@@ -2,6 +2,7 @@ import { Scene } from "./scene";
 import { Matrix } from "./matrix";
 import { BBox } from "./bbox";
 import { createId } from "../util/id";
+import { WINDOW } from "../util/window";
 
 export enum PointerEvents {
     All,
@@ -42,8 +43,7 @@ export function SceneChangeDetection(opts?: {
 }) {
     const { redraw = RedrawType.TRIVIAL, type = 'normal', changeCb, convertor } = opts || {};
     
-    const win = typeof window === "undefined" ? undefined : window;
-    const debug = (win as any)?.agChartsSceneChangeDetectionDebug != null;
+    const debug = WINDOW?.agChartsSceneChangeDetectionDebug != null;
 
     return function (target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)
@@ -381,8 +381,6 @@ export abstract class Node { // Don't confuse with `window.Node`.
      * Recursively checks if the given point is inside this node or any of its children.
      * Returns the first matching node or `undefined`.
      * Nodes that render later (show on top) are hit tested first.
-     * @param x
-     * @param y
      */
     pickNode(x: number, y: number): Node | undefined {
         if (!this.visible || this.pointerEvents === PointerEvents.None || !this.containsPoint(x, y)) {
@@ -391,7 +389,19 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
         const children = this.children;
 
-        if (children.length) {
+        if (children.length > 1_000) {
+            // Try to optimise which children to interrogate; BBox calculation is an approximation
+            // for more complex shapes, so discarding items based on this will save a lot of
+            // processing when the point is nowhere near the child.
+            for (let i = children.length - 1; i >= 0; i--) {
+                const hit = children[i].computeBBox()?.containsPoint(x, y) ?
+                    children[i].pickNode(x, y) : undefined ;
+
+                if (hit) {
+                    return hit;
+                }
+            }
+        } else if (children.length) {
             // Nodes added later should be hit-tested first,
             // as they are rendered on top of the previously added nodes.
             for (let i = children.length - 1; i >= 0; i--) {

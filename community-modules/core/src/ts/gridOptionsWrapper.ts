@@ -144,7 +144,7 @@ export class GridOptionsWrapper {
 
     public static PROP_GET_CHART_TOOLBAR_ITEMS = 'getChartToolbarItems';
 
-    public static PROP_GET_SERVER_SIDE_STORE_PARAMS = 'getServerSideStoreParams';
+    public static PROP_GET_SERVER_SIDE_GROUP_PARAMS = 'getServerSideGroupLevelParams';
     public static PROP_IS_SERVER_SIDE_GROUPS_OPEN_BY_DEFAULT = 'isServerSideGroupOpenByDefault';
     public static PROP_IS_APPLY_SERVER_SIDE_TRANSACTION = 'isApplyServerSideTransaction';
     public static PROP_IS_SERVER_SIDE_GROUP = 'isServerSideGroup';
@@ -745,8 +745,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.serverSideInfiniteScroll);
     }
 
-    public getServerSideStoreParamsFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.getServerSideStoreParams);
+    public getServerSideGroupLevelParamsFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.getServerSideGroupLevelParams);
     }
 
     public getCreateChartContainerFunc() {
@@ -1880,6 +1880,8 @@ export class GridOptionsWrapper {
             console.warn('AG Grid: since v28.0, `serverSideStoreType` has been replaced by `serverSideInfiniteScroll`. Set to true to use Partial Store, and false to use Full Store.');
             options.serverSideInfiniteScroll = options.serverSideStoreType === 'partial';
         }
+
+        checkRenamedProperty('getServerSideStoreParams', 'getServerSideGroupLevelParams', '28.0.x');
     }
 
     private checkForViolations() {

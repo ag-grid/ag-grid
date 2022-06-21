@@ -12,6 +12,7 @@ import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util
 import { doOnce } from "./util/function";
 import { ContinuousScale } from "./scale/continuousScale";
 import { CountableTimeInterval } from "./util/time/interval";
+import { Validate, BOOLEAN, OPT_BOOLEAN, NUMBER, OPT_NUMBER, OPT_FONT_STYLE, OPT_FONT_WEIGHT, STRING, OPT_STRING } from './util/validation';
 
 enum Tags {
     Tick,
@@ -28,17 +29,20 @@ export class AxisTick {
     /**
      * The line width to be used by axis ticks.
      */
+    @Validate(NUMBER(0))
     width: number = 1;
 
     /**
      * The line length to be used by axis ticks.
      */
+    @Validate(NUMBER(0))
     size: number = 6;
 
     /**
      * The color of the axis ticks.
      * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
      */
+    @Validate(OPT_STRING)
     color?: string = 'rgba(195, 195, 195, 1)';
 
     /**
@@ -63,24 +67,30 @@ export interface AxisLabelFormatterParams {
 
 export class AxisLabel {
 
+    @Validate(OPT_FONT_STYLE)
     fontStyle?: FontStyle = undefined;
 
+    @Validate(OPT_FONT_WEIGHT)
     fontWeight?: FontWeight = undefined;
 
+    @Validate(NUMBER(1))
     fontSize: number = 12;
 
+    @Validate(STRING)
     fontFamily: string = 'Verdana, sans-serif';
 
     /**
      * The padding between the labels and the ticks.
      */
+    @Validate(NUMBER(0))
     padding: number = 5;
 
     /**
      * The color of the labels.
      * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
      */
-    color?: string = 'rgba(87, 87, 87, 1)';
+     @Validate(STRING)
+     color?: string = 'rgba(87, 87, 87, 1)';
 
     /**
      * Custom label rotation in degrees.
@@ -89,17 +99,21 @@ export class AxisLabel {
      * The value of this config is used as the angular offset/deflection
      * from the default rotation.
      */
+    @Validate(OPT_NUMBER(-360, 360))
     rotation?: number = undefined;
+
 
     /**
      * If specified and axis labels may collide, they are rotated to reduce collisions. If the
      * `rotation` property is specified, it takes precedence.
      */
+    @Validate(OPT_BOOLEAN)
     autoRotate: boolean | undefined = undefined;
 
     /**
      * Rotation angle to use when autoRotate is applied.
      */
+    @Validate(NUMBER(-360, 360))
     autoRotateAngle: number = 335;
 
     /**
@@ -115,6 +129,7 @@ export class AxisLabel {
      * from north-west to south-east, _starting_ at the tick to the right
      * of the axis line.
      */
+    @Validate(BOOLEAN)
     mirrored: boolean = false;
 
     /**
@@ -122,7 +137,8 @@ export class AxisLabel {
      * Setting this config to `true` makes labels render parallel to the axis line
      * and center aligns labels' text at the ticks.
      */
-    parallel: boolean = false;
+     @Validate(BOOLEAN)
+     parallel: boolean = false;
 
     /**
      * In case {@param value} is a number, the {@param fractionDigits} parameter will
@@ -134,6 +150,7 @@ export class AxisLabel {
 
     onFormatChange?: (format?: string) => void = undefined;
 
+    @Validate(STRING)
     private _format: string | undefined;
     set format(value: string | undefined) {
         // See `TimeLocaleObject` docs for the list of supported format directives.

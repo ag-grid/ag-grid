@@ -3,7 +3,6 @@ const fs = require('fs-extra');
 const cp = require('child_process');
 const glob = require('glob');
 const resolve = require('path').resolve;
-const http = require('http');
 const https = require('https');
 const express = require('express');
 const realWebpack = require('webpack');
@@ -12,7 +11,7 @@ const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
 const {generateDocumentationExamples} = require('./example-generator-documentation');
 const {watchValidateExampleTypes} = require('./example-validator');
-const {updateBetweenStrings, getAllModules} = require('./utils');
+const {updateBetweenStrings, getAllModules, processStdio} = require('./utils');
 const {getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss} = require('./lernaOperations');
 const {EOL} = os;
 
@@ -448,11 +447,13 @@ const watchCoreModules = async (skipFrameworks) => {
     console.log("Watching TS files only...");
     const tsc = getTscPath();
     const tsWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch'], {
-        cwd: '../../'
+        cwd: '../../',
+        stdio: 'pipe',
+        encoding: 'buffer'
     });
 
-    tsWatch.stdout.on('data', async (data) => {
-        const output = data.toString().trim();
+    tsWatch.stdout.on('data', await processStdio(async (output) => {
+        console.log("Core Typescript: " + output);
         if (output.includes("Found 0 errors. Watching for file changes.")) {
             await rebuildPackagesBasedOnChangeState(false, skipFrameworks);
 
@@ -460,7 +461,11 @@ const watchCoreModules = async (skipFrameworks) => {
             // hashes on build
             updateCoreModuleHashes();
         }
-    });
+    }));
+
+    tsWatch.stderr.on('data', await processStdio(async (output) => {
+        console.error("Core Typescript: " + output);
+    }));
 
     process.on('exit', () => {
         tsWatch.kill();
@@ -716,9 +721,6 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
             console.log("Watch Core Modules & CSS");
             await watchCoreModulesAndCss(skipFrameworks);
 
-            console.log("Watch Typescript examples...");
-            await watchValidateExampleTypes();
-
             if (!skipFrameworks) {
                 console.log("Watch Framework Modules");
                 watchFrameworkModules();
@@ -736,6 +738,9 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
             console.log("Watch and Generate Examples");
             await watchAndGenerateExamples();
             console.log("Examples Generated");
+
+            console.log("Watch Typescript examples...");
+            await watchValidateExampleTypes();
 
             // todo - iterate everything under src and serve it
             // ...or use app.get('/' and handle it that way

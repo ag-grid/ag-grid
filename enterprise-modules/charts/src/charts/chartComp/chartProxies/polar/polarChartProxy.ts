@@ -1,10 +1,23 @@
 import { ChartProxy, ChartProxyParams } from "../chartProxy";
-import { PieSeries, PieTooltipRendererParams } from "ag-charts-community";
+import { AgChart, PieSeries, PieTooltipRendererParams, PolarChart } from "ag-charts-community";
+import { AgPolarChartOptions } from "ag-charts-community/src/chart/agChartOptions";
 
 export abstract class PolarChartProxy extends ChartProxy {
 
     protected constructor(params: ChartProxyParams) {
         super(params);
+    }
+
+    protected createChart(): PolarChart {
+        return AgChart.create({
+            type: 'pie',
+            container: this.chartProxyParams.parentElement,
+            theme: this.chartTheme,
+        });
+    }
+
+    protected updateChart(options: AgPolarChartOptions): void {
+        AgChart.update(this.chart as PolarChart, options);
     }
 
     protected addCrossFilteringTooltipRenderer(pieSeries: PieSeries) {

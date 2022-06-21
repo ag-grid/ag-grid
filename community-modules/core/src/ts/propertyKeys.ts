@@ -81,6 +81,7 @@ export class PropertyKeys {
         'detailCellRendererFramework', 'isRowMaster', 'isRowSelectable', 'postSort', 'postSortRows', 'processHeaderForClipboard', 'processGroupHeaderForClipboard',
         'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup', 'suppressKeyboardEvent',
         'createChartContainer', 'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction', 'getServerSideStoreParams',
+        'getServerSideGroupLevelParams',
         'isServerSideGroupOpenByDefault', 'isGroupOpenByDefault', 'defaultGroupSortComparator', 'defaultGroupOrderComparator', 'initialGroupOrderComparator',
         'loadingCellRendererSelector', 'getRowId', 'groupAggFiltering'
     ];

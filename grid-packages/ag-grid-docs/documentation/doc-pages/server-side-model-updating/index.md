@@ -65,7 +65,7 @@ The example below shows this in action where the following can be noted:
 
 
 - **Update Selected Rows** - will update the medal count directly on the row nodes and then invoke the mock server with the updated rows.
-- **Refresh Store** - will clear all loaded data and force a reload. Notice that the previously updated data will be returned from the server.
+- **Refresh** - will clear all loaded data and force a reload. Notice that the previously updated data will be returned from the server.
 
 <grid-example title='Updating Row Data' name='updating-row-data' type='generated' options='{ "enterprise": true, "extras": ["lodash"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 

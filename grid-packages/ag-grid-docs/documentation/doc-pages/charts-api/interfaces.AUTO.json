@@ -2409,28 +2409,6 @@
     "meta": {},
     "type": { "fill?": "string", "stroke?": "string", "strokeWidth?": "number" }
   },
-  "CartesianSeriesMarkerFormat": {
-    "meta": {},
-    "type": {
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth?": "number",
-      "size?": "number"
-    }
-  },
-  "CartesianSeriesMarkerFormatterParams": {
-    "meta": {},
-    "type": {
-      "xKey": "string",
-      "yKey": "string",
-      "datum": "any",
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth": "number",
-      "size": "number",
-      "highlighted": "boolean"
-    }
-  },
   "NodeDataSelection": {
     "meta": {
       "isTypeAlias": true,
@@ -2475,6 +2453,28 @@
     "type": {
       "pickGroupIncludes": "PickGroupInclude[]",
       "pathsPerSeries": "number"
+    }
+  },
+  "CartesianSeriesMarkerFormat": {
+    "meta": {},
+    "type": {
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth?": "number",
+      "size?": "number"
+    }
+  },
+  "CartesianSeriesMarkerFormatterParams": {
+    "meta": {},
+    "type": {
+      "xKey": "string",
+      "yKey": "string",
+      "datum": "any",
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth": "number",
+      "size": "number",
+      "highlighted": "boolean"
     }
   },
   "HistogramSeriesNodeTag": {
@@ -2762,7 +2762,7 @@
   },
   "SeriesNodeDataContext": {
     "meta": { "isTypeAlias": true, "typeParams": ["S", "L"] },
-    "type": "{ nodeData: S[]; labelData: L[]; }"
+    "type": "{ itemId: string; nodeData: S[]; labelData: L[]; }"
   },
   "SeriesMarkerFormatterParams": {
     "meta": {},

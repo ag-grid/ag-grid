@@ -53,11 +53,11 @@ The example below listens for this event and prints a summary of the result obje
 
 The Retrying Transactions feature guards against Lost Updates. Lost updates refers to new data created in the server's data store that due to the order of data getting read and the transaction applied, the record ends up missing in the grid.
 
-Lost updates occur when data read from the server is missing a record (as it's read to early), but the transaction for the new record is attempted before the Row Store finishes loading (causing transaction to be discarded).
+Lost updates occur when data read from the server is missing a record (as it's read to early), but the transaction for the new record is attempted before the grid finishes loading (causing transaction to be discarded).
 
-When a Row Store is loading and a transaction is applied asynchronously, the grid will wait for the Row Store to be loaded and then apply the transaction.
+When the grid is loading a particular level and a transaction is applied asynchronously to that level, the grid will wait for the load and then apply the transaction.
 
-The transactions will get applied to the store in the order they were provided to the grid. The order will not get mixed up due to retrying. However transactions applied to other stores (e.g. grouping is active and other Row Stores have loaded) will go ahead as normal. Loading only delays transactions for the loading stores.
+The transactions will get applied to the grid's level in the order they were provided to the grid. The order will not get mixed up due to retrying. However transactions applied to other levels (e.g. grouping is active and other levels have loaded) will go ahead as normal. Loading only delays transactions for the loading level.
 
 The example is configured to demonstrate this. Note the following:
 
@@ -68,13 +68,13 @@ The example is configured to demonstrate this. Note the following:
 
 <grid-example title='Retry Transactions' name='retry-transactions' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
 
-This only applies to loading stores. If the grid is limiting the number of concurrent loads (property `maxConcurrentDatasourceRequests` is set) then it's possible Stores are waiting to load. If they are waiting to load, transactions for updates will all be discarded as no race condition (see below) is possible.
+This only applies to loading levels. If the grid is limiting the number of concurrent loads (property `maxConcurrentDatasourceRequests` is set) then it's possible levels are waiting to load. If they are waiting to load, transactions for updates will all be discarded as no race condition (see below) is possible.
 
 ## Cancelling Transactions
 
 The Cancelling Transactions feature guards against Duplicate Records. Duplicate records is the inverse of Lost Update. It results in records duplicating.
 
-Duplicate records occur when data read from the server includes a new record (it's just in time), but the transaction for the new record is attempted after the Row Store finishes loading (transaction is applied). This results in the record appearing twice.
+Duplicate records occur when data read from the server includes a new record (it's just in time), but the transaction for the new record is attempted after the level finishes loading (transaction is applied). This results in the record appearing twice.
 
 Before a transaction is applied, the grid calls the `isApplyServerSideTransaction(params)` callback to give the application one last chance to cancel the transaction.
 
@@ -82,14 +82,14 @@ Before a transaction is applied, the grid calls the `isApplyServerSideTransactio
 
 If the callback returns `true`, the transaction is applied as normal and the Transaction Status `Applied` is returned. If the callback returns `false`, the transaction is discarded and the Transaction Status `Cancelled` is returned.
 
-The suggested mechanism is to use versioned (or timestamped) data. When row data is loaded, the application could provide a data version as [Store Info](/server-side-model-grouping/#store-state-info).
+The suggested mechanism is to use versioned (or timestamped) data. When row data is loaded, the application could provide a data version as [Group Level Info](/server-side-model-grouping/#group-level-info).
 
 The example is configured to demonstrate this. Note the following:
 
 - Use the **Refresh** button to get the grid to refresh.
 - The Datasource reads (takes a copy) of the server data, but waits 2 seconds first before reading. This mimics a slow network on the way to the server.
 - While a refresh is underway, add records using the **Add** button. This will add records to the server that will be existing in the row data the grid receives. The transactions will be applied after the data load is complete.
-- A version is applied to the server. This version attached to both Store Info and also the Transaction.
+- A version is applied to the server. This version attached to both the group level and also the Transaction.
 - Note the console - after rows are loaded, transactions that were received during the load are applied after the load. This means the grid will show new records even though they were missing from the loaded row data.
 
 <grid-example title='Cancel Transactions' name='cancel-transactions' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
@@ -98,7 +98,7 @@ The example is configured to demonstrate this. Note the following:
 
 Race conditions occur because of the asynchronous nature of loading data and applying transactions. Race conditions result in lost updates and duplicated records.
 
-Lost updates are catered for by the grid by retrying transactions when Row Stores are loading explained in [Retry Transactions](#retrying-transactions) above.
+Lost updates are catered for by the grid by retrying transactions when loading completes explained in [Retry Transactions](#retrying-transactions) above.
 
 Duplicate records need to be catered for by your application using the [Cancelling Transactions](#cancelling-transactions) feature explained above.
 
@@ -115,13 +115,13 @@ In theory there is no limit to the number of groupings or data size allowed. It'
 In the example, note the following:
 
 - The data has three levels of grouping over columns Product, Portfolio and Book.
-- The SSRM uses the Full store for all group levels.
+- The SSRM does not use Infinite Scrolling at any level.
 - The grid property `asyncTransactionWaitMillis = 500`, which means all Async Transactions will get applied after 500ms. In applications, a lower number would typically be used to give more instant feedback to the user. However this example slows it down to save clutter in the dev console and make the example easier to follow.
 - The button One Transaction apply one Async Transaction to the top most group when data is un-sorted (Palm Oil -> Aggressive -> LB-0-0-0). When this route is expanded, adding the trade can be observed.
 - The buttons Start Feed and Stop Feed start and stop live updates happening on the server.
 - The example registers for live updates with the fake server. In a real world example, live updates would probably be delivered using web sockets and how it is managed on the server would be the responsibility of your server technology.
-- The fake server makes use of a version counter. The version at the time of data reads is provided to the grid as Store Data. The version of the data at the time of record creation is passed alongside the grid's transactions.
-- There are no problem with race conditions as the grid will retry transactions automatically when transactions are applied against loading Row Stores, and the callback `isApplyServerSideTransaction(params)` is implemented to discard old transactions.
+- The fake server makes use of a version counter. The version at the time of data reads is provided to the grid as Group Info. The version of the data at the time of record creation is passed alongside the grid's transactions.
+- There are no problems with race conditions as the grid will retry transactions automatically when transactions are applied against loading levels and the callback `isApplyServerSideTransaction(params)` is implemented to discard old transactions.
 - All columns are sortable. The sorting is done by the grid without needing to request data again from the server.
 - Column Deal Type has a filter associated with it. The filter is done by the grid without needing to request data again from the server.
 

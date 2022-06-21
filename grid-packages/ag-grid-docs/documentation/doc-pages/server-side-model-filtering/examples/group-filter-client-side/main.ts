@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IServerSideDatasource, ServerSideStoreParams, GetServerSideStoreParamsParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [

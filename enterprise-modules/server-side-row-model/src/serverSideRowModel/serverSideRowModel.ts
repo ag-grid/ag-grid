@@ -24,8 +24,8 @@ import {
     RowRenderer,
     SortController,
     StoreRefreshAfterParams,
-    RefreshStoreParams,
-    ServerSideStoreState,
+    RefreshServerSideParams,
+    ServerSideGroupLevelState,
     Beans,
     SortModelItem
 } from "@ag-grid-community/core";
@@ -409,13 +409,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
     }
 
-    public refreshStore(params: RefreshStoreParams = {}): void {
+    public refreshStore(params: RefreshServerSideParams = {}): void {
         const route = params.route ? params.route : [];
         this.executeOnStore(route, store => store.refreshStore(params.purge == true));
     }
 
-    public getStoreState(): ServerSideStoreState[] {
-        const res: ServerSideStoreState[] = [];
+    public getStoreState(): ServerSideGroupLevelState[] {
+        const res: ServerSideGroupLevelState[] = [];
         const rootStore = this.getRootStore();
         if (rootStore) {
             rootStore.addStoreStates(res);

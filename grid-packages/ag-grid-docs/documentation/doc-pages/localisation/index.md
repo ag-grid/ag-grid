@@ -10,7 +10,7 @@ The default language of the grid is American English. The grid does not come wit
 
 ## Creating a Locale
 
-The grid by default does not need a locale. If no locale is provided, the grid will default to English. If a locale is provided but is missing values, the default English will be used for the missing values.
+By default, the grid does not require a locale. If no locale is provided, the grid will default to English. If a locale is provided but is missing values, the default English will be used for the missing values.
 
 An example full locale file is provided below. To support other languages, the first step is to copy this file and translate the values into the required language.
 

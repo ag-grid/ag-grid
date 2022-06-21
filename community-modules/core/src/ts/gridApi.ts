@@ -22,11 +22,11 @@ import {
     IsRowSelectable,
     IsServerSideGroup,
     RowClassParams,
-    ServerSideStoreParams,
+    ServerSideGroupLevelParams,
 } from "./entities/gridOptions";
 import {
     GetGroupRowAggParams,
-    GetServerSideStoreParamsParams,
+    GetServerSideGroupLevelParamsParams,
     InitialGroupOrderComparatorParams,
     IsServerSideGroupOpenByDefaultParams,
     NavigateToNextCellParams,
@@ -77,9 +77,9 @@ import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
 import {
     IServerSideRowModel,
     IServerSideTransactionManager,
-    RefreshStoreParams
+    RefreshServerSideParams
 } from "./interfaces/iServerSideRowModel";
-import { ServerSideStoreState } from "./interfaces/IServerSideStore";
+import { ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
 import { ISideBar } from "./interfaces/iSideBar";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanel } from "./interfaces/iStatusPanel";
@@ -100,7 +100,9 @@ import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { SelectionService } from "./selectionService";
 import { SortController } from "./sortController";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
+import { _ } from "./utils";
 import { doOnce } from "./utils/function";
+import { message } from "./utils/general";
 import { exists, missing } from "./utils/generic";
 import { iterateObject, removeAllReferences } from "./utils/object";
 import { camelCaseToHumanText } from "./utils/string";
@@ -1288,8 +1290,15 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PAGINATION_NUMBER_FORMATTER, paginationNumberFormatterFunc);
     }
 
-    public setGetServerSideStoreParams(getServerSideStoreParamsFunc: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams): void {
-        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_SERVER_SIDE_STORE_PARAMS, getServerSideStoreParamsFunc);
+    /** @deprecated
+     * use setGetServerSideGroupLevelParams instead
+     */
+    public setGetServerSideStoreParams(getServerSideStoreParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void {
+        this.setGetServerSideGroupLevelParams(getServerSideStoreParamsFunc);
+    }
+
+    public setGetServerSideGroupLevelParams(getServerSideGroupLevelParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_SERVER_SIDE_GROUP_PARAMS, getServerSideGroupLevelParamsFunc);
     }
 
     public setIsServerSideGroupOpenByDefault(isServerSideGroupOpenByDefaultFunc: (params: IsServerSideGroupOpenByDefaultParams) => boolean): void {
@@ -1920,26 +1929,38 @@ export class GridApi {
     }
 
     /**
-     * Refresh a server-side store.
+     * Refresh a server-side level.
      * If you pass no parameters, then the top level store is purged.
-     * To purge a child store, pass in the string of keys to get to the child cache.
+     * To purge a child level, pass in the string of keys to get to the desired level.
      */
-    public refreshServerSideStore(params?: RefreshStoreParams): void {
-        if (this.serverSideRowModel) {
-            this.serverSideRowModel.refreshStore(params);
-        } else {
+    public refreshServerSide(params?: RefreshServerSideParams): void {
+        if (!this.serverSideRowModel) {
             console.warn(`AG Grid: api.refreshServerSideStore is only available when rowModelType='serverSide'.`);
         }
+        this.serverSideRowModel.refreshStore(params);
     }
 
-    /** Returns info on all server side stores. */
-    public getServerSideStoreState(): ServerSideStoreState[] {
-        if (this.serverSideRowModel) {
-            return this.serverSideRowModel.getStoreState();
-        } else {
-            console.warn(`AG Grid: api.getServerSideStoreState is only available when rowModelType='serverSide'.`);
+    /** @deprecated use `refreshServerSide` instead */
+    public refreshServerSideStore(params?: RefreshServerSideParams): void {
+        const message = `AG Grid: Grid API refreshServerSideStore() was renamed to refreshServerSide() in v28.0`;
+        doOnce( ()=> console.warn(message), 'refreshServerSideStore-renamed');
+        return this.refreshServerSide(params);
+    }
+
+    /** @deprecated use `getServerSideGroupLevelState` instead */
+    public getServerSideStoreState(): ServerSideGroupLevelState[] {
+        const message = `AG Grid: Grid API getServerSideStoreState() was renamed to getServerSideGroupLevelState() in v28.0`;
+        doOnce( ()=> console.warn(message), 'getServerSideStoreState-renamed');
+        return this.getServerSideGroupLevelState();
+    }
+
+    /** Returns info on all server side group levels. */
+    public getServerSideGroupLevelState(): ServerSideGroupLevelState[] {
+        if (!this.serverSideRowModel) {
+            console.warn(`AG Grid: api.getServerSideGroupLevelState is only available when rowModelType='serverSide'.`);
             return [];
         }
+        return this.serverSideRowModel.getStoreState();
     }
 
     public getVirtualRowCount(): number | null | undefined {

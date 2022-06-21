@@ -955,8 +955,16 @@
       "description": "/** Whether to display a floating filter for this column. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "wrapHeaderText": {
+      "description": "/** If enabled then column header names that are too long for the column width will wrap onto the next line. Default `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "autoHeaderHeight": {
+      "description": "/** If enabled then the column header row will automatically adjust height to acommodate the size of the header cell.\n * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "headerComponent": {
-      "description": "/** */\n/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
+      "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerComponentFramework": {
@@ -3506,11 +3514,19 @@
         "optional": true
       }
     },
-    "getServerSideStoreParams": {
+    "getServerSideGroupLevelParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams" },
-        "returnType": "ServerSideStoreParams",
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
+        "optional": true
+      }
+    },
+    "getServerSideStoreParams": {
+      "description": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
+      "type": {
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
         "optional": true
       }
     },
@@ -5102,6 +5118,24 @@
     }
   },
   "ServerSideStoreType": {},
+  "ServerSideGroupLevelParams": {
+    "storeType": {
+      "description": "/** @deprecated What store type to use.\nIf missing, then defaults to grid option `serverSideStoreType`.\nDeprecated in favor of infiniteScroll.\nIf infiniteScroll==true, then Partial Store is used.\nIf infiniteScroll==false, then Full Store is used.\n */",
+      "type": { "returnType": "ServerSideStoreType", "optional": true }
+    },
+    "infiniteScroll": {
+      "description": "/** Whether to have infinite scroll active or not for the level. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "maxBlocksInCache": {
+      "description": "/** For Infinite Scroll only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "cacheBlockSize": {
+      "description": "/** For Infinite Scroll only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
   "ServerSideStoreParams": {
     "storeType": {
       "description": "/** @deprecated What store type to use.\nIf missing, then defaults to grid option `serverSideStoreType`.\nDeprecated in favor of infiniteScroll.\nIf infiniteScroll==true, then Partial Store is used.\nIf infiniteScroll==false, then Full Store is used.\n */",
@@ -5444,6 +5478,40 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
+  "GetServerSideGroupLevelParamsParams": {
+    "level": {
+      "description": "/** The level of the store. Top level is 0. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "parentRowNode": {
+      "description": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
+      "type": { "returnType": "RowNode", "optional": true }
+    },
+    "rowGroupColumns": {
+      "description": "/** Active Row Group Columns, if any. */",
+      "type": { "returnType": "Column[]", "optional": false }
+    },
+    "pivotColumns": {
+      "description": "/** Active Pivot Columns, if any. */",
+      "type": { "returnType": "Column[]", "optional": false }
+    },
+    "pivotMode": {
+      "description": "/** true if pivot mode is active. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
   "GetServerSideStoreParamsParams": {
     "level": {
       "description": "/** The level of the store. Top level is 0. */",
@@ -5503,7 +5571,14 @@
       "description": "/** The parent RowNode, if transaction is applied to a group. */",
       "type": { "returnType": "RowNode", "optional": false }
     },
-    "storeInfo": { "type": { "returnType": "any", "optional": false } },
+    "storeInfo": {
+      "description": "/** @deprecated use groupLevelInfo instead\n */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "groupLevelInfo": {
+      "description": "/** Store info, if any, as passed via the success() callback when loading data. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi", "optional": false }
@@ -16281,7 +16356,7 @@
   "IServerSideRowModel": {
     "refreshStore": {
       "type": {
-        "arguments": { "params?": "RefreshStoreParams" },
+        "arguments": { "params?": "RefreshServerSideParams" },
         "returnType": "void",
         "optional": false
       }
@@ -16292,7 +16367,7 @@
     "getStoreState": {
       "type": {
         "arguments": {},
-        "returnType": "ServerSideStoreState[]",
+        "returnType": "ServerSideGroupLevelState[]",
         "optional": false
       }
     },
@@ -16448,9 +16523,19 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
+  "RefreshServerSideParams": {
+    "route": {
+      "description": "/** List of group keys, pointing to the level to refresh.\n * For example, to purge two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].\n * If no route is passed, or an empty array, then the top level is refreshed. */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "purge": {
+      "description": "/** If true, then all rows at the level getting refreshed are immediately destroyed and 'loading' rows will appear.\n * If false, then all rows at the level getting refreshed are kept until rows are loaded (no 'loading' rows appear). */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
   "RefreshStoreParams": {
     "route": {
-      "description": "/** List of group keys, pointing to the store to refresh.\n * For example, to purge the cache two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].\n * If no route is passed, or an empty array, then the top level store is refreshed. */",
+      "description": "/** List of group keys, pointing to the level to refresh.\n * For example, to purge two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].\n * If no route is passed, or an empty array, then the top level is refreshed. */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "purge": {
@@ -16597,7 +16682,7 @@
     },
     "addStoreStates": {
       "type": {
-        "arguments": { "result": "ServerSideStoreState[]" },
+        "arguments": { "result": "ServerSideGroupLevelState[]" },
         "returnType": "void",
         "optional": false
       }
@@ -16614,17 +16699,17 @@
       "type": { "returnType": "string[]", "optional": false }
     }
   },
-  "ServerSideStoreState": {
+  "ServerSideGroupLevelState": {
     "infiniteScroll": {
       "description": "/** True if infininte scrolling */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "route": {
-      "description": "/** The route that identifies this store. */",
+      "description": "/** The route that identifies this level. */",
       "type": { "returnType": "string[]", "optional": false }
     },
     "rowCount": {
-      "description": "/** How many rows the store has. This includes 'loading rows'. */",
+      "description": "/** How many rows the level has. This includes 'loading rows'. */",
       "type": { "returnType": "number", "optional": false }
     },
     "lastRowIndexKnown": {
@@ -16632,15 +16717,45 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "info": {
-      "description": "/** Any extra info provided to the store, when data was loaded. */",
+      "description": "/** Any extra info provided to the level, when data was loaded. */",
       "type": { "returnType": "any", "optional": true }
     },
     "maxBlocksInCache": {
-      "description": "/** Infinite Scroll only.\n *  Max blocks allowed in the store. */",
+      "description": "/** Infinite Scroll only.\n *  Max blocks allowed in the infinite cache. */",
       "type": { "returnType": "number", "optional": true }
     },
     "cacheBlockSize": {
-      "description": "/** Infinite Scroll only.\n * The size (number of rows) of each block. */",
+      "description": "/** Infinite Scroll only.\n * The size (number of rows) of each infinite cache block. */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "ServerSideGroupState": {
+    "infiniteScroll": {
+      "description": "/** True if infininte scrolling */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "route": {
+      "description": "/** The route that identifies this level. */",
+      "type": { "returnType": "string[]", "optional": false }
+    },
+    "rowCount": {
+      "description": "/** How many rows the level has. This includes 'loading rows'. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "lastRowIndexKnown": {
+      "description": "/** Infinite Scroll only.\n * Whether the last row index is know. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "info": {
+      "description": "/** Any extra info provided to the level, when data was loaded. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "maxBlocksInCache": {
+      "description": "/** Infinite Scroll only.\n *  Max blocks allowed in the infinite cache. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "cacheBlockSize": {
+      "description": "/** Infinite Scroll only.\n * The size (number of rows) of each infinite cache block. */",
       "type": { "returnType": "number", "optional": true }
     }
   },
@@ -19725,6 +19840,10 @@
       "type": { "returnType": "number", "optional": true }
     },
     "storeInfo": {
+      "description": "/** @deprecated use groupLevelInfo instead\n */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "groupLevelInfo": {
       "description": "/** Any extra information for the grid to associate with this load. */",
       "type": { "returnType": "any", "optional": true }
     }
@@ -20990,8 +21109,16 @@
       "description": "/** Whether to display a floating filter for this column. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "wrapHeaderText": {
+      "description": "/** If enabled then column header names that are too long for the column width will wrap onto the next line. Default `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "autoHeaderHeight": {
+      "description": "/** If enabled then the column header row will automatically adjust height to acommodate the size of the header cell.\n * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "headerComponent": {
-      "description": "/** */\n/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
+      "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerComponentFramework": {
@@ -22807,11 +22934,19 @@
         "optional": true
       }
     },
-    "getServerSideStoreParams": {
+    "getServerSideGroupLevelParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams" },
-        "returnType": "ServerSideStoreParams",
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
+        "optional": true
+      }
+    },
+    "getServerSideStoreParams": {
+      "description": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
+      "type": {
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
         "optional": true
       }
     },
@@ -25552,11 +25687,19 @@
         "optional": true
       }
     },
-    "getServerSideStoreParams": {
+    "getServerSideGroupLevelParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams" },
-        "returnType": "ServerSideStoreParams",
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
+        "optional": true
+      }
+    },
+    "getServerSideStoreParams": {
+      "description": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
+      "type": {
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
         "optional": true
       }
     },
@@ -28307,11 +28450,19 @@
         "optional": true
       }
     },
-    "getServerSideStoreParams": {
+    "getServerSideGroupLevelParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams" },
-        "returnType": "ServerSideStoreParams",
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
+        "optional": true
+      }
+    },
+    "getServerSideStoreParams": {
+      "description": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
+      "type": {
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
         "optional": true
       }
     },

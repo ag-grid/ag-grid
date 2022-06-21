@@ -215,8 +215,8 @@ export { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 export { ColumnVO } from "./interfaces/iColumnVO";
 
 export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest } from "./interfaces/iServerSideDatasource";
-export { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams } from "./interfaces/iServerSideRowModel";
-export { IServerSideStore, StoreRefreshAfterParams, ServerSideStoreState } from "./interfaces/IServerSideStore";
+export { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams, RefreshServerSideParams } from "./interfaces/iServerSideRowModel";
+export { IServerSideStore, StoreRefreshAfterParams, ServerSideGroupState, ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
 
 export { ISideBar } from "./interfaces/iSideBar";
 export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
@@ -387,6 +387,7 @@ export {
     RowStyle,
     RowClassParams,
     ServerSideStoreType,
+    ServerSideGroupLevelParams,
     ServerSideStoreParams,
     GetServerSideGroupKey,
     IsServerSideGroup,
@@ -405,6 +406,7 @@ export {
     IsServerSideGroupOpenByDefaultParams,
     IsApplyServerSideTransactionParams,
     IsGroupOpenByDefaultParams,
+    GetServerSideGroupLevelParamsParams,
     GetServerSideStoreParamsParams,
     PaginationNumberFormatterParams,
     ProcessDataFromClipboardParams,

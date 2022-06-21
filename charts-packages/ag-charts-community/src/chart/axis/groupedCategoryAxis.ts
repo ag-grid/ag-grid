@@ -117,11 +117,6 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             y: 0
         };
 
-    /**
-     * Axis rotation angle in degrees.
-     */
-    rotation: number = 0;
-
     readonly line: {
         /**
          * The line width to be used by the axis line.

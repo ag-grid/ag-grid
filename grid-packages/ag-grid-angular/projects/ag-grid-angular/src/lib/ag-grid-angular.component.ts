@@ -59,8 +59,8 @@ import {
     GetChartToolbarItems,
     FillOperationParams,
     IsApplyServerSideTransaction,
-    GetServerSideStoreParamsParams,
-    ServerSideStoreParams,
+    GetServerSideGroupLevelParamsParams,
+    ServerSideGroupLevelParams,
     IsServerSideGroupOpenByDefaultParams,
     IsGroupOpenByDefaultParams,
     ColumnEverythingChangedEvent,
@@ -728,7 +728,7 @@ export class AgGridAngular implements AfterViewInit {
      * Set to `-1` for no maximum restriction on requests.
      * Default: `2`     */
     @Input() public maxConcurrentDatasourceRequests: number | undefined = undefined;
-    /** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled.     */
+    /** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled.     */
     @Input() public blockLoadDebounceMillis: number | undefined = undefined;
     /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false`     */
     @Input() public purgeClosedRowNodes: boolean | undefined = undefined;
@@ -909,7 +909,9 @@ export class AgGridAngular implements AfterViewInit {
     /** Allows setting the child count for a group row.     */
     @Input() public getChildCount: ((dataItem: any) => number) | undefined = undefined;
     /** Allows providing different params for different levels of grouping.     */
-    @Input() public getServerSideStoreParams: ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams) | undefined = undefined;
+    @Input() public getServerSideGroupLevelParams: ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams) | undefined = undefined;
+    /** @deprecated use `getServerSideGroupLevelParams` instead.     */
+    @Input() public getServerSideStoreParams: ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams) | undefined = undefined;
     /** Allows groups to be open by default.     */
     @Input() public isServerSideGroupOpenByDefault: ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined = undefined;
     /** Allows cancelling transactions.     */

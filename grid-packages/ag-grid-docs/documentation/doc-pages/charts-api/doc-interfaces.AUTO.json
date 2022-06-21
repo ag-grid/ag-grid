@@ -3223,7 +3223,7 @@
   "FillSelectionDatum": {
     "itemId": { "type": { "returnType": "string", "optional": false } },
     "points": {
-      "type": { "returnType": "{ x: number, y: number }[]", "optional": false }
+      "type": { "returnType": "{ x: number; y: number }[]", "optional": false }
     }
   },
   "StrokeSelectionDatum": {
@@ -3232,7 +3232,7 @@
     },
     "itemId": { "type": { "returnType": "string", "optional": false } },
     "points": {
-      "type": { "returnType": "{ x: number, y: number }[]", "optional": false }
+      "type": { "returnType": "{ x: number; y: number }[]", "optional": false }
     }
   },
   "AreaSeriesNodeClickEvent": {
@@ -3323,7 +3323,7 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": {
-        "returnType": "{ // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n    }",
+        "returnType": "{\n        // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n    }",
         "optional": true
       }
     }
@@ -3343,22 +3343,6 @@
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } }
-  },
-  "CartesianSeriesMarkerFormat": {
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "size": { "type": { "returnType": "number", "optional": true } }
-  },
-  "CartesianSeriesMarkerFormatterParams": {
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
-    "size": { "type": { "returnType": "number", "optional": false } },
-    "highlighted": { "type": { "returnType": "boolean", "optional": false } }
   },
   "NodeDataSelection": {
     "meta": {
@@ -3403,6 +3387,22 @@
     },
     "pathsPerSeries": { "type": { "returnType": "number", "optional": false } }
   },
+  "CartesianSeriesMarkerFormat": {
+    "fill": { "type": { "returnType": "string", "optional": true } },
+    "stroke": { "type": { "returnType": "string", "optional": true } },
+    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
+    "size": { "type": { "returnType": "number", "optional": true } }
+  },
+  "CartesianSeriesMarkerFormatterParams": {
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } },
+    "datum": { "type": { "returnType": "any", "optional": false } },
+    "fill": { "type": { "returnType": "string", "optional": true } },
+    "stroke": { "type": { "returnType": "string", "optional": true } },
+    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
+    "size": { "type": { "returnType": "number", "optional": false } },
+    "highlighted": { "type": { "returnType": "boolean", "optional": false } }
+  },
   "HistogramSeriesNodeTag": {},
   "HistogramNodeDatum": {
     "x": { "type": { "returnType": "number", "optional": false } },
@@ -3423,7 +3423,7 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": {
-        "returnType": "{ // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n    }",
+        "returnType": "{\n        // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n    }",
         "optional": true
       }
     }
@@ -3525,7 +3525,7 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": {
-        "returnType": "{ // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n    }",
+        "returnType": "{\n        // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n    }",
         "optional": true
       }
     }
@@ -3578,7 +3578,7 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": {
-        "returnType": "{ // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n    }",
+        "returnType": "{\n        // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n    }",
         "optional": true
       }
     }
@@ -3627,7 +3627,7 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": {
-        "returnType": "{ // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n    }",
+        "returnType": "{\n        // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n    }",
         "optional": true
       }
     }
