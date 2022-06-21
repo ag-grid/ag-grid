@@ -488,6 +488,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public detailRowHeight: number | undefined = undefined;
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows.     */
     @Input() public detailRowAutoHeight: boolean | undefined = undefined;
+    /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.     */
     @Input() public groupRowsSticky: boolean | undefined = undefined;
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application.     */
     @Input() public context: any = undefined;

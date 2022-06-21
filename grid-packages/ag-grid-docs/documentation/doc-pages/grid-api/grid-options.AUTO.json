@@ -351,7 +351,10 @@
     "description": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
     "type": { "returnType": "boolean" }
   },
-  "groupRowsSticky": { "type": { "returnType": "boolean" } },
+  "groupRowsSticky": {
+    "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
+    "type": { "returnType": "boolean" }
+  },
   "context": {
     "description": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
     "type": { "returnType": "any" }

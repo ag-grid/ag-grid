@@ -2612,6 +2612,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
+      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "context": {
@@ -22060,6 +22061,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
+      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "context": {
@@ -24817,6 +24819,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
+      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "context": {
@@ -27584,6 +27587,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
+      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "context": {
