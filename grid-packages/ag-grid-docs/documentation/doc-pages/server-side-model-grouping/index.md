@@ -22,7 +22,7 @@ const gridOptions = {
 
 For more configuration details see the section on [Row Grouping](/grouping/).
 
-## Row Grouping on the Server
+## Server Side Row Grouping
 
 The actual grouping of rows is performed on the server when using the SSRM.
 When the grid needs more rows it makes a request via `getRows(params)` on
@@ -51,88 +51,46 @@ e.g. `['Argentina', '2012']`.
 The example below demonstrates server-side Row Grouping. Note the following:
 
 - [Infinite Scrolling](/server-side-model-row-stores/) is active via grid property `serverSideInfiniteScroll=true`.
-- The store block size is set to 5 by setting the grid property `cacheBlockSize = 5`. It can then be observed that rows are loaded in blocks at all levels. For example if you expand United States row, the children rows are loaded in blocks using [Infinite Scrolling](/server-side-model-row-stores/).
+- The infinite block size is set to 5 by setting the grid property `cacheBlockSize = 5`. It can then be observed that rows are loaded in blocks at all levels. For example if you expand United States row, the children rows are loaded in blocks using [Infinite Scrolling](/server-side-model-row-stores/).
 - Country and Sport columns have `rowGroup=true` defined on their column definitions. This tells the grid there is two levels of grouping, one for Country and one for Sport.
 - The `rowGroupCols` and `groupKeys` properties in the request are used by the server to perform grouping.
 - Open the browser's dev console to view the request supplied to the datasource.
 
 <grid-example title='Row Grouping' name='row-grouping' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-## Row Stores
+## Configuring Group Levels
 
-A Row Store contains all the Rows for a particual level. For example if you are grouping by Country and have Ireland and United Kingdom expanded, there are three Row Stores for 1) Top Level, 2) Child Rows of Ireland and 3) Child Rows of United Kingdom.
+Some applications may require Infinite Scrolling at certain group levels only. It may be that some levels have large numbers of rows making Infinite Scrolling a better choice, while levels with fewer rows don't require Infinite Scrolling.
 
-If you are not grouping, then there is one Row Store for the top level.
+This is done by implementing the grid callback `getServerSideGroupLevelParams(params)`.
 
-## Configure Stores
+<api-documentation source='grid-options/properties.json' section='serverSideRowModel' names='["getServerSideGroupLevelParams"]' ></api-documentation>
 
-By default, each Row Store will behave in the same way with regards [Infinite Scrolling](/server-side-model-row-stores/). This configuration is specified using the grid properties `serverSideInfiniteScroll`, `maxBlocksInCache` and `cacheBlockSize`.
-
-It is possible to have different configurations for different Row Stores. For example if grouping, infinite
-scrolling could be turned off at the top level but turned on at the lower levels.
-
-This is done by implementing the grid callback `getServerSideStoreParams(params)`.
-
-<api-documentation source='grid-options/properties.json' section='serverSideRowModel' names='["getServerSideStoreParams"]' ></api-documentation>
-
-The example below demonstrates the `getServerSideStoreParams(params)` callback. Note the following:
+The example below demonstrates the `getServerSideGroupLevelParams(params)` callback. Note the following:
 
 - The grid is configured differently depending on whether grouping is active or not by implementing
-the `getServerSideStoreParams(params)` callback. The callback logs its results to the dev console.
+the `getServerSideGroupLevelParams(params)` callback. The callback logs its results to the dev console.
 
-- When grouping is active, the stores are configured as follows:
-    - Level 0 - No Infinite Scrolling
-    - Level 1 - Infinite Scrolling with block size of 5
-    - Level 2 - Infinite Scrolling with block size of 2
+- When grouping is active, the group levels are configured as follows:
+    - Group Level 0 - No Infinite Scrolling
+    - Group Level 1 - Infinite Scrolling with block size of 5
+    - Group Level 2 - Infinite Scrolling with block size of 2
 
     To observe, expand different levels of the data and notice when rows are read back in blocks.
 
-- When no grouping is active, the store is configured to use Infinite Scroll and only keeps two blocks of rows in the store. To observe this, remove all grouping and scroll down to load more blocks. Then scroll back up to observe the initial blocks getting reloaded.
+- When no grouping is active, the top most (and only) group level is configured to use Infinite Scroll and only keeps two blocks of rows. To observe this, remove all grouping and scroll down to load more blocks. Then scroll back up to observe the initial blocks getting reloaded.
 
 <grid-example title='Dynamic Params' name='dynamic-params' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside","rowgrouping"] }'></grid-example>
 
-## Store State & Store Info
+## Debugging Group Levels
 
-For debugging purposes, the grid has the API `getServerSideStoreState()` which returns info on all
-existing [Row Stores](/server-side-model-row-stores/). This is good for learning purposes, as you can
-see details about the store such as the store type and it's route.
+The grid API `getServerSideGroupLevelState()` returns info on all existing levels. Levels do not exist if their parent groups have not been opened. Using this you can see details about the group level such as it's route and whether Infinite Scroll is on.
 
-<api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["getServerSideStoreState"]' ></api-documentation>
+<api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["getServerSideGroupLevelState"]' ></api-documentation>
 
-Inspecting the Store State can be useful, for example when wanting to know what Route to use when
-providing [Transactions](/server-side-model-transactions/) or doing a [Store Refresh](/server-side-model-refresh/).
+Inspecting the Group Level State can be useful, for example when wanting to know what Route to use when
+providing [Transactions](/server-side-model-transactions/) or doing a [Level Refresh](/server-side-model-refresh/).
 
-It is also possible to attach info to each store as data is loaded. This is done through the `success()` callback
-when rows are fetched.
-
-```js
-const createDatasource = server => {
-    return {
-        // called by the grid when more rows are required
-        getRows: params => {
-            // get data for request from server
-            const rows = server.getData(params.request);
-
-            // pass rows back along with any additional store info
-            params.success({
-                rowData: rows,
-                storeInfo: {a: 22, b: 55}
-            });
-        }
-    }
-}
-```
-
-The info object is merged into the Store Info (which is initially an empty object) and then available through the `getServerSideStoreState()` API.
-
-If rows are loaded multiple times into the Store, then the Store Info values will over write existing values
-as they are merged on top of the existing values. Rows can be loaded multiple times if a) the store
-is [Refreshed](/server-side-model-refresh/) or b) [Infinite Scrolling](/server-side-model-row-stores/) is used (as each block load will get the
-opportunity to add info data).
-
-The example below shows Store Info in action.
-
-<grid-example title='Store Info' name='store-info' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 ## Open by Default
 
@@ -162,7 +120,7 @@ Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note th
 - Note [Zimbabwe] and [Zimbabwe, Swimming] are visibly open by default.
 - Note [United States, Swimming] is not visibly open by default, as the parent group 'United States' is not open. However open 'United States' is open, it's 'Swimming' group is open.
 - Selecting a row and clicking 'Route of Selected' will print the route to the selected node.
-- The grid is configured with both Partial Store (top level) and Full Store (all other levels) to demonstrate the feature working with both.
+- The grid is configured with both Infinite Scroll on (top level) and Infinite Scroll off (all other levels) to demonstrate the feature working with both.
 
 <grid-example title='Open by Default' name='open-by-default' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
@@ -219,7 +177,7 @@ const gridOptions = {
 <grid-example title='Child Counts' name='child-counts' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 
-## Complex Columns
+## Group via Value Getter
 
 It is possible the data provided has composite objects, in which case it's more difficult for the grid to extract group names. This can be worked with using value getters or embedded fields (i.e. the field attribute has dot notation).
 
@@ -248,6 +206,39 @@ In the example below, all rows are modified so that the rows look something like
 Then the columns are set up so that country uses a `valueGetter` that uses the field with dot notation, i.e. `data.country.name`
 
 <grid-example title='Complex Objects' name='complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
+
+## Group Level Info
+
+It is also possible to attach info to each Group Level as data is loaded. This is done through the `success()` callback
+when rows are fetched.
+
+```js
+const createDatasource = server => {
+    return {
+        // called by the grid when more rows are required
+        getRows: params => {
+            // get data for request from server
+            const rows = server.getData(params.request);
+
+            // pass rows back along with any additional group info
+            params.success({
+                rowData: rows,
+                groupLevelInfo: {a: 22, b: 55}
+            });
+        }
+    }
+}
+```
+
+The `groupLevelInfo` object is merged into the Group Level Info (which is initially an empty object) and then available through the `getServerSideGroupLevelState()` API.
+
+If rows are loaded multiple times, then the `groupLevelInfo` values will over write existing values
+as they are merged on top of the existing values. Rows can be loaded multiple times if a) the level
+is [Refreshed](/server-side-model-refresh/) or b) [Infinite Scrolling](/server-side-model-row-stores/) is used (as each block load will get the opportunity to add info data).
+
+The example below shows Group Level Info in action.
+
+<grid-example title='Group Info' name='group-info' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 ## Next Up
 

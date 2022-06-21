@@ -15,9 +15,8 @@ import {
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
-    ServerSideStoreParams,
-    ServerSideStoreState,
-    ServerSideStoreType,
+    ServerSideGroupLevelParams,
+    ServerSideGroupLevelState,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
@@ -49,7 +48,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     @Autowired("columnModel") private columnModel: ColumnModel;
 
     private readonly ssrmParams: SSRMParams;
-    private readonly storeParams: ServerSideStoreParams;
+    private readonly storeParams: ServerSideGroupLevelParams;
     private readonly parentRowNode: RowNode;
     private readonly blocks: { [blockNumber: string]: PartialStoreBlock; } = {};
     private readonly blockHeights: { [blockId: number]: number } = {};
@@ -71,7 +70,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
     private info: any = {};
 
-    constructor(ssrmParams: SSRMParams, storeParams: ServerSideStoreParams, parentRowNode: RowNode) {
+    constructor(ssrmParams: SSRMParams, storeParams: ServerSideGroupLevelParams, parentRowNode: RowNode) {
         super();
         this.ssrmParams = ssrmParams;
         this.storeParams = storeParams;
@@ -114,8 +113,9 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
         this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${params.rowCount}`);
 
-        if (params.storeInfo) {
-            Object.assign(this.info, params.storeInfo);
+        const info = params.storeInfo || params.groupLevelInfo;
+        if (info) {
+            Object.assign(this.info, info);
         }
 
         if (!params.rowData) {
@@ -296,7 +296,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         // otherwise if set to zero rows last time, and we don't update the row count, then after
         // the purge there will still be zero rows, meaning the SSRM won't request any rows.
         // to kick things off, at least one row needs to be asked for.
-        if (this.columnModel.isAutoRowHeightActive || this.rowCount === 0) {
+        if (this.columnModel.isAutoRowHeightActive() || this.rowCount === 0) {
             this.rowCount = PartialStore.INITIAL_ROW_COUNT;
         }
     }
@@ -665,7 +665,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         return this.findBlockAndExecute(matchBlockFunc, blockFoundFunc, blockNotFoundFunc);
     }
 
-    public addStoreStates(result: ServerSideStoreState[]): void {
+    public addStoreStates(result: ServerSideGroupLevelState[]): void {
         result.push({
             infiniteScroll: true,
             route: this.parentRowNode.getGroupKeys(),

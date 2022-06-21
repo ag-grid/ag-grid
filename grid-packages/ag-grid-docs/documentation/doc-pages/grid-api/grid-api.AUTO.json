@@ -861,9 +861,18 @@
     }
   },
   "setGetServerSideStoreParams": {
+    "description": "/** @deprecated use setGetServerSideGroupLevelParams instead\n */",
     "type": {
       "arguments": {
-        "getServerSideStoreParamsFunc": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams"
+        "getServerSideStoreParamsFunc": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams"
+      },
+      "returnType": "void"
+    }
+  },
+  "setGetServerSideGroupLevelParams": {
+    "type": {
+      "arguments": {
+        "getServerSideGroupLevelParamsFunc": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams"
       },
       "returnType": "void"
     }
@@ -1329,16 +1338,27 @@
     "description": "/** @deprecated */",
     "type": { "arguments": { "route": "string[] = []" }, "returnType": "void" }
   },
-  "refreshServerSideStore": {
-    "description": "/** Refresh a server-side store.\n * If you pass no parameters, then the top level store is purged.\n * To purge a child store, pass in the string of keys to get to the child cache. */",
+  "refreshServerSide": {
+    "description": "/** Refresh a server-side level.\n * If you pass no parameters, then the top level store is purged.\n * To purge a child level, pass in the string of keys to get to the desired level. */",
     "type": {
-      "arguments": { "params?": "RefreshStoreParams" },
+      "arguments": { "params?": "RefreshServerSideParams" },
+      "returnType": "void"
+    }
+  },
+  "refreshServerSideStore": {
+    "description": "/** @deprecated use `refreshServerSide` instead\n */",
+    "type": {
+      "arguments": { "params?": "RefreshServerSideParams" },
       "returnType": "void"
     }
   },
   "getServerSideStoreState": {
-    "description": "/** Returns info on all server side stores. */",
-    "type": { "arguments": {}, "returnType": "ServerSideStoreState[]" }
+    "description": "/** @deprecated use `getServerSideGroupLevelState` instead\n */",
+    "type": { "arguments": {}, "returnType": "ServerSideGroupLevelState[]" }
+  },
+  "getServerSideGroupLevelState": {
+    "description": "/** Returns info on all server side group levels. */",
+    "type": { "arguments": {}, "returnType": "ServerSideGroupLevelState[]" }
   },
   "getVirtualRowCount": {
     "type": { "arguments": {}, "returnType": "number | null | undefined" }

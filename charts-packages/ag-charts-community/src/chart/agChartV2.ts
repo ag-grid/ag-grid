@@ -43,6 +43,7 @@ import { Axis } from '../axis';
 import { GroupedCategoryChart } from './groupedCategoryChart';
 import { prepareOptions, isAgCartesianChartOptions, isAgHierarchyChartOptions, isAgPolarChartOptions, optionsType } from './mapping/prepare';
 import { SeriesOptionsTypes } from './mapping/defaults';
+import { WINDOW } from '../util/window';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
 
@@ -116,12 +117,12 @@ export abstract class AgChart {
 }
 
 export abstract class AgChartV2 {
-    static DEBUG = false;
+    static DEBUG = WINDOW?.agChartsDebug ?? false;
     
     static create<T extends ChartType>(userOptions: ChartOptionType<T>): T {
         debug('user options', userOptions);
         const mixinOpts: any = {};
-        if ((window as any).agChartsDebug ?? AgChartV2.DEBUG) {
+        if (AgChartV2.DEBUG) {
             mixinOpts['debug'] = true;
         }
 
@@ -143,7 +144,7 @@ export abstract class AgChartV2 {
     static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>): void {
         debug('user options', userOptions);
         const mixinOpts: any = {};
-        if ((window as any).agChartsDebug ?? AgChartV2.DEBUG) {
+        if (AgChartV2.DEBUG) {
             mixinOpts['debug'] = true;
         }
 
@@ -173,7 +174,7 @@ export abstract class AgChartV2 {
 }
 
 function debug(message?: any, ...optionalParams: any[]): void {
-    if ((window as any).agChartsDebug ?? AgChartV2.DEBUG) {
+    if (AgChartV2.DEBUG) {
         console.log(message, ...optionalParams);
     }
 }

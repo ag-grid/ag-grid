@@ -97,6 +97,7 @@ That's it! You've created a theme. You haven't added any styles to it so what yo
 ```css
 .ag-theme-mycustomtheme {
     /* customise with CSS variables */
+    --ag-grid-size: 8px;
     --ag-border-color: red;
 }
 .ag-theme-mycustomtheme .ag-header {

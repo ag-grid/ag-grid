@@ -1,13 +1,13 @@
 import { IRowModel } from "./iRowModel";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./serverSideTransaction";
-import { ServerSideStoreState } from "./IServerSideStore";
+import { ServerSideGroupLevelState } from "./IServerSideStore";
 import { IServerSideDatasource } from "./iServerSideDatasource";
 import { RowNode } from "../entities/rowNode";
 
 export interface IServerSideRowModel extends IRowModel {
-    refreshStore(params?: RefreshStoreParams): void;
+    refreshStore(params?: RefreshServerSideParams): void;
     onRowHeightChanged(): void;
-    getStoreState(): ServerSideStoreState[];
+    getStoreState(): ServerSideGroupLevelState[];
     retryLoads(): void;
     expandAll(value: boolean): void;
     setDatasource(datasource: IServerSideDatasource): void;
@@ -20,11 +20,11 @@ export interface IServerSideTransactionManager {
     flushAsyncTransactions(): void;
 }
 
-export interface RefreshStoreParams {
+export interface RefreshServerSideParams {
     /**
-     * List of group keys, pointing to the store to refresh.
-     * For example, to purge the cache two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].
-     * If no route is passed, or an empty array, then the top level store is refreshed.
+     * List of group keys, pointing to the level to refresh.
+     * For example, to purge two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].
+     * If no route is passed, or an empty array, then the top level is refreshed.
      */
     route?: string[];
     /**
@@ -33,3 +33,6 @@ export interface RefreshStoreParams {
      */
     purge?: boolean;
 }
+
+/** @deprecated use RefreshServerSideParams instead  */
+export interface RefreshStoreParams extends RefreshServerSideParams {}

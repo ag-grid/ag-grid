@@ -1,6 +1,8 @@
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import {
     AgCartesianAxisType,
+    AgCartesianChartOptions,
+    AgChart,
     AreaSeries,
     CartesianChart,
     CategoryAxis,
@@ -9,7 +11,6 @@ import {
     NumberAxis,
     TimeAxis
 } from "ag-charts-community";
-import { ChartDataModel } from "../../chartDataModel";
 import { ChartSeriesType } from "../../utils/seriesTypeMapper";
 
 export abstract class CartesianChartProxy extends ChartProxy {
@@ -27,46 +28,70 @@ export abstract class CartesianChartProxy extends ChartProxy {
         super(params);
     }
 
-    protected updateAxes(params: UpdateChartParams): void {
-        // when grouping recreate chart if the axis is not a 'groupedCategory', otherwise return
-        if (params.grouping) {
-            if (!(this.axisTypeToClassMap[this.xAxisType] === GroupedCategoryAxis)) {
-                this.xAxisType = 'groupedCategory';
-                this.recreateChart();
-            }
-            return;
-        }
-
-        // only update axis has changed and recreate the chart, i.e. switching from 'category' to 'time' axis
-        const newXAxisType = CartesianChartProxy.isTimeAxis(params) ? 'time' : 'category';
-        if (newXAxisType !== this.xAxisType) {
-            this.xAxisType = newXAxisType;
-            this.recreateChart();
-        }
+    protected createChart(): CartesianChart {
+        return AgChart.create({
+            container: this.chartProxyParams.parentElement,
+            theme: this.chartTheme,
+        });
     }
+
+    protected updateChart(options: AgCartesianChartOptions): void {
+        if (this.crossFiltering) {
+            options.tooltip = { delay: 500 };
+        }
+        AgChart.update(this.chart as CartesianChart, options);
+    }
+
+    protected extractSeriesOverrides(chartSeriesType?: ChartSeriesType) {
+        const seriesOverrides = this.chartOptions[chartSeriesType ? chartSeriesType : this.standaloneChartType].series;
+
+        // TODO: remove once `yKeys` and `yNames` have been removed from the options
+        delete seriesOverrides.yKeys;
+        delete seriesOverrides.yNames;
+
+        return seriesOverrides;
+    }
+
+    // protected updateAxes(params: UpdateChartParams): void {
+    //     // when grouping recreate chart if the axis is not a 'groupedCategory', otherwise return
+    //     if (params.grouping) {
+    //         if (!(this.axisTypeToClassMap[this.xAxisType] === GroupedCategoryAxis)) {
+    //             this.xAxisType = 'groupedCategory';
+    //             this.recreateChart();
+    //         }
+    //         return;
+    //     }
+    //
+    //     // only update axis has changed and recreate the chart, i.e. switching from 'category' to 'time' axis
+    //     const newXAxisType = CartesianChartProxy.isTimeAxis(params) ? 'time' : 'category';
+    //     if (newXAxisType !== this.xAxisType) {
+    //         this.xAxisType = newXAxisType;
+    //         this.recreateChart();
+    //     }
+    // }
 
     protected getAxesOptions(chartSeriesType: ChartSeriesType = this.standaloneChartType) {
         return this.chartOptions[chartSeriesType].axes;
     }
 
-    protected processDataForCrossFiltering(data: any[], colId: string, params: UpdateChartParams) {
-        let yKey = colId;
-        let atLeastOneSelectedPoint = false;
-        if (this.crossFiltering) {
-            data.forEach(d => {
-                d[colId + '-total'] = d[colId] + d[colId + '-filtered-out'];
-                if (d[colId + '-filtered-out'] > 0) {
-                    atLeastOneSelectedPoint = true;
-                }
-            });
-
-            const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
-            if (lastSelectedChartId === params.chartId) {
-                yKey = colId + '-total';
-            }
-        }
-        return {yKey, atLeastOneSelectedPoint};
-    }
+    // protected processDataForCrossFiltering(data: any[], colId: string, params: UpdateChartParams) {
+    //     let yKey = colId;
+    //     let atLeastOneSelectedPoint = false;
+    //     if (this.crossFiltering) {
+    //         data.forEach(d => {
+    //             d[colId + '-total'] = d[colId] + d[colId + '-filtered-out'];
+    //             if (d[colId + '-filtered-out'] > 0) {
+    //                 atLeastOneSelectedPoint = true;
+    //             }
+    //         });
+    //
+    //         const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
+    //         if (lastSelectedChartId === params.chartId) {
+    //             yKey = colId + '-total';
+    //         }
+    //     }
+    //     return {yKey, atLeastOneSelectedPoint};
+    // }
 
     protected updateSeriesForCrossFiltering(
         series: AreaSeries | LineSeries,
@@ -105,11 +130,11 @@ export abstract class CartesianChartProxy extends ChartProxy {
         }
     }
 
-    private static isTimeAxis(params: UpdateChartParams): boolean {
-        if (params.category && params.category.chartDataType) {
-            return params.category.chartDataType === 'time';
-        }
-        const testDatum = params.data[0];
-        return (testDatum && testDatum[params.category.id]) instanceof Date;
-    }
+    // private static isTimeAxis(params: UpdateChartParams): boolean {
+    //     if (params.category && params.category.chartDataType) {
+    //         return params.category.chartDataType === 'time';
+    //     }
+    //     const testDatum = params.data[0];
+    //     return (testDatum && testDatum[params.category.id]) instanceof Date;
+    // }
 }

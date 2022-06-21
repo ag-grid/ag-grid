@@ -15,7 +15,11 @@ const buildDependencies = async (dependencies, command = 'build-css', arguments 
 
     const scopedDependencies = dependencies.map(dependency => `--scope ${dependency}`).join(' ');
     const lernaArgs = `run ${command} ${scopedDependencies} ${arguments}`.trim().split(" ");
-    return await execa("./node_modules/.bin/lerna", lernaArgs, {stdio: "inherit", cwd: '../../'});
+    try {
+        await execa("./node_modules/.bin/lerna", lernaArgs, {stdio: "inherit", cwd: '../../'});
+    } catch(e) {
+        console.log(`An error occurred while running lerna: ${e}`);
+    }
 };
 
 const buildDependencyChain = async (packageName, buildChains, command = "build-css") => {

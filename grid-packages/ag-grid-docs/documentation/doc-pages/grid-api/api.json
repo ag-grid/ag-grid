@@ -689,13 +689,13 @@
             }
         },
         "setServerSideDatasource": {},
-        "refreshServerSideStore": {
+        "refreshServerSide": {
             "more": {
                 "name": "Purging Groups",
                 "url": "/server-side-model-refresh/"
             }
         },
-        "getServerSideStoreState": {
+        "getServerSideGroupLevelState": {
             "more": {
                 "name": "Store State",
                 "url": "/server-side-model-grouping/#store-state--store-info"

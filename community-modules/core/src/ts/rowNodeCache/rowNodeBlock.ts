@@ -16,9 +16,13 @@ export interface LoadSuccessParams {
      */
     rowCount?: number;
     /**
-     * Any extra information for the grid to associate with this load.
+     * @deprecated use groupLevelInfo instead
      */
     storeInfo?: any;
+    /**
+     * Any extra information for the grid to associate with this load.
+     */
+    groupLevelInfo?: any;
 }
 
 export abstract class RowNodeBlock extends BeanStub {
@@ -87,7 +91,7 @@ export abstract class RowNodeBlock extends BeanStub {
     }
 
     protected pageLoaded(version: number, rows: any[], lastRow: number) {
-        this.successCommon(version, {rowData: rows, rowCount: lastRow});
+        this.successCommon(version, { rowData: rows, rowCount: lastRow });
     }
 
     private isRequestMostRecentAndLive(version: number): boolean {

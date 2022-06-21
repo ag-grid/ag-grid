@@ -120,7 +120,9 @@ export class ColDefUtil {
         'singleClickEdit',
         'floatingFilter',
         'cellEditorPopup',
-        'suppressFillHandle'
+        'suppressFillHandle',
+        'wrapHeaderText',
+        'autoHeaderHeight'
     ];
 
     public static FUNCTION_PROPERTIES = [

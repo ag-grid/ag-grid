@@ -1,10 +1,4 @@
-import {
-    AgCartesianAxisOptions,
-    AgCartesianChartOptions,
-    AgChart,
-    CartesianChart,
-    ChartAxisPosition
-} from "ag-charts-community";
+import { AgCartesianAxisOptions, AgCartesianChartOptions, ChartAxisPosition } from "ag-charts-community";
 import { _, ChartType, SeriesChartType } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
@@ -26,18 +20,9 @@ export class ComboChartProxy extends CartesianChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(): CartesianChart {
-        return AgChart.create({
-            container: this.chartProxyParams.parentElement,
-            theme: this.chartTheme,
-        }) as CartesianChart;
-    }
-
     public update(params: UpdateChartParams): void {
-        const { category, data } = params;
-
         let options: AgCartesianChartOptions = {
-            data: this.transformData(data, category.id)
+            data: this.transformData(params.data, params.category.id)
         };
 
         if (this.seriesChanged(params)) {
@@ -45,7 +30,7 @@ export class ComboChartProxy extends CartesianChartProxy {
             options.axes = this.getAxes(params);
         }
 
-        AgChart.update(this.chart as CartesianChart, options);
+        this.updateChart(options);
     }
 
     private seriesChanged(params: UpdateChartParams): boolean {
@@ -77,7 +62,7 @@ export class ComboChartProxy extends CartesianChartProxy {
             if (seriesChartType) {
                 const chartType: ChartType = seriesChartType.chartType;
                 return {
-                    ...this.extractSeriesOverrides(seriesChartType),
+                    ...this.extractSeriesOverrides(getSeriesType(seriesChartType.chartType)),
                     type: getSeriesType(chartType),
                     xKey: category.id,
                     yKey: field.colId,
@@ -189,15 +174,4 @@ export class ComboChartProxy extends CartesianChartProxy {
 
         return { primaryYKeys, secondaryYKeys };
     }
-
-    private extractSeriesOverrides(seriesChartType: SeriesChartType) {
-        const seriesOverrides = this.chartOptions[getSeriesType(seriesChartType.chartType)].series;
-
-        // TODO: remove once `yKeys` and `yNames` have been removed from the options
-        delete seriesOverrides.yKeys;
-        delete seriesOverrides.yNames;
-
-        return seriesOverrides;
-    }
-
 }

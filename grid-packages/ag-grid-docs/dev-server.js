@@ -11,7 +11,7 @@ const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
 const {generateDocumentationExamples} = require('./example-generator-documentation');
 const {watchValidateExampleTypes} = require('./example-validator');
-const {updateBetweenStrings, getAllModules} = require('./utils');
+const {updateBetweenStrings, getAllModules, processStdio} = require('./utils');
 const {getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss} = require('./lernaOperations');
 const {EOL} = os;
 
@@ -449,11 +449,13 @@ const watchCoreModules = async (skipFrameworks) => {
     console.log("Watching TS files only...");
     const tsc = getTscPath();
     const tsWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch'], {
-        cwd: '../../'
+        cwd: '../../',
+        stdio: 'pipe',
+        encoding: 'buffer'
     });
 
-    tsWatch.stdout.on('data', async (data) => {
-        const output = data.toString().trim();
+    tsWatch.stdout.on('data', await processStdio(async (output) => {
+        console.log("Core Typescript: " + output);
         if (output.includes("Found 0 errors. Watching for file changes.")) {
             await rebuildPackagesBasedOnChangeState(false, skipFrameworks);
 
@@ -461,7 +463,11 @@ const watchCoreModules = async (skipFrameworks) => {
             // hashes on build
             updateCoreModuleHashes();
         }
-    });
+    }));
+
+    tsWatch.stderr.on('data', await processStdio(async (output) => {
+        console.error("Core Typescript: " + output);
+    }));
 
     process.on('exit', () => {
         tsWatch.kill();
