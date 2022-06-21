@@ -645,8 +645,14 @@ export function getModuleRegistration({ gridSettings, enterprise, exampleName })
     return moduleRegistration;
 }
 
-export function handleRowGenericInterface(fileTxt: string, tData: string): string {
+export function handleRowGenericInterface(fileTxt: string): string {
     // Until we support this cleanly.
     fileTxt = fileTxt.replace(/<TData>/g, '').replace(/TData\[\]/g, 'any[]');
     return fileTxt;
+}
+
+export function addGenericInterfaceImport(imports: string[], tData: string, bindings) {
+    if (tData && !bindings.interfaces.some(i => i.includes(tData))) {
+        imports.push(`import { ${tData} } from './interfaces'`)
+    }
 }

@@ -403,7 +403,16 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                         reactDeclarativeConfigs = addRawScripts(reactDeclarativeConfigs, false, '.tsx');
 
                         if (typedBindings.tData) {
-                            importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { ...reactDeclarativeConfigs.get(importType), 'interfaces.ts': getGenericInterface(typedBindings.tData) }));
+                            const interfaces = getGenericInterface(typedBindings.tData);
+                            if (interfaces) {
+                                importTypes.forEach(importType =>
+                                    reactDeclarativeConfigs.set(importType,
+                                        {
+                                            ...reactDeclarativeConfigs.get(importType),
+                                            'interfaces.ts': interfaces
+                                        }));
+
+                            }
                         }
 
                     } catch (e) {
@@ -430,7 +439,10 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                             'app.module.ts': appModuleAngular.get(importType)(angularComponentFileNames, typedBindings),
                         };
                         if (typedBindings.tData) {
-                            frameworkFiles = { ...frameworkFiles, 'interfaces.ts': getGenericInterface(typedBindings.tData) }
+                            const interfaces = getGenericInterface(typedBindings.tData);
+                            if (interfaces) {
+                                frameworkFiles = { ...frameworkFiles, 'interfaces.ts': interfaces }
+                            }
                         }
                         angularConfigs.set(importType, frameworkFiles);
                     });
@@ -528,7 +540,13 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     });
 
                     if (typedBindings.tData) {
-                        tsConfigs.set(importType, { ...tsConfigs.get(importType), 'interfaces.ts': getGenericInterface(typedBindings.tData) });
+                        const interfaces = getGenericInterface(typedBindings.tData);
+                        if (interfaces) {
+                            tsConfigs.set(importType, {
+                                ...tsConfigs.get(importType),
+                                'interfaces.ts': interfaces
+                            });
+                        }
                     }
 
                 });

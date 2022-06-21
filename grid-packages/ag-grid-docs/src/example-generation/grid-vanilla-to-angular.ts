@@ -1,6 +1,6 @@
 import { convertTemplate, getImport, toMemberWithValue, toConst, toInput, toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
+import { addBindingImports, addGenericInterfaceImport, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
 
 function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
     data: { url: string, callback: string; },
@@ -21,9 +21,9 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
 
         if (callback.indexOf('api!.setRowData') !== -1) {
             const setRowDataBlock = callback.replace('params.api!.setRowData(data)', 'this.rowData = data');
-            additionalLines.push(`this.http.get<${rowDataType}>(${url}).subscribe(data => ${setRowDataBlock});`);
+            additionalLines.push(`this.http.get<${rowDataType}[]>(${url}).subscribe(data => ${setRowDataBlock});`);
         } else {
-            additionalLines.push(`this.http.get<${rowDataType}>(${url}).subscribe(data => ${callback});`);
+            additionalLines.push(`this.http.get<${rowDataType}[]>(${url}).subscribe(data => ${callback});`);
         }
     }
 
@@ -33,14 +33,8 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
     }`;
 }
 
-function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings, imports: bindingImports, properties, tData } = bindings;
-
-    const imports = ["import { Component } from '@angular/core';"];
-
-    if (bindings.data) {
-        imports.push("import { HttpClient } from '@angular/common/http';");
-    }
+function addModuleImports(imports: string[], bindings: any): string[] {
+    const { gridSettings, imports: bindingImports, properties } = bindings;
 
     imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
 
@@ -60,26 +54,13 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
         addBindingImports(bImports, imports, false, true);
     }
 
-    if (componentFileNames) {
-        imports.push(...componentFileNames.map(getImport));
-    }
-
-    if (tData) {
-        imports.push(`import { ${tData} } from './interfaces'`)
-    }
-
     imports.push('// Required feature modules are registered in app.module.ts')
 
     return imports;
 }
 
-function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings, imports: bindingImports, properties, tData } = bindings;
-    const imports = ["import { Component } from '@angular/core';"];
-
-    if (bindings.data) {
-        imports.push("import { HttpClient } from '@angular/common/http';");
-    }
+function addPackageImports(imports: string[], bindings: any): string[] {
+    const { gridSettings, imports: bindingImports, properties } = bindings;
 
     if (gridSettings.enterprise) {
         imports.push("import 'ag-grid-enterprise';");
@@ -103,23 +84,30 @@ function getPackageImports(bindings: any, componentFileNames: string[]): string[
         addBindingImports(bImports, imports, true, true);
     }
 
-    if (componentFileNames) {
-        imports.push(...componentFileNames.map(getImport));
-    }
-
-    if (tData) {
-        imports.push(`import { ${tData} } from './interfaces'`)
-    }
-
     return imports;
 }
 
 function getImports(bindings: any, componentFileNames: string[], importType: ImportType): string[] {
-    if (importType === "packages") {
-        return getPackageImports(bindings, componentFileNames);
-    } else {
-        return getModuleImports(bindings, componentFileNames);
+
+    let imports = ["import { Component } from '@angular/core';"];
+
+    if (bindings.data) {
+        imports.push("import { HttpClient } from '@angular/common/http';");
     }
+
+    if (importType === "packages") {
+        addPackageImports(imports, bindings);
+    } else {
+        addModuleImports(imports, bindings);
+    }
+
+    if (componentFileNames) {
+        imports.push(...componentFileNames.map(getImport));
+    }
+
+    addGenericInterfaceImport(imports, bindings.tData, bindings);
+
+    return imports;
 }
 
 function getTemplate(bindings: any, attributes: string[]): string {
@@ -140,7 +128,7 @@ function getTemplate(bindings: any, attributes: string[]): string {
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
     const { data, properties, typeDeclares, interfaces, tData } = bindings;
-    const rowDataType = tData ? `${tData}[]` : 'any[]';
+    const rowDataType = tData || 'any';
     const diParams = [];
 
     if (data) {
@@ -185,7 +173,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
 
         if (!propertyAssignments.find(item => item.indexOf('rowData') >= 0)) {
 
-            propertyAssignments.push(`public rowData!: ${rowDataType};`);
+            propertyAssignments.push(`public rowData!: ${rowDataType}[];`);
         }
 
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
@@ -199,7 +187,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
         const hasGridApi = componentForCheckBody.includes('gridApi');
         const hasGridColumnApi = componentForCheckBody.includes('gridColumnApi');
 
-        const additional = [getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data, tData, hasGridApi, hasGridColumnApi)];
+        const additional = [getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data, rowDataType, hasGridApi, hasGridColumnApi)];
         const componentBody = eventHandlers
             .concat(externalEventHandlers)
             .concat(additional)
@@ -237,7 +225,7 @@ ${bindings.utils.join('\n')}
 `;
 
         // Until we support this cleanly.
-        generatedOutput = handleRowGenericInterface(generatedOutput, tData);
+        generatedOutput = handleRowGenericInterface(generatedOutput);
 
         return generatedOutput;
     };

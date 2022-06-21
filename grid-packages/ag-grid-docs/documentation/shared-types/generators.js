@@ -1,7 +1,14 @@
 function getGenericInterface(tData) {
+    let interfaceStr = undefined;
     switch (tData) {
+        case 'IOlympicDataWithId':
+            interfaceStr = `
+export interface IOlympicDataWithId extends IOlympicData {
+    id: number;
+}
+`// purposefully fall through to IOlympicData
         case 'IOlympicData':
-            return `
+            interfaceStr = interfaceStr + `
 export interface IOlympicData {
     athlete: string,
     age: number,
@@ -14,9 +21,10 @@ export interface IOlympicData {
     bronze: number,
     total: number
 }`
+            break;
     }
 
-    return ''
+    return interfaceStr;
 }
 
 module.exports = getGenericInterface

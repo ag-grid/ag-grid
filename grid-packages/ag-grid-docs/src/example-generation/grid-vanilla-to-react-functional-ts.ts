@@ -1,5 +1,5 @@
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, convertFunctionToConstPropertyTs, getFunctionName, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod } from './parser-utils';
+import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getFunctionName, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallbackTs, getImport, getValueType } from './react-utils';
 
 function getModuleImports(bindings: any, componentFilenames: string[], extraCoreTypes: string[]): string[] {
@@ -30,9 +30,7 @@ function getModuleImports(bindings: any, componentFilenames: string[], extraCore
         imports.push(...componentFilenames.map(getImport));
     }
 
-    if (bindings.tData) {
-        imports.push(`import { ${bindings.tData} } from './interfaces'`)
-    }
+    addGenericInterfaceImport(imports, bindings.tData, bindings);
 
     imports = [...imports, ...getModuleRegistration(bindings)];
 
@@ -73,9 +71,7 @@ function getPackageImports(bindings: any, componentFilenames: string[], extraCor
         imports.push(...componentFilenames.map(getImport));
     }
 
-    if (tData) {
-        imports.push(`import { ${tData} } from './interfaces'`)
-    }
+    addGenericInterfaceImport(imports, bindings.tData, bindings);
 
     return imports;
 }
@@ -345,7 +341,7 @@ render(<GridExample></GridExample>, document.querySelector('#root'))
         }
 
         // Until we support this cleanly.
-        generatedOutput = handleRowGenericInterface(generatedOutput, tData);
+        generatedOutput = handleRowGenericInterface(generatedOutput);
 
         return generatedOutput;
     };

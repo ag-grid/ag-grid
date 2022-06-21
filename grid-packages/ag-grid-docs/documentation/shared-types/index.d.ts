@@ -18,5 +18,9 @@ declare global {
         total: number
     }
 
+    interface IOlympicDataWithId extends IOlympicData {
+        id: number;
+    }
+
 }
 

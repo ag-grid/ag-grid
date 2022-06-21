@@ -1,4 +1,4 @@
-import { addBindingImports, getModuleRegistration, ImportType } from './parser-utils';
+import { addBindingImports, addGenericInterfaceImport, getModuleRegistration, ImportType } from './parser-utils';
 const fs = require('fs-extra');
 
 export function toTitleCase(value) {
@@ -39,9 +39,7 @@ function getModuleImports(bindings: any): string[] {
         addBindingImports(bImports, imports, false, false);
     }
 
-    if (bindings.tData) {
-        imports.push(`import { ${bindings.tData} } from './interfaces'`)
-    }
+    addGenericInterfaceImport(imports, bindings.tData, bindings);
 
     imports = [...imports, ...getModuleRegistration(bindings)]
 
@@ -74,9 +72,8 @@ function getPackageImports(bindings: any): string[] {
         addBindingImports(bImports, imports, true, false);
     }
 
-    if (bindings.tData) {
-        imports.push(`import { ${bindings.tData} } from './interfaces'`)
-    }
+    addGenericInterfaceImport(imports, bindings.tData, bindings);
+
     return imports;
 }
 
