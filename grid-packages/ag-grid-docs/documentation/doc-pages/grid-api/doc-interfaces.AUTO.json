@@ -352,11 +352,20 @@
     },
     "onDragStopped": {
       "description": "/** Callback for drag stopped */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onGridEnter": {
+      "description": "/** Callback for entering the grid */",
       "type": {
-        "arguments": {
-          "dragItem": "DragItem | null",
-          "dropZone?": "DropTarget | null"
-        },
+        "arguments": { "dragItem": "DragItem | null" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "onGridExit": {
+      "description": "/** Callback for exiting the grid */",
+      "type": {
+        "arguments": { "dragItem": "DragItem | null" },
         "returnType": "void",
         "optional": true
       }

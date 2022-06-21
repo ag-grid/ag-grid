@@ -4,7 +4,9 @@ import { IHeaderColumn } from "../../../entities/iHeaderColumn";
 import { FocusService } from "../../../focusService";
 import { isUserSuppressingHeaderKeyboardEvent } from "../../../utils/keyboard";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
-import { IHeaderCellComp } from "../column/headerCellCtrl";
+import { KeyCode } from "../.././../constants/keyCode";
+import { Beans } from "../../../rendering/beans";
+import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 
 let instanceIdSequence = 0;
 
@@ -15,7 +17,9 @@ export class AbstractHeaderCellCtrl extends BeanStub {
 
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
-    @Autowired('focusService') protected focusService: FocusService;
+    @Autowired('focusService') protected readonly focusService: FocusService;
+    @Autowired('beans') protected readonly beans: Beans;
+    @Autowired('userComponentFactory') protected readonly userComponentFactory: UserComponentFactory;
 
     private instanceId: string;
 
@@ -48,9 +52,30 @@ export class AbstractHeaderCellCtrl extends BeanStub {
         );
     }
 
+    protected getWrapperHasFocus(): boolean {
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const activeEl = eDocument.activeElement;
+
+        return activeEl === this.eGui;
+    }
+
     protected setGui(eGui: HTMLElement): void {
         this.eGui = eGui;
         this.addDomData();
+    }
+
+    protected handleKeyDown(e: KeyboardEvent): void {
+        const wrapperHasFocus = this.getWrapperHasFocus();
+
+        switch (e.key) {
+            case KeyCode.PAGE_DOWN:
+            case KeyCode.PAGE_UP:
+            case KeyCode.PAGE_HOME:
+            case KeyCode.PAGE_END:
+                if (wrapperHasFocus) {
+                    e.preventDefault();
+                }
+        }
     }
 
     private addDomData(): void {

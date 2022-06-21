@@ -209,7 +209,9 @@
       "dragSourceDomDataKey?": "string",
       "dragStartPixels?": "number",
       "onDragStarted?": "() => void",
-      "onDragStopped?": "(dragItem: DragItem | null, dropZone?: DropTarget | null) => void"
+      "onDragStopped?": "() => void",
+      "onGridEnter?": "(dragItem: DragItem | null) => void",
+      "onGridExit?": "(dragItem: DragItem | null) => void"
     },
     "docs": {
       "type": "/** The type of the drag source, used by the drop target to know where the\n * drag originated from. */",
@@ -221,7 +223,9 @@
       "dragSourceDomDataKey?": "/** The drag source DOM Data Key, this is useful to detect if the origin grid is the same\n * as the target grid. */",
       "dragStartPixels?": "/** After how many pixels of dragging should the drag operation start. Default is 4. */",
       "onDragStarted?": "/** Callback for drag started */",
-      "onDragStopped?": "/** Callback for drag stopped */"
+      "onDragStopped?": "/** Callback for drag stopped */",
+      "onGridEnter?": "/** Callback for entering the grid */",
+      "onGridExit?": "/** Callback for exiting the grid */"
     }
   },
   "DropTarget": {
