@@ -26,13 +26,19 @@ To use a theme, add the theme class name to the `div` element that contains your
 [[warning]]
 | The grid must always have a theme class set on its container, whether this is a provided theme or your own.
 
-In order for the above code to work, the correct stylesheets must be loaded. There are two kinds of stylesheet that need to be loaded when using provided themes:
+## Loading CSS files
 
-- **`ag-grid.css`** - structural styles containing CSS rules that are essential to the functioning of the grid.
+In order for the above code to work, the correct stylesheets must be loaded in the correct order. There are two kinds of stylesheet that need to be loaded when using provided themes:
+
+- **`ag-grid.css`** - structural styles containing CSS rules that are essential to the functioning of the grid and must be loaded first.
 - **`ag-theme-{theme-name}.css`** - theme styles that add design look and feel on top of the structural styles.
 
 [[note]]
-| Both stylesheets need to be included with the structural styles (`ag-grid.css`) loaded before theme styles (`ag-theme-{theme-name}.css`).
+| The correct files to load are located in `ag-grid-community/styles` or `@ag-grid-community/styles` if you're using [modules](/modules/).
+|
+| This path has changed in v28, and the old files are still there as part of the [Legacy Sass API](/styling-sass-legacy/).
+|
+| Double-check that you are importing files from the new paths. If you have `/src/` or `/dist/` in your path then you're using the old paths.
 
 There are various ways to load these stylesheets, as described in the sections below:
 
@@ -43,11 +49,23 @@ There are various ways to load these stylesheets, as described in the sections b
 
 ### JavaScript Bundlers
 
-If you are using a JavaScript bundler like webpack or Rollup and it is configured to load styles, you can `require()` the correct CSS file from `node_modules`. This is the recommended approach as webpack will take care of minifying your CSS in production.
+If you are using a JavaScript bundler like webpack or Rollup and it is configured to load styles, you can `require()` the correct CSS file from `node_modules`. This is the recommended approach as webpack will take care of minifying your CSS in production:
+
+```js
+// CommonJS:
+require("ag-grid-community/styles/ag-grid.css");
+
+// ECMAScript Modules:
+import "ag-grid-community/styles/ag-grid.css";
+```
 
 ### App Hosted
 
 You can copy, either manually or as part of your app's build, the required CSS files (`ag-grid.css` and `ag-theme-{theme-name}.css`) from node_modules and serve it with your app.
+
+### Sass Styling API
+
+If you're using the [Sass Styling API](/styling-sass) then the right CSS files will be automatically included for your chosen theme. For projects that are already using Sass this is the recommended approach.
 
 ### CDN
 
@@ -56,11 +74,11 @@ You can load the structural styles and theme from a free CDN by adding this code
 ```html
 <link
   rel="stylesheet"
-  href="https://unpkg.com/@ag-grid-community/core@@AG_GRID_VERSION@/dist/styles/ag-grid.css" />
+  href="https://unpkg.com/ag-grid-community@@AG_GRID_VERSION@/styles/ag-grid.css" />
 
 <link
   rel="stylesheet"
-  href="https://unpkg.com/@ag-grid-community/core@@AG_GRID_VERSION@/dist/styles/ag-theme-alpine.css" />
+  href="https://unpkg.com/ag-grid-community@@AG_GRID_VERSION@/styles/ag-theme-alpine.css" />
 ```
 
 [[note]]
