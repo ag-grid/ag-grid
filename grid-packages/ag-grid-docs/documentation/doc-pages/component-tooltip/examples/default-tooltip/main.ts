@@ -13,7 +13,7 @@ const columnDefs: ColDef[] = [
   { field: 'total' },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     editable: true,
     sortable: true,

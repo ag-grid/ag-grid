@@ -126,7 +126,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   // debug: true,
   columnDefs: columnDefs,
   rowData: null,
@@ -194,5 +194,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })

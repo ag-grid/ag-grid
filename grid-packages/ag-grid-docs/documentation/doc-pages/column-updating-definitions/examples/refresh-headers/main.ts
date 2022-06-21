@@ -1,7 +1,7 @@
 import { ColDef, Grid, GridOptions } from '@ag-grid-community/core'
 import { CustomHeader } from './customHeader_typescript'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'athlete' },
         { field: 'age' },

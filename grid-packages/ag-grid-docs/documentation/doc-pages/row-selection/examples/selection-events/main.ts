@@ -1,6 +1,6 @@
 import { Grid, GridOptions, RowSelectedEvent, SelectionChangedEvent } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'athlete', minWidth: 150 },
     { field: 'age', maxWidth: 90 },
@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
   onSelectionChanged: onSelectionChanged,
 }
 
-function onRowSelected(event: RowSelectedEvent<IOlympicData>) {
+function onRowSelected(event: RowSelectedEvent) {
   window.alert(
     'row ' + event.node.data.athlete + ' selected = ' + event.node.isSelected()
   )

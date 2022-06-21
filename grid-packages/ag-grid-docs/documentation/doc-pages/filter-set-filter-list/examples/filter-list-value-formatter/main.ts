@@ -5,7 +5,7 @@ import {
   ValueFormatterParams,
 } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     {
       headerName: 'No Value Formatter',

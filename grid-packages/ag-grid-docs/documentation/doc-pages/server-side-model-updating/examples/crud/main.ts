@@ -12,7 +12,7 @@ const columnDefs: ColDef[] = [
   { field: 'bronze' },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     width: 100,
     resizable: true,

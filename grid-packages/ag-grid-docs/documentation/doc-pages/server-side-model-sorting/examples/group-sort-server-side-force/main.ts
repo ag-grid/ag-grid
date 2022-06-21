@@ -1,6 +1,6 @@
 import { Grid, GridOptions, IServerSideDatasource, ServerSideStoreParams, GetServerSideStoreParamsParams } from '@ag-grid-community/core'
 declare var FakeServer: any;
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', enableRowGroup: true, rowGroup: true },
     { field: 'sport', enableRowGroup: true, rowGroup: true },

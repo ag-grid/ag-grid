@@ -66,7 +66,7 @@ const columnDefs: ColGroupDef[] = [
     },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         sortable: true,
         resizable: true,
@@ -87,5 +87,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
-        .then(data => gridOptions.api!.setRowData(data))
+        .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })

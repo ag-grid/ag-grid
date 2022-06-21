@@ -29,7 +29,7 @@ const columnDefs: ColDef[] = [
   colDefBronze,
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,

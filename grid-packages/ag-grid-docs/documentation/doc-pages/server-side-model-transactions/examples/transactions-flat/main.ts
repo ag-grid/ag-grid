@@ -150,9 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     new Grid(gridDiv, gridOptions)
 
-    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
-        .then(function (data) {
+
             const dataSource: IServerSideDatasource = {
                 getRows: (params: IServerSideGetRowsParams) => {
                     // To make the demo look real, wait for 500ms before returning
@@ -172,6 +170,6 @@ document.addEventListener('DOMContentLoaded', function () {
             };
 
             gridOptions.api!.setServerSideDatasource(dataSource)
-        })
+
 })
 

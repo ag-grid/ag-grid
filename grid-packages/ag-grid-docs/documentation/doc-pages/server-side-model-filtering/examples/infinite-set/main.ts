@@ -21,7 +21,7 @@ const columnDefs: ColDef[] = [
   { field: 'athlete', menuTabs: undefined },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,

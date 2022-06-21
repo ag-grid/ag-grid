@@ -33,7 +33,7 @@ const columnDefs: ColDef[] = [
   { field: 'bronze', filter: 'agNumberColumnFilter' },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,

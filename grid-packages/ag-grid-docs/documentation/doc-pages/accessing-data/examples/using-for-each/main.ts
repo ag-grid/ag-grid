@@ -1,6 +1,6 @@
 import { Grid, GridOptions, RowNode } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true, hide: true },
     { field: 'athlete', minWidth: 180 },
@@ -62,5 +62,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data.slice(0, 50)))
+    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data.slice(0, 50)))
 })

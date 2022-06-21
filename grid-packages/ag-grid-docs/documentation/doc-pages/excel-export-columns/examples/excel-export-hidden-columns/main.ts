@@ -26,7 +26,7 @@ const columnDefs: ColGroupDef[] = [
   },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     sortable: true,

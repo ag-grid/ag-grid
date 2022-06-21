@@ -1,6 +1,6 @@
 import { Grid, GridOptions, PostSortRowsParams } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'athlete' },
     { field: 'age', width: 100 },

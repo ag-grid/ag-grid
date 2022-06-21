@@ -86,7 +86,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     cellClassRules: {
       darkGreyBackground: (params: CellClassParams) => {
@@ -123,7 +123,7 @@ const gridOptions: GridOptions = {
       silver: '003',
       bronze: 44,
       total: 55,
-    },
+    } as any,
   ],
 
   pinnedBottomRowData: [
@@ -138,7 +138,7 @@ const gridOptions: GridOptions = {
       silver: '005',
       bronze: 244,
       total: 255,
-    },
+    } as any,
   ],
 
   excelStyles: [
@@ -285,5 +285,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })

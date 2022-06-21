@@ -22,7 +22,7 @@ const columnDefs: ColDef[] = [
   { field: 'total', sortable: false },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   rowData: null,
   suppressMenuHide: true,

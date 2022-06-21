@@ -29,7 +29,7 @@ const KEY_UP = 'ArrowUp';
 const KEY_RIGHT = 'ArrowRight';
 const KEY_DOWN = 'ArrowDown';
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   // make all cols editable
   defaultColDef: {
     editable: true,
@@ -171,5 +171,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })

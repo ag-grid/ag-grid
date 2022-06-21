@@ -11,7 +11,7 @@ const columnDefs: ColDef[] = [
   { field: 'total', minWidth: 175, cellRenderer: TotalValueRenderer },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     editable: true,

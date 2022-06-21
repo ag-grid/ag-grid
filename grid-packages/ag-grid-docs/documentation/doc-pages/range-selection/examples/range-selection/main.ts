@@ -1,6 +1,6 @@
 import { Grid, GridOptions } from '@ag-grid-community/core'
 
-var gridOptions: GridOptions = {
+var gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'athlete', minWidth: 150 },
     { field: 'age', maxWidth: 90 },
@@ -27,5 +27,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })

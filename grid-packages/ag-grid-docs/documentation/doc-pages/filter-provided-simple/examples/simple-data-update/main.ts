@@ -28,7 +28,7 @@ var filterParams = {
 
 var fetchedData: any[];
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'athlete' },
     { field: 'age', filter: 'agNumberColumnFilter', maxWidth: 100 },
