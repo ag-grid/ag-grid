@@ -137,7 +137,7 @@ function getEventAndCallbackNames() {
     return callbacksAndEvents;;
 }
 
-const ROW_DATA_STATE = 'const [rowData, setRowData] = useState<any[]>();'
+
 const GRID_REF_HOOK = "const gridRef = useRef<AgGridReact>(null);"
 
 export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
@@ -151,13 +151,15 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
             .filter(dependency => !global[dependency]) // exclude things like Number, isNaN etc
         return acc;
     }, {})
+    const rowDataType = tData || 'any';
+    const rowDataState = `const [rowData, setRowData] = useState<${rowDataType}[]>();`
 
     return importType => {
         // instance values
         const stateProperties = [
             `const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);`,
             `const gridStyle = useMemo(() => ({height: '${gridSettings.height}', width: '${gridSettings.width}'}), []);`,
-            ROW_DATA_STATE
+            rowDataState
         ];
 
 
@@ -177,7 +179,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
             additionalInReady.push(`
                 fetch(${data.url})
                 .then(resp => resp.json())
-                .then((data: any[]) => ${setRowDataBlock});`
+                .then((data: ${rowDataType}[]) => ${setRowDataBlock});`
             );
         }
 
@@ -210,8 +212,8 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
             if (property.name === 'rowData') {
                 if (property.value !== "null" && property.value !== null) {
-                    const rowDataIndex = stateProperties.indexOf(ROW_DATA_STATE);
-                    stateProperties[rowDataIndex] = `const [rowData, setRowData] = useState<any[]>(${property.value});`
+                    const rowDataIndex = stateProperties.indexOf(rowDataState);
+                    stateProperties[rowDataIndex] = `const [rowData, setRowData] = useState<${rowDataType}[]>(${property.value});`
                 }
             } else if (property.value === 'true' || property.value === 'false') {
                 componentProps.push(`${property.name}={${property.value}}`);
@@ -335,8 +337,8 @@ render(<GridExample></GridExample>, document.querySelector('#root'))
             generatedOutput = generatedOutput.replace(GRID_REF_HOOK, "")
             generatedOutput = generatedOutput.replace("ref={gridRef}", "")
         }
-        if (generatedOutput.includes(ROW_DATA_STATE) && (generatedOutput.match(/setRowData/g) || []).length === 1) {
-            generatedOutput = generatedOutput.replace(ROW_DATA_STATE, "")
+        if (generatedOutput.includes(rowDataState) && (generatedOutput.match(/setRowData/g) || []).length === 1) {
+            generatedOutput = generatedOutput.replace(rowDataState, "")
             generatedOutput = generatedOutput.replace("rowData={rowData}", "")
         }
 
