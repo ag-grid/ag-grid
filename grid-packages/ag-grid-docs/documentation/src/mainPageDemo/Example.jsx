@@ -39,9 +39,7 @@ import {WinningsFilter} from "./WinningsFilter";
 
 import "@ag-grid-community/styles/ag-grid.css"
 import "@ag-grid-community/styles/ag-theme-alpine.css"
-import "@ag-grid-community/styles/ag-theme-alpine-dark.css"
 import "@ag-grid-community/styles/ag-theme-balham.css"
-import "@ag-grid-community/styles/ag-theme-balham-dark.css"
 import "@ag-grid-community/styles/ag-theme-material.css"
 
 const IS_SSR = typeof window === "undefined"
