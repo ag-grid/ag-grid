@@ -82,7 +82,7 @@ Before a transaction is applied, the grid calls the `isApplyServerSideTransactio
 
 If the callback returns `true`, the transaction is applied as normal and the Transaction Status `Applied` is returned. If the callback returns `false`, the transaction is discarded and the Transaction Status `Cancelled` is returned.
 
-The suggested mechanism is to use versioned (or timestamped) data. When row data is loaded, the application could provide a data version as [Store Info](/server-side-model-grouping/#store-state-info).
+The suggested mechanism is to use versioned (or timestamped) data. When row data is loaded, the application could provide a data version as [Group Level Info](/server-side-model-grouping/#group-level-info).
 
 The example is configured to demonstrate this. Note the following:
 

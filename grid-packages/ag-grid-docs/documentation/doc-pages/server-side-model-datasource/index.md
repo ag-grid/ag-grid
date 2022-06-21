@@ -123,7 +123,7 @@ The `rowCount` is used when Infininte Scrolling is used. When the total row coun
 
 The `rowCount` is also used when [Pagination](/server-side-model-pagination/) is enabled. The row count is used to determine the number of pages that are required and enables the grid to jump to the last page. If not provided users will only be able to step to the next page as the grid does not know how many pages are required.
 
-The `storeInfo` is additional data the application can pass to the grid about a particular load. This is useful when doing [High Frequency Updates](/server-side-model-high-frequency/) and explained further in that section.
+The `groupLevelInfo` is additional data the application can pass to the grid about a particular load. This is useful when doing [High Frequency Updates](/server-side-model-high-frequency/) and explained further in that section.
 
 ## Fail Callback
 

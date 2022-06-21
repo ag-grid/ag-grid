@@ -40,7 +40,7 @@ more blocks will be loaded.
 
 The example below demonstrates some configurations that are specific to Infinite Scroll. Note the following:
 
-- The grid property `serverSideInfiniteScrolling = true`, which gets the Infinite Store to be used. The grid loads rows one block at a time as the user scrolls down.
+- The grid property `serverSideInfiniteScrolling = true`, which turns on Infinite Scrolling. The grid loads rows one block at a time as the user scrolls down.
 - The grid property `cacheBlockSize = 50`. This sets the block size to 50, thus rows are read back 50 at a time.
 - The grid property `maxBlocksInCache = 2`. This means the grid will keep two blocks in memory only. To see this in action, scroll past row 100 (which will require a third block to be loaded), then quickly scroll back to the start and you will observe the first block needs to be reloaded.
 
@@ -85,25 +85,25 @@ Infinite Scroll allows displaying a large amount of data by breaking it into blo
 and lazy loading the blocks as the users scrolls. However, it comes with the following restrictions.
 
 - **In Grid Sorting**
-    Because data is read back in blocks from the Infinite Store, the grid cannot sort the data,
+    Because data is read back in blocks, the grid cannot sort the data,
     as it does not have all the data loaded. All sorting must be done on the server
     as described in [Sorting](/server-side-model-sorting/).
 
 - **In Grid Filtering**
-    Because data is read back in blocks from the Infinite Store, the grid cannot filter the data,
+    Because data is read back in blocks, the grid cannot filter the data,
     as it does not have all the data loaded. All filtering must be done on the server
     as described in [Filtering](/server-side-model-filtering/).
 
 - **Updating Data**
     Updating data in the grid using [Transactions](/server-side-model-transactions/) is not supported
-    by the Infinite Store.
+    when Infinite Scrolling.
 
     This is because applying updates would potentially move rows between blocks, which would not be possible
     if all blocks are not loaded.
 
 - **Changing Data**
     If data on the server is changing with regards inserts and deletes, this will cause problems with the
-    Infinite Store. This is because data is read back from the server in blocks.
+    Infinite Scroll. This is because data is read back from the server in blocks.
     If the data is receiving updates or deletes, then what block a particual row should be in can change.
     For example consider the following scenario:
 
@@ -115,7 +115,7 @@ and lazy loading the blocks as the users scrolls. However, it comes with the fol
     block. This is because the row was at index 99 before the insert and then at index 100 after the insert.
 
     If data is changing such that row indexes will change and result in duplicate or missing rows across
-    blocks, then it is best either avoid the Infinite Store or use a snapshot of data to prevent data updates.
+    blocks, then it is best either avoid Infinite Scrolling or use a snapshot of data to prevent data updates.
 
 ## Next Up
 

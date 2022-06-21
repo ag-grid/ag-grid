@@ -79,7 +79,7 @@ The example below demonstrates applying transactions to groups. Note the followi
 
 ## Infinite Scroll
 
-Transaction Updates do not work for Infinite Scroll. Instead either move your application to not use Infinite Scroll or use [Store Refresh](/server-side-model-refresh/) to have the grid data update.
+Transaction Updates do not work for Infinite Scroll. Instead either move your application to not use Infinite Scroll or  [Refresh](/server-side-model-refresh/) to have the grid data update.
 
 ## Next Up
 

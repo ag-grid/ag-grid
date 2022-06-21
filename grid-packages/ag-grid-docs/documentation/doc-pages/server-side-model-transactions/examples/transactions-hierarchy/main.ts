@@ -125,10 +125,10 @@ function onBtNewProduct() {
   console.log('New Product, result = ' + (res && res.status))
 }
 
-function onBtGroupState() {
-  const storeState = gridOptions.api!.getServerSideGroupLevelState()
-  console.log('Store States:')
-  storeState.forEach(function (state, index) {
+function onBtGroupLevelState() {
+  const groupLevelState = gridOptions.api!.getServerSideGroupLevelState()
+  console.log('Group Level States:')
+  groupLevelState.forEach(function (state, index) {
     console.log(
       index +
       ' - ' +
