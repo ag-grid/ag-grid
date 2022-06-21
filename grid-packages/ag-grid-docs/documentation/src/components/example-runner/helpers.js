@@ -234,7 +234,7 @@ export const isUsingPublishedPackages = () => process.env.GATSBY_USE_PUBLISHED_P
 export const getCssFilePaths = theme => {
     const themeFiles = theme ?
         [theme] :
-        ['alpine', 'balham', 'material', 'classic'];
+        ['alpine', 'balham', 'material'];
 
     const cssFiles = [
         'ag-grid.css',

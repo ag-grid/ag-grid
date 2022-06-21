@@ -1,8 +1,8 @@
 import { AfterViewInit, Component } from "@angular/core";
 
 
-import "@ag-grid-community/core/dist/styles/ag-grid.css";
-import "@ag-grid-community/core/dist/styles/ag-theme-material.css";
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-material.css";
 
 import { MatSliderComponent } from "./mat-slider.component";
 import { MatButtonToggleHeaderComponent } from "./mat-button-toggle.component";

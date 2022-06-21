@@ -1,6 +1,6 @@
 import { AgGridVue } from '@ag-grid-community/vue3';
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import '@ag-grid-community/styles/ag-grid.css';
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 
 export default {
     template: `

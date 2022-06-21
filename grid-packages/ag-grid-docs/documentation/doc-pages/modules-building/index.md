@@ -110,8 +110,8 @@ In this section we demonstrate how you to cherry pick modules to provide the fea
 | ModuleRegistry.register(MenuModule);
 | ModuleRegistry.register(ExcelExportModule);
 |
-| import '@ag-grid-community/core/dist/styles/ag-grid.css';
-| import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+| import '@ag-grid-community/styles/ag-grid.css';
+| import '@ag-grid-community/styles/ag-theme-alpine.css';
 | ```
 |
 | Note that we've included the Module Registration step here - we do this so that consumers of our UMD bundle won't have to. This is a convenience step but is recommended for UMD bundles.

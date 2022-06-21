@@ -289,14 +289,14 @@ CSS & SCSS will be available in the `@ag-grid-community/core` module,  which wil
 
 ```css
 /* CSS Community */
-import "@ag-grid-community/core/dist/styles/ag-grid.css";
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 ```
 
 ```scss
 // SCSS Community
-@import "@ag-grid-community/core/dist/styles/ag-grid.scss";
-@import "@ag-grid-community/core/dist/styles/ag-theme-alpine/sass/ag-theme-alpine.scss";
+@import "@ag-grid-community/styles/ag-grid.scss";
+@import "@ag-grid-community/styles/ag-theme-alpine/sass/ag-theme-alpine.scss";
 ```
 
 ## Module Examples
