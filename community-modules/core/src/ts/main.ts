@@ -216,7 +216,7 @@ export { ColumnVO } from "./interfaces/iColumnVO";
 
 export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest } from "./interfaces/iServerSideDatasource";
 export { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams } from "./interfaces/iServerSideRowModel";
-export { IServerSideStore, StoreRefreshAfterParams, ServerSideStoreState } from "./interfaces/IServerSideStore";
+export { IServerSideStore, StoreRefreshAfterParams, ServerSideGroupState } from "./interfaces/IServerSideStore";
 
 export { ISideBar } from "./interfaces/iSideBar";
 export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
@@ -387,7 +387,7 @@ export {
     RowStyle,
     RowClassParams,
     ServerSideStoreType,
-    ServerSideStoreParams,
+    ServerSideGroupParams,
     GetServerSideGroupKey,
     IsServerSideGroup,
     GetChartToolbarItems,
@@ -405,7 +405,7 @@ export {
     IsServerSideGroupOpenByDefaultParams,
     IsApplyServerSideTransactionParams,
     IsGroupOpenByDefaultParams,
-    GetServerSideStoreParamsParams,
+    GetServerSideGroupParamsParams,
     PaginationNumberFormatterParams,
     ProcessDataFromClipboardParams,
     SendToClipboardParams,

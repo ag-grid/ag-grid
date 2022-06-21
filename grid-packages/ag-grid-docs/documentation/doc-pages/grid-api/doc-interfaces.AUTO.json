@@ -3506,11 +3506,19 @@
         "optional": true
       }
     },
-    "getServerSideStoreParams": {
+    "getServerSideGroupParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams" },
-        "returnType": "ServerSideStoreParams",
+        "arguments": { "params": "GetServerSideGroupParamsParams" },
+        "returnType": "ServerSideGroupParams",
+        "optional": true
+      }
+    },
+    "getServerSideStoreParams": {
+      "description": "/** @deprecated use `getServerSideGroupParams` instead.\n */",
+      "type": {
+        "arguments": { "params": "GetServerSideGroupParamsParams" },
+        "returnType": "ServerSideGroupParams",
         "optional": true
       }
     },
@@ -5102,7 +5110,7 @@
     }
   },
   "ServerSideStoreType": {},
-  "ServerSideStoreParams": {
+  "ServerSideGroupParams": {
     "storeType": {
       "description": "/** @deprecated What store type to use.\nIf missing, then defaults to grid option `serverSideStoreType`.\nDeprecated in favor of infiniteScroll.\nIf infiniteScroll==true, then Partial Store is used.\nIf infiniteScroll==false, then Full Store is used.\n */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
@@ -5444,7 +5452,7 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "GetServerSideStoreParamsParams": {
+  "GetServerSideGroupParamsParams": {
     "level": {
       "description": "/** The level of the store. Top level is 0. */",
       "type": { "returnType": "number", "optional": false }
@@ -5503,7 +5511,14 @@
       "description": "/** The parent RowNode, if transaction is applied to a group. */",
       "type": { "returnType": "RowNode", "optional": false }
     },
-    "storeInfo": { "type": { "returnType": "any", "optional": false } },
+    "storeInfo": {
+      "description": "/** @deprecated use groupInfo instead\n */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "groupInfo": {
+      "description": "/** Store info, if any, as passed via the success() callback when loading data. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi", "optional": false }
@@ -16292,7 +16307,7 @@
     "getStoreState": {
       "type": {
         "arguments": {},
-        "returnType": "ServerSideStoreState[]",
+        "returnType": "ServerSideGroupState[]",
         "optional": false
       }
     },
@@ -16597,7 +16612,7 @@
     },
     "addStoreStates": {
       "type": {
-        "arguments": { "result": "ServerSideStoreState[]" },
+        "arguments": { "result": "ServerSideGroupState[]" },
         "returnType": "void",
         "optional": false
       }
@@ -16614,7 +16629,7 @@
       "type": { "returnType": "string[]", "optional": false }
     }
   },
-  "ServerSideStoreState": {
+  "ServerSideGroupState": {
     "infiniteScroll": {
       "description": "/** True if infininte scrolling */",
       "type": { "returnType": "boolean", "optional": false }
@@ -19725,6 +19740,10 @@
       "type": { "returnType": "number", "optional": true }
     },
     "storeInfo": {
+      "description": "/** @deprecated use groupInfo instead\n */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "groupInfo": {
       "description": "/** Any extra information for the grid to associate with this load. */",
       "type": { "returnType": "any", "optional": true }
     }
@@ -22807,11 +22826,19 @@
         "optional": true
       }
     },
-    "getServerSideStoreParams": {
+    "getServerSideGroupParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams" },
-        "returnType": "ServerSideStoreParams",
+        "arguments": { "params": "GetServerSideGroupParamsParams" },
+        "returnType": "ServerSideGroupParams",
+        "optional": true
+      }
+    },
+    "getServerSideStoreParams": {
+      "description": "/** @deprecated use `getServerSideGroupParams` instead.\n */",
+      "type": {
+        "arguments": { "params": "GetServerSideGroupParamsParams" },
+        "returnType": "ServerSideGroupParams",
         "optional": true
       }
     },
@@ -25552,11 +25579,19 @@
         "optional": true
       }
     },
-    "getServerSideStoreParams": {
+    "getServerSideGroupParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams" },
-        "returnType": "ServerSideStoreParams",
+        "arguments": { "params": "GetServerSideGroupParamsParams" },
+        "returnType": "ServerSideGroupParams",
+        "optional": true
+      }
+    },
+    "getServerSideStoreParams": {
+      "description": "/** @deprecated use `getServerSideGroupParams` instead.\n */",
+      "type": {
+        "arguments": { "params": "GetServerSideGroupParamsParams" },
+        "returnType": "ServerSideGroupParams",
         "optional": true
       }
     },
@@ -28307,11 +28342,19 @@
         "optional": true
       }
     },
-    "getServerSideStoreParams": {
+    "getServerSideGroupParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams" },
-        "returnType": "ServerSideStoreParams",
+        "arguments": { "params": "GetServerSideGroupParamsParams" },
+        "returnType": "ServerSideGroupParams",
+        "optional": true
+      }
+    },
+    "getServerSideStoreParams": {
+      "description": "/** @deprecated use `getServerSideGroupParams` instead.\n */",
+      "type": {
+        "arguments": { "params": "GetServerSideGroupParamsParams" },
+        "returnType": "ServerSideGroupParams",
         "optional": true
       }
     },

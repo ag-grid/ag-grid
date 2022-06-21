@@ -1738,7 +1738,8 @@
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
-      "getServerSideStoreParams?": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams",
+      "getServerSideGroupParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
+      "getServerSideStoreParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
       "isServerSideGroupOpenByDefault?": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
@@ -2114,7 +2115,8 @@
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
-      "getServerSideStoreParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideGroupParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupParams` instead.\n */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
       "isApplyServerSideTransaction?": "/** Allows cancelling transactions. */",
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
@@ -2397,7 +2399,7 @@
     "meta": { "isTypeAlias": true },
     "type": "'full' | 'partial'"
   },
-  "ServerSideStoreParams": {
+  "ServerSideGroupParams": {
     "meta": {},
     "type": {
       "storeType?": "ServerSideStoreType",
@@ -2659,7 +2661,7 @@
       "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
-  "GetServerSideStoreParamsParams": {
+  "GetServerSideGroupParamsParams": {
     "meta": {},
     "type": {
       "level": "number",
@@ -2703,6 +2705,7 @@
       "transaction": "ServerSideTransaction",
       "parentNode": "RowNode",
       "storeInfo": "any",
+      "groupInfo": "any",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -2710,6 +2713,8 @@
     "docs": {
       "transaction": "/** The transaction getting applied. */",
       "parentNode": "/** The parent RowNode, if transaction is applied to a group. */",
+      "storeInfo": "/** @deprecated use groupInfo instead\n */",
+      "groupInfo": "/** Store info, if any, as passed via the success() callback when loading data. */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */"
@@ -9338,7 +9343,7 @@
     "type": {
       "refreshStore(params?: RefreshStoreParams)": "void",
       "onRowHeightChanged()": "void",
-      "getStoreState()": "ServerSideStoreState[]",
+      "getStoreState()": "ServerSideGroupState[]",
       "retryLoads()": "void",
       "expandAll(value: boolean)": "void",
       "setDatasource(datasource: IServerSideDatasource)": "void",
@@ -9416,7 +9421,7 @@
       "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
       "isLastRowIndexKnown()": "boolean",
       "getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode)": "RowNode[]",
-      "addStoreStates(result: ServerSideStoreState[])": "void"
+      "addStoreStates(result: ServerSideGroupState[])": "void"
     }
   },
   "StoreRefreshAfterParams": {
@@ -9427,7 +9432,7 @@
       "changedColumns": "string[]"
     }
   },
-  "ServerSideStoreState": {
+  "ServerSideGroupState": {
     "meta": {},
     "type": {
       "infiniteScroll": "boolean",
@@ -11273,11 +11278,17 @@
   },
   "LoadSuccessParams": {
     "meta": {},
-    "type": { "rowData": "any[]", "rowCount?": "number", "storeInfo?": "any" },
+    "type": {
+      "rowData": "any[]",
+      "rowCount?": "number",
+      "storeInfo?": "any",
+      "groupInfo?": "any"
+    },
     "docs": {
       "rowData": "/** Data retrieved from the server as requested by the grid. */",
       "rowCount?": "/** The last row, if known, to help Infinite Scroll. */",
-      "storeInfo?": "/** Any extra information for the grid to associate with this load. */"
+      "storeInfo?": "/** @deprecated use groupInfo instead\n */",
+      "groupInfo?": "/** Any extra information for the grid to associate with this load. */"
     }
   },
   "SortOption": {
@@ -12612,7 +12623,8 @@
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
-      "getServerSideStoreParams?": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams",
+      "getServerSideGroupParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
+      "getServerSideStoreParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
       "isServerSideGroupOpenByDefault?": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
@@ -12988,7 +13000,8 @@
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
-      "getServerSideStoreParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideGroupParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupParams` instead.\n */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
       "isApplyServerSideTransaction?": "/** Allows cancelling transactions. */",
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
@@ -13377,7 +13390,8 @@
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
-      "getServerSideStoreParams?": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams",
+      "getServerSideGroupParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
+      "getServerSideStoreParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
       "isServerSideGroupOpenByDefault?": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
@@ -13753,7 +13767,8 @@
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
-      "getServerSideStoreParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideGroupParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupParams` instead.\n */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
       "isApplyServerSideTransaction?": "/** Allows cancelling transactions. */",
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
@@ -14146,7 +14161,8 @@
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
-      "getServerSideStoreParams?": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams",
+      "getServerSideGroupParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
+      "getServerSideStoreParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
       "isServerSideGroupOpenByDefault?": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
@@ -14522,7 +14538,8 @@
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
-      "getServerSideStoreParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideGroupParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupParams` instead.\n */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
       "isApplyServerSideTransaction?": "/** Allows cancelling transactions. */",
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",

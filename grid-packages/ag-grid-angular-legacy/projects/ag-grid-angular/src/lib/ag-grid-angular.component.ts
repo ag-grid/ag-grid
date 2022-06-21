@@ -59,8 +59,8 @@ import {
     GetChartToolbarItems,
     FillOperationParams,
     IsApplyServerSideTransaction,
-    GetServerSideStoreParamsParams,
-    ServerSideStoreParams,
+    GetServerSideGroupParamsParams,
+    ServerSideGroupParams,
     IsServerSideGroupOpenByDefaultParams,
     IsGroupOpenByDefaultParams,
     ColumnEverythingChangedEvent,
@@ -938,7 +938,10 @@ Full Store is used.
     /** Allows setting the child count for a group row.     */
     @Input() public getChildCount: ((dataItem: any) => number) | undefined = undefined;
     /** Allows providing different params for different levels of grouping.     */
-    @Input() public getServerSideStoreParams: ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams) | undefined = undefined;
+    @Input() public getServerSideGroupParams: ((params: GetServerSideGroupParamsParams) => ServerSideGroupParams) | undefined = undefined;
+    /** @deprecated use `getServerSideGroupParams` instead.
+     */
+    @Input() public getServerSideStoreParams: ((params: GetServerSideGroupParamsParams) => ServerSideGroupParams) | undefined = undefined;
     /** Allows groups to be open by default.     */
     @Input() public isServerSideGroupOpenByDefault: ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined = undefined;
     /** Allows cancelling transactions.     */

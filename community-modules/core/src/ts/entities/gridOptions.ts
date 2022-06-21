@@ -79,7 +79,7 @@ import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { CellPosition } from "./cellPosition";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
-import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideStoreParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "./iCallbackParams";
+import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "./iCallbackParams";
 import { RowNode } from "./rowNode";
 import { SideBarDef } from "./sideBar";
 
@@ -883,7 +883,9 @@ export interface GridOptions {
     /** Allows setting the child count for a group row. */
     getChildCount?: (dataItem: any) => number;
     /** Allows providing different params for different levels of grouping. */
-    getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
+    getServerSideGroupParams?: (params: GetServerSideGroupParamsParams) => ServerSideGroupParams;
+    /** @deprecated use `getServerSideGroupParams` instead. */
+    getServerSideStoreParams?: (params: GetServerSideGroupParamsParams) => ServerSideGroupParams;
     /** Allows groups to be open by default. */
     isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
     /** Allows cancelling transactions. */
@@ -1233,7 +1235,7 @@ export interface ChartRefParams extends AgGridCommon, ChartRef { }
 
 export type ServerSideStoreType = 'full' | 'partial';
 
-export interface ServerSideStoreParams {
+export interface ServerSideGroupParams {
     /**
      * @deprecated
      * What store type to use.

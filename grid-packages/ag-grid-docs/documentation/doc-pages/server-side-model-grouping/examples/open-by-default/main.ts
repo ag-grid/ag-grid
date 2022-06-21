@@ -1,4 +1,4 @@
-import { Grid, GetServerSideStoreParamsParams, GetRowIdParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, IsServerSideGroupOpenByDefaultParams, ServerSideStoreParams } from '@ag-grid-community/core'
+import { Grid, GetServerSideGroupParamsParams, GetRowIdParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, IsServerSideGroupOpenByDefaultParams, ServerSideGroupParams } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -19,8 +19,8 @@ const gridOptions: GridOptions = {
     flex: 1,
     minWidth: 280,
   },
-  getServerSideStoreParams: (params: GetServerSideStoreParamsParams): ServerSideStoreParams => {
-    var res: ServerSideStoreParams = {
+  getServerSideGroupParams: (params: GetServerSideGroupParamsParams): ServerSideGroupParams => {
+    var res: ServerSideGroupParams = {
       storeType: params.level == 0 ? 'partial' : 'full',
     }
     return res

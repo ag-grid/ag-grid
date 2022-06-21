@@ -861,9 +861,18 @@
     }
   },
   "setGetServerSideStoreParams": {
+    "description": "/** @deprecated use setGetServerSideGroupParams instead\n */",
     "type": {
       "arguments": {
-        "getServerSideStoreParamsFunc": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams"
+        "getServerSideStoreParamsFunc": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams"
+      },
+      "returnType": "void"
+    }
+  },
+  "setGetServerSideGroupParams": {
+    "type": {
+      "arguments": {
+        "getServerSideGroupParamsFunc": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams"
       },
       "returnType": "void"
     }
@@ -1329,16 +1338,27 @@
     "description": "/** @deprecated */",
     "type": { "arguments": { "route": "string[] = []" }, "returnType": "void" }
   },
-  "refreshServerSideStore": {
+  "refreshServerSideGroup": {
     "description": "/** Refresh a server-side store.\n * If you pass no parameters, then the top level store is purged.\n * To purge a child store, pass in the string of keys to get to the child cache. */",
     "type": {
       "arguments": { "params?": "RefreshStoreParams" },
       "returnType": "void"
     }
   },
+  "refreshServerSideStore": {
+    "description": "/** @deprecated use `refreshServerSideGroup` instead\n */",
+    "type": {
+      "arguments": { "params?": "RefreshStoreParams" },
+      "returnType": "void"
+    }
+  },
   "getServerSideStoreState": {
+    "description": "/** @deprecated use `getServerSideGroupState` instead\n */",
+    "type": { "arguments": {}, "returnType": "ServerSideGroupState[]" }
+  },
+  "getServerSideGroupState": {
     "description": "/** Returns info on all server side stores. */",
-    "type": { "arguments": {}, "returnType": "ServerSideStoreState[]" }
+    "type": { "arguments": {}, "returnType": "ServerSideGroupState[]" }
   },
   "getVirtualRowCount": {
     "type": { "arguments": {}, "returnType": "number | null | undefined" }

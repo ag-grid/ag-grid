@@ -62,7 +62,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
           params.success({
             rowData: response.rows,
             rowCount: response.lastRow,
-            storeInfo: {
+            groupInfo: {
               lastLoadedTime: new Date().toLocaleString(),
               randomValue: Math.random(),
             },

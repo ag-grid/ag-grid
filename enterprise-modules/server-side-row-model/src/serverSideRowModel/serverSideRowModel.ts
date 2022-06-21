@@ -25,7 +25,7 @@ import {
     SortController,
     StoreRefreshAfterParams,
     RefreshStoreParams,
-    ServerSideStoreState,
+    ServerSideGroupState,
     Beans,
     SortModelItem
 } from "@ag-grid-community/core";
@@ -414,8 +414,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.executeOnStore(route, store => store.refreshStore(params.purge == true));
     }
 
-    public getStoreState(): ServerSideStoreState[] {
-        const res: ServerSideStoreState[] = [];
+    public getStoreState(): ServerSideGroupState[] {
+        const res: ServerSideGroupState[] = [];
         const rootStore = this.getRootStore();
         if (rootStore) {
             rootStore.addStoreStates(res);

@@ -1,4 +1,4 @@
-import { Grid, GetServerSideStoreParamsParams, GridOptions, IServerSideDatasource, ServerSideStoreParams } from '@ag-grid-community/core'
+import { Grid, GetServerSideGroupParamsParams, GridOptions, IServerSideDatasource, ServerSideGroupParams } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -21,15 +21,14 @@ const gridOptions: GridOptions = {
     minWidth: 280,
   },
 
-  // rowBuffer: 0,
   cacheBlockSize: 4,
 
   // use the server-side row model
   rowModelType: 'serverSide',
 
-  getServerSideStoreParams: (params: GetServerSideStoreParamsParams): ServerSideStoreParams => {
+  getServerSideGroupParams: (params: GetServerSideGroupParamsParams): ServerSideGroupParams => {
     var noGroupingActive = params.rowGroupColumns.length == 0
-    var res: ServerSideStoreParams;
+    var res: ServerSideGroupParams;
     if (noGroupingActive) {
       res = {
         // infinite scrolling
@@ -48,9 +47,9 @@ const gridOptions: GridOptions = {
       }
     }
 
-    console.log('############## NEW STORE ##############')
+    console.log('############## NEW GROUP LEVEL ##############')
     console.log(
-      'getServerSideStoreParams, level = ' +
+      'getServerSideGroupParams, level = ' +
       params.level +
       ', result = ' +
       JSON.stringify(res)

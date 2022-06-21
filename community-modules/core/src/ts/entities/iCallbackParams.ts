@@ -123,7 +123,7 @@ export interface IsGroupOpenByDefaultParams extends AgGridCommon {
     key: string;
 }
 
-export interface GetServerSideStoreParamsParams extends AgGridCommon {
+export interface GetServerSideGroupParamsParams extends AgGridCommon {
     /** The level of the store. Top level is 0. */
     level: number;
     /** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */
@@ -146,8 +146,10 @@ export interface IsApplyServerSideTransactionParams extends AgGridCommon {
     transaction: ServerSideTransaction;
     /** The parent RowNode, if transaction is applied to a group. */
     parentNode: RowNode;
-    //** Store info, if any, as passed via the success() callback when loading data. */
+    /** @deprecated use groupInfo instead */
     storeInfo: any;
+    /** Store info, if any, as passed via the success() callback when loading data. */
+    groupInfo: any;
 }
 
 export interface GetRowIdParams extends AgGridCommon {
