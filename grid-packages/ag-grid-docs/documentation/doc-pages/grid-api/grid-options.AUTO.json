@@ -1212,28 +1212,28 @@
   "getServerSideStoreParams": {
     "description": "/** Allows providing different params for different levels of grouping. */",
     "type": {
-      "arguments": { "params": "GetServerSideStoreParamsParams<TData>" },
+      "arguments": { "params": "GetServerSideStoreParamsParams" },
       "returnType": "ServerSideStoreParams"
     }
   },
   "isServerSideGroupOpenByDefault": {
     "description": "/** Allows groups to be open by default. */",
     "type": {
-      "arguments": { "params": "IsServerSideGroupOpenByDefaultParams<TData>" },
+      "arguments": { "params": "IsServerSideGroupOpenByDefaultParams" },
       "returnType": "boolean"
     }
   },
   "isApplyServerSideTransaction": {
     "description": "/** Allows cancelling transactions. */",
-    "type": { "returnType": "IsApplyServerSideTransaction<TData>" }
+    "type": { "returnType": "IsApplyServerSideTransaction" }
   },
   "isServerSideGroup": {
     "description": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
-    "type": { "returnType": "IsServerSideGroup<TData>" }
+    "type": { "returnType": "IsServerSideGroup" }
   },
   "getServerSideGroupKey": {
     "description": "/** SSRM Tree Data: Allows specifying group keys. */",
-    "type": { "returnType": "GetServerSideGroupKey<TData>" }
+    "type": { "returnType": "GetServerSideGroupKey" }
   },
   "getBusinessKeyForNode": {
     "description": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",

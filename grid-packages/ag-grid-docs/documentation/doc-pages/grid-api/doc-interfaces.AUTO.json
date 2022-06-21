@@ -1408,8 +1408,8 @@
       "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "data": {
-      "description": "/** Data associated with the node */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "column": {
       "description": "/** Column for this callback */",
@@ -1440,8 +1440,8 @@
       "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "data": {
-      "description": "/** Data associated with the node */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "column": {
       "description": "/** Column for this callback */",
@@ -1472,8 +1472,8 @@
       "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "data": {
-      "description": "/** Data associated with the node */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "column": {
       "description": "/** Column for this callback */",
@@ -1504,8 +1504,8 @@
       "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "data": {
-      "description": "/** Data associated with the node */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "column": {
       "description": "/** Column for this callback */",
@@ -1559,8 +1559,8 @@
       "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "data": {
-      "description": "/** Data associated with the node */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "column": {
       "description": "/** Column for this callback */",
@@ -1591,8 +1591,8 @@
       "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "data": {
-      "description": "/** Data associated with the node */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "column": {
       "description": "/** Column for this callback */",
@@ -1623,8 +1623,8 @@
       "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "data": {
-      "description": "/** Data associated with the node */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "column": {
       "description": "/** Column for this callback */",
@@ -1673,8 +1673,8 @@
       "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "data": {
-      "description": "/** Data associated with the node */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "column": {
       "description": "/** Column for this callback */",
@@ -1698,11 +1698,26 @@
     }
   },
   "GetQuickFilterTextParams": {
-    "value": { "type": { "returnType": "any", "optional": false } },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
-    "data": { "type": { "returnType": "TData", "optional": false } },
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef", "optional": false } },
+    "value": {
+      "description": "/** Value for the cell. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "node": {
+      "description": "/** Row node for the given row */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
+    },
+    "data": {
+      "description": "/** Row data associated with the node. */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "column": {
+      "description": "/** Column for this callback */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "colDef": {
+      "description": "/** ColDef provided for this column */",
+      "type": { "returnType": "ColDef", "optional": false }
+    },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -1770,19 +1785,14 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "BaseWithValueColDefParams": {
-    "value": {
-      "description": "/** Value for the cell. */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any"] },
+  "BaseColDefOptionalDataParams": {
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "RowNode<TData> | null", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node */",
-      "type": { "returnType": "TData", "optional": false }
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "column": {
       "description": "/** Column for this callback */",
@@ -1792,6 +1802,7 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
+    "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi", "optional": false }
@@ -1821,7 +1832,7 @@
     },
     "data": {
       "description": "/** Data associated with the node */",
-      "type": { "returnType": "TData", "optional": false }
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "column": {
       "description": "/** Column for this callback */",
@@ -2000,18 +2011,18 @@
   },
   "ValueParserFunc": { "meta": { "typeParams": ["TData = any"] } },
   "ValueFormatterParams": {
-    "meta": { "typeParams": ["TData = any"] },
     "value": {
       "description": "/** Value for the cell. */",
       "type": { "returnType": "any", "optional": false }
     },
+    "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "RowNode<TData> | null", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node */",
-      "type": { "returnType": "TData", "optional": false }
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "column": {
       "description": "/** Column for this callback */",
@@ -2036,11 +2047,11 @@
   },
   "ValueFormatterFunc": { "meta": { "typeParams": ["TData = any"] } },
   "KeyCreatorParams": {
-    "meta": { "typeParams": ["TData = any"] },
     "value": {
       "description": "/** Value for the cell. */",
       "type": { "returnType": "any", "optional": false }
     },
+    "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "RowNode<TData> | null", "optional": false }
@@ -2078,7 +2089,7 @@
     },
     "data": {
       "description": "/** Data associated with the node */",
-      "type": { "returnType": "TData", "optional": false }
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "column": {
       "description": "/** Column for this callback */",
@@ -2109,7 +2120,7 @@
     },
     "data": {
       "description": "/** Data associated with the node */",
-      "type": { "returnType": "TData", "optional": false }
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "column": {
       "description": "/** Column for this callback */",
@@ -2147,8 +2158,8 @@
       "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "data": {
-      "description": "/** Data associated with the node */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "column": {
       "description": "/** Column for this callback */",
@@ -2210,8 +2221,8 @@
     },
     "meta": { "typeParams": ["TData = any"] },
     "data": {
-      "description": "/** The data associated with this row from rowData */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** The data associated with this row from rowData. Data is `undefined` for row groups. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "node": {
       "description": "/** The RowNode associated with this row */",
@@ -3578,7 +3589,7 @@
     "getServerSideStoreParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams<TData>" },
+        "arguments": { "params": "GetServerSideStoreParamsParams" },
         "returnType": "ServerSideStoreParams",
         "optional": true
       }
@@ -3586,27 +3597,22 @@
     "isServerSideGroupOpenByDefault": {
       "description": "/** Allows groups to be open by default. */",
       "type": {
-        "arguments": {
-          "params": "IsServerSideGroupOpenByDefaultParams<TData>"
-        },
+        "arguments": { "params": "IsServerSideGroupOpenByDefaultParams" },
         "returnType": "boolean",
         "optional": true
       }
     },
     "isApplyServerSideTransaction": {
       "description": "/** Allows cancelling transactions. */",
-      "type": {
-        "returnType": "IsApplyServerSideTransaction<TData>",
-        "optional": true
-      }
+      "type": { "returnType": "IsApplyServerSideTransaction", "optional": true }
     },
     "isServerSideGroup": {
       "description": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
-      "type": { "returnType": "IsServerSideGroup<TData>", "optional": true }
+      "type": { "returnType": "IsServerSideGroup", "optional": true }
     },
     "getServerSideGroupKey": {
       "description": "/** SSRM Tree Data: Allows specifying group keys. */",
-      "type": { "returnType": "GetServerSideGroupKey<TData>", "optional": true }
+      "type": { "returnType": "GetServerSideGroupKey", "optional": true }
     },
     "getBusinessKeyForNode": {
       "description": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
@@ -5017,18 +5023,18 @@
   "RowGroupingDisplayType": {},
   "TreeDataDisplayType": {},
   "GetDataPath": { "meta": { "typeParams": ["TData = any"] } },
-  "IsServerSideGroup": { "meta": { "typeParams": ["TData = any"] } },
+  "IsServerSideGroup": {},
   "IsRowFilterable": { "meta": { "typeParams": ["TData = any"] } },
-  "IsApplyServerSideTransaction": { "meta": { "typeParams": ["TData = any"] } },
-  "GetServerSideGroupKey": { "meta": { "typeParams": ["TData = any"] } },
+  "IsApplyServerSideTransaction": {},
+  "GetServerSideGroupKey": {},
   "IsRowMaster": { "meta": { "typeParams": ["TData = any"] } },
   "IsRowSelectable": { "meta": { "typeParams": ["TData = any"] } },
   "RowClassRules": { "meta": { "typeParams": ["TData = any"] } },
   "RowStyle": {},
   "RowClassParams": {
     "data": {
-      "description": "/** The data associated with this row from rowData */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** The data associated with this row from rowData. Data is `undefined` for row groups. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "node": {
       "description": "/** The RowNode associated with this row */",
@@ -5530,7 +5536,7 @@
     },
     "parentRowNode": {
       "description": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
-      "type": { "returnType": "RowNode<TData>", "optional": true }
+      "type": { "returnType": "RowNode", "optional": true }
     },
     "rowGroupColumns": {
       "description": "/** Active Row Group Columns, if any. */",
@@ -5544,7 +5550,6 @@
       "description": "/** true if pivot mode is active. */",
       "type": { "returnType": "boolean", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi", "optional": false }
@@ -5559,11 +5564,8 @@
     }
   },
   "IsServerSideGroupOpenByDefaultParams": {
-    "data": { "type": { "returnType": "TData", "optional": false } },
-    "rowNode": {
-      "type": { "returnType": "RowNode<TData>", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any"] },
+    "data": { "type": { "returnType": "any", "optional": false } },
+    "rowNode": { "type": { "returnType": "RowNode", "optional": false } },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi", "optional": false }
@@ -5584,10 +5586,9 @@
     },
     "parentNode": {
       "description": "/** The parent RowNode, if transaction is applied to a group. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "RowNode", "optional": false }
     },
     "storeInfo": { "type": { "returnType": "any", "optional": false } },
-    "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi", "optional": false }
@@ -5710,8 +5711,14 @@
     }
   },
   "RowHeightParams": {
-    "data": { "type": { "returnType": "TData", "optional": false } },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
+    "data": {
+      "description": "/** The data associated with this row from rowData. Data is `undefined` for row groups. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The RowNode of the row in question. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
+    },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -7093,7 +7100,7 @@
   "RowEvent": {
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7128,7 +7135,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7158,7 +7165,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7188,7 +7195,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7218,7 +7225,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7248,7 +7255,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7278,7 +7285,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7308,7 +7315,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7338,7 +7345,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7368,7 +7375,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7398,7 +7405,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7434,7 +7441,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7470,7 +7477,7 @@
     },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7506,7 +7513,7 @@
     },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7542,7 +7549,7 @@
     },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7578,7 +7585,7 @@
     },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7614,7 +7621,7 @@
     },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7650,7 +7657,7 @@
     },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7686,7 +7693,7 @@
     },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7722,7 +7729,7 @@
     },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7758,7 +7765,7 @@
     },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7802,7 +7809,7 @@
     },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7843,7 +7850,7 @@
     },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -7884,7 +7891,7 @@
     },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row */",
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
     },
     "rowIndex": {
@@ -17173,8 +17180,8 @@
       "type": { "returnType": "string | null", "optional": true }
     },
     "data": {
-      "description": "/** The row's data. */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "node": {
       "description": "/** The row node. */",
@@ -18241,14 +18248,14 @@
     },
     "setDetailGrid": {
       "type": {
-        "arguments": { "gridOptions": "GridOptions" },
+        "arguments": { "gridOptions": "GridOptions<TData>" },
         "returnType": "void",
         "optional": false
       }
     },
     "setRowData": {
       "type": {
-        "arguments": { "rowData": "any[]" },
+        "arguments": { "rowData": "TData[]" },
         "returnType": "void",
         "optional": false
       }
@@ -18259,16 +18266,20 @@
         "returnType": "HTMLElement",
         "optional": false
       }
-    }
+    },
+    "meta": { "typeParams": ["TData = any"] }
   },
   "IDetailCellRendererParams": {
     "detailGridOptions": {
       "description": "/** Provide Grid Options to use for the Detail Grid. */",
-      "type": { "returnType": "GridOptions", "optional": false }
+      "type": { "returnType": "GridOptions<TDetail>", "optional": false }
     },
     "getDetailRowData": {
       "description": "/** A function that provides what rows to display in the Detail Grid. */",
-      "type": { "returnType": "GetDetailRowData<TData>", "optional": false }
+      "type": {
+        "returnType": "GetDetailRowData<TData, TDetail>",
+        "optional": false
+      }
     },
     "refreshStrategy": {
       "description": "/** Defines how to refresh the Detail Grids as data is changing in the Master Grid. */",
@@ -18297,7 +18308,7 @@
       "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TDetail = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
       "type": { "returnType": "any", "optional": false }
@@ -18311,8 +18322,8 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "data": {
-      "description": "/** The row's data. */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "node": {
       "description": "/** The row node. */",
@@ -18388,7 +18399,9 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "GetDetailRowData": { "meta": { "typeParams": ["TData = any"] } },
+  "GetDetailRowData": {
+    "meta": { "typeParams": ["TData = any", "TDetail = any"] }
+  },
   "GetDetailRowDataParams": {
     "node": {
       "description": "/** Row node for the details request. */",
@@ -18401,12 +18414,12 @@
     "successCallback": {
       "description": "/** Success callback: pass the rows back for the grid request. */",
       "type": {
-        "arguments": { "rowData": "any[]" },
+        "arguments": { "rowData": "TDetail[]" },
         "returnType": "void",
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any"] }
+    "meta": { "typeParams": ["TData = any", "TDetail = any"] }
   },
   "TemplateFunc": { "meta": { "typeParams": ["TData = any"] } },
   "IDetailCellRendererCtrl": {
@@ -19069,8 +19082,8 @@
       "type": { "returnType": "any", "optional": false }
     },
     "data": {
-      "description": "/** The row's data. */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "node": {
       "description": "/** The row node. */",
@@ -19165,8 +19178,8 @@
       "type": { "returnType": "string | null", "optional": true }
     },
     "data": {
-      "description": "/** The row's data. */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "node": {
       "description": "/** The row node. */",
@@ -19328,8 +19341,8 @@
       "type": { "returnType": "string | null", "optional": true }
     },
     "data": {
-      "description": "/** The row's data. */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "node": {
       "description": "/** The row node. */",
@@ -23054,7 +23067,7 @@
     "getServerSideStoreParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams<TData>" },
+        "arguments": { "params": "GetServerSideStoreParamsParams" },
         "returnType": "ServerSideStoreParams",
         "optional": true
       }
@@ -23062,27 +23075,22 @@
     "isServerSideGroupOpenByDefault": {
       "description": "/** Allows groups to be open by default. */",
       "type": {
-        "arguments": {
-          "params": "IsServerSideGroupOpenByDefaultParams<TData>"
-        },
+        "arguments": { "params": "IsServerSideGroupOpenByDefaultParams" },
         "returnType": "boolean",
         "optional": true
       }
     },
     "isApplyServerSideTransaction": {
       "description": "/** Allows cancelling transactions. */",
-      "type": {
-        "returnType": "IsApplyServerSideTransaction<TData>",
-        "optional": true
-      }
+      "type": { "returnType": "IsApplyServerSideTransaction", "optional": true }
     },
     "isServerSideGroup": {
       "description": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
-      "type": { "returnType": "IsServerSideGroup<TData>", "optional": true }
+      "type": { "returnType": "IsServerSideGroup", "optional": true }
     },
     "getServerSideGroupKey": {
       "description": "/** SSRM Tree Data: Allows specifying group keys. */",
-      "type": { "returnType": "GetServerSideGroupKey<TData>", "optional": true }
+      "type": { "returnType": "GetServerSideGroupKey", "optional": true }
     },
     "getBusinessKeyForNode": {
       "description": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
@@ -25811,7 +25819,7 @@
     "getServerSideStoreParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams<TData>" },
+        "arguments": { "params": "GetServerSideStoreParamsParams" },
         "returnType": "ServerSideStoreParams",
         "optional": true
       }
@@ -25819,27 +25827,22 @@
     "isServerSideGroupOpenByDefault": {
       "description": "/** Allows groups to be open by default. */",
       "type": {
-        "arguments": {
-          "params": "IsServerSideGroupOpenByDefaultParams<TData>"
-        },
+        "arguments": { "params": "IsServerSideGroupOpenByDefaultParams" },
         "returnType": "boolean",
         "optional": true
       }
     },
     "isApplyServerSideTransaction": {
       "description": "/** Allows cancelling transactions. */",
-      "type": {
-        "returnType": "IsApplyServerSideTransaction<TData>",
-        "optional": true
-      }
+      "type": { "returnType": "IsApplyServerSideTransaction", "optional": true }
     },
     "isServerSideGroup": {
       "description": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
-      "type": { "returnType": "IsServerSideGroup<TData>", "optional": true }
+      "type": { "returnType": "IsServerSideGroup", "optional": true }
     },
     "getServerSideGroupKey": {
       "description": "/** SSRM Tree Data: Allows specifying group keys. */",
-      "type": { "returnType": "GetServerSideGroupKey<TData>", "optional": true }
+      "type": { "returnType": "GetServerSideGroupKey", "optional": true }
     },
     "getBusinessKeyForNode": {
       "description": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
@@ -28578,7 +28581,7 @@
     "getServerSideStoreParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams<TData>" },
+        "arguments": { "params": "GetServerSideStoreParamsParams" },
         "returnType": "ServerSideStoreParams",
         "optional": true
       }
@@ -28586,27 +28589,22 @@
     "isServerSideGroupOpenByDefault": {
       "description": "/** Allows groups to be open by default. */",
       "type": {
-        "arguments": {
-          "params": "IsServerSideGroupOpenByDefaultParams<TData>"
-        },
+        "arguments": { "params": "IsServerSideGroupOpenByDefaultParams" },
         "returnType": "boolean",
         "optional": true
       }
     },
     "isApplyServerSideTransaction": {
       "description": "/** Allows cancelling transactions. */",
-      "type": {
-        "returnType": "IsApplyServerSideTransaction<TData>",
-        "optional": true
-      }
+      "type": { "returnType": "IsApplyServerSideTransaction", "optional": true }
     },
     "isServerSideGroup": {
       "description": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
-      "type": { "returnType": "IsServerSideGroup<TData>", "optional": true }
+      "type": { "returnType": "IsServerSideGroup", "optional": true }
     },
     "getServerSideGroupKey": {
       "description": "/** SSRM Tree Data: Allows specifying group keys. */",
-      "type": { "returnType": "GetServerSideGroupKey<TData>", "optional": true }
+      "type": { "returnType": "GetServerSideGroupKey", "optional": true }
     },
     "getBusinessKeyForNode": {
       "description": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
