@@ -2,12 +2,9 @@
 title: "Customising Design with CSS"
 ---
 
-[[warning]]
-| TODO: This page covers broadly the right topics, but needs updating for CSS variables.
+You can customise the look and feel of the grid using CSS.
 
-This section describes how to customise the look and feel of the grid using CSS. If you want to style a particular column, particular header or cell, consider using [row styles](/row-styles), [cell styles](/cell-styles) or [custom renderers](/component-types/).
-
-[Provided Themes](/themes/) can be customised using theme parameters and CSS rules. This requires configuring your project to build Sass files and allows you to change elements of the look and feel like colours, padding, and borders.
+If you want to style a particular column, particular header or cell, consider using [row styles](/row-styles), [cell styles](/cell-styles) or [custom renderers](/component-types/).
 
 ## When to extend a provided theme
 
@@ -71,7 +68,6 @@ To customise a theme, include the theme mixin file and then call the mixin passi
     }
 }
 ```
-
 
 Note how this example includes the structural styles (`ag-gris.scss`) before the theme mixin. Doing this means that both structural and theme styles will be included in the compiled CSS file. Alternatively, you could leave out the first `@import` and then embed the structural stylesheet separately in your HTML page.
 

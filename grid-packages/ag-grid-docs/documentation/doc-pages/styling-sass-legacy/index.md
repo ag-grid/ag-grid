@@ -7,7 +7,7 @@ In v28, the [Sass Styling API](/styling-sass) was introduced as the preferred wa
 [[note]]
 | If you a) created an app on v27 or earlier, b) have not updated your import paths, and c) are using Sass to modify the provided themes; then you will be using the Legacy Sass API even if you upgraded your ag-Grid dependency to v28. You can recognise Legacy Sass API import paths because they will have `/dist/` or `/src/` in them, e.g. `@import "ag-grid-community/src/styles/ag-grid.scss"`.
 |
-| New apps that follow the setup instructions in the current documentation will use the new Sass Styling API, recognisable by its import paths in this form `@import "ag-grid-community/styles" as ag;`. For new apps, we recommend using the new API. If it is necessary to use the old API as a temporary measure then consult the [archived v27.x documentation site](https://ag-grid.com/archive/27.3.0/javascript-data-grid/) to find setup instructions for the legacy API.
+| New apps that follow the setup instructions in the current documentation will use the new Sass Styling API, recognisable by its import paths in this form `@import "ag-grid-community/styles" as ag;`. For new apps, we recommend using the new API.
 
 ## Loading the Legacy Sass API
 
