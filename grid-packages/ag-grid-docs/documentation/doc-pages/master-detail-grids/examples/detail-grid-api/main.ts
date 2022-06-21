@@ -28,7 +28,7 @@ const gridOptions: GridOptions<IAccount> = {
     getDetailRowData: (params) => {
       params.successCallback(params.data.callRecords)
     },
-  } as IDetailCellRendererParams,
+  } as IDetailCellRendererParams<IAccount, ICallRecord>,
   getRowId: (params: GetRowIdParams) => {
     // use 'account' as the row ID
     return params.data.account

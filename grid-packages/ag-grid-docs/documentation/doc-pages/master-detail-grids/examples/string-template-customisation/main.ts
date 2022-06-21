@@ -33,7 +33,7 @@ const gridOptions: GridOptions<IAccount> = {
       '  <div style="height: 10%; padding: 2px; font-weight: bold;">###### Call Details</div>' +
       '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
       '</div>',
-  } as IDetailCellRendererParams,
+  } as IDetailCellRendererParams<IAccount, ICallRecord>,
   onFirstDataRendered: onFirstDataRendered,
 }
 

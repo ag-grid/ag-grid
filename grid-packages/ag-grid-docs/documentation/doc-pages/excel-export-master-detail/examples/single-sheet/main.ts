@@ -49,7 +49,7 @@ var defaultExcelExportParams: ExcelExportParams = {
   columnWidth: 120,
 }
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IAccount> = {
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
     { field: 'name', cellRenderer: 'agGroupCellRenderer' },
@@ -77,7 +77,7 @@ const gridOptions: GridOptions = {
     getDetailRowData: (params) => {
       params.successCallback(params.data.callRecords)
     },
-  } as IDetailCellRendererParams,
+  } as IDetailCellRendererParams<IAccount, ICallRecord>,
   defaultCsvExportParams: defaultCsvExportParams,
   defaultExcelExportParams: defaultExcelExportParams,
   excelStyles: [
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
     .then(response => response.json())
-    .then(function (data) {
+    .then((data: IAccount[]) => {
       gridOptions.api!.setRowData(data)
     })
 })

@@ -32,7 +32,7 @@ const gridOptions: GridOptions = {
     getDetailRowData: (params) => {
       params.successCallback(params.data.callRecords)
     },
-  } as IDetailCellRendererParams,
+  } as IDetailCellRendererParams<IAccount, ICallRecord>,
   getRowHeight: (params: RowHeightParams) => {
     if (params.node && params.node.detail) {
       var offset = 80

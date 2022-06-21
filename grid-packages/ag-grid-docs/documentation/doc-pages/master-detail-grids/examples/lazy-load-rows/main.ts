@@ -31,7 +31,7 @@ const gridOptions: GridOptions<IAccount> = {
         params.successCallback(params.data.callRecords)
       }, 1000)
     },
-  } as IDetailCellRendererParams,
+  } as IDetailCellRendererParams<IAccount, ICallRecord>,
 }
 
 // setup the grid after the page has finished loading
