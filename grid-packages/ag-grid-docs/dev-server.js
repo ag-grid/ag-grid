@@ -106,6 +106,10 @@ function serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, char
         console.log(`Serving modules ${module.publishedName} from ./_dev/${module.publishedName} - available at /dev/${module.publishedName}`);
         app.use(`/dev/${module.publishedName}`, express.static(`./_dev/${module.publishedName}`));
     });
+
+    console.log(`Serving modules @ag-grid-community/styles from /_dev/@ag-grid-community/styles - available at /dev/@ag-grid-community/styles`);
+    app.use(`/dev/@ag-grid-community/styles`, express.static(`./_dev/@ag-grid-community/styles`));
+
 }
 
 function getTscPath() {
@@ -169,6 +173,13 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
                 rename: module.publishedName
             });
         });
+
+    lnk('../../community-modules/styles/', '_dev/@ag-grid-community', {
+        force: true,
+        type: linkType,
+        rename: 'styles'
+    });
+
 
     lnk('../../charts-packages/ag-charts-react/', '_dev/', {
         force: true,

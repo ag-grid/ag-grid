@@ -39,11 +39,11 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
         imports.push("import { HttpClient } from '@angular/common/http';");
     }
 
-    imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
+    imports.push("import '@ag-grid-community/styles/ag-grid.css';");
 
     // to account for the (rare) example that has more than one class...just default to balham if it does
     const theme = gridSettings.theme || 'ag-theme-alpine';
-    imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
+    imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
     let propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
