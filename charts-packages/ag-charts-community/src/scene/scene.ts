@@ -3,7 +3,7 @@ import { Node, RedrawType, RenderContext } from "./node";
 import { createId } from "../util/id";
 import { Group } from "./group";
 import { HdpiOffscreenCanvas } from "../canvas/hdpiOffscreenCanvas";
-import { WINDOW } from '../util/window';
+import { windowValue } from '../util/window';
 
 interface DebugOptions {
     stats: false | 'basic' | 'detailed';
@@ -45,14 +45,14 @@ export class Scene {
     ) {
         const {
             document = window.document,
-            mode = WINDOW?.agChartsSceneRenderModel || 'adv-composite',
+            mode = windowValue('agChartsSceneRenderModel') || 'adv-composite',
             width,
             height,
         } = opts;
 
         this.opts = { document, mode };
-        this.debug.stats = WINDOW?.agChartsSceneStats ?? false;
-        this.debug.dirtyTree = WINDOW?.agChartsSceneDirtyTree ?? false;
+        this.debug.stats = windowValue('agChartsSceneStats') ?? false;
+        this.debug.dirtyTree = windowValue('agChartsSceneDirtyTree') ?? false;
         this.canvas = new HdpiCanvas({ document, width, height });
         this.ctx = this.canvas.context;
     }
