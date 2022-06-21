@@ -171,6 +171,10 @@
     "description": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
+  "suppressRowGroupHidesColumns": {
+    "description": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
+    "type": { "returnType": "boolean" }
+  },
   "colResizeDefault": {
     "description": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
     "type": { "returnType": "string" }

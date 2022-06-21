@@ -187,10 +187,12 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
+        const hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns();
         const dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
+            defaultIconName: hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
                 const event: ColumnPanelItemDragStartEvent = {
@@ -204,6 +206,20 @@ export class ToolPanelColumnComp extends Component {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END
                 };
                 this.eventService.dispatchEvent(event);
+            },
+            onGridEnter: () => {
+                if (hideColumnOnExit) {
+                    // when dragged into the grid, mimic what happens when checkbox is enabled
+                    // this handles the behaviour for pivot which is different to just hiding a column.
+                    this.onChangeCommon(true);
+                }
+            },
+            onGridExit: () => {
+                if (hideColumnOnExit) {
+                    // when dragged outside of the grid, mimic what happens when checkbox is disabled
+                    // this handles the behaviour for pivot which is different to just hiding a column.
+                    this.onChangeCommon(false);
+                }
             }
         };
 
