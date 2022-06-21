@@ -645,9 +645,14 @@ export function getModuleRegistration({ gridSettings, enterprise, exampleName })
     return moduleRegistration;
 }
 
-export function handleRowGenericInterface(fileTxt: string): string {
-    // Until we support this cleanly.
-    fileTxt = fileTxt.replace(/<TData>/g, '').replace(/TData\[\]/g, 'any[]');
+export function handleRowGenericInterface(fileTxt: string, tData: string): string {
+    if (tData) {
+        fileTxt = fileTxt.replace(/<TData>/g, '').replace(/TData\[\]/g, 'any[]');
+        // Until we support this cleanly.
+        //fileTxt = fileTxt.replace(/<TData>/g, `<${tData}>`).replace(/TData\[\]/g, `${tData}[]`);
+    } else {
+        fileTxt = fileTxt.replace(/<TData>/g, '').replace(/TData\[\]/g, 'any[]');
+    }
     return fileTxt;
 }
 

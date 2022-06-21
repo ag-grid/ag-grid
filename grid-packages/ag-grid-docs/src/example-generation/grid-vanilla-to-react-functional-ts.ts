@@ -341,7 +341,7 @@ render(<GridExample></GridExample>, document.querySelector('#root'))
         }
 
         // Until we support this cleanly.
-        generatedOutput = handleRowGenericInterface(generatedOutput);
+        generatedOutput = handleRowGenericInterface(generatedOutput, tData);
 
         return generatedOutput;
     };
