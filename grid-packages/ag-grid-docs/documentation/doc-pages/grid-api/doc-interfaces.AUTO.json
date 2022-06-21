@@ -11433,6 +11433,26 @@
       "type": { "returnType": "PixelSize", "optional": true }
     }
   },
+  "AgChartLegendClickEvent": {
+    "itemId": {
+      "description": "/** Legend item id - based on series id. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "enabled": {
+      "description": "/** Whether the legend item is currently enabled or not. */",
+      "type": { "returnType": "boolean", "optional": false }
+    }
+  },
+  "AgChartLegendListeners": {
+    "legendItemClick": {
+      "description": "/** The listener to call when a legend item is clicked. */",
+      "type": {
+        "arguments": { "event": "AgChartLegendClickEvent" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
   "AgChartLegendOptions": {
     "enabled": {
       "description": "/** Whether or not to show the legend. */",
@@ -11449,6 +11469,10 @@
     "item": {
       "description": "/** Configuration for the legend items that consist of a marker and a label. */",
       "type": { "returnType": "AgChartLegendItemOptions", "optional": true }
+    },
+    "listeners": {
+      "description": "/** Optional callbacks for specific legend-related events. */",
+      "type": { "returnType": "AgChartLegendListeners", "optional": true }
     }
   },
   "AgChartTooltipOptions": {
