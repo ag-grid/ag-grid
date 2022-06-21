@@ -8,8 +8,8 @@ import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
 
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-alpine.css';
 
 const App = () => {
     const [columnDefs, setColumnDefs] = useState([

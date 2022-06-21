@@ -5,8 +5,8 @@ import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import '@ag-grid-community/styles/ag-grid.css';
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 import { getData } from "./data";
 
 import { ColDef, ICellRendererParams, ModuleRegistry, ValueParserParams } from '@ag-grid-community/core';

@@ -4,8 +4,8 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import '@ag-grid-community/styles/ag-grid.css';
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 
 import { ColDef, GetRowIdParams, GridReadyEvent, ICellRendererParams, IDatasource, ModuleRegistry, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid

@@ -7,8 +7,8 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import '@ag-grid-community/styles/ag-grid.css';
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 import { getData } from "./data";
 import { ColDef, FirstDataRenderedEvent, ICellRendererParams, IFiltersToolPanel, ISetFilter, ModuleRegistry } from '@ag-grid-community/core';
 

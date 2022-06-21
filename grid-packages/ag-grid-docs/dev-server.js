@@ -339,13 +339,6 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     const utilityFilename = 'documentation/src/components/example-runner/SystemJs.jsx';
     const utilFileContents = fs.readFileSync(utilityFilename, 'UTF-8');
 
-    const cssFiles = glob.sync(`../../community-modules/core/dist/styles/*.css`)
-        .filter(css => !css.includes(".min."))
-        .filter(css => !css.includes("Font"))
-        .filter(css => !css.includes("mixin"))
-        .filter(css => !css.includes("base-rename-legacy-vars"))
-        .map(css => css.replace('../../community-modules/core/dist/styles/', ''));
-
     let updatedUtilFileContents = updateBetweenStrings(utilFileContents,
         '            /* START OF GRID MODULES DEV - DO NOT DELETE */',
         '            /* END OF GRID MODULES DEV - DO NOT DELETE */',
