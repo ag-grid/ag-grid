@@ -32,16 +32,13 @@ export abstract class CartesianChartProxy extends ChartProxy {
         return AgChart.create({
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,
-        }) as CartesianChart;
+        });
     }
 
     protected updateChart(options: AgCartesianChartOptions): void {
         if (this.crossFiltering) {
             options.tooltip = { delay: 500 };
         }
-
-        console.log(options);
-
         AgChart.update(this.chart as CartesianChart, options);
     }
 

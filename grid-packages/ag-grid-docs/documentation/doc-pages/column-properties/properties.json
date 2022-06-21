@@ -118,6 +118,13 @@
             }
         },
         "headerComponentParams": {},
+        "wrapHeaderText": {},
+        "autoHeaderHeight": {
+            "more": {
+                "name": "Auto Header Height",
+                "url": "/column-headers/#auto-header-height"
+            }
+        },
         "menuTabs": {},
         "columnsMenuParams": {
             "more": {

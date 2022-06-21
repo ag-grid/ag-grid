@@ -323,6 +323,7 @@ export interface ExpandCollapseAllEvent extends AgGridEvent {
 export type ColumnEventType =
     "sizeColumnsToFit" |
     "autosizeColumns" |
+    "autosizeColumnHeaderHeight" |
     "alignedGridChanged" |
     "filterChanged" |
     "filterDestroyed" |

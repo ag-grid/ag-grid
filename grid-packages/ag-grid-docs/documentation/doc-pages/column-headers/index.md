@@ -120,6 +120,20 @@ As you can see in the example below, if you change any of the header heights, th
 
 <grid-example title='Dynamic Header Height' name='dynamic-height' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
+## Auto Header Height
+
+The column header row can have it's height set automatically based on the content of the header cells, this is most useful when used in conjunction with [Custom Header Components](/component-header/) or when using the `wrapHeaderText` column property.
+
+To enable this, set `autoHeaderHeight=true` on the column definition you want to adjust the header height for. If more than one column has this property enabled, then the header row will be sized to the maximum of these
+column's header cells so no content overflows.
+
+The example below demonstrates using the `autoHeaderHeight` property in conjunction with the `wrapHeaderText` property, so that long column names are fully displayed.
+
+- Note that the long column header names wrap onto another line
+- Try making a column smaller by dragging the resize handle on the column header, observe that the header will expand so the full header content is still visible.
+
+<grid-example title='Auto Header Height' name='auto-height' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
 ## Header Tooltips
 
 You can provide a tooltip to the header using `colDef.headerTooltip`.
