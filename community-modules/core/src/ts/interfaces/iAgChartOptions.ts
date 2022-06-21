@@ -317,6 +317,18 @@ export interface AgChartLegendItemOptions {
     paddingY?: PixelSize;
 }
 
+export interface AgChartLegendClickEvent {
+    /** Legend item id - based on series id. */
+    itemId: string;
+    /** Whether the legend item is currently enabled or not. */
+    enabled: boolean;
+}
+
+export interface AgChartLegendListeners {
+    /** The listener to call when a legend item is clicked. */
+    legendItemClick?: (event: AgChartLegendClickEvent) => void;
+}
+
 export interface AgChartLegendOptions {
     /** Whether or not to show the legend. */
     enabled?: boolean;
@@ -326,6 +338,8 @@ export interface AgChartLegendOptions {
     spacing?: PixelSize;
     /** Configuration for the legend items that consist of a marker and a label. */
     item?: AgChartLegendItemOptions;
+    /** Optional callbacks for specific legend-related events. */
+    listeners?: AgChartLegendListeners;
 }
 
 export interface AgChartTooltipOptions {

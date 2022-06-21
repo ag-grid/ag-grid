@@ -2,7 +2,7 @@ import { Scene } from "./scene";
 import { Matrix } from "./matrix";
 import { BBox } from "./bbox";
 import { createId } from "../util/id";
-import { WINDOW } from "../util/window";
+import { windowValue } from "../util/window";
 
 export enum PointerEvents {
     All,
@@ -43,7 +43,7 @@ export function SceneChangeDetection(opts?: {
 }) {
     const { redraw = RedrawType.TRIVIAL, type = 'normal', changeCb, convertor } = opts || {};
     
-    const debug = WINDOW?.agChartsSceneChangeDetectionDebug != null;
+    const debug = windowValue('agChartsSceneChangeDetectionDebug') != null;
 
     return function (target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)

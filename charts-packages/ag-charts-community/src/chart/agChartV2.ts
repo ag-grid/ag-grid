@@ -43,7 +43,7 @@ import { Axis } from '../axis';
 import { GroupedCategoryChart } from './groupedCategoryChart';
 import { prepareOptions, isAgCartesianChartOptions, isAgHierarchyChartOptions, isAgPolarChartOptions, optionsType } from './mapping/prepare';
 import { SeriesOptionsTypes } from './mapping/defaults';
-import { WINDOW } from '../util/window';
+import { windowValue } from '../util/window';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
 
@@ -117,7 +117,7 @@ export abstract class AgChart {
 }
 
 export abstract class AgChartV2 {
-    static DEBUG = WINDOW?.agChartsDebug ?? false;
+    static DEBUG = windowValue('agChartsDebug') ?? false;
     
     static create<T extends ChartType>(userOptions: ChartOptionType<T>): T {
         debug('user options', userOptions);
@@ -218,6 +218,9 @@ function applyChartOptions<
     }
     if (options.listeners) {
         registerListeners(chart, options.listeners);
+    }
+    if (options.legend?.listeners) {
+        Object.assign(chart.legend.listeners, options.legend.listeners);
     }
 
     chart.options = jsonMerge(chart.options || {}, options);
