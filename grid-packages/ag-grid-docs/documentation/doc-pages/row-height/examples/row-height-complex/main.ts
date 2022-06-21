@@ -1,6 +1,6 @@
 import { Grid, GridOptions } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions<IOlympicData> = {
+const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'latinText', width: 350, wrapText: true },
     { field: 'athlete' },

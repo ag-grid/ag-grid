@@ -45,12 +45,12 @@ function onBtForEachLeafNode() {
   gridOptions.api!.forEachLeafNode(printNode)
 }
 
-const printNode = (node: RowNode, index?: number) => {
+const printNode = (node: RowNode<IOlympicData>, index?: number) => {
   if (node.group) {
     console.log(index + ' -> group: ' + node.key)
   } else {
     console.log(
-      index + ' -> data: ' + node.data.country + ', ' + node.data.athlete
+      index + ' -> data: ' + node.data!.country + ', ' + node.data!.athlete
     )
   }
 }

@@ -1,10 +1,10 @@
 import { CellEditingStartedEvent, CellEditingStoppedEvent, Grid, GridOptions, ICellEditorParams, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core';
-import { getData } from "./data";
+import { getData, IRow } from "./data";
 import { MoodEditor } from './moodEditor_typescript';
 import { NumericCellEditor } from './numericCellEditor_typescript';
 
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IRow> = {
   columnDefs: [
     { field: 'type' },
     {
@@ -40,7 +40,7 @@ function onCellEditingStopped(event: CellEditingStoppedEvent) {
   console.log('cellEditingStopped')
 }
 
-function cellEditorSelector(params: ICellEditorParams) {
+function cellEditorSelector(params: ICellEditorParams<IRow>) {
   if (params.data.type === 'age') {
     return {
       component: NumericCellEditor,

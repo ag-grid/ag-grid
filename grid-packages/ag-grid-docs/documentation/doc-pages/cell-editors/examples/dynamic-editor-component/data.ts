@@ -1,4 +1,9 @@
-export function getData(): any[] {
+export interface IRow {
+    value: string | number;
+    type: 'age' | 'gender' | 'mood';
+}
+
+export function getData(): IRow[] {
     return [
         { value: 14, type: 'age' },
         { value: 'Female', type: 'gender' },

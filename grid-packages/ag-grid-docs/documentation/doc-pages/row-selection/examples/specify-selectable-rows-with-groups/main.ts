@@ -30,7 +30,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   groupSelectsFiltered: true,
   suppressRowClickSelection: true,
   groupDefaultExpanded: -1,
-  isRowSelectable: (node: RowNode) => {
+  isRowSelectable: (node: RowNode<IOlympicData>) => {
     return node.data
       ? node.data.year === 2008 || node.data.year === 2004
       : false

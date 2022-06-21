@@ -1,6 +1,6 @@
 import { Grid, GridOptions, RowHeightParams } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions<IOlympicData> = {
+const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'rowHeight' },
     { field: 'athlete' },

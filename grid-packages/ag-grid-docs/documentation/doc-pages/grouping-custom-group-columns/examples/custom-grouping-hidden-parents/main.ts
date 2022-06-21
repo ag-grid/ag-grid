@@ -10,7 +10,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     {
       headerName: 'Year',
-      valueGetter: (params: ValueGetterParams) => {
+      valueGetter: (params: ValueGetterParams<IOlympicData>) => {
         if (params.data) {
           return params.data.year
         }

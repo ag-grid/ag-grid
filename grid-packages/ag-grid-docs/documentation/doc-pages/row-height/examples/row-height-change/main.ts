@@ -6,7 +6,7 @@ var swimmingHeight: number;
 var groupHeight: number;
 var russiaHeight: number;
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true },
     { field: 'athlete' },
@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
   getRowHeight: getRowHeight,
 }
 
-function getRowHeight(params: RowHeightParams): number | undefined | null {
+function getRowHeight(params: RowHeightParams<IOlympicData>): number | undefined | null {
   if (params.node.group && groupHeight != null) {
     return groupHeight
   } else if (

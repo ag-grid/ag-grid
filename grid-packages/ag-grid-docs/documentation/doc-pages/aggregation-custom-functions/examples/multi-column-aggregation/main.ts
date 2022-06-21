@@ -53,10 +53,10 @@ function numberFormatter(params: ValueFormatterParams): string {
   return '' + Math.round(params.value * 100) / 100
 }
 
-function ratioValueGetter(params: ValueGetterParams) {
+function ratioValueGetter(params: ValueGetterParams<IOlympicData>) {
   if (!(params.node && params.node.group)) {
     // no need to handle group levels - calculated in the 'ratioAggFunc'
-    return createValueObject(params.data.gold, params.data.silver)
+    return createValueObject(params.data!.gold, params.data!.silver)
   }
 }
 

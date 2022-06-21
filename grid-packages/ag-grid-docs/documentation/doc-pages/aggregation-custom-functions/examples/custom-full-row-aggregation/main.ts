@@ -27,7 +27,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   getGroupRowAgg: getGroupRowAgg,
 }
 
-function getGroupRowAgg(params: GetGroupRowAggParams) {
+function getGroupRowAgg(params: GetGroupRowAggParams<IOlympicData>) {
   const result = {
     gold: 0,
     silver: 0,
