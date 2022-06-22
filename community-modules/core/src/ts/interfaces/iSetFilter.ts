@@ -58,21 +58,21 @@ export interface ISetFilter extends IProvidedFilter {
     getModelFromUi(): SetFilterModel | null;
 }
 
-export interface SetFilterValuesFuncParams {
+export interface SetFilterValuesFuncParams<TData = any> {
     /** The function to call with the values to load into the filter once they are ready. */
     success: (values: string[]) => void;
     /** The column definition from which the set filter is invoked. */
-    colDef: ColDef;
+    colDef: ColDef<TData>;
     /** Column from which the set filter is invoked. */
     column: Column;
     columnApi: ColumnApi;
-    api: GridApi;
+    api: GridApi<TData>;
     /** The context as provided on `gridOptions.context` */
     context: any;
 }
 
-export type SetFilterValuesFunc = (params: SetFilterValuesFuncParams) => void;
-export type SetFilterValues = SetFilterValuesFunc | any[];
+export type SetFilterValuesFunc<TData = any> = (params: SetFilterValuesFuncParams<TData>) => void;
+export type SetFilterValues<TData = any> = SetFilterValuesFunc<TData> | any[];
 
 export interface ISetFilterParams extends IProvidedFilterParams {
     /**

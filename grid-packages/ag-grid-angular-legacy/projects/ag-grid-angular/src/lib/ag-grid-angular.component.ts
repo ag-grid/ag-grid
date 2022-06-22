@@ -182,7 +182,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     private _fullyReady: AgPromise<boolean> = AgPromise.resolve(true);
 
     // making these public, so they are accessible to people using the ng2 component references
-    public api: GridApi;
+    public api: GridApi<TData>;
     public columnApi: ColumnApi;
 
     @ContentChildren(AgGridColumn) public columns: QueryList<AgGridColumn>;

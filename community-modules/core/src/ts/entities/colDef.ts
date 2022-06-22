@@ -84,7 +84,7 @@ export interface IAggFuncParams<TData = any> extends AgGridCommon<TData> {
     /** Column the aggregation function is working on */
     column: Column;
     /** ColDef of the aggregation column */
-    colDef: ColDef;
+    colDef: ColDef<TData>;
     /** The parent RowNode, where the aggregation result will be shown */
     rowNode: RowNode<TData>;
     /** data (if any) of the parent RowNode */
@@ -464,7 +464,7 @@ export interface ColumnFunctionCallbackParams<TData = any> extends AgGridCommon<
     /** Column for this callback */
     column: Column;
     /** ColDef provided for this column */
-    colDef: ColDef;
+    colDef: ColDef<TData>;
 }
 
 export interface CheckboxSelectionCallbackParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
@@ -500,7 +500,7 @@ export interface SuppressNavigableCallback<TData = any> {
 }
 export interface HeaderCheckboxSelectionCallbackParams<TData = any> extends AgGridCommon<TData> {
     column: Column;
-    colDef: ColDef;
+    colDef: ColDef<TData>;
 }
 export interface HeaderCheckboxSelectionCallback {
     (params: HeaderCheckboxSelectionCallbackParams): boolean;
@@ -530,7 +530,7 @@ export interface GetQuickFilterTextParams<TData = any> extends AgGridCommon<TDat
     /** Column for this callback */
     column: Column;
     /** ColDef provided for this column */
-    colDef: ColDef;
+    colDef: ColDef<TData>;
 }
 
 export interface ColumnsMenuParams {
@@ -555,7 +555,7 @@ export interface BaseColDefParams<TData = any> extends AgGridCommon<TData> {
     /** Column for this callback */
     column: Column;
     /** ColDef provided for this column */
-    colDef: ColDef;
+    colDef: ColDef<TData>;
 }
 
 export interface BaseColDefOptionalDataParams<TData = any> extends AgGridCommon<TData> {
@@ -566,7 +566,7 @@ export interface BaseColDefOptionalDataParams<TData = any> extends AgGridCommon<
     /** Column for this callback */
     column: Column;
     /** ColDef provided for this column */
-    colDef: ColDef;
+    colDef: ColDef<TData>;
 }
 
 export interface ValueGetterParams<TData = any> extends BaseColDefOptionalDataParams<TData> {
@@ -647,7 +647,7 @@ export interface SuppressHeaderKeyboardEventParams<TData = any> extends AgGridCo
 
 export interface CellClassParams<TData = any> extends RowClassParams<TData> {
     /** The colDef associated with the column for this cell */
-    colDef: ColDef;
+    colDef: ColDef<TData>;
     /** The value to be rendered */
     value: any;
 }

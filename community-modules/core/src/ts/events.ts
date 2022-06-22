@@ -427,7 +427,7 @@ export interface FullWidthCellKeyPressEvent<TData = any> extends RowEvent<TData>
 /**------------*/
 export interface CellEvent<TData = any> extends RowEvent<TData> {
     column: Column;
-    colDef: ColDef;
+    colDef: ColDef<TData>;
     /** The value for the cell */
     value: any;
 }
