@@ -69,7 +69,7 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
         }
 
         const availableRange = Math.abs(max - min);
-        const optimalTickInteralPx = this.calculateTickInternalEstimate();
+        const optimalTickInteralPx = this.calculateTickIntervalEstimate();
 
         // Approximate number of pixels to allocate for each tick.
         const optimalRangePx = 600;
@@ -79,11 +79,11 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
         this._calculatedTickCount = Math.max(2, Math.floor(availableRange / tickInterval));
     }
 
-    protected calculateTickInternalEstimate() {
+    protected calculateTickIntervalEstimate() {
         const { domain, label: { fontSize }, direction } = this;
 
         const padding = fontSize * 1.5;
-        if (direction === 'y') {
+        if (direction === ChartAxisDirection.Y) {
             return fontSize * 2 + padding;
         }
 
