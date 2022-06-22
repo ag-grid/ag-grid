@@ -52,7 +52,7 @@ var versionCounter = 1
 function refreshCache(route?: string[]) {
   versionCounter++
   var purge = (document.querySelector('#purge') as HTMLInputElement).checked === true
-  gridOptions.api!.refreshServerSideStore({ route: route, purge: purge })
+  gridOptions.api!.refreshServerSide({ route: route, purge: purge })
 }
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
