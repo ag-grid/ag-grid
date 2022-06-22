@@ -89,7 +89,7 @@ export class RowNode<TData = any> implements IEventEmitter {
     public data: TData | undefined;
 
     /** The parent node to this node, or empty if top level */
-    public parent: RowNode | null;
+    public parent: RowNode<TData> | null;
 
     /** How many levels this node is from the top when grouping. */
     public level: number;
@@ -167,19 +167,19 @@ export class RowNode<TData = any> implements IEventEmitter {
     public failedLoad: boolean;
 
     /** All lowest level nodes beneath this node, no groups. */
-    public allLeafChildren: RowNode[];
+    public allLeafChildren: RowNode<TData>[];
 
     /** Children of this group. If multi levels of grouping, shows only immediate children. */
-    public childrenAfterGroup: RowNode[] | null;
+    public childrenAfterGroup: RowNode<TData>[] | null;
 
     /** Filtered children of this group. */
-    public childrenAfterFilter: RowNode[] | null;
+    public childrenAfterFilter: RowNode<TData>[] | null;
 
     /** Aggregated and re-filtered children of this group. */
-    public childrenAfterAggFilter: RowNode[] | null;
+    public childrenAfterAggFilter: RowNode<TData>[] | null;
 
     /** Sorted children of this group. */
-    public childrenAfterSort: RowNode[] | null;
+    public childrenAfterSort: RowNode<TData>[] | null;
 
     /** Number of children and grand children. */
     public allChildrenCount: number | null;
@@ -815,7 +815,7 @@ export class RowNode<TData = any> implements IEventEmitter {
     }
 
     /** Perform a depth-first search of this node and its children. */
-    public depthFirstSearch(callback: (rowNode: RowNode) => void): void {
+    public depthFirstSearch(callback: (rowNode: RowNode<TData>) => void): void {
         if (this.childrenAfterGroup) {
             this.childrenAfterGroup.forEach(child => child.depthFirstSearch(callback));
         }

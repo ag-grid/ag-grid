@@ -13,7 +13,7 @@ import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 export { Events } from './eventKeys';
 
-export interface ModelUpdatedEvent extends AgGridEvent {
+export interface ModelUpdatedEvent<TData = any> extends AgGridEvent<TData> {
     /** If true, the grid will try and animate the rows to the new positions */
     animate: boolean | undefined;
     /** If true, the grid has new data loaded, eg user called setRowData(), otherwise
@@ -27,7 +27,7 @@ export interface ModelUpdatedEvent extends AgGridEvent {
     newPage: boolean;
 }
 
-export interface PaginationChangedEvent extends AgGridEvent {
+export interface PaginationChangedEvent<TData = any> extends AgGridEvent<TData> {
     /** True if rows were animated to new position */
     animate?: boolean;
     /** True if rows were kept (otherwise complete redraw) */
@@ -43,38 +43,38 @@ export interface AgEvent {
     type: string;
 }
 
-export interface AgGridEvent extends AgEvent {
-    api: GridApi;
+export interface AgGridEvent<TData> extends AgEvent {
+    api: GridApi<TData>;
     columnApi: ColumnApi;
 }
 
-export interface ToolPanelVisibleChangedEvent extends AgGridEvent {
+export interface ToolPanelVisibleChangedEvent<TData = any> extends AgGridEvent<TData> {
     source: string | undefined;
 }
 
-export interface ColumnPivotModeChangedEvent extends AgGridEvent { }
+export interface ColumnPivotModeChangedEvent<TData = any> extends AgGridEvent<TData> { }
 
-export interface VirtualColumnsChangedEvent extends AgGridEvent { }
+export interface VirtualColumnsChangedEvent<TData = any> extends AgGridEvent<TData> { }
 
-export interface ColumnEverythingChangedEvent extends AgGridEvent {
+export interface ColumnEverythingChangedEvent<TData = any> extends AgGridEvent<TData> {
     source: string;
 }
 
-export interface NewColumnsLoadedEvent extends AgGridEvent { }
+export interface NewColumnsLoadedEvent<TData = any> extends AgGridEvent<TData> { }
 
-export interface GridColumnsChangedEvent extends AgGridEvent { }
+export interface GridColumnsChangedEvent<TData = any> extends AgGridEvent<TData> { }
 
-export interface DisplayedColumnsChangedEvent extends AgGridEvent { }
+export interface DisplayedColumnsChangedEvent<TData = any> extends AgGridEvent<TData> { }
 
-export interface RowDataChangedEvent extends AgGridEvent { }
+export interface RowDataChangedEvent<TData = any> extends AgGridEvent<TData> { }
 
-export interface RowDataUpdatedEvent extends AgGridEvent { }
+export interface RowDataUpdatedEvent<TData = any> extends AgGridEvent<TData> { }
 
-export interface PinnedRowDataChangedEvent extends AgGridEvent { }
+export interface PinnedRowDataChangedEvent<TData = any> extends AgGridEvent<TData> { }
 
-export interface SelectionChangedEvent extends AgGridEvent { }
+export interface SelectionChangedEvent<TData = any> extends AgGridEvent<TData> { }
 
-export interface FilterChangedEvent extends AgGridEvent {
+export interface FilterChangedEvent<TData = any> extends AgGridEvent<TData> {
     /** True if the filter was changed as a result of data changing */
     afterDataChange?: boolean;
     /** True if filter was changed via floating filter */
@@ -90,12 +90,12 @@ export interface FilterChangedEvent extends AgGridEvent {
     columns: Column[];
 }
 
-export interface FilterModifiedEvent extends AgGridEvent {
+export interface FilterModifiedEvent<TData = any> extends AgGridEvent<TData> {
     filterInstance: IFilterComp;
     column: Column;
 }
 
-export interface FilterOpenedEvent extends AgGridEvent {
+export interface FilterOpenedEvent<TData = any> extends AgGridEvent<TData> {
     /** Column / OriginalColumnGroup that contains the filter */
     column: Column | ProvidedColumnGroup;
     /** Source of the open request */
@@ -104,22 +104,22 @@ export interface FilterOpenedEvent extends AgGridEvent {
     eGui: HTMLElement;
 }
 
-export interface SortChangedEvent extends AgGridEvent {
+export interface SortChangedEvent<TData = any> extends AgGridEvent<TData> {
     /** Source of the sort change. */
     source: string;
 }
 
-export interface GridReadyEvent extends AgGridEvent { }
+export interface GridReadyEvent<TData = any> extends AgGridEvent<TData> { }
 
-export interface DisplayedColumnsWidthChangedEvent extends AgGridEvent { } // not documented
-export interface ColumnHoverChangedEvent extends AgGridEvent { } // not documented
-export interface BodyHeightChangedEvent extends AgGridEvent { } // not documented
+export interface DisplayedColumnsWidthChangedEvent<TData = any> extends AgGridEvent<TData> { } // not documented
+export interface ColumnHoverChangedEvent<TData = any> extends AgGridEvent<TData> { } // not documented
+export interface BodyHeightChangedEvent<TData = any> extends AgGridEvent<TData> { } // not documented
 
 // this event is 'odd one out' as it should have properties for all the properties
 // in gridOptions that can be bound by the framework. for example, the gridOptions
 // has 'rowData', so this property should have 'rowData' also, so that when the row
 // data changes via the framework bound property, this event has that attribute set.
-export interface ComponentStateChangedEvent extends AgGridEvent { }
+export interface ComponentStateChangedEvent<TData = any> extends AgGridEvent<TData> { }
 
 export interface ColumnPanelItemDragStartEvent extends AgEvent {
     column: Column | ProvidedColumnGroup;
@@ -127,7 +127,7 @@ export interface ColumnPanelItemDragStartEvent extends AgEvent {
 
 export interface ColumnPanelItemDragEndEvent extends AgEvent { }
 
-export interface DragEvent extends AgGridEvent {
+export interface DragEvent<TData = any> extends AgGridEvent<TData> {
     /** One of {'cell','row','headerCell','toolPanel'} */
     type: string;
     /** The DOM element that started the event. */
@@ -148,14 +148,14 @@ export interface CheckboxChangedEvent extends AgEvent {
     previousValue: boolean | undefined;
 }
 
-export interface GridSizeChangedEvent extends AgGridEvent {
+export interface GridSizeChangedEvent<TData = any> extends AgGridEvent<TData> {
     /** The grid's DIV's clientWidth */
     clientWidth: number;
     /** The grid's DIV's clientHeight */
     clientHeight: number;
 }
 
-export interface RowDragEvent<TData = any> extends AgGridEvent {
+export interface RowDragEvent<TData = any> extends AgGridEvent<TData> {
     /** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */
     type: string;
     /** The row node getting dragged. Also the node that started the drag when multi-row dragging. */
@@ -186,37 +186,37 @@ export interface RowDragMoveEvent<TData = any> extends RowDragEvent<TData> { }
 
 export interface RowDragLeaveEvent<TData = any> extends RowDragEvent<TData> { }
 
-export interface PasteStartEvent extends AgGridEvent {
+export interface PasteStartEvent<TData = any> extends AgGridEvent<TData> {
     source: string;
 }
 
-export interface PasteEndEvent extends AgGridEvent {
+export interface PasteEndEvent<TData = any> extends AgGridEvent<TData> {
     source: string;
 }
 
-export interface FillStartEvent extends AgGridEvent {
+export interface FillStartEvent<TData = any> extends AgGridEvent<TData> {
 }
 
-export interface FillEndEvent extends AgGridEvent {
+export interface FillEndEvent<TData = any> extends AgGridEvent<TData> {
     initialRange: CellRange;
     finalRange: CellRange;
 }
 
-export interface ViewportChangedEvent extends AgGridEvent {
+export interface ViewportChangedEvent<TData = any> extends AgGridEvent<TData> {
     /** Index of the first rendered row */
     firstRow: number;
     /** Index of the last rendered row */
     lastRow: number;
 }
 
-export interface FirstDataRenderedEvent extends AgGridEvent {
+export interface FirstDataRenderedEvent<TData = any> extends AgGridEvent<TData> {
     /** Index of the first rendered row */
     firstRow: number;
     /** Index of the last rendered row */
     lastRow: number;
 }
 
-export interface RangeSelectionChangedEvent extends AgGridEvent {
+export interface RangeSelectionChangedEvent<TData = any> extends AgGridEvent<TData> {
     id?: string;
     /** True for the first change event, otherwise false */
     started: boolean;
@@ -224,14 +224,14 @@ export interface RangeSelectionChangedEvent extends AgGridEvent {
     finished: boolean;
 }
 
-export interface ChartCreated extends AgGridEvent {
+export interface ChartCreated<TData = any> extends AgGridEvent<TData> {
     /** Will always be `chartCreated`. */
     type: string;
     /** Id of the created chart. This can later be used to reference the chart via api methods. */
     chartId: string;
 }
 
-export interface ChartRangeSelectionChanged extends AgGridEvent {
+export interface ChartRangeSelectionChanged<TData = any> extends AgGridEvent<TData> {
     /** Will always be `chartRangeSelectionChanged`. */
     type: string;
     /** Id of the effected chart. */
@@ -242,7 +242,7 @@ export interface ChartRangeSelectionChanged extends AgGridEvent {
     cellRange: CellRangeParams;
 }
 
-export interface ChartOptionsChanged extends AgGridEvent {
+export interface ChartOptionsChanged<TData = any> extends AgGridEvent<TData> {
     /** Will always be `chartOptionsChanged`. */
     type: string;
     /** Id of the effected chart. */
@@ -255,24 +255,24 @@ export interface ChartOptionsChanged extends AgGridEvent {
     chartOptions: AgChartThemeOverrides;
 }
 
-export interface ChartDestroyed extends AgGridEvent {
+export interface ChartDestroyed<TData = any> extends AgGridEvent<TData> {
     /** Will always be `chartDestroyed`. */
     type: string;
     /** Id of the effected chart. */
     chartId: string;
 }
 
-export interface ColumnGroupOpenedEvent extends AgGridEvent {
+export interface ColumnGroupOpenedEvent<TData = any> extends AgGridEvent<TData> {
     columnGroup: ProvidedColumnGroup;
 }
 
-export interface ItemsAddedEvent<TData = any> extends AgGridEvent {
+export interface ItemsAddedEvent<TData = any> extends AgGridEvent<TData> {
     items: RowNode<TData>[];
 }
 
 export type ScrollDirection = 'horizontal' | 'vertical';
 
-export interface BodyScrollEvent extends AgGridEvent {
+export interface BodyScrollEvent<TData = any> extends AgGridEvent<TData> {
     direction: ScrollDirection;
     left: number;
     top: number;
@@ -281,16 +281,16 @@ export interface BodyScrollEvent extends AgGridEvent {
 export interface BodyScrollEndEvent extends BodyScrollEvent { }
 
 // not documented
-export interface FlashCellsEvent extends AgGridEvent {
+export interface FlashCellsEvent<TData = any> extends AgGridEvent<TData> {
     cells: any;
 }
 
-export interface PaginationPixelOffsetChangedEvent extends AgGridEvent {
+export interface PaginationPixelOffsetChangedEvent<TData = any> extends AgGridEvent<TData> {
 }
 
 // this does not extent CellEvent as the focus service doesn't keep a reference to
 // the rowNode.
-export interface CellFocusedEvent extends AgGridEvent {
+export interface CellFocusedEvent<TData = any> extends AgGridEvent<TData> {
     /** Row index of the focused cell */
     rowIndex: number | null;
     /** Column of the focused cell */
@@ -312,7 +312,7 @@ export interface FullWidthRowFocusedEvent extends CellFocusedEvent {
     fromBelow: boolean;
 }
 
-export interface ExpandCollapseAllEvent extends AgGridEvent {
+export interface ExpandCollapseAllEvent<TData = any> extends AgGridEvent<TData> {
     source: string;
 }
 
@@ -343,7 +343,7 @@ export type ColumnEventType =
     "flex" |
     "pivotChart";
 
-export interface ColumnEvent extends AgGridEvent {
+export interface ColumnEvent<TData = any> extends AgGridEvent<TData> {
     /** The impacted column, only set if action was on one column */
     column: Column | null;
     /** List of all impacted columns */
@@ -384,7 +384,7 @@ export interface ColumnPinnedEvent extends ColumnEvent {
 
 /** ROW EVENTS */
 /**------------*/
-export interface RowEvent<TData = any> extends AgGridEvent {
+export interface RowEvent<TData = any> extends AgGridEvent<TData> {
     node: RowNode<TData>;
     /** The user provided data for the row. Data is `undefined` for row groups. */
     data: TData | undefined;
@@ -470,7 +470,7 @@ export interface CellEditRequestEvent<TData = any> extends CellEvent<TData> {
     source: string | undefined;
 }
 
-export interface AsyncTransactionsFlushed<TData = any> extends AgGridEvent {
+export interface AsyncTransactionsFlushed<TData = any> extends AgGridEvent<TData> {
     /**
      * Array of result objects. for SSRM it's always list of `ServerSideTransactionResult`.
      * For Client-Side Row Model it's a list of `RowNodeTransaction`.
@@ -480,7 +480,7 @@ export interface AsyncTransactionsFlushed<TData = any> extends AgGridEvent {
 
 // not documented, was put in for CS - more thought needed of how server side grouping / pivoting
 // is done and how these should be used before we fully document and share with the world.
-export interface ColumnRequestEvent extends AgGridEvent {
+export interface ColumnRequestEvent<TData = any> extends AgGridEvent<TData> {
     columns: Column[];
 }
 
@@ -494,7 +494,7 @@ export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
     aggFunc: any;
 }
 
-export interface ScrollVisibilityChangedEvent extends AgGridEvent { } // not documented
+export interface ScrollVisibilityChangedEvent<TData = any> extends AgGridEvent<TData> { } // not documented
 
 export interface StoreUpdatedEvent extends AgEvent { } // not documented
 

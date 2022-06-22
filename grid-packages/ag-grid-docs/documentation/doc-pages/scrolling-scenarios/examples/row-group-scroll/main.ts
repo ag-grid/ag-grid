@@ -24,7 +24,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
 }
 
-function onRowGroupOpened(event: RowGroupOpenedEvent) {
+function onRowGroupOpened(event: RowGroupOpenedEvent<IOlympicData>) {
   var rowNodeIndex = event.node.rowIndex!
   // factor in child nodes so we can scroll to correct position
   var childCount = event.node.childrenAfterSort

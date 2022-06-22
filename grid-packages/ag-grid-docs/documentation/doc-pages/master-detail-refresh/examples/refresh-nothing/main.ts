@@ -73,7 +73,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
     const data = allRowData[0]
 
-    const newCallRecords: any[] = []
+    const newCallRecords: ICallRecord[] = []
     data.callRecords.forEach(function (record: any, index: number) {
       newCallRecords.push({
         name: record.name,
