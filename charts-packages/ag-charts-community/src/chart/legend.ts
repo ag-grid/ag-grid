@@ -45,7 +45,7 @@ interface LegendLabelFormatterParams {
 }
 
 export class LegendLabel {
-    characterLimit = undefined;
+    maxLength = undefined;
     color = 'black';
     fontStyle?: FontStyle = undefined;
     fontWeight?: FontWeight = undefined;
@@ -219,7 +219,7 @@ export class Legend {
                 shape: markerShape
             },
             label: {
-                characterLimit = Infinity,
+                maxLength = Infinity,
                 fontStyle,
                 fontWeight,
                 fontSize,
@@ -261,8 +261,8 @@ export class Legend {
             const textChars = text.split('');
             let addEllipsis = false;
 
-            if (text.length > characterLimit) {
-                text = `${text.substring(0, characterLimit - ellipsis.length)}`;
+            if (text.length > maxLength) {
+                text = `${text.substring(0, maxLength)}`;
                 addEllipsis = true;
             }
 
