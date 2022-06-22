@@ -1918,8 +1918,8 @@ export class GridApi {
     /** @deprecated */
     public purgeServerSideCache(route: string[] = []): void {
         if (this.serverSideRowModel) {
-            console.warn(`AG Grid: since v25.0, api.purgeServerSideCache is deprecated. Please use api.refreshServerSideStore({purge: true}) instead.`);
-            this.refreshServerSideStore({
+            console.warn(`AG Grid: since v25.0, api.purgeServerSideCache is deprecated. Please use api.refreshServerSide({purge: true}) instead.`);
+            this.refreshServerSide({
                 route: route,
                 purge: true
             });
@@ -1935,7 +1935,7 @@ export class GridApi {
      */
     public refreshServerSide(params?: RefreshServerSideParams): void {
         if (!this.serverSideRowModel) {
-            console.warn(`AG Grid: api.refreshServerSideStore is only available when rowModelType='serverSide'.`);
+            console.warn(`AG Grid: api.refreshServerSide is only available when rowModelType='serverSide'.`);
         }
         this.serverSideRowModel.refreshStore(params);
     }
