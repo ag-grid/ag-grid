@@ -204,9 +204,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             this.updateRowIndexesAndBounds();
         }
 
-        // this event: 1) clears selection 2) updates filters 3) shows/hides 'no rows' overlay
+        // this event shows/hides 'no rows' overlay
         const rowDataChangedEvent: RowDataChangedEvent = {
-            type: Events.EVENT_ROW_DATA_CHANGED,
+            type: Events.EVENT_ROW_DATA_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi
         };

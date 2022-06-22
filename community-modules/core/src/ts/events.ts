@@ -66,6 +66,7 @@ export interface GridColumnsChangedEvent extends AgGridEvent { }
 
 export interface DisplayedColumnsChangedEvent extends AgGridEvent { }
 
+/** @deprecated use RowDataUpdatedEvent instead */
 export interface RowDataChangedEvent extends AgGridEvent { }
 
 export interface RowDataUpdatedEvent extends AgGridEvent { }

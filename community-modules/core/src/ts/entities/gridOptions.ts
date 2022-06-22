@@ -1083,9 +1083,9 @@ export interface GridOptions {
     onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent): void;
 
     // *** Row Model: Client Side *** //
-    /** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */
+    /** @deprecated No longer fired, use onRowDataUpdated instead */
     onRowDataChanged?(event: RowDataChangedEvent): void;
-    /** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */
+    /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */
     onRowDataUpdated?(event: RowDataUpdatedEvent): void;
     /** Async transactions have been applied. Contains a list of all transaction results. */
     onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed): void;
