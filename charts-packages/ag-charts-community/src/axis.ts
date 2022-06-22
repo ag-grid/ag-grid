@@ -513,7 +513,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         this.fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
 
         // Update properties that affect the size of the axis labels and measure the labels
-        const labelBboxes: Map<number, BBox> = new Map();
+        const labelBboxes: Map<number, BBox | null> = new Map();
         let labelCount = 0;
 
         let halfFirstLabelLength = false;
@@ -531,9 +531,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 node.visible = node.parent!.visible;
                 if (node.visible !== true) { return; }
 
-                labelBboxes.set(index, node.computeBBox());
+                const userHidden = node.text === '' || node.text == undefined;
+                labelBboxes.set(index, userHidden ? null : node.computeBBox());
 
-                if (node.text === '' || node.text == undefined) { return; }
+                if (userHidden) { return; }
                 labelCount++;
 
                 if (index === 0 && (node.translationY === scale.range[0])) {
@@ -547,12 +548,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const step = availableRange / labelCount;
 
-        const calculateLabelsLength = (bboxes: Map<number, BBox>, useWidth: boolean) => {
+        const calculateLabelsLength = (bboxes: Map<number, BBox | null>, useWidth: boolean) => {
             let totalLength = 0;
             let rotate = false;
             const lastIdx = bboxes.size - 1;
             const padding = 12;
             for (let [i, bbox] of bboxes.entries()) {
+                if (bbox == null) { continue; }
+
                 const divideBy = (i === 0 && halfFirstLabelLength) || (i === lastIdx && halfLastLabelLength) ? 2 : 1;
                 const length = useWidth ? bbox.width / divideBy : bbox.height / divideBy;
                 const lengthWithPadding = length <= 0 ? 0 : length + padding;
