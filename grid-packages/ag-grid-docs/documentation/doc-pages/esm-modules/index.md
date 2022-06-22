@@ -15,8 +15,8 @@ If however you want to use ES Modules directly in the browser then you can do so
 <!doctype html>
 <html>
 <head>
-    <link rel="stylesheet" href="./node_modules/@ag-grid-community/core/dist/styles/ag-grid.css">
-    <link rel="stylesheet" href="./node_modules/@ag-grid-community/core/dist/styles/ag-theme-alpine.css">
+    <link rel="stylesheet" href="./node_modules/@ag-grid-community/styles/ag-grid.css">
+    <link rel="stylesheet" href="./node_modules/@ag-grid-community/styles/ag-theme-alpine.css">
     <script type="module">
         import {
             ClientSideRowModelModule

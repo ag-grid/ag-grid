@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import "@ag-grid-community/core/dist/styles/ag-grid.css";
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 import { DaysFrostRenderer } from './days-frost-renderer.component';
 import { ColDef, GridApi, ICellRenderer, ICellRendererParams, RowNode } from '@ag-grid-community/core';
 

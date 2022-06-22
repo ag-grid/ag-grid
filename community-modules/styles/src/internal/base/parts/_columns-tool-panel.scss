@@ -1,0 +1,40 @@
+@use "ag";
+
+@mixin output {
+    .ag-pivot-mode-panel {
+        min-height: var(--ag-header-height);
+        height: var(--ag-header-height);
+        display: flex;
+    }
+
+    .ag-pivot-mode-select {
+        display: flex;
+        align-items: center;
+
+        @include ag.unthemed-rtl(( margin-left: var(--ag-widget-container-horizontal-padding) ));
+    }
+
+    @include ag.keyboard-focus((ag-column-select-header), 4px);
+
+    .ag-column-select-header {
+        height: var(--ag-header-height);
+        align-items: center;
+        padding: 0 var(--ag-widget-container-horizontal-padding);
+
+        border-bottom: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+    }
+
+    .ag-column-panel-column-select {
+        border-bottom: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+        border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+    }
+
+    .ag-column-group-icons,
+    .ag-column-select-header-icon {
+        color: var(--ag-secondary-foreground-color);
+    }
+
+    .ag-column-select-list {
+        @include ag.list-item-hovered()
+    }
+}

@@ -418,19 +418,27 @@
             "title": "Themes",
             "url": "/themes/",
             "matrixExcludeChildren": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Customising Design",
+            "url": "/customising-design/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Sass Styling API",
+            "url": "/styling-sass/",
             "showInCollapsed": true,
             "items": [
               {
-                "title": "Provided Themes",
-                "url": "/themes-provided/"
+                "title": "Legacy Sass API",
+                "url": "/styling-sass-legacy/",
+                "showInCollapsed": true
               },
               {
-                "title": "Customising Themes",
-                "url": "/themes-customising/"
-              },
-              {
-                "title": "Migrating to v23+",
-                "url": "/themes-v23-migration/"
+                "title": "Upgrading from v27",
+                "url": "/styling-sass-upgrading-from-v27/",
+                "showInCollapsed": true
               }
             ]
           },

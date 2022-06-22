@@ -10,10 +10,10 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
         "import { AgGridVue } from '@ag-grid-community/vue3';",
     ];
 
-    imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
+    imports.push("import '@ag-grid-community/styles/ag-grid.css';");
     // to account for the (rare) example that has more than one class...just default to alpine if it does
     const theme = gridSettings.theme || 'ag-theme-alpine';
-    imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
+    imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
     if (componentFileNames) {
         imports.push(...componentFileNames.map(componentFileName => getImport(componentFileName, 'Vue', '')));

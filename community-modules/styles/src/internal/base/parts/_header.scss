@@ -1,0 +1,132 @@
+@use "ag";
+
+@mixin output {
+    .ag-header {
+        background-color: var(--ag-header-background-color);
+        border-bottom: var(--ag-borders-critical) var(--ag-border-color);
+    }
+
+    .ag-header-row {
+        color: var(--ag-header-foreground-color);
+        height: var(--ag-header-height);
+    }
+
+    .ag-pinned-right-header {
+        border-left: var(--ag-borders-critical) var(--ag-border-color);
+    }
+
+    .ag-pinned-left-header {
+        border-right: var(--ag-borders-critical) var(--ag-border-color);
+    }
+
+    .ag-header-cell:not(.ag-right-aligned-header) .ag-header-label-icon {
+        @include ag.unthemed-rtl(( margin-left: var(--ag-grid-size) ));
+    }
+
+    .ag-header-cell.ag-right-aligned-header .ag-header-label-icon {
+        @include ag.unthemed-rtl(( margin-right: var(--ag-grid-size) ));
+    }
+
+    .ag-header-cell,
+    .ag-header-group-cell {
+        padding-left: var(--ag-cell-horizontal-padding);
+        padding-right: var(--ag-cell-horizontal-padding);
+
+        &.ag-header-cell-moving {
+            background-color: var(--ag-header-cell-moving-background-color);
+        }
+    }
+
+    @include ag.keyboard-focus((ag-header-cell, ag-header-group-cell), 4px);
+
+    .ag-header-icon {
+        color: var(--ag-secondary-foreground-color);
+    }
+
+    .ag-header-expand-icon {
+        cursor: pointer;
+        @include ag.unthemed-rtl(( padding-left: 4px ));
+    }
+
+    .ag-header-row:not(:first-child) {
+        .ag-header-cell,
+        .ag-header-group-cell.ag-header-group-cell-with-group {
+            border-top: var(--ag-borders-critical) var(--ag-border-color);
+        }
+    }
+
+    // This logic with :not(.ag-column-resizing) is to prevent a mouseover effect
+    // being applied to the adjacent cell as the user resizes a cell, because
+    // during a resize, the mouse will momentarily move over the neighbouring cell
+    .ag-header-group-cell:not(.ag-column-resizing) + .ag-header-group-cell,
+    .ag-header-cell:not(.ag-column-resizing) + .ag-header-cell,
+    .ag-header-group-cell:first-of-type,
+    .ag-header-cell:first-of-type {
+        &:not(.ag-header-cell-moving):hover,
+        &.ag-column-resizing {
+            background-color: var(--ag-header-cell-hover-background-color);
+        }
+    }
+
+    .ag-header-cell::after,
+    .ag-header-group-cell::after {
+        content: "";
+        position: absolute;
+        z-index: 1;
+        display: var(--ag-header-column-separator-display);
+        width: var(--ag-header-column-separator-width);
+        height: var(--ag-header-column-separator-height);
+        top: calc(50% - var(--ag-header-column-separator-height) * 0.5);
+        background-color: var(--ag-header-column-separator-color);
+
+        @include ag.unthemed-rtl(( right: 0 ));
+    }
+
+    .ag-header-cell-resize {
+        display: flex;
+        align-items: center;
+    }
+
+    .ag-header-cell-resize::after {
+        content: "";
+        position: absolute;
+        z-index: 1;
+        display: var(--ag-header-column-resize-handle-display);
+        left: calc(50% - var(--ag-header-column-resize-handle-width));
+        width: var(--ag-header-column-resize-handle-width);
+        height: var(--ag-header-column-resize-handle-height);
+        top: calc(50% - var(--ag-header-column-resize-handle-height) * 0.5);
+        background-color: var(--ag-header-column-resize-handle-color);
+    }
+
+    .ag-pinned-right-header .ag-header-cell-resize::after {
+        left: 50%;
+    }
+
+    .ag-header-select-all {
+        @include ag.unthemed-rtl(( margin-right: var(--ag-cell-horizontal-padding) ));
+    }
+
+    .ag-floating-filter-button {
+        @include ag.unthemed-rtl(( margin-left: calc(var(--ag-grid-size) * 3) ));
+    }
+
+    .ag-floating-filter-button-button {
+        @include ag.inherit-text-styles();
+        appearance: none;
+        background: transparent;
+        border: none;
+        height: var(--ag-icon-size);
+        padding: 0;
+        width: var(--ag-icon-size);
+    }
+
+    .ag-filter-loading {
+        background-color: var(--ag-control-panel-background-color);
+        height: 100%;
+        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+        position: absolute;
+        width: 100%;
+        z-index: 1;
+    }
+}

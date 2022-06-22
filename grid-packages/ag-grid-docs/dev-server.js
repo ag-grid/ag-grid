@@ -106,6 +106,10 @@ function serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, char
         console.log(`Serving modules ${module.publishedName} from ./_dev/${module.publishedName} - available at /dev/${module.publishedName}`);
         app.use(`/dev/${module.publishedName}`, express.static(`./_dev/${module.publishedName}`));
     });
+
+    console.log(`Serving modules @ag-grid-community/styles from /_dev/@ag-grid-community/styles - available at /dev/@ag-grid-community/styles`);
+    app.use(`/dev/@ag-grid-community/styles`, express.static(`./_dev/@ag-grid-community/styles`));
+
 }
 
 function getTscPath() {
@@ -169,6 +173,13 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
                 rename: module.publishedName
             });
         });
+
+    lnk('../../community-modules/styles/', '_dev/@ag-grid-community', {
+        force: true,
+        type: linkType,
+        rename: 'styles'
+    });
+
 
     lnk('../../charts-packages/ag-charts-react/', '_dev/', {
         force: true,
@@ -328,13 +339,6 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     const utilityFilename = 'documentation/src/components/example-runner/SystemJs.jsx';
     const utilFileContents = fs.readFileSync(utilityFilename, 'UTF-8');
 
-    const cssFiles = glob.sync(`../../community-modules/core/dist/styles/*.css`)
-        .filter(css => !css.includes(".min."))
-        .filter(css => !css.includes("Font"))
-        .filter(css => !css.includes("mixin"))
-        .filter(css => !css.includes("base-rename-legacy-vars"))
-        .map(css => css.replace('../../community-modules/core/dist/styles/', ''));
-
     let updatedUtilFileContents = updateBetweenStrings(utilFileContents,
         '            /* START OF GRID MODULES DEV - DO NOT DELETE */',
         '            /* END OF GRID MODULES DEV - DO NOT DELETE */',
@@ -427,17 +431,19 @@ const rebuildPackagesBasedOnChangeState = async (skipSelf = true, skipFrameworks
         })
         .map(changedPackage => skipSelf && lernaBuildChainInfo[changedPackage][0] === changedPackage ? lernaBuildChainInfo[changedPackage].slice(1) : lernaBuildChainInfo[changedPackage]));
 
+
+    if (modulesState["@ag-grid-community/core"].moduleChanged ||
+        modulesState["@ag-grid-community/styles"].moduleChanged) {
+        console.log("Core / Styles have changed - rebuilding CSS");
+        await buildCss();
+    }
+
     const lernaPackagesToRebuild = new Set();
     changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
 
     if (lernaPackagesToRebuild.size > 0) {
         console.log("Rebuilding changed packages...");
-
-        await buildPackages(Array.from(lernaPackagesToRebuild));
-
-        if (lernaPackagesToRebuild.has("@ag-grid-community/core")) {
-            await buildCss();
-        }
+        // await buildPackages(Array.from(lernaPackagesToRebuild));
     } else {
         console.log("No non-core packages are out of date - skipping");
     }
@@ -600,7 +606,7 @@ const addWebpackMiddleware = (app) => {
 };
 
 const watchCoreModulesAndCss = async (skipFrameworks) => {
-    watchCss();
+    await watchCss();
     await watchCoreModules(skipFrameworks);
 };
 

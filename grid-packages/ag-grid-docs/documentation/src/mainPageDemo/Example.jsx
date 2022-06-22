@@ -37,12 +37,10 @@ import {PersonFilter} from "./PersonFilter";
 import {CountryFloatingFilterComponent} from "./CountryFloatingFilterComponent";
 import {WinningsFilter} from "./WinningsFilter";
 
-import "@ag-grid-community/core/dist/styles/ag-grid.css"
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css"
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css"
-import "@ag-grid-community/core/dist/styles/ag-theme-balham.css"
-import "@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css"
-import "@ag-grid-community/core/dist/styles/ag-theme-material.css"
+import "@ag-grid-community/styles/ag-grid.css"
+import "@ag-grid-community/styles/ag-theme-alpine.css"
+import "@ag-grid-community/styles/ag-theme-balham.css"
+import "@ag-grid-community/styles/ag-theme-material.css"
 
 const IS_SSR = typeof window === "undefined"
 
@@ -473,8 +471,10 @@ function createDataSizeValue(rows, cols) {
 const Example = () => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
-    const [gridTheme, setGridTheme] = useState('ag-theme-alpine');
-    const [recreateGrid, setRecreateGrid] = useState(false);
+    const [gridTheme, setGridTheme] = useState(() => {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('theme') || 'ag-theme-alpine';
+    });
     const [bodyClass, setBodyClass] = useState('');
     const [toolbarCollapsed, setToolbarCollapsed] = useState(false);
     const [base64Flags, setBase64Flags] = useState();
@@ -1122,12 +1122,6 @@ const Example = () => {
     }
 
     useEffect(() => {
-        if(recreateGrid) {
-            setRecreateGrid(false);
-        }
-    }, [recreateGrid]);
-
-    useEffect(() => {
         const small = IS_SSR ? false : document.documentElement.clientHeight <= 415 || document.documentElement.clientWidth < 768;
         setIsSmall(small);
 
@@ -1240,7 +1234,19 @@ const Example = () => {
         if (dataSize) {
             createData();
         }
-    }, [dataSize])
+    }, [dataSize]);
+
+    useEffect(() => {
+        const isDark = gridTheme.indexOf('dark') >= 0;
+
+        if (isDark) {
+            setBodyClass(styles['dark']);
+            gridOptions.chartThemes = ['ag-default-dark', 'ag-material-dark', 'ag-pastel-dark', 'ag-vivid-dark', 'ag-solar-dark'];
+        } else {
+            setBodyClass('');
+            gridOptions.chartThemes = null;
+        }
+    }, [gridTheme]);
 
     function onDataSizeChanged(event) {
         setDataSize(event.target.value)
@@ -1250,17 +1256,14 @@ const Example = () => {
         const newTheme = event.target.value || 'ag-theme-none';
         setGridTheme(newTheme);
 
-        const isDark = newTheme && newTheme.indexOf('dark') >= 0;
-
-        if (isDark) {
-            setBodyClass(styles['dark']);
-            gridOptions.chartThemes = ['ag-default-dark', 'ag-material-dark', 'ag-pastel-dark', 'ag-vivid-dark', 'ag-solar-dark'];
+        let url = window.location.href;
+        if (url.indexOf('?theme=') !== -1) {
+            url = url.replace(/\?theme=[\w-]+/, `?theme=${newTheme}`);
         } else {
-            setBodyClass('');
-            gridOptions.chartThemes = null;
+            const sep = url.indexOf('?') === -1 ? '?' : '&';
+            url += `${sep}theme=${newTheme}`;
         }
-
-        setRecreateGrid(true);
+        history.replaceState({}, '', url);
     }
 
     function toggleOptionsCollapsed() {
@@ -1300,8 +1303,8 @@ const Example = () => {
                         </div>
                         <div>
                             <label htmlFor="grid-theme">Theme:</label>
-                            <select id="grid-theme" defaultValue="ag-theme-alpine" onChange={onThemeChanged}>
-                                <option value="">-none-</option>
+                            <select id="grid-theme" defaultValue="ag-theme-alpine" onChange={onThemeChanged} value={gridTheme}>
+                                <option value="ag-theme-none">-none-</option>
                                 <option value="ag-theme-alpine">Alpine</option>
                                 <option value="ag-theme-alpine-dark">Alpine Dark</option>
                                 <option value="ag-theme-balham">Balham</option>
@@ -1334,7 +1337,8 @@ const Example = () => {
                 </div>
                 <section className={styles['example-wrapper__grid-wrapper']} style={{padding: "1rem", paddingTop: 0}}>
                     <div id="myGrid" style={{flex: "1 1 auto", overflow: "hidden"}} className={gridTheme}>
-                        {!recreateGrid && <AgGridReactMemo
+                        <AgGridReactMemo
+                            key={gridTheme}
                             ref={gridRef}
                             modules={modules}
                             gridOptions={gridOptions}
@@ -1342,7 +1346,7 @@ const Example = () => {
                             rowData={rowData}
                             defaultCsvExportParams={defaultExportParams}
                             defaultExcelExportParams={defaultExportParams}
-                        />}
+                        />
                     </div>
                 </section>
             </div>

@@ -51,8 +51,10 @@ const spawnCssWatcher = ({paths, buildChains}) => {
 
     const buildOperation = (path, operation) => {
         console.log(`File ${path} has been ${operation}`);
+
+        const rootModule = path.includes('community-modules/styles') ? '@ag-grid-community/styles' : '@ag-grid-community/core'
         // noinspection JSIgnoredPromiseFromCall
-        buildDependencyChain("@ag-grid-community/core", buildChains);
+        buildDependencyChain(rootModule, buildChains);
     };
 
     // Add event listeners
@@ -160,14 +162,29 @@ const generateBuildChain = async (packageName, allPackagesOrdered, includeExampl
 };
 
 const extractCssBuildChain = (buildChainInfo) => {
+    const corePaths = buildChainInfo.paths
+        .filter(path => path.includes('community-modules/core'))
+        .map(path => `${path}/src/styles`);
+    const stylePaths = buildChainInfo.paths
+        .filter(path => path.includes('community-modules/styles'))
+        .map(path => `${path}/src`);
     return {
-        paths: buildChainInfo.paths
-            .filter(path => path.includes('community-modules/core') || path.includes('community-modules\\core'))
-            .map(path => `${path}/src/styles`),
+        paths: corePaths.concat(stylePaths),
         buildChains: {
             "@ag-grid-community/core": {
                 "0": [
                     "@ag-grid-community/core"
+                ],
+                "1": [
+                    "@ag-grid-community/all-modules"
+                ],
+                "2": [
+                    "@ag-grid-enterprise/all-modules"
+                ]
+            },
+            "@ag-grid-community/styles": {
+                "0": [
+                    "@ag-grid-community/styles"
                 ],
                 "1": [
                     "@ag-grid-community/all-modules"
@@ -184,26 +201,9 @@ const getCacheFilePath = () => {
     return path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
 };
 
-const watchCss = () => {
+const watchCss = async () => {
     console.log("Watching css...");
-    const cacheFilePath = getCacheFilePath();
-    if (!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = getOrderedDependencies("@ag-grid-community/core");
-
-        const buildChains = {};
-        for (let packageName of orderedPackageNames) {
-            buildChains[packageName] = generateBuildChain(packageName, orderedPackageNames);
-        }
-
-        buildChainInfo = {
-            paths,
-            buildChains
-        };
-
-        fs.writeFileSync(cacheFilePath, JSON.stringify(buildChainInfo), 'UTF-8');
-    } else {
-        buildChainInfo = JSON.parse(fs.readFileSync(cacheFilePath, 'UTF-8'));
-    }
+    const buildChainInfo = await getBuildChainInfo();
     const cssBuildChain = extractCssBuildChain(buildChainInfo);
     spawnCssWatcher(cssBuildChain);
 };
@@ -216,14 +216,15 @@ const getBuildChainInfo = async () => {
             orderedPackageNames: orderedGridPackageNames
         } = await getOrderedDependencies("@ag-grid-community/core", true, false);
         const {paths: chartPaths, orderedPackageNames: orderedChartPackageNames} = await getOrderedDependencies("ag-charts-community", false, true);
+        const {paths: stylePaths, orderedPackageNames: orderedStylePackageNames} = await getOrderedDependencies("@ag-grid-community/styles", false, true);
 
         const buildChains = {};
-        for (let packageName of orderedGridPackageNames.concat(orderedChartPackageNames)) {
+        for (let packageName of orderedGridPackageNames.concat(orderedChartPackageNames).concat(orderedStylePackageNames)) {
             buildChains[packageName] = await generateBuildChain(packageName, orderedGridPackageNames, true, false);
         }
 
         buildChainInfo = {
-            paths: gridPaths.concat(chartPaths),
+            paths: gridPaths.concat(chartPaths).concat(stylePaths),
             buildChains
         };
 
@@ -235,7 +236,7 @@ const getBuildChainInfo = async () => {
 };
 
 const getFlattenedBuildChainInfo = async (includeExamples, skipPackageExamples, skipDocs) => {
-    const buildChainInfo = await getBuildChainInfo(includeExamples, skipPackageExamples);
+    const buildChainInfo = await getBuildChainInfo();
 
     const flattenedBuildChainInfo = {};
     const packageNames = Object.keys(buildChainInfo.buildChains);
@@ -266,7 +267,11 @@ const getFlattenedBuildChainInfo = async (includeExamples, skipPackageExamples, 
 const buildCss = async () => {
     const buildChainInfo = await getBuildChainInfo();
     const cssBuildChain = extractCssBuildChain(buildChainInfo);
-    await buildDependencyChain("@ag-grid-community/core", cssBuildChain.buildChains);
+
+    // temp addition on core that removes actual deps so that they're not build for both core and styles (ie deps aren't build twice)
+    // core styles will eventually be removed
+    await buildDependencyChain("@ag-grid-community/core", { '@ag-grid-community/core': {'0': [ '@ag-grid-community/core' ] }});
+    await buildDependencyChain("@ag-grid-community/styles", cssBuildChain.buildChains);
 };
 
 const buildPackages = async (packageNames, command = 'build', arguments) => {

@@ -1,0 +1,4 @@
+@use "base";
+
+@include base.general-styles();
+@include base.native-input-styles();

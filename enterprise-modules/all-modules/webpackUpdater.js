@@ -10,10 +10,15 @@ const frameworkModules = [
     'polymer'
 ];
 
+const cssModules = [
+    'styles'
+];
+
 const modules = glob.sync("../../community-modules/*")
     .concat(glob.sync("../../enterprise-modules/*"))
     .filter(module => !frameworkModules.includes(module.replace(`../../community-modules/`, '')))
     .filter(module => !frameworkModules.includes(module.replace(`../../enterprise-modules/`, '')))
+    .filter(module => !cssModules.includes(module.replace(`../../community-modules/`, '')))
     .filter(module => module.indexOf('all-modules') === -1)
     .map(module => glob.sync(`${module}/src/*Module.ts`)[0])
     .map(module => module.replace('.ts', ''))

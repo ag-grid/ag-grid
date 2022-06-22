@@ -107,12 +107,17 @@ const copyGridCoreStyles = (done) => {
         done("node_modules/@ag-grid-community/core/dist/styles doesn't exist - exiting")
     }
 
+    // we don't have a dist folder in styles so just check for at least the core structural css file
+    if (!fs.existsSync('./node_modules/@ag-grid-community/styles/ag-grid.css')) {
+        done("./node_modules/@ag-grid-community/styles/ag-grid.css doesn't exist - exiting")
+    }
+
     return merge([
-        gulp.src('./node_modules/@ag-grid-community/core/dist/styles/**/*').pipe(gulp.dest('./dist/styles')),
-        gulp.src([
-            './node_modules/@ag-grid-community/core/src/styles/**/*',
-        ]).pipe(gulp.dest('./dist/styles'))
-    ]);
+            gulp.src('./node_modules/@ag-grid-community/core/dist/styles/**/*').pipe(gulp.dest('./dist/styles')),
+            gulp.src('./node_modules/@ag-grid-community/styles/*.css').pipe(gulp.dest('./styles')),
+            gulp.src('./node_modules/@ag-grid-community/styles/*.scss').pipe(gulp.dest('./styles'))
+        ]
+    );
 };
 
 gulp.task('clean', cleanDist);

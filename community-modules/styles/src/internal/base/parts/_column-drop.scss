@@ -1,0 +1,125 @@
+@use "ag";
+
+@mixin output {
+    .ag-column-drop-cell {
+        background: var(--ag-chip-background-color);
+        border-radius: calc(var(--ag-grid-size) * 4);
+        height: calc(var(--ag-grid-size) * 4);
+        padding: 0 calc(var(--ag-grid-size) * 0.5);
+        border: 1px solid transparent;
+    }
+
+    @include ag.keyboard-focus((ag-column-drop-cell), 2px);
+
+    .ag-column-drop-cell-text {
+        margin: 0 var(--ag-grid-size);
+    }
+
+    .ag-column-drop-cell-button {
+        min-width: calc(var(--ag-grid-size) * 4);
+
+        margin: 0 calc(var(--ag-grid-size) * 0.5);
+        color: var(--ag-secondary-foreground-color);
+    }
+
+    .ag-column-drop-cell-drag-handle {
+        margin-left: calc(var(--ag-grid-size) * 2);
+    }
+
+    .ag-column-drop-cell-ghost {
+        opacity: 0.5;
+    }
+
+    // HORIZONTAL COLUMN DROP
+
+    .ag-column-drop-horizontal {
+        background-color: var(--ag-control-panel-background-color);
+        color: var(--ag-secondary-foreground-color);
+        height: var(--ag-row-height);
+        border-bottom: var(--ag-borders) var(--ag-border-color);
+
+        @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
+    }
+
+    .ag-column-drop-horizontal-half-width:not(:last-child) {
+        @include ag.unthemed-rtl((border-right: var(--ag-borders) var(--ag-border-color)));
+    }
+
+    .ag-column-drop-horizontal-cell-separator {
+        margin: 0 var(--ag-grid-size);
+        color: var(--ag-secondary-foreground-color);
+    }
+
+    .ag-column-drop-horizontal-empty-message {
+        color: var(--ag-disabled-foreground-color);
+    }
+
+    .ag-column-drop-horizontal-icon {
+        @include ag.unthemed-rtl(( margin-right: var(--ag-cell-horizontal-padding) ));
+    }
+
+    // VERTICAL COLUMN DROP
+
+    .ag-column-drop-vertical-list {
+        padding-bottom: var(--ag-grid-size);
+        padding-right: var(--ag-grid-size);
+        padding-left: var(--ag-grid-size);
+    }
+
+    .ag-column-drop-vertical-cell {
+        margin-top: var(--ag-grid-size);
+    }
+
+    .ag-column-drop-vertical {
+        min-height: 50px;
+        
+        border-bottom: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+        &.ag-last-column-drop {
+            border-bottom: none;
+        }
+    }
+
+    .ag-column-drop-vertical-icon {
+        margin-left: var(--ag-grid-size);
+        margin-right: var(--ag-grid-size);
+    }
+
+    .ag-column-drop-vertical-empty-message {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        overflow: hidden;
+        color: var(--ag-disabled-foreground-color);
+        margin-top: var(--ag-grid-size);
+    }
+
+    .ag-select-agg-func-popup {
+        @include ag.card();
+
+        background: var(--ag-background-color);
+        height: calc(var(--ag-grid-size) * 5 * 3.5);
+        padding: 0;
+    }
+
+    .ag-select-agg-func-virtual-list-item {
+        cursor: default;
+        padding-left: calc(var(--ag-grid-size) * 2);
+
+        &:hover {
+            background-color: var(--ag-selected-row-background-color);
+        }
+    }
+
+    @include ag.keyboard-focus((ag-select-agg-func-virtual-list-item), 1px);
+
+    // column sort direction indicator
+    .ag-sort-indicator-container {
+        display: flex;
+    }
+
+    .ag-sort-indicator-icon {
+        @include ag.unthemed-rtl(( padding-left: var(--ag-grid-size) ));
+    }
+}

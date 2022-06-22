@@ -37,8 +37,8 @@ Our application will be a very simple one, consisting of a single file that will
 import { Grid, ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 // import { RangeSelectionModule } from "@ag-grid-enterprise/range-selection";
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-balham.css';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-balham.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule])
 

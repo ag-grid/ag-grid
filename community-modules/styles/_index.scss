@@ -1,0 +1,645 @@
+
+//
+// This file defines the public Sass API to ag-Grid's styles.
+// https://ag-grid.com/javascript-data-grid/styling-sass/
+//
+
+@use "sass:map";
+@use "sass:list";
+@use "sass:meta";
+@use "sass:string";
+@use "sass:color";
+@use "sass:math";
+@use "./css-content";
+@use "./icon-font-codes" as *;
+
+@forward "./shared";
+
+// Emit styles for the grid. This mixin validates the parameters passed to it,
+// converts the parameters to CSS variables, and combines all the necessary CSS
+// files for the grid and selected theme.
+@mixin grid-styles($global-params: ()) {
+    $no-native-widgets: map.get($global-params, "suppress-native-widget-styling");
+    $global-params: map.remove($global-params, "suppress-native-widget-styling");
+
+    $themes: -get-themes($global-params);
+
+    @if $no-native-widgets {
+        @include -load-css-file("ag-grid-no-native-widgets.css");
+    } @else {
+        @include -load-css-file("ag-grid.css");
+    }
+
+    $global-extended-theme-name: -clean-theme-name(map.get($global-params, "extend-theme"));
+
+    @each $theme-name, $theme-params in $themes {
+        @include -validate-params($theme-params, $theme-name);
+
+        @include -load-theme-css-file($theme-name);
+        $extended-theme-name: -get-extended-theme-name($theme-params, $default: $global-extended-theme-name);
+        @if $extended-theme-name and not -is-provided-theme($extended-theme-name) {
+            @error "Invalid extend-theme: \"#{$extended-theme-name}\": only provided themes can be extended, use one of #{meta.inspect(map.keys($-theme-css-files))}";
+        }
+        @if $extended-theme-name and -is-provided-theme($theme-name) {
+            @error "Can't use a provided theme (#{$theme-name}) and also extend a provided theme (#{$extended-theme-name}). If you want to extend #{$extended-theme-name}, provide your own custom theme name.";
+        }
+        @if $extended-theme-name {
+            @include -load-theme-css-file($extended-theme-name);
+        }
+
+        $font: map.get($theme-params, "icon-font-family");
+        $font: map.get($-theme-fonts, $theme-name) !default;
+        $font: map.get($-theme-fonts, $extended-theme-name) !default;
+        @if $font {
+            @include -load-css-file("#{$font}Font.css", $ignore-missing: true);
+        }
+    }
+
+    @each $theme-name, $theme-params in $themes {
+        $extended-theme-name: -get-extended-theme-name($theme-params, $default: $global-extended-theme-name);
+
+        @if $extended-theme-name and $extended-theme-name != $theme-name {
+            // alias all the styles in the extended theme to the new theme name
+            .ag-theme-#{$theme-name} {
+                @extend .ag-theme-#{$extended-theme-name};
+            }
+        }
+
+        // Emit CSS variable declarations for a st of params, converting (foo: bar) to `--ag-foo: bar`
+        .ag-theme-#{$theme-name} {
+            $color-blend-theme-name: $extended-theme-name;
+            $color-blend-theme-name: $theme-name !default;
+            $blend-function-name: "-theme-#{$color-blend-theme-name}-color-blends";
+            @if meta.function-exists($blend-function-name) {
+                $theme-color-blends: meta.get-function($blend-function-name);
+                $theme-params: meta.call($theme-color-blends, $theme-params);
+            }
+            $theme-params: -base-color-blends($theme-params);
+        
+            @each $name, $value in $theme-params {
+                // use meta.inspect to preserve the quote style of strings
+                @if map.has-key($-variable-param-types, $name) {
+                    --ag-#{$name}: #{meta.inspect($value)};
+                }
+            }
+        }
+    }
+}
+
+//
+// PRIVATE IMPLEMENTATION
+//
+
+$-loaded-css-files: ();
+
+// Fulfils the same role as meta.load-css, which we can't use due to this issue:
+// https://github.com/sass/dart-sass/issues/1627
+//
+// NOTE the above bug was fixed in Sass 1.52.4 in June 2022, this workaround should
+// be kept as long as we want to support earlier Sass versions
+@mixin -load-css-file($file, $ignore-missing: false) {
+    @if not map.get($-loaded-css-files, $file) {
+        $-loaded-css-files: map.set($-loaded-css-files, $file, true);
+        @include css-content.output-css-file($file, $ignore-missing: $ignore-missing);
+    }
+}
+
+@mixin -load-theme-css-file($theme-name, $ignore-missing: false) {
+    $css-file: map.get($-theme-css-files, $theme-name);
+    @if $css-file {
+        @include -load-css-file($css-file);
+    }
+}
+
+@function -clean-theme-name($name) {
+    @if $name == null {
+        @return null;
+    }
+    @if $name == blue {
+        // if user passes `blue` the color, convert it to a string for the legacy "blue" theme
+        $name: "blue";
+    }
+    $name: string.to-lower-case($name);
+    $remove-prefix: "ag-theme-";
+    @if string.index($name, $remove-prefix) == 1 {
+        $name: string.slice($name, string.length($remove-prefix) + 1);
+    }
+    @return $name;
+}
+
+@function -get-extended-theme-name($theme-params, $default) {
+    $extended-theme-name: -clean-theme-name(map.get($theme-params, "extend-theme"));
+    @if $extended-theme-name {
+        @return $extended-theme-name;
+    }
+    @return $default;
+}
+
+$-theme-variables: (
+    "alpine": (alpine-active-color: "color"),
+    "alpine-dark": (alpine-active-color: "color"),
+    "balham": (balham-active-color: "color"),
+    "balham-dark": (balham-active-color: "color"),
+    "material": (material-primary-color: "color", material-accent-color: "color"),
+);
+
+$-theme-css-files: (
+    "alpine": "ag-theme-alpine-no-font.css",
+    "alpine-dark": "ag-theme-alpine-no-font.css",
+    "balham": "ag-theme-balham-no-font.css",
+    "balham-dark": "ag-theme-balham-no-font.css",
+    "material": "ag-theme-material-no-font.css",
+);
+
+$-theme-fonts: (
+    "alpine": "agGridAlpine",
+    "alpine-dark": "agGridAlpine",
+    "balham": "agGridBalham",
+    "balham-dark": "agGridBalham",
+    "material": "agGridMaterial",
+);
+
+@function -is-provided-theme($theme-name) {
+    @return map.has-key($-theme-variables, $theme-name);
+}
+
+@function -get-themes($params) {
+    $themes: map.get($params, "themes");
+    $themes: () !default;
+    
+    @if meta.type-of($themes) == string {
+        $themes: ($themes,) // comma makes this a single element list
+    }
+    
+    // treat ("alpine", "balham") as (alpine: (), "balham": ())
+    @if meta.type-of($themes) == list {
+        $themes-list: $themes;
+        $themes: ();
+        @each $theme in $themes-list {
+            $themes: map.set($themes, $theme, ());
+        }
+    }
+    
+    @if map.has-key($params, "theme") {
+        $theme: map.get($params, "theme");
+        @if meta.type-of($theme) == list {
+            @error "Expected theme to be a string, got a list (if you intend to use multiple themes, use the plural `themes` parameter)";
+        }
+        @else if meta.type-of($theme) != string {
+            @error "Expected theme to be a string, got #{meta.inspect($theme)})";
+        }
+        $themes: map.set($themes, $theme, ());
+    }
+    
+    @if list.length($themes) == 0 {
+        @return ("alpine": ());
+    }
+
+    $params: map.remove($params, "theme", "themes");
+
+    $cleaned: ();
+    @each $name, $extra-params in $themes {
+        $params: -preprocess-params(map.merge($params, $extra-params));
+        $cleaned: map.set($cleaned, -clean-theme-name($name), $params);
+    }
+    @return $cleaned;
+}
+
+// Return a version of $params with colour blending applied
+@function -base-color-blends($params) {
+    // Simple defaults. We need to define the defaults for any parameters
+    // that are used in blending below
+    $params: -param-default($params, foreground-color, #000);
+    $params: -param-default($params, background-color, #fff);
+    $params: -param-default($params, range-selection-border-color, foreground-color);
+
+    // Blended defaults.
+    $params: -param-default($params, disabled-foreground-color,          foreground-color,                 $alpha: 0.5);
+    $params: -param-default($params, modal-overlay-background-color,     background-color,                 $alpha: 0.66);
+    $params: -param-default($params, range-selection-background-color,   range-selection-border-color,     $alpha: 0.2);
+    $params: -param-default($params, range-selection-background-color-2, range-selection-background-color, $self-overlay: 2);
+    $params: -param-default($params, range-selection-background-color-3, range-selection-background-color, $self-overlay: 3);
+    $params: -param-default($params, range-selection-background-color-4, range-selection-background-color, $self-overlay: 4);
+    $params: -param-default($params, border-color,                       foreground-color,                 $alpha: 0.25);
+    $params: -param-default($params, header-column-separator-color,      border-color,                     $alpha: 0.5);
+    $params: -param-default($params, header-column-resize-handle-color,  border-color,                     $alpha: 0.5);
+    $params: -param-default($params, input-disabled-border-color,        input-border-color,               $alpha: 0.3);
+    @return $params;
+}
+
+@function -theme-alpine-color-blends($params) {
+    // Simple defaults. We need to define the defaults for any parameters
+    // that are used in blending either below or in the base color blends
+    $params: -param-default($params, background-color, #fff);
+    $params: -param-default($params, foreground-color, #181d1f);
+    $params: -param-default($params, subheader-background-color, #fff);
+    $params: -param-default($params, alpine-active-color, #2196f3);
+    $params: -param-default($params, range-selection-border-color, alpine-active-color);
+
+    // Blended defaults
+    $params: -param-default($params, subheader-toolbar-background-color, subheader-background-color, $alpha: 0.5);
+    $params: -param-default($params, selected-row-background-color, alpine-active-color, $alpha: 0.1);
+    $params: -param-default($params, row-hover-color, alpine-active-color, $alpha: 0.1);
+    $params: -param-default($params, column-hover-color, alpine-active-color, $alpha: 0.1);
+    $params: -param-default($params, chip-background-color, foreground-color, $alpha: 0.07);
+    $params: -param-default($params, input-disabled-background-color, border-color, $alpha: 0.15);
+    $params: -param-default($params, input-disabled-border-color, border-color, $alpha: 0.3);
+    $params: -param-default($params, disabled-foreground-color, foreground-color, $alpha: 0.5);
+    $params: -param-default($params, input-focus-border-color, alpine-active-color, $alpha: 0.4);
+    @return $params;
+}
+
+@function -theme-alpine-dark-color-blends($params) {
+    $params: -param-default($params, background-color, #181d1f);
+    $params: -param-default($params, foreground-color, #fff);
+    $params: -param-default($params, subheader-background-color, #000);
+
+    @return  -theme-alpine-color-blends($params);
+}
+
+@function -theme-balham-color-blends($params) {
+    // Simple defaults. We need to define the defaults for any parameters
+    // that are used in blending either below or in the base color blends
+    $params: -param-default($params, background-color, #fff);
+    $params: -param-default($params, foreground-color, #000);
+    $params: -param-default($params, border-color, #bdc3c7);
+    $params: -param-default($params, subheader-background-color, #e2e9eb);
+    $params: -param-default($params, balham-active-color, #0091ea);
+    $params: -param-default($params, range-selection-border-color, balham-active-color);
+
+    // Blended defaults
+    $params: -param-default($params, secondary-foreground-color, foreground-color, $alpha: 0.54);
+    $params: -param-default($params, disabled-foreground-color, foreground-color, $alpha: 0.38);
+    $params: -param-default($params, subheader-toolbar-background-color, subheader-background-color, $alpha: 0.5);
+    $params: -param-default($params, row-border-color, border-color, $alpha: 0.58);
+    $params: -param-default($params, chip-background-color, foreground-color, $alpha: 0.1);
+    $params: -param-default($params, selected-row-background-color, balham-active-color, $alpha: 0.28);
+    $params: -param-default($params, header-column-separator-color, border-color, $alpha: 0.5);
+    @return $params;
+}
+
+@function -theme-balham-dark-color-blends($params) {
+    $params: -param-default($params, background-color, #181d1f);
+    $params: -param-default($params, foreground-color, #fff);
+    $params: -param-default($params, border-color, #424242);
+    $params: -param-default($params, subheader-background-color, #000);
+    $params: -param-default($params, balham-active-color, #00B0FF);
+
+    $params: -param-default($params, disabled-foreground-color, foreground-color, $alpha: 0.38);
+    $params: -param-default($params, header-foreground-color, foreground-color, $alpha: 0.64);
+
+    @return  -theme-balham-color-blends($params);
+}
+
+@function -theme-material-color-blends($params) {
+    // Simple defaults. We need to define the defaults for any parameters
+    // that are used in blending either below or in the base color blends
+    $params: -param-default($params, background-color, #fff);
+    $params: -param-default($params, foreground-color, color.change(#000, $alpha: 0.87));
+    $params: -param-default($params, subheader-background-color, #eee);
+    $params: -param-default($params, material-primary-color, #3f51b5);
+    $params: -param-default($params, range-selection-border-color, material-primary-color);
+    $params: -param-default($params, range-selection-background-color, rgba(122, 134, 203, 0.1));
+    $params: -param-default($params, border-color, #e2e2e2);
+
+    // Blended defaults
+    $params: -param-default($params, secondary-foreground-color, foreground-color, $alpha: 0.54);
+    $params: -param-default($params, disabled-foreground-color, foreground-color, $alpha: 0.38);
+    $params: -param-default($params, subheader-toolbar-background-color, subheader-background-color, $alpha: 0.5);
+    @return $params;
+}
+
+@function -theme-fresh-color-blends($params) {
+    $params: -param-default($params, foreground-color, #000);
+    $params: -param-default($params, background-color, #FFF);
+    @return $params;
+}
+
+@function -theme-dark-color-blends($params) {
+    $params: -param-default($params, foreground-color, #ccc);
+    $params: -param-default($params, background-color, #302e2e);
+    @return $params;
+}
+
+@function -theme-blue-color-blends($params) {
+    $params: -param-default($params, foreground-color, #222);
+    $params: -param-default($params, background-color, #fff);
+    @return $params;
+}
+
+@function -theme-bootstrap-color-blends($params) {
+    $params: -param-default($params, foreground-color, #000);
+    $params: -param-default($params, background-color, #FFF);
+    @return $params;
+}
+
+// Apply a default value to a parameter
+//  $params: -param-default($params, x, #f08) - default x to a specific color value
+//  $params: -param-default($params, x, y) - default x to the value of y (if y is set)
+//  $params: -param-default($params, x, y, $alpha: 0.5) - default x to the value of y made 50% transparent
+@function -param-default($params, $target, $source, $alpha: null, $self-overlay: null) {
+    $value: null;
+    @if type-of($source) == "color" {
+        $value: $source;
+    } @else {
+        $value: map.get($params, $source);
+    }
+    @if map.has-key($params, $target) or $value == null {
+        @return $params;
+    }
+    @if $alpha != null {
+        $value: color.change($value, $alpha: color.alpha($value) * $alpha);
+    }
+    @if $self-overlay != null {
+        // this formula produces the same opacity value as overlaying the color on top
+        // of itself $self-overlay times
+        $value: color.change($value, $alpha: 1-(math.pow(1 - color.alpha($value), $self-overlay)));
+    }
+    @return map.set($params, $target, $value);
+}
+
+$-param-type-descriptions: (
+    "color": "a CSS color (e.g. `red` or `#fff`)",
+    "size": "a CSS size (e.g. `0`, `4px` or `50%`)",
+    "border-style": "a CSS border style (e.g. `dotted` or `solid`)",
+    "duration": "a number with time duration units (e.g. `3s` or `250ms`)",
+    "border-style-and-size": "either `none`, or a border-style and size (e.g. `solid 1px`), or a boolean (true -> `solid 1px` and false -> `none`)",
+    "border-style-and-color": "a border-style and color (e.g. `solid red`)",
+    "display": "`block` or `true` to show, `none` or `false` to hide",
+    "any": "any value",
+);
+
+// params that are copied to --ag-param-name variables
+$-variable-param-types: (
+    foreground-color: "color",
+    data-color: "color",
+    secondary-foreground-color: "color",
+    header-foreground-color: "color",
+    disabled-foreground-color: "color",
+    background-color: "color",
+    header-background-color: "color",
+    subheader-background-color: "color",
+    subheader-toolbar-background-color: "color",
+    control-panel-background-color: "color",
+    side-button-selected-background: "color",
+    selected-row-background-color: "color",
+    odd-row-background-color: "color",
+    modal-overlay-background-color: "color",
+    row-hover-color: "color",
+    column-hover-color: "color",
+    range-selection-border-color: "color",
+    range-selection-border-style: "border-style",
+    range-selection-background-color: "color",
+    range-selection-background-color-2: "color",
+    range-selection-background-color-3: "color",
+    range-selection-background-color-4: "color",
+    range-selection-highlight-color: "color",
+    selected-tab-underline-color: "color",
+    selected-tab-underline-width: "size",
+    selected-tab-underline-transition-speed: "duration",
+    range-selection-chart-category-background-color: "color",
+    range-selection-chart-background-color: "color",
+    header-cell-hover-background-color: "color",
+    header-cell-moving-background-color: "color",
+    value-change-value-highlight-background-color: "color",
+    value-change-delta-up-color: "color",
+    value-change-delta-down-color: "color",
+    chip-background-color: "color",
+    borders: "border-style-and-size",
+    border-color: "color",
+    borders-critical: "border-style-and-size",
+    borders-secondary: "border-style-and-size",
+    secondary-border-color: "color",
+    borders-row: "border-style-and-size",
+    row-border-color: "color",
+    cell-horizontal-border: "border-style-and-color",
+    borders-input: "border-style-and-size",
+    input-border-color: "color",
+    borders-input-invalid: "border-style-and-size",
+    input-border-color-invalid: "color",
+    borders-side-button: "border-style-and-size",
+    border-radius: "size",
+    header-column-separator-display: "display",
+    header-column-separator-height: "size",
+    header-column-separator-width: "size",
+    header-column-separator-color: "color",
+    header-column-resize-handle-display: "display",
+    header-column-resize-handle-height: "size",
+    header-column-resize-handle-width: "size",
+    header-column-resize-handle-color: "color",
+    invalid-color: "color",
+    input-disabled-border-color: "color",
+    input-disabled-background-color: "color",
+    checkbox-background-color: "color",
+    checkbox-border-radius: "size",
+    checkbox-checked-color: "color",
+    checkbox-unchecked-color: "color",
+    checkbox-indeterminate-color: "color",
+    toggle-button-off-border-color: "color",
+    toggle-button-off-background-color: "color",
+    toggle-button-on-border-color: "color",
+    toggle-button-on-background-color: "color",
+    toggle-button-switch-background-color: "color",
+    toggle-button-switch-border-color: "color",
+    toggle-button-border-width: "size",
+    toggle-button-height: "size",
+    toggle-button-width: "size",
+    input-focus-box-shadow: "any",
+    input-focus-border-color: "any",
+    minichart-selected-chart-color: "color",
+    minichart-selected-page-color: "color",
+    grid-size: "size",
+    icon-size: "size",
+    widget-container-horizontal-padding: "size",
+    widget-container-vertical-padding: "size",
+    widget-horizontal-spacing: "size",
+    widget-vertical-spacing: "size",
+    cell-horizontal-padding: "size",
+    cell-widget-spacing: "size",
+    row-height: "size",
+    header-height: "size",
+    list-item-height: "size",
+    column-select-indent-size: "size",
+    row-group-indent-size: "size",
+    filter-tool-panel-group-indent: "size",
+    tab-min-width: "size",
+    menu-min-width: "size",
+    side-bar-panel-width: "size",
+    font-family: "any",
+    font-size: "size",
+    card-radius: "size",
+    card-shadow: "any",
+    popup-shadow: "any",
+    alpine-active-color: "color",
+    balham-active-color: "color",
+    material-primary-color: "color",
+    material-accent-color: "color",
+    icon-font-family: "any"
+);
+
+@each $icon-name in map.keys($icon-font-codes) {
+    $-variable-param-types: map.set($-variable-param-types, "icon-font-code-#{$icon-name}", "any");
+}
+
+// params that are not copied to CSS variables
+$-non-variable-param-types: (
+    suppress-native-widget-styling: "bool",
+    extend-theme: "string"
+);
+
+// Apply Sass API sugar over CSS variable API
+@function -preprocess-params($params) {
+    $processed: ();
+    @each $name, $value in $params {
+        // Allow `null` for colours
+        @if -string-ends-with($name, "-color") and $value == null {
+            $value: transparent;
+        }
+        // Allow booleans for borders params
+        @if string.index($name, "borders") and $value == true {
+            $value: solid 1px;
+        }
+        @if string.index($name, "borders") and $value == false {
+            $value: none;
+        }
+        // Allow booleans for display params
+        @if -string-ends-with($name, "-display") and not $value {
+            $value: none;
+        }
+        @if -string-ends-with($name, "-display") and $value == true {
+            $value: block;
+        }
+        $processed: map.set($processed, $name, $value);
+    }
+    @return $processed;
+}
+
+@function -string-ends-with($string, $substring) {
+    @return string.index($string, $substring) == string.length($string) - string.length($substring) + 1;
+}
+
+@mixin -validate-params($params, $theme: null) {
+    $theme-variables: ();
+    @if $theme and map.has-key($-theme-variables, $theme) {
+        $theme-variables: map.get($-theme-variables, $theme);
+    }
+
+    $param-types: map.merge($-variable-param-types, $theme-variables);
+    $errors: ();
+    @each $name, $value in $params {
+
+        @if $name == "suppress-native-widget-styling" {
+            $errors: list.append($errors, "suppress-native-widget-styling can not be specified at the theme level, only at the top level");
+        }
+        
+
+        @if -is-runtime-expression($value) {
+            // You can pass variable expressions as values and we'll just trust
+            // that it's an appropriate value because we can't check at compile time
+        } @else {
+            $expected-type: map.get($param-types, $name);
+            @if $expected-type {
+                $validator-name: "-validate-#{$expected-type}";
+                $validator: meta.get-function($validator-name);
+                @if not $validator {
+                    @error "Internal error: no validator function #{$validator-name}";
+                }
+                $is-valid: meta.call($validator, $value);
+                @if not $is-valid {
+                    $expected: map.get($-param-type-descriptions, $expected-type);
+                    $expected: $expected-type !default;
+                    $errors: list.append($errors, "Invalid parameter `#{$name}: #{meta.inspect($value)}` (expected #{$expected})");
+                }
+            } @else if not map.has-key($-non-variable-param-types, $name) {
+                $errors: list.append($errors, "Unrecognised parameter '#{$name}'");
+            }
+        }
+    }
+    @if list.length($errors) > 0 {
+        $message: "";
+        @each $error in $errors {
+            @if $message == "" {
+                $message: $error;
+            }
+            @else {
+                $message: "#{$message}; #{$error}";
+            }
+        }
+        @if list.length($errors) > 1 {
+            $message: "#{list.length($errors)} errors in #{$theme} parameters: #{$message}";
+        }
+        @else {
+            $message: "Error in #{$theme} parameters: #{$message}";
+        }
+        @error $message;
+    }
+}
+
+@function -is-runtime-expression($value) {
+    $value: string.to-lower-case(meta.inspect($value));
+    @return string.index($value, "var(") != null or string.index($value, "calc(") != null;
+}
+
+@function -validate-color($value) {
+    @return meta.type-of($value) == "color";
+}
+
+@function -validate-size($value) {
+    // TODO implement me
+    @return true;
+}
+
+@function -validate-border($value) {
+    // TODO implement me
+    @return true;
+}
+
+@function -validate-border-style($value) {
+    // TODO implement me
+    // Note: check for style, number and color in any order
+    @return true;
+}
+
+@function -validate-duration($value) {
+    // TODO implement me
+    @return true;
+}
+
+@function -validate-display($value) {
+    // TODO implement me
+    @return $value == block or $value == none;
+}
+
+@function -validate-border-style-and-size($value) {
+    // TODO implement me
+    // Note: check for style and number in any order
+    @return true;
+}
+
+@function -validate-border-style-and-color($value) {
+    // TODO implement me
+    // Note: check for style and color in any order
+    @return true;
+}
+
+@function -validate-bool($value) {
+    @return meta.type-of($value) == "bool";
+}
+
+@function -validate-string($value) {
+    @return meta.type-of($value) == "string";
+}
+
+@function -validate-any($value) {
+    @return true;
+}
+
+// check that we defined all the validator functions
+@each $variable-name, $type in $-variable-param-types {
+    @if not map.has-key($-param-type-descriptions, $type) {
+        @error "Internal error: missing type description for #{$type} (used on #{$variable-name})";
+    }
+    @if not meta.function-exists("-validate-#{$type}") {
+        @error "Internal error: missing validator function for #{$type} (used on #{$variable-name})";
+    }
+}

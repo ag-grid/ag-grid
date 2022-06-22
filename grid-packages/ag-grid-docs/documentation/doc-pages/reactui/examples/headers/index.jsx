@@ -1,8 +1,8 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-alpine.css';
 import { AgGridReact } from '@ag-grid-community/react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { render } from 'react-dom';

@@ -1,0 +1,301 @@
+@use "ag";
+@use "sass:meta";
+
+@mixin -check-button-base {
+    @include ag.icon();
+
+    width: var(--ag-icon-size);
+    height: var(--ag-icon-size);
+
+    & input, input {
+        -webkit-appearance: none;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    background-color: var(--ag-checkbox-background-color);
+    border-radius: var(--ag-checkbox-border-radius);
+    display: inline-block;
+    vertical-align: middle;
+    flex: none;
+
+    &:focus-within, &:active {
+        outline: none;
+        box-shadow: var(--ag-input-focus-box-shadow);
+    }
+
+    &.ag-disabled {
+        opacity: 0.5;
+    }
+}
+
+@mixin output {
+    .ag-input-field-input {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .ag-checkbox-input-wrapper {
+        @include -check-button-base();
+
+        // IMPORTANT!
+        // We document these styles at /javascript-grid-icons/ and advise users who want to change
+        // checkbox icons to style: `.ag-checkbox-input-wrapper.ag-checked::after`. Do not change
+        // these styles without also updating the icons examples.
+
+        &::after {
+            content: ag.icon-char(checkbox-unchecked);
+            color: var(--ag-checkbox-unchecked-color);
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        &.ag-checked::after {
+            content: ag.icon-char(checkbox-checked);
+            color: var(--ag-checkbox-checked-color);
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        &.ag-indeterminate::after {
+            content: ag.icon-char(checkbox-indeterminate);
+            color: var(--ag-checkbox-indeterminate-color);
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+    }
+
+
+    .ag-toggle-button-input-wrapper {
+        box-sizing: border-box;
+        width: var(--ag-toggle-button-width);
+        height: var(--ag-toggle-button-height);
+        background-color: var(--ag-toggle-button-off-background-color);
+        border-radius: calc(var(--ag-toggle-button-height) * 0.5);
+        position: relative;
+        flex: none;
+        border: var(--ag-toggle-button-border-width) solid;
+        border-color: var(--ag-toggle-button-off-border-color);
+
+        input {
+            opacity: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        &:focus-within {
+            outline: none;
+            box-shadow: var(--ag-input-focus-box-shadow);
+        }
+
+        &.ag-disabled {
+            opacity: 0.5;
+        }
+
+        &.ag-checked {
+            background-color: var(--ag-toggle-button-on-background-color);
+            border-color: var(--ag-toggle-button-on-border-color);
+        }
+
+        &::before {
+            content: ' ';
+            position: absolute;
+            top: calc(0px - var(--ag-toggle-button-border-width));
+            left: calc(0px - var(--ag-toggle-button-border-width));
+            display: block;
+            box-sizing: border-box;
+            height: var(--ag-toggle-button-height);
+            width: var(--ag-toggle-button-height);
+            background-color: var(--ag-toggle-button-switch-background-color);
+            border-radius: 100%;
+            transition: left 100ms;
+            border: var(--ag-toggle-button-border-width) solid;
+            border-color: var(--ag-toggle-button-switch-border-color);
+        }
+
+        &.ag-checked::before {
+            left: calc(100% - var(--ag-toggle-button-height) );
+            border-color: var(--ag-toggle-button-on-border-color);
+        }
+    }
+
+
+    .ag-radio-button-input-wrapper {
+        @include -check-button-base();
+
+        border-radius: var(--ag-icon-size);
+
+        &::after {
+            content: ag.icon-char(radio-button-off);
+            color: var(--ag-checkbox-unchecked-color);
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        &.ag-checked::after {
+            content: ag.icon-char(radio-button-on);
+            color: var(--ag-checkbox-checked-color);
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+    }
+
+    input[class^='ag-'][type='range'] {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 100%;
+        background: none;
+        overflow: visible;
+
+        &::-webkit-slider-runnable-track {
+            @include -ag-range-track;
+        }
+
+        &::-moz-range-track {
+            @include -ag-range-track;
+        }
+
+        &::-ms-track {
+            @include -ag-range-track;
+            color: transparent;
+            width: calc(100% - 2px);
+        }
+
+        &::-webkit-slider-thumb {
+            @include -ag-range-thumb;
+            transform: translateY(calc(var(--ag-icon-size) * -0.5 + 1.5px));
+        }
+
+        &::-ms-thumb {
+            @include -ag-range-thumb;
+        }
+        &::-moz-ag-range-thumb {
+            @include -ag-range-thumb;
+        }
+
+        &:focus {
+            outline: none;
+
+            &::-webkit-slider-runnable-track {
+                @include -ag-focus-range-track;
+            }
+            &::-moz-ag-range-track {
+                @include -ag-focus-range-track;
+            }
+            &::-ms-track {
+                @include -ag-focus-range-track;
+            }
+
+            &::-webkit-slider-thumb {
+                @include -ag-focus-range-thumb;
+            }
+            &::-ms-thumb {
+                @include -ag-focus-range-thumb;
+            }
+            &::-moz-ag-range-thumb {
+                @include -ag-focus-range-thumb;
+            }
+        }
+
+        &:active {
+            &::-webkit-slider-runnable-track {
+                @include -ag-active-range-track;
+            }
+            &::-moz-ag-range-track {
+                @include -ag-active-range-track;
+            }
+            &::-ms-track {
+                @include -ag-active-range-track;
+            }
+
+            &::-webkit-slider-thumb {
+                @include -ag-active-range-thumb;
+            }
+            &::-ms-thumb {
+                @include -ag-active-range-thumb;
+            }
+            &::-moz-ag-range-thumb {
+                @include -ag-active-range-thumb;
+            }
+        }
+
+        &:disabled {
+            opacity: 0.5;
+        }
+    }
+}
+
+
+@mixin -ag-range-track {
+    @if meta.mixin-exists(ag-range-track) {
+        @include ag.range-track
+    }
+    @else {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 3px;
+        background-color: var(--ag-border-color);
+        border-radius: var(--ag-border-radius);
+        border-radius: var(--ag-checkbox-border-radius);
+    }
+}
+
+@mixin -ag-focus-range-track {
+    @if meta.mixin-exists(ag-focus-range-track) {
+        @include ag.focus-range-track
+    }
+}
+
+@mixin -ag-active-range-track {
+    @if meta.mixin-exists(ag-focus-range-track) {
+        @include ag.focus-range-track
+    }
+    @else {
+        background-color: var(--ag-input-focus-border-color);
+    }
+}
+
+@mixin -ag-range-thumb {
+    @if meta.mixin-exists(ag-range-thumb) {
+        @include ag.range-thumb
+    }
+    @else {
+        margin: 0;
+        padding: 0;
+        -webkit-appearance: none;
+        width: var(--ag-icon-size);
+        height: var(--ag-icon-size);
+        background-color: var(--ag-background-color);
+        border: 1px solid;
+        border-color: var(--ag-checkbox-unchecked-color);
+        border-radius: var(--ag-icon-size);
+    }
+}
+
+@mixin -ag-focus-range-thumb {
+    box-shadow: var(--ag-input-focus-box-shadow);
+    @if meta.mixin-exists(ag-focus-range-thumb) {
+        @include ag.focus-range-thumb
+    }
+    @else {
+        border-color: var(--ag-checkbox-checked-color);
+    }
+}
+
+@mixin -ag-active-range-thumb {
+    @if meta.mixin-exists(ag-active-range-thumb) {
+        @include ag.active-range-thumb
+    }
+}

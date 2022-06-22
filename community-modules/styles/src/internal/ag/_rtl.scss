@@ -1,0 +1,140 @@
+@use "sass:string";
+@use "sass:list";
+@use "sass:map";
+
+// Automatically generate rtl styles from provided ltr styles by
+// flipping "left" and "right" in property names and values.
+//
+// For example:
+//
+// .foo {
+//     @include ag.unthemed-rtl((margin-left: 10px));
+// }
+//
+// Will emit:
+//
+// .ag-ltr .foo {
+//   margin-left: 10px;
+// }
+// .ag-rtl .foo {
+//   margin-right: 10px;
+// }
+@mixin unthemed-rtl($rules) {
+    @if list.length(list.nth(&, 1)) < 1 {
+        @error "unthemed-rtl() can't be used at the top level of a css file, only nested in a selector.";
+    }
+    @if string.index(list.nth(list.nth(&, 1), 1), ".ag-theme-") != null {
+        @error "unthemed-rtl() should not be used in a theme, use ag.theme-rtl() instead.";
+    }
+    .ag-ltr & {
+        @each $property, $value in $rules {
+            #{$property}: $value;
+        }
+    }
+    .ag-rtl & {
+        @each $property, $value in -get-rtl-rules($rules) {
+            #{$property}: $value;
+        }
+    }
+}
+
+// Like ag.unthemed-rtl, automatically generate rtl styles from provided ltr
+// styles by flipping "left" and "right" in property names and values. However
+// this mixin is for use in themes. Because the div with the theme class is
+// outside the div with the .ag-rtl class, we need to keep the theme class
+// higher than the .ag-rtl.
+//
+// For example:
+//
+// .ag-theme-xyz {
+//     .foo {
+//         @include ag.theme-rtl((margin-left: 10px));
+//     }
+// }
+//
+// Will emit:
+//
+// .ag-theme-xyz .ag-ltr .foo {
+//   margin-left: 10px;
+// }
+// .ag-theme-xyz .ag-rtl .foo {
+//   margin-right: 10px;
+// }
+//
+// Note how the .ag-ltr class is inserted between the theme class and the rest of the selector
+@mixin theme-rtl($rules) {
+    @if list.length(list.nth(&, 1)) < 2 {
+        @error "theme-rtl() can't be used at the top level of a SCSS file, only nested in a selector.";
+    }
+    @at-root {
+        #{-insert-class-after-theme(&, ".ag-ltr")} {
+            @each $property, $value in $rules {
+                #{$property}: $value;
+            }
+        }
+        #{-insert-class-after-theme(&, ".ag-rtl")} {
+            @each $property, $value in -get-rtl-rules($rules) {
+                #{$property}: $value;
+            }
+        }
+    }
+}
+
+// invert rules e.g. (border-right-color: red) becomes (border-left-color: red)
+@function -get-rtl-rules($ltr-rules) {
+    $rtl-rules: ();
+    @each $property, $value in $ltr-rules {
+        @if string.index($property, "-right") {
+            $rtl-property: -replace-substring($property, "-right", "-left");
+            $rtl-rules: map.merge($rtl-rules, ($rtl-property: $value));
+        }
+        @else if string.index($property, "-left") {
+            $rtl-property: -replace-substring($property, "-left", "-right");
+            $rtl-rules: map.merge($rtl-rules, ($rtl-property: $value));
+        }
+        @else if $property == "right" {
+            $rtl-rules: map.merge($rtl-rules, (left: $value));
+        }
+        @else if $property == "left" {
+            $rtl-rules: map.merge($rtl-rules, (right: $value));
+        }
+        @else if $value == "right" {
+            $rtl-rules: map.merge($rtl-rules, ($property: left));
+        }
+        @else if $value == "left" {
+            $rtl-rules: map.merge($rtl-rules, (property: right));
+        }
+        @else {
+            @error "-get-rtl-rules doesn't know how to process the \"#{$property}\" property"
+        }
+    }
+    @return $rtl-rules;
+}
+
+@function -replace-substring($string, $search, $replace: '') {
+    $index: string.index($string, $search);
+    @if $index {
+        @return string.slice($string, 1, $index - 1)
+                + $replace
+                + -replace-substring(str-slice($string, $index + str-length($search)), $search, $replace);
+    }
+    @return $string;
+}
+
+@function -insert-class-after-theme($selectors, $class) {
+    // this needs to do a 2-level loop, because the selector list returned by & in Sass is a 2D list,
+    // e.g.  .foo .bar, .foo .baz { ... } is ((".foo", ".bar"), (".foo", ".baz"))
+    $selector-list: ();
+    @each $selector in $selectors {
+        $result: ();
+        @for $i from 1 through length($selector) {
+            $item: list.nth($selector, $i);
+            $result: list.append($result, $item);
+            @if $i == 1 {
+                $result: list.append($result, $class);
+            }
+        }
+        $selector-list: list.append($selector-list, $result, comma);
+    }
+    @return $selector-list;
+}

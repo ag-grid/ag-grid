@@ -1,0 +1,51 @@
+@use "sass:string";
+@use "sass:map";
+@use "sass:meta";
+
+@use "../../../icon-font-codes" as *;
+@use "./generated/agGridAlpine";
+@use "./generated/agGridBalham";
+@use "./generated/agGridMaterial";
+@use "./generated/agGridClassic";
+
+$-fonts-emitted: ();
+
+@mixin font-face($name) {
+    @if not map.get($-fonts-emitted, $name) {
+        $-fonts-emitted: map.set($-fonts-emitted, $name, true);
+        
+        $data: map.get(meta.module-variables($name), "data");
+        @if not $data {
+            @error "No $data for #{$name} font";
+        }
+        @font-face {
+            font-family: string.quote($name);
+            src: url(#{$data});
+            font-weight: normal;
+            font-style: normal;
+        }
+    }
+}
+
+@mixin icon() {
+    font-family: var(--ag-icon-font-family);
+    font-size: var(--ag-icon-size);
+    line-height: var(--ag-icon-size);
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    
+    // Better Font Rendering
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+// Get the glyph for a named icon
+@function icon-char($name) {
+    $glyph: map.get($icon-font-codes, $name);
+    @if not $glyph {
+        @error "No such icon: #{$name}";
+    }
+    @return $glyph;
+}

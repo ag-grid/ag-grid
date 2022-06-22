@@ -1,0 +1,29 @@
+@use "sass:string";
+@use "sass:map";
+@use "sass:meta";
+
+@use "ag";
+
+@mixin output() {
+    .ag-icon {
+        @include ag.icon();
+    }
+
+    @each $icon-name, $font-code in ag.$icon-font-codes {
+        .ag-icon-#{$icon-name}::before {
+            content: var(--ag-icon-font-code-#{$icon-name}, #{$font-code});
+        }
+    }
+
+    .ag-icon-row-drag::before {
+        content: var(--ag-icon-font-code-grip);
+    }
+
+    .ag-left-arrow::before {
+        content: var(--ag-icon-font-code-left);
+    }
+
+    .ag-right-arrow::before {
+        content: var(--ag-icon-font-code-right);
+    }
+}

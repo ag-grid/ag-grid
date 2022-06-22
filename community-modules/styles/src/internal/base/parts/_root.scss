@@ -1,0 +1,10 @@
+@mixin output {
+    .ag-root-wrapper, .ag-sticky-top {
+        background-color: var(--ag-background-color);
+        -webkit-font-smoothing: antialiased;
+        color: var(--ag-foreground-color);
+        font-family: var(--ag-font-family);
+        font-size: var(--ag-font-size);
+        line-height: normal;
+    }
+}

@@ -1,0 +1,71 @@
+@use "sass:color";
+
+.ag-theme-material {
+    // Taking primary and accent from the indigo / pink theme: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/indigo-pink.scss
+    --ag-material-primary-color: #3f51b5;
+    --ag-material-accent-color: #ff4081;
+
+    // Colors
+    --ag-foreground-color: rgba(0, 0, 0, 0.87);
+    --ag-secondary-foreground-color: rgba(0, 0, 0, 0.54);
+    --ag-disabled-foreground-color: rgba(0, 0, 0, 0.38);
+    --ag-background-color: #fff;
+    --ag-header-background-color: #fff;
+    --ag-subheader-background-color: #eee;
+    --ag-subheader-toolbar-background-color: rgba(238, 238, 238, 0.5);
+    --ag-header-cell-hover-background-color: #f2f2f2;
+    --ag-chip-background-color: #e2e2e2;
+    --ag-range-selection-background-color: rgba(122, 134, 203, 0.1);
+    --ag-range-selection-background-color-2: rgba(122, 134, 203, 0.19);
+    --ag-range-selection-background-color-3: rgba(122, 134, 203, 0.27);
+    --ag-range-selection-background-color-4: rgba(122, 134, 203, 0.34);
+    --ag-range-selection-highlight-color: #fce4ec;
+    --ag-row-hover-color: #fafafa;
+    --ag-column-hover-color: #fafafa;
+    --ag-control-panel-background-color: #fafafa;
+    --ag-selected-row-background-color: #eee;
+    --ag-range-selection-border-color: var(--ag-material-primary-color);
+    --ag-checkbox-checked-color: var(--ag-material-accent-color);
+    --ag-checkbox-unchecked-color: #333;
+    --ag-value-change-value-highlight-background-color: #00acc1;
+    --ag-side-button-selected-background: transparent;
+
+    // Borders
+    --ag-borders: none;
+    --ag-borders-critical: solid 1px;
+    --ag-borders-row: solid 1px;
+    --ag-border-color: #e2e2e2;
+
+    // Sizing
+    --ag-grid-size: 8px;
+    --ag-icon-size: 18px;
+    --ag-header-height: calc(var(--ag-grid-size) * 7);
+    --ag-row-height: calc(var(--ag-grid-size) * 6);
+    --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 3);
+    --ag-list-item-height: calc(var(--ag-grid-size) * 4);
+    --ag-row-group-indent-size: calc(var(--ag-grid-size) * 3 + var(--ag-icon-size));
+    --ag-filter-tool-panel-sub-level-row-height: calc(var(--ag-grid-size) * 4);
+    --ag-checkbox-border-radius: 2px;
+    --ag-toggle-button-switch-border-width: 2px;
+    --ag-toggle-button-height: var(--ag-icon-size);
+    --ag-widget-container-horizontal-padding: calc(var(--ag-grid-size) * 1.5);
+    --ag-widget-container-vertical-padding: calc(var(--ag-grid-size) * 2);
+    --ag-widget-vertical-spacing: calc(var(--ag-grid-size) * 1.75);
+
+    // Fonts
+    --ag-font-family: "Roboto", sans-serif;
+    --ag-font-size: 13px;
+    --ag-icon-font-family: agGridMaterial;
+
+    // Misc
+    --ag-selected-tab-underline-color: var(--ag-material-primary-color);
+    --ag-selected-tab-underline-width: 2px;
+
+    --ag-input-focus-border-color: var(--ag-material-primary-color);
+    
+    --ag-input-focus-box-shadow: 0 0 0 5px rgba(32, 33, 36, 0.122);
+
+    --ag-card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    --ag-card-radius: 2px;
+    --ag-invalid-color: #e02525;
+};
