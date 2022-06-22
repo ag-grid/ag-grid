@@ -235,15 +235,26 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         if (this.isSuppressMoving()) { return; }
 
         const allLeafColumns = this.columnGroup.getProvidedColumnGroup().getLeafColumns();
+        const hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns();
         const dragSource: DragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eHeaderGroup,
-            defaultIconName: DragAndDropService.ICON_HIDE,
+            defaultIconName: hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             dragItemName: this.displayName,
             // we add in the original group leaf columns, so we move both visible and non-visible items
             getDragItem: this.getDragItemForGroup.bind(this),
             onDragStarted: () => allLeafColumns.forEach(col => col.setMoving(true, "uiColumnDragged")),
-            onDragStopped: () => allLeafColumns.forEach(col => col.setMoving(false, "uiColumnDragged"))
+            onDragStopped: () => allLeafColumns.forEach(col => col.setMoving(false, "uiColumnDragged")),
+            onGridEnter: (dragItem) => {
+                if (hideColumnOnExit) {
+                    this.columnModel.setColumnsVisible(dragItem?.columns || [], true, "uiColumnMoved");
+                }
+            },
+            onGridExit: (dragItem) => {
+                if (hideColumnOnExit) {
+                    this.columnModel.setColumnsVisible(dragItem?.columns || [], false, "uiColumnMoved");
+                }
+            },
         };
 
         this.dragAndDropService.addDragSource(dragSource, true);
