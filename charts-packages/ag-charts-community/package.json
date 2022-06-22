@@ -8,7 +8,7 @@
   "scripts": {
     "clean": "rimraf dist .hash",
     "test": "export FONTCONFIG_PATH=$PWD/src/chart/test ; export FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf ; export PANGOCAIRO_BACKEND=fontconfig ; npx jest",
-    "test-update": "export SNAPSHOT_FAILURE_THRESHOLD=0 ; npm run test -- -u",
+    "test-update": "export SNAPSHOT_FAILURE_THRESHOLD=0.01 ; npm run test -- -u",
     "build-cjs": "npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
