@@ -1,5 +1,4 @@
 const cp = require('child_process');
-const os = require('os');
 const path = require("path");
 const fs = require("fs");
 const fsExtra = require("fs-extra");
@@ -16,7 +15,7 @@ const buildDependencies = async (dependencies, command = 'build-css', arguments 
     const scopedDependencies = dependencies.map(dependency => `--scope ${dependency}`).join(' ');
     const lernaArgs = `run ${command} ${scopedDependencies} ${arguments}`.trim().split(" ");
     try {
-        await execa("./node_modules/.bin/lerna", lernaArgs, {stdio: "inherit", cwd: '../../'});
+        return await execa("./node_modules/.bin/lerna", lernaArgs, {stdio: "inherit", cwd: '../../'});
     } catch(e) {
         console.log(`An error occurred while running lerna: ${e}`);
     }

@@ -276,10 +276,17 @@ const createDocPages = async (createPage, graphql, reporter) => {
  */
 const createChartGalleryPages = createPage => {
     const chartGalleryPageTemplate = path.resolve(`src/templates/chart-gallery-page.jsx`);
-    const categories = Object.keys(chartGallery);
+    const filter = (c) => !c.startsWith('_');
+    const categories = Object.keys(chartGallery).filter(filter);
 
     const namesByCategory = categories.reduce(
-        (names, c) => names.concat(Object.keys(chartGallery[c]).map(k => ({category: c, name: k}))),
+        (names, c) => {
+            return names.concat(
+                Object.keys(chartGallery[c])
+                    .filter(filter)
+                    .map(k => ({category: c, name: k}))
+            );
+        },
         []);
 
     namesByCategory.forEach(({category, name}, i) => {
