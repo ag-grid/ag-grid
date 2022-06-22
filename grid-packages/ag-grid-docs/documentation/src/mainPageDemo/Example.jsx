@@ -472,6 +472,10 @@ const Example = () => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
     const [gridTheme, setGridTheme] = useState(() => {
+        if(IS_SSR) {
+            return 'ag-theme-alpine';
+        }
+
         const params = new URLSearchParams(window.location.search);
         return params.get('theme') || 'ag-theme-alpine';
     });
@@ -1256,14 +1260,16 @@ const Example = () => {
         const newTheme = event.target.value || 'ag-theme-none';
         setGridTheme(newTheme);
 
-        let url = window.location.href;
-        if (url.indexOf('?theme=') !== -1) {
-            url = url.replace(/\?theme=[\w-]+/, `?theme=${newTheme}`);
-        } else {
-            const sep = url.indexOf('?') === -1 ? '?' : '&';
-            url += `${sep}theme=${newTheme}`;
+        if(!IS_SSR) {
+            let url = window.location.href;
+            if (url.indexOf('?theme=') !== -1) {
+                url = url.replace(/\?theme=[\w-]+/, `?theme=${newTheme}`);
+            } else {
+                const sep = url.indexOf('?') === -1 ? '?' : '&';
+                url += `${sep}theme=${newTheme}`;
+            }
+            history.replaceState({}, '', url);
         }
-        history.replaceState({}, '', url);
     }
 
     function toggleOptionsCollapsed() {
