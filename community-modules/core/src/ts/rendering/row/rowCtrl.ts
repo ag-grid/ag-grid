@@ -1194,9 +1194,6 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowHeightChanged(): void {
-        // row heights don't change for sticky rows
-        if (this.isSticky()) { return; }
-
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten
         // stage is called where the row will then update again with a new height

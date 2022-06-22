@@ -1,6 +1,6 @@
 import { ColumnApi } from "../../../columns/columnApi";
 import { ColumnModel } from "../../../columns/columnModel";
-import { UserCompDetails, UserComponentFactory } from "../../../components/framework/userComponentFactory";
+import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { KeyCode } from '../../../constants/keyCode';
 import { Autowired, PreDestroy } from "../../../context/context";
 import { DragAndDropService, DragItem, DragSource, DragSourceType } from "../../../dragAndDrop/dragAndDropService";
@@ -8,7 +8,6 @@ import { Column } from "../../../entities/column";
 import { Events } from "../../../eventKeys";
 import { GridApi } from "../../../gridApi";
 import { IMenuFactory } from "../../../interfaces/iMenuFactory";
-import { Beans } from "../../../rendering/beans";
 import { ColumnHoverService } from "../../../rendering/columnHoverService";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { SortController } from "../../../sortController";
@@ -36,15 +35,13 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatur
 
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
-    @Autowired('beans') protected beans: Beans;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('menuFactory') private menuFactory: IMenuFactory;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
+    @Autowired('sortController') private readonly sortController: SortController;
+    @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
+    @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
+    @Autowired('gridApi') private readonly gridApi: GridApi;
+    @Autowired('columnApi') private readonly columnApi: ColumnApi;
 
     private colDefVersion: number;
 
@@ -170,6 +167,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
+        super.handleKeyDown(e);
+
         if (e.key === KeyCode.SPACE) {
             this.selectAllFeature.onSpaceKeyPressed(e);
         }
@@ -198,7 +197,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         return this.menuEnabled;
     }
 
-    protected onFocusIn(e: FocusEvent) {
+    private onFocusIn(e: FocusEvent) {
         if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
             const rowIndex = this.getRowIndex();
             this.focusService.setFocusedHeader(rowIndex, this.column);
@@ -207,7 +206,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setActiveHeader(true);
     }
 
-    protected onFocusOut(e: FocusEvent) {
+    private onFocusOut(e: FocusEvent) {
         if (
             this.getGui().contains(e.relatedTarget as HTMLElement)
         ) { return; }
@@ -270,14 +269,25 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
         if (!this.draggable) { return; }
 
+        const hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns();
         this.moveDragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eSource,
-            defaultIconName: DragAndDropService.ICON_HIDE,
+            defaultIconName: hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(),
             dragItemName: this.displayName,
             onDragStarted: () => this.column.setMoving(true, "uiColumnMoved"),
-            onDragStopped: () => this.column.setMoving(false, "uiColumnMoved")
+            onDragStopped: () => this.column.setMoving(false, "uiColumnMoved"),
+            onGridEnter: (dragItem) => {
+                if (hideColumnOnExit) {
+                    this.columnModel.setColumnsVisible(dragItem?.columns || [], true, "uiColumnMoved");
+                }
+            },
+            onGridExit: (dragItem) => {
+                if (hideColumnOnExit) {
+                    this.columnModel.setColumnsVisible(dragItem?.columns || [], false, "uiColumnMoved");
+                }
+            },
         };
 
         this.dragAndDropService.addDragSource(this.moveDragSource, true);

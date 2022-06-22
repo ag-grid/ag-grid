@@ -162,7 +162,8 @@
         "suppressColumnMoveAnimation": {
             "description": "If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default [themes](/themes/), this results in no animation when moving columns. Default: `false` "
         },
-        "suppressDragLeaveHidesColumns": {}
+        "suppressDragLeaveHidesColumns": {},
+        "suppressRowGroupHidesColumns": {}
     },
     "columnSizing": {
         "meta": {
@@ -848,7 +849,12 @@
             }
         },
         "groupSuppressBlankHeader": {},
-        "groupRowsSticky": {},
+        "groupRowsSticky": {
+            "more": {
+                "name": "Sticky Groups",
+                "url": "/grouping-sticky-groups/"
+            }
+        },
         "groupSelectsFiltered": {
             "more": {
                 "name": "Group Selection",
@@ -907,6 +913,12 @@
         "groupRowRendererParams": {},
         "suppressDragLeaveHidesColumns": {
             "description": "By default, dragging a column out of the grid, i.e. to the [Row Group Panel](/grouping-group-panel/), it will be hidden in the grid. This property prevents the column becoming hidden in the grid. Default: `false`",
+            "more": {
+                "name": "Keeping Columns Visible",
+                "url": "/grouping-group-panel/#keeping-columns-visible"
+            }
+        },
+        "suppressRowGroupHidesColumns": {
             "more": {
                 "name": "Keeping Columns Visible",
                 "url": "/grouping-group-panel/#keeping-columns-visible"

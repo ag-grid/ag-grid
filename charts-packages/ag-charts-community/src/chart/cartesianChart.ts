@@ -178,19 +178,6 @@ export class CartesianChart extends Chart {
         this.navigator.onDragStop();
     }
 
-    protected assignAxesToSeries(force: boolean = false) {
-        super.assignAxesToSeries(force);
-
-        this.series.forEach(series => {
-            if (!series.xAxis) {
-                console.warn(`Could not find a matching xAxis for the ${series.id} series.`);
-            }
-            if (!series.yAxis) {
-                console.warn(`Could not find a matching yAxis for the ${series.id} series.`);
-            }
-        });
-    }
-
     updateAxes(inputShrinkRect: BBox) {
         const axisWidths: Partial<Record<ChartAxisPosition, number>> = {
             [ChartAxisPosition.Top]: 0,

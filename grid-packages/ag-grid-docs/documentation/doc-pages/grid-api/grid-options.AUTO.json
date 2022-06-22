@@ -171,6 +171,10 @@
     "description": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
+  "suppressRowGroupHidesColumns": {
+    "description": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
+    "type": { "returnType": "boolean" }
+  },
   "colResizeDefault": {
     "description": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
     "type": { "returnType": "string" }
@@ -347,7 +351,10 @@
     "description": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
     "type": { "returnType": "boolean" }
   },
-  "groupRowsSticky": { "type": { "returnType": "boolean" } },
+  "groupRowsSticky": {
+    "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
+    "type": { "returnType": "boolean" }
+  },
   "context": {
     "description": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
     "type": { "returnType": "any" }
@@ -781,7 +788,7 @@
     "type": { "returnType": "number" }
   },
   "blockLoadDebounceMillis": {
-    "description": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
+    "description": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
     "type": { "returnType": "number" }
   },
   "purgeClosedRowNodes": {

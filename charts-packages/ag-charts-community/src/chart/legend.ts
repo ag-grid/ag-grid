@@ -4,7 +4,7 @@ import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
 import { FontStyle, FontWeight, getFont } from "../scene/shape/text";
 import { Marker } from "./marker/marker";
-import { SourceEvent } from "../util/observable";
+import { AgChartLegendClickEvent, AgChartLegendListeners } from "./agChartOptions";
 import { getMarker } from "./marker/util";
 import { createId } from "../util/id";
 import { RedrawType } from "../scene/node";
@@ -24,12 +24,6 @@ export interface LegendDatum {
     label: {
         text: string;  // display name for the sub-component
     };
-}
-
-export interface LegendClickEvent extends SourceEvent<Legend> {
-    event: MouseEvent;
-    itemId: string;
-    enabled: boolean;
 }
 
 export enum LegendOrientation {
@@ -106,6 +100,12 @@ export class LegendItem {
     paddingY = 8;
 }
 
+const NO_OP_LISTENER = () => {};
+
+export class LegendListeners implements Required<AgChartLegendListeners> {
+    legendItemClick: (event: AgChartLegendClickEvent) => void = NO_OP_LISTENER;
+}
+
 export class Legend {
 
     static className = 'Legend';
@@ -121,6 +121,7 @@ export class Legend {
     private oldSize: [number, number] = [0, 0];
 
     readonly item = new LegendItem();
+    readonly listeners = new LegendListeners();
 
     truncatedItems: Set<string> = new Set();
 

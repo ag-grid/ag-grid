@@ -1,18 +1,16 @@
 
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
-import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { KeyCode } from '../../../constants/keyCode';
 import { Autowired } from '../../../context/context';
 import { Column } from '../../../entities/column';
 import { Events, FilterChangedEvent } from '../../../events';
 import { FilterManager } from '../../../filter/filterManager';
 import { IFloatingFilter, IFloatingFilterParams, IFloatingFilterParentCallback } from '../../../filter/floating/floatingFilter';
-import { GridApi, unwrapUserComp } from '../../../gridApi';
+import { unwrapUserComp } from '../../../gridApi';
 import { IFilter, IFilterComp } from '../../../interfaces/iFilter';
 import { IMenuFactory } from '../../../interfaces/iMenuFactory';
 import { WithoutGridCommon } from '../../../interfaces/iCommon';
-import { Beans } from '../../../rendering/beans';
 import { ColumnHoverService } from '../../../rendering/columnHoverService';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { AgPromise } from '../../../utils';
@@ -35,12 +33,9 @@ export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
 
 export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
-    @Autowired('beans') protected readonly beans: Beans;
 
     private comp: IHeaderFilterCellComp;
 
@@ -107,7 +102,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         ));
     }
 
-    protected onTabKeyDown(e: KeyboardEvent) {
+    private onTabKeyDown(e: KeyboardEvent) {
         const eDocument = this.gridOptionsWrapper.getDocument();
         const activeEl = eDocument.activeElement as HTMLElement;
         const wrapperHasFocus = activeEl === this.eGui;
@@ -154,10 +149,10 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         return nextCol;
     }
 
-    protected handleKeyDown(e: KeyboardEvent) {
-        const eDocument = this.gridOptionsWrapper.getDocument();
-        const activeEl = eDocument.activeElement;
-        const wrapperHasFocus = activeEl === this.eGui;
+    protected handleKeyDown(e: KeyboardEvent): void {
+        super.handleKeyDown(e);
+
+        const wrapperHasFocus = this.getWrapperHasFocus();
 
         switch (e.key) {
             case KeyCode.UP:
@@ -183,7 +178,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         }
     }
 
-    protected onFocusIn(e: FocusEvent): void {
+    private onFocusIn(e: FocusEvent): void {
         const isRelatedWithin = this.eGui.contains(e.relatedTarget as HTMLElement);
 
         // when the focus is already within the component,

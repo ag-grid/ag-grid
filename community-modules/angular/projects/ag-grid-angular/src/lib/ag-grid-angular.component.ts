@@ -384,6 +384,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressColumnMoveAnimation: boolean | undefined = undefined;
     /** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false`     */
     @Input() public suppressDragLeaveHidesColumns: boolean | undefined = undefined;
+    /** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false`     */
+    @Input() public suppressRowGroupHidesColumns: boolean | undefined = undefined;
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing).     */
     @Input() public colResizeDefault: string | undefined = undefined;
     /** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false`     */
@@ -478,6 +480,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public detailRowHeight: number | undefined = undefined;
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows.     */
     @Input() public detailRowAutoHeight: boolean | undefined = undefined;
+    /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.     */
     @Input() public groupRowsSticky: boolean | undefined = undefined;
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application.     */
     @Input() public context: any = undefined;
@@ -1146,6 +1149,7 @@ export class AgGridAngular implements AfterViewInit {
     static ngAcceptInputType_rememberGroupStateWhenNewData: boolean | null | '';
     static ngAcceptInputType_enableCellChangeFlash: boolean | null | '';
     static ngAcceptInputType_suppressDragLeaveHidesColumns: boolean | null | '';
+    static ngAcceptInputType_suppressRowGroupHidesColumns: boolean | null | '';
     static ngAcceptInputType_suppressMiddleClickScrolls: boolean | null | '';
     static ngAcceptInputType_suppressPreventDefaultOnMouseWheel: boolean | null | '';
     static ngAcceptInputType_suppressCopyRowsToClipboard: boolean | null | '';

@@ -209,7 +209,9 @@
       "dragSourceDomDataKey?": "string",
       "dragStartPixels?": "number",
       "onDragStarted?": "() => void",
-      "onDragStopped?": "() => void"
+      "onDragStopped?": "() => void",
+      "onGridEnter?": "(dragItem: DragItem | null) => void",
+      "onGridExit?": "(dragItem: DragItem | null) => void"
     },
     "docs": {
       "type": "/** The type of the drag source, used by the drop target to know where the\n * drag originated from. */",
@@ -221,7 +223,9 @@
       "dragSourceDomDataKey?": "/** The drag source DOM Data Key, this is useful to detect if the origin grid is the same\n * as the target grid. */",
       "dragStartPixels?": "/** After how many pixels of dragging should the drag operation start. Default is 4. */",
       "onDragStarted?": "/** Callback for drag started */",
-      "onDragStopped?": "/** Callback for drag stopped */"
+      "onDragStopped?": "/** Callback for drag stopped */",
+      "onGridEnter?": "/** Callback for entering the grid */",
+      "onGridExit?": "/** Callback for exiting the grid */"
     }
   },
   "DropTarget": {
@@ -1498,6 +1502,7 @@
       "suppressMovableColumns?": "boolean",
       "suppressColumnMoveAnimation?": "boolean",
       "suppressDragLeaveHidesColumns?": "boolean",
+      "suppressRowGroupHidesColumns?": "boolean",
       "colResizeDefault?": "string",
       "suppressAutoSize?": "boolean",
       "autoSizePadding?": "number",
@@ -1882,6 +1887,7 @@
       "suppressMovableColumns?": "/** Set to `true` to suppress column moving, i.e. to make the columns fixed position. Default: `false` */",
       "suppressColumnMoveAnimation?": "/** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. Default: `false` */",
       "suppressDragLeaveHidesColumns?": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
+      "suppressRowGroupHidesColumns?": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
       "colResizeDefault?": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "suppressAutoSize?": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
       "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n * Default: `4` */",
@@ -1926,6 +1932,7 @@
       "detailCellRendererParams?": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
       "detailRowHeight?": "/** Set fixed height in pixels for each detail row. */",
       "detailRowAutoHeight?": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
+      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "context?": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "alignedGrids?": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "tabIndex?": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -2033,7 +2040,7 @@
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
-      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
+      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
@@ -6572,19 +6579,36 @@
       "paddingY?": "/** The vertical spacing in pixels to use between legend items. */"
     }
   },
+  "AgChartLegendClickEvent": {
+    "meta": {},
+    "type": { "itemId": "string", "enabled": "boolean" },
+    "docs": {
+      "itemId": "/** Legend item id - based on series id. */",
+      "enabled": "/** Whether the legend item is currently enabled or not. */"
+    }
+  },
+  "AgChartLegendListeners": {
+    "meta": {},
+    "type": { "legendItemClick?": "(event: AgChartLegendClickEvent) => void" },
+    "docs": {
+      "legendItemClick?": "/** The listener to call when a legend item is clicked. */"
+    }
+  },
   "AgChartLegendOptions": {
     "meta": {},
     "type": {
       "enabled?": "boolean",
       "position?": "AgChartLegendPosition",
       "spacing?": "PixelSize",
-      "item?": "AgChartLegendItemOptions"
+      "item?": "AgChartLegendItemOptions",
+      "listeners?": "AgChartLegendListeners"
     },
     "docs": {
       "enabled?": "/** Whether or not to show the legend. */",
       "position?": "/** Where the legend should show in relation to the chart. */",
       "spacing?": "/** The spacing in pixels to use outside the legend. */",
-      "item?": "/** Configuration for the legend items that consist of a marker and a label. */"
+      "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "listeners?": "/** Optional callbacks for specific legend-related events. */"
     }
   },
   "AgChartTooltipOptions": {
@@ -12462,6 +12486,7 @@
       "suppressMovableColumns?": "boolean",
       "suppressColumnMoveAnimation?": "boolean",
       "suppressDragLeaveHidesColumns?": "boolean",
+      "suppressRowGroupHidesColumns?": "boolean",
       "colResizeDefault?": "string",
       "suppressAutoSize?": "boolean",
       "autoSizePadding?": "number",
@@ -12846,6 +12871,7 @@
       "suppressMovableColumns?": "/** Set to `true` to suppress column moving, i.e. to make the columns fixed position. Default: `false` */",
       "suppressColumnMoveAnimation?": "/** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. Default: `false` */",
       "suppressDragLeaveHidesColumns?": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
+      "suppressRowGroupHidesColumns?": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
       "colResizeDefault?": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "suppressAutoSize?": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
       "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n * Default: `4` */",
@@ -12890,6 +12916,7 @@
       "detailCellRendererParams?": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
       "detailRowHeight?": "/** Set fixed height in pixels for each detail row. */",
       "detailRowAutoHeight?": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
+      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "context?": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "alignedGrids?": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "tabIndex?": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -12997,7 +13024,7 @@
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
-      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
+      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
@@ -13229,6 +13256,7 @@
       "suppressMovableColumns?": "boolean",
       "suppressColumnMoveAnimation?": "boolean",
       "suppressDragLeaveHidesColumns?": "boolean",
+      "suppressRowGroupHidesColumns?": "boolean",
       "colResizeDefault?": "string",
       "suppressAutoSize?": "boolean",
       "autoSizePadding?": "number",
@@ -13613,6 +13641,7 @@
       "suppressMovableColumns?": "/** Set to `true` to suppress column moving, i.e. to make the columns fixed position. Default: `false` */",
       "suppressColumnMoveAnimation?": "/** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. Default: `false` */",
       "suppressDragLeaveHidesColumns?": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
+      "suppressRowGroupHidesColumns?": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
       "colResizeDefault?": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "suppressAutoSize?": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
       "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n * Default: `4` */",
@@ -13657,6 +13686,7 @@
       "detailCellRendererParams?": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
       "detailRowHeight?": "/** Set fixed height in pixels for each detail row. */",
       "detailRowAutoHeight?": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
+      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "context?": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "alignedGrids?": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "tabIndex?": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -13764,7 +13794,7 @@
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
-      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
+      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
@@ -14000,6 +14030,7 @@
       "suppressMovableColumns?": "boolean",
       "suppressColumnMoveAnimation?": "boolean",
       "suppressDragLeaveHidesColumns?": "boolean",
+      "suppressRowGroupHidesColumns?": "boolean",
       "colResizeDefault?": "string",
       "suppressAutoSize?": "boolean",
       "autoSizePadding?": "number",
@@ -14384,6 +14415,7 @@
       "suppressMovableColumns?": "/** Set to `true` to suppress column moving, i.e. to make the columns fixed position. Default: `false` */",
       "suppressColumnMoveAnimation?": "/** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. Default: `false` */",
       "suppressDragLeaveHidesColumns?": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
+      "suppressRowGroupHidesColumns?": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
       "colResizeDefault?": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "suppressAutoSize?": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
       "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n * Default: `4` */",
@@ -14428,6 +14460,7 @@
       "detailCellRendererParams?": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
       "detailRowHeight?": "/** Set fixed height in pixels for each detail row. */",
       "detailRowAutoHeight?": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
+      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "context?": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "alignedGrids?": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "tabIndex?": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -14535,7 +14568,7 @@
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
-      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
+      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",

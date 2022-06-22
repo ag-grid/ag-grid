@@ -548,7 +548,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public getRowIndexAtPixel(pixelToMatch: number): number {
-        if (this.isEmpty()) {
+        if (this.isEmpty() || this.rowsToDisplay.length === 0) {
             return -1;
         }
 

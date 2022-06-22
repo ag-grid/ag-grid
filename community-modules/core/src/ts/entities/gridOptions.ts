@@ -201,6 +201,8 @@ export interface GridOptions {
     suppressColumnMoveAnimation?: boolean;
     /** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */
     suppressDragLeaveHidesColumns?: boolean;
+    /** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */
+    suppressRowGroupHidesColumns?: boolean;
 
     // *** Column Sizing *** //
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */
@@ -339,6 +341,7 @@ export interface GridOptions {
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */
     detailRowAutoHeight?: boolean;
 
+    /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/
     groupRowsSticky?: boolean;
 
     // *** Miscellaneous *** //
@@ -663,7 +666,6 @@ export interface GridOptions {
     purgeClosedRowNodes?: boolean;
     /** Provide the `serverSideDatasource` for server side row model. */
     serverSideDatasource?: IServerSideDatasource;
-
 
     /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */
     serverSideSortAllLevels?: boolean;
@@ -1245,7 +1247,7 @@ export interface ServerSideGroupLevelParams {
      * If infiniteScroll==false, then Full Store is used.
      *  */
     storeType?: ServerSideStoreType;
-    /** 
+    /**
      * Whether to have infinite scroll active or not for the level.
      */
     infiniteScroll?: boolean;
