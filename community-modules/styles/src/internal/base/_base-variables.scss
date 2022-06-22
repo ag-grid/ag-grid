@@ -25,7 +25,7 @@
 
         // Color of elements that can't be interacted with because they are in a
         // disabled state
-        --ag-disabled-foreground-color: #{color.change(#000, $alpha: 0.5)};
+        --ag-disabled-foreground-color: rgba(0, 0, 0, 0.5);
 
         // Background colour of the grid
         --ag-background-color: #fff;
@@ -55,7 +55,7 @@
 
         // Background color of the overlay shown over the grid e.g. a data loading
         // indicator
-        --ag-modal-overlay-background-color: #{color.change(#FFF, $alpha: 0.66)};
+        --ag-modal-overlay-background-color: rgba(255, 255, 255, 0.66);
 
         // Background color when hovering over rows in the grid and in dropdown
         // menus; Note: if you want a rollover on one but not the other, use CSS
@@ -79,9 +79,9 @@
         // a CSS variable, and your app supports overlapping range selections, also
         // set range-selection-background-color-{1..4}.
         
-        // These 4 parameters are used for fine-grained control over the background
+        // These 4 variables are used for fine-grained control over the background
         // color used when 1, 2, 3 or 4 ranges overlap.
-        --ag-range-selection-background-color: #{color.change(#000, $alpha: 0.2)};
+        --ag-range-selection-background-color: rgba(0, 0, 0, 0.2);
 
         // Optionally set these variables for fine-grained control over the color of
         // overlapping ranges when 2, 3 or 4 ranges overlap. Hint: for a realistic
@@ -104,10 +104,10 @@
 
         // Background colour for cells that provide categories to the current range
         // chart
-        --ag-range-selection-chart-category-background-color: #{color.change(#00FF84, $alpha: 0.1)};
+        --ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1);
 
         // Background colour for cells that provide data to the current range chart
-        --ag-range-selection-chart-background-color: #{color.change(#0058FF, $alpha: 0.1)};
+        --ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1);
 
         // Rollover colour for header cells
         --ag-header-cell-hover-background-color: transparent;
@@ -118,7 +118,7 @@
 
         // Colour to apply when a cell value changes and enableCellChangeFlash is
         // enabled
-        --ag-value-change-value-highlight-background-color: #{color.change(#16A085, $alpha: 0.5)};
+        --ag-value-change-value-highlight-background-color: rgba(22, 160, 133, 0.1);
 
         // Colours to apply when a value increases or decreases in an
         // agAnimateShowChangeCellRenderer cell
@@ -141,7 +141,7 @@
 
         // Colour for border around major UI components like the grid itself,
         // headers; footers and tool panels.
-        --ag-border-color: #{color.change(#000, $alpha: 0.25)};
+        --ag-border-color: rgba(0, 0, 0, 0.25);
 
         // Enable or disable borders that are critical to UX, e.g. those between
         // headers and rows. Themes that disable borders generally may want to
