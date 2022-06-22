@@ -3,7 +3,7 @@ import { ColumnEventType } from "../events";
 import { IComponent } from "./iComponent";
 import { AgGridCommon } from "./iCommon";
 
-export interface IToolPanelParams extends AgGridCommon { }
+export interface IToolPanelParams<TData = any> extends AgGridCommon<TData> { }
 
 export interface IToolPanel {
     refresh(): void;

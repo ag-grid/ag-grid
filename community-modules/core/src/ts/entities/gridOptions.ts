@@ -1168,7 +1168,7 @@ export interface RowClassRules<TData = any> {
 
 export interface RowStyle { [cssProperty: string]: string | number; }
 
-export interface RowClassParams<TData = any> extends AgGridCommon {
+export interface RowClassParams<TData = any> extends AgGridCommon<TData> {
     /** The data associated with this row from rowData. Data is `undefined` for row groups. */
     data: TData | undefined;
     /** The RowNode associated with this row */
@@ -1230,7 +1230,7 @@ export interface ChartRef {
     destroyChart: () => void;
 }
 
-export interface ChartRefParams extends AgGridCommon, ChartRef { }
+export interface ChartRefParams<TData = any> extends AgGridCommon<TData>, ChartRef { }
 
 export type ServerSideStoreType = 'full' | 'partial';
 

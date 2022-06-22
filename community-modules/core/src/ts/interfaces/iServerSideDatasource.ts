@@ -28,7 +28,7 @@ export interface IServerSideGetRowsRequest {
     sortModel: SortModelItem[];
 }
 
-export interface IServerSideGetRowsParams extends AgGridCommon {
+export interface IServerSideGetRowsParams<TData = any> extends AgGridCommon<TData> {
     /**
      * Details for the request. A simple object that can be converted to JSON.
      */

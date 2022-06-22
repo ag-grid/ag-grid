@@ -4,7 +4,7 @@ import { RowNode } from "../../entities/rowNode";
 import { AgGridCommon } from "../../interfaces/iCommon";
 import { IComponent } from "../../interfaces/iComponent";
 
-export interface ICellRendererParams<TData = any> extends AgGridCommon {
+export interface ICellRendererParams<TData = any> extends AgGridCommon<TData> {
     /** Value to be rendered. */
     value: any;
     /** Formatted value to be rendered. */
@@ -45,7 +45,7 @@ export interface ICellRendererParams<TData = any> extends AgGridCommon {
     registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void;
 }
 
-export interface ISetFilterCellRendererParams extends AgGridCommon {
+export interface ISetFilterCellRendererParams<TData = any> extends AgGridCommon<TData> {
     value: any;
     valueFormatted: any;
 

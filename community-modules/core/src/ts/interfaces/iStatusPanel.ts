@@ -10,7 +10,7 @@ export interface StatusPanelDef {
     statusPanelParams?: any;
 }
 
-export interface IStatusPanelParams extends AgGridCommon { }
+export interface IStatusPanelParams<TData = any> extends AgGridCommon<TData> { }
 
 export interface IStatusPanel { }
 

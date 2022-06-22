@@ -119,7 +119,7 @@ export interface IFilterOptionDef {
     hideFilterInput?: boolean;
 }
 
-export interface IFilterParams<TData = any> extends AgGridCommon {
+export interface IFilterParams<TData = any> extends AgGridCommon<TData> {
     /** The column this filter is for. */
     column: Column;
     /** The column definition for the column. */

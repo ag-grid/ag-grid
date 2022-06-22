@@ -66,26 +66,26 @@ export interface CsvExportParams extends ExportParams<CsvCustomContent> {
     suppressQuotes?: boolean;
 }
 
-export interface ShouldRowBeSkippedParams extends AgGridCommon {
-    node: RowNode;
+export interface ShouldRowBeSkippedParams<TData = any> extends AgGridCommon<TData> {
+    node: RowNode<TData>;
 }
 
-export interface ProcessCellForExportParams extends AgGridCommon {
+export interface ProcessCellForExportParams<TData = any> extends AgGridCommon<TData> {
     value: any;
     accumulatedRowIndex?: number;
-    node?: RowNode | null;
+    node?: RowNode<TData> | null;
     column: Column;
     type: string; // clipboard, dragCopy (ctrl+D), export
 }
 
-export interface ProcessHeaderForExportParams extends AgGridCommon {
+export interface ProcessHeaderForExportParams<TData = any> extends AgGridCommon<TData> {
     column: Column;
 }
 
-export interface ProcessGroupHeaderForExportParams extends AgGridCommon {
+export interface ProcessGroupHeaderForExportParams<TData = any> extends AgGridCommon<TData> {
     columnGroup: ColumnGroup;
 }
 
-export interface ProcessRowGroupForExportParams extends AgGridCommon {
-    node: RowNode;
+export interface ProcessRowGroupForExportParams<TData = any> extends AgGridCommon<TData> {
+    node: RowNode<TData>;
 }

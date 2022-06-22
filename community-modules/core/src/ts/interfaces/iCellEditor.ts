@@ -54,7 +54,7 @@ export interface ICellEditor {
     afterGuiAttached?(): void;
 }
 
-export interface ICellEditorParams<TData = any> extends AgGridCommon {
+export interface ICellEditorParams<TData = any> extends AgGridCommon<TData> {
     /** Current value of the cell */
     value: any;
     /** @deprecated Use `eventKey`. */

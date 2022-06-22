@@ -78,7 +78,7 @@ export interface IAggFunc {
     (params: IAggFuncParams): any;
 }
 
-export interface IAggFuncParams extends AgGridCommon {
+export interface IAggFuncParams<TData = any> extends AgGridCommon<TData> {
     /** Values to aggregate */
     values: any[];
     /** Column the aggregation function is working on */
@@ -86,18 +86,18 @@ export interface IAggFuncParams extends AgGridCommon {
     /** ColDef of the aggregation column */
     colDef: ColDef;
     /** The parent RowNode, where the aggregation result will be shown */
-    rowNode: RowNode;
+    rowNode: RowNode<TData>;
     /** data (if any) of the parent RowNode */
     data: any;
 }
 
-export interface HeaderClassParams extends AgGridCommon {
+export interface HeaderClassParams<TData = any> extends AgGridCommon<TData> {
     colDef: AbstractColDef;
     column?: Column | null;
     columnGroup?: ColumnGroup | null;
 }
 export type HeaderClass = string | string[] | ((params: HeaderClassParams) => string | string[] | undefined);
-export interface ToolPanelClassParams extends AgGridCommon {
+export interface ToolPanelClassParams<TData = any> extends AgGridCommon<TData> {
     colDef: AbstractColDef;
     column?: Column | null;
     columnGroup?: ProvidedColumnGroup | null;
@@ -456,7 +456,7 @@ export interface ColDef<TData = any> extends AbstractColDef, IFilterDef {
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotTotalColumnIds?: string[];
 }
-export interface ColumnFunctionCallbackParams<TData = any> extends AgGridCommon {
+export interface ColumnFunctionCallbackParams<TData = any> extends AgGridCommon<TData> {
     /** Row node for the given row */
     node: RowNode<TData>;
     /** Data associated with the node. Will be `undefined` for group rows. */
@@ -477,7 +477,7 @@ export interface RowDragCallback<TData = any> {
 }
 export interface DndSourceCallbackParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
 
-export interface DndSourceOnRowDragParams<TData = any> extends AgGridCommon {
+export interface DndSourceOnRowDragParams<TData = any> extends AgGridCommon<TData> {
     /** Row node for the given row */
     rowNode: RowNode<TData>;
     /** The DOM event that represents a drag and drop interaction */
@@ -498,7 +498,7 @@ export interface SuppressNavigableCallbackParams<TData = any> extends ColumnFunc
 export interface SuppressNavigableCallback<TData = any> {
     (params: SuppressNavigableCallbackParams<TData>): boolean;
 }
-export interface HeaderCheckboxSelectionCallbackParams extends AgGridCommon {
+export interface HeaderCheckboxSelectionCallbackParams<TData = any> extends AgGridCommon<TData> {
     column: Column;
     colDef: ColDef;
 }
@@ -520,7 +520,7 @@ export interface IsColumnFunc<TData = any> {
  */
 export interface IsColumnFuncParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
 
-export interface GetQuickFilterTextParams<TData = any> extends AgGridCommon {
+export interface GetQuickFilterTextParams<TData = any> extends AgGridCommon<TData> {
     /** Value for the cell. */
     value: any;
     /** Row node for the given row */
@@ -547,7 +547,7 @@ export interface ColumnsMenuParams {
     contractColumnSelection?: boolean;
 }
 
-export interface BaseColDefParams<TData = any> extends AgGridCommon {
+export interface BaseColDefParams<TData = any> extends AgGridCommon<TData> {
     /** Row node for the given row */
     node: RowNode<TData> | null;
     /** Data associated with the node */
@@ -558,7 +558,7 @@ export interface BaseColDefParams<TData = any> extends AgGridCommon {
     colDef: ColDef;
 }
 
-export interface BaseColDefOptionalDataParams<TData = any> extends AgGridCommon {
+export interface BaseColDefOptionalDataParams<TData = any> extends AgGridCommon<TData> {
     /** Row node for the given row */
     node: RowNode<TData> | null;
     /** Data associated with the node */
@@ -576,7 +576,7 @@ export interface ValueGetterParams<TData = any> extends BaseColDefOptionalDataPa
 export interface ValueGetterFunc<TData = any> {
     (params: ValueGetterParams<TData>): any;
 }
-export interface HeaderValueGetterParams extends AgGridCommon {
+export interface HeaderValueGetterParams<TData = any> extends AgGridCommon<TData> {
     colDef: AbstractColDef;
     /** Column for this callback if applicable*/
     column?: Column | null;
@@ -636,7 +636,7 @@ export interface SuppressKeyboardEventParams<TData = any> extends ColumnFunction
     editing: boolean;
 }
 
-export interface SuppressHeaderKeyboardEventParams extends AgGridCommon {
+export interface SuppressHeaderKeyboardEventParams<TData = any> extends AgGridCommon<TData> {
     column: Column | ColumnGroup;
     colDef: ColDef | ColGroupDef | null;
     /** The index of the header row of the current focused header */

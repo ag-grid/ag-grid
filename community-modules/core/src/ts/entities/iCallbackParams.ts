@@ -6,7 +6,7 @@ import { CellPosition } from "./cellPosition";
 import { Column } from "./column";
 import { RowNode } from "./rowNode";
 
-export interface GetContextMenuItemsParams<TData = any> extends AgGridCommon {
+export interface GetContextMenuItemsParams<TData = any> extends AgGridCommon<TData> {
     /** Names of the items that would be provided by default. */
     defaultItems: string[] | undefined;
     /** The column, if a cell was clicked, otherwise null. */
@@ -17,14 +17,14 @@ export interface GetContextMenuItemsParams<TData = any> extends AgGridCommon {
     value: any;
 }
 
-export interface GetMainMenuItemsParams extends AgGridCommon {
+export interface GetMainMenuItemsParams<TData = any> extends AgGridCommon<TData> {
     /** The column that was clicked */
     column: Column;
     /** List of the items that would be displayed by default */
     defaultItems: string[];
 }
 
-export interface PostProcessPopupParams<TData = any> extends AgGridCommon {
+export interface PostProcessPopupParams<TData = any> extends AgGridCommon<TData> {
     /** If popup is for a column, this gives the Column */
     column?: Column | null;
     /** If popup is for a row, this gives the RowNode */
@@ -42,19 +42,19 @@ export interface PostProcessPopupParams<TData = any> extends AgGridCommon {
     mouseEvent?: MouseEvent | Touch | null;
 }
 
-export interface SendToClipboardParams extends AgGridCommon {
+export interface SendToClipboardParams<TData = any> extends AgGridCommon<TData> {
     data: string;
 }
-export interface ProcessDataFromClipboardParams extends AgGridCommon {
+export interface ProcessDataFromClipboardParams<TData = any> extends AgGridCommon<TData> {
     /** 2D array of all cells from the clipboard */
     data: string[][];
 }
 
-export interface GetChartToolbarItemsParams extends AgGridCommon {
+export interface GetChartToolbarItemsParams<TData = any> extends AgGridCommon<TData> {
     defaultItems?: ChartMenuOptions[];
 }
 
-export interface NavigateToNextHeaderParams extends AgGridCommon {
+export interface NavigateToNextHeaderParams<TData = any> extends AgGridCommon<TData> {
     /** The key for the arrow key pressed,
      *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */
     key: string;
@@ -67,7 +67,7 @@ export interface NavigateToNextHeaderParams extends AgGridCommon {
     event: KeyboardEvent;
 }
 
-export interface TabToNextHeaderParams extends AgGridCommon {
+export interface TabToNextHeaderParams<TData = any> extends AgGridCommon<TData> {
     /** True if the Shift key is also down */
     backwards: boolean;
     /** The header that currently has focus */
@@ -79,7 +79,7 @@ export interface TabToNextHeaderParams extends AgGridCommon {
 }
 
 
-export interface TabToNextCellParams extends AgGridCommon {
+export interface TabToNextCellParams<TData = any> extends AgGridCommon<TData> {
     /** True if the Shift key is also down */
     backwards: boolean;
     /** True if the current cell is editing
@@ -92,7 +92,7 @@ export interface TabToNextCellParams extends AgGridCommon {
 
 }
 
-export interface NavigateToNextCellParams extends AgGridCommon {
+export interface NavigateToNextCellParams<TData = any> extends AgGridCommon<TData> {
     /** The keycode for the arrow key pressed:
      *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */
     key: string;
@@ -104,12 +104,12 @@ export interface NavigateToNextCellParams extends AgGridCommon {
     event: KeyboardEvent | null;
 }
 
-export interface PaginationNumberFormatterParams extends AgGridCommon {
+export interface PaginationNumberFormatterParams<TData = any> extends AgGridCommon<TData> {
     value: number;
 }
 
 
-export interface IsGroupOpenByDefaultParams<TData = any> extends AgGridCommon {
+export interface IsGroupOpenByDefaultParams<TData = any> extends AgGridCommon<TData> {
     /** The row node being considered. */
     rowNode: RowNode<TData>;
     /** The Column for which this row is grouping. */
@@ -122,7 +122,7 @@ export interface IsGroupOpenByDefaultParams<TData = any> extends AgGridCommon {
     key: string;
 }
 
-export interface GetServerSideStoreParamsParams extends AgGridCommon {
+export interface GetServerSideStoreParamsParams<TData = any> extends AgGridCommon<TData> {
     /** The level of the store. Top level is 0. */
     level: number;
     /** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */
@@ -135,12 +135,12 @@ export interface GetServerSideStoreParamsParams extends AgGridCommon {
     pivotMode: boolean;
 }
 
-export interface IsServerSideGroupOpenByDefaultParams extends AgGridCommon {
+export interface IsServerSideGroupOpenByDefaultParams<TData = any> extends AgGridCommon<TData> {
     data: any;
     rowNode: RowNode;
 }
 
-export interface IsApplyServerSideTransactionParams extends AgGridCommon {
+export interface IsApplyServerSideTransactionParams<TData = any> extends AgGridCommon<TData> {
     /** The transaction getting applied. */
     transaction: ServerSideTransaction;
     /** The parent RowNode, if transaction is applied to a group. */
@@ -149,7 +149,7 @@ export interface IsApplyServerSideTransactionParams extends AgGridCommon {
     storeInfo: any;
 }
 
-export interface GetRowIdParams<TData = any> extends AgGridCommon {
+export interface GetRowIdParams<TData = any> extends AgGridCommon<TData> {
     /** The data item provided to the grid for the row in question */
     data: TData;
     /** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */
@@ -158,7 +158,7 @@ export interface GetRowIdParams<TData = any> extends AgGridCommon {
     parentKeys?: string[];
 }
 
-export interface ProcessRowParams<TData = any> extends AgGridCommon {
+export interface ProcessRowParams<TData = any> extends AgGridCommon<TData> {
     eRow: HTMLElement;
     ePinnedLeftRow: HTMLElement;
     ePinnedRightRow: HTMLElement;
@@ -167,7 +167,7 @@ export interface ProcessRowParams<TData = any> extends AgGridCommon {
     addRenderedRowListener: (eventType: string, listener: Function) => void;
 }
 
-export interface FillOperationParams<TData = any> extends AgGridCommon {
+export interface FillOperationParams<TData = any> extends AgGridCommon<TData> {
     /** The mouse event for the fill operation. */
     event: MouseEvent;
     /** The values that have been processed by the fill operation. */
@@ -186,38 +186,38 @@ export interface FillOperationParams<TData = any> extends AgGridCommon {
     direction: 'up' | 'down' | 'left' | 'right';
 }
 
-export interface RowHeightParams<TData = any> extends AgGridCommon {
+export interface RowHeightParams<TData = any> extends AgGridCommon<TData> {
     /** The data associated with this row from rowData. Data is `undefined` for row groups. */
     data: TData | undefined;
     /** The RowNode of the row in question. */
     node: RowNode<TData>;
 }
 
-export interface IsExternalFilterPresentParams extends AgGridCommon { }
+export interface IsExternalFilterPresentParams<TData = any> extends AgGridCommon<TData> { }
 
-export interface InitialGroupOrderComparatorParams<TData = any> extends AgGridCommon {
+export interface InitialGroupOrderComparatorParams<TData = any> extends AgGridCommon<TData> {
     nodeA: RowNode<TData>;
     nodeB: RowNode<TData>;
 }
 
-export interface GetGroupRowAggParams<TData = any> extends AgGridCommon {
+export interface GetGroupRowAggParams<TData = any> extends AgGridCommon<TData> {
     nodes: RowNode<TData>[];
 }
 
-export interface PostSortRowsParams<TData = any> extends AgGridCommon {
+export interface PostSortRowsParams<TData = any> extends AgGridCommon<TData> {
     nodes: RowNode<TData>[];
 }
 
-export interface IsFullWidthRowParams<TData = any> extends AgGridCommon {
+export interface IsFullWidthRowParams<TData = any> extends AgGridCommon<TData> {
     rowNode: RowNode<TData>;
 }
 
-export interface GetLocaleTextParams extends AgGridCommon {
+export interface GetLocaleTextParams<TData = any> extends AgGridCommon<TData> {
     key: string;
     defaultValue: string;
     variableValues?: string[];
 }
 
-export interface GetGroupAggFilteringParams<TData = any> extends AgGridCommon {
+export interface GetGroupAggFilteringParams<TData = any> extends AgGridCommon<TData> {
     node: RowNode<TData>;
 }
