@@ -16,6 +16,7 @@ import { createId } from "../util/id";
 import { PlacedLabel, placeLabels, PointLabelDatum, isPointLabelDatum } from "../util/labelPlacement";
 import { AgChartOptions } from "./agChartOptions";
 import { debouncedAnimationFrame, debouncedCallback } from "../util/render";
+import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
@@ -791,8 +792,10 @@ export abstract class Chart extends Observable {
     }
 
     processData(): void {
-        this.assignAxesToSeries(true);
-        this.assignSeriesToAxes();
+        if (this.axes.length > 0 || this.series.some(s => s instanceof CartesianSeries)) {
+            this.assignAxesToSeries(true);
+            this.assignSeriesToAxes();
+        }
 
         this.series.forEach(s => s.processData());
 
