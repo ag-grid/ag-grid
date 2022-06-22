@@ -41,7 +41,7 @@
   },
   "parent": {
     "description": "/** The parent node to this node, or empty if top level */",
-    "type": { "returnType": "RowNode | null" }
+    "type": { "returnType": "RowNode<TData> | null" }
   },
   "level": {
     "description": "/** How many levels this node is from the top when grouping. */",
@@ -141,23 +141,23 @@
   },
   "allLeafChildren": {
     "description": "/** All lowest level nodes beneath this node, no groups. */",
-    "type": { "returnType": "RowNode[]" }
+    "type": { "returnType": "RowNode<TData>[]" }
   },
   "childrenAfterGroup": {
     "description": "/** Children of this group. If multi levels of grouping, shows only immediate children. */",
-    "type": { "returnType": "RowNode[] | null" }
+    "type": { "returnType": "RowNode<TData>[] | null" }
   },
   "childrenAfterFilter": {
     "description": "/** Filtered children of this group. */",
-    "type": { "returnType": "RowNode[] | null" }
+    "type": { "returnType": "RowNode<TData>[] | null" }
   },
   "childrenAfterAggFilter": {
     "description": "/** Aggregated and re-filtered children of this group. */",
-    "type": { "returnType": "RowNode[] | null" }
+    "type": { "returnType": "RowNode<TData>[] | null" }
   },
   "childrenAfterSort": {
     "description": "/** Sorted children of this group. */",
-    "type": { "returnType": "RowNode[] | null" }
+    "type": { "returnType": "RowNode<TData>[] | null" }
   },
   "allChildrenCount": {
     "description": "/** Number of children and grand children. */",
@@ -357,7 +357,7 @@
   "depthFirstSearch": {
     "description": "/** Perform a depth-first search of this node and its children. */",
     "type": {
-      "arguments": { "callback": "(rowNode: RowNode) => void" },
+      "arguments": { "callback": "(rowNode: RowNode<TData>) => void" },
       "returnType": "void"
     }
   },

@@ -406,14 +406,14 @@
     "type": { "arguments": { "params": "IAggFuncParams" }, "returnType": "any" }
   },
   "IAggFuncParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "values": "any[]",
       "column": "Column",
-      "colDef": "ColDef",
-      "rowNode": "RowNode",
+      "colDef": "ColDef<TData>",
+      "rowNode": "RowNode<TData>",
       "data": "any",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -429,12 +429,12 @@
     }
   },
   "HeaderClassParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "colDef": "AbstractColDef",
       "column?": "Column | null",
       "columnGroup?": "ColumnGroup | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -449,12 +449,12 @@
     "type": "string | string[] | ((params: HeaderClassParams) => string | string[] | undefined)"
   },
   "ToolPanelClassParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "colDef": "AbstractColDef",
       "column?": "Column | null",
       "columnGroup?": "ProvidedColumnGroup | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -740,8 +740,8 @@
       "node": "RowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -761,8 +761,8 @@
       "node": "RowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -789,8 +789,8 @@
       "node": "RowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -817,8 +817,8 @@
       "node": "RowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -837,7 +837,7 @@
     "type": {
       "rowNode": "RowNode<TData>",
       "dragEvent": "DragEvent",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -862,8 +862,8 @@
       "node": "RowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -890,8 +890,8 @@
       "node": "RowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -918,8 +918,8 @@
       "node": "RowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -941,11 +941,11 @@
     }
   },
   "HeaderCheckboxSelectionCallbackParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -982,8 +982,8 @@
       "node": "RowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -1004,8 +1004,8 @@
       "node": "RowNode<TData>",
       "data": "TData",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -1043,8 +1043,8 @@
       "node": "RowNode<TData> | null",
       "data": "TData",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -1064,8 +1064,8 @@
       "node": "RowNode<TData> | null",
       "data": "TData | undefined",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -1086,8 +1086,8 @@
       "node": "RowNode<TData> | null",
       "data": "TData | undefined",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -1110,14 +1110,14 @@
     }
   },
   "HeaderValueGetterParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "colDef": "AbstractColDef",
       "column?": "Column | null",
       "columnGroup?": "ColumnGroup | ProvidedColumnGroup | null",
       "providedColumnGroup": "ProvidedColumnGroup | null",
       "location": "string | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -1146,8 +1146,8 @@
       "node": "RowNode<TData> | null",
       "data": "TData",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -1171,8 +1171,8 @@
       "node": "RowNode<TData> | null",
       "data": "TData",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -1203,8 +1203,8 @@
       "node": "RowNode<TData> | null",
       "data": "TData",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -1234,8 +1234,8 @@
       "node": "RowNode<TData> | null",
       "data": "TData | undefined",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -1264,8 +1264,8 @@
       "node": "RowNode<TData> | null",
       "data": "TData",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -1286,8 +1286,8 @@
       "node": "RowNode<TData> | null",
       "data": "TData | undefined",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -1307,8 +1307,8 @@
       "node": "RowNode<TData> | null",
       "data": "TData | undefined",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -1330,8 +1330,8 @@
       "node": "RowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -1348,13 +1348,13 @@
     }
   },
   "SuppressHeaderKeyboardEventParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column | ColumnGroup",
       "colDef": "ColDef | ColGroupDef | null",
       "headerRowIndex": "number",
       "event": "KeyboardEvent",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -1369,12 +1369,12 @@
   "CellClassParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "colDef": "ColDef",
+      "colDef": "ColDef<TData>",
       "value": "any",
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2276,7 +2276,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2385,9 +2385,9 @@
     }
   },
   "ChartRefParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any",
       "chartId": "string",
@@ -2451,7 +2451,7 @@
       "column": "Column | null",
       "node": "RowNode<TData> | null",
       "value": "any",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2466,11 +2466,11 @@
     }
   },
   "GetMainMenuItemsParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column",
       "defaultItems": "string[]",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2491,7 +2491,7 @@
       "type": "string",
       "eventSource?": "HTMLElement | null",
       "mouseEvent?": "MouseEvent | Touch | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2508,10 +2508,10 @@
     }
   },
   "SendToClipboardParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "data": "string",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2522,10 +2522,10 @@
     }
   },
   "ProcessDataFromClipboardParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "data": "string[][]",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2537,10 +2537,10 @@
     }
   },
   "GetChartToolbarItemsParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "defaultItems?": "ChartMenuOptions[]",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2551,14 +2551,14 @@
     }
   },
   "NavigateToNextHeaderParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "key": "string",
       "previousHeaderPosition": "HeaderPosition | null",
       "nextHeaderPosition": "HeaderPosition | null",
       "headerRowCount": "number",
       "event": "KeyboardEvent",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2573,13 +2573,13 @@
     }
   },
   "TabToNextHeaderParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "backwards": "boolean",
       "previousHeaderPosition": "HeaderPosition | null",
       "nextHeaderPosition": "HeaderPosition | null",
       "headerRowCount": "number",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2594,13 +2594,13 @@
     }
   },
   "TabToNextCellParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "backwards": "boolean",
       "editing": "boolean",
       "previousCellPosition": "CellPosition",
       "nextCellPosition": "CellPosition | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2615,13 +2615,13 @@
     }
   },
   "NavigateToNextCellParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "key": "string",
       "previousCellPosition": "CellPosition",
       "nextCellPosition": "CellPosition | null",
       "event": "KeyboardEvent | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2635,10 +2635,10 @@
     }
   },
   "PaginationNumberFormatterParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "value": "number",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2656,7 +2656,7 @@
       "level": "number",
       "field": "string",
       "key": "string",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2672,14 +2672,14 @@
     }
   },
   "GetServerSideStoreParamsParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "level": "number",
       "parentRowNode?": "RowNode",
       "rowGroupColumns": "Column[]",
       "pivotColumns": "Column[]",
       "pivotMode": "boolean",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2695,11 +2695,11 @@
     }
   },
   "IsServerSideGroupOpenByDefaultParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "data": "any",
       "rowNode": "RowNode",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2710,12 +2710,12 @@
     }
   },
   "IsApplyServerSideTransactionParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "transaction": "ServerSideTransaction",
       "parentNode": "RowNode",
       "storeInfo": "any",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2733,7 +2733,7 @@
       "data": "TData",
       "level": "number",
       "parentKeys?": "string[]",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2755,7 +2755,7 @@
       "rowIndex": "number",
       "node": "RowNode<TData>",
       "addRenderedRowListener": "(eventType: string, listener: Function) => void",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2776,7 +2776,7 @@
       "currentIndex": "number",
       "currentCellValue": "any",
       "direction": "'up' | 'down' | 'left' | 'right'",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2799,7 +2799,7 @@
     "type": {
       "data": "TData | undefined",
       "node": "RowNode<TData>",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2812,8 +2812,12 @@
     }
   },
   "IsExternalFilterPresentParams": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
     "docs": {
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
@@ -2825,7 +2829,7 @@
     "type": {
       "nodeA": "RowNode<TData>",
       "nodeB": "RowNode<TData>",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2839,7 +2843,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "nodes": "RowNode<TData>[]",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2853,7 +2857,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "nodes": "RowNode<TData>[]",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2867,7 +2871,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "rowNode": "RowNode<TData>",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2878,12 +2882,12 @@
     }
   },
   "GetLocaleTextParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "key": "string",
       "defaultValue": "string",
       "variableValues?": "string[]",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2897,7 +2901,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "node": "RowNode<TData>",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -3037,13 +3041,13 @@
     "type": { "[key: string]": "{[key in SASS_PROPERTIES]?: number}" }
   },
   "ModelUpdatedEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "animate": "boolean | undefined",
       "keepRenderedRows": "boolean | undefined",
       "newData": "boolean | undefined",
       "newPage": "boolean",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3056,13 +3060,13 @@
     }
   },
   "PaginationChangedEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "animate?": "boolean",
       "keepRenderedRows?": "boolean",
       "newData?": "boolean",
       "newPage": "boolean",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3080,82 +3084,122 @@
     "docs": { "type": "/** Event identifier */" }
   },
   "AgGridEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "ToolPanelVisibleChangedEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "source": "string | undefined",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ColumnPivotModeChangedEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "VirtualColumnsChangedEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "ColumnEverythingChangedEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "source": "string",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "NewColumnsLoadedEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "GridColumnsChangedEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "DisplayedColumnsChangedEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "RowDataChangedEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "RowDataUpdatedEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "PinnedRowDataChangedEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "SelectionChangedEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "FilterChangedEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "afterDataChange?": "boolean",
       "afterFloatingFilter?": "boolean",
       "columns": "Column[]",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3167,23 +3211,23 @@
     }
   },
   "FilterModifiedEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "filterInstance": "IFilterComp",
       "column": "Column",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "FilterOpenedEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column | ProvidedColumnGroup",
       "source": "FilterRequestSource",
       "eGui": "HTMLElement",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3195,10 +3239,10 @@
     }
   },
   "SortChangedEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "source": "string",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3208,28 +3252,48 @@
     }
   },
   "GridReadyEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "DisplayedColumnsWidthChangedEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "ColumnHoverChangedEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "BodyHeightChangedEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "ComponentStateChangedEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "ColumnPanelItemDragStartEvent": {
@@ -3243,11 +3307,11 @@
     "docs": { "type": "/** Event identifier */" }
   },
   "DragEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "type": "string",
       "target": "HTMLElement",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi"
     },
     "docs": {
@@ -3260,7 +3324,7 @@
     "type": {
       "type": "string",
       "target": "HTMLElement",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi"
     },
     "docs": {
@@ -3273,7 +3337,7 @@
     "type": {
       "type": "string",
       "target": "HTMLElement",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi"
     },
     "docs": {
@@ -3293,11 +3357,11 @@
     "docs": { "type": "/** Event identifier */" }
   },
   "GridSizeChangedEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "clientWidth": "number",
       "clientHeight": "number",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3318,7 +3382,7 @@
       "overIndex": "number",
       "overNode?": "RowNode<TData>",
       "y": "number",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi"
     },
     "docs": {
@@ -3343,7 +3407,7 @@
       "overIndex": "number",
       "overNode?": "RowNode<TData>",
       "y": "number",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi"
     },
     "docs": {
@@ -3368,7 +3432,7 @@
       "overIndex": "number",
       "overNode?": "RowNode<TData>",
       "y": "number",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi"
     },
     "docs": {
@@ -3393,7 +3457,7 @@
       "overIndex": "number",
       "overNode?": "RowNode<TData>",
       "y": "number",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi"
     },
     "docs": {
@@ -3418,7 +3482,7 @@
       "overIndex": "number",
       "overNode?": "RowNode<TData>",
       "y": "number",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi"
     },
     "docs": {
@@ -3433,47 +3497,51 @@
     }
   },
   "PasteStartEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "source": "string",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "PasteEndEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "source": "string",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "FillStartEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "FillEndEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "initialRange": "CellRange",
       "finalRange": "CellRange",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ViewportChangedEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "firstRow": "number",
       "lastRow": "number",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3484,11 +3552,11 @@
     }
   },
   "FirstDataRenderedEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "firstRow": "number",
       "lastRow": "number",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3499,12 +3567,12 @@
     }
   },
   "RangeSelectionChangedEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "id?": "string",
       "started": "boolean",
       "finished": "boolean",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3515,11 +3583,11 @@
     }
   },
   "ChartCreated": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "type": "string",
       "chartId": "string",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi"
     },
     "docs": {
@@ -3528,13 +3596,13 @@
     }
   },
   "ChartRangeSelectionChanged": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "type": "string",
       "chartId": "string",
       "id": "string",
       "cellRange": "CellRangeParams",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi"
     },
     "docs": {
@@ -3545,14 +3613,14 @@
     }
   },
   "ChartOptionsChanged": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "type": "string",
       "chartId": "string",
       "chartType": "ChartType",
       "chartThemeName": "string",
       "chartOptions": "AgChartThemeOverrides",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi"
     },
     "docs": {
@@ -3564,11 +3632,11 @@
     }
   },
   "ChartDestroyed": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "type": "string",
       "chartId": "string",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi"
     },
     "docs": {
@@ -3577,10 +3645,10 @@
     }
   },
   "ColumnGroupOpenedEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "columnGroup": "ProvidedColumnGroup",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3590,7 +3658,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "items": "RowNode<TData>[]",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3601,12 +3669,12 @@
     "type": "'horizontal' | 'vertical'"
   },
   "BodyScrollEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "direction": "ScrollDirection",
       "left": "number",
       "top": "number",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3618,29 +3686,33 @@
       "direction": "ScrollDirection",
       "left": "number",
       "top": "number",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "FlashCellsEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "cells": "any",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "PaginationPixelOffsetChangedEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "CellFocusedEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "rowIndex": "number | null",
       "column": "Column | null",
@@ -3648,7 +3720,7 @@
       "isFullWidthCell": "boolean",
       "forceBrowserFocus?": "boolean",
       "floating": "string | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3671,7 +3743,7 @@
       "isFullWidthCell": "boolean",
       "forceBrowserFocus?": "boolean",
       "floating": "string | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3685,10 +3757,10 @@
     }
   },
   "ExpandCollapseAllEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "source": "string",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3699,12 +3771,12 @@
     "type": "\"sizeColumnsToFit\" | \"autosizeColumns\" | \"alignedGridChanged\" | \"filterChanged\" | \"filterDestroyed\" | \"gridOptionsChanged\" | \"gridInitializing\" | \"toolPanelDragAndDrop\" | \"toolPanelUi\" | \"uiColumnMoved\" | \"uiColumnResized\" | \"uiColumnDragged\" | \"uiColumnExpanded\" | \"uiColumnSorted\" | \"contextMenu\" | \"columnMenu\" | \"rowModelUpdated\" | \"rowDataUpdated\" | \"api\" | \"flex\" | \"pivotChart\""
   },
   "ColumnEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3723,7 +3795,7 @@
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3742,7 +3814,7 @@
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3759,7 +3831,7 @@
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3776,7 +3848,7 @@
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3794,7 +3866,7 @@
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3813,7 +3885,7 @@
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3832,7 +3904,7 @@
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3856,7 +3928,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3879,7 +3951,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3902,7 +3974,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3924,7 +3996,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3946,7 +4018,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3968,7 +4040,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -3990,7 +4062,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4012,7 +4084,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4034,7 +4106,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4056,7 +4128,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4078,7 +4150,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4098,7 +4170,7 @@
     },
     "type": {
       "column": "Column",
-      "colDef": "ColDef",
+      "colDef": "ColDef<TData>",
       "value": "any",
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4106,7 +4178,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4124,7 +4196,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column",
-      "colDef": "ColDef",
+      "colDef": "ColDef<TData>",
       "value": "any",
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4132,7 +4204,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4150,7 +4222,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column",
-      "colDef": "ColDef",
+      "colDef": "ColDef<TData>",
       "value": "any",
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4158,7 +4230,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4176,7 +4248,7 @@
     "meta": { "typeParams": ["TData = any"], "doc": "/** Cell is clicked */" },
     "type": {
       "column": "Column",
-      "colDef": "ColDef",
+      "colDef": "ColDef<TData>",
       "value": "any",
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4184,7 +4256,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4202,7 +4274,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column",
-      "colDef": "ColDef",
+      "colDef": "ColDef<TData>",
       "value": "any",
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4210,7 +4282,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4228,7 +4300,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column",
-      "colDef": "ColDef",
+      "colDef": "ColDef<TData>",
       "value": "any",
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4236,7 +4308,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4254,7 +4326,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column",
-      "colDef": "ColDef",
+      "colDef": "ColDef<TData>",
       "value": "any",
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4262,7 +4334,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4280,7 +4352,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column",
-      "colDef": "ColDef",
+      "colDef": "ColDef<TData>",
       "value": "any",
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4288,7 +4360,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4306,7 +4378,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column",
-      "colDef": "ColDef",
+      "colDef": "ColDef<TData>",
       "value": "any",
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4314,7 +4386,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4332,7 +4404,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column",
-      "colDef": "ColDef",
+      "colDef": "ColDef<TData>",
       "value": "any",
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4340,7 +4412,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4360,7 +4432,7 @@
       "oldValue": "any",
       "newValue": "any",
       "column": "Column",
-      "colDef": "ColDef",
+      "colDef": "ColDef<TData>",
       "value": "any",
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4368,7 +4440,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4391,7 +4463,7 @@
       "newValue": "any",
       "source": "string | undefined",
       "column": "Column",
-      "colDef": "ColDef",
+      "colDef": "ColDef<TData>",
       "value": "any",
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4399,7 +4471,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4420,7 +4492,7 @@
       "newValue": "any",
       "source": "string | undefined",
       "column": "Column",
-      "colDef": "ColDef",
+      "colDef": "ColDef<TData>",
       "value": "any",
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4428,7 +4500,7 @@
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4446,7 +4518,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "results": "(RowNodeTransaction<TData> | ServerSideTransactionResult)[]",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4456,10 +4528,10 @@
     }
   },
   "ColumnRequestEvent": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "columns": "Column[]",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4469,7 +4541,7 @@
     "meta": {},
     "type": {
       "columns": "Column[]",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4479,7 +4551,7 @@
     "meta": {},
     "type": {
       "columns": "Column[]",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4489,7 +4561,7 @@
     "meta": {},
     "type": {
       "columns": "Column[]",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
@@ -4500,15 +4572,19 @@
     "type": {
       "aggFunc": "any",
       "columns": "Column[]",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ScrollVisibilityChangedEvent": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "StoreUpdatedEvent": {
@@ -4605,7 +4681,7 @@
     "type": "(parentFilterInstance: P) => void"
   },
   "IFloatingFilterParams": {
-    "meta": { "typeParams": ["P = InbuiltParentType"] },
+    "meta": { "typeParams": ["P = InbuiltParentType", "TData = any"] },
     "type": {
       "column": "Column",
       "filterParams": "IFilterParams",
@@ -4613,7 +4689,7 @@
       "currentParentModel": "() => any",
       "parentFilterInstance": "(callback: IFloatingFilterParentCallback<P>) => void",
       "showParentFilter": "() => void",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -4708,7 +4784,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
       "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -4791,7 +4867,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
       "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -4842,7 +4918,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
       "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -4916,7 +4992,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
       "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -5005,7 +5081,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
       "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -5086,8 +5162,8 @@
       "node": "RowNode<TData> | null",
       "data": "TData",
       "column": "Column",
-      "colDef": "ColDef",
-      "api": "GridApi",
+      "colDef": "ColDef<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -5138,7 +5214,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
       "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -5549,7 +5625,7 @@
     }
   },
   "IHeaderParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column",
       "displayName": "string",
@@ -5560,7 +5636,7 @@
       "setSort": "(sort: 'asc' | 'desc' | null, multiSort?: boolean) => void",
       "template?": "string",
       "eGridHeader": "HTMLElement",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -5618,12 +5694,12 @@
     }
   },
   "IHeaderGroupParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "columnGroup": "ColumnGroup",
       "displayName": "string",
       "setExpanded": "(expanded: boolean) => void",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -5850,10 +5926,10 @@
     }
   },
   "ShouldRowBeSkippedParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode",
-      "api": "GridApi",
+      "node": "RowNode<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -5864,14 +5940,14 @@
     }
   },
   "ProcessCellForExportParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "value": "any",
       "accumulatedRowIndex?": "number",
-      "node?": "RowNode | null",
+      "node?": "RowNode<TData> | null",
       "column": "Column",
       "type": "string",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -5882,10 +5958,10 @@
     }
   },
   "ProcessHeaderForExportParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -5896,10 +5972,10 @@
     }
   },
   "ProcessGroupHeaderForExportParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "columnGroup": "ColumnGroup",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -5910,10 +5986,10 @@
     }
   },
   "ProcessRowGroupForExportParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode",
-      "api": "GridApi",
+      "node": "RowNode<TData>",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -8076,7 +8152,7 @@
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
       "formatValue": "(value: any) => any",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -8323,12 +8399,19 @@
     }
   },
   "WithoutGridCommon": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T extends AgGridCommon"] },
-    "type": "Omit<T, keyof AgGridCommon>"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["T extends AgGridCommon<any>"]
+    },
+    "type": "Omit<T, keyof AgGridCommon<any>>"
   },
   "AgGridCommon": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "meta": { "typeParams": ["TData"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
     "docs": {
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
@@ -8828,7 +8911,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
       "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -9004,7 +9087,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
       "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -9200,7 +9283,7 @@
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
       "formatValue": "(value: any) => any",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -9323,7 +9406,7 @@
     }
   },
   "IServerSideGetRowsParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "request": "IServerSideGetRowsRequest",
       "parentNode": "RowNode",
@@ -9331,7 +9414,7 @@
       "success(params: LoadSuccessParams)": "void",
       "failCallback()": "void",
       "fail()": "void",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -9525,13 +9608,13 @@
     }
   },
   "SetFilterValuesFuncParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "success": "(values: string[]) => void",
-      "colDef": "ColDef",
+      "colDef": "ColDef<TData>",
       "column": "Column",
       "columnApi": "ColumnApi",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "context": "any"
     },
     "docs": {
@@ -9542,12 +9625,12 @@
     }
   },
   "SetFilterValuesFunc": {
-    "meta": { "isTypeAlias": true },
-    "type": "(params: SetFilterValuesFuncParams) => void"
+    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
+    "type": "(params: SetFilterValuesFuncParams<TData>) => void"
   },
   "SetFilterValues": {
-    "meta": { "isTypeAlias": true },
-    "type": "SetFilterValuesFunc | any[]"
+    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
+    "type": "SetFilterValuesFunc<TData> | any[]"
   },
   "ISetFilterParams": {
     "meta": {},
@@ -9579,7 +9662,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
       "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -9649,7 +9732,7 @@
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -10194,8 +10277,12 @@
     }
   },
   "IStatusPanelParams": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
     "docs": {
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
@@ -10217,8 +10304,12 @@
     }
   },
   "IToolPanelParams": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
     "docs": {
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
@@ -10253,7 +10344,7 @@
       "suppressColumnExpandAll": "boolean",
       "contractColumnSelection": "boolean",
       "suppressSyncLayoutWithGrid": "boolean",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -10379,7 +10470,7 @@
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -10668,7 +10759,7 @@
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
       "formatValue": "(value: any) => any",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -10712,7 +10803,7 @@
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
       "formatValue": "(value: any) => any",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -10758,7 +10849,7 @@
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
       "formatValue": "(value: any) => any",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -10834,7 +10925,7 @@
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -10892,7 +10983,7 @@
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -10919,13 +11010,13 @@
     }
   },
   "ISetFilterCellRendererParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "value": "any",
       "valueFormatted": "any",
       "colDef?": "ColDef",
       "column?": "Column",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -10985,7 +11076,7 @@
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -11045,11 +11136,11 @@
     }
   },
   "IDateParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "onDateChanged": "() => void",
       "filterParams": "IDateFilterParams",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -11116,8 +11207,12 @@
     "type": { "element": "HTMLElement", "dragSource?": "DragListenerParams" }
   },
   "ILoadingOverlayParams": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
     "docs": {
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
@@ -11138,8 +11233,12 @@
     }
   },
   "INoRowsOverlayParams": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
     "docs": {
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
@@ -11263,7 +11362,7 @@
       "rowIndex?": "number",
       "node?": "RowNode<TData>",
       "data?": "TData",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -11762,7 +11861,7 @@
       "suppressExpandAll": "boolean",
       "suppressFilterSearch": "boolean",
       "suppressSyncLayoutWithGrid": "boolean",
-      "api": "GridApi",
+      "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
