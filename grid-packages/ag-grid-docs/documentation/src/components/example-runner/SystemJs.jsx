@@ -19,7 +19,6 @@ import isDevelopment from 'utils/is-development';
 const localConfiguration = {
     gridMap: {
         "@ag-grid-community/styles": `${localPrefix}/@ag-grid-community/styles`,
-        "@ag-grid-community/styles": `${localPrefix}/@ag-grid-community/styles`,
         "@ag-grid-community/react": `${localPrefix}/@ag-grid-community/react`,
         "@ag-grid-community/angular": `${localPrefix}/@ag-grid-community/angular`,
         "@ag-grid-community/vue": `${localPrefix}/@ag-grid-community/vue`,
