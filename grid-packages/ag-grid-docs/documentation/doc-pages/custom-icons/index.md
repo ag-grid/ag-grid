@@ -2,6 +2,13 @@
 title: "Custom Icons"
 ---
 
+[[warning]]
+| TODO rework this page with up-to-date examples of changing icons using CSS variables. Needs 4 examples:
+| 1. fontawesome
+| 2. Material Design Icons
+| 3. SVG icons
+| 4. Using a different icon font
+
 This sections details how to provide your own icons for the grid and style grid icons for your application requirements.
 
 ## Change Individual Icons Using CSS
