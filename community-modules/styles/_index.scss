@@ -532,7 +532,8 @@ $-non-variable-param-types: (
             $errors: list.append($errors, "suppress-native-widget-styling can not be specified at the theme level, only at the top level");
         }
         
-        @if string.index(meta.inspect($value), "var(") != null {
+
+        @if -is-runtime-expression($value) {
             // You can pass variable expressions as values and we'll just trust
             // that it's an appropriate value because we can't check at compile time
         } @else {
@@ -572,6 +573,11 @@ $-non-variable-param-types: (
         }
         @error $message;
     }
+}
+
+@function -is-runtime-expression($value) {
+    $value: string.to-lower-case(meta.inspect($value));
+    @return string.index($value, "var(") != null or string.index($value, "calc(") != null;
 }
 
 @function -validate-color($value) {
