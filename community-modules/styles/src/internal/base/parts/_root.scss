@@ -1,5 +1,5 @@
 @mixin output {
-    .ag-root-wrapper, .ag-sticky-top {
+    .ag-root-wrapper, .ag-sticky-top, .ag-dnd-ghost {
         background-color: var(--ag-background-color);
         -webkit-font-smoothing: antialiased;
         color: var(--ag-foreground-color);
