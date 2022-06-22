@@ -141,11 +141,6 @@ $-theme-variables: (
     "balham": (balham-active-color: "color"),
     "balham-dark": (balham-active-color: "color"),
     "material": (material-primary-color: "color", material-accent-color: "color"),
-    "classic": (),
-    "fresh": (),
-    "dark": (),
-    "blue": (),
-    "bootstrap": (),
 );
 
 $-theme-css-files: (
@@ -154,11 +149,6 @@ $-theme-css-files: (
     "balham": "ag-theme-balham-no-font.css",
     "balham-dark": "ag-theme-balham-no-font.css",
     "material": "ag-theme-material-no-font.css",
-    "classic": "ag-theme-classic-no-font.css",
-    "fresh": "ag-theme-classic-no-font.css",
-    "dark": "ag-theme-classic-no-font.css",
-    "blue": "ag-theme-classic-no-font.css",
-    "bootstrap": "ag-theme-classic-no-font.css",
 );
 
 $-theme-fonts: (
@@ -167,11 +157,6 @@ $-theme-fonts: (
     "balham": "agGridBalham",
     "balham-dark": "agGridBalham",
     "material": "agGridMaterial",
-    "classic": "agGridClassic",
-    "fresh": "agGridClassic",
-    "dark": "agGridClassic",
-    "blue": "agGridClassic",
-    "bootstrap": "agGridClassic",
 );
 
 @function -is-provided-theme($theme-name) {
