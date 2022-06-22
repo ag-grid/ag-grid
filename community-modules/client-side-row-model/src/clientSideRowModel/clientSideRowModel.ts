@@ -20,7 +20,6 @@ import {
     RefreshModelParams,
     ClientSideRowModelSteps,
     RowBounds,
-    RowDataChangedEvent,
     RowDataTransaction,
     RowDataUpdatedEvent,
     RowNode,
@@ -840,12 +839,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         // this event kicks off:
         // - shows 'no rows' overlay if needed
-        const rowDataChangedEvent: RowDataChangedEvent = {
+        const rowDataUpdatedEvent: RowDataUpdatedEvent = {
             type: Events.EVENT_ROW_DATA_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(rowDataChangedEvent);
+        this.eventService.dispatchEvent(rowDataUpdatedEvent);
 
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,

@@ -171,15 +171,6 @@ To create a reusable set of design customisations that can be shared between pro
 }
 ```
 
-## Changing theme icons
-
-TODO explanation and example of setting custom icons:
-
-1. fontawesome
-2. Material Design Icons
-3. SVG icons
-4. Using a different icon font
-
 ## Using or Overriding Browser Native Widget Styles
 
 TODO description of why you'd want to use `ag-grid-no-native-widgets.css` and a demo

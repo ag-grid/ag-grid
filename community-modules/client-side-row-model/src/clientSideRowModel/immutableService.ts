@@ -1,13 +1,11 @@
 import {
     Autowired,
     Bean, BeanStub, ColumnApi, Constants,
-    Events,
     FilterManager,
     GridApi,
     IImmutableService,
     IRowModel,
     PostConstruct,
-    RowDataChangedEvent,
     RowDataTransaction,
     RowNode, RowRenderer, _
 } from "@ag-grid-community/core";
