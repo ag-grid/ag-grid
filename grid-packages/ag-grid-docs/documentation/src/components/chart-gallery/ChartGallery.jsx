@@ -9,11 +9,13 @@ import styles from './ChartGallery.module.scss';
  * This used to display the chart gallery on the Standalone Charts Overview page.
  */
 const ChartGallery = () => {
-    const categories = Object.keys(chartGallery);
+    const filter = (c) => !c.startsWith('_');
+    const categories = Object.keys(chartGallery)
+        .filter(filter);
 
     return <>
         <h2 id='gallery' className={styles['chart-gallery__title']}>Gallery</h2>
-        {categories.map(c => <GallerySection key={c} title={c} exampleNames={Object.keys(chartGallery[c])} />)}
+        {categories.map(c => <GallerySection key={c} title={c} exampleNames={Object.keys(chartGallery[c]).filter(filter)} />)}
     </>;
 };
 
