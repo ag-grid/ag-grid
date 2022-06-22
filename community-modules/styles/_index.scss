@@ -199,7 +199,7 @@ $-theme-fonts: (
 
     $cleaned: ();
     @each $name, $extra-params in $themes {
-        $params: map.merge($params, $extra-params);
+        $params: -preprocess-params(map.merge($params, $extra-params));
         $cleaned: map.set($cleaned, -clean-theme-name($name), $params);
     }
     @return $cleaned;
@@ -361,9 +361,7 @@ $-theme-fonts: (
 $-param-type-descriptions: (
     "color": "a CSS color (e.g. `red` or `#fff`)",
     "size": "a CSS size (e.g. `0`, `4px` or `50%`)",
-    "border": "a 3-part border spec in the form `style width color` (e.g. `solid 1px red`)",
     "border-style": "a CSS border style (e.g. `dotted` or `solid`)",
-    "border-style-not-none": "a CSS border style (e.g. `dotted` or `solid` but not `none`)",
     "duration": "a number with time duration units (e.g. `3s` or `250ms`)",
     "border-style-and-size": "either `none`, or a border-style and size (e.g. `solid 1px`), or a boolean (true -> `solid 1px` and false -> `none`)",
     "border-style-and-color": "a border-style and color (e.g. `solid red`)",
@@ -483,17 +481,42 @@ $-variable-param-types: (
     $-variable-param-types: map.set($-variable-param-types, "icon-font-code-#{$icon-name}", "any");
 }
 
-@each $variable-name, $type in $-variable-param-types {
-    @if not map.has-key($-param-type-descriptions, $type) {
-        @error "Internal error: missing type description for #{$type} (used on #{$variable-name})";
-    }
-}
-
 // params that are not copied to CSS variables
 $-non-variable-param-types: (
     suppress-native-widget-styling: "bool",
     extend-theme: "string"
 );
+
+// Apply Sass API sugar over CSS variable API
+@function -preprocess-params($params) {
+    $processed: ();
+    @each $name, $value in $params {
+        // Allow `null` for colours
+        @if -string-ends-with($name, "-color") and $value == null {
+            $value: transparent;
+        }
+        // Allow booleans for borders params
+        @if string.index($name, "borders") and $value == true {
+            $value: solid 1px;
+        }
+        @if string.index($name, "borders") and $value == false {
+            $value: none;
+        }
+        // Allow booleans for display params
+        @if -string-ends-with($name, "-display") and not $value {
+            $value: none;
+        }
+        @if -string-ends-with($name, "-display") and $value == true {
+            $value: block;
+        }
+        $processed: map.set($processed, $name, $value);
+    }
+    @return $processed;
+}
+
+@function -string-ends-with($string, $substring) {
+    @return string.index($string, $substring) == string.length($string) - string.length($substring) + 1;
+}
 
 @mixin -validate-params($params, $theme: null) {
     $theme-variables: ();
@@ -576,9 +599,20 @@ $-non-variable-param-types: (
     @return true;
 }
 
+@function -validate-display($value) {
+    // TODO implement me
+    @return $value == block or $value == none;
+}
+
 @function -validate-border-style-and-size($value) {
     // TODO implement me
     // Note: check for style and number in any order
+    @return true;
+}
+
+@function -validate-border-style-and-color($value) {
+    // TODO implement me
+    // Note: check for style and color in any order
     @return true;
 }
 
@@ -592,4 +626,14 @@ $-non-variable-param-types: (
 
 @function -validate-any($value) {
     @return true;
+}
+
+// check that we defined all the validator functions
+@each $variable-name, $type in $-variable-param-types {
+    @if not map.has-key($-param-type-descriptions, $type) {
+        @error "Internal error: missing type description for #{$type} (used on #{$variable-name})";
+    }
+    @if not meta.function-exists("-validate-#{$type}") {
+        @error "Internal error: missing validator function for #{$type} (used on #{$variable-name})";
+    }
 }
