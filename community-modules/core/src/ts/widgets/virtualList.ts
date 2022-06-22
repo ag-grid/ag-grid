@@ -226,6 +226,7 @@ export class VirtualList extends TabGuardComp {
     }
 
     private drawVirtualRows() {
+        if (!this.isAlive()) { return; }
         const gui = this.getGui();
         const topPixel = gui.scrollTop;
         const bottomPixel = topPixel + gui.offsetHeight;
