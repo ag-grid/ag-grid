@@ -375,7 +375,14 @@
     .ag-header-cell-text {
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap;
+    }
+
+    .ag-header-cell-comp-wrapper {
+        width: 100%;
+    }
+    
+    .ag-header-cell-wrap-text .ag-header-cell-comp-wrapper {
+        white-space: normal;
     }
 
     .ag-right-aligned-header .ag-header-cell-label {
@@ -1272,7 +1279,6 @@
         flex-direction: row-reverse;
         align-items: center;
         width: 100%;
-        height: 100%;
         overflow: hidden;
     }
 
