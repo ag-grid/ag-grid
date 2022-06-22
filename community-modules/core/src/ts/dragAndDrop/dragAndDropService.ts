@@ -296,19 +296,17 @@ export class DragAndDropService extends BeanStub {
         if (len === 1) { return dropTargets[0]; }
 
         const eDocument = this.gridOptionsWrapper.getDocument();
-        const eGhost = this.eGhost;
+        const elementStack = eDocument.elementsFromPoint(mouseEvent.x, mouseEvent.y) as HTMLElement[];
+        const dropTargetEls = dropTargets.map(dropTarget => dropTarget.getContainer());
 
-        let elementStack = eDocument.elementsFromPoint(mouseEvent.x, mouseEvent.y);
+        let index = -1;
 
-        if (eGhost) {
-            elementStack = elementStack.filter(el => eGhost !== el && !eGhost.contains(el));
+        for (const el of elementStack) {
+            index = dropTargetEls.indexOf(el);
+            if (index !== -1) { break; }
         }
 
-        if (elementStack.length === 0) { return null; }
-
-        const topMostEl = elementStack[0];
-
-        return dropTargets.find(dropTarget => dropTarget.getContainer().contains(topMostEl)) || null;
+        return index === -1 ? null : dropTargets[index];
     }
 
     private enterDragTargetIfExists(dropTarget: DropTarget | null, mouseEvent: MouseEvent, hDirection: HorizontalDirection | null, vDirection: VerticalDirection | null, fromNudge: boolean): void {
