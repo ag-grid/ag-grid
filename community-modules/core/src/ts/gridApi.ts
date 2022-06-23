@@ -1950,7 +1950,7 @@ export class GridApi<TData = any> {
     /** @deprecated use `refreshServerSide` instead */
     public refreshServerSideStore(params?: RefreshServerSideParams): void {
         const message = `AG Grid: Grid API refreshServerSideStore() was renamed to refreshServerSide() in v28.0`;
-        doOnce( ()=> console.warn(message), 'refreshServerSideStore-renamed');
+        doOnce(() => console.warn(message), 'refreshServerSideStore-renamed');
         return this.refreshServerSide(params);
     }
 
