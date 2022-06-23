@@ -289,25 +289,29 @@ export interface FlashCellsEvent<TData = any> extends AgGridEvent<TData> {
 export interface PaginationPixelOffsetChangedEvent<TData = any> extends AgGridEvent<TData> {
 }
 
-// this does not extent CellEvent as the focus service doesn't keep a reference to
-// the rowNode.
-export interface CellFocusedEvent<TData = any> extends AgGridEvent<TData> {
+export interface CellFocusedParams {
     /** Row index of the focused cell */
     rowIndex: number | null;
     /** Column of the focused cell */
-    column: Column | null;
+    column: Column | string | null;
     /** either 'top', 'bottom' or null / undefined (if not pinned) */
     rowPinned?: string | null;
     /** Whether the cell a full width cell or a regular cell */
-    isFullWidthCell: boolean;
+    isFullWidthCell?: boolean;
     /** Whether browser focus is also set (false when editing) */
     forceBrowserFocus?: boolean;
+    /** When `forceBrowserFocus` is `true`, should scroll be prevented */
+    preventScrollOnBrowserFocus?: boolean;
     // floating is for backwards compatibility, this is the same as rowPinned.
     // this is because the focus service doesn't keep references to rowNodes
     // as focused cell is identified by rowIndex - thus when the user re-orders
     // or filters, the focused cell stays with the index, but the node can change.
-    floating: string | null;
+    floating?: string | null;
 }
+
+// this does not extent CellEvent as the focus service doesn't keep a reference to
+// the rowNode.
+export interface CellFocusedEvent<TData = any> extends AgGridEvent<TData>, CellFocusedParams {}
 
 export interface FullWidthRowFocusedEvent extends CellFocusedEvent {
     fromBelow: boolean;

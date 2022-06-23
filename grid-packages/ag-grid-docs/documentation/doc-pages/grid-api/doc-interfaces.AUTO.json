@@ -7001,14 +7001,14 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "CellFocusedEvent": {
+  "CellFocusedParams": {
     "rowIndex": {
       "description": "/** Row index of the focused cell */",
       "type": { "returnType": "number | null", "optional": false }
     },
     "column": {
       "description": "/** Column of the focused cell */",
-      "type": { "returnType": "Column | null", "optional": false }
+      "type": { "returnType": "Column | string | null", "optional": false }
     },
     "rowPinned": {
       "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
@@ -7016,32 +7016,68 @@
     },
     "isFullWidthCell": {
       "description": "/** Whether the cell a full width cell or a regular cell */",
-      "type": { "returnType": "boolean", "optional": false }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "forceBrowserFocus": {
       "description": "/** Whether browser focus is also set (false when editing) */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "floating": {
-      "type": { "returnType": "string | null", "optional": false }
+    "preventScrollOnBrowserFocus": {
+      "description": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
+      "type": { "returnType": "boolean", "optional": true }
     },
+    "floating": { "type": { "returnType": "string | null", "optional": true } }
+  },
+  "CellFocusedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
-    }
+    },
+    "rowIndex": {
+      "description": "/** Row index of the focused cell */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "column": {
+      "description": "/** Column of the focused cell */",
+      "type": { "returnType": "Column | string | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "type": { "returnType": "string | null", "optional": true }
+    },
+    "isFullWidthCell": {
+      "description": "/** Whether the cell a full width cell or a regular cell */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "forceBrowserFocus": {
+      "description": "/** Whether browser focus is also set (false when editing) */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "preventScrollOnBrowserFocus": {
+      "description": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "floating": { "type": { "returnType": "string | null", "optional": true } }
   },
   "FullWidthRowFocusedEvent": {
     "fromBelow": { "type": { "returnType": "boolean", "optional": false } },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "rowIndex": {
       "description": "/** Row index of the focused cell */",
       "type": { "returnType": "number | null", "optional": false }
     },
     "column": {
       "description": "/** Column of the focused cell */",
-      "type": { "returnType": "Column | null", "optional": false }
+      "type": { "returnType": "Column | string | null", "optional": false }
     },
     "rowPinned": {
       "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
@@ -7049,22 +7085,17 @@
     },
     "isFullWidthCell": {
       "description": "/** Whether the cell a full width cell or a regular cell */",
-      "type": { "returnType": "boolean", "optional": false }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "forceBrowserFocus": {
       "description": "/** Whether browser focus is also set (false when editing) */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "floating": {
-      "type": { "returnType": "string | null", "optional": false }
+    "preventScrollOnBrowserFocus": {
+      "description": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
+      "type": { "returnType": "boolean", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
+    "floating": { "type": { "returnType": "string | null", "optional": true } }
   },
   "ExpandCollapseAllEvent": {
     "source": { "type": { "returnType": "string", "optional": false } },

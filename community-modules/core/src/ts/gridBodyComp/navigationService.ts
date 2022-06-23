@@ -155,7 +155,7 @@ export class NavigationService extends BeanStub {
 
         // if we don't do this, the range will be left on the last cell, which will leave the last focused cell
         // highlighted.
-        this.focusService.setFocusedCell(focusIndex, focusColumn, null, true);
+        this.focusService.setFocusedCell({ rowIndex: focusIndex, column: focusColumn, rowPinned: null, forceBrowserFocus: true });
 
         if (this.rangeService) {
             const cellPosition: CellPosition = { rowIndex: focusIndex, rowPinned: null, column: focusColumn };
@@ -782,7 +782,12 @@ export class NavigationService extends BeanStub {
     }
 
     private focusPosition(cellPosition: CellPosition) {
-        this.focusService.setFocusedCell(cellPosition.rowIndex, cellPosition.column, cellPosition.rowPinned, true);
+        this.focusService.setFocusedCell({
+            rowIndex: cellPosition.rowIndex,
+            column: cellPosition.column,
+            rowPinned: cellPosition.rowPinned,
+            forceBrowserFocus: true
+        });
 
         if (this.rangeService) {
             this.rangeService.setRangeToCell(cellPosition);

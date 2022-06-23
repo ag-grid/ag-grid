@@ -254,7 +254,7 @@ class ContextMenu extends Component {
             const doc = this.gridOptionsWrapper.getDocument();
 
             if (doc.activeElement === doc.body) {
-                this.focusService.setFocusedCell(rowIndex, column, rowPinned, true);
+                this.focusService.setFocusedCell({ rowIndex, column, rowPinned, forceBrowserFocus: true });
             }
         }
     }

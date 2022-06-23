@@ -1,7 +1,7 @@
 import { Autowired, Bean, Optional, PostConstruct } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
-import { CellFocusedEvent, Events } from "./events";
+import { CellFocusedParams, CellFocusedEvent, Events } from "./events";
 import { ColumnApi } from "./columns/columnApi";
 import { ColumnModel } from "./columns/columnModel";
 import { CellPosition } from "./entities/cellPosition";
@@ -224,15 +224,23 @@ export class FocusService extends BeanStub {
 
     public clearFocusedCell(): void {
         this.focusedCellPosition = null;
-        this.onCellFocused(false);
+        this.onCellFocused(false, false);
     }
 
     public getFocusedCell(): CellPosition | null {
         return this.focusedCellPosition;
     }
 
-    public setFocusedCell(rowIndex: number, colKey: string | Column, floating: string | null | undefined, forceBrowserFocus = false): void {
-        const gridColumn = this.columnModel.getGridColumn(colKey);
+    public setFocusedCell(params: CellFocusedParams): void {
+        const {
+            column,
+            rowIndex,
+            rowPinned,
+            forceBrowserFocus = false,
+            preventScrollOnBrowserFocus = false
+        } = params;
+
+        const gridColumn = this.columnModel.getGridColumn(column!);
 
         // if column doesn't exist, then blank the focused cell and return. this can happen when user sets new columns,
         // and the focused cell is in a column that no longer exists. after columns change, the grid refreshes and tries
@@ -242,8 +250,13 @@ export class FocusService extends BeanStub {
             return;
         }
 
-        this.focusedCellPosition = gridColumn ? { rowIndex, rowPinned: makeNull(floating), column: gridColumn } : null;
-        this.onCellFocused(forceBrowserFocus);
+        this.focusedCellPosition = gridColumn ? {
+            rowIndex: rowIndex!,
+            rowPinned: makeNull(rowPinned),
+            column: gridColumn
+        } : null;
+
+        this.onCellFocused(forceBrowserFocus, preventScrollOnBrowserFocus);
     }
 
     public isCellFocused(cellPosition: CellPosition): boolean {
@@ -456,10 +469,11 @@ export class FocusService extends BeanStub {
         return node;
     }
 
-    private onCellFocused(forceBrowserFocus: boolean): void {
+    private onCellFocused(forceBrowserFocus: boolean, preventScrollOnBrowserFocus: boolean): void {
         const event: CellFocusedEvent = {
             type: Events.EVENT_CELL_FOCUSED,
             forceBrowserFocus: forceBrowserFocus,
+            preventScrollOnBrowserFocus: preventScrollOnBrowserFocus,
             rowIndex: null,
             column: null,
             floating: null,
@@ -515,7 +529,12 @@ export class FocusService extends BeanStub {
 
         this.navigationService.ensureCellVisible({ rowIndex, column, rowPinned });
 
-        this.setFocusedCell(rowIndex, column, makeNull(rowPinned), true);
+        this.setFocusedCell({
+            rowIndex,
+            column,
+            rowPinned: makeNull(rowPinned),
+            forceBrowserFocus: true
+        });
 
         if (this.rangeService) {
             const cellPosition = { rowIndex, rowPinned, column };

@@ -203,7 +203,7 @@ export class UndoRedoService extends BeanStub {
             this.gridApi.clearRangeSelection();
         }
 
-        this.focusService.setFocusedCell(rowIndex, columnId, rowPinned, true);
+        this.focusService.setFocusedCell({ rowIndex: rowIndex, column: columnId, rowPinned, forceBrowserFocus: true });
     }
 
     private addRowEditingListeners(): void {

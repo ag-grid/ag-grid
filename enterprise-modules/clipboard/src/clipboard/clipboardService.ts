@@ -213,7 +213,12 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
         // navigation stops.
         if (focusedCell) {
-            this.focusService.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
+            this.focusService.setFocusedCell({
+                rowIndex: focusedCell.rowIndex,
+                column: focusedCell.column, 
+                rowPinned: focusedCell.rowPinned, 
+                forceBrowserFocus: true
+            });
         }
 
         this.eventService.dispatchEvent({

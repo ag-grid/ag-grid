@@ -806,11 +806,12 @@ export class RowCtrl extends BeanStub {
         const node = this.rowNode;
         const columnModel = this.beans.columnModel;
 
-        this.beans.focusService.setFocusedCell(
-            node.rowIndex!,
-            columnModel.getAllDisplayedColumns()[0],
-            node.rowPinned, true
-        );
+        this.beans.focusService.setFocusedCell({
+            rowIndex: node.rowIndex!,
+            column: columnModel.getAllDisplayedColumns()[0],
+            rowPinned: node.rowPinned,
+            forceBrowserFocus: true
+        });
 
     }
 

@@ -1071,7 +1071,7 @@ export class GridApi<TData = any> {
 
     /** Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned). */
     public setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: string) {
-        this.focusService.setFocusedCell(rowIndex, colKey, rowPinned, true);
+        this.focusService.setFocusedCell({rowIndex, column: colKey, rowPinned, forceBrowserFocus: true });
     }
 
     /** Sets the `suppressRowDrag` property. */
@@ -1957,7 +1957,7 @@ export class GridApi<TData = any> {
     /** @deprecated use `getServerSideGroupLevelState` instead */
     public getServerSideStoreState(): ServerSideGroupLevelState[] {
         const message = `AG Grid: Grid API getServerSideStoreState() was renamed to getServerSideGroupLevelState() in v28.0`;
-        doOnce( ()=> console.warn(message), 'getServerSideStoreState-renamed');
+        doOnce(() => console.warn(message), 'getServerSideStoreState-renamed');
         return this.getServerSideGroupLevelState();
     }
 

@@ -454,7 +454,7 @@ export class EnterpriseMenu extends BeanStub {
 
         if (eDocument.activeElement === eDocument.body && focusedCell) {
             const { rowIndex, rowPinned, column } = focusedCell;
-            this.focusService.setFocusedCell(rowIndex, column, rowPinned, true);
+            this.focusService.setFocusedCell({ rowIndex, column, rowPinned, forceBrowserFocus: true });
         }
     }
 

@@ -3772,49 +3772,73 @@
     },
     "docs": { "type": "/** Event identifier */" }
   },
-  "CellFocusedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+  "CellFocusedParams": {
+    "meta": {},
     "type": {
       "rowIndex": "number | null",
-      "column": "Column | null",
+      "column": "Column | string | null",
       "rowPinned?": "string | null",
-      "isFullWidthCell": "boolean",
+      "isFullWidthCell?": "boolean",
       "forceBrowserFocus?": "boolean",
-      "floating": "string | null",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "type": "string"
+      "preventScrollOnBrowserFocus?": "boolean",
+      "floating?": "string | null"
     },
     "docs": {
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
       "rowPinned?": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
-      "isFullWidthCell": "/** Whether the cell a full width cell or a regular cell */",
+      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */",
       "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
-      "type": "/** Event identifier */"
+      "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */"
+    }
+  },
+  "CellFocusedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string",
+      "rowIndex": "number | null",
+      "column": "Column | string | null",
+      "rowPinned?": "string | null",
+      "isFullWidthCell?": "boolean",
+      "forceBrowserFocus?": "boolean",
+      "preventScrollOnBrowserFocus?": "boolean",
+      "floating?": "string | null"
+    },
+    "docs": {
+      "type": "/** Event identifier */",
+      "rowIndex": "/** Row index of the focused cell */",
+      "column": "/** Column of the focused cell */",
+      "rowPinned?": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */",
+      "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
+      "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */"
     }
   },
   "FullWidthRowFocusedEvent": {
     "meta": {},
     "type": {
       "fromBelow": "boolean",
-      "rowIndex": "number | null",
-      "column": "Column | null",
-      "rowPinned?": "string | null",
-      "isFullWidthCell": "boolean",
-      "forceBrowserFocus?": "boolean",
-      "floating": "string | null",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "type": "string"
+      "type": "string",
+      "rowIndex": "number | null",
+      "column": "Column | string | null",
+      "rowPinned?": "string | null",
+      "isFullWidthCell?": "boolean",
+      "forceBrowserFocus?": "boolean",
+      "preventScrollOnBrowserFocus?": "boolean",
+      "floating?": "string | null"
     },
     "docs": {
+      "type": "/** Event identifier */",
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
       "rowPinned?": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
-      "isFullWidthCell": "/** Whether the cell a full width cell or a regular cell */",
+      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */",
       "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
-      "type": "/** Event identifier */"
+      "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */"
     }
   },
   "ExpandCollapseAllEvent": {

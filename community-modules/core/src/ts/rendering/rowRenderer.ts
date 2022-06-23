@@ -545,7 +545,13 @@ export class RowRenderer extends BeanStub {
     // edited cell).
     private restoreFocusedCell(cellPosition: CellPosition | null): void {
         if (cellPosition) {
-            this.focusService.setFocusedCell(cellPosition.rowIndex, cellPosition.column, cellPosition.rowPinned, true);
+            this.focusService.setFocusedCell({
+                rowIndex: cellPosition.rowIndex,
+                column: cellPosition.column,
+                rowPinned: cellPosition.rowPinned,
+                forceBrowserFocus: true,
+                preventScrollOnBrowserFocus: true
+            });
         }
     }
 
