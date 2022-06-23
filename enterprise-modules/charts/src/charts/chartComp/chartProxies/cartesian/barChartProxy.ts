@@ -78,7 +78,10 @@ export class BarChartProxy extends CartesianChartProxy {
             s.highlightStyle = { item: { fill: undefined } };
             s.fill = palette.fills[index];
             s.stroke = palette.strokes[index];
-            s.listeners = { nodeClick: this.crossFilterCallback };
+            s.listeners = {
+                ...this.extractSeriesOverrides().listeners,
+                nodeClick: this.crossFilterCallback
+            };
         }
 
         const updateFilteredOutSeries = (s: AgBarSeriesOptions) => {
@@ -90,19 +93,14 @@ export class BarChartProxy extends CartesianChartProxy {
 
         const allSeries: AgBarSeriesOptions[] = [];
         for (let i = 0; i < series.length; i++) {
+            // update primary series
             const s: AgBarSeriesOptions = series[i];
             updatePrimarySeries(s, i);
             allSeries.push(s);
 
+            // add 'filtered-out' series
             const filteredOutSeries = deepMerge({}, s);
             updateFilteredOutSeries(filteredOutSeries);
-
-            // TODO: pending AG Chart factory support
-            // sync toggling of legend item with hidden 'filtered out' item
-            // this.chart.legend.addEventListener('click', (event: LegendClickEvent) => {
-            //     barSeries.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
-            // });
-
             allSeries.push(filteredOutSeries);
         }
         return allSeries;

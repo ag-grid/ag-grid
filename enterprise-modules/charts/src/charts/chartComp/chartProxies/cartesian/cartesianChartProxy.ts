@@ -3,6 +3,7 @@ import {
     AgCartesianAxisType,
     AgCartesianChartOptions,
     AgChart,
+    AgChartLegendClickEvent,
     AreaSeries,
     CartesianChart,
     CategoryAxis,
@@ -37,7 +38,22 @@ export abstract class CartesianChartProxy extends ChartProxy {
 
     protected updateChart(options: AgCartesianChartOptions): void {
         if (this.crossFiltering) {
-            options.tooltip = { delay: 500 };
+            const seriesOverrides = this.extractSeriesOverrides();
+
+            options.tooltip = {
+                ...seriesOverrides.tooltip,
+                delay: 500,
+            };
+
+            options.legend = {
+                ...seriesOverrides.legend,
+                listeners: {
+                    legendItemClick: (e: AgChartLegendClickEvent) => {
+                        options?.series?.forEach(s => s.visible = e.enabled);
+                        this.updateChart(options);
+                    }
+                }
+            };
         }
         AgChart.update(this.chart as CartesianChart, options);
     }
