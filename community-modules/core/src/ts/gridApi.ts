@@ -1071,7 +1071,7 @@ export class GridApi<TData = any> {
 
     /** Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned). */
     public setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: string) {
-        this.focusService.setFocusedCell({rowIndex, column: colKey, rowPinned, forceBrowserFocus: true });
+        this.focusService.setFocusedCell({ rowIndex, column: colKey, rowPinned, forceBrowserFocus: true });
     }
 
     /** Sets the `suppressRowDrag` property. */
