@@ -29,6 +29,12 @@ export class Group extends Node {
         }
     }
 
+    protected zIndexChanged() {
+        if (this.layer) {
+            this._scene?.moveLayer(this.layer, this.zIndex);
+        }
+    }
+
     public constructor(
         protected readonly opts?: {
             readonly layer?: boolean,
