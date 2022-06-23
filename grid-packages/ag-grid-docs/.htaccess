@@ -438,9 +438,8 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/systemjs/ /angular-data-grid/
     Redirect 301 /angular-data-grid/systemjs/ /angular-data-grid/
     Redirect 301 /documentation/angular/testing/ /angular-data-grid/testing/
-    Redirect 301 /documentation/angular/themes-customising/ /angular-data-grid/themes-customising/
-    Redirect 301 /documentation/angular/themes-provided/ /angular-data-grid/themes-provided/
-    Redirect 301 /documentation/angular/themes-v23-migration/ /angular-data-grid/themes-v23-migration/
+    Redirect 301 /documentation/angular/themes-customising/ /angular-data-grid/themes/
+    Redirect 301 /documentation/angular/themes-provided/ /angular-data-grid/themes/
     Redirect 301 /documentation/angular/themes/ /angular-data-grid/themes/
     Redirect 301 /documentation/angular/tool-panel-columns/ /angular-data-grid/tool-panel-columns/
     Redirect 301 /documentation/angular/tool-panel-filters/ /angular-data-grid/tool-panel-filters/
@@ -690,9 +689,8 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/status-bar/ /javascript-data-grid/status-bar/
     Redirect 301 /documentation/javascript/supported-browsers/ /javascript-data-grid/supported-browsers/
     Redirect 301 /documentation/javascript/testing/ /javascript-data-grid/testing/
-    Redirect 301 /documentation/javascript/themes-customising/ /javascript-data-grid/themes-customising/
-    Redirect 301 /documentation/javascript/themes-provided/ /javascript-data-grid/themes-provided/
-    Redirect 301 /documentation/javascript/themes-v23-migration/ /javascript-data-grid/themes-v23-migration/
+    Redirect 301 /documentation/javascript/themes-customising/ /javascript-data-grid/themes/
+    Redirect 301 /documentation/javascript/themes-provided/ /javascript-data-grid/themes/
     Redirect 301 /documentation/javascript/themes/ /javascript-data-grid/themes/
     Redirect 301 /documentation/javascript/tool-panel-columns/ /javascript-data-grid/tool-panel-columns/
     Redirect 301 /documentation/javascript/tool-panel-filters/ /javascript-data-grid/tool-panel-filters/
@@ -936,9 +934,8 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/status-bar/ /react-data-grid/status-bar/
     Redirect 301 /documentation/react/supported-browsers/ /react-data-grid/supported-browsers/
     Redirect 301 /documentation/react/testing/ /react-data-grid/testing/
-    Redirect 301 /documentation/react/themes-customising/ /react-data-grid/themes-customising/
-    Redirect 301 /documentation/react/themes-provided/ /react-data-grid/themes-provided/
-    Redirect 301 /documentation/react/themes-v23-migration/ /react-data-grid/themes-v23-migration/
+    Redirect 301 /documentation/react/themes-customising/ /react-data-grid/themes/
+    Redirect 301 /documentation/react/themes-provided/ /react-data-grid/themes/
     Redirect 301 /documentation/react/themes/ /react-data-grid/themes/
     Redirect 301 /documentation/react/tool-panel-columns/ /react-data-grid/tool-panel-columns/
     Redirect 301 /documentation/react/tool-panel-filters/ /react-data-grid/tool-panel-filters/
@@ -1178,9 +1175,8 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/status-bar/ /vue-data-grid/status-bar/
     Redirect 301 /documentation/vue/supported-browsers/ /vue-data-grid/supported-browsers/
     Redirect 301 /documentation/vue/testing/ /vue-data-grid/testing/
-    Redirect 301 /documentation/vue/themes-customising/ /vue-data-grid/themes-customising/
-    Redirect 301 /documentation/vue/themes-provided/ /vue-data-grid/themes-provided/
-    Redirect 301 /documentation/vue/themes-v23-migration/ /vue-data-grid/themes-v23-migration/
+    Redirect 301 /documentation/vue/themes-customising/ /vue-data-grid/themes/
+    Redirect 301 /documentation/vue/themes-provided/ /vue-data-grid/themes/
     Redirect 301 /documentation/vue/themes/ /vue-data-grid/themes/
     Redirect 301 /documentation/vue/tool-panel-columns/ /vue-data-grid/tool-panel-columns/
     Redirect 301 /documentation/vue/tool-panel-filters/ /vue-data-grid/tool-panel-filters/
@@ -1416,9 +1412,8 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-testing-react/ /react-data-grid/testing/
     Redirect 301 /javascript-grid-testing-vue/ /vue-data-grid/testing/
     Redirect 301 /javascript-grid-testing/ /javascript-data-grid/testing/
-    Redirect 301 /javascript-grid-themes-customising/ /javascript-data-grid/themes-customising/
-    Redirect 301 /javascript-grid-themes-provided/ /javascript-data-grid/themes-provided/
-    Redirect 301 /javascript-grid-themes-v23-migration/ /javascript-data-grid/themes-v23-migration/
+    Redirect 301 /javascript-grid-themes-customising/ /javascript-data-grid/themes/
+    Redirect 301 /javascript-grid-themes-provided/ /javascript-data-grid/themes/
     Redirect 301 /javascript-grid-themes/ /javascript-data-grid/themes/
     Redirect 301 /javascript-grid-tool-panel-columns/ /javascript-data-grid/tool-panel-columns/
     Redirect 301 /javascript-grid-tool-panel-component/ /javascript-data-grid/component-tool-panel/
@@ -1615,9 +1610,8 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid/supported-browsers/ /javascript-data-grid/supported-browsers/
     Redirect 301 /javascript-grid/testing/ /javascript-data-grid/testing/
     Redirect 301 /javascript-grid/themes/ /javascript-data-grid/themes/
-    Redirect 301 /javascript-grid/themes-customising/ /javascript-data-grid/themes-customising/
-    Redirect 301 /javascript-grid/themes-provided/ /javascript-data-grid/themes-provided/
-    Redirect 301 /javascript-grid/themes-v23-migration/ /javascript-data-grid/themes-v23-migration/
+    Redirect 301 /javascript-grid/themes-customising/ /javascript-data-grid/themes/
+    Redirect 301 /javascript-grid/themes-provided/ /javascript-data-grid/themes/
     Redirect 301 /javascript-grid/tool-panel/ /javascript-data-grid/tool-panel/
     Redirect 301 /javascript-grid/tool-panel-columns/ /javascript-data-grid/tool-panel-columns/
     Redirect 301 /javascript-grid/tool-panel-filters/ /javascript-data-grid/tool-panel-filters/
@@ -1811,9 +1805,8 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid/supported-browsers/ /angular-data-grid/supported-browsers/
     Redirect 301 /angular-grid/testing/ /angular-data-grid/testing/
     Redirect 301 /angular-grid/themes/ /angular-data-grid/themes/
-    Redirect 301 /angular-grid/themes-customising/ /angular-data-grid/themes-customising/
-    Redirect 301 /angular-grid/themes-provided/ /angular-data-grid/themes-provided/
-    Redirect 301 /angular-grid/themes-v23-migration/ /angular-data-grid/themes-v23-migration/
+    Redirect 301 /angular-grid/themes-customising/ /angular-data-grid/themes/
+    Redirect 301 /angular-grid/themes-provided/ /angular-data-grid/themes/
     Redirect 301 /angular-grid/tool-panel/ /angular-data-grid/tool-panel/
     Redirect 301 /angular-grid/tool-panel-columns/ /angular-data-grid/tool-panel-columns/
     Redirect 301 /angular-grid/tool-panel-filters/ /angular-data-grid/tool-panel-filters/
@@ -2013,9 +2006,8 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/supported-browsers/ /react-data-grid/supported-browsers/
     Redirect 301 /react-grid/testing/ /react-data-grid/testing/
     Redirect 301 /react-grid/themes/ /react-data-grid/themes/
-    Redirect 301 /react-grid/themes-customising/ /react-data-grid/themes-customising/
-    Redirect 301 /react-grid/themes-provided/ /react-data-grid/themes-provided/
-    Redirect 301 /react-grid/themes-v23-migration/ /react-data-grid/themes-v23-migration/
+    Redirect 301 /react-grid/themes-customising/ /react-data-grid/themes/
+    Redirect 301 /react-grid/themes-provided/ /react-data-grid/themes/
     Redirect 301 /react-grid/tool-panel/ /react-data-grid/tool-panel/
     Redirect 301 /react-grid/tool-panel-columns/ /react-data-grid/tool-panel-columns/
     Redirect 301 /react-grid/tool-panel-filters/ /react-data-grid/tool-panel-filters/
@@ -2209,9 +2201,8 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/supported-browsers/ /vue-data-grid/supported-browsers/
     Redirect 301 /vue-grid/testing/ /vue-data-grid/testing/
     Redirect 301 /vue-grid/themes/ /vue-data-grid/themes/
-    Redirect 301 /vue-grid/themes-customising/ /vue-data-grid/themes-customising/
-    Redirect 301 /vue-grid/themes-provided/ /vue-data-grid/themes-provided/
-    Redirect 301 /vue-grid/themes-v23-migration/ /vue-data-grid/themes-v23-migration/
+    Redirect 301 /vue-grid/themes-customising/ /vue-data-grid/themes/
+    Redirect 301 /vue-grid/themes-provided/ /vue-data-grid/themes/
     Redirect 301 /vue-grid/tool-panel/ /vue-data-grid/tool-panel/
     Redirect 301 /vue-grid/tool-panel-columns/ /vue-data-grid/tool-panel-columns/
     Redirect 301 /vue-grid/tool-panel-filters/ /vue-data-grid/tool-panel-filters/
