@@ -47,7 +47,7 @@
             @include -load-theme-css-file($extended-theme-name);
         }
 
-        $font: map.get($theme-params, "icon-font-family");
+        $font: map.get($theme-params, "--ag-icon-font-family");
         $font: map.get($-theme-fonts, $theme-name) !default;
         $font: map.get($-theme-fonts, $extended-theme-name) !default;
         @if $font {
@@ -79,7 +79,7 @@
             @each $name, $value in $theme-params {
                 // use meta.inspect to preserve the quote style of strings
                 @if map.has-key($-variable-param-types, $name) {
-                    --ag-#{$name}: #{meta.inspect($value)};
+                    #{$name}: #{meta.inspect($value)};
                 }
             }
         }
@@ -115,11 +115,25 @@ $-loaded-css-files: ();
     @if $name == null {
         @return null;
     }
-    @if $name == blue {
-        // if user passes `blue` the color, convert it to a string for the legacy "blue" theme
-        $name: "blue";
+    $name: string.to-lower-case($name);
+    $remove-prefix: "ag-theme-";
+    @if string.index($name, $remove-prefix) == 1 {
+        $name: string.slice($name, string.length($remove-prefix) + 1);
+    }
+    @return $name;
+}
+
+@function -clean-variable-name($name) {
+    @if $name == null {
+        @return null;
     }
     $name: string.to-lower-case($name);
+    
+    $proposed-variable-name: "--ag-#{$name}";
+    @if map.has-key($-variable-param-types, $proposed-variable-name) {
+        $name: $proposed-variable-name;
+    }
+        
     $remove-prefix: "ag-theme-";
     @if string.index($name, $remove-prefix) == 1 {
         $name: string.slice($name, string.length($remove-prefix) + 1);
@@ -209,50 +223,50 @@ $-theme-fonts: (
 @function -base-color-blends($params) {
     // Simple defaults. We need to define the defaults for any parameters
     // that are used in blending below
-    $params: -param-default($params, foreground-color, #000);
-    $params: -param-default($params, background-color, #fff);
-    $params: -param-default($params, range-selection-border-color, foreground-color);
+    $params: -param-default($params, --ag-foreground-color,            #000);
+    $params: -param-default($params, --ag-background-color,            #fff);
+    $params: -param-default($params, --ag-range-selection-border-color, --ag-foreground-color);
 
     // Blended defaults.
-    $params: -param-default($params, disabled-foreground-color,          foreground-color,                 $alpha: 0.5);
-    $params: -param-default($params, modal-overlay-background-color,     background-color,                 $alpha: 0.66);
-    $params: -param-default($params, range-selection-background-color,   range-selection-border-color,     $alpha: 0.2);
-    $params: -param-default($params, range-selection-background-color-2, range-selection-background-color, $self-overlay: 2);
-    $params: -param-default($params, range-selection-background-color-3, range-selection-background-color, $self-overlay: 3);
-    $params: -param-default($params, range-selection-background-color-4, range-selection-background-color, $self-overlay: 4);
-    $params: -param-default($params, border-color,                       foreground-color,                 $alpha: 0.25);
-    $params: -param-default($params, header-column-separator-color,      border-color,                     $alpha: 0.5);
-    $params: -param-default($params, header-column-resize-handle-color,  border-color,                     $alpha: 0.5);
-    $params: -param-default($params, input-disabled-border-color,        input-border-color,               $alpha: 0.3);
+    $params: -param-default($params, --ag-disabled-foreground-color,          --ag-foreground-color,                 $alpha: 0.5);
+    $params: -param-default($params, --ag-modal-overlay-background-color,     --ag-background-color,                 $alpha: 0.66);
+    $params: -param-default($params, --ag-range-selection-background-color,   --ag-range-selection-border-color,     $alpha: 0.2);
+    $params: -param-default($params, --ag-range-selection-background-color-2, --ag-range-selection-background-color, $self-overlay: 2);
+    $params: -param-default($params, --ag-range-selection-background-color-3, --ag-range-selection-background-color, $self-overlay: 3);
+    $params: -param-default($params, --ag-range-selection-background-color-4, --ag-range-selection-background-color, $self-overlay: 4);
+    $params: -param-default($params, --ag-border-color,                       --ag-foreground-color,                 $alpha: 0.25);
+    $params: -param-default($params, --ag-header-column-separator-color,      --ag-border-color,                     $alpha: 0.5);
+    $params: -param-default($params, --ag-header-column-resize-handle-color,  --ag-border-color,                     $alpha: 0.5);
+    $params: -param-default($params, --ag-input-disabled-border-color,        --ag-input-border-color,               $alpha: 0.3);
     @return $params;
 }
 
 @function -theme-alpine-color-blends($params) {
     // Simple defaults. We need to define the defaults for any parameters
     // that are used in blending either below or in the base color blends
-    $params: -param-default($params, background-color, #fff);
-    $params: -param-default($params, foreground-color, #181d1f);
-    $params: -param-default($params, subheader-background-color, #fff);
-    $params: -param-default($params, alpine-active-color, #2196f3);
-    $params: -param-default($params, range-selection-border-color, alpine-active-color);
+    $params: -param-default($params, --ag-background-color,            #fff);
+    $params: -param-default($params, --ag-foreground-color,            #181d1f);
+    $params: -param-default($params, --ag-subheader-background-color,  #fff);
+    $params: -param-default($params, --ag-alpine-active-color,         #2196f3);
+    $params: -param-default($params, --ag-range-selection-border-color, --ag-alpine-active-color);
 
     // Blended defaults
-    $params: -param-default($params, subheader-toolbar-background-color, subheader-background-color, $alpha: 0.5);
-    $params: -param-default($params, selected-row-background-color, alpine-active-color, $alpha: 0.1);
-    $params: -param-default($params, row-hover-color, alpine-active-color, $alpha: 0.1);
-    $params: -param-default($params, column-hover-color, alpine-active-color, $alpha: 0.1);
-    $params: -param-default($params, chip-background-color, foreground-color, $alpha: 0.07);
-    $params: -param-default($params, input-disabled-background-color, border-color, $alpha: 0.15);
-    $params: -param-default($params, input-disabled-border-color, border-color, $alpha: 0.3);
-    $params: -param-default($params, disabled-foreground-color, foreground-color, $alpha: 0.5);
-    $params: -param-default($params, input-focus-border-color, alpine-active-color, $alpha: 0.4);
+    $params: -param-default($params, --ag-subheader-toolbar-background-color, --ag-subheader-background-color, $alpha: 0.5);
+    $params: -param-default($params, --ag-selected-row-background-color,      --ag-alpine-active-color,        $alpha: 0.1);
+    $params: -param-default($params, --ag-row-hover-color,                    --ag-alpine-active-color,        $alpha: 0.1);
+    $params: -param-default($params, --ag-column-hover-color,                 --ag-alpine-active-color,        $alpha: 0.1);
+    $params: -param-default($params, --ag-chip-background-color,              --ag-foreground-color,           $alpha: 0.07);
+    $params: -param-default($params, --ag-input-disabled-background-color,    --ag-border-color,               $alpha: 0.15);
+    $params: -param-default($params, --ag-input-disabled-border-color,        --ag-border-color,               $alpha: 0.3);
+    $params: -param-default($params, --ag-disabled-foreground-color,          --ag-foreground-color,           $alpha: 0.5);
+    $params: -param-default($params, --ag-input-focus-border-color,           --ag-alpine-active-color,        $alpha: 0.4);
     @return $params;
 }
 
 @function -theme-alpine-dark-color-blends($params) {
-    $params: -param-default($params, background-color, #181d1f);
-    $params: -param-default($params, foreground-color, #fff);
-    $params: -param-default($params, subheader-background-color, #000);
+    $params: -param-default($params, --ag-background-color,           #181d1f);
+    $params: -param-default($params, --ag-foreground-color,           #fff);
+    $params: -param-default($params, --ag-subheader-background-color, #000);
 
     @return  -theme-alpine-color-blends($params);
 }
@@ -260,33 +274,33 @@ $-theme-fonts: (
 @function -theme-balham-color-blends($params) {
     // Simple defaults. We need to define the defaults for any parameters
     // that are used in blending either below or in the base color blends
-    $params: -param-default($params, background-color, #fff);
-    $params: -param-default($params, foreground-color, #000);
-    $params: -param-default($params, border-color, #bdc3c7);
-    $params: -param-default($params, subheader-background-color, #e2e9eb);
-    $params: -param-default($params, balham-active-color, #0091ea);
-    $params: -param-default($params, range-selection-border-color, balham-active-color);
+    $params: -param-default($params, --ag-background-color,             #fff);
+    $params: -param-default($params, --ag-foreground-color,             #000);
+    $params: -param-default($params, --ag-border-color,                 #bdc3c7);
+    $params: -param-default($params, --ag-subheader-background-color,   #e2e9eb);
+    $params: -param-default($params, --ag-balham-active-color,          #0091ea);
+    $params: -param-default($params, --ag-range-selection-border-color, --ag-balham-active-color);
 
     // Blended defaults
-    $params: -param-default($params, secondary-foreground-color, foreground-color, $alpha: 0.54);
-    $params: -param-default($params, disabled-foreground-color, foreground-color, $alpha: 0.38);
-    $params: -param-default($params, subheader-toolbar-background-color, subheader-background-color, $alpha: 0.5);
-    $params: -param-default($params, row-border-color, border-color, $alpha: 0.58);
-    $params: -param-default($params, chip-background-color, foreground-color, $alpha: 0.1);
-    $params: -param-default($params, selected-row-background-color, balham-active-color, $alpha: 0.28);
-    $params: -param-default($params, header-column-separator-color, border-color, $alpha: 0.5);
+    $params: -param-default($params, --ag-secondary-foreground-color,         --ag-foreground-color,           $alpha: 0.54);
+    $params: -param-default($params, --ag-disabled-foreground-color,          --ag-foreground-color,           $alpha: 0.38);
+    $params: -param-default($params, --ag-subheader-toolbar-background-color, --ag-subheader-background-color, $alpha: 0.5);
+    $params: -param-default($params, --ag-row-border-color,                   --ag-border-color,               $alpha: 0.58);
+    $params: -param-default($params, --ag-chip-background-color,              --ag-foreground-color,           $alpha: 0.1);
+    $params: -param-default($params, --ag-selected-row-background-color,      --ag-balham-active-color,        $alpha: 0.28);
+    $params: -param-default($params, --ag-header-column-separator-color,      --ag-border-color,               $alpha: 0.5);
     @return $params;
 }
 
 @function -theme-balham-dark-color-blends($params) {
-    $params: -param-default($params, background-color, #181d1f);
-    $params: -param-default($params, foreground-color, #fff);
-    $params: -param-default($params, border-color, #424242);
-    $params: -param-default($params, subheader-background-color, #000);
-    $params: -param-default($params, balham-active-color, #00B0FF);
+    $params: -param-default($params, --ag-background-color,           #181d1f);
+    $params: -param-default($params, --ag-foreground-color,           #fff);
+    $params: -param-default($params, --ag-border-color,               #424242);
+    $params: -param-default($params, --ag-subheader-background-color, #000);
+    $params: -param-default($params, --ag-balham-active-color,        #00B0FF);
 
-    $params: -param-default($params, disabled-foreground-color, foreground-color, $alpha: 0.38);
-    $params: -param-default($params, header-foreground-color, foreground-color, $alpha: 0.64);
+    $params: -param-default($params, --ag-disabled-foreground-color, --ag-foreground-color, $alpha: 0.38);
+    $params: -param-default($params, --ag-header-foreground-color,   --ag-foreground-color, $alpha: 0.64);
 
     @return  -theme-balham-color-blends($params);
 }
@@ -294,42 +308,18 @@ $-theme-fonts: (
 @function -theme-material-color-blends($params) {
     // Simple defaults. We need to define the defaults for any parameters
     // that are used in blending either below or in the base color blends
-    $params: -param-default($params, background-color, #fff);
-    $params: -param-default($params, foreground-color, color.change(#000, $alpha: 0.87));
-    $params: -param-default($params, subheader-background-color, #eee);
-    $params: -param-default($params, material-primary-color, #3f51b5);
-    $params: -param-default($params, range-selection-border-color, material-primary-color);
-    $params: -param-default($params, range-selection-background-color, rgba(122, 134, 203, 0.1));
-    $params: -param-default($params, border-color, #e2e2e2);
+    $params: -param-default($params, --ag-background-color,                  #fff);
+    $params: -param-default($params, --ag-foreground-color,                  rgba(0, 0, 0, 0.87));
+    $params: -param-default($params, --ag-subheader-background-color,        #eee);
+    $params: -param-default($params, --ag-material-primary-color,            #3f51b5);
+    $params: -param-default($params, --ag-range-selection-border-color,       --ag-material-primary-color);
+    $params: -param-default($params, --ag-range-selection-background-color,  rgba(122, 134, 203, 0.1));
+    $params: -param-default($params, --ag-border-color,                      #e2e2e2);
 
     // Blended defaults
-    $params: -param-default($params, secondary-foreground-color, foreground-color, $alpha: 0.54);
-    $params: -param-default($params, disabled-foreground-color, foreground-color, $alpha: 0.38);
-    $params: -param-default($params, subheader-toolbar-background-color, subheader-background-color, $alpha: 0.5);
-    @return $params;
-}
-
-@function -theme-fresh-color-blends($params) {
-    $params: -param-default($params, foreground-color, #000);
-    $params: -param-default($params, background-color, #FFF);
-    @return $params;
-}
-
-@function -theme-dark-color-blends($params) {
-    $params: -param-default($params, foreground-color, #ccc);
-    $params: -param-default($params, background-color, #302e2e);
-    @return $params;
-}
-
-@function -theme-blue-color-blends($params) {
-    $params: -param-default($params, foreground-color, #222);
-    $params: -param-default($params, background-color, #fff);
-    @return $params;
-}
-
-@function -theme-bootstrap-color-blends($params) {
-    $params: -param-default($params, foreground-color, #000);
-    $params: -param-default($params, background-color, #FFF);
+    $params: -param-default($params, --ag-secondary-foreground-color,         --ag-foreground-color,           $alpha: 0.54);
+    $params: -param-default($params, --ag-disabled-foreground-color,          --ag-foreground-color,           $alpha: 0.38);
+    $params: -param-default($params, --ag-subheader-toolbar-background-color, --ag-subheader-background-color, $alpha: 0.5);
     @return $params;
 }
 
@@ -338,10 +328,16 @@ $-theme-fonts: (
 //  $params: -param-default($params, x, y) - default x to the value of y (if y is set)
 //  $params: -param-default($params, x, y, $alpha: 0.5) - default x to the value of y made 50% transparent
 @function -param-default($params, $target, $source, $alpha: null, $self-overlay: null) {
+    @if string.index($target, "--ag-") != 1 {
+        @error "Internal error: $target to -param-default should start --ag-";
+    }
     $value: null;
     @if type-of($source) == "color" {
         $value: $source;
     } @else {
+        @if string.index($source, "--ag-") != 1 {
+            @error "Internal error: $source to -param-default should start --ag-";
+        }
         $value: map.get($params, $source);
     }
     @if map.has-key($params, $target) or $value == null {
@@ -371,114 +367,114 @@ $-param-type-descriptions: (
 
 // params that are copied to --ag-param-name variables
 $-variable-param-types: (
-    foreground-color: "color",
-    data-color: "color",
-    secondary-foreground-color: "color",
-    header-foreground-color: "color",
-    disabled-foreground-color: "color",
-    background-color: "color",
-    header-background-color: "color",
-    subheader-background-color: "color",
-    subheader-toolbar-background-color: "color",
-    control-panel-background-color: "color",
-    side-button-selected-background: "color",
-    selected-row-background-color: "color",
-    odd-row-background-color: "color",
-    modal-overlay-background-color: "color",
-    row-hover-color: "color",
-    column-hover-color: "color",
-    range-selection-border-color: "color",
-    range-selection-border-style: "border-style",
-    range-selection-background-color: "color",
-    range-selection-background-color-2: "color",
-    range-selection-background-color-3: "color",
-    range-selection-background-color-4: "color",
-    range-selection-highlight-color: "color",
-    selected-tab-underline-color: "color",
-    selected-tab-underline-width: "size",
-    selected-tab-underline-transition-speed: "duration",
-    range-selection-chart-category-background-color: "color",
-    range-selection-chart-background-color: "color",
-    header-cell-hover-background-color: "color",
-    header-cell-moving-background-color: "color",
-    value-change-value-highlight-background-color: "color",
-    value-change-delta-up-color: "color",
-    value-change-delta-down-color: "color",
-    chip-background-color: "color",
-    borders: "border-style-and-size",
-    border-color: "color",
-    borders-critical: "border-style-and-size",
-    borders-secondary: "border-style-and-size",
-    secondary-border-color: "color",
-    borders-row: "border-style-and-size",
-    row-border-color: "color",
-    cell-horizontal-border: "border-style-and-color",
-    borders-input: "border-style-and-size",
-    input-border-color: "color",
-    borders-input-invalid: "border-style-and-size",
-    input-border-color-invalid: "color",
-    borders-side-button: "border-style-and-size",
-    border-radius: "size",
-    header-column-separator-display: "display",
-    header-column-separator-height: "size",
-    header-column-separator-width: "size",
-    header-column-separator-color: "color",
-    header-column-resize-handle-display: "display",
-    header-column-resize-handle-height: "size",
-    header-column-resize-handle-width: "size",
-    header-column-resize-handle-color: "color",
-    invalid-color: "color",
-    input-disabled-border-color: "color",
-    input-disabled-background-color: "color",
-    checkbox-background-color: "color",
-    checkbox-border-radius: "size",
-    checkbox-checked-color: "color",
-    checkbox-unchecked-color: "color",
-    checkbox-indeterminate-color: "color",
-    toggle-button-off-border-color: "color",
-    toggle-button-off-background-color: "color",
-    toggle-button-on-border-color: "color",
-    toggle-button-on-background-color: "color",
-    toggle-button-switch-background-color: "color",
-    toggle-button-switch-border-color: "color",
-    toggle-button-border-width: "size",
-    toggle-button-height: "size",
-    toggle-button-width: "size",
-    input-focus-box-shadow: "any",
-    input-focus-border-color: "any",
-    minichart-selected-chart-color: "color",
-    minichart-selected-page-color: "color",
-    grid-size: "size",
-    icon-size: "size",
-    widget-container-horizontal-padding: "size",
-    widget-container-vertical-padding: "size",
-    widget-horizontal-spacing: "size",
-    widget-vertical-spacing: "size",
-    cell-horizontal-padding: "size",
-    cell-widget-spacing: "size",
-    row-height: "size",
-    header-height: "size",
-    list-item-height: "size",
-    column-select-indent-size: "size",
-    row-group-indent-size: "size",
-    filter-tool-panel-group-indent: "size",
-    tab-min-width: "size",
-    menu-min-width: "size",
-    side-bar-panel-width: "size",
-    font-family: "any",
-    font-size: "size",
-    card-radius: "size",
-    card-shadow: "any",
-    popup-shadow: "any",
-    alpine-active-color: "color",
-    balham-active-color: "color",
-    material-primary-color: "color",
-    material-accent-color: "color",
-    icon-font-family: "any"
+    --ag-foreground-color: "color",
+    --ag-data-color: "color",
+    --ag-secondary-foreground-color: "color",
+    --ag-header-foreground-color: "color",
+    --ag-disabled-foreground-color: "color",
+    --ag-background-color: "color",
+    --ag-header-background-color: "color",
+    --ag-subheader-background-color: "color",
+    --ag-subheader-toolbar-background-color: "color",
+    --ag-control-panel-background-color: "color",
+    --ag-side-button-selected-background: "color",
+    --ag-selected-row-background-color: "color",
+    --ag-odd-row-background-color: "color",
+    --ag-modal-overlay-background-color: "color",
+    --ag-row-hover-color: "color",
+    --ag-column-hover-color: "color",
+    --ag-range-selection-border-color: "color",
+    --ag-range-selection-border-style: "border-style",
+    --ag-range-selection-background-color: "color",
+    --ag-range-selection-background-color-2: "color",
+    --ag-range-selection-background-color-3: "color",
+    --ag-range-selection-background-color-4: "color",
+    --ag-range-selection-highlight-color: "color",
+    --ag-selected-tab-underline-color: "color",
+    --ag-selected-tab-underline-width: "size",
+    --ag-selected-tab-underline-transition-speed: "duration",
+    --ag-range-selection-chart-category-background-color: "color",
+    --ag-range-selection-chart-background-color: "color",
+    --ag-header-cell-hover-background-color: "color",
+    --ag-header-cell-moving-background-color: "color",
+    --ag-value-change-value-highlight-background-color: "color",
+    --ag-value-change-delta-up-color: "color",
+    --ag-value-change-delta-down-color: "color",
+    --ag-chip-background-color: "color",
+    --ag-borders: "border-style-and-size",
+    --ag-border-color: "color",
+    --ag-borders-critical: "border-style-and-size",
+    --ag-borders-secondary: "border-style-and-size",
+    --ag-secondary-border-color: "color",
+    --ag-borders-row: "border-style-and-size",
+    --ag-row-border-color: "color",
+    --ag-cell-horizontal-border: "border-style-and-color",
+    --ag-borders-input: "border-style-and-size",
+    --ag-input-border-color: "color",
+    --ag-borders-input-invalid: "border-style-and-size",
+    --ag-input-border-color-invalid: "color",
+    --ag-borders-side-button: "border-style-and-size",
+    --ag-border-radius: "size",
+    --ag-header-column-separator-display: "display",
+    --ag-header-column-separator-height: "size",
+    --ag-header-column-separator-width: "size",
+    --ag-header-column-separator-color: "color",
+    --ag-header-column-resize-handle-display: "display",
+    --ag-header-column-resize-handle-height: "size",
+    --ag-header-column-resize-handle-width: "size",
+    --ag-header-column-resize-handle-color: "color",
+    --ag-invalid-color: "color",
+    --ag-input-disabled-border-color: "color",
+    --ag-input-disabled-background-color: "color",
+    --ag-checkbox-background-color: "color",
+    --ag-checkbox-border-radius: "size",
+    --ag-checkbox-checked-color: "color",
+    --ag-checkbox-unchecked-color: "color",
+    --ag-checkbox-indeterminate-color: "color",
+    --ag-toggle-button-off-border-color: "color",
+    --ag-toggle-button-off-background-color: "color",
+    --ag-toggle-button-on-border-color: "color",
+    --ag-toggle-button-on-background-color: "color",
+    --ag-toggle-button-switch-background-color: "color",
+    --ag-toggle-button-switch-border-color: "color",
+    --ag-toggle-button-border-width: "size",
+    --ag-toggle-button-height: "size",
+    --ag-toggle-button-width: "size",
+    --ag-input-focus-box-shadow: "any",
+    --ag-input-focus-border-color: "any",
+    --ag-minichart-selected-chart-color: "color",
+    --ag-minichart-selected-page-color: "color",
+    --ag-grid-size: "size",
+    --ag-icon-size: "size",
+    --ag-widget-container-horizontal-padding: "size",
+    --ag-widget-container-vertical-padding: "size",
+    --ag-widget-horizontal-spacing: "size",
+    --ag-widget-vertical-spacing: "size",
+    --ag-cell-horizontal-padding: "size",
+    --ag-cell-widget-spacing: "size",
+    --ag-row-height: "size",
+    --ag-header-height: "size",
+    --ag-list-item-height: "size",
+    --ag-column-select-indent-size: "size",
+    --ag-row-group-indent-size: "size",
+    --ag-filter-tool-panel-group-indent: "size",
+    --ag-tab-min-width: "size",
+    --ag-menu-min-width: "size",
+    --ag-side-bar-panel-width: "size",
+    --ag-font-family: "any",
+    --ag-font-size: "size",
+    --ag-card-radius: "size",
+    --ag-card-shadow: "any",
+    --ag-popup-shadow: "any",
+    --ag-alpine-active-color: "color",
+    --ag-balham-active-color: "color",
+    --ag-material-primary-color: "color",
+    --ag-material-accent-color: "color",
+    --ag-icon-font-family: "any"
 );
 
 @each $icon-name in map.keys($icon-font-codes) {
-    $-variable-param-types: map.set($-variable-param-types, "icon-font-code-#{$icon-name}", "any");
+    $-variable-param-types: map.set($-variable-param-types, "--ag-icon-font-code-#{$icon-name}", "any");
 }
 
 // params that are not copied to CSS variables
@@ -491,6 +487,7 @@ $-non-variable-param-types: (
 @function -preprocess-params($params) {
     $processed: ();
     @each $name, $value in $params {
+        $name: -clean-variable-name($name);
         // Allow `null` for colours
         @if -string-ends-with($name, "-color") and $value == null {
             $value: transparent;
@@ -523,6 +520,8 @@ $-non-variable-param-types: (
     @if $theme and map.has-key($-theme-variables, $theme) {
         $theme-variables: map.get($-theme-variables, $theme);
     }
+
+    // TODO what's going on here? Merging param types with params?
 
     $param-types: map.merge($-variable-param-types, $theme-variables);
     $errors: ();
