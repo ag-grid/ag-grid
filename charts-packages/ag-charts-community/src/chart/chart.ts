@@ -715,7 +715,7 @@ export abstract class Chart extends Observable {
     protected assignSeriesToAxes() {
         this.axes.forEach(axis => {
             axis.boundSeries = this.series.filter((s) => {
-                const seriesAxis =  axis.direction === 'x' ? s.xAxis : s.yAxis;
+                const seriesAxis =  axis.direction === ChartAxisDirection.X ? s.xAxis : s.yAxis;
                 return seriesAxis === axis;
             });
         });
@@ -733,7 +733,7 @@ export abstract class Chart extends Observable {
 
         this.series.forEach(series => {
             series.directions.forEach((direction) => {
-                const currentAxis =  direction === 'x' ? series.xAxis : series.yAxis;
+                const currentAxis =  direction === ChartAxisDirection.X ? series.xAxis : series.yAxis;
                 if (currentAxis && !force) {
                     return;
                 }
@@ -751,7 +751,7 @@ export abstract class Chart extends Observable {
                     return;
                 }
 
-                if (direction === 'x') {
+                if (direction === ChartAxisDirection.X) {
                     series.xAxis = newAxis;
                 } else {
                     series.yAxis = newAxis;
