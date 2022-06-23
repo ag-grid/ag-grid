@@ -44,10 +44,12 @@ export interface IFilter {
     */
     isFilterActive(): boolean;
 
-    /** The grid will ask each active filter, in turn, whether each row in the grid passes. If any
-     filter fails, then the row will be excluded from the final set. The method is provided a
-     params object with attributes node (the rodNode the grid creates that wraps the data) and data
-     (the data object that you provided to the grid for that row). */
+    /**
+     * The grid will ask each active filter, in turn, whether each row in the grid passes. If any
+     * filter fails, then the row will be excluded from the final set. The method is provided a
+     * params object with attributes node (the rodNode the grid creates that wraps the data) and data
+     * (the data object that you provided to the grid for that row).
+     */
     doesFilterPass(params: IDoesFilterPassParams): boolean;
 
     /**
@@ -92,14 +94,14 @@ export interface ProvidedFilterModel {
     filterType?: string;
 }
 
-export interface IFilterComp extends IFilter, IComponent<IFilterParams> {
+export interface IFilterComp<TData = any> extends IComponent<IFilterParams<TData>>, IFilter {
 }
 
-export interface IDoesFilterPassParams {
+export interface IDoesFilterPassParams<TData = any> {
     /** The row node in question. */
-    node: RowNode;
+    node: RowNode<TData>;
     /** The data part of the row node in question. */
-    data: any;
+    data: TData;
 }
 
 export interface IFilterOptionDef {
@@ -117,11 +119,11 @@ export interface IFilterOptionDef {
     hideFilterInput?: boolean;
 }
 
-export interface IFilterParams extends AgGridCommon {
+export interface IFilterParams<TData = any> extends AgGridCommon<TData> {
     /** The column this filter is for. */
     column: Column;
     /** The column definition for the column. */
-    colDef: ColDef;
+    colDef: ColDef<TData>;
     /**
      * The row model, helpful for looking up data values if needed.
      * If the filter needs to know which rows are
@@ -151,11 +153,11 @@ export interface IFilterParams extends AgGridCommon {
     /**
      * A function callback for the filter to get cell values from provided row data. Called with a
      * `ValueGetterParams` to get the value for this filter's column for the provided row data.
-     * 
+     *
      * The callback takes care of selecting the right column definition and deciding whether to use
      * the column `valueGetter` or raw field etc.
      */
-    valueGetter: ValueGetterFunc;
+    valueGetter: ValueGetterFunc<TData>;
 
     /**
      * A function callback, call with a node to be told whether the node passes all filters except the current filter.
@@ -163,5 +165,5 @@ export interface IFilterParams extends AgGridCommon {
      * The set filter uses this to remove from the list,
      * items that are no longer available due to the state of other filters (like Excel type filtering).
      */
-    doesRowPassOtherFilter: (rowNode: RowNode) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
+    doesRowPassOtherFilter: (rowNode: RowNode<TData>) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
 }

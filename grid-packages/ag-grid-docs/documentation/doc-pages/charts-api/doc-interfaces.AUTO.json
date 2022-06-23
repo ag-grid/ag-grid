@@ -177,7 +177,7 @@
       "description": "/** Configuration for the chart navigator. */",
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
     },
-    "meta": { "typeParams": ["S"] },
+    "meta": { "typeParams": ["S = AgCartesianSeriesTheme"] },
     "data": {
       "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "type": { "returnType": "any[]", "optional": true }
@@ -236,7 +236,7 @@
       "description": "/** Series configurations. */",
       "type": { "returnType": "S", "optional": true }
     },
-    "meta": { "typeParams": ["S"] },
+    "meta": { "typeParams": ["S = AgPolarSeriesTheme"] },
     "data": {
       "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "type": { "returnType": "any[]", "optional": true }
@@ -295,7 +295,7 @@
       "description": "/** Series configurations. */",
       "type": { "returnType": "S", "optional": true }
     },
-    "meta": { "typeParams": ["S"] },
+    "meta": { "typeParams": ["S = AgHierarchySeriesTheme"] },
     "data": {
       "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "type": { "returnType": "any[]", "optional": true }
@@ -3676,7 +3676,9 @@
     "title": { "type": { "returnType": "string", "optional": true } },
     "color": { "type": { "returnType": "string", "optional": true } }
   },
-  "SeriesNodeDataContext": { "meta": { "typeParams": ["S", "L"] } },
+  "SeriesNodeDataContext": {
+    "meta": { "typeParams": ["S = SeriesNodeDatum", "L = S"] }
+  },
   "SeriesMarkerFormatterParams": {
     "datum": { "type": { "returnType": "any", "optional": false } },
     "fill": { "type": { "returnType": "string", "optional": true } },
@@ -3810,7 +3812,7 @@
     "x": { "type": { "returnType": "number", "optional": false } },
     "y": { "type": { "returnType": "number", "optional": false } },
     "datum": { "type": { "returnType": "PLD", "optional": false } },
-    "meta": { "typeParams": ["PLD"] },
+    "meta": { "typeParams": ["PLD = PointLabelDatum"] },
     "text": { "type": { "returnType": "string", "optional": false } },
     "width": { "type": { "returnType": "number", "optional": false } },
     "height": { "type": { "returnType": "number", "optional": false } }

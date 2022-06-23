@@ -27,7 +27,7 @@ const columnDefs: ColGroupDef[] = [
   },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     sortable: true,
     filter: true,
@@ -49,7 +49,7 @@ const gridOptions: GridOptions = {
       silver: '003',
       bronze: 44,
       total: 55,
-    },
+    } as any,
   ],
 
   pinnedBottomRowData: [
@@ -62,7 +62,7 @@ const gridOptions: GridOptions = {
       silver: '005',
       bronze: 244,
       total: 255,
-    },
+    } as any,
   ],
 }
 

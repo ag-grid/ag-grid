@@ -8,7 +8,7 @@ const columnDefs: ColDef[] = [
   { field: 'date', width: 110, rowGroupIndex: 2 },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   rowData: null,
   animateRows: false,
@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
   },
 }
 
-function onRowGroupOpened(event: RowGroupOpenedEvent) {
+function onRowGroupOpened(event: RowGroupOpenedEvent<IOlympicData>) {
   var rowNodeIndex = event.node.rowIndex!
   // factor in child nodes so we can scroll to correct position
   var childCount = event.node.childrenAfterSort
@@ -41,5 +41,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })

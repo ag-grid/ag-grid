@@ -66,7 +66,7 @@ function createColSetB(): ColGroupDef[] {
   ]
 }
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     initialWidth: 100,
     sortable: true,

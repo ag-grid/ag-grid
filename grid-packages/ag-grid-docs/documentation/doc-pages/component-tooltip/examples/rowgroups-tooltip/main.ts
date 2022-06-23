@@ -13,7 +13,7 @@ const columnDefs: ColDef[] = [
   { field: 'date', width: 110 },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   autoGroupColumnDef: {
     headerTooltip: 'Group',
     minWidth: 190,

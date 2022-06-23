@@ -15,11 +15,11 @@ export enum ClientSideRowModelSteps {
     NOTHING = 'nothing'
 }
 
-export interface IClientSideRowModel extends IRowModel {
+export interface IClientSideRowModel<TData = any> extends IRowModel {
     onRowGroupOpened(): void;
-    updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: { [id: string]: number; } | null): RowNodeTransaction | null;
+    updateRowData(rowDataTran: RowDataTransaction<TData>, rowNodeOrder?: { [id: string]: number; } | null): RowNodeTransaction<TData> | null;
     setRowData(rowData: any[]): void;
-    refreshModel(params: RefreshModelParams): void;
+    refreshModel(params: RefreshModelParams<TData>): void;
     expandOrCollapseAll(expand: boolean): void;
     forEachLeafNode(callback: (node: RowNode, index: number) => void): void;
     forEachNode(callback: (node: RowNode, index: number) => void): void;
@@ -27,7 +27,7 @@ export interface IClientSideRowModel extends IRowModel {
     forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void): void;
     resetRowHeights(): void;
     onRowHeightChanged(): void;
-    batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
+    batchUpdateRowData(rowDataTransaction: RowDataTransaction<TData>, callback?: (res: RowNodeTransaction<TData>) => void): void;
     flushAsyncTransactions(): void;
     getRootNode(): RowNode;
     doAggregate(changedPath?: ChangedPath): void;
@@ -39,7 +39,7 @@ export interface IClientSideRowModel extends IRowModel {
     getLastHighlightedRowNode(): RowNode | null;
 }
 
-export interface RefreshModelParams {
+export interface RefreshModelParams<TData = any> {
     // how much of the pipeline to execute
     step: ClientSideRowModelSteps;
     // what state to reset the groups back to after the refresh
@@ -52,7 +52,7 @@ export interface RefreshModelParams {
     // if true, then rows we are editing will be kept
     keepEditingRows?: boolean;
     // if doing delta updates, this has the changes that were done
-    rowNodeTransactions?: RowNodeTransaction[];
+    rowNodeTransactions?: RowNodeTransaction<TData>[];
     // if doing delta updates, this has the order of the nodes
     rowNodeOrder?: { [id: string]: number };
     // true user called setRowData() (or a new page in pagination). the grid scrolls

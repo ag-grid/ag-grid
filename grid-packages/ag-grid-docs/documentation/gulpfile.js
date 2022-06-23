@@ -25,7 +25,7 @@ const renameFiles = () => {
 
 const containsGridOptions = function (file) {
     const fileContent = fs.readFileSync(file.path, "utf8");
-    return fileContent.includes('gridOptions =')
+    return fileContent.includes('gridOptions: GridOptions =')
 }
 
 const containsEvent = (eventName) => function (file) {
@@ -70,6 +70,28 @@ const convertDataFile = () => {
         .pipe(dest('./'))
 };
 
+const containsOlympicData = function (file) {
+    const fileContent = fs.readFileSync(file.path, "utf8");
+    return fileContent.includes('olympic-winners.json')
+}
+const applyGeneric = () => {
+    return src([`./doc-pages/**/${folder}/**/main.ts`, '!./doc-pages/**/{_gen,provided}/**/*.ts'], { base: './' })
+        .pipe(gulpIf(containsOlympicData, replace(new RegExp('gridOptions: GridOptions =', 'g'), 'gridOptions: GridOptions<IOlympicData> =')))
+        .pipe(gulpIf(containsOlympicData, replace(new RegExp('data => gridOptions', 'g'), '(data: IOlympicData[]) => gridOptions')))
+        .pipe(dest('./'))
+};
+
+const containsCallsData = function (file) {
+    const fileContent = fs.readFileSync(file.path, "utf8");
+    return fileContent.includes('master-detail-data.json')
+}
+const applyGeneric2 = () => {
+    return src([`./doc-pages/**/${folder}/**/main.ts`, '!./doc-pages/**/{_gen,provided}/**/*.ts'], { base: './' })
+        .pipe(gulpIf(containsCallsData, replace(new RegExp('gridOptions: GridOptions =', 'g'), 'gridOptions: GridOptions<IAccount> =')))
+        .pipe(gulpIf(containsCallsData, replace(new RegExp('then\\(function \\(data\\) ', 'g'), 'then((data: IAccount[]) => ')))
+        .pipe(dest('./'))
+};
+
 const containsChartOptions = function (file) {
     const fileContent = fs.readFileSync(file.path, "utf8");
     return fileContent.includes('options =')
@@ -91,4 +113,5 @@ const prettify = () => {
 };
 
 // applyTypes
-exports.default = series(renameFiles, convertDataFile, convertData, prettify)
+//series(renameFiles, convertDataFile, convertData, prettify)
+exports.default = series(applyGeneric2)

@@ -23,7 +23,7 @@ const COUNTRY_CODES: Record<string, string> = {
     Uruguay: 'uy',
 };
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         {
             headerName: 'No Cell Renderer',

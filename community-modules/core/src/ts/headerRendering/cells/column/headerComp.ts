@@ -17,7 +17,7 @@ import { SortIndicatorComp } from "./sortIndicatorComp";
 import { ColumnModel } from "../../../columns/columnModel";
 import { Events } from "../../../eventKeys";
 
-export interface IHeaderParams extends AgGridCommon {
+export interface IHeaderParams<TData = any> extends AgGridCommon<TData> {
     /** The column the header is for. */
     column: Column;
     /**

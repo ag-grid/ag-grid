@@ -1,7 +1,7 @@
 import { Grid, GridOptions, ValueParserParams } from '@ag-grid-community/core'
 import { GroupRowInnerRenderer } from './groupRowInnerRenderer_typescript'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'athlete', minWidth: 200 },
     { field: 'country', rowGroup: true, hide: true },
@@ -295,5 +295,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })

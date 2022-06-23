@@ -1,6 +1,6 @@
 import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams, GetRowIdParams } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IAccount> = {
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
     { field: 'name', cellRenderer: 'agGroupCellRenderer' },
@@ -21,7 +21,7 @@ const gridOptions: GridOptions = {
     template: (params) => {
       return (
         `<div class="ag-details-row ag-details-row-fixed-height">
-            <div style="padding: 4px; font-weight: bold;">${params.data.name} ${params.data.calls} calls</div>
+            <div style="padding: 4px; font-weight: bold;">${params.data?.name} ${params.data?.calls} calls</div>
             <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>
          </div>`
       )
@@ -49,7 +49,7 @@ const gridOptions: GridOptions = {
       // params.successCallback([]);
       params.successCallback(params.data.callRecords)
     },
-  } as IDetailCellRendererParams,
+  } as IDetailCellRendererParams<IAccount, ICallRecord>,
   onFirstDataRendered: onFirstDataRendered,
 }
 
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
     .then(response => response.json())
-    .then(function (data) {
+    .then((data: IAccount[]) => {
       allRowData = data
       gridOptions.api!.setRowData(data)
     })

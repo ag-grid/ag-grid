@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import styles from './ApiDocumentation.module.scss';
 import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, ObjectCode, PropertyCall, PropertyType, SectionProps, InterfaceEntry, ChildDocEntry } from './ApiDocumentation.types';
 import Code from './Code';
-import { extractInterfaces, writeAllInterfaces, formatJsDocString, sortAndFilterProperties, addMoreLink } from './documentation-helpers';
+import { extractInterfaces, writeAllInterfaces, formatJsDocString, sortAndFilterProperties, addMoreLink, getInterfaceWithGenericParams } from './documentation-helpers';
 import { useJsonFileNodes } from './use-json-file-nodes';
 
 
@@ -85,9 +85,10 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
 
     ordered.map(([k, v]) => orderedProps[k] = v);
 
+    const interfaceDeclaration = getInterfaceWithGenericParams(interfacename, li.meta);
     const description = config.description != null ?
         config.description :
-        `Properties available on the \`${interfacename}\` interface.`;
+        `Properties available on the \`${interfaceDeclaration}\` interface.`;
     let properties: DocEntryMap = {
         [interfacename]: {
             ...orderedProps,
@@ -695,6 +696,9 @@ function getPropertyType(type: string | PropertyType, config: Config) {
             }
         }
     }
+    // We hide generics from this part of the display for simplicity
+    propertyType = propertyType.replace(/<TData>/g, '').replace(/TData\[\]/g, 'any[]');
+
     return propertyType;
 }
 

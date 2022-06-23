@@ -1,5 +1,5 @@
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, convertFunctionToConstPropertyTs, getFunctionName, getModuleRegistration, getPropertyInterfaces, ImportType, isInstanceMethod } from './parser-utils';
+import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getFunctionName, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallbackTs, getImport, getValueType } from './react-utils';
 
 function getModuleImports(bindings: any, componentFilenames: string[], extraCoreTypes: string[]): string[] {
@@ -30,13 +30,15 @@ function getModuleImports(bindings: any, componentFilenames: string[], extraCore
         imports.push(...componentFilenames.map(getImport));
     }
 
+    addGenericInterfaceImport(imports, bindings.tData, bindings);
+
     imports = [...imports, ...getModuleRegistration(bindings)];
 
     return imports;
 }
 
 function getPackageImports(bindings: any, componentFilenames: string[], extraCoreTypes: string[]): string[] {
-    const { gridSettings } = bindings;
+    const { gridSettings, tData } = bindings;
 
     const imports = [
         "import React, { useCallback, useMemo, useRef, useState } from 'react';",
@@ -68,6 +70,8 @@ function getPackageImports(bindings: any, componentFilenames: string[], extraCor
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
     }
+
+    addGenericInterfaceImport(imports, bindings.tData, bindings);
 
     return imports;
 }
@@ -123,6 +127,7 @@ function getEventAndCallbackNames() {
     const docs = require('../../documentation/doc-pages/grid-api/doc-interfaces.AUTO.json');
     const gridOptions = docs['GridOptions'];
     const callbacksAndEvents = Object.entries(gridOptions).filter(([k, v]: [any, any]) => {
+        if (k == 'meta') { return false; }
         const isCallback = v.type.arguments && !v.meta?.isEvent;
         // Some callbacks use call signature interfaces and so do not have arguments like you might expect.
         const isCallSigInterface = interfaces[v.type?.returnType]?.meta?.isCallSignature;
@@ -132,11 +137,11 @@ function getEventAndCallbackNames() {
     return callbacksAndEvents;;
 }
 
-const ROW_DATA_STATE = 'const [rowData, setRowData] = useState<any[]>();'
+
 const GRID_REF_HOOK = "const gridRef = useRef<AgGridReact>(null);"
 
 export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
-    const { properties, data, gridSettings, onGridReady, resizeToFit, typeDeclares, interfaces } = bindings;
+    const { properties, data, tData, gridSettings, onGridReady, resizeToFit, typeDeclares, interfaces } = bindings;
 
     const eventAndCallbackNames = getEventAndCallbackNames();
     const utilMethodNames = bindings.utils.map(getFunctionName);
@@ -146,13 +151,15 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
             .filter(dependency => !global[dependency]) // exclude things like Number, isNaN etc
         return acc;
     }, {})
+    const rowDataType = tData || 'any';
+    const rowDataState = `const [rowData, setRowData] = useState<${rowDataType}[]>();`
 
     return importType => {
         // instance values
         const stateProperties = [
             `const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);`,
             `const gridStyle = useMemo(() => ({height: '${gridSettings.height}', width: '${gridSettings.width}'}), []);`,
-            ROW_DATA_STATE
+            rowDataState
         ];
 
 
@@ -172,7 +179,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
             additionalInReady.push(`
                 fetch(${data.url})
                 .then(resp => resp.json())
-                .then((data: any[]) => ${setRowDataBlock});`
+                .then((data: ${rowDataType}[]) => ${setRowDataBlock});`
             );
         }
 
@@ -205,8 +212,8 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
             if (property.name === 'rowData') {
                 if (property.value !== "null" && property.value !== null) {
-                    const rowDataIndex = stateProperties.indexOf(ROW_DATA_STATE);
-                    stateProperties[rowDataIndex] = `const [rowData, setRowData] = useState<any[]>(${property.value});`
+                    const rowDataIndex = stateProperties.indexOf(rowDataState);
+                    stateProperties[rowDataIndex] = `const [rowData, setRowData] = useState<${rowDataType}[]>(${property.value});`
                 }
             } else if (property.value === 'true' || property.value === 'false') {
                 componentProps.push(`${property.name}={${property.value}}`);
@@ -330,10 +337,13 @@ render(<GridExample></GridExample>, document.querySelector('#root'))
             generatedOutput = generatedOutput.replace(GRID_REF_HOOK, "")
             generatedOutput = generatedOutput.replace("ref={gridRef}", "")
         }
-        if (generatedOutput.includes(ROW_DATA_STATE) && (generatedOutput.match(/setRowData/g) || []).length === 1) {
-            generatedOutput = generatedOutput.replace(ROW_DATA_STATE, "")
+        if (generatedOutput.includes(rowDataState) && (generatedOutput.match(/setRowData/g) || []).length === 1) {
+            generatedOutput = generatedOutput.replace(rowDataState, "")
             generatedOutput = generatedOutput.replace("rowData={rowData}", "")
         }
+
+        // Until we support this cleanly.
+        generatedOutput = handleRowGenericInterface(generatedOutput, tData);
 
         return generatedOutput;
     };

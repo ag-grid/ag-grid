@@ -1,4 +1,13 @@
-export function getData(): any[] {
+export interface IRow {
+    name: string;
+    gender: string;
+    age?: number;
+    address: string;
+    city: string;
+    country: string;
+}
+
+export function getData(): IRow[] {
     return [
         {
             name: 'Bob Harrison',

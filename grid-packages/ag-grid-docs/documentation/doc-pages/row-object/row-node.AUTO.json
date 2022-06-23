@@ -36,12 +36,12 @@
     "type": { "returnType": "any" }
   },
   "data": {
-    "description": "/** The data as provided by the application. */",
-    "type": { "returnType": "any" }
+    "description": "/** The data as provided by the application.\n * Can be `undefined` when using row grouping or during grid initialisation. */",
+    "type": { "returnType": "TData | undefined" }
   },
   "parent": {
     "description": "/** The parent node to this node, or empty if top level */",
-    "type": { "returnType": "RowNode | null" }
+    "type": { "returnType": "RowNode<TData> | null" }
   },
   "level": {
     "description": "/** How many levels this node is from the top when grouping. */",
@@ -141,23 +141,23 @@
   },
   "allLeafChildren": {
     "description": "/** All lowest level nodes beneath this node, no groups. */",
-    "type": { "returnType": "RowNode[]" }
+    "type": { "returnType": "RowNode<TData>[]" }
   },
   "childrenAfterGroup": {
     "description": "/** Children of this group. If multi levels of grouping, shows only immediate children. */",
-    "type": { "returnType": "RowNode[] | null" }
+    "type": { "returnType": "RowNode<TData>[] | null" }
   },
   "childrenAfterFilter": {
     "description": "/** Filtered children of this group. */",
-    "type": { "returnType": "RowNode[] | null" }
+    "type": { "returnType": "RowNode<TData>[] | null" }
   },
   "childrenAfterAggFilter": {
     "description": "/** Aggregated and re-filtered children of this group. */",
-    "type": { "returnType": "RowNode[] | null" }
+    "type": { "returnType": "RowNode<TData>[] | null" }
   },
   "childrenAfterSort": {
     "description": "/** Sorted children of this group. */",
-    "type": { "returnType": "RowNode[] | null" }
+    "type": { "returnType": "RowNode<TData>[] | null" }
   },
   "allChildrenCount": {
     "description": "/** Number of children and grand children. */",
@@ -223,15 +223,15 @@
   "highlighted": { "type": { "returnType": "RowHighlightPosition | null" } },
   "setData": {
     "description": "/** Replaces the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing. */",
-    "type": { "arguments": { "data": "any" }, "returnType": "void" }
+    "type": { "arguments": { "data": "TData" }, "returnType": "void" }
   },
   "updateData": {
-    "type": { "arguments": { "data": "any" }, "returnType": "void" }
+    "type": { "arguments": { "data": "TData" }, "returnType": "void" }
   },
   "getRowIndexString": { "type": { "arguments": {}, "returnType": "string" } },
   "setDataAndId": {
     "type": {
-      "arguments": { "data": "any", "id": "string | undefined" },
+      "arguments": { "data": "TData", "id": "string | undefined" },
       "returnType": "void"
     }
   },
@@ -357,7 +357,7 @@
   "depthFirstSearch": {
     "description": "/** Perform a depth-first search of this node and its children. */",
     "type": {
-      "arguments": { "callback": "(rowNode: RowNode) => void" },
+      "arguments": { "callback": "(rowNode: RowNode<TData>) => void" },
       "returnType": "void"
     }
   },

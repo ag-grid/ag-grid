@@ -1,6 +1,6 @@
 import { Grid, GridOptions, RowNode } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true, hide: true },
     { field: 'year', maxWidth: 100 },
@@ -30,7 +30,7 @@ const gridOptions: GridOptions = {
   groupSelectsFiltered: true,
   suppressRowClickSelection: true,
   groupDefaultExpanded: -1,
-  isRowSelectable: (node: RowNode) => {
+  isRowSelectable: (node: RowNode<IOlympicData>) => {
     return node.data
       ? node.data.year === 2008 || node.data.year === 2004
       : false

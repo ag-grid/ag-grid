@@ -56,7 +56,7 @@
   },
   "children": {
     "description": "/** A list containing a mix of columns and column groups. */",
-    "type": { "returnType": "(ColDef | ColGroupDef)[]" }
+    "type": { "returnType": "(ColDef<TData> | ColGroupDef<TData>)[]" }
   },
   "groupId": {
     "description": "/** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the column API. */",
@@ -96,11 +96,11 @@
   },
   "valueGetter": {
     "description": "/** Function or expression. Gets the value from your data for display. */",
-    "type": { "returnType": "string | ValueGetterFunc" }
+    "type": { "returnType": "string | ValueGetterFunc<TData>" }
   },
   "valueFormatter": {
     "description": "/** A function or expression to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */",
-    "type": { "returnType": "string | ValueFormatterFunc" }
+    "type": { "returnType": "string | ValueFormatterFunc<TData>" }
   },
   "refData": {
     "description": "/** Provided a reference data map to be used to map column values to their respective value from the map. */",
@@ -109,7 +109,7 @@
   "keyCreator": {
     "description": "/** Function to return a string key for a value.\n * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.\n * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value. */",
     "type": {
-      "arguments": { "params": "KeyCreatorParams" },
+      "arguments": { "params": "KeyCreatorParams<TData>" },
       "returnType": "string"
     }
   },
@@ -133,7 +133,7 @@
   },
   "checkboxSelection": {
     "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
-    "type": { "returnType": "boolean | CheckboxSelectionCallback" }
+    "type": { "returnType": "boolean | CheckboxSelectionCallback<TData>" }
   },
   "icons": {
     "description": "/** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults. */",
@@ -141,18 +141,18 @@
   },
   "suppressNavigable": {
     "description": "/** Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.\n * Can also be a callback function to have different rows navigable.\n * Default: `false` */",
-    "type": { "returnType": "boolean | SuppressNavigableCallback" }
+    "type": { "returnType": "boolean | SuppressNavigableCallback<TData>" }
   },
   "suppressKeyboardEvent": {
     "description": "/** Allows the user to suppress certain keyboard events in the grid cell. Default: `false` */",
     "type": {
-      "arguments": { "params": "SuppressKeyboardEventParams" },
+      "arguments": { "params": "SuppressKeyboardEventParams<TData>" },
       "returnType": "boolean"
     }
   },
   "suppressPaste": {
     "description": "/** Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even with a paste operation).\n * Set to `true` turn paste operations off. */",
-    "type": { "returnType": "boolean | SuppressPasteCallback" }
+    "type": { "returnType": "boolean | SuppressPasteCallback<TData>" }
   },
   "suppressFillHandle": {
     "description": "/** Set to true to prevent the fillHandle from being rendered in any cell that belongs to this column */",
@@ -180,15 +180,15 @@
   },
   "editable": {
     "description": "/** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable. Default: `false` */",
-    "type": { "returnType": "boolean | EditableCallback" }
+    "type": { "returnType": "boolean | EditableCallback<TData>" }
   },
   "valueSetter": {
     "description": "/** Function or expression. Sets the value into your data for saving. Return `true` if the data changed. */",
-    "type": { "returnType": "string | ValueSetterFunc" }
+    "type": { "returnType": "string | ValueSetterFunc<TData>" }
   },
   "valueParser": {
     "description": "/** Function or expression. Parses the value for saving. */",
-    "type": { "returnType": "string | ValueParserFunc" }
+    "type": { "returnType": "string | ValueParserFunc<TData>" }
   },
   "cellEditor": {
     "description": "/** Provide your own cell editor component for this column's cells.\n * See [Cell Editor](https://www.ag-grid.com/javascript-data-grid/component-cell-editor/) for framework specific implementation detail. */",
@@ -204,7 +204,7 @@
   },
   "cellEditorSelector": {
     "description": "/** Callback to select which cell editor to be used for a given row within the same column. */",
-    "type": { "returnType": "CellEditorSelectorFunc" }
+    "type": { "returnType": "CellEditorSelectorFunc<TData>" }
   },
   "singleClickEdit": {
     "description": "/** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */",
@@ -213,7 +213,7 @@
   "newValueHandler": {
     "description": "/** @deprecated use `valueSetter` instead\n */",
     "type": {
-      "arguments": { "params": "NewValueParams" },
+      "arguments": { "params": "NewValueParams<TData>" },
       "returnType": "boolean"
     }
   },
@@ -227,39 +227,42 @@
   },
   "onCellValueChanged": {
     "description": "/** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`. */",
-    "type": { "arguments": { "event": "NewValueParams" }, "returnType": "void" }
+    "type": {
+      "arguments": { "event": "NewValueParams<TData>" },
+      "returnType": "void"
+    }
   },
   "onCellClicked": {
     "description": "/** Callback called when a cell is clicked. */",
     "type": {
-      "arguments": { "event": "CellClickedEvent" },
+      "arguments": { "event": "CellClickedEvent<TData>" },
       "returnType": "void"
     }
   },
   "onCellDoubleClicked": {
     "description": "/** Callback called when a cell is double clicked. */",
     "type": {
-      "arguments": { "event": "CellDoubleClickedEvent" },
+      "arguments": { "event": "CellDoubleClickedEvent<TData>" },
       "returnType": "void"
     }
   },
   "onCellContextMenu": {
     "description": "/** Callback called when a cell is right clicked. */",
     "type": {
-      "arguments": { "event": "CellContextMenuEvent" },
+      "arguments": { "event": "CellContextMenuEvent<TData>" },
       "returnType": "void"
     }
   },
   "getQuickFilterText": {
     "description": "/** A function to tell the grid what quick filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
     "type": {
-      "arguments": { "params": "GetQuickFilterTextParams" },
+      "arguments": { "params": "GetQuickFilterTextParams<TData>" },
       "returnType": "string"
     }
   },
   "filterValueGetter": {
     "description": "/** Function or expression. Gets the value for filtering purposes. */",
-    "type": { "returnType": "string | ValueGetterFunc" }
+    "type": { "returnType": "string | ValueGetterFunc<TData>" }
   },
   "floatingFilter": {
     "description": "/** Whether to display a floating filter for this column. Default: `false` */",
@@ -337,7 +340,7 @@
   },
   "pinnedRowValueFormatter": {
     "description": "/** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned.\n */",
-    "type": { "returnType": "string | ValueFormatterFunc" }
+    "type": { "returnType": "string | ValueFormatterFunc<TData>" }
   },
   "pivot": {
     "description": "/** Set to true to pivot by this column. */",
@@ -368,15 +371,15 @@
   },
   "cellStyle": {
     "description": "/** An object of css values / or function returning an object of css values for a particular cell. */",
-    "type": { "returnType": "CellStyle | CellStyleFunc" }
+    "type": { "returnType": "CellStyle | CellStyleFunc<TData>" }
   },
   "cellClass": {
     "description": "/** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */",
-    "type": { "returnType": "string | string[] | CellClassFunc" }
+    "type": { "returnType": "string | string[] | CellClassFunc<TData>" }
   },
   "cellClassRules": {
     "description": "/** Rules which can be applied to include certain CSS classes. */",
-    "type": { "returnType": "CellClassRules" }
+    "type": { "returnType": "CellClassRules<TData>" }
   },
   "cellRenderer": {
     "description": "/** Provide your own cell Renderer component for this column's cells.\n * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details. */",
@@ -392,7 +395,7 @@
   },
   "cellRendererSelector": {
     "description": "/** Callback to select which cell renderer to be used for a given row within the same column. */",
-    "type": { "returnType": "CellRendererSelectorFunc" }
+    "type": { "returnType": "CellRendererSelectorFunc<TData>" }
   },
   "autoHeight": {
     "description": "/** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */",
@@ -412,7 +415,7 @@
   },
   "rowDrag": {
     "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging. Default: `false` */",
-    "type": { "returnType": "boolean | RowDragCallback" }
+    "type": { "returnType": "boolean | RowDragCallback<TData>" }
   },
   "rowDragText": {
     "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the current cell value will be used. */",
@@ -423,12 +426,12 @@
   },
   "dndSource": {
     "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. Default: `false` */",
-    "type": { "returnType": "boolean | DndSourceCallback" }
+    "type": { "returnType": "boolean | DndSourceCallback<TData>" }
   },
   "dndSourceOnRowDrag": {
     "description": "/** Function to allow custom drag functionality for native drag and drop. */",
     "type": {
-      "arguments": { "params": "DndSourceOnRowDragParams" },
+      "arguments": { "params": "DndSourceOnRowDragParams<TData>" },
       "returnType": "void"
     }
   },
@@ -524,14 +527,14 @@
   "colSpan": {
     "description": "/** By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns. */",
     "type": {
-      "arguments": { "params": "ColSpanParams" },
+      "arguments": { "params": "ColSpanParams<TData>" },
       "returnType": "number"
     }
   },
   "rowSpan": {
     "description": "/** By default, each cell will take up the height of one row. You can change this behaviour to allow cells to span multiple rows. */",
     "type": {
-      "arguments": { "params": "RowSpanParams" },
+      "arguments": { "params": "RowSpanParams<TData>" },
       "returnType": "number"
     }
   },

@@ -3,7 +3,12 @@ import { CellEditingStartedEvent, CellEditingStoppedEvent, Grid, GridOptions, IC
 import { MoodRenderer } from './moodRenderer_typescript'
 import { GenderRenderer } from './genderRenderer_typescript'
 
-const rowData = [
+interface IRow {
+  value: number | string;
+  type: 'age' | 'gender' | 'mood';
+}
+
+const rowData: IRow[] = [
   { value: 14, type: 'age' },
   { value: 'female', type: 'gender' },
   { value: 'Happy', type: 'mood' },
@@ -12,13 +17,13 @@ const rowData = [
   { value: 'Sad', type: 'mood' },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IRow> = {
   columnDefs: [
     { field: 'value' },
     {
       headerName: 'Rendered Value',
       field: 'value',
-      cellRendererSelector: (params: ICellRendererParams) => {
+      cellRendererSelector: (params: ICellRendererParams<IRow>) => {
         const moodDetails = {
           component: MoodRenderer
         }
@@ -27,10 +32,11 @@ const gridOptions: GridOptions = {
           component: GenderRenderer,
           params: { values: ['Male', 'Female'] },
         }
-
-        if (params.data.type === 'gender') return genderDetails
-        else if (params.data.type === 'mood') return moodDetails
-        else return undefined
+        if (params.data) {
+          if (params.data.type === 'gender') return genderDetails
+          else if (params.data.type === 'mood') return moodDetails
+        }
+        return undefined
       },
     },
     { field: 'type' },
@@ -39,16 +45,16 @@ const gridOptions: GridOptions = {
     flex: 1,
   },
   rowData: rowData,
-  onRowEditingStarted: (event: RowEditingStartedEvent) => {
+  onRowEditingStarted: (event: RowEditingStartedEvent<IRow>) => {
     console.log('never called - not doing row editing')
   },
-  onRowEditingStopped: (event: RowEditingStoppedEvent) => {
+  onRowEditingStopped: (event: RowEditingStoppedEvent<IRow>) => {
     console.log('never called - not doing row editing')
   },
-  onCellEditingStarted: (event: CellEditingStartedEvent) => {
+  onCellEditingStarted: (event: CellEditingStartedEvent<IRow>) => {
     console.log('cellEditingStarted')
   },
-  onCellEditingStopped: (event: CellEditingStoppedEvent) => {
+  onCellEditingStopped: (event: CellEditingStoppedEvent<IRow>) => {
     console.log('cellEditingStopped')
   }
 }

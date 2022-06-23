@@ -25,25 +25,25 @@ export interface SetSelectedParams {
     groupSelectsFiltered?: boolean;
 }
 
-export interface RowNodeEvent extends AgEvent {
-    node: RowNode;
+export interface RowNodeEvent<TData = any> extends AgEvent {
+    node: RowNode<TData>;
 }
 
-export interface DataChangedEvent extends RowNodeEvent {
-    oldData: any;
-    newData: any;
+export interface DataChangedEvent<TData = any> extends RowNodeEvent<TData> {
+    oldData: TData | undefined;
+    newData: TData | undefined;
     update: boolean;
 }
 
-export interface CellChangedEvent extends RowNodeEvent {
+export interface CellChangedEvent<TData = any> extends RowNodeEvent<TData> {
     column: Column;
-    newValue: any;
-    oldValue: any;
+    newValue: TData | undefined;
+    oldValue: TData | undefined;
 }
 
 export enum RowHighlightPosition { Above, Below }
 
-export class RowNode implements IEventEmitter {
+export class RowNode<TData = any> implements IEventEmitter {
 
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
     public static ID_PREFIX_TOP_PINNED = 't-';
@@ -82,11 +82,14 @@ export class RowNode implements IEventEmitter {
     /** If using row grouping and aggregation, contains the aggregation data. */
     public aggData: any;
 
-    /** The data as provided by the application. */
-    public data: any;
+    /**
+     * The data as provided by the application.
+     * Can be `undefined` when using row grouping or during grid initialisation. 
+     */
+    public data: TData | undefined;
 
     /** The parent node to this node, or empty if top level */
-    public parent: RowNode | null;
+    public parent: RowNode<TData> | null;
 
     /** How many levels this node is from the top when grouping. */
     public level: number;
@@ -164,19 +167,19 @@ export class RowNode implements IEventEmitter {
     public failedLoad: boolean;
 
     /** All lowest level nodes beneath this node, no groups. */
-    public allLeafChildren: RowNode[];
+    public allLeafChildren: RowNode<TData>[];
 
     /** Children of this group. If multi levels of grouping, shows only immediate children. */
-    public childrenAfterGroup: RowNode[] | null;
+    public childrenAfterGroup: RowNode<TData>[] | null;
 
     /** Filtered children of this group. */
-    public childrenAfterFilter: RowNode[] | null;
+    public childrenAfterFilter: RowNode<TData>[] | null;
 
     /** Aggregated and re-filtered children of this group. */
-    public childrenAfterAggFilter: RowNode[] | null;
+    public childrenAfterAggFilter: RowNode<TData>[] | null;
 
     /** Sorted children of this group. */
-    public childrenAfterSort: RowNode[] | null;
+    public childrenAfterSort: RowNode<TData>[] | null;
 
     /** Number of children and grand children. */
     public allChildrenCount: number | null;
@@ -259,7 +262,7 @@ export class RowNode implements IEventEmitter {
     }
 
     /** Replaces the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing. */
-    public setData(data: any): void {
+    public setData(data: TData): void {
         this.setDataCommon(data, false);
     }
 
@@ -268,11 +271,11 @@ export class RowNode implements IEventEmitter {
     // guaranteed that the data is the same entity (so grid doesn't need to worry about the id of the
     // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
     // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
-    public updateData(data: any): void {
+    public updateData(data: TData): void {
         this.setDataCommon(data, true);
     }
 
-    private setDataCommon(data: any, update: boolean): void {
+    private setDataCommon(data: TData, update: boolean): void {
         const oldData = this.data;
 
         this.data = data;
@@ -280,7 +283,7 @@ export class RowNode implements IEventEmitter {
         this.updateDataOnDetailNode();
         this.checkRowSelectable();
 
-        const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, update);
+        const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, update);
 
         this.dispatchLocalEvent(event);
     }
@@ -294,7 +297,7 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    private createDataChangedEvent(newData: any, oldData: any, update: boolean): DataChangedEvent {
+    private createDataChangedEvent(newData: TData, oldData: TData | undefined, update: boolean): DataChangedEvent<TData> {
         return {
             type: RowNode.EVENT_DATA_CHANGED,
             node: this,
@@ -338,7 +341,7 @@ export class RowNode implements IEventEmitter {
         return oldNode;
     }
 
-    public setDataAndId(data: any, id: string | undefined): void {
+    public setDataAndId(data: TData, id: string | undefined): void {
         const oldNode = exists(this.id) ? this.createDaemonNode() : null;
         const oldData = this.data;
 
@@ -348,7 +351,7 @@ export class RowNode implements IEventEmitter {
         this.beans.selectionService.syncInRowNode(this, oldNode);
         this.checkRowSelectable();
 
-        const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
+        const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, false);
 
         this.dispatchLocalEvent(event);
     }
@@ -681,7 +684,7 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    private createGlobalRowEvent(type: string): RowEvent {
+    private createGlobalRowEvent(type: string): RowEvent<TData> {
         return {
             type: type,
             node: this,
@@ -782,8 +785,8 @@ export class RowNode implements IEventEmitter {
         return this.group && missingOrEmpty(this.childrenAfterGroup);
     }
 
-    private dispatchCellChangedEvent(column: Column, newValue: any, oldValue: any): void {
-        const cellChangedEvent: CellChangedEvent = {
+    private dispatchCellChangedEvent(column: Column, newValue: TData, oldValue: TData): void {
+        const cellChangedEvent: CellChangedEvent<TData> = {
             type: RowNode.EVENT_CELL_CHANGED,
             node: this,
             column: column,
@@ -819,7 +822,7 @@ export class RowNode implements IEventEmitter {
     }
 
     /** Perform a depth-first search of this node and its children. */
-    public depthFirstSearch(callback: (rowNode: RowNode) => void): void {
+    public depthFirstSearch(callback: (rowNode: RowNode<TData>) => void): void {
         if (this.childrenAfterGroup) {
             this.childrenAfterGroup.forEach(child => child.depthFirstSearch(callback));
         }

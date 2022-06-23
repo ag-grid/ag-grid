@@ -2,7 +2,7 @@ import { IComponent } from "../../interfaces/iComponent";
 import { AgGridCommon } from "../../interfaces/iCommon";
 import { Component } from "../../widgets/component";
 
-export interface ILoadingOverlayParams extends AgGridCommon { }
+export interface ILoadingOverlayParams<TData = any> extends AgGridCommon<TData> { }
 
 export interface ILoadingOverlayComp extends IComponent<ILoadingOverlayParams> { }
 

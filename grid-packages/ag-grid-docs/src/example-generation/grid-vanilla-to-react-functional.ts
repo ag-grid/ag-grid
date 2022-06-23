@@ -100,6 +100,7 @@ function getEventAndCallbackNames() {
     const docs = require('../../documentation/doc-pages/grid-api/doc-interfaces.AUTO.json');
     const gridOptions = docs['GridOptions'];
     const callbacksAndEvents = Object.entries(gridOptions).filter(([k, v]: [any, any]) => {
+        if (k == 'meta') { return false; }
         const isCallback = v.type.arguments && !v.meta?.isEvent;
         // Some callbacks use call signature interfaces and so do not have arguments like you might expect.
         const isCallSigInterface = interfaces[v.type?.returnType]?.meta?.isCallSignature;

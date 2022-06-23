@@ -1,6 +1,6 @@
 import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IAccount> = {
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
     { field: 'name', cellRenderer: 'agGroupCellRenderer' },
@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
       params.successCallback(params.data.callRecords)
     },
     template: (params) => {
-      var personName = params.data.name
+      var personName = params.data?.name
       return (
         '<div style="height: 100%; background-color: #EDF6FF; padding: 20px; box-sizing: border-box;">' +
         '  <div style="height: 10%; padding: 2px; font-weight: bold;">###### Name: ' +
@@ -39,11 +39,11 @@ const gridOptions: GridOptions = {
         '</div>'
       )
     },
-  } as IDetailCellRendererParams,
+  } as IDetailCellRendererParams<IAccount, ICallRecord>,
   onFirstDataRendered: onFirstDataRendered,
 }
 
-function onFirstDataRendered(params: FirstDataRenderedEvent) {
+function onFirstDataRendered(params: FirstDataRenderedEvent<IAccount>) {
   // arbitrarily expand a row for presentational purposes
   setTimeout(function () {
     params.api.getDisplayedRowAtIndex(1)!.setExpanded(true)
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
     .then(response => response.json())
-    .then(function (data) {
+    .then((data: IAccount[]) => {
       gridOptions.api!.setRowData(data)
     })
 })

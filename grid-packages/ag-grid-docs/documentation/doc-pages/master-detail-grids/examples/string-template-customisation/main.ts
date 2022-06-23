@@ -1,6 +1,6 @@
 import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IAccount> = {
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
     { field: 'name', cellRenderer: 'agGroupCellRenderer' },
@@ -33,7 +33,7 @@ const gridOptions: GridOptions = {
       '  <div style="height: 10%; padding: 2px; font-weight: bold;">###### Call Details</div>' +
       '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
       '</div>',
-  } as IDetailCellRendererParams,
+  } as IDetailCellRendererParams<IAccount, ICallRecord>,
   onFirstDataRendered: onFirstDataRendered,
 }
 
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
     .then(response => response.json())
-    .then(function (data) {
+    .then((data: IAccount[]) => {
       gridOptions.api!.setRowData(data)
     })
 })

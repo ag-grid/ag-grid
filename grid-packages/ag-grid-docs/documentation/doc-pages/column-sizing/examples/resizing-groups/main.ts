@@ -58,7 +58,7 @@ const columnDefs: ColGroupDef[] = [
   },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     width: 150,
     resizable: true,
@@ -75,5 +75,5 @@ document.addEventListener('DOMContentLoaded', () => {
   // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })

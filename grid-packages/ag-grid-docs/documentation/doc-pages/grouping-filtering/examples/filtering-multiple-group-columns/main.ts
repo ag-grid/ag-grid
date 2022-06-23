@@ -2,7 +2,7 @@ import { Grid, GridOptions, ValueGetterParams } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true, hide: true },
     { field: 'year', rowGroup: true, hide: true },
@@ -19,13 +19,13 @@ const gridOptions: GridOptions = {
   },
   autoGroupColumnDef: {
     // supplies filter values to the column filters based on the colId
-    filterValueGetter: (params: ValueGetterParams) => {
+    filterValueGetter: (params: ValueGetterParams<IOlympicData>) => {
       const colId = params.column.getColId()
       if (colId.includes('country')) {
-        return params.data.country
+        return params.data?.country
       }
       if (colId.includes('year')) {
-        return params.data.year
+        return params.data?.year
       }
     },
   },

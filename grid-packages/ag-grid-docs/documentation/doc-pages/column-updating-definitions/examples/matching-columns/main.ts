@@ -2,8 +2,8 @@ import { Grid, GridOptions, ValueGetterParams } from '@ag-grid-community/core'
 
 const athleteColumn = {
   headerName: 'Athlete',
-  valueGetter: (params: ValueGetterParams) => {
-    return params.data.athlete
+  valueGetter: (params: ValueGetterParams<IOlympicData>) => {
+    return params.data?.athlete
   },
 }
 
@@ -13,15 +13,15 @@ function getColDefsMedalsIncluded() {
     {
       colId: 'myAgeCol',
       headerName: 'Age',
-      valueGetter: (params: ValueGetterParams) => {
-        return params.data.age
+      valueGetter: (params: ValueGetterParams<IOlympicData>) => {
+        return params.data?.age
       },
     },
     {
       headerName: 'Country',
       headerClass: 'country-header',
-      valueGetter: (params: ValueGetterParams) => {
-        return params.data.country
+      valueGetter: (params: ValueGetterParams<IOlympicData>) => {
+        return params.data?.country
       },
     },
     { field: 'sport' },
@@ -40,15 +40,15 @@ function getColDefsMedalsExcluded() {
     {
       colId: 'myAgeCol',
       headerName: 'Age',
-      valueGetter: (params: ValueGetterParams) => {
-        return params.data.age
+      valueGetter: (params: ValueGetterParams<IOlympicData>) => {
+        return params.data?.age
       },
     },
     {
       headerName: 'Country',
       headerClass: 'country-header',
-      valueGetter: (params: ValueGetterParams) => {
-        return params.data.country
+      valueGetter: (params: ValueGetterParams<IOlympicData>) => {
+        return params.data?.country
       },
     },
     { field: 'sport' },
@@ -57,7 +57,7 @@ function getColDefsMedalsExcluded() {
   ]
 }
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     initialWidth: 100,
     sortable: true,
@@ -81,5 +81,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })

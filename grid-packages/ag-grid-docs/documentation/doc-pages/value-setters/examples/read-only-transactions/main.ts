@@ -1,6 +1,6 @@
 import { Grid, GridOptions, CellEditRequestEvent, GetRowIdParams } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicDataWithId> = {
   columnDefs: [
     { field: 'athlete', minWidth: 160 },
     { field: 'age' },

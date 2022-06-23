@@ -7,7 +7,7 @@ import { ColumnGroup } from '../entities/columnGroup';
 import { ColGroupDef, ColDef } from '../entities/colDef';
 import { AgGridCommon } from '../interfaces/iCommon';
 
-export interface ITooltipParams extends AgGridCommon {
+export interface ITooltipParams<TData = any> extends AgGridCommon<TData> {
     /** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */
     location: string;
     /** The value to be rendered by the tooltip. */
@@ -21,9 +21,9 @@ export interface ITooltipParams extends AgGridCommon {
     /** The index of the row containing the cell rendering the tooltip. */
     rowIndex?: number;
     /** The row node. */
-    node?: RowNode;
+    node?: RowNode<TData>;
     /** Data for the row node in question. */
-    data?: any;
+    data?: TData;
 }
 
 export interface ITooltipComp extends IComponent<ITooltipParams> { }

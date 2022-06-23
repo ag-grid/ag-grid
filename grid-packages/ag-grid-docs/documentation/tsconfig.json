@@ -25,6 +25,7 @@
         "./doc-pages/**/*_angular.ts",
         "./doc-pages/**/*.ts",
         "./doc-pages/**/*.tsx",
+        "./shared-types/**/*"
     ],
     "exclude": [
         "./node_modules"

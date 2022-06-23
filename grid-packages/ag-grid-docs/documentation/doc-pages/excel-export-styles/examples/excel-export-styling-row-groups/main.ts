@@ -1,6 +1,6 @@
 import { Grid, CellClassParams, GridOptions, ProcessRowGroupForExportParams } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', minWidth: 120, rowGroup: true },
     { field: 'year', rowGroup: true },

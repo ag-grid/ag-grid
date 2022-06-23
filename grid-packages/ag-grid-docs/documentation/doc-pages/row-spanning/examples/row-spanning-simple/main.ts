@@ -1,7 +1,7 @@
 import { Grid, ColDef, GridOptions, RowSpanParams } from '@ag-grid-community/core'
 
-function rowSpan(params: RowSpanParams) {
-  var athlete = params.data.athlete
+function rowSpan(params: RowSpanParams<IOlympicData>) {
+  var athlete = params.data?.athlete
   if (athlete === 'Aleksey Nemov') {
     // have all Russia age columns width 2
     return 2
@@ -34,7 +34,7 @@ const columnDefs: ColDef[] = [
   { field: 'total' },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     width: 170,
@@ -50,5 +50,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })

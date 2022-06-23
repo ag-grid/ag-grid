@@ -47,7 +47,7 @@ const columnDefs: ColDef[] = [
     { field: 'total', suppressMenu: true },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,

@@ -1,6 +1,6 @@
 import { Grid, GridOptions, ISetFilter, KeyCreatorParams, ValueFormatterParams, IFiltersToolPanel } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         {
             field: 'athlete',

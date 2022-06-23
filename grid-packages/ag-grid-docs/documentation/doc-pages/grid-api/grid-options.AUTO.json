@@ -81,19 +81,19 @@
   },
   "columnDefs": {
     "description": "/** Array of Column / Column Group definitions. */",
-    "type": { "returnType": "(ColDef | ColGroupDef)[] | null" }
+    "type": { "returnType": "(ColDef<TData> | ColGroupDef<TData>)[] | null" }
   },
   "defaultColDef": {
     "description": "/** A default column definition. Items defined in the actual column definitions get precedence. */",
-    "type": { "returnType": "ColDef" }
+    "type": { "returnType": "ColDef<TData>" }
   },
   "defaultColGroupDef": {
     "description": "/** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence. */",
-    "type": { "returnType": "Partial<ColGroupDef>" }
+    "type": { "returnType": "Partial<ColGroupDef<TData>>" }
   },
   "columnTypes": {
     "description": "/** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */",
-    "type": { "returnType": "{ [key: string]: ColDef; }" }
+    "type": { "returnType": "{ [key: string]: ColDef<TData>; }" }
   },
   "maintainColumnOrder": {
     "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",
@@ -623,7 +623,7 @@
   },
   "autoGroupColumnDef": {
     "description": "/** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included. */",
-    "type": { "returnType": "ColDef" }
+    "type": { "returnType": "ColDef<TData>" }
   },
   "groupMaintainOrder": {
     "description": "/** When `true`, preserves the current group order when sorting on non-group columns. Default: `false` */",
@@ -635,7 +635,7 @@
   },
   "groupAggFiltering": {
     "description": "/** Set to determine whether filters should be applied on aggregated group values. Default: `false` */",
-    "type": { "returnType": "boolean | IsRowFilterable" }
+    "type": { "returnType": "boolean | IsRowFilterable<TData>" }
   },
   "groupIncludeFooter": {
     "description": "/** If grouping, this controls whether to show a group footer when the group is expanded.\n * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.\n * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).\n * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.\n * Default: `false` */",
@@ -719,11 +719,11 @@
   },
   "pinnedTopRowData": {
     "description": "/** Data to be displayed as pinned top rows in the grid. */",
-    "type": { "returnType": "any[]" }
+    "type": { "returnType": "TData[]" }
   },
   "pinnedBottomRowData": {
     "description": "/** Data to be displayed as pinned bottom rows in the grid. */",
-    "type": { "returnType": "any[]" }
+    "type": { "returnType": "TData[]" }
   },
   "rowModelType": {
     "description": "/** Sets the row model type. Default: `clientSide` */",
@@ -733,7 +733,7 @@
   },
   "rowData": {
     "description": "/** Set the data to be displayed as rows in the grid. */",
-    "type": { "returnType": "any[] | null" }
+    "type": { "returnType": "TData[] | null" }
   },
   "immutableData": {
     "description": "/** @deprecated Immutable Data is on by default when grid callback getRowId() is implemented\nEnables Immutable Data mode, for compatibility with immutable stores. Default: `false`\n */",
@@ -981,7 +981,7 @@
   },
   "rowClassRules": {
     "description": "/** Rules which can be applied to include certain CSS classes. */",
-    "type": { "returnType": "RowClassRules" }
+    "type": { "returnType": "RowClassRules<TData>" }
   },
   "suppressRowHoverHighlight": {
     "description": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
@@ -1003,7 +1003,7 @@
   "enableGroupEdit": { "type": { "returnType": "boolean" } },
   "getContextMenuItems": {
     "description": "/** For customising the context menu. */",
-    "type": { "returnType": "GetContextMenuItems" }
+    "type": { "returnType": "GetContextMenuItems<TData>" }
   },
   "getMainMenuItems": {
     "description": "/** For customising the main 'column header' menu. */",
@@ -1012,7 +1012,7 @@
   "postProcessPopup": {
     "description": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
     "type": {
-      "arguments": { "params": "PostProcessPopupParams" },
+      "arguments": { "params": "PostProcessPopupParams<TData>" },
       "returnType": "void"
     }
   },
@@ -1067,7 +1067,10 @@
   },
   "doesExternalFilterPass": {
     "description": "/** Should return `true` if external filter passes, otherwise `false`. */",
-    "type": { "arguments": { "node": "RowNode" }, "returnType": "boolean" }
+    "type": {
+      "arguments": { "node": "RowNode<TData>" },
+      "returnType": "boolean"
+    }
   },
   "getChartToolbarItems": {
     "description": "/** Callback to be used to customise the chart toolbar items. */",
@@ -1151,61 +1154,61 @@
   "getGroupRowAgg": {
     "description": "/** Callback to use when you need access to more then the current column for aggregation. */",
     "type": {
-      "arguments": { "params": "GetGroupRowAggParams" },
+      "arguments": { "params": "GetGroupRowAggParams<TData>" },
       "returnType": "any"
     }
   },
   "isGroupOpenByDefault": {
     "description": "/** (Client-side Row Model only) Allows groups to be open by default. */",
     "type": {
-      "arguments": { "params": "IsGroupOpenByDefaultParams" },
+      "arguments": { "params": "IsGroupOpenByDefaultParams<TData>" },
       "returnType": "boolean"
     }
   },
   "initialGroupOrderComparator": {
     "description": "/** Allows default sorting of groups. */",
     "type": {
-      "arguments": { "params": "InitialGroupOrderComparatorParams" },
+      "arguments": { "params": "InitialGroupOrderComparatorParams<TData>" },
       "returnType": "number"
     }
   },
   "defaultGroupOrderComparator": {
     "description": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
     "type": {
-      "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
+      "arguments": { "nodeA": "RowNode<TData>", "nodeB": "RowNode<TData>" },
       "returnType": "number"
     }
   },
   "processSecondaryColDef": {
     "description": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
-    "type": { "arguments": { "colDef": "ColDef" }, "returnType": "void" }
+    "type": { "arguments": { "colDef": "ColDef<TData>" }, "returnType": "void" }
   },
   "processSecondaryColGroupDef": {
     "description": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
     "type": {
-      "arguments": { "colGroupDef": "ColGroupDef" },
+      "arguments": { "colGroupDef": "ColGroupDef<TData>" },
       "returnType": "void"
     }
   },
   "processPivotResultColDef": {
     "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-    "type": { "arguments": { "colDef": "ColDef" }, "returnType": "void" }
+    "type": { "arguments": { "colDef": "ColDef<TData>" }, "returnType": "void" }
   },
   "processPivotResultColGroupDef": {
     "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
     "type": {
-      "arguments": { "colGroupDef": "ColGroupDef" },
+      "arguments": { "colGroupDef": "ColGroupDef<TData>" },
       "returnType": "void"
     }
   },
   "getDataPath": {
     "description": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
-    "type": { "returnType": "GetDataPath" }
+    "type": { "returnType": "GetDataPath<TData>" }
   },
   "defaultGroupSortComparator": {
     "description": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
     "type": {
-      "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
+      "arguments": { "nodeA": "RowNode<TData>", "nodeB": "RowNode<TData>" },
       "returnType": "number"
     }
   },
@@ -1248,15 +1251,18 @@
   },
   "getBusinessKeyForNode": {
     "description": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-    "type": { "arguments": { "node": "RowNode" }, "returnType": "string" }
+    "type": {
+      "arguments": { "node": "RowNode<TData>" },
+      "returnType": "string"
+    }
   },
   "getRowNodeId": {
     "description": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\nAllows you to set the ID for a particular row node based on the data.\n */",
-    "type": { "returnType": "GetRowNodeIdFunc" }
+    "type": { "returnType": "GetRowNodeIdFunc<TData>" }
   },
   "getRowId": {
     "description": "/** Allows setting the ID for a particular row node based on the data. */",
-    "type": { "returnType": "GetRowIdFunc" }
+    "type": { "returnType": "GetRowIdFunc<TData>" }
   },
   "resetRowDataOnUpdate": {
     "description": "/** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */",
@@ -1265,65 +1271,71 @@
   "processRowPostCreate": {
     "description": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
     "type": {
-      "arguments": { "params": "ProcessRowParams" },
+      "arguments": { "params": "ProcessRowParams<TData>" },
       "returnType": "void"
     }
   },
   "isRowSelectable": {
     "description": "/** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */",
-    "type": { "returnType": "IsRowSelectable" }
+    "type": { "returnType": "IsRowSelectable<TData>" }
   },
   "isRowMaster": {
     "description": "/** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */",
-    "type": { "returnType": "IsRowMaster" }
+    "type": { "returnType": "IsRowMaster<TData>" }
   },
   "fillOperation": {
     "description": "/** Callback to fill values instead of simply copying values or increasing number values using linear progression. */",
     "type": {
-      "arguments": { "params": "FillOperationParams" },
+      "arguments": { "params": "FillOperationParams<TData>" },
       "returnType": "any"
     }
   },
   "postSort": {
     "description": "/** @deprecated Use `postSortRows` instead\n */",
-    "type": { "arguments": { "nodes": "RowNode[]" }, "returnType": "void" }
+    "type": {
+      "arguments": { "nodes": "RowNode<TData>[]" },
+      "returnType": "void"
+    }
   },
   "postSortRows": {
     "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
     "type": {
-      "arguments": { "params": "PostSortRowsParams" },
+      "arguments": { "params": "PostSortRowsParams<TData>" },
       "returnType": "void"
     }
   },
   "getRowStyle": {
     "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
     "type": {
-      "arguments": { "params": "RowClassParams" },
+      "arguments": { "params": "RowClassParams<TData>" },
       "returnType": "RowStyle | undefined"
     }
   },
   "getRowClass": {
     "description": "/** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */",
     "type": {
-      "arguments": { "params": "RowClassParams" },
+      "arguments": { "params": "RowClassParams<TData>" },
       "returnType": "string | string[] | undefined"
     }
   },
   "getRowHeight": {
     "description": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
     "type": {
-      "arguments": { "params": "RowHeightParams" },
+      "arguments": { "params": "RowHeightParams<TData>" },
       "returnType": "number | undefined | null"
     }
   },
   "isFullWidthCell": {
     "description": "/** @deprecated Use `isFullWidthRow` instead.\n */",
-    "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
+    "type": {
+      "arguments": { "rowNode": "RowNode<TData>" },
+      "returnType": "boolean"
+    }
   },
   "isFullWidthRow": {
     "description": "/** Tells the grid if this row should be rendered as full width. */",
     "type": {
-      "arguments": { "params": "IsFullWidthRowParams" },
+      "arguments": { "params": "IsFullWidthRowParams<TData>" },
       "returnType": "boolean"
     }
   },
@@ -1596,7 +1608,7 @@
   "onCellValueChanged": {
     "description": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
     "type": {
-      "arguments": { "event": "CellValueChangedEvent" },
+      "arguments": { "event": "CellValueChangedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellValueChanged" }
@@ -1604,7 +1616,7 @@
   "cellValueChanged": {
     "description": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
     "type": {
-      "arguments": { "event": "CellValueChangedEvent" },
+      "arguments": { "event": "CellValueChangedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellValueChanged" }
@@ -1612,7 +1624,7 @@
   "onCellEditRequest": {
     "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
     "type": {
-      "arguments": { "event": "CellEditRequestEvent" },
+      "arguments": { "event": "CellEditRequestEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellEditRequest" }
@@ -1620,7 +1632,7 @@
   "cellEditRequest": {
     "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
     "type": {
-      "arguments": { "event": "CellEditRequestEvent" },
+      "arguments": { "event": "CellEditRequestEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellEditRequest" }
@@ -1628,7 +1640,7 @@
   "onRowValueChanged": {
     "description": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
     "type": {
-      "arguments": { "event": "RowValueChangedEvent" },
+      "arguments": { "event": "RowValueChangedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onRowValueChanged" }
@@ -1636,7 +1648,7 @@
   "rowValueChanged": {
     "description": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
     "type": {
-      "arguments": { "event": "RowValueChangedEvent" },
+      "arguments": { "event": "RowValueChangedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onRowValueChanged" }
@@ -1644,7 +1656,7 @@
   "onCellEditingStarted": {
     "description": "/** Editing a cell has started. */",
     "type": {
-      "arguments": { "event": "CellEditingStartedEvent" },
+      "arguments": { "event": "CellEditingStartedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellEditingStarted" }
@@ -1652,7 +1664,7 @@
   "cellEditingStarted": {
     "description": "/** Editing a cell has started. */",
     "type": {
-      "arguments": { "event": "CellEditingStartedEvent" },
+      "arguments": { "event": "CellEditingStartedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellEditingStarted" }
@@ -1660,7 +1672,7 @@
   "onCellEditingStopped": {
     "description": "/** Editing a cell has stopped. */",
     "type": {
-      "arguments": { "event": "CellEditingStoppedEvent" },
+      "arguments": { "event": "CellEditingStoppedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellEditingStopped" }
@@ -1668,7 +1680,7 @@
   "cellEditingStopped": {
     "description": "/** Editing a cell has stopped. */",
     "type": {
-      "arguments": { "event": "CellEditingStoppedEvent" },
+      "arguments": { "event": "CellEditingStoppedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellEditingStopped" }
@@ -1676,7 +1688,7 @@
   "onRowEditingStarted": {
     "description": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
     "type": {
-      "arguments": { "event": "RowEditingStartedEvent" },
+      "arguments": { "event": "RowEditingStartedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onRowEditingStarted" }
@@ -1684,7 +1696,7 @@
   "rowEditingStarted": {
     "description": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
     "type": {
-      "arguments": { "event": "RowEditingStartedEvent" },
+      "arguments": { "event": "RowEditingStartedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onRowEditingStarted" }
@@ -1692,7 +1704,7 @@
   "onRowEditingStopped": {
     "description": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
     "type": {
-      "arguments": { "event": "RowEditingStoppedEvent" },
+      "arguments": { "event": "RowEditingStoppedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onRowEditingStopped" }
@@ -1700,7 +1712,7 @@
   "rowEditingStopped": {
     "description": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
     "type": {
-      "arguments": { "event": "RowEditingStoppedEvent" },
+      "arguments": { "event": "RowEditingStoppedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onRowEditingStopped" }
@@ -1814,7 +1826,9 @@
   "onCellKeyDown": {
     "description": "/** DOM event `keyDown` happened on a cell. */",
     "type": {
-      "arguments": { "event": "CellKeyDownEvent | FullWidthCellKeyDownEvent" },
+      "arguments": {
+        "event": "CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>"
+      },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellKeyDown" }
@@ -1822,7 +1836,9 @@
   "cellKeyDown": {
     "description": "/** DOM event `keyDown` happened on a cell. */",
     "type": {
-      "arguments": { "event": "CellKeyDownEvent | FullWidthCellKeyDownEvent" },
+      "arguments": {
+        "event": "CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>"
+      },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellKeyDown" }
@@ -1831,7 +1847,7 @@
     "description": "/** DOM event `keyPress` happened on a cell. */",
     "type": {
       "arguments": {
-        "event": "CellKeyPressEvent | FullWidthCellKeyPressEvent"
+        "event": "CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>"
       },
       "returnType": "void"
     },
@@ -1841,7 +1857,7 @@
     "description": "/** DOM event `keyPress` happened on a cell. */",
     "type": {
       "arguments": {
-        "event": "CellKeyPressEvent | FullWidthCellKeyPressEvent"
+        "event": "CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>"
       },
       "returnType": "void"
     },
@@ -1914,7 +1930,7 @@
   "onVirtualRowRemoved": {
     "description": "/** A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row. */",
     "type": {
-      "arguments": { "event": "VirtualRowRemovedEvent" },
+      "arguments": { "event": "VirtualRowRemovedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onVirtualRowRemoved" }
@@ -1922,7 +1938,7 @@
   "virtualRowRemoved": {
     "description": "/** A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row. */",
     "type": {
-      "arguments": { "event": "VirtualRowRemovedEvent" },
+      "arguments": { "event": "VirtualRowRemovedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onVirtualRowRemoved" }
@@ -2025,42 +2041,66 @@
   },
   "onRowDragEnter": {
     "description": "/** A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid. */",
-    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "type": {
+      "arguments": { "event": "RowDragEvent<TData>" },
+      "returnType": "void"
+    },
     "meta": { "isEvent": true, "name": "onRowDragEnter" }
   },
   "rowDragEnter": {
     "description": "/** A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid. */",
-    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "type": {
+      "arguments": { "event": "RowDragEvent<TData>" },
+      "returnType": "void"
+    },
     "meta": { "isEvent": true, "name": "onRowDragEnter" }
   },
   "onRowDragMove": {
     "description": "/** The mouse has moved while dragging. */",
-    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "type": {
+      "arguments": { "event": "RowDragEvent<TData>" },
+      "returnType": "void"
+    },
     "meta": { "isEvent": true, "name": "onRowDragMove" }
   },
   "rowDragMove": {
     "description": "/** The mouse has moved while dragging. */",
-    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "type": {
+      "arguments": { "event": "RowDragEvent<TData>" },
+      "returnType": "void"
+    },
     "meta": { "isEvent": true, "name": "onRowDragMove" }
   },
   "onRowDragLeave": {
     "description": "/** The mouse has left the grid while dragging. */",
-    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "type": {
+      "arguments": { "event": "RowDragEvent<TData>" },
+      "returnType": "void"
+    },
     "meta": { "isEvent": true, "name": "onRowDragLeave" }
   },
   "rowDragLeave": {
     "description": "/** The mouse has left the grid while dragging. */",
-    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "type": {
+      "arguments": { "event": "RowDragEvent<TData>" },
+      "returnType": "void"
+    },
     "meta": { "isEvent": true, "name": "onRowDragLeave" }
   },
   "onRowDragEnd": {
     "description": "/** The drag has finished over the grid. */",
-    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "type": {
+      "arguments": { "event": "RowDragEvent<TData>" },
+      "returnType": "void"
+    },
     "meta": { "isEvent": true, "name": "onRowDragEnd" }
   },
   "rowDragEnd": {
     "description": "/** The drag has finished over the grid. */",
-    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "type": {
+      "arguments": { "event": "RowDragEvent<TData>" },
+      "returnType": "void"
+    },
     "meta": { "isEvent": true, "name": "onRowDragEnd" }
   },
   "onColumnRowGroupChanged": {
@@ -2082,7 +2122,7 @@
   "onRowGroupOpened": {
     "description": "/** A row group was opened or closed. */",
     "type": {
-      "arguments": { "event": "RowGroupOpenedEvent" },
+      "arguments": { "event": "RowGroupOpenedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onRowGroupOpened" }
@@ -2090,7 +2130,7 @@
   "rowGroupOpened": {
     "description": "/** A row group was opened or closed. */",
     "type": {
-      "arguments": { "event": "RowGroupOpenedEvent" },
+      "arguments": { "event": "RowGroupOpenedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onRowGroupOpened" }
@@ -2162,7 +2202,7 @@
   "onAsyncTransactionsFlushed": {
     "description": "/** Async transactions have been applied. Contains a list of all transaction results. */",
     "type": {
-      "arguments": { "event": "AsyncTransactionsFlushed" },
+      "arguments": { "event": "AsyncTransactionsFlushed<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onAsyncTransactionsFlushed" }
@@ -2170,7 +2210,7 @@
   "asyncTransactionsFlushed": {
     "description": "/** Async transactions have been applied. Contains a list of all transaction results. */",
     "type": {
-      "arguments": { "event": "AsyncTransactionsFlushed" },
+      "arguments": { "event": "AsyncTransactionsFlushed<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onAsyncTransactionsFlushed" }
@@ -2178,7 +2218,7 @@
   "onCellClicked": {
     "description": "/** Cell is clicked. */",
     "type": {
-      "arguments": { "event": "CellClickedEvent" },
+      "arguments": { "event": "CellClickedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellClicked" }
@@ -2186,7 +2226,7 @@
   "cellClicked": {
     "description": "/** Cell is clicked. */",
     "type": {
-      "arguments": { "event": "CellClickedEvent" },
+      "arguments": { "event": "CellClickedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellClicked" }
@@ -2194,7 +2234,7 @@
   "onCellDoubleClicked": {
     "description": "/** Cell is double clicked. */",
     "type": {
-      "arguments": { "event": "CellDoubleClickedEvent" },
+      "arguments": { "event": "CellDoubleClickedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellDoubleClicked" }
@@ -2202,7 +2242,7 @@
   "cellDoubleClicked": {
     "description": "/** Cell is double clicked. */",
     "type": {
-      "arguments": { "event": "CellDoubleClickedEvent" },
+      "arguments": { "event": "CellDoubleClickedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellDoubleClicked" }
@@ -2226,7 +2266,7 @@
   "onCellMouseOver": {
     "description": "/** Mouse entered cell. */",
     "type": {
-      "arguments": { "event": "CellMouseOverEvent" },
+      "arguments": { "event": "CellMouseOverEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellMouseOver" }
@@ -2234,7 +2274,7 @@
   "cellMouseOver": {
     "description": "/** Mouse entered cell. */",
     "type": {
-      "arguments": { "event": "CellMouseOverEvent" },
+      "arguments": { "event": "CellMouseOverEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellMouseOver" }
@@ -2242,7 +2282,7 @@
   "onCellMouseOut": {
     "description": "/** Mouse left cell. */",
     "type": {
-      "arguments": { "event": "CellMouseOutEvent" },
+      "arguments": { "event": "CellMouseOutEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellMouseOut" }
@@ -2250,7 +2290,7 @@
   "cellMouseOut": {
     "description": "/** Mouse left cell. */",
     "type": {
-      "arguments": { "event": "CellMouseOutEvent" },
+      "arguments": { "event": "CellMouseOutEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellMouseOut" }
@@ -2258,7 +2298,7 @@
   "onCellMouseDown": {
     "description": "/** Mouse down on cell. */",
     "type": {
-      "arguments": { "event": "CellMouseDownEvent" },
+      "arguments": { "event": "CellMouseDownEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellMouseDown" }
@@ -2266,7 +2306,7 @@
   "cellMouseDown": {
     "description": "/** Mouse down on cell. */",
     "type": {
-      "arguments": { "event": "CellMouseDownEvent" },
+      "arguments": { "event": "CellMouseDownEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellMouseDown" }
@@ -2274,7 +2314,7 @@
   "onRowClicked": {
     "description": "/** Row is clicked. */",
     "type": {
-      "arguments": { "event": "RowClickedEvent" },
+      "arguments": { "event": "RowClickedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onRowClicked" }
@@ -2282,7 +2322,7 @@
   "rowClicked": {
     "description": "/** Row is clicked. */",
     "type": {
-      "arguments": { "event": "RowClickedEvent" },
+      "arguments": { "event": "RowClickedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onRowClicked" }
@@ -2290,7 +2330,7 @@
   "onRowDoubleClicked": {
     "description": "/** Row is double clicked. */",
     "type": {
-      "arguments": { "event": "RowDoubleClickedEvent" },
+      "arguments": { "event": "RowDoubleClickedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onRowDoubleClicked" }
@@ -2298,7 +2338,7 @@
   "rowDoubleClicked": {
     "description": "/** Row is double clicked. */",
     "type": {
-      "arguments": { "event": "RowDoubleClickedEvent" },
+      "arguments": { "event": "RowDoubleClickedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onRowDoubleClicked" }
@@ -2306,7 +2346,7 @@
   "onRowSelected": {
     "description": "/** Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected. */",
     "type": {
-      "arguments": { "event": "RowSelectedEvent" },
+      "arguments": { "event": "RowSelectedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onRowSelected" }
@@ -2314,7 +2354,7 @@
   "rowSelected": {
     "description": "/** Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected. */",
     "type": {
-      "arguments": { "event": "RowSelectedEvent" },
+      "arguments": { "event": "RowSelectedEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onRowSelected" }
@@ -2338,7 +2378,7 @@
   "onCellContextMenu": {
     "description": "/** Cell is right clicked. */",
     "type": {
-      "arguments": { "event": "CellContextMenuEvent" },
+      "arguments": { "event": "CellContextMenuEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellContextMenu" }
@@ -2346,7 +2386,7 @@
   "cellContextMenu": {
     "description": "/** Cell is right clicked. */",
     "type": {
-      "arguments": { "event": "CellContextMenuEvent" },
+      "arguments": { "event": "CellContextMenuEvent<TData>" },
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onCellContextMenu" }
@@ -2441,7 +2481,7 @@
   },
   "api": {
     "description": "/** The Grid Api for interacting with the grid.\n * Set by the grid on init, set to null on destroy. */",
-    "type": { "returnType": "GridApi | null" }
+    "type": { "returnType": "GridApi<TData> | null" }
   },
   "columnApi": {
     "description": "/** The Column Api for interacting with the grid columns.\n * Set by the grid on init, set to null on destroy. */",

@@ -1,10 +1,10 @@
 import { RowNode } from "../entities/rowNode";
 
-export interface RowNodeTransaction {
+export interface RowNodeTransaction<TData = any> {
     /** Row nodes added */
-    add: RowNode[];
+    add: RowNode<TData>[];
     /** Row nodes removed */
-    remove: RowNode[];
+    remove: RowNode<TData>[];
     /** Row nodes updated */
-    update: RowNode[];
+    update: RowNode<TData>[];
 }

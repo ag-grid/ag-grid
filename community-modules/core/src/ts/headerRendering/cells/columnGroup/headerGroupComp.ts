@@ -14,7 +14,7 @@ import { Component } from "../../../widgets/component";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { TouchListener } from "../../../widgets/touchListener";
 
-export interface IHeaderGroupParams extends AgGridCommon {
+export interface IHeaderGroupParams<TData = any> extends AgGridCommon<TData> {
     /** The column group the header is for. */
     columnGroup: ColumnGroup;
     /**

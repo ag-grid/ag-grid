@@ -1,9 +1,9 @@
 import { CellValueChangedEvent, Grid, GridOptions, ICellEditorParams } from '@ag-grid-community/core';
-import { getData } from "./data";
+import { getData, IRow } from "./data";
 import { GenderCellRenderer } from "./genderCellRenderer_typescript";
 
 
-const cellCellEditorParams = (params: ICellEditorParams) => {
+const cellCellEditorParams = (params: ICellEditorParams<IRow>) => {
   const selectedCountry = params.data.country
   const allowedCities = countyToCityMap(selectedCountry)
 

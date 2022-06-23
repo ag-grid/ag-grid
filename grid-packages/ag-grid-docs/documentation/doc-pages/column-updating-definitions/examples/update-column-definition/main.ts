@@ -15,7 +15,7 @@ function getColumnDefs() {
   ]
 }
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     initialWidth: 100,
     sortable: true,

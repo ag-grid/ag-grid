@@ -40,7 +40,7 @@ const columnDefs: ColDef[] = [
   { field: 'sport' },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     width: 200,
     sortable: true,
@@ -73,8 +73,8 @@ function onPinnedRowBottomCount() {
   gridOptions.api!.setPinnedBottomRowData(rows)
 }
 
-function createData(count: number, prefix: string) {
-  var result = []
+function createData(count: number, prefix: string): IOlympicData[] {
+  var result: IOlympicData[] = []
   for (var i = 0; i < count; i++) {
     result.push({
       athlete: prefix + ' Athlete ' + i,
@@ -83,7 +83,7 @@ function createData(count: number, prefix: string) {
       year: prefix + ' Year ' + i,
       date: prefix + ' Date ' + i,
       sport: prefix + ' Sport ' + i,
-    })
+    } as any)
   }
   return result
 }
@@ -95,5 +95,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })

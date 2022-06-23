@@ -131,7 +131,7 @@
     }
   },
   "AgCartesianThemeOptions": {
-    "meta": { "typeParams": ["S"] },
+    "meta": { "typeParams": ["S = AgCartesianSeriesTheme"] },
     "type": {
       "axes?": "AgCartesianAxesTheme",
       "series?": "S",
@@ -170,7 +170,7 @@
     }
   },
   "AgPolarThemeOptions": {
-    "meta": { "typeParams": ["S"] },
+    "meta": { "typeParams": ["S = AgPolarSeriesTheme"] },
     "type": {
       "series?": "S",
       "data?": "any[]",
@@ -205,7 +205,7 @@
     }
   },
   "AgHierarchyThemeOptions": {
-    "meta": { "typeParams": ["S"] },
+    "meta": { "typeParams": ["S = AgHierarchySeriesTheme"] },
     "type": {
       "series?": "S",
       "data?": "any[]",
@@ -2768,7 +2768,10 @@
     }
   },
   "SeriesNodeDataContext": {
-    "meta": { "isTypeAlias": true, "typeParams": ["S", "L"] },
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["S = SeriesNodeDatum", "L = S"]
+    },
     "type": "{ itemId: string; nodeData: S[]; labelData: L[]; }"
   },
   "SeriesMarkerFormatterParams": {
@@ -2936,7 +2939,7 @@
     "type": { "text": "string", "width": "number", "height": "number" }
   },
   "PlacedLabel": {
-    "meta": { "typeParams": ["PLD"] },
+    "meta": { "typeParams": ["PLD = PointLabelDatum"] },
     "type": {
       "index": "number",
       "x": "number",

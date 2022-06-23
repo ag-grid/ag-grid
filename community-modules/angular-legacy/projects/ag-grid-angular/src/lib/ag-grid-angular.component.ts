@@ -169,7 +169,7 @@ import { AgGridColumn } from "./ag-grid-column.component";
     // tell angular we don't want view encapsulation, we don't want a shadow root
     encapsulation: ViewEncapsulation.None
 })
-export class AgGridAngular implements AfterViewInit {
+export class AgGridAngular<TData = any> implements AfterViewInit {
     // not intended for user to interact with. so putting _ in so if user gets reference
     // to this object, they kind'a know it's not part of the agreed interface
     private _nativeElement: any;
@@ -182,7 +182,7 @@ export class AgGridAngular implements AfterViewInit {
     private _fullyReady: AgPromise<boolean> = AgPromise.resolve(true);
 
     // making these public, so they are accessible to people using the ng2 component references
-    public api: GridApi;
+    public api: GridApi<TData>;
     public columnApi: ColumnApi;
 
     @ContentChildren(AgGridColumn) public columns: QueryList<AgGridColumn>;
@@ -339,13 +339,13 @@ export class AgGridAngular implements AfterViewInit {
     /** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround.     */
     @Input() public suppressClipboardApi: boolean | undefined = undefined;
     /** Array of Column / Column Group definitions.     */
-    @Input() public columnDefs: (ColDef | ColGroupDef)[] | null | undefined = undefined;
+    @Input() public columnDefs: (ColDef<TData> | ColGroupDef<TData>)[] | null | undefined = undefined;
     /** A default column definition. Items defined in the actual column definitions get precedence.     */
-    @Input() public defaultColDef: ColDef | undefined = undefined;
+    @Input() public defaultColDef: ColDef<TData> | undefined = undefined;
     /** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence.     */
-    @Input() public defaultColGroupDef: Partial<ColGroupDef> | undefined = undefined;
+    @Input() public defaultColGroupDef: Partial<ColGroupDef<TData>> | undefined = undefined;
     /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property.     */
-    @Input() public columnTypes: { [key: string]: ColDef; } | undefined = undefined;
+    @Input() public columnTypes: { [key: string]: ColDef<TData>; } | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false`     */
     @Input() public maintainColumnOrder: boolean | undefined = undefined;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
@@ -647,13 +647,13 @@ export class AgGridAngular implements AfterViewInit {
     /** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. Default: `0`     */
     @Input() public groupDefaultExpanded: number | undefined = undefined;
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.     */
-    @Input() public autoGroupColumnDef: ColDef | undefined = undefined;
+    @Input() public autoGroupColumnDef: ColDef<TData> | undefined = undefined;
     /** When `true`, preserves the current group order when sorting on non-group columns. Default: `false`     */
     @Input() public groupMaintainOrder: boolean | undefined = undefined;
     /** When `true`, if you select a group, the children of the group will also be selected. Default: `false`     */
     @Input() public groupSelectsChildren: boolean | undefined = undefined;
     /** Set to determine whether filters should be applied on aggregated group values. Default: `false`     */
-    @Input() public groupAggFiltering: boolean | IsRowFilterable | undefined = undefined;
+    @Input() public groupAggFiltering: boolean | IsRowFilterable<TData> | undefined = undefined;
     /** If grouping, this controls whether to show a group footer when the group is expanded.
      * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.
      * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).
@@ -707,13 +707,13 @@ export class AgGridAngular implements AfterViewInit {
      */
     @Input() public rememberGroupStateWhenNewData: boolean | undefined = undefined;
     /** Data to be displayed as pinned top rows in the grid.     */
-    @Input() public pinnedTopRowData: any[] | undefined = undefined;
+    @Input() public pinnedTopRowData: TData[] | undefined = undefined;
     /** Data to be displayed as pinned bottom rows in the grid.     */
-    @Input() public pinnedBottomRowData: any[] | undefined = undefined;
+    @Input() public pinnedBottomRowData: TData[] | undefined = undefined;
     /** Sets the row model type. Default: `clientSide`     */
     @Input() public rowModelType: 'clientSide' | 'infinite' | 'viewport' | 'serverSide' | undefined = undefined;
     /** Set the data to be displayed as rows in the grid.     */
-    @Input() public rowData: any[] | null | undefined = undefined;
+    @Input() public rowData: TData[] | null | undefined = undefined;
     /** @deprecated Immutable Data is on by default when grid callback getRowId() is implemented
 Enables Immutable Data mode, for compatibility with immutable stores. Default: `false`
      */
@@ -852,7 +852,7 @@ Full Store is used.
     /** CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names).     */
     @Input() public rowClass: string | string[] | undefined = undefined;
     /** Rules which can be applied to include certain CSS classes.     */
-    @Input() public rowClassRules: RowClassRules | undefined = undefined;
+    @Input() public rowClassRules: RowClassRules<TData> | undefined = undefined;
     /** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false`     */
     @Input() public suppressRowHoverHighlight: boolean | undefined = undefined;
     /** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false`     */
@@ -866,11 +866,11 @@ Full Store is used.
     @Input() public functionsPassive: boolean | undefined = undefined;
     @Input() public enableGroupEdit: boolean | undefined = undefined;
     /** For customising the context menu.     */
-    @Input() public getContextMenuItems: GetContextMenuItems | undefined = undefined;
+    @Input() public getContextMenuItems: GetContextMenuItems<TData> | undefined = undefined;
     /** For customising the main 'column header' menu.     */
     @Input() public getMainMenuItems: GetMainMenuItems | undefined = undefined;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.     */
-    @Input() public postProcessPopup: ((params: PostProcessPopupParams) => void) | undefined = undefined;
+    @Input() public postProcessPopup: ((params: PostProcessPopupParams<TData>) => void) | undefined = undefined;
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.     */
     @Input() public processCellForClipboard: ((params: ProcessCellForExportParams) => any) | undefined = undefined;
     /** Allows you to process header values for the clipboard.     */
@@ -886,7 +886,7 @@ Full Store is used.
     /** Grid calls this method to know if an external filter is present.     */
     @Input() public isExternalFilterPresent: ((params: IsExternalFilterPresentParams) => boolean) | undefined = undefined;
     /** Should return `true` if external filter passes, otherwise `false`.     */
-    @Input() public doesExternalFilterPass: ((node: RowNode) => boolean) | undefined = undefined;
+    @Input() public doesExternalFilterPass: ((node: RowNode<TData>) => boolean) | undefined = undefined;
     /** Callback to be used to customise the chart toolbar items.     */
     @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
     /** Callback to enable displaying the chart in an alternative chart container.     */
@@ -915,29 +915,29 @@ Full Store is used.
      */
     @Input() public groupRowAggNodes: ((nodes: RowNode[]) => any) | undefined = undefined;
     /** Callback to use when you need access to more then the current column for aggregation.     */
-    @Input() public getGroupRowAgg: ((params: GetGroupRowAggParams) => any) | undefined = undefined;
+    @Input() public getGroupRowAgg: ((params: GetGroupRowAggParams<TData>) => any) | undefined = undefined;
     /** (Client-side Row Model only) Allows groups to be open by default.     */
-    @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams) => boolean) | undefined = undefined;
+    @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams<TData>) => boolean) | undefined = undefined;
     /** Allows default sorting of groups.     */
-    @Input() public initialGroupOrderComparator: ((params: InitialGroupOrderComparatorParams) => number) | undefined = undefined;
+    @Input() public initialGroupOrderComparator: ((params: InitialGroupOrderComparatorParams<TData>) => number) | undefined = undefined;
     /** @deprecated - Use `initialGroupOrderComparator` instead
      */
-    @Input() public defaultGroupOrderComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
+    @Input() public defaultGroupOrderComparator: ((nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number) | undefined = undefined;
     /** @deprecated - Use `processPivotResultColDef` instead
      */
-    @Input() public processSecondaryColDef: ((colDef: ColDef) => void) | undefined = undefined;
+    @Input() public processSecondaryColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
     /** @deprecated - Use `processPivotResultColGroupDef` instead
      */
-    @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) => void) | undefined = undefined;
+    @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column definition.     */
-    @Input() public processPivotResultColDef: ((colDef: ColDef) => void) | undefined = undefined;
+    @Input() public processPivotResultColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column group definition.     */
-    @Input() public processPivotResultColGroupDef: ((colGroupDef: ColGroupDef) => void) | undefined = undefined;
+    @Input() public processPivotResultColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.     */
-    @Input() public getDataPath: GetDataPath | undefined = undefined;
+    @Input() public getDataPath: GetDataPath<TData> | undefined = undefined;
     /** @deprecated - Use initialGroupOrderComparator instead
      */
-    @Input() public defaultGroupSortComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
+    @Input() public defaultGroupSortComparator: ((nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number) | undefined = undefined;
     /** Allows setting the child count for a group row.     */
     @Input() public getChildCount: ((dataItem: any) => number) | undefined = undefined;
     /** Allows providing different params for different levels of grouping.     */
@@ -955,39 +955,39 @@ Full Store is used.
     @Input() public getServerSideGroupKey: GetServerSideGroupKey | undefined = undefined;
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.     */
-    @Input() public getBusinessKeyForNode: ((node: RowNode) => string) | undefined = undefined;
+    @Input() public getBusinessKeyForNode: ((node: RowNode<TData>) => string) | undefined = undefined;
     /** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
 Allows you to set the ID for a particular row node based on the data.
      */
-    @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
+    @Input() public getRowNodeId: GetRowNodeIdFunc<TData> | undefined = undefined;
     /** Allows setting the ID for a particular row node based on the data.     */
-    @Input() public getRowId: GetRowIdFunc | undefined = undefined;
+    @Input() public getRowId: GetRowIdFunc<TData> | undefined = undefined;
     /** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false`     */
     @Input() public resetRowDataOnUpdate: boolean | undefined = undefined;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.     */
-    @Input() public processRowPostCreate: ((params: ProcessRowParams) => void) | undefined = undefined;
+    @Input() public processRowPostCreate: ((params: ProcessRowParams<TData>) => void) | undefined = undefined;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.     */
-    @Input() public isRowSelectable: IsRowSelectable | undefined = undefined;
+    @Input() public isRowSelectable: IsRowSelectable<TData> | undefined = undefined;
     /** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row.     */
-    @Input() public isRowMaster: IsRowMaster | undefined = undefined;
+    @Input() public isRowMaster: IsRowMaster<TData> | undefined = undefined;
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.     */
-    @Input() public fillOperation: ((params: FillOperationParams) => any) | undefined = undefined;
+    @Input() public fillOperation: ((params: FillOperationParams<TData>) => any) | undefined = undefined;
     /** @deprecated Use `postSortRows` instead
      */
-    @Input() public postSort: ((nodes: RowNode[]) => void) | undefined = undefined;
+    @Input() public postSort: ((nodes: RowNode<TData>[]) => void) | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.     */
-    @Input() public postSortRows: ((params: PostSortRowsParams) => void) | undefined = undefined;
+    @Input() public postSortRows: ((params: PostSortRowsParams<TData>) => void) | undefined = undefined;
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.     */
-    @Input() public getRowStyle: ((params: RowClassParams) => RowStyle | undefined) | undefined = undefined;
+    @Input() public getRowStyle: ((params: RowClassParams<TData>) => RowStyle | undefined) | undefined = undefined;
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.     */
-    @Input() public getRowClass: ((params: RowClassParams) => string | string[] | undefined) | undefined = undefined;
+    @Input() public getRowClass: ((params: RowClassParams<TData>) => string | string[] | undefined) | undefined = undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.     */
-    @Input() public getRowHeight: ((params: RowHeightParams) => number | undefined | null) | undefined = undefined;
+    @Input() public getRowHeight: ((params: RowHeightParams<TData>) => number | undefined | null) | undefined = undefined;
     /** @deprecated Use `isFullWidthRow` instead.
      */
-    @Input() public isFullWidthCell: ((rowNode: RowNode) => boolean) | undefined = undefined;
+    @Input() public isFullWidthCell: ((rowNode: RowNode<TData>) => boolean) | undefined = undefined;
     /** Tells the grid if this row should be rendered as full width.     */
-    @Input() public isFullWidthRow: ((params: IsFullWidthRowParams) => boolean) | undefined = undefined;
+    @Input() public isFullWidthRow: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined = undefined;
 
     /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status.     */
     @Output() public toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent> = new EventEmitter<ToolPanelVisibleChangedEvent>();
@@ -1025,19 +1025,19 @@ Allows you to set the ID for a particular row node based on the data.
      * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.     */
     @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent> = new EventEmitter<ComponentStateChangedEvent>();
     /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed).     */
-    @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent> = new EventEmitter<CellValueChangedEvent>();
+    @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent<TData>> = new EventEmitter<CellValueChangedEvent<TData>>();
     /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`.     */
-    @Output() public cellEditRequest: EventEmitter<CellEditRequestEvent> = new EventEmitter<CellEditRequestEvent>();
+    @Output() public cellEditRequest: EventEmitter<CellEditRequestEvent<TData>> = new EventEmitter<CellEditRequestEvent<TData>>();
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only.     */
-    @Output() public rowValueChanged: EventEmitter<RowValueChangedEvent> = new EventEmitter<RowValueChangedEvent>();
+    @Output() public rowValueChanged: EventEmitter<RowValueChangedEvent<TData>> = new EventEmitter<RowValueChangedEvent<TData>>();
     /** Editing a cell has started.     */
-    @Output() public cellEditingStarted: EventEmitter<CellEditingStartedEvent> = new EventEmitter<CellEditingStartedEvent>();
+    @Output() public cellEditingStarted: EventEmitter<CellEditingStartedEvent<TData>> = new EventEmitter<CellEditingStartedEvent<TData>>();
     /** Editing a cell has stopped.     */
-    @Output() public cellEditingStopped: EventEmitter<CellEditingStoppedEvent> = new EventEmitter<CellEditingStoppedEvent>();
+    @Output() public cellEditingStopped: EventEmitter<CellEditingStoppedEvent<TData>> = new EventEmitter<CellEditingStoppedEvent<TData>>();
     /** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing.     */
-    @Output() public rowEditingStarted: EventEmitter<RowEditingStartedEvent> = new EventEmitter<RowEditingStartedEvent>();
+    @Output() public rowEditingStarted: EventEmitter<RowEditingStartedEvent<TData>> = new EventEmitter<RowEditingStartedEvent<TData>>();
     /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing.     */
-    @Output() public rowEditingStopped: EventEmitter<RowEditingStoppedEvent> = new EventEmitter<RowEditingStoppedEvent>();
+    @Output() public rowEditingStopped: EventEmitter<RowEditingStoppedEvent<TData>> = new EventEmitter<RowEditingStoppedEvent<TData>>();
     /** Filter has been opened.     */
     @Output() public filterOpened: EventEmitter<FilterOpenedEvent> = new EventEmitter<FilterOpenedEvent>();
     /** Filter has been modified and applied.     */
@@ -1053,9 +1053,9 @@ Allows you to set the ID for a particular row node based on the data.
     /** A chart has been destroyed.     */
     @Output() public chartDestroyed: EventEmitter<ChartDestroyed> = new EventEmitter<ChartDestroyed>();
     /** DOM event `keyDown` happened on a cell.     */
-    @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent | FullWidthCellKeyDownEvent> = new EventEmitter<CellKeyDownEvent | FullWidthCellKeyDownEvent>();
+    @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>> = new EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>>();
     /** DOM event `keyPress` happened on a cell.     */
-    @Output() public cellKeyPress: EventEmitter<CellKeyPressEvent | FullWidthCellKeyPressEvent> = new EventEmitter<CellKeyPressEvent | FullWidthCellKeyPressEvent>();
+    @Output() public cellKeyPress: EventEmitter<CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>> = new EventEmitter<CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>>();
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet     */
     @Output() public gridReady: EventEmitter<GridReadyEvent> = new EventEmitter<GridReadyEvent>();
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents     */
@@ -1065,7 +1065,7 @@ Allows you to set the ID for a particular row node based on the data.
     /** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events.     */
     @Output() public modelUpdated: EventEmitter<ModelUpdatedEvent> = new EventEmitter<ModelUpdatedEvent>();
     /** A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row.     */
-    @Output() public virtualRowRemoved: EventEmitter<VirtualRowRemovedEvent> = new EventEmitter<VirtualRowRemovedEvent>();
+    @Output() public virtualRowRemoved: EventEmitter<VirtualRowRemovedEvent<TData>> = new EventEmitter<VirtualRowRemovedEvent<TData>>();
     /** Which rows are rendered in the DOM has changed.     */
     @Output() public viewportChanged: EventEmitter<ViewportChangedEvent> = new EventEmitter<ViewportChangedEvent>();
     /** The body was scrolled horizontally or vertically.     */
@@ -1083,17 +1083,17 @@ Allows you to set the ID for a particular row node based on the data.
      *   - New data is loaded onto the grid.     */
     @Output() public paginationChanged: EventEmitter<PaginationChangedEvent> = new EventEmitter<PaginationChangedEvent>();
     /** A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid.     */
-    @Output() public rowDragEnter: EventEmitter<RowDragEvent> = new EventEmitter<RowDragEvent>();
+    @Output() public rowDragEnter: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
     /** The mouse has moved while dragging.     */
-    @Output() public rowDragMove: EventEmitter<RowDragEvent> = new EventEmitter<RowDragEvent>();
+    @Output() public rowDragMove: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
     /** The mouse has left the grid while dragging.     */
-    @Output() public rowDragLeave: EventEmitter<RowDragEvent> = new EventEmitter<RowDragEvent>();
+    @Output() public rowDragLeave: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
     /** The drag has finished over the grid.     */
-    @Output() public rowDragEnd: EventEmitter<RowDragEvent> = new EventEmitter<RowDragEvent>();
+    @Output() public rowDragEnd: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
     /** A row group column was added or removed.     */
     @Output() public columnRowGroupChanged: EventEmitter<ColumnRowGroupChangedEvent> = new EventEmitter<ColumnRowGroupChangedEvent>();
     /** A row group was opened or closed.     */
-    @Output() public rowGroupOpened: EventEmitter<RowGroupOpenedEvent> = new EventEmitter<RowGroupOpenedEvent>();
+    @Output() public rowGroupOpened: EventEmitter<RowGroupOpenedEvent<TData>> = new EventEmitter<RowGroupOpenedEvent<TData>>();
     /** Fired when calling either of the API methods `expandAll()` or `collapseAll()`.     */
     @Output() public expandOrCollapseAll: EventEmitter<ExpandCollapseAllEvent> = new EventEmitter<ExpandCollapseAllEvent>();
     /** The client has set new pinned row data into the grid.     */
@@ -1104,29 +1104,29 @@ Allows you to set the ID for a particular row node based on the data.
     /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction.     */
     @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent> = new EventEmitter<RowDataUpdatedEvent>();
     /** Async transactions have been applied. Contains a list of all transaction results.     */
-    @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushed> = new EventEmitter<AsyncTransactionsFlushed>();
+    @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushed<TData>> = new EventEmitter<AsyncTransactionsFlushed<TData>>();
     /** Cell is clicked.     */
-    @Output() public cellClicked: EventEmitter<CellClickedEvent> = new EventEmitter<CellClickedEvent>();
+    @Output() public cellClicked: EventEmitter<CellClickedEvent<TData>> = new EventEmitter<CellClickedEvent<TData>>();
     /** Cell is double clicked.     */
-    @Output() public cellDoubleClicked: EventEmitter<CellDoubleClickedEvent> = new EventEmitter<CellDoubleClickedEvent>();
+    @Output() public cellDoubleClicked: EventEmitter<CellDoubleClickedEvent<TData>> = new EventEmitter<CellDoubleClickedEvent<TData>>();
     /** Cell is focused.     */
     @Output() public cellFocused: EventEmitter<CellFocusedEvent> = new EventEmitter<CellFocusedEvent>();
     /** Mouse entered cell.     */
-    @Output() public cellMouseOver: EventEmitter<CellMouseOverEvent> = new EventEmitter<CellMouseOverEvent>();
+    @Output() public cellMouseOver: EventEmitter<CellMouseOverEvent<TData>> = new EventEmitter<CellMouseOverEvent<TData>>();
     /** Mouse left cell.     */
-    @Output() public cellMouseOut: EventEmitter<CellMouseOutEvent> = new EventEmitter<CellMouseOutEvent>();
+    @Output() public cellMouseOut: EventEmitter<CellMouseOutEvent<TData>> = new EventEmitter<CellMouseOutEvent<TData>>();
     /** Mouse down on cell.     */
-    @Output() public cellMouseDown: EventEmitter<CellMouseDownEvent> = new EventEmitter<CellMouseDownEvent>();
+    @Output() public cellMouseDown: EventEmitter<CellMouseDownEvent<TData>> = new EventEmitter<CellMouseDownEvent<TData>>();
     /** Row is clicked.     */
-    @Output() public rowClicked: EventEmitter<RowClickedEvent> = new EventEmitter<RowClickedEvent>();
+    @Output() public rowClicked: EventEmitter<RowClickedEvent<TData>> = new EventEmitter<RowClickedEvent<TData>>();
     /** Row is double clicked.     */
-    @Output() public rowDoubleClicked: EventEmitter<RowDoubleClickedEvent> = new EventEmitter<RowDoubleClickedEvent>();
+    @Output() public rowDoubleClicked: EventEmitter<RowDoubleClickedEvent<TData>> = new EventEmitter<RowDoubleClickedEvent<TData>>();
     /** Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected.     */
-    @Output() public rowSelected: EventEmitter<RowSelectedEvent> = new EventEmitter<RowSelectedEvent>();
+    @Output() public rowSelected: EventEmitter<RowSelectedEvent<TData>> = new EventEmitter<RowSelectedEvent<TData>>();
     /** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes.     */
     @Output() public selectionChanged: EventEmitter<SelectionChangedEvent> = new EventEmitter<SelectionChangedEvent>();
     /** Cell is right clicked.     */
-    @Output() public cellContextMenu: EventEmitter<CellContextMenuEvent> = new EventEmitter<CellContextMenuEvent>();
+    @Output() public cellContextMenu: EventEmitter<CellContextMenuEvent<TData>> = new EventEmitter<CellContextMenuEvent<TData>>();
     /** A change to range selection has occurred.     */
     @Output() public rangeSelectionChanged: EventEmitter<RangeSelectionChangedEvent> = new EventEmitter<RangeSelectionChangedEvent>();
     /** Sort has changed. The grid also listens for this and updates the model.     */

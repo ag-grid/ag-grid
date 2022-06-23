@@ -83,7 +83,7 @@ import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsPar
 import { RowNode } from "./rowNode";
 import { SideBarDef } from "./sideBar";
 
-export interface GridOptions {
+export interface GridOptions<TData = any> {
 
     // ******************************************************************************************************
     // If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
@@ -150,13 +150,13 @@ export interface GridOptions {
 
     // *** Columns *** //
     /** Array of Column / Column Group definitions. */
-    columnDefs?: (ColDef | ColGroupDef)[] | null;
+    columnDefs?: (ColDef<TData> | ColGroupDef<TData>)[] | null;
     /** A default column definition. Items defined in the actual column definitions get precedence. */
-    defaultColDef?: ColDef;
+    defaultColDef?: ColDef<TData>;
     /** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence. */
-    defaultColGroupDef?: Partial<ColGroupDef>;
+    defaultColGroupDef?: Partial<ColGroupDef<TData>>;
     /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */
-    columnTypes?: { [key: string]: ColDef; };
+    columnTypes?: { [key: string]: ColDef<TData>; };
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */
     maintainColumnOrder?: boolean;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */
@@ -541,13 +541,13 @@ export interface GridOptions {
     /** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. Default: `0` */
     groupDefaultExpanded?: number;
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included. */
-    autoGroupColumnDef?: ColDef;
+    autoGroupColumnDef?: ColDef<TData>;
     /** When `true`, preserves the current group order when sorting on non-group columns. Default: `false` */
     groupMaintainOrder?: boolean;
     /** When `true`, if you select a group, the children of the group will also be selected. Default: `false` */
     groupSelectsChildren?: boolean;
     /** Set to determine whether filters should be applied on aggregated group values. Default: `false` */
-    groupAggFiltering?: boolean | IsRowFilterable;
+    groupAggFiltering?: boolean | IsRowFilterable<TData>;
     /**
      * If grouping, this controls whether to show a group footer when the group is expanded.
      * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.
@@ -602,9 +602,9 @@ export interface GridOptions {
 
     // *** Row Pinning *** //
     /** Data to be displayed as pinned top rows in the grid. */
-    pinnedTopRowData?: any[];
+    pinnedTopRowData?: TData[];
     /** Data to be displayed as pinned bottom rows in the grid. */
-    pinnedBottomRowData?: any[];
+    pinnedBottomRowData?: TData[];
 
     // *** Row Model *** //
     /** Sets the row model type. Default: `clientSide` */
@@ -613,7 +613,7 @@ export interface GridOptions {
     // *** Row Model: Client-side *** //
     // changeable with impact
     /** Set the data to be displayed as rows in the grid. */
-    rowData?: any[] | null;
+    rowData?: TData[] | null;
     /**
      * @deprecated Immutable Data is on by default when grid callback getRowId() is implemented
      * Enables Immutable Data mode, for compatibility with immutable stores. Default: `false` */
@@ -778,7 +778,7 @@ export interface GridOptions {
     /** CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names). */
     rowClass?: string | string[];
     /** Rules which can be applied to include certain CSS classes. */
-    rowClassRules?: RowClassRules;
+    rowClassRules?: RowClassRules<TData>;
     /** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */
     suppressRowHoverHighlight?: boolean;
     /** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */
@@ -799,11 +799,11 @@ export interface GridOptions {
 
     // *** Accessories *** //
     /** For customising the context menu. */
-    getContextMenuItems?: GetContextMenuItems;
+    getContextMenuItems?: GetContextMenuItems<TData>;
     /** For customising the main 'column header' menu. */
     getMainMenuItems?: GetMainMenuItems;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */
-    postProcessPopup?: (params: PostProcessPopupParams) => void;
+    postProcessPopup?: (params: PostProcessPopupParams<TData>) => void;
 
     // *** Clipboard *** //
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */
@@ -823,7 +823,7 @@ export interface GridOptions {
     /** Grid calls this method to know if an external filter is present. */
     isExternalFilterPresent?: (params: IsExternalFilterPresentParams) => boolean;
     /** Should return `true` if external filter passes, otherwise `false`. */
-    doesExternalFilterPass?: (node: RowNode) => boolean;
+    doesExternalFilterPass?: (node: RowNode<TData>) => boolean;
 
     // *** Integrated Charts *** //
     /** Callback to be used to customise the chart toolbar items. */
@@ -861,25 +861,25 @@ export interface GridOptions {
     /** @deprecated - Use `getGroupRowAgg` instead. */
     groupRowAggNodes?: (nodes: RowNode[]) => any;
     /** Callback to use when you need access to more then the current column for aggregation. */
-    getGroupRowAgg?: (params: GetGroupRowAggParams) => any;
+    getGroupRowAgg?: (params: GetGroupRowAggParams<TData>) => any;
     /** (Client-side Row Model only) Allows groups to be open by default. */
-    isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams) => boolean;
+    isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams<TData>) => boolean;
     /** Allows default sorting of groups. */
-    initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams) => number;
+    initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams<TData>) => number;
     /** @deprecated - Use `initialGroupOrderComparator` instead */
-    defaultGroupOrderComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
+    defaultGroupOrderComparator?: (nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number;
     /** @deprecated - Use `processPivotResultColDef` instead */
-    processSecondaryColDef?: (colDef: ColDef) => void;
+    processSecondaryColDef?: (colDef: ColDef<TData>) => void;
     /** @deprecated - Use `processPivotResultColGroupDef` instead */
-    processSecondaryColGroupDef?: (colGroupDef: ColGroupDef) => void;
+    processSecondaryColGroupDef?: (colGroupDef: ColGroupDef<TData>) => void;
     /** Callback to be used with pivoting, to allow changing the second column definition. */
-    processPivotResultColDef?: (colDef: ColDef) => void;
+    processPivotResultColDef?: (colDef: ColDef<TData>) => void;
     /** Callback to be used with pivoting, to allow changing the second column group definition. */
-    processPivotResultColGroupDef?: (colGroupDef: ColGroupDef) => void;
+    processPivotResultColGroupDef?: (colGroupDef: ColGroupDef<TData>) => void;
     /** Callback to be used when working with Tree Data when `treeData = true`. */
-    getDataPath?: GetDataPath;
+    getDataPath?: GetDataPath<TData>;
     /** @deprecated - Use initialGroupOrderComparator instead */
-    defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
+    defaultGroupSortComparator?: (nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number;
 
     // *** Row Model: Server Side *** //
     /** Allows setting the child count for a group row. */
@@ -902,41 +902,41 @@ export interface GridOptions {
      * Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
      */
-    getBusinessKeyForNode?: (node: RowNode) => string;
+    getBusinessKeyForNode?: (node: RowNode<TData>) => string;
     /**
      * @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
      * Allows you to set the ID for a particular row node based on the data. */
-    getRowNodeId?: GetRowNodeIdFunc;
+    getRowNodeId?: GetRowNodeIdFunc<TData>;
     /** Allows setting the ID for a particular row node based on the data. */
-    getRowId?: GetRowIdFunc;
+    getRowId?: GetRowIdFunc<TData>;
     /** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */
     resetRowDataOnUpdate?: boolean;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */
-    processRowPostCreate?: (params: ProcessRowParams) => void;
+    processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */
-    isRowSelectable?: IsRowSelectable;
+    isRowSelectable?: IsRowSelectable<TData>;
     /** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */
-    isRowMaster?: IsRowMaster;
+    isRowMaster?: IsRowMaster<TData>;
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression. */
-    fillOperation?: (params: FillOperationParams) => any;
+    fillOperation?: (params: FillOperationParams<TData>) => any;
 
     // *** Sorting *** //
     /** @deprecated Use `postSortRows` instead */
-    postSort?: (nodes: RowNode[]) => void;
+    postSort?: (nodes: RowNode<TData>[]) => void;
     /** Callback to perform additional sorting after the grid has sorted the rows. */
-    postSortRows?: (params: PostSortRowsParams) => void;
+    postSortRows?: (params: PostSortRowsParams<TData>) => void;
 
     // *** Styling *** //
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */
-    getRowStyle?: (params: RowClassParams) => RowStyle | undefined;
+    getRowStyle?: (params: RowClassParams<TData>) => RowStyle | undefined;
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */
-    getRowClass?: (params: RowClassParams) => string | string[] | undefined;
+    getRowClass?: (params: RowClassParams<TData>) => string | string[] | undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */
-    getRowHeight?: (params: RowHeightParams) => number | undefined | null;
+    getRowHeight?: (params: RowHeightParams<TData>) => number | undefined | null;
     /** @deprecated Use `isFullWidthRow` instead. */
-    isFullWidthCell?: (rowNode: RowNode) => boolean;
+    isFullWidthCell?: (rowNode: RowNode<TData>) => boolean;
     /** Tells the grid if this row should be rendered as full width. */
-    isFullWidthRow?: (params: IsFullWidthRowParams) => boolean;
+    isFullWidthRow?: (params: IsFullWidthRowParams<TData>) => boolean;
 
     // **********************************************************************************************************
     // * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *
@@ -990,19 +990,19 @@ export interface GridOptions {
 
     // *** Editing *** //
     /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */
-    onCellValueChanged?(event: CellValueChangedEvent): void;
+    onCellValueChanged?(event: CellValueChangedEvent<TData>): void;
     /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */
-    onCellEditRequest?(event: CellEditRequestEvent): void;
+    onCellEditRequest?(event: CellEditRequestEvent<TData>): void;
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */
-    onRowValueChanged?(event: RowValueChangedEvent): void;
+    onRowValueChanged?(event: RowValueChangedEvent<TData>): void;
     /** Editing a cell has started. */
-    onCellEditingStarted?(event: CellEditingStartedEvent): void;
+    onCellEditingStarted?(event: CellEditingStartedEvent<TData>): void;
     /** Editing a cell has stopped. */
-    onCellEditingStopped?(event: CellEditingStoppedEvent): void;
+    onCellEditingStopped?(event: CellEditingStoppedEvent<TData>): void;
     /** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing. */
-    onRowEditingStarted?(event: RowEditingStartedEvent): void;
+    onRowEditingStarted?(event: RowEditingStartedEvent<TData>): void;
     /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */
-    onRowEditingStopped?(event: RowEditingStoppedEvent): void;
+    onRowEditingStopped?(event: RowEditingStoppedEvent<TData>): void;
 
     // *** Filtering *** //
     /** Filter has been opened. */
@@ -1024,9 +1024,9 @@ export interface GridOptions {
 
     // *** Keyboard Navigation *** //
     /** DOM event `keyDown` happened on a cell. */
-    onCellKeyDown?(event: CellKeyDownEvent | FullWidthCellKeyDownEvent): void;
+    onCellKeyDown?(event: CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>): void;
     /** DOM event `keyPress` happened on a cell. */
-    onCellKeyPress?(event: CellKeyPressEvent | FullWidthCellKeyPressEvent): void;
+    onCellKeyPress?(event: CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>): void;
 
     // *** Miscellaneous *** //
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet  */
@@ -1038,7 +1038,7 @@ export interface GridOptions {
     /** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events. */
     onModelUpdated?(event: ModelUpdatedEvent): void;
     /** A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row. */
-    onVirtualRowRemoved?(event: VirtualRowRemovedEvent): void;
+    onVirtualRowRemoved?(event: VirtualRowRemovedEvent<TData>): void;
     /** Which rows are rendered in the DOM has changed. */
     onViewportChanged?(event: ViewportChangedEvent): void;
     /** The body was scrolled horizontally or vertically. */
@@ -1062,19 +1062,19 @@ export interface GridOptions {
 
     // *** Row Drag and Drop *** //
     /** A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid. */
-    onRowDragEnter?(event: RowDragEvent): void;
+    onRowDragEnter?(event: RowDragEvent<TData>): void;
     /** The mouse has moved while dragging. */
-    onRowDragMove?(event: RowDragEvent): void;
+    onRowDragMove?(event: RowDragEvent<TData>): void;
     /** The mouse has left the grid while dragging. */
-    onRowDragLeave?(event: RowDragEvent): void;
+    onRowDragLeave?(event: RowDragEvent<TData>): void;
     /** The drag has finished over the grid. */
-    onRowDragEnd?(event: RowDragEvent): void;
+    onRowDragEnd?(event: RowDragEvent<TData>): void;
 
     // *** Row Grouping *** //
     /** A row group column was added or removed. */
     onColumnRowGroupChanged?(event: ColumnRowGroupChangedEvent): void;
     /** A row group was opened or closed. */
-    onRowGroupOpened?(event: RowGroupOpenedEvent): void;
+    onRowGroupOpened?(event: RowGroupOpenedEvent<TData>): void;
     /** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */
     onExpandOrCollapseAll?(event: ExpandCollapseAllEvent): void;
 
@@ -1088,31 +1088,31 @@ export interface GridOptions {
     /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */
     onRowDataUpdated?(event: RowDataUpdatedEvent): void;
     /** Async transactions have been applied. Contains a list of all transaction results. */
-    onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed): void;
+    onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>): void;
 
     // *** Selection *** //
     /** Cell is clicked. */
-    onCellClicked?(event: CellClickedEvent): void;
+    onCellClicked?(event: CellClickedEvent<TData>): void;
     /** Cell is double clicked. */
-    onCellDoubleClicked?(event: CellDoubleClickedEvent): void;
+    onCellDoubleClicked?(event: CellDoubleClickedEvent<TData>): void;
     /** Cell is focused. */
     onCellFocused?(event: CellFocusedEvent): void;
     /** Mouse entered cell. */
-    onCellMouseOver?(event: CellMouseOverEvent): void;
+    onCellMouseOver?(event: CellMouseOverEvent<TData>): void;
     /** Mouse left cell. */
-    onCellMouseOut?(event: CellMouseOutEvent): void;
+    onCellMouseOut?(event: CellMouseOutEvent<TData>): void;
     /** Mouse down on cell. */
-    onCellMouseDown?(event: CellMouseDownEvent): void;
+    onCellMouseDown?(event: CellMouseDownEvent<TData>): void;
     /** Row is clicked. */
-    onRowClicked?(event: RowClickedEvent): void;
+    onRowClicked?(event: RowClickedEvent<TData>): void;
     /** Row is double clicked. */
-    onRowDoubleClicked?(event: RowDoubleClickedEvent): void;
+    onRowDoubleClicked?(event: RowDoubleClickedEvent<TData>): void;
     /** Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected. */
-    onRowSelected?(event: RowSelectedEvent): void;
+    onRowSelected?(event: RowSelectedEvent<TData>): void;
     /** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */
     onSelectionChanged?(event: SelectionChangedEvent): void;
     /** Cell is right clicked. */
-    onCellContextMenu?(event: CellContextMenuEvent): void;
+    onCellContextMenu?(event: CellContextMenuEvent<TData>): void;
     /** A change to range selection has occurred. */
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent): void;
 
@@ -1129,7 +1129,7 @@ export interface GridOptions {
      * The Grid Api for interacting with the grid.
      * Set by the grid on init, set to null on destroy.
      */
-    api?: GridApi | null;
+    api?: GridApi<TData> | null;
     /**
      * The Column Api for interacting with the grid columns.
      * Set by the grid on init, set to null on destroy.
@@ -1140,16 +1140,16 @@ export interface GridOptions {
 export type RowGroupingDisplayType = 'singleColumn' | 'multipleColumns' | 'groupRows' | 'custom';
 export type TreeDataDisplayType = 'auto' | 'custom';
 
-export interface GetDataPath {
-    (data: any): string[];
+export interface GetDataPath<TData = any> {
+    (data: TData): string[];
 }
 
 export interface IsServerSideGroup {
     (dataItem: any): boolean;
 }
 
-export interface IsRowFilterable {
-    (params: GetGroupAggFilteringParams): boolean;
+export interface IsRowFilterable<TData = any> {
+    (params: GetGroupAggFilteringParams<TData>): boolean;
 }
 export interface IsApplyServerSideTransaction {
     (params: IsApplyServerSideTransactionParams): boolean;
@@ -1158,31 +1158,32 @@ export interface GetServerSideGroupKey {
     (dataItem: any): string;
 }
 
-export interface IsRowMaster {
-    (dataItem: any): boolean;
+export interface IsRowMaster<TData = any> {
+    (dataItem: TData): boolean;
 }
 
-export interface IsRowSelectable {
-    (node: RowNode): boolean;
+export interface IsRowSelectable<TData = any> {
+    (node: RowNode<TData>): boolean;
 }
 
-export interface RowClassRules {
-    [cssClassName: string]: (((params: RowClassParams) => boolean) | string);
+export interface RowClassRules<TData = any> {
+    [cssClassName: string]: (((params: RowClassParams<TData>) => boolean) | string);
 }
 
 export interface RowStyle { [cssProperty: string]: string | number; }
 
-export interface RowClassParams extends AgGridCommon {
-    /** The data associated with this row from rowData */
-    data: any;
+export interface RowClassParams<TData = any> extends AgGridCommon<TData> {
+    /** The data associated with this row from rowData. Data is `undefined` for row groups. */
+    data: TData | undefined;
     /** The RowNode associated with this row */
-    node: RowNode;
+    node: RowNode<TData>;
     /** The index of the row */
     rowIndex: number;
 }
 
-export interface GetContextMenuItems {
-    (params: GetContextMenuItemsParams): (string | MenuItemDef)[];
+
+export interface GetContextMenuItems<TData = any> {
+    (params: GetContextMenuItemsParams<TData>): (string | MenuItemDef)[];
 }
 export interface GetChartToolbarItems {
     (params: GetChartToolbarItemsParams): ChartMenuOptions[];
@@ -1214,12 +1215,12 @@ export interface GetMainMenuItems {
     (params: GetMainMenuItemsParams): (string | MenuItemDef)[];
 }
 
-export interface GetRowNodeIdFunc {
-    (data: any): string;
+export interface GetRowNodeIdFunc<TData = any> {
+    (data: TData): string;
 }
 
-export interface GetRowIdFunc {
-    (params: GetRowIdParams): string;
+export interface GetRowIdFunc<TData = any> {
+    (params: GetRowIdParams<TData>): string;
 }
 
 export interface ChartRef {
@@ -1233,7 +1234,7 @@ export interface ChartRef {
     destroyChart: () => void;
 }
 
-export interface ChartRefParams extends AgGridCommon, ChartRef { }
+export interface ChartRefParams<TData = any> extends AgGridCommon<TData>, ChartRef { }
 
 export type ServerSideStoreType = 'full' | 'partial';
 

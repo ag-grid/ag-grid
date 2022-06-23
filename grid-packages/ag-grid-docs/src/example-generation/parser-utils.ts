@@ -320,7 +320,7 @@ export function getTypes(node: ts.Node) {
     let typesToInclude = []
     if (ts.isIdentifier(node)) {
         const typeName = node.getText();
-        if (!['HTMLElement', 'Function', 'Partial'].includes(typeName)) {
+        if (!['HTMLElement', 'Function', 'Partial', 'TData'].includes(typeName)) {
             typesToInclude.push(typeName);
         }
     }
@@ -647,4 +647,25 @@ export function getModuleRegistration({ gridSettings, enterprise, exampleName })
     moduleRegistration.push(`\n// Register the required feature modules with the Grid`);
     moduleRegistration.push(`ModuleRegistry.registerModules(${gridSuppliedModules})`);
     return moduleRegistration;
+}
+
+export function handleRowGenericInterface(fileTxt: string, tData: string): string {
+    if (tData) {
+        fileTxt = fileTxt
+        // Until we support this cleanly.
+            //.replace(/<TData>/g, `<${tData}>`)
+            .replace(/<TData>/g, '')
+            .replace(/TData\[\]/g, `${tData}[]`);
+    } else {
+        fileTxt = fileTxt.replace(/<TData>/g, '').replace(/TData\[\]/g, 'any[]');
+    }
+    return fileTxt;
+}
+
+export function addGenericInterfaceImport(imports: string[], tData: string, bindings) {
+    if (tData &&
+        !bindings.interfaces.some(i => i.includes(tData)) &&
+        !imports.some(i => i.includes(tData))) {
+        imports.push(`import { ${tData} } from './interfaces'`)
+    }
 }

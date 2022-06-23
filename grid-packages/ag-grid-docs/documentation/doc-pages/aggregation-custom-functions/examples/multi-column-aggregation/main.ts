@@ -6,7 +6,7 @@ import {
   ValueGetterParams,
 } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     {
       field: 'country',
@@ -53,10 +53,10 @@ function numberFormatter(params: ValueFormatterParams): string {
   return '' + Math.round(params.value * 100) / 100
 }
 
-function ratioValueGetter(params: ValueGetterParams) {
+function ratioValueGetter(params: ValueGetterParams<IOlympicData>) {
   if (!(params.node && params.node.group)) {
     // no need to handle group levels - calculated in the 'ratioAggFunc'
-    return createValueObject(params.data.gold, params.data.silver)
+    return createValueObject(params.data!.gold, params.data!.silver)
   }
 }
 
@@ -94,5 +94,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })

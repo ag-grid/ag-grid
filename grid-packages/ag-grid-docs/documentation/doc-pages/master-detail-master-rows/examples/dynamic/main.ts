@@ -32,7 +32,7 @@ const gridOptions: GridOptions = {
       params) {
       params.successCallback(params.data.callRecords)
     },
-  } as IDetailCellRendererParams,
+  } as IDetailCellRendererParams<IAccount, ICallRecord>,
   onFirstDataRendered: onFirstDataRendered,
 }
 

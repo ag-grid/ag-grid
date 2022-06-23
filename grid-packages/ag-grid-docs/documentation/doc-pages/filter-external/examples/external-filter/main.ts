@@ -33,7 +33,7 @@ const columnDefs: ColDef[] = [
   { field: 'bronze', filter: 'agNumberColumnFilter' },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
@@ -52,19 +52,22 @@ function isExternalFilterPresent(): boolean {
   return ageType !== 'everyone'
 }
 
-function doesExternalFilterPass(node: RowNode): boolean {
-  switch (ageType) {
-    case 'below25':
-      return node.data.age < 25
-    case 'between25and50':
-      return node.data.age >= 25 && node.data.age <= 50
-    case 'above50':
-      return node.data.age > 50
-    case 'dateAfter2008':
-      return asDate(node.data.date) > new Date(2008, 1, 1)
-    default:
-      return true
+function doesExternalFilterPass(node: RowNode<IOlympicData>): boolean {
+  if (node.data) {
+    switch (ageType) {
+      case 'below25':
+        return node.data.age < 25
+      case 'between25and50':
+        return node.data.age >= 25 && node.data.age <= 50
+      case 'above50':
+        return node.data.age > 50
+      case 'dateAfter2008':
+        return asDate(node.data.date) > new Date(2008, 1, 1)
+      default:
+        return true
+    }
   }
+  return true;
 }
 
 function asDate(dateAsString: string) {

@@ -14,7 +14,7 @@ const columnDefs: ColDef[] = [
   { field: 'bronze', aggFunc: 'sum' },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,

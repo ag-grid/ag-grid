@@ -1,6 +1,6 @@
 import { Grid, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         // this row shows the row index, doesn't use any data from the row
         {

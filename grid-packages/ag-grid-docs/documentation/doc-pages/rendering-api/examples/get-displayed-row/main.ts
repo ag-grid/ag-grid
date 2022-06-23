@@ -1,6 +1,6 @@
 import { Grid, GridOptions } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'athlete', minWidth: 180 },
     { field: 'age' },
@@ -26,7 +26,7 @@ const gridOptions: GridOptions = {
 
 function getDisplayedRowAtIndex() {
   var rowNode = gridOptions.api!.getDisplayedRowAtIndex(0)!
-  console.log('getDisplayedRowAtIndex(0) => ' + rowNode.data.athlete + ' ' + rowNode.data.year)
+  console.log('getDisplayedRowAtIndex(0) => ' + rowNode.data!.athlete + ' ' + rowNode.data!.year)
 }
 
 function getDisplayedRowCount() {
@@ -39,7 +39,7 @@ function printAllDisplayedRows() {
   console.log('## printAllDisplayedRows')
   for (var i = 0; i < count; i++) {
     var rowNode = gridOptions.api!.getDisplayedRowAtIndex(i)!
-    console.log('row ' + i + ' is ' + rowNode.data.athlete)
+    console.log('row ' + i + ' is ' + rowNode.data!.athlete)
   }
 }
 
@@ -58,7 +58,7 @@ function printPageDisplayedRows() {
   console.log('## printPageDisplayedRows')
   for (var i = startPageIndex; i <= endPageIndex; i++) {
     var rowNode = gridOptions.api!.getDisplayedRowAtIndex(i)!
-    console.log('row ' + i + ' is ' + rowNode.data.athlete)
+    console.log('row ' + i + ' is ' + rowNode.data!.athlete)
   }
 }
 

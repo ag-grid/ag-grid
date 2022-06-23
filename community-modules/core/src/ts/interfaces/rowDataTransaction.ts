@@ -1,10 +1,10 @@
-export interface RowDataTransaction {
+export interface RowDataTransaction<TData = any> {
     /** Index to add rows */
     addIndex?: number | null;
     /** Rows to add */
-    add?: any[] | null;
+    add?: TData[] | null;
     /** Rows to remove */
-    remove?: any[] | null;
+    remove?: TData[] | null;
     /** Rows to update */
-    update?: any[] | null;
+    update?: TData[] | null;
 }
