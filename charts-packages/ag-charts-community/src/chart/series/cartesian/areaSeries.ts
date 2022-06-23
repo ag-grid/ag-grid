@@ -164,14 +164,27 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             this._yKeys = values;
             this.yData = [];
 
-            const { seriesItemEnabled } = this;
-            seriesItemEnabled.clear();
-            values.forEach((key) => seriesItemEnabled.set(key, true));
+            this.processSeriesItemEnabled();
         }
     }
 
     get yKeys(): string[] {
         return this._yKeys;
+    }
+
+    protected _visibles: boolean[];
+    set visibles(visibles: boolean[]) {
+        this._visibles = visibles;
+        this.processSeriesItemEnabled();
+    }
+    get visibles() {
+        return this._visibles;
+    }
+
+    private processSeriesItemEnabled() {
+        const { seriesItemEnabled, _visibles: visibles = [] } = this;
+        seriesItemEnabled.clear();
+        this._yKeys.forEach((key, idx) => seriesItemEnabled.set(key, visibles[idx] ?? true));
     }
 
     setColors(fills: string[], strokes: string[]) {

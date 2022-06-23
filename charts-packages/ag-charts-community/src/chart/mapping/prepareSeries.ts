@@ -43,31 +43,72 @@ export function groupSeriesByType(seriesOptions: SeriesOptions[]) {
 export function reduceSeries(series: any[], enableBarSeriesSpecialCases: boolean) {
     let options: any = {};
 
+    const NA = Symbol();
+    const SKIP = Symbol();
     const arrayValueProperties = ['yKeys', 'fills', 'strokes', 'yNames', 'hideInChart', 'hideInLegend'];
-    const stringValueProperties = ['yKey', 'fill', 'stroke', 'yName'];
+    const stringValueProperties = ['yKey', 'fill', 'stroke', 'yName', 'visible'];
+    const barSeriesProperties = ['showInLegend', 'grouped'];
+    const defaultValues = [NA, SKIP, SKIP, SKIP, true];
 
-    for (const s of series) {
-        for (const property in s) {
-            const arrayValueProperty = arrayValueProperties.indexOf(property) > -1;
-            const stringValueProperty = stringValueProperties.indexOf(property) > -1;
+    const keys: string[] = series.reduce(
+        (r, n) => {
+            Object.keys(n).forEach(k => r.add(k));
+            return r;
+        },
+        new Set(),
+    );
+    keys.forEach((prop) => {
+        const type = arrayValueProperties.includes(prop) ? 'array' :
+            stringValueProperties.includes(prop) ? 'string' :
+            barSeriesProperties.includes(prop) && enableBarSeriesSpecialCases ? 'bar' :
+            'other';
 
-            if (arrayValueProperty && s[property].length > 0) {
-                options[property] = [...(options[property] || []), ...s[property]];
-            } else if (stringValueProperty) {
-                options[`${property}s`] = [...(options[`${property}s`] || []), s[property]];
-            } else if (enableBarSeriesSpecialCases && property === 'showInLegend') {
-                if (s[property] === false) {
-                    options.hideInLegend = [...(options.hideInLegend || []), ...(s.yKey ? [s.yKey] : s.yKeys)];
-                }
-            } else if (enableBarSeriesSpecialCases && property === 'grouped') {
-                if (s[property] === true) {
-                    options[property] = s[property];
-                }
-            } else {
-                options[property] = s[property];
-            }
+        if (type === 'array') {
+            options[prop] = series.reduce(
+                (result, next) => {
+                    return result.concat(next[prop] ?? []);
+                },
+                [],
+            );
+        } else if (type === 'string') {
+            const defaultValue = defaultValues[stringValueProperties.indexOf(prop)];
+            options[prop + 's'] = series.reduce(
+                (result, next) => {
+                    const nextValue = next[prop] ?? defaultValue;
+                    if (nextValue === NA) {
+                        throw new Error(`AG Charts - missing value for property [${prop}] on series config.`);
+                    } else if (nextValue === SKIP) {
+                        return result;
+                    }
+    
+                    return result.concat(nextValue);
+                },
+                [],
+            );
+        } else if (type === 'bar' && prop === 'showInLegend') {
+            options.hideInLegend = series.reduce(
+                (r, n) => {
+                    if (n.showInLegend === false) {
+                        r.push(...(n.yKey ? [n.yKey] : n.yKeys));
+                    }
+                    return r;
+                },
+                [],
+            );
+        } else if (type === 'bar' && prop === 'grouped') {
+            options.grouped = series.reduce(
+                (r, n) => {
+                    if (n.grouped === true) {
+                        return true;
+                    }
+                    return r;
+                },
+                false,
+            );
+        } else {
+            options[prop] = series.reduce((r, n) => n[prop] ?? r);
         }
-    }
+    });
 
     return options;
 }
