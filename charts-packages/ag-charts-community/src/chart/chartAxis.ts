@@ -62,15 +62,39 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
     calculateTickCount(): void {
         if (!this.useCalculatedTickCount()) { return; }
 
-        const [min, max] = this.range;
+        const { tick: { count }, range: [min, max] } = this;
+
+        if (count) {
+            return;
+        }
+
         const availableRange = Math.abs(max - min);
+        const optimalTickInteralPx = this.calculateTickIntervalEstimate();
 
         // Approximate number of pixels to allocate for each tick.
         const optimalRangePx = 600;
-        const optimalTickInteralPx = 70;
-        const tickIntervalRatio = Math.pow(Math.log(availableRange) / Math.log(optimalRangePx), 2);
+        const minTickIntervalRatio = 0.75;
+        const tickIntervalRatio = Math.max(Math.pow(Math.log(availableRange) / Math.log(optimalRangePx), 2), minTickIntervalRatio);
         const tickInterval = optimalTickInteralPx * tickIntervalRatio;
-        this._calculatedTickCount = this.tick.count || Math.max(2, Math.floor(availableRange / tickInterval));
+        this._calculatedTickCount = Math.max(2, Math.floor(availableRange / tickInterval));
+    }
+
+    protected calculateTickIntervalEstimate() {
+        const { domain, label: { fontSize }, direction } = this;
+
+        const padding = fontSize * 1.5;
+        if (direction === ChartAxisDirection.Y) {
+            return fontSize * 2 + padding;
+        }
+
+        const ticks = this.scale.ticks?.(10) || [domain[0], domain[domain.length - 1]];
+
+        // Dynamic optimal tick interval based upon label scale.
+        const approxMaxLabelCharacters = Math.max(...ticks.map((v) => {
+            return String(v).length;
+        }));
+
+        return approxMaxLabelCharacters * fontSize + padding;
     }
 
     protected _position: ChartAxisPosition = ChartAxisPosition.Left;

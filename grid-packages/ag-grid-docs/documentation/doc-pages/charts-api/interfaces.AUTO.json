@@ -815,7 +815,7 @@
       "autoRotate?": "boolean",
       "autoRotateAngle?": "number",
       "format?": "string",
-      "formatter?": "(params: AgAxisLabelFormatterParams) => string"
+      "formatter?": "(params: AgAxisLabelFormatterParams) => string | undefined"
     },
     "docs": {
       "fontStyle?": "/** The font style to use for the labels. */",
