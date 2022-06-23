@@ -547,6 +547,10 @@ export function convertImportPath(modulePackage: string, convertToPackage: boole
         if (modulePackage.includes("@ag-grid-community/core/dist")) {
             return modulePackage.replace('@ag-grid-community/core/dist', 'ag-grid-community/dist');
         }
+        if (modulePackage.includes("@ag-grid-community/styles")) {
+            return modulePackage.replace('@ag-grid-community/styles', 'ag-grid-community/dist/styles');
+        }
+
         if (modulePackage.includes("@ag-grid-community")) {
             return `'ag-grid-community'`
         }
