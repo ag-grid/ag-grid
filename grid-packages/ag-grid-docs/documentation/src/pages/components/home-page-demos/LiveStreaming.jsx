@@ -5,7 +5,7 @@ import isDevelopment from '../../../utils/is-development';
 
 const helmet = [];
 if (isDevelopment()) {
-    helmet.push(<link key="live-streaming-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css`}
+    helmet.push(<link key="live-streaming-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/styles/ag-theme-balham.css`}
                       crossOrigin="anonymous"/>);
     helmet.push(<script key="enterprise-lib" src={`${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`}
                         type="text/javascript"/>);

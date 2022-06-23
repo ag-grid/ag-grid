@@ -62,7 +62,7 @@ function onBtRemove() {
     window.rowDataServerSide.splice(indexToRemove, 1)
   }
 
-  gridOptions.api!.refreshServerSideStore()
+  gridOptions.api!.refreshServerSide()
 }
 
 function onBtAdd() {
@@ -80,7 +80,7 @@ function onBtAdd() {
   })
   newItemCount++
 
-  gridOptions.api!.refreshServerSideStore()
+  gridOptions.api!.refreshServerSide()
 }
 
 function createMyDataSource(data: any[]) {

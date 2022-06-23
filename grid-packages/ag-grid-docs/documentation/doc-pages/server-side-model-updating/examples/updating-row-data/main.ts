@@ -35,8 +35,8 @@ function isRowSelectable(rowNode: RowNode) {
   return !rowNode.group
 }
 
-function refreshStore() {
-  gridOptions.api!.refreshServerSideStore({ purge: true })
+function refresh() {
+  gridOptions.api!.refreshServerSide({ purge: true })
 }
 
 function updateSelectedRows() {

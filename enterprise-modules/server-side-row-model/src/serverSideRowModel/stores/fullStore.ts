@@ -16,16 +16,14 @@ import {
     RowNodeBlockLoader,
     RowNodeSorter,
     SelectionChangedEvent,
-    ServerSideStoreParams,
-    ServerSideStoreState,
+    ServerSideGroupLevelParams,
+    ServerSideGroupLevelState,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
     SortController,
     StoreRefreshAfterParams,
     StoreUpdatedEvent,
-    ColumnApi,
-    GridApi,
     WithoutGridCommon,
     IsApplyServerSideTransactionParams
 } from "@ag-grid-community/core";
@@ -76,7 +74,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     private info: any = {};
 
-    constructor(ssrmParams: SSRMParams, storeParams: ServerSideStoreParams, parentRowNode: RowNode) {
+    constructor(ssrmParams: SSRMParams, storeParams: ServerSideGroupLevelParams, parentRowNode: RowNode) {
         // finite block represents a cache with just one block, thus 0 is the id, it's the first block
         super(0);
         this.ssrmParams = ssrmParams;
@@ -202,8 +200,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     protected processServerResult(params: LoadSuccessParams): void {
         if (!this.isAlive()) { return; }
 
-        if (params.storeInfo) {
-            Object.assign(this.info, params.storeInfo);
+        const info = params.storeInfo || params.groupLevelInfo;
+        if (info) {
+            Object.assign(this.info, info);
         }
 
         const nodesToRecycle = this.allRowNodes.length > 0 ? this.allNodesMap : undefined;
@@ -504,7 +503,8 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
                 transaction: transaction,
                 parentNode: this.parentRowNode,
-                storeInfo: this.info
+                storeInfo: this.info,
+                groupLevelInfo: this.info
             };
             const apply = applyCallback(params);
             if (!apply) {
@@ -650,7 +650,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         return rowNode;
     }
 
-    public addStoreStates(result: ServerSideStoreState[]): void {
+    public addStoreStates(result: ServerSideGroupLevelState[]): void {
         result.push({
             infiniteScroll: false,
             route: this.parentRowNode.getGroupKeys(),

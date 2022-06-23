@@ -288,8 +288,8 @@ export interface AgChartLegendMarkerOptions {
 }
 
 export interface AgChartLegendLabelOptions {
-    /** If the label text exceeds the character limit, it will be truncated and an ellipsis will be appended to indicate this. By default, the character limit is 25. */
-    characterLimit?: number;
+    /** If the label text exceeds the maximum length, it will be truncated and an ellipsis will be appended to indicate this. */
+    maxLength?: number;
     /** The colour of the text. */
     color?: CssColor;
     /** The font style to use for the legend. */
@@ -317,6 +317,18 @@ export interface AgChartLegendItemOptions {
     paddingY?: PixelSize;
 }
 
+export interface AgChartLegendClickEvent {
+    /** Legend item id - based on series id. */
+    itemId: string;
+    /** Whether the legend item is currently enabled or not. */
+    enabled: boolean;
+}
+
+export interface AgChartLegendListeners {
+    /** The listener to call when a legend item is clicked. */
+    legendItemClick?: (event: AgChartLegendClickEvent) => void;
+}
+
 export interface AgChartLegendOptions {
     /** Whether or not to show the legend. */
     enabled?: boolean;
@@ -326,6 +338,8 @@ export interface AgChartLegendOptions {
     spacing?: PixelSize;
     /** Configuration for the legend items that consist of a marker and a label. */
     item?: AgChartLegendItemOptions;
+    /** Optional callbacks for specific legend-related events. */
+    listeners?: AgChartLegendListeners;
 }
 
 export interface AgChartTooltipOptions {

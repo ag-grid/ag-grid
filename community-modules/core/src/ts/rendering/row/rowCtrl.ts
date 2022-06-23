@@ -122,13 +122,11 @@ export class RowCtrl extends BeanStub {
         beans: Beans,
         animateIn: boolean,
         useAnimationFrameForCreate: boolean,
-        printLayout: boolean,
-        sticky: boolean
+        printLayout: boolean
     ) {
         super();
         this.beans = beans;
         this.rowNode = rowNode;
-        this.rowNode.sticky = !!sticky;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
@@ -1196,9 +1194,6 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowHeightChanged(): void {
-        // row heights don't change for sticky rows
-        if (this.isSticky()) { return; }
-
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten
         // stage is called where the row will then update again with a new height
@@ -1281,7 +1276,6 @@ export class RowCtrl extends BeanStub {
 
     public destroySecondPass(): void {
         this.allRowGuis.length = 0;
-        this.rowNode.sticky = false;
 
         const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {
             ctrls.list.forEach(c => c.destroy());

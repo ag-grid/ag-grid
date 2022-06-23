@@ -66,6 +66,7 @@ export interface GridColumnsChangedEvent<TData = any> extends AgGridEvent<TData>
 
 export interface DisplayedColumnsChangedEvent<TData = any> extends AgGridEvent<TData> { }
 
+/** @deprecated use RowDataUpdatedEvent instead */
 export interface RowDataChangedEvent<TData = any> extends AgGridEvent<TData> { }
 
 export interface RowDataUpdatedEvent<TData = any> extends AgGridEvent<TData> { }
@@ -323,6 +324,7 @@ export interface ExpandCollapseAllEvent<TData = any> extends AgGridEvent<TData> 
 export type ColumnEventType =
     "sizeColumnsToFit" |
     "autosizeColumns" |
+    "autosizeColumnHeaderHeight" |
     "alignedGridChanged" |
     "filterChanged" |
     "filterDestroyed" |

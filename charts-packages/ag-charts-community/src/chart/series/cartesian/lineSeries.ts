@@ -1,33 +1,30 @@
-import { Path } from "../../../scene/shape/path";
-import { ContinuousScale } from "../../../scale/continuousScale";
-import { Selection } from "../../../scene/selection";
-import { Group } from "../../../scene/group";
-import {
-    SeriesNodeDatum,
-    CartesianTooltipRendererParams as LineTooltipRendererParams,
-    SeriesTooltip
-} from "../series";
-import { extent } from "../../../util/array";
-import { PointerEvents } from "../../../scene/node";
-import { Text } from "../../../scene/shape/text";
-import { LegendDatum } from "../../legend";
-import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
-import { ChartAxisDirection } from "../../chartAxis";
-import { getMarker } from "../../marker/util";
-import { TypedEvent } from "../../../util/observable";
-import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import { interpolate } from "../../../util/string";
-import { FontStyle, FontWeight } from "../../../scene/shape/text";
-import { Label } from "../../label";
-import { sanitizeHtml } from "../../../util/sanitize";
-import { isContinuous } from "../../../util/value";
-import { Marker } from "../../marker/marker";
+import { Path } from '../../../scene/shape/path';
+import { ContinuousScale } from '../../../scale/continuousScale';
+import { Selection } from '../../../scene/selection';
+import { Group } from '../../../scene/group';
+import { SeriesNodeDatum, CartesianTooltipRendererParams, SeriesTooltip, SeriesNodeDataContext } from '../series';
+import { extent } from '../../../util/array';
+import { PointerEvents } from '../../../scene/node';
+import { Text } from '../../../scene/shape/text';
+import { LegendDatum } from '../../legend';
+import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from './cartesianSeries';
+import { ChartAxisDirection } from '../../chartAxis';
+import { getMarker } from '../../marker/util';
+import { TypedEvent } from '../../../util/observable';
+import { TooltipRendererResult, toTooltipHtml } from '../../chart';
+import { interpolate } from '../../../util/string';
+import { FontStyle, FontWeight } from '../../../scene/shape/text';
+import { Label } from '../../label';
+import { sanitizeHtml } from '../../../util/sanitize';
+import { isContinuous } from '../../../util/value';
+import { Marker } from '../../marker/marker';
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: {
+        readonly moveTo: boolean;
         readonly x: number;
         readonly y: number;
-    }
+    };
     readonly label?: {
         readonly text: string;
         readonly fontStyle?: FontStyle;
@@ -49,7 +46,7 @@ export interface LineSeriesNodeClickEvent extends TypedEvent {
     readonly yKey: string;
 }
 
-export { LineTooltipRendererParams };
+export type LineTooltipRendererParams = CartesianTooltipRendererParams;
 
 class LineSeriesLabel extends Label {
     formatter?: (params: { value: any }) => string = undefined;
@@ -60,8 +57,8 @@ export class LineSeriesTooltip extends SeriesTooltip {
     format?: string = undefined;
 }
 
-export class LineSeries extends CartesianSeries {
-
+type LineContext = SeriesNodeDataContext<LineNodeDatum>;
+export class LineSeries extends CartesianSeries<LineContext> {
     static className = 'LineSeries';
     static type = 'line' as const;
 
@@ -69,13 +66,6 @@ export class LineSeries extends CartesianSeries {
     private yDomain: any[] = [];
     private xData: any[] = [];
     private yData: any[] = [];
-
-    private lineNode = new Path();
-
-    private markerSelection: Selection<Marker, Group, LineNodeDatum, any> = Selection.select(this.seriesGroup).selectAll<Marker>();
-    private textSelection: Selection<Text, Group, LineNodeDatum, any> = Selection.select(this.seriesGroup).selectAll<Text>();
-    private highlightSelection: Selection<Marker, Group, LineNodeDatum, any> = Selection.select(this.highlightGroup).selectAll<Marker>();
-    private nodeData: LineNodeDatum[] = [];
 
     readonly marker = new CartesianSeriesMarker();
 
@@ -92,14 +82,7 @@ export class LineSeries extends CartesianSeries {
     tooltip: LineSeriesTooltip = new LineSeriesTooltip();
 
     constructor() {
-        super();
-
-        const lineNode = this.lineNode;
-        lineNode.fill = undefined;
-        lineNode.lineJoin = 'round';
-        lineNode.pointerEvents = PointerEvents.None;
-        // Make line render before markers in the pick group.
-        this.seriesGroup.insertBefore(lineNode, this.pickGroup);
+        super({ pickGroupIncludes: ['datumNodes'] });
 
         const { marker, label } = this;
 
@@ -137,6 +120,13 @@ export class LineSeries extends CartesianSeries {
 
     yName: string = '';
 
+    getDomain(direction: ChartAxisDirection): any[] {
+        if (direction === ChartAxisDirection.X) {
+            return this.xDomain;
+        }
+        return this.yDomain;
+    }
+
     processData(): boolean {
         const { xAxis, yAxis, xKey, yKey, xData, yData } = this;
         const data = xKey && yKey && this.data ? this.data : [];
@@ -151,8 +141,7 @@ export class LineSeries extends CartesianSeries {
         xData.length = 0;
         yData.length = 0;
 
-        for (let i = 0, n = data.length; i < n; i++) {
-            const datum = data[i];
+        for (const datum of data) {
             const x = datum[xKey];
             const y = datum[yKey];
 
@@ -174,52 +163,24 @@ export class LineSeries extends CartesianSeries {
         return true;
     }
 
-    getDomain(direction: ChartAxisDirection): any[] {
-        if (direction === ChartAxisDirection.X) {
-            return this.xDomain;
-        }
-        return this.yDomain;
-    }
-
-    resetHighlight() {
-        this.lineNode.strokeWidth = this.strokeWidth;
-    }
-
-    update(): void {
-        this.updateSelections();
-        this.updateHighlightSelection();
-        this.updateNodes();
-    }
-
-    private updateSelections() {
-        if (!this.nodeDataRefresh) {
-            return;
-        }
-        this.nodeDataRefresh = false;
-
-        this.updateLinePath(); // this will create node data too
-        this.updateNodeSelection();
-    }
-
-    private updateLinePath() {
+    public createNodeData() {
         const { data, xAxis, yAxis } = this;
 
         if (!data || !xAxis || !yAxis) {
-            return;
+            return [];
         }
 
-        const { xData, yData, lineNode, label, xKey, yKey } = this;
+        const { xData, yData, label, xKey, yKey } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
-        const linePath = lineNode.path;
-        const nodeData: LineNodeDatum[] = [];
+        const nodeData: LineNodeDatum[] = new Array(data.length);
 
-        linePath.clear({ trackChanges: true });
         let moveTo = true;
         let prevXInRange: undefined | -1 | 0 | 1 = undefined;
         let nextXYDatums: [number, number] | undefined = undefined;
+        let actualLength = 0;
         for (let i = 0; i < xData.length; i++) {
             const xyDatums = nextXYDatums || [xData[i], yData[i]];
 
@@ -234,11 +195,12 @@ export class LineSeries extends CartesianSeries {
                     moveTo = true;
                     continue;
                 }
-                const tolerance = (xScale.bandwidth || (this.marker.size * 0.5 + (this.marker.strokeWidth || 0))) + 1;
+                const tolerance = (xScale.bandwidth || this.marker.size * 0.5 + (this.marker.strokeWidth || 0)) + 1;
 
                 nextXYDatums = yData[i + 1] === undefined ? undefined : [xData[i + 1], yData[i + 1]];
                 const xInRange = xAxis.inRangeEx(x, 0, tolerance);
-                const nextXInRange = nextXYDatums && xAxis.inRangeEx(xScale.convert(nextXYDatums[0]) + xOffset, 0, tolerance);
+                const nextXInRange =
+                    nextXYDatums && xAxis.inRangeEx(xScale.convert(nextXYDatums[0]) + xOffset, 0, tolerance);
                 if (xInRange === -1 && nextXInRange === -1) {
                     moveTo = true;
                     continue;
@@ -251,95 +213,72 @@ export class LineSeries extends CartesianSeries {
 
                 const y = yScale.convert(yDatum) + yOffset;
 
-                if (moveTo) {
-                    linePath.moveTo(x, y);
-                    moveTo = false;
-                } else {
-                    linePath.lineTo(x, y);
-                }
-
                 let labelText: string;
 
                 if (label.formatter) {
                     labelText = label.formatter({ value: yDatum });
                 } else {
-                    labelText = typeof yDatum === 'number' && isFinite(yDatum) ? yDatum.toFixed(2) : yDatum ? String(yDatum) : '';
+                    labelText =
+                        typeof yDatum === 'number' && isFinite(yDatum)
+                            ? yDatum.toFixed(2)
+                            : yDatum
+                            ? String(yDatum)
+                            : '';
                 }
 
                 const seriesDatum = { [xKey]: xDatum, [yKey]: yDatum };
 
-                nodeData.push({
+                nodeData[actualLength++] = {
                     series: this,
                     datum: seriesDatum,
-                    point: { x, y },
-                    label: labelText ? {
-                        text: labelText,
-                        fontStyle: label.fontStyle,
-                        fontWeight: label.fontWeight,
-                        fontSize: label.fontSize,
-                        fontFamily: label.fontFamily,
-                        textAlign: 'center',
-                        textBaseline: 'bottom',
-                        fill: label.color
-                    } : undefined
-                });
+                    point: { x, y, moveTo },
+                    label: labelText
+                        ? {
+                              text: labelText,
+                              fontStyle: label.fontStyle,
+                              fontWeight: label.fontWeight,
+                              fontSize: label.fontSize,
+                              fontFamily: label.fontFamily,
+                              textAlign: 'center',
+                              textBaseline: 'bottom',
+                              fill: label.color,
+                          }
+                        : undefined,
+                };
+                moveTo = false;
             }
-
-            lineNode.checkPathDirty();
         }
+        nodeData.length = actualLength;
 
-        // Used by marker nodes and for hit-testing even when not using markers
-        // when `chart.tooltip.tracking` is true.
-        this.nodeData = nodeData;
+        return [{ itemId: yKey, nodeData, labelData: nodeData }];
     }
 
-    private updateNodeSelection() {
-        const { marker: { shape, enabled } } = this;
-        const nodeData = shape && enabled ? this.nodeData : [];
-        const MarkerShape = getMarker(shape);
-
-        const { markerSelection, textSelection } = this;
-
-        const updateMarkerSelection = markerSelection.setData(nodeData);
-        updateMarkerSelection.exit.remove();
-        const enterMarkerSelection = updateMarkerSelection.enter.append(MarkerShape);
-        this.markerSelection = updateMarkerSelection.merge(enterMarkerSelection);
-
-        const updateTextSelection = textSelection.setData(nodeData);
-        updateTextSelection.exit.remove();
-        const enterTextSelection = updateTextSelection.enter.append(Text);
-        this.textSelection = updateTextSelection.merge(enterTextSelection);
-    }
-
-    private updateHighlightSelection() {
+    protected updatePaths(opts: { seriesHighlighted?: boolean; contextData: LineContext; paths: Path[] }): void {
         const {
-            marker: { shape, enabled },
-            chart: { highlightedDatum: { datum = undefined, series = undefined } = {}, highlightedDatum = undefined } = {},
-            highlightSelection,
-        } = this;
-        const highlightData = shape && enabled && series === this && highlightedDatum && datum ? [highlightedDatum as LineNodeDatum] : [];
-        const MarkerShape = getMarker(shape);
+            contextData: { nodeData },
+            paths: [lineNode],
+        } = opts;
+        const { path: linePath } = lineNode;
 
-        const updateHighlightSelection = highlightSelection.setData(highlightData);
-        updateHighlightSelection.exit.remove();
-        const enterHighlightSelection = updateHighlightSelection.enter.append(MarkerShape);
-        this.highlightSelection = updateHighlightSelection.merge(enterHighlightSelection);
-    }
-    
-    private updateNodes() {
-        this.group.visible = this.visible;
-        this.seriesGroup.visible = this.visible;
-        this.highlightGroup.visible = this.visible && this.chart?.highlightedDatum?.series === this;
+        lineNode.fill = undefined;
+        lineNode.lineJoin = 'round';
+        lineNode.pointerEvents = PointerEvents.None;
 
-        this.seriesGroup.opacity = this.getOpacity();
-
-        this.updateLineNode();
-        this.updateMarkerNodes();
-        this.updateTextNodes();
+        linePath.clear({ trackChanges: true });
+        for (const data of nodeData) {
+            if (data.point.moveTo) {
+                linePath.moveTo(data.point.x, data.point.y);
+            } else {
+                linePath.lineTo(data.point.x, data.point.y);
+            }
+        }
+        lineNode.checkPathDirty();
     }
 
-    private updateLineNode() {
-        const { lineNode } = this;
+    protected updatePathNodes(opts: { seriesHighlighted?: boolean; paths: Path[] }): void {
+        const {
+            paths: [lineNode],
+        } = opts;
 
         lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
@@ -349,15 +288,33 @@ export class LineSeries extends CartesianSeries {
         lineNode.lineDashOffset = this.lineDashOffset;
     }
 
-    private updateMarkerNodes() {
-        if (!this.chart) {
-            return;
-        }
-
+    protected updateDatumSelection(opts: {
+        nodeData: LineNodeDatum[];
+        datumSelection: Selection<Marker, Group, LineNodeDatum, any>;
+    }): Selection<Marker, Group, LineNodeDatum, any> {
+        let { nodeData, datumSelection } = opts;
         const {
-            marker, xKey, yKey,
+            marker: { shape, enabled },
+        } = this;
+        nodeData = shape && enabled ? nodeData : [];
+        const MarkerShape = getMarker(shape);
+
+        const updateDatumSelection = datumSelection.setData(nodeData);
+        updateDatumSelection.exit.remove();
+        const enterDatumSelection = updateDatumSelection.enter.append(MarkerShape);
+        return updateDatumSelection.merge(enterDatumSelection);
+    }
+
+    protected updateDatumNodes(opts: {
+        datumSelection: Selection<Marker, Group, LineNodeDatum, any>;
+        isHighlight: boolean;
+    }) {
+        const { datumSelection, isHighlight: isDatumHighlighted } = opts;
+        const {
+            marker,
+            xKey,
+            yKey,
             stroke: lineStroke,
-            chart: { highlightedDatum },
             highlightStyle: {
                 fill: deprecatedFill,
                 stroke: deprecatedStroke,
@@ -366,19 +323,20 @@ export class LineSeries extends CartesianSeries {
                     fill: highlightedFill = deprecatedFill,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
-                }
-            }
+                },
+            },
         } = this;
         const { size, formatter } = marker;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
-        const MarkerShape = getMarker(marker.shape);
 
-        const updateMarkerFn = (node: Marker, datum: LineNodeDatum, isDatumHighlighted: boolean) => {
+        datumSelection.each((node, datum) => {
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill;
-            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || lineStroke;
-            const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
-                ? highlightedDatumStrokeWidth
-                : markerStrokeWidth;
+            const stroke =
+                isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || lineStroke;
+            const strokeWidth =
+                isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
+                    ? highlightedDatumStrokeWidth
+                    : markerStrokeWidth;
 
             let format: CartesianSeriesMarkerFormat | undefined = undefined;
             if (formatter) {
@@ -390,44 +348,46 @@ export class LineSeries extends CartesianSeries {
                     stroke,
                     strokeWidth,
                     size,
-                    highlighted: isDatumHighlighted
+                    highlighted: isDatumHighlighted,
                 });
             }
 
-            node.fill = format && format.fill || fill;
-            node.stroke = format && format.stroke || stroke;
-            node.strokeWidth = format && format.strokeWidth !== undefined
-                ? format.strokeWidth
-                : strokeWidth;
-            node.size = format && format.size !== undefined
-                ? format.size
-                : size;
+            node.fill = (format && format.fill) || fill;
+            node.stroke = (format && format.stroke) || stroke;
+            node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
+            node.size = format && format.size !== undefined ? format.size : size;
 
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
             node.visible = node.size > 0;
-        };
-
-        this.markerSelection
-            .each((node, datum) => updateMarkerFn(node, datum, false));
-        this.highlightSelection
-            .each((node, datum) => {
-                const isDatumHighlighted = datum === highlightedDatum;
-
-                node.visible = isDatumHighlighted;
-                if (node.visible) {
-                    updateMarkerFn(node, datum, isDatumHighlighted);
-                }
-            });
+        });
     }
 
-    private updateTextNodes() {
-        const updateTextFn = (text: Text, datum: LineNodeDatum) => {
+    protected updateLabelSelection(opts: {
+        labelData: LineNodeDatum[];
+        labelSelection: Selection<Text, Group, LineNodeDatum, any>;
+    }): Selection<Text, Group, LineNodeDatum, any> {
+        let { labelData, labelSelection } = opts;
+        const {
+            marker: { shape, enabled },
+        } = this;
+        labelData = shape && enabled ? labelData : [];
+        const MarkerShape = getMarker(shape);
+
+        const updateTextSelection = labelSelection.setData(labelData);
+        updateTextSelection.exit.remove();
+        const enterTextSelection = updateTextSelection.enter.append(Text);
+        return updateTextSelection.merge(enterTextSelection);
+    }
+
+    protected updateLabelNodes(opts: { labelSelection: Selection<Text, Group, LineNodeDatum, any> }) {
+        const { labelSelection } = opts;
+        const { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
+
+        labelSelection.each((text, datum) => {
             const { point, label } = datum;
-    
-            const { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
-    
-            if (label && labelEnabled) {
+
+            if (datum && label && labelEnabled) {
                 text.fontStyle = fontStyle;
                 text.fontWeight = fontWeight;
                 text.fontSize = fontSize;
@@ -442,13 +402,7 @@ export class LineSeries extends CartesianSeries {
             } else {
                 text.visible = false;
             }
-        };
-
-        this.textSelection.each(updateTextFn);
-    }
-
-    getNodeData(): readonly LineNodeDatum[] {
-        return this.nodeData;
+        });
     }
 
     fireNodeClickEvent(event: MouseEvent, datum: LineNodeDatum): void {
@@ -458,7 +412,7 @@ export class LineSeries extends CartesianSeries {
             series: this,
             datum: datum.datum,
             xKey: this.xKey,
-            yKey: this.yKey
+            yKey: this.yKey,
         });
     }
 
@@ -470,10 +424,7 @@ export class LineSeries extends CartesianSeries {
         }
 
         const { xName, yName, tooltip, marker } = this;
-        const {
-            renderer: tooltipRenderer,
-            format: tooltipFormat
-        } = tooltip;
+        const { renderer: tooltipRenderer, format: tooltipFormat } = tooltip;
         const datum = nodeDatum.datum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
@@ -495,16 +446,16 @@ export class LineSeries extends CartesianSeries {
                 stroke,
                 strokeWidth,
                 size,
-                highlighted: false
+                highlighted: false,
             });
         }
 
-        const color = format && format.fill || fill;
+        const color = (format && format.fill) || fill;
 
         const defaults: TooltipRendererResult = {
             title,
             backgroundColor: color,
-            content
+            content,
         };
 
         if (tooltipFormat || tooltipRenderer) {
@@ -517,12 +468,15 @@ export class LineSeries extends CartesianSeries {
                 yValue,
                 yName,
                 title,
-                color
+                color,
             };
             if (tooltipFormat) {
-                return toTooltipHtml({
-                    content: interpolate(tooltipFormat, params)
-                }, defaults);
+                return toTooltipHtml(
+                    {
+                        content: interpolate(tooltipFormat, params),
+                    },
+                    defaults
+                );
             }
             if (tooltipRenderer) {
                 return toTooltipHtml(tooltipRenderer(params), defaults);
@@ -533,10 +487,7 @@ export class LineSeries extends CartesianSeries {
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {
-        const {
-            id, data, xKey, yKey, yName, visible,
-            title, marker, stroke, strokeOpacity
-        } = this;
+        const { id, data, xKey, yKey, yName, visible, title, marker, stroke, strokeOpacity } = this;
 
         if (data && data.length && xKey && yKey) {
             legendData.push({
@@ -544,15 +495,15 @@ export class LineSeries extends CartesianSeries {
                 itemId: undefined,
                 enabled: visible,
                 label: {
-                    text: title || yName || yKey
+                    text: title || yName || yKey,
                 },
                 marker: {
                     shape: marker.shape,
                     fill: marker.fill || 'rgba(0, 0, 0, 0)',
                     stroke: marker.stroke || stroke || 'rgba(0, 0, 0, 0)',
                     fillOpacity: 1,
-                    strokeOpacity
-                }
+                    strokeOpacity,
+                },
             });
         }
     }

@@ -1,6 +1,6 @@
 import { BandScale } from "../../scale/bandScale";
 import { ChartAxis } from "../chartAxis";
-export class CategoryAxis extends ChartAxis<BandScale<string>> {
+export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
     static className = 'CategoryAxis';
     static type = 'category' as const;
 
@@ -25,15 +25,13 @@ export class CategoryAxis extends ChartAxis<BandScale<string>> {
         return this.scale.paddingOuter;
     }
 
-    set domain(values: string[]) {
+    set domain(values: (string | object)[]) {
         // Prevent duplicate categories.
-        const valuesDict: Record<string, null> = {};
-        for (const value of values) {
-            valuesDict[value] = null;
-        }
-        this.scale.domain = Object.keys(valuesDict);
+        const valuesSet = new Set<string | {}>(values);
+        this.scale.domain = new Array(...valuesSet.values());
     }
-    get domain(): string[] {
+
+    get domain(): (string | object)[] {
         return this.scale.domain.slice();
     }
 }

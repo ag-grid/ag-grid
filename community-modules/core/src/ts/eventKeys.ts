@@ -52,7 +52,7 @@ export class Events {
     /** A row group was opened / closed */
     public static EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
 
-    /** The client has set new data into the grid */
+    /** @deprecated use EVENT_ROW_DATA_UPDATED instead */
     public static EVENT_ROW_DATA_CHANGED = 'rowDataChanged';
 
     /** The client has updated data for the grid */
@@ -184,6 +184,7 @@ export class Events {
 
     public static EVENT_ROW_CONTAINER_HEIGHT_CHANGED = 'rowContainerHeightChanged';
     public static EVENT_HEADER_HEIGHT_CHANGED = 'headerHeightChanged';
+    public static EVENT_COLUMN_HEADER_HEIGHT_CHANGED = 'columnHeaderHeightChanged';
 
     public static EVENT_ROW_DRAG_ENTER = 'rowDragEnter';
     public static EVENT_ROW_DRAG_MOVE = 'rowDragMove';

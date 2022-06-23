@@ -77,18 +77,14 @@ export class RowNodeBlockLoader extends BeanStub {
             return;
         }
 
-        let blockToLoad: RowNodeBlock | null = null;
-        this.blocks.forEach(block => {
-            if (block.getState() === RowNodeBlock.STATE_WAITING_TO_LOAD) {
-                blockToLoad = block;
-            }
-        });
+        const loadAvailability = this.maxConcurrentRequests !== undefined ? this.maxConcurrentRequests - this.activeBlockLoadsCount : undefined;
+        const blocksToLoad: RowNodeBlock[] = this.blocks.filter(block => (
+            block.getState() === RowNodeBlock.STATE_WAITING_TO_LOAD
+        )).slice(0, loadAvailability);
 
-        if (blockToLoad) {
-            (blockToLoad as RowNodeBlock).load();
-            this.activeBlockLoadsCount++;
-            this.printCacheStatus();
-        }
+        this.activeBlockLoadsCount += blocksToLoad.length;
+        blocksToLoad.forEach(block => block.load());
+        this.printCacheStatus();
     }
 
     public getBlockState(): any {

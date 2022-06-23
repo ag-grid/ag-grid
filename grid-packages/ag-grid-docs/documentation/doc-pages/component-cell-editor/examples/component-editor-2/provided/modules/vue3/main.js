@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-alpine.css';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import { createApp } from 'vue';

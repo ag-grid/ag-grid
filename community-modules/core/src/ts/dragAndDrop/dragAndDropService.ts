@@ -9,7 +9,7 @@ import { RowDropZoneParams } from "../gridBodyComp/rowDragFeature";
 import { RowNode } from "../entities/rowNode";
 import { escapeString } from "../utils/string";
 import { createIcon } from "../utils/icon";
-import { removeFromArray } from "../utils/array";
+import { flatten, removeFromArray } from "../utils/array";
 import { getBodyHeight, getBodyWidth } from "../utils/browser";
 import { loadTemplate, clearElement } from "../utils/dom";
 import { isFunction } from "../utils/function";
@@ -77,6 +77,14 @@ export interface DragSource {
      * Callback for drag stopped
      */
     onDragStopped?: () => void;
+    /**
+     * Callback for entering the grid
+     */
+    onGridEnter?: (dragItem: DragItem | null) => void;
+    /**
+     * Callback for exiting the grid
+     */
+    onGridExit?: (dragItem: DragItem | null) => void;
 }
 
 export interface DropTarget {
@@ -263,28 +271,15 @@ export class DragAndDropService extends BeanStub {
 
         // check if mouseEvent intersects with any of the drop targets
         const validDropTargets = this.dropTargets.filter(target => this.isMouseOnDropTarget(mouseEvent, target));
-        const len = validDropTargets.length;
-
-        let dropTarget: DropTarget | null = null;
-
-        if (len > 0) {
-            dropTarget = len === 1
-            ? validDropTargets[0]
-            // the current mouse position could intersect with more than 1 element
-            // if they are nested. In that case we need to get the most specific
-            // container, which is the one that does not contain any other targets.
-            : validDropTargets.reduce((prevTarget, currTarget) => {
-                if (!prevTarget) { return currTarget; }
-                const prevContainer = prevTarget.getContainer();
-                const currContainer = currTarget.getContainer();
-
-                if (prevContainer.contains(currContainer)) { return currTarget; }
-
-                return prevTarget;
-            });
-        }
+        const dropTarget: DropTarget | null = this.findCurrentDropTarget(mouseEvent, validDropTargets);
 
         if (dropTarget !== this.lastDropTarget) {
+            if (this.lastDropTarget !== null && dropTarget === null) {
+                this.dragSource.onGridExit?.(this.dragItem);
+            }
+            if (this.lastDropTarget === null && dropTarget !== null) {
+                this.dragSource.onGridEnter?.(this.dragItem);
+            }
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             this.lastDropTarget = dropTarget;
@@ -292,30 +287,6 @@ export class DragAndDropService extends BeanStub {
             const draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             dropTarget.onDragging(draggingEvent);
         }
-    }
-
-    private enterDragTargetIfExists(dropTarget: DropTarget | null, mouseEvent: MouseEvent, hDirection: HorizontalDirection | null, vDirection: VerticalDirection | null, fromNudge: boolean): void {
-        if (!dropTarget) { return; }
-
-        if (dropTarget.onDragEnter) {
-            const dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
-
-            dropTarget.onDragEnter(dragEnterEvent);
-        }
-
-        this.setGhostIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
-    }
-
-    private leaveLastTargetIfExists(mouseEvent: MouseEvent, hDirection: HorizontalDirection | null, vDirection: VerticalDirection | null, fromNudge: boolean): void {
-        if (!this.lastDropTarget) { return; }
-
-        if (this.lastDropTarget.onDragLeave) {
-            const dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, hDirection, vDirection, fromNudge);
-
-            this.lastDropTarget.onDragLeave(dragLeaveEvent);
-        }
-
-        this.setGhostIcon(null);
     }
 
     private getAllContainersFromDropTarget(dropTarget: DropTarget): HTMLElement[][] {
@@ -355,6 +326,55 @@ export class DragAndDropService extends BeanStub {
         if (dropTarget.targetContainsSource && !dropTarget.getContainer().contains(this.dragSource.eElement)) { return false; }
 
         return mouseOverTarget && dropTarget.isInterestedIn(this.dragSource.type, this.dragSource.eElement);
+    }
+
+    private findCurrentDropTarget(mouseEvent: MouseEvent, validDropTargets: DropTarget[]): DropTarget | null {
+        const len = validDropTargets.length;
+
+        if (len === 0) { return  null; }
+        if (len === 1) { return validDropTargets[0]; }
+
+        const eDocument = this.gridOptionsWrapper.getDocument();
+
+        // elementsFromPoint return a list of elements under
+        // the mouseEvent sorted from topMost to bottomMost
+        const elementStack = eDocument.elementsFromPoint(mouseEvent.x, mouseEvent.y) as HTMLElement[];
+
+        // loop over the sorted elementStack to find which dropTarget comes first
+        for (const el of elementStack) {
+            for (const dropTarget of validDropTargets) {
+                const containers = flatten(this.getAllContainersFromDropTarget(dropTarget));
+                if (containers.indexOf(el) !== -1) { return dropTarget; }
+            }
+        }
+
+        // we should never hit this point of the code because only
+        // valid dropTargets should be provided to this method.
+        return null;
+    }
+
+    private enterDragTargetIfExists(dropTarget: DropTarget | null, mouseEvent: MouseEvent, hDirection: HorizontalDirection | null, vDirection: VerticalDirection | null, fromNudge: boolean): void {
+        if (!dropTarget) { return; }
+
+        if (dropTarget.onDragEnter) {
+            const dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
+
+            dropTarget.onDragEnter(dragEnterEvent);
+        }
+
+        this.setGhostIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
+    }
+
+    private leaveLastTargetIfExists(mouseEvent: MouseEvent, hDirection: HorizontalDirection | null, vDirection: VerticalDirection | null, fromNudge: boolean): void {
+        if (!this.lastDropTarget) { return; }
+
+        if (this.lastDropTarget.onDragLeave) {
+            const dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, hDirection, vDirection, fromNudge);
+
+            this.lastDropTarget.onDragLeave(dragLeaveEvent);
+        }
+
+        this.setGhostIcon(null);
     }
 
     public addDropTarget(dropTarget: DropTarget) {

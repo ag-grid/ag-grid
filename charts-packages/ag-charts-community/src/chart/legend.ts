@@ -4,7 +4,7 @@ import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
 import { FontStyle, FontWeight, getFont } from "../scene/shape/text";
 import { Marker } from "./marker/marker";
-import { SourceEvent } from "../util/observable";
+import { AgChartLegendClickEvent, AgChartLegendListeners } from "./agChartOptions";
 import { getMarker } from "./marker/util";
 import { createId } from "../util/id";
 import { RedrawType } from "../scene/node";
@@ -26,12 +26,6 @@ export interface LegendDatum {
     };
 }
 
-export interface LegendClickEvent extends SourceEvent<Legend> {
-    event: MouseEvent;
-    itemId: string;
-    enabled: boolean;
-}
-
 export enum LegendOrientation {
     Vertical,
     Horizontal
@@ -51,7 +45,7 @@ interface LegendLabelFormatterParams {
 }
 
 export class LegendLabel {
-    characterLimit = undefined;
+    maxLength = undefined;
     color = 'black';
     fontStyle?: FontStyle = undefined;
     fontWeight?: FontWeight = undefined;
@@ -106,6 +100,12 @@ export class LegendItem {
     paddingY = 8;
 }
 
+const NO_OP_LISTENER = () => {};
+
+export class LegendListeners implements Required<AgChartLegendListeners> {
+    legendItemClick: (event: AgChartLegendClickEvent) => void = NO_OP_LISTENER;
+}
+
 export class Legend {
 
     static className = 'Legend';
@@ -121,6 +121,7 @@ export class Legend {
     private oldSize: [number, number] = [0, 0];
 
     readonly item = new LegendItem();
+    readonly listeners = new LegendListeners();
 
     truncatedItems: Set<string> = new Set();
 
@@ -218,7 +219,7 @@ export class Legend {
                 shape: markerShape
             },
             label: {
-                characterLimit = Infinity,
+                maxLength = Infinity,
                 fontStyle,
                 fontWeight,
                 fontSize,
@@ -260,8 +261,8 @@ export class Legend {
             const textChars = text.split('');
             let addEllipsis = false;
 
-            if (text.length > characterLimit) {
-                text = `${text.substring(0, characterLimit - ellipsis.length)}`;
+            if (text.length > maxLength) {
+                text = `${text.substring(0, maxLength)}`;
                 addEllipsis = true;
             }
 

@@ -81,5 +81,18 @@ function updateBetweenStrings(
     return `${fileContents.substring(0, startIndex)}${EOL}${fragmentToBeInserted}${EOL}${fileContents.substring(endIndex)}`;
 }
 
+const processStdio = func => async (data) => {
+    let output = data.toString().trim();
+
+    // trim off requests to reset the screen/scrolling position
+    if(data[0] === 27 && data[1] === 99) {
+        output = output.split('').splice(2).join('');
+    }
+
+    func(output)
+}
+
 exports.getAllModules = getAllModules;
 exports.updateBetweenStrings = updateBetweenStrings;
+exports.processStdio = processStdio;
+

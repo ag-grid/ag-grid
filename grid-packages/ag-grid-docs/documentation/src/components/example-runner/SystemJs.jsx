@@ -18,7 +18,7 @@ import isDevelopment from 'utils/is-development';
 
 const localConfiguration = {
     gridMap: {
-        "@ag-grid-community/core/dist/styles": `${localPrefix}/@ag-grid-community/core/dist/styles`,
+        "@ag-grid-community/styles": `${localPrefix}/@ag-grid-community/styles`,
         "@ag-grid-community/react": `${localPrefix}/@ag-grid-community/react`,
         "@ag-grid-community/angular": `${localPrefix}/@ag-grid-community/angular`,
         "@ag-grid-community/vue": `${localPrefix}/@ag-grid-community/vue`,
@@ -83,7 +83,7 @@ const localConfiguration = {
 
 const publishedConfiguration = {
     gridMap: {
-        "@ag-grid-community/core/dist/styles": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles`,
+        "@ag-grid-community/styles": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles`,
         "@ag-grid-community/react": `https://unpkg.com/@ag-grid-community/react@${agGridReactVersion}/`,
         "@ag-grid-community/angular": `https://unpkg.com/@ag-grid-community/angular@${agGridAngularVersion}/`,
         "@ag-grid-community/vue": `https://unpkg.com/@ag-grid-community/vue@${agGridVueVersion}/`,

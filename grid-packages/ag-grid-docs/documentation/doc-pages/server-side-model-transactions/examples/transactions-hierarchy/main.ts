@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, GridReadyEvent, IServerSideDatasource, IServerSideGetRowsParams, ServerSideStoreParams, GetServerSideStoreParamsParams, GetRowIdParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, GridReadyEvent, IServerSideDatasource, IServerSideGetRowsParams, ServerSideGroupLevelParams, GetServerSideGroupLevelParamsParams, GetRowIdParams } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'productName', rowGroup: true, hide: true },
@@ -52,7 +52,7 @@ const gridOptions: GridOptions = {
 
     params.api.setServerSideDatasource(dataSource)
   },
-  getServerSideStoreParams: (params: GetServerSideStoreParamsParams): ServerSideStoreParams => {
+  getServerSideGroupLevelParams: (params: GetServerSideGroupLevelParamsParams): ServerSideGroupLevelParams => {
     return {
       infiniteScroll: params.level == 0,
     }
@@ -125,10 +125,10 @@ function onBtNewProduct() {
   console.log('New Product, result = ' + (res && res.status))
 }
 
-function onBtStoreState() {
-  const storeState = gridOptions.api!.getServerSideStoreState()
-  console.log('Store States:')
-  storeState.forEach(function (state, index) {
+function onBtGroupLevelState() {
+  const groupLevelState = gridOptions.api!.getServerSideGroupLevelState()
+  console.log('Group Level States:')
+  groupLevelState.forEach(function (state, index) {
     console.log(
       index +
       ' - ' +

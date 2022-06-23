@@ -171,6 +171,10 @@
     "description": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
+  "suppressRowGroupHidesColumns": {
+    "description": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
+    "type": { "returnType": "boolean" }
+  },
   "colResizeDefault": {
     "description": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
     "type": { "returnType": "string" }
@@ -347,7 +351,10 @@
     "description": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
     "type": { "returnType": "boolean" }
   },
-  "groupRowsSticky": { "type": { "returnType": "boolean" } },
+  "groupRowsSticky": {
+    "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
+    "type": { "returnType": "boolean" }
+  },
   "context": {
     "description": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
     "type": { "returnType": "any" }
@@ -781,7 +788,7 @@
     "type": { "returnType": "number" }
   },
   "blockLoadDebounceMillis": {
-    "description": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
+    "description": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
     "type": { "returnType": "number" }
   },
   "purgeClosedRowNodes": {
@@ -1209,11 +1216,18 @@
     "description": "/** Allows setting the child count for a group row. */",
     "type": { "arguments": { "dataItem": "any" }, "returnType": "number" }
   },
-  "getServerSideStoreParams": {
+  "getServerSideGroupLevelParams": {
     "description": "/** Allows providing different params for different levels of grouping. */",
     "type": {
-      "arguments": { "params": "GetServerSideStoreParamsParams" },
-      "returnType": "ServerSideStoreParams"
+      "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+      "returnType": "ServerSideGroupLevelParams"
+    }
+  },
+  "getServerSideStoreParams": {
+    "description": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
+    "type": {
+      "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+      "returnType": "ServerSideGroupLevelParams"
     }
   },
   "isServerSideGroupOpenByDefault": {
@@ -2154,7 +2168,7 @@
     "meta": { "isEvent": true, "name": "onPinnedRowDataChanged" }
   },
   "onRowDataChanged": {
-    "description": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
+    "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
     "type": {
       "arguments": { "event": "RowDataChangedEvent" },
       "returnType": "void"
@@ -2162,7 +2176,7 @@
     "meta": { "isEvent": true, "name": "onRowDataChanged" }
   },
   "rowDataChanged": {
-    "description": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
+    "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
     "type": {
       "arguments": { "event": "RowDataChangedEvent" },
       "returnType": "void"
@@ -2170,7 +2184,7 @@
     "meta": { "isEvent": true, "name": "onRowDataChanged" }
   },
   "onRowDataUpdated": {
-    "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
+    "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
     "type": {
       "arguments": { "event": "RowDataUpdatedEvent" },
       "returnType": "void"
@@ -2178,7 +2192,7 @@
     "meta": { "isEvent": true, "name": "onRowDataUpdated" }
   },
   "rowDataUpdated": {
-    "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
+    "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
     "type": {
       "arguments": { "event": "RowDataUpdatedEvent" },
       "returnType": "void"

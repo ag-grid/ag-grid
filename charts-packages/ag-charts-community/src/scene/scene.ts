@@ -3,6 +3,7 @@ import { Node, RedrawType, RenderContext } from "./node";
 import { createId } from "../util/id";
 import { Group } from "./group";
 import { HdpiOffscreenCanvas } from "../canvas/hdpiOffscreenCanvas";
+import { windowValue } from '../util/window';
 
 interface DebugOptions {
     stats: false | 'basic' | 'detailed';
@@ -44,14 +45,14 @@ export class Scene {
     ) {
         const {
             document = window.document,
-            mode = (window as any).agChartsSceneRenderModel || 'adv-composite',
+            mode = windowValue('agChartsSceneRenderModel') || 'adv-composite',
             width,
             height,
         } = opts;
 
         this.opts = { document, mode };
-        this.debug.stats = (window as any).agChartsSceneStats ?? false;
-        this.debug.dirtyTree = (window as any).agChartsSceneDirtyTree ?? false;
+        this.debug.stats = windowValue('agChartsSceneStats') ?? false;
+        this.debug.dirtyTree = windowValue('agChartsSceneDirtyTree') ?? false;
         this.canvas = new HdpiCanvas({ document, width, height });
         this.ctx = this.canvas.context;
     }
@@ -213,9 +214,8 @@ export class Scene {
         consoleLog: false,
     };
 
-    render(opts: { start: number }) {
-        const { start: preprocessingStart } = opts;
-        const start = performance.now();
+    render(opts?: { debugSplitTimes: number[], extraDebugStats: Record<string, number> }) {
+        const { debugSplitTimes = [performance.now()], extraDebugStats = {} } = opts || {};
         const { canvas, ctx, root, layers, pendingSize, opts: { mode } } = this;
 
         if (pendingSize) {
@@ -257,7 +257,7 @@ export class Scene {
 
         if (root && canvasCleared) {
             if (this.debug.consoleLog) {
-                console.log({ redrawType: RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
+                console.log('before', { redrawType: RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
             }
 
             if (root.visible) {
@@ -286,6 +286,9 @@ export class Scene {
         const end = performance.now();
 
         if (this.debug.stats) {
+            const start = debugSplitTimes[0];
+            debugSplitTimes.push(end);
+
             const pct = (rendered: number, skipped: number) => {
                 const total = rendered + skipped;
                 return `${rendered} / ${total} (${Math.round(100*rendered/total)}%)`;
@@ -295,8 +298,18 @@ export class Scene {
             }
             const { layersRendered = 0, layersSkipped = 0, nodesRendered = 0, nodesSkipped = 0 } =
                 renderCtx.stats || {};
+
+            const splits = debugSplitTimes
+                .map((t, i) => i > 0 ? time(debugSplitTimes[i - 1], t) : null)
+                .filter(v => v != null)
+                .join(' + ');
+            const extras = Object.entries(extraDebugStats)
+                .map(([k, v]) => `${k}: ${v}`)
+                .join(' ; ');
+
             const stats = [
-                `${time(preprocessingStart, end)} (${time(preprocessingStart, start)} + ${time(start, end)})`,
+                `${time(start, end)} (${splits})`,
+                `${extras}`,
                 this.debug.stats === 'detailed' ? `Layers: ${pct(layersRendered, layersSkipped)}` : null,
                 this.debug.stats === 'detailed' ? `Nodes: ${pct(nodesRendered, nodesSkipped)}` : null,
             ].filter((v): v is string => v != null);
@@ -313,7 +326,10 @@ export class Scene {
             ctx.restore();
         }
 
-    }
+        if (root && this.debug.consoleLog) {
+            console.log('after', { redrawType: RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
+        }
+}
 
     buildTree(node: Node): { name?: string, node?: any, dirty?: string } {
         const name = (node instanceof Group ? node.name : null) ?? node.id;

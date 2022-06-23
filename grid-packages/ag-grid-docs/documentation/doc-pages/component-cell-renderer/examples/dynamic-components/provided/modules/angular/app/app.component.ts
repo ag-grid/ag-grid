@@ -5,8 +5,8 @@ import { CurrencyRenderer } from './currency-renderer.component';
 import { ParamsRenderer } from './params-renderer.component';
 import { SquareRenderer } from './square-renderer.component';
 
-import "@ag-grid-community/core/dist/styles/ag-grid.css";
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 import { ColDef, ColumnApi, GridApi, GridReadyEvent, RowNode } from '@ag-grid-community/core';
 
 @Component({

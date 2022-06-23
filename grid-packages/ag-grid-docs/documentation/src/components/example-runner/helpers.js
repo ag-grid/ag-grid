@@ -228,12 +228,13 @@ export const openPlunker = exampleInfo => {
     });
 };
 
+
 export const isUsingPublishedPackages = () => process.env.GATSBY_USE_PUBLISHED_PACKAGES === 'true';
 
 export const getCssFilePaths = theme => {
     const themeFiles = theme ?
         [theme] :
-        ['alpine-dark', 'alpine', 'balham-dark', 'balham', 'material', 'fresh', 'dark', 'blue', 'bootstrap'];
+        ['alpine', 'balham', 'material'];
 
     const cssFiles = [
         'ag-grid.css',
@@ -241,8 +242,8 @@ export const getCssFilePaths = theme => {
     ];
 
     const getCssFilePath = file => isUsingPublishedPackages() ?
-        `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/${file}` :
-        `${localPrefix}/@ag-grid-community/core/dist/styles/${file}`;
+        `https://unpkg.com/@ag-grid-community/styles@${agGridVersion}/styles/${file}` :
+        `${localPrefix}/@ag-grid-community/styles/${file}`;
 
     return cssFiles.map(getCssFilePath);
 };

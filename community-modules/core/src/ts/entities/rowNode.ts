@@ -367,6 +367,12 @@ export class RowNode<TData = any> implements IEventEmitter {
             if (this.eventService) {
                 this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_SELECTABLE_CHANGED));
             }
+
+            const isGroupSelectsChildren = this.beans.gridOptionsWrapper.isGroupSelectsChildren();
+            if (isGroupSelectsChildren) {
+                const selected = this.calculateSelectedFromChildren();
+                this.setSelected(selected ?? false);
+            }
         }
     }
 
@@ -716,6 +722,7 @@ export class RowNode<TData = any> implements IEventEmitter {
 
         const valueChanged = this.beans.valueService.setValue(this, column, newValue, eventSource);
         this.dispatchCellChangedEvent(column, newValue, oldValue);
+        this.checkRowSelectable();
 
         return valueChanged;
     }

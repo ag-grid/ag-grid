@@ -59,6 +59,7 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, listener);
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, listener);
     }
 
     public getHeaderHeight(): number {
@@ -71,8 +72,6 @@ export class GridHeaderCtrl extends BeanStub {
         let numberOfFloating = 0;
         let headerRowCount = columnModel.getHeaderRowCount();
         let totalHeaderHeight: number;
-        let groupHeight: number | null | undefined;
-        let headerHeight: number | null | undefined;
 
         const hasFloatingFilters = columnModel.hasFloatingFilters();
 
@@ -81,13 +80,8 @@ export class GridHeaderCtrl extends BeanStub {
             numberOfFloating = 1;
         }
 
-        if (columnModel.isPivotMode()) {
-            groupHeight = gridOptionsWrapper.getPivotGroupHeaderHeight();
-            headerHeight = gridOptionsWrapper.getPivotHeaderHeight();
-        } else {
-            groupHeight = gridOptionsWrapper.getGroupHeaderHeight();
-            headerHeight = gridOptionsWrapper.getHeaderHeight();
-        }
+        const groupHeight = this.columnModel.getColumnGroupHeaderRowHeight();
+        const headerHeight = this.columnModel.getColumnHeaderRowHeight();
 
         const numberOfNonGroups = 1 + numberOfFloating;
         const numberOfGroups = headerRowCount - numberOfNonGroups;

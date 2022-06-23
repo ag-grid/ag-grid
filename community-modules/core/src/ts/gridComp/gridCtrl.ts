@@ -13,6 +13,7 @@ import { ColumnModel } from "../columns/columnModel";
 import { CtrlsService } from "../ctrlsService";
 import { MouseEventService } from "../gridBodyComp/mouseEventService";
 import { last } from "../utils/array";
+import { DragAndDropService, DragSourceType } from "../dragAndDrop/dragAndDropService";
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
@@ -33,6 +34,7 @@ export class GridCtrl extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
     @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
+    @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
 
     private view: IGridComp;
     private eGridHostDiv: HTMLElement;
@@ -42,6 +44,13 @@ export class GridCtrl extends BeanStub {
         this.view = view;
         this.eGridHostDiv = eGridDiv;
         this.eGui = eGui;
+
+        // this drop target is just used to see if the drop event is inside the grid
+        this.dragAndDropService.addDropTarget({
+            getContainer: () => this.eGui,
+            isInterestedIn: (type) => type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel,
+            getIconName: () => DragAndDropService.ICON_NOT_ALLOWED,
+        });
 
         this.mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
 

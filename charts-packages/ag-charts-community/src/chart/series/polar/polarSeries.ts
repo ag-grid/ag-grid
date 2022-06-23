@@ -1,8 +1,8 @@
-import { Series } from "../series";
+import { Series, SeriesNodeDatum, SeriesNodeDataContext } from "../series";
 import { ChartAxisDirection } from "../../chartAxis";
 import { SeriesMarker, SeriesMarkerFormatterParams } from "../seriesMarker";
 
-export abstract class PolarSeries extends Series {
+export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
 
     directionKeys = {
         [ChartAxisDirection.X]: ['angleKey'],

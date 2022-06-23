@@ -209,7 +209,9 @@
       "dragSourceDomDataKey?": "string",
       "dragStartPixels?": "number",
       "onDragStarted?": "() => void",
-      "onDragStopped?": "() => void"
+      "onDragStopped?": "() => void",
+      "onGridEnter?": "(dragItem: DragItem | null) => void",
+      "onGridExit?": "(dragItem: DragItem | null) => void"
     },
     "docs": {
       "type": "/** The type of the drag source, used by the drop target to know where the\n * drag originated from. */",
@@ -221,7 +223,9 @@
       "dragSourceDomDataKey?": "/** The drag source DOM Data Key, this is useful to detect if the origin grid is the same\n * as the target grid. */",
       "dragStartPixels?": "/** After how many pixels of dragging should the drag operation start. Default is 4. */",
       "onDragStarted?": "/** Callback for drag started */",
-      "onDragStopped?": "/** Callback for drag stopped */"
+      "onDragStopped?": "/** Callback for drag stopped */",
+      "onGridEnter?": "/** Callback for entering the grid */",
+      "onGridExit?": "/** Callback for exiting the grid */"
     }
   },
   "DropTarget": {
@@ -513,6 +517,8 @@
       "getQuickFilterText?": "(params: GetQuickFilterTextParams<TData>) => string",
       "filterValueGetter?": "string | ValueGetterFunc<TData>",
       "floatingFilter?": "boolean",
+      "wrapHeaderText?": "boolean",
+      "autoHeaderHeight?": "boolean",
       "headerComponent?": "any",
       "headerComponentFramework?": "any",
       "headerComponentParams?": "any",
@@ -643,7 +649,9 @@
       "getQuickFilterText?": "/** A function to tell the grid what quick filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
       "filterValueGetter?": "/** Function or expression. Gets the value for filtering purposes. */",
       "floatingFilter?": "/** Whether to display a floating filter for this column. Default: `false` */",
-      "headerComponent?": "/** */\n/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
+      "wrapHeaderText?": "/** If enabled then column header names that are too long for the column width will wrap onto the next line. Default `false` */",
+      "autoHeaderHeight?": "/** If enabled then the column header row will automatically adjust height to acommodate the size of the header cell.\n * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.\n * Default: `false` */",
+      "headerComponent?": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
       "headerComponentFramework?": "/** @deprecated As of v27, use `headerComponent` for framework components too.\n */",
       "headerComponentParams?": "/** The parameters to be passed to the `headerComponent`. */",
       "menuTabs?": "/** Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.\n * This is used to figure out which menu tabs are present and in which order the tabs are shown. */",
@@ -1503,6 +1511,7 @@
       "suppressMovableColumns?": "boolean",
       "suppressColumnMoveAnimation?": "boolean",
       "suppressDragLeaveHidesColumns?": "boolean",
+      "suppressRowGroupHidesColumns?": "boolean",
       "colResizeDefault?": "string",
       "suppressAutoSize?": "boolean",
       "autoSizePadding?": "number",
@@ -1747,7 +1756,8 @@
       "getDataPath?": "GetDataPath<TData>",
       "defaultGroupSortComparator?": "(nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number",
       "getChildCount?": "(dataItem: any) => number",
-      "getServerSideStoreParams?": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams",
+      "getServerSideGroupLevelParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
+      "getServerSideStoreParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
       "isServerSideGroupOpenByDefault?": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
@@ -1886,6 +1896,7 @@
       "suppressMovableColumns?": "/** Set to `true` to suppress column moving, i.e. to make the columns fixed position. Default: `false` */",
       "suppressColumnMoveAnimation?": "/** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. Default: `false` */",
       "suppressDragLeaveHidesColumns?": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
+      "suppressRowGroupHidesColumns?": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
       "colResizeDefault?": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "suppressAutoSize?": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
       "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n * Default: `4` */",
@@ -1930,6 +1941,7 @@
       "detailCellRendererParams?": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
       "detailRowHeight?": "/** Set fixed height in pixels for each detail row. */",
       "detailRowAutoHeight?": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
+      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "context?": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "alignedGrids?": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "tabIndex?": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -2037,7 +2049,7 @@
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
-      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
+      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
@@ -2123,7 +2135,8 @@
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
-      "getServerSideStoreParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideGroupLevelParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
       "isApplyServerSideTransaction?": "/** Allows cancelling transactions. */",
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
@@ -2195,8 +2208,8 @@
       "onRowGroupOpened?(event: RowGroupOpenedEvent<TData>)": "/** A row group was opened or closed. */",
       "onExpandOrCollapseAll?(event: ExpandCollapseAllEvent)": "/** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */",
       "onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent)": "/** The client has set new pinned row data into the grid. */",
-      "onRowDataChanged?(event: RowDataChangedEvent)": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
-      "onRowDataUpdated?(event: RowDataUpdatedEvent)": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
+      "onRowDataChanged?(event: RowDataChangedEvent)": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
+      "onRowDataUpdated?(event: RowDataUpdatedEvent)": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>)": "/** Async transactions have been applied. Contains a list of all transaction results. */",
       "onCellClicked?(event: CellClickedEvent<TData>)": "/** Cell is clicked. */",
       "onCellDoubleClicked?(event: CellDoubleClickedEvent<TData>)": "/** Cell is double clicked. */",
@@ -2409,8 +2422,25 @@
     "meta": { "isTypeAlias": true },
     "type": "'full' | 'partial'"
   },
-  "ServerSideStoreParams": {
+  "ServerSideGroupLevelParams": {
     "meta": {},
+    "type": {
+      "storeType?": "ServerSideStoreType",
+      "infiniteScroll?": "boolean",
+      "maxBlocksInCache?": "number",
+      "cacheBlockSize?": "number"
+    },
+    "docs": {
+      "storeType?": "/** @deprecated What store type to use.\nIf missing, then defaults to grid option `serverSideStoreType`.\nDeprecated in favor of infiniteScroll.\nIf infiniteScroll==true, then Partial Store is used.\nIf infiniteScroll==false, then Full Store is used.\n */",
+      "infiniteScroll?": "/** Whether to have infinite scroll active or not for the level. */",
+      "maxBlocksInCache?": "/** For Infinite Scroll only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
+      "cacheBlockSize?": "/** For Infinite Scroll only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */"
+    }
+  },
+  "ServerSideStoreParams": {
+    "meta": {
+      "doc": "/** @deprecated use ServerSideGroupLevelParams instead\n */"
+    },
     "type": {
       "storeType?": "ServerSideStoreType",
       "infiniteScroll?": "boolean",
@@ -2671,15 +2701,40 @@
       "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
-  "GetServerSideStoreParamsParams": {
-    "meta": { "typeParams": ["TData = any"] },
+  "GetServerSideGroupLevelParamsParams": {
+    "meta": {},
     "type": {
       "level": "number",
       "parentRowNode?": "RowNode",
       "rowGroupColumns": "Column[]",
       "pivotColumns": "Column[]",
       "pivotMode": "boolean",
-      "api": "GridApi<TData>",
+      "api": "GridApi<any>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "level": "/** The level of the store. Top level is 0. */",
+      "parentRowNode?": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
+      "rowGroupColumns": "/** Active Row Group Columns, if any. */",
+      "pivotColumns": "/** Active Pivot Columns, if any. */",
+      "pivotMode": "/** true if pivot mode is active. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetServerSideStoreParamsParams": {
+    "meta": {
+      "doc": "/** @deprecated use GetServerSideGroupLevelParamsParams instead\n */"
+    },
+    "type": {
+      "level": "number",
+      "parentRowNode?": "RowNode",
+      "rowGroupColumns": "Column[]",
+      "pivotColumns": "Column[]",
+      "pivotMode": "boolean",
+      "api": "GridApi<any>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2695,11 +2750,11 @@
     }
   },
   "IsServerSideGroupOpenByDefaultParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": {},
     "type": {
       "data": "any",
       "rowNode": "RowNode",
-      "api": "GridApi<TData>",
+      "api": "GridApi<any>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
@@ -2710,18 +2765,21 @@
     }
   },
   "IsApplyServerSideTransactionParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": {},
     "type": {
       "transaction": "ServerSideTransaction",
       "parentNode": "RowNode",
       "storeInfo": "any",
-      "api": "GridApi<TData>",
+      "groupLevelInfo": "any",
+      "api": "GridApi<any>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
     "docs": {
       "transaction": "/** The transaction getting applied. */",
       "parentNode": "/** The parent RowNode, if transaction is applied to a group. */",
+      "storeInfo": "/** @deprecated use groupLevelInfo instead\n */",
+      "groupLevelInfo": "/** Store info, if any, as passed via the success() callback when loading data. */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */"
@@ -3158,7 +3216,10 @@
     "docs": { "type": "/** Event identifier */" }
   },
   "RowDataChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": {
+      "typeParams": ["TData = any"],
+      "doc": "/** @deprecated use RowDataUpdatedEvent instead\n */"
+    },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -3768,7 +3829,7 @@
   },
   "ColumnEventType": {
     "meta": { "isTypeAlias": true },
-    "type": "\"sizeColumnsToFit\" | \"autosizeColumns\" | \"alignedGridChanged\" | \"filterChanged\" | \"filterDestroyed\" | \"gridOptionsChanged\" | \"gridInitializing\" | \"toolPanelDragAndDrop\" | \"toolPanelUi\" | \"uiColumnMoved\" | \"uiColumnResized\" | \"uiColumnDragged\" | \"uiColumnExpanded\" | \"uiColumnSorted\" | \"contextMenu\" | \"columnMenu\" | \"rowModelUpdated\" | \"rowDataUpdated\" | \"api\" | \"flex\" | \"pivotChart\""
+    "type": "\"sizeColumnsToFit\" | \"autosizeColumns\" | \"autosizeColumnHeaderHeight\" | \"alignedGridChanged\" | \"filterChanged\" | \"filterDestroyed\" | \"gridOptionsChanged\" | \"gridInitializing\" | \"toolPanelDragAndDrop\" | \"toolPanelUi\" | \"uiColumnMoved\" | \"uiColumnResized\" | \"uiColumnDragged\" | \"uiColumnExpanded\" | \"uiColumnSorted\" | \"contextMenu\" | \"columnMenu\" | \"rowModelUpdated\" | \"rowDataUpdated\" | \"api\" | \"flex\" | \"pivotChart\""
   },
   "ColumnEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -6587,7 +6648,7 @@
   "AgChartLegendLabelOptions": {
     "meta": {},
     "type": {
-      "characterLimit?": "number",
+      "maxLength?": "number",
       "color?": "CssColor",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -6596,7 +6657,7 @@
       "formatter?": "(id: string, itemId: any, value: string) => string"
     },
     "docs": {
-      "characterLimit?": "/** If the label text exceeds the character limit, it will be truncated and an ellipsis will be appended to indicate this. By default, the character limit is 25. */",
+      "maxLength?": "/** If the label text exceeds the maximum length, it will be truncated and an ellipsis will be appended to indicate this. */",
       "color?": "/** The colour of the text. */",
       "fontStyle?": "/** The font style to use for the legend. */",
       "fontWeight?": "/** The font weight to use for the legend. */",
@@ -6622,19 +6683,36 @@
       "paddingY?": "/** The vertical spacing in pixels to use between legend items. */"
     }
   },
+  "AgChartLegendClickEvent": {
+    "meta": {},
+    "type": { "itemId": "string", "enabled": "boolean" },
+    "docs": {
+      "itemId": "/** Legend item id - based on series id. */",
+      "enabled": "/** Whether the legend item is currently enabled or not. */"
+    }
+  },
+  "AgChartLegendListeners": {
+    "meta": {},
+    "type": { "legendItemClick?": "(event: AgChartLegendClickEvent) => void" },
+    "docs": {
+      "legendItemClick?": "/** The listener to call when a legend item is clicked. */"
+    }
+  },
   "AgChartLegendOptions": {
     "meta": {},
     "type": {
       "enabled?": "boolean",
       "position?": "AgChartLegendPosition",
       "spacing?": "PixelSize",
-      "item?": "AgChartLegendItemOptions"
+      "item?": "AgChartLegendItemOptions",
+      "listeners?": "AgChartLegendListeners"
     },
     "docs": {
       "enabled?": "/** Whether or not to show the legend. */",
       "position?": "/** Where the legend should show in relation to the chart. */",
       "spacing?": "/** The spacing in pixels to use outside the legend. */",
-      "item?": "/** Configuration for the legend items that consist of a marker and a label. */"
+      "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "listeners?": "/** Optional callbacks for specific legend-related events. */"
     }
   },
   "AgChartTooltipOptions": {
@@ -9444,9 +9522,9 @@
   "IServerSideRowModel": {
     "meta": {},
     "type": {
-      "refreshStore(params?: RefreshStoreParams)": "void",
+      "refreshStore(params?: RefreshServerSideParams)": "void",
       "onRowHeightChanged()": "void",
-      "getStoreState()": "ServerSideStoreState[]",
+      "getStoreState()": "ServerSideGroupLevelState[]",
       "retryLoads()": "void",
       "expandAll(value: boolean)": "void",
       "setDatasource(datasource: IServerSideDatasource)": "void",
@@ -9493,11 +9571,21 @@
       "flushAsyncTransactions()": "void"
     }
   },
-  "RefreshStoreParams": {
+  "RefreshServerSideParams": {
     "meta": {},
     "type": { "route?": "string[]", "purge?": "boolean" },
     "docs": {
-      "route?": "/** List of group keys, pointing to the store to refresh.\n * For example, to purge the cache two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].\n * If no route is passed, or an empty array, then the top level store is refreshed. */",
+      "route?": "/** List of group keys, pointing to the level to refresh.\n * For example, to purge two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].\n * If no route is passed, or an empty array, then the top level is refreshed. */",
+      "purge?": "/** If true, then all rows at the level getting refreshed are immediately destroyed and 'loading' rows will appear.\n * If false, then all rows at the level getting refreshed are kept until rows are loaded (no 'loading' rows appear). */"
+    }
+  },
+  "RefreshStoreParams": {
+    "meta": {
+      "doc": "/** @deprecated use RefreshServerSideParams instead\n */"
+    },
+    "type": { "route?": "string[]", "purge?": "boolean" },
+    "docs": {
+      "route?": "/** List of group keys, pointing to the level to refresh.\n * For example, to purge two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].\n * If no route is passed, or an empty array, then the top level is refreshed. */",
       "purge?": "/** If true, then all rows at the level getting refreshed are immediately destroyed and 'loading' rows will appear.\n * If false, then all rows at the level getting refreshed are kept until rows are loaded (no 'loading' rows appear). */"
     }
   },
@@ -9524,7 +9612,7 @@
       "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
       "isLastRowIndexKnown()": "boolean",
       "getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode)": "RowNode[]",
-      "addStoreStates(result: ServerSideStoreState[])": "void"
+      "addStoreStates(result: ServerSideGroupLevelState[])": "void"
     }
   },
   "StoreRefreshAfterParams": {
@@ -9535,7 +9623,7 @@
       "changedColumns": "string[]"
     }
   },
-  "ServerSideStoreState": {
+  "ServerSideGroupLevelState": {
     "meta": {},
     "type": {
       "infiniteScroll": "boolean",
@@ -9548,12 +9636,35 @@
     },
     "docs": {
       "infiniteScroll": "/** True if infininte scrolling */",
-      "route": "/** The route that identifies this store. */",
-      "rowCount": "/** How many rows the store has. This includes 'loading rows'. */",
+      "route": "/** The route that identifies this level. */",
+      "rowCount": "/** How many rows the level has. This includes 'loading rows'. */",
       "lastRowIndexKnown?": "/** Infinite Scroll only.\n * Whether the last row index is know. */",
-      "info?": "/** Any extra info provided to the store, when data was loaded. */",
-      "maxBlocksInCache?": "/** Infinite Scroll only.\n *  Max blocks allowed in the store. */",
-      "cacheBlockSize?": "/** Infinite Scroll only.\n * The size (number of rows) of each block. */"
+      "info?": "/** Any extra info provided to the level, when data was loaded. */",
+      "maxBlocksInCache?": "/** Infinite Scroll only.\n *  Max blocks allowed in the infinite cache. */",
+      "cacheBlockSize?": "/** Infinite Scroll only.\n * The size (number of rows) of each infinite cache block. */"
+    }
+  },
+  "ServerSideGroupState": {
+    "meta": {
+      "doc": "/** @deprecated use ServerSideGroupLevelState instead\n */"
+    },
+    "type": {
+      "infiniteScroll": "boolean",
+      "route": "string[]",
+      "rowCount": "number",
+      "lastRowIndexKnown?": "boolean",
+      "info?": "any",
+      "maxBlocksInCache?": "number",
+      "cacheBlockSize?": "number"
+    },
+    "docs": {
+      "infiniteScroll": "/** True if infininte scrolling */",
+      "route": "/** The route that identifies this level. */",
+      "rowCount": "/** How many rows the level has. This includes 'loading rows'. */",
+      "lastRowIndexKnown?": "/** Infinite Scroll only.\n * Whether the last row index is know. */",
+      "info?": "/** Any extra info provided to the level, when data was loaded. */",
+      "maxBlocksInCache?": "/** Infinite Scroll only.\n *  Max blocks allowed in the infinite cache. */",
+      "cacheBlockSize?": "/** Infinite Scroll only.\n * The size (number of rows) of each infinite cache block. */"
     }
   },
   "SetFilterModelValue": {
@@ -11400,11 +11511,17 @@
   },
   "LoadSuccessParams": {
     "meta": {},
-    "type": { "rowData": "any[]", "rowCount?": "number", "storeInfo?": "any" },
+    "type": {
+      "rowData": "any[]",
+      "rowCount?": "number",
+      "storeInfo?": "any",
+      "groupLevelInfo?": "any"
+    },
     "docs": {
       "rowData": "/** Data retrieved from the server as requested by the grid. */",
       "rowCount?": "/** The last row, if known, to help Infinite Scroll. */",
-      "storeInfo?": "/** Any extra information for the grid to associate with this load. */"
+      "storeInfo?": "/** @deprecated use groupLevelInfo instead\n */",
+      "groupLevelInfo?": "/** Any extra information for the grid to associate with this load. */"
     }
   },
   "SortOption": {
@@ -12161,6 +12278,8 @@
       "getQuickFilterText?": "(params: GetQuickFilterTextParams<TData>) => string",
       "filterValueGetter?": "string | ValueGetterFunc<TData>",
       "floatingFilter?": "boolean",
+      "wrapHeaderText?": "boolean",
+      "autoHeaderHeight?": "boolean",
       "headerComponent?": "any",
       "headerComponentFramework?": "any",
       "headerComponentParams?": "any",
@@ -12291,7 +12410,9 @@
       "getQuickFilterText?": "/** A function to tell the grid what quick filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
       "filterValueGetter?": "/** Function or expression. Gets the value for filtering purposes. */",
       "floatingFilter?": "/** Whether to display a floating filter for this column. Default: `false` */",
-      "headerComponent?": "/** */\n/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
+      "wrapHeaderText?": "/** If enabled then column header names that are too long for the column width will wrap onto the next line. Default `false` */",
+      "autoHeaderHeight?": "/** If enabled then the column header row will automatically adjust height to acommodate the size of the header cell.\n * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.\n * Default: `false` */",
+      "headerComponent?": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
       "headerComponentFramework?": "/** @deprecated As of v27, use `headerComponent` for framework components too.\n */",
       "headerComponentParams?": "/** The parameters to be passed to the `headerComponent`. */",
       "menuTabs?": "/** Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.\n * This is used to figure out which menu tabs are present and in which order the tabs are shown. */",
@@ -12495,6 +12616,7 @@
       "suppressMovableColumns?": "boolean",
       "suppressColumnMoveAnimation?": "boolean",
       "suppressDragLeaveHidesColumns?": "boolean",
+      "suppressRowGroupHidesColumns?": "boolean",
       "colResizeDefault?": "string",
       "suppressAutoSize?": "boolean",
       "autoSizePadding?": "number",
@@ -12739,7 +12861,8 @@
       "getDataPath?": "GetDataPath<TData>",
       "defaultGroupSortComparator?": "(nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number",
       "getChildCount?": "(dataItem: any) => number",
-      "getServerSideStoreParams?": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams",
+      "getServerSideGroupLevelParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
+      "getServerSideStoreParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
       "isServerSideGroupOpenByDefault?": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
@@ -12878,6 +13001,7 @@
       "suppressMovableColumns?": "/** Set to `true` to suppress column moving, i.e. to make the columns fixed position. Default: `false` */",
       "suppressColumnMoveAnimation?": "/** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. Default: `false` */",
       "suppressDragLeaveHidesColumns?": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
+      "suppressRowGroupHidesColumns?": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
       "colResizeDefault?": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "suppressAutoSize?": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
       "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n * Default: `4` */",
@@ -12922,6 +13046,7 @@
       "detailCellRendererParams?": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
       "detailRowHeight?": "/** Set fixed height in pixels for each detail row. */",
       "detailRowAutoHeight?": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
+      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "context?": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "alignedGrids?": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "tabIndex?": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -13029,7 +13154,7 @@
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
-      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
+      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
@@ -13115,7 +13240,8 @@
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
-      "getServerSideStoreParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideGroupLevelParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
       "isApplyServerSideTransaction?": "/** Allows cancelling transactions. */",
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
@@ -13187,8 +13313,8 @@
       "onRowGroupOpened?(event: RowGroupOpenedEvent<TData>)": "/** A row group was opened or closed. */",
       "onExpandOrCollapseAll?(event: ExpandCollapseAllEvent)": "/** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */",
       "onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent)": "/** The client has set new pinned row data into the grid. */",
-      "onRowDataChanged?(event: RowDataChangedEvent)": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
-      "onRowDataUpdated?(event: RowDataUpdatedEvent)": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
+      "onRowDataChanged?(event: RowDataChangedEvent)": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
+      "onRowDataUpdated?(event: RowDataUpdatedEvent)": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>)": "/** Async transactions have been applied. Contains a list of all transaction results. */",
       "onCellClicked?(event: CellClickedEvent<TData>)": "/** Cell is clicked. */",
       "onCellDoubleClicked?(event: CellDoubleClickedEvent<TData>)": "/** Cell is double clicked. */",
@@ -13260,6 +13386,7 @@
       "suppressMovableColumns?": "boolean",
       "suppressColumnMoveAnimation?": "boolean",
       "suppressDragLeaveHidesColumns?": "boolean",
+      "suppressRowGroupHidesColumns?": "boolean",
       "colResizeDefault?": "string",
       "suppressAutoSize?": "boolean",
       "autoSizePadding?": "number",
@@ -13504,7 +13631,8 @@
       "getDataPath?": "GetDataPath<TData>",
       "defaultGroupSortComparator?": "(nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number",
       "getChildCount?": "(dataItem: any) => number",
-      "getServerSideStoreParams?": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams",
+      "getServerSideGroupLevelParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
+      "getServerSideStoreParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
       "isServerSideGroupOpenByDefault?": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
@@ -13643,6 +13771,7 @@
       "suppressMovableColumns?": "/** Set to `true` to suppress column moving, i.e. to make the columns fixed position. Default: `false` */",
       "suppressColumnMoveAnimation?": "/** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. Default: `false` */",
       "suppressDragLeaveHidesColumns?": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
+      "suppressRowGroupHidesColumns?": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
       "colResizeDefault?": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "suppressAutoSize?": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
       "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n * Default: `4` */",
@@ -13687,6 +13816,7 @@
       "detailCellRendererParams?": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
       "detailRowHeight?": "/** Set fixed height in pixels for each detail row. */",
       "detailRowAutoHeight?": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
+      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "context?": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "alignedGrids?": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "tabIndex?": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -13794,7 +13924,7 @@
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
-      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
+      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
@@ -13880,7 +14010,8 @@
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
-      "getServerSideStoreParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideGroupLevelParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
       "isApplyServerSideTransaction?": "/** Allows cancelling transactions. */",
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
@@ -13952,8 +14083,8 @@
       "onRowGroupOpened?(event: RowGroupOpenedEvent<TData>)": "/** A row group was opened or closed. */",
       "onExpandOrCollapseAll?(event: ExpandCollapseAllEvent)": "/** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */",
       "onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent)": "/** The client has set new pinned row data into the grid. */",
-      "onRowDataChanged?(event: RowDataChangedEvent)": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
-      "onRowDataUpdated?(event: RowDataUpdatedEvent)": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
+      "onRowDataChanged?(event: RowDataChangedEvent)": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
+      "onRowDataUpdated?(event: RowDataUpdatedEvent)": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>)": "/** Async transactions have been applied. Contains a list of all transaction results. */",
       "onCellClicked?(event: CellClickedEvent<TData>)": "/** Cell is clicked. */",
       "onCellDoubleClicked?(event: CellDoubleClickedEvent<TData>)": "/** Cell is double clicked. */",
@@ -14029,6 +14160,7 @@
       "suppressMovableColumns?": "boolean",
       "suppressColumnMoveAnimation?": "boolean",
       "suppressDragLeaveHidesColumns?": "boolean",
+      "suppressRowGroupHidesColumns?": "boolean",
       "colResizeDefault?": "string",
       "suppressAutoSize?": "boolean",
       "autoSizePadding?": "number",
@@ -14273,7 +14405,8 @@
       "getDataPath?": "GetDataPath<TData>",
       "defaultGroupSortComparator?": "(nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number",
       "getChildCount?": "(dataItem: any) => number",
-      "getServerSideStoreParams?": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams",
+      "getServerSideGroupLevelParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
+      "getServerSideStoreParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
       "isServerSideGroupOpenByDefault?": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
@@ -14412,6 +14545,7 @@
       "suppressMovableColumns?": "/** Set to `true` to suppress column moving, i.e. to make the columns fixed position. Default: `false` */",
       "suppressColumnMoveAnimation?": "/** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. Default: `false` */",
       "suppressDragLeaveHidesColumns?": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
+      "suppressRowGroupHidesColumns?": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
       "colResizeDefault?": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "suppressAutoSize?": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
       "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n * Default: `4` */",
@@ -14456,6 +14590,7 @@
       "detailCellRendererParams?": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
       "detailRowHeight?": "/** Set fixed height in pixels for each detail row. */",
       "detailRowAutoHeight?": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
+      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "context?": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "alignedGrids?": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "tabIndex?": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -14563,7 +14698,7 @@
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
-      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
+      "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
@@ -14649,7 +14784,8 @@
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
-      "getServerSideStoreParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideGroupLevelParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
       "isApplyServerSideTransaction?": "/** Allows cancelling transactions. */",
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
@@ -14721,8 +14857,8 @@
       "onRowGroupOpened?(event: RowGroupOpenedEvent<TData>)": "/** A row group was opened or closed. */",
       "onExpandOrCollapseAll?(event: ExpandCollapseAllEvent)": "/** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */",
       "onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent)": "/** The client has set new pinned row data into the grid. */",
-      "onRowDataChanged?(event: RowDataChangedEvent)": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
-      "onRowDataUpdated?(event: RowDataUpdatedEvent)": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
+      "onRowDataChanged?(event: RowDataChangedEvent)": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
+      "onRowDataUpdated?(event: RowDataUpdatedEvent)": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>)": "/** Async transactions have been applied. Contains a list of all transaction results. */",
       "onCellClicked?(event: CellClickedEvent<TData>)": "/** Cell is clicked. */",
       "onCellDoubleClicked?(event: CellDoubleClickedEvent<TData>)": "/** Cell is double clicked. */",

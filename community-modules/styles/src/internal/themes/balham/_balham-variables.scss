@@ -1,0 +1,104 @@
+@use "sass:color";
+
+.ag-theme-balham, .ag-theme-balham-dark {
+    // main colours (overridden by balham-dark)
+    --ag-balham-active-color: #0091ea;
+    --ag-foreground-color: #000;
+    --ag-background-color: #fff;
+    --ag-header-background-color: #f5f7f7;
+    --ag-subheader-background-color: #e2e9eb;
+    --ag-control-panel-background-color: #f5f7f7;
+    --ag-border-color: #bdc3c7;
+    --ag-odd-row-background-color: #fcfdfe;
+    --ag-row-hover-color: #ecf0f1;
+    --ag-column-hover-color: #ecf0f1;
+    --ag-input-border-color: #95a5a6;
+    --ag-invalid-color: #e02525;
+    --ag-input-disabled-background-color: #ebebeb;
+    --ag-checkbox-unchecked-color: #7f8c8d;
+    --ag-input-focus-border-color: #719ECE;
+
+    // derived colours (no color blending - these are shared by balham-dark)
+    --ag-input-focus-box-shadow: 0 0 2px 1px var(--ag-input-focus-border-color);
+    --ag-range-selection-border-color: var(--ag-balham-active-color);
+    --ag-header-cell-moving-background-color: var(--ag-background-color);
+    --ag-checkbox-checked-color: var(--ag-balham-active-color);
+    --ag-checkbox-background-color: var(--ag-background-color);
+
+    // derived and blended colours (these are static versions of the dynamic colour blends
+    // applied by the Sass API and must be overridden in balham-dark)
+    --ag-secondary-foreground-color: #{color.change(#000, $alpha: 0.54)};
+    --ag-disabled-foreground-color: #{color.change(#000, $alpha: 0.38)};
+    --ag-subheader-toolbar-background-color: #{color.change(#e2e9eb, $alpha: 0.5)};
+    --ag-row-border-color: #{color.change(#bdc3c7, $alpha: 0.58)};
+    --ag-chip-background-color: #{color.change(#000, $alpha: 0.1)};
+    --ag-range-selection-background-color: #{color.change(#0091ea, $alpha: 0.2)};
+    --ag-range-selection-background-color-2: #{color.change(#0091ea, $alpha: 0.36)};
+    --ag-range-selection-background-color-3: #{color.change(#0091ea, $alpha: 0.49)};
+    --ag-range-selection-background-color-4: #{color.change(#0091ea, $alpha: 0.59)};
+    --ag-selected-row-background-color: #{color.change(#0091ea, $alpha: 0.28)};
+    --ag-header-column-separator-color: #{color.change(#bdc3c7, $alpha: 0.5)};
+    --ag-input-disabled-border-color: #{color.change(#95a5a6, $alpha: 0.3)};
+
+    --ag-header-column-separator-display: block;
+    --ag-header-column-separator-height: 50%;
+
+    // sizing
+    --ag-grid-size: 4px;
+    --ag-icon-size: 16px;
+    --ag-row-height: calc(var(--ag-grid-size) * 7);
+    --ag-header-height: calc(var(--ag-grid-size) * 8);
+    --ag-list-item-height: calc(var(--ag-grid-size) * 6);
+    --ag-row-group-indent-size: calc(var(--ag-grid-size) * 3 + var(--ag-icon-size));
+    --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 3);
+    --ag-input-height: calc(var(--ag-grid-size) * 4);
+
+    // Fonts
+    --ag-font-family: (-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif);
+    --ag-font-size: 12px;
+    --ag-icon-font-family: agGridBalham;
+
+    // Misc
+    --ag-border-radius: 2px;
+    --ag-checkbox-border-radius: 3px;
+    --ag-card-shadow: none;
+};
+
+.ag-theme-balham-dark {
+    // override colours from balham theme
+    --ag-balham-active-color: #00B0FF;
+    --ag-foreground-color: #F5F5F5;
+    --ag-background-color: #2d3436;
+    --ag-header-background-color: #1c1c1c;
+    --ag-subheader-background-color: #111;
+    --ag-control-panel-background-color: #202020;
+    --ag-border-color: #424242;
+    --ag-odd-row-background-color: #262c2e;
+    --ag-row-hover-color: #3d4749;
+    --ag-column-hover-color: #3d4749;
+    --ag-input-border-color: #f0f0f0;
+    --ag-input-disabled-background-color: rgba(48, 46, 46, 0.3);
+    --ag-checkbox-unchecked-color: #ecf0f1;
+
+    // override blended colors from balham theme
+    --ag-secondary-foreground-color: var(--ag-foreground-color);
+    --ag-disabled-foreground-color: #{color.change(#F5F5F5, $alpha: 0.38)};
+    --ag-subheader-toolbar-background-color: #{color.change(#111, $alpha: 0.5)};
+    --ag-row-border-color: #5c5c5c;
+    --ag-chip-background-color: #{color.change(#F5F5F5, $alpha: 0.08)};
+    --ag-range-selection-background-color: #{color.change(#00B0FF, $alpha: 0.2)};
+    --ag-range-selection-background-color-2: #{color.change(#00B0FF, $alpha: 0.36)};
+    --ag-range-selection-background-color-3: #{color.change(#00B0FF, $alpha: 0.49)};
+    --ag-range-selection-background-color-4: #{color.change(#00B0FF, $alpha: 0.59)};
+    --ag-selected-row-background-color: #{color.change(#00B0FF, $alpha: 0.28)};
+    --ag-header-column-separator-color: #{color.change(#424242, $alpha: 0.5)};
+    --ag-input-disabled-border-color: #{color.change(#f0f0f0, $alpha: 0.3)};
+
+    // additional overrides
+    --ag-header-foreground-color: #{color.change(#F5F5F5, $alpha: 0.64)};
+    --ag-toggle-button-off-background-color: transparent;
+    --ag-toggle-button-off-border-color: var(--ag-foreground-color);
+    --ag-range-selection-chart-category-background-color: #{color.change(#1ab14a, $alpha: 0.5)};
+    --ag-range-selection-chart-background-color: #{color.change(#2da6ff, $alpha: 0.5)};
+    --ag-input-focus-box-shadow: 0 0 4px 1.5px var(--ag-input-focus-border-color);
+}

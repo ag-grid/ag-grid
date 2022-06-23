@@ -10,13 +10,13 @@ This is useful when the data has changed at the source (typically on the server)
 
 The grid has the following API's to assist with refreshing:
 
-<api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["refreshServerSideStore"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
+<api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["refreshServerSide"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
 <api-documentation source='grid-api/api.json' section='infiniteScrolling' names='["getCacheBlockState"]'  ></api-documentation>
 
 
 The following example demonstrates the refresh API. The following can be noted:
 
-- Button **Refresh Top Level** refreshes the top level store. Note the Version column has changed its value.
+- Button **Refresh Top Level** refreshes the top level. Note the Version column has changed its value.
 
 - Button **Refresh [Canada]** refreshes the Canada cache only. To see this in action, make sure you have Canada expanded. Note the Version column has changed it's value.
 
@@ -26,7 +26,7 @@ The following example demonstrates the refresh API. The following can be noted:
 
 - Toggle **Purge** to change whether loading rows are shown or not during the refresh.
 
-<grid-example title='Refresh Store' name='refresh-store' type='generated' options='{ "enterprise": true, "exampleHeight":  615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
+<grid-example title='Refresh Group' name='refresh-group' type='generated' options='{ "enterprise": true, "exampleHeight":  615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 ## Purge vs Refresh
 
@@ -54,15 +54,13 @@ of open groups.
 
 Maintaining open groups is achieved when all of the following are configured:
 
-- Not Infinite Scrolling (`serverSideInfiniteScroll=false`). When using Infinite Scroll, groups and children will be lost.
-
 - Refreshing (`params.purge=false`). When using a purge, groups and children will be lost.
 
 - Row IDs are provided (`getRowId()` implemented, see [Row IDs](/row-ids/)). If not providing Row IDs, groups and children will be lost
 
 When all the above is true, when a refresh is done, open groups will remain open and children will be kept.
 
-The example below shows refreshing using the Full Store and keeping group state. The example is similar to the
+The example below shows refreshing and keeping group state. The example is similar to the
 previous example with the addition `getRowId()` is implemented. Note the following:
 
 - When 'Purge' is not checked, refreshing using any refresh button will maintain any open groups and children at that level.<br/><br/>
@@ -82,19 +80,13 @@ replace rows. This also means when grid property `enableCellChangeFlash = true` 
 changes. If `getRowId()` is not implemented, rows are replaced and cells are re-created from scratch, no flashing
 is possible.
 
+### Example 1: Keeping Group State
 
 <grid-example title='Keep Group State' name='keep-group-state' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-[[note]]
-| If using Infinite Scroll, the grid does not provide for keeping open groups. Refreshing will always
-| reset groups and destroy children.
-|
-| This is because Infinite Scroll loads rows in blocks, so it's unreliable to expect rows that existed before to
-| exist in the new load, as the row could appear in a different block.
-|
-|If you are using Infinite Scroll and need to restore groups to their previously open state, then this logic can
-|be implemented in your application using the [Open by Default](/server-side-model-grouping/#open-by-default) API.
+### Example 2: Keeping Group State with Infinite Scrolling
 
+<grid-example title='Keep Group State with Infinite Scroll' name='keep-group-state-infinite' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 ## Next Up
 

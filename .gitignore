@@ -33,6 +33,16 @@ archive*.zip
 # latest only
 dist
 
+community-modules/all-modules/styles/**
+enterprise-modules/all-modules/styles/**
+grid-packages/ag-grid-community/styles/**
+grid-packages/ag-grid-enterprise/styles/**
+
+# compiled CSS files
+community-modules/styles/*.css
+# compiled css files as SCSS
+community-modules/styles/_css-content.scss
+
 charts-packages/**/dist
 community-modules/**/dist
 enterprise-modules/**/dist

@@ -1,6 +1,6 @@
 import { ColumnApi } from "../../../columns/columnApi";
 import { ColumnModel } from "../../../columns/columnModel";
-import { UserCompDetails, UserComponentFactory } from "../../../components/framework/userComponentFactory";
+import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { KeyCode } from '../../../constants/keyCode';
 import { Autowired } from "../../../context/context";
 import {
@@ -13,7 +13,6 @@ import { Column } from "../../../entities/column";
 import { ColumnGroup } from "../../../entities/columnGroup";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { GridApi } from "../../../gridApi";
-import { Beans } from "../../../rendering/beans";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { removeFromArray } from "../../../utils/array";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
@@ -37,11 +36,9 @@ export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp, ITooltipF
 
 export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
-    @Autowired('beans') protected beans: Beans;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
+    @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
 
     private columnGroup: ColumnGroup;
@@ -209,17 +206,17 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         listener();
     }
 
-    protected onFocusIn(e: FocusEvent) {
+    private onFocusIn(e: FocusEvent) {
         if (!this.eGui.contains(e.relatedTarget as HTMLElement)) {
             const rowIndex = this.getRowIndex();
             this.beans.focusService.setFocusedHeader(rowIndex, this.columnGroup);
         }
     }
 
-    protected handleKeyDown(e: KeyboardEvent) {
-        const eDocument = this.gridOptionsWrapper.getDocument();
-        const activeEl = eDocument.activeElement;
-        const wrapperHasFocus = activeEl === this.eGui;
+    protected handleKeyDown(e: KeyboardEvent): void {
+        super.handleKeyDown(e);
+
+        const wrapperHasFocus = this.getWrapperHasFocus();
 
         if (!this.expandable || !wrapperHasFocus) { return; }
 
@@ -238,15 +235,26 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         if (this.isSuppressMoving()) { return; }
 
         const allLeafColumns = this.columnGroup.getProvidedColumnGroup().getLeafColumns();
+        const hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns();
         const dragSource: DragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eHeaderGroup,
-            defaultIconName: DragAndDropService.ICON_HIDE,
+            defaultIconName: hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             dragItemName: this.displayName,
             // we add in the original group leaf columns, so we move both visible and non-visible items
             getDragItem: this.getDragItemForGroup.bind(this),
             onDragStarted: () => allLeafColumns.forEach(col => col.setMoving(true, "uiColumnDragged")),
-            onDragStopped: () => allLeafColumns.forEach(col => col.setMoving(false, "uiColumnDragged"))
+            onDragStopped: () => allLeafColumns.forEach(col => col.setMoving(false, "uiColumnDragged")),
+            onGridEnter: (dragItem) => {
+                if (hideColumnOnExit) {
+                    this.columnModel.setColumnsVisible(dragItem?.columns || [], true, "uiColumnMoved");
+                }
+            },
+            onGridExit: (dragItem) => {
+                if (hideColumnOnExit) {
+                    this.columnModel.setColumnsVisible(dragItem?.columns || [], false, "uiColumnMoved");
+                }
+            },
         };
 
         this.dragAndDropService.addDragSource(dragSource, true);

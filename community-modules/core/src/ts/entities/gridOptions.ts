@@ -79,7 +79,7 @@ import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { CellPosition } from "./cellPosition";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
-import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideStoreParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "./iCallbackParams";
+import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "./iCallbackParams";
 import { RowNode } from "./rowNode";
 import { SideBarDef } from "./sideBar";
 
@@ -201,6 +201,8 @@ export interface GridOptions<TData = any> {
     suppressColumnMoveAnimation?: boolean;
     /** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */
     suppressDragLeaveHidesColumns?: boolean;
+    /** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */
+    suppressRowGroupHidesColumns?: boolean;
 
     // *** Column Sizing *** //
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */
@@ -339,6 +341,7 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */
     detailRowAutoHeight?: boolean;
 
+    /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/
     groupRowsSticky?: boolean;
 
     // *** Miscellaneous *** //
@@ -657,13 +660,12 @@ export interface GridOptions<TData = any> {
      * Default: `2`
      */
     maxConcurrentDatasourceRequests?: number;
-    /** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */
+    /** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */
     blockLoadDebounceMillis?: number;
     /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false`  */
     purgeClosedRowNodes?: boolean;
     /** Provide the `serverSideDatasource` for server side row model. */
     serverSideDatasource?: IServerSideDatasource;
-
 
     /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */
     serverSideSortAllLevels?: boolean;
@@ -883,7 +885,9 @@ export interface GridOptions<TData = any> {
     /** Allows setting the child count for a group row. */
     getChildCount?: (dataItem: any) => number;
     /** Allows providing different params for different levels of grouping. */
-    getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
+    getServerSideGroupLevelParams?: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams;
+    /** @deprecated use `getServerSideGroupLevelParams` instead. */
+    getServerSideStoreParams?: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams;
     /** Allows groups to be open by default. */
     isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
     /** Allows cancelling transactions. */
@@ -1079,9 +1083,9 @@ export interface GridOptions<TData = any> {
     onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent): void;
 
     // *** Row Model: Client Side *** //
-    /** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */
+    /** @deprecated No longer fired, use onRowDataUpdated instead */
     onRowDataChanged?(event: RowDataChangedEvent): void;
-    /** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */
+    /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */
     onRowDataUpdated?(event: RowDataUpdatedEvent): void;
     /** Async transactions have been applied. Contains a list of all transaction results. */
     onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>): void;
@@ -1234,7 +1238,7 @@ export interface ChartRefParams<TData = any> extends AgGridCommon<TData>, ChartR
 
 export type ServerSideStoreType = 'full' | 'partial';
 
-export interface ServerSideStoreParams {
+export interface ServerSideGroupLevelParams {
     /**
      * @deprecated
      * What store type to use.
@@ -1244,7 +1248,7 @@ export interface ServerSideStoreParams {
      * If infiniteScroll==false, then Full Store is used.
      *  */
     storeType?: ServerSideStoreType;
-    /** 
+    /**
      * Whether to have infinite scroll active or not for the level.
      */
     infiniteScroll?: boolean;
@@ -1261,6 +1265,9 @@ export interface ServerSideStoreParams {
      */
     cacheBlockSize?: number;
 }
+
+/** @deprecated use ServerSideGroupLevelParams instead */
+export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
 
 export interface LoadingCellRendererSelectorFunc {
     (params: ILoadingCellRendererParams): LoadingCellRendererSelectorResult | undefined;

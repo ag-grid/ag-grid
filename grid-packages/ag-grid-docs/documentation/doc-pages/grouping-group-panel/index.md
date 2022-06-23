@@ -48,6 +48,7 @@ This default behaviour can be changed with the following properties:
 
 - `suppressDragLeaveHidesColumns`: When dragging a column out of the grid, e.g. when dragging a column from the grid to the group drop zone, the column will remain visible.
 - `suppressMakeColumnVisibleAfterUnGroup`: When un-grouping, e.g. when clicking the 'x' on a column in the drop zone, the column will not be made visible.
+- `suppressRowGroupHidesColumns`: When grouping, when a group is dragged into the group drop zones, the column will not be hidden.
 
 The default behaviour is more natural for most scenarios as it stops data appearing twice, e.g. if country is displayed in the group column,
 there is no need to display country again in the country column. However, preventing hiding the grouped columns can allow for a finer control over the group sorting.

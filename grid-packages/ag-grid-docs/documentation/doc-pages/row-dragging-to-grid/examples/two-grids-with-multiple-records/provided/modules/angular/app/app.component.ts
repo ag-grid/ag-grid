@@ -2,8 +2,8 @@ import { Component, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
-import "@ag-grid-community/core/dist/styles/ag-grid.css";
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 import { ModuleRegistry, ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
 import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 

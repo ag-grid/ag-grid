@@ -1,12 +1,11 @@
 import {
     Autowired,
     Bean, BeanStub, ColumnApi, Constants,
-    Events,
+    FilterManager,
     GridApi,
     IImmutableService,
     IRowModel,
     PostConstruct,
-    RowDataChangedEvent,
     RowDataTransaction,
     RowNode, RowRenderer, _
 } from "@ag-grid-community/core";
@@ -20,6 +19,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('filterManager') private filterManager: FilterManager;
 
     private clientSideRowModel: ClientSideRowModel;
 
@@ -45,14 +45,6 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         if (nodeTransaction) {
             this.rowRenderer.refreshFullWidthRows(nodeTransaction.update);
         }
-
-        // - shows 'no rows' overlay if needed
-        const rowDataChangedEvent: RowDataChangedEvent = {
-            type: Events.EVENT_ROW_DATA_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-        this.eventService.dispatchEvent(rowDataChangedEvent);
     }
 
     // converts the setRowData() command to a transaction

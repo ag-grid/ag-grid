@@ -59,8 +59,8 @@ import {
     GetChartToolbarItems,
     FillOperationParams,
     IsApplyServerSideTransaction,
-    GetServerSideStoreParamsParams,
-    ServerSideStoreParams,
+    GetServerSideGroupLevelParamsParams,
+    ServerSideGroupLevelParams,
     IsServerSideGroupOpenByDefaultParams,
     IsGroupOpenByDefaultParams,
     ColumnEverythingChangedEvent,
@@ -387,6 +387,8 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     @Input() public suppressColumnMoveAnimation: boolean | undefined = undefined;
     /** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false`     */
     @Input() public suppressDragLeaveHidesColumns: boolean | undefined = undefined;
+    /** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false`     */
+    @Input() public suppressRowGroupHidesColumns: boolean | undefined = undefined;
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing).     */
     @Input() public colResizeDefault: string | undefined = undefined;
     /** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false`     */
@@ -486,6 +488,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     @Input() public detailRowHeight: number | undefined = undefined;
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows.     */
     @Input() public detailRowAutoHeight: boolean | undefined = undefined;
+    /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.     */
     @Input() public groupRowsSticky: boolean | undefined = undefined;
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application.     */
     @Input() public context: any = undefined;
@@ -748,7 +751,7 @@ Full Store is used.
      * Set to `-1` for no maximum restriction on requests.
      * Default: `2`     */
     @Input() public maxConcurrentDatasourceRequests: number | undefined = undefined;
-    /** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled.     */
+    /** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled.     */
     @Input() public blockLoadDebounceMillis: number | undefined = undefined;
     /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false`     */
     @Input() public purgeClosedRowNodes: boolean | undefined = undefined;
@@ -938,7 +941,10 @@ Full Store is used.
     /** Allows setting the child count for a group row.     */
     @Input() public getChildCount: ((dataItem: any) => number) | undefined = undefined;
     /** Allows providing different params for different levels of grouping.     */
-    @Input() public getServerSideStoreParams: ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams) | undefined = undefined;
+    @Input() public getServerSideGroupLevelParams: ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams) | undefined = undefined;
+    /** @deprecated use `getServerSideGroupLevelParams` instead.
+     */
+    @Input() public getServerSideStoreParams: ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams) | undefined = undefined;
     /** Allows groups to be open by default.     */
     @Input() public isServerSideGroupOpenByDefault: ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined = undefined;
     /** Allows cancelling transactions.     */
@@ -1092,9 +1098,10 @@ Allows you to set the ID for a particular row node based on the data.
     @Output() public expandOrCollapseAll: EventEmitter<ExpandCollapseAllEvent> = new EventEmitter<ExpandCollapseAllEvent>();
     /** The client has set new pinned row data into the grid.     */
     @Output() public pinnedRowDataChanged: EventEmitter<PinnedRowDataChangedEvent> = new EventEmitter<PinnedRowDataChangedEvent>();
-    /** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property.     */
+    /** @deprecated No longer fired, use onRowDataUpdated instead
+     */
     @Output() public rowDataChanged: EventEmitter<RowDataChangedEvent> = new EventEmitter<RowDataChangedEvent>();
-    /** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood).     */
+    /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction.     */
     @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent> = new EventEmitter<RowDataUpdatedEvent>();
     /** Async transactions have been applied. Contains a list of all transaction results.     */
     @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushed<TData>> = new EventEmitter<AsyncTransactionsFlushed<TData>>();
@@ -1176,6 +1183,7 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_rememberGroupStateWhenNewData: boolean | null | '';
     static ngAcceptInputType_enableCellChangeFlash: boolean | null | '';
     static ngAcceptInputType_suppressDragLeaveHidesColumns: boolean | null | '';
+    static ngAcceptInputType_suppressRowGroupHidesColumns: boolean | null | '';
     static ngAcceptInputType_suppressMiddleClickScrolls: boolean | null | '';
     static ngAcceptInputType_suppressPreventDefaultOnMouseWheel: boolean | null | '';
     static ngAcceptInputType_suppressCopyRowsToClipboard: boolean | null | '';

@@ -1,0 +1,49 @@
+
+@use "ag";
+@use "sass:meta";
+@use "sass:color";
+
+@use "./parts/icons";
+@use "./base-variables";
+@use "./parts/root";
+@use "./parts/common-structural";
+@use "./parts/print-structural";
+@use "./parts/reset";
+@use "./parts/widgets";
+@use "./parts/grid-layout";
+@use "./parts/grid-borders";
+@use "./parts/menu";
+@use "./parts/sidebar";
+@use "./parts/filter-tool-panel";
+@use "./parts/columns-tool-panel";
+@use "./parts/header";
+@use "./parts/footer";
+@use "./parts/column-drop";
+@use "./parts/charts";
+@use "./parts/date-time";
+@use "./parts/native-inputs";
+
+@mixin general-styles() {
+    @include icons.output();
+    @include base-variables.output();
+    @include root.output();
+    @include common-structural.output();
+    @include print-structural.output();
+    @include reset.output();
+    @include widgets.output();
+    @include grid-layout.output();
+    @include grid-borders.output();
+    @include menu.output();
+    @include sidebar.output();
+    @include filter-tool-panel.output();
+    @include columns-tool-panel.output();
+    @include header.output();
+    @include footer.output();
+    @include column-drop.output();
+    @include charts.output();
+    @include date-time.output();
+}
+
+@mixin native-input-styles() {
+    @include native-inputs.output();
+}

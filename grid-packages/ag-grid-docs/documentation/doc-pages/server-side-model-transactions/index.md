@@ -66,20 +66,20 @@ If the grid callback `getRowId` is not provided, the grid will match on object r
 
 When updating grouped data, a transaction needs to be targeted against the group. This is done by using the transaction's `route` attribute.
 
-If you require to update more than one group, then a transaction needs to be applied for each individual store group to update.
+If you require to update more than one group, then a transaction needs to be applied for each individual group to update.
 
-The example below demonstrates applying transactions to a store with groups. Note the following:
+The example below demonstrates applying transactions to groups. Note the following:
 
 - The buttons **New Palm Oil** and **New Rubber** will add one row to each group accordingly and print the result to the console. The group must be open for the add to happen.
 - The button **New Wool & Amber** will add one item to each group. Note that two transactions are require to achieve this, one for each group, and print the results to the console. The groups must be open for the add to happen.
 - The button **New Product** will attempt to add an item to the top level, however it will fail as the top level has been configured to use Infinite Scroll.
-- The button **Store State** will print to the console the state of the existing stores.
+- The button **Group State** will print to the console the state of the existing groups.
 
 <grid-example title='Transactions Hierarchy' name='transactions-hierarchy' type='generated' options='{ "enterprise": true, "modules": ["serverside","rowgrouping"] }'></grid-example>
 
 ## Infinite Scroll
 
-Transaction Updates do not work for Infinite Scroll. Instead either move your application to not use Infinite Scroll or use [Store Refresh](/server-side-model-refresh/) to have the grid data update.
+Transaction Updates do not work for Infinite Scroll. Instead either move your application to not use Infinite Scroll or  [Refresh](/server-side-model-refresh/) to have the grid data update.
 
 ## Next Up
 

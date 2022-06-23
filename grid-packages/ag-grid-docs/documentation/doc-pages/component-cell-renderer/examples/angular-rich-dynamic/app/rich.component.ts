@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 
-import "@ag-grid-community/core/dist/styles/ag-grid.css";
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 
 import { RatioParentComponent } from "./ratio.parent.component";
 import { ClickableParentComponent } from "./clickable.parent.component";

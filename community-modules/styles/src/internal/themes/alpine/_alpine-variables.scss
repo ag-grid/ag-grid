@@ -1,0 +1,106 @@
+@use "sass:color";
+
+.ag-theme-alpine, .ag-theme-alpine-dark {
+    // COLOURS
+
+    // Active colours - same shade, different opacities
+    --ag-alpine-active-color: #2196f3;
+    --ag-selected-row-background-color: #{color.change(#2196f3, $alpha: 0.3)};
+    --ag-row-hover-color: #{color.change(#2196f3, $alpha: 0.1)};
+    --ag-column-hover-color: #{color.change(#2196f3, $alpha: 0.1)};
+    --ag-input-focus-border-color: #{color.change(#2196f3, $alpha: 0.4)};
+    --ag-range-selection-background-color: #{color.change(#2196f3, $alpha: 0.2)};
+    --ag-range-selection-background-color-2: #{color.change(#2196f3, $alpha: 0.36)};
+    --ag-range-selection-background-color-3: #{color.change(#2196f3, $alpha: 0.49)};
+    --ag-range-selection-background-color-4: #{color.change(#2196f3, $alpha: 0.59)};
+
+    // main colours (overridden by alpine-dark)
+    --ag-background-color: #fff;
+    --ag-foreground-color: #181d1f;
+    --ag-border-color: #babfc7;
+    --ag-secondary-border-color: #dde2eb;
+    --ag-header-background-color: #f8f8f8;
+    --ag-odd-row-background-color: #fcfcfc;
+    --ag-control-panel-background-color: #f8f8f8;
+    --ag-subheader-background-color: #fff;
+    --ag-invalid-color: #e02525;
+    --ag-checkbox-unchecked-color: #999;
+    
+    // derived colours (no color blending - these are shared by alpine-dark)
+    --ag-checkbox-background-color: var(--ag-background-color);
+    --ag-checkbox-checked-color: var(--ag-alpine-active-color);
+    --ag-range-selection-border-color: var(--ag-alpine-active-color);
+    --ag-secondary-foreground-color: var(--ag-foreground-color);
+    --ag-input-border-color: var(--ag-border-color);
+    --ag-input-border-color-invalid: var(--ag-invalid-color);
+    --ag-input-focus-box-shadow: 0 0 2px 0.1rem var(--ag-input-focus-border-color);
+
+    // derived and blended colours (these are static versions of the dynamic colour blends
+    // applied by the Sass API and must be overridden in alpine-dark)
+    --ag-disabled-foreground-color: #{color.change(#181d1f, $alpha: 0.5)};
+    --ag-chip-background-color: #{color.change(#181d1f, $alpha: 0.07)};
+    --ag-input-disabled-border-color: rgba(186, 191, 199, 0.3);
+    --ag-input-disabled-background-color: rgba(186, 191, 199, 0.15);
+
+    // BORDERS
+    --ag-borders: solid 1px;
+    --ag-border-radius: 3px;
+    --ag-borders-side-button: none;
+    --ag-side-button-selected-background: none;
+    --ag-header-column-resize-handle-display: block;
+    --ag-header-column-resize-handle-width: 2px;
+    --ag-header-column-resize-handle-height: 30%;
+
+    // SIZING
+    --ag-grid-size: 6px;
+    --ag-icon-size: 16px;
+    --ag-row-height: calc(var(--ag-grid-size) * 7);          // if changed, update environment.ts
+    --ag-header-height: calc(var(--ag-grid-size) * 8);       // if changed, update environment.ts
+    --ag-list-item-height: calc(var(--ag-grid-size) * 4); // if changed, update environment.ts
+    --ag-column-select-indent-size: var(--ag-icon-size);
+    --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 3);
+    --ag-cell-widget-spacing: calc(var(--ag-grid-size) * 2);
+
+    --ag-widget-container-vertical-padding: calc(var(--ag-grid-size) * 2);
+    --ag-widget-container-horizontal-padding: calc(var(--ag-grid-size) * 2);
+    --ag-widget-vertical-spacing: calc(var(--ag-grid-size) * 1.5);
+
+    --ag-toggle-button-height: 18px;
+    --ag-toggle-button-width: 28px;
+
+    // FONTS
+    --ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    --ag-font-size: 13px;
+    --ag-icon-font-family: agGridAlpine;
+
+    // MISC
+    --ag-selected-tab-underline-color: var(--ag-alpine-active-color);
+    --ag-selected-tab-underline-width: 2px;
+    --ag-selected-tab-underline-transition-speed: 0.3s;
+    --ag-tab-min-width: 240px;
+
+    --ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
+    --ag-popup-shadow: var(--ag-card-shadow);
+    --ag-side-bar-panel-width: 250px;
+};
+
+.ag-theme-alpine-dark {
+    --ag-background-color: #181d1f;
+    --ag-foreground-color: #fff;
+    --ag-border-color: #68686e;
+    --ag-secondary-border-color: #{color.change(#585652, $alpha: 0.5)};
+    --ag-header-background-color: #222628;
+    --ag-odd-row-background-color: #222628;
+    --ag-control-panel-background-color: #222628;
+    --ag-subheader-background-color: #000;
+    --ag-input-disabled-background-color: #282c2f;
+    --ag-input-focus-box-shadow:
+        0 0 2px 0.5px rgba(255, 255, 255, 0.5),
+        0 0 4px 3px var(--ag-input-focus-border-color);
+    --ag-card-shadow: 0 1px 20px 1px black;
+
+    --ag-disabled-foreground-color: #{color.change(#fff, $alpha: 0.5)};
+    --ag-chip-background-color: #{color.change(#fff, $alpha: 0.07)};
+    --ag-input-disabled-border-color: #{color.change(#68686e, $alpha: 0.3)};
+    --ag-input-disabled-background-color: #{color.change(#68686e, $alpha: 0.07)};
+}

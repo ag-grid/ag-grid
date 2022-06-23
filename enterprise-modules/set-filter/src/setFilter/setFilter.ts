@@ -185,10 +185,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> implements I
 
         this.initialiseFilterBodyUi();
 
-        if (params.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
-            !params.values) {
-            this.addEventListenersForDataChanges();
-        }
+        this.addEventListenersForDataChanges();
     }
 
     private applyExcelModeOptions(params: ISetFilterParams): void {
@@ -217,8 +214,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> implements I
     }
 
     private addEventListenersForDataChanges(): void {
-        this.addManagedListener(
-            this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => this.syncAfterDataChange());
+        if (!this.isValuesTakenFromGrid()) { return; }
 
         this.addManagedListener(
             this.eventService,
@@ -231,14 +227,10 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> implements I
             });
     }
 
-    private syncAfterDataChange(refreshValues = true): AgPromise<void> {
+    private syncAfterDataChange(): AgPromise<void> {
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        let promise: AgPromise<void> = AgPromise.resolve();
-
-        if (refreshValues) {
-            promise = this.valueModel.refreshValues();
-        }
+        let promise = this.valueModel.refreshValues();
 
         return promise.then(() => {
             this.refresh();
@@ -461,11 +453,14 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> implements I
     }
 
     public onNewRowsLoaded(): void {
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.isValuesTakenFromGrid()) { return; }
+        this.syncAfterDataChange();
+    }
 
+    private isValuesTakenFromGrid(): boolean {
+        if (!this.valueModel) { return false; }
         const valuesType = this.valueModel.getValuesType();
-
-        this.syncAfterDataChange(valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES);
+        return valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
     }
 
     //noinspection JSUnusedGlobalSymbols
@@ -491,7 +486,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> implements I
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
         this.valueModel.setValuesType(SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES);
-        this.syncAfterDataChange(true);
+        this.syncAfterDataChange();
     }
 
     public refreshFilterValues(): void {

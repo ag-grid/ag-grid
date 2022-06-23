@@ -43,6 +43,7 @@ import { Axis } from '../axis';
 import { GroupedCategoryChart } from './groupedCategoryChart';
 import { prepareOptions, isAgCartesianChartOptions, isAgHierarchyChartOptions, isAgPolarChartOptions, optionsType } from './mapping/prepare';
 import { SeriesOptionsTypes } from './mapping/defaults';
+import { windowValue } from '../util/window';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
 
@@ -116,12 +117,12 @@ export abstract class AgChart {
 }
 
 export abstract class AgChartV2 {
-    static DEBUG = false;
+    static DEBUG = windowValue('agChartsDebug') ?? false;
     
     static create<T extends ChartType>(userOptions: ChartOptionType<T>): T {
         debug('user options', userOptions);
         const mixinOpts: any = {};
-        if ((window as any).agChartsDebug ?? AgChartV2.DEBUG) {
+        if (AgChartV2.DEBUG) {
             mixinOpts['debug'] = true;
         }
 
@@ -143,7 +144,7 @@ export abstract class AgChartV2 {
     static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>): void {
         debug('user options', userOptions);
         const mixinOpts: any = {};
-        if ((window as any).agChartsDebug ?? AgChartV2.DEBUG) {
+        if (AgChartV2.DEBUG) {
             mixinOpts['debug'] = true;
         }
 
@@ -173,7 +174,7 @@ export abstract class AgChartV2 {
 }
 
 function debug(message?: any, ...optionalParams: any[]): void {
-    if ((window as any).agChartsDebug ?? AgChartV2.DEBUG) {
+    if (AgChartV2.DEBUG) {
         console.log(message, ...optionalParams);
     }
 }
@@ -217,6 +218,9 @@ function applyChartOptions<
     }
     if (options.listeners) {
         registerListeners(chart, options.listeners);
+    }
+    if (options.legend?.listeners) {
+        Object.assign(chart.legend.listeners, options.legend.listeners);
     }
 
     chart.options = jsonMerge(chart.options || {}, options);
@@ -292,7 +296,7 @@ function applyAxes<
 }
 
 function createSeries(options: SeriesOptionsTypes[]): Series[] {
-    const series: Series[] = [];
+    const series: Series<any>[] = [];
     const skip: (keyof NonNullable<SeriesOptionsTypes>)[] = ['listeners'];
 
     let index = 0;
@@ -400,7 +404,7 @@ function applyOptionValues<T extends ChartType, S extends ChartOptionType<T>>(
     return jsonApply<T, any>(target, options, applyOpts);
 }
 
-function applySeriesValues<T extends Series, S extends SeriesOptionType<T>>(
+function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>(
     target: T,
     options?: S,
     { skip, path }: { skip?: (keyof T | keyof S)[], path?: string } = {},

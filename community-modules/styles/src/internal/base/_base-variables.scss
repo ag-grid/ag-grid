@@ -1,0 +1,327 @@
+@use "sass:color";
+
+// NOTE this file is used in the themes-customising/index.md file for
+// customer-facing documentation. If you update it; then also update the php
+// file
+
+// Keep to 80 characters per line to avoid line wrapping in the docs
+
+@mixin output {
+    // apply these variables to the root element that has the theme class name on
+    // it, e.g. "ag-theme-alpine"
+    [class*="ag-theme-"] {
+        // Colour of text and icons in primary UI elements like menus
+        --ag-foreground-color: #000;
+
+        // Colour of text in grid cells
+        --ag-data-color: var(--ag-foreground-color);
+
+        // Colour of text and icons in UI elements that need to be slightly less
+        // emphasised to avoid distracting attention from data
+        --ag-secondary-foreground-color: var(--ag-foreground-color);
+
+        // Colour of text and icons in the header
+        --ag-header-foreground-color: var(--ag-secondary-foreground-color);
+
+        // Color of elements that can't be interacted with because they are in a
+        // disabled state
+        --ag-disabled-foreground-color: rgba(0, 0, 0, 0.5);
+
+        // Background colour of the grid
+        --ag-background-color: #fff;
+
+        // Background colour for all headers, including the grid header, panels etc
+        --ag-header-background-color: transparent;
+
+        // Background colour for second level headings within UI components
+        --ag-subheader-background-color: transparent;
+
+        // Background colour for toolbars directly under subheadings (as used in the
+        // chart settings menu)
+        --ag-subheader-toolbar-background-color: transparent;
+
+        // Background for areas of the interface that contain UI controls, like tool
+        // panels and the chart settings menu
+        --ag-control-panel-background-color: transparent;
+
+        // Background for the active tab on the side of the control panel
+        --ag-side-button-selected-background: var(--ag-control-panel-background-color);
+
+        // Background color of selected rows in the grid and in dropdown menus
+        --ag-selected-row-background-color: #BBB;
+
+        // Background colour applied to every other row
+        --ag-odd-row-background-color: var(--ag-background-color);
+
+        // Background color of the overlay shown over the grid e.g. a data loading
+        // indicator
+        --ag-modal-overlay-background-color: rgba(255, 255, 255, 0.66);
+
+        // Background color when hovering over rows in the grid and in dropdown
+        // menus; Note: if you want a rollover on one but not the other, use CSS
+        // selectors instead of this property
+        --ag-row-hover-color: transparent;
+
+        // Background color when hovering over columns in the grid
+        --ag-column-hover-color: transparent;
+
+        // Color to draw around selected cell ranges
+        --ag-range-selection-border-color: var(--ag-foreground-color);
+
+        // Border style for range selections, e.g. `solid` or `dashed`. Do not set
+        // to `none`, if you need to hide the border set the color to transparent
+        --ag-range-selection-border-style: solid;
+
+        // Background colour of selected cell ranges. By default, setting this to a
+        // semi-transparent color (opacity of 0.1 to 0.5 works well) will generate
+        // appropriate values for the range-selection-background-color-{1..4}
+        // colours used when multiple ranges overlap. NOTE: if setting this value to
+        // a CSS variable, and your app supports overlapping range selections, also
+        // set range-selection-background-color-{1..4}.
+        
+        // These 4 variables are used for fine-grained control over the background
+        // color used when 1, 2, 3 or 4 ranges overlap.
+        --ag-range-selection-background-color: rgba(0, 0, 0, 0.2);
+
+        // Optionally set these variables for fine-grained control over the color of
+        // overlapping ranges when 2, 3 or 4 ranges overlap. Hint: for a realistic
+        // appearance of multiple semi-transparent colours overlaying, set the
+        // opacity to 1-((1-X)^N) where X is the opacity of
+        // --ag-range-selection-background-color and N is the number of overlays
+        --ag-range-selection-background-color-2: var(--ag-range-selection-background-color);
+        --ag-range-selection-background-color-3: var(--ag-range-selection-background-color);
+        --ag-range-selection-background-color-4: var(--ag-range-selection-background-color);
+
+        // Background colour to briefly apply to a cell range when it is copied from
+        // or pasted into
+        --ag-range-selection-highlight-color: var(--ag-range-selection-border-color);
+
+        // Colour and thickness of the border drawn under selected tabs, including
+        // menus and tool panels
+        --ag-selected-tab-underline-color: var(--ag-range-selection-border-color);
+        --ag-selected-tab-underline-width: 0;
+        --ag-selected-tab-underline-transition-speed: 0s;
+
+        // Background colour for cells that provide categories to the current range
+        // chart
+        --ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1);
+
+        // Background colour for cells that provide data to the current range chart
+        --ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1);
+
+        // Rollover colour for header cells
+        --ag-header-cell-hover-background-color: transparent;
+
+        // Colour applied to header cells when the column is being dragged to a new
+        // position
+        --ag-header-cell-moving-background-color: var(--ag-header-cell-hover-background-color);
+
+        // Colour to apply when a cell value changes and enableCellChangeFlash is
+        // enabled
+        --ag-value-change-value-highlight-background-color: rgba(22, 160, 133, 0.1);
+
+        // Colours to apply when a value increases or decreases in an
+        // agAnimateShowChangeCellRenderer cell
+        --ag-value-change-delta-up-color: #43a047;
+        --ag-value-change-delta-down-color: #e53935;
+
+        // Colour for the "chip" that represents a column that has been dragged onto
+        // a drop zone
+        --ag-chip-background-color: transparent;
+
+        //
+        // BORDERS
+        //
+
+        // Enable or disable borders around most UI elements in the grid. Set this
+        // to a border style and thickness, e.g. `solid 1px` to enable borders, or
+        // `none` to disable borders. Use the other --ag-borders-* variables for
+        // more fine grained control over which UI elements get borders.
+        --ag-borders: solid 1px;
+
+        // Colour for border around major UI components like the grid itself,
+        // headers; footers and tool panels.
+        --ag-border-color: rgba(0, 0, 0, 0.25);
+
+        // Enable or disable borders that are critical to UX, e.g. those between
+        // headers and rows. Themes that disable borders generally may want to
+        // enable these borders. Set this to a border style and thickness, e.g.
+        // `solid 1px` to enable borders, or `none` to disable borders.
+        --ag-borders-critical: var(--ag-borders);
+
+        // Draw decorative borders separating UI elements within components Set this
+        // to a border style and thickness, e.g. `solid 1px` to enable borders, or
+        // `none` to disable borders.
+        --ag-borders-secondary: var(--ag-borders);
+
+        // Colour for borders used to separate elements within a major UI component
+        --ag-secondary-border-color: var(--ag-border-color);
+
+        // Draw borders between rows. Set this to a border style and thickness, e.g.
+        // `solid 1px` to enable borders, or `none` to disable borders.
+        --ag-borders-row: var(--ag-borders-secondary);
+
+        // Colour for borders between rows, if enabled with --ag-borders-row
+        --ag-row-border-color: var(--ag-secondary-border-color);
+
+        // Default border for cells. This can be used to specify the border-style
+        // and border-color properties e.g. `dashed red` but the border-width is
+        // fixed at 1px.
+        --ag-cell-horizontal-border: solid transparent;
+        
+        // Draw borders around inputs. Set this to a border style and thickness,
+        // e.g. `solid 1px` to enable borders, or `none` to disable borders.
+        --ag-borders-input: var(--ag-borders-secondary);
+
+        // Colour for borders around inputs, if enabled with --ag-borders-input
+        --ag-input-border-color: var(--ag-secondary-border-color);
+
+        // Draw borders around inputs when their content has failed validation. Set
+        // this to a border style and thickness, e.g. `solid 2px` to enable borders.
+        // Set to `none` to disable borders but ensure that you have added styles to
+        // differentiate invalid from valid inputs.
+        --ag-borders-input-invalid: solid 2px;
+
+        // The color for the border around invalid inputs, if enabled with
+        // --ag-borders-input-invalid
+        --ag-input-border-color-invalid: var(--ag-invalid-color);
+
+        // Draw borders around the vertical tabs on the side of the control panel
+        // Set this to a border style and thickness, e.g. `solid 1px` to enable
+        // borders, or `none` to disable borders.
+        --ag-borders-side-button: var(--ag-borders);
+
+        // Border radius applied to many elements such as dialogs and form widgets
+        --ag-border-radius: 0px;
+
+        // Colour of the border between grid rows, or "transparent" to display no
+        // border
+        --ag-row-border-color: var(--ag-secondary-border-color);
+
+        // The Header Column Separator is a vertical border between all columns in
+        // the header. Set display to "block" to enable or "none" to disable
+        --ag-header-column-separator-display: none;
+        --ag-header-column-separator-height: 100%;
+        --ag-header-column-separator-width: 1px;
+        --ag-header-column-separator-color: var(--ag-secondary-border-color);
+
+        // The Header Column Resize Handle is like the column separator but only
+        // appears on resizeable columns. Set display to "block" to enable or "none"
+        // to disable
+        --ag-header-column-resize-handle-display: none;
+        --ag-header-column-resize-handle-height: 50%;
+        --ag-header-column-resize-handle-width: 1px;
+        --ag-header-column-resize-handle-color: var(--ag-secondary-border-color);
+
+        //
+        // INPUTS
+        //
+
+        // The color applied to form elements in an invalid state
+        --ag-invalid-color: red;
+        --ag-input-disabled-border-color: var(--ag-input-border-color);
+        --ag-input-disabled-background-color: transparent;
+
+        --ag-checkbox-background-color: transparent;
+        --ag-checkbox-border-radius: var(--ag-border-radius);
+        --ag-checkbox-checked-color: var(--ag-foreground-color);
+        --ag-checkbox-unchecked-color: var(--ag-foreground-color);
+        --ag-checkbox-indeterminate-color: var(--ag-checkbox-unchecked-color);
+
+        --ag-toggle-button-off-border-color: var(--ag-checkbox-unchecked-color);
+        --ag-toggle-button-off-background-color: var(--ag-checkbox-unchecked-color);
+        --ag-toggle-button-on-border-color: var(--ag-checkbox-checked-color);
+        --ag-toggle-button-on-background-color: var(--ag-checkbox-checked-color);
+        --ag-toggle-button-switch-background-color: var(--ag-background-color);
+        --ag-toggle-button-switch-border-color: var(--ag-toggle-button-off-border-color);
+        --ag-toggle-button-border-width: 1px;
+        --ag-toggle-button-height: var(--ag-icon-size);
+        --ag-toggle-button-width: calc(var(--ag-toggle-button-height) * 2);
+
+        --ag-input-focus-box-shadow: none;
+        --ag-input-focus-border-color: none;
+
+        // CHART SETTINGS
+
+        // Color of border around selected chart style
+        --ag-minichart-selected-chart-color: var(--ag-checkbox-checked-color);
+        // Color of dot representing selected page of chart styles
+        --ag-minichart-selected-page-color: var(--ag-checkbox-checked-color);
+
+
+        //
+        // SIZING / PADDING / SPACING
+        //
+
+        // grid-size is the main control for affecting how tightly data and UI
+        // elements are packed together. All padding and spacing in the grid is
+        // defined as a multiple of grid-size, so increasing it will make most
+        // components larger by increasing their internal white space while leaving
+        // the size of text and icons unchanged.
+        --ag-grid-size: 4px;
+
+        // The size of square icons and icon-buttons
+        --ag-icon-size: 12px;
+
+        // These 4 variables set the padding around and spacing between widgets in
+        // "widget containers" which are parts of the UI that contain many related
+        // widgets, like the set filter menu, charts settings tabs etc.
+        --ag-widget-container-horizontal-padding: calc(var(--ag-grid-size) * 1.5);
+        --ag-widget-container-vertical-padding: calc(var(--ag-grid-size) * 1.5);
+        --ag-widget-horizontal-spacing: calc(var(--ag-grid-size) * 2);
+        --ag-widget-vertical-spacing: var(--ag-grid-size);
+
+        // Horizontal padding for grid and header cells (vertical padding is not set
+        // explicitly, but inferred from row-height / header-height
+        --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 3);
+
+        // Horizontal spacing between widgets inside cells (e.g. row group expand
+        // buttons and row selection checkboxes)
+        --ag-cell-widget-spacing: var(--ag-cell-horizontal-padding);
+
+        // Height of grid rows
+        --ag-row-height: calc(var(--ag-grid-size) * 6 + 1px);
+
+        // Height of header rows
+        --ag-header-height: var(--ag-row-height);
+
+        // Height of items in lists (example of lists are dropdown select inputs and
+        // column menu set filters)
+        --ag-list-item-height: calc(var(--ag-grid-size) * 5);
+
+        // How much to indent child columns in the column tool panel relative to
+        // their parent
+        --ag-column-select-indent-size: calc(var(--ag-grid-size) + var(--ag-icon-size));
+
+        // How much to indent child rows in the grid relative to their parent row
+        --ag-row-group-indent-size: calc(var(--ag-cell-widget-spacing) + var(--ag-icon-size));
+
+        // How much to indent child columns in the filters tool panel relative to
+        // their parent
+        --ag-filter-tool-panel-group-indent: 16px;
+
+        // Minimum width of a tabbed menu (usd in charts)
+        --ag-tab-min-width: 220px;
+
+        // Minimum width of a menu that is not tabbed
+        --ag-menu-min-width: 181px;
+
+        // Width of the sidebar that contains the columns and filters tool panels
+        --ag-side-bar-panel-width: 200px;
+
+        // Fonts
+        --ag-font-family: ("Helvetica Neue", sans-serif);
+        --ag-font-size: 14px;
+
+        // cards are elements that float above the UI
+        --ag-card-radius: var(--ag-border-radius);
+
+        // the default card shadow applies to simple cards like column drag
+        // indicators and text editors
+        --ag-card-shadow: none;
+
+        // override the shadow for popups - cards that contain complex UI, like
+        // menus and charts
+        --ag-popup-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    };
+}

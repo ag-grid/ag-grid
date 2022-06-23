@@ -299,17 +299,16 @@ export class HeaderComp extends Component implements IHeaderComp {
             this.addOrRemoveCssClass('ag-header-cell-sorted-asc', this.params.column.isSortAscending());
             this.addOrRemoveCssClass('ag-header-cell-sorted-desc', this.params.column.isSortDescending());
             this.addOrRemoveCssClass('ag-header-cell-sorted-none', this.params.column.isSortNone());
-    
+
             if (this.params.column.getColDef().showRowGroup) {
                 const sourceColumns = this.columnModel.getSourceColumnsForGroupColumn(this.params.column);
                 // this == is intentional, as it allows null and undefined to match, which are both unsorted states
                 const sortDirectionsMatch = sourceColumns?.every(sourceCol => this.params.column.getSort() == sourceCol.getSort());
-    
                 const isMultiSorting = !sortDirectionsMatch;
-    
+
                 this.addOrRemoveCssClass('ag-header-cell-sorted-mixed', isMultiSorting);
             }
-        }
+        };
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, onSortingChanged);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, onSortingChanged);
     }

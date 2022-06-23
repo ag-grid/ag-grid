@@ -198,6 +198,7 @@ export { RowCtrl, IRowComp } from "./rendering/row/rowCtrl";
 export { RowRenderer } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { ILoadingCellRenderer, ILoadingCellRendererComp, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
+export { CssClassManager } from "./rendering/cssClassManager";
 
 // row models
 export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
@@ -214,8 +215,8 @@ export { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 export { ColumnVO } from "./interfaces/iColumnVO";
 
 export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest } from "./interfaces/iServerSideDatasource";
-export { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams } from "./interfaces/iServerSideRowModel";
-export { IServerSideStore, StoreRefreshAfterParams, ServerSideStoreState } from "./interfaces/IServerSideStore";
+export { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams, RefreshServerSideParams } from "./interfaces/iServerSideRowModel";
+export { IServerSideStore, StoreRefreshAfterParams, ServerSideGroupState, ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
 
 export { ISideBar } from "./interfaces/iSideBar";
 export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
@@ -244,7 +245,7 @@ export { AgMenuPanel } from "./widgets/agMenuPanel";
 export { AgDialog } from "./widgets/agDialog";
 export { AgPanel } from "./widgets/agPanel";
 export { ListOption } from "./widgets/agList";
-export { Component, VisibleChangedEvent, CssClassManager } from "./widgets/component";
+export { Component, VisibleChangedEvent } from "./widgets/component";
 export { ManagedFocusFeature, ManagedFocusCallbacks } from "./widgets/managedFocusFeature";
 export { TabGuardComp } from "./widgets/tabGuardComp";
 export { TabGuardCtrl, ITabGuard } from "./widgets/tabGuardCtrl";
@@ -386,6 +387,7 @@ export {
     RowStyle,
     RowClassParams,
     ServerSideStoreType,
+    ServerSideGroupLevelParams,
     ServerSideStoreParams,
     GetServerSideGroupKey,
     IsServerSideGroup,
@@ -404,6 +406,7 @@ export {
     IsServerSideGroupOpenByDefaultParams,
     IsApplyServerSideTransactionParams,
     IsGroupOpenByDefaultParams,
+    GetServerSideGroupLevelParamsParams,
     GetServerSideStoreParamsParams,
     PaginationNumberFormatterParams,
     ProcessDataFromClipboardParams,

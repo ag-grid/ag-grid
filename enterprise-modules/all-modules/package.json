@@ -80,7 +80,8 @@
     "@ag-grid-enterprise/side-bar": "~27.3.0",
     "@ag-grid-enterprise/sparklines": "~27.3.0",
     "@ag-grid-enterprise/status-bar": "~27.3.0",
-    "@ag-grid-enterprise/viewport-row-model": "~27.3.0"
+    "@ag-grid-enterprise/viewport-row-model": "~27.3.0",
+    "@ag-grid-community/styles": "~27.3.0"
   },
   "devDependencies": {
     "@babel/types": "7.12.7",

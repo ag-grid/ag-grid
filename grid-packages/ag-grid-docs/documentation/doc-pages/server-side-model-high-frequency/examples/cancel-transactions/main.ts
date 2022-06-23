@@ -20,13 +20,13 @@ const gridOptions: GridOptions = {
   },
   isApplyServerSideTransaction: (params: IsApplyServerSideTransactionParams) => {
     var tx = params.transaction as any;
-    var storeInfo = params.storeInfo
-    var txCreatedSinceRowDataRead = tx.serverVersion > storeInfo.serverVersion
+    var groupLevelInfo = params.groupLevelInfo
+    var txCreatedSinceRowDataRead = tx.serverVersion > groupLevelInfo.serverVersion
     console.log(
       'tx.serverVersion = ' +
       tx.serverVersion +
-      ', storeInfo.serverVersion = ' +
-      storeInfo.serverVersion
+      ', groupLevelInfo.serverVersion = ' +
+      groupLevelInfo.serverVersion
     )
     if (txCreatedSinceRowDataRead) {
       console.log('Applying transaction')
@@ -49,7 +49,7 @@ const gridOptions: GridOptions = {
 
           params2.success({
             rowData: rowData,
-            storeInfo: { serverVersion: serverVersion },
+            groupLevelInfo: { serverVersion: serverVersion },
           })
         }, 2000)
       },
@@ -129,7 +129,7 @@ function onBtAdd() {
 }
 
 function onBtRefresh() {
-  gridOptions.api!.refreshServerSideStore({ purge: true })
+  gridOptions.api!.refreshServerSide({ purge: true })
 }
 
 // setup the grid after the page has finished loading

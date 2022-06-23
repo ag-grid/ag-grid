@@ -81,6 +81,7 @@ export class HeaderRowCtrl extends BeanStub {
 
         this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
 
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
@@ -97,6 +98,7 @@ export class HeaderRowCtrl extends BeanStub {
     private onDisplayedColumnsChanged(): void {
         this.onVirtualColumnsChanged();
         this.setWidth();
+        this.onRowHeightChanged();
     }
 
     public getType(): HeaderRowType {
@@ -133,37 +135,32 @@ export class HeaderRowCtrl extends BeanStub {
         const sizes: number[] = [];
 
         let numberOfFloating = 0;
-        let groupHeight: number | null | undefined;
-        let headerHeight: number | null | undefined;
 
         if (this.columnModel.hasFloatingFilters()) {
             headerRowCount++;
             numberOfFloating = 1;
         }
 
-        if (this.columnModel.isPivotMode()) {
-            groupHeight = this.gridOptionsWrapper.getPivotGroupHeaderHeight();
-            headerHeight = this.gridOptionsWrapper.getPivotHeaderHeight();
-        } else {
-            groupHeight = this.gridOptionsWrapper.getGroupHeaderHeight();
-            headerHeight = this.gridOptionsWrapper.getHeaderHeight();
-        }
+        const groupHeight = this.columnModel.getColumnGroupHeaderRowHeight();
+        const headerHeight = this.columnModel.getColumnHeaderRowHeight();
 
         const numberOfNonGroups = 1 + numberOfFloating;
         const numberOfGroups = headerRowCount - numberOfNonGroups;
 
         for (let i = 0; i < numberOfGroups; i++) { sizes.push(groupHeight as number); }
 
-        sizes.push(headerHeight as number);
+        sizes.push(headerHeight);
 
         for (let i = 0; i < numberOfFloating; i++) { sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight() as number); }
 
-        let rowHeight = 0;
+        let topOffset = 0;
 
-        for (let i = 0; i < this.rowIndex; i++) { rowHeight += sizes[i]; }
+        for (let i = 0; i < this.rowIndex; i++) { topOffset += sizes[i]; }
 
-        this.comp.setTop(rowHeight + 'px');
-        this.comp.setHeight(sizes[this.rowIndex] + 'px');
+        const thisRowHeight = sizes[this.rowIndex] + 'px';
+
+        this.comp.setTop(topOffset + 'px');
+        this.comp.setHeight(thisRowHeight);
     }
 
     public getPinned(): string | null {

@@ -1,0 +1,89 @@
+@use "ag";
+
+@mixin output {
+    .ag-side-bar {
+        position: relative;
+    }
+
+    .ag-tool-panel-wrapper {
+        width: var(--ag-side-bar-panel-width);
+        background-color: var(--ag-control-panel-background-color);
+    }
+
+    .ag-side-buttons {
+        padding-top: calc(var(--ag-grid-size) * 4);
+        width: calc(var(--ag-icon-size) + 4px);
+        position: relative;
+        color: var(--ag-foreground-color);
+        overflow: hidden;
+    }
+
+    button.ag-side-button-button {
+        @include ag.inherit-text-styles();
+        background: transparent;
+        padding: calc(var(--ag-grid-size) * 2) 0 calc(var(--ag-grid-size) * 2) 0;
+        width: 100%;
+        margin: 0;
+        min-height: calc(var(--ag-grid-size) * 18);
+        background-position-y: center;
+        background-position-x: center;
+        background-repeat: no-repeat;
+
+        border: none;
+        border-top: var(--ag-borders-side-button) var(--ag-border-color);
+        border-bottom: var(--ag-borders-side-button) var(--ag-border-color);
+        $border-top-color: transparent;
+        $border-bottom-color: transparent;
+
+        &:focus {
+            box-shadow: none;
+        }
+    }
+
+    @include ag.keyboard-focus((ag-side-button-button), 4px);
+
+    .ag-selected button.ag-side-button-button {
+        background: var(--ag-side-button-selected-background);
+    }
+
+    .ag-side-button-icon-wrapper {
+        margin-bottom: 3px;
+    }
+
+    // sidebar visually on left
+    .ag-ltr .ag-side-bar-left,
+    .ag-rtl .ag-side-bar-right {
+        border-right: var(--ag-borders) var(--ag-border-color);
+        .ag-tool-panel-wrapper {
+            border-left: var(--ag-borders) var(--ag-border-color);
+        }
+
+        .ag-side-button-button {
+            border-right: var(--ag-selected-tab-underline-width) solid transparent;
+            transition: border-right var(--ag-selected-tab-underline-transition-speed);
+        }
+
+        .ag-selected .ag-side-button-button {
+            border-right-color: var(--ag-selected-tab-underline-color);
+        }
+    }
+
+    // sidebar visually on right
+    .ag-rtl .ag-side-bar-left,
+    .ag-ltr .ag-side-bar-right {
+        border-left: var(--ag-borders) var(--ag-border-color);
+        
+        .ag-tool-panel-wrapper {
+            border-right: var(--ag-borders) var(--ag-border-color);
+        }
+
+        .ag-side-button-button {
+            border-left: var(--ag-selected-tab-underline-width) solid transparent;
+            transition: border-left var(--ag-selected-tab-underline-transition-speed);
+        }
+
+        .ag-selected .ag-side-button-button {
+            border-left-color: var(--ag-selected-tab-underline-color);
+        }
+    }
+}

@@ -1,0 +1,78 @@
+
+
+@mixin selectable($value) {
+    @if $value == null {
+        $value: none;
+    }
+
+    -moz-user-select: $value;
+    -webkit-user-select: $value;
+    -ms-user-select: $value;
+    user-select: $value;
+}
+
+@mixin inherit-text-styles() {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+}
+
+@mixin keyboard-focus($selectors, $offset) {
+    .ag-keyboard-focus {
+        @each $selector in $selectors {
+            .#{$selector}:focus {
+                outline: none;
+                &::after {
+                    content: '';
+                    position: absolute;
+                    background-color: transparent;
+                    pointer-events: none;
+                    top: $offset;
+                    left: $offset;
+                    display: block;
+                    width: calc(100% - #{$offset * 2});
+                    height: calc(100% - #{$offset * 2});
+                    border: 1px solid;
+                    border-color: var(--ag-input-focus-border-color);
+                }
+            }
+        }
+    }
+}
+
+@mixin vertical-widget-container {
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+    padding-bottom: calc(var(--ag-widget-container-vertical-padding) - var(--ag-widget-vertical-spacing));
+
+    & > * {
+        margin-bottom: var(--ag-widget-vertical-spacing);
+    }
+}
+
+@mixin list-item-hovered {
+    .ag-list-item-hovered::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: var(--ag-range-selection-border-color);
+    }
+    .ag-item-highlight-top::after {
+        top: 0;
+    }
+    .ag-item-highlight-bottom::after {
+        bottom: 0;
+    }
+}
+
+@mixin card() {
+    border: var(--ag-borders) var(--ag-border-color);
+    
+    background: var(--ag-background-color);
+    border-radius: var(--ag-card-radius);
+    box-shadow: var(--ag-card-shadow);
+    padding: var(--ag-grid-size);
+}

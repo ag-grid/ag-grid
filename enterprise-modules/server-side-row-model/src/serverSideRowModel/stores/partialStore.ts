@@ -15,9 +15,8 @@ import {
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
-    ServerSideStoreParams,
-    ServerSideStoreState,
-    ServerSideStoreType,
+    ServerSideGroupLevelParams,
+    ServerSideGroupLevelState,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
@@ -29,6 +28,7 @@ import {
 import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
 import { PartialStoreBlock } from "../blocks/partialStoreBlock";
+import { BlockUtils } from "../blocks/blockUtils";
 
 enum FindResult { FOUND, CONTINUE_FIND, BREAK_FIND }
 
@@ -47,9 +47,10 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
     @Autowired("focusService") private focusService: FocusService;
     @Autowired("columnModel") private columnModel: ColumnModel;
+    @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
 
     private readonly ssrmParams: SSRMParams;
-    private readonly storeParams: ServerSideStoreParams;
+    private readonly storeParams: ServerSideGroupLevelParams;
     private readonly parentRowNode: RowNode;
     private readonly blocks: { [blockNumber: string]: PartialStoreBlock; } = {};
     private readonly blockHeights: { [blockId: number]: number } = {};
@@ -71,7 +72,9 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
     private info: any = {};
 
-    constructor(ssrmParams: SSRMParams, storeParams: ServerSideStoreParams, parentRowNode: RowNode) {
+    private refreshedNodeCache: { [id: string]: RowNode } = {};
+
+    constructor(ssrmParams: SSRMParams, storeParams: ServerSideGroupLevelParams, parentRowNode: RowNode) {
         super();
         this.ssrmParams = ssrmParams;
         this.storeParams = storeParams;
@@ -87,6 +90,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     @PreDestroy
     private destroyAllBlocks(): void {
         this.getBlocksInOrder().forEach(block => this.destroyBlock(block));
+        this.blockUtils.destroyRowNodes(Object.values(this.refreshedNodeCache));
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -114,8 +118,9 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
         this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${params.rowCount}`);
 
-        if (params.storeInfo) {
-            Object.assign(this.info, params.storeInfo);
+        const info = params.storeInfo || params.groupLevelInfo;
+        if (info) {
+            Object.assign(this.info, info);
         }
 
         if (!params.rowData) {
@@ -279,7 +284,32 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         this.fireCacheUpdatedEvent();
     }
 
+    public isNodeCached(id: string) {
+        return !!this.refreshedNodeCache[id];
+    }
+
+    public retrieveNodeFromCache(id: string) {
+        const node = this.refreshedNodeCache[id];
+        if (node) {
+            delete this.refreshedNodeCache[id];
+        }
+        return node;
+    }
+
+    private buildRowNodeCache() {
+        const rowCache: { [id: string]: RowNode } = {};
+        this.getBlocksInOrder().forEach(block => {
+            block.rowNodes.forEach(row => {
+                if (row.group) {
+                    rowCache[row.id!] = row;
+                }
+            });
+        });
+        this.refreshedNodeCache = rowCache;
+    }
+
     private refreshBlocks(): void {
+        this.buildRowNodeCache();
         this.getBlocksInOrder().forEach(block => {
             block.refresh();
         });
@@ -296,7 +326,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         // otherwise if set to zero rows last time, and we don't update the row count, then after
         // the purge there will still be zero rows, meaning the SSRM won't request any rows.
         // to kick things off, at least one row needs to be asked for.
-        if (this.columnModel.isAutoRowHeightActive || this.rowCount === 0) {
+        if (this.columnModel.isAutoRowHeightActive() || this.rowCount === 0) {
             this.rowCount = PartialStore.INITIAL_ROW_COUNT;
         }
     }
@@ -543,7 +573,6 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
     // gets called in a) init() above and b) by the grid
     public getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock = false): RowNode | undefined {
-
         // this can happen if asking for a row that doesn't exist in the model,
         // eg if a cell range is selected, and the user filters so rows no longer exists
         if (!this.isDisplayIndexInStore(displayRowIndex)) { return undefined; }
@@ -665,7 +694,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         return this.findBlockAndExecute(matchBlockFunc, blockFoundFunc, blockNotFoundFunc);
     }
 
-    public addStoreStates(result: ServerSideStoreState[]): void {
+    public addStoreStates(result: ServerSideGroupLevelState[]): void {
         result.push({
             infiniteScroll: true,
             route: this.parentRowNode.getGroupKeys(),
@@ -717,7 +746,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
             let nextNode: RowNode | null = null;
             this.getBlocksInOrder().forEach(block => {
                 block.forEachNodeShallow(rowNode => {
-                    if (rowNode.key === key) {
+                    if (rowNode.key == key) {
                         nextNode = rowNode;
                     }
                 }, new NumberSequence());

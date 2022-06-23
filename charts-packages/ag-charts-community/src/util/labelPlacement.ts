@@ -4,10 +4,11 @@ export interface MeasuredLabel {
     readonly height: number;
 }
 
-export interface PlacedLabel extends MeasuredLabel {
+export interface PlacedLabel<PLD = PointLabelDatum> extends MeasuredLabel {
     readonly index: number;
     readonly x: number;
     readonly y: number;
+    readonly datum: PLD;
 }
 
 export interface PointLabelDatum {
@@ -45,6 +46,13 @@ function rectRectOverlap(x1: number, y1: number, w1: number, h1: number, x2: num
 
 function rectContainsRect(r1x: number, r1y: number, r1w: number, r1h: number, r2x: number, r2y: number, r2w: number, r2h: number) {
     return (r2x + r2w) < (r1x + r1w) && (r2x) > (r1x) && (r2y) > (r1y) && (r2y + r2h) < (r1y + r1h);
+}
+
+export function isPointLabelDatum(x: any): x is PointLabelDatum {
+    return x != null && 
+        typeof x.point === 'object' &&
+        typeof x.size === 'number' &&
+        typeof x.label === 'object';
 }
 
 /**
@@ -91,7 +99,8 @@ export function placeLabels(data: readonly (readonly PointLabelDatum[])[], bound
                 x,
                 y,
                 width,
-                height
+                height,
+                datum: d,
             });
         }
     }

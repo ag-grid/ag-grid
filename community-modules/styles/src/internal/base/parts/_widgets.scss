@@ -1,0 +1,499 @@
+@use "ag";
+
+@mixin output {
+    .ag-checkbox,
+    .ag-radio-button {
+        .ag-input-wrapper {
+            overflow: visible;
+        }
+    }
+
+    .ag-range-field {
+        .ag-input-wrapper {
+            height: 100%;
+        }
+    }
+
+    .ag-toggle-button {
+        flex: none;
+        width: unset;
+        min-width: unset;
+    }
+
+    .ag-label-align-right .ag-label {
+        @include ag.unthemed-rtl((margin-left: var(--ag-grid-size)));
+    }
+
+    input[class^='ag-'] {
+        margin: 0;
+        background-color: var(--ag-background-color);
+    }
+
+    textarea[class^='ag-'],
+    select[class^='ag-'] {
+        background-color: var(--ag-background-color);
+    }
+
+    @include ag.text-input {
+        font-size: inherit;
+        line-height: inherit;
+        color: inherit;
+
+        border: var(--ag-borders-input) var(--ag-input-border-color);
+
+        &:disabled {
+            color: var(--ag-disabled-foreground-color);
+            background-color: var(--ag-input-disabled-background-color);
+            border-color: var(--ag-input-disabled-border-color);
+        }
+
+        &:focus {
+            outline: none;
+            box-shadow: var(--ag-input-focus-box-shadow);
+            border-color: var(--ag-input-focus-border-color);
+        }
+
+        &:invalid {
+            border: var(--ag-borders-input-invalid) var(--ag-input-border-color-invalid);
+        }
+    }
+
+    input[class^='ag-'][type='number'] {
+        -moz-appearance: textfield;
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    }
+
+    input[class^='ag-'][type='range'] {
+        padding: 0;
+    }
+
+    input[class^='ag-'][type='button'], button[class^='ag-'] {
+        &:focus {
+            box-shadow: var(--ag-input-focus-box-shadow);
+        }
+    }
+
+    .ag-drag-handle {
+        color: var(--ag-secondary-foreground-color);
+    }
+
+    ////////////////////////////////////////
+    // Lists
+    ////////////////////////////////////////
+    .ag-list-item, .ag-virtual-list-item {
+        height: var(--ag-list-item-height);
+    }
+
+    @include ag.keyboard-focus((ag-virtual-list-item), 4px);
+
+    .ag-select-list {
+        background-color: var(--ag-background-color);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .ag-list-item {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &.ag-active-item {
+            background-color: var(--ag-row-hover-color);
+        }
+    }
+
+    .ag-select-list-item {
+        padding-left: 4px;
+        padding-right: 4px;
+        cursor: default;
+        @include ag.selectable(none);
+        span {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    }
+
+    .ag-select {
+        .ag-picker-field-wrapper {
+            background-color: var(--ag-background-color);
+            min-height: var(--ag-list-item-height);
+            cursor: default;
+        }
+
+        &.ag-disabled .ag-picker-field-wrapper:focus {
+            box-shadow: none;
+        }
+
+        &:not(.ag-cell-editor) {
+            height: var(--ag-list-item-height);
+        }
+        .ag-picker-field-display {
+            margin: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ag-picker-field-icon {
+            display: flex;
+            align-items: center;
+        }
+        &.ag-disabled {
+            opacity: 0.5;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Rich Select
+    ////////////////////////////////////////
+    .ag-rich-select {
+        background-color: var(--ag-control-panel-background-color);
+    }
+
+    .ag-rich-select-list {
+        width: 100%;
+        min-width: 200px;
+        height: calc(var(--ag-row-height) * 6.5); // intentional
+    }
+
+    .ag-rich-select-value {
+        padding: 0 var(--ag-grid-size) 0 var(--ag-cell-horizontal-padding);
+        height: var(--ag-row-height);
+
+        border-bottom: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+    }
+
+    .ag-rich-select-virtual-list-item {
+        cursor: default;
+        height: var(--ag-list-item-height);
+
+        &:hover {
+            background-color: var(--ag-row-hover-color);
+        }
+    }
+
+    .ag-rich-select-row {
+        padding-left: var(--ag-cell-horizontal-padding);
+    }
+
+    .ag-rich-select-row-selected {
+        background-color: var(--ag-selected-row-background-color);
+    }
+
+    ////////////////////////////////////////
+    // Selection checkbox
+    ////////////////////////////////////////
+
+
+    .ag-row-drag,
+    .ag-selection-checkbox,
+    .ag-group-expanded,
+    .ag-group-contracted {
+        @include ag.unthemed-rtl(( margin-right: var(--ag-cell-widget-spacing) ));
+
+        color: var(--ag-secondary-foreground-color);
+    }
+
+    .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
+        // Needed to capitalize min, because it clashes with old versions of Sass
+        height: Min(var(--ag-line-height, calc(var(--ag-row-height) - 2px)), calc(var(--ag-row-height) - 2px));
+        display: flex;
+        align-items: center;
+        flex: none;
+    }
+
+    .ag-group-expanded,
+    .ag-group-contracted {
+        cursor: pointer;
+    }
+
+    .ag-group-title-bar-icon {
+        cursor: pointer;
+        flex: none;
+        color: var(--ag-secondary-foreground-color);
+    }
+
+    .ag-group-child-count {
+        @include ag.unthemed-rtl(( margin-left: 2px ));
+    }
+
+    .ag-group-title-bar {
+        background-color: var(--ag-subheader-background-color);
+        padding: var(--ag-grid-size);
+    }
+
+    .ag-group-toolbar {
+        padding: var(--ag-grid-size);
+        background-color: var(--ag-subheader-toolbar-background-color);
+    }
+
+    .ag-disabled-group-title-bar, .ag-disabled-group-container {
+        opacity: 0.5
+    }
+
+    .group-item {
+        margin: calc(var(--ag-grid-size) * 0.5) 0;
+    }
+
+    .ag-label {
+        white-space: nowrap;
+        @include ag.unthemed-rtl((margin-right: var(--ag-grid-size)));
+    }
+
+    .ag-label-align-top .ag-label {
+        margin-bottom: calc(var(--ag-grid-size) * 0.5);
+    }
+
+    .ag-slider-field,
+    .ag-angle-select-field {
+        @include ag.unthemed-rtl((margin-right: calc(var(--ag-grid-size) * 2)));
+    }
+
+    .ag-angle-select-parent-circle {
+        width: 24px;
+        height: 24px;
+        border-radius: 12px;
+        border: solid 1px;
+        border-color: var(--ag-border-color);
+        background-color: var(--ag-background-color);
+    }
+
+    .ag-angle-select-child-circle {
+        top: 4px;
+        left: 12px;
+        width: 6px;
+        height: 6px;
+        margin-left: -3px;
+        margin-top: -4px;
+        border-radius: 3px;
+        background-color: var(--ag-secondary-foreground-color);
+    }
+
+    .ag-picker-field-wrapper {
+        border: 1px solid;
+        border-color: var(--ag-border-color);
+        border-radius: 5px;
+        &:focus {
+            box-shadow: var(--ag-input-focus-box-shadow);
+        }
+    }
+
+    .ag-picker-field-button {
+        background-color: var(--ag-background-color);
+        color: var(--ag-secondary-foreground-color);
+    }
+
+    .ag-dialog.ag-color-dialog {
+        border-radius: 5px;
+    }
+
+    .ag-color-picker .ag-picker-field-display {
+        height: var(--ag-icon-size);
+    }
+
+    .ag-color-panel {
+        padding: var(--ag-grid-size);
+    }
+
+    .ag-spectrum-color {
+        background-color: rgb(255, 0, 0);
+        border-radius: 2px;
+    }
+
+    .ag-spectrum-tools {
+        padding: 10px;
+    }
+
+    .ag-spectrum-sat {
+        background-image: linear-gradient(to right, white, rgba(204, 154, 129, 0));
+    }
+
+    .ag-spectrum-val {
+        background-image: linear-gradient(to top, black, rgba(204, 154, 129, 0));
+    }
+
+    .ag-spectrum-dragger {
+        border-radius: 12px;
+        height: 12px;
+        width: 12px;
+        border: 1px solid white;
+        background: black;
+        box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.24);
+    }
+
+    .ag-spectrum-hue-background {
+        border-radius: 2px;
+    }
+
+    .ag-spectrum-alpha-background {
+        border-radius: 2px;
+    }
+
+    .ag-spectrum-tool {
+        margin-bottom: 10px;
+        height: 11px;
+        border-radius: 2px;
+    }
+
+    .ag-spectrum-slider {
+        margin-top: -12px;
+        width: 13px;
+        height: 13px;
+        border-radius: 13px;
+        background-color: rgb(248, 248, 248);
+        box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .ag-recent-color {
+        margin: 0 3px;
+        &:first-child {
+            margin-left: 0;
+        }
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Ghost Element (Drag and Drop)
+    ////////////////////////////////////////
+    .ag-dnd-ghost {
+        @include ag.card();
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+        color: var(--ag-secondary-foreground-color);
+        height: var(--ag-header-height) !important;
+        line-height: var(--ag-header-height);
+        margin: 0;
+        padding: 0 calc(var(--ag-grid-size) * 2);
+        transform: translateY(calc(var(--ag-grid-size) * 2));
+    }
+
+    .ag-dnd-ghost-icon {
+        margin-right: var(--ag-grid-size);
+        color: var(--ag-foreground-color);
+    }
+
+    ////////////////////////////////////////
+    // Popup
+    ////////////////////////////////////////
+    .ag-popup-child:not(.ag-tooltip-custom) {
+        box-shadow: var(--ag-popup-shadow);
+    }
+
+    ////////////////////////////////////////
+    // Dialog
+    ////////////////////////////////////////
+
+    .ag-dragging-range-handle .ag-dialog,
+    .ag-dragging-fill-handle .ag-dialog {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    .ag-dialog {
+        border-radius: var(--ag-border-radius);
+        border: var(--ag-borders) var(--ag-border-color);
+    }
+
+    .ag-panel {
+        background-color: var(--ag-background-color);
+    }
+
+    .ag-panel-title-bar {
+        background-color: var(--ag-header-background-color);
+        color: var(--ag-header-foreground-color);
+        height: var(--ag-header-height);
+        padding: var(--ag-grid-size) var(--ag-cell-horizontal-padding);
+        border-bottom: var(--ag-borders) var(--ag-border-color);
+    }
+
+    .ag-panel-title-bar-button {
+        @include ag.unthemed-rtl((margin-left: var(--ag-grid-size)));
+    }
+
+    ////////////////////////////////////////
+    // Tooltip
+    ////////////////////////////////////////
+    .ag-tooltip {
+        background-color: var(--ag-header-background-color);
+        color: var(--ag-foreground-color);
+        padding: var(--ag-grid-size);
+        border: var(--ag-borders) var(--ag-border-color);
+        border-radius: var(--ag-card-radius);
+        transition: opacity 1s;
+        white-space: normal;
+        &.ag-tooltip-hiding {
+            opacity: 0;
+        }
+    }
+
+    .ag-tooltip-custom {
+        transition: opacity 1s;
+        &.ag-tooltip-hiding {
+            opacity: 0;
+        }
+    }
+
+    // Column select
+    @for $i from 1 to 10 {
+        .ag-column-select-indent-#{$i} {
+            @include ag.unthemed-rtl(( padding-left: calc(#{$i} * var(--ag-column-select-indent-size)) ));
+        }
+    }
+
+    .ag-column-select-header-icon {
+        cursor: pointer;
+    }
+
+    @include ag.keyboard-focus((ag-column-select-header-icon), 0px);
+
+    .ag-column-group-icons,
+    .ag-column-select-header-icon,
+    .ag-column-select-header-checkbox,
+    .ag-column-select-header-filter-wrapper,
+    .ag-column-select-checkbox,
+    .ag-column-select-column-drag-handle,
+    .ag-column-select-column-group-drag-handle,
+    .ag-column-select-column-label {
+        &:not(:last-child) {
+            @include ag.unthemed-rtl((margin-right: var(--ag-widget-horizontal-spacing)))
+        }
+    }
+
+    @include ag.keyboard-focus((ag-column-select-virtual-list-item), 1px);
+
+    .ag-column-select-column-group,
+    .ag-column-select-column {
+        &:not(:last-child) {
+            margin-bottom: var(--ag-widget-vertical-spacing);
+        }
+    }
+
+    .ag-column-select-column-readonly,
+    .ag-column-select-column-group-readonly {
+        color: var(--ag-disabled-foreground-color);
+        pointer-events: none;
+    }
+
+    // note - this applies a margin of the same width as a .ag-column-group-icons element, to indent columns
+    // wihtout icons to the same level as siblings with icons. If changing .ag-column-group-icons, change this too.
+    .ag-column-select-add-group-indent {
+        @include ag.unthemed-rtl(( margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2) ));
+    }
+
+    .ag-column-select-virtual-list-viewport {
+        padding: calc(var(--ag-widget-container-vertical-padding) * 0.5) 0px;
+    }
+
+    .ag-column-select-virtual-list-item {
+        padding: 0 var(--ag-widget-container-horizontal-padding);
+    }
+}

@@ -353,6 +353,22 @@
     "onDragStopped": {
       "description": "/** Callback for drag stopped */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onGridEnter": {
+      "description": "/** Callback for entering the grid */",
+      "type": {
+        "arguments": { "dragItem": "DragItem | null" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "onGridExit": {
+      "description": "/** Callback for exiting the grid */",
+      "type": {
+        "arguments": { "dragItem": "DragItem | null" },
+        "returnType": "void",
+        "optional": true
+      }
     }
   },
   "DropTarget": {
@@ -983,8 +999,16 @@
       "description": "/** Whether to display a floating filter for this column. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "wrapHeaderText": {
+      "description": "/** If enabled then column header names that are too long for the column width will wrap onto the next line. Default `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "autoHeaderHeight": {
+      "description": "/** If enabled then the column header row will automatically adjust height to acommodate the size of the header cell.\n * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "headerComponent": {
-      "description": "/** */\n/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
+      "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerComponentFramework": {
@@ -2478,6 +2502,10 @@
       "description": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "suppressRowGroupHidesColumns": {
+      "description": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "colResizeDefault": {
       "description": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "type": { "returnType": "string", "optional": true }
@@ -2667,6 +2695,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
+      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "context": {
@@ -3110,7 +3139,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "blockLoadDebounceMillis": {
-      "description": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
+      "description": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
       "type": { "returnType": "number", "optional": true }
     },
     "purgeClosedRowNodes": {
@@ -3592,11 +3621,19 @@
         "optional": true
       }
     },
-    "getServerSideStoreParams": {
+    "getServerSideGroupLevelParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams" },
-        "returnType": "ServerSideStoreParams",
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
+        "optional": true
+      }
+    },
+    "getServerSideStoreParams": {
+      "description": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
+      "type": {
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
         "optional": true
       }
     },
@@ -4665,7 +4702,7 @@
       "meta": { "isEvent": true, "name": "onPinnedRowDataChanged" }
     },
     "onRowDataChanged": {
-      "description": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
+      "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
         "arguments": { "event": "RowDataChangedEvent" },
         "returnType": "void",
@@ -4674,7 +4711,7 @@
       "meta": { "isEvent": true, "name": "onRowDataChanged" }
     },
     "rowDataChanged": {
-      "description": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
+      "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
         "arguments": { "event": "RowDataChangedEvent" },
         "returnType": "void",
@@ -4683,7 +4720,7 @@
       "meta": { "isEvent": true, "name": "onRowDataChanged" }
     },
     "onRowDataUpdated": {
-      "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
+      "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
         "arguments": { "event": "RowDataUpdatedEvent" },
         "returnType": "void",
@@ -4692,7 +4729,7 @@
       "meta": { "isEvent": true, "name": "onRowDataUpdated" }
     },
     "rowDataUpdated": {
-      "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
+      "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
         "arguments": { "event": "RowDataUpdatedEvent" },
         "returnType": "void",
@@ -5191,6 +5228,24 @@
     }
   },
   "ServerSideStoreType": {},
+  "ServerSideGroupLevelParams": {
+    "storeType": {
+      "description": "/** @deprecated What store type to use.\nIf missing, then defaults to grid option `serverSideStoreType`.\nDeprecated in favor of infiniteScroll.\nIf infiniteScroll==true, then Partial Store is used.\nIf infiniteScroll==false, then Full Store is used.\n */",
+      "type": { "returnType": "ServerSideStoreType", "optional": true }
+    },
+    "infiniteScroll": {
+      "description": "/** Whether to have infinite scroll active or not for the level. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "maxBlocksInCache": {
+      "description": "/** For Infinite Scroll only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "cacheBlockSize": {
+      "description": "/** For Infinite Scroll only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
   "ServerSideStoreParams": {
     "storeType": {
       "description": "/** @deprecated What store type to use.\nIf missing, then defaults to grid option `serverSideStoreType`.\nDeprecated in favor of infiniteScroll.\nIf infiniteScroll==true, then Partial Store is used.\nIf infiniteScroll==false, then Full Store is used.\n */",
@@ -5545,6 +5600,40 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
+  "GetServerSideGroupLevelParamsParams": {
+    "level": {
+      "description": "/** The level of the store. Top level is 0. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "parentRowNode": {
+      "description": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
+      "type": { "returnType": "RowNode", "optional": true }
+    },
+    "rowGroupColumns": {
+      "description": "/** Active Row Group Columns, if any. */",
+      "type": { "returnType": "Column[]", "optional": false }
+    },
+    "pivotColumns": {
+      "description": "/** Active Pivot Columns, if any. */",
+      "type": { "returnType": "Column[]", "optional": false }
+    },
+    "pivotMode": {
+      "description": "/** true if pivot mode is active. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<any>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
   "GetServerSideStoreParamsParams": {
     "level": {
       "description": "/** The level of the store. Top level is 0. */",
@@ -5566,10 +5655,9 @@
       "description": "/** true if pivot mode is active. */",
       "type": { "returnType": "boolean", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<any>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5583,10 +5671,9 @@
   "IsServerSideGroupOpenByDefaultParams": {
     "data": { "type": { "returnType": "any", "optional": false } },
     "rowNode": { "type": { "returnType": "RowNode", "optional": false } },
-    "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<any>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5606,11 +5693,17 @@
       "description": "/** The parent RowNode, if transaction is applied to a group. */",
       "type": { "returnType": "RowNode", "optional": false }
     },
-    "storeInfo": { "type": { "returnType": "any", "optional": false } },
-    "meta": { "typeParams": ["TData = any"] },
+    "storeInfo": {
+      "description": "/** @deprecated use groupLevelInfo instead\n */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "groupLevelInfo": {
+      "description": "/** Store info, if any, as passed via the success() callback when loading data. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<any>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11558,8 +11651,8 @@
     }
   },
   "AgChartLegendLabelOptions": {
-    "characterLimit": {
-      "description": "/** If the label text exceeds the character limit, it will be truncated and an ellipsis will be appended to indicate this. By default, the character limit is 25. */",
+    "maxLength": {
+      "description": "/** If the label text exceeds the maximum length, it will be truncated and an ellipsis will be appended to indicate this. */",
       "type": { "returnType": "number", "optional": true }
     },
     "color": {
@@ -11613,6 +11706,26 @@
       "type": { "returnType": "PixelSize", "optional": true }
     }
   },
+  "AgChartLegendClickEvent": {
+    "itemId": {
+      "description": "/** Legend item id - based on series id. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "enabled": {
+      "description": "/** Whether the legend item is currently enabled or not. */",
+      "type": { "returnType": "boolean", "optional": false }
+    }
+  },
+  "AgChartLegendListeners": {
+    "legendItemClick": {
+      "description": "/** The listener to call when a legend item is clicked. */",
+      "type": {
+        "arguments": { "event": "AgChartLegendClickEvent" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
   "AgChartLegendOptions": {
     "enabled": {
       "description": "/** Whether or not to show the legend. */",
@@ -11629,6 +11742,10 @@
     "item": {
       "description": "/** Configuration for the legend items that consist of a marker and a label. */",
       "type": { "returnType": "AgChartLegendItemOptions", "optional": true }
+    },
+    "listeners": {
+      "description": "/** Optional callbacks for specific legend-related events. */",
+      "type": { "returnType": "AgChartLegendListeners", "optional": true }
     }
   },
   "AgChartTooltipOptions": {
@@ -16559,7 +16676,7 @@
   "IServerSideRowModel": {
     "refreshStore": {
       "type": {
-        "arguments": { "params?": "RefreshStoreParams" },
+        "arguments": { "params?": "RefreshServerSideParams" },
         "returnType": "void",
         "optional": false
       }
@@ -16570,7 +16687,7 @@
     "getStoreState": {
       "type": {
         "arguments": {},
-        "returnType": "ServerSideStoreState[]",
+        "returnType": "ServerSideGroupLevelState[]",
         "optional": false
       }
     },
@@ -16726,9 +16843,19 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
+  "RefreshServerSideParams": {
+    "route": {
+      "description": "/** List of group keys, pointing to the level to refresh.\n * For example, to purge two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].\n * If no route is passed, or an empty array, then the top level is refreshed. */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "purge": {
+      "description": "/** If true, then all rows at the level getting refreshed are immediately destroyed and 'loading' rows will appear.\n * If false, then all rows at the level getting refreshed are kept until rows are loaded (no 'loading' rows appear). */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
   "RefreshStoreParams": {
     "route": {
-      "description": "/** List of group keys, pointing to the store to refresh.\n * For example, to purge the cache two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].\n * If no route is passed, or an empty array, then the top level store is refreshed. */",
+      "description": "/** List of group keys, pointing to the level to refresh.\n * For example, to purge two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].\n * If no route is passed, or an empty array, then the top level is refreshed. */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "purge": {
@@ -16875,7 +17002,7 @@
     },
     "addStoreStates": {
       "type": {
-        "arguments": { "result": "ServerSideStoreState[]" },
+        "arguments": { "result": "ServerSideGroupLevelState[]" },
         "returnType": "void",
         "optional": false
       }
@@ -16892,17 +17019,17 @@
       "type": { "returnType": "string[]", "optional": false }
     }
   },
-  "ServerSideStoreState": {
+  "ServerSideGroupLevelState": {
     "infiniteScroll": {
       "description": "/** True if infininte scrolling */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "route": {
-      "description": "/** The route that identifies this store. */",
+      "description": "/** The route that identifies this level. */",
       "type": { "returnType": "string[]", "optional": false }
     },
     "rowCount": {
-      "description": "/** How many rows the store has. This includes 'loading rows'. */",
+      "description": "/** How many rows the level has. This includes 'loading rows'. */",
       "type": { "returnType": "number", "optional": false }
     },
     "lastRowIndexKnown": {
@@ -16910,15 +17037,45 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "info": {
-      "description": "/** Any extra info provided to the store, when data was loaded. */",
+      "description": "/** Any extra info provided to the level, when data was loaded. */",
       "type": { "returnType": "any", "optional": true }
     },
     "maxBlocksInCache": {
-      "description": "/** Infinite Scroll only.\n *  Max blocks allowed in the store. */",
+      "description": "/** Infinite Scroll only.\n *  Max blocks allowed in the infinite cache. */",
       "type": { "returnType": "number", "optional": true }
     },
     "cacheBlockSize": {
-      "description": "/** Infinite Scroll only.\n * The size (number of rows) of each block. */",
+      "description": "/** Infinite Scroll only.\n * The size (number of rows) of each infinite cache block. */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "ServerSideGroupState": {
+    "infiniteScroll": {
+      "description": "/** True if infininte scrolling */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "route": {
+      "description": "/** The route that identifies this level. */",
+      "type": { "returnType": "string[]", "optional": false }
+    },
+    "rowCount": {
+      "description": "/** How many rows the level has. This includes 'loading rows'. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "lastRowIndexKnown": {
+      "description": "/** Infinite Scroll only.\n * Whether the last row index is know. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "info": {
+      "description": "/** Any extra info provided to the level, when data was loaded. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "maxBlocksInCache": {
+      "description": "/** Infinite Scroll only.\n *  Max blocks allowed in the infinite cache. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "cacheBlockSize": {
+      "description": "/** Infinite Scroll only.\n * The size (number of rows) of each infinite cache block. */",
       "type": { "returnType": "number", "optional": true }
     }
   },
@@ -20035,6 +20192,10 @@
       "type": { "returnType": "number", "optional": true }
     },
     "storeInfo": {
+      "description": "/** @deprecated use groupLevelInfo instead\n */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "groupLevelInfo": {
       "description": "/** Any extra information for the grid to associate with this load. */",
       "type": { "returnType": "any", "optional": true }
     }
@@ -21324,8 +21485,16 @@
       "description": "/** Whether to display a floating filter for this column. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "wrapHeaderText": {
+      "description": "/** If enabled then column header names that are too long for the column width will wrap onto the next line. Default `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "autoHeaderHeight": {
+      "description": "/** If enabled then the column header row will automatically adjust height to acommodate the size of the header cell.\n * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "headerComponent": {
-      "description": "/** */\n/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
+      "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerComponentFramework": {
@@ -22053,6 +22222,10 @@
       "description": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "suppressRowGroupHidesColumns": {
+      "description": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "colResizeDefault": {
       "description": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "type": { "returnType": "string", "optional": true }
@@ -22242,6 +22415,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
+      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "context": {
@@ -22685,7 +22859,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "blockLoadDebounceMillis": {
-      "description": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
+      "description": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
       "type": { "returnType": "number", "optional": true }
     },
     "purgeClosedRowNodes": {
@@ -23167,11 +23341,19 @@
         "optional": true
       }
     },
-    "getServerSideStoreParams": {
+    "getServerSideGroupLevelParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams" },
-        "returnType": "ServerSideStoreParams",
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
+        "optional": true
+      }
+    },
+    "getServerSideStoreParams": {
+      "description": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
+      "type": {
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
         "optional": true
       }
     },
@@ -24240,7 +24422,7 @@
       "meta": { "isEvent": true, "name": "onPinnedRowDataChanged" }
     },
     "onRowDataChanged": {
-      "description": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
+      "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
         "arguments": { "event": "RowDataChangedEvent" },
         "returnType": "void",
@@ -24249,7 +24431,7 @@
       "meta": { "isEvent": true, "name": "onRowDataChanged" }
     },
     "rowDataChanged": {
-      "description": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
+      "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
         "arguments": { "event": "RowDataChangedEvent" },
         "returnType": "void",
@@ -24258,7 +24440,7 @@
       "meta": { "isEvent": true, "name": "onRowDataChanged" }
     },
     "onRowDataUpdated": {
-      "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
+      "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
         "arguments": { "event": "RowDataUpdatedEvent" },
         "returnType": "void",
@@ -24267,7 +24449,7 @@
       "meta": { "isEvent": true, "name": "onRowDataUpdated" }
     },
     "rowDataUpdated": {
-      "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
+      "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
         "arguments": { "event": "RowDataUpdatedEvent" },
         "returnType": "void",
@@ -24805,6 +24987,10 @@
       "description": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "suppressRowGroupHidesColumns": {
+      "description": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "colResizeDefault": {
       "description": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "type": { "returnType": "string", "optional": true }
@@ -24994,6 +25180,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
+      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "context": {
@@ -25437,7 +25624,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "blockLoadDebounceMillis": {
-      "description": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
+      "description": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
       "type": { "returnType": "number", "optional": true }
     },
     "purgeClosedRowNodes": {
@@ -25919,11 +26106,19 @@
         "optional": true
       }
     },
-    "getServerSideStoreParams": {
+    "getServerSideGroupLevelParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams" },
-        "returnType": "ServerSideStoreParams",
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
+        "optional": true
+      }
+    },
+    "getServerSideStoreParams": {
+      "description": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
+      "type": {
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
         "optional": true
       }
     },
@@ -26992,7 +27187,7 @@
       "meta": { "isEvent": true, "name": "onPinnedRowDataChanged" }
     },
     "onRowDataChanged": {
-      "description": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
+      "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
         "arguments": { "event": "RowDataChangedEvent" },
         "returnType": "void",
@@ -27001,7 +27196,7 @@
       "meta": { "isEvent": true, "name": "onRowDataChanged" }
     },
     "rowDataChanged": {
-      "description": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
+      "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
         "arguments": { "event": "RowDataChangedEvent" },
         "returnType": "void",
@@ -27010,7 +27205,7 @@
       "meta": { "isEvent": true, "name": "onRowDataChanged" }
     },
     "onRowDataUpdated": {
-      "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
+      "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
         "arguments": { "event": "RowDataUpdatedEvent" },
         "returnType": "void",
@@ -27019,7 +27214,7 @@
       "meta": { "isEvent": true, "name": "onRowDataUpdated" }
     },
     "rowDataUpdated": {
-      "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
+      "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
         "arguments": { "event": "RowDataUpdatedEvent" },
         "returnType": "void",
@@ -27567,6 +27762,10 @@
       "description": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "suppressRowGroupHidesColumns": {
+      "description": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "colResizeDefault": {
       "description": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "type": { "returnType": "string", "optional": true }
@@ -27756,6 +27955,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
+      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "context": {
@@ -28199,7 +28399,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "blockLoadDebounceMillis": {
-      "description": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
+      "description": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
       "type": { "returnType": "number", "optional": true }
     },
     "purgeClosedRowNodes": {
@@ -28681,11 +28881,19 @@
         "optional": true
       }
     },
-    "getServerSideStoreParams": {
+    "getServerSideGroupLevelParams": {
       "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
-        "arguments": { "params": "GetServerSideStoreParamsParams" },
-        "returnType": "ServerSideStoreParams",
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
+        "optional": true
+      }
+    },
+    "getServerSideStoreParams": {
+      "description": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
+      "type": {
+        "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+        "returnType": "ServerSideGroupLevelParams",
         "optional": true
       }
     },
@@ -29754,7 +29962,7 @@
       "meta": { "isEvent": true, "name": "onPinnedRowDataChanged" }
     },
     "onRowDataChanged": {
-      "description": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
+      "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
         "arguments": { "event": "RowDataChangedEvent" },
         "returnType": "void",
@@ -29763,7 +29971,7 @@
       "meta": { "isEvent": true, "name": "onRowDataChanged" }
     },
     "rowDataChanged": {
-      "description": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
+      "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
         "arguments": { "event": "RowDataChangedEvent" },
         "returnType": "void",
@@ -29772,7 +29980,7 @@
       "meta": { "isEvent": true, "name": "onRowDataChanged" }
     },
     "onRowDataUpdated": {
-      "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
+      "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
         "arguments": { "event": "RowDataUpdatedEvent" },
         "returnType": "void",
@@ -29781,7 +29989,7 @@
       "meta": { "isEvent": true, "name": "onRowDataUpdated" }
     },
     "rowDataUpdated": {
-      "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
+      "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
         "arguments": { "event": "RowDataUpdatedEvent" },
         "returnType": "void",

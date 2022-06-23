@@ -1,0 +1,55 @@
+{
+  "name": "@ag-grid-community/styles",
+  "version": "27.3.0",
+  "description": "AG Grid Styles and Themes",
+  "main": "_index.scss",
+  "files": [
+    "*.scss",
+    "*.css"
+  ],
+  "scripts": {
+    "build": "npm run build:sass -- --no-error-css && node post-build.js",
+    "build:sass": "sass --no-source-map --load-path src/internal src:.",
+    "build-css": "npm run build",
+    "build-prod": "npm run build",
+    "watch": "npm-run-all build --parallel watch:sass watch:post-build",
+    "watch:post-build": "chokidar '*.css' --ignore '*.min.css' --command 'node post-build.js'",
+    "watch:sass": "npm run build:sass -- --watch",
+    "clean": "rm -f *.css",
+    "$COMMENT": "TODO remove these tmp scripts once the docs use this module rather than the legacy styles in community-modules/core",
+    "tmp-watch-patch": "npm run tmp-build-patch; npm run tmp-build-patch -- --watch",
+    "tmp-build-patch": "sass --no-source-map --load-path src/internal src:../core/dist/styles",
+    "test": "npm run lint:scss && npm run build && npm run lint:css",
+    "lint:css": "stylelint --formatter unix --config stylelint-config-css.js '*.css'",
+    "lint:scss": "stylelint --formatter unix --config stylelint-config-scss.js 'src/**/*.scss' '*.scss'",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash",
+    "update-icon-fonts": "cd icon-fonts && npm i && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "ag",
+    "ag-grid",
+    "style",
+    "theme"
+  ],
+  "author": "Niall Crosby <niall.crosby@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "homepage": "http://www.ag-grid.com/",
+  "devDependencies": {
+    "@vusion/webfonts-generator": "^0.8.0",
+    "chokidar-cli": "^3.0.0",
+    "csso": "^5.0.3",
+    "npm-run-all": "^4.1.5",
+    "postcss-scss": "^4.0.4",
+    "sass": "^1.51.0",
+    "stylelint": "^14.8.2",
+    "stylelint-csstree-validator": "^2.0.0",
+    "stylelint-scss": "^4.2.0"
+  }
+}

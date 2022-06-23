@@ -1,0 +1,376 @@
+@use "ag";
+
+@mixin output {
+
+    .ag-chart {
+        position: relative;
+        display: flex;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+    }
+
+    .ag-chart-components-wrapper {
+        position: relative;
+        display: flex;
+        flex: 1 1 auto;
+        overflow: hidden;
+    }
+
+    .ag-chart-title-edit {
+        position: absolute;
+        display: none;
+        top: 0;
+        left: 0;
+        text-align: center;
+    }
+    .ag-chart-title-edit.currently-editing {
+        display: inline-block;
+    }
+
+    .ag-chart-canvas-wrapper {
+        position: relative;
+        flex: 1 1 auto;
+        overflow: hidden;
+    }
+
+    .ag-charts-canvas {
+        display: block;
+    }
+
+    .ag-chart-menu {
+        position: absolute;
+        top: 10px;
+        width: 24px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+
+        @include ag.unthemed-rtl((right: 20px));
+    }
+
+    .ag-chart-docked-container {
+        position: relative;
+        width: 0;
+        min-width: 0;
+        transition: min-width 0.4s;
+    }
+
+    .ag-chart-menu-hidden ~ .ag-chart-docked-container {
+        max-width: 0;
+        overflow: hidden;
+    }
+
+    .ag-chart-tabbed-menu {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .ag-chart-tabbed-menu-header {
+        flex: none;
+        user-select: none;
+        cursor: default;
+    }
+
+    .ag-chart-tabbed-menu-body {
+        display: flex;
+        flex: 1 1 auto;
+        align-items: stretch;
+        overflow: hidden;
+    }
+
+    .ag-chart-tab {
+        width: 100%;
+        overflow: hidden;
+        overflow-y: auto;
+    }
+
+    .ag-chart-settings {
+        overflow-x: hidden;
+    }
+
+    .ag-chart-settings-wrapper {
+        position: relative;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        overflow: hidden;
+    }
+
+    .ag-chart-settings-nav-bar {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 30px;
+        padding: 0 10px;
+        user-select: none;
+    }
+
+    .ag-chart-settings-card-selector {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        flex: 1 1 auto;
+        height: 100%;
+        padding: 0 10px; // increase size of click area for better UX
+    }
+
+    .ag-chart-settings-card-item {
+        cursor: pointer;
+        width: 10px;
+        height: 10px;
+        background-color: #000; // exception to the rule of no visual styles in functional stylesheet - without a background this element would be invisible
+        position: relative;
+        &.ag-not-selected {
+            opacity: 0.2;
+        }
+
+        &::before {
+            // make expanded click area
+            content: " ";
+            display: block;
+            position: absolute;
+            background-color: transparent;
+            left: 50%;
+            top: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    .ag-chart-settings-prev,
+    .ag-chart-settings-next {
+        position: relative;
+        flex: none;
+    }
+
+    .ag-chart-settings-prev-button,
+    .ag-chart-settings-next-button {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        opacity: 0;
+    }
+
+    .ag-chart-settings-mini-charts-container {
+        position: relative;
+        flex: 1 1 auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .ag-chart-settings-mini-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-height: 100%;
+        overflow: hidden;
+
+        &.ag-animating {
+            transition: left 0.3s;
+            transition-timing-function: ease-in-out;
+        }
+    }
+
+    .ag-chart-mini-thumbnail {
+        cursor: pointer;
+    }
+
+    .ag-chart-mini-thumbnail-canvas {
+        display: block;
+    }
+
+    .ag-chart-data-wrapper,
+    .ag-chart-format-wrapper {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        user-select: none;
+    }
+
+    .ag-chart-data-wrapper {
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    .ag-chart-data-section,
+    .ag-chart-format-section {
+        display: flex;
+        margin: 0;
+    }
+
+    .ag-chart-empty-text {
+        display: flex;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ag-chart .ag-chart-menu {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .ag-chart-menu-hidden:hover .ag-chart-menu {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .ag-charts-font-size-color {
+        display: flex;
+        align-self: stretch;
+        justify-content: space-between;
+    }
+
+    .ag-charts-data-group-item {
+        position: relative;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .ag-chart-menu {
+        border-radius: var(--ag-card-radius);
+        background: var(--ag-background-color);
+    }
+
+    .ag-chart-menu-icon {
+        opacity: 0.5;
+        line-height: 24px;
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+        margin: 2px 0;
+        cursor: pointer;
+        border-radius: var(--ag-card-radius);
+        color: var(--ag-secondary-foreground-color);
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    .ag-chart-mini-thumbnail {
+        border: 1px solid var(--ag-secondary-border-color);
+        border-radius: 5px;
+        margin: 5px;
+
+        // specific style to apply when there are 3 items in the row
+        &:nth-last-child(3),
+        &:nth-last-child(3) ~ .ag-chart-mini-thumbnail {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        &:first-child {
+            @include ag.unthemed-rtl((margin-left: 0));
+        }
+
+        &:last-child {
+            @include ag.unthemed-rtl((margin-right: 0));
+        }
+
+        &.ag-selected {
+            border-color: var(--ag-minichart-selected-chart-color);
+        }
+    }
+
+    .ag-chart-settings-card-item {
+        background: var(--ag-foreground-color);
+        width: 8px;
+        height: 8px;
+        border-radius: 4px;
+
+        &.ag-selected {
+            background-color: var(--ag-minichart-selected-page-color);
+        }
+    }
+
+    .ag-chart-data-column-drag-handle {
+        margin-left: var(--ag-grid-size);
+    }
+
+    .ag-charts-settings-group-title-bar,
+    .ag-charts-data-group-title-bar,
+    .ag-charts-format-top-level-group-title-bar {
+        border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+    }
+
+    .ag-charts-settings-group-container {
+        padding: var(--ag-grid-size);
+    }
+
+    .ag-charts-data-group-container {
+        padding: calc(var(--ag-widget-container-vertical-padding) * 0.5) var(--ag-widget-container-horizontal-padding);
+
+        .ag-charts-data-group-item:not(.ag-charts-format-sub-level-group) {
+            height: var(--ag-list-item-height);
+        }
+
+        @include ag.list-item-hovered();
+    }
+
+    .ag-charts-format-top-level-group-container {
+        margin-left: calc(var(--ag-grid-size) * 2);
+        padding: var(--ag-grid-size);
+    }
+
+    .ag-charts-format-top-level-group-item {
+        margin: var(--ag-grid-size) 0;
+    }
+
+    .ag-charts-format-sub-level-group-container {
+        @include ag.vertical-widget-container();
+    }
+
+    .ag-charts-group-container.ag-group-container-horizontal {
+        padding: var(--ag-grid-size);
+    }
+
+    .ag-chart-data-section,
+    .ag-chart-format-section {
+        display: flex;
+        margin: 0;
+    }
+
+    .ag-chart-menu-panel {
+        @include ag.unthemed-rtl((border-left: solid 1px var(--ag-border-color)));
+        background-color: var(--ag-control-panel-background-color);
+    }
+}

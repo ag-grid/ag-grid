@@ -3,7 +3,6 @@ const fs = require('fs-extra');
 const cp = require('child_process');
 const glob = require('glob');
 const resolve = require('path').resolve;
-const http = require('http');
 const https = require('https');
 const express = require('express');
 const realWebpack = require('webpack');
@@ -12,7 +11,7 @@ const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
 const {generateDocumentationExamples} = require('./example-generator-documentation');
 const {watchValidateExampleTypes} = require('./example-validator');
-const {updateBetweenStrings, getAllModules} = require('./utils');
+const {updateBetweenStrings, getAllModules, processStdio} = require('./utils');
 const {getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss} = require('./lernaOperations');
 const {EOL} = os;
 
@@ -107,6 +106,10 @@ function serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, char
         console.log(`Serving modules ${module.publishedName} from ./_dev/${module.publishedName} - available at /dev/${module.publishedName}`);
         app.use(`/dev/${module.publishedName}`, express.static(`./_dev/${module.publishedName}`));
     });
+
+    console.log(`Serving modules @ag-grid-community/styles from /_dev/@ag-grid-community/styles - available at /dev/@ag-grid-community/styles`);
+    app.use(`/dev/@ag-grid-community/styles`, express.static(`./_dev/@ag-grid-community/styles`));
+
 }
 
 function getTscPath() {
@@ -170,6 +173,13 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
                 rename: module.publishedName
             });
         });
+
+    lnk('../../community-modules/styles/', '_dev/@ag-grid-community', {
+        force: true,
+        type: linkType,
+        rename: 'styles'
+    });
+
 
     lnk('../../charts-packages/ag-charts-react/', '_dev/', {
         force: true,
@@ -329,13 +339,6 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     const utilityFilename = 'documentation/src/components/example-runner/SystemJs.jsx';
     const utilFileContents = fs.readFileSync(utilityFilename, 'UTF-8');
 
-    const cssFiles = glob.sync(`../../community-modules/core/dist/styles/*.css`)
-        .filter(css => !css.includes(".min."))
-        .filter(css => !css.includes("Font"))
-        .filter(css => !css.includes("mixin"))
-        .filter(css => !css.includes("base-rename-legacy-vars"))
-        .map(css => css.replace('../../community-modules/core/dist/styles/', ''));
-
     let updatedUtilFileContents = updateBetweenStrings(utilFileContents,
         '            /* START OF GRID MODULES DEV - DO NOT DELETE */',
         '            /* END OF GRID MODULES DEV - DO NOT DELETE */',
@@ -428,17 +431,19 @@ const rebuildPackagesBasedOnChangeState = async (skipSelf = true, skipFrameworks
         })
         .map(changedPackage => skipSelf && lernaBuildChainInfo[changedPackage][0] === changedPackage ? lernaBuildChainInfo[changedPackage].slice(1) : lernaBuildChainInfo[changedPackage]));
 
+
+    if (modulesState["@ag-grid-community/core"].moduleChanged ||
+        modulesState["@ag-grid-community/styles"].moduleChanged) {
+        console.log("Core / Styles have changed - rebuilding CSS");
+        await buildCss();
+    }
+
     const lernaPackagesToRebuild = new Set();
     changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
 
     if (lernaPackagesToRebuild.size > 0) {
         console.log("Rebuilding changed packages...");
-
-        await buildPackages(Array.from(lernaPackagesToRebuild));
-
-        if (lernaPackagesToRebuild.has("@ag-grid-community/core")) {
-            await buildCss();
-        }
+        // await buildPackages(Array.from(lernaPackagesToRebuild));
     } else {
         console.log("No non-core packages are out of date - skipping");
     }
@@ -448,11 +453,13 @@ const watchCoreModules = async (skipFrameworks) => {
     console.log("Watching TS files only...");
     const tsc = getTscPath();
     const tsWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch'], {
-        cwd: '../../'
+        cwd: '../../',
+        stdio: 'pipe',
+        encoding: 'buffer'
     });
 
-    tsWatch.stdout.on('data', async (data) => {
-        const output = data.toString().trim();
+    tsWatch.stdout.on('data', await processStdio(async (output) => {
+        console.log("Core Typescript: " + output);
         if (output.includes("Found 0 errors. Watching for file changes.")) {
             await rebuildPackagesBasedOnChangeState(false, skipFrameworks);
 
@@ -460,7 +467,11 @@ const watchCoreModules = async (skipFrameworks) => {
             // hashes on build
             updateCoreModuleHashes();
         }
-    });
+    }));
+
+    tsWatch.stderr.on('data', await processStdio(async (output) => {
+        console.error("Core Typescript: " + output);
+    }));
 
     process.on('exit', () => {
         tsWatch.kill();
@@ -595,7 +606,7 @@ const addWebpackMiddleware = (app) => {
 };
 
 const watchCoreModulesAndCss = async (skipFrameworks) => {
-    watchCss();
+    await watchCss();
     await watchCoreModules(skipFrameworks);
 };
 
@@ -716,9 +727,6 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
             console.log("Watch Core Modules & CSS");
             await watchCoreModulesAndCss(skipFrameworks);
 
-            console.log("Watch Typescript examples...");
-            await watchValidateExampleTypes();
-
             if (!skipFrameworks) {
                 console.log("Watch Framework Modules");
                 watchFrameworkModules();
@@ -736,6 +744,9 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
             console.log("Watch and Generate Examples");
             await watchAndGenerateExamples();
             console.log("Examples Generated");
+
+            console.log("Watch Typescript examples...");
+            await watchValidateExampleTypes();
 
             // todo - iterate everything under src and serve it
             // ...or use app.get('/' and handle it that way

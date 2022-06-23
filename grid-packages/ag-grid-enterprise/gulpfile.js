@@ -1,7 +1,7 @@
 const gulp = require('gulp');
 const {series} = gulp;
-const { EOL } = require('os');
-
+const {EOL} = require('os');
+const merge = require('merge2');
 const fs = require('fs');
 const clean = require('gulp-clean');
 const rename = require("gulp-rename");
@@ -87,7 +87,16 @@ const copyGridCoreStyles = (done) => {
         done("node_modules/ag-grid-community/dist/styles doesn't exist - exiting")
     }
 
-    return gulp.src('./node_modules/ag-grid-community/dist/styles/**/*').pipe(gulp.dest('./dist/styles'));
+    if (!fs.existsSync('./node_modules/ag-grid-community/styles/ag-grid.css')) {
+        done("./node_modules/ag-grid-community/styles doesn't exist - exiting")
+    }
+
+    return merge([
+            gulp.src('./node_modules/ag-grid-community/dist/styles/**/*').pipe(gulp.dest('./dist/styles')),
+            gulp.src('./node_modules/ag-grid-community/styles/*.css').pipe(gulp.dest('./styles')),
+            gulp.src('./node_modules/ag-grid-community/styles/*.scss').pipe(gulp.dest('./styles'))
+        ]
+    );
 };
 
 const copyAndConcatMainTypings = () => {

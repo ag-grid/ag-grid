@@ -6,7 +6,7 @@ import isDevelopment from '../../../utils/is-development';
 
 const helmet = [];
 if(isDevelopment()) {
-    helmet.push(<link key="best-html-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-material.css`} crossOrigin="anonymous"/>);
+    helmet.push(<link key="best-html-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/styles/ag-theme-material.css`} crossOrigin="anonymous"/>);
     helmet.push(<script key="enterprise-lib" src={`${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`} type="text/javascript"/>);
 } else {
     helmet.push(<script key="enterprise-lib" src="https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.min.js" type="text/javascript"/>);

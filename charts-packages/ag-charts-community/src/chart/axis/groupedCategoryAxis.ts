@@ -4,11 +4,12 @@ import { Line } from "../../scene/shape/line";
 import { normalizeAngle360, toRadians } from "../../util/angle";
 import { Text } from "../../scene/shape/text";
 import { BBox } from "../../scene/bbox";
-import { Matrix } from "../../scene/matrix";
 import { BandScale } from "../../scale/bandScale";
 import { ticksToTree, TreeLayout, treeLayout } from "../../layout/tree";
 import { AxisLabel } from "../../axis";
-import { ChartAxis } from "../chartAxis";
+import { ChartAxis, ChartAxisDirection } from "../chartAxis";
+import { extent } from "../../util/array";
+import { isContinuous } from "../../util/value";
 
 class GroupedCategoryAxisLabel extends AxisLabel {
     grid: boolean = false;
@@ -116,11 +117,6 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             y: 0
         };
 
-    /**
-     * Axis rotation angle in degrees.
-     */
-    rotation: number = 0;
-
     readonly line: {
         /**
          * The line width to be used by the axis line.
@@ -163,6 +159,31 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
     }
     get gridLength(): number {
         return this._gridLength;
+    }
+
+    calculateDomain({ primaryTickCount }: { primaryTickCount?: number }) {
+        const { direction, boundSeries } = this;
+        const domains: any[][] = [];
+        let isNumericX: boolean | undefined = undefined;
+        boundSeries.filter(s => s.visible).forEach(series => {
+            if (direction === ChartAxisDirection.X) {
+                if (isNumericX === undefined) {
+                    // always add first X domain
+                    const domain = series.getDomain(direction);
+                    domains.push(domain);
+                    isNumericX = typeof domain[0] === 'number';
+                } else if (isNumericX) {
+                    // only add further X domains if the axis is numeric
+                    domains.push(series.getDomain(direction));
+                }
+            } else {
+                domains.push(series.getDomain(direction));
+            }
+        });
+        const domain = new Array<any>().concat(...domains);
+        this.domain = extent(domain, isContinuous) || domain;
+
+        return { primaryTickCount };
     }
 
     /**
@@ -427,46 +448,5 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                     line.fill = undefined;
                 });
         }
-    }
-
-    computeBBox(options?: { excludeTitle: boolean }): BBox {
-        const includeTitle = !options || !options.excludeTitle;
-        let left = Infinity;
-        let right = -Infinity;
-        let top = Infinity;
-        let bottom = -Infinity;
-
-        this.labelSelection.each((label, _, index) => {
-            // The label itself is rotated, but not translated, the group that
-            // contains it is. So to capture the group transform in the label bbox
-            // calculation we combine the transform matrices of the label and the group.
-            // Depending on the timing of the `axis.computeBBox()` method call, we may
-            // not have the group's and the label's transform matrices updated yet (because
-            // the transform matrix is not recalculated whenever a node's transform attributes
-            // change, instead it's marked for recalculation on the next frame by setting
-            // the node's `dirtyTransform` flag to `true`), so we force them to update
-            // right here by calling `computeTransformMatrix`.
-            if (index > 0 || includeTitle) { // first node is the root (title)
-                label.computeTransformMatrix();
-                const matrix = Matrix.flyweight(label.matrix);
-                const labelBBox = label.computeBBox();
-
-                if (labelBBox) {
-                    const bbox = matrix.transformBBox(labelBBox);
-
-                    left = Math.min(left, bbox.x);
-                    right = Math.max(right, bbox.x + bbox.width);
-                    top = Math.min(top, bbox.y);
-                    bottom = Math.max(bottom, bbox.y + bbox.height);
-                }
-            }
-        });
-
-        return new BBox(
-            left,
-            top,
-            Math.max(right - left, this.longestSeparatorLength),
-            bottom - top
-        );
     }
 }
