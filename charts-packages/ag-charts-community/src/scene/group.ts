@@ -251,8 +251,7 @@ export class Group extends Node {
         clipBBox = clipBBox ? this.matrix.inverse().transformBBox(clipBBox) : undefined;
 
         if (dirtyZIndex) {
-            this.dirtyZIndex = false;
-            children.sort((a, b) => a.zIndex - b.zIndex);
+            this.sortChildren();
             forceRender = true;
         }
 
@@ -380,8 +379,7 @@ export class Group extends Node {
         clipBBox = clipBBox ? this.matrix.inverse().transformBBox(clipBBox) : undefined;
 
         if (dirtyZIndex) {
-            this.dirtyZIndex = false;
-            children.sort((a, b) => a.zIndex - b.zIndex);
+            this.sortChildren();
             forceRender = true;
         }
 
@@ -444,5 +442,18 @@ export class Group extends Node {
                 visibleChildren[child.id] = child;
             }
         }
+    }
+
+    private sortChildren() {
+        this.dirtyZIndex = false;
+        this.children.sort((a, b) => {
+            const result = a.zIndex - b.zIndex;
+            if (result !== 0) {
+                return result;
+            }
+            return a.id < b.id ? -1 : 
+                a.id > b.id ? 1 :
+                0;
+        });
     }
 }
