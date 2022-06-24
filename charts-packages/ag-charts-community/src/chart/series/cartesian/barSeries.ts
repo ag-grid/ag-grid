@@ -220,11 +220,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             });
             this.yData = [];
 
-            const { seriesItemEnabled } = this;
-            seriesItemEnabled.clear();
-            yKeys.forEach((stack) => {
-                stack.forEach((yKey) => seriesItemEnabled.set(yKey, true));
-            });
+            this.processSeriesItemEnabled();
 
             const { groupScale } = this;
             groupScale.domain = visibleStacks;
@@ -234,6 +230,29 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
     get yKeys(): string[][] {
         return this._yKeys;
+    }
+    
+    protected _visibles: boolean[][];
+    set visibles(visibles: boolean[] | boolean[][]) {
+        if (is2dArray(visibles)) {
+            this._visibles = visibles;
+        } else {
+            this._visibles = this.grouped ? visibles.map((k) => [k]) : [visibles];
+        }
+
+        this.processSeriesItemEnabled();
+    }
+    get visibles() {
+        return this._visibles;
+    }
+
+    private processSeriesItemEnabled() {
+        const { seriesItemEnabled, _visibles: visibles = [] } = this;
+        seriesItemEnabled.clear();
+        this._yKeys.forEach((stack, stackIdx) => {
+            const stackVisibles = visibles[stackIdx];
+            stack.forEach((yKey, idx) => seriesItemEnabled.set(yKey, stackVisibles?.[idx] ?? true));
+        });
     }
 
     protected _grouped: boolean = false;
