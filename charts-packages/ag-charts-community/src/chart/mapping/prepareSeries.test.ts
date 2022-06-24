@@ -121,7 +121,7 @@ describe('transform series options', () => {
             },
         ];
 
-        const result = reduceSeries(columnSeriesGroup, true);
+        const result = reduceSeries(columnSeriesGroup);
 
         const columnSeriesOptions = {
             type: 'column',
