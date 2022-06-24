@@ -169,3 +169,5 @@ export function compose(...fns: Function[]) {
 export function callIfPresent(func: Function): void {
     if (func) { func(); }
 }
+
+export const noop = () => { return; };

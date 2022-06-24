@@ -22,7 +22,8 @@ import { HeaderComp, IHeader, IHeaderParams } from "./headerComp";
 import { ResizeFeature } from "./resizeFeature";
 import { SelectAllFeature } from "./selectAllFeature";
 import { getElementSize } from "../../../utils/dom";
-
+import { ResizeObserverService } from "../../../misc/resizeObserverService";
+import { noop } from "../../../utils/function";
 export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -40,6 +41,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
     @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
+    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
 
@@ -457,9 +459,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private setupAutoHeight(wrapperElement: HTMLElement) {
         const measureHeight = (timesCalled: number) => {
             if (!this.isAlive()) { return; }
-            if (!this.column.isAutoHeaderHeight()) {
-                return;
-            }
 
             const { paddingTop, paddingBottom } = getElementSize(this.getGui());
             const wrapperHeight = wrapperElement.offsetHeight;
@@ -483,14 +482,44 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             this.columnModel.setColumnHeaderHeight(this.column, autoHeight);
         };
 
-        this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, () => measureHeight(0));
+        let isMeasuring = false;
+        let stopResizeObserver: (()=>void) | undefined;
+
+        const checkMeasuring = ()=> {
+            const newValue = this.column.isAutoHeaderHeight();
+            if (newValue && !isMeasuring) {
+                startMeasuring();
+            }
+            if (!newValue && isMeasuring) {
+                stopMeasuring();
+            }
+        };
+
+        const startMeasuring = () => {
+            isMeasuring = true;
+            measureHeight(0);
+            stopResizeObserver = this.resizeObserverService.observeResize(wrapperElement, () => measureHeight(0));
+        };
+
+        const stopMeasuring = () => {
+            isMeasuring = false;
+            stopResizeObserver && stopResizeObserver();
+            stopResizeObserver = undefined;
+        };
+
+        checkMeasuring();
+
+        this.addDestroyFunc(() => stopMeasuring());
+
+        // In theory we could rely on the resize observer for everything - but since it's debounced
+        // it can be a little janky for smooth movement. in this case its better to react to our own events
+        // And unfortunately we cant _just_ rely on our own events, since custom components can change whenever
+        this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, () => isMeasuring && measureHeight(0));
         // Displaying the sort icon changes the available area for text, so sort changes can affect height
         this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, () => {
             // Rendering changes for sort, happen after the event... not ideal
-            this.beans.frameworkOverrides.setTimeout(() => measureHeight(0));
+            isMeasuring && this.beans.frameworkOverrides.setTimeout(() => measureHeight(0));
         });
-        this.addRefreshFunction(() => measureHeight(0));
-        measureHeight(0);
     }
 
     private refreshAriaSort(): void {
