@@ -42,7 +42,7 @@ const seriesOptions: ((AgBarSeriesOptions | AgLineSeriesOptions) & {hideInLegend
     },
 ];
 
-describe.skip('transform series options', () => {
+describe('transform series options', () => {
     test('groupSeriesByType', () => {
         const result = groupSeriesByType(seriesOptions);
         const groupedSeriesOptions = [
