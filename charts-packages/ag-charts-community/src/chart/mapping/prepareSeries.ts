@@ -48,7 +48,7 @@ export function reduceSeries(series: any[], enableBarSeriesSpecialCases: boolean
     const arrayValueProperties = ['yKeys', 'fills', 'strokes', 'yNames', 'hideInChart', 'hideInLegend'];
     const stringValueProperties = ['yKey', 'fill', 'stroke', 'yName', 'visible'];
     const barSeriesProperties = ['showInLegend', 'grouped'];
-    const defaultValues = [NA, SKIP, SKIP, SKIP, true];
+    const defaultValues = [SKIP, SKIP, SKIP, SKIP, true];
 
     const keys: string[] = series.reduce(
         (r, n) => {
@@ -106,7 +106,7 @@ export function reduceSeries(series: any[], enableBarSeriesSpecialCases: boolean
                 false,
             );
         } else {
-            options[prop] = series.reduce((r, n) => n[prop] ?? r);
+            options[prop] = series.reduce((r, n) => n[prop] ?? r, undefined);
         }
     });
 
