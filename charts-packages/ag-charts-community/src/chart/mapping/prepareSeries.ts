@@ -40,10 +40,13 @@ export function groupSeriesByType(seriesOptions: SeriesOptions[]) {
 const FAIL = Symbol();
 const SKIP = Symbol();
 const ARRAY_REDUCER = (prop: string) => (result: string[], next: any) => {
-    return result.concat(next[prop] ?? []);
+    return result.concat(...(next[prop] ?? []));
 };
-const BOOLEAN_OR_REDUCER = (prop: string) => (result: boolean, next: any) => {
-    return result || (next[prop] ?? false);
+const BOOLEAN_OR_REDUCER = (prop: string, activationValue: any) => (result: boolean, next: any) => {
+    if (next[prop] === activationValue) {
+        return result || (next[prop] ?? false);
+    }
+    return result;
 };
 const DEFAULTING_ARRAY_REDUCER = (prop: string, defaultValue: any) => (result: string[], next: any) => {
     const nextValue = next[prop] ?? defaultValue;
@@ -57,7 +60,7 @@ const DEFAULTING_ARRAY_REDUCER = (prop: string, defaultValue: any) => (result: s
 };
 const YKEYS_REDUCER = (prop: string, activationValue: any) => (result: string[][], next: any) => {
     if (next[prop] === activationValue) {
-        result.push(...(next.yKey ? [next.yKey] : next.yKeys));
+        return result.concat(...(next.yKey ? [next.yKey] : next.yKeys));
     }
     return result;
 };
@@ -76,13 +79,13 @@ const REDUCE_CONFIG: Record<string, ReduceConfig<unknown>> = {
     'hideInChart': { outputProp: 'hideInChart', reducer: ARRAY_REDUCER('hideInChart'), start: [] },
     'hideInLegend': { outputProp: 'hideInLegend', reducer: ARRAY_REDUCER('hideInLegend'), start: [] },
 
-    'yKey': { outputProp: 'yKeys', reducer: DEFAULTING_ARRAY_REDUCER('yKey', FAIL), start: [] },
+    'yKey': { outputProp: 'yKeys', reducer: DEFAULTING_ARRAY_REDUCER('yKey', SKIP), start: [] },
     'fill': { outputProp: 'fills', reducer: DEFAULTING_ARRAY_REDUCER('fill', SKIP), start: [] },
     'stroke': { outputProp: 'strokes', reducer: DEFAULTING_ARRAY_REDUCER('stroke', SKIP), start: [] },
     'yName': { outputProp: 'yNames', reducer: DEFAULTING_ARRAY_REDUCER('yName', SKIP), start: [] },
     'visible': { outputProp: 'visibles', reducer: DEFAULTING_ARRAY_REDUCER('visible', true), start: [] },
 
-    'grouped': { outputProp: 'grouped', reducer: BOOLEAN_OR_REDUCER('grouped'), seriesType: ['bar', 'column'], start: false },
+    'grouped': { outputProp: 'grouped', reducer: BOOLEAN_OR_REDUCER('grouped', true), seriesType: ['bar', 'column'], start: undefined },
     'showInLegend': { outputProp: 'hideInLegend', reducer: YKEYS_REDUCER('showInLegend', false), seriesType: ['bar', 'column'], start: []},
 };
 
@@ -90,36 +93,29 @@ const REDUCE_CONFIG: Record<string, ReduceConfig<unknown>> = {
  * Takes an array of bar or area series options objects and returns a single object with the combined area series options.
  */
 export function reduceSeries(series: any[]) {
-    const type = series[0]['type'] as string;
     let options: any = {};
 
-    const keys: string[] = series.reduce(
-        (r, n) => {
-            Object.keys(n).forEach(k => r.add(k));
-            return r;
-        },
-        new Set(),
-    );
-
-    keys.forEach((prop) => {
-        const reducerConfig = REDUCE_CONFIG[prop];
-
-        const defaultReduce = () => {
-            options[prop] = series.reduce((r, n) => n[prop] ?? r, undefined);
-        };
-        if (!reducerConfig) {
-            defaultReduce();
-            return;
-        }
-
-        const { outputProp, reducer, start = undefined, seriesType = [type] } = reducerConfig;
-        if (!seriesType.includes(type)) {
-            defaultReduce();
-            return;
-        }
-
-        options[outputProp] = series.reduce(reducer, start);
-    });
+    series.forEach((s) => {
+        Object.keys(s).forEach((prop) => {
+            const reducerConfig = REDUCE_CONFIG[prop];
+    
+            const defaultReduce = () => {
+                options[prop] = s[prop] ?? options[prop] ?? undefined;
+            };
+            if (!reducerConfig) {
+                defaultReduce();
+                return;
+            }
+    
+            const { outputProp, reducer, start = undefined, seriesType = [s.type] } = reducerConfig;
+            if (!seriesType.includes(s.type)) {
+                defaultReduce();
+                return;
+            }
+    
+            options[outputProp] = reducer(options[outputProp] ?? start, s);
+        });
+    })
 
     return options;
 }
