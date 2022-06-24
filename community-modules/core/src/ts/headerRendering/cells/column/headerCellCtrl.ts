@@ -455,12 +455,11 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private setupAutoHeight(wrapperElement: HTMLElement) {
-        if (!this.column.isAutoHeaderHeight()) {
-            return;
-        }
-
         const measureHeight = (timesCalled: number) => {
             if (!this.isAlive()) { return; }
+            if (!this.column.isAutoHeaderHeight()) {
+                return;
+            }
 
             const { paddingTop, paddingBottom } = getElementSize(this.getGui());
             const wrapperHeight = wrapperElement.offsetHeight;
@@ -484,9 +483,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             this.columnModel.setColumnHeaderHeight(this.column, autoHeight);
         };
 
-        measureHeight(0);
         this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, () => measureHeight(0));
+        // Displaying the sort icon changes the available area for text, so sort changes can affect height
+        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, () => {
+            // Rendering changes for sort, happen after the event... not ideal
+            this.beans.frameworkOverrides.setTimeout(() => measureHeight(0));
+        });
         this.addRefreshFunction(() => measureHeight(0));
+        measureHeight(0);
     }
 
     private refreshAriaSort(): void {
