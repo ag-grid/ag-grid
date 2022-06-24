@@ -18,7 +18,7 @@
 |
 |<script>
 |//...other imports
-|import {AgGridVue} from "@ag-grid-community/vue";
+|import {AgGridVue} from "ag-grid-vue3";
 |import JavascriptComponent from './JavascriptComponent.js';
 |import VueComponent from './VueComponent.vue';
 |

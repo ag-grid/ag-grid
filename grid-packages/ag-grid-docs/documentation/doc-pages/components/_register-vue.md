@@ -27,7 +27,7 @@
 |
 |<script>
 |//...other imports
-|import {AgGridVue} from "@ag-grid-community/vue";
+|import {AgGridVue} from "ag-grid-vue3";
 |
 |export default {
 |   components: {
@@ -71,7 +71,7 @@
 |
 |<script>
 |//...other imports
-|import {AgGridVue} from "@ag-grid-community/vue";
+|import {AgGridVue} from "ag-grid-vue3";
 |import CubeComponent from './CubeComponent.vue';
 |
 |export default {
@@ -113,7 +113,7 @@
 |<script>
 |//...other imports
 |import Vue from "vue";
-|import {AgGridVue} from "@ag-grid-community/vue";
+|import {AgGridVue} from "ag-grid-vue3";
 |
 |// component wrapped in Vue.extend for direct reference
 |const CubeComponent = Vue.extend({

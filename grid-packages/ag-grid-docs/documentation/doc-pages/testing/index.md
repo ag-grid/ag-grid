@@ -835,7 +835,7 @@ title: "Testing AG Grid"
 | </template>
 |
 | <script>
-|     import {AgGridVue} from "@ag-grid-community/vue";
+|     import {AgGridVue} from "ag-grid-vue3";
 |     import Editor from './Editor.vue';
 |
 |     export default {
