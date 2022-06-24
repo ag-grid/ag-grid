@@ -39,6 +39,8 @@ const populateDevFolder = () => {
     const vue = createCopyTask('../../community-modules/vue/**/*.*', '../../community-modules/vue/', '@ag-grid-community/vue');
     const vue3 = createCopyTask('../../community-modules/vue3/**/*.*', '../../community-modules/vue3/', '@ag-grid-community/vue3');
 
+    const styles = createCopyTask('../../community-modules/styles/**/*.*', '../../community-modules/styles/', '@ag-grid-community/styles');
+
     const chartReact = createCopyTask('../../charts-packages/ag-charts-react/**/*.*', '../../charts-packages/ag-charts-react/', 'ag-charts-react');
     const chartAngular = createCopyTask('../../charts-packages/ag-charts-angular/dist/ag-charts-angular/**/*.*', '../../charts-packages/ag-charts-angular/', 'ag-charts-angular');
     const chartAngularLegacy = createCopyTask('../../charts-packages/ag-charts-angular-legacy/dist/ag-charts-angular-legacy/**/*.*', '../../charts-packages/ag-charts-angular-legacy/', 'ag-charts-angular-legacy');
@@ -56,6 +58,7 @@ const populateDevFolder = () => {
     return merge(
         ...moduleCopyTasks,
         react, angular, angularLegacy, vue, vue3,
+        styles,
         chartReact, chartAngular, chartAngularLegacy, chartVue, chartVue3,
         packageCommunity, packageEnterprise, packageAngular, packageAngularLegacy, packageReact, packageVue, packageVue3
     );
