@@ -1309,7 +1309,7 @@ const Example = () => {
                         </div>
                         <div>
                             <label htmlFor="grid-theme">Theme:</label>
-                            <select id="grid-theme" defaultValue="ag-theme-alpine" onChange={onThemeChanged} value={gridTheme}>
+                            <select id="grid-theme" onChange={onThemeChanged} value={gridTheme}>
                                 <option value="ag-theme-none">-none-</option>
                                 <option value="ag-theme-alpine">Alpine</option>
                                 <option value="ag-theme-alpine-dark">Alpine Dark</option>

@@ -2,9 +2,9 @@
 title: "Sass Styling API"
 ---
 
-The Sass Styling API is an optional lightweight wrapper around [Themes](/themes) and [Design Customisations](/customising-design) that automates the process of importing CSS files and setting CSS variables.
+The Sass Styling API is an optional lightweight wrapper around [Themes](/themes) and [Look & Feel Customisations](/look-and-feel-customisation) that automates the process of importing CSS files and setting CSS variables.
 
-Sass is not necessary to customise the provided themes. Since introducing full support for design customisation through CSS variables in v28, anything that is possible with Sass is also possible with CSS. But the Sass API provides some benefits:
+The Sass API provides a few benefits on top of the CSS API:
 
 1. **Colour blending.** The Sass API saves you the work of defining multiple related colours. For example with the Alpine theme, if you set `alpine-active-color` to `red` then the `row-hover-colour` will automatically be set to a light pink.
 1. **Validation.** In the Sass API you will get a build error if you accidentally pass an invalid parameter name or value. In CSS this would be silent and lead to incorrect styling.
@@ -29,9 +29,6 @@ The above import path assumes that `node_modules` is added to the Sass load path
  - `@ag-grid-community/styles` if you're using the grid [modules](/modules/) feature
  - `node_modules/ag-grid-community/styles` if `node_modules` is not in the Sass load path
  - `~ag-grid-community/styles` is you're using webpack and sass-loader (the tilde instructs sass-loader to look in `node_modules`)
-
- [[note]]
-| These import paths changed in v28. If you have created ag-Grid apps using v27 or below, ensure that you use the above import paths rather than copying the old v27 import paths, to avoid importing the [Legacy Sass API](/styling-sass-legacy/).
 
 ## Simple example
 
@@ -68,17 +65,45 @@ This can be either:
 1. a [provided theme](/themes/) (`alpine`, `alpine-dark`, `balham`, `balham-dark` or `material`). The CSS file for the theme will automatically be included.
 2. Any string of your choice to create a custom theme.
 
-If you
-
 ## Setting CSS variables
 
-The Sass Styling API is a wrapper around the CSS variable API for design customisation, you can pass any supported CSS variable as a parameter to the Sass API, just remove the `--ag-` prefix from the variable name. See the [full list of supported CSS variables](/customising-design#full-list-of-css-variables).
+The Sass Styling API is a wrapper around the CSS variable API for design customisation, you can pass any supported CSS variable as a parameter to the Sass API:
 
-The Sass API provides a little bit of sugar to make it easier to read and remember some parameter values and assists migration from the [Legacy Sass API](/styling-sass-legacy/).
+```scss
+@use "ag-grid-community/styles" as ag;
+@include ag.grid-styles(
+    theme: balham,
+    --ag-balham-active-color: deeppink
+);
+```
 
-- You can pass `true` or `false` to any `borders-*` parameter to enable or disable the border (the equivalent CSS variables require `solid 1px` or `none`)
-- You can pass `true` or `false` to the `header-column-separator-display` or `header-column-resize-handle-display` parameters (the equivalent CSS variables require `block` or `none`)
+For information about what CSS variables and rules to use to control grid features, see the [feature customisation reference](/look-and-feel-customisation-features/) or [full list of CSS variables](/look-and-feel-customisation-variables/)
+
+The Sass API provides a little bit of sugar to make it easier to read and remember some parameter values and assists migration from the [Legacy Sass API](/look-and-feel-customisation-sass-legacy/).
+
+- The `--ag-` prefix is optional.
+- You can pass `true` or `false` to any `borders-*` parameter to enable or disable the border (`true` is converted to `solid 1px` and `false` to `none`)
+- You can pass `true` or `false` to the `header-column-separator-display` or `header-column-resize-handle-display` parameters (`true` is converted to `block` and `false` to `none`)
 - You can pass `null` to any `*-color` parameter, which will be converted to a CSS value of `transparent`
+
+## Adding your own CSS rules
+
+When there is not a variable that achieves the effect you want, add custom CSS rules below the `grid-styles` mixin:
+
+```scss
+@use "ag-grid-community/styles" as ag;
+@include ag.grid-styles(
+    theme: alpine
+);
+.ag-theme-alpine {
+    // Nest rules in .ag-theme-alpine so that the selectors include the theme name.
+    // Without the theme name, your styles will not override the theme's built-in
+    // styles due to CSS selector specificity rules.
+    .ag-header-cell-label {
+        font-style: italic;
+    }
+}
+```
 
 ## Colour blending
 
@@ -155,9 +180,7 @@ If each theme needs a different configuration, `themes` can be a map of theme na
 
 ## Suppressing native widget styles
 
-The default styles in `ag-grid.css` use CSS to style native inputs - checkboxes, radio buttons and range sliders. These default styles can be customised using the `checkbox-*` and `toggle-button-*` parameters. If you want to use the browser's default UI or create your own then it's easier to start from a blank slate rather than attempting to override the default styles.
-
-Setting `suppress-native-widget-styling` to `true` will use `ag-grid-no-native-widgets.css` instead of `ag-grid.css`, turning off all default styles for native widgets.
+Setting `suppress-native-widget-styling` to `true` will supporess native widget styling, see [Customising Inputs & Widgets](/look-and-feel-customisation-widgets/) for more information.
 
 ## Extending a provided theme
 
@@ -176,7 +199,7 @@ To do this, set the `theme` parameter to your custom theme and the `extend-theme
 
 To use this theme, add the `ag-theme-acmecorp` class to your grid div.
 
-Theme extension is only available in the Sass API. The alternative method of creating a [reusable package of design customisations](/customising-design#creating-a-reusable-package-of-design-customisations) works in both Sass and pure CSS projects.
+Theme extension is only available in the Sass API. The alternative method of creating a [reusable package of design customisations](/look-and-feel-customisation#creating-a-reusable-package-of-design-customisations) works in both Sass and pure CSS projects.
 
 Theme extension works with multiple themes too, set the `extend-theme` parameter at the theme level:
 
@@ -193,3 +216,5 @@ Theme extension works with multiple themes too, set the `extend-theme` parameter
 
 [[note]]
 | `extend-theme` internally uses the Sass `@extend` rule, which generates new selectors for `.ag-theme-acmecorp` while leaving the original selectors for `.ag-theme-alpine` intact. This slightly increases the output of the compiled CSS, but the difference is likely to be too small to measure in real world conditions (less than 1kb gzipped)
+
+##
