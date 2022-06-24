@@ -3,8 +3,8 @@
 |
 |```js
 |import {Component, ElementRef, ViewChild} from '@angular/core';
-|import {IHeaderAngularComp} from '@ag-grid-community/angular'
-|import {IHeaderParams} from '@ag-grid-community/core'
+|import {IHeaderAngularComp} from 'ag-grid-angular'
+|import {IHeaderParams} from 'ag-grid-community'
 |
 |@Component({
 |    selector: 'app-custom-header',

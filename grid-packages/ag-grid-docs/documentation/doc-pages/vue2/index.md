@@ -135,10 +135,10 @@ new Vue({
 | We offer two versions of Vue support - one for Vue 2 and one for Vue 3. The only difference
 | in use is how you import the dependency:
 |
-| | Version | Package Imports         | Module Imports |
-| | ------- | ----------------------- | -------------- |
-| | Vue 2   | @ag-grid-community/vue  | ag-grid-vue    |
-| | Vue 3   | @ag-grid-community/vue3 | ag-grid-vue3   |
+| | Version | Package Imports  | Module Imports          |
+| | ------- | ---------------- | ----------------------- |
+| | Vue 2   | ag-grid-vue      | @ag-grid-community/vue  |
+| | Vue 3   | ag-grid-vue3     | @ag-grid-community/vue3 |
 |
 | If you unsure what import type to use you should use the package import type
 | (i.e. `ag-grid-vue`/ `ag-grid-vue3`).

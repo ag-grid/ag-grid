@@ -4,8 +4,8 @@
 |
 |```js
 |import {Component} from "@angular/core";
-|import {IToolPanelParams, RowNode} from "@ag-grid-community/core";
-|import {IToolPanelAngularComp} from "@ag-grid-community/angular";
+|import {IToolPanelParams, RowNode} from "ag-grid-community";
+|import {IToolPanelAngularComp} from "ag-grid-angular";
 |
 |@Component({
 |    selector: 'custom-stats',

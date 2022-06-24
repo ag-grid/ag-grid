@@ -3,8 +3,8 @@
 |
 |```js
 |import {Component} from '@angular/core';
-|import {ILoadingOverlayParams} from "@ag-grid-community/core";
-|import {ILoadingOverlayAngularComp} from "@ag-grid-community/angular";
+|import {ILoadingOverlayParams} from "ag-grid-community";
+|import {ILoadingOverlayAngularComp} from "ag-grid-angular";
 |
 |@Component({
 |    selector: 'app-loading-overlay',

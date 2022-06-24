@@ -3,8 +3,8 @@
 |
 |```js
 |import {Component} from '@angular/core';
-|import {ILoadingCellRendererAngularComp} from "@ag-grid-community/angular";
-|import {ILoadingCellRendererParams} from "@ag-grid-community/core";
+|import {ILoadingCellRendererAngularComp} from "ag-grid-angular";
+|import {ILoadingCellRendererParams} from "ag-grid-community";
 |
 |@Component({
 |    selector: 'app-loading-cell-renderer',

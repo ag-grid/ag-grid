@@ -55,6 +55,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
                 }
             };
         }
+
         AgChart.update(this.chart as CartesianChart, options);
     }
 

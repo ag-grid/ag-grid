@@ -3,9 +3,9 @@
 |Below is a simple example of a status bar component:
 |
 |```js
-|import {Component} from "@angular/core";
-|import { IStatusPanelAngularComp } from '@ag-grid-community/angular';
-|import {IStatusPanelParams} from "@ag-grid-community/core";
+|import { Component } from "@angular/core";
+|import { IStatusPanelAngularComp } from 'ag-grid-angular';
+|import { IStatusPanelParams } from "ag-grid-community";
 |
 |@Component({
 |    selector: 'status-component',

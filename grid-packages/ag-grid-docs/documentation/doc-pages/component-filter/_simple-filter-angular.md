@@ -2,8 +2,8 @@
 |Below is a simple example of filter component class:
 |
 |```js
-|import {IFilterAngularComp} from "@ag-grid-community/angular";
-|import {IDoesFilterPassParams, IFilterParams} from "@ag-grid-community/core";
+|import {IFilterAngularComp} from "ag-grid-angular";
+|import {IDoesFilterPassParams, IFilterParams} from "ag-grid-community";
 |
 |@Component({
 |    selector: 'year-filter',

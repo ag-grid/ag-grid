@@ -8,7 +8,7 @@
 |
 |<script>
 |//...other imports
-|import {AgGridVue} from "@ag-grid-community/vue";
+|import {AgGridVue} from "ag-grid-vue3";
 |
 |// define cellRenderer to be reused
 |const ColourComponent = {

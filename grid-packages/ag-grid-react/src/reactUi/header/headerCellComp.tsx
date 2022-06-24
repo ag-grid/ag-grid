@@ -50,7 +50,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     // add drag handling, must be done after component is added to the dom
     useEffect(() => {
-        ctrl.setDragSource(eHeaderCompWrapper.current!);
+        ctrl.setDragSource(eGui.current!);
     }, [userCompDetails]);
 
     const style = useMemo(() => ({ width }), [width]);
