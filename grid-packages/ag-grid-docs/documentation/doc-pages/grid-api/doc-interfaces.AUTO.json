@@ -40,7 +40,7 @@
     "pinned": {
       "description": "/** Set if column is pinned */",
       "type": {
-        "returnType": "boolean | string | 'left' | 'right' | null",
+        "returnType": "boolean | 'left' | 'right' | null",
         "optional": true
       }
     },
@@ -93,7 +93,7 @@
     "pinned": {
       "description": "/** Set if column is pinned */",
       "type": {
-        "returnType": "boolean | string | 'left' | 'right' | null",
+        "returnType": "boolean | 'left' | 'right' | null",
         "optional": true
       }
     },
@@ -1051,11 +1051,14 @@
     },
     "pinned": {
       "description": "/** Pin a column to one side: `right` or `left`. A value of `true` is converted to `'left'`. */",
-      "type": { "returnType": "boolean | string | null", "optional": true }
+      "type": {
+        "returnType": "boolean | 'left' | 'right' | null",
+        "optional": true
+      }
     },
     "initialPinned": {
       "description": "/** Same as `pinned`, except only applied when creating a new column. Not applied when updating column definitions. */",
-      "type": { "returnType": "boolean | string", "optional": true }
+      "type": { "returnType": "boolean | 'left' | 'right'", "optional": true }
     },
     "lockPinned": {
       "description": "/** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false` */",
@@ -17468,7 +17471,7 @@
     },
     "pinned": {
       "description": "/** Pinned state of the cell. */",
-      "type": { "returnType": "string | null", "optional": true }
+      "type": { "returnType": "\"left\" | \"right\" | null", "optional": true }
     },
     "data": {
       "description": "/** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */",
@@ -18593,7 +18596,12 @@
     "frameworkComponentWrapper": {
       "type": { "returnType": "any", "optional": false }
     },
-    "pinned": { "type": { "returnType": "string", "optional": false } },
+    "pinned": {
+      "type": {
+        "returnType": "\"left\" | \"right\" | null | undefined",
+        "optional": false
+      }
+    },
     "autoHeight": {
       "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": false }
@@ -19310,7 +19318,7 @@
   "GroupCellRendererParams": {
     "pinned": {
       "description": "/** Only when in fullWidth, this gives whether the comp is pinned or not.\n * If not doing fullWidth, then this is not provided, as pinned can be got from the column. */",
-      "type": { "returnType": "string", "optional": false }
+      "type": { "returnType": "\"left\" | \"right\" | null", "optional": true }
     },
     "fullWidth": {
       "description": "/** 'true' if comp is showing full width. */",
@@ -19469,7 +19477,7 @@
     },
     "pinned": {
       "description": "/** Pinned state of the cell. */",
-      "type": { "returnType": "string | null", "optional": true }
+      "type": { "returnType": "\"left\" | \"right\" | null", "optional": true }
     },
     "data": {
       "description": "/** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */",
@@ -19633,7 +19641,7 @@
     },
     "pinned": {
       "description": "/** Pinned state of the cell. */",
-      "type": { "returnType": "string | null", "optional": true }
+      "type": { "returnType": "\"left\" | \"right\" | null", "optional": true }
     },
     "data": {
       "description": "/** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */",
@@ -20037,6 +20045,20 @@
       "type": {
         "arguments": {},
         "returnType": "ICellRenderer | null | undefined",
+        "optional": false
+      }
+    },
+    "setTop": {
+      "type": {
+        "arguments": { "top": "string" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setTransform": {
+      "type": {
+        "arguments": { "transform": "string" },
+        "returnType": "void",
         "optional": false
       }
     },
@@ -21562,11 +21584,14 @@
     },
     "pinned": {
       "description": "/** Pin a column to one side: `right` or `left`. A value of `true` is converted to `'left'`. */",
-      "type": { "returnType": "boolean | string | null", "optional": true }
+      "type": {
+        "returnType": "boolean | 'left' | 'right' | null",
+        "optional": true
+      }
     },
     "initialPinned": {
       "description": "/** Same as `pinned`, except only applied when creating a new column. Not applied when updating column definitions. */",
-      "type": { "returnType": "boolean | string", "optional": true }
+      "type": { "returnType": "boolean | 'left' | 'right'", "optional": true }
     },
     "lockPinned": {
       "description": "/** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false` */",

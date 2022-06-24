@@ -282,9 +282,9 @@ export interface ColDef<TData = any> extends AbstractColDef, IFilterDef {
     // *** Columns: Pinned *** //
 
     /** Pin a column to one side: `right` or `left`. A value of `true` is converted to `'left'`. */
-    pinned?: boolean | string | null;
+    pinned?: boolean | 'left' | 'right' | null;
     /** Same as `pinned`, except only applied when creating a new column. Not applied when updating column definitions. */
-    initialPinned?: boolean | string;
+    initialPinned?: boolean | 'left' | 'right';
     /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false`  */
     lockPinned?: boolean;
 

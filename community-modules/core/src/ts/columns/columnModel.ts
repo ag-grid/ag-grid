@@ -77,7 +77,7 @@ export interface ColumnStateParams {
     /** The order of the pivot, if pivoting by many columns */
     pivotIndex?: number | null;
     /** Set if column is pinned */
-    pinned?: boolean | string | 'left' | 'right' | null;
+    pinned?: boolean | 'left' | 'right' | null;
     /** True if row group active */
     rowGroup?: boolean | null;
     /** The order of the row group, if grouping by many columns */
@@ -1659,7 +1659,7 @@ export class ColumnModel extends BeanStub {
         }
         this.columnAnimationService.start();
 
-        let actualPinned: string | null;
+        let actualPinned: 'left' | 'right' | null;
         if (pinned === true || pinned === Constants.PINNED_LEFT) {
             actualPinned = Constants.PINNED_LEFT;
         } else if (pinned === Constants.PINNED_RIGHT) {

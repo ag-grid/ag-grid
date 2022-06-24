@@ -314,11 +314,11 @@
   },
   "pinned": {
     "description": "/** Pin a column to one side: `right` or `left`. A value of `true` is converted to `'left'`. */",
-    "type": { "returnType": "boolean | string | null" }
+    "type": { "returnType": "boolean | 'left' | 'right' | null" }
   },
   "initialPinned": {
     "description": "/** Same as `pinned`, except only applied when creating a new column. Not applied when updating column definitions. */",
-    "type": { "returnType": "boolean | string" }
+    "type": { "returnType": "boolean | 'left' | 'right'" }
   },
   "lockPinned": {
     "description": "/** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false` */",

@@ -3229,6 +3229,19 @@
     }
   },
   "SeriesOptions": {},
+  "ReduceConfig": {
+    "outputProp": { "type": { "returnType": "string", "optional": false } },
+    "reducer": {
+      "type": {
+        "arguments": { "r": "T", "n": "any" },
+        "returnType": "T",
+        "optional": false
+      }
+    },
+    "start": { "type": { "returnType": "T", "optional": false } },
+    "seriesType": { "type": { "returnType": "string[]", "optional": true } },
+    "meta": { "typeParams": ["T"] }
+  },
   "ThemeMap": {},
   "Transforms": {
     "meta": {

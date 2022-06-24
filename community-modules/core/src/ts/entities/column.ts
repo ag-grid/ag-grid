@@ -561,7 +561,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         this.eventService.dispatchEvent(filterChangedEvent);
     }
 
-    public setPinned(pinned: string | boolean | null | undefined): void {
+    public setPinned(pinned: 'left' | 'right' | boolean | null | undefined): void {
         if (pinned === true || pinned === Constants.PINNED_LEFT) {
             this.pinned = Constants.PINNED_LEFT;
         } else if (pinned === Constants.PINNED_RIGHT) {

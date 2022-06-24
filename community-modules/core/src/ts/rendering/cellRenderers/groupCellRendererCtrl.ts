@@ -40,7 +40,7 @@ export interface GroupCellRendererParams extends ICellRendererParams {
      * Only when in fullWidth, this gives whether the comp is pinned or not.
      * If not doing fullWidth, then this is not provided, as pinned can be got from the column.
      */
-    pinned: string;
+    pinned?: "left" | "right" | null;
     /** 'true' if comp is showing full width. */
     fullWidth: boolean;
 

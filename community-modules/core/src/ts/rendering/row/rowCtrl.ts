@@ -511,7 +511,7 @@ export class RowCtrl extends BeanStub {
 
     public refreshFullWidth(): boolean {
         // returns 'true' if refresh succeeded
-        const tryRefresh = (gui: RowGui, pinned: string | null): boolean => {
+        const tryRefresh = (gui: RowGui, pinned: 'left' | 'right' | null): boolean => {
             if (!gui) { return true; } // no refresh needed
 
             const cellRenderer = gui.rowComp.getFullWidthCellRenderer();
@@ -896,7 +896,7 @@ export class RowCtrl extends BeanStub {
         checkRowSizeFunc();
     }
 
-    public createFullWidthParams(eRow: HTMLElement, pinned: string | null): ICellRendererParams {
+    public createFullWidthParams(eRow: HTMLElement, pinned: 'left' | 'right' | null): ICellRendererParams {
         const params = {
             fullWidth: true,
             data: this.rowNode.data,
@@ -1051,7 +1051,7 @@ export class RowCtrl extends BeanStub {
         return businessKeyForNodeFunc(this.rowNode);
     }
 
-    private getPinnedForContainer(rowContainerType: RowContainerType): string | null {
+    private getPinnedForContainer(rowContainerType: RowContainerType): 'left' | 'right' | null {
         const pinned = rowContainerType === RowContainerType.LEFT ? Constants.PINNED_LEFT :
             rowContainerType === RowContainerType.RIGHT ? Constants.PINNED_RIGHT : null;
         return pinned;

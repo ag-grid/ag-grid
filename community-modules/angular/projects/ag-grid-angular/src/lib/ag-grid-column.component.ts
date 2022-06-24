@@ -209,9 +209,9 @@ export class AgGridColumn<TData = any> {
     /** Defines the chart data type that should be used for a column.     */
     @Input() public chartDataType: 'category' | 'series' | 'time' | 'excluded' | undefined;
     /** Pin a column to one side: `right` or `left`. A value of `true` is converted to `'left'`.     */
-    @Input() public pinned: boolean | string | null | undefined;
+    @Input() public pinned: boolean | 'left' | 'right' | null | undefined;
     /** Same as `pinned`, except only applied when creating a new column. Not applied when updating column definitions.     */
-    @Input() public initialPinned: boolean | string | undefined;
+    @Input() public initialPinned: boolean | 'left' | 'right' | undefined;
     /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false`     */
     @Input() public lockPinned: boolean | undefined;
     /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.     */

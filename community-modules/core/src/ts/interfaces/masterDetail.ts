@@ -26,7 +26,7 @@ export interface IDetailCellRendererParams<TData = any, TDetail = any> extends I
 
     agGridReact: any;
     frameworkComponentWrapper: any;
-    pinned: string;
+    pinned: "left" | "right" | null | undefined;
     /** @deprecated */
     autoHeight: boolean;
     /** @deprecated */

@@ -195,7 +195,9 @@
   },
   "setPinned": {
     "type": {
-      "arguments": { "pinned": "string | boolean | null | undefined" },
+      "arguments": {
+        "pinned": "'left' | 'right' | boolean | null | undefined"
+      },
       "returnType": "void"
     }
   },
