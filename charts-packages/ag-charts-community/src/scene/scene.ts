@@ -136,13 +136,7 @@ export class Scene {
         }
 
         this.layers.push(newLayer);
-        this.layers.sort((a, b) => { 
-            const zDiff = a.zIndex - b.zIndex;
-            if (zDiff !== 0) {
-                return zDiff;
-            }
-            return a.id - b.id;
-        });
+        this.sortLayers();
 
         if (domLayer) {
             const domCanvases= this.layers.map(v => v.canvas)
@@ -171,6 +165,30 @@ export class Scene {
                 console.log({ layers: this.layers });
             }
         }
+    }
+
+    moveLayer(canvas: HdpiCanvas | HdpiOffscreenCanvas, newZIndex: number) {
+        const layer = this.layers.find((l) => l.canvas === canvas);
+
+        if (layer) {
+            layer.zIndex = newZIndex;
+            this.sortLayers();
+            this.markDirty();
+
+            if (this.debug.consoleLog) {
+                console.log({ layers: this.layers });
+            }
+        }
+    }
+
+    private sortLayers() {
+        this.layers.sort((a, b) => { 
+            const zDiff = a.zIndex - b.zIndex;
+            if (zDiff !== 0) {
+                return zDiff;
+            }
+            return a.id - b.id;
+        });
     }
 
     private _dirty = false;
