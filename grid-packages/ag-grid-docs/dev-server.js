@@ -443,7 +443,7 @@ const rebuildPackagesBasedOnChangeState = async (skipSelf = true, skipFrameworks
 
     if (lernaPackagesToRebuild.size > 0) {
         console.log("Rebuilding changed packages...");
-        // await buildPackages(Array.from(lernaPackagesToRebuild));
+        await buildPackages(Array.from(lernaPackagesToRebuild));
     } else {
         console.log("No non-core packages are out of date - skipping");
     }
