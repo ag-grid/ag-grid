@@ -1100,6 +1100,10 @@ export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     outerRadiusOffset?: PixelSize;
     /** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not given, or a value of zero is given, a pie chart will be rendered. */
     innerRadiusOffset?: PixelSize;
+    /** Override of the automatically determined minimum radiusKey value from the data. */
+    radiusMin?: number;
+    /** Override of the automatically determined maximum radiusKey value from the data. */
+    radiusMax?: number;
     /** Configuration for the shadow used behind the chart series. */
     shadow?: AgDropShadowOptions;
     /** Series-specific tooltip configuration. */

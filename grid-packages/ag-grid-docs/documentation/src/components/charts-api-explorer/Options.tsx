@@ -152,7 +152,7 @@ interface UnionOptionParameters {
     requiresWholeObject: boolean;
     isAlternate: boolean;
     isVisible: boolean;
-    documentation: string;
+    documentation: string | undefined;
     context: GenerateOptionParameters['context'];
 }
 
@@ -357,7 +357,7 @@ const generateOptions = ({
         isArraySkipped,
         isEditable,
     } = context;
-    let elements = [];
+    let elements: React.ReactFragment[] = [];
 
     Object.entries(model.properties).forEach(([name, prop]) => {
         const key = `${prefix}${name}`;
@@ -439,6 +439,22 @@ const generateOptions = ({
                         requiresWholeObject={requiresWholeObject}
                         context={context}
                     />
+                </ComplexOption>
+            );
+        } else if (desc.type === 'array' && desc.elements.type === 'nested-object' && isArraySkipped(name)) {
+            elements.push(
+                <ComplexOption
+                    {...commonProps}
+                    isVisible={isVisible || childMatchesSearch(desc)}
+                    isSearching={isSearching}>
+                    {generateOptions({
+                        model: desc.elements.model,
+                        prefix: `${key}.`,
+                        parentMatchesSearch: parentMatchesSearch || (isSearching && matchesSearch(name)),
+                        requiresWholeObject: requiresWholeObject || isRequiresWholeObject(name),
+                        isAlternate: !isAlternate,
+                        context,
+                    })}
                 </ComplexOption>
             );
         } else if (desc.type === 'function') {

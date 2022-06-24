@@ -1821,6 +1821,8 @@
       "rotation?": "number",
       "outerRadiusOffset?": "PixelSize",
       "innerRadiusOffset?": "PixelSize",
+      "radiusMin?": "number",
+      "radiusMax?": "number",
       "shadow?": "AgDropShadowOptions",
       "tooltip?": "AgPieSeriesTooltip",
       "formatter?": "(params: AgPieSeriesFormatterParams) => AgPieSeriesFormat",
@@ -1851,6 +1853,8 @@
       "rotation?": "/** The rotation of the pie series in degrees. */",
       "outerRadiusOffset?": "/** The offset in pixels of the outer radius of the series. Used to construct doughnut charts. */",
       "innerRadiusOffset?": "/** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not given, or a value of zero is given, a pie chart will be rendered. */",
+      "radiusMin?": "/** Override of the automatically determined minimum radiusKey value from the data. */",
+      "radiusMax?": "/** Override of the automatically determined maximum radiusKey value from the data. */",
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
@@ -2244,6 +2248,15 @@
   "SeriesOptions": {
     "meta": { "isTypeAlias": true },
     "type": "AgCartesianSeriesOptions | AgPolarSeriesOptions | AgHierarchySeriesOptions"
+  },
+  "ReduceConfig": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "outputProp": "string",
+      "reducer": "(r: T, n: any) => T",
+      "start": "T",
+      "seriesType?": "string[]"
+    }
   },
   "ThemeMap": {
     "meta": { "isTypeAlias": true },

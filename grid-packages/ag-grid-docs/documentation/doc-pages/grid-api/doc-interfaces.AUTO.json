@@ -13492,6 +13492,14 @@
       "description": "/** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not given, or a value of zero is given, a pie chart will be rendered. */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
+    "radiusMin": {
+      "description": "/** Override of the automatically determined minimum radiusKey value from the data. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "radiusMax": {
+      "description": "/** Override of the automatically determined maximum radiusKey value from the data. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "shadow": {
       "description": "/** Configuration for the shadow used behind the chart series. */",
       "type": { "returnType": "AgDropShadowOptions", "optional": true }
