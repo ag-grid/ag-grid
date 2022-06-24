@@ -37,18 +37,61 @@ export function groupSeriesByType(seriesOptions: SeriesOptions[]) {
     return result;
 }
 
+const FAIL = Symbol();
+const SKIP = Symbol();
+const ARRAY_REDUCER = (prop: string) => (result: string[], next: any) => {
+    return result.concat(next[prop] ?? []);
+};
+const BOOLEAN_OR_REDUCER = (prop: string) => (result: boolean, next: any) => {
+    return result || (next[prop] ?? false);
+};
+const DEFAULTING_ARRAY_REDUCER = (prop: string, defaultValue: any) => (result: string[], next: any) => {
+    const nextValue = next[prop] ?? defaultValue;
+    if (nextValue === FAIL) {
+        throw new Error(`AG Charts - missing value for property [${prop}] on series config.`);
+    } else if (nextValue === SKIP) {
+        return result;
+    }
+
+    return result.concat(nextValue);
+};
+const YKEYS_REDUCER = (prop: string, activationValue: any) => (result: string[][], next: any) => {
+    if (next[prop] === activationValue) {
+        result.push(...(next.yKey ? [next.yKey] : next.yKeys));
+    }
+    return result;
+};
+
+interface ReduceConfig<T> {
+    outputProp: string;
+    reducer: (r: T, n: any) => T;
+    start: T,
+    seriesType?: string[];
+}
+const REDUCE_CONFIG: Record<string, ReduceConfig<unknown>> = {
+    'yKeys': { outputProp: 'yKeys', reducer: ARRAY_REDUCER('yKeys'), start: [] },
+    'fills': { outputProp: 'fills', reducer: ARRAY_REDUCER('fills'), start: [] },
+    'strokes': { outputProp: 'strokes', reducer: ARRAY_REDUCER('strokes'), start: [] },
+    'yNames': { outputProp: 'yNames', reducer: ARRAY_REDUCER('yNames'), start: [] },
+    'hideInChart': { outputProp: 'hideInChart', reducer: ARRAY_REDUCER('hideInChart'), start: [] },
+    'hideInLegend': { outputProp: 'hideInLegend', reducer: ARRAY_REDUCER('hideInLegend'), start: [] },
+
+    'yKey': { outputProp: 'yKeys', reducer: DEFAULTING_ARRAY_REDUCER('yKey', FAIL), start: [] },
+    'fill': { outputProp: 'fills', reducer: DEFAULTING_ARRAY_REDUCER('fill', SKIP), start: [] },
+    'stroke': { outputProp: 'strokes', reducer: DEFAULTING_ARRAY_REDUCER('stroke', SKIP), start: [] },
+    'yName': { outputProp: 'yNames', reducer: DEFAULTING_ARRAY_REDUCER('yName', SKIP), start: [] },
+    'visible': { outputProp: 'visibles', reducer: DEFAULTING_ARRAY_REDUCER('visible', true), start: [] },
+
+    'grouped': { outputProp: 'grouped', reducer: BOOLEAN_OR_REDUCER('grouped'), seriesType: ['bar', 'column'], start: false },
+    'showInLegend': { outputProp: 'hideInLegend', reducer: YKEYS_REDUCER('showInLegend', false), seriesType: ['bar', 'column'], start: []},
+};
+
 /**
  * Takes an array of bar or area series options objects and returns a single object with the combined area series options.
  */
-export function reduceSeries(series: any[], enableBarSeriesSpecialCases: boolean) {
+export function reduceSeries(series: any[]) {
+    const type = series[0]['type'] as string;
     let options: any = {};
-
-    const NA = Symbol();
-    const SKIP = Symbol();
-    const arrayValueProperties = ['yKeys', 'fills', 'strokes', 'yNames', 'hideInChart', 'hideInLegend'];
-    const stringValueProperties = ['yKey', 'fill', 'stroke', 'yName', 'visible'];
-    const barSeriesProperties = ['showInLegend', 'grouped'];
-    const defaultValues = [SKIP, SKIP, SKIP, SKIP, true];
 
     const keys: string[] = series.reduce(
         (r, n) => {
@@ -57,57 +100,25 @@ export function reduceSeries(series: any[], enableBarSeriesSpecialCases: boolean
         },
         new Set(),
     );
-    keys.forEach((prop) => {
-        const type = arrayValueProperties.includes(prop) ? 'array' :
-            stringValueProperties.includes(prop) ? 'string' :
-            barSeriesProperties.includes(prop) && enableBarSeriesSpecialCases ? 'bar' :
-            'other';
 
-        if (type === 'array') {
-            options[prop] = series.reduce(
-                (result, next) => {
-                    return result.concat(next[prop] ?? []);
-                },
-                [],
-            );
-        } else if (type === 'string') {
-            const defaultValue = defaultValues[stringValueProperties.indexOf(prop)];
-            options[prop + 's'] = series.reduce(
-                (result, next) => {
-                    const nextValue = next[prop] ?? defaultValue;
-                    if (nextValue === NA) {
-                        throw new Error(`AG Charts - missing value for property [${prop}] on series config.`);
-                    } else if (nextValue === SKIP) {
-                        return result;
-                    }
-    
-                    return result.concat(nextValue);
-                },
-                [],
-            );
-        } else if (type === 'bar' && prop === 'showInLegend') {
-            options.hideInLegend = series.reduce(
-                (r, n) => {
-                    if (n.showInLegend === false) {
-                        r.push(...(n.yKey ? [n.yKey] : n.yKeys));
-                    }
-                    return r;
-                },
-                [],
-            );
-        } else if (type === 'bar' && prop === 'grouped') {
-            options.grouped = series.reduce(
-                (r, n) => {
-                    if (n.grouped === true) {
-                        return true;
-                    }
-                    return r;
-                },
-                false,
-            );
-        } else {
+    keys.forEach((prop) => {
+        const reducerConfig = REDUCE_CONFIG[prop];
+
+        const defaultReduce = () => {
             options[prop] = series.reduce((r, n) => n[prop] ?? r, undefined);
+        };
+        if (!reducerConfig) {
+            defaultReduce();
+            return;
         }
+
+        const { outputProp, reducer, start = undefined, seriesType = [type] } = reducerConfig;
+        if (!seriesType.includes(type)) {
+            defaultReduce();
+            return;
+        }
+
+        options[outputProp] = series.reduce(reducer, start);
     });
 
     return options;
@@ -132,10 +143,8 @@ export function processSeriesOptions(seriesOptions: SeriesOptions[]) {
         switch (series[0].type) {
             case 'column':
             case 'bar':
-                result.push(reduceSeries(series, true));
-                break;
             case 'area':
-                result.push(reduceSeries(series, false));
+                result.push(reduceSeries(series));
                 break;
             case 'line':
             default:
