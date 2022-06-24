@@ -3,7 +3,7 @@
 |
 |```js
 |import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
-|import { ICellEditorAngularComp } from "@ag-grid-community/angular";
+|import { ICellEditorAngularComp } from "ag-grid-angular";
 |
 |@Component({
 |    selector: 'editor-cell',

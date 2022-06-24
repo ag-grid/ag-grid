@@ -2,8 +2,8 @@
 |Below is an example of floating filter component:
 |
 |```js
-|import {IFloatingFilterAngularComp} from "@ag-grid-community/angular";
-|import {IFloatingFilterParams} from "@ag-grid-community/core";
+|import {IFloatingFilterAngularComp} from "ag-grid-angular";
+|import {IFloatingFilterParams} from "ag-grid-community";
 |
 |@Component({
 |    selector: 'number-component',

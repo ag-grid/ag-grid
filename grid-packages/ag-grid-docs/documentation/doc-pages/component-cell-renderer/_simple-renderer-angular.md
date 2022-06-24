@@ -3,8 +3,8 @@
 |
 |```js
 |import {Component} from "@angular/core";
-|import {ICellRendererAngularComp} from '@ag-grid-community/angular';
-|import {ICellRendererParams} from "@ag-grid-community/core";
+|import {ICellRendererAngularComp} from 'ag-grid-angular';
+|import {ICellRendererParams} from "ag-grid-community";
 |
 |@Component({
 |    selector: 'total-value-component',

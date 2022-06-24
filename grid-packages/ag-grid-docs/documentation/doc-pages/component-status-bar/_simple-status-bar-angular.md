@@ -5,7 +5,7 @@
 |```js
 |import {Component} from "@angular/core";
 |import { IStatusPanelAngularComp } from '@ag-grid-community/angular';
-|import {IStatusPanelParams} from "@ag-grid-community/core";
+|import {IStatusPanelParams} from "ag-grid-community";
 |
 |@Component({
 |    selector: 'status-component',

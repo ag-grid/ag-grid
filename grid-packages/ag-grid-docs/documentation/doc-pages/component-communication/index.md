@@ -13,7 +13,7 @@ frameworks: ["angular", "vue"]
 |```tsx
 |//...other imports
 |import {Component} from '@angular/core';
-|import {ICellRendererAngularComp} from '@ag-grid-community/angular';
+|import {ICellRendererAngularComp} from 'ag-grid-angular';
 |import {CubeComponent} from './cube.component';
 |
 |@Component({
@@ -76,7 +76,7 @@ frameworks: ["angular", "vue"]
 |
 |<script>
 |//...other imports
-|import {AgGridVue} from "@ag-grid-community/vue";
+|import {AgGridVue} from "ag-grid-vue3";
 |import CubeComponent from './CubeComponent.vue';
 |
 |export default {
