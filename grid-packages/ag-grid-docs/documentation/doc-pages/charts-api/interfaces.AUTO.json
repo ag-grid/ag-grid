@@ -2249,15 +2249,6 @@
     "meta": { "isTypeAlias": true },
     "type": "AgCartesianSeriesOptions | AgPolarSeriesOptions | AgHierarchySeriesOptions"
   },
-  "ReduceConfig": {
-    "meta": { "typeParams": ["T"] },
-    "type": {
-      "outputProp": "string",
-      "reducer": "(r: T, n: any) => T",
-      "start": "T",
-      "seriesType?": "string[]"
-    }
-  },
   "ThemeMap": {
     "meta": { "isTypeAlias": true },
     "type": "{[key in AgChartThemeName | 'undefined' | 'null']?: ChartTheme}"

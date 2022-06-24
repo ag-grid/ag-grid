@@ -11438,8 +11438,6 @@
       "setCellCtrls(cellCtrls: CellCtrl[])": "void",
       "showFullWidth(compDetails: UserCompDetails)": "void",
       "getFullWidthCellRenderer()": "ICellRenderer | null | undefined",
-      "setTop(top: string)": "void",
-      "setTransform(transform: string)": "void",
       "setRowIndex(rowIndex: string)": "void",
       "setRowId(rowId: string)": "void",
       "setRowBusinessKey(businessKey: string)": "void",

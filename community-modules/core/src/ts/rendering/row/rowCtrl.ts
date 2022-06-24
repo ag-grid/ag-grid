@@ -107,16 +107,6 @@ export class RowCtrl extends BeanStub {
 
     private updateColumnListsPending = false;
 
-    // the top needs to be set into the DOM element when the element is created, not updated afterwards.
-    // otherwise the transition would not work, as it would be transitioning from zero (the unset value).
-    // for example, suppose a row that is outside the viewport, then user does a filter to remove other rows
-    // and this row now appears in the viewport, and the row moves up (ie it was under the viewport and not rendered,
-    // but now is in the viewport) then a new RowComp is created, however it should have it's position initialised
-    // to below the viewport, so the row will appear to animate up. if we didn't set the initial position at creation
-    // time, the row would animate down (ie from position zero).
-    private initialTop: string;
-    private initialTransform: string;
-
     constructor(
         rowNode: RowNode,
         beans: Beans,
@@ -142,7 +132,7 @@ export class RowCtrl extends BeanStub {
 
         this.addListeners();
 
-        this.setInitialRowTop();
+        // this.setInitialRowTop();
     }
 
     public isSticky(): boolean {
@@ -1358,15 +1348,22 @@ export class RowCtrl extends BeanStub {
         }
     }
 
+    // the top needs to be set into the DOM element when the element is created, not updated afterwards.
+    // otherwise the transition would not work, as it would be transitioning from zero (the unset value).
+    // for example, suppose a row that is outside the viewport, then user does a filter to remove other rows
+    // and this row now appears in the viewport, and the row moves up (ie it was under the viewport and not rendered,
+    // but now is in the viewport) then a new RowComp is created, however it should have it's position initialised
+    // to below the viewport, so the row will appear to animate up. if we didn't set the initial position at creation
+    // time, the row would animate down (ie from position zero).
     public getInitialRowTop(): string | undefined {
-        return this.initialTop;
+        const suppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
+        return suppressRowTransform ? this.getInitialRowTopShared() : undefined;
     }
-
     public getInitialTransform(): string | undefined {
-        return this.initialTransform;
+        const suppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
+        return suppressRowTransform ? undefined : `translateY(${this.getInitialRowTopShared()})`;
     }
-
-    private setInitialRowTop() {
+    private getInitialRowTopShared(): string {
         // print layout uses normal flow layout for row positioning
         if (this.printLayout) { return ''; }
 
@@ -1381,14 +1378,7 @@ export class RowCtrl extends BeanStub {
             rowTop = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
         }
 
-        const rowTopPx = rowTop + 'px';
-
-        const suppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
-        if (suppressRowTransform) {
-            this.initialTop = rowTopPx;
-        } else {
-            this.initialTransform = `translateY(${rowTopPx})`;
-        }
+        return rowTop + 'px';
     }
 
     private setRowTopStyle(topPx: string): void {

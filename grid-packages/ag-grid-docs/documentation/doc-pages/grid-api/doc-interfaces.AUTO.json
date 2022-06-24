@@ -20040,20 +20040,6 @@
         "optional": false
       }
     },
-    "setTop": {
-      "type": {
-        "arguments": { "top": "string" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setTransform": {
-      "type": {
-        "arguments": { "transform": "string" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "setRowIndex": {
       "type": {
         "arguments": { "rowIndex": "string" },
