@@ -1,7 +1,7 @@
 
 //
 // This file defines the public Sass API to ag-Grid's styles.
-// https://ag-grid.com/javascript-data-grid/styling-sass/
+// https://ag-grid.com/javascript-data-grid/look-and-feel-customisation-sass/
 //
 
 @use "sass:map";
@@ -377,7 +377,7 @@ $-variable-param-types: (
     --ag-subheader-background-color: "color",
     --ag-subheader-toolbar-background-color: "color",
     --ag-control-panel-background-color: "color",
-    --ag-side-button-selected-background: "color",
+    --ag-side-button-selected-background-color: "color",
     --ag-selected-row-background-color: "color",
     --ag-odd-row-background-color: "color",
     --ag-modal-overlay-background-color: "color",

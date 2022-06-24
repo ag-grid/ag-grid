@@ -43,7 +43,7 @@
     @include ag.keyboard-focus((ag-side-button-button), 4px);
 
     .ag-selected button.ag-side-button-button {
-        background: var(--ag-side-button-selected-background);
+        background-color: var(--ag-side-button-selected-background-color);
     }
 
     .ag-side-button-icon-wrapper {

@@ -127,6 +127,11 @@
                 "title": "Row Object",
                 "url": "/row-object/",
                 "showInCollapsed": true
+              },
+              {
+                "title": "Sizing",
+                "url": "/grid-size/",
+                "showInCollapsed": true
               }
             ]
           },
@@ -212,6 +217,12 @@
             "box-title": "Spanning",
             "url": "/column-spanning/",
             "showInCollapsed": true
+          },
+          {
+            "title": "Column & Cell Styles",
+            "box-title": "Cells",
+            "url": "/cell-styles/",
+            "showInCollapsed": true
           }
         ]
       },
@@ -241,6 +252,12 @@
             "title": "Row Pinning",
             "box-title": "Pinning",
             "url": "/row-pinning/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Styles",
+            "box-title": "Styles",
+            "url": "/row-styles/",
             "showInCollapsed": true
           },
           {
@@ -399,64 +416,120 @@
     "group": "Core Features",
     "items": [
       {
-        "title": "Layout & Styling",
+        "title": "Look & Feel",
         "icon": "icon-style",
         "items": [
           {
-            "title": "Styling Rows",
-            "box-title": "Rows",
-            "url": "/row-styles/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Styling Cells",
-            "box-title": "Cells",
-            "url": "/cell-styles/",
-            "showInCollapsed": true
+            "title": "Overview",
+            "url": "/look-and-feel/",
+            "showInCollapsed": true,
+            "matrixExclude": true
           },
           {
             "title": "Themes",
             "url": "/themes/",
-            "matrixExcludeChildren": true,
             "showInCollapsed": true
           },
           {
-            "title": "Customising Design",
-            "url": "/customising-design/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Sass Styling API",
-            "url": "/styling-sass/",
+            "title": "Customisation",
+            "url": "/look-and-feel-customisation/",
             "showInCollapsed": true,
             "items": [
               {
-                "title": "Legacy Sass API",
-                "url": "/styling-sass-legacy/",
-                "showInCollapsed": true
+                "title": "CSS",
+                "url": "/look-and-feel-customisation-css/",
+                "showInCollapsed": false
               },
               {
-                "title": "Upgrading from v27",
-                "url": "/styling-sass-upgrading-from-v27/",
-                "showInCollapsed": true
+                "title": "Sass",
+                "url": "/look-and-feel-customisation-sass/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Features",
+                "url": "/look-and-feel-customisation-features/",
+                "showInCollapsed": false,
+                "items": [
+                  {
+                    "title": "Colours & Fonts",
+                    "url": "/look-and-feel-customisation-colours/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Compactness & Row Height",
+                    "url": "/look-and-feel-customisation-compactness/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Selections",
+                    "url": "/look-and-feel-customisation-selections/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Headers",
+                    "url": "/look-and-feel-customisation-headers/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Borders",
+                    "url": "/look-and-feel-customisation-borders/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Icons",
+                    "url": "/custom-icons/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Tool Panels",
+                    "url": "/look-and-feel-customisation-tool-panels/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Charts",
+                    "url": "/look-and-feel-customisation-charts/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Inputs & Widgets",
+                    "url": "/look-and-feel-customisation-widgets/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Tabs",
+                    "url": "/look-and-feel-customisation-tabs/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Menus & Popups",
+                    "url": "/look-and-feel-customisation-popups/",
+                    "showInCollapsed": false
+                  }
+                ]
+              },
+              {
+                "title": "Variable Reference",
+                "url": "/look-and-feel-customisation-variables/",
+                "showInCollapsed": false
               }
             ]
           },
           {
-            "title": "Grid Size",
-            "url": "/grid-size/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Custom Icons",
-            "box-title": "Icons",
-            "url": "/custom-icons/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Printing",
-            "url": "/printing/",
-            "showInCollapsed": true
+            "title": "Upgrading to v28",
+            "url": "/look-and-feel-upgrading-to-v28/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "CSS",
+                "url": "/look-and-feel-upgrading-to-v28-css/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Sass",
+                "url": "/look-and-feel-upgrading-to-v28-sass/",
+                "showInCollapsed": false
+              }
+            ]
           }
         ]
       },
@@ -1221,6 +1294,11 @@
           {
             "title": "Drag & Drop",
             "url": "/drag-and-drop/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Printing",
+            "url": "/printing/",
             "showInCollapsed": true
           },
           {

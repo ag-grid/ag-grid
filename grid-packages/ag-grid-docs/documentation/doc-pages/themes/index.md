@@ -2,18 +2,18 @@
 title: "Themes"
 ---
 
-The grid is styled with CSS, and a theme is simply a CSS class that applies styles to the grid. Most users choose a provided theme and then [customise](/customising-design/) it to meet their needs. It is also possible to [create your own themes](#creating-your-own-theme).
+The grid is styled with CSS, and a theme is simply a CSS class that applies styles to the grid. Most users choose a provided theme and then [customise](/look-and-feel-customisation/) it to meet their needs. It is also possible to [create your own themes](#creating-your-own-theme).
 
 ## Provided Themes
 
-The grid comes with several provided themes which act as a great starting point for any application-specific customisations. To see the themes in action take a look at our [Demo Application](../../example)
+The grid comes with several provided themes which act as a great starting point for any application-specific customisations. Click the theme name to see a demo see the themes in action take a look at our [Demo Application](../../example)
 and try switching between the available themes.
 
 | Theme Name | Description |
 |------------|-------------|
-|**ag-theme-alpine**<br/>**ag-theme-alpine-dark**<br/><br/>File name `ag-theme-alpine[.min].css` | Modern looking themes with high contrast, and generous padding. <br/><br/>**Recommendation:** This is the recommended grid theme and an excellent choice for most applications. |
-|**ag-theme-balham**<br/>**ag-theme-balham-dark**<br/><br/>File name `ag-theme-balham[.min].css` | Themes for professional data-heavy applications.<br/><br/>**Recommendation:** Balham was the recommended theme before Alpine was developed. It is still an excellent choice for applications that need to fit more data onto each page. |
-|**ag-theme-material**<br/><br/>File name `ag-theme-material[.min].css` | A theme designed according to the Google Material Language Specs.<br/><br/>**Recommendation:** This theme looks great for simple applications with lots of white space, and is the obvious choice if the rest of your application follows the Google Material Design spec. However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If your application uses these features, consider using `ag-theme-alpine` instead. |
+|[**ag-theme-alpine**](../../example?theme=ag-theme-alpine)<br/>[**ag-theme-alpine-dark**](../../example?theme=ag-theme-alpine-dark)<br/><br/>File name `ag-theme-alpine[.min].css` | Modern looking themes with high contrast, and generous padding. <br/><br/>**Recommendation:** This is the recommended grid theme and an excellent choice for most applications. |
+|[**ag-theme-balham**](../../example?theme=ag-theme-balham)<br/>[**ag-theme-balham-dark**](../../example?theme=ag-theme-balham-dark)<br/><br/>File name `ag-theme-balham[.min].css` | Themes for professional data-heavy applications.<br/><br/>**Recommendation:** Balham was the recommended theme before Alpine was developed. It is still an excellent choice for applications that need to fit more data onto each page. |
+|[**ag-theme-material**](../../example?theme=ag-theme-material)<br/><br/>File name `ag-theme-material[.min].css` | A theme designed according to the Google Material Language Specs.<br/><br/>**Recommendation:** This theme looks great for simple applications with lots of white space, and is the obvious choice if the rest of your application follows the Google Material Design spec. However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If your application uses these features, consider using `ag-theme-alpine` instead. |
 
 ## Applying a Theme to an App
 
@@ -36,7 +36,7 @@ In order for the above code to work, the correct stylesheets must be loaded in t
 [[note]]
 | The correct files to load are located in `ag-grid-community/styles` or `@ag-grid-community/styles` if you're using [modules](/modules/).
 |
-| This path has changed in v28, and the old files are still there as part of the [Legacy Sass API](/styling-sass-legacy/).
+| This path has changed in v28, and the old files are still there as part of the [Legacy Sass API](/look-and-feel-customisation-sass-legacy/).
 |
 | Double-check that you are importing files from the new paths. If you have `/src/` or `/dist/` in your path then you're using the old paths.
 
@@ -65,7 +65,7 @@ You can copy, either manually or as part of your app's build, the required CSS f
 
 ### Sass Styling API
 
-If you're using the [Sass Styling API](/styling-sass) then the right CSS files will be automatically included for your chosen theme. For projects that are already using Sass this is the recommended approach.
+If you're using the [Sass Styling API](/look-and-feel-customisation-sass) then the right CSS files will be automatically included for your chosen theme. For projects that are already using Sass this is the recommended approach.
 
 ### CDN
 
@@ -95,12 +95,7 @@ The Material theme requires the Roboto font, and this is not bundled in the mate
 
 ## Creating your own theme
 
-The majority of users select a provided theme and [make customisations using CSS](/customising-design/). If you start with a provided theme and then very extensively alter it to make a totally different design, you may encounter a couple of issues:
-
-1. If the provided theme contains design elements that you don't want, you need to add CSS rules to remove them.
-2. Between releases, we may change some of the implementation details of the provided theme in a way that breaks these rules you have added.
-
-For apps that want a look and feel that is entirely different from our provided themes, you can define your own theme.
+The majority of users select a provided theme and [make customisations using CSS](/look-and-feel-customisation/). If your chosen provided theme has elements that you don't want, you will need to add CSS rules to remove them. If your desired look and feel is very different from the provided theme, at some point it becomes easier to start from scratch. To do this, you can define your own theme.
 
 A theme is simply a CSS class name matching the pattern `ag-theme-*`, along with CSS rules that target this class name.
 
@@ -110,7 +105,7 @@ Ensure that `ag-grid.css` is loaded, choose a theme name and apply it to the gri
 <div id="myGrid" class="ag-theme-mycustomtheme"></div>
 ```
 
-That's it! You've created a theme. You haven't added any styles to it so what you will see is a nearly blank slate - basic customisable borders and padding but no opinionated design elements. You can then [add customisations using CSS](/customising-design/):
+That's it! You've created a theme. You haven't added any styles to it so what you will see is a nearly blank slate - basic customisable borders and padding but no opinionated design elements. You can then [add customisations using CSS](/look-and-feel-customisation/):
 
 ```css
 .ag-theme-mycustomtheme {
@@ -123,8 +118,3 @@ That's it! You've created a theme. You haven't added any styles to it so what yo
     font-style: italic;
 }
 ```
-
-[[note]]
-| Versions of the grid before v28 had a different mechanism for creating custom themes, and allowed custom themes to "extend" a provided theme. This functionality is now provided by [Design Customisations](/customising-design/).
-|
-| If you're using the old method of building themes, see the notes on [Upgrading from v27](/styling-sass#upgrading-from-v27)
