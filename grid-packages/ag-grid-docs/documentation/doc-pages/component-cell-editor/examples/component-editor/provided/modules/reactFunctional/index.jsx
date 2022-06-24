@@ -164,7 +164,7 @@ const NumericEditor = memo(forwardRef((props, ref) => {
         let startValue;
         let highlightAllOnFocus = true;
 
-        if (props.key === KEY_BACKSPACE || props.key === KEY_DELETE) {
+        if (props.eventKey === KEY_BACKSPACE || props.eventKey === KEY_DELETE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
         } else if (props.charPress) {
@@ -174,7 +174,7 @@ const NumericEditor = memo(forwardRef((props, ref) => {
         } else {
             // otherwise we start with the current value
             startValue = props.value;
-            if (props.key === KEY_F2) {
+            if (props.eventKey === KEY_F2) {
                 highlightAllOnFocus = false;
             }
         }

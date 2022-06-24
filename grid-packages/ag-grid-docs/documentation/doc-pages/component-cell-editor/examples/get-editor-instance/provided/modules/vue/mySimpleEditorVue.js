@@ -12,7 +12,7 @@ export default {
     },
     methods: {
         getValue() {
-            return this.happy ? 'Happy' : 'Sad';
+            return this.value;
         },
 
         myCustomFunction() {

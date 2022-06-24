@@ -26,7 +26,7 @@ export default {
             let startValue;
             let highlightAllOnFocus = true;
 
-            if (params.key === KEY_BACKSPACE || params.key === KEY_DELETE) {
+            if (params.eventKey === KEY_BACKSPACE || params.eventKey === KEY_DELETE) {
                 // if backspace or delete pressed, we clear the cell
                 startValue = '';
             } else if (params.charPress) {
@@ -36,7 +36,7 @@ export default {
             } else {
                 // otherwise we start with the current value
                 startValue = params.value;
-                if (params.key === KEY_F2) {
+                if (params.eventKey === KEY_F2) {
                     highlightAllOnFocus = false;
                 }
             }

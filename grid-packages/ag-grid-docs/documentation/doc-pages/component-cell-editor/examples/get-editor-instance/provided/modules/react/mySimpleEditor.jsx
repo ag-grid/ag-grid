@@ -21,7 +21,7 @@ export default class MySimpleEditor extends Component {
     getInitialValue(props) {
         let startValue = props.value;
 
-        const isBackspaceOrDelete = props.key === KEY_BACKSPACE || props.key === KEY_DELETE;
+        const isBackspaceOrDelete = props.eventKey === KEY_BACKSPACE || props.eventKey === KEY_DELETE;
         if (isBackspaceOrDelete) {
             startValue = '';
         } else if (props.charPress) {

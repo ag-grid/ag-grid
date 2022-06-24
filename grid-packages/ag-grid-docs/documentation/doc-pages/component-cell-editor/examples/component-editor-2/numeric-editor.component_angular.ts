@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
 
 import { ICellEditorAngularComp } from "@ag-grid-community/angular";
+import { ICellEditorParams } from "@ag-grid-community/core";
 
 const KEY_BACKSPACE = 'Backspace';
 const KEY_DELETE = 'Delete';
@@ -21,19 +22,19 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
     @ViewChild('input', { read: ViewContainerRef }) public input!: ViewContainerRef;
 
 
-    agInit(params: any): void {
+    agInit(params: ICellEditorParams): void {
         this.params = params;
         this.setInitialState(this.params);
 
         // only start edit if key pressed is a number, not a letter
-        this.cancelBeforeStart = params.charPress && ('1234567890'.indexOf(params.charPress) < 0);
+        this.cancelBeforeStart = !!(params.charPress && ('1234567890'.indexOf(params.charPress) < 0));
     }
 
-    setInitialState(params: any) {
+    setInitialState(params: ICellEditorParams) {
         let startValue;
         let highlightAllOnFocus = true;
 
-        if (params.key === KEY_BACKSPACE || params.key === KEY_DELETE) {
+        if (params.eventKey === KEY_BACKSPACE || params.eventKey === KEY_DELETE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
         } else if (params.charPress) {
@@ -43,7 +44,7 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
         } else {
             // otherwise we start with the current value
             startValue = params.value;
-            if (params.key === KEY_F2) {
+            if (params.eventKey === KEY_F2) {
                 highlightAllOnFocus = false;
             }
         }

@@ -25,7 +25,7 @@ export default {
         setInitialState(params) {
             let startValue;
 
-            if (params.key === KEY_BACKSPACE || params.key === KEY_DELETE) {
+            if (params.eventKey === KEY_BACKSPACE || params.eventKey === KEY_DELETE) {
                 // if backspace or delete pressed, we clear the cell
                 startValue = '';
             } else if (params.charPress) {

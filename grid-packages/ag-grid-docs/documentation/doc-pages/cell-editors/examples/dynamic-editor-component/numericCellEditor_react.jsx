@@ -58,7 +58,7 @@ export default class NumericEditor extends Component {
     createInitialState(props) {
         let startValue;
 
-        if (props.key === KEY_BACKSPACE || props.key === KEY_DELETE) {
+        if (props.eventKey === KEY_BACKSPACE || props.eventKey === KEY_DELETE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
         } else if (props.charPress) {
