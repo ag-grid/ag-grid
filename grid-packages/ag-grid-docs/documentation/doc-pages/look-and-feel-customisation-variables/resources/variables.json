@@ -1,0 +1,405 @@
+{
+  "_config_": {},
+  "variables": {
+    "--ag-foreground-color": {
+      "description": "Colour of text and icons in primary UI elements like menus",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-data-color": {
+      "description": "Colour of text in grid cells",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-secondary-foreground-color": {
+      "description": "Colour of text and icons in UI elements that need to be slightly less emphasised to avoid distracting attention from data",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-header-foreground-color": {
+      "description": "Colour of text and icons in the header",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-disabled-foreground-color": {
+      "description": "Color of elements that can't be interacted with because they are in a disabled state",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-background-color": {
+      "description": "Background colour of the grid",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-header-background-color": {
+      "description": "Background colour for all headers, including the grid header, panels etc",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-subheader-background-color": {
+      "description": "Background colour for second level headings within UI components",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-subheader-toolbar-background-color": {
+      "description": "Background colour for toolbars directly under subheadings (as used in the chart settings menu)",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-control-panel-background-color": {
+      "description": "Background for areas of the interface that contain UI controls, like tool panels and the chart settings menu",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-side-button-selected-background-color": {
+      "description": "Background for the active tab on the side of the control panel",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-selected-row-background-color": {
+      "description": "Background color of selected rows in the grid and in dropdown menus",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-odd-row-background-color": {
+      "description": "Background colour applied to every other row",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-modal-overlay-background-color": {
+      "description": "Background color of the overlay shown over the grid e.g. a data loading indicator",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-row-hover-color": {
+      "description": "Background color when hovering over rows in the grid and in dropdown menus; Note: if you want a rollover on one but not the other, use CSS selectors instead of this property",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-column-hover-color": {
+      "description": "Background color when hovering over columns in the grid",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-range-selection-border-color": {
+      "description": "Color to draw around selected cell ranges",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-range-selection-border-style": {
+      "description": "Border style for range selections, e.g. `solid` or `dashed`. Do not set to `none`, if you need to hide the border set the color to transparent",
+      "type": "a CSS border style (e.g. `dotted`, `solid` or `none`)"
+    },
+    "--ag-range-selection-background-color": {
+      "description": "Background colour of selected cell ranges.",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-range-selection-background-color-2": {
+      "description": "Background-color when 2 selected ranges overlap. Hint: for a realistic appearance of multiple semi-transparent colours overlaying, set the opacity to 1-((1-X)^2) where X is the opacity of --ag-range-selection-background-color",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-range-selection-background-color-3": {
+      "description": "Background-color when 3 selected ranges overlap. Hint: for a realistic appearance of multiple semi-transparent colours overlaying, set the opacity to 1-((1-X)^3) where X is the opacity of --ag-range-selection-background-color",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-range-selection-background-color-4": {
+      "description": "Background-color when 4 selected ranges overlap. Hint: for a realistic appearance of multiple semi-transparent colours overlaying, set the opacity to 1-((1-X)^4) where X is the opacity of --ag-range-selection-background-color",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-range-selection-highlight-color": {
+      "description": "Background colour to briefly apply to a cell range when it is copied from or pasted into",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-selected-tab-underline-color": {
+      "description": "Colour of the border drawn under selected tabs",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-selected-tab-underline-width": {
+      "description": "Thickness of the border drawn under selected tabs",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-selected-tab-underline-transition-speed": {
+      "description": "Duration of animation used to show and hide the border drawn under selected tabs",
+      "type": "CSS time duration (e.g. `3s` or `250ms`)"
+    },
+    "--ag-range-selection-chart-category-background-color": {
+      "description": "Background colour for cells that provide categories to the current range chart",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-range-selection-chart-background-color": {
+      "description": "Background colour for cells that provide data to the current range chart",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-header-cell-hover-background-color": {
+      "description": "Rollover colour for header cells",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-header-cell-moving-background-color": {
+      "description": "Colour applied to header cells when the column is being dragged to a new position",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-value-change-value-highlight-background-color": {
+      "description": "Colour to apply when a cell value changes and enableCellChangeFlash is enabled",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-value-change-delta-up-color": {
+      "description": "Colour to temporarily apply to cell data when its value increases in an agAnimateShowChangeCellRenderer cell",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-value-change-delta-down-color": {
+      "description": "Colour to temporarily apply to cell data when its value decreases in an agAnimateShowChangeCellRenderer cell",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-chip-background-color": {
+      "description": "Colour for the 'chip' that represents a column that has been dragged onto a drop zone",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-borders": {
+      "description": "Enable or disable borders around most UI elements in the grid. Set this to a border style and thickness, e.g. `solid 1px` to enable borders, or `none` to disable borders. Use the other --ag-borders-* variables for more fine grained control over which UI elements get borders.",
+      "type": "a CSS border style and size (e.g. `solid 1px` or `none`)"
+    },
+    "--ag-border-color": {
+      "description": "Colour for border around major UI components like the grid itself, headers; footers and tool panels.",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-borders-critical": {
+      "description": "Enable or disable borders that are critical to UX, e.g. those between headers and rows. Themes that disable borders generally may want to enable these borders. Set this to a border style and thickness, e.g. `solid 1px` to enable borders, or `none` to disable borders.",
+      "type": "a CSS border style and size (e.g. `solid 1px` or `none`)"
+    },
+    "--ag-borders-secondary": {
+      "description": "Draw decorative borders separating UI elements within components Set this to a border style and thickness, e.g. `solid 1px` to enable borders, or `none` to disable borders.",
+      "type": "a CSS border style and size (e.g. `solid 1px` or `none`)"
+    },
+    "--ag-secondary-border-color": {
+      "description": "Colour for borders used to separate elements within a major UI component",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-borders-row": {
+      "description": "Draw borders between rows. Set this to a border style and thickness, e.g. `solid 1px` to enable borders, or `none` to disable borders.",
+      "type": "a CSS border style and size (e.g. `solid 1px` or `none`)"
+    },
+    "--ag-row-border-color": {
+      "description": "Colour for borders between rows, if enabled with --ag-borders-row",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-cell-horizontal-border": {
+      "description": "Default border for cells. This can be used to specify the border-style and border-color properties e.g. `dashed red` but the border-width is fixed at 1px. Set to `solid transparent` to show no border.",
+      "type": "a CSS border style and colour (e.g. `solid red`)"
+    },
+    "--ag-borders-input": {
+      "description": "Draw borders around inputs. Set this to a border style and thickness, e.g. `solid 1px` to enable borders, or `none` to disable borders.",
+      "type": "a CSS border style and size (e.g. `solid 1px` or `none`)"
+    },
+    "--ag-input-border-color": {
+      "description": "Colour for borders around inputs, if enabled with --ag-borders-input",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-borders-input-invalid": {
+      "description": "Draw borders around inputs when their content has failed validation. Set this to a border style and thickness, e.g. `solid 2px` to enable borders. Set to `none` to disable borders but ensure that you have added styles to differentiate invalid from valid inputs.",
+      "type": "a CSS border style and size (e.g. `solid 1px` or `none`)"
+    },
+    "--ag-input-border-color-invalid": {
+      "description": "The color for the border around invalid inputs, if enabled with --ag-borders-input-invalid",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-borders-side-button": {
+      "description": "Draw borders around the vertical tabs on the side of the control panel Set this to a border style and thickness, e.g. `solid 1px` to enable borders, or `none` to disable borders.",
+      "type": "a CSS border style and size (e.g. `solid 1px` or `none`)"
+    },
+    "--ag-border-radius": {
+      "description": "Border radius applied to many elements such as dialogs and form widgets",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-row-border-color": {
+      "description": "Colour of the border between grid rows, or `transparent` to display no border",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-header-column-separator-display": {
+      "description": "Whether to display the header column separator - a vertical line that displays between every header cell",
+      "type": "CSS display value - `block` to show or `none` to hide"
+    },
+    "--ag-header-column-separator-height": {
+      "description": "Height of the header column separator. Percentage values are relative to the header height.",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-header-column-separator-width": {
+      "description": "Width of the header column separator",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-header-column-separator-color": {
+      "description": "Colour of the header column separator",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-header-column-resize-handle-display": {
+      "description": "Whether to show the header column resize handle - a vertical line that displays only between resizeable header columns, indicating where to drag in order to resize the column.",
+      "type": "CSS display value - `block` to show or `none` to hide"
+    },
+    "--ag-header-column-resize-handle-height": {
+      "description": "Height of the header resize handle. Percentage values are relative to the header height.",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-header-column-resize-handle-width": {
+      "description": "Width of the header resize handle.",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-header-column-resize-handle-color": {
+      "description": "Colour of the header resize handle",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-invalid-color": {
+      "description": "The color applied to form elements in an invalid state",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-input-disabled-border-color": {
+      "description": "The border around disabled text inputs",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-input-disabled-background-color": {
+      "description": "The background colour of disabled text inputs",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-checkbox-background-color": {
+      "description": "the background of an checkbox",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-checkbox-border-radius": {
+      "description": "edge rounding a checkboxes",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-checkbox-checked-color": {
+      "description": "color of the `checkbox-checked` icon that is shown in a checked checkbox",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-checkbox-unchecked-color": {
+      "description": "color of the `checkbox-unchecked` icon that is shown in an unchecked checkbox",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-checkbox-indeterminate-color": {
+      "description": "color of the `checkbox-indeterminate` icon that is shown in an indeterminate checkbox",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-toggle-button-border-width": {
+      "description": "size of the toggle button outer border",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-toggle-button-on-border-color": {
+      "description": "colour of the toggle button outer border in its 'on' state",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-toggle-button-off-border-color": {
+      "description": "colour of the toggle button's outer border in its 'off' state",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-toggle-button-on-background-color": {
+      "description": "colour of the toggle button background in its 'on' state",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-toggle-button-off-background-color": {
+      "description": "colour of the toggle button background in its 'off' state",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-toggle-button-switch-background-color": {
+      "description": "colour of the toggle button switch (the bit that slides from left to right)",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-toggle-button-switch-border-color": {
+      "description": "border colour of the toggle button switch (the bit that slides from left to right)",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-toggle-button-width": {
+      "description": "width of the whole toggle button component",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-toggle-button-height": {
+      "description": "height of the whole toggle button component",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-input-focus-box-shadow": {
+      "description": "box shadow around focussed inputs",
+      "type": "CSS box-shadow value (e.g. `0 5px 10px black`)"
+    },
+    "--ag-input-focus-border-color": {
+      "description": "Colour of the border around focussed inputs. Set to `var(--ag-input-border-color)` if you do not want to change the border colour on focus.",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-minichart-selected-chart-color": {
+      "description": "Color of border around selected chart style",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-minichart-selected-page-color": {
+      "description": "Color of dot representing selected page of chart styles",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-grid-size": {
+      "description": "grid-size is the main control for affecting how tightly data and UI elements are packed together. All padding and spacing in the grid is defined as a multiple of grid-size, so increasing it will make most components larger by increasing their internal white space while leaving the size of text and icons unchanged.",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-icon-size": {
+      "description": "The size of square icons and icon-buttons",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-widget-container-horizontal-padding": {
+      "description": "The horizontal padding of containers that contain stacked widgets widgets",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-widget-container-vertical-padding": {
+      "description": "The vertical padding of containers that contain stacked widgets widgets",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-widget-horizontal-spacing": {
+      "description": "The horizontal spacing between widgets in containers that contain horizontally stacked widgets",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-widget-vertical-spacing": {
+      "description": "The vertical spacing between widgets in containers that contain vertically stacked widgets",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-cell-horizontal-padding": {
+      "description": "Horizontal padding for grid and header cells (vertical padding is not set explicitly, but inferred from row-height / header-height",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-cell-widget-spacing": {
+      "description": "Horizontal spacing between widgets inside cells (e.g. row group expand buttons and row selection checkboxes)",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-row-height": {
+      "description": "Height of grid rows",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-header-height": {
+      "description": "Height of header rows",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-list-item-height": {
+      "description": "Height of items in lists (example of lists are dropdown select inputs and column menu set filters)",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-column-select-indent-size": {
+      "description": "How much to indent child columns in the column tool panel relative to their parent",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-row-group-indent-size": {
+      "description": "How much to indent child rows in the grid relative to their parent row",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-filter-tool-panel-group-indent": {
+      "description": "How much to indent child columns in the filters tool panel relative to their parent",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-tab-min-width": {
+      "description": "Minimum width of a tabbed menu (usd in charts)",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-menu-min-width": {
+      "description": "Minimum width of a menu that is not tabbed",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-side-bar-panel-width": {
+      "description": "Width of the sidebar that contains the columns and filters tool panels",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-font-family": {
+      "description": "Font family used for all text",
+      "type": "CSS font-family value (e.g. `font-family: `'Gill Sans', sans-serif`)"
+    },
+    "--ag-font-size": {
+      "description": "Default font size for text in the grid",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-card-radius": {
+      "description": "cards are elements that float above the UI",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-card-shadow": {
+      "description": "the default card shadow applies to simple cards like column drag indicators and text editors",
+      "type": "CSS box-shadow value (e.g. `0 5px 10px black`)"
+    },
+    "--ag-popup-shadow": {
+      "description": "override the shadow for popups - cards that contain complex UI, like menus and charts",
+      "type": "CSS box-shadow value (e.g. `0 5px 10px black`)"
+    }
+  }
+}

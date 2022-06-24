@@ -6,6 +6,7 @@
     }
 }
 
+
 .reference {
     height: 1px; // needed for divs to fit table cell heights correctly
 
@@ -14,6 +15,10 @@
         color: inherit;
         word-break: keep-all;
         word-wrap: normal;
+    }
+
+    &__name__wrap {
+        word-break: break-word;
     }
 
     &__required {
@@ -38,6 +43,10 @@
         + td {
            width: 280px;
         }
+    }
+
+    &__name-cell__wrap {
+        width: 100%;
     }
 
     &__expander {

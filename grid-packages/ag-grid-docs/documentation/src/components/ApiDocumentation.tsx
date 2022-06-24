@@ -12,7 +12,7 @@ import { useJsonFileNodes } from './use-json-file-nodes';
 /**
  * This generates tabulated interface documentation based on information in JSON files.
  */
-export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework, overridesrc, names = "", exclude = "", config = {} }): any => {
+export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework, overridesrc, names = "", exclude = "", wrapNamesAt = null, config = {} }): any => {
     const nodes = useJsonFileNodes();
     let codeSrcProvided = [interfacename];
     let namesArr = [];
@@ -21,6 +21,10 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     if (names && names.length) {
         namesArr = JSON.parse(names);
         config = { overrideBottomMargin: "1rem", ...config, };
+    }
+
+    if (wrapNamesAt) {
+        config = { wrapNamesAt: parseFloat(wrapNamesAt), ...config, };
     }
 
     const { lookupRoot = 'grid-api' } = config;
@@ -186,7 +190,6 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
         names={namesArr} />;
 };
 
-
 const Section: React.FC<SectionProps> = ({ framework, title, properties, config = {} as Config, breadcrumbs = {}, names = [] }): any => {
     const { meta } = properties;
     const displayName = (meta && meta.displayName) || title;
@@ -231,7 +234,7 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
     const rows = [];
     const objectProperties: DocEntryMap = {};
 
-    let longestNameLength = 25;
+    let leftColumnWidth = 25;
     let processed = new Set();
     Object.entries(properties).forEach(([name, definition]) => {
         if (name === 'meta' || (names.length > 0 && !names.includes(name))) {
@@ -240,9 +243,13 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
         processed.add(name);
 
         const length = getLongestNameLength(name);
-        if (longestNameLength < length) {
-            longestNameLength = length;
+        if (leftColumnWidth < length) {
+            leftColumnWidth = length;
         }
+        if (config.maxLeftColumnWidth < leftColumnWidth) {
+            leftColumnWidth = config.maxLeftColumnWidth
+        }
+        
         const gridOptionProperty = config.lookups.codeLookup[name];
 
         rows.push(<Property key={name} framework={framework} id={id} name={name} definition={definition} config={{ ...config, gridOpProp: gridOptionProperty, interfaceHierarchyOverrides: definition.interfaceHierarchyOverrides }} />);
@@ -262,12 +269,14 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
         })
     }
 
+    const wrap = !!config.maxLeftColumnWidth;
+
     return <>
         {header}
         <table className={styles['reference']} style={config.overrideBottomMargin ? { "marginBottom": config.overrideBottomMargin } : {}}>
             <colgroup>
                 <col className={styles['reference__expander-cell']} ></col>
-                <col style={{ width: longestNameLength + 'ch' }}></col>
+                <col className={wrap ? styles['reference__name-cell__wrap'] : undefined} style={{ width: leftColumnWidth + 'ch' }}></col>
                 <col></col>
             </colgroup>
             <tbody>
@@ -366,6 +375,8 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         </tr>
     }
 
+    const wrap = !!config.maxLeftColumnWidth;
+
     return <tr>
         <td className={styles['reference__expander-cell']} onClick={() => setExpanded(!isExpanded)} role="presentation">
             {showAdditionalDetails && <div className={styles['reference__expander']}>
@@ -374,7 +385,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         </td>
         <td role="presentation">
             <h6 id={`reference-${id}-${name}`} style={{ display: 'inline-flex' }} className="side-menu-exclude" >
-                <code onClick={() => setExpanded(!isExpanded)} dangerouslySetInnerHTML={{ __html: displayName }} className={styles['reference__name']}></code>
+                <code onClick={() => setExpanded(!isExpanded)} dangerouslySetInnerHTML={{ __html: displayName }} className={wrap ? `${styles['reference__name']} ${styles['reference__name__wrap']}`: styles['reference__name']}></code>
                 <a href={`#reference-${id}-${name}`} className="anchor after" style={{ fontSize: 'small' }}>{anchorIcon}</a>
             </h6>
 
