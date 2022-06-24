@@ -94,7 +94,7 @@ export class BarChartProxy extends CartesianChartProxy {
         const allSeries: AgBarSeriesOptions[] = [];
         for (let i = 0; i < series.length; i++) {
             // update primary series
-            const s: AgBarSeriesOptions = series[i];
+            const s = series[i];
             updatePrimarySeries(s, i);
             allSeries.push(s);
 

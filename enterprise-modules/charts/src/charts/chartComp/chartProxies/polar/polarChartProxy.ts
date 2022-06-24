@@ -1,6 +1,6 @@
 import { ChartProxy, ChartProxyParams } from "../chartProxy";
-import { AgChart, PieSeries, PieTooltipRendererParams, PolarChart } from "ag-charts-community";
-import { AgPolarChartOptions } from "ag-charts-community/src/chart/agChartOptions";
+import { AgChart, PieSeries, PieTooltipRendererParams, PolarChart, AgChartLegendClickEvent } from "ag-charts-community";
+import { AgPieSeriesOptions, AgPolarChartOptions } from "ag-charts-community/src/chart/agChartOptions";
 
 export abstract class PolarChartProxy extends ChartProxy {
 
@@ -17,6 +17,25 @@ export abstract class PolarChartProxy extends ChartProxy {
     }
 
     protected updateChart(options: AgPolarChartOptions): void {
+        if (this.crossFiltering) {
+            const seriesOverrides = this.extractSeriesOverrides();
+
+            options.tooltip = {
+                ...seriesOverrides.tooltip,
+                delay: 500,
+            };
+
+            options.legend = {
+                ...seriesOverrides.legend,
+                listeners: {
+                    legendItemClick: (e: AgChartLegendClickEvent) => {
+                        // options?.series?.forEach(s => s.visible = e.enabled);
+                        // this.updateChart(options);
+                    }
+                }
+            };
+        }
+
         AgChart.update(this.chart as PolarChart, options);
     }
 
@@ -30,5 +49,9 @@ export abstract class PolarChartProxy extends ChartProxy {
                 content: `${label}: ${value}`,
             }
         };
+    }
+
+    protected extractSeriesOverrides() {
+        return this.chartOptions[this.standaloneChartType].series;
     }
 }
