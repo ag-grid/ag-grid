@@ -558,6 +558,7 @@ export class CellCtrl extends BeanStub {
             formatValue: this.formatValue.bind(this),
             data: this.rowNode.data,
             node: this.rowNode,
+            pinned: this.column.getPinned(),
             colDef: this.column.getColDef(),
             column: this.column,
             rowIndex: this.getCellPosition().rowIndex,
