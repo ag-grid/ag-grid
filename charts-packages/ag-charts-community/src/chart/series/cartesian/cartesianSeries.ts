@@ -203,6 +203,7 @@ export abstract class CartesianSeries<
             const { group, datumSelection, labelSelection, paths } = subGroup;
             const { itemId } = contextNodeData[seriesIdx];
             group.opacity = this.getOpacity({ itemId });
+            group.zIndex = this.getZIndex({ itemId });
             group.visible = visible && (this.seriesItemEnabled.get(itemId) ?? true);
 
             this.updatePathNodes({ seriesHighlighted, itemId, paths, seriesIdx });

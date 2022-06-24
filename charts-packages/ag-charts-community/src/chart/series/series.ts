@@ -220,41 +220,27 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     protected getOpacity(datum?: { itemId?: any }): number {
         const {
-            chart: { highlightedDatum: { series = undefined, itemId = undefined } = {} } = {},
             highlightStyle: {
                 series: { dimOpacity = 1 },
             },
         } = this;
 
         const defaultOpacity = 1;
-        const highlighting = series != null;
-
-        if (!highlighting) {
-            // Highlighting not active.
+        if (dimOpacity === defaultOpacity) {
             return defaultOpacity;
         }
 
-        if (series !== this) {
-            // Highlighting active, this series not highlighted.
-            return dimOpacity;
+        switch (this.isItemIdHighlighted(datum)) {
+            case 'no-highlight':
+            case 'highlighted':
+                return defaultOpacity;
+            case 'other-highlighted':
+                return dimOpacity;
         }
-
-        if (itemId === undefined) {
-            // Series doesn't use itemIds - so no further refinement needed, series is highlighted.
-            return defaultOpacity;
-        }
-
-        if (datum && itemId !== datum.itemId) {
-            // Highlighting active, this series item not highlighted.
-            return dimOpacity;
-        }
-
-        return defaultOpacity;
     }
 
     protected getStrokeWidth(defaultStrokeWidth: number, datum?: { itemId?: any }): number {
         const {
-            chart: { highlightedDatum: { series = undefined } = {}, highlightedDatum = undefined } = {},
             highlightStyle: {
                 series: { strokeWidth },
             },
@@ -265,17 +251,58 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             return defaultStrokeWidth;
         }
 
-        if (!series) {
-            // Current series isn't highlighted.
-            return defaultStrokeWidth;
+        switch (this.isItemIdHighlighted(datum)) {
+            case 'highlighted':
+                return strokeWidth;
+            case 'no-highlight':
+            case 'other-highlighted':
+                return defaultStrokeWidth;
+        }
+    }
+
+    protected getZIndex(datum?: { itemId?: any }): number {
+        const defaultZIndex = Series.SERIES_LAYER_ZINDEX;
+
+        switch (this.isItemIdHighlighted(datum)) {
+            case 'highlighted':
+                return defaultZIndex + 1;
+            case 'no-highlight':
+            case 'other-highlighted':
+                return defaultZIndex;
+        }
+    }
+
+    protected isItemIdHighlighted(datum?: { itemId?: any }): 'highlighted' | 'other-highlighted' | 'no-highlight' {
+        const {
+            chart: {
+                highlightedDatum: { series = undefined, itemId = undefined } = {},
+                highlightedDatum = undefined,
+            } = {},
+        } = this;
+
+        const highlighting = series != null;
+
+        if (!highlighting) {
+            // Highlighting not active.
+            return 'no-highlight';
         }
 
-        const matchesDatum = datum ? highlightedDatum === datum || highlightedDatum?.itemId === datum?.itemId : true;
-        if (series === this && matchesDatum) {
-            return strokeWidth;
+        if (series !== this) {
+            // Highlighting active, this series not highlighted.
+            return 'other-highlighted';
         }
 
-        return defaultStrokeWidth;
+        if (itemId === undefined) {
+            // Series doesn't use itemIds - so no further refinement needed, series is highlighted.
+            return 'highlighted';
+        }
+
+        if (datum && highlightedDatum !== datum && itemId !== datum.itemId) {
+            // Highlighting active, this series item not highlighted.
+            return 'other-highlighted';
+        }
+
+        return 'highlighted';
     }
 
     abstract getTooltipHtml(seriesDatum: any): string;

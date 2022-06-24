@@ -567,6 +567,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
             if (o.parent) {
                 o.parent.dirtyZIndex = true;
             }
+            o.zIndexChanged();
         },
     })
     zIndex: number = 0;
@@ -588,5 +589,9 @@ export abstract class Node { // Don't confuse with `window.Node`.
         }
 
         return { count, visibleCount, dirtyCount };
+    }
+
+    protected zIndexChanged() {
+        // Override point for sub-classes.
     }
 }
