@@ -131,8 +131,6 @@ export class RowCtrl extends BeanStub {
         this.setRowType();
 
         this.addListeners();
-
-        // this.setInitialRowTop();
     }
 
     public isSticky(): boolean {
