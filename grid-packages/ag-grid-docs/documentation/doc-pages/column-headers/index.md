@@ -122,7 +122,7 @@ As you can see in the example below, if you change any of the header heights, th
 
 ## Auto Header Height
 
-The column header row can have it's height set automatically based on the content of the header cells, this is most useful when used in conjunction with [Custom Header Components](/component-header/) or when using the `wrapHeaderText` column property.
+The column header row can have its height set automatically based on the content of the header cells. This is most useful when used together with [Custom Header Components](/component-header/) or when using the `wrapHeaderText` column property.
 
 To enable this, set `autoHeaderHeight=true` on the column definition you want to adjust the header height for. If more than one column has this property enabled, then the header row will be sized to the maximum of these
 column's header cells so no content overflows.
