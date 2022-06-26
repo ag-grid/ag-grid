@@ -37,15 +37,28 @@ export abstract class CartesianChartProxy extends ChartProxy {
     }
 
     protected updateChart(options: AgCartesianChartOptions): void {
-        if (this.crossFiltering) {
-            const seriesOverrides = this.extractSeriesOverrides();
+        options = {
+            ...this.getCommonChartOptions(),
+            ...options,
+        }
 
-            options.tooltip = {
+        if (this.crossFiltering) {
+            options = this.addCrossFilterOptions(options);
+        }
+
+        AgChart.update(this.chart as CartesianChart, options);
+    }
+
+    private addCrossFilterOptions(options: AgCartesianChartOptions) {
+        const seriesOverrides = this.extractSeriesOverrides();
+
+        return {
+            ...options,
+            tooltip: {
                 ...seriesOverrides.tooltip,
                 delay: 500,
-            };
-
-            options.legend = {
+            },
+            legend: {
                 ...seriesOverrides.legend,
                 listeners: {
                     legendItemClick: (e: AgChartLegendClickEvent) => {
@@ -53,10 +66,8 @@ export abstract class CartesianChartProxy extends ChartProxy {
                         this.updateChart(options);
                     }
                 }
-            };
+            }
         }
-
-        AgChart.update(this.chart as CartesianChart, options);
     }
 
     protected extractSeriesOverrides(chartSeriesType?: ChartSeriesType) {

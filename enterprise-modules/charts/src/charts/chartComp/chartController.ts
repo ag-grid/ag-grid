@@ -19,7 +19,7 @@ import {
     SeriesChartType
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
-import { ChartProxy } from "./chartProxies/chartProxy";
+import { ChartProxy, UpdateChartParams } from "./chartProxies/chartProxy";
 import { getChartTheme } from "ag-charts-community";
 import { ChartSeriesType, getSeriesType } from "./utils/seriesTypeMapper";
 
@@ -90,6 +90,27 @@ export class ChartController extends BeanStub {
         this.model.updateCellRanges(updatedCol);
         this.setChartRange();
         this.raiseChartRangeSelectionChangedEvent();
+    }
+
+    public getChartUpdateParams(): UpdateChartParams {
+        const selectedCols = this.getSelectedValueColState();
+        const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
+        const data = this.getChartData();
+        const selectedDimension = this.getSelectedDimension();
+
+        return {
+            data,
+            grouping: this.isGrouping(),
+            category: {
+                id: selectedDimension.colId,
+                name: selectedDimension.displayName!,
+                chartDataType: this.model.getChartDataType(selectedDimension.colId)
+            },
+            fields,
+            chartId: this.getChartId(),
+            getCrossFilteringContext: () => ({lastSelectedChartId: 'xxx'}), //this.params.crossFilteringContext, //TODO
+            seriesChartTypes: this.getSeriesChartTypes()
+        };
     }
 
     public getChartModel(): ChartModel {

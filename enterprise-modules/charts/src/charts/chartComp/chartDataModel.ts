@@ -277,6 +277,11 @@ export class ChartDataModel extends BeanStub {
         return this.columnModel.isPivotMode();
     }
 
+    public getChartDataType(colId: string): string | undefined {
+        const column = this.columnModel.getPrimaryColumn(colId);
+        return column ? column.getColDef().chartDataType : undefined;
+    }
+
     private isPivotActive(): boolean {
         return this.columnModel.isPivotActive();
     }

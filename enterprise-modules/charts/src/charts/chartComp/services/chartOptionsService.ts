@@ -40,23 +40,25 @@ export class ChartOptionsService extends BeanStub {
         this.chartController = chartController;
     }
 
-    public getChartType(): ChartType {
-        return this.chartController.getChartType();
-    }
-
     public getChartOption<T = string>(expression: string): T {
         return _.get(this.getChart(), expression, undefined) as T;
     }
 
     public setChartOption<T = string>(expression: string, value: T): void {
-        // update chart options
-        this.chartController.getChartSeriesTypes().forEach(optionsType => {
+        const chartSeriesTypes = this.chartController.getChartSeriesTypes();
+        if(this.chartController.isComboChart()) {
+            chartSeriesTypes.push('cartesian');
+        }
+
+        // we need to update chart options on each series type for combo charts
+        chartSeriesTypes.forEach(optionsType => {
+            // update options
             const options = _.get(this.getChartOptions(), `${optionsType}`, undefined);
             _.set(options, expression, value);
         });
 
         // update chart
-        _.set(this.getChart(), expression, value);
+        this.updateChart();
 
         this.raiseChartOptionsChangedEvent();
     }
@@ -66,19 +68,14 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public setAxisProperty<T = string>(expression: string, value: T) {
+        // update axis options
         const chart = this.getChart();
-
         chart.axes.forEach((axis: any) => {
-            // update axis options
             this.updateAxisOptions<T>(axis, expression, value);
-
-            // update chart axis
-            _.set(axis, expression, value)
         });
 
-        // @todo(AG-6790): Revisit approach here?
-        // chart axis properties are not reactive, need to schedule a layout
-        // chart.layoutPending = true;
+        // update chart
+        this.updateChart();
 
         this.raiseChartOptionsChangedEvent();
     }
@@ -89,19 +86,11 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public setLabelRotation(axisType: 'xAxis' | 'yAxis', value: number) {
-        const expression = 'label.rotation';
-
-        // update chart
-        const chartAxis = this.getAxis(axisType);
-        _.set(chartAxis, expression, value);
-
-        // @todo(AG-6790): Revisit approach here?
-        // chart axis properties are not reactive, need to schedule a layout
-        // this.getChart().layoutPending = true;
-
         // do not update axis options when the default category is selected
-        if (chartAxis && !this.chartController.isDefaultCategorySelected()) {
-            this.updateAxisOptions(chartAxis, expression, value);
+        const chartAxis = this.getAxis(axisType);
+        if (chartAxis) {
+            this.updateAxisOptions(chartAxis, 'label.rotation', value);
+            this.updateChart();
             this.raiseChartOptionsChangedEvent();
         }
     }
@@ -119,12 +108,8 @@ export class ChartOptionsService extends BeanStub {
         }
         _.set(options[seriesType].series, expression, value);
 
-        // update chart series
-        this.getChart().series.forEach((s: any) => {
-            if (ChartOptionsService.isMatchingSeries(seriesType, s)) {
-                _.set(s, expression, value);
-            }
-        });
+        // update chart
+        this.updateChart();
 
         this.raiseChartOptionsChangedEvent();
     }
@@ -138,14 +123,6 @@ export class ChartOptionsService extends BeanStub {
         const optionsType = getSeriesType(this.getChartType());
         const options = _.get(this.getChartOptions(), `${optionsType}`, undefined);
         _.set(options, 'paired', paired);
-    }
-
-    private getChart(): Chart {
-        return this.chartController.getChartProxy().getChart();
-    }
-
-    private getChartOptions(): AgChartThemeOverrides {
-        return this.chartController.getChartProxy().getChartOptions();
     }
 
     private getAxis(axisType: string): ChartAxis | undefined {
@@ -170,6 +147,23 @@ export class ChartOptionsService extends BeanStub {
         } else if (chartAxis instanceof GroupedCategoryAxis) {
             _.set(axisOptions.groupedCategory, expression, value);
         }
+    }
+
+    public getChartType(): ChartType {
+        return this.chartController.getChartType();
+    }
+
+    private getChart(): Chart {
+        return this.chartController.getChartProxy().getChart();
+    }
+
+    private getChartOptions(): AgChartThemeOverrides {
+        return this.chartController.getChartProxy().getChartOptions();
+    }
+
+    private updateChart() {
+        let chartUpdateParams = this.chartController.getChartUpdateParams();
+        this.chartController.getChartProxy().update(chartUpdateParams);
     }
 
     private raiseChartOptionsChangedEvent(): void {

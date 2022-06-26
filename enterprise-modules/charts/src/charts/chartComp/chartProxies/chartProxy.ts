@@ -47,6 +47,8 @@ export interface UpdateChartParams {
     seriesChartTypes: SeriesChartType[];
 }
 
+type CommonChartPropertyKeys = 'padding' | 'legend' | 'background' | 'title' | 'subtitle' | 'tooltip' | 'navigator';
+
 export abstract class ChartProxy {
     protected readonly chartType: ChartType;
     protected readonly standaloneChartType: ChartSeriesType;
@@ -184,6 +186,22 @@ export abstract class ChartProxy {
 
             return datum;
         });
+    }
+
+    protected getCommonChartOptions() {
+        const getChartOption = (propertyKey: CommonChartPropertyKeys) => {
+            return _.get(this.chartOptions, `${this.standaloneChartType}.${propertyKey}`, undefined);
+        }
+
+        return {
+            padding: getChartOption('padding'),
+            background: getChartOption('background'),
+            title: getChartOption('title'),
+            subtitle: getChartOption('subtitle'),
+            tooltip: getChartOption('tooltip'),
+            legend: getChartOption('legend'),
+            navigator: getChartOption('navigator'),
+        };
     }
 
     private convertConfigToOverrides(config: any) {

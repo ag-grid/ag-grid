@@ -27,7 +27,7 @@ import { ChartController } from "./chartController";
 import { ChartDataModel, ChartModelParams } from "./chartDataModel";
 import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
 import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
-import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxies/chartProxy";
+import { ChartProxy, ChartProxyParams } from "./chartProxies/chartProxy";
 import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
 import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
@@ -366,29 +366,9 @@ export class GridChartComp extends Component {
             return;
         }
 
-        const selectedDimension = this.chartController.getSelectedDimension();
-
-        const chartUpdateParams: UpdateChartParams = {
-            data,
-            grouping: this.chartController.isGrouping(),
-            category: {
-                id: selectedDimension.colId,
-                name: selectedDimension.displayName!,
-                chartDataType: this.getChartDataType(selectedDimension.colId)
-            },
-            fields,
-            chartId: this.chartController.getChartId(),
-            getCrossFilteringContext: () => this.params.crossFilteringContext,
-            seriesChartTypes: this.chartController.getSeriesChartTypes()
-        };
-
+        let chartUpdateParams = this.chartController.getChartUpdateParams();
         chartProxy.update(chartUpdateParams);
         this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
-    }
-
-    private getChartDataType(colId: string): string | undefined {
-        const column = this.columnModel.getPrimaryColumn(colId);
-        return column ? column.getColDef().chartDataType : undefined;
     }
 
     private handleEmptyChart(data: any[], fields: any[]): boolean {

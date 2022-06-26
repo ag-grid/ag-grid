@@ -32,12 +32,13 @@ export class PieChartProxy extends ChartProxy {
         const { data, category } = params;
 
         let options: AgPolarChartOptions = {
+            ...this.getCommonChartOptions(),
             data: this.crossFiltering ? this.getCrossFilterData(params) : this.transformData(data, category.id),
             series: this.getSeries(params)
         }
 
         if (this.crossFiltering) {
-            options = this.getCrossFilterOptions(options);
+            options = this.getCrossFilterChartOptions(options);
         }
 
         AgChart.update(this.chart as PolarChart, options);
@@ -79,7 +80,7 @@ export class PieChartProxy extends ChartProxy {
                     },
                     callout: {
                         ...seriesDefaults.callout,
-                        colors: this.chartTheme.palette.strokes
+                        colors: this.chartTheme.palette.strokes,
                     }
                 }
             }
@@ -90,7 +91,7 @@ export class PieChartProxy extends ChartProxy {
         return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
     }
 
-    private getCrossFilterOptions(options: AgPolarChartOptions) {
+    private getCrossFilterChartOptions(options: AgPolarChartOptions) {
         const seriesOverrides = this.extractSeriesOverrides();
         return {
             ...options,
@@ -138,11 +139,11 @@ export class PieChartProxy extends ChartProxy {
                 strokes: palette.strokes,
                 listeners: {
                     ...seriesOverrides.listeners,
-                    nodeClick: this.crossFilterCallback
+                    nodeClick: this.crossFilterCallback,
                 },
                 tooltip: {
                     ...seriesOverrides.tooltip,
-                    renderer: this.getCrossFilterTooltipRenderer(`${seriesOptions.angleName}`)
+                    renderer: this.getCrossFilterTooltipRenderer(`${seriesOptions.angleName}`),
                 }
             };
         }
