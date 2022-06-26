@@ -30,7 +30,6 @@ import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxies/chartProxy";
 import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
 import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
-import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
 import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
 import { ChartTranslationService } from "./services/chartTranslationService";
@@ -249,9 +248,8 @@ export class GridChartComp extends Component {
             case 'normalizedBar':
                 return new BarChartProxy(chartProxyParams);
             case 'pie':
-                return new PieChartProxy(chartProxyParams);
             case 'doughnut':
-                return new DoughnutChartProxy(chartProxyParams);
+                return new PieChartProxy(chartProxyParams);
             case 'area':
             case 'stackedArea':
             case 'normalizedArea':

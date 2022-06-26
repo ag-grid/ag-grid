@@ -74,34 +74,38 @@ export class BarChartProxy extends CartesianChartProxy {
     private extractCrossFilterSeries(series: AgBarSeriesOptions[]): AgBarSeriesOptions[] {
         const palette = this.chartTheme.palette;
 
-        const updatePrimarySeries = (s: AgBarSeriesOptions, index: number) => {
-            s.highlightStyle = { item: { fill: undefined } };
-            s.fill = palette.fills[index];
-            s.stroke = palette.strokes[index];
-            s.listeners = {
-                ...this.extractSeriesOverrides().listeners,
-                nodeClick: this.crossFilterCallback
-            };
+        const updatePrimarySeries = (seriesOptions: AgBarSeriesOptions, index: number) => {
+            return {
+                ...seriesOptions,
+                highlightStyle: { item: { fill: undefined } },
+                fill: palette.fills[index],
+                stroke: palette.strokes[index],
+                listeners: {
+                    ...this.extractSeriesOverrides().listeners,
+                    nodeClick: this.crossFilterCallback
+                }
+            }
         }
 
-        const updateFilteredOutSeries = (s: AgBarSeriesOptions) => {
-            s.yKey = s.yKey + '-filtered-out';
-            s.fill = hexToRGBA(s.fill!, '0.3');
-            s.stroke = hexToRGBA(s.stroke!, '0.3');
-            (s as any).hideInLegend = [s.yKey];
+        const updateFilteredOutSeries = (seriesOptions: AgBarSeriesOptions): AgBarSeriesOptions => {
+            const yKey = seriesOptions.yKey + '-filtered-out';
+            return {
+                ...deepMerge({}, seriesOptions),
+                yKey,
+                fill: hexToRGBA(seriesOptions.fill!, '0.3'),
+                stroke: hexToRGBA(seriesOptions.stroke!, '0.3'),
+                hideInLegend: [yKey],
+            }
         }
 
         const allSeries: AgBarSeriesOptions[] = [];
         for (let i = 0; i < series.length; i++) {
             // update primary series
-            const s = series[i];
-            updatePrimarySeries(s, i);
-            allSeries.push(s);
+            const primarySeries = updatePrimarySeries(series[i], i);
+            allSeries.push(primarySeries);
 
             // add 'filtered-out' series
-            const filteredOutSeries = deepMerge({}, s);
-            updateFilteredOutSeries(filteredOutSeries);
-            allSeries.push(filteredOutSeries);
+            allSeries.push(updateFilteredOutSeries(primarySeries));
         }
         return allSeries;
     }

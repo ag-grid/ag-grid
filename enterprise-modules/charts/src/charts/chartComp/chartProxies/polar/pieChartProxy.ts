@@ -1,97 +1,204 @@
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { PolarChartProxy } from "./polarChartProxy";
-import { AgPolarSeriesOptions, AgPieSeriesOptions } from "ag-charts-community/src/chart/agChartOptions";
-import { changeOpacity, hexToRGBA } from "../../utils/color";
+import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
+import { AgChart, PieTooltipRendererParams, PolarChart } from "ag-charts-community";
+import {
+    AgPieSeriesOptions,
+    AgPolarChartOptions,
+    AgPolarSeriesOptions
+} from "ag-charts-community/src/chart/agChartOptions";
+import { changeOpacity } from "../../utils/color";
 import { deepMerge } from "../../utils/object";
 
-export class PieChartProxy extends PolarChartProxy {
+interface DoughnutOffset {
+    offsetAmount: number;
+    currentOffset: number;
+}
+
+export class PieChartProxy extends ChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
         this.recreateChart();
     }
 
-    public update(params: UpdateChartParams): void {
-        const { data, category } = params;
-
-        this.updateChart({
-            data: this.crossFiltering ? this.getCrossFilterData(params) : this.transformData(data, category.id),
-            series: this.getSeries(params)
+    protected createChart(): PolarChart {
+        return AgChart.create({
+            type: 'pie',
+            container: this.chartProxyParams.parentElement,
+            theme: this.chartTheme,
         });
     }
 
-    private getSeries(params: UpdateChartParams): AgPolarSeriesOptions[] {
-        const field = params.fields[0];
+    public update(params: UpdateChartParams): void {
+        const { data, category } = params;
 
-        const series = [{
-            ...this.extractSeriesOverrides(),
-            type: this.standaloneChartType,
-            angleKey: field.colId,
-            angleName: field.displayName!,
-            labelKey: params.category.id,
-            labelName: params.category.name,
-        }];
+        let options: AgPolarChartOptions = {
+            data: this.crossFiltering ? this.getCrossFilterData(params) : this.transformData(data, category.id),
+            series: this.getSeries(params)
+        }
+
+        if (this.crossFiltering) {
+            options = this.getCrossFilterOptions(options);
+        }
+
+        AgChart.update(this.chart as PolarChart, options);
+    }
+
+    private getSeries(params: UpdateChartParams): AgPolarSeriesOptions[] {
+        const numFields = params.fields.length;
+
+        const offset = {
+            currentOffset: 0,
+            offsetAmount: numFields > 1 ? 20 : 40
+        };
+
+        const series = this.getFields(params).map((f: FieldDefinition) => {
+            const seriesDefaults = this.extractSeriesOverrides();
+
+            // options shared by 'pie' and 'doughnut' charts
+            const options = {
+                ...seriesDefaults,
+                type: this.standaloneChartType,
+                angleKey: f.colId,
+                angleName: f.displayName!,
+                labelKey: params.category.id,
+                labelName: params.category.name,
+            }
+
+            if (this.chartType === 'doughnut') {
+                const { outerRadiusOffset, innerRadiusOffset } = PieChartProxy.calculateOffsets(offset);
+
+                // augment shared options with 'doughnut' specific options
+                return {
+                    ...options,
+                    outerRadiusOffset,
+                    innerRadiusOffset,
+                    title: {
+                        ...seriesDefaults.title,
+                        text: seriesDefaults.title.text || f.displayName,
+                        showInLegend: numFields > 1,
+                    },
+                    callout: {
+                        ...seriesDefaults.callout,
+                        colors: this.chartTheme.palette.strokes
+                    }
+                }
+            }
+
+            return options;
+        });
 
         return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
     }
 
-    private getCrossFilterData(params: UpdateChartParams) {
-        // add additional filtered out field
-        let fields = params.fields;
-        fields.forEach(field => {
-            const crossFilteringField = { ...field };
-            crossFilteringField.colId = field.colId + '-filtered-out';
-            fields.push(crossFilteringField);
-        });
+    private getCrossFilterOptions(options: AgPolarChartOptions) {
+        const seriesOverrides = this.extractSeriesOverrides();
+        return {
+            ...options,
+            tooltip: {
+                ...seriesOverrides.tooltip,
+                delay: 500,
+            },
+            legend: {
+                ...seriesOverrides.legend,
+                listeners: {
+                    // TODO: standalone changes are required to handle pie series legend item toggling
+                    // legendItemClick: (e: AgChartLegendClickEvent) => { }
+                }
+            }
+        }
+    }
 
-        const field = params.fields[0];
-        const filteredOutField = fields[1];
+    private getCrossFilterData(params: UpdateChartParams) {
+        const colId = params.fields[0].colId;
+        const filteredOutColId = `${colId}-filtered-out`;
 
         return params.data.map(d => {
-            const total = d[field.colId] + d[filteredOutField.colId];
-            d[field.colId + '-total'] = total;
-            d[field.colId] = d[field.colId] / total;
-            d[filteredOutField.colId] = 1;
+            const total = d[colId] + d[filteredOutColId];
+            d[`${colId}-total`] = total;
+            d[filteredOutColId] = 1; // normalise to 1
+            d[colId] = d[colId] / total; // fraction of 1
             return d;
         });
     }
 
     private extractCrossFilterSeries(series: AgPieSeriesOptions[]) {
         const palette = this.chartTheme.palette;
+        const seriesOverrides = this.extractSeriesOverrides();
 
-        const updatePrimarySeries = (s: AgPieSeriesOptions) => {
-            s.highlightStyle = { item: { fill: undefined } };
-            s.radiusKey = s.angleKey;
-            s.angleKey = s.angleKey + '-total';
-            s.fills = palette.fills;
-            s.strokes = palette.strokes;
-            s.radiusMin = 0;
-            s.radiusMax = 1;
-            s.listeners = {
-                ...this.extractSeriesOverrides().listeners,
-                nodeClick: this.crossFilterCallback
+        const primaryOptions = (seriesOptions: AgPieSeriesOptions) => {
+            return {
+                ...seriesOptions,
+                label: { enabled: false }, // hide labels on primary series
+                highlightStyle: { item: { fill: undefined } },
+                radiusKey: seriesOptions.angleKey,
+                angleKey: seriesOptions.angleKey + '-total',
+                radiusMin: 0,
+                radiusMax: 1,
+                fills: palette.fills,
+                strokes: palette.strokes,
+                listeners: {
+                    ...seriesOverrides.listeners,
+                    nodeClick: this.crossFilterCallback
+                },
+                tooltip: {
+                    ...seriesOverrides.tooltip,
+                    renderer: this.getCrossFilterTooltipRenderer(`${seriesOptions.angleName}`)
+                }
             };
         }
 
-        const updateFilteredOutSeries = (s: AgPieSeriesOptions) => {
-            s.fills = changeOpacity(palette.fills, 0.3);
-            s.strokes = changeOpacity(palette.strokes, 0.3);
-            s.showInLegend = false;
-        };
-
-        const allSeries: AgPieSeriesOptions[] = [];
-        for (let i = 0; i < series.length; i++) {
-            const s = series[i];
-            const angleKey = s.angleKey;
-            updatePrimarySeries(s);
-            allSeries.push(s);
-
-            const filteredOutSeries = deepMerge({}, s);
-            filteredOutSeries.radiusKey = angleKey + '-filtered-out'
-            updateFilteredOutSeries(filteredOutSeries);
-            allSeries.push(filteredOutSeries);
+        const filteredOutOptions = (seriesOptions: AgPieSeriesOptions, angleKey: string) => {
+            return {
+                ...deepMerge({}, primaryOpts),
+                radiusKey: angleKey + '-filtered-out',
+                label: seriesOverrides.label, // labels can be shown on the 'filtered-out' series
+                callout: {
+                    ...seriesOverrides.callout,
+                    colors: seriesOverrides.callout.colors ?? palette.strokes,
+                },
+                fills: changeOpacity(palette.fills, 0.3),
+                strokes: changeOpacity(palette.strokes, 0.3),
+                showInLegend: false,
+            };
         }
 
-        return allSeries;
+        // currently, only single 'doughnut' cross-filter series are supported
+        const primarySeries = series[0];
+
+        // update primary series
+        const angleKey = primarySeries.angleKey!;
+        const primaryOpts = primaryOptions(primarySeries);
+
+        return [
+            primaryOpts,
+            filteredOutOptions(primarySeries, angleKey)
+        ];
+    }
+
+    private static calculateOffsets(offset: DoughnutOffset) {
+        const outerRadiusOffset = offset.currentOffset;
+        offset.currentOffset -= offset.offsetAmount;
+
+        const innerRadiusOffset = offset.currentOffset;
+        offset.currentOffset -= offset.offsetAmount;
+
+        return { outerRadiusOffset, innerRadiusOffset };
+    }
+
+    private getFields(params: UpdateChartParams) {
+        return this.chartType === 'pie' ? params.fields.slice(0, 1) : params.fields;
+    }
+
+    private getCrossFilterTooltipRenderer(title: string) {
+        return (params: PieTooltipRendererParams) => {
+            const label = params.datum[params.labelKey as string];
+            const ratio = params.datum[params.radiusKey as string];
+            const totalValue = params.angleValue;
+            return { title, content: `${label}: ${totalValue * ratio}` };
+        }
+    }
+
+    protected extractSeriesOverrides() {
+        return this.chartOptions[this.standaloneChartType].series;
     }
 }
