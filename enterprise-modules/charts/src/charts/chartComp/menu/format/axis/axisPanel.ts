@@ -56,10 +56,9 @@ export class AxisPanel extends Component {
         this.initAxis();
         this.initAxisTicks();
         this.initAxisLabels();
-
-        // TODO: reintroduce
-        // const updateAxisLabelRotations = () => this.axisLabelUpdateFuncs.forEach(func => func());
-        // this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, updateAxisLabelRotations);
+        
+        const updateAxisLabelRotations = () => this.axisLabelUpdateFuncs.forEach(func => func());
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, updateAxisLabelRotations);
     }
 
     private initAxis() {
@@ -129,9 +128,6 @@ export class AxisPanel extends Component {
             if (font.style) { this.chartOptionsService.setAxisProperty("label.fontStyle", font.style); }
             if (font.size) { this.chartOptionsService.setAxisProperty("label.fontSize", font.size); }
             if (font.color) { this.chartOptionsService.setAxisProperty("label.color", font.color); }
-
-            // @todo(AG-6790): Revisit approach here?
-            // this.chartController.getChartProxy().getChart().layoutPending = true;
         };
 
         const params: FontPanelParams = {
