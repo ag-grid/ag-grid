@@ -5,6 +5,7 @@
   "main": "./dist/cjs/es5/main.js",
   "module": "./dist/esm/es5/main.js",
   "types": "./dist/cjs/es5/main.d.ts",
+  "private": "true",
   "scripts": {
     "clean": "rimraf dist .hash",
     "build-cjs": "npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
