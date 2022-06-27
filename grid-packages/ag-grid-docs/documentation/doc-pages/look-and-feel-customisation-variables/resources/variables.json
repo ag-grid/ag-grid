@@ -1,32 +1,48 @@
 {
   "_config_": {},
   "variables": {
+    "--ag-alpine-active-color": {
+      "description": "(Alpine theme only) accent colour used for checkboxes, range selections, row hover, row selections, selected tab underlines, and input focus outlines in the Alpine theme",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-balham-active-color": {
+      "description": "(Balham theme only) accent colour used for checkboxes, range selections, row selections, and input focus outlines in the Balham theme",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-material-primary-color": {
+      "description": "(Material theme only) the primary colour as defined in the [Material Design colour system](https://material.io/design/color/). Currently this is used on buttons, range selections and selected tab underlines in the Material theme",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-material-accent-color": {
+      "description": "(Material theme only) the accent colour as defined in the [Material Design colour system](https://material.io/design/color/). Currently this is used on checkboxes in the Material theme",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
     "--ag-foreground-color": {
       "description": "Colour of text and icons in primary UI elements like menus",
-      "type": "CSS color (e.g. `red` or `#fff`)"
-    },
-    "--ag-data-color": {
-      "description": "Colour of text in grid cells",
-      "type": "CSS color (e.g. `red` or `#fff`)"
-    },
-    "--ag-secondary-foreground-color": {
-      "description": "Colour of text and icons in UI elements that need to be slightly less emphasised to avoid distracting attention from data",
-      "type": "CSS color (e.g. `red` or `#fff`)"
-    },
-    "--ag-header-foreground-color": {
-      "description": "Colour of text and icons in the header",
-      "type": "CSS color (e.g. `red` or `#fff`)"
-    },
-    "--ag-disabled-foreground-color": {
-      "description": "Color of elements that can't be interacted with because they are in a disabled state",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-background-color": {
       "description": "Background colour of the grid",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
+    "--ag-secondary-foreground-color": {
+      "description": "Colour of text and icons in UI elements that need to be slightly less emphasised to avoid distracting attention from data",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-data-color": {
+      "description": "Colour of text in grid cells",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-header-foreground-color": {
+      "description": "Colour of text and icons in the header",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
     "--ag-header-background-color": {
       "description": "Background colour for all headers, including the grid header, panels etc",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-disabled-foreground-color": {
+      "description": "Color of elements that can't be interacted with because they are in a disabled state",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-subheader-background-color": {
@@ -58,7 +74,7 @@
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-row-hover-color": {
-      "description": "Background color when hovering over rows in the grid and in dropdown menus; Note: if you want a rollover on one but not the other, use CSS selectors instead of this property",
+      "description": "Background color when hovering over rows in the grid and in dropdown menus. Set to `transparent` to disable the hover effect. Note: if you want a rollover on one but not the other, use CSS selectors instead of this property",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-column-hover-color": {
@@ -160,10 +176,6 @@
     "--ag-borders-row": {
       "description": "Draw borders between rows. Set this to a border style and thickness, e.g. `solid 1px` to enable borders, or `none` to disable borders.",
       "type": "a CSS border style and size (e.g. `solid 1px` or `none`)"
-    },
-    "--ag-row-border-color": {
-      "description": "Colour for borders between rows, if enabled with --ag-borders-row",
-      "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-cell-horizontal-border": {
       "description": "Default border for cells. This can be used to specify the border-style and border-color properties e.g. `dashed red` but the border-width is fixed at 1px. Set to `solid transparent` to show no border.",
@@ -322,15 +334,15 @@
       "type": "CSS size (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-widget-container-horizontal-padding": {
-      "description": "The horizontal padding of containers that contain stacked widgets widgets",
+      "description": "The horizontal padding of containers that contain stacked widgets, such as menus and tool panels",
       "type": "CSS size (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-widget-container-vertical-padding": {
-      "description": "The vertical padding of containers that contain stacked widgets widgets",
+      "description": "The vertical padding of containers that contain stacked widgets, such as menus and tool panels",
       "type": "CSS size (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-widget-horizontal-spacing": {
-      "description": "The horizontal spacing between widgets in containers that contain horizontally stacked widgets",
+      "description": "The horizontal spacing between widgets in containers that contain horizontally stacked widgets such as the column groups header component.",
       "type": "CSS size (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-widget-vertical-spacing": {
