@@ -17463,7 +17463,7 @@
     },
     "valueFormatted": {
       "description": "/** Formatted value to be rendered. */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "string | null | undefined", "optional": false }
     },
     "fullWidth": {
       "description": "/** True if this is a full width row. */",
@@ -18617,7 +18617,7 @@
     },
     "valueFormatted": {
       "description": "/** Formatted value to be rendered. */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "string | null | undefined", "optional": false }
     },
     "fullWidth": {
       "description": "/** True if this is a full width row. */",
@@ -19381,7 +19381,7 @@
     },
     "valueFormatted": {
       "description": "/** Formatted value to be rendered. */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "string | null | undefined", "optional": false }
     },
     "data": {
       "description": "/** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */",
@@ -19469,7 +19469,7 @@
     },
     "valueFormatted": {
       "description": "/** Formatted value to be rendered. */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "string | null | undefined", "optional": false }
     },
     "fullWidth": {
       "description": "/** True if this is a full width row. */",
@@ -19560,7 +19560,9 @@
   },
   "ISetFilterCellRendererParams": {
     "value": { "type": { "returnType": "any", "optional": false } },
-    "valueFormatted": { "type": { "returnType": "any", "optional": false } },
+    "valueFormatted": {
+      "type": { "returnType": "string | null | undefined", "optional": false }
+    },
     "colDef": {
       "description": "/** The cell's column definition. */",
       "type": { "returnType": "ColDef", "optional": true }
@@ -19627,13 +19629,14 @@
   },
   "ICellRendererFunc": { "meta": { "typeParams": ["TData = any"] } },
   "ILoadingCellRendererParams": {
+    "meta": { "typeParams": ["TData = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
       "type": { "returnType": "any", "optional": false }
     },
     "valueFormatted": {
       "description": "/** Formatted value to be rendered. */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "string | null | undefined", "optional": false }
     },
     "fullWidth": {
       "description": "/** True if this is a full width row. */",
@@ -19708,7 +19711,6 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -20163,11 +20165,14 @@
     },
     "valueFormatted": {
       "description": "/** The formatted value to be rendered by the tooltip. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "string | null", "optional": true }
     },
     "colDef": {
       "description": "/** Column / ColumnGroup definition. */",
-      "type": { "returnType": "ColDef | ColGroupDef | null", "optional": true }
+      "type": {
+        "returnType": "ColDef<TData> | ColGroupDef<TData> | null",
+        "optional": true
+      }
     },
     "column": {
       "description": "/** Column / ColumnGroup */",

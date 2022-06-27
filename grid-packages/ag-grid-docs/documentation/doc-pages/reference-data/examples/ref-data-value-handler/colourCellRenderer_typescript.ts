@@ -8,8 +8,8 @@ export class ColourCellRenderer implements ICellRendererComp {
         if (params.value === '(Select All)') {
             this.eGui.innerText = params.value;
         } else {
-            this.eGui.innerText = params.valueFormatted;
-            this.eGui.style.color = this.removeSpaces(params.valueFormatted);
+            this.eGui.innerText = params.valueFormatted || '';
+            this.eGui.style.color = this.removeSpaces(params.valueFormatted || '');
         }
     }
 

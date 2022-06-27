@@ -9856,7 +9856,7 @@
     "type": {
       "sparklineOptions?": "SparklineOptions",
       "value": "any",
-      "valueFormatted": "any",
+      "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
       "data": "TData | undefined",
@@ -10594,7 +10594,7 @@
       "autoHeight": "boolean",
       "suppressRefresh": "boolean",
       "value": "any",
-      "valueFormatted": "any",
+      "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
       "data": "TData | undefined",
@@ -11049,7 +11049,7 @@
       "innerRendererSelector?": "CellRendererSelectorFunc",
       "padding": "number",
       "value": "any",
-      "valueFormatted": "any",
+      "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
       "data": "TData | undefined",
       "node": "RowNode<TData>",
@@ -11105,7 +11105,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "value": "any",
-      "valueFormatted": "any",
+      "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
       "data": "TData | undefined",
@@ -11150,7 +11150,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "value": "any",
-      "valueFormatted": "any",
+      "valueFormatted": "string | null | undefined",
       "colDef?": "ColDef",
       "column?": "Column",
       "api": "GridApi<TData>",
@@ -11195,10 +11195,10 @@
     }
   },
   "ILoadingCellRendererParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "value": "any",
-      "valueFormatted": "any",
+      "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
       "data": "TData | undefined",
@@ -11493,8 +11493,8 @@
     "type": {
       "location": "string",
       "value?": "any",
-      "valueFormatted?": "any",
-      "colDef?": "ColDef | ColGroupDef | null",
+      "valueFormatted?": "string | null",
+      "colDef?": "ColDef<TData> | ColGroupDef<TData> | null",
       "column?": "Column | ColumnGroup",
       "rowIndex?": "number",
       "node?": "RowNode<TData>",

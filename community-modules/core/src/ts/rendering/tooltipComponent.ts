@@ -13,9 +13,9 @@ export interface ITooltipParams<TData = any> extends AgGridCommon<TData> {
     /** The value to be rendered by the tooltip. */
     value?: any;
     /** The formatted value to be rendered by the tooltip. */
-    valueFormatted?: any;
+    valueFormatted?: string | null;
     /** Column / ColumnGroup definition. */
-    colDef?: ColDef | ColGroupDef | null;
+    colDef?: ColDef<TData> | ColGroupDef<TData> | null;
     /** Column / ColumnGroup */
     column?: Column | ColumnGroup;
     /** The index of the row containing the cell rendering the tooltip. */

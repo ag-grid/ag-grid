@@ -8,7 +8,7 @@ export interface ICellRendererParams<TData = any> extends AgGridCommon<TData> {
     /** Value to be rendered. */
     value: any;
     /** Formatted value to be rendered. */
-    valueFormatted: any;
+    valueFormatted: string | null | undefined;
     /** True if this is a full width row. */
     fullWidth?: boolean;
     /** Pinned state of the cell. */
@@ -47,7 +47,7 @@ export interface ICellRendererParams<TData = any> extends AgGridCommon<TData> {
 
 export interface ISetFilterCellRendererParams<TData = any> extends AgGridCommon<TData> {
     value: any;
-    valueFormatted: any;
+    valueFormatted: string | null | undefined;
 
     /** The cell's column definition. */
     colDef?: ColDef;
