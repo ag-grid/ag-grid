@@ -5,7 +5,6 @@
 
     [class*="ag-theme-"] {
         -webkit-font-smoothing: antialiased;
-        @include ag-color-property(color, foreground-color);
         font-family: ag-param(font-family);
         font-size: ag-param(font-size);
         line-height: normal;
