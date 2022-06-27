@@ -146,9 +146,12 @@ export function buildModel(
 
     const genericArgs: Record<string, string> = {};
     if (typeParams != null && typeParams.length > 0) {
-        typeParams.forEach((tp) => {
-            const [symbol, value] = tp.split('=').map(v => v.trim())
-            genericArgs[symbol] = value;
+        const genericParams = type.substring(type.indexOf('<') + 1, type.lastIndexOf('>'))
+            .split(',')
+            .map((p) => p.trim());
+        typeParams.forEach((tp, idx) => {
+            const [tpName] = tp.split('=').map(v => v.trim());
+            genericArgs[tpName] = genericParams[idx];
         });
     }
 
