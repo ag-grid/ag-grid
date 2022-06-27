@@ -18,8 +18,9 @@ export function SceneChangeDetection(opts?: {
     type?: 'normal' | 'transform' | 'path' | 'font',
     convertor?: (o: any) => any,
     changeCb?: (o: any) => any,
+    checkDirtyOnAssignment?: boolean,
 }) {
-    const { redraw = RedrawType.TRIVIAL, type = 'normal', changeCb, convertor } = opts || {};
+    const { redraw = RedrawType.TRIVIAL, type = 'normal', changeCb, convertor, checkDirtyOnAssignment = false } = opts || {};
     
     const debug = windowValue('agChartsSceneChangeDetectionDebug') != null;
 
@@ -44,6 +45,7 @@ export function SceneChangeDetection(opts?: {
                         ${type === 'font' ? `if (!this._dirtyFont) { this._dirtyFont = true; this.markDirty(this, redraw); }` : ''}
                         ${changeCb ? 'changeCb(this);' : ''}
                     }
+                    ${checkDirtyOnAssignment ? `if (value != null && value._dirty > ${RedrawType.NONE}) { this.markDirty(value, value._dirty); }` : ''}
                 };
                 set_${key};
             `;
