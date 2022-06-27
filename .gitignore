@@ -104,3 +104,4 @@ charts-packages/ag-charts-react/umd
 charts-packages/ag-charts-vue/lib/**
 charts-packages/ag-charts-vue3/lib/**
 charts-packages/ag-charts-angular/dist
+grid-packages/ag-grid-docs/documentation/cypress.config.AUTO.json

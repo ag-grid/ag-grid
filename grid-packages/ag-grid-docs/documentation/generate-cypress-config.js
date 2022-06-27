@@ -16,11 +16,8 @@ const basePath = './doc-pages/';
     const examples = getExamples();
     const apiPages = getApiDocumentationPages();
 
-    try {
-        if (!fs.existsSync('./_gen')) {
-            await fs.mkdir('./_gen');
-        }
-        await fs.writeJson('./_gen/cypress.config.json', { examples, apiPages })
+    try {        
+        await fs.writeJson('./cypress.config.AUTO.json', { examples, apiPages })
         console.log('Generating Cypress Test Config: Success!')
     } catch (err) {
         console.error(err)
