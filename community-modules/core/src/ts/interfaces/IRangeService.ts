@@ -18,6 +18,7 @@ export interface IRangeService {
     onDragging(mouseEvent: MouseEvent): void;
     getCellRanges(): CellRange[];
     setRangeToCell(cell: CellPosition, appendRange?: boolean): void;
+    intersectLastRange(fromMouseClick?: boolean): void;
     setCellRange(params: CellRangeParams): void;
     addCellRange(params: CellRangeParams): void;
     extendLatestRangeInDirection(event: KeyboardEvent): CellPosition | undefined;

@@ -624,8 +624,12 @@ export class RangeService extends BeanStub implements IRangeService {
 
         this.dispatchChangedEvent(true, false, this.draggingRange.id);
     }
-    
-    private intersectLastRange() {
+
+    public intersectLastRange(fromMouseClick?: boolean) {
+        // when ranges are created due to a mouse click without drag (happens in cellMouseListener)
+        // this method will be called with `fromMouseClick=true`.
+        if (fromMouseClick && this.dragging) { return; }
+        if (this.gridOptionsWrapper.isSuppressMultiRangeSelection()) { return; }
         if (this.isEmpty()) { return; }
         
         const lastRange = _.last(this.cellRanges);
@@ -661,7 +665,7 @@ export class RangeService extends BeanStub implements IRangeService {
                 };
                 newRanges.push(top);
             }
-            // Left & Right (not contigious with columns)
+            // Left & Right (not contiguous with columns)
             if (intersectCols.length > 0) {
                 const middle: CellRange = {
                     columns: intersectCols,
@@ -687,6 +691,12 @@ export class RangeService extends BeanStub implements IRangeService {
             }
         });
         this.cellRanges = newRanges;
+
+        // when this is called because of a clickEvent and the ranges were changed
+        // we need to force a dragEnd event to update the UI.
+        if (fromMouseClick) {
+            this.dispatchChangedEvent(false, true);
+        }
     }
     
     private updateValuesOnMove(mouseEvent: MouseEvent) {
@@ -748,7 +758,7 @@ export class RangeService extends BeanStub implements IRangeService {
         this.dragging = false;
         this.draggingRange = undefined;
         this.lastCellHovered = undefined;
-        
+
         if (this.intersectionRange) {
             this.intersectionRange = false;
             this.intersectLastRange();
