@@ -16,7 +16,6 @@
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
   },
-  "private": true,
   "license": "MIT",
   "main": "./dist/ag-grid-angular/bundles/ag-grid-angular-legacy.umd.js",
   "module": "./dist/ag-grid-angular/fesm5/ag-grid-angular-legacy.js",
