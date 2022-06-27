@@ -6,7 +6,6 @@
 /.idea/atlassian-ide-plugin.xml
 .vscode
 
-grid-packages/ag-grid-docs/src/jira_reports/prod/credentials.json
 
 doc-pages_orig
 
@@ -37,6 +36,7 @@ community-modules/all-modules/styles/**
 enterprise-modules/all-modules/styles/**
 grid-packages/ag-grid-community/styles/**
 grid-packages/ag-grid-enterprise/styles/**
+grid-packages/ag-grid-docs/src/jira_reports/prod/credentials.json
 
 # compiled CSS files
 community-modules/styles/*.css
