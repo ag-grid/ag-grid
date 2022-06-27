@@ -483,9 +483,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         };
 
         let isMeasuring = false;
-        let stopResizeObserver: (()=>void) | undefined;
+        let stopResizeObserver: (() => void) | undefined;
 
-        const checkMeasuring = ()=> {
+        const checkMeasuring = () => {
             const newValue = this.column.isAutoHeaderHeight();
             if (newValue && !isMeasuring) {
                 startMeasuring();
@@ -520,6 +520,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             // Rendering changes for sort, happen after the event... not ideal
             isMeasuring && this.beans.frameworkOverrides.setTimeout(() => measureHeight(0));
         });
+        this.addRefreshFunction(checkMeasuring);
     }
 
     private refreshAriaSort(): void {
