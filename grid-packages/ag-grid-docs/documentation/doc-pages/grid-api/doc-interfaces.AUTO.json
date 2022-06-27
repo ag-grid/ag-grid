@@ -19629,7 +19629,6 @@
   },
   "ICellRendererFunc": { "meta": { "typeParams": ["TData = any"] } },
   "ILoadingCellRendererParams": {
-    "meta": { "typeParams": ["TData = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
       "type": { "returnType": "any", "optional": false }
@@ -19711,6 +19710,7 @@
         "optional": false
       }
     },
+    "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }

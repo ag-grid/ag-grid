@@ -11195,7 +11195,7 @@
     }
   },
   "ILoadingCellRendererParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": {},
     "type": {
       "value": "any",
       "valueFormatted": "string | null | undefined",
