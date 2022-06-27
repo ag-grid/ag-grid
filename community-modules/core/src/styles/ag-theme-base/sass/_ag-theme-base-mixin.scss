@@ -35,6 +35,12 @@ $ag-compatibility-mode: "variables" !default;
         @include ag-color-property(background-color, background-color);
     }
 
+    .ag-cell {
+        // TODO remove this before v28 release, it's designed to make it clear
+        // if we're accidentally using the legacy styles
+        color: red!important;
+    }
+
     @include ag-theme-base-part-reset();
     @include ag-theme-base-part-widgets();
     @include ag-theme-base-part-grid-layout();
