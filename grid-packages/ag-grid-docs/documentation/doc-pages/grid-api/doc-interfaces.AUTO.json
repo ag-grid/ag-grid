@@ -16120,6 +16120,13 @@
         "optional": false
       }
     },
+    "intersectLastRange": {
+      "type": {
+        "arguments": { "fromMouseClick?": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "setCellRange": {
       "type": {
         "arguments": { "params": "CellRangeParams" },

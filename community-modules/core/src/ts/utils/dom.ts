@@ -60,7 +60,11 @@ export function setDisabled(element: HTMLElement, disabled: boolean) {
     nodeListForEach(element.querySelectorAll('input'), input => addOrRemoveDisabledAttribute(input));
 }
 
-export function isElementChildOfClass(element: HTMLElement | null, cls: string, maxNest?: number): boolean {
+export function isElementChildOfClass(
+    element: HTMLElement | null,
+    cls: string,
+    maxNest?: HTMLElement | number
+): boolean {
     let counter = 0;
 
     while (element) {
@@ -70,7 +74,9 @@ export function isElementChildOfClass(element: HTMLElement | null, cls: string, 
 
         element = element.parentElement;
 
-        if (maxNest && ++counter > maxNest) { break; }
+        if (typeof maxNest == 'number') {
+            if (++counter > maxNest) { break; }
+        } else if (element === maxNest) { break; }
     }
 
     return false;

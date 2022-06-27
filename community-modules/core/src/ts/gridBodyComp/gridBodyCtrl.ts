@@ -9,7 +9,7 @@ import { ColumnModel } from "../columns/columnModel";
 import { ScrollVisibleService } from "./scrollVisibleService";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
-import { getInnerWidth, isVerticalScrollShowing } from "../utils/dom";
+import { getInnerWidth, isElementChildOfClass, isVerticalScrollShowing } from "../utils/dom";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { RowDragFeature } from "./rowDragFeature";
@@ -128,12 +128,27 @@ export class GridBodyCtrl extends BeanStub {
 
     private addFocusListeners(elements: HTMLElement[]): void {
         elements.forEach(element => {
-            this.addManagedListener(element, 'focusin', () => {
-                element.classList.add('ag-has-focus');
+            this.addManagedListener(element, 'focusin', (e: FocusEvent) => {
+                const { target } = e;
+                // element being focused is nested?
+                const isFocusedElementNested = isElementChildOfClass(target as HTMLElement, 'ag-root', element);
+
+                element.classList.toggle('ag-has-focus', !isFocusedElementNested);
             });
 
             this.addManagedListener(element, 'focusout', (e: FocusEvent) => {
-                if (!element.contains(e.relatedTarget as HTMLElement)) {
+                const { target, relatedTarget } = e;
+                const gridContainRelatedTarget = element.contains(relatedTarget as HTMLElement);
+                const isNestedRelatedTarget = isElementChildOfClass(relatedTarget as HTMLElement, 'ag-root', element);
+                const isNestedTarget = isElementChildOfClass(target as HTMLElement, 'ag-root', element);
+
+                // element losing focus belongs to a nested grid,
+                // it should not be handled here.
+                if (isNestedTarget) { return; }
+
+                // the grid does not contain, or the focus element is within
+                // a nested grid
+                if (!gridContainRelatedTarget || isNestedRelatedTarget) {
                     element.classList.remove('ag-has-focus');
                 }
             });

@@ -69,9 +69,9 @@
 
     // ltr/rtl needed so that this overrides the rtl/ltr styles of pinned column borders
     .ag-ltr, .ag-rtl {
-        .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
+        .ag-cell-focus:not(.ag-cell-range-selected):focus-within,
         .ag-context-menu-open .ag-cell-focus:not(.ag-cell-range-selected),
-        .ag-has-focus .ag-full-width-row.ag-row-focus .ag-cell-wrapper.ag-row-group,
+        .ag-full-width-row.ag-row-focus:focus-within .ag-cell-wrapper.ag-row-group,
         .ag-cell-range-single-cell,
         .ag-cell-range-single-cell.ag-cell-range-handle {
             border: 1px solid;
