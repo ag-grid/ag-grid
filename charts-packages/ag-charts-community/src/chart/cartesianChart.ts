@@ -300,7 +300,12 @@ export class CartesianChart extends Chart {
             axis.calculateTickCount();
 
             if (axis.direction === ChartAxisDirection.X) {
-                axis.visibleRange = [navigator.min, navigator.max];
+                let { min, max, enabled } = navigator;
+                if (enabled) {
+                    axis.visibleRange = [min, max];
+                } else {
+                    axis.visibleRange = [0, 1];
+                }
             }
             if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {
                 clipSeries = true;
