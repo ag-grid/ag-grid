@@ -389,6 +389,7 @@ export class ColumnModel extends BeanStub {
             const gridIndexB = this.gridColumns.indexOf(colB);
             return gridIndexA - gridIndexB;
         });
+        this.gridColumns = this.placeLockedColumns(this.gridColumns);
     }
 
     public getAllDisplayedAutoHeightCols(): Column[] {
