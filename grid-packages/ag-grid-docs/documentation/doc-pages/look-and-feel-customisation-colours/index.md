@@ -2,28 +2,52 @@
 title: "Customising Colours & Fonts"
 ---
 
-CHange the overall colour scheme and appearance of data.
+Change the overall colour scheme and appearance of data.
 
-- `--ag-foreground-color` and `--ag-background-color` set the text colour and background colour for the grid - there are more colour variables available for more fine-grained control over the colour scheme.
+The grid exposes many CSS variables that affect the colour of elements.
 
+## Example
 
+```css
+.ag-theme-alpine {
+    --ag-foreground-color: rgb(126, 46, 132);
+    --ag-background-color: rgb(249, 245, 227);
+    --ag-header-foreground-color: rgb(204, 245, 172);
+    --ag-header-background-color: rgb(209, 64, 129);
+    --ag-odd-row-background-color: rgb(0, 0, 0, 0.03);
+    --ag-header-column-resize-handle-color: rgb(126, 46, 132);
+}
+```
 
-## Theme Colour Variables
+The above code produces these results:
 
-The [Provided Themes](/themes/) define additional variables for key theme colours. The Sass API uses these in colour blending, but due to the limitations described above you need to set a few additional variables yourself if using pure CSS.
+<grid-example title='Colour Customisation' name='colour-customisation' type='generated' options='{ "exampleHeight": 400 }'></grid-example>
 
-- Alpine defines `--ag-alpine-active-color` which sets the colour of checked checkboxes, range selections, row hover, row selections, selected tab underlines, and input focus outlines. To reproduce the Sass colour blends, set the following variables:
-    - Set `--ag-selected-row-background-color` to a **10%** opaque version of `--ag-alpine-active-color`
-    - Set `--ag-range-selection-background-color` to a **20%** opaque version of `--ag-alpine-active-color`
-    - Set `--ag-row-hover-color` to a **10%** opaque version of `--ag-alpine-active-color`
-    - Set `--ag-column-hover-color` to a **10%** opaque version of `--ag-alpine-active-color`
-    - Set `--ag-input-focus-border-color` to a **40%** opaque version of `--ag-alpine-active-color`
+## Key colour variables
 
-- Balham defines `--ag-balham-active-color` which sets the colour of checked checkboxes, range selections, row selections, and input focus outlines. To reproduce the Sass colour blends, set the following variables:
-    - Set `--ag-selected-row-background-color` to a **10%** opaque version of `--ag-alpine-active-color`
-    - Set `--ag-range-selection-background-color` to a **20%** opaque version of `--ag-alpine-active-color`
+Some of the most important colour variables are listed below:
 
-- Material defines `--ag-material-primary-color` and `--ag-material-accent-color` which set the colours used for the primary and accent colour roles specified in the [Material Design colour system](https://material.io/design/color/). Currently primary colour is used for buttons, range selections, selected tab underlines and input focus underlines, and accent colour is used for checked checkboxes. No colour blending is required.
+<api-documentation source='look-and-feel-customisation-variables/resources/variables.json' section='variables' names='["--ag-alpine-active-color", "--ag-balham-active-color", "--ag-material-primary-color", "--ag-material-accent-color", "--ag-foreground-color", "--ag-background-color", "--ag-secondary-foreground-color", "--ag-data-color", "--ag-header-foreground-color", "--ag-header-background-color", "--ag-disabled-foreground-color", "--ag-odd-row-background-color", "--ag-row-hover-color", "--ag-border-color", "--ag-row-border-color"]' config='{"maxLeftColumnWidth": 35, "hideHeader": true}'></api-documentation>
+
+For the full list check the [full variable reference](/look-and-feel-customisation-variables/) - every colour variable is ends with `-color`.
+
+[[note]]
+| There are a lot of colour variables - the easiest way to find the variable that colours a specific element is often to inspect the element in your browser's developer tools and check the value of its `color` or `background-color` properties.
+
+## Colour blending, Sass and CSS
+
+The Sass API [Colour Blending](/look-and-feel-customisation-sass/#colour-blending) feature will automatically generate a few default values for colour variables based on the ones that you define. If you're using CSS you may want to set these values yourself for a consistent colour scheme:
+
+- Setting `--ag-alpine-active-color` in the Sass API will:
+    - Set `--ag-selected-row-background-color` to a **10%** opaque version
+    - Set `--ag-range-selection-background-color` to a **20%** opaque version
+    - Set `--ag-row-hover-color` to a **10%** opaque version
+    - Set `--ag-column-hover-color` to a **10%** opaque version
+    - Set `--ag-input-focus-border-color` to a **40%** opaque version
+
+- Setting `--ag-balham-active-color` in the Sass API will:
+    - Set `--ag-selected-row-background-color` to a **10%** opaque version
+    - Set `--ag-range-selection-background-color` to a **20%** opaque version
 
 [[note]]
 | **Generating semi-transparent colours**
