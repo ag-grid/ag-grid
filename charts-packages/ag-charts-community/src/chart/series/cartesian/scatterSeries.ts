@@ -253,15 +253,24 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         return [{ itemId: this.yKey, nodeData, labelData: nodeData }];
     }
 
+    protected isPathOrSelectionDirty(): boolean {
+        return this.marker.isDirty();
+    }
+
     protected updateDatumSelection(opts: {
         nodeData: ScatterNodeDatum[];
         datumSelection: Selection<Marker, Group, ScatterNodeDatum, any>;
     }): Selection<Marker, Group, ScatterNodeDatum, any> {
-        const { nodeData, datumSelection } = opts;
+        let { nodeData, datumSelection } = opts;
         const {
             marker: { enabled, shape },
         } = this;
         const MarkerShape = getMarker(shape);
+
+        if (this.marker.isDirty()) {
+            datumSelection = datumSelection.setData([]);
+            datumSelection.exit.remove();
+        }
 
         const data = enabled ? nodeData : [];
         const updateDatums = datumSelection.setData(data);
@@ -339,6 +348,10 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             node.translationY = datum.point.y;
             node.visible = node.size > 0;
         });
+
+        if (!isDatumHighlighted) {
+            this.marker.markClean();
+        }
     }
 
     protected updateLabelSelection(opts: {
