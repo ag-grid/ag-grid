@@ -36,7 +36,8 @@ community-modules/all-modules/styles/**
 enterprise-modules/all-modules/styles/**
 grid-packages/ag-grid-community/styles/**
 grid-packages/ag-grid-enterprise/styles/**
-grid-packages/ag-grid-docs/src/jira_reports/prod/credentials.json
+grid-packages/ag-grid-docs/documentation/cypress.config.AUTO.json
+
 
 # compiled CSS files
 community-modules/styles/*.css
@@ -104,4 +105,3 @@ charts-packages/ag-charts-react/umd
 charts-packages/ag-charts-vue/lib/**
 charts-packages/ag-charts-vue3/lib/**
 charts-packages/ag-charts-angular/dist
-grid-packages/ag-grid-docs/documentation/cypress.config.AUTO.json
