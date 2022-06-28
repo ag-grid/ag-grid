@@ -62,8 +62,11 @@ export class GridSerializer extends BeanStub {
         const api = gridOptionsWrapper.getApi()!;
         const columnApi = gridOptionsWrapper.getColumnApi()!;
         const skipSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveSingleChildren();
-        const hideOpenParents = gridOptionsWrapper.isGroupHideOpenParents();
         const skipLowestSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
+        // if onlySelected, we ignore groupHideOpenParents as the user has explicitly selected the rows they wish to export.
+        // similarly, if specific rowNodes are provided we do the same. (the clipboard service uses rowNodes to define which rows to export)
+        const isExplicitExportSelection = params.rowNodes || params.onlySelected;
+        const hideOpenParents = gridOptionsWrapper.isGroupHideOpenParents() && !isExplicitExportSelection;
         const isLeafNode = this.columnModel.isPivotMode() ? node.leafGroup : !node.group;
         const skipRowGroups = params.skipGroups || params.skipRowGroups;
         const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
