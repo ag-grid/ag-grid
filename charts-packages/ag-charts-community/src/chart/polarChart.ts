@@ -72,7 +72,6 @@ export class PolarChart extends Chart {
                 series.centerX = centerX;
                 series.centerY = centerY;
                 series.radius = radius;
-                series.update();
             }
         });
     }

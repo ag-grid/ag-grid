@@ -155,7 +155,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     set data(input: any[] | undefined) {
         this._data = input;
-        this.seriesItemEnabled = input?.map(() => true) || [];
+        this.processSeriesItemEnabled();
     }
     get data() {
         return this._data;
@@ -221,6 +221,15 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     shadow?: DropShadow = undefined;
 
     readonly highlightStyle = new PieHighlightStyle();
+
+    visibleChanged() {
+        this.processSeriesItemEnabled();
+    }
+
+    private processSeriesItemEnabled() {
+        const { data, visible } = this;
+        this.seriesItemEnabled = data?.map(() => visible) || [];
+    }
 
     setColors(fills: string[], strokes: string[]) {
         this.fills = fills;
@@ -404,7 +413,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             return;
         }
 
-        const isVisible = this.visible && this.seriesItemEnabled.indexOf(true) >= 0;
+        const isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
         this.group.visible = isVisible;
         this.seriesGroup.visible = isVisible;
         this.highlightGroup.visible = isVisible && this.chart?.highlightedDatum?.series === this;
@@ -630,5 +639,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     toggleSeriesItem(itemId: number, enabled: boolean): void {
         this.seriesItemEnabled[itemId] = enabled;
+        this.nodeDataRefresh = true;
     }
 }
