@@ -1,4 +1,4 @@
-import { AgScatterSeriesOptions, ChartAxisPosition } from "ag-charts-community";
+import { AgCartesianAxisOptions, AgScatterSeriesOptions, ChartAxisPosition } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
@@ -15,21 +15,30 @@ export class ScatterChartProxy extends CartesianChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
+        this.supportsAxesUpdates = false;
         this.xAxisType = 'number';
         this.yAxisType = 'number';
 
         this.recreateChart();
     }
 
-    public update(params: UpdateChartParams): void {
-        this.updateChart({
-            data: this.transformData(params.data, params.category.id),
-            axes: this.getAxes(),
-            series: this.getSeries(params)
-        });
+    public getAxes(): AgCartesianAxisOptions[] {
+        const axisOptions = this.getAxesOptions();
+        return [
+            {
+                ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
+                type: this.xAxisType,
+                position: ChartAxisPosition.Bottom,
+            },
+            {
+                ...deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left),
+                type: this.yAxisType,
+                position: ChartAxisPosition.Left,
+            },
+        ];
     }
 
-    private getSeries(params: UpdateChartParams): AgScatterSeriesOptions[] {
+    public getSeries(params: UpdateChartParams): AgScatterSeriesOptions[] {
         const paired = this.chartOptions[this.standaloneChartType].paired;
         const seriesDefinitions = this.getSeriesDefinitions(params.fields, paired);
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
@@ -55,22 +64,6 @@ export class ScatterChartProxy extends CartesianChartProxy {
 
     private extractCrossFilterSeries(series: AgScatterSeriesOptions[]): AgScatterSeriesOptions[] {
         return []; //TODO
-    }
-
-    private getAxes() {
-        const axisOptions = this.getAxesOptions();
-        return [
-            {
-                ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
-                type: this.xAxisType,
-                position: ChartAxisPosition.Bottom,
-            },
-            {
-                ...deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left),
-                type: this.yAxisType,
-                position: ChartAxisPosition.Left,
-            },
-        ];
     }
 
     private getSeriesDefinitions(fields: FieldDefinition[], paired: boolean): (SeriesDefinition | null)[] {

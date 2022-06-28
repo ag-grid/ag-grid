@@ -1,5 +1,5 @@
 import { _ } from "@ag-grid-community/core";
-import { AgBarSeriesOptions, ChartAxisPosition } from "ag-charts-community";
+import { AgBarSeriesOptions, ChartAxisPosition, AgCartesianAxisOptions } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
@@ -17,18 +17,9 @@ export class BarChartProxy extends CartesianChartProxy {
         this.recreateChart();
     }
 
-    public update(params: UpdateChartParams): void {
-        const isNormalised = this.isNormalised();
+    public getAxes(): AgCartesianAxisOptions[] {
         const isBar = this.standaloneChartType === 'bar';
 
-        this.updateChart({
-            data: this.transformData(params.data, params.category.id),
-            axes: this.getAxes(isBar, isNormalised),
-            series: this.getSeries(params, isNormalised)
-        });
-    }
-
-    private getAxes(isBar: boolean, normalised: boolean) {
         const axisOptions = this.getAxesOptions();
         let axes = [
             {
@@ -43,7 +34,7 @@ export class BarChartProxy extends CartesianChartProxy {
             },
         ];
         // special handling to add a default label formatter to show '%' for normalized charts if none is provided
-        if (normalised) {
+        if (this.isNormalised()) {
             const numberAxis = axes[1];
             numberAxis.label = { ...numberAxis.label, formatter: (params: any) => Math.round(params.value) + '%' };
         }
@@ -51,7 +42,7 @@ export class BarChartProxy extends CartesianChartProxy {
         return axes;
     }
 
-    private getSeries(params: UpdateChartParams, normalised: boolean) {
+    public getSeries(params: UpdateChartParams): AgBarSeriesOptions[] {
         const groupedCharts = ['groupedColumn', 'groupedBar'];
         const isGrouped = !this.crossFiltering && _.includes(groupedCharts, this.chartType);
 
@@ -60,7 +51,7 @@ export class BarChartProxy extends CartesianChartProxy {
                 ...this.extractSeriesOverrides(),
                 type: this.standaloneChartType,
                 grouped: isGrouped,
-                normalizedTo: normalised ? 100 : undefined,
+                normalizedTo: this.isNormalised() ? 100 : undefined,
                 xKey: params.category.id,
                 xName: params.category.name,
                 yKey: f.colId,

@@ -9,8 +9,7 @@ import {
     Component,
     ListOption,
     PostConstruct,
-    RefSelector,
-    SeriesChartType
+    RefSelector
 } from "@ag-grid-community/core";
 import { ShadowPanel } from "./shadowPanel";
 import { FontPanel } from "../fontPanel";

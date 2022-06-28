@@ -16,41 +16,13 @@ export class ComboChartProxy extends CartesianChartProxy {
         this.recreateChart();
     }
 
-    public update(params: UpdateChartParams): void {
-        this.updateChart({
-            data: this.transformData(params.data, params.category.id),
-            series: this.getSeriesOptions(params),
-            axes: this.getAxes(params),
-        });
-    }
+    public getAxes(params: UpdateChartParams): AgCartesianAxisOptions[] {
+        this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
 
-    private getSeriesOptions(params: UpdateChartParams): any {
-        const { fields, category, seriesChartTypes } = params;
-
-        return fields.map(field => {
-            const seriesChartType = seriesChartTypes.find(s => s.colId === field.colId);
-            if (seriesChartType) {
-                const chartType: ChartType = seriesChartType.chartType;
-                return {
-                    ...this.extractSeriesOverrides(getSeriesType(seriesChartType.chartType)),
-                    type: getSeriesType(chartType),
-                    xKey: category.id,
-                    yKey: field.colId,
-                    yName: field.displayName,
-                    grouped: ['groupedColumn', 'groupedBar', 'groupedArea'].includes(chartType),
-                    stacked: ['stackedArea', 'stackedColumn'].includes(chartType),
-                }
-            }
-        });
-    }
-
-    private getAxes(updateParams: UpdateChartParams): AgCartesianAxisOptions[] {
-        this.xAxisType = updateParams.grouping ? 'groupedCategory' : 'category';
-
-        const fields = updateParams ? updateParams.fields : [];
+        const fields = params ? params.fields : [];
         const fieldsMap = new Map(fields.map(f => [f.colId, f]));
 
-        const { primaryYKeys, secondaryYKeys } = this.getYKeys(fields, updateParams.seriesChartTypes);
+        const { primaryYKeys, secondaryYKeys } = this.getYKeys(fields, params.seriesChartTypes);
         const { bottomOptions, leftOptions, rightOptions } = this.getAxisOptions();
 
         const axes = [
@@ -119,6 +91,26 @@ export class ComboChartProxy extends CartesianChartProxy {
         }
 
         return axes;
+    }
+
+    public getSeries(params: UpdateChartParams): any {
+        const { fields, category, seriesChartTypes } = params;
+
+        return fields.map(field => {
+            const seriesChartType = seriesChartTypes.find(s => s.colId === field.colId);
+            if (seriesChartType) {
+                const chartType: ChartType = seriesChartType.chartType;
+                return {
+                    ...this.extractSeriesOverrides(getSeriesType(seriesChartType.chartType)),
+                    type: getSeriesType(chartType),
+                    xKey: category.id,
+                    yKey: field.colId,
+                    yName: field.displayName,
+                    grouped: ['groupedColumn', 'groupedBar', 'groupedArea'].includes(chartType),
+                    stacked: ['stackedArea', 'stackedColumn'].includes(chartType),
+                }
+            }
+        });
     }
 
     private getAxisOptions() {
