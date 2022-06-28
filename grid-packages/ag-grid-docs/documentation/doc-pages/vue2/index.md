@@ -62,8 +62,8 @@ index.js
 </template>
 
 <script>
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 import { AgGridVue } from "ag-grid-vue";
 
 export default {
@@ -261,8 +261,8 @@ As a first step, let's add the AG Grid styles - replace the `style` block in `sr
 
 ```scss
 <style lang="scss">
-  @import "~ag-grid-community/dist/styles/ag-grid.css";
-  @import "~ag-grid-community/dist/styles/ag-theme-alpine.css";
+  @import "~ag-grid-community/styles/ag-grid.css";
+  @import "~ag-grid-community/styles/ag-theme-alpine.css";
 </style>
 ```
 
@@ -327,8 +327,8 @@ export default {
 };
 </script>
 <style lang="scss">
-   @import "~ag-grid-community/dist/styles/ag-grid.css";
-   @import "~ag-grid-community/dist/styles/ag-theme-alpine.css";
+   @import "~ag-grid-community/styles/ag-grid.css";
+   @import "~ag-grid-community/styles/ag-theme-alpine.css";
 </style>
 ```
 
@@ -461,8 +461,8 @@ export default {
 };
 </script>
 <style lang="scss">
- @import "~ag-grid-community/dist/styles/ag-grid.css";
- @import "~ag-grid-community/dist/styles/ag-theme-alpine.css";
+ @import "~ag-grid-community/styles/ag-grid.css";
+ @import "~ag-grid-community/styles/ag-theme-alpine.css";
 </style>
 ```
 
@@ -535,8 +535,8 @@ export default {
 };
 </script>
 <style lang="scss">
- @import "~ag-grid-community/dist/styles/ag-grid.css";
- @import "~ag-grid-community/dist/styles/ag-theme-alpine.css";
+ @import "~ag-grid-community/styles/ag-grid.css";
+ @import "~ag-grid-community/styles/ag-theme-alpine.css";
 </style>
 ```
 
@@ -652,8 +652,8 @@ the `columnDefs` with a `rowGroup`:
    };
 </script>
 <style lang="scss">
-   @import "~ag-grid-community/dist/styles/ag-grid.css";
-   @import "~ag-grid-community/dist/styles/ag-theme-alpine.css";
+   @import "~ag-grid-community/styles/ag-grid.css";
+   @import "~ag-grid-community/styles/ag-theme-alpine.css";
 </style>
 ```
 

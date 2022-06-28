@@ -36,11 +36,11 @@ function getPackageImports(bindings: any, componentFileNames: string[]): string[
         imports.push("import 'ag-grid-enterprise';");
     }
 
-    imports.push("import 'ag-grid-community/dist/styles/ag-grid.css';");
+    imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
     // to account for the (rare) example that has more than one class...just default to alpine if it does
     const theme = gridSettings.theme || 'ag-theme-alpine';
-    imports.push(`import 'ag-grid-community/dist/styles/${theme}.css';`);
+    imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
     if (componentFileNames) {
         imports.push(...componentFileNames.map(componentFileName => getImport(componentFileName, 'Vue', '')));

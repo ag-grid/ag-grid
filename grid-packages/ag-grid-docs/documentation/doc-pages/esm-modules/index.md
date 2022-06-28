@@ -79,8 +79,8 @@ For example:
 <!doctype html>
 <html>
 <head>
-    <link rel="stylesheet" href="https://unpkg.com/ag-grid-enterprise/dist/styles/ag-grid.css">
-    <link rel="stylesheet" href="https://unpkg.com/ag-grid-enterprise/dist/styles/ag-theme-alpine.css">
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-enterprise/styles/ag-grid.css">
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-enterprise/styles/ag-theme-alpine.css">
     <script type="module">
         import {
             ClientSideRowModelModule,

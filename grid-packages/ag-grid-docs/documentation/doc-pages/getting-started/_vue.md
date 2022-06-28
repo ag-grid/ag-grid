@@ -35,8 +35,8 @@
 |</template>
 |
 |<script>
-|import "ag-grid-community/dist/styles/ag-grid.css";
-|import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+|import "ag-grid-community/styles/ag-grid.css";
+|import "ag-grid-community/styles/ag-theme-alpine.css";
 |import { AgGridVue } from "ag-grid-vue3";
 |
 |export default {
@@ -176,8 +176,8 @@
 |import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 |import { reactive, onMounted, ref } from "vue";
 |
-|import "ag-grid-community/dist/styles/ag-grid.css"; // Core grid CSS, always needed
-|import "ag-grid-community/dist/styles/ag-theme-alpine.css"; // Optional theme CSS
+|import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
+|import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 |
 |export default {
 |  name: "App",
@@ -248,8 +248,8 @@
 | Two CSS files were loaded as follows:
 |
 | ```js
-|import 'ag-grid-community/dist/styles/ag-grid.css'; // Core grid CSS, always needed
-|import 'ag-grid-community/dist/styles/ag-theme-alpine.css'; // Optional theme CSS
+|import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
+|import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 | ```
 |
 | The first `ag-grid.css` is always needed. It's the core structural CSS needed by the grid. Without this, the Grid will not work.

@@ -28,8 +28,8 @@
 | import { render } from 'react-dom';
 | import { AgGridReact } from 'ag-grid-react';
 |
-| import 'ag-grid-community/dist/styles/ag-grid.css';
-| import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+| import 'ag-grid-community/styles/ag-grid.css';
+| import 'ag-grid-community/styles/ag-theme-alpine.css';
 |
 | const App = () => {
 |    const [rowData] = useState([
@@ -144,8 +144,8 @@
 |import { render } from 'react-dom';
 |import { AgGridReact } from 'ag-grid-react'; // the AG Grid React Component
 |
-|import 'ag-grid-community/dist/styles/ag-grid.css'; // Core grid CSS, always needed
-|import 'ag-grid-community/dist/styles/ag-theme-alpine.css'; // Optional theme CSS
+|import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
+|import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 |
 |const App = () => {
 |
@@ -223,8 +223,8 @@
 | Two CSS files were loaded as follows:
 |
 | ```jsx
-|import 'ag-grid-community/dist/styles/ag-grid.css'; // Core grid CSS, always needed
-|import 'ag-grid-community/dist/styles/ag-theme-alpine.css'; // Optional theme CSS
+|import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
+|import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 | ```
 |
 | The first `ag-grid.css` is always needed. It's the core structural CSS needed by the grid. Without this, the Grid will not work.

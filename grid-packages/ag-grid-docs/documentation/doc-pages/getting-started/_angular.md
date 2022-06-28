@@ -240,8 +240,8 @@
 | Copy the content below into the file `styles.scss`:
 |
 |```css
-|@import 'ag-grid-community/dist/styles/ag-grid.css';
-|@import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+|@import 'ag-grid-community/styles/ag-grid.css';
+|@import 'ag-grid-community/styles/ag-theme-alpine.css';
 |
 |html, body {
 |    height: 100%;
@@ -283,8 +283,8 @@
 | Two CSS files were loaded as follows:
 |
 |```css
-|@import 'ag-grid-community/dist/styles/ag-grid.css'; // Core grid CSS, always needed
-|@import 'ag-grid-community/dist/styles/ag-theme-alpine.css'; // Optional theme CSS
+|@import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
+|@import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 | ```
 |
 | The first `ag-grid.css` is always needed. It's the core structural CSS needed by the grid. Without this, the Grid will not work.
