@@ -65,10 +65,7 @@
 | ## Grid Options
 |
 | The `gridOptions` object is a 'one stop shop' for the entire interface into the grid, commonly used if using plain JavaScript.
-| Grid options can however be used instead of, or in addition to, normal framework binding.
-|
-| If an option is passed via the `gridOptions` and the normal framework bindings, the one from the framework binding will overwrite the setting in the `gridOptions`.
-| With this approach you can have a global `gridOptions` object that you pass to all your grids while still being able to override specific options on each individual grid.
+| Grid options can however be used instead of, or in addition to, normal framework binding. If an option is set via `gridOptions`, as well as directly on the component, then the component value will take precedence.
 |
 | The example below shows the different types of items available on `gridOptions`.
 |
