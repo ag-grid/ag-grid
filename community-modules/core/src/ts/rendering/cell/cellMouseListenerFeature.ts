@@ -57,7 +57,11 @@ export class CellMouseListenerFeature extends Beans {
         const multiKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
 
         if (rangeService && multiKeyPressed) {
-            rangeService.intersectLastRange(true);
+            // the mousedown event has created the range already, so we only intersect if there is more than one
+            // range on this cell
+            if (rangeService.getCellRangeCount(this.cellCtrl.getCellPosition()) > 1) {
+                rangeService.intersectLastRange(true);
+            }
         }
 
         const cellClickedEvent: CellClickedEvent = this.cellCtrl.createEvent(mouseEvent, Events.EVENT_CELL_CLICKED);
