@@ -154,28 +154,30 @@ function mergeAncestorProps(isDocStyle, parent, child, getProps) {
 
         if (child.meta && child.meta.typeParams) {
             child.meta.typeParams.forEach((t, i) => {
-                Object.entries(props).forEach(([k, v]) => {
+                Object.entries(props).forEach(([k, v]) => { //.filter(([k, v]) => k !== 'meta')
                     delete mergedProps[k];
                     // Replace the generic params. Regex to make sure you are not just replacing 
                     // random letters in variable names.
                     var rep = `(?<!\\w)${t}(?!\\w)`;
                     var re = new RegExp(rep, "g");
                     var newKey = k.replace(re, parent.params[i]);
+                    if (v) {
 
-                    if (isDocStyle) {
-                        if (v.type) {
-                            let newArgs = undefined;
-                            if (v.type.arguments) {
-                                newArgs = {};
-                                Object.entries(v.type.arguments).forEach(([ak, av]) => {
-                                    newArgs[ak] = av.replace(re, parent.params[i])
-                                })
+                        if (isDocStyle) {
+                            if (v.type) {
+                                let newArgs = undefined;
+                                if (v.type.arguments) {
+                                    newArgs = {};
+                                    Object.entries(v.type.arguments).forEach(([ak, av]) => {
+                                        newArgs[ak] = av.replace(re, parent.params[i])
+                                    })
+                                }
+                                const newReturnType = v.type.returnType.replace(re, parent.params[i])
+                                newValue = { ...v, type: { ...v.type, returnType: newReturnType, arguments: newArgs } }
                             }
-                            const newReturnType = v.type.returnType.replace(re, parent.params[i])
-                            newValue = { ...v, type: { ...v.type, returnType: newReturnType, arguments: newArgs } }
+                        } else {
+                            var newValue = v.replace(re, parent.params[i]);
                         }
-                    } else {
-                        var newValue = v.replace(re, parent.params[i]);
                     }
 
                     mergedProps[newKey] = newValue;

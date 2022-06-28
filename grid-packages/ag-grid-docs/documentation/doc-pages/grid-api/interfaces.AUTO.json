@@ -322,16 +322,17 @@
   },
   "AbstractColDef": {
     "meta": {
+      "typeParams": ["TData = any"],
       "doc": "/** AbstractColDef can be a group or a column definition */"
     },
     "type": {
       "headerName?": "string",
-      "headerValueGetter?": "string | HeaderValueGetterFunc",
+      "headerValueGetter?": "string | HeaderValueGetterFunc<TData>",
       "headerTooltip?": "string",
       "headerClass?": "HeaderClass",
-      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean",
+      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData>) => boolean",
       "columnGroupShow?": "string",
-      "toolPanelClass?": "ToolPanelClass",
+      "toolPanelClass?": "ToolPanelClass<TData>",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
       "tooltipComponent?": "any",
@@ -369,12 +370,12 @@
       "headerGroupComponentFramework?": "any",
       "headerGroupComponentParams?": "any",
       "headerName?": "string",
-      "headerValueGetter?": "string | HeaderValueGetterFunc",
+      "headerValueGetter?": "string | HeaderValueGetterFunc<TData>",
       "headerTooltip?": "string",
       "headerClass?": "HeaderClass",
-      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean",
+      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData>) => boolean",
       "columnGroupShow?": "string",
-      "toolPanelClass?": "ToolPanelClass",
+      "toolPanelClass?": "ToolPanelClass<TData>",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
       "tooltipComponent?": "any",
@@ -406,17 +407,23 @@
     }
   },
   "IAggFunc": {
-    "meta": { "isCallSignature": true },
-    "type": { "arguments": { "params": "IAggFuncParams" }, "returnType": "any" }
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
+    "type": {
+      "arguments": { "params": "IAggFuncParams<TData, TValue>" },
+      "returnType": "any"
+    }
   },
   "IAggFuncParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "values": "any[]",
+      "values": "TValue[]",
       "column": "Column",
       "colDef": "ColDef<TData>",
       "rowNode": "RowNode<TData>",
-      "data": "any",
+      "data": "TData",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -435,7 +442,7 @@
   "HeaderClassParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "colDef": "AbstractColDef",
+      "colDef": "AbstractColDef<TData>",
       "column?": "Column | null",
       "columnGroup?": "ColumnGroup | null",
       "api": "GridApi<TData>",
@@ -449,13 +456,13 @@
     }
   },
   "HeaderClass": {
-    "meta": { "isTypeAlias": true },
-    "type": "string | string[] | ((params: HeaderClassParams) => string | string[] | undefined)"
+    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
+    "type": "string | string[] | ((params: HeaderClassParams<TData>) => string | string[] | undefined)"
   },
   "ToolPanelClassParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "colDef": "AbstractColDef",
+      "colDef": "AbstractColDef<TData>",
       "column?": "Column | null",
       "columnGroup?": "ProvidedColumnGroup | null",
       "api": "GridApi<TData>",
@@ -469,8 +476,8 @@
     }
   },
   "ToolPanelClass": {
-    "meta": { "isTypeAlias": true },
-    "type": "string | string[] | ((params: ToolPanelClassParams) => string | string[] | undefined)"
+    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
+    "type": "string | string[] | ((params: ToolPanelClassParams<TData>) => string | string[] | undefined)"
   },
   "ColDef": {
     "meta": {
@@ -487,7 +494,7 @@
       "keyCreator?": "(params: KeyCreatorParams<TData>) => string",
       "equals?": "(valueA: any, valueB: any) => boolean",
       "tooltipField?": "string",
-      "tooltipValueGetter?": "(params: ITooltipParams) => string | any",
+      "tooltipValueGetter?": "(params: ITooltipParams<TData>) => string | any",
       "checkboxSelection?": "boolean | CheckboxSelectionCallback<TData>",
       "icons?": "{ [key: string]: Function | string; }",
       "suppressNavigable?": "boolean | SuppressNavigableCallback<TData>",
@@ -525,7 +532,7 @@
       "menuTabs?": "string[]",
       "columnsMenuParams?": "ColumnsMenuParams",
       "suppressMenu?": "boolean",
-      "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback",
+      "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback<TData>",
       "headerCheckboxSelectionFilteredOnly?": "boolean",
       "chartDataType?": "'category' | 'series' | 'time' | 'excluded'",
       "pinned?": "boolean | 'left' | 'right' | null",
@@ -562,8 +569,8 @@
       "initialRowGroupIndex?": "number",
       "enableRowGroup?": "boolean",
       "enableValue?": "boolean",
-      "aggFunc?": "string | IAggFunc | null",
-      "initialAggFunc?": "string | IAggFunc",
+      "aggFunc?": "string | IAggFunc<TData> | null",
+      "initialAggFunc?": "string | IAggFunc<TData>",
       "defaultAggFunc?": "string",
       "allowedAggFuncs?": "string[]",
       "showRowGroup?": "string | boolean",
@@ -573,7 +580,7 @@
       "sortIndex?": "number | null",
       "initialSortIndex?": "number",
       "sortingOrder?": "('asc' | 'desc' | null)[]",
-      "comparator?": "(valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number",
+      "comparator?": "(valueA: any, valueB: any, nodeA: RowNode<TData>, nodeB: RowNode<TData>, isInverted: boolean) => number",
       "unSortIcon?": "boolean",
       "sortedAt?": "number",
       "colSpan?": "(params: ColSpanParams<TData>) => number",
@@ -590,12 +597,12 @@
       "pivotValueColumn?": "Column | null",
       "pivotTotalColumnIds?": "string[]",
       "headerName?": "string",
-      "headerValueGetter?": "string | HeaderValueGetterFunc",
+      "headerValueGetter?": "string | HeaderValueGetterFunc<TData>",
       "headerTooltip?": "string",
       "headerClass?": "HeaderClass",
-      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean",
+      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData>) => boolean",
       "columnGroupShow?": "string",
-      "toolPanelClass?": "ToolPanelClass",
+      "toolPanelClass?": "ToolPanelClass<TData>",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
       "tooltipComponent?": "any",
@@ -964,9 +971,9 @@
     }
   },
   "HeaderCheckboxSelectionCallback": {
-    "meta": { "isCallSignature": true },
+    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
     "type": {
-      "arguments": { "params": "HeaderCheckboxSelectionCallbackParams" },
+      "arguments": { "params": "HeaderCheckboxSelectionCallbackParams<TData>" },
       "returnType": "boolean"
     }
   },
@@ -1006,9 +1013,9 @@
     }
   },
   "GetQuickFilterTextParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "value": "any",
+      "value": "TValue",
       "node": "RowNode<TData>",
       "data": "TData",
       "column": "Column",
@@ -1120,7 +1127,7 @@
   "HeaderValueGetterParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "colDef": "AbstractColDef",
+      "colDef": "AbstractColDef<TData>",
       "column?": "Column | null",
       "columnGroup?": "ColumnGroup | ProvidedColumnGroup | null",
       "providedColumnGroup": "ProvidedColumnGroup | null",
@@ -1140,17 +1147,17 @@
     }
   },
   "HeaderValueGetterFunc": {
-    "meta": { "isCallSignature": true },
+    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
     "type": {
-      "arguments": { "params": "HeaderValueGetterParams" },
+      "arguments": { "params": "HeaderValueGetterParams<TData>" },
       "returnType": "any"
     }
   },
   "NewValueParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue",
+      "newValue": "TValue",
       "node": "RowNode<TData> | null",
       "data": "TData",
       "column": "Column",
@@ -1174,8 +1181,8 @@
   "ValueSetterParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue",
+      "newValue": "TValue",
       "node": "RowNode<TData> | null",
       "data": "TData",
       "column": "Column",
@@ -1206,8 +1213,8 @@
   "ValueParserParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue",
+      "newValue": "TValue",
       "node": "RowNode<TData> | null",
       "data": "TData",
       "column": "Column",
@@ -1229,16 +1236,19 @@
     }
   },
   "ValueParserFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
       "arguments": { "params": "ValueParserParams<TData>" },
-      "returnType": "any"
+      "returnType": "TValue"
     }
   },
   "ValueFormatterParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "value": "any",
+      "value": "TValue",
       "node": "RowNode<TData> | null",
       "data": "TData | undefined",
       "column": "Column",
@@ -1266,9 +1276,9 @@
     }
   },
   "KeyCreatorParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "value": "any",
+      "value": "TValue",
       "node": "RowNode<TData> | null",
       "data": "TData",
       "column": "Column",
@@ -1359,7 +1369,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column": "Column | ColumnGroup",
-      "colDef": "ColDef | ColGroupDef | null",
+      "colDef": "ColDef<TData> | ColGroupDef<TData> | null",
       "headerRowIndex": "number",
       "event": "KeyboardEvent",
       "api": "GridApi<TData>",
@@ -1375,10 +1385,10 @@
     }
   },
   "CellClassParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "colDef": "ColDef<TData>",
-      "value": "any",
+      "value": "TValue",
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number",
@@ -9853,10 +9863,10 @@
     }
   },
   "ISparklineCellRendererParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "sparklineOptions?": "SparklineOptions",
-      "value": "any",
+      "value": "TValue",
       "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
@@ -10594,7 +10604,7 @@
       "pinned": "\"left\" | \"right\" | null | undefined",
       "autoHeight": "boolean",
       "suppressRefresh": "boolean",
-      "value": "any",
+      "value": "TValue",
       "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
@@ -11033,7 +11043,7 @@
     }
   },
   "GroupCellRendererParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "pinned?": "\"left\" | \"right\" | null",
       "fullWidth": "boolean",
@@ -11049,7 +11059,7 @@
       "innerRendererParams?": "any",
       "innerRendererSelector?": "CellRendererSelectorFunc",
       "padding": "number",
-      "value": "any",
+      "value": "TValue",
       "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
       "data": "TData | undefined",
@@ -11103,9 +11113,9 @@
     }
   },
   "ICellRendererParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "value": "any",
+      "value": "TValue",
       "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
@@ -11196,9 +11206,9 @@
     }
   },
   "ILoadingCellRendererParams": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "value": "any",
+      "value": "TValue",
       "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
@@ -11490,10 +11500,10 @@
     }
   },
   "ITooltipParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "location": "string",
-      "value?": "any",
+      "value?": "TValue",
       "valueFormatted?": "string | null",
       "colDef?": "ColDef<TData> | ColGroupDef<TData> | null",
       "column?": "Column | ColumnGroup",
@@ -12275,7 +12285,7 @@
       "keyCreator?": "(params: KeyCreatorParams<TData>) => string",
       "equals?": "(valueA: any, valueB: any) => boolean",
       "tooltipField?": "string",
-      "tooltipValueGetter?": "(params: ITooltipParams) => string | any",
+      "tooltipValueGetter?": "(params: ITooltipParams<TData>) => string | any",
       "checkboxSelection?": "boolean | CheckboxSelectionCallback<TData>",
       "icons?": "{ [key: string]: Function | string; }",
       "suppressNavigable?": "boolean | SuppressNavigableCallback<TData>",
@@ -12313,7 +12323,7 @@
       "menuTabs?": "string[]",
       "columnsMenuParams?": "ColumnsMenuParams",
       "suppressMenu?": "boolean",
-      "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback",
+      "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback<TData>",
       "headerCheckboxSelectionFilteredOnly?": "boolean",
       "chartDataType?": "'category' | 'series' | 'time' | 'excluded'",
       "pinned?": "boolean | 'left' | 'right' | null",
@@ -12350,8 +12360,8 @@
       "initialRowGroupIndex?": "number",
       "enableRowGroup?": "boolean",
       "enableValue?": "boolean",
-      "aggFunc?": "string | IAggFunc | null",
-      "initialAggFunc?": "string | IAggFunc",
+      "aggFunc?": "string | IAggFunc<TData> | null",
+      "initialAggFunc?": "string | IAggFunc<TData>",
       "defaultAggFunc?": "string",
       "allowedAggFuncs?": "string[]",
       "showRowGroup?": "string | boolean",
@@ -12361,7 +12371,7 @@
       "sortIndex?": "number | null",
       "initialSortIndex?": "number",
       "sortingOrder?": "('asc' | 'desc' | null)[]",
-      "comparator?": "(valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number",
+      "comparator?": "(valueA: any, valueB: any, nodeA: RowNode<TData>, nodeB: RowNode<TData>, isInverted: boolean) => number",
       "unSortIcon?": "boolean",
       "sortedAt?": "number",
       "colSpan?": "(params: ColSpanParams<TData>) => number",
@@ -12378,12 +12388,12 @@
       "pivotValueColumn?": "Column | null",
       "pivotTotalColumnIds?": "string[]",
       "headerName?": "string",
-      "headerValueGetter?": "string | HeaderValueGetterFunc",
+      "headerValueGetter?": "string | HeaderValueGetterFunc<TData>",
       "headerTooltip?": "string",
       "headerClass?": "HeaderClass",
-      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean",
+      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData>) => boolean",
       "columnGroupShow?": "string",
-      "toolPanelClass?": "ToolPanelClass",
+      "toolPanelClass?": "ToolPanelClass<TData>",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
       "tooltipComponent?": "any",
@@ -12541,12 +12551,12 @@
       "headerGroupComponentFramework?": "any",
       "headerGroupComponentParams?": "any",
       "headerName?": "string",
-      "headerValueGetter?": "string | HeaderValueGetterFunc",
+      "headerValueGetter?": "string | HeaderValueGetterFunc<TData>",
       "headerTooltip?": "string",
       "headerClass?": "HeaderClass",
-      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean",
+      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData>) => boolean",
       "columnGroupShow?": "string",
-      "toolPanelClass?": "ToolPanelClass",
+      "toolPanelClass?": "ToolPanelClass<TData>",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
       "tooltipComponent?": "any",
