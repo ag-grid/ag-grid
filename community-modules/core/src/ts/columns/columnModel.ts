@@ -3121,7 +3121,7 @@ export class ColumnModel extends BeanStub {
         return this.groupDisplayColumns;
     }
 
-    public getGroupDisplayColumnForGroup(rowGroupColumnId: string): Column {
+    public getGroupDisplayColumnForGroup(rowGroupColumnId: string): Column | undefined {
         return this.groupDisplayColumnsMap[rowGroupColumnId];
     }
 

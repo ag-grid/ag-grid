@@ -8,6 +8,7 @@
         height: ag-param(grid-size) * 4;
         padding: 0 ag-param(grid-size) * 0.5;
         border: 1px solid transparent;
+        cursor: pointer;
     }
 
     @include ag-keyboard-focus((ag-column-drop-cell), 2px);

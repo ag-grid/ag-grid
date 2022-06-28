@@ -81,11 +81,6 @@ export class RowNodeSorter {
             return comparatorOnCol;
         }
 
-        // if no comparator on col, see if we are showing a group, and if we are, get comparator from row group col
-        if (rowNode.rowGroupColumn) {
-            return rowNode.rowGroupColumn.getColDef().comparator;
-        }
-
         if (!column.getColDef().showRowGroup) { return; }
 
         // if a 'field' is supplied on the autoGroupColumnDef we need to use the associated column comparator
@@ -99,6 +94,11 @@ export class RowNodeSorter {
     }
 
     private getValue(node: RowNode, column: Column): any {
+        const primaryColumnsSortGroups = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
+        if (!primaryColumnsSortGroups) {
+            return this.valueService.getValue(column, node, false, false);
+        }
+
         const isNodeGroupedAtLevel = node.rowGroupColumn === column;
         if (isNodeGroupedAtLevel) {
             const displayCol = this.columnModel.getGroupDisplayColumnForGroup(column.getId());

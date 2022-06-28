@@ -71,7 +71,7 @@ export class DropZoneColumnComp extends Component {
     public init(): void {
         this.setTemplate(DropZoneColumnComp.TEMPLATE);
         const eGui = this.getGui();
-        const isFunctionsReadOnly = this.gridOptionsWrapper.isFunctionsReadOnly()
+        const isFunctionsReadOnly = this.gridOptionsWrapper.isFunctionsReadOnly();
 
         this.addElementClasses(eGui);
         this.addElementClasses(this.eDragHandle, 'drag-handle');
@@ -90,19 +90,48 @@ export class DropZoneColumnComp extends Component {
             this.addDragSource();
         }
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const label = translate('ariaDropZoneColumnComponentDescription', 'Press DELETE to remove');
-        const { name, aggFuncName } = this.getColumnAndAggFuncName();
+        this.setupAria();
 
-        let extraDescription = '';
-
-        if (this.isAggregationZone() && !isFunctionsReadOnly) {
-            extraDescription = translate('ariaDropZoneColumnValueItemDescription', 'Press ENTER to change the aggregation type');
-        }
-
-        _.setAriaLabel(eGui, `${aggFuncName} ${name} ${label} ${extraDescription}`);
+        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, () => {
+            this.setupAria();
+        });
 
         this.setupTooltip();
+    }
+
+    private setupAria() {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const { name, aggFuncName } = this.getColumnAndAggFuncName();
+
+        const aggSeperator = translate('ariaDropZoneColumnComponentAggFuncSeperator', ' of ');
+        const sortDirection =  {
+            asc: translate('ariaDropZoneColumnComponentSortAscending', 'ascending'),
+            desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
+        };
+        const columnSort = this.column.getSort();
+
+        const ariaInstructions = [
+            [
+                aggFuncName && `${aggFuncName}${aggSeperator}`,
+                name,
+                this.isGroupingZone() && columnSort && `, ${sortDirection[columnSort]}`
+            ].filter(part => !!part).join(''),
+        ];
+
+        const deleteAria = translate('ariaDropZoneColumnComponentDescription', 'Press DELETE to remove');
+        ariaInstructions.push(deleteAria);
+
+        const isFunctionsReadOnly = this.gridOptionsWrapper.isFunctionsReadOnly()
+        if (this.isAggregationZone() && !isFunctionsReadOnly) {
+            const aggregationMenuAria = translate('ariaDropZoneColumnValueItemDescription', 'Press ENTER to change the aggregation type');
+            ariaInstructions.push(aggregationMenuAria);
+        }
+
+        if (this.isGroupingZone() && this.column.getColDef().sortable) {
+            const sortProgressAria = translate('ariaDropZoneColumnGroupItemDescription', 'Press ENTER to progress the column sort');
+            ariaInstructions.push(sortProgressAria);
+        }
+        _.setAriaLabel(this.getGui(), ariaInstructions.join('. '));
     }
 
     private setupTooltip(): void {
@@ -123,22 +152,22 @@ export class DropZoneColumnComp extends Component {
             return;
         }
 
-        this.eSortIndicator.setupSort(this.column);
-        const sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
+        this.eSortIndicator.setupSort(this.column, true);
 
-        const onClick = (event: MouseEvent) => {
+        const performSort = (event: MouseEvent | KeyboardEvent) => {
+            event.preventDefault();
+            const sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
             const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
             this.sortController.progressSort(this.column, multiSort, 'uiColumnSorted');
-            event.preventDefault();
         };
-        // add the event on the header, so when clicked, we do sorting
-        if (this.eText) {
-            this.addManagedListener(this.eText, 'click', onClick);
-        }
-        // also add the event to the sort indicator
-        if (this.eSortIndicator) {
-            this.eSortIndicator.addGuiEventListener('click', onClick);
-        }
+
+        this.addGuiEventListener('click', performSort);
+        this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
+            const isEnter = e.key === KeyCode.ENTER;
+            if (isEnter && this.isGroupingZone()) {
+                performSort(e);
+            }
+        });
     }
 
     private addDragSource(): void {

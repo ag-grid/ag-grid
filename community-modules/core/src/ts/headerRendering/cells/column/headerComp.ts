@@ -264,6 +264,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         // we set up the indicator prior to the check for whether this column is sortable, as it allows the indicator to
         // set up the multi sort indicator which can appear irrelevant of whether this column can itself be sorted.
+        // this can occur in the case of a non-sortable group display column.
         if (!this.currentSort) {
             return;
         }
