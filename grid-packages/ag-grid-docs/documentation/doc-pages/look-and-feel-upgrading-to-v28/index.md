@@ -7,6 +7,9 @@ The Legacy Sass API is deprecated and will be removed from the Grid in a future 
 [[warning]]
 | If you upgrade an app from v27 to 28 you will be automatically opted in to the Legacy API. Follow the instructions in this document to upgrade.
 
+[[note]]
+| If you need to make changes to an app that is still using the legacy API, you can consult the [Archived Documentation for the Legacy API](/look-and-feel-customisation-sass-legacy/).
+
 ### Benefits of the new API
 
 1. Long-term stability and feature completeness. The Legacy API is being kept around for at least one major version in order to allow a grace period where customers can continue using the old API if they encounter issues with the new one. But the new API is the future, and as we add new features in future minor releases these may not be fully supported by the legacy API.
