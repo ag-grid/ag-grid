@@ -85,8 +85,8 @@ describe('Class Component Cell Renderer Grid', () => {
 
         mount(<GridComponent/>, {
             stylesheets: [
-                'https://unpkg.com/@ag-grid-community/core/dist/styles/ag-grid.css',
-                'https://unpkg.com/@ag-grid-community/core/dist/styles/ag-theme-alpine.css'
+                'https://unpkg.com/@ag-grid-community/styles/ag-grid.css',
+                'https://unpkg.com/@ag-grid-community/styles/ag-theme-alpine.css'
             ]
         })
 

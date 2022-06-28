@@ -64,8 +64,8 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 
     import {AgGridReact} from 'ag-grid-react';
     
-    import 'ag-grid-community/dist/styles/ag-grid.css';
-    import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+    import 'ag-grid-community/styles//ag-grid.css';
+    import 'ag-grid-community/styles//ag-theme-alpine.css';
 
 ### Set the grid's configuration in a parent component
 	class App extends Component {

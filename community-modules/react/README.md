@@ -66,8 +66,8 @@ $ npm install --save @ag-grid-community/core @ag-grid-community/react
 ```js
 import { AgGridReact } from '@ag-grid-community/react';
 
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-alpine.css';
 ```
 
 ### Set the grid's configuration in a parent component

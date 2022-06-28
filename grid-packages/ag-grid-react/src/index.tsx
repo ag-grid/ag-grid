@@ -4,8 +4,8 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { AgGridColumn } from './shared/agGridColumn'
 import { AgGridReactUi } from './reactUi/agGridReactUi';
 
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-alpine.css';
 
 
 const App = () => {

@@ -22,7 +22,7 @@ There are four bundle files in the distribution:
 - `dist/ag-grid-community.noStyle.js` — standard bundle containing JavaScript without CSS
 - `dist/ag-grid-community.min.noStyle.js` — minified bundle containing JavaScript without CSS
 
-Should you decide to use the `noStyle` versions of the bundle, the stylesheet files are present in the `dist/styles` folder.
+Should you decide to use the `noStyle` versions of the bundle, the stylesheet files are present in the `styles` folder.
 
 ## Download AG Grid Enterprise bundle
 

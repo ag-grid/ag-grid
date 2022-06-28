@@ -70,8 +70,8 @@ import { AgGridVue } from "@ag-grid-community/vue";
 ### Import styles in 
 
 ```ts
-import "@ag-grid-community/core/dist/styles/ag-grid.css";
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 ```
 
 ### Set the grid's configuration in the parent component
@@ -124,8 +124,8 @@ export default {
 </template>
 
 <script>
-import "@ag-grid-community/core/dist/styles/ag-grid.css";
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 import { AgGridVue } from "@ag-grid-community/vue";
 
 export default {

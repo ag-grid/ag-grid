@@ -5,8 +5,8 @@ import { AgGridReact } from './agGridReact';
 import { AgGridColumn } from './shared/agGridColumn';
 import useGridApis from "./useGridApi";
 
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-alpine.css';
 
 
 const App = () => {

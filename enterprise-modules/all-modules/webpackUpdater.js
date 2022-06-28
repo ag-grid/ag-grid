@@ -37,7 +37,7 @@ const moduleRequireLines = modules.map(module => `var ${module.moduleName} = req
 const moduleRegisterLines = modules.filter(module => module.directory.indexOf('core') === -1) // exclude core - we don't register core
     .map(module => `agGrid.ModuleRegistry.register(${module.moduleName}.${module.moduleName});`);
 
-const css = glob.sync("./dist/styles/*.css")
+const css = glob.sync("./styles/*.css")
     .filter(css => css.indexOf('.min.css') === -1)
     .map(css => `require('${css}');`);
 

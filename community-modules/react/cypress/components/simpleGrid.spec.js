@@ -45,8 +45,8 @@ describe('Simple Grid', () => {
 
         mount(<App/>, {
             stylesheets: [
-                'https://unpkg.com/@ag-grid-community/core/dist/styles/ag-grid.css',
-                'https://unpkg.com/@ag-grid-community/core/dist/styles/ag-theme-alpine.css'
+                'https://unpkg.com/@ag-grid-community/styles/ag-grid.css',
+                'https://unpkg.com/@ag-grid-community/styles/ag-theme-alpine.css'
             ]
         })
 

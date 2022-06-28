@@ -73,8 +73,8 @@ $ npm install --save @ag-grid-community/csv-export
 ```js
 import { Grid } from '@ag-grid-community/core';
 
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-alpine.css';
 ```
 
 ### Set configuration

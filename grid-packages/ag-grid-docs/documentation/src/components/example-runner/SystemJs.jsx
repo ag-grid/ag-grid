@@ -83,7 +83,7 @@ const localConfiguration = {
 
 const publishedConfiguration = {
     gridMap: {
-        "@ag-grid-community/styles": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles`,
+        "@ag-grid-community/styles": `https://unpkg.com/@ag-grid-community/styles@${agGridVersion}/`,
         "@ag-grid-community/react": `https://unpkg.com/@ag-grid-community/react@${agGridReactVersion}/`,
         "@ag-grid-community/angular": `https://unpkg.com/@ag-grid-community/angular@${agGridAngularVersion}/`,
         "@ag-grid-community/vue": `https://unpkg.com/@ag-grid-community/vue@${agGridVueVersion}/`,
