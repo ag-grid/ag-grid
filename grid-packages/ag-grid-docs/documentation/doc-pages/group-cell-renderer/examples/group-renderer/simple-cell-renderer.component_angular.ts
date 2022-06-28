@@ -1,7 +1,6 @@
 import {Component} from "@angular/core";
 import {ICellRendererParams} from "@ag-grid-community/core";
-import {ICellRendererAngularComp} from "@ag-grid-community/angular";
-import React from "react";
+import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'simple-component',

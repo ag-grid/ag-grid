@@ -26,9 +26,9 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
             additionalLines.push(`this.http.get<${rowDataType}[]>(${url}).subscribe(data => ${callback});`);
         }
     }
-
+    const gridReadyEventParam = rowDataType !== 'any' ? `<${rowDataType}>` : ''
     return `
-    onGridReady(params: GridReadyEvent) {
+    onGridReady(params: GridReadyEvent${gridReadyEventParam}) {
         ${hasApi ? 'this.gridApi = params.api;' : ''}${hasColApi ? 'this.gridColumnApi = params.columnApi;' : ''}${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
     }`;
 }
@@ -143,6 +143,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
 
     const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunctionKeyword);
     const externalEventHandlers = bindings.externalEventHandlers.map(handler => removeFunctionKeyword(handler.body));
+    const genericParams = rowDataType !== 'any' ? `<${rowDataType}>` : ''
 
     return importType => {
         const imports = getImports(bindings, componentFileNames, importType);
@@ -207,7 +208,7 @@ ${imports.join('\n')}${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n')
 })
 
 export class AppComponent {
-${hasGridApi ? '    private gridApi!: GridApi;\n' : ''}${hasGridColumnApi ? '    private gridColumnApi!: ColumnApi;\n' : ''}
+${hasGridApi ? `    private gridApi!: GridApi${genericParams};\n` : ''}${hasGridColumnApi ? '    private gridColumnApi!: ColumnApi;\n' : ''}
     ${propertyVars.join('\n')}
     ${propertyAssignments.join(';\n')}
 

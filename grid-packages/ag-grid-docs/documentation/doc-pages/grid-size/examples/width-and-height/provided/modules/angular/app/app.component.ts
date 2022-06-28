@@ -1,4 +1,5 @@
 
+import { AgGridAngular } from '@ag-grid-community/angular';
 import { ColDef } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-alpine.css";
@@ -31,7 +32,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 
 export class AppComponent implements OnInit {
 
-    @ViewChild('agGrid') agGrid: any;
+    @ViewChild('agGrid') agGrid!: AgGridAngular<IOlympicData>;
 
     public style: any = {
         width: '100%',
@@ -51,14 +52,14 @@ export class AppComponent implements OnInit {
         { field: "bronze", width: 100 },
         { field: "total", width: 100 },
     ];
-    public rowData!: any[];
+    public rowData!: IOlympicData[];
 
     constructor(private http: HttpClient) { }
 
     ngOnInit() {
-        this.http.get('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        this.http.get<IOlympicData[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .subscribe(data => {
-                this.rowData = data as any[];
+                this.rowData = data;
             });
     }
 

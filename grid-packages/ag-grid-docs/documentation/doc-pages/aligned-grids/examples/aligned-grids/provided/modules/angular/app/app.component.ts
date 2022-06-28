@@ -7,6 +7,7 @@ import { ColDef, ColGroupDef, FirstDataRenderedEvent, GridOptions } from '@ag-gr
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { AgGridAngular } from '@ag-grid-community/angular';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule])
@@ -68,8 +69,8 @@ export class AppComponent {
         }
     };
 
-    @ViewChild('topGrid') topGrid: any;
-    @ViewChild('bottomGrid') bottomGrid: any;
+    @ViewChild('topGrid') topGrid!: AgGridAngular<IOlympicData>;
+    @ViewChild('bottomGrid') bottomGrid!: AgGridAngular<IOlympicData>;
 
     constructor(private http: HttpClient) {
         this.columnDefs = [
