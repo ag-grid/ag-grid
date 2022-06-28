@@ -290,9 +290,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
         bottom: 0;
         left: 0;
         right: 0;
-        pointer-events: none;
-        &.ag-scrollbar-scrolling, &.ag-scrollbar-active {
-            pointer-events: all;
+        &.ag-apple-scrollbar {
+            display: none;
+            &.ag-scrollbar-scrolling, &.ag-scrollbar-active {
+                display: inherit;
+            }
         }
     }
 }

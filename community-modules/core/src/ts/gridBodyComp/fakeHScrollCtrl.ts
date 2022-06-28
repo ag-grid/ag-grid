@@ -1,5 +1,5 @@
 import { BeanStub } from "../context/beanStub";
-import { isInvisibleScrollbar } from "../utils/browser";
+import { isInvisibleScrollbar, isIOSUserAgent, isMacOsUserAgent } from "../utils/browser";
 import { Autowired, PostConstruct } from "../context/context";
 import { ScrollVisibleService } from "./scrollVisibleService";
 import { Events } from "../eventKeys";
@@ -60,14 +60,23 @@ export class FakeHScrollCtrl extends BeanStub {
         }
 
         this.ctrlsService.registerFakeHScrollCtrl(this);
+        this.view.addOrRemoveCssClass('ag-apple-scrollbar', isMacOsUserAgent() || isIOSUserAgent());
     }
 
     addActiveListenerToggles(): void {
         const activateEvents = ['mouseenter', 'mousedown', 'touchstart'];
-        const deactivateEvents = ['mouseleave', 'mouseup', 'touchend'];
+        const deactivateEvents = ['mouseleave', 'touchend'];
 
-        activateEvents.forEach(eventName => this.addManagedListener(this.eGui, eventName, () => this.view.addOrRemoveCssClass('ag-scrollbar-active', true)));
-        deactivateEvents.forEach(eventName => this.addManagedListener(this.eGui, eventName, () => this.view.addOrRemoveCssClass('ag-scrollbar-active', false)));
+        activateEvents.forEach(
+            eventName => this.addManagedListener(
+                this.eGui, eventName, () => this.view.addOrRemoveCssClass('ag-scrollbar-active', true)
+            )
+        );
+        deactivateEvents.forEach(
+            eventName => this.addManagedListener(
+                this.eGui, eventName, () => this.view.addOrRemoveCssClass('ag-scrollbar-active', false)
+            )
+        );
     }
 
     @PostConstruct

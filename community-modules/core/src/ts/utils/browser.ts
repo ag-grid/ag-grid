@@ -8,6 +8,7 @@ let isIE: boolean;
 let isEdge: boolean;
 let isChrome: boolean;
 let isFirefox: boolean;
+let isMacOs: boolean;
 let isIOS: boolean;
 let invisibleScrollbar: boolean;
 let browserScrollbarWidth: number;
@@ -103,6 +104,14 @@ export function isBrowserFirefox(): boolean {
     }
 
     return isFirefox;
+}
+
+export function isMacOsUserAgent(): boolean {
+    if (isMacOs === undefined) {
+        isMacOs = /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform);
+    }
+
+    return isMacOs;
 }
 
 export function isIOSUserAgent(): boolean {
