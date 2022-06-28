@@ -17480,7 +17480,7 @@
     "sparklineOptions": {
       "type": { "returnType": "SparklineOptions", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any", "TValue = any"] },
+    "meta": { "typeParams": ["TData = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
       "type": { "returnType": "TValue", "optional": false }

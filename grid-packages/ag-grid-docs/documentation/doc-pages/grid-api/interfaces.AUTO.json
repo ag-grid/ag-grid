@@ -9863,7 +9863,7 @@
     }
   },
   "ISparklineCellRendererParams": {
-    "meta": { "typeParams": ["TData = any", "TValue = any"] },
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "sparklineOptions?": "SparklineOptions",
       "value": "TValue",

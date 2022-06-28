@@ -2846,6 +2846,11 @@
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(v: T) => number"
   },
+  "RedrawType": {
+    "meta": { "isEnum": true },
+    "type": ["NONE", "TRIVIAL", "MINOR", "MAJOR"],
+    "docs": [null, null, null, null]
+  },
   "GradientColorStop": {
     "meta": {},
     "type": { "offset": "number", "color": "string" }
@@ -2854,11 +2859,6 @@
     "meta": { "isEnum": true },
     "type": ["All", "None"],
     "docs": [null, null]
-  },
-  "RedrawType": {
-    "meta": { "isEnum": true },
-    "type": ["NONE", "TRIVIAL", "MINOR", "MAJOR"],
-    "docs": [null, null, null, null]
   },
   "RenderContext": {
     "meta": { "isTypeAlias": true },

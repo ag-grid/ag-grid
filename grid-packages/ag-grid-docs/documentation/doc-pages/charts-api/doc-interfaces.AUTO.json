@@ -3767,12 +3767,12 @@
   },
   "Reinterpolator": { "meta": { "typeParams": ["T"] } },
   "Deinterpolator": { "meta": { "typeParams": ["T"] } },
+  "RedrawType": {},
   "GradientColorStop": {
     "offset": { "type": { "returnType": "number", "optional": false } },
     "color": { "type": { "returnType": "string", "optional": false } }
   },
   "PointerEvents": {},
-  "RedrawType": {},
   "RenderContext": {},
   "DebugOptions": {
     "stats": {
