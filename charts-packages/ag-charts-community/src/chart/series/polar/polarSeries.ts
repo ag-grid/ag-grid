@@ -1,7 +1,7 @@
 import { Series, SeriesNodeDatum, SeriesNodeDataContext } from "../series";
 import { ChartAxisDirection } from "../../chartAxis";
 import { SeriesMarker, SeriesMarkerFormatterParams } from "../seriesMarker";
-
+import { RedrawType, SceneChangeDetection } from '../../../scene/changeDetectable';
 export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
 
     directionKeys = {
@@ -27,6 +27,7 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
 }
 
 export class PolarSeriesMarker extends SeriesMarker {
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
     formatter?: (params: PolarSeriesMarkerFormatterParams) => {
         fill?: string,
         stroke?: string,

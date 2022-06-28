@@ -5,7 +5,7 @@
   },
   "headerValueGetter": {
     "description": "/** Function or expression. Gets the value for display in the header. */",
-    "type": { "returnType": "string | HeaderValueGetterFunc" }
+    "type": { "returnType": "string | HeaderValueGetterFunc<TData>" }
   },
   "headerTooltip": {
     "description": "/** Tooltip for the column header */",
@@ -18,7 +18,7 @@
   "suppressHeaderKeyboardEvent": {
     "description": "/** Suppress the grid taking action for the relevant keyboard event when a header is focused. */",
     "type": {
-      "arguments": { "params": "SuppressHeaderKeyboardEventParams" },
+      "arguments": { "params": "SuppressHeaderKeyboardEventParams<TData>" },
       "returnType": "boolean"
     }
   },
@@ -28,7 +28,7 @@
   },
   "toolPanelClass": {
     "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
-    "type": { "returnType": "ToolPanelClass" }
+    "type": { "returnType": "ToolPanelClass<TData>" }
   },
   "suppressColumnsToolPanel": {
     "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
@@ -127,7 +127,7 @@
   "tooltipValueGetter": {
     "description": "/** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.\n * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component. */",
     "type": {
-      "arguments": { "params": "ITooltipParams" },
+      "arguments": { "params": "ITooltipParams<TData>" },
       "returnType": "string | any"
     }
   },
@@ -302,7 +302,7 @@
   },
   "headerCheckboxSelection": {
     "description": "/** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */",
-    "type": { "returnType": "boolean | HeaderCheckboxSelectionCallback" }
+    "type": { "returnType": "boolean | HeaderCheckboxSelectionCallback<TData>" }
   },
   "headerCheckboxSelectionFilteredOnly": {
     "description": "/** If `true`, the header checkbox selection will only select filtered items. */",
@@ -461,11 +461,11 @@
   },
   "aggFunc": {
     "description": "/** Name of function to use for aggregation. You can also provide your own agg function. */",
-    "type": { "returnType": "string | IAggFunc | null" }
+    "type": { "returnType": "string | IAggFunc<TData> | null" }
   },
   "initialAggFunc": {
     "description": "/** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */",
-    "type": { "returnType": "string | IAggFunc" }
+    "type": { "returnType": "string | IAggFunc<TData>" }
   },
   "defaultAggFunc": {
     "description": "/** The name of the aggregation function to use for this column when it is enabled via the GUI.\n * Note that this does not immediately apply the aggregation function like `aggFunc`\n * Default: `sum` */",
@@ -509,8 +509,8 @@
       "arguments": {
         "valueA": "any",
         "valueB": "any",
-        "nodeA": "RowNode",
-        "nodeB": "RowNode",
+        "nodeA": "RowNode<TData>",
+        "nodeB": "RowNode<TData>",
         "isInverted": "boolean"
       },
       "returnType": "number"

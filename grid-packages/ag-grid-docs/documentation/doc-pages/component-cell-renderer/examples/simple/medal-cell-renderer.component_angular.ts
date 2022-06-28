@@ -10,8 +10,8 @@ import { ICellRendererParams } from "@ag-grid-community/core";
 export class MedalCellRenderer implements ICellRendererAngularComp {
     public displayValue!: string;
 
-    agInit(params: ICellRendererParams): void {
-        this.displayValue = new Array(parseInt(params.value, 10)).fill('#').join('');
+    agInit(params: ICellRendererParams<IOlympicData, number>): void {
+        this.displayValue = new Array(params.value).fill('#').join('');
     }
 
     refresh(params: ICellRendererParams) {

@@ -545,7 +545,7 @@
     "headerValueGetter": {
       "description": "/** Function or expression. Gets the value for display in the header. */",
       "type": {
-        "returnType": "string | HeaderValueGetterFunc",
+        "returnType": "string | HeaderValueGetterFunc<TData>",
         "optional": true
       }
     },
@@ -560,7 +560,7 @@
     "suppressHeaderKeyboardEvent": {
       "description": "/** Suppress the grid taking action for the relevant keyboard event when a header is focused. */",
       "type": {
-        "arguments": { "params": "SuppressHeaderKeyboardEventParams" },
+        "arguments": { "params": "SuppressHeaderKeyboardEventParams<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -571,7 +571,7 @@
     },
     "toolPanelClass": {
       "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
-      "type": { "returnType": "ToolPanelClass", "optional": true }
+      "type": { "returnType": "ToolPanelClass<TData>", "optional": true }
     },
     "suppressColumnsToolPanel": {
       "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
@@ -596,7 +596,8 @@
     "pivotKeys": {
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "type": { "returnType": "string[]", "optional": true }
-    }
+    },
+    "meta": { "typeParams": ["TData = any"] }
   },
   "ColGroupDef": {
     "children": {
@@ -638,7 +639,7 @@
     "headerValueGetter": {
       "description": "/** Function or expression. Gets the value for display in the header. */",
       "type": {
-        "returnType": "string | HeaderValueGetterFunc",
+        "returnType": "string | HeaderValueGetterFunc<TData>",
         "optional": true
       }
     },
@@ -653,7 +654,7 @@
     "suppressHeaderKeyboardEvent": {
       "description": "/** Suppress the grid taking action for the relevant keyboard event when a header is focused. */",
       "type": {
-        "arguments": { "params": "SuppressHeaderKeyboardEventParams" },
+        "arguments": { "params": "SuppressHeaderKeyboardEventParams<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -664,7 +665,7 @@
     },
     "toolPanelClass": {
       "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
-      "type": { "returnType": "ToolPanelClass", "optional": true }
+      "type": { "returnType": "ToolPanelClass<TData>", "optional": true }
     },
     "suppressColumnsToolPanel": {
       "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
@@ -691,11 +692,11 @@
       "type": { "returnType": "string[]", "optional": true }
     }
   },
-  "IAggFunc": {},
+  "IAggFunc": { "meta": { "typeParams": ["TData = any", "TValue = any"] } },
   "IAggFuncParams": {
     "values": {
       "description": "/** Values to aggregate */",
-      "type": { "returnType": "any[]", "optional": false }
+      "type": { "returnType": "TValue[]", "optional": false }
     },
     "column": {
       "description": "/** Column the aggregation function is working on */",
@@ -711,9 +712,9 @@
     },
     "data": {
       "description": "/** data (if any) of the parent RowNode */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TData", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -728,7 +729,9 @@
     }
   },
   "HeaderClassParams": {
-    "colDef": { "type": { "returnType": "AbstractColDef", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "AbstractColDef<TData>", "optional": false }
+    },
     "column": { "type": { "returnType": "Column | null", "optional": true } },
     "columnGroup": {
       "type": { "returnType": "ColumnGroup | null", "optional": true }
@@ -747,9 +750,11 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "HeaderClass": {},
+  "HeaderClass": { "meta": { "typeParams": ["TData = any"] } },
   "ToolPanelClassParams": {
-    "colDef": { "type": { "returnType": "AbstractColDef", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "AbstractColDef<TData>", "optional": false }
+    },
     "column": { "type": { "returnType": "Column | null", "optional": true } },
     "columnGroup": {
       "type": { "returnType": "ProvidedColumnGroup | null", "optional": true }
@@ -768,7 +773,7 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "ToolPanelClass": {},
+  "ToolPanelClass": { "meta": { "typeParams": ["TData = any"] } },
   "ColDef": {
     "colId": {
       "description": "/** The unique ID to give the column. This is optional. If missing, the ID will default to the field.\n * If both field and colId are missing, a unique ID will be generated.\n * This ID is used to identify the column in the API for sorting, filtering etc. */",
@@ -823,7 +828,7 @@
     "tooltipValueGetter": {
       "description": "/** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.\n * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component. */",
       "type": {
-        "arguments": { "params": "ITooltipParams" },
+        "arguments": { "params": "ITooltipParams<TData>" },
         "returnType": "string | any",
         "optional": true
       }
@@ -1034,7 +1039,7 @@
     "headerCheckboxSelection": {
       "description": "/** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */",
       "type": {
-        "returnType": "boolean | HeaderCheckboxSelectionCallback",
+        "returnType": "boolean | HeaderCheckboxSelectionCallback<TData>",
         "optional": true
       }
     },
@@ -1223,11 +1228,14 @@
     },
     "aggFunc": {
       "description": "/** Name of function to use for aggregation. You can also provide your own agg function. */",
-      "type": { "returnType": "string | IAggFunc | null", "optional": true }
+      "type": {
+        "returnType": "string | IAggFunc<TData> | null",
+        "optional": true
+      }
     },
     "initialAggFunc": {
       "description": "/** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */",
-      "type": { "returnType": "string | IAggFunc", "optional": true }
+      "type": { "returnType": "string | IAggFunc<TData>", "optional": true }
     },
     "defaultAggFunc": {
       "description": "/** The name of the aggregation function to use for this column when it is enabled via the GUI.\n * Note that this does not immediately apply the aggregation function like `aggFunc`\n * Default: `sum` */",
@@ -1271,8 +1279,8 @@
         "arguments": {
           "valueA": "any",
           "valueB": "any",
-          "nodeA": "RowNode",
-          "nodeB": "RowNode",
+          "nodeA": "RowNode<TData>",
+          "nodeB": "RowNode<TData>",
           "isInverted": "boolean"
         },
         "returnType": "number",
@@ -1355,7 +1363,7 @@
     "headerValueGetter": {
       "description": "/** Function or expression. Gets the value for display in the header. */",
       "type": {
-        "returnType": "string | HeaderValueGetterFunc",
+        "returnType": "string | HeaderValueGetterFunc<TData>",
         "optional": true
       }
     },
@@ -1370,7 +1378,7 @@
     "suppressHeaderKeyboardEvent": {
       "description": "/** Suppress the grid taking action for the relevant keyboard event when a header is focused. */",
       "type": {
-        "arguments": { "params": "SuppressHeaderKeyboardEventParams" },
+        "arguments": { "params": "SuppressHeaderKeyboardEventParams<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -1381,7 +1389,7 @@
     },
     "toolPanelClass": {
       "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
-      "type": { "returnType": "ToolPanelClass", "optional": true }
+      "type": { "returnType": "ToolPanelClass<TData>", "optional": true }
     },
     "suppressColumnsToolPanel": {
       "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
@@ -1695,7 +1703,9 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "HeaderCheckboxSelectionCallback": {},
+  "HeaderCheckboxSelectionCallback": {
+    "meta": { "typeParams": ["TData = any"] }
+  },
   "IsColumnFunc": { "meta": { "typeParams": ["TData = any"] } },
   "IsColumnFuncParams": {
     "meta": { "typeParams": ["TData = any"] },
@@ -1731,7 +1741,7 @@
   "GetQuickFilterTextParams": {
     "value": {
       "description": "/** Value for the cell. */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "node": {
       "description": "/** Row node for the given row */",
@@ -1749,7 +1759,7 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef<TData>", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -1888,7 +1898,9 @@
   },
   "ValueGetterFunc": { "meta": { "typeParams": ["TData = any"] } },
   "HeaderValueGetterParams": {
-    "colDef": { "type": { "returnType": "AbstractColDef", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "AbstractColDef<TData>", "optional": false }
+    },
     "column": {
       "description": "/** Column for this callback if applicable */",
       "type": { "returnType": "Column | null", "optional": true }
@@ -1922,17 +1934,17 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "HeaderValueGetterFunc": {},
+  "HeaderValueGetterFunc": { "meta": { "typeParams": ["TData = any"] } },
   "NewValueParams": {
     "oldValue": {
       "description": "/** The value before the change */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "newValue": {
       "description": "/** The value after the change */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "RowNode<TData> | null", "optional": false }
@@ -1966,11 +1978,11 @@
     "meta": { "typeParams": ["TData = any"] },
     "oldValue": {
       "description": "/** The value before the change */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "newValue": {
       "description": "/** The value after the change */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "node": {
       "description": "/** Row node for the given row */",
@@ -2006,11 +2018,11 @@
     "meta": { "typeParams": ["TData = any"] },
     "oldValue": {
       "description": "/** The value before the change */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "newValue": {
       "description": "/** The value after the change */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "node": {
       "description": "/** Row node for the given row */",
@@ -2041,13 +2053,15 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "ValueParserFunc": { "meta": { "typeParams": ["TData = any"] } },
+  "ValueParserFunc": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
   "ValueFormatterParams": {
     "value": {
       "description": "/** Value for the cell. */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "RowNode<TData> | null", "optional": false }
@@ -2081,9 +2095,9 @@
   "KeyCreatorParams": {
     "value": {
       "description": "/** Value for the cell. */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "RowNode<TData> | null", "optional": false }
@@ -2219,7 +2233,10 @@
       "type": { "returnType": "Column | ColumnGroup", "optional": false }
     },
     "colDef": {
-      "type": { "returnType": "ColDef | ColGroupDef | null", "optional": false }
+      "type": {
+        "returnType": "ColDef<TData> | ColGroupDef<TData> | null",
+        "optional": false
+      }
     },
     "headerRowIndex": {
       "description": "/** The index of the header row of the current focused header */",
@@ -2250,9 +2267,9 @@
     },
     "value": {
       "description": "/** The value to be rendered */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "data": {
       "description": "/** The data associated with this row from rowData. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
@@ -17463,10 +17480,10 @@
     "sparklineOptions": {
       "type": { "returnType": "SparklineOptions", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "valueFormatted": {
       "description": "/** Formatted value to be rendered. */",
@@ -18620,7 +18637,7 @@
     "meta": { "typeParams": ["TData = any", "TDetail = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "valueFormatted": {
       "description": "/** Formatted value to be rendered. */",
@@ -19382,9 +19399,10 @@
       "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": false }
     },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "valueFormatted": {
       "description": "/** Formatted value to be rendered. */",
@@ -19455,7 +19473,6 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -19472,7 +19489,7 @@
   "ICellRendererParams": {
     "value": {
       "description": "/** Value to be rendered. */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "valueFormatted": {
       "description": "/** Formatted value to be rendered. */",
@@ -19551,7 +19568,7 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -19636,9 +19653,10 @@
   },
   "ICellRendererFunc": { "meta": { "typeParams": ["TData = any"] } },
   "ILoadingCellRendererParams": {
+    "meta": { "typeParams": ["TData = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "valueFormatted": {
       "description": "/** Formatted value to be rendered. */",
@@ -19717,7 +19735,6 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -20168,7 +20185,7 @@
     },
     "value": {
       "description": "/** The value to be rendered by the tooltip. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "TValue", "optional": true }
     },
     "valueFormatted": {
       "description": "/** The formatted value to be rendered by the tooltip. */",
@@ -20197,7 +20214,7 @@
       "description": "/** Data for the row node in question. */",
       "type": { "returnType": "TData", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -21368,7 +21385,7 @@
     "tooltipValueGetter": {
       "description": "/** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.\n * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component. */",
       "type": {
-        "arguments": { "params": "ITooltipParams" },
+        "arguments": { "params": "ITooltipParams<TData>" },
         "returnType": "string | any",
         "optional": true
       }
@@ -21579,7 +21596,7 @@
     "headerCheckboxSelection": {
       "description": "/** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */",
       "type": {
-        "returnType": "boolean | HeaderCheckboxSelectionCallback",
+        "returnType": "boolean | HeaderCheckboxSelectionCallback<TData>",
         "optional": true
       }
     },
@@ -21768,11 +21785,14 @@
     },
     "aggFunc": {
       "description": "/** Name of function to use for aggregation. You can also provide your own agg function. */",
-      "type": { "returnType": "string | IAggFunc | null", "optional": true }
+      "type": {
+        "returnType": "string | IAggFunc<TData> | null",
+        "optional": true
+      }
     },
     "initialAggFunc": {
       "description": "/** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */",
-      "type": { "returnType": "string | IAggFunc", "optional": true }
+      "type": { "returnType": "string | IAggFunc<TData>", "optional": true }
     },
     "defaultAggFunc": {
       "description": "/** The name of the aggregation function to use for this column when it is enabled via the GUI.\n * Note that this does not immediately apply the aggregation function like `aggFunc`\n * Default: `sum` */",
@@ -21816,8 +21836,8 @@
         "arguments": {
           "valueA": "any",
           "valueB": "any",
-          "nodeA": "RowNode",
-          "nodeB": "RowNode",
+          "nodeA": "RowNode<TData>",
+          "nodeB": "RowNode<TData>",
           "isInverted": "boolean"
         },
         "returnType": "number",
@@ -21900,7 +21920,7 @@
     "headerValueGetter": {
       "description": "/** Function or expression. Gets the value for display in the header. */",
       "type": {
-        "returnType": "string | HeaderValueGetterFunc",
+        "returnType": "string | HeaderValueGetterFunc<TData>",
         "optional": true
       }
     },
@@ -21915,7 +21935,7 @@
     "suppressHeaderKeyboardEvent": {
       "description": "/** Suppress the grid taking action for the relevant keyboard event when a header is focused. */",
       "type": {
-        "arguments": { "params": "SuppressHeaderKeyboardEventParams" },
+        "arguments": { "params": "SuppressHeaderKeyboardEventParams<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -21926,7 +21946,7 @@
     },
     "toolPanelClass": {
       "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
-      "type": { "returnType": "ToolPanelClass", "optional": true }
+      "type": { "returnType": "ToolPanelClass<TData>", "optional": true }
     },
     "suppressColumnsToolPanel": {
       "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
@@ -22017,7 +22037,7 @@
     "headerValueGetter": {
       "description": "/** Function or expression. Gets the value for display in the header. */",
       "type": {
-        "returnType": "string | HeaderValueGetterFunc",
+        "returnType": "string | HeaderValueGetterFunc<TData>",
         "optional": true
       }
     },
@@ -22032,7 +22052,7 @@
     "suppressHeaderKeyboardEvent": {
       "description": "/** Suppress the grid taking action for the relevant keyboard event when a header is focused. */",
       "type": {
-        "arguments": { "params": "SuppressHeaderKeyboardEventParams" },
+        "arguments": { "params": "SuppressHeaderKeyboardEventParams<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -22043,7 +22063,7 @@
     },
     "toolPanelClass": {
       "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
-      "type": { "returnType": "ToolPanelClass", "optional": true }
+      "type": { "returnType": "ToolPanelClass<TData>", "optional": true }
     },
     "suppressColumnsToolPanel": {
       "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",

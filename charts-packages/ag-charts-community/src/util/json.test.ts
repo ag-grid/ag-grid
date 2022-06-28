@@ -87,6 +87,18 @@ describe('json module', () => {
                 expect(diff).toBeNull();
             });
 
+            it('should correctly diff mismatching arrays', () => {
+                const source = {
+                    foo: [1, 2, 3, 4],
+                };
+                const target = {
+                    foo: [9, 8, 7, 6],
+                };
+
+                const diff = jsonDiff(source, target);
+                expect(diff).toEqual(target);
+            });
+
             it('should correctly diff function changes in arrays', () => {
                 const source = {
                     foo: [{ fn: () => 'hello-world!'}],

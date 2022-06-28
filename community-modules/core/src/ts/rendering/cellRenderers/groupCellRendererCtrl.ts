@@ -34,7 +34,7 @@ export interface FooterValueGetterFunc {
     (params: GroupCellRendererParams): any;
 }
 
-export interface GroupCellRendererParams extends ICellRendererParams {
+export interface GroupCellRendererParams<TData = any, TValue = any> extends ICellRendererParams<TData, TValue> {
 
     /**
      * Only when in fullWidth, this gives whether the comp is pinned or not.

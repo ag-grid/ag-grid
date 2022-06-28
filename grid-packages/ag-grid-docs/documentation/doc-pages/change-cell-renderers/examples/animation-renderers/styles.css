@@ -7,6 +7,9 @@
 #myGrid {
     flex: 1 1 0px;
     width: 100%;
+
+    --ag-value-change-delta-down-color: rgb(0, 200, 160);
+    --ag-value-change-delta-up-color: rgb(255, 0, 80);
 }
 
 .align-right {

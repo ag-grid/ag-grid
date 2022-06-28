@@ -51,17 +51,17 @@ export class AgGridColumn<TData = any> {
     /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name.     */
     @Input() public headerName: string | undefined;
     /** Function or expression. Gets the value for display in the header.     */
-    @Input() public headerValueGetter: string | HeaderValueGetterFunc | undefined;
+    @Input() public headerValueGetter: string | HeaderValueGetterFunc<TData> | undefined;
     /** Tooltip for the column header     */
     @Input() public headerTooltip: string | undefined;
     /** CSS class to use for the header cell. Can be a string, array of strings, or function.     */
     @Input() public headerClass: HeaderClass | undefined;
     /** Suppress the grid taking action for the relevant keyboard event when a header is focused.     */
-    @Input() public suppressHeaderKeyboardEvent: ((params: SuppressHeaderKeyboardEventParams) => boolean) | undefined;
+    @Input() public suppressHeaderKeyboardEvent: ((params: SuppressHeaderKeyboardEventParams<TData>) => boolean) | undefined;
     /** Whether to show the column when the group is open / closed.     */
     @Input() public columnGroupShow: string | undefined;
     /** CSS class to use for the tool panel cell. Can be a string, array of strings, or function.     */
-    @Input() public toolPanelClass: ToolPanelClass | undefined;
+    @Input() public toolPanelClass: ToolPanelClass<TData> | undefined;
     /** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false`     */
     @Input() public suppressColumnsToolPanel: boolean | undefined;
     /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false`     */
@@ -117,7 +117,7 @@ export class AgGridColumn<TData = any> {
     @Input() public tooltipField: string | undefined;
     /** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.
      * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.     */
-    @Input() public tooltipValueGetter: ((params: ITooltipParams) => string | any) | undefined;
+    @Input() public tooltipValueGetter: ((params: ITooltipParams<TData>) => string | any) | undefined;
     /** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false`     */
     @Input() public checkboxSelection: boolean | CheckboxSelectionCallback<TData> | undefined;
     /** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults.     */
@@ -208,7 +208,7 @@ export class AgGridColumn<TData = any> {
     /** Set to `true` if no menu should be shown for this column header. Default: `false`     */
     @Input() public suppressMenu: boolean | undefined;
     /** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.     */
-    @Input() public headerCheckboxSelection: boolean | HeaderCheckboxSelectionCallback | undefined;
+    @Input() public headerCheckboxSelection: boolean | HeaderCheckboxSelectionCallback<TData> | undefined;
     /** If `true`, the header checkbox selection will only select filtered items.     */
     @Input() public headerCheckboxSelectionFilteredOnly: boolean | undefined;
     /** Defines the chart data type that should be used for a column.     */
@@ -298,9 +298,9 @@ export class AgGridColumn<TData = any> {
      * Default: `false`     */
     @Input() public enableValue: boolean | undefined;
     /** Name of function to use for aggregation. You can also provide your own agg function.     */
-    @Input() public aggFunc: string | IAggFunc | null | undefined;
+    @Input() public aggFunc: string | IAggFunc<TData> | null | undefined;
     /** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions.     */
-    @Input() public initialAggFunc: string | IAggFunc | undefined;
+    @Input() public initialAggFunc: string | IAggFunc<TData> | undefined;
     /** The name of the aggregation function to use for this column when it is enabled via the GUI.
      * Note that this does not immediately apply the aggregation function like `aggFunc`
      * Default: `sum`     */
@@ -324,7 +324,7 @@ export class AgGridColumn<TData = any> {
     /** Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]`     */
     @Input() public sortingOrder: ('asc' | 'desc' | null)[] | undefined;
     /** Comparator function for custom sorting.     */
-    @Input() public comparator: ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number) | undefined;
+    @Input() public comparator: ((valueA: any, valueB: any, nodeA: RowNode<TData>, nodeB: RowNode<TData>, isInverted: boolean) => number) | undefined;
     /** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. Default: `false`     */
     @Input() public unSortIcon: boolean | undefined;
     /** @deprecated since v24 - use sortIndex instead

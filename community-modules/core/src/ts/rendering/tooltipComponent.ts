@@ -7,11 +7,11 @@ import { ColumnGroup } from '../entities/columnGroup';
 import { ColGroupDef, ColDef } from '../entities/colDef';
 import { AgGridCommon } from '../interfaces/iCommon';
 
-export interface ITooltipParams<TData = any> extends AgGridCommon<TData> {
+export interface ITooltipParams<TData = any, TValue = any> extends AgGridCommon<TData> {
     /** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */
     location: string;
     /** The value to be rendered by the tooltip. */
-    value?: any;
+    value?: TValue;
     /** The formatted value to be rendered by the tooltip. */
     valueFormatted?: string | null;
     /** Column / ColumnGroup definition. */

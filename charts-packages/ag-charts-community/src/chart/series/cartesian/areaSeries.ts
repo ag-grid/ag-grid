@@ -555,6 +555,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         return contexts;
     }
 
+    protected isPathOrSelectionDirty(): boolean {
+        return this.marker.isDirty();
+    }
+
     protected updatePaths(opts: {
         seriesHighlighted?: boolean;
         contextData: AreaSeriesNodeDataContext;
@@ -653,13 +657,18 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         nodeData: MarkerSelectionDatum[];
         datumSelection: Selection<Marker, Group, MarkerSelectionDatum, any>;
     }) {
-        const { nodeData, datumSelection } = opts;
+        let { nodeData, datumSelection } = opts;
         const {
             marker: { enabled, shape },
         } = this;
         const data = enabled && nodeData ? nodeData : [];
 
         const MarkerShape = getMarker(shape);
+
+        if (this.marker.isDirty()) {
+            datumSelection = datumSelection.setData([]);
+            datumSelection.exit.remove();
+        }
 
         const updateSelection = datumSelection.setData(data);
         updateSelection.exit.remove();
@@ -735,6 +744,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             node.visible =
                 node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x) && !isNaN(datum.point.y);
         });
+
+        if (!isDatumHighlighted) {
+            this.marker.markClean();
+        }
     }
 
     protected updateLabelSelection(opts: {

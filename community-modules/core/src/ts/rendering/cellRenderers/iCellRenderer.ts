@@ -4,9 +4,9 @@ import { RowNode } from "../../entities/rowNode";
 import { AgGridCommon } from "../../interfaces/iCommon";
 import { IComponent } from "../../interfaces/iComponent";
 
-export interface ICellRendererParams<TData = any> extends AgGridCommon<TData> {
+export interface ICellRendererParams<TData = any, TValue = any> extends AgGridCommon<TData> {
     /** Value to be rendered. */
-    value: any;
+    value: TValue;
     /** Formatted value to be rendered. */
     valueFormatted: string | null | undefined;
     /** True if this is a full width row. */
