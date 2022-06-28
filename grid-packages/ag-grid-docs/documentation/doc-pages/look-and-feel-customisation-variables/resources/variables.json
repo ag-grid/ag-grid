@@ -401,6 +401,10 @@
       "description": "Default font size for text in the grid",
       "type": "CSS size (e.g. `0`, `4px` or `50%`)"
     },
+    "--ag-icon-font-family": {
+      "description": "The [icon font](/custom-icons/) used by the grid.",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
     "--ag-card-radius": {
       "description": "cards are elements that float above the UI",
       "type": "CSS size (e.g. `0`, `4px` or `50%`)"

@@ -36,6 +36,7 @@ The example below demonstrates flashing delay changes. The following can be note
 - The `cellFadeDelay` value has been changed to 500ms, so the fading animation will happen faster than what it normally would (1 second).
 - Clicking **Update Some Data** will update some data to demonstrate the changes mentioned above.
 - Clicking **Flash Two Rows** will pass a custom `flashDelay` of 3000ms and a custom `fadeDelay` delay of 2000ms to demonstrate default values can be overridden.
+- The example demonstrates how to change the default colour of the flash using the `--ag-value-change-value-highlight-background-color` CSS variable.
 
 <grid-example title='Changing Flashing Delay' name='flashing-delay-changes' type='generated' options='{  }'></grid-example>
 

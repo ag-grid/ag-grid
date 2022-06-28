@@ -8,6 +8,7 @@ import { Marker } from '../../marker/marker';
 import { Group } from '../../../scene/group';
 import { Text } from '../../../scene/shape/text';
 import { Node } from '../../../scene/node';
+import { RedrawType, SceneChangeDetection } from '../../../scene/changeDetectable';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
@@ -127,13 +128,15 @@ export abstract class CartesianSeries<
     protected updateSelections(seriesHighlighted?: boolean) {
         this.updateHighlightSelection(seriesHighlighted);
 
-        if (!this.nodeDataRefresh) {
+        if (!this.nodeDataRefresh && !this.isPathOrSelectionDirty()) {
             return;
         }
-        this.nodeDataRefresh = false;
-
-        this.contextNodeData = this.createNodeData();
-        this.updateSeriesGroups();
+        if (this.nodeDataRefresh) {
+            this.nodeDataRefresh = false;
+            
+            this.contextNodeData = this.createNodeData();
+            this.updateSeriesGroups();
+        }
 
         this.subGroups.forEach((subGroup, seriesIdx) => {
             const { datumSelection, labelSelection, paths } = subGroup;
@@ -248,6 +251,11 @@ export abstract class CartesianSeries<
         }
     }
 
+    protected isPathOrSelectionDirty(): boolean {
+        // Override point to allow more sophisticated dirty selection detection.
+        return false;
+    }
+
     protected updatePaths(opts: {
         seriesHighlighted?: boolean;
         itemId?: string;
@@ -305,6 +313,7 @@ export interface CartesianSeriesMarkerFormat {
 }
 
 export class CartesianSeriesMarker extends SeriesMarker {
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
     formatter?: (params: CartesianSeriesMarkerFormatterParams) => CartesianSeriesMarkerFormat = undefined;
 }
 

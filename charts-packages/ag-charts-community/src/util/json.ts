@@ -58,6 +58,18 @@ export function jsonDiff<T extends any>(source: T, target: T, opts?: { stringify
         return null;
     }
 
+    if (targetType === 'primitive') {
+        if (sourceType !== 'primitive') {
+            return { ...target };
+        }
+
+        if (source !== target) {
+            return target;
+        }
+
+        return null;
+    }
+
     const lhs = source || {} as any;
     const rhs = target || {} as any;
 
