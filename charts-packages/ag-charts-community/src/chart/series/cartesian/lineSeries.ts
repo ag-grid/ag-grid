@@ -253,6 +253,10 @@ export class LineSeries extends CartesianSeries<LineContext> {
         return [{ itemId: yKey, nodeData, labelData: nodeData }];
     }
 
+    protected isPathOrSelectionDirty(): boolean {
+        return this.marker.isDirty();
+    }
+
     protected updatePaths(opts: { seriesHighlighted?: boolean; contextData: LineContext; paths: Path[] }): void {
         const {
             contextData: { nodeData },
@@ -298,6 +302,11 @@ export class LineSeries extends CartesianSeries<LineContext> {
         } = this;
         nodeData = shape && enabled ? nodeData : [];
         const MarkerShape = getMarker(shape);
+
+        if (this.marker.isDirty()) {
+            datumSelection = datumSelection.setData([]);
+            datumSelection.exit.remove();
+        }
 
         const updateDatumSelection = datumSelection.setData(nodeData);
         updateDatumSelection.exit.remove();
@@ -361,6 +370,10 @@ export class LineSeries extends CartesianSeries<LineContext> {
             node.translationY = datum.point.y;
             node.visible = node.size > 0;
         });
+
+        if (!isDatumHighlighted) {
+            this.marker.markClean();
+        }
     }
 
     protected updateLabelSelection(opts: {

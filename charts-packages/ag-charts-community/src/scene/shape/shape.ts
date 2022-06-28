@@ -146,10 +146,10 @@ export abstract class Shape extends Node {
     })
     opacity: number = Shape.defaultStyles.opacity;
 
-    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    @SceneChangeDetection({ redraw: RedrawType.MINOR, checkDirtyOnAssignment: true })
     fillShadow: DropShadow | undefined = Shape.defaultStyles.fillShadow;
 
-    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    @SceneChangeDetection({ redraw: RedrawType.MINOR, checkDirtyOnAssignment: true })
     strokeShadow: DropShadow | undefined = Shape.defaultStyles.strokeShadow;
 
     protected fillStroke(ctx: CanvasFillStrokeStyles & CanvasCompositing & CanvasShadowStyles & CanvasPathDrawingStyles & CanvasDrawPath) {
