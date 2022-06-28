@@ -11,7 +11,6 @@ import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
 import { getInnerWidth, isElementChildOfClass, isVerticalScrollShowing } from "../utils/dom";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
-import { PaginationProxy } from "../pagination/paginationProxy";
 import { RowDragFeature } from "./rowDragFeature";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
@@ -19,6 +18,7 @@ import { getTabIndex } from "../utils/browser";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { PopupService } from "../widgets/popupService";
 import { MouseEventService } from "./mouseEventService";
+import { IRowModel } from "../interfaces/iRowModel";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -55,12 +55,12 @@ export class GridBodyCtrl extends BeanStub {
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('popupService') public popupService: PopupService;
     @Autowired('mouseEventService') public mouseEventService: MouseEventService;
+    @Autowired('rowModel') public rowModel: IRowModel;
 
     private comp: IGridBodyComp;
     private eGridBody: HTMLElement;
@@ -225,16 +225,8 @@ export class GridBodyCtrl extends BeanStub {
 
     public updateRowCount(): void {
         const headerCount = this.headerNavigationService.getHeaderRowCount();
-        const modelType = this.paginationProxy.getType();
-        let rowCount = -1;
-
-        if (modelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            rowCount = 0;
-            this.paginationProxy.forEachNode(node => {
-                if (!node.group) { rowCount++; }
-            });
-        }
-
+        
+        const rowCount = this.rowModel.isLastRowIndexKnown() ? this.rowModel.getRowCount() : -1;
         const total = rowCount === -1 ? -1 : (headerCount + rowCount);
 
         this.comp.setRowCount(total);
