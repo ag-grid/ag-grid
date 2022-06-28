@@ -19,7 +19,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     sortable: true,
   },
   autoGroupColumnDef: {
-    comparator: (valueA, valueB, nodeA, nodeB, isInverted) => {
+    comparator: (valueA, valueB, nodeA, nodeB, isDescending) => {
       var res = valueA == valueB ? 0 : valueA > valueB ? 1 : -1
       return res
     },

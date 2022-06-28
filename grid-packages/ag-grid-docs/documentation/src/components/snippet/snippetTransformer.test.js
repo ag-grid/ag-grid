@@ -155,12 +155,12 @@ const rowNode = gridOptions.api.getRowNode('55');`
         {
             field: 'age',
             // simple number comparator
-            comparator: (valueA, valueB, nodeA, nodeB, isInverted) => valueA - valueB
+            comparator: (valueA, valueB, nodeA, nodeB, isDescending) => valueA - valueB
         },
         {
             field: 'name',
             // simple string comparator
-            comparator: (valueA, valueB, nodeA, nodeB, isInverted) => {
+            comparator: (valueA, valueB, nodeA, nodeB, isDescending) => {
                 if (valueA == valueB) return 0;
                 return (valueA > valueB) ? 1 : -1;
             }

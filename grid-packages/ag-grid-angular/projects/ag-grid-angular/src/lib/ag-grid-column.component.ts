@@ -314,7 +314,7 @@ export class AgGridColumn<TData = any> {
     /** Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]`     */
     @Input() public sortingOrder: ('asc' | 'desc' | null)[] | undefined;
     /** Comparator function for custom sorting.     */
-    @Input() public comparator: ((valueA: any, valueB: any, nodeA: RowNode<TData>, nodeB: RowNode<TData>, isInverted: boolean) => number) | undefined;
+    @Input() public comparator: ((valueA: any, valueB: any, nodeA: RowNode<TData>, nodeB: RowNode<TData>, isDescending: boolean) => number) | undefined;
     /** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. Default: `false`     */
     @Input() public unSortIcon: boolean | undefined;
     /** @deprecated since v24 - use sortIndex instead*/

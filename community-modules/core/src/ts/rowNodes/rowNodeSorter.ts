@@ -43,7 +43,7 @@ export class RowNodeSorter {
         // Iterate columns, return the first that doesn't match
         for (let i = 0, len = sortOptions.length; i < len; i++) {
             const sortOption = sortOptions[i];
-            const isInverted = sortOption.sort === Constants.SORT_DESC;
+            const isDescending = sortOption.sort === Constants.SORT_DESC;
 
             const valueA: any = this.getValue(nodeA, sortOption.column);
             const valueB: any = this.getValue(nodeB, sortOption.column);
@@ -52,7 +52,7 @@ export class RowNodeSorter {
             const providedComparator = this.getComparator(sortOption, nodeA);
             if (providedComparator) {
                 //if comparator provided, use it
-                comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isInverted);
+                comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isDescending);
             } else {
                 //otherwise do our own comparison
                 comparatorResult = _.defaultComparator(valueA, valueB, this.gridOptionsWrapper.isAccentedSort());
@@ -71,7 +71,7 @@ export class RowNodeSorter {
     }
 
     private getComparator(sortOption: SortOption, rowNode: RowNode):
-        ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number) | undefined {
+        ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isDescending: boolean) => number) | undefined {
 
         const column = sortOption.column;
 
