@@ -19,10 +19,10 @@ import {
 import { StoreUtils } from "../stores/storeUtils";
 import { BlockUtils } from "./blockUtils";
 import { SSRMParams } from "../serverSideRowModel";
-import { PartialStore } from "../stores/partialStore";
+import { InfiniteStore } from "../stores/infiniteStore";
 import { NodeManager } from "../nodeManager";
 
-export class PartialStoreBlock extends RowNodeBlock {
+export class InfiniteStoreBlock extends RowNodeBlock {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
@@ -40,7 +40,7 @@ export class PartialStoreBlock extends RowNodeBlock {
     private readonly groupLevel: boolean | undefined;
     private readonly leafGroup: boolean;
 
-    private readonly parentStore: PartialStore;
+    private readonly parentStore: InfiniteStore;
     private readonly parentRowNode: RowNode;
 
     private usingTreeData: boolean;
@@ -63,7 +63,7 @@ export class PartialStoreBlock extends RowNodeBlock {
     private nodeIdPrefix: string | undefined;
 
     constructor(blockNumber: number, parentRowNode: RowNode, ssrmParams: SSRMParams,
-                storeParams: ServerSideGroupLevelParams, parentStore: PartialStore) {
+                storeParams: ServerSideGroupLevelParams, parentStore: InfiniteStore) {
         super(blockNumber);
 
         this.ssrmParams = ssrmParams;

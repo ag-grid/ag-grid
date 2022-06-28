@@ -10,7 +10,7 @@ import {
     ColumnModel,
     WithoutGridCommon
 } from "@ag-grid-community/core";
-import { PartialStore } from "./partialStore";
+import { InfiniteStore } from "./infiniteStore";
 import { SSRMParams } from "../serverSideRowModel";
 import { FullStore } from "./fullStore";
 
@@ -23,7 +23,7 @@ export class StoreFactory {
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);
 
-        const CacheClass = storeParams.infiniteScroll ? PartialStore : FullStore;
+        const CacheClass = storeParams.infiniteScroll ? InfiniteStore : FullStore;
 
         return new CacheClass(ssrmParams, storeParams, parentNode);
     }

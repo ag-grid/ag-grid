@@ -27,12 +27,12 @@ import {
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
-import { PartialStoreBlock } from "../blocks/partialStoreBlock";
+import { InfiniteStoreBlock } from "../blocks/infiniteStoreBlock";
 import { BlockUtils } from "../blocks/blockUtils";
 
 enum FindResult { FOUND, CONTINUE_FIND, BREAK_FIND }
 
-export class PartialStore extends BeanStub implements IServerSideStore {
+export class InfiniteStore extends BeanStub implements IServerSideStore {
 
     // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
     // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
@@ -52,7 +52,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     private readonly ssrmParams: SSRMParams;
     private readonly storeParams: ServerSideGroupLevelParams;
     private readonly parentRowNode: RowNode;
-    private readonly blocks: { [blockNumber: string]: PartialStoreBlock; } = {};
+    private readonly blocks: { [blockNumber: string]: InfiniteStoreBlock; } = {};
     private readonly blockHeights: { [blockId: number]: number } = {};
 
     private defaultRowHeight: number;
@@ -79,7 +79,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         this.ssrmParams = ssrmParams;
         this.storeParams = storeParams;
         this.parentRowNode = parentRowNode;
-        this.rowCount = PartialStore.INITIAL_ROW_COUNT;
+        this.rowCount = InfiniteStore.INITIAL_ROW_COUNT;
     }
 
     @PostConstruct
@@ -109,12 +109,12 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         this.getBlocksInOrder().forEach(block => block.retryLoads());
     }
 
-    public onBlockLoadFailed(block: PartialStoreBlock): void {
+    public onBlockLoadFailed(block: InfiniteStoreBlock): void {
         block.setData([], true);
         this.fireCacheUpdatedEvent();
     }
 
-    public onBlockLoaded(block: PartialStoreBlock, params: LoadSuccessParams): void {
+    public onBlockLoaded(block: InfiniteStoreBlock, params: LoadSuccessParams): void {
 
         this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${params.rowCount}`);
 
@@ -147,11 +147,11 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         this.fireCacheUpdatedEvent();
     }
 
-    private purgeBlocksIfNeeded(blockToExclude: PartialStoreBlock): void {
+    private purgeBlocksIfNeeded(blockToExclude: InfiniteStoreBlock): void {
         // we exclude checking for the page just created, as this has yet to be accessed and hence
         // the lastAccessed stamp will not be updated for the first time yet
         const blocksForPurging = this.getBlocksInOrder().filter(b => b != blockToExclude);
-        const lastAccessedComparator = (a: PartialStoreBlock, b: PartialStoreBlock) => b.getLastAccessed() - a.getLastAccessed();
+        const lastAccessedComparator = (a: InfiniteStoreBlock, b: InfiniteStoreBlock) => b.getLastAccessed() - a.getLastAccessed();
         blocksForPurging.sort(lastAccessedComparator);
 
         // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.
@@ -159,11 +159,11 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         // we want to keep, which means we are left with blocks that we can potentially purge
         const maxBlocksProvided = this.storeParams.maxBlocksInCache! > 0;
         const blocksToKeep = maxBlocksProvided ? this.storeParams.maxBlocksInCache! - 1 : null;
-        const emptyBlocksToKeep = PartialStore.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
+        const emptyBlocksToKeep = InfiniteStore.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
 
-        blocksForPurging.forEach((block: PartialStoreBlock, index: number) => {
+        blocksForPurging.forEach((block: InfiniteStoreBlock, index: number) => {
 
-            const purgeBecauseBlockEmpty = block.getState() === PartialStoreBlock.STATE_WAITING_TO_LOAD && index >= emptyBlocksToKeep;
+            const purgeBecauseBlockEmpty = block.getState() === InfiniteStoreBlock.STATE_WAITING_TO_LOAD && index >= emptyBlocksToKeep;
 
             const purgeBecauseCacheFull = maxBlocksProvided ? index >= blocksToKeep! : false;
 
@@ -189,7 +189,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         });
     }
 
-    private isBlockFocused(block: PartialStoreBlock): boolean {
+    private isBlockFocused(block: InfiniteStoreBlock): boolean {
         const focusedCell = this.focusService.getFocusCellToUseAfterRefresh();
         if (!focusedCell) { return false; }
         if (focusedCell.rowPinned != null) { return false; }
@@ -202,7 +202,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         return hasFocus;
     }
 
-    private isBlockCurrentlyDisplayed(block: PartialStoreBlock): boolean {
+    private isBlockCurrentlyDisplayed(block: InfiniteStoreBlock): boolean {
         const startIndex = block.getDisplayIndexStart();
         const endIndex = block.getDisplayIndexEnd()! - 1;
         return this.rowRenderer.isRangeInRenderedViewport(startIndex!, endIndex);
@@ -212,7 +212,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         this.getBlocksInOrder().forEach(block => block.removeDuplicateNode(id));
     }
 
-    private checkRowCount(block: PartialStoreBlock, lastRow?: number): void {
+    private checkRowCount(block: InfiniteStoreBlock, lastRow?: number): void {
         // if client provided a last row, we always use it, as it could change between server calls
         // if user deleted data and then called refresh on the grid.
         if (typeof lastRow === 'number' && lastRow >= 0) {
@@ -221,7 +221,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         } else if (!this.lastRowIndexKnown) {
             // otherwise, see if we need to add some virtual rows
             const lastRowIndex = (block.getId() + 1) * this.storeParams.cacheBlockSize!;
-            const lastRowIndexPlusOverflow = lastRowIndex + PartialStore.OVERFLOW_SIZE;
+            const lastRowIndexPlusOverflow = lastRowIndex + InfiniteStore.OVERFLOW_SIZE;
 
             if (this.rowCount < lastRowIndexPlusOverflow) {
                 this.rowCount = lastRowIndexPlusOverflow;
@@ -237,15 +237,15 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         this.getBlocksInOrder().forEach(block => block.forEachNodeAfterFilterAndSort(callback, sequence));
     }
 
-    public getBlocksInOrder(): PartialStoreBlock[] {
+    public getBlocksInOrder(): InfiniteStoreBlock[] {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
-        const blockComparator = (a: PartialStoreBlock, b: PartialStoreBlock) => a.getId() - b.getId();
+        const blockComparator = (a: InfiniteStoreBlock, b: InfiniteStoreBlock) => a.getId() - b.getId();
         const blocks = _.getAllValuesInObject(this.blocks).sort(blockComparator);
 
         return blocks;
     }
 
-    private destroyBlock(block: PartialStoreBlock): void {
+    private destroyBlock(block: InfiniteStoreBlock): void {
         delete this.blocks[block.getId()];
         this.destroyBean(block);
         this.rowNodeBlockLoader.removeBlock(block);
@@ -262,8 +262,8 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     }
 
     private destroyAllBlocksPastVirtualRowCount(): void {
-        const blocksToDestroy: PartialStoreBlock[] = [];
-        this.getBlocksInOrder().forEach((block: PartialStoreBlock) => {
+        const blocksToDestroy: InfiniteStoreBlock[] = [];
+        this.getBlocksInOrder().forEach((block: InfiniteStoreBlock) => {
             const startRow = block.getId() * this.storeParams.cacheBlockSize!;
             if (startRow >= this.rowCount) {
                 blocksToDestroy.push(block);
@@ -327,7 +327,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         // the purge there will still be zero rows, meaning the SSRM won't request any rows.
         // to kick things off, at least one row needs to be asked for.
         if (this.columnModel.isAutoRowHeightActive() || this.rowCount === 0) {
-            this.rowCount = PartialStore.INITIAL_ROW_COUNT;
+            this.rowCount = InfiniteStore.INITIAL_ROW_COUNT;
         }
     }
 
@@ -372,14 +372,14 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         return invalidRange ? [] : result;
     }
 
-    private findBlockAndExecute<T>(matchBlockFunc: (block: PartialStoreBlock) => FindResult,
-        blockFoundFunc: (foundBlock: PartialStoreBlock) => T,
-        blockNotFoundFunc: (previousBlock: PartialStoreBlock) => T | undefined,
+    private findBlockAndExecute<T>(matchBlockFunc: (block: InfiniteStoreBlock) => FindResult,
+        blockFoundFunc: (foundBlock: InfiniteStoreBlock) => T,
+        blockNotFoundFunc: (previousBlock: InfiniteStoreBlock) => T | undefined,
     ): T {
 
         let blockFound = false;
         let breakSearch = false;
-        let lastBlock: PartialStoreBlock | null = null;
+        let lastBlock: InfiniteStoreBlock | null = null;
 
         let res: T;
 
@@ -407,7 +407,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
     public getRowBounds(index: number): RowBounds {
 
-        const matchBlockFunc = (block: PartialStoreBlock): FindResult => {
+        const matchBlockFunc = (block: InfiniteStoreBlock): FindResult => {
             if (block.isDisplayIndexInBlock(index)) {
                 return FindResult.FOUND;
             } else {
@@ -415,11 +415,11 @@ export class PartialStore extends BeanStub implements IServerSideStore {
             }
         };
 
-        const blockFoundFunc = (foundBlock: PartialStoreBlock): RowBounds => {
+        const blockFoundFunc = (foundBlock: InfiniteStoreBlock): RowBounds => {
             return foundBlock.getRowBounds(index)!;
         };
 
-        const blockNotFoundFunc = (previousBlock: PartialStoreBlock): RowBounds => {
+        const blockNotFoundFunc = (previousBlock: InfiniteStoreBlock): RowBounds => {
             let nextRowTop: number;
             let nextRowIndex: number;
 
@@ -444,7 +444,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
     public getRowIndexAtPixel(pixel: number): number {
 
-        const matchBlockFunc = (block: PartialStoreBlock): FindResult => {
+        const matchBlockFunc = (block: InfiniteStoreBlock): FindResult => {
             if (block.isPixelInRange(pixel)) {
                 return FindResult.FOUND;
             } else {
@@ -452,11 +452,11 @@ export class PartialStore extends BeanStub implements IServerSideStore {
             }
         };
 
-        const blockFoundFunc = (foundBlock: PartialStoreBlock): number => {
+        const blockFoundFunc = (foundBlock: InfiniteStoreBlock): number => {
             return foundBlock.getRowIndexAtPixel(pixel)!;
         };
 
-        const blockNotFoundFunc = (previousBlock: PartialStoreBlock): number => {
+        const blockNotFoundFunc = (previousBlock: InfiniteStoreBlock): number => {
             let nextRowTop: number;
             let nextRowIndex: number;
 
@@ -577,7 +577,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         // eg if a cell range is selected, and the user filters so rows no longer exists
         if (!this.isDisplayIndexInStore(displayRowIndex)) { return undefined; }
 
-        const matchBlockFunc = (block: PartialStoreBlock): FindResult => {
+        const matchBlockFunc = (block: InfiniteStoreBlock): FindResult => {
             if (block.isDisplayIndexInBlock(displayRowIndex)) {
                 return FindResult.FOUND;
             } else {
@@ -585,11 +585,11 @@ export class PartialStore extends BeanStub implements IServerSideStore {
             }
         };
 
-        const blockFoundFunc = (foundBlock: PartialStoreBlock): RowNode => {
+        const blockFoundFunc = (foundBlock: InfiniteStoreBlock): RowNode => {
             return foundBlock.getRowUsingDisplayIndex(displayRowIndex)!;
         };
 
-        const blockNotFoundFunc = (previousBlock: PartialStoreBlock): RowNode | undefined => {
+        const blockNotFoundFunc = (previousBlock: InfiniteStoreBlock): RowNode | undefined => {
             if (dontCreateBlock) { return; }
 
             let blockNumber: number;
@@ -643,19 +643,19 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         const blockSize = this.storeParams.cacheBlockSize;
         const blockId = Math.floor(topLevelIndex / blockSize!);
 
-        const matchBlockFunc = (block: PartialStoreBlock): FindResult => {
+        const matchBlockFunc = (block: InfiniteStoreBlock): FindResult => {
             if (block.getId() === blockId) {
                 return FindResult.FOUND;
             }
             return block.getId() < blockId ? FindResult.CONTINUE_FIND : FindResult.BREAK_FIND;
         };
 
-        const blockFoundFunc = (foundBlock: PartialStoreBlock): number => {
+        const blockFoundFunc = (foundBlock: InfiniteStoreBlock): number => {
             const rowNode = foundBlock.getRowUsingLocalIndex(topLevelIndex);
             return rowNode.rowIndex!;
         };
 
-        const blockNotFoundFunc = (previousBlock: PartialStoreBlock): number => {
+        const blockNotFoundFunc = (previousBlock: InfiniteStoreBlock): number => {
             if (!previousBlock) {
                 return topLevelIndex;
             }
@@ -711,9 +711,9 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         return this.blockHeights[blockNumber];
     }
 
-    private createBlock(blockNumber: number, displayIndex: number, nextRowTop: { value: number }): PartialStoreBlock {
+    private createBlock(blockNumber: number, displayIndex: number, nextRowTop: { value: number }): InfiniteStoreBlock {
 
-        const block = this.createBean(new PartialStoreBlock(
+        const block = this.createBean(new InfiniteStoreBlock(
             blockNumber, this.parentRowNode, this.ssrmParams, this.storeParams, this));
         block.setDisplayIndexes(new NumberSequence(displayIndex), nextRowTop);
 
