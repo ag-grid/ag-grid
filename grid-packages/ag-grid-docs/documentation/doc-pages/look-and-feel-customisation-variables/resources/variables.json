@@ -2,11 +2,11 @@
   "_config_": {},
   "variables": {
     "--ag-alpine-active-color": {
-      "description": "(Alpine theme only) accent colour used for checkboxes, range selections, row hover, row selections, selected tab underlines, and input focus outlines in the Alpine theme",
+      "description": "(Alpine theme only) accent colour used for checked checkboxes, range selections, row hover, row selections, selected tab underlines, and input focus outlines in the Alpine theme",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-balham-active-color": {
-      "description": "(Balham theme only) accent colour used for checkboxes, range selections, row selections, and input focus outlines in the Balham theme",
+      "description": "(Balham theme only) accent colour used for checked checkboxes, range selections, row selections, and input focus outlines in the Balham theme",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-material-primary-color": {
@@ -14,7 +14,7 @@
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-material-accent-color": {
-      "description": "(Material theme only) the accent colour as defined in the [Material Design colour system](https://material.io/design/color/). Currently this is used on checkboxes in the Material theme",
+      "description": "(Material theme only) the accent colour as defined in the [Material Design colour system](https://material.io/design/color/). Currently this is used on checked checkboxes in the Material theme",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-foreground-color": {
