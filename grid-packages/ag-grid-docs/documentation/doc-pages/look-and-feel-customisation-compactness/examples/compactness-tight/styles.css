@@ -1,4 +1,4 @@
-
 .ag-theme-alpine {
-    --ag-grid-size: 4px;
+    --ag-grid-size: 3px;
+    --ag-list-item-height: 20px;
 }
