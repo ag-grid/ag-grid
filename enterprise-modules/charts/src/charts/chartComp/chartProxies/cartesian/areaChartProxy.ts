@@ -1,4 +1,4 @@
-import { AgAreaSeriesOptions, ChartAxisPosition } from "ag-charts-community";
+import { AgAreaSeriesOptions, AgCartesianAxisOptions, ChartAxisPosition } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
@@ -14,36 +14,7 @@ export class AreaChartProxy extends CartesianChartProxy {
         this.recreateChart();
     }
 
-    public update(params: UpdateChartParams): void {
-        this.updateChart({
-            data: this.transformData(params.data, params.category.id),
-            axes: this.getAxes(),
-            series: this.getSeries(params)
-        });
-    }
-
-    private getSeries(params: UpdateChartParams): AgAreaSeriesOptions[] {
-        const series: AgAreaSeriesOptions[] = params.fields.map(f => (
-            {
-                ...this.extractSeriesOverrides(),
-                type: this.standaloneChartType,
-                xKey: params.category.id,
-                xName: params.category.name,
-                yKey: f.colId,
-                yName: f.displayName,
-                normalizedTo: this.chartType === 'normalizedArea' ? 100 : undefined,
-                stacked: ['normalizedArea', 'stackedArea'].includes(this.chartType)
-            }
-        ));
-
-        return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
-    }
-
-    private extractCrossFilterSeries(series: AgAreaSeriesOptions[]): AgAreaSeriesOptions[] {
-        return []; //TODO
-    }
-
-    private getAxes() {
+    public getAxes(): AgCartesianAxisOptions[] {
         const axisOptions = this.getAxesOptions();
         const options = [
             {
@@ -66,5 +37,26 @@ export class AreaChartProxy extends CartesianChartProxy {
         }
 
         return options;
+    }
+
+    public getSeries(params: UpdateChartParams): AgAreaSeriesOptions[] {
+        const series: AgAreaSeriesOptions[] = params.fields.map(f => (
+            {
+                ...this.extractSeriesOverrides(),
+                type: this.standaloneChartType,
+                xKey: params.category.id,
+                xName: params.category.name,
+                yKey: f.colId,
+                yName: f.displayName,
+                normalizedTo: this.chartType === 'normalizedArea' ? 100 : undefined,
+                stacked: ['normalizedArea', 'stackedArea'].includes(this.chartType)
+            }
+        ));
+
+        return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
+    }
+
+    private extractCrossFilterSeries(series: AgAreaSeriesOptions[]): AgAreaSeriesOptions[] {
+        return []; //TODO
     }
 }

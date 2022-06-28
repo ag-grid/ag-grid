@@ -1,13 +1,5 @@
 import { _, AgChartThemeOverrides, ChartType, SeriesChartType } from "@ag-grid-community/core";
-import {
-    AgChartTheme,
-    AgChartThemePalette,
-    CategoryAxis,
-    Chart,
-    ChartTheme,
-    getChartTheme,
-    themes
-} from "ag-charts-community";
+import { AgChartTheme, AgChartThemePalette, Chart, ChartTheme, getChartTheme, themes } from "ag-charts-community";
 import { deepMerge } from "../utils/object";
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
@@ -168,24 +160,21 @@ export abstract class ChartProxy {
         return this.chartPalette;
     }
 
-    protected transformData(data: any[], categoryKey: string): any[] {
-        const usingGroupedCategory =
-            this.chartProxyParams.grouping || this.chart.axes.filter(a => a instanceof CategoryAxis).length < 1;
+    protected transformData(data: any[], categoryKey: string, categoryAxis?: boolean): any[] {
+        if (categoryAxis) {
+            // replace the values for the selected category with a complex object to allow for duplicated categories
+            return data.map((d, index) => {
+                const value = d[categoryKey];
+                const valueString = value && value.toString ? value.toString() : '';
+                const datum = { ...d };
 
-        if (usingGroupedCategory) {
-            return data;
+                datum[categoryKey] = { id: index, value, toString: () => valueString };
+
+                return datum;
+            });
         }
 
-        // replace the values for the selected category with a complex object to allow for duplicated categories
-        return data.map((d, index) => {
-            const value = d[categoryKey];
-            const valueString = value && value.toString ? value.toString() : '';
-            const datum = { ...d };
-
-            datum[categoryKey] = { id: index, value, toString: () => valueString };
-
-            return datum;
-        });
+        return data;
     }
 
     protected getCommonChartOptions() {

@@ -1,5 +1,7 @@
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import {
+    AgBaseSeriesOptions,
+    AgCartesianAxisOptions,
     AgCartesianAxisType,
     AgCartesianChartOptions,
     AgChart,
@@ -15,6 +17,7 @@ import {
 import { ChartSeriesType } from "../../utils/seriesTypeMapper";
 
 export abstract class CartesianChartProxy extends ChartProxy {
+    protected supportsAxesUpdates = true;
     protected xAxisType: AgCartesianAxisType;
     protected yAxisType: AgCartesianAxisType;
 
@@ -29,6 +32,10 @@ export abstract class CartesianChartProxy extends ChartProxy {
         super(params);
     }
 
+    abstract getAxes(params: UpdateChartParams): AgCartesianAxisOptions[];
+
+    abstract getSeries(params: UpdateChartParams): AgBaseSeriesOptions[];
+
     protected createChart(): CartesianChart {
         return AgChart.create({
             container: this.chartProxyParams.parentElement,
@@ -36,10 +43,18 @@ export abstract class CartesianChartProxy extends ChartProxy {
         });
     }
 
-    protected updateChart(options: AgCartesianChartOptions): void {
-        options = {
+    public update(params: UpdateChartParams): void {
+        if (this.supportsAxesUpdates) {
+            this.updateAxes(params);
+        }
+
+        const categoryAxis = this.xAxisType === 'category';
+
+        let options: AgCartesianChartOptions = {
             ...this.getCommonChartOptions(),
-            ...options,
+            data: this.transformData(params.data, params.category.id, categoryAxis),
+            axes: this.getAxes(params),
+            series: this.getSeries(params)
         }
 
         if (this.crossFiltering) {
@@ -62,8 +77,9 @@ export abstract class CartesianChartProxy extends ChartProxy {
                 ...seriesOverrides.legend,
                 listeners: {
                     legendItemClick: (e: AgChartLegendClickEvent) => {
-                        options?.series?.forEach(s => s.visible = e.enabled);
-                        this.updateChart(options);
+                        // TODO
+                        // options?.series?.forEach(s => s.visible = e.enabled);
+                        // this.updateChart(options);
                     }
                 }
             }
@@ -80,23 +96,23 @@ export abstract class CartesianChartProxy extends ChartProxy {
         return seriesOverrides;
     }
 
-    // protected updateAxes(params: UpdateChartParams): void {
-    //     // when grouping recreate chart if the axis is not a 'groupedCategory', otherwise return
-    //     if (params.grouping) {
-    //         if (!(this.axisTypeToClassMap[this.xAxisType] === GroupedCategoryAxis)) {
-    //             this.xAxisType = 'groupedCategory';
-    //             this.recreateChart();
-    //         }
-    //         return;
-    //     }
-    //
-    //     // only update axis has changed and recreate the chart, i.e. switching from 'category' to 'time' axis
-    //     const newXAxisType = CartesianChartProxy.isTimeAxis(params) ? 'time' : 'category';
-    //     if (newXAxisType !== this.xAxisType) {
-    //         this.xAxisType = newXAxisType;
-    //         this.recreateChart();
-    //     }
-    // }
+    protected updateAxes(params: UpdateChartParams): void {
+        // when grouping recreate chart if the axis is not a 'groupedCategory', otherwise return
+        if (params.grouping) {
+            if (!(this.axisTypeToClassMap[this.xAxisType] === GroupedCategoryAxis)) {
+                this.xAxisType = 'groupedCategory';
+                this.recreateChart();
+            }
+            return;
+        }
+
+        // only update axis has changed and recreate the chart, i.e. switching from 'category' to 'time' axis
+        const newXAxisType = CartesianChartProxy.isTimeAxis(params) ? 'time' : 'category';
+        if (newXAxisType !== this.xAxisType) {
+            this.xAxisType = newXAxisType;
+            this.recreateChart();
+        }
+    }
 
     protected getAxesOptions(chartSeriesType: ChartSeriesType = this.standaloneChartType) {
         return this.chartOptions[chartSeriesType].axes;
@@ -106,17 +122,17 @@ export abstract class CartesianChartProxy extends ChartProxy {
     //     let yKey = colId;
     //     let atLeastOneSelectedPoint = false;
     //     if (this.crossFiltering) {
-    //         data.forEach(d => {
-    //             d[colId + '-total'] = d[colId] + d[colId + '-filtered-out'];
-    //             if (d[colId + '-filtered-out'] > 0) {
-    //                 atLeastOneSelectedPoint = true;
-    //             }
-    //         });
-    //
-    //         const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
-    //         if (lastSelectedChartId === params.chartId) {
-    //             yKey = colId + '-total';
-    //         }
+    //         // data.forEach(d => {
+    //         //     d[colId + '-total'] = d[colId] + d[colId + '-filtered-out'];
+    //         //     if (d[colId + '-filtered-out'] > 0) {
+    //         //         atLeastOneSelectedPoint = true;
+    //         //     }
+    //         // });
+    //         //
+    //         // const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
+    //         // if (lastSelectedChartId === params.chartId) {
+    //         //     yKey = colId + '-total';
+    //         // }
     //     }
     //     return {yKey, atLeastOneSelectedPoint};
     // }
@@ -158,11 +174,11 @@ export abstract class CartesianChartProxy extends ChartProxy {
         }
     }
 
-    // private static isTimeAxis(params: UpdateChartParams): boolean {
-    //     if (params.category && params.category.chartDataType) {
-    //         return params.category.chartDataType === 'time';
-    //     }
-    //     const testDatum = params.data[0];
-    //     return (testDatum && testDatum[params.category.id]) instanceof Date;
-    // }
+    private static isTimeAxis(params: UpdateChartParams): boolean {
+        if (params.category && params.category.chartDataType) {
+            return params.category.chartDataType === 'time';
+        }
+        const testDatum = params.data[0];
+        return (testDatum && testDatum[params.category.id]) instanceof Date;
+    }
 }

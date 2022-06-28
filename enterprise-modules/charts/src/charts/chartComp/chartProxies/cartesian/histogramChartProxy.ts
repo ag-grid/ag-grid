@@ -1,4 +1,4 @@
-import { AgHistogramSeriesOptions, ChartAxisPosition } from "ag-charts-community";
+import { AgCartesianAxisOptions, AgHistogramSeriesOptions, ChartAxisPosition } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
@@ -8,21 +8,14 @@ export class HistogramChartProxy extends CartesianChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
+        this.supportsAxesUpdates = false;
         this.xAxisType = 'number';
         this.yAxisType = 'number';
 
         this.recreateChart();
     }
 
-    public update(params: UpdateChartParams): void {
-        this.updateChart({
-            data: this.transformData(params.data, params.category.id),
-            axes: this.getAxes(),
-            series: this.getSeries(params)
-        });
-    }
-
-    private getSeries(params: UpdateChartParams): AgHistogramSeriesOptions[] {
+    public getSeries(params: UpdateChartParams): AgHistogramSeriesOptions[] {
         const firstField = params.fields[0]; // multiple series are not supported!
         return [{
             ...this.extractSeriesOverrides(),
@@ -33,7 +26,7 @@ export class HistogramChartProxy extends CartesianChartProxy {
         }];
     }
 
-    private getAxes() {
+    public getAxes(): AgCartesianAxisOptions[] {
         const axisOptions = this.getAxesOptions();
         return [
             {
