@@ -215,12 +215,13 @@ const getBuildChainInfo = async () => {
             paths: gridPaths,
             orderedPackageNames: orderedGridPackageNames
         } = await getOrderedDependencies("@ag-grid-community/core", true, false);
+
         const {paths: chartPaths, orderedPackageNames: orderedChartPackageNames} = await getOrderedDependencies("ag-charts-community", false, true);
         const {paths: stylePaths, orderedPackageNames: orderedStylePackageNames} = await getOrderedDependencies("@ag-grid-community/styles", false, true);
 
         const buildChains = {};
         for (let packageName of orderedGridPackageNames.concat(orderedChartPackageNames).concat(orderedStylePackageNames)) {
-            buildChains[packageName] = await generateBuildChain(packageName, orderedGridPackageNames, true, false);
+            buildChains[packageName] = await generateBuildChain(packageName, orderedGridPackageNames.concat(orderedStylePackageNames), true, false);
         }
 
         buildChainInfo = {
@@ -237,7 +238,6 @@ const getBuildChainInfo = async () => {
 
 const getFlattenedBuildChainInfo = async (includeExamples, skipPackageExamples, skipDocs) => {
     const buildChainInfo = await getBuildChainInfo();
-
     const flattenedBuildChainInfo = {};
     const packageNames = Object.keys(buildChainInfo.buildChains);
 
@@ -386,7 +386,6 @@ const rebuildPackagesBasedOnChangeState = async (runUnitTests = true,
 
     if (lernaPackagesToRebuild.size > 0) {
         console.log("Rebuilding changed packages...");
-        console.log(lernaPackagesToRebuild);
 
         let buildFailed = false;
         const packagesToRun = Array.from(lernaPackagesToRebuild);
