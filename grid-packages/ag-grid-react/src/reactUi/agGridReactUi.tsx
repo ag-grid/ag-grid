@@ -12,12 +12,12 @@ function debug(msg: string, obj?: any) {
     // console.log(msg, obj);
 }
 
-export class AgGridReactUi extends Component<AgReactUiProps, { context: Context | undefined }> {
+export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>, { context: Context | undefined }> {
 
-    public api!: GridApi;
+    public api!: GridApi<TData>;
     public columnApi!: ColumnApi;
 
-    private gridOptions!: GridOptions;
+    private gridOptions!: GridOptions<TData>;
 
     private destroyFuncs: (() => void)[] = [];
     private changeDetectionService = new ChangeDetectionService();

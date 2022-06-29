@@ -15,20 +15,20 @@ import {
 } from '@ag-grid-community/core';
 import { ChangeDetectionStrategyType } from './changeDetectionService';
 
-export interface SharedProps extends GridOptions {
-    gridOptions?: GridOptions;
+export interface SharedProps<TData = any> extends GridOptions<TData> {
+    gridOptions?: GridOptions<TData>;
     modules?: Module[];
     containerStyle?: any;
     className?: string;
-    setGridApi?: (gridApi: GridApi, columnApi: ColumnApi) => void;
+    setGridApi?: (gridApi: GridApi<TData>, columnApi: ColumnApi) => void;
     componentWrappingElement?: string; // only used when putting React into JS
     maxComponentCreationTimeMs?: number; // only used when putting React into JS
 }
 
-export interface AgReactUiProps extends SharedProps {
+export interface AgReactUiProps<TData = any> extends SharedProps<TData> {
 }
 
-export interface AgGridReactProps extends SharedProps {
+export interface AgGridReactProps<TData = any> extends SharedProps<TData> {
     children?: any;
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     disableStaticMarkup?: boolean;  // only used when legacyComponentRendering is true

@@ -19,7 +19,7 @@ import { NewReactComponent } from '../shared/newReactComponent';
 import { PortalManager } from '../shared/portalManager';
 import { ReactFrameworkOverrides } from '../shared/reactFrameworkOverrides';
 
-export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
+export class AgGridReactLegacy<TData = any> extends Component<AgGridReactProps<TData>, {}> {
 
     private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
 
@@ -31,11 +31,11 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
         maxComponentCreationTimeMs: AgGridReactLegacy.MAX_COMPONENT_CREATION_TIME_IN_MS
     };
 
-    gridOptions!: GridOptions;
+    gridOptions!: GridOptions<TData>;
 
     changeDetectionService = new ChangeDetectionService();
 
-    api: GridApi | null = null;
+    api: GridApi<TData> | null = null;
     columnApi!: ColumnApi;
 
     portalManager: PortalManager;
@@ -46,7 +46,7 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
 
     readonly SYNCHRONOUS_CHANGE_PROPERTIES = ['context']
 
-    constructor(public props: AgGridReactProps) {
+    constructor(public props: AgGridReactProps<TData>) {
         super(props);
 
         this.portalManager = new PortalManager(this, props.componentWrappingElement, props.maxComponentCreationTimeMs);

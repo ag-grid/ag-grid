@@ -84,11 +84,11 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
     }
 }
 
-function getTemplate(bindings: any, componentAttributes: string[]): string {
+function getTemplate(bindings: any, componentAttributes: string[], rowDataGeneric: string): string {
     const { gridSettings } = bindings;
     const agGridTag = `
         <div ${gridSettings.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className="${gridSettings.theme}">             
-            <AgGridReact
+            <AgGridReact${rowDataGeneric}
                 ref={gridRef}
                 ${componentAttributes.join('\n')}
             >
@@ -138,7 +138,6 @@ function getEventAndCallbackNames() {
 }
 
 
-const GRID_REF_HOOK = "const gridRef = useRef<AgGridReact>(null);"
 
 export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
     const { properties, data, tData, gridSettings, onGridReady, resizeToFit, typeDeclares, interfaces } = bindings;
@@ -152,7 +151,9 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         return acc;
     }, {})
     const rowDataType = tData || 'any';
+    const rowDataGeneric = tData ? `<${tData}>` : ''
     const rowDataState = `const [rowData, setRowData] = useState<${rowDataType}[]>();`
+    const gridRefHook = `const gridRef = useRef<AgGridReact${rowDataGeneric}>(null);`
 
     return importType => {
         // instance values
@@ -161,8 +162,6 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
             `const gridStyle = useMemo(() => ({height: '${gridSettings.height}', width: '${gridSettings.width}'}), []);`,
             rowDataState
         ];
-
-
 
         // for when binding a method
         // see javascript-grid-keyboard-navigation for an example
@@ -284,7 +283,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
             .replace(/gridRef\.current\.api(!?)\.setRowData/g, "setRowData")
             .replace(/gridApi/g, "gridRef.current!.api")
 
-        const template = getTemplate(bindings, componentProps.map(thisReferenceConverter));
+        const template = getTemplate(bindings, componentProps.map(thisReferenceConverter), rowDataGeneric);
         const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstCallbackTs(event.handler, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
         const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstCallbackTs(handler.body, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
         const instanceMethods = bindings.instanceMethods.map(instance => convertFunctionToConstCallbackTs(instance, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
@@ -307,7 +306,7 @@ ${bindings.utils.map(convertFunctionToConstPropertyTs).join('\n\n')}
 ${bindings.classes.join('\n')}
 
 const GridExample = () => {
-    ${GRID_REF_HOOK}
+    ${gridRefHook}
     ${stateProperties.join('\n    ')}
 
 ${gridReady}
@@ -334,7 +333,7 @@ render(<GridExample></GridExample>, document.querySelector('#root'))
         }
 
         if ((generatedOutput.match(/gridRef\.current/g) || []).length === 0) {
-            generatedOutput = generatedOutput.replace(GRID_REF_HOOK, "")
+            generatedOutput = generatedOutput.replace(gridRefHook, "")
             generatedOutput = generatedOutput.replace("ref={gridRef}", "")
         }
         if (generatedOutput.includes(rowDataState) && (generatedOutput.match(/setRowData/g) || []).length === 1) {

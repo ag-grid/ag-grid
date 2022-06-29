@@ -5,8 +5,8 @@ import { AgGridReactProps, AgReactUiProps } from './shared/interfaces';
 import { ColumnApi, GridApi } from 'ag-grid-community';
 
 
-export class AgGridReact extends Component<AgGridReactProps | AgReactUiProps, {}> {
-    public api!: GridApi;
+export class AgGridReact<TData = any> extends Component<AgGridReactProps<TData> | AgReactUiProps<TData>, {}> {
+    public api!: GridApi<TData>;
     public columnApi!: ColumnApi;
 
     private setGridApi = (api: GridApi, columnApi: ColumnApi) => {
@@ -15,7 +15,9 @@ export class AgGridReact extends Component<AgGridReactProps | AgReactUiProps, {}
     }
 
     render() {
-        const ReactComponentToUse = this.props.suppressReactUi ? AgGridReactLegacy : AgGridReactUi;
-        return <ReactComponentToUse { ...this.props } setGridApi={ this.setGridApi } />;
+        const ReactComponentToUse = this.props.suppressReactUi ?
+            <AgGridReactLegacy<TData> {...this.props} setGridApi={this.setGridApi} />
+            : <AgGridReactUi<TData> {...this.props} setGridApi={this.setGridApi} />;
+        return ReactComponentToUse;
     }
 }
