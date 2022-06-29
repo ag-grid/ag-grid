@@ -510,10 +510,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const tickLineGroupSelection = updateAxis.merge(enterAxis);
 
-        const updateGridlines = this.gridlineGroupSelection.setData(this.gridLength ? ticks : []);
+        const updateGridlines = this.gridlineGroupSelection.setData(gridLength ? ticks : []);
         updateGridlines.exit.remove();
         let gridlineGroupSelection = updateGridlines;
-        if (this.gridLength) {
+        if (gridLength) {
             const tagFn = (node: Line | Arc) => node.tag = Tags.GridLine;
             const enterGridline = updateGridlines.enter.append(Group);
             if (this.radialGrid) {
@@ -690,12 +690,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
             .attr('y1', 0)
             .attr('y2', 0);
 
-        if (this.gridLength && gridStyle.length) {
+        if (gridLength && gridStyle.length) {
             const styleCount = gridStyle.length;
             let gridLines: Selection<Shape, Group, D, D>;
 
             if (this.radialGrid) {
-                const angularGridLength = normalizeAngle360Inclusive(toRadians(this.gridLength));
+                const angularGridLength = normalizeAngle360Inclusive(toRadians(gridLength));
 
                 gridLines = gridlineGroupSelection.selectByTag<Arc>(Tags.GridLine)
                     .each((arc, datum, index) => {
@@ -712,7 +712,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 gridLines = gridlineGroupSelection.selectByTag<Line>(Tags.GridLine)
                     .each((line, _, index) => {
                         line.x1 = 0;
-                        line.x2 = -sideFlag * this.gridLength;
+                        line.x2 = -sideFlag * gridLength;
                         line.y1 = 0;
                         line.y2 = 0;
                         line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1 && labelBboxes.has(index);
@@ -749,6 +749,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
             crossLine.gridLength = gridLength;
             crossLine.sideFlag = -sideFlag as (-1 | 1);
             crossLine.direction = rotation === -Math.PI / 2 ? ChartAxisDirection.X : ChartAxisDirection.Y;
+            crossLine.label.parallel = crossLine.label.parallel !== undefined ? crossLine.label.parallel : parallelLabels;
+            crossLine.parallelFlipRotation = parallelFlipRotation;
+            crossLine.regularFlipRotation = regularFlipRotation;
             crossLine.update(anyVisible); // fix visible
         });
     }

@@ -1,11 +1,13 @@
 import { PointerEvents } from "../../scene/node";
 import { Group } from "../../scene/group";
 import { Path } from "../../scene/shape/path";
-import { FontStyle, FontWeight } from "../../scene/shape/text";
+import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
 import { Scale } from "../../scale/scale";
 import { createId } from "../../util/id";
 import { Series } from "../series/series";
+import { normalizeAngle360, toRadians } from "../../util/angle";
 import { ChartAxisDirection } from "../chartAxis";
+import { CrossLineLabelPosition, Point, labeldDirectionHandling, POSITION_TOP_COORDINATES, calculateLabelTranslation } from "./crossLineLabelPosition";
 
 export class CrossLineLabel {
     text?: string = undefined;
@@ -24,26 +26,6 @@ export class CrossLineLabel {
     position?: CrossLineLabelPosition = undefined;
     rotation?: number = undefined;
     parallel?: boolean = undefined;
-}
-
-export type CrossLineLabelPosition =
-    'top'
-    | 'left'
-    | 'right'
-    | 'bottom'
-    | 'inside'
-    | 'insideLeft'
-    | 'insideRight'
-    | 'insideTop'
-    | 'insideBottom'
-    | 'insideTopLeft'
-    | 'insideBottomLeft'
-    | 'insideTopRight'
-    | 'insideBottomRight';
-
-export interface Point {
-    readonly x: number;
-    readonly y: number;
 }
 
 interface CrossLinePathData {
@@ -71,17 +53,21 @@ export class CrossLine {
     scale?: Scale<any, number> = undefined;
     gridLength: number = 0;
     sideFlag: 1 | -1 = -1;
+    parallelFlipRotation: number = 0;
+    regularFlipRotation: number = 0;
     direction: ChartAxisDirection = ChartAxisDirection.X;
 
     readonly group = new Group({ name: `${this.id}`, layer: true, zIndex: CrossLine.ANNOTATION_LAYER_ZINDEX });
+    private crossLineLabel = new Text();
     private crossLineLine: Path = new Path();
     private crossLineRange: Path = new Path();
+    private labelPoint?: Point = undefined;
     private pathData?: CrossLinePathData = undefined;
 
     constructor() {
-        const { group, crossLineLine, crossLineRange } = this;
+        const { group, crossLineLine, crossLineRange, crossLineLabel } = this;
 
-        group.append([crossLineRange, crossLineLine ]);
+        group.append([crossLineRange, crossLineLine, crossLineLabel]);
 
         crossLineLine.fill = undefined;
         crossLineLine.pointerEvents = PointerEvents.None;
@@ -108,10 +94,13 @@ export class CrossLine {
             this.updateRangePath();
             this.updateRangeNode();
         }
+
+        this.updateLabel();
+        this.positionLabel();
     }
 
     private createNodeData() {
-        const { scale, gridLength, sideFlag, range, value } = this;
+        const { scale, gridLength, sideFlag, direction, range, value, label: { position = 'top', padding: labelPadding } } = this;
 
         if (!scale) { return; }
 
@@ -123,6 +112,18 @@ export class CrossLine {
         [xStart, xEnd] = [0, sideFlag * gridLength];
         [yStart, yEnd] = range ? [Math.min(...range), Math.max(...range)] : [value, undefined];
         [yStart, yEnd] = [scale.convert(yStart) + halfBandwidth, scale.convert(yEnd) + halfBandwidth];
+
+        if (this.label.text) {
+            const yDirection = direction === ChartAxisDirection.Y;
+
+            const { c = POSITION_TOP_COORDINATES } = labeldDirectionHandling[position] ?? {};
+            const { x: labelX, y: labelY } = c({ yDirection, xStart, xEnd, yStart, yEnd });
+
+            this.labelPoint = {
+                x: labelX,
+                y: labelY
+            }
+        }
 
         this.pathData.points.push(
             {
@@ -186,5 +187,62 @@ export class CrossLine {
         });
         path.closePath();
         crossLineRange.checkPathDirty();
+    }
+
+    private updateLabel() {
+        const { crossLineLabel, label } = this;
+
+        if (!label.text) { return; }
+
+        crossLineLabel.fontStyle = label.fontStyle;
+        crossLineLabel.fontWeight = label.fontWeight;
+        crossLineLabel.fontSize = label.fontSize;
+        crossLineLabel.fontFamily = label.fontFamily;
+        crossLineLabel.fill = label.color;
+        crossLineLabel.text = label.text;
+    }
+
+    private positionLabel() {
+        const { crossLineLabel,
+            labelPoint: {
+                x = undefined,
+                y = undefined
+            } = {},
+            label: {
+                parallel,
+                rotation,
+                position = 'top',
+                padding = 0
+            },
+            direction,
+            parallelFlipRotation,
+            regularFlipRotation,
+        } = this;
+
+        if (x === undefined || y === undefined) { return; }
+
+        const labelRotation = rotation ? normalizeAngle360(toRadians(rotation)) : 0;
+
+        const parallelFlipFlag = !labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI ? -1 : 1;
+        const regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
+
+        const autoRotation = parallel
+            ? parallelFlipFlag * Math.PI / 2
+            : (regularFlipFlag === -1 ? Math.PI : 0);
+
+        crossLineLabel.rotation = autoRotation + labelRotation;
+
+        const bbox = crossLineLabel.computeTransformedBBox();
+
+        crossLineLabel.textBaseline = 'middle';
+        crossLineLabel.textAlign = 'center';
+
+        if (!bbox) { return; }
+
+        const yDirection = direction === ChartAxisDirection.Y;
+        const { xTranslation, yTranslation } = calculateLabelTranslation({ yDirection, padding, position, bbox });
+
+        crossLineLabel.translationX = x + xTranslation;
+        crossLineLabel.translationY = y + yTranslation;
     }
 }
