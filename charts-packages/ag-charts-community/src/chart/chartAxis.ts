@@ -64,7 +64,8 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
 
         const { tick: { count }, range: [min, max] } = this;
 
-        if (count) {
+        if (count !== undefined) {
+            this._calculatedTickCount = undefined;
             return;
         }
 
