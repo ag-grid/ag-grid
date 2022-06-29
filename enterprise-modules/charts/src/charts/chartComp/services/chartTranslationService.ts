@@ -23,6 +23,7 @@ export class ChartTranslationService extends BeanStub {
         category: 'Category',
         number: 'Number',
         time: 'Time',
+        autoRotate: 'Auto Rotate',
         xRotation: 'X Rotation',
         yRotation: 'Y Rotation',
         ticks: 'Ticks',
