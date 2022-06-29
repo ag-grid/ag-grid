@@ -11572,9 +11572,6 @@
       "description": "/** Whether or not the title should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "padding": {
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
-    },
     "text": {
       "description": "/** The text to show in the title. */",
       "type": { "returnType": "string", "optional": true }
@@ -13391,9 +13388,6 @@
     "enabled": {
       "description": "/** Whether or not the title should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "padding": {
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "text": {
       "description": "/** The text to show in the title. */",

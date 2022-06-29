@@ -861,37 +861,37 @@ export abstract class Chart extends Observable {
     protected positionCaptions() {
         const { _title: title, _subtitle: subtitle } = this;
 
-        let titleVisible = false;
-        let subtitleVisible = false;
-
         const spacing = 10;
         let paddingTop = spacing;
 
-        if (title && title.enabled) {
+        if (!title) {
+            return;
+        }
+        title.node.visible = title.enabled;
+
+        if (title.enabled) {
             title.node.x = this.width / 2;
             title.node.y = paddingTop;
-            titleVisible = true;
+            title.node.visible = true;
             const titleBBox = title.node.computeBBox(); // make sure to set node's x/y, then computeBBox
             if (titleBBox) {
                 paddingTop = titleBBox.y + titleBBox.height;
             }
+        }
 
-            if (subtitle && subtitle.enabled) {
-                subtitle.node.x = this.width / 2;
-                subtitle.node.y = paddingTop + spacing;
-                subtitleVisible = true;
-                const subtitleBBox = subtitle.node.computeBBox();
-                if (subtitleBBox) {
-                    paddingTop = subtitleBBox.y + subtitleBBox.height;
-                }
+        if (!subtitle) {
+            return;
+        }
+        subtitle.node.visible = title.enabled && subtitle.enabled;
+        
+        if (title.enabled && subtitle.enabled) {
+            subtitle.node.x = this.width / 2;
+            subtitle.node.y = paddingTop + spacing;
+            subtitle.node.visible = true;
+            const subtitleBBox = subtitle.node.computeBBox();
+            if (subtitleBBox) {
+                paddingTop = subtitleBBox.y + subtitleBBox.height;
             }
-        }
-
-        if (title) {
-            title.node.visible = titleVisible;
-        }
-        if (subtitle) {
-            subtitle.node.visible = subtitleVisible;
         }
 
         this.captionAutoPadding = Math.floor(paddingTop);

@@ -721,7 +721,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
             const sideFlag = label.mirrored ? 1 : -1;
             const parallelFlipRotation = normalizeAngle360(rotation);
-            const padding = title.padding.bottom;
+            const padding = Caption.PADDING;
             const titleNode = title.node;
             const titleRotationFlag = sideFlag === -1 && parallelFlipRotation > Math.PI && parallelFlipRotation < Math.PI * 2 ? -1 : 1;
             

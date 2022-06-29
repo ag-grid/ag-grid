@@ -800,9 +800,6 @@
       "description": "/** Whether or not the title should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "padding": {
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
-    },
     "text": {
       "description": "/** The text to show in the title. */",
       "type": { "returnType": "string", "optional": true }
@@ -2620,9 +2617,6 @@
       "description": "/** Whether or not the title should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "padding": {
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
-    },
     "text": {
       "description": "/** The text to show in the title. */",
       "type": { "returnType": "string", "optional": true }
@@ -3402,6 +3396,7 @@
     "paths": { "type": { "returnType": "Path[]", "optional": false } },
     "group": { "type": { "returnType": "Group", "optional": false } },
     "pickGroup": { "type": { "returnType": "Group", "optional": false } },
+    "markerGroup": { "type": { "returnType": "Group", "optional": true } },
     "datumSelection": {
       "type": {
         "returnType": "NodeDataSelection<SceneNodeType, C>",
@@ -3411,6 +3406,9 @@
     "labelSelection": {
       "type": { "returnType": "LabelDataSelection<Text, C>", "optional": false }
     },
+    "markerSelection": {
+      "type": { "returnType": "NodeDataSelection<Marker, C>", "optional": true }
+    },
     "meta": {
       "typeParams": [
         "C extends SeriesNodeDataContext",
@@ -3419,11 +3417,15 @@
     }
   },
   "PickGroupInclude": {},
+  "SeriesFeature": {},
   "SeriesOpts": {
     "pickGroupIncludes": {
       "type": { "returnType": "PickGroupInclude[]", "optional": false }
     },
-    "pathsPerSeries": { "type": { "returnType": "number", "optional": false } }
+    "pathsPerSeries": { "type": { "returnType": "number", "optional": false } },
+    "features": {
+      "type": { "returnType": "SeriesFeature[]", "optional": false }
+    }
   },
   "CartesianSeriesMarkerFormat": {
     "fill": { "type": { "returnType": "string", "optional": true } },

@@ -6583,7 +6583,6 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
-      "padding?": "AgChartPaddingOptions",
       "text?": "string",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -7852,7 +7851,6 @@
     "type": {
       "showInLegend?": "boolean",
       "enabled?": "boolean",
-      "padding?": "AgChartPaddingOptions",
       "text?": "string",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",

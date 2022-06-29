@@ -212,7 +212,6 @@ export interface AgDropShadowOptions {
 export interface AgChartCaptionOptions {
     /** Whether or not the title should be shown. */
     enabled?: boolean;
-    padding?: AgChartPaddingOptions;
     /** The text to show in the title. */
     text?: string;
     /** The font style to use for the title. */

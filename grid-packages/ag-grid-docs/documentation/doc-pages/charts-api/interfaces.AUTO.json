@@ -498,7 +498,6 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
-      "padding?": "AgChartPaddingOptions",
       "text?": "string",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -1767,7 +1766,6 @@
     "type": {
       "showInLegend?": "boolean",
       "enabled?": "boolean",
-      "padding?": "AgChartPaddingOptions",
       "text?": "string",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -2460,19 +2458,23 @@
       "paths": "Path[]",
       "group": "Group",
       "pickGroup": "Group",
+      "markerGroup?": "Group",
       "datumSelection": "NodeDataSelection<SceneNodeType, C>",
-      "labelSelection": "LabelDataSelection<Text, C>"
+      "labelSelection": "LabelDataSelection<Text, C>",
+      "markerSelection?": "NodeDataSelection<Marker, C>"
     }
   },
   "PickGroupInclude": {
     "meta": { "isTypeAlias": true },
-    "type": "'mainPath' | 'datumNodes'"
+    "type": "'mainPath' | 'datumNodes' | 'markers'"
   },
+  "SeriesFeature": { "meta": { "isTypeAlias": true }, "type": "'markers'" },
   "SeriesOpts": {
     "meta": {},
     "type": {
       "pickGroupIncludes": "PickGroupInclude[]",
-      "pathsPerSeries": "number"
+      "pathsPerSeries": "number",
+      "features": "SeriesFeature[]"
     }
   },
   "CartesianSeriesMarkerFormat": {

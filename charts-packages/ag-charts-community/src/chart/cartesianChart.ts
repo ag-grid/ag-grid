@@ -6,6 +6,7 @@ import { BBox } from "../scene/bbox";
 import { ClipRect } from "../scene/clipRect";
 import { Navigator } from "./navigator/navigator";
 import { ChartAxis } from "./chartAxis";
+import { Caption } from "../caption";
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
@@ -266,7 +267,7 @@ export class CartesianChart extends Chart {
             visited[position] = (visited[position] ?? 0) + 1;
 
             // for multiple axes in the same direction and position, apply padding at the top of each inner axis (i.e. between axes).
-            const axisPadding = axis.title && axis.title.padding.top || 15;
+            const axisPadding = axis.title ? Caption.PADDING : 15;
 
             const axisLeftRightRange = (axis: ChartAxis<any>) => {
                 if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
