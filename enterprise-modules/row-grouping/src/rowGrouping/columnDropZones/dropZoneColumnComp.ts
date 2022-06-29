@@ -118,9 +118,6 @@ export class DropZoneColumnComp extends Component {
             ].filter(part => !!part).join(''),
         ];
 
-        const deleteAria = translate('ariaDropZoneColumnComponentDescription', 'Press DELETE to remove');
-        ariaInstructions.push(deleteAria);
-
         const isFunctionsReadOnly = this.gridOptionsWrapper.isFunctionsReadOnly()
         if (this.isAggregationZone() && !isFunctionsReadOnly) {
             const aggregationMenuAria = translate('ariaDropZoneColumnValueItemDescription', 'Press ENTER to change the aggregation type');
@@ -128,9 +125,13 @@ export class DropZoneColumnComp extends Component {
         }
 
         if (this.isGroupingZone() && this.column.getColDef().sortable) {
-            const sortProgressAria = translate('ariaDropZoneColumnGroupItemDescription', 'Press ENTER to progress the column sort');
+            const sortProgressAria = translate('ariaDropZoneColumnGroupItemDescription', 'Press ENTER to sort');
             ariaInstructions.push(sortProgressAria);
         }
+
+        const deleteAria = translate('ariaDropZoneColumnComponentDescription', 'Press DELETE to remove');
+        ariaInstructions.push(deleteAria);
+
         _.setAriaLabel(this.getGui(), ariaInstructions.join('. '));
     }
 
