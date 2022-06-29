@@ -127,11 +127,6 @@
                 "title": "Row Object",
                 "url": "/row-object/",
                 "showInCollapsed": true
-              },
-              {
-                "title": "Sizing",
-                "url": "/grid-size/",
-                "showInCollapsed": true
               }
             ]
           },
@@ -217,12 +212,6 @@
             "box-title": "Spanning",
             "url": "/column-spanning/",
             "showInCollapsed": true
-          },
-          {
-            "title": "Column & Cell Styles",
-            "box-title": "Cells",
-            "url": "/cell-styles/",
-            "showInCollapsed": true
           }
         ]
       },
@@ -252,12 +241,6 @@
             "title": "Row Pinning",
             "box-title": "Pinning",
             "url": "/row-pinning/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Row Styles",
-            "box-title": "Styles",
-            "url": "/row-styles/",
             "showInCollapsed": true
           },
           {
@@ -524,6 +507,27 @@
                 "showInCollapsed": false
               }
             ]
+          },
+          {
+            "title": "Styling Rows",
+            "url": "/row-styles/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Styling Cells",
+            "box-title": "Cells",
+            "url": "/cell-styles/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Grid Size",
+            "url": "/grid-size/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Printing",
+            "url": "/printing/",
+            "showInCollapsed": true
           }
         ]
       },
@@ -1288,11 +1292,6 @@
           {
             "title": "Drag & Drop",
             "url": "/drag-and-drop/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Printing",
-            "url": "/printing/",
             "showInCollapsed": true
           },
           {
