@@ -511,7 +511,7 @@
         "valueB": "any",
         "nodeA": "RowNode<TData>",
         "nodeB": "RowNode<TData>",
-        "isInverted": "boolean"
+        "isDescending": "boolean"
       },
       "returnType": "number"
     }

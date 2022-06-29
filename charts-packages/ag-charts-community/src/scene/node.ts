@@ -500,7 +500,7 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
     protected dirtyZIndex: boolean = false;
 
     @SceneChangeDetection({
-        redraw: RedrawType.MINOR,
+        redraw: RedrawType.TRIVIAL,
         changeCb: (o) => {
             if (o.parent) {
                 o.parent.dirtyZIndex = true;

@@ -208,6 +208,8 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
 
     let header = null;
 
+    const pattern = new RegExp(config.namePattern || ".*");
+
     if (!config.isSubset) {
         const headerLevel = config.headerLevel || breadcrumbKeys.length + 1;
         const HeaderTag = `h${headerLevel}`;
@@ -241,6 +243,10 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
             return;
         }
         processed.add(name);
+
+        if (!pattern.test(name)) {
+            return;
+        }
 
         const length = getLongestNameLength(name);
         if (leftColumnWidth < length) {

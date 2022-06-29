@@ -137,7 +137,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     lineDashOffset: number = 0;
 
     constructor() {
-        super({ pathsPerSeries: 2, pickGroupIncludes: ['datumNodes'] });
+        super({ pathsPerSeries: 2, pickGroupIncludes: ['markers'], features: ['markers'] });
 
         const { marker, label } = this;
 
@@ -653,11 +653,11 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         }
     }
 
-    protected updateDatumSelection(opts: {
+    protected updateMarkerSelection(opts: {
         nodeData: MarkerSelectionDatum[];
-        datumSelection: Selection<Marker, Group, MarkerSelectionDatum, any>;
+        markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any>;
     }) {
-        let { nodeData, datumSelection } = opts;
+        let { nodeData, markerSelection } = opts;
         const {
             marker: { enabled, shape },
         } = this;
@@ -666,23 +666,23 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const MarkerShape = getMarker(shape);
 
         if (this.marker.isDirty()) {
-            datumSelection = datumSelection.setData([]);
-            datumSelection.exit.remove();
+            markerSelection = markerSelection.setData([]);
+            markerSelection.exit.remove();
         }
 
-        const updateSelection = datumSelection.setData(data);
-        updateSelection.exit.remove();
-        const enterMarkers = updateSelection.enter.append(MarkerShape).each((marker) => {
+        const updateMarkerSelection = markerSelection.setData(data);
+        updateMarkerSelection.exit.remove();
+        const enterMarkers = updateMarkerSelection.enter.append(MarkerShape).each((marker) => {
             marker.tag = AreaSeriesTag.Marker;
         });
-        return updateSelection.merge(enterMarkers);
+        return updateMarkerSelection.merge(enterMarkers);
     }
 
-    protected updateDatumNodes(opts: {
-        datumSelection: Selection<Marker, Group, MarkerSelectionDatum, any>;
+    protected updateMarkerNodes(opts: {
+        markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any>;
         isHighlight: boolean;
     }) {
-        const { datumSelection, isHighlight: isDatumHighlighted } = opts;
+        const { markerSelection, isHighlight: isDatumHighlighted } = opts;
         const {
             xKey,
             marker,
@@ -705,7 +705,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const { size, formatter } = marker;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
 
-        datumSelection.each((node, datum) => {
+        markerSelection.each((node, datum) => {
             const yKeyIndex = yKeys.indexOf(datum.yKey);
             const fill =
                 isDatumHighlighted && highlightedFill !== undefined

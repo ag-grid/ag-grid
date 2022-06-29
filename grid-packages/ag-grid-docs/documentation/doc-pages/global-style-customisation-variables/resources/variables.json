@@ -130,7 +130,7 @@
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-header-cell-hover-background-color": {
-      "description": "Rollover colour for header cells",
+      "description": "Rollover colour for header cells. If you set this variable and have enabled column reordering by dragging, you may want to set `--ag-header-cell-moving-background-color` to ensure that the rollover colour remains in place during dragging.",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-header-cell-moving-background-color": {
@@ -207,38 +207,6 @@
     },
     "--ag-row-border-color": {
       "description": "Colour of the border between grid rows, or `transparent` to display no border",
-      "type": "CSS color (e.g. `red` or `#fff`)"
-    },
-    "--ag-header-column-separator-display": {
-      "description": "Whether to display the header column separator - a vertical line that displays between every header cell",
-      "type": "CSS display value - `block` to show or `none` to hide"
-    },
-    "--ag-header-column-separator-height": {
-      "description": "Height of the header column separator. Percentage values are relative to the header height.",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
-    },
-    "--ag-header-column-separator-width": {
-      "description": "Width of the header column separator",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
-    },
-    "--ag-header-column-separator-color": {
-      "description": "Colour of the header column separator",
-      "type": "CSS color (e.g. `red` or `#fff`)"
-    },
-    "--ag-header-column-resize-handle-display": {
-      "description": "Whether to show the header column resize handle - a vertical line that displays only between resizeable header columns, indicating where to drag in order to resize the column.",
-      "type": "CSS display value - `block` to show or `none` to hide"
-    },
-    "--ag-header-column-resize-handle-height": {
-      "description": "Height of the header resize handle. Percentage values are relative to the header height.",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
-    },
-    "--ag-header-column-resize-handle-width": {
-      "description": "Width of the header resize handle.",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
-    },
-    "--ag-header-column-resize-handle-color": {
-      "description": "Colour of the header resize handle",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-invalid-color": {
@@ -368,6 +336,38 @@
     "--ag-list-item-height": {
       "description": "Height of items in lists (example of lists are dropdown select inputs and column menu set filters)",
       "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-header-column-separator-display": {
+      "description": "Whether to display the header column separator - a vertical line that displays between every header cell",
+      "type": "CSS display value - `block` to show or `none` to hide"
+    },
+    "--ag-header-column-separator-height": {
+      "description": "Height of the header column separator. Percentage values are relative to the header height.",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-header-column-separator-width": {
+      "description": "Width of the header column separator",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-header-column-separator-color": {
+      "description": "Colour of the header column separator",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-header-column-resize-handle-display": {
+      "description": "Whether to show the header column resize handle - a vertical line that displays only between resizeable header columns, indicating where to drag in order to resize the column.",
+      "type": "CSS display value - `block` to show or `none` to hide"
+    },
+    "--ag-header-column-resize-handle-height": {
+      "description": "Height of the header resize handle. Percentage values are relative to the header height.",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-header-column-resize-handle-width": {
+      "description": "Width of the header resize handle.",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-header-column-resize-handle-color": {
+      "description": "Colour of the header resize handle",
+      "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-column-select-indent-size": {
       "description": "How much to indent child columns in the column tool panel relative to their parent",

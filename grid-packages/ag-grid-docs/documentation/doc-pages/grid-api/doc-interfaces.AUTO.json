@@ -1281,7 +1281,7 @@
           "valueB": "any",
           "nodeA": "RowNode<TData>",
           "nodeB": "RowNode<TData>",
-          "isInverted": "boolean"
+          "isDescending": "boolean"
         },
         "returnType": "number",
         "optional": true
@@ -14023,7 +14023,7 @@
   "ICellEditorParams": {
     "value": {
       "description": "/** Current value of the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "key": {
       "description": "/** @deprecated Use `eventKey`.\n */",
@@ -14097,7 +14097,7 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -16330,7 +16330,7 @@
     },
     "value": {
       "description": "/** Current value of the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "key": {
       "description": "/** @deprecated Use `eventKey`.\n */",
@@ -16404,7 +16404,7 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -19019,7 +19019,7 @@
     "cols": { "type": { "returnType": "number", "optional": false } },
     "value": {
       "description": "/** Current value of the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "key": {
       "description": "/** @deprecated Use `eventKey`.\n */",
@@ -19093,7 +19093,7 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -19111,7 +19111,7 @@
     "values": { "type": { "returnType": "any[]", "optional": false } },
     "value": {
       "description": "/** Current value of the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "key": {
       "description": "/** @deprecated Use `eventKey`.\n */",
@@ -19185,7 +19185,7 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -19203,7 +19203,7 @@
     "useFormatter": { "type": { "returnType": "boolean", "optional": false } },
     "value": {
       "description": "/** Current value of the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "key": {
       "description": "/** @deprecated Use `eventKey`.\n */",
@@ -19277,7 +19277,7 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -21838,7 +21838,7 @@
           "valueB": "any",
           "nodeA": "RowNode<TData>",
           "nodeB": "RowNode<TData>",
-          "isInverted": "boolean"
+          "isDescending": "boolean"
         },
         "returnType": "number",
         "optional": true
