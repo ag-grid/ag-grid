@@ -1281,7 +1281,7 @@
           "valueB": "any",
           "nodeA": "RowNode<TData>",
           "nodeB": "RowNode<TData>",
-          "isInverted": "boolean"
+          "isDescending": "boolean"
         },
         "returnType": "number",
         "optional": true
@@ -21838,7 +21838,7 @@
           "valueB": "any",
           "nodeA": "RowNode<TData>",
           "nodeB": "RowNode<TData>",
-          "isInverted": "boolean"
+          "isDescending": "boolean"
         },
         "returnType": "number",
         "optional": true
