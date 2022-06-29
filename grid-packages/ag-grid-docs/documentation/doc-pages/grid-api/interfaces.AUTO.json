@@ -12601,13 +12601,13 @@
     "type": { "areEqual(a: any, b: any)": "boolean" }
   },
   "SharedProps": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "gridOptions?": "GridOptions",
+      "gridOptions?": "GridOptions<TData>",
       "modules?": "Module[]",
       "containerStyle?": "any",
       "className?": "string",
-      "setGridApi?": "(gridApi: GridApi, columnApi: ColumnApi) => void",
+      "setGridApi?": "(gridApi: GridApi<TData>, columnApi: ColumnApi) => void",
       "componentWrappingElement?": "string",
       "maxComponentCreationTimeMs?": "number",
       "statusBar?": "{ statusPanels: StatusPanelDef[]; }",
@@ -13371,13 +13371,13 @@
     }
   },
   "AgReactUiProps": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "gridOptions?": "GridOptions",
+      "gridOptions?": "GridOptions<TData>",
       "modules?": "Module[]",
       "containerStyle?": "any",
       "className?": "string",
-      "setGridApi?": "(gridApi: GridApi, columnApi: ColumnApi) => void",
+      "setGridApi?": "(gridApi: GridApi<TData>, columnApi: ColumnApi) => void",
       "componentWrappingElement?": "string",
       "maxComponentCreationTimeMs?": "number",
       "statusBar?": "{ statusPanels: StatusPanelDef[]; }",
@@ -14141,17 +14141,17 @@
     }
   },
   "AgGridReactProps": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "children?": "any",
       "rowDataChangeDetectionStrategy?": "ChangeDetectionStrategyType",
       "disableStaticMarkup?": "boolean",
       "legacyComponentRendering?": "boolean",
-      "gridOptions?": "GridOptions",
+      "gridOptions?": "GridOptions<TData>",
       "modules?": "Module[]",
       "containerStyle?": "any",
       "className?": "string",
-      "setGridApi?": "(gridApi: GridApi, columnApi: ColumnApi) => void",
+      "setGridApi?": "(gridApi: GridApi<TData>, columnApi: ColumnApi) => void",
       "componentWrappingElement?": "string",
       "maxComponentCreationTimeMs?": "number",
       "statusBar?": "{ statusPanels: StatusPanelDef[]; }",

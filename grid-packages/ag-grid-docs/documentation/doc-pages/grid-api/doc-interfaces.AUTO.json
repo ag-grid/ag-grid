@@ -22102,14 +22102,14 @@
   },
   "SharedProps": {
     "gridOptions": {
-      "type": { "returnType": "GridOptions", "optional": true }
+      "type": { "returnType": "GridOptions<TData>", "optional": true }
     },
     "modules": { "type": { "returnType": "Module[]", "optional": true } },
     "containerStyle": { "type": { "returnType": "any", "optional": true } },
     "className": { "type": { "returnType": "string", "optional": true } },
     "setGridApi": {
       "type": {
-        "arguments": { "gridApi": "GridApi", "columnApi": "ColumnApi" },
+        "arguments": { "gridApi": "GridApi<TData>", "columnApi": "ColumnApi" },
         "returnType": "void",
         "optional": true
       }
@@ -22120,6 +22120,7 @@
     "maxComponentCreationTimeMs": {
       "type": { "returnType": "number", "optional": true }
     },
+    "meta": { "typeParams": ["TData = any"] },
     "statusBar": {
       "description": "/** Specifies the status bar components to use in the status bar. */",
       "type": {
@@ -24862,19 +24863,19 @@
     "columnApi": {
       "description": "/** The Column Api for interacting with the grid columns.\n * Set by the grid on init, set to null on destroy. */",
       "type": { "returnType": "ColumnApi | null", "optional": true }
-    },
-    "meta": { "typeParams": ["TData = any"] }
+    }
   },
   "AgReactUiProps": {
+    "meta": { "typeParams": ["TData = any"] },
     "gridOptions": {
-      "type": { "returnType": "GridOptions", "optional": true }
+      "type": { "returnType": "GridOptions<TData>", "optional": true }
     },
     "modules": { "type": { "returnType": "Module[]", "optional": true } },
     "containerStyle": { "type": { "returnType": "any", "optional": true } },
     "className": { "type": { "returnType": "string", "optional": true } },
     "setGridApi": {
       "type": {
-        "arguments": { "gridApi": "GridApi", "columnApi": "ColumnApi" },
+        "arguments": { "gridApi": "GridApi<TData>", "columnApi": "ColumnApi" },
         "returnType": "void",
         "optional": true
       }
@@ -27627,8 +27628,7 @@
     "columnApi": {
       "description": "/** The Column Api for interacting with the grid columns.\n * Set by the grid on init, set to null on destroy. */",
       "type": { "returnType": "ColumnApi | null", "optional": true }
-    },
-    "meta": { "typeParams": ["TData = any"] }
+    }
   },
   "AgGridReactProps": {
     "children": { "type": { "returnType": "any", "optional": true } },
@@ -27641,15 +27641,16 @@
     "legacyComponentRendering": {
       "type": { "returnType": "boolean", "optional": true }
     },
+    "meta": { "typeParams": ["TData = any"] },
     "gridOptions": {
-      "type": { "returnType": "GridOptions", "optional": true }
+      "type": { "returnType": "GridOptions<TData>", "optional": true }
     },
     "modules": { "type": { "returnType": "Module[]", "optional": true } },
     "containerStyle": { "type": { "returnType": "any", "optional": true } },
     "className": { "type": { "returnType": "string", "optional": true } },
     "setGridApi": {
       "type": {
-        "arguments": { "gridApi": "GridApi", "columnApi": "ColumnApi" },
+        "arguments": { "gridApi": "GridApi<TData>", "columnApi": "ColumnApi" },
         "returnType": "void",
         "optional": true
       }
@@ -30402,8 +30403,7 @@
     "columnApi": {
       "description": "/** The Column Api for interacting with the grid columns.\n * Set by the grid on init, set to null on destroy. */",
       "type": { "returnType": "ColumnApi | null", "optional": true }
-    },
-    "meta": { "typeParams": ["TData = any"] }
+    }
   },
   "AgReactComponent": {
     "getReactContainerStyle": {
