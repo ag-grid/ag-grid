@@ -105,7 +105,6 @@ export interface ExcelRow {
     hidden?: boolean;
     height?: number;
     outlineLevel?: number;
-    s?: number;
     cells: ExcelCell[];
 }
 

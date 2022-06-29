@@ -40,7 +40,7 @@ const shouldDisplayCell = (cell: ExcelCell) => cell.data?.value !== '' || cell.s
 
 const rowFactory: ExcelOOXMLTemplate = {
     getTemplate(config: ExcelRow, idx: number, currentSheet: number) {
-        const { index, collapsed, hidden, height, s, outlineLevel, cells = [] } = config;
+        const { index, collapsed, hidden, height, outlineLevel, cells = [] } = config;
         addEmptyCells(cells, idx);
         const children = cells.filter(shouldDisplayCell).map((cell, idx) => cellFactory.getTemplate(cell, idx, currentSheet));
 
@@ -53,8 +53,6 @@ const rowFactory: ExcelOOXMLTemplate = {
                     hidden: hidden ? '1' : '0',
                     ht: height,
                     customHeight: height != null ? '1' : '0',
-                    s,
-                    customFormat: s != null ? '1' : '0',
                     spans: '1:1',
                     outlineLevel: outlineLevel || undefined
                 }

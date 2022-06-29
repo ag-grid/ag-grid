@@ -87,12 +87,12 @@ export class ChartOptionsService extends BeanStub {
 
     public setLabelRotation(axisType: 'xAxis' | 'yAxis', value: number) {
         // do not update axis options when the default category is selected
-        const chartAxis = this.getAxis(axisType);
-        if (chartAxis) {
-            this.updateAxisOptions(chartAxis, 'label.rotation', value);
-            this.updateChart();
-            this.raiseChartOptionsChangedEvent();
-        }
+        // const chartAxis = this.getAxis(axisType);
+        // if (chartAxis) {
+        //     this.updateAxisOptions(chartAxis, 'label.rotation', value);
+        //     this.updateChart();
+        //     this.raiseChartOptionsChangedEvent();
+        // }
     }
 
     public getSeriesOption<T = string>(expression: string, seriesType: ChartSeriesType): T {

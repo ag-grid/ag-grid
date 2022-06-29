@@ -258,7 +258,7 @@ $-ag-included-themes: () !default;
 // }
 //
 // Note how the .ag-ltr class is inserted between the theme class and the rest of the selector
-@mixin ag-theme-rtl($rules, $color-param: null) {
+@mixin ag-theme-rtl($rules, $color-param: null, $color-param-important: false) {
     @if length(nth(&, 1)) < 2 {
         @error "ag-theme-rtl() can't be used at the top level of a SCSS file, only nested in a selector.";
     }
@@ -267,7 +267,7 @@ $-ag-included-themes: () !default;
             @each $property, $value in $rules {
                 #{$property}: $value;
                 @if $color-param {
-                    @include ag-color-property(#{$property}-color, $color-param);
+                    @include ag-color-property(#{$property}-color, $color-param, $color-param-important);
                 }
             }
         }
@@ -275,7 +275,7 @@ $-ag-included-themes: () !default;
             @each $property, $value in ag-get-rtl-rules($rules) {
                 #{$property}: $value;
                 @if $color-param {
-                    @include ag-color-property(#{$property}-color, $color-param);
+                    @include ag-color-property(#{$property}-color, $color-param, $color-param-important);
                 }
             }
         }
