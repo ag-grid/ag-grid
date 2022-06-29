@@ -23,13 +23,13 @@
         @error "ag-unthemed-rtl() should not be used in a theme, use ag-theme-rtl() instead.";
     }
     .ag-ltr & {
-        @each $property, $value in $rules {
-            #{$property}: $value;
+        @each $property, $value, $important in $rules {
+            #{$property}: $value $important;
         }
     }
     .ag-rtl & {
-        @each $property, $value in ag-get-rtl-rules($rules) {
-            #{$property}: $value;
+        @each $property, $value, $important in ag-get-rtl-rules($rules) {
+            #{$property}: $value $important;
         }
     }
 }
