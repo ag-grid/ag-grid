@@ -27,16 +27,16 @@ The above code produces these results:
 
 Some of the most important colour variables are listed below:
 
-<api-documentation source='look-and-feel-customisation-variables/resources/variables.json' section='variables' names='["--ag-alpine-active-color", "--ag-balham-active-color", "--ag-material-primary-color", "--ag-material-accent-color", "--ag-foreground-color", "--ag-background-color", "--ag-secondary-foreground-color", "--ag-data-color", "--ag-header-foreground-color", "--ag-header-background-color", "--ag-disabled-foreground-color", "--ag-odd-row-background-color", "--ag-row-hover-color", "--ag-border-color", "--ag-row-border-color"]' config='{"maxLeftColumnWidth": 35, "hideHeader": true}'></api-documentation>
+<api-documentation source='global-style-customisation-variables/resources/variables.json' section='variables' names='["--ag-alpine-active-color", "--ag-balham-active-color", "--ag-material-primary-color", "--ag-material-accent-color", "--ag-foreground-color", "--ag-background-color", "--ag-secondary-foreground-color", "--ag-data-color", "--ag-header-foreground-color", "--ag-header-background-color", "--ag-disabled-foreground-color", "--ag-odd-row-background-color", "--ag-row-hover-color", "--ag-border-color", "--ag-row-border-color"]' config='{"maxLeftColumnWidth": 35, "hideHeader": true}'></api-documentation>
 
-For the full list check the [full variable reference](/look-and-feel-customisation-variables/) - every colour variable is ends with `-color`.
+For the full list check the [full variable reference](/global-style-customisation-variables/) - every colour variable is ends with `-color`.
 
 [[note]]
 | There are a lot of colour variables - the easiest way to find the variable that colours a specific element is often to inspect the element in your browser's developer tools and check the value of its `color` or `background-color` properties.
 
 ## Colour blending, Sass and CSS
 
-The Sass API [Colour Blending](/look-and-feel-customisation-sass/#colour-blending) feature will automatically generate a few default values for colour variables based on the ones that you define. If you're using CSS you may want to set these values yourself for a consistent colour scheme:
+The Sass API [Colour Blending](/global-style-customisation-sass/#colour-blending) feature will automatically generate a few default values for colour variables based on the ones that you define. If you're using CSS you may want to set these values yourself for a consistent colour scheme:
 
 - Setting `--ag-alpine-active-color` in the Sass API will:
     - Set `--ag-selected-row-background-color` to a **10%** opaque version

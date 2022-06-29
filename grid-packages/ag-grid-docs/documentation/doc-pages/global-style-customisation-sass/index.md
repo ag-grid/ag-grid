@@ -2,7 +2,7 @@
 title: "Sass Styling API"
 ---
 
-The Sass Styling API is an optional lightweight wrapper around [Themes](/themes) and [Look & Feel Customisations](/look-and-feel-customisation) that automates the process of importing CSS files and setting CSS variables.
+The Sass Styling API is an optional lightweight wrapper around [Themes](/themes) and [Global Style Customisations](/global-style-customisation) that automates the process of importing CSS files and setting CSS variables.
 
 The Sass API provides a few benefits on top of the CSS API:
 
@@ -77,9 +77,9 @@ The Sass Styling API is a wrapper around the CSS variable API for design customi
 );
 ```
 
-For information about what CSS variables and rules to use to control grid features, see the [feature customisation reference](/look-and-feel-customisation-features/) or [full list of CSS variables](/look-and-feel-customisation-variables/)
+For information about what CSS variables and rules to use to control grid features, see the [feature customisation reference](/global-style-customisation-features/) or [full list of CSS variables](/global-style-customisation-variables/)
 
-The Sass API provides a little bit of sugar to make it easier to read and remember some parameter values and assists migration from the [Legacy Sass API](/look-and-feel-customisation-sass-legacy/).
+The Sass API provides a little bit of sugar to make it easier to read and remember some parameter values and assists migration from the [Legacy Sass API](/global-style-customisation-sass-legacy/).
 
 - The `--ag-` prefix is optional.
 - You can pass `true` or `false` to any `borders-*` parameter to enable or disable the border (`true` is converted to `solid 1px` and `false` to `none`)
@@ -180,7 +180,7 @@ If each theme needs a different configuration, `themes` can be a map of theme na
 
 ## Suppressing native widget styles
 
-Setting `suppress-native-widget-styling` to `true` will supporess native widget styling, see [Customising Inputs & Widgets](/look-and-feel-customisation-widgets/) for more information.
+Setting `suppress-native-widget-styling` to `true` will suppress native widget styling, see [Customising Inputs & Widgets](/global-style-customisation-widgets/) for more information.
 
 ## Extending a provided theme
 
@@ -199,7 +199,7 @@ To do this, set the `theme` parameter to your custom theme and the `extend-theme
 
 To use this theme, add the `ag-theme-acmecorp` class to your grid div.
 
-Theme extension is only available in the Sass API. The alternative method of creating a [reusable package of design customisations](/look-and-feel-customisation#creating-a-reusable-package-of-design-customisations) works in both Sass and pure CSS projects.
+Theme extension is only available in the Sass API. The alternative method of creating a [reusable package of design customisations](/global-style-customisation#creating-a-reusable-package-of-design-customisations) works in both Sass and pure CSS projects.
 
 Theme extension works with multiple themes too, set the `extend-theme` parameter at the theme level:
 

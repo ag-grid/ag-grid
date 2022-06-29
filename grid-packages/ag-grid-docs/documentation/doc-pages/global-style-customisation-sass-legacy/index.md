@@ -2,7 +2,7 @@
 title: "Legacy Sass API"
 ---
 
-In v28, the [Sass Styling API](/look-and-feel-customisation-sass) was introduced as the preferred way for Sass users to control themes and design customisations. The Legacy Sass API is deprecated and will be removed from the Grid in a future major release.
+In v28, the [Sass Styling API](/global-style-customisation-sass) was introduced as the preferred way for Sass users to control themes and design customisations. The Legacy Sass API is deprecated and will be removed from the Grid in a future major release.
 
 [[note]]
 | If you a) created an app on v27 or earlier, b) have not updated your import paths, and c) are using Sass to modify the provided themes; then you will be using the Legacy Sass API even if you upgraded your ag-Grid dependency to v28. You can recognise Legacy Sass API import paths because they will have `/dist/` or `/src/` in them, e.g. `@import "ag-grid-community/src/styles/ag-grid.scss"`.

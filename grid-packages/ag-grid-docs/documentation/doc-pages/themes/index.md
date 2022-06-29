@@ -2,7 +2,7 @@
 title: "Themes"
 ---
 
-The grid is styled with CSS, and a theme is simply a CSS class that applies styles to the grid. Most users choose a provided theme and then [customise](/look-and-feel-customisation/) it to meet their needs. It is also possible to [create your own themes](#creating-your-own-theme).
+The grid is styled with CSS, and a theme is simply a CSS class that applies styles to the grid. Most users choose a provided theme and then [customise](/global-style-customisation/) it to meet their needs. It is also possible to [create your own themes](#creating-your-own-theme).
 
 ## Provided Themes
 
@@ -36,7 +36,7 @@ In order for the above code to work, the correct stylesheets must be loaded in t
 [[note]]
 | The correct files to load are located in `ag-grid-community/styles` or `@ag-grid-community/styles` if you're using [modules](/modules/).
 |
-| This path has changed in v28, and the old files are still there as part of the [Legacy Sass API](/look-and-feel-customisation-sass-legacy/).
+| This path has changed in v28, and the old files are still there as part of the [Legacy Sass API](/global-style-customisation-sass-legacy/).
 |
 | Double-check that you are importing files from the new paths. If you have `/src/` or `/dist/` in your path then you're using the old paths.
 
@@ -65,7 +65,7 @@ You can copy, either manually or as part of your app's build, the required CSS f
 
 ### Sass Styling API
 
-If you're using the [Sass Styling API](/look-and-feel-customisation-sass) then the right CSS files will be automatically included for your chosen theme. For projects that are already using Sass this is the recommended approach.
+If you're using the [Sass Styling API](/global-style-customisation-sass) then the right CSS files will be automatically included for your chosen theme. For projects that are already using Sass this is the recommended approach.
 
 ### CDN
 
@@ -95,7 +95,7 @@ The Material theme requires the Roboto font, and this is not bundled in the mate
 
 ## Creating your own theme
 
-The majority of users select a provided theme and [make customisations using CSS](/look-and-feel-customisation/). If your chosen provided theme has elements that you don't want, you will need to add CSS rules to remove them. If your desired look and feel is very different from the provided theme, at some point it becomes easier to start from scratch. To do this, you can define your own theme.
+The majority of users select a provided theme and [make customisations using CSS](/global-style-customisation/). If your chosen provided theme has elements that you don't want, you will need to add CSS rules to remove them. If your desired look and feel is very different from the provided theme, at some point it becomes easier to start from scratch. To do this, you can define your own theme.
 
 A theme is simply a CSS class name matching the pattern `ag-theme-*`, along with CSS rules that target this class name.
 
@@ -105,7 +105,7 @@ Ensure that `ag-grid.css` is loaded, choose a theme name and apply it to the gri
 <div id="myGrid" class="ag-theme-mycustomtheme"></div>
 ```
 
-That's it! You've created a theme. You haven't added any styles to it so what you will see is a nearly blank slate - basic customisable borders and padding but no opinionated design elements. You can then [add customisations using CSS](/look-and-feel-customisation/):
+That's it! You've created a theme. You haven't added any styles to it so what you will see is a nearly blank slate - basic customisable borders and padding but no opinionated design elements. You can then [add customisations using CSS](/global-style-customisation/):
 
 ```css
 .ag-theme-mycustomtheme {

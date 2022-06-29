@@ -41,4 +41,4 @@ Range selections can be created by clicking and dragging on the grid. Multiple o
 
 ### Range Selection CSS Variables
 
-<api-documentation source='look-and-feel-customisation-variables/resources/variables.json' section='variables' names='["--ag-range-selection-border-color", "--ag-range-selection-border-style", "--ag-range-selection-background-color", "--ag-range-selection-background-color-2", "--ag-range-selection-background-color-3", "--ag-range-selection-background-color-4", "--ag-range-selection-highlight-color"]' config='{"maxLeftColumnWidth": 35, "hideHeader": true}'></api-documentation>
+<api-documentation source='global-style-customisation-variables/resources/variables.json' section='variables' names='["--ag-range-selection-border-color", "--ag-range-selection-border-style", "--ag-range-selection-background-color", "--ag-range-selection-background-color-2", "--ag-range-selection-background-color-3", "--ag-range-selection-background-color-4", "--ag-range-selection-highlight-color"]' config='{"maxLeftColumnWidth": 35, "hideHeader": true}'></api-documentation>

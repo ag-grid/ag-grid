@@ -2,19 +2,22 @@
 title: "Using CSS"
 ---
 
-The grid Look & Feel can be customised using CSS Variables and regular CSS Rules.
+This page contains information for troubleshooting and advanced use of CSS
 
-For information about what CSS variables and rules to use to control grid features, see the [feature customisation reference](/look-and-feel-customisation-features/) or [full list of CSS variables](/look-and-feel-customisation-variables/)
-
-### Setting CSS Variables
-
-CSS variables should be set using a CSS selector that targets the theme class:
+As described in [Customising Global Styles](/global-style-customisation/), you can set CSS variables and write CSS rules that target the grid's CSS class names:
 
 ```css
 .ag-theme-alpine {
-    --ag-foreground-color: blue;
+    --ag-background-color: #ddd;
+}
+.ag-theme-alpine .ag-header-cell-label {
+    font-style: italic;
 }
 ```
+
+### Setting CSS Variables
+
+CSS variables should be set using a CSS selector that targets the theme class.
 
 Themes define their own default values for many variables. So that your values override the defaults, ensure that:
 
@@ -55,20 +58,18 @@ This is implemented by setting default values for variables that reference other
 In this example, if you provide a value for `--ag-grid-size` of 10px then `--ag-cell-horizontal-padding` will default to 30px and --ag-header-height to 10px. However it is still possible to override these defaults with your own values.
 
 [[note]]
-| The Sass Styling API additionally implements [Colour Blending](/look-and-feel-customisation-sass/#colour-blending), where for example if you set `range-selection-border-color` to red then `range-selection-background-color` will automatically default to a semi-transparent red. This is not possible in pure CSS, so it's necessary to set both `--ag-range-selection-border-color` and `--ag-range-selection-background-color`. See [Theme Colour Variables](#theme-colour-variables) for instructions on how to manually recreate this in CSS.
+| The Sass Styling API additionally implements [Colour Blending](/global-style-customisation-sass/#colour-blending), where for example if you set `range-selection-border-color` to red then `range-selection-background-color` will automatically default to a semi-transparent red. This is not possible in pure CSS, so it's necessary to set both `--ag-range-selection-border-color` and `--ag-range-selection-background-color`. See [Theme Colour Variables](#theme-colour-variables) for instructions on how to manually recreate this in CSS.
 
 ## Customising Themes using CSS Rules
 
-Some design effects can't be achieved through CSS variables alone. For example, there is no variable to set the `font-style` on header cells. If you want your column headers to be italic, use regular CSS:
+Some design effects can't be achieved through CSS variables alone. For example, there is no variable to set the `font-style` on header cells. If you want your column headers to be italic, use regular CSS.
+
+It is important to include the name of the theme in the rule. Without the theme name, your styles will not override the theme's built-in styles due to CSS selector specificity rules:
 
 ```css
 .ag-theme-alpine .ag-header-cell-label {
     font-style: italic;
 }
-/* It is important to include the name of the theme in the rule:
-   `.ag-theme-alpine .ag-header-cell-label { ... } `. Without the
-   theme name, your styles will not override the theme's built-in
-   styles due to CSS selector specificity rules. */
 ```
 
 The best way to find the right class name to use in a CSS rule is using the browser's developer tools. You will notice that components often have multiple class names, some more general than others. For example, the [row grouping panel](/tool-panel-columns/#example-simple) is a component onto which you can drag columns to group them. The internal name for this is the "column drop" component, and there are two kinds - a horizontal one at the top of the header and a vertical one in the columns tool panel. You can use the class name `ag-column-drop` to target either kind, or `ag-column-drop-vertical` / `ag-column-drop-horizontal` to target one only.

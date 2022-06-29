@@ -416,63 +416,52 @@
     "group": "Core Features",
     "items": [
       {
-        "title": "Look & Feel",
+        "title": "Layout & Styling",
         "icon": "icon-style",
         "items": [
           {
-            "title": "Overview",
-            "url": "/look-and-feel/",
-            "showInCollapsed": true,
-            "matrixExclude": true
-          },
-          {
-            "title": "Themes",
-            "url": "/themes/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Customisation",
-            "url": "/look-and-feel-customisation/",
+            "title": "Global Styling",
+            "url": "/global-style/",
             "showInCollapsed": true,
             "items": [
               {
-                "title": "CSS",
-                "url": "/look-and-feel-customisation-css/",
-                "showInCollapsed": false
+                "title": "Themes",
+                "url": "/themes/",
+                "showInCollapsed": true
               },
               {
-                "title": "Sass",
-                "url": "/look-and-feel-customisation-sass/",
-                "showInCollapsed": false
-              },
-              {
-                "title": "Features",
-                "url": "/look-and-feel-customisation-features/",
-                "showInCollapsed": false,
+                "title": "Customisation",
+                "url": "/global-style-customisation/",
+                "showInCollapsed": true,
                 "items": [
                   {
+                    "title": "Variable Reference",
+                    "url": "/global-style-customisation-variables/",
+                    "showInCollapsed": false
+                  },
+                  {
                     "title": "Colours & Fonts",
-                    "url": "/look-and-feel-customisation-colours/",
+                    "url": "/global-style-customisation-colours/",
                     "showInCollapsed": false
                   },
                   {
                     "title": "Compactness & Row Height",
-                    "url": "/look-and-feel-customisation-compactness/",
+                    "url": "/global-style-customisation-compactness/",
                     "showInCollapsed": false
                   },
                   {
                     "title": "Selections",
-                    "url": "/look-and-feel-customisation-selections/",
+                    "url": "/global-style-customisation-selections/",
                     "showInCollapsed": false
                   },
                   {
                     "title": "Headers",
-                    "url": "/look-and-feel-customisation-headers/",
+                    "url": "/global-style-customisation-headers/",
                     "showInCollapsed": false
                   },
                   {
                     "title": "Borders",
-                    "url": "/look-and-feel-customisation-borders/",
+                    "url": "/global-style-customisation-borders/",
                     "showInCollapsed": false
                   },
                   {
@@ -482,51 +471,56 @@
                   },
                   {
                     "title": "Tool Panels",
-                    "url": "/look-and-feel-customisation-tool-panels/",
+                    "url": "/global-style-customisation-tool-panels/",
                     "showInCollapsed": false
                   },
                   {
                     "title": "Charts",
-                    "url": "/look-and-feel-customisation-charts/",
+                    "url": "/global-style-customisation-charts/",
                     "showInCollapsed": false
                   },
                   {
                     "title": "Inputs & Widgets",
-                    "url": "/look-and-feel-customisation-widgets/",
+                    "url": "/global-style-customisation-widgets/",
                     "showInCollapsed": false
                   },
                   {
                     "title": "Tabs",
-                    "url": "/look-and-feel-customisation-tabs/",
+                    "url": "/global-style-customisation-tabs/",
                     "showInCollapsed": false
                   },
                   {
                     "title": "Menus & Popups",
-                    "url": "/look-and-feel-customisation-popups/",
+                    "url": "/global-style-customisation-popups/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Advanced CSS",
+                    "url": "/global-style-customisation-css/",
                     "showInCollapsed": false
                   }
                 ]
               },
               {
-                "title": "Variable Reference",
-                "url": "/look-and-feel-customisation-variables/",
+                "title": "Sass",
+                "url": "/global-style-customisation-sass/",
                 "showInCollapsed": false
               }
             ]
           },
           {
             "title": "Upgrading to v28",
-            "url": "/look-and-feel-upgrading-to-v28/",
+            "url": "/global-style-upgrading-to-v28/",
             "showInCollapsed": true,
             "items": [
               {
                 "title": "CSS",
-                "url": "/look-and-feel-upgrading-to-v28-css/",
+                "url": "/global-style-upgrading-to-v28-css/",
                 "showInCollapsed": false
               },
               {
                 "title": "Sass",
-                "url": "/look-and-feel-upgrading-to-v28-sass/",
+                "url": "/global-style-upgrading-to-v28-sass/",
                 "showInCollapsed": false
               }
             ]

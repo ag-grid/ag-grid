@@ -102,7 +102,7 @@
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-range-selection-background-color-4": {
-      "description": "Background-color when 4 selected ranges overlap. Hint: for a realistic appearance of multiple semi-transparent colours overlaying, set the opacity to 1-((1-X)^4) where X is the opacity of --ag-range-selection-background-color",
+      "description": "Background-color when 4 or more selected ranges overlap. Hint: for a realistic appearance of multiple semi-transparent colours overlaying, set the opacity to 1-((1-X)^4) where X is the opacity of --ag-range-selection-background-color",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-range-selection-highlight-color": {
