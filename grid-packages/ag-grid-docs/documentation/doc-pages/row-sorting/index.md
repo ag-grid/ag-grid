@@ -48,12 +48,12 @@ const gridOptions = {
         {
             field: 'age',
             // simple number comparator
-            comparator: (valueA, valueB, nodeA, nodeB, isInverted) => valueA - valueB
+            comparator: (valueA, valueB, nodeA, nodeB, isDescending) => valueA - valueB
         },
         {
             field: 'name',
             // simple string comparator
-            comparator: (valueA, valueB, nodeA, nodeB, isInverted) => {
+            comparator: (valueA, valueB, nodeA, nodeB, isDescending) => {
                 if (valueA == valueB) return 0;
                 return (valueA > valueB) ? 1 : -1;
             }
@@ -66,7 +66,7 @@ The parameters are as follows:
 
 - `valueA, valueB`: The values in the cells to be compared. Typically sorts are done on these values only.
 - `nodeA, nodeB`: The [Row Nodes](/row-object/) for the rows getting sorted. These can be used if more information, such as data from other columns, are needed for the comparison.
-- `isInverted`: `true` for Ascending, `false` for Descending.
+- `isDescending`: `true` for Descending, `false` for Ascending.
 
 
 ### Custom Sorting Example
@@ -88,7 +88,7 @@ When [Row Grouping](/grouping/) it is possible to override the sort order of the
 var gridOptions = {
     autoGroupColumnDef: {
         field: 'athlete',
-        comparator: function(valueA, valueB, nodeA, nodeB, isInverted) {
+        comparator: function(valueA, valueB, nodeA, nodeB, isDescending) {
             return (valueA == valueB) ? 0 : (valueA > valueB) ? 1 : -1;
         },
     }
