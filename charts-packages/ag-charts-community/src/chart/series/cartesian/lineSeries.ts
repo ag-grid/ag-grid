@@ -82,7 +82,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
     tooltip: LineSeriesTooltip = new LineSeriesTooltip();
 
     constructor() {
-        super({ pickGroupIncludes: ['datumNodes'] });
+        super({ pickGroupIncludes: ['markers'], features: ['markers'] });
 
         const { marker, label } = this;
 
@@ -292,11 +292,11 @@ export class LineSeries extends CartesianSeries<LineContext> {
         lineNode.lineDashOffset = this.lineDashOffset;
     }
 
-    protected updateDatumSelection(opts: {
+    protected updateMarkerSelection(opts: {
         nodeData: LineNodeDatum[];
-        datumSelection: Selection<Marker, Group, LineNodeDatum, any>;
+        markerSelection: Selection<Marker, Group, LineNodeDatum, any>;
     }): Selection<Marker, Group, LineNodeDatum, any> {
-        let { nodeData, datumSelection } = opts;
+        let { nodeData, markerSelection } = opts;
         const {
             marker: { shape, enabled },
         } = this;
@@ -304,21 +304,21 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const MarkerShape = getMarker(shape);
 
         if (this.marker.isDirty()) {
-            datumSelection = datumSelection.setData([]);
-            datumSelection.exit.remove();
+            markerSelection = markerSelection.setData([]);
+            markerSelection.exit.remove();
         }
 
-        const updateDatumSelection = datumSelection.setData(nodeData);
-        updateDatumSelection.exit.remove();
-        const enterDatumSelection = updateDatumSelection.enter.append(MarkerShape);
-        return updateDatumSelection.merge(enterDatumSelection);
+        const updateMarkerSelection = markerSelection.setData(nodeData);
+        updateMarkerSelection.exit.remove();
+        const enterDatumSelection = updateMarkerSelection.enter.append(MarkerShape);
+        return updateMarkerSelection.merge(enterDatumSelection);
     }
 
-    protected updateDatumNodes(opts: {
-        datumSelection: Selection<Marker, Group, LineNodeDatum, any>;
+    protected updateMarkerNodes(opts: {
+        markerSelection: Selection<Marker, Group, LineNodeDatum, any>;
         isHighlight: boolean;
     }) {
-        const { datumSelection, isHighlight: isDatumHighlighted } = opts;
+        const { markerSelection, isHighlight: isDatumHighlighted } = opts;
         const {
             marker,
             xKey,
@@ -338,7 +338,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const { size, formatter } = marker;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
 
-        datumSelection.each((node, datum) => {
+        markerSelection.each((node, datum) => {
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill;
             const stroke =
                 isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || lineStroke;
