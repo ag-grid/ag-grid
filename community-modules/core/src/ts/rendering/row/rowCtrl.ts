@@ -846,18 +846,18 @@ export class RowCtrl extends BeanStub {
 
         if (this.rowNode.isSelected()) {
             if (multiSelectOnClick) {
-                this.rowNode.setSelectedParams({ newValue: false });
+                this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent });
             } else if (multiSelectKeyPressed) {
                 if (rowDeselectionWithCtrl) {
-                    this.rowNode.setSelectedParams({ newValue: false });
+                    this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent });
                 }
             } else {
                 // selected with no multi key, must make sure anything else is unselected
-                this.rowNode.setSelectedParams({ newValue: true, clearSelection: !shiftKeyPressed, rangeSelect: shiftKeyPressed });
+                this.rowNode.setSelectedParams({ newValue: true, clearSelection: !shiftKeyPressed, rangeSelect: shiftKeyPressed, event: mouseEvent });
             }
         } else {
             const clearSelection = multiSelectOnClick ? false : !multiSelectKeyPressed;
-            this.rowNode.setSelectedParams({ newValue: true, clearSelection: clearSelection, rangeSelect: shiftKeyPressed });
+            this.rowNode.setSelectedParams({ newValue: true, clearSelection: clearSelection, rangeSelect: shiftKeyPressed, event: mouseEvent });
         }
     }
 
