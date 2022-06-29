@@ -60,6 +60,12 @@ export class CrossLine {
     kind?: "line" | "range" = undefined;
     range?: [any, any] = undefined;
     value?: any = undefined;
+    fill?: string = undefined;
+    fillOpacity?: number = undefined;
+    stroke?: string = undefined;
+    strokeWidth?: number = undefined;
+    strokeOpacity?: number = undefined;
+    lineDash?: [] = undefined;
     label: CrossLineLabel = new CrossLineLabel();
 
     scale?: Scale<any, number> = undefined;
@@ -154,9 +160,18 @@ export class CrossLine {
     }
 
     private updateLineNode() {
+        const { crossLineLine, stroke, strokeWidth, lineDash } = this;
+        crossLineLine.stroke = stroke;
+        crossLineLine.strokeWidth = strokeWidth ?? 1;
+        crossLineLine.opacity = this.strokeOpacity ?? 1;
+        crossLineLine.lineDash = lineDash;
     }
 
     private updateRangeNode() {
+        const { crossLineRange, fill, lineDash, fillOpacity } = this;
+        crossLineRange.fill = fill;
+        crossLineRange.opacity = fillOpacity ?? 1;
+        crossLineRange.lineDash = lineDash;
     }
 
     private updateRangePath() {
