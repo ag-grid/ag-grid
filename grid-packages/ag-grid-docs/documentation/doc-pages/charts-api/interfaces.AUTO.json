@@ -2460,19 +2460,23 @@
       "paths": "Path[]",
       "group": "Group",
       "pickGroup": "Group",
+      "markerGroup?": "Group",
       "datumSelection": "NodeDataSelection<SceneNodeType, C>",
-      "labelSelection": "LabelDataSelection<Text, C>"
+      "labelSelection": "LabelDataSelection<Text, C>",
+      "markerSelection?": "NodeDataSelection<Marker, C>"
     }
   },
   "PickGroupInclude": {
     "meta": { "isTypeAlias": true },
-    "type": "'mainPath' | 'datumNodes'"
+    "type": "'mainPath' | 'datumNodes' | 'markers'"
   },
+  "SeriesFeature": { "meta": { "isTypeAlias": true }, "type": "'markers'" },
   "SeriesOpts": {
     "meta": {},
     "type": {
       "pickGroupIncludes": "PickGroupInclude[]",
-      "pathsPerSeries": "number"
+      "pathsPerSeries": "number",
+      "features": "SeriesFeature[]"
     }
   },
   "CartesianSeriesMarkerFormat": {
