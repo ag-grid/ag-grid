@@ -142,7 +142,15 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         return this._data;
     }
 
-    visible = true;
+    protected _visible = true;
+    set visible(value: boolean) {
+        this._visible = value;
+        this.visibleChanged();
+    }
+    get visible() {
+        return this._visible;
+    }
+
     showInLegend = true;
 
     cursor = 'default';
@@ -213,6 +221,10 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     // Indicate that something external changed and we should recalculate nodeData.
     markNodeDataDirty() {
         this.nodeDataRefresh = true;
+    }
+
+    visibleChanged() {
+        // Override point for this.visible change post-processing.
     }
 
     // Produce data joins and update selection's nodes using node data.
