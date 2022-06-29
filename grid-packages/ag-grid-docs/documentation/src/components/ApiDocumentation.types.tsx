@@ -173,6 +173,9 @@ export interface Config {
 
     /** The width of the left column in characters. Names will wrap if there are any longer names. */
     maxLeftColumnWidth: number;
+
+    /** A regular expression limiting the names that should appear */
+    namePattern: string;
 }
 export type SectionProps = {
     framework: string;

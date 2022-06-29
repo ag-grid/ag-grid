@@ -25,11 +25,9 @@ The above code produces these results:
 
 ## Key colour variables
 
-Some of the most important colour variables are listed below:
+Some of the most important colour variables are listed below. For the full list check the [full variable reference](/global-style-customisation-variables/) - every colour variable is ends with `-color`.
 
 <api-documentation source='global-style-customisation-variables/resources/variables.json' section='variables' names='["--ag-alpine-active-color", "--ag-balham-active-color", "--ag-material-primary-color", "--ag-material-accent-color", "--ag-foreground-color", "--ag-background-color", "--ag-secondary-foreground-color", "--ag-data-color", "--ag-header-foreground-color", "--ag-header-background-color", "--ag-disabled-foreground-color", "--ag-odd-row-background-color", "--ag-row-hover-color", "--ag-border-color", "--ag-row-border-color"]' config='{"maxLeftColumnWidth": 35, "hideHeader": true}'></api-documentation>
-
-For the full list check the [full variable reference](/global-style-customisation-variables/) - every colour variable is ends with `-color`.
 
 [[note]]
 | There are a lot of colour variables - the easiest way to find the variable that colours a specific element is often to inspect the element in your browser's developer tools and check the value of its `color` or `background-color` properties.
