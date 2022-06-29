@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/styles/ag-grid.css";
-import '@ag-grid-community/styles/ag-theme-alpine-dark.css';
+import '@ag-grid-community/styles/ag-theme-alpine.css';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid

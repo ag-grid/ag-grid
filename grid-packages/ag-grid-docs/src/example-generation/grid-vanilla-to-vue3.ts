@@ -12,7 +12,9 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
     // to account for the (rare) example that has more than one class...just default to alpine if it does
-    const theme = gridSettings.theme || 'ag-theme-alpine';
+    // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
+    // "source" non dark version
+    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
     if (componentFileNames) {
@@ -39,7 +41,9 @@ function getPackageImports(bindings: any, componentFileNames: string[]): string[
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
     // to account for the (rare) example that has more than one class...just default to alpine if it does
-    const theme = gridSettings.theme || 'ag-theme-alpine';
+    // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
+    // "source" non dark version
+    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
     if (componentFileNames) {

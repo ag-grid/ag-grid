@@ -11,7 +11,9 @@ function getModuleImports(bindings: any, componentFilenames: string[], extraCore
 
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
     // to account for the (rare) example that has more than one class...just default to alpine if it does
-    const theme = bindings.gridSettings.theme || 'ag-theme-alpine';
+    // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
+    // "source" non dark version
+    const theme = bindings.gridSettings.theme ? bindings.gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
     imports.push(`import '@ag-grid-community/styles/${theme}.css';`);
 
     let propertyInterfaces = getPropertyInterfaces(bindings.properties);
@@ -53,7 +55,9 @@ function getPackageImports(bindings: any, componentFilenames: string[], extraCor
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
     // to account for the (rare) example that has more than one class...just default to alpine if it does
-    const theme = gridSettings.theme || 'ag-theme-alpine';
+    // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
+    // "source" non dark version
+    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
     let propertyInterfaces = getPropertyInterfaces(bindings.properties);
