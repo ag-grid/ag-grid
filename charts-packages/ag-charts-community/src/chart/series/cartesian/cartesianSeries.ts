@@ -126,16 +126,21 @@ export abstract class CartesianSeries<
     }
 
     update(): void {
-        const { chart: { highlightedDatum: { series = undefined } = {} } = {} } = this;
+        const { seriesItemEnabled, visible, chart: { highlightedDatum: { series = undefined } = {} } = {} } = this;
         const seriesHighlighted = series ? series === this : undefined;
 
-        this.updateSelections(seriesHighlighted);
-        this.updateNodes(seriesHighlighted);
+        const anySeriesItemEnabled = (visible && seriesItemEnabled.size === 0) || [...seriesItemEnabled.values()].some(v => v === true);
+
+        this.updateSelections(seriesHighlighted, anySeriesItemEnabled);
+        this.updateNodes(seriesHighlighted, anySeriesItemEnabled);
     }
 
-    protected updateSelections(seriesHighlighted?: boolean) {
+    protected updateSelections(seriesHighlighted: boolean | undefined, anySeriesItemEnabled: boolean) {
         this.updateHighlightSelection(seriesHighlighted);
 
+        if (!anySeriesItemEnabled) {
+            return;
+        }
         if (!this.nodeDataRefresh && !this.isPathOrSelectionDirty()) {
             return;
         }
@@ -222,12 +227,11 @@ export abstract class CartesianSeries<
         }
     }
 
-    protected updateNodes(seriesHighlighted?: boolean) {
+    protected updateNodes(seriesHighlighted: boolean | undefined, anySeriesItemEnabled: boolean) {
         const { highlightSelection, contextNodeData, seriesItemEnabled, opts: { features } } = this;
         const markersEnabled = features.includes('markers');
 
-        const anySeriesItemEnabled = seriesItemEnabled.size === 0 || [...seriesItemEnabled.values()].some(v => v === true);
-        const visible = this.visible && this.contextNodeData.length > 0 && anySeriesItemEnabled;
+        const visible = this.visible && this.contextNodeData?.length > 0 && anySeriesItemEnabled;
         this.group.visible = visible;
         this.seriesGroup.visible = visible;
         this.highlightGroup.visible = visible && !!seriesHighlighted;
@@ -244,7 +248,7 @@ export abstract class CartesianSeries<
             const { itemId } = contextNodeData[seriesIdx];
             group.opacity = this.getOpacity({ itemId });
             group.zIndex = this.getZIndex({ itemId });
-            group.visible = visible && (this.seriesItemEnabled.get(itemId) ?? true);
+            group.visible = visible && (seriesItemEnabled.get(itemId) ?? true);
             if (markerGroup) {
                 markerGroup.opacity = group.opacity;
                 markerGroup.zIndex = group.zIndex + (Series.SERIES_MARKER_LAYER_ZINDEX - Series.SERIES_LAYER_ZINDEX);
