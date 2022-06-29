@@ -8251,9 +8251,9 @@
     }
   },
   "ICellEditorParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "value": "any",
+      "value": "TValue",
       "key": "string | null",
       "eventKey": "string | null",
       "charPress": "string | null",
@@ -9385,7 +9385,7 @@
       "cellHeight": "number",
       "cellRenderer": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "searchDebounceDelay?": "number",
-      "value": "any",
+      "value": "TValue",
       "key": "string | null",
       "eventKey": "string | null",
       "charPress": "string | null",
@@ -10894,7 +10894,7 @@
       "maxLength": "number",
       "rows": "number",
       "cols": "number",
-      "value": "any",
+      "value": "TValue",
       "key": "string | null",
       "eventKey": "string | null",
       "charPress": "string | null",
@@ -10938,7 +10938,7 @@
     "meta": {},
     "type": {
       "values": "any[]",
-      "value": "any",
+      "value": "TValue",
       "key": "string | null",
       "eventKey": "string | null",
       "charPress": "string | null",
@@ -10984,7 +10984,7 @@
     },
     "type": {
       "useFormatter": "boolean",
-      "value": "any",
+      "value": "TValue",
       "key": "string | null",
       "eventKey": "string | null",
       "charPress": "string | null",
@@ -12601,13 +12601,13 @@
     "type": { "areEqual(a: any, b: any)": "boolean" }
   },
   "SharedProps": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "gridOptions?": "GridOptions",
+      "gridOptions?": "GridOptions<TData>",
       "modules?": "Module[]",
       "containerStyle?": "any",
       "className?": "string",
-      "setGridApi?": "(gridApi: GridApi, columnApi: ColumnApi) => void",
+      "setGridApi?": "(gridApi: GridApi<TData>, columnApi: ColumnApi) => void",
       "componentWrappingElement?": "string",
       "maxComponentCreationTimeMs?": "number",
       "statusBar?": "{ statusPanels: StatusPanelDef[]; }",
@@ -13371,13 +13371,13 @@
     }
   },
   "AgReactUiProps": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "gridOptions?": "GridOptions",
+      "gridOptions?": "GridOptions<TData>",
       "modules?": "Module[]",
       "containerStyle?": "any",
       "className?": "string",
-      "setGridApi?": "(gridApi: GridApi, columnApi: ColumnApi) => void",
+      "setGridApi?": "(gridApi: GridApi<TData>, columnApi: ColumnApi) => void",
       "componentWrappingElement?": "string",
       "maxComponentCreationTimeMs?": "number",
       "statusBar?": "{ statusPanels: StatusPanelDef[]; }",
@@ -14141,17 +14141,17 @@
     }
   },
   "AgGridReactProps": {
-    "meta": {},
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "children?": "any",
       "rowDataChangeDetectionStrategy?": "ChangeDetectionStrategyType",
       "disableStaticMarkup?": "boolean",
       "legacyComponentRendering?": "boolean",
-      "gridOptions?": "GridOptions",
+      "gridOptions?": "GridOptions<TData>",
       "modules?": "Module[]",
       "containerStyle?": "any",
       "className?": "string",
-      "setGridApi?": "(gridApi: GridApi, columnApi: ColumnApi) => void",
+      "setGridApi?": "(gridApi: GridApi<TData>, columnApi: ColumnApi) => void",
       "componentWrappingElement?": "string",
       "maxComponentCreationTimeMs?": "number",
       "statusBar?": "{ statusPanels: StatusPanelDef[]; }",
