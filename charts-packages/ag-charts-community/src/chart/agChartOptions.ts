@@ -671,10 +671,6 @@ export interface AgSeriesMarker {
     stroke?: CssColor;
     /** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */
     strokeWidth?: PixelSize;
-    /**  */
-    fillOpacity?: Opacity;
-    /**  */
-    strokeOpacity?: Opacity;
 }
 
 export interface AgSeriesMarkerFormatterParams {
