@@ -166,7 +166,7 @@
       "type": "a CSS border style and size (e.g. `solid 1px` or `none`)"
     },
     "--ag-borders-secondary": {
-      "description": "Draw decorative borders separating UI elements within components Set this to a border style and thickness, e.g. `solid 1px` to enable borders, or `none` to disable borders.",
+      "description": "Draw decorative borders separating UI elements within components. Set this to a border style and thickness, e.g. `solid 1px` to enable borders, or `none` to disable borders.",
       "type": "a CSS border style and size (e.g. `solid 1px` or `none`)"
     },
     "--ag-secondary-border-color": {
@@ -198,7 +198,7 @@
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-borders-side-button": {
-      "description": "Draw borders around the vertical tabs on the side of the control panel Set this to a border style and thickness, e.g. `solid 1px` to enable borders, or `none` to disable borders.",
+      "description": "Draw borders around the vertical tabs on the side of the control panel. Set this to a border style and thickness, e.g. `solid 1px` to enable borders, or `none` to disable borders.",
       "type": "a CSS border style and size (e.g. `solid 1px` or `none`)"
     },
     "--ag-border-radius": {

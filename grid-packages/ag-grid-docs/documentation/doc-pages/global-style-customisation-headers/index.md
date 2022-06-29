@@ -48,6 +48,6 @@ Header Column Separators appear between every column, whereas Resize Handles onl
 
 <grid-example title='Column Separators' name='header-customisation-columns' type='generated' options='{ "exampleHeight": 400 }'></grid-example>
 
-## Full list of header customisation variables
+## Full List of Header Variables
 
 <api-documentation source='global-style-customisation-variables/resources/variables.json' section='variables' config='{"namePattern": "--ag-header", "maxLeftColumnWidth": 35, "hideHeader": true}'></api-documentation>
