@@ -146,17 +146,24 @@ export class AxisPanel extends Component {
     private addAdditionalLabelComps(labelPanelComp: FontPanel) {
         this.addLabelPadding(labelPanelComp);
 
-        const {xRotationComp, yRotationComp} = this.createRotationWidgets();
+        const { xRotationComp, yRotationComp } = this.createRotationWidgets();
 
         const autoRotateCb = this.createBean(new AgCheckbox());
+        const autoRotateValue = this.chartOptionsService.getAxisProperty<boolean>("label.autoRotate") || false;
+
+        function toggleRotateDisable(disabled: boolean) {
+            xRotationComp.setDisabled(disabled);
+            yRotationComp.setDisabled(disabled);
+        }
+
         autoRotateCb
             .setLabel(this.translate('autoRotate'))
-            .setValue(this.chartOptionsService.getAxisProperty<boolean>("label.autoRotate") || false)
+            .setValue(autoRotateValue)
             .onValueChange(newValue => {
-                // TODO: disable rotation comps
-                // xRotationComp.setEnabled(newValue);
-                // yRotationComp.setEnabled(newValue);
+                toggleRotateDisable(!!newValue);
             });
+
+        toggleRotateDisable(autoRotateValue);
 
         labelPanelComp.addCompToPanel(autoRotateCb);
         labelPanelComp.addCompToPanel(xRotationComp);

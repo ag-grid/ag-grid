@@ -262,6 +262,14 @@
         margin-bottom: ag-param(grid-size) * 0.5;
     }
 
+    .ag-angle-select[disabled] {
+        @include ag-color-property(color, disabled-foreground-color);
+        pointer-events: none;
+        .ag-angle-select-field {
+            opacity: 0.4;
+        }
+    }
+
     .ag-slider-field,
     .ag-angle-select-field {
         @include ag-theme-rtl((margin-right: ag-param(grid-size) * 2));
