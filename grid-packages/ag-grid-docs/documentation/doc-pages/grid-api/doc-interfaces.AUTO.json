@@ -14930,7 +14930,6 @@
     "hidden": { "type": { "returnType": "boolean", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
     "outlineLevel": { "type": { "returnType": "number", "optional": true } },
-    "s": { "type": { "returnType": "number", "optional": true } },
     "cells": { "type": { "returnType": "ExcelCell[]", "optional": false } }
   },
   "ExcelCell": {
