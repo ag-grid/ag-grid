@@ -129,20 +129,9 @@ export class Group extends Node {
             if (!child.visible) {
                 return;
             }
-            const bbox = child.computeBBox();
+            const bbox = child.computeTransformedBBox();
             if (!bbox) {
                 return;
-            }
-
-            if (!(child instanceof Group)) {
-                child.computeTransformMatrix();
-                const matrix = Matrix.flyweight(child.matrix);
-                let parent = child.parent;
-                while (parent) {
-                    matrix.preMultiplySelf(parent.matrix);
-                    parent = parent.parent;
-                }
-                matrix.transformBBox(bbox, 0, bbox);
             }
 
             const x = bbox.x;
@@ -168,6 +157,10 @@ export class Group extends Node {
             right - left,
             bottom - top
         );
+    }
+
+    computeTransformedBBox(): BBox | undefined {
+        return this.computeBBox();
     }
 
     render(renderCtx: RenderContext) {
@@ -403,7 +396,7 @@ export class Group extends Node {
                     if (stats) skipped += child.nodeCount.count;
                     continue;
                 }
-    
+
                 ctx.save();
                 child.render(childRenderContext);
                 ctx.restore();

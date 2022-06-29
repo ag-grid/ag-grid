@@ -136,10 +136,10 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
                 // Cast to `any` to avoid `Property 'name' does not exist on type 'Function'`.
                 throw new Error(`Duplicate ${(node.constructor as any).name} node: ${node}`);
             }
-    
+
             this._children.push(node);
             this.childSet[node.id] = true;
-    
+
             node._parent = this;
             node._setScene(this.scene);
         }
@@ -356,6 +356,25 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
 
     computeBBox(): BBox | undefined { return; }
 
+    computeTransformedBBox(): BBox | undefined {
+        const bbox = this.computeBBox();
+
+        if (!bbox) {
+            return undefined;
+        }
+
+        this.computeTransformMatrix();
+        const matrix = Matrix.flyweight(this.matrix);
+        let parent = this.parent;
+        while (parent) {
+            matrix.preMultiplySelf(parent.matrix);
+            parent = parent.parent;
+        }
+        matrix.transformBBox(bbox, 0, bbox);
+
+        return bbox;
+    }
+
     computeBBoxCenter(): [number, number] {
         const bbox = this.computeBBox && this.computeBBox();
         if (bbox) {
@@ -371,7 +390,7 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
         if (!this._dirtyTransform) {
             return;
         }
-        
+
         // TODO: transforms without center of scaling and rotation correspond directly
         //       to `setAttribute('transform', 'translate(tx, ty) rotate(rDeg) scale(sx, sy)')`
         //       in SVG. Our use cases will mostly require positioning elements (rects, circles)
@@ -441,7 +460,7 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
 
     render(renderCtx: RenderContext): void {
         const { stats } = renderCtx;
-        
+
         this._dirty = RedrawType.NONE;
 
         if (stats) stats.nodesRendered++;
