@@ -160,7 +160,7 @@ export abstract class CartesianSeries<
             subGroup.datumSelection = this.updateDatumSelection({ nodeData, datumSelection, seriesIdx });
             subGroup.labelSelection = this.updateLabelSelection({ labelData, labelSelection, seriesIdx });
             if (markerSelection) {
-                subGroup.markerSelection = this.updateMarkerSelection({ nodeData, markerSelection, seriesIdx })
+                subGroup.markerSelection = this.updateMarkerSelection({ nodeData, markerSelection, seriesIdx });
             }
         });
     }
