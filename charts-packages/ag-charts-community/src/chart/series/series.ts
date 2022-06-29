@@ -95,7 +95,7 @@ export type SeriesNodeDataContext<S = SeriesNodeDatum, L = S> = {
 
 export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataContext> extends Observable {
     protected static readonly highlightedZIndex = 1000000000000;
-    protected static readonly SERIES_LAYER_ZINDEX = 100;
+    static readonly SERIES_LAYER_ZINDEX = 100;
     protected static readonly SERIES_HIGHLIGHT_LAYER_ZINDEX = 150;
 
     readonly id = createId(this);
