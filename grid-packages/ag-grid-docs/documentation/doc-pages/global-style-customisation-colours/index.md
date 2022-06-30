@@ -4,7 +4,7 @@ title: "Customising Colours & Fonts"
 
 Change the overall colour scheme and appearance of data.
 
-The grid exposes many CSS variables that affect the colour of elements.
+The grid exposes many CSS `--ag-*-color` variables that affect the colour of elements. `--ag-font-size` and `--ag-font-family` control the default font for the grid.
 
 ## Example
 
@@ -16,6 +16,9 @@ The grid exposes many CSS variables that affect the colour of elements.
     --ag-header-background-color: rgb(209, 64, 129);
     --ag-odd-row-background-color: rgb(0, 0, 0, 0.03);
     --ag-header-column-resize-handle-color: rgb(126, 46, 132);
+
+    --ag-font-size: 15px;
+    --ag-font-family: monospace;
 }
 ```
 
