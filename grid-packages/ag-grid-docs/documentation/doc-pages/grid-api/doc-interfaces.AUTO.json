@@ -12132,6 +12132,10 @@
     }
   },
   "AgCrossLineLabelOptions": {
+    "text": {
+      "description": "/** The text to show in the label. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "fontStyle": {
       "description": "/** The font style to use for the label. */",
       "type": { "returnType": "FontStyle", "optional": true }
@@ -12155,6 +12159,10 @@
     "color": {
       "description": "/** The colour to use for the label. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the crossLine label. */",
+      "type": { "returnType": "AgCrossLineLabelPosition", "optional": true }
     },
     "rotation": {
       "description": "/** The rotation of the crossLine label in degrees. */",
@@ -12458,7 +12466,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
+        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
         "optional": true
       }
     },
@@ -12793,7 +12801,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
+        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
         "optional": true
       }
     },
@@ -12934,7 +12942,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
+        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
         "optional": true
       }
     },
@@ -13090,7 +13098,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
+        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
         "optional": true
       }
     },
@@ -13279,7 +13287,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
+        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
         "optional": true
       }
     },
@@ -13432,7 +13440,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
+        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
         "optional": true
       }
     },
@@ -13671,7 +13679,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
+        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
         "optional": true
       }
     },
@@ -13847,7 +13855,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
+        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
         "optional": true
       }
     },

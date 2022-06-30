@@ -126,19 +126,19 @@ export interface AgHierarchyThemeOptions<S = AgHierarchySeriesTheme> extends AgB
 
 export interface AgNumberAxisThemeOptions
     extends Omit<AgNumberAxisOptions, 'type'>,
-        AgCartesianAxisThemeOptions<AgNumberAxisOptions> {}
+    AgCartesianAxisThemeOptions<AgNumberAxisOptions> { }
 export interface AgLogAxisThemeOptions
     extends Omit<AgLogAxisOptions, 'type'>,
-        AgCartesianAxisThemeOptions<AgLogAxisOptions> {}
+    AgCartesianAxisThemeOptions<AgLogAxisOptions> { }
 export interface AgCategoryAxisThemeOptions
     extends Omit<AgCategoryAxisOptions, 'type'>,
-        AgCartesianAxisThemeOptions<AgCategoryAxisOptions> {}
+    AgCartesianAxisThemeOptions<AgCategoryAxisOptions> { }
 export interface AgGroupedCategoryAxisThemeOptions
     extends Omit<AgGroupedCategoryAxisOptions, 'type'>,
-        AgCartesianAxisThemeOptions<AgGroupedCategoryAxisOptions> {}
+    AgCartesianAxisThemeOptions<AgGroupedCategoryAxisOptions> { }
 export interface AgTimeAxisThemeOptions
     extends Omit<AgTimeAxisOptions, 'type'>,
-        AgCartesianAxisThemeOptions<AgTimeAxisOptions> {}
+    AgCartesianAxisThemeOptions<AgTimeAxisOptions> { }
 
 export interface AgCartesianAxesTheme {
     /** This extends the common axis configuration with options specific to number axes. */
@@ -519,6 +519,8 @@ export interface AgCrossLineOptions {
 }
 
 export interface AgCrossLineLabelOptions {
+    /** The text to show in the label. */
+    text?: string;
     /** The font style to use for the label. */
     fontStyle?: FontStyle;
     /** The font weight to use for the label. */
@@ -531,6 +533,8 @@ export interface AgCrossLineLabelOptions {
     padding?: PixelSize;
     /** The colour to use for the label. */
     color?: CssColor;
+    /** The position of the crossLine label. */
+    position?: AgCrossLineLabelPosition;
     /** The rotation of the crossLine label in degrees. */
     rotation?: number;
 }
@@ -670,7 +674,7 @@ export interface AgBaseSeriesOptions {
     /** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */
     cursor?: string;
     /** A map of event names to event listeners. */
-    listeners?: AgBaseSeriesListeners | {[key: string]: Function};
+    listeners?: AgBaseSeriesListeners | { [key: string]: Function };
     /** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */
     highlightStyle?: AgSeriesHighlightStyle;
 }
@@ -765,7 +769,7 @@ export interface AgCartesianSeriesMarker extends AgSeriesMarker {
     formatter?: AgCartesianSeriesMarkerFormatter;
 }
 
-export interface AgAreaSeriesMarker extends AgCartesianSeriesMarker {}
+export interface AgAreaSeriesMarker extends AgCartesianSeriesMarker { }
 
 export interface AgSeriesTooltip {
     /** Whether or not to show tooltips when the series are hovered over. */
@@ -818,7 +822,7 @@ export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
-export interface AgScatterSeriesLabelOptions extends AgChartLabelOptions {}
+export interface AgScatterSeriesLabelOptions extends AgChartLabelOptions { }
 
 /** Configuration for scatter/bubble series. */
 export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {

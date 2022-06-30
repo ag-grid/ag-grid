@@ -6990,21 +6990,25 @@
   "AgCrossLineLabelOptions": {
     "meta": {},
     "type": {
+      "text?": "string",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "padding?": "PixelSize",
       "color?": "CssColor",
+      "position?": "AgCrossLineLabelPosition",
       "rotation?": "number"
     },
     "docs": {
+      "text?": "/** The text to show in the label. */",
       "fontStyle?": "/** The font style to use for the label. */",
       "fontWeight?": "/** The font weight to use for the label. */",
       "fontSize?": "/** The font size in pixels to use for the label. */",
       "fontFamily?": "/** The font family to use for the label. */",
       "padding?": "/** Padding in pixels between the label and the edge of the crossLine. */",
       "color?": "/** The colour to use for the label. */",
+      "position?": "/** The position of the crossLine label. */",
       "rotation?": "/** The rotation of the crossLine label in degrees. */"
     }
   },
