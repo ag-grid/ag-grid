@@ -309,7 +309,6 @@ export abstract class Chart extends Observable {
     readonly legend = new Legend();
 
     protected legendAutoPadding = new Padding();
-    protected captionAutoPadding = 0; // top padding only
 
     static readonly defaultTooltipClass = 'ag-chart-tooltip';
 
@@ -858,14 +857,14 @@ export abstract class Chart extends Observable {
 
     abstract performLayout(): void;
 
-    protected positionCaptions() {
+    protected positionCaptions(): { captionAutoPadding?: number } {
         const { _title: title, _subtitle: subtitle } = this;
 
         const spacing = 10;
         let paddingTop = spacing;
 
         if (!title) {
-            return;
+            return {};
         }
         title.node.visible = title.enabled;
 
@@ -879,7 +878,7 @@ export abstract class Chart extends Observable {
         }
 
         if (!subtitle) {
-            return;
+            return {};
         }
         subtitle.node.visible = title.enabled && subtitle.enabled;
         
@@ -892,17 +891,17 @@ export abstract class Chart extends Observable {
             }
         }
 
-        this.captionAutoPadding = Math.floor(paddingTop);
+        return { captionAutoPadding: Math.floor(paddingTop) };
     }
 
     protected legendBBox: BBox = new BBox(0, 0, 0, 0);
 
-    protected positionLegend() {
+    protected positionLegend(captionAutoPadding: number) {
         if (!this.legend.enabled || !this.legend.data.length) {
             return;
         }
 
-        const { legend, captionAutoPadding, legendAutoPadding } = this;
+        const { legend, legendAutoPadding } = this;
         const width = this.width;
         const height = this.height - captionAutoPadding;
         const legendGroup = legend.group;

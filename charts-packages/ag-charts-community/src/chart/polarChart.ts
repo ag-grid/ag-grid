@@ -23,10 +23,9 @@ export class PolarChart extends Chart {
     performLayout(): void {
         const shrinkRect = new BBox(0, 0, this.width, this.height);
 
-        this.positionCaptions();
-        this.positionLegend();
+        const { captionAutoPadding = 0 } = this.positionCaptions();
+        this.positionLegend(captionAutoPadding);
 
-        const captionAutoPadding = this.captionAutoPadding;
         shrinkRect.y += captionAutoPadding;
         shrinkRect.height -= captionAutoPadding;
 
