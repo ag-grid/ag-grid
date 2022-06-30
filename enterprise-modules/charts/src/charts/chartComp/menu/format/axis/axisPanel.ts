@@ -57,7 +57,7 @@ export class AxisPanel extends Component {
         this.initAxis();
         this.initAxisTicks();
         this.initAxisLabels();
-        
+
         const updateAxisLabelRotations = () => this.axisLabelUpdateFuncs.forEach(func => func());
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, updateAxisLabelRotations);
     }
@@ -130,6 +130,7 @@ export class AxisPanel extends Component {
         };
 
         const params: FontPanelParams = {
+            name: "Labels",
             enabled: true,
             suppressEnabledCheckbox: true,
             initialFont,
