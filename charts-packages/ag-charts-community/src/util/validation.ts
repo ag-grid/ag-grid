@@ -43,3 +43,39 @@ export function NUMBER(min?: number, max?: number) {
 const FONT_WEIGHTS = ['normal', 'bold', 'bolder', 'lighter', '100', '200', '300', '400', '500', '600', '700', '800', '900'];
 export const OPT_FONT_STYLE = (v: any) => v === undefined || v === 'normal' || v === 'italic' || v === 'oblique';
 export const OPT_FONT_WEIGHT = (v: any) => v === undefined || FONT_WEIGHTS.includes(v);
+
+export function Deprecated(message?: string) {
+    let logged = false;
+
+    return function (target: any, key: any) {
+        // `target` is either a constructor (static member) or prototype (instance member)
+        const privateKey = `__${key}`;
+
+        if (!target[key]) {
+            const setter = function(v: any) {
+                if (!logged) {
+                    const msg = [
+                        `AG Charts - Property [${target.constructor?.name ?? target.className}.${key}] is deprecated.`,
+                        message,
+                    ]
+                        .filter(v => v != null)
+                        .join(' ');
+                    console.warn(msg);
+                    logged = true;
+                }
+
+                this[privateKey] = v;
+            };
+            const getter = function () {
+                return this[privateKey];
+            };
+
+            Object.defineProperty(target, key, {
+                set: setter,
+                get: getter,
+                enumerable: true,
+                configurable: false,
+            });
+        }
+    }
+}

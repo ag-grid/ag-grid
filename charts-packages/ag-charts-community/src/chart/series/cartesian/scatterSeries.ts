@@ -17,6 +17,7 @@ import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Marker } from '../../marker/marker';
 import { MeasuredLabel } from '../../../util/labelPlacement';
 import { isContinuous } from '../../../util/value';
+import { Deprecated } from '../../../util/validation';
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -68,25 +69,30 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     /**
      * @deprecated Use {@link marker.fill} instead.
      */
-    fill: string | undefined = '#c16068';
+     @Deprecated('Use marker.fill instead.')
+     fill: string | undefined = '#c16068';
 
     /**
      * @deprecated Use {@link marker.stroke} instead.
      */
-    stroke: string | undefined = '#874349';
+     @Deprecated('Use marker.stroke instead.')
+     stroke: string | undefined = '#874349';
 
     /**
      * @deprecated Use {@link marker.strokeWidth} instead.
      */
+     @Deprecated('Use marker.strokeWidth instead.')
     strokeWidth: number = 2;
     /**
      * @deprecated Use {@link marker.fillOpacity} instead.
      */
+     @Deprecated('Use marker.fillOpacity instead.')
     fillOpacity: number = 1;
 
     /**
      * @deprecated Use {@link marker.strokeOpacity} instead.
      */
+     @Deprecated('Use marker.strokeOpacity instead.')
     strokeOpacity: number = 1;
 
     title?: string = undefined;
