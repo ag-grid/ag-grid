@@ -6649,7 +6649,6 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
-      "padding?": "AgChartPaddingOptions",
       "text?": "string",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -7284,9 +7283,7 @@
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
       "stroke?": "CssColor",
-      "strokeWidth?": "PixelSize",
-      "fillOpacity?": "Opacity",
-      "strokeOpacity?": "Opacity"
+      "strokeWidth?": "PixelSize"
     },
     "docs": {
       "enabled?": "/** Whether or not to show markers. */",
@@ -7295,9 +7292,7 @@
       "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
       "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
       "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
-      "fillOpacity?": "/** */",
-      "strokeOpacity?": "/** */"
+      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */"
     }
   },
   "AgSeriesMarkerFormatterParams": {
@@ -7347,9 +7342,7 @@
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
       "stroke?": "CssColor",
-      "strokeWidth?": "PixelSize",
-      "fillOpacity?": "Opacity",
-      "strokeOpacity?": "Opacity"
+      "strokeWidth?": "PixelSize"
     },
     "docs": {
       "formatter?": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
@@ -7359,9 +7352,7 @@
       "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
       "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
       "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
-      "fillOpacity?": "/** */",
-      "strokeOpacity?": "/** */"
+      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */"
     }
   },
   "AgAreaSeriesMarker": {
@@ -7374,9 +7365,7 @@
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
       "stroke?": "CssColor",
-      "strokeWidth?": "PixelSize",
-      "fillOpacity?": "Opacity",
-      "strokeOpacity?": "Opacity"
+      "strokeWidth?": "PixelSize"
     },
     "docs": {
       "formatter?": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
@@ -7386,9 +7375,7 @@
       "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
       "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
       "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
-      "fillOpacity?": "/** */",
-      "strokeOpacity?": "/** */"
+      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */"
     }
   },
   "AgSeriesTooltip": {
@@ -7918,7 +7905,6 @@
     "type": {
       "showInLegend?": "boolean",
       "enabled?": "boolean",
-      "padding?": "AgChartPaddingOptions",
       "text?": "string",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",

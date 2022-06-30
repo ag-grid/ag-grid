@@ -261,8 +261,14 @@ export const StringEditor = ({ value, toStringValue, fromStringValue, onChange }
 
 export const ArrayEditor = props =>
     <StringEditor
-        toStringValue={array => array ? array.join(', ') : ''}
-        fromStringValue={value => value.split(',').filter(x => x != null && x.trim().length).map(x => JSON.parse(x))}
+        toStringValue={array => array ? JSON.stringify(array) : '[]'}
+        fromStringValue={(value) => {
+            try {
+                return JSON.parse(value);
+            } catch (error) {
+                return undefined;
+            }
+        }}
         {...props}
     />;
 

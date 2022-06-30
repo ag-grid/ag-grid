@@ -11687,9 +11687,6 @@
       "description": "/** Whether or not the title should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "padding": {
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
-    },
     "text": {
       "description": "/** The text to show in the title. */",
       "type": { "returnType": "string", "optional": true }
@@ -12539,14 +12536,6 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "type": { "returnType": "PixelSize", "optional": true }
-    },
-    "fillOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
-    },
-    "strokeOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgSeriesMarkerFormatterParams": {
@@ -12609,14 +12598,6 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "type": { "returnType": "PixelSize", "optional": true }
-    },
-    "fillOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
-    },
-    "strokeOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgAreaSeriesMarker": {
@@ -12654,14 +12635,6 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "type": { "returnType": "PixelSize", "optional": true }
-    },
-    "fillOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
-    },
-    "strokeOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgSeriesTooltip": {
@@ -13506,9 +13479,6 @@
     "enabled": {
       "description": "/** Whether or not the title should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "padding": {
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "text": {
       "description": "/** The text to show in the title. */",

@@ -6,6 +6,7 @@ import { BBox } from "../scene/bbox";
 import { ClipRect } from "../scene/clipRect";
 import { Navigator } from "./navigator/navigator";
 import { ChartAxis } from "./chartAxis";
+import { Caption } from "../caption";
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
@@ -35,8 +36,8 @@ export class CartesianChart extends Chart {
 
         let shrinkRect = new BBox(0, 0, width, height);
 
-        this.positionCaptions();
-        this.positionLegend();
+        const { captionAutoPadding = 0 } = this.positionCaptions();
+        this.positionLegend(captionAutoPadding);
 
         if (legend.enabled && legend.data.length) {
             const { legendAutoPadding } = this;
@@ -65,8 +66,7 @@ export class CartesianChart extends Chart {
             }
         }
 
-        const { captionAutoPadding, padding } = this;
-
+        const { padding } = this;
         shrinkRect.x += padding.left;
         shrinkRect.width -= padding.left + padding.right;
 
@@ -265,9 +265,6 @@ export class CartesianChart extends Chart {
             const { position, direction } = axis;
             visited[position] = (visited[position] ?? 0) + 1;
 
-            // for multiple axes in the same direction and position, apply padding at the top of each inner axis (i.e. between axes).
-            const axisPadding = axis.title && axis.title.padding.top || 15;
-
             const axisLeftRightRange = (axis: ChartAxis<any>) => {
                 if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
                     return [0, seriesRect.height];
@@ -322,6 +319,8 @@ export class CartesianChart extends Chart {
                 axisThickness = direction === ChartAxisDirection.X ? bbox.height : bbox.width;
             }
 
+            // for multiple axes in the same direction and position, apply padding at the top of each inner axis (i.e. between axes).
+            const axisPadding = 15;
             const visitCount = (visited[position] ?? 0);
             if (visitCount > 1) {
                 axisThickness += axisPadding;

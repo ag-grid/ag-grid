@@ -60,8 +60,6 @@ const gridOptions: GridOptions = {
           shape: 'diamond',
           size: 12,
           strokeWidth: 4,
-          fillOpacity: 0.2,
-          strokeOpacity: 0.2
         },
         tooltip: {
           renderer: (params) => {
