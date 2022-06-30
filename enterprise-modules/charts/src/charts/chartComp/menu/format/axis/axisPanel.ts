@@ -130,7 +130,7 @@ export class AxisPanel extends Component {
         };
 
         const params: FontPanelParams = {
-            name: "Labels",
+            name: this.translate("labels"),
             enabled: true,
             suppressEnabledCheckbox: true,
             initialFont,
