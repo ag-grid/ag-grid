@@ -84,7 +84,7 @@ export class RowNode<TData = any> implements IEventEmitter {
 
     /**
      * The data as provided by the application.
-     * Can be `undefined` when using row grouping or during grid initialisation. 
+     * Can be `undefined` when using row grouping or during grid initialisation.
      */
     public data: TData | undefined;
 
@@ -852,7 +852,6 @@ export class RowNode<TData = any> implements IEventEmitter {
                 childState = selectable;
             }
 
-
             switch (childState) {
                 case true:
                     atLeastOneSelected = true;
@@ -903,7 +902,7 @@ export class RowNode<TData = any> implements IEventEmitter {
     }
 
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
-    public setSelectedParams(params: SetSelectedParams): number {
+    public setSelectedParams(params: SetSelectedParams & { event?: Event }): number {
         const groupSelectsChildren = this.beans.gridOptionsWrapper.isGroupSelectsChildren();
         const newValue = params.newValue === true;
         const clearSelection = params.clearSelection === true;
@@ -947,7 +946,7 @@ export class RowNode<TData = any> implements IEventEmitter {
         const skipThisNode = groupSelectsFiltered && this.group;
 
         if (!skipThisNode) {
-            const thisNodeWasSelected = this.selectThisNode(newValue);
+            const thisNodeWasSelected = this.selectThisNode(newValue, params.event);
             if (thisNodeWasSelected) {
                 updatedCount++;
             }
@@ -1032,7 +1031,7 @@ export class RowNode<TData = any> implements IEventEmitter {
         return false;
     }
 
-    public selectThisNode(newValue?: boolean): boolean {
+    public selectThisNode(newValue?: boolean, e?: Event): boolean {
 
         // we only check selectable when newValue=true (ie selecting) to allow unselecting values,
         // as selectable is dynamic, need a way to unselect rows when selectable becomes false.
@@ -1047,7 +1046,9 @@ export class RowNode<TData = any> implements IEventEmitter {
             this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
         }
 
-        const event: RowSelectedEvent = this.createGlobalRowEvent(Events.EVENT_ROW_SELECTED);
+        const event: RowSelectedEvent = Object.assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_SELECTED), {
+            event: e || null
+        });
 
         this.beans.eventService.dispatchEvent(event);
 

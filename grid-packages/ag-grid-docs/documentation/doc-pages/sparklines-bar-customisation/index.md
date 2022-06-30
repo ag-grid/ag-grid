@@ -322,13 +322,10 @@ More advanced customisations are discussed separately in the following sections:
 <interface-documentation interfaceName='BarSparklineOptions' overrideSrc='sparklines-bar-customisation/resources/bar-sparkline-api.json'></interface-documentation>
 
 ### SparklineAxisOptions
-
-<api-documentation source='sparklines-bar-customisation/resources/bar-sparkline-api.json' section='SparklineAxisOptions'></api-documentation>
+<interface-documentation interfaceName='SparklineAxisOptions' ></interface-documentation>
 
 ### SparklineLabelOptions
-
-<api-documentation source='sparklines-bar-customisation/resources/bar-sparkline-api.json' section='SparklineLabelOptions'></api-documentation>
-
+<interface-documentation interfaceName='SparklineLabelOptions' ></interface-documentation>
 
 ## Next Up
 

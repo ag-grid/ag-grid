@@ -108,7 +108,7 @@
         }
     }
 
-    .ag-row-hover::before {
+    .ag-row-hover:not(.ag-full-width-row)::before {
         content: "";
         background-color: var(--ag-row-hover-color);
         display: block;

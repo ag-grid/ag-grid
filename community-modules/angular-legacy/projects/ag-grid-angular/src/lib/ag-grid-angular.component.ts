@@ -740,7 +740,8 @@ Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is us
 Full Store is used.
      */
     @Input() public serverSideStoreType: ServerSideStoreType | undefined = undefined;
-    /** Whether Server-side Row Model will use Infinite Scrolling     */
+    /** Whether Server-side Row Model will use Infinite Scrolling
+     * Default: `false`     */
     @Input() public serverSideInfiniteScroll: boolean | undefined = undefined;
     /** How many rows for each block in the store, i.e. how many rows returned from the server at a time.
      * Default: `100`     */
@@ -761,9 +762,11 @@ Full Store is used.
     @Input() public serverSideSortAllLevels: boolean | undefined = undefined;
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
     @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
-    /** When enabled, the grid will always request the server to provide the sort results     */
+    /** When enabled, the grid will always request the server to provide the sort results.
+     * Default: `1`     */
     @Input() public serverSideSortOnServer: boolean | undefined = undefined;
-    /** When enabled, the grid will always request the server to provide the filter results     */
+    /** When enabled, the grid will always request the server to provide the filter results.
+     * Default: `1`     */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
     /** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.
      */

@@ -117,7 +117,7 @@
         }
     }
 
-    .ag-row-hover {
+    .ag-row-hover:not(.ag-full-width-row) {
         @if ag-param-is-set(row-hover-color) {
             @include ag-color-property(background-color, row-hover-color);
         }

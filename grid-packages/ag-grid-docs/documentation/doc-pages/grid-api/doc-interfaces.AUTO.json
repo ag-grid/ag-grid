@@ -3143,7 +3143,7 @@
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
     "serverSideInfiniteScroll": {
-      "description": "/** Whether Server-side Row Model will use Infinite Scrolling */",
+      "description": "/** Whether Server-side Row Model will use Infinite Scrolling\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
@@ -3179,11 +3179,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "description": "/** When enabled, the grid will always request the server to provide the sort results.\n * Default: `1` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "description": "/** When enabled, the grid will always request the server to provide the filter results.\n * Default: `1` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -7316,11 +7316,10 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "RowEvent": {
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
-    "data": {
-      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
-      "type": { "returnType": "TData | undefined", "optional": false }
+  "BaseRowEvent": {
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7338,7 +7337,73 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "meta": { "typeParams": ["TData"] },
+    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "RowEvent": {
+    "data": {
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
+    },
     "meta": { "typeParams": ["TData = any"] },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
+    },
+    "rowIndex": {
+      "description": "/** The visible row index for the row */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "event": {
+      "description": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": { "returnType": "Event | null", "optional": true }
+    },
+    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "RowWithDataEvent": {
+    "data": {
+      "description": "/** The user provided data for the row. */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
+    },
+    "rowIndex": {
+      "description": "/** The visible row index for the row */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "event": {
+      "description": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": { "returnType": "Event | null", "optional": true }
+    },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
@@ -7352,10 +7417,13 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7382,10 +7450,13 @@
   },
   "RowValueChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7412,10 +7483,13 @@
   },
   "RowSelectedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7442,10 +7516,13 @@
   },
   "VirtualRowRemovedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7472,10 +7549,13 @@
   },
   "RowClickedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7502,10 +7582,13 @@
   },
   "RowDoubleClickedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7532,10 +7615,13 @@
   },
   "RowEditingStartedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7562,10 +7648,13 @@
   },
   "RowEditingStoppedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7592,10 +7681,13 @@
   },
   "FullWidthCellKeyDownEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7622,10 +7714,13 @@
   },
   "FullWidthCellKeyPressEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7654,14 +7749,56 @@
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
+    },
+    "rowIndex": {
+      "description": "/** The visible row index for the row */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "event": {
+      "description": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": { "returnType": "Event | null", "optional": true }
+    },
+    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "CellWithDataEvent": {
+    "column": { "type": { "returnType": "Column", "optional": false } },
+    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "value": {
+      "description": "/** The value for the cell */",
+      "type": { "returnType": "TValue", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
+    "data": {
+      "description": "/** The user provided data for the row. */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7687,17 +7824,20 @@
     }
   },
   "CellKeyDownEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7723,17 +7863,20 @@
     }
   },
   "CellKeyPressEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7759,17 +7902,20 @@
     }
   },
   "CellClickedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7795,17 +7941,20 @@
     }
   },
   "CellMouseDownEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7831,17 +7980,20 @@
     }
   },
   "CellDoubleClickedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7867,17 +8019,20 @@
     }
   },
   "CellMouseOverEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7903,17 +8058,20 @@
     }
   },
   "CellMouseOutEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7939,17 +8097,20 @@
     }
   },
   "CellContextMenuEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7975,17 +8136,20 @@
     }
   },
   "CellEditingStartedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
       "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
-      "type": { "returnType": "TData | undefined", "optional": false }
+      "description": "/** The user provided data for the row. */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -8013,23 +8177,26 @@
   "CellEditingStoppedEvent": {
     "oldValue": {
       "description": "/** The old value before editing */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "newValue": {
       "description": "/** The new value after editing */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
       "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
-      "type": { "returnType": "TData | undefined", "optional": false }
+      "description": "/** The user provided data for the row. */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -8055,22 +8222,25 @@
     }
   },
   "CellValueChangedEvent": {
-    "oldValue": { "type": { "returnType": "any", "optional": false } },
-    "newValue": { "type": { "returnType": "any", "optional": false } },
+    "oldValue": { "type": { "returnType": "TValue", "optional": false } },
+    "newValue": { "type": { "returnType": "TValue", "optional": false } },
     "source": {
       "type": { "returnType": "string | undefined", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
       "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
-      "type": { "returnType": "TData | undefined", "optional": false }
+      "description": "/** The user provided data for the row. */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -8096,22 +8266,25 @@
     }
   },
   "CellEditRequestEvent": {
-    "oldValue": { "type": { "returnType": "any", "optional": false } },
-    "newValue": { "type": { "returnType": "any", "optional": false } },
+    "oldValue": { "type": { "returnType": "TValue", "optional": false } },
+    "newValue": { "type": { "returnType": "TValue", "optional": false } },
     "source": {
       "type": { "returnType": "string | undefined", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
       "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
-      "type": { "returnType": "TData | undefined", "optional": false }
+      "description": "/** The user provided data for the row. */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -10427,28 +10600,52 @@
     }
   },
   "BaseExportParams": {
-    "allColumns": { "type": { "returnType": "boolean", "optional": true } },
+    "allColumns": {
+      "description": "/** If `true`, all columns will be exported in the order they appear in the columnDefs.\n * When `false` only the columns currently being displayed will be exported.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "columnKeys": {
+      "description": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
       "type": { "returnType": "(string | Column)[]", "optional": true }
     },
-    "rowNodes": { "type": { "returnType": "RowPosition[]", "optional": true } },
-    "fileName": { "type": { "returnType": "string", "optional": true } },
-    "onlySelected": { "type": { "returnType": "boolean", "optional": true } },
+    "rowNodes": {
+      "description": "/** Row node positions. */",
+      "type": { "returnType": "RowPosition[]", "optional": true }
+    },
+    "fileName": {
+      "description": "/** String to use as the file name. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "onlySelected": {
+      "description": "/** Export only selected rows.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "onlySelectedAllPages": {
+      "description": "/** Only export selected rows including other pages (only makes sense when using pagination).\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipColumnGroupHeaders": {
+      "description": "/** Set to `true` to exclude header column groups.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipColumnHeaders": {
+      "description": "/** Set to `true` if you don't want to export column headers.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "skipRowGroups": { "type": { "returnType": "boolean", "optional": true } },
-    "skipPinnedTop": { "type": { "returnType": "boolean", "optional": true } },
+    "skipRowGroups": {
+      "description": "/** Set to `true` to skip row group headers if grouping rows. Only relevant when grouping rows.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "skipPinnedTop": {
+      "description": "/** Set to `true` to suppress exporting rows pinned to the top of the grid.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "skipPinnedBottom": {
+      "description": "/** Set to `true` to suppress exporting rows pinned to the bottom of the grid.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "shouldRowBeSkipped": {
+      "description": "/** A callback function that will be invoked once per row in the grid. Return true to omit the row from the export. */",
       "type": {
         "arguments": { "params": "ShouldRowBeSkippedParams" },
         "returnType": "boolean",
@@ -10456,6 +10653,7 @@
       }
     },
     "processCellCallback": {
+      "description": "/** A callback function invoked once per cell in the grid. Return a string value to be displayed in the export. For example this is useful for formatting date values. */",
       "type": {
         "arguments": { "params": "ProcessCellForExportParams" },
         "returnType": "string",
@@ -10463,6 +10661,7 @@
       }
     },
     "processHeaderCallback": {
+      "description": "/** A callback function invoked once per column. Return a string to be displayed in the column header. */",
       "type": {
         "arguments": { "params": "ProcessHeaderForExportParams" },
         "returnType": "string",
@@ -10470,6 +10669,7 @@
       }
     },
     "processGroupHeaderCallback": {
+      "description": "/** A callback function invoked once per column group. Return a `string` to be displayed in the column group header.\n * Note that column groups are exported by default, this option will not work with `skipColumnGroupHeaders=true`. */",
       "type": {
         "arguments": { "params": "ProcessGroupHeaderForExportParams" },
         "returnType": "string",
@@ -10477,6 +10677,7 @@
       }
     },
     "processRowGroupCallback": {
+      "description": "/** A callback function invoked once per row group. Return a `string` to be displayed in the group cell. */",
       "type": {
         "arguments": { "params": "ProcessRowGroupForExportParams" },
         "returnType": "string",
@@ -10497,8 +10698,14 @@
     }
   },
   "ExportParams": {
-    "prependContent": { "type": { "returnType": "T", "optional": true } },
-    "appendContent": { "type": { "returnType": "T", "optional": true } },
+    "prependContent": {
+      "description": "/** Content to put at the top of the exported sheet. */",
+      "type": { "returnType": "T", "optional": true }
+    },
+    "appendContent": {
+      "description": "/** Content to put at the bottom of the exported sheet. */",
+      "type": { "returnType": "T", "optional": true }
+    },
     "customHeader": {
       "description": "/** @deprecated Use prependContent\n */",
       "type": { "returnType": "T", "optional": true }
@@ -10508,6 +10715,7 @@
       "type": { "returnType": "T", "optional": true }
     },
     "getCustomContentBelowRow": {
+      "description": "/** A callback function to return content to be inserted below a row in the export. */",
       "type": {
         "arguments": { "params": "ProcessRowGroupForExportParams" },
         "returnType": "T | undefined",
@@ -10515,28 +10723,52 @@
       }
     },
     "meta": { "typeParams": ["T"] },
-    "allColumns": { "type": { "returnType": "boolean", "optional": true } },
+    "allColumns": {
+      "description": "/** If `true`, all columns will be exported in the order they appear in the columnDefs.\n * When `false` only the columns currently being displayed will be exported.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "columnKeys": {
+      "description": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
       "type": { "returnType": "(string | Column)[]", "optional": true }
     },
-    "rowNodes": { "type": { "returnType": "RowPosition[]", "optional": true } },
-    "fileName": { "type": { "returnType": "string", "optional": true } },
-    "onlySelected": { "type": { "returnType": "boolean", "optional": true } },
+    "rowNodes": {
+      "description": "/** Row node positions. */",
+      "type": { "returnType": "RowPosition[]", "optional": true }
+    },
+    "fileName": {
+      "description": "/** String to use as the file name. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "onlySelected": {
+      "description": "/** Export only selected rows.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "onlySelectedAllPages": {
+      "description": "/** Only export selected rows including other pages (only makes sense when using pagination).\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipColumnGroupHeaders": {
+      "description": "/** Set to `true` to exclude header column groups.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipColumnHeaders": {
+      "description": "/** Set to `true` if you don't want to export column headers.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "skipRowGroups": { "type": { "returnType": "boolean", "optional": true } },
-    "skipPinnedTop": { "type": { "returnType": "boolean", "optional": true } },
+    "skipRowGroups": {
+      "description": "/** Set to `true` to skip row group headers if grouping rows. Only relevant when grouping rows.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "skipPinnedTop": {
+      "description": "/** Set to `true` to suppress exporting rows pinned to the top of the grid.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "skipPinnedBottom": {
+      "description": "/** Set to `true` to suppress exporting rows pinned to the bottom of the grid.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "shouldRowBeSkipped": {
+      "description": "/** A callback function that will be invoked once per row in the grid. Return true to omit the row from the export. */",
       "type": {
         "arguments": { "params": "ShouldRowBeSkippedParams" },
         "returnType": "boolean",
@@ -10544,6 +10776,7 @@
       }
     },
     "processCellCallback": {
+      "description": "/** A callback function invoked once per cell in the grid. Return a string value to be displayed in the export. For example this is useful for formatting date values. */",
       "type": {
         "arguments": { "params": "ProcessCellForExportParams" },
         "returnType": "string",
@@ -10551,6 +10784,7 @@
       }
     },
     "processHeaderCallback": {
+      "description": "/** A callback function invoked once per column. Return a string to be displayed in the column header. */",
       "type": {
         "arguments": { "params": "ProcessHeaderForExportParams" },
         "returnType": "string",
@@ -10558,6 +10792,7 @@
       }
     },
     "processGroupHeaderCallback": {
+      "description": "/** A callback function invoked once per column group. Return a `string` to be displayed in the column group header.\n * Note that column groups are exported by default, this option will not work with `skipColumnGroupHeaders=true`. */",
       "type": {
         "arguments": { "params": "ProcessGroupHeaderForExportParams" },
         "returnType": "string",
@@ -10565,6 +10800,7 @@
       }
     },
     "processRowGroupCallback": {
+      "description": "/** A callback function invoked once per row group. Return a `string` to be displayed in the group cell. */",
       "type": {
         "arguments": { "params": "ProcessRowGroupForExportParams" },
         "returnType": "string",
@@ -10586,20 +10822,37 @@
   },
   "PackageFileParams": { "meta": { "typeParams": ["T"] } },
   "CsvCell": {
-    "data": { "type": { "returnType": "CsvCellData", "optional": false } },
-    "mergeAcross": { "type": { "returnType": "number", "optional": true } }
+    "data": {
+      "description": "/** The data that will be added to the cell. */",
+      "type": { "returnType": "CsvCellData", "optional": false }
+    },
+    "mergeAcross": {
+      "description": "/** The number of cells to span across (1 means span 2 columns).\n * Default: `0` */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "CsvCellData": {
-    "value": { "type": { "returnType": "string | null", "optional": false } }
+    "value": {
+      "description": "/** The value of the cell. */",
+      "type": { "returnType": "string | null", "optional": false }
+    }
   },
   "CsvCustomContent": {},
   "CsvExportParams": {
-    "columnSeparator": { "type": { "returnType": "string", "optional": true } },
-    "suppressQuotes": { "type": { "returnType": "boolean", "optional": true } },
+    "columnSeparator": {
+      "description": "/** Delimiter to insert between cell values.\n * Default: `,` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "suppressQuotes": {
+      "description": "/** By default cell values are encoded according to CSV format rules: values are wrapped in double quotes, and any double quotes within the values are escaped, so my value becomes \\\"my\\\"\\\"value\\\". Pass `true` to insert the value into the CSV file without escaping.\n * In this case it is your responsibility to ensure that no cells contain the columnSeparator character.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "prependContent": {
+      "description": "/** Content to put at the top of the exported sheet. */",
       "type": { "returnType": "CsvCustomContent", "optional": true }
     },
     "appendContent": {
+      "description": "/** Content to put at the bottom of the exported sheet. */",
       "type": { "returnType": "CsvCustomContent", "optional": true }
     },
     "customHeader": {
@@ -10611,34 +10864,59 @@
       "type": { "returnType": "CsvCustomContent", "optional": true }
     },
     "getCustomContentBelowRow": {
+      "description": "/** A callback function to return content to be inserted below a row in the export. */",
       "type": {
         "arguments": { "params": "ProcessRowGroupForExportParams" },
         "returnType": "CsvCustomContent | undefined",
         "optional": true
       }
     },
-    "allColumns": { "type": { "returnType": "boolean", "optional": true } },
+    "allColumns": {
+      "description": "/** If `true`, all columns will be exported in the order they appear in the columnDefs.\n * When `false` only the columns currently being displayed will be exported.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "columnKeys": {
+      "description": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
       "type": { "returnType": "(string | Column)[]", "optional": true }
     },
-    "rowNodes": { "type": { "returnType": "RowPosition[]", "optional": true } },
-    "fileName": { "type": { "returnType": "string", "optional": true } },
-    "onlySelected": { "type": { "returnType": "boolean", "optional": true } },
+    "rowNodes": {
+      "description": "/** Row node positions. */",
+      "type": { "returnType": "RowPosition[]", "optional": true }
+    },
+    "fileName": {
+      "description": "/** String to use as the file name. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "onlySelected": {
+      "description": "/** Export only selected rows.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "onlySelectedAllPages": {
+      "description": "/** Only export selected rows including other pages (only makes sense when using pagination).\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipColumnGroupHeaders": {
+      "description": "/** Set to `true` to exclude header column groups.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipColumnHeaders": {
+      "description": "/** Set to `true` if you don't want to export column headers.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "skipRowGroups": { "type": { "returnType": "boolean", "optional": true } },
-    "skipPinnedTop": { "type": { "returnType": "boolean", "optional": true } },
+    "skipRowGroups": {
+      "description": "/** Set to `true` to skip row group headers if grouping rows. Only relevant when grouping rows.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "skipPinnedTop": {
+      "description": "/** Set to `true` to suppress exporting rows pinned to the top of the grid.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "skipPinnedBottom": {
+      "description": "/** Set to `true` to suppress exporting rows pinned to the bottom of the grid.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "shouldRowBeSkipped": {
+      "description": "/** A callback function that will be invoked once per row in the grid. Return true to omit the row from the export. */",
       "type": {
         "arguments": { "params": "ShouldRowBeSkippedParams" },
         "returnType": "boolean",
@@ -10646,6 +10924,7 @@
       }
     },
     "processCellCallback": {
+      "description": "/** A callback function invoked once per cell in the grid. Return a string value to be displayed in the export. For example this is useful for formatting date values. */",
       "type": {
         "arguments": { "params": "ProcessCellForExportParams" },
         "returnType": "string",
@@ -10653,6 +10932,7 @@
       }
     },
     "processHeaderCallback": {
+      "description": "/** A callback function invoked once per column. Return a string to be displayed in the column header. */",
       "type": {
         "arguments": { "params": "ProcessHeaderForExportParams" },
         "returnType": "string",
@@ -10660,6 +10940,7 @@
       }
     },
     "processGroupHeaderCallback": {
+      "description": "/** A callback function invoked once per column group. Return a `string` to be displayed in the column group header.\n * Note that column groups are exported by default, this option will not work with `skipColumnGroupHeaders=true`. */",
       "type": {
         "arguments": { "params": "ProcessGroupHeaderForExportParams" },
         "returnType": "string",
@@ -10667,6 +10948,7 @@
       }
     },
     "processRowGroupCallback": {
+      "description": "/** A callback function invoked once per row group. Return a `string` to be displayed in the group cell. */",
       "type": {
         "arguments": { "params": "ProcessRowGroupForExportParams" },
         "returnType": "string",
@@ -10687,7 +10969,10 @@
     }
   },
   "ShouldRowBeSkippedParams": {
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
+    "node": {
+      "description": "/** Row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
+    },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -10761,7 +11046,10 @@
     }
   },
   "ProcessRowGroupForExportParams": {
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
+    "node": {
+      "description": "/** Row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
+    },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -11591,9 +11879,6 @@
     "enabled": {
       "description": "/** Whether or not the title should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "padding": {
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "text": {
       "description": "/** The text to show in the title. */",
@@ -12549,14 +12834,6 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "type": { "returnType": "PixelSize", "optional": true }
-    },
-    "fillOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
-    },
-    "strokeOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgSeriesMarkerFormatterParams": {
@@ -12619,14 +12896,6 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "type": { "returnType": "PixelSize", "optional": true }
-    },
-    "fillOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
-    },
-    "strokeOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgAreaSeriesMarker": {
@@ -12664,14 +12933,6 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "type": { "returnType": "PixelSize", "optional": true }
-    },
-    "fillOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
-    },
-    "strokeOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgSeriesTooltip": {
@@ -13516,9 +13777,6 @@
     "enabled": {
       "description": "/** Whether or not the title should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "padding": {
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "text": {
       "description": "/** The text to show in the title. */",
@@ -14927,18 +15185,36 @@
     }
   },
   "ExcelStyle": {
-    "id": { "type": { "returnType": "string", "optional": false } },
+    "id": {
+      "description": "/** The id of the Excel Style, this should match a CSS cell class. */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "alignment": {
+      "description": "/** Use this property to customise cell alignment properties. */",
       "type": { "returnType": "ExcelAlignment", "optional": true }
     },
-    "borders": { "type": { "returnType": "ExcelBorders", "optional": true } },
-    "dataType": { "type": { "returnType": "ExcelDataType", "optional": true } },
-    "font": { "type": { "returnType": "ExcelFont", "optional": true } },
-    "interior": { "type": { "returnType": "ExcelInterior", "optional": true } },
+    "borders": {
+      "description": "/** Use this property to customise cell borders. */",
+      "type": { "returnType": "ExcelBorders", "optional": true }
+    },
+    "dataType": {
+      "description": "/** Use this property to specify the type of data being exported. */",
+      "type": { "returnType": "ExcelDataType", "optional": true }
+    },
+    "font": {
+      "description": "/** Use this property to customise the font used in the cell. */",
+      "type": { "returnType": "ExcelFont", "optional": true }
+    },
+    "interior": {
+      "description": "/** Use this property to customise the cell background. */",
+      "type": { "returnType": "ExcelInterior", "optional": true }
+    },
     "numberFormat": {
+      "description": "/** Use this property to customise the cell value as a formatted number. */",
       "type": { "returnType": "ExcelNumberFormat", "optional": true }
     },
     "protection": {
+      "description": "/** Use this property to setup cell protection. */",
       "type": { "returnType": "ExcelProtection", "optional": true }
     },
     "name": {
@@ -14948,27 +15224,42 @@
   },
   "ExcelAlignment": {
     "horizontal": {
+      "description": "/** Use this property to change the cell horizontal alignment.\n * Default: `Automatic` */",
       "type": {
         "returnType": "'Automatic' | 'Left' | 'Center' | 'Right' | 'Fill' | 'Justify' | 'CenterAcrossSelection' | 'Distributed' | 'JustifyDistributed'",
         "optional": true
       }
     },
-    "indent": { "type": { "returnType": "number", "optional": true } },
+    "indent": {
+      "description": "/** Use this property to change the level of indentation in the cell.\n * Default: 0 */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "readingOrder": {
+      "description": "/** Use this property to change the cell reading order.\n * Default: `LeftToRight` */",
       "type": {
         "returnType": "'RightToLeft' | 'LeftToRight' | 'Context'",
         "optional": true
       }
     },
-    "rotate": { "type": { "returnType": "number", "optional": true } },
-    "shrinkToFit": { "type": { "returnType": "boolean", "optional": true } },
+    "rotate": {
+      "description": "/** The number of degrees between 0 and 359 to rotate the text.\n * Default: `0` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "shrinkToFit": {
+      "description": "/** If set to `true`, the font size of the cell will automatically change to force the text to fit within the cell.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "vertical": {
+      "description": "/** Use this property to change the cell vertical alignment.\n * Default: `Automatic` */",
       "type": {
         "returnType": "'Automatic' | 'Top' | 'Bottom' | 'Center' | 'Justify' | 'Distributed' | 'JustifyDistributed'",
         "optional": true
       }
     },
-    "wrapText": { "type": { "returnType": "boolean", "optional": true } },
+    "wrapText": {
+      "description": "/** If set to `true`, multiline text will be displayed as multiline by Excel.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "verticalText": {
       "description": "/** @deprecated Legacy property\n */",
       "type": { "returnType": "boolean", "optional": true }
@@ -14976,38 +15267,82 @@
   },
   "ExcelBorders": {
     "borderBottom": {
+      "description": "/** Use to set the cell's bottom border. */",
       "type": { "returnType": "ExcelBorder", "optional": true }
     },
-    "borderLeft": { "type": { "returnType": "ExcelBorder", "optional": true } },
+    "borderLeft": {
+      "description": "/** Use to set the cell's left border. */",
+      "type": { "returnType": "ExcelBorder", "optional": true }
+    },
     "borderRight": {
+      "description": "/** Use to set the cell's right border. */",
       "type": { "returnType": "ExcelBorder", "optional": true }
     },
-    "borderTop": { "type": { "returnType": "ExcelBorder", "optional": true } }
+    "borderTop": {
+      "description": "/** Use to set the cell's top border. */",
+      "type": { "returnType": "ExcelBorder", "optional": true }
+    }
   },
   "ExcelBorder": {
-    "color": { "type": { "returnType": "string", "optional": true } },
+    "color": {
+      "description": "/** The color or the border.\n * Default: `black` */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "lineStyle": {
+      "description": "/** The style of the border.\n * Default: `None` */",
       "type": {
         "returnType": "'None' | 'Continuous' | 'Dash' | 'Dot' | 'DashDot' | 'DashDotDot' | 'SlantDashDot' | 'Double'",
         "optional": true
       }
     },
-    "weight": { "type": { "returnType": "0 | 1 | 2 | 3", "optional": true } }
+    "weight": {
+      "description": "/** The thickness of the border from 0 (thin) to 3 (thick).\n * Default: `0` */",
+      "type": { "returnType": "0 | 1 | 2 | 3", "optional": true }
+    }
   },
   "ExcelFont": {
-    "bold": { "type": { "returnType": "boolean", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "family": { "type": { "returnType": "string", "optional": true } },
-    "fontName": { "type": { "returnType": "string", "optional": true } },
-    "italic": { "type": { "returnType": "boolean", "optional": true } },
-    "outline": { "type": { "returnType": "boolean", "optional": true } },
-    "shadow": { "type": { "returnType": "boolean", "optional": true } },
-    "size": { "type": { "returnType": "number", "optional": true } },
-    "strikeThrough": { "type": { "returnType": "boolean", "optional": true } },
+    "bold": {
+      "description": "/** Set to `true` to set the cell text to bold.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "color": {
+      "description": "/** The color of the cell font.\n * Default: `#000000` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "family": {
+      "description": "/** The family of the font to used in the cell.\n * Options: `Automatic`,`Roman`,`Swiss`,`Modern`,`Script`,`Decorative`,\n * Default: `Automatic` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fontName": {
+      "description": "/** The name of the font to be used in the cell.\n * Default: `Calibri` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "italic": {
+      "description": "/** Set to `true` to display the cell font as italic.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "outline": {
+      "description": "/** Set to `true` to add a text outline.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "shadow": {
+      "description": "/** Set to `true` to add text shadow.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "size": {
+      "description": "/** Set this property to used a different font size other than the default. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "strikeThrough": {
+      "description": "/** Set to `true` to add a strikeThrough line.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "underline": {
+      "description": "/** Use this property to underline the cell text. */",
       "type": { "returnType": "'Single' | 'Double'", "optional": true }
     },
     "verticalAlign": {
+      "description": "/** Use this property to change the default font alignment. Note: This is different than setting cell vertical alignment. */",
       "type": { "returnType": "'Superscript' | 'Subscript'", "optional": true }
     },
     "charSet": {
@@ -15017,20 +15352,36 @@
   },
   "ExcelInterior": {
     "pattern": {
+      "description": "/** Use this property to set background color patterns. */",
       "type": {
         "returnType": "'None' | 'Solid' | 'Gray75' | 'Gray50' | 'Gray25' | 'Gray125' | 'Gray0625' | 'HorzStripe' | 'VertStripe' | 'ReverseDiagStripe' | 'DiagStripe' | 'DiagCross' | 'ThickDiagCross' | 'ThinHorzStripe' | 'ThinVertStripe' | 'ThinReverseDiagStripe' | 'ThinDiagStripe' | 'ThinHorzCross' | 'ThinDiagCross'",
         "optional": false
       }
     },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "patternColor": { "type": { "returnType": "string", "optional": true } }
+    "color": {
+      "description": "/** The colour to be used as a secondary colour combined with patterns. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "patternColor": {
+      "description": "/** The pattern color. */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "ExcelNumberFormat": {
-    "format": { "type": { "returnType": "string", "optional": false } }
+    "format": {
+      "description": "/** Use this property to provide a pattern to format a number. (eg. 10000 could become $10,000.00). */",
+      "type": { "returnType": "string", "optional": false }
+    }
   },
   "ExcelProtection": {
-    "protected": { "type": { "returnType": "boolean", "optional": false } },
-    "hideFormula": { "type": { "returnType": "boolean", "optional": false } }
+    "protected": {
+      "description": "/** Set to `false` to disable cell protection (locking)\n * Default: `true` */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "hideFormula": {
+      "description": "/** Set to `true` to hide formulas within protected cells.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": false }
+    }
   },
   "ExcelWorksheet": {
     "name": { "type": { "returnType": "string", "optional": false } },
@@ -15050,58 +15401,142 @@
     "bestFit": { "type": { "returnType": "boolean", "optional": true } }
   },
   "ExcelRow": {
-    "index": { "type": { "returnType": "number", "optional": true } },
-    "collapsed": { "type": { "returnType": "boolean", "optional": true } },
-    "hidden": { "type": { "returnType": "boolean", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "outlineLevel": { "type": { "returnType": "number", "optional": true } },
-    "s": { "type": { "returnType": "number", "optional": true } },
-    "cells": { "type": { "returnType": "ExcelCell[]", "optional": false } }
+    "index": {
+      "description": "/** Row index. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "collapsed": {
+      "description": "/** Collapsed state. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "hidden": {
+      "description": "/** Hidden state. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "height": {
+      "description": "/** The height of the row. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "outlineLevel": {
+      "description": "/** The indentation level if the current row is part of a row group. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "cells": {
+      "description": "/** An array of ExcelCells. */",
+      "type": { "returnType": "ExcelCell[]", "optional": false }
+    }
   },
   "ExcelCell": {
-    "ref": { "type": { "returnType": "string", "optional": true } },
-    "styleId": { "type": { "returnType": "string", "optional": true } },
-    "data": { "type": { "returnType": "ExcelData", "optional": true } },
-    "mergeAcross": { "type": { "returnType": "number", "optional": true } },
+    "ref": {
+      "description": "/** Cell reference. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "styleId": {
+      "description": "/** The ExcelStyle id to be associated with the cell. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "data": {
+      "description": "/** The data that will be added to the cell. */",
+      "type": { "returnType": "ExcelData", "optional": true }
+    },
+    "mergeAcross": {
+      "description": "/** The number of cells to span across (1 means span 2 columns).\n * Default: `0` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "collapsibleRanges": {
+      "description": "/** Collapsible ranges. */",
       "type": { "returnType": "number[][]", "optional": true }
     }
   },
+  "ExcelImagePosition": {
+    "row": {
+      "description": "/** The row containing this image. This property is set automatically, don't change it unless you know what you are doing. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "rowSpan": {
+      "description": "/** The amount of rows this image will cover.\n * Default: `1` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "column": {
+      "description": "/** The column containing this image. This property is set automatically, don't change it unless you know what you are doing. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "colSpan": {
+      "description": "/** The amount of columns this image will cover.\n * Default: `1` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "offsetX": {
+      "description": "/** The amount in pixels the image should be offset horizontally.\n * Default: `0` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "offsetY": {
+      "description": "/** The amount in pixels the image should be offset vertically.\n * Default: `0` */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
   "ExcelImage": {
-    "id": { "type": { "returnType": "string", "optional": false } },
-    "base64": { "type": { "returnType": "string", "optional": false } },
+    "id": {
+      "description": "/** The image `id`. This field is required so the same image doesn't get imported multiple times. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "base64": {
+      "description": "/** A base64 string that represents the image being imported. */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "imageType": {
+      "description": "/** The type of image being exported. */",
       "type": { "returnType": "'jpg' | 'png' | 'gif'", "optional": false }
     },
-    "altText": { "type": { "returnType": "string", "optional": true } },
-    "fitCell": { "type": { "returnType": "boolean", "optional": true } },
-    "transparency": { "type": { "returnType": "number", "optional": true } },
-    "rotation": { "type": { "returnType": "number", "optional": true } },
+    "altText": {
+      "description": "/** Alt Text for the image. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fitCell": {
+      "description": "/** If set to `true`, the image will cover the whole cell that is being imported to.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "transparency": {
+      "description": "/** Set a value between 0 - 100 that will indicate the percentage of transparency of the image.\n * Default: `0` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "rotation": {
+      "description": "/** Set a value between 0 - 359 that will indicate the number of degrees to rotate the image clockwise.\n * Default: `0` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "recolor": {
+      "description": "/** Set this property to select a preset that changes the appearance of the image. */",
       "type": {
         "returnType": "'Grayscale' | 'Sepia' | 'Washout'",
         "optional": true
       }
     },
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
+    "width": {
+      "description": "/** The width of the image in pixels. If this value is not selected, `fitCell` will be automatically set to true. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** The height of the image in pixels. If this value is not selected, `fitCell` will be automatically set to true. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "position": {
-      "type": {
-        "returnType": "{\n        row?: number;\n        rowSpan?: number;\n        column?: number;\n        colSpan?: number;\n        offsetX?: number;\n        offsetY?: number;\n    }",
-        "optional": true
-      }
+      "description": "/** Position of the image. */",
+      "type": { "returnType": "ExcelImagePosition", "optional": true }
     }
   },
   "ExcelDataType": {},
   "ExcelOOXMLDataType": {},
   "ExcelData": {
     "type": {
+      "description": "/** The type of data being in the cell. */",
       "type": {
         "returnType": "ExcelDataType | ExcelOOXMLDataType",
         "optional": false
       }
     },
-    "value": { "type": { "returnType": "string | null", "optional": false } }
+    "value": {
+      "description": "/** The value of the cell. */",
+      "type": { "returnType": "string | null", "optional": false }
+    }
   },
   "ExcelRelationship": {
     "Id": { "type": { "returnType": "string", "optional": false } },
@@ -15156,46 +15591,67 @@
     "rowIndex": { "type": { "returnType": "number", "optional": false } }
   },
   "ExcelExportParams": {
-    "author": { "type": { "returnType": "string", "optional": true } },
+    "author": {
+      "description": "/** The author of the exported file. Default: `\"AG Grid\"` */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "autoConvertFormulas": {
+      "description": "/** If set to `true`, this will try to convert any cell that starts with `=` to a formula, instead of setting the cell value as regular string that starts with `=`.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "columnWidth": {
+      "description": "/** Defines the default column width. If no value is present, each column will have value currently set in the application with a min value of 75px. This property can also be supplied a callback function that returns a number. */",
       "type": {
         "returnType": "number | ((params: ColumnWidthCallbackParams) => number)",
         "optional": true
       }
     },
     "exportMode": {
+      "description": "/** For backwards compatibility, this property could be set to `xml`, which will export an Excel Spreadsheet compatible with old Office versions (prior to Office 2007). Setting this to `xml` is not recommended as some features will not work in legacy mode.\n * Default: `xlsx` */",
       "type": { "returnType": "'xlsx' | 'xml'", "optional": true }
     },
-    "fontSize": { "type": { "returnType": "number", "optional": true } },
+    "fontSize": {
+      "description": "/** The default value for the font size of the Excel document.\n * Default: `11` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "headerRowHeight": {
+      "description": "/** The height in pixels of header rows. Defaults to Excel default value. This property can also be supplied a callback function that returns a number. */",
       "type": {
         "returnType": "number | ((params: RowHeightCallbackParams) => number)",
         "optional": true
       }
     },
     "rowHeight": {
+      "description": "/** The height in pixels of all rows. Defaults to Excel default value. This property can also be supplied a callback function that returns a number. */",
       "type": {
         "returnType": "number | ((params: RowHeightCallbackParams) => number)",
         "optional": true
       }
     },
-    "sheetName": { "type": { "returnType": "string", "optional": true } },
+    "sheetName": {
+      "description": "/** The name of the sheet in Excel where the grid will be exported. There is a max limit of 31 characters.\n * Default: `ag-grid` */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "margins": {
+      "description": "/** The Excel document page margins. Relevant for printing. */",
       "type": { "returnType": "ExcelSheetMargin", "optional": true }
     },
     "pageSetup": {
+      "description": "/** Allows you to setup the page orientation and size. */",
       "type": { "returnType": "ExcelSheetPageSetup", "optional": true }
     },
     "headerFooterConfig": {
+      "description": "/** The configuration for header and footers. */",
       "type": { "returnType": "ExcelHeaderFooterConfig", "optional": true }
     },
     "suppressTextAsCDATA": {
+      "description": "/** If `true`, text content will be encoded with XML character entities like `&amp;lt;` and `&amp;gt;`. This is only relevant when `exportMode='xml'`.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "mimeType": { "type": { "returnType": "string", "optional": true } },
+    "mimeType": {
+      "description": "/** The mimeType of the Excel file. Note that this defaults to `application/vnd.ms-excel` if exportMode is `xml`.\n * Default: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "addImageToCell": {
       "description": "/** Use to export an image for the gridCell in question. */",
       "type": {
@@ -15209,9 +15665,11 @@
       }
     },
     "prependContent": {
+      "description": "/** Content to put at the top of the exported sheet. */",
       "type": { "returnType": "ExcelRow[]", "optional": true }
     },
     "appendContent": {
+      "description": "/** Content to put at the bottom of the exported sheet. */",
       "type": { "returnType": "ExcelRow[]", "optional": true }
     },
     "customHeader": {
@@ -15223,34 +15681,59 @@
       "type": { "returnType": "ExcelRow[]", "optional": true }
     },
     "getCustomContentBelowRow": {
+      "description": "/** A callback function to return content to be inserted below a row in the export. */",
       "type": {
         "arguments": { "params": "ProcessRowGroupForExportParams" },
         "returnType": "ExcelRow[] | undefined",
         "optional": true
       }
     },
-    "allColumns": { "type": { "returnType": "boolean", "optional": true } },
+    "allColumns": {
+      "description": "/** If `true`, all columns will be exported in the order they appear in the columnDefs.\n * When `false` only the columns currently being displayed will be exported.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "columnKeys": {
+      "description": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
       "type": { "returnType": "(string | Column)[]", "optional": true }
     },
-    "rowNodes": { "type": { "returnType": "RowPosition[]", "optional": true } },
-    "fileName": { "type": { "returnType": "string", "optional": true } },
-    "onlySelected": { "type": { "returnType": "boolean", "optional": true } },
+    "rowNodes": {
+      "description": "/** Row node positions. */",
+      "type": { "returnType": "RowPosition[]", "optional": true }
+    },
+    "fileName": {
+      "description": "/** String to use as the file name. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "onlySelected": {
+      "description": "/** Export only selected rows.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "onlySelectedAllPages": {
+      "description": "/** Only export selected rows including other pages (only makes sense when using pagination).\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipColumnGroupHeaders": {
+      "description": "/** Set to `true` to exclude header column groups.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipColumnHeaders": {
+      "description": "/** Set to `true` if you don't want to export column headers.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "skipRowGroups": { "type": { "returnType": "boolean", "optional": true } },
-    "skipPinnedTop": { "type": { "returnType": "boolean", "optional": true } },
+    "skipRowGroups": {
+      "description": "/** Set to `true` to skip row group headers if grouping rows. Only relevant when grouping rows.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "skipPinnedTop": {
+      "description": "/** Set to `true` to suppress exporting rows pinned to the top of the grid.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "skipPinnedBottom": {
+      "description": "/** Set to `true` to suppress exporting rows pinned to the bottom of the grid.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "shouldRowBeSkipped": {
+      "description": "/** A callback function that will be invoked once per row in the grid. Return true to omit the row from the export. */",
       "type": {
         "arguments": { "params": "ShouldRowBeSkippedParams" },
         "returnType": "boolean",
@@ -15258,6 +15741,7 @@
       }
     },
     "processCellCallback": {
+      "description": "/** A callback function invoked once per cell in the grid. Return a string value to be displayed in the export. For example this is useful for formatting date values. */",
       "type": {
         "arguments": { "params": "ProcessCellForExportParams" },
         "returnType": "string",
@@ -15265,6 +15749,7 @@
       }
     },
     "processHeaderCallback": {
+      "description": "/** A callback function invoked once per column. Return a string to be displayed in the column header. */",
       "type": {
         "arguments": { "params": "ProcessHeaderForExportParams" },
         "returnType": "string",
@@ -15272,6 +15757,7 @@
       }
     },
     "processGroupHeaderCallback": {
+      "description": "/** A callback function invoked once per column group. Return a `string` to be displayed in the column group header.\n * Note that column groups are exported by default, this option will not work with `skipColumnGroupHeaders=true`. */",
       "type": {
         "arguments": { "params": "ProcessGroupHeaderForExportParams" },
         "returnType": "string",
@@ -15279,6 +15765,7 @@
       }
     },
     "processRowGroupCallback": {
+      "description": "/** A callback function invoked once per row group. Return a `string` to be displayed in the group cell. */",
       "type": {
         "arguments": { "params": "ProcessRowGroupForExportParams" },
         "returnType": "string",
@@ -15299,33 +15786,64 @@
     }
   },
   "ExcelExportMultipleSheetParams": {
-    "author": { "type": { "returnType": "string", "optional": true } },
-    "data": { "type": { "returnType": "string[]", "optional": false } },
-    "fileName": { "type": { "returnType": "string", "optional": true } },
-    "fontSize": { "type": { "returnType": "number", "optional": true } },
-    "mimeType": { "type": { "returnType": "string", "optional": true } }
+    "author": {
+      "description": "/** The author of the exported file.\n * Default: `AG Grid` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "data": {
+      "description": "/** Array of strings containing the raw data for Excel workbook sheets.\n * This property is only used when exporting to multiple sheets using `api.exportMultipleSheetsAsExcel()` and the data for each sheet is obtained by calling `api.getSheetDataForExcel()`. */",
+      "type": { "returnType": "string[]", "optional": false }
+    },
+    "fileName": {
+      "description": "/** String to use as the file name.\n * Default: `export.xlsx` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The default value for the font size of the Excel document.\n * Default: `11` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "mimeType": {
+      "description": "/** The mimeType of the Excel file.\n * Default: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "ExcelHeaderFooterConfig": {
-    "all": { "type": { "returnType": "ExcelHeaderFooter", "optional": true } },
-    "first": {
+    "all": {
+      "description": "/** The configuration for header and footer on every page. */",
       "type": { "returnType": "ExcelHeaderFooter", "optional": true }
     },
-    "even": { "type": { "returnType": "ExcelHeaderFooter", "optional": true } }
+    "first": {
+      "description": "/** The configuration for header and footer on the first page only. */",
+      "type": { "returnType": "ExcelHeaderFooter", "optional": true }
+    },
+    "even": {
+      "description": "/** The configuration for header and footer on even numbered pages only. */",
+      "type": { "returnType": "ExcelHeaderFooter", "optional": true }
+    }
   },
   "ExcelHeaderFooter": {
     "header": {
+      "description": "/** An array of maximum 3 items (`Left`, `Center`, `Right`), containing header configurations. */",
       "type": { "returnType": "ExcelHeaderFooterContent[]", "optional": true }
     },
     "footer": {
+      "description": "/** An array of maximum 3 items (`Left`, `Center`, `Right`), containing footer configurations. */",
       "type": { "returnType": "ExcelHeaderFooterContent[]", "optional": true }
     }
   },
   "ExcelHeaderFooterContent": {
-    "value": { "type": { "returnType": "string", "optional": false } },
+    "value": {
+      "description": "/** The value of the text to be included in the header. */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "position": {
+      "description": "/** Configures where the text should be added: `Left`, `Center` or `Right`.\n * Default: `Left` */",
       "type": { "returnType": "'Left' | 'Center' | 'Right'", "optional": true }
     },
-    "font": { "type": { "returnType": "ExcelFont", "optional": true } }
+    "font": {
+      "description": "/** The font style of the header/footer value. */",
+      "type": { "returnType": "ExcelFont", "optional": true }
+    }
   },
   "IExcelCreator": {
     "exportDataAsExcel": {
@@ -15383,18 +15901,38 @@
     }
   },
   "ExcelSheetMargin": {
-    "top": { "type": { "returnType": "number", "optional": true } },
-    "right": { "type": { "returnType": "number", "optional": true } },
-    "bottom": { "type": { "returnType": "number", "optional": true } },
-    "left": { "type": { "returnType": "number", "optional": true } },
-    "header": { "type": { "returnType": "number", "optional": true } },
-    "footer": { "type": { "returnType": "number", "optional": true } }
+    "top": {
+      "description": "/** The sheet top margin.\n * Default: `0.75` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "right": {
+      "description": "/** The sheet right margin.\n * Default: `0.7` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "bottom": {
+      "description": "/** The sheet bottom margin.\n * Default: `0.75` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "left": {
+      "description": "/** The sheet left margin.\n * Default: `0.7` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "header": {
+      "description": "/** The sheet header margin.\n * Default: `0.3` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "footer": {
+      "description": "/** The sheet footer margin.\n * Default: `0.3` */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "ExcelSheetPageSetup": {
     "orientation": {
+      "description": "/** Use this property to change the print orientation.\n * Default: `Portrait` */",
       "type": { "returnType": "'Portrait' | 'Landscape'", "optional": true }
     },
     "pageSize": {
+      "description": "/** Use this property to set the sheet size.\n * Default: `Letter` */",
       "type": {
         "returnType": "'Letter' | 'Letter Small' | 'Tabloid' | 'Ledger' | 'Legal' | 'Statement' | 'Executive' | 'A3' | 'A4' | 'A4 Small' | 'A5' | 'A6' | 'B4' | 'B5' | 'Folio' | 'Envelope' | 'Envelope DL' | 'Envelope C5' | 'Envelope B5' | 'Envelope C3' | 'Envelope C4' | 'Envelope C6' | 'Envelope Monarch' | 'Japanese Postcard' | 'Japanese Double Postcard'",
         "optional": true
@@ -17715,7 +18253,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the x-axis in the sparklines. */",
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -17757,7 +18295,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the x-axis in the sparklines. */",
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -17803,7 +18341,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the x-axis in the sparklines. */",
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -17865,7 +18403,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the x-axis in the sparklines. */",
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -17927,7 +18465,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the x-axis in the sparklines. */",
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -17941,15 +18479,15 @@
   },
   "SparklineLabelOptions": {
     "enabled": {
-      "description": "/** Set to true to enable labels. */",
+      "description": "/** Set to true to enable labels.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "fontSize": {
-      "description": "/** Set size of the font. */",
+      "description": "/** Set size of the font.\n * Default: `8` */",
       "type": { "returnType": "number", "optional": true }
     },
     "fontFamily": {
-      "description": "/** Specify the font for the label text. */",
+      "description": "/** Specify the font for the label text.\n * Default: `Verdana, sans-serif` */",
       "type": { "returnType": "string", "optional": true }
     },
     "fontStyle": {
@@ -17967,11 +18505,11 @@
       }
     },
     "color": {
-      "description": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */",
+      "description": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value.\n * Default: `rgba(70, 70, 70, 1)` */",
       "type": { "returnType": "string", "optional": true }
     },
     "formatter": {
-      "description": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified. */",
+      "description": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar.\n * By default the values are simply stringified. */",
       "type": {
         "arguments": { "params": "LabelFormatterParams" },
         "returnType": "string",
@@ -23051,7 +23589,7 @@
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
     "serverSideInfiniteScroll": {
-      "description": "/** Whether Server-side Row Model will use Infinite Scrolling */",
+      "description": "/** Whether Server-side Row Model will use Infinite Scrolling\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
@@ -23087,11 +23625,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "description": "/** When enabled, the grid will always request the server to provide the sort results.\n * Default: `1` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "description": "/** When enabled, the grid will always request the server to provide the filter results.\n * Default: `1` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -25816,7 +26354,7 @@
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
     "serverSideInfiniteScroll": {
-      "description": "/** Whether Server-side Row Model will use Infinite Scrolling */",
+      "description": "/** Whether Server-side Row Model will use Infinite Scrolling\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
@@ -25852,11 +26390,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "description": "/** When enabled, the grid will always request the server to provide the sort results.\n * Default: `1` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "description": "/** When enabled, the grid will always request the server to provide the filter results.\n * Default: `1` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -28591,7 +29129,7 @@
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
     "serverSideInfiniteScroll": {
-      "description": "/** Whether Server-side Row Model will use Infinite Scrolling */",
+      "description": "/** Whether Server-side Row Model will use Infinite Scrolling\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
@@ -28627,11 +29165,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "description": "/** When enabled, the grid will always request the server to provide the sort results.\n * Default: `1` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "description": "/** When enabled, the grid will always request the server to provide the filter results.\n * Default: `1` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {

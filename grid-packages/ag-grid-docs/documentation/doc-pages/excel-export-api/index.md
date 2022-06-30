@@ -14,93 +14,85 @@ This page documents the Excel Export API and Interfaces.
 
 ## Interfaces
 
-### ExcelExportParams:
+### ExcelExportParams
+<interface-documentation interfaceName='ExcelExportParams' overrideSrc='excel-export-api/resources/excel-api.json' ></interface-documentation>
 
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelExportParams'></api-documentation>
-
-### ExcelExportMultipleSheetParams:
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelExportMultipleSheetParams'></api-documentation>
-
-### ExcelRow
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelRow'></api-documentation>
-
-### ExcelCell
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelCell'></api-documentation>
-
-### ExcelData
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelData'></api-documentation>
-
-### ExcelImage
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelImage'></api-documentation>
-
-### ExcelStyle
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelStyle'></api-documentation>
+### ExcelExportMultipleSheetParams
+<interface-documentation interfaceName='ExcelExportMultipleSheetParams' overrideSrc='excel-export-api/resources/excel-api.json'></interface-documentation>
 
 ### ExcelAlignment
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelAlignment'></api-documentation>
+<interface-documentation interfaceName='ExcelAlignment'></interface-documentation>
 
 ### ExcelBorders
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelBorders'></api-documentation>
+<interface-documentation interfaceName='ExcelBorders'></interface-documentation>
 
 ### ExcelBorder
+<interface-documentation interfaceName='ExcelBorder'></interface-documentation>
 
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelBorder'></api-documentation>
+### ExcelCell
+<interface-documentation interfaceName='ExcelCell'></interface-documentation>
+
+### ExcelData
+<interface-documentation interfaceName='ExcelData' overrideSrc='excel-export-api/resources/excel-api.json'></interface-documentation>
 
 ### ExcelFont
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelFont'></api-documentation>
-
-### ExcelInterior
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelInterior'></api-documentation>
-
-### ExcelNumberFormat
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelNumberFormat'></api-documentation>
-
-### ExcelProtection
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelProtection'></api-documentation>
-
-### ExcelSheetMargin
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelSheetMargin'></api-documentation>
-
-### ExcelSheetPageSetup
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelSheetPageSetup'></api-documentation>
-
-### ExcelHeaderFooterConfig
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelHeaderFooterConfig'></api-documentation>
+<interface-documentation interfaceName='ExcelFont'></interface-documentation>
 
 ### ExcelHeaderFooter
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelHeaderFooter'></api-documentation>
+<interface-documentation interfaceName='ExcelHeaderFooter'></interface-documentation>
 
 ### ExcelHeaderFooterContent
+<interface-documentation interfaceName='ExcelHeaderFooterContent' overrideSrc='excel-export-api/resources/excel-api.json'></interface-documentation>
 
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelHeaderFooterContent'></api-documentation>
+### ExcelImage
+<interface-documentation interfaceName='ExcelImage' overrideSrc='excel-export-api/resources/excel-api.json'></interface-documentation>
 
+### ExcelImagePosition
+<interface-documentation interfaceName='ExcelImagePosition'></interface-documentation>
+
+### ExcelInterior
+<interface-documentation interfaceName='ExcelInterior'></interface-documentation>
+
+### ExcelNumberFormat
+<interface-documentation interfaceName='ExcelNumberFormat'></interface-documentation>
+
+### ExcelProtection
+<interface-documentation interfaceName='ExcelProtection'></interface-documentation>
+
+### ExcelSheetMargin
+<interface-documentation interfaceName='ExcelSheetMargin'></interface-documentation>
+
+### ExcelSheetPageSetup
+<interface-documentation interfaceName='ExcelSheetPageSetup'></interface-documentation>
+
+### ExcelStyle
+<interface-documentation interfaceName='ExcelStyle' overrideSrc='excel-export-api/resources/excel-api.json'></interface-documentation>
 
 ## Types
 
 ### ExcelDataType
 
 ```ts
-type ExcelDataType = 'String' | 'Formula' | 'Number' | 'Boolean' | 'DateTime' | 'Error'
+type ExcelDataType = 
+    'String'   |
+    'Formula'  |
+    'Number'   |
+    'Boolean'  |
+    'DateTime' |
+    'Error'
 ```
 
 ### ExcelOOXMLDataType
 
 ```ts
-type ExcelOOXMLDataType = 'str' | 's' | 'f' | 'inlineStr' | 'n' | 'b' | 'd' | 'e' | 'empty'
+type ExcelOOXMLDataType = 
+    'str'       |
+    's'         |
+    'f'         |
+    'inlineStr' |
+    'n'         |
+    'b'         |
+    'd'         |
+    'e'         |
+    'empty'
 ```

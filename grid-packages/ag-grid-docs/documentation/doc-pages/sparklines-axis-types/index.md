@@ -144,10 +144,8 @@ The example below demonstrates the Time Axis used in an Area Sparkline. Note the
 <grid-example title='Sparkline Time Axis' name='sparkline-time-axis' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Interfaces
-
 ### SparklineAxisOptions
-
-<api-documentation source='sparklines-axis-types/resources/sparkline-axis-api.json' section='SparklineAxisOptions'></api-documentation>
+<interface-documentation interfaceName='SparklineAxisOptions'></interface-documentation>
 
 ## Next Up
 

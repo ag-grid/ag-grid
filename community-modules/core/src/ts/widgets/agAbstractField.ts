@@ -1,5 +1,5 @@
 import { AgAbstractLabel, IAgLabel } from './agAbstractLabel';
-import { setDisabled, setFixedWidth } from '../utils/dom';
+import { setFixedWidth } from '../utils/dom';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabel> extends AgAbstractLabel<TConfig> {
@@ -7,7 +7,6 @@ export abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabe
 
     protected previousValue: TValue | null | undefined;
     protected value: TValue | null | undefined;
-    protected disabled: boolean = false;
 
     constructor(config?: TConfig, template?: string, protected readonly className?: string) {
         super(config, template);
@@ -58,22 +57,5 @@ export abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabe
         }
 
         return this;
-    }
-
-    public setDisabled(disabled: boolean): this {
-        disabled = !!disabled;
-
-        const element = this.getGui();
-
-        setDisabled(element, disabled);
-        element.classList.toggle('ag-disabled', disabled);
-
-        this.disabled = disabled;
-
-        return this;
-    }
-
-    public isDisabled(): boolean {
-        return !!this.disabled;
     }
 }

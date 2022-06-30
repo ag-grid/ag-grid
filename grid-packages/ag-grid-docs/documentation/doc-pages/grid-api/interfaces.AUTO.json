@@ -2055,7 +2055,7 @@
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "serverSideStoreType?": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
-      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling */",
+      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling\n * Default: `false` */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
@@ -2064,8 +2064,8 @@
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
       "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
-      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results */",
-      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results.\n * Default: `1` */",
+      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results.\n * Default: `1` */",
       "serverSideSortingAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
       "serverSideFilteringAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "suppressEnterpriseResetOnNewColumns?": "/** @deprecated */",
@@ -4011,14 +4011,35 @@
       "type": "/** Event identifier */"
     }
   },
-  "RowEvent": {
+  "BaseRowEvent": {
     "meta": {
-      "typeParams": ["TData = any"],
+      "typeParams": ["TData"],
       "doc": "/** ------------ */\n/** ROW EVENTS */\n/** ------------ */"
     },
     "type": {
       "node": "RowNode<TData>",
+      "rowIndex": "number | null",
+      "rowPinned": "string | null",
+      "context": "any",
+      "event?": "Event | null",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "node": "/** The row node. */",
+      "rowIndex": "/** The visible row index for the row */",
+      "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
+      "context": "/** The context as provided on `gridOptions.context` */",
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "RowEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4029,6 +4050,33 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
+      "rowIndex": "/** The visible row index for the row */",
+      "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
+      "context": "/** The context as provided on `gridOptions.context` */",
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "RowWithDataEvent": {
+    "meta": {
+      "typeParams": ["TData = any"],
+      "doc": "/** Base interface for row events that always have data set. */"
+    },
+    "type": {
+      "data": "TData",
+      "node": "RowNode<TData>",
+      "rowIndex": "number | null",
+      "rowPinned": "string | null",
+      "context": "any",
+      "event?": "Event | null",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "data": "/** The user provided data for the row. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4040,8 +4088,8 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "expanded": "boolean",
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4053,6 +4101,7 @@
     "docs": {
       "expanded": "/** True if the group is expanded. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4063,8 +4112,8 @@
   "RowValueChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4075,6 +4124,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4085,8 +4135,8 @@
   "RowSelectedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4097,6 +4147,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4107,8 +4158,8 @@
   "VirtualRowRemovedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4119,6 +4170,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4129,8 +4181,8 @@
   "RowClickedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4141,6 +4193,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4151,8 +4204,8 @@
   "RowDoubleClickedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4163,6 +4216,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4173,8 +4227,8 @@
   "RowEditingStartedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4185,6 +4239,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4195,8 +4250,8 @@
   "RowEditingStoppedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4207,6 +4262,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4217,8 +4273,8 @@
   "FullWidthCellKeyDownEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4229,6 +4285,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4239,8 +4296,8 @@
   "FullWidthCellKeyPressEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4251,6 +4308,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4260,15 +4318,45 @@
   },
   "CellEvent": {
     "meta": {
-      "typeParams": ["TData = any"],
+      "typeParams": ["TData = any", "TValue = any"],
       "doc": "/** ------------ */\n/** CELL EVENTS */\n/** ------------ */"
     },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
+      "rowIndex": "number | null",
+      "rowPinned": "string | null",
+      "context": "any",
+      "event?": "Event | null",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "value": "/** The value for the cell if available otherwise undefined. */",
+      "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
+      "rowIndex": "/** The visible row index for the row */",
+      "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
+      "context": "/** The context as provided on `gridOptions.context` */",
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "CellWithDataEvent": {
+    "meta": {
+      "typeParams": ["TData = any", "TValue = any"],
+      "doc": "/** Use for cell events that will always have a value and data property. */"
+    },
+    "type": {
+      "column": "Column",
+      "colDef": "ColDef<TData>",
+      "value": "TValue",
+      "data": "TData",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4279,7 +4367,8 @@
     },
     "docs": {
       "value": "/** The value for the cell */",
-      "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "data": "/** The user provided data for the row. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4288,13 +4377,13 @@
     }
   },
   "CellKeyDownEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4304,8 +4393,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4314,13 +4404,13 @@
     }
   },
   "CellKeyPressEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4330,8 +4420,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4340,13 +4431,13 @@
     }
   },
   "CellClickedEvent": {
-    "meta": { "typeParams": ["TData = any"], "doc": "/** Cell is clicked */" },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4356,8 +4447,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4366,13 +4458,13 @@
     }
   },
   "CellMouseDownEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4382,8 +4474,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4392,13 +4485,13 @@
     }
   },
   "CellDoubleClickedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4408,8 +4501,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4418,13 +4512,13 @@
     }
   },
   "CellMouseOverEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4434,8 +4528,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4444,13 +4539,13 @@
     }
   },
   "CellMouseOutEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4460,8 +4555,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4470,13 +4566,13 @@
     }
   },
   "CellContextMenuEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4486,8 +4582,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4496,13 +4593,13 @@
     }
   },
   "CellEditingStartedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
+      "value": "TValue",
+      "data": "TData",
       "node": "RowNode<TData>",
-      "data": "TData | undefined",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4513,7 +4610,8 @@
     },
     "docs": {
       "value": "/** The value for the cell */",
-      "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "data": "/** The user provided data for the row. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4522,15 +4620,15 @@
     }
   },
   "CellEditingStoppedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue",
+      "newValue": "TValue",
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
+      "value": "TValue",
+      "data": "TData",
       "node": "RowNode<TData>",
-      "data": "TData | undefined",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4543,7 +4641,8 @@
       "oldValue": "/** The old value before editing */",
       "newValue": "/** The new value after editing */",
       "value": "/** The value for the cell */",
-      "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "data": "/** The user provided data for the row. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4552,16 +4651,16 @@
     }
   },
   "CellValueChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue",
+      "newValue": "TValue",
       "source": "string | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
+      "value": "TValue",
+      "data": "TData",
       "node": "RowNode<TData>",
-      "data": "TData | undefined",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4572,7 +4671,8 @@
     },
     "docs": {
       "value": "/** The value for the cell */",
-      "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "data": "/** The user provided data for the row. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4581,16 +4681,16 @@
     }
   },
   "CellEditRequestEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue",
+      "newValue": "TValue",
       "source": "string | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
+      "value": "TValue",
+      "data": "TData",
       "node": "RowNode<TData>",
-      "data": "TData | undefined",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4601,7 +4701,8 @@
     },
     "docs": {
       "value": "/** The value for the cell */",
-      "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "data": "/** The user provided data for the row. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -5928,6 +6029,22 @@
       "skipHeader?": "boolean"
     },
     "docs": {
+      "allColumns?": "/** If `true`, all columns will be exported in the order they appear in the columnDefs.\n * When `false` only the columns currently being displayed will be exported.\n * Default: `false` */",
+      "columnKeys?": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
+      "rowNodes?": "/** Row node positions. */",
+      "fileName?": "/** String to use as the file name. */",
+      "onlySelected?": "/** Export only selected rows.\n * Default: `false` */",
+      "onlySelectedAllPages?": "/** Only export selected rows including other pages (only makes sense when using pagination).\n * Default: `false` */",
+      "skipColumnGroupHeaders?": "/** Set to `true` to exclude header column groups.\n * Default: `false` */",
+      "skipColumnHeaders?": "/** Set to `true` if you don't want to export column headers.\n * Default: `false` */",
+      "skipRowGroups?": "/** Set to `true` to skip row group headers if grouping rows. Only relevant when grouping rows.\n * Default: `false` */",
+      "skipPinnedTop?": "/** Set to `true` to suppress exporting rows pinned to the top of the grid.\n * Default: `false` */",
+      "skipPinnedBottom?": "/** Set to `true` to suppress exporting rows pinned to the bottom of the grid.\n * Default: `false` */",
+      "shouldRowBeSkipped?(params: ShouldRowBeSkippedParams)": "/** A callback function that will be invoked once per row in the grid. Return true to omit the row from the export. */",
+      "processCellCallback?(params: ProcessCellForExportParams)": "/** A callback function invoked once per cell in the grid. Return a string value to be displayed in the export. For example this is useful for formatting date values. */",
+      "processHeaderCallback?(params: ProcessHeaderForExportParams)": "/** A callback function invoked once per column. Return a string to be displayed in the column header. */",
+      "processGroupHeaderCallback?(params: ProcessGroupHeaderForExportParams)": "/** A callback function invoked once per column group. Return a `string` to be displayed in the column group header.\n * Note that column groups are exported by default, this option will not work with `skipColumnGroupHeaders=true`. */",
+      "processRowGroupCallback?(params: ProcessRowGroupForExportParams)": "/** A callback function invoked once per row group. Return a `string` to be displayed in the group cell. */",
       "columnGroups?": "/** @deprecated */",
       "skipGroups?": "/** @deprecated */",
       "skipHeader?": "/** @deprecated */"
@@ -5962,8 +6079,27 @@
       "skipHeader?": "boolean"
     },
     "docs": {
+      "prependContent?": "/** Content to put at the top of the exported sheet. */",
+      "appendContent?": "/** Content to put at the bottom of the exported sheet. */",
       "customHeader?": "/** @deprecated Use prependContent\n */",
       "customFooter?": "/** @deprecated Use appendContent\n */",
+      "getCustomContentBelowRow?": "/** A callback function to return content to be inserted below a row in the export. */",
+      "allColumns?": "/** If `true`, all columns will be exported in the order they appear in the columnDefs.\n * When `false` only the columns currently being displayed will be exported.\n * Default: `false` */",
+      "columnKeys?": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
+      "rowNodes?": "/** Row node positions. */",
+      "fileName?": "/** String to use as the file name. */",
+      "onlySelected?": "/** Export only selected rows.\n * Default: `false` */",
+      "onlySelectedAllPages?": "/** Only export selected rows including other pages (only makes sense when using pagination).\n * Default: `false` */",
+      "skipColumnGroupHeaders?": "/** Set to `true` to exclude header column groups.\n * Default: `false` */",
+      "skipColumnHeaders?": "/** Set to `true` if you don't want to export column headers.\n * Default: `false` */",
+      "skipRowGroups?": "/** Set to `true` to skip row group headers if grouping rows. Only relevant when grouping rows.\n * Default: `false` */",
+      "skipPinnedTop?": "/** Set to `true` to suppress exporting rows pinned to the top of the grid.\n * Default: `false` */",
+      "skipPinnedBottom?": "/** Set to `true` to suppress exporting rows pinned to the bottom of the grid.\n * Default: `false` */",
+      "shouldRowBeSkipped?(params: ShouldRowBeSkippedParams)": "/** A callback function that will be invoked once per row in the grid. Return true to omit the row from the export. */",
+      "processCellCallback?(params: ProcessCellForExportParams)": "/** A callback function invoked once per cell in the grid. Return a string value to be displayed in the export. For example this is useful for formatting date values. */",
+      "processHeaderCallback?(params: ProcessHeaderForExportParams)": "/** A callback function invoked once per column. Return a string to be displayed in the column header. */",
+      "processGroupHeaderCallback?(params: ProcessGroupHeaderForExportParams)": "/** A callback function invoked once per column group. Return a `string` to be displayed in the column group header.\n * Note that column groups are exported by default, this option will not work with `skipColumnGroupHeaders=true`. */",
+      "processRowGroupCallback?(params: ProcessRowGroupForExportParams)": "/** A callback function invoked once per row group. Return a `string` to be displayed in the group cell. */",
       "columnGroups?": "/** @deprecated */",
       "skipGroups?": "/** @deprecated */",
       "skipHeader?": "/** @deprecated */"
@@ -5975,9 +6111,17 @@
   },
   "CsvCell": {
     "meta": {},
-    "type": { "data": "CsvCellData", "mergeAcross?": "number" }
+    "type": { "data": "CsvCellData", "mergeAcross?": "number" },
+    "docs": {
+      "data": "/** The data that will be added to the cell. */",
+      "mergeAcross?": "/** The number of cells to span across (1 means span 2 columns).\n * Default: `0` */"
+    }
   },
-  "CsvCellData": { "meta": {}, "type": { "value": "string | null" } },
+  "CsvCellData": {
+    "meta": {},
+    "type": { "value": "string | null" },
+    "docs": { "value": "/** The value of the cell. */" }
+  },
   "CsvCustomContent": {
     "meta": { "isTypeAlias": true },
     "type": "CsvCell[][] | string"
@@ -6013,8 +6157,29 @@
       "skipHeader?": "boolean"
     },
     "docs": {
+      "columnSeparator?": "/** Delimiter to insert between cell values.\n * Default: `,` */",
+      "suppressQuotes?": "/** By default cell values are encoded according to CSV format rules: values are wrapped in double quotes, and any double quotes within the values are escaped, so my value becomes \\\"my\\\"\\\"value\\\". Pass `true` to insert the value into the CSV file without escaping.\n * In this case it is your responsibility to ensure that no cells contain the columnSeparator character.\n * Default: `false` */",
+      "prependContent?": "/** Content to put at the top of the exported sheet. */",
+      "appendContent?": "/** Content to put at the bottom of the exported sheet. */",
       "customHeader?": "/** @deprecated Use prependContent\n */",
       "customFooter?": "/** @deprecated Use appendContent\n */",
+      "getCustomContentBelowRow?": "/** A callback function to return content to be inserted below a row in the export. */",
+      "allColumns?": "/** If `true`, all columns will be exported in the order they appear in the columnDefs.\n * When `false` only the columns currently being displayed will be exported.\n * Default: `false` */",
+      "columnKeys?": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
+      "rowNodes?": "/** Row node positions. */",
+      "fileName?": "/** String to use as the file name. */",
+      "onlySelected?": "/** Export only selected rows.\n * Default: `false` */",
+      "onlySelectedAllPages?": "/** Only export selected rows including other pages (only makes sense when using pagination).\n * Default: `false` */",
+      "skipColumnGroupHeaders?": "/** Set to `true` to exclude header column groups.\n * Default: `false` */",
+      "skipColumnHeaders?": "/** Set to `true` if you don't want to export column headers.\n * Default: `false` */",
+      "skipRowGroups?": "/** Set to `true` to skip row group headers if grouping rows. Only relevant when grouping rows.\n * Default: `false` */",
+      "skipPinnedTop?": "/** Set to `true` to suppress exporting rows pinned to the top of the grid.\n * Default: `false` */",
+      "skipPinnedBottom?": "/** Set to `true` to suppress exporting rows pinned to the bottom of the grid.\n * Default: `false` */",
+      "shouldRowBeSkipped?(params: ShouldRowBeSkippedParams)": "/** A callback function that will be invoked once per row in the grid. Return true to omit the row from the export. */",
+      "processCellCallback?(params: ProcessCellForExportParams)": "/** A callback function invoked once per cell in the grid. Return a string value to be displayed in the export. For example this is useful for formatting date values. */",
+      "processHeaderCallback?(params: ProcessHeaderForExportParams)": "/** A callback function invoked once per column. Return a string to be displayed in the column header. */",
+      "processGroupHeaderCallback?(params: ProcessGroupHeaderForExportParams)": "/** A callback function invoked once per column group. Return a `string` to be displayed in the column group header.\n * Note that column groups are exported by default, this option will not work with `skipColumnGroupHeaders=true`. */",
+      "processRowGroupCallback?(params: ProcessRowGroupForExportParams)": "/** A callback function invoked once per row group. Return a `string` to be displayed in the group cell. */",
       "columnGroups?": "/** @deprecated */",
       "skipGroups?": "/** @deprecated */",
       "skipHeader?": "/** @deprecated */"
@@ -6029,6 +6194,7 @@
       "context": "any"
     },
     "docs": {
+      "node": "/** Row node. */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */"
@@ -6089,6 +6255,7 @@
       "context": "any"
     },
     "docs": {
+      "node": "/** Row node. */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */"
@@ -6593,7 +6760,6 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
-      "padding?": "AgChartPaddingOptions",
       "text?": "string",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -7296,9 +7462,7 @@
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
       "stroke?": "CssColor",
-      "strokeWidth?": "PixelSize",
-      "fillOpacity?": "Opacity",
-      "strokeOpacity?": "Opacity"
+      "strokeWidth?": "PixelSize"
     },
     "docs": {
       "enabled?": "/** Whether or not to show markers. */",
@@ -7307,9 +7471,7 @@
       "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
       "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
       "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
-      "fillOpacity?": "/** */",
-      "strokeOpacity?": "/** */"
+      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */"
     }
   },
   "AgSeriesMarkerFormatterParams": {
@@ -7359,9 +7521,7 @@
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
       "stroke?": "CssColor",
-      "strokeWidth?": "PixelSize",
-      "fillOpacity?": "Opacity",
-      "strokeOpacity?": "Opacity"
+      "strokeWidth?": "PixelSize"
     },
     "docs": {
       "formatter?": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
@@ -7371,9 +7531,7 @@
       "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
       "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
       "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
-      "fillOpacity?": "/** */",
-      "strokeOpacity?": "/** */"
+      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */"
     }
   },
   "AgAreaSeriesMarker": {
@@ -7386,9 +7544,7 @@
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
       "stroke?": "CssColor",
-      "strokeWidth?": "PixelSize",
-      "fillOpacity?": "Opacity",
-      "strokeOpacity?": "Opacity"
+      "strokeWidth?": "PixelSize"
     },
     "docs": {
       "formatter?": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
@@ -7398,9 +7554,7 @@
       "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
       "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
       "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
-      "fillOpacity?": "/** */",
-      "strokeOpacity?": "/** */"
+      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */"
     }
   },
   "AgSeriesTooltip": {
@@ -7930,7 +8084,6 @@
     "type": {
       "showInLegend?": "boolean",
       "enabled?": "boolean",
-      "padding?": "AgChartPaddingOptions",
       "text?": "string",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -8698,7 +8851,17 @@
       "protection?": "ExcelProtection",
       "name?": "string"
     },
-    "docs": { "name?": "/** @deprecated Legacy property\n */" }
+    "docs": {
+      "id": "/** The id of the Excel Style, this should match a CSS cell class. */",
+      "alignment?": "/** Use this property to customise cell alignment properties. */",
+      "borders?": "/** Use this property to customise cell borders. */",
+      "dataType?": "/** Use this property to specify the type of data being exported. */",
+      "font?": "/** Use this property to customise the font used in the cell. */",
+      "interior?": "/** Use this property to customise the cell background. */",
+      "numberFormat?": "/** Use this property to customise the cell value as a formatted number. */",
+      "protection?": "/** Use this property to setup cell protection. */",
+      "name?": "/** @deprecated Legacy property\n */"
+    }
   },
   "ExcelAlignment": {
     "meta": {},
@@ -8712,7 +8875,16 @@
       "wrapText?": "boolean",
       "verticalText?": "boolean"
     },
-    "docs": { "verticalText?": "/** @deprecated Legacy property\n */" }
+    "docs": {
+      "horizontal?": "/** Use this property to change the cell horizontal alignment.\n * Default: `Automatic` */",
+      "indent?": "/** Use this property to change the level of indentation in the cell.\n * Default: 0 */",
+      "readingOrder?": "/** Use this property to change the cell reading order.\n * Default: `LeftToRight` */",
+      "rotate?": "/** The number of degrees between 0 and 359 to rotate the text.\n * Default: `0` */",
+      "shrinkToFit?": "/** If set to `true`, the font size of the cell will automatically change to force the text to fit within the cell.\n * Default: `false` */",
+      "vertical?": "/** Use this property to change the cell vertical alignment.\n * Default: `Automatic` */",
+      "wrapText?": "/** If set to `true`, multiline text will be displayed as multiline by Excel.\n * Default: `false` */",
+      "verticalText?": "/** @deprecated Legacy property\n */"
+    }
   },
   "ExcelBorders": {
     "meta": {},
@@ -8721,6 +8893,12 @@
       "borderLeft?": "ExcelBorder",
       "borderRight?": "ExcelBorder",
       "borderTop?": "ExcelBorder"
+    },
+    "docs": {
+      "borderBottom?": "/** Use to set the cell's bottom border. */",
+      "borderLeft?": "/** Use to set the cell's left border. */",
+      "borderRight?": "/** Use to set the cell's right border. */",
+      "borderTop?": "/** Use to set the cell's top border. */"
     }
   },
   "ExcelBorder": {
@@ -8729,6 +8907,11 @@
       "color?": "string",
       "lineStyle?": "'None' | 'Continuous' | 'Dash' | 'Dot' | 'DashDot' | 'DashDotDot' | 'SlantDashDot' | 'Double'",
       "weight?": "0 | 1 | 2 | 3"
+    },
+    "docs": {
+      "color?": "/** The color or the border.\n * Default: `black` */",
+      "lineStyle?": "/** The style of the border.\n * Default: `None` */",
+      "weight?": "/** The thickness of the border from 0 (thin) to 3 (thick).\n * Default: `0` */"
     }
   },
   "ExcelFont": {
@@ -8747,7 +8930,20 @@
       "verticalAlign?": "'Superscript' | 'Subscript'",
       "charSet?": "number"
     },
-    "docs": { "charSet?": "/** @deprecated Legacy property\n */" }
+    "docs": {
+      "bold?": "/** Set to `true` to set the cell text to bold.\n * Default: `false` */",
+      "color?": "/** The color of the cell font.\n * Default: `#000000` */",
+      "family?": "/** The family of the font to used in the cell.\n * Options: `Automatic`,`Roman`,`Swiss`,`Modern`,`Script`,`Decorative`,\n * Default: `Automatic` */",
+      "fontName?": "/** The name of the font to be used in the cell.\n * Default: `Calibri` */",
+      "italic?": "/** Set to `true` to display the cell font as italic.\n * Default: `false` */",
+      "outline?": "/** Set to `true` to add a text outline.\n * Default: `false` */",
+      "shadow?": "/** Set to `true` to add text shadow.\n * Default: `false` */",
+      "size?": "/** Set this property to used a different font size other than the default. */",
+      "strikeThrough?": "/** Set to `true` to add a strikeThrough line.\n * Default: `false` */",
+      "underline?": "/** Use this property to underline the cell text. */",
+      "verticalAlign?": "/** Use this property to change the default font alignment. Note: This is different than setting cell vertical alignment. */",
+      "charSet?": "/** @deprecated Legacy property\n */"
+    }
   },
   "ExcelInterior": {
     "meta": {},
@@ -8755,12 +8951,27 @@
       "pattern": "'None' | 'Solid' | 'Gray75' | 'Gray50' | 'Gray25' | 'Gray125' | 'Gray0625' | 'HorzStripe' | 'VertStripe' | 'ReverseDiagStripe' | 'DiagStripe' | 'DiagCross' | 'ThickDiagCross' | 'ThinHorzStripe' | 'ThinVertStripe' | 'ThinReverseDiagStripe' | 'ThinDiagStripe' | 'ThinHorzCross' | 'ThinDiagCross'",
       "color?": "string",
       "patternColor?": "string"
+    },
+    "docs": {
+      "pattern": "/** Use this property to set background color patterns. */",
+      "color?": "/** The colour to be used as a secondary colour combined with patterns. */",
+      "patternColor?": "/** The pattern color. */"
     }
   },
-  "ExcelNumberFormat": { "meta": {}, "type": { "format": "string" } },
+  "ExcelNumberFormat": {
+    "meta": {},
+    "type": { "format": "string" },
+    "docs": {
+      "format": "/** Use this property to provide a pattern to format a number. (eg. 10000 could become $10,000.00). */"
+    }
+  },
   "ExcelProtection": {
     "meta": {},
-    "type": { "protected": "boolean", "hideFormula": "boolean" }
+    "type": { "protected": "boolean", "hideFormula": "boolean" },
+    "docs": {
+      "protected": "/** Set to `false` to disable cell protection (locking)\n * Default: `true` */",
+      "hideFormula": "/** Set to `true` to hide formulas within protected cells.\n * Default: `false` */"
+    }
   },
   "ExcelWorksheet": {
     "meta": {},
@@ -8790,8 +9001,15 @@
       "hidden?": "boolean",
       "height?": "number",
       "outlineLevel?": "number",
-      "s?": "number",
       "cells": "ExcelCell[]"
+    },
+    "docs": {
+      "index?": "/** Row index. */",
+      "collapsed?": "/** Collapsed state. */",
+      "hidden?": "/** Hidden state. */",
+      "height?": "/** The height of the row. */",
+      "outlineLevel?": "/** The indentation level if the current row is part of a row group. */",
+      "cells": "/** An array of ExcelCells. */"
     }
   },
   "ExcelCell": {
@@ -8802,6 +9020,32 @@
       "data?": "ExcelData",
       "mergeAcross?": "number",
       "collapsibleRanges?": "number[][]"
+    },
+    "docs": {
+      "ref?": "/** Cell reference. */",
+      "styleId?": "/** The ExcelStyle id to be associated with the cell. */",
+      "data?": "/** The data that will be added to the cell. */",
+      "mergeAcross?": "/** The number of cells to span across (1 means span 2 columns).\n * Default: `0` */",
+      "collapsibleRanges?": "/** Collapsible ranges. */"
+    }
+  },
+  "ExcelImagePosition": {
+    "meta": {},
+    "type": {
+      "row?": "number",
+      "rowSpan?": "number",
+      "column?": "number",
+      "colSpan?": "number",
+      "offsetX?": "number",
+      "offsetY?": "number"
+    },
+    "docs": {
+      "row?": "/** The row containing this image. This property is set automatically, don't change it unless you know what you are doing. */",
+      "rowSpan?": "/** The amount of rows this image will cover.\n * Default: `1` */",
+      "column?": "/** The column containing this image. This property is set automatically, don't change it unless you know what you are doing. */",
+      "colSpan?": "/** The amount of columns this image will cover.\n * Default: `1` */",
+      "offsetX?": "/** The amount in pixels the image should be offset horizontally.\n * Default: `0` */",
+      "offsetY?": "/** The amount in pixels the image should be offset vertically.\n * Default: `0` */"
     }
   },
   "ExcelImage": {
@@ -8817,7 +9061,20 @@
       "recolor?": "'Grayscale' | 'Sepia' | 'Washout'",
       "width?": "number",
       "height?": "number",
-      "position?": "{ row?: number; rowSpan?: number; column?: number; colSpan?: number; offsetX?: number; offsetY?: number; }"
+      "position?": "ExcelImagePosition"
+    },
+    "docs": {
+      "id": "/** The image `id`. This field is required so the same image doesn't get imported multiple times. */",
+      "base64": "/** A base64 string that represents the image being imported. */",
+      "imageType": "/** The type of image being exported. */",
+      "altText?": "/** Alt Text for the image. */",
+      "fitCell?": "/** If set to `true`, the image will cover the whole cell that is being imported to.\n * Default: `false` */",
+      "transparency?": "/** Set a value between 0 - 100 that will indicate the percentage of transparency of the image.\n * Default: `0` */",
+      "rotation?": "/** Set a value between 0 - 359 that will indicate the number of degrees to rotate the image clockwise.\n * Default: `0` */",
+      "recolor?": "/** Set this property to select a preset that changes the appearance of the image. */",
+      "width?": "/** The width of the image in pixels. If this value is not selected, `fitCell` will be automatically set to true. */",
+      "height?": "/** The height of the image in pixels. If this value is not selected, `fitCell` will be automatically set to true. */",
+      "position?": "/** Position of the image. */"
     }
   },
   "ExcelDataType": {
@@ -8833,6 +9090,10 @@
     "type": {
       "type": "ExcelDataType | ExcelOOXMLDataType",
       "value": "string | null"
+    },
+    "docs": {
+      "type": "/** The type of data being in the cell. */",
+      "value": "/** The value of the cell. */"
     }
   },
   "ExcelRelationship": {
@@ -8914,9 +9175,41 @@
       "skipHeader?": "boolean"
     },
     "docs": {
+      "author?": "/** The author of the exported file. Default: `\"AG Grid\"` */",
+      "autoConvertFormulas?": "/** If set to `true`, this will try to convert any cell that starts with `=` to a formula, instead of setting the cell value as regular string that starts with `=`.\n * Default: `false` */",
+      "columnWidth?": "/** Defines the default column width. If no value is present, each column will have value currently set in the application with a min value of 75px. This property can also be supplied a callback function that returns a number. */",
+      "exportMode?": "/** For backwards compatibility, this property could be set to `xml`, which will export an Excel Spreadsheet compatible with old Office versions (prior to Office 2007). Setting this to `xml` is not recommended as some features will not work in legacy mode.\n * Default: `xlsx` */",
+      "fontSize?": "/** The default value for the font size of the Excel document.\n * Default: `11` */",
+      "headerRowHeight?": "/** The height in pixels of header rows. Defaults to Excel default value. This property can also be supplied a callback function that returns a number. */",
+      "rowHeight?": "/** The height in pixels of all rows. Defaults to Excel default value. This property can also be supplied a callback function that returns a number. */",
+      "sheetName?": "/** The name of the sheet in Excel where the grid will be exported. There is a max limit of 31 characters.\n * Default: `ag-grid` */",
+      "margins?": "/** The Excel document page margins. Relevant for printing. */",
+      "pageSetup?": "/** Allows you to setup the page orientation and size. */",
+      "headerFooterConfig?": "/** The configuration for header and footers. */",
+      "suppressTextAsCDATA?": "/** If `true`, text content will be encoded with XML character entities like `&amp;lt;` and `&amp;gt;`. This is only relevant when `exportMode='xml'`.\n * Default: `false` */",
+      "mimeType?": "/** The mimeType of the Excel file. Note that this defaults to `application/vnd.ms-excel` if exportMode is `xml`.\n * Default: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` */",
       "addImageToCell?": "/** Use to export an image for the gridCell in question. */",
+      "prependContent?": "/** Content to put at the top of the exported sheet. */",
+      "appendContent?": "/** Content to put at the bottom of the exported sheet. */",
       "customHeader?": "/** @deprecated Use prependContent\n */",
       "customFooter?": "/** @deprecated Use appendContent\n */",
+      "getCustomContentBelowRow?": "/** A callback function to return content to be inserted below a row in the export. */",
+      "allColumns?": "/** If `true`, all columns will be exported in the order they appear in the columnDefs.\n * When `false` only the columns currently being displayed will be exported.\n * Default: `false` */",
+      "columnKeys?": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
+      "rowNodes?": "/** Row node positions. */",
+      "fileName?": "/** String to use as the file name. */",
+      "onlySelected?": "/** Export only selected rows.\n * Default: `false` */",
+      "onlySelectedAllPages?": "/** Only export selected rows including other pages (only makes sense when using pagination).\n * Default: `false` */",
+      "skipColumnGroupHeaders?": "/** Set to `true` to exclude header column groups.\n * Default: `false` */",
+      "skipColumnHeaders?": "/** Set to `true` if you don't want to export column headers.\n * Default: `false` */",
+      "skipRowGroups?": "/** Set to `true` to skip row group headers if grouping rows. Only relevant when grouping rows.\n * Default: `false` */",
+      "skipPinnedTop?": "/** Set to `true` to suppress exporting rows pinned to the top of the grid.\n * Default: `false` */",
+      "skipPinnedBottom?": "/** Set to `true` to suppress exporting rows pinned to the bottom of the grid.\n * Default: `false` */",
+      "shouldRowBeSkipped?(params: ShouldRowBeSkippedParams)": "/** A callback function that will be invoked once per row in the grid. Return true to omit the row from the export. */",
+      "processCellCallback?(params: ProcessCellForExportParams)": "/** A callback function invoked once per cell in the grid. Return a string value to be displayed in the export. For example this is useful for formatting date values. */",
+      "processHeaderCallback?(params: ProcessHeaderForExportParams)": "/** A callback function invoked once per column. Return a string to be displayed in the column header. */",
+      "processGroupHeaderCallback?(params: ProcessGroupHeaderForExportParams)": "/** A callback function invoked once per column group. Return a `string` to be displayed in the column group header.\n * Note that column groups are exported by default, this option will not work with `skipColumnGroupHeaders=true`. */",
+      "processRowGroupCallback?(params: ProcessRowGroupForExportParams)": "/** A callback function invoked once per row group. Return a `string` to be displayed in the group cell. */",
       "columnGroups?": "/** @deprecated */",
       "skipGroups?": "/** @deprecated */",
       "skipHeader?": "/** @deprecated */"
@@ -8930,6 +9223,13 @@
       "fileName?": "string",
       "fontSize?": "number",
       "mimeType?": "string"
+    },
+    "docs": {
+      "author?": "/** The author of the exported file.\n * Default: `AG Grid` */",
+      "data": "/** Array of strings containing the raw data for Excel workbook sheets.\n * This property is only used when exporting to multiple sheets using `api.exportMultipleSheetsAsExcel()` and the data for each sheet is obtained by calling `api.getSheetDataForExcel()`. */",
+      "fileName?": "/** String to use as the file name.\n * Default: `export.xlsx` */",
+      "fontSize?": "/** The default value for the font size of the Excel document.\n * Default: `11` */",
+      "mimeType?": "/** The mimeType of the Excel file.\n * Default: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` */"
     }
   },
   "ExcelHeaderFooterConfig": {
@@ -8938,6 +9238,11 @@
       "all?": "ExcelHeaderFooter",
       "first?": "ExcelHeaderFooter",
       "even?": "ExcelHeaderFooter"
+    },
+    "docs": {
+      "all?": "/** The configuration for header and footer on every page. */",
+      "first?": "/** The configuration for header and footer on the first page only. */",
+      "even?": "/** The configuration for header and footer on even numbered pages only. */"
     }
   },
   "ExcelHeaderFooter": {
@@ -8945,6 +9250,10 @@
     "type": {
       "header?": "ExcelHeaderFooterContent[]",
       "footer?": "ExcelHeaderFooterContent[]"
+    },
+    "docs": {
+      "header?": "/** An array of maximum 3 items (`Left`, `Center`, `Right`), containing header configurations. */",
+      "footer?": "/** An array of maximum 3 items (`Left`, `Center`, `Right`), containing footer configurations. */"
     }
   },
   "ExcelHeaderFooterContent": {
@@ -8953,6 +9262,11 @@
       "value": "string",
       "position?": "'Left' | 'Center' | 'Right'",
       "font?": "ExcelFont"
+    },
+    "docs": {
+      "value": "/** The value of the text to be included in the header. */",
+      "position?": "/** Configures where the text should be added: `Left`, `Center` or `Right`.\n * Default: `Left` */",
+      "font?": "/** The font style of the header/footer value. */"
     }
   },
   "IExcelCreator": {
@@ -8979,6 +9293,14 @@
       "left?": "number",
       "header?": "number",
       "footer?": "number"
+    },
+    "docs": {
+      "top?": "/** The sheet top margin.\n * Default: `0.75` */",
+      "right?": "/** The sheet right margin.\n * Default: `0.7` */",
+      "bottom?": "/** The sheet bottom margin.\n * Default: `0.75` */",
+      "left?": "/** The sheet left margin.\n * Default: `0.7` */",
+      "header?": "/** The sheet header margin.\n * Default: `0.3` */",
+      "footer?": "/** The sheet footer margin.\n * Default: `0.3` */"
     }
   },
   "ExcelSheetPageSetup": {
@@ -8986,6 +9308,10 @@
     "type": {
       "orientation?": "'Portrait' | 'Landscape'",
       "pageSize?": "'Letter' | 'Letter Small' | 'Tabloid' | 'Ledger' | 'Legal' | 'Statement' | 'Executive' | 'A3' | 'A4' | 'A4 Small' | 'A5' | 'A6' | 'B4' | 'B5' | 'Folio' | 'Envelope' | 'Envelope DL' | 'Envelope C5' | 'Envelope B5' | 'Envelope C3' | 'Envelope C4' | 'Envelope C6' | 'Envelope Monarch' | 'Japanese Postcard' | 'Japanese Double Postcard'"
+    },
+    "docs": {
+      "orientation?": "/** Use this property to change the print orientation.\n * Default: `Portrait` */",
+      "pageSize?": "/** Use this property to set the sheet size.\n * Default: `Letter` */"
     }
   },
   "IFilterType": {
@@ -10004,7 +10330,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10031,7 +10357,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10060,7 +10386,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10097,7 +10423,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10134,7 +10460,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10152,13 +10478,13 @@
       "placement?": "BarColumnLabelPlacement"
     },
     "docs": {
-      "enabled?": "/** Set to true to enable labels. */",
-      "fontSize?": "/** Set size of the font. */",
-      "fontFamily?": "/** Specify the font for the label text. */",
+      "enabled?": "/** Set to true to enable labels.\n * Default: `false` */",
+      "fontSize?": "/** Set size of the font.\n * Default: `8` */",
+      "fontFamily?": "/** Specify the font for the label text.\n * Default: `Verdana, sans-serif` */",
       "fontStyle?": "/** Specify the font style for the label text. */",
       "fontWeight?": "/** Set how thick or thin characters in label text should be displayed. */",
-      "color?": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */",
-      "formatter?": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified. */",
+      "color?": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value.\n * Default: `rgba(70, 70, 70, 1)` */",
+      "formatter?": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar.\n * By default the values are simply stringified. */",
       "placement?": "/** Where to render labels relative to the segments.\n * Default: `insideEnd` */"
     }
   },
@@ -13265,7 +13591,7 @@
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "serverSideStoreType?": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
-      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling */",
+      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling\n * Default: `false` */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
@@ -13274,8 +13600,8 @@
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
       "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
-      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results */",
-      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results.\n * Default: `1` */",
+      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results.\n * Default: `1` */",
       "serverSideSortingAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
       "serverSideFilteringAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "suppressEnterpriseResetOnNewColumns?": "/** @deprecated */",
@@ -14035,7 +14361,7 @@
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "serverSideStoreType?": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
-      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling */",
+      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling\n * Default: `false` */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
@@ -14044,8 +14370,8 @@
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
       "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
-      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results */",
-      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results.\n * Default: `1` */",
+      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results.\n * Default: `1` */",
       "serverSideSortingAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
       "serverSideFilteringAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "suppressEnterpriseResetOnNewColumns?": "/** @deprecated */",
@@ -14809,7 +15135,7 @@
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "serverSideStoreType?": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
-      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling */",
+      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling\n * Default: `false` */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
@@ -14818,8 +15144,8 @@
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
       "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
-      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results */",
-      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results.\n * Default: `1` */",
+      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results.\n * Default: `1` */",
       "serverSideSortingAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
       "serverSideFilteringAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "suppressEnterpriseResetOnNewColumns?": "/** @deprecated */",

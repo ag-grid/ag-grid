@@ -27,14 +27,18 @@ interface SubGroup<C extends SeriesNodeDataContext, SceneNodeType extends Node> 
     paths: Path[];
     group: Group;
     pickGroup: Group;
+    markerGroup?: Group;
     datumSelection: NodeDataSelection<SceneNodeType, C>;
     labelSelection: LabelDataSelection<Text, C>;
+    markerSelection?: NodeDataSelection<Marker, C>;
 }
 
-type PickGroupInclude = 'mainPath' | 'datumNodes';
+type PickGroupInclude = 'mainPath' | 'datumNodes' | 'markers';
+type SeriesFeature = 'markers';
 interface SeriesOpts {
     pickGroupIncludes: PickGroupInclude[];
     pathsPerSeries: number;
+    features: SeriesFeature[];
 }
 
 export abstract class CartesianSeries<
@@ -59,8 +63,12 @@ export abstract class CartesianSeries<
     protected constructor(opts: Partial<SeriesOpts> = {}) {
         super({ seriesGroupUsesLayer: false });
 
-        const { pickGroupIncludes = ['datumNodes'] as PickGroupInclude[], pathsPerSeries = 1 } = opts;
-        this.opts = { pickGroupIncludes, pathsPerSeries };
+        const {
+            pickGroupIncludes = ['datumNodes'] as PickGroupInclude[],
+            pathsPerSeries = 1,
+            features = [],
+        } = opts;
+        this.opts = { pickGroupIncludes, pathsPerSeries, features };
     }
 
     directionKeys: { [key in ChartAxisDirection]?: string[] } = {
@@ -118,16 +126,21 @@ export abstract class CartesianSeries<
     }
 
     update(): void {
-        const { chart: { highlightedDatum: { series = undefined } = {} } = {} } = this;
+        const { seriesItemEnabled, visible, chart: { highlightedDatum: { series = undefined } = {} } = {} } = this;
         const seriesHighlighted = series ? series === this : undefined;
 
-        this.updateSelections(seriesHighlighted);
-        this.updateNodes(seriesHighlighted);
+        const anySeriesItemEnabled = (visible && seriesItemEnabled.size === 0) || [...seriesItemEnabled.values()].some(v => v === true);
+
+        this.updateSelections(seriesHighlighted, anySeriesItemEnabled);
+        this.updateNodes(seriesHighlighted, anySeriesItemEnabled);
     }
 
-    protected updateSelections(seriesHighlighted?: boolean) {
+    protected updateSelections(seriesHighlighted: boolean | undefined, anySeriesItemEnabled: boolean) {
         this.updateHighlightSelection(seriesHighlighted);
 
+        if (!anySeriesItemEnabled) {
+            return;
+        }
         if (!this.nodeDataRefresh && !this.isPathOrSelectionDirty()) {
             return;
         }
@@ -139,13 +152,16 @@ export abstract class CartesianSeries<
         }
 
         this.subGroups.forEach((subGroup, seriesIdx) => {
-            const { datumSelection, labelSelection, paths } = subGroup;
+            const { datumSelection, labelSelection, markerSelection, paths } = subGroup;
             const contextData = this.contextNodeData[seriesIdx];
             const { nodeData, labelData, itemId } = contextData;
 
             this.updatePaths({ seriesHighlighted, itemId, contextData, paths, seriesIdx });
             subGroup.datumSelection = this.updateDatumSelection({ nodeData, datumSelection, seriesIdx });
             subGroup.labelSelection = this.updateLabelSelection({ labelData, labelSelection, seriesIdx });
+            if (markerSelection) {
+                subGroup.markerSelection = this.updateMarkerSelection({ nodeData, markerSelection, seriesIdx });
+            }
         });
     }
 
@@ -153,14 +169,20 @@ export abstract class CartesianSeries<
         const {
             contextNodeData,
             subGroups,
-            opts: { pickGroupIncludes, pathsPerSeries },
+            opts: { pickGroupIncludes, pathsPerSeries, features },
         } = this;
         if (contextNodeData.length === subGroups.length) {
             return;
         }
 
         if (contextNodeData.length < subGroups.length) {
-            subGroups.splice(contextNodeData.length).forEach((group) => this.seriesGroup.removeChild(group.group));
+            subGroups.splice(contextNodeData.length)
+                .forEach(({group, markerGroup}) => {
+                    this.seriesGroup.removeChild(group);
+                    if (markerGroup) {
+                        this.seriesGroup.removeChild(markerGroup);
+                    }
+                });
         }
 
         while (contextNodeData.length > subGroups.length) {
@@ -169,49 +191,80 @@ export abstract class CartesianSeries<
                 layer: true,
                 zIndex: Series.SERIES_LAYER_ZINDEX,
             });
-            this.seriesGroup.appendChild(group);
+            const markerGroup = features.includes('markers') ? 
+                new Group({
+                    name: `${this.id}-series-sub${this.subGroupId++}-markers`,
+                    layer: true,
+                    zIndex: Series.SERIES_MARKER_LAYER_ZINDEX,
+                }) :
+                undefined;
             const pickGroup = new Group();
 
-            const paths: Path[] = [];
             const pathParentGroup = pickGroupIncludes.includes('mainPath') ? pickGroup : group;
+            const datumParentGroup = pickGroupIncludes.includes('datumNodes') ? pickGroup : group;
+
+            this.seriesGroup.appendChild(group);
+            if (markerGroup) {
+                this.seriesGroup.appendChild(markerGroup);
+            }
+
+            const paths: Path[] = [];
             for (let index = 0; index < pathsPerSeries; index++) {
                 paths[index] = new Path();
                 pathParentGroup.appendChild(paths[index]);
             }
             group.appendChild(pickGroup);
 
-            const datumParentGroup = pickGroupIncludes.includes('datumNodes') ? pickGroup : group;
             subGroups.push({
                 paths,
                 group,
                 pickGroup,
+                markerGroup,
                 labelSelection: Selection.select(group).selectAll<Text>(),
                 datumSelection: Selection.select(datumParentGroup).selectAll<N>(),
+                markerSelection: markerGroup ? Selection.select(markerGroup).selectAll<Marker>() : undefined,
             });
         }
     }
 
-    protected updateNodes(seriesHighlighted?: boolean) {
-        const { highlightSelection, contextNodeData } = this;
+    protected updateNodes(seriesHighlighted: boolean | undefined, anySeriesItemEnabled: boolean) {
+        const { highlightSelection, contextNodeData, seriesItemEnabled, opts: { features } } = this;
+        const markersEnabled = features.includes('markers');
 
-        const visible = this.visible && this.contextNodeData.length > 0;
+        const visible = this.visible && this.contextNodeData?.length > 0 && anySeriesItemEnabled;
         this.group.visible = visible;
         this.seriesGroup.visible = visible;
         this.highlightGroup.visible = visible && !!seriesHighlighted;
         this.seriesGroup.opacity = this.getOpacity();
 
-        this.updateDatumNodes({ datumSelection: highlightSelection, isHighlight: true, seriesIdx: -1 });
+        if (markersEnabled) {
+            this.updateMarkerNodes({ markerSelection: (highlightSelection as any), isHighlight: true, seriesIdx: -1 });
+        } else {
+            this.updateDatumNodes({ datumSelection: highlightSelection, isHighlight: true, seriesIdx: -1 });
+        }
 
         this.subGroups.forEach((subGroup, seriesIdx) => {
-            const { group, datumSelection, labelSelection, paths } = subGroup;
+            const { group, markerGroup, datumSelection, labelSelection, markerSelection, paths } = subGroup;
             const { itemId } = contextNodeData[seriesIdx];
             group.opacity = this.getOpacity({ itemId });
             group.zIndex = this.getZIndex({ itemId });
-            group.visible = visible && (this.seriesItemEnabled.get(itemId) ?? true);
+            group.visible = visible && (seriesItemEnabled.get(itemId) ?? true);
+            if (markerGroup) {
+                markerGroup.opacity = group.opacity;
+                markerGroup.zIndex = group.zIndex + (Series.SERIES_MARKER_LAYER_ZINDEX - Series.SERIES_LAYER_ZINDEX);
+                markerGroup.visible = group.visible;
+            }
+
+            if (!group.visible) {
+                return;
+            }
 
             this.updatePathNodes({ seriesHighlighted, itemId, paths, seriesIdx });
-            this.updateDatumNodes({ datumSelection: datumSelection, isHighlight: false, seriesIdx });
-            this.updateLabelNodes({ labelSelection: labelSelection, seriesIdx });
+            this.updateDatumNodes({ datumSelection, isHighlight: false, seriesIdx });
+            this.updateLabelNodes({ labelSelection, seriesIdx });
+            if (markersEnabled && markerSelection) {
+                this.updateMarkerNodes({ markerSelection, isHighlight: false, seriesIdx });
+            }
         });
     }
 
@@ -230,8 +283,15 @@ export abstract class CartesianSeries<
         let result = super.pickNode(x, y);
 
         if (!result) {
-            for (const { pickGroup } of this.subGroups) {
+            const { opts: { pickGroupIncludes } } = this;
+            const markerGroupIncluded = pickGroupIncludes.includes('markers');
+
+            for (const { pickGroup, markerGroup } of this.subGroups) {
                 result = pickGroup.pickNode(x, y);
+
+                if (!result && markerGroupIncluded) {
+                    result = markerGroup?.pickNode(x, y);
+                }
 
                 if (result) {
                     break;
@@ -280,22 +340,51 @@ export abstract class CartesianSeries<
         item?: C['nodeData'][number];
         highlightSelection: NodeDataSelection<N, C>;
     }): NodeDataSelection<N, C> {
-        const { item, highlightSelection: datumSelection } = opts;
+        const { opts: { features } } = this;
+        const markersEnabled = features.includes('markers');
+
+        const { item, highlightSelection } = opts;
         const nodeData = item ? [item] : [];
 
-        return this.updateDatumSelection({ nodeData, datumSelection, seriesIdx: -1 });
+        if (markersEnabled) {
+            const markerSelection = highlightSelection as any;
+            return this.updateMarkerSelection({ nodeData, markerSelection, seriesIdx: -1 }) as any;
+        } else {
+            return this.updateDatumSelection({ nodeData, datumSelection: highlightSelection, seriesIdx: -1 });
+        }
     }
 
-    protected abstract updateDatumSelection(opts: {
+    protected updateDatumSelection(opts: {
         nodeData: C['nodeData'];
         datumSelection: NodeDataSelection<N, C>;
         seriesIdx: number;
-    }): NodeDataSelection<N, C>;
-    protected abstract updateDatumNodes(opts: {
+    }): NodeDataSelection<N, C> {
+        // Override point for sub-classes.
+        return opts.datumSelection;
+    }
+    protected updateDatumNodes(opts: {
         datumSelection: NodeDataSelection<N, C>;
         isHighlight: boolean;
         seriesIdx: number;
-    }): void;
+    }): void {
+        // Override point for sub-classes.
+    }
+
+    protected updateMarkerSelection(opts: {
+        nodeData: C['nodeData'];
+        markerSelection: NodeDataSelection<Marker, C>;
+        seriesIdx: number;
+    }): NodeDataSelection<Marker, C> {
+        // Override point for sub-classes.
+        return opts.markerSelection;
+    }
+    protected updateMarkerNodes(opts: {
+        markerSelection: NodeDataSelection<Marker, C>;
+        isHighlight: boolean;
+        seriesIdx: number;
+    }): void {
+        // Override point for sub-classes.
+    }
 
     protected abstract updateLabelSelection(opts: {
         labelData: C['labelData'];

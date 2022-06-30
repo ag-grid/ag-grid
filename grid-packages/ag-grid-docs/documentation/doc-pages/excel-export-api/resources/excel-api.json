@@ -1,0 +1,56 @@
+{
+    "_config_": {},
+    "ExcelExportParams": {
+        "appendContent": {
+            "description": "Content to put at the top of the exported sheet. An array of ExcelRow objects, see [Extra Content section](/excel-export-extra-content/)."
+        },
+        "prependContent": {
+            "description": "Content to put at the bottom of the exported sheet. An array of ExcelRow objects, see [Extra Content section](/excel-export-extra-content/)."
+        },
+        "fileName": {
+            "default": "export.xlsx"
+        }
+    },
+    "ExcelExportMultipleSheetParams": {
+        "meta": {
+            "page": {
+                "name": "Multiple Sheets",
+                "url": "/excel-export-multiple-sheets/"
+            }
+        }
+    },
+    "ExcelData": {
+        "type": {
+            "isRequired": true
+        },
+        "value": {
+            "isRequired": true
+        }
+    },
+    "ExcelImage": {
+        "meta": {},
+        "id": {
+            "isRequired": true
+        },
+        "imageType": {
+            "isRequired": true
+        },
+        "base64": {
+            "isRequired": true,
+            "more": {
+                "name": "Base64",
+                "url": "https://en.wikipedia.org/wiki/Base64"
+            }
+        }
+    },
+    "ExcelHeaderFooterContent": {
+        "value": {
+            "isRequired": true
+        }
+    },
+    "ExcelStyle": {
+        "id": {
+            "isRequired": true
+        }
+    }
+}

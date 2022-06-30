@@ -50,6 +50,9 @@ export class FilterManager extends BeanStub {
     private processingFilterChange = false;
     private allowShowChangeAfterFilter: boolean;
 
+    // A cached version of gridOptions.isExternalFilterPresent so its not called for every row
+    private externalFilterPresent: boolean;
+
     @PostConstruct
     public init(): void {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
@@ -61,6 +64,7 @@ export class FilterManager extends BeanStub {
         this.setQuickFilterParts();
 
         this.allowShowChangeAfterFilter = this.gridOptionsWrapper.isAllowShowChangeAfterFilter();
+        this.externalFilterPresent = this.gridOptionsWrapper.isExternalFilterPresent();
     }
 
     private setQuickFilterParts(): void {
@@ -174,6 +178,10 @@ export class FilterManager extends BeanStub {
         return !!this.activeAggregateFilters.length;
     }
 
+    public isExternalFilterPresent(): boolean {
+        return this.externalFilterPresent;
+    }
+
     private doAggregateFiltersPass(node: RowNode, filterToSkip?: IFilterComp) {
         return this.doColumnFiltersPass(node, filterToSkip, true);
     }
@@ -240,7 +248,7 @@ export class FilterManager extends BeanStub {
     }
 
     public isAnyFilterPresent(): boolean {
-        return this.isQuickFilterPresent() || this.isColumnFilterPresent() || this.isAggregateFilterPresent() || this.gridOptionsWrapper.isExternalFilterPresent();
+        return this.isQuickFilterPresent() || this.isColumnFilterPresent() || this.isAggregateFilterPresent() || this.isExternalFilterPresent();
     }
 
     private doColumnFiltersPass(node: RowNode, filterToSkip?: IFilterComp, targetAggregates?: boolean): boolean {
@@ -321,6 +329,7 @@ export class FilterManager extends BeanStub {
 
         this.updateActiveFilters();
         this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes);
+        this.externalFilterPresent = this.gridOptionsWrapper.isExternalFilterPresent();
 
         this.allColumnFilters.forEach(filterWrapper => {
             if (!filterWrapper.filterPromise) { return; }
@@ -418,7 +427,7 @@ export class FilterManager extends BeanStub {
         }
 
         // secondly, give the client a chance to reject this row
-        if (this.gridOptionsWrapper.isExternalFilterPresent() && !this.gridOptionsWrapper.doesExternalFilterPass(params.rowNode)) {
+        if (this.isExternalFilterPresent() && !this.gridOptionsWrapper.doesExternalFilterPass(params.rowNode)) {
             return false;
         }
 

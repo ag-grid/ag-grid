@@ -1,182 +1,23 @@
 {
     "_config_": {},
-    "csvExportParams": {
-        "columnSeparator": {
-            "default": ",",
-            "description": "Delimiter to insert between cell values.",
-            "type": "string"
-        },
-        "suppressQuotes": {
-            "default": false,
-            "description": "By default cell values are encoded according to CSV format rules: values are wrapped in double quotes, and any double quotes within the values are escaped, so my value becomes \"my\"\"value\". Pass `true` to insert the value into the CSV file without escaping. In this case it is your responsibility to ensure that no cells contain the columnSeparator character.",
-            "type": "boolean"
-        },
+    "CsvExportParams": {
         "prependContent": {
-            "description": "Content to put at the top of the file export. A 2D array of CsvCell objects (see Prepending and Appending Content section). Alternatively, you can pass a multi-line string that is simply appended to the top of the file content.",
-            "type": "string | CsvCell[][]"
+            "description": "Content to put at the top of the file export. A 2D array of CsvCell objects (see [Prepending and Appending Content](#prepending-and-appending-content)). Alternatively, you can pass a multi-line string that is simply appended to the top of the file content."
         },
         "appendContent": {
-            "description": "Content to put at the bottom of the file export. A 2D array of CsvCell objects (see Prepending and Appending Content section). Alternatively, you can pass a multi-line string that is simply appended to the bottom of the file content.",
-            "type": "string | CsvCell[][]"
-        },
-        "allColumns": {
-            "default": false,
-            "description": "If `true`, all columns will be exported in the order they appear in the columnDefs.",
-            "type": "boolean"
-        },
-        "columnKeys": {
-            "description": "Provide a list (an array) of column keys or Column objects if you want to export specific columns.",
-            "type": "(string | Column)[]"
+            "description": "Content to put at the bottom of the file export. A 2D array of CsvCell objects (see [Prepending and Appending Content](#prepending-and-appending-content)). Alternatively, you can pass a multi-line string that is simply appended to the bottom of the file content."
         },
         "fileName": {
-            "default": "export.csv",
-            "description": "String to use as the file name",
-            "type": "string"
-        },
-        "onlySelected": {
-            "default": false,
-            "description": "Export only selected rows.",
-            "type": "boolean"
-        },
-        "onlySelectedAllPages": {
-            "default": false,
-            "description": "Only export selected rows including other pages (only makes sense when using pagination).",
-            "type": "boolean"
-        },
-        "skipColumnGroupHeaders": {
-            "default": false,
-            "description": "Set to `true` to skip include header column groups.",
-            "type": "boolean"
-        },
-        "skipColumnHeaders": {
-            "default": false,
-            "description": "Set to `true` if you don't want to export column headers.",
-            "type": "boolean"
-        },
-        "skipRowGroups": {
-            "default": false,
-            "description": "Set to `true` to skip row group headers if grouping rows. Only relevant when grouping rows.",
-            "type": "boolean"
-        },
-        "skipPinnedTop": {
-            "default": false,
-            "description": "Set to `true` to suppress exporting rows pinned to the top of the grid.",
-            "type": "boolean"
-        },
-        "skipPinnedBottom": {
-            "default": false,
-            "description": "Set to `true` to suppress exporting rows pinned to the bottom of the grid.",
-            "type": "boolean"
-        },
-        "getCustomContentBelowRow": {
-            "description": "A callback function to return content to be inserted below a row in the export.",
-            "type": {
-                "meta": {
-                    "name":  "ProcessRowGroupForExportParams"
-                },
-                "parameters": {
-                    "node": "RowNode",
-                    "api": "GridApi",
-                    "columnApi": "ColumnApi",
-                    "context": "any"
-                },
-                "returnType": "CsvCell[][]"
-            }
-        },
-        "shouldRowBeSkipped": {
-            "description": "A callback function that will be invoked once per row in the grid. Return true to omit the row from the export.",
-            "type": {
-                "meta": {
-                    "name":  "ShouldRowBeSkippedParams"
-                },
-                "parameters": {
-                    "node": "RowNode",
-                    "api": "GridApi",
-                    "context": "any"
-                },
-                "returnType": "boolean"
-            }
-        },
-        "processCellCallback": {
-            "description": "A callback function invoked once per cell in the grid. Return a string value to be displayed in the export. Useful for formatting date values.",
-            "type": {
-                "meta": {
-                    "name":  "ProcessCellForExportParams"
-                },
-                "parameters": {
-                    "value": "any",
-                    "node": "RowNode",
-                    "column": "Column",
-                    "api": "GridApi",
-                    "columnApi": "ColumnApi",
-                    "context": "any",
-                    "type": "string"
-                },
-                "returnType": "string"
-            }
-        },
-        "processHeaderCallback": {
-            "description": "A callback function invoked once per column. Return a string to be displayed in the column header.",
-            "type": {
-                "meta": {
-                    "name":  "ProcessHeaderForExportParams"
-                },
-                "parameters": {
-                    "column": "Column",
-                    "api": "GridApi",
-                    "columnApi": "ColumnApi",
-                    "context": "any"
-                },
-                "returnType": "string"
-            }
-        },
-        "processGroupHeaderCallback": {
-            "description": "A callback function invoked once per column group. Return a string to be displayed in the column group header. Note that column groups are not exported by default, you must pass columnGroups=true.",
-            "type": {
-                "meta": {
-                    "name":  "ProcessGroupHeaderForExportParams"
-                },
-                "parameters": {
-                    "columnGroup": "ColumnGroup",
-                    "api": "GridApi",
-                    "columnApi": "ColumnApi",
-                    "context": "any"
-                },
-                "returnType": "string"
-            }
-        },
-        "processRowGroupCallback": {
-            "description": "A callback function invoked once per row group. Return a string to be displayed in the group cell.",
-            "type": {
-                "meta": {
-                    "name":  "ProcessRowGroupForExportParams"
-                },
-                "parameters": {
-                    "node": "RowNode",
-                    "api": "GridApi",
-                    "columnApi": "ColumnApi",
-                    "context": "any"
-                },
-                "returnType": "string"
-            }
+            "default": "export.csv"
         }
     },
-    "csvCell": {
+    "CsvCell": {
         "data": {
-            "description": "The data that will be added to the cell.",
-            "type": "CsvCellData",
             "isRequired": true
-        },
-        "mergeAcross": {
-            "default": 0,
-            "description": "The number of cells to span across (1 means span 2 columns)",
-            "type": "number"
         }
     },
-    "csvCellData": {
+    "CsvCellData": {
         "value": {
-            "description": "The value of the cell.",
-            "type": "string",
             "isRequired": true
         }
     }

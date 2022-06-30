@@ -1,40 +1,61 @@
 import { Grid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
-
+declare var FakeServer: any;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
-    { field: 'athlete', minWidth: 220, filter: 'agTextColumnFilter' },
     {
-      field: 'country',
-      minWidth: 200,
-      filter: 'agSetColumnFilter',
+      field: 'athlete',
+      filter: 'agTextColumnFilter',
+      minWidth: 220,
+    },
+    {
+      field: 'year',
+      filter: 'agNumberColumnFilter',
       filterParams: {
-        values: [
-          'United States',
-          'Ireland',
-          'United Kingdom',
-          'Russia',
-          'Australia',
-          'Canada',
-          'Norway',
-        ],
+        buttons: ['reset'],
+        debounceMs: 1000,
+        suppressAndOrCondition: true,
       },
     },
-    { field: 'year', filter: 'agNumberColumnFilter' },
-    { field: 'sport', minWidth: 200 },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
+    { field: 'gold', type: 'number' },
+    { field: 'silver', type: 'number' },
+    { field: 'bronze', type: 'number' },
   ],
-
   defaultColDef: {
     flex: 1,
     minWidth: 100,
+    sortable: true,
+    resizable: true,
+    menuTabs: ['filterMenuTab'],
   },
-
-  animateRows: true,
-
+  columnTypes: {
+    number: { filter: 'agNumberColumnFilter' },
+  },
+  // use the server-side row model
   rowModelType: 'serverSide',
-  serverSideFilterOnServer: true
+  serverSideFilterOnServer: true,
+  animateRows: true,
+  // debug: true
+}
+
+function getServerSideDatasource(server: any): IServerSideDatasource {
+  return {
+    getRows: (params) => {
+      console.log('[Datasource] - rows requested by grid: ', params.request)
+
+      // get data for request from our fake server
+      var response = server.getData(params.request)
+
+      // simulating real server call with a 500ms delay
+      setTimeout(function () {
+        if (response.success) {
+          // supply rows for requested block to grid
+          params.success({ rowData: response.rows, rowCount: response.lastRow })
+        } else {
+          params.fail()
+        }
+      }, 500)
+    },
+  }
 }
 
 // setup the grid after the page has finished loading
@@ -46,49 +67,12 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(response => response.json())
     .then(function (data) {
       // setup the fake server with entire dataset
-      var fakeServer = createFakeServer(data)
+      var fakeServer = new FakeServer(data)
 
       // create datasource with a reference to the fake server
-      var datasource = createServerSideDatasource(fakeServer)
+      var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
       gridOptions.api!.setServerSideDatasource(datasource)
     })
 })
-
-function createServerSideDatasource(server: any): IServerSideDatasource {
-  return {
-    getRows: (params) => {
-      console.log(
-        '[Datasource] - rows requested by grid: startRow = ' +
-        params.request.startRow +
-        ', endRow = ' +
-        params.request.endRow
-      )
-
-      // get data for request from our fake server
-      var response = server.getData()
-
-      // simulating real server call with a 500ms delay
-      setTimeout(function () {
-        if (response.success) {
-          // supply rows for requested block to grid
-          params.success({ rowData: response.rows })
-        } else {
-          params.fail()
-        }
-      }, 1000)
-    },
-  }
-}
-
-function createFakeServer(allData: any[]) {
-  return {
-    getData: () => {
-      return {
-        success: true,
-        rows: allData,
-      }
-    },
-  }
-}

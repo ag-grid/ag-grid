@@ -127,13 +127,10 @@ Note the following:
 ## Interfaces
 
 ### CsvExportParams
-
-<api-documentation source='csv-export/resources/csv.json' section='csvExportParams'></api-documentation>
+<interface-documentation interfaceName='CsvExportParams' overrideSrc='csv-export/resources/csv.json'></interface-documentation>
 
 ### CsvCell
-
-<api-documentation source='csv-export/resources/csv.json' section='csvCell'></api-documentation>
+<interface-documentation interfaceName='CsvCell' overrideSrc='csv-export/resources/csv.json'></interface-documentation>
 
 ### CsvCellData
-
-<api-documentation source='csv-export/resources/csv.json' section='csvCellData'></api-documentation>
+<interface-documentation interfaceName='CsvCellData' overrideSrc='csv-export/resources/csv.json'></interface-documentation>

@@ -380,7 +380,7 @@
   "isRowPinned": { "type": { "arguments": {}, "returnType": "boolean" } },
   "setSelectedParams": {
     "type": {
-      "arguments": { "params": "SetSelectedParams" },
+      "arguments": { "params": "SetSelectedParams & { event?: Event; }" },
       "returnType": "number"
     }
   },
@@ -391,7 +391,10 @@
     }
   },
   "selectThisNode": {
-    "type": { "arguments": { "newValue?": "boolean" }, "returnType": "boolean" }
+    "type": {
+      "arguments": { "newValue?": "boolean", "e?": "Event" },
+      "returnType": "boolean"
+    }
   },
   "addEventListener": {
     "description": "/** Add an event listener. */",

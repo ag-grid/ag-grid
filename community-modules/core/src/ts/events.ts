@@ -390,10 +390,9 @@ export interface ColumnPinnedEvent extends ColumnEvent {
 
 /** ROW EVENTS */
 /**------------*/
-export interface RowEvent<TData = any> extends AgGridEvent<TData> {
+interface BaseRowEvent<TData> extends AgGridEvent<TData> {
+    /** The row node. */
     node: RowNode<TData>;
-    /** The user provided data for the row. Data is `undefined` for row groups. */
-    data: TData | undefined;
     /** The visible row index for the row */
     rowIndex: number | null;
     /** Either 'top', 'bottom' or null / undefined (if not set) */
@@ -402,6 +401,17 @@ export interface RowEvent<TData = any> extends AgGridEvent<TData> {
     context: any;
     /** If event was due to browser event (eg click), this is the browser event */
     event?: Event | null;
+}
+
+export interface RowEvent<TData = any> extends BaseRowEvent<TData> {
+    /** The user provided data for the row. Data is `undefined` for row groups. */
+    data: TData | undefined;
+}
+
+/** Base interface for row events that always have data set. */
+interface RowWithDataEvent<TData = any> extends BaseRowEvent<TData> {
+    /** The user provided data for the row. */
+    data: TData;
 }
 
 export interface RowGroupOpenedEvent<TData = any> extends RowEvent<TData> {
@@ -431,48 +441,55 @@ export interface FullWidthCellKeyPressEvent<TData = any> extends RowEvent<TData>
 
 /** CELL EVENTS */
 /**------------*/
-export interface CellEvent<TData = any> extends RowEvent<TData> {
+export interface CellEvent<TData = any, TValue = any> extends RowEvent<TData> {
+    column: Column;
+    colDef: ColDef<TData>;
+    /** The value for the cell if available otherwise undefined. */
+    value: TValue | undefined;
+}
+
+/** Use for cell events that will always have a value and data property. */
+interface CellWithDataEvent<TData = any, TValue = any> extends RowWithDataEvent<TData> {
     column: Column;
     colDef: ColDef<TData>;
     /** The value for the cell */
-    value: any;
+    value: TValue;
 }
 
-export interface CellKeyDownEvent<TData = any> extends CellEvent<TData> { }
+export interface CellKeyDownEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
 
-export interface CellKeyPressEvent<TData = any> extends CellEvent<TData> { }
+export interface CellKeyPressEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
 
-/** Cell is clicked */
-export interface CellClickedEvent<TData = any> extends CellEvent<TData> { }
+export interface CellClickedEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
 
-export interface CellMouseDownEvent<TData = any> extends CellEvent<TData> { }
+export interface CellMouseDownEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
 
-export interface CellDoubleClickedEvent<TData = any> extends CellEvent<TData> { }
+export interface CellDoubleClickedEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
 
-export interface CellMouseOverEvent<TData = any> extends CellEvent<TData> { }
+export interface CellMouseOverEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
 
-export interface CellMouseOutEvent<TData = any> extends CellEvent<TData> { }
+export interface CellMouseOutEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
 
-export interface CellContextMenuEvent<TData = any> extends CellEvent<TData> { }
+export interface CellContextMenuEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
 
-export interface CellEditingStartedEvent<TData = any> extends CellEvent<TData> { }
+export interface CellEditingStartedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> { }
 
-export interface CellEditingStoppedEvent<TData = any> extends CellEvent<TData> {
+export interface CellEditingStoppedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
     /** The old value before editing */
-    oldValue: any;
+    oldValue: TValue;
     /** The new value after editing */
-    newValue: any;
+    newValue: TValue;
 }
 
-export interface CellValueChangedEvent<TData = any> extends CellEvent<TData> {
-    oldValue: any;
-    newValue: any;
+export interface CellValueChangedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
+    oldValue: TValue;
+    newValue: TValue;
     source: string | undefined;
 }
 
-export interface CellEditRequestEvent<TData = any> extends CellEvent<TData> {
-    oldValue: any;
-    newValue: any;
+export interface CellEditRequestEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
+    oldValue: TValue;
+    newValue: TValue;
     source: string | undefined;
 }
 
