@@ -6,6 +6,9 @@
         },
         "prependContent": {
             "description": "Content to put at the bottom of the exported sheet. An array of ExcelRow objects, see [Extra Content section](/excel-export-extra-content/)."
+        },
+        "fileName": {
+            "default": "export.xlsx"
         }
     },
     "ExcelExportMultipleSheetParams": {

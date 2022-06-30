@@ -19,7 +19,6 @@ export interface BaseExportParams {
     rowNodes?: RowPosition[];
     /**
      * String to use as the file name.
-     * Default: `export.xlsx`
      */
     fileName?: string;
     /**
@@ -115,18 +114,33 @@ export type PackageFileParams<T> = T & {
 };
 
 export interface CsvCell {
+    /** The data that will be added to the cell. */
     data: CsvCellData;
+    /**
+     * The number of cells to span across (1 means span 2 columns).
+     * Default: `0`
+     */
     mergeAcross?: number;
 }
 
 export interface CsvCellData {
+    /** The value of the cell. */
     value: string | null;
 }
 
 export type CsvCustomContent = CsvCell[][] | string;
 
 export interface CsvExportParams extends ExportParams<CsvCustomContent> {
+    /**
+     * Delimiter to insert between cell values.
+     * Default: `,`
+     */
     columnSeparator?: string;
+    /**
+     * By default cell values are encoded according to CSV format rules: values are wrapped in double quotes, and any double quotes within the values are escaped, so my value becomes \"my\"\"value\". Pass `true` to insert the value into the CSV file without escaping.
+     * In this case it is your responsibility to ensure that no cells contain the columnSeparator character.
+     * Default: `false`
+     */
     suppressQuotes?: boolean;
 }
 

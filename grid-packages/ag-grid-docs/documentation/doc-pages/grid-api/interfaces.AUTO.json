@@ -5931,7 +5931,7 @@
       "allColumns?": "/** If `true`, all columns will be exported in the order they appear in the columnDefs.\n * When `false` only the columns currently being displayed will be exported.\n * Default: `false` */",
       "columnKeys?": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
       "rowNodes?": "/** Row node positions. */",
-      "fileName?": "/** String to use as the file name.\n * Default: `export.xlsx` */",
+      "fileName?": "/** String to use as the file name. */",
       "onlySelected?": "/** Export only selected rows.\n * Default: `false` */",
       "onlySelectedAllPages?": "/** Only export selected rows including other pages (only makes sense when using pagination).\n * Default: `false` */",
       "skipColumnGroupHeaders?": "/** Set to `true` to exclude header column groups.\n * Default: `false` */",
@@ -5986,7 +5986,7 @@
       "allColumns?": "/** If `true`, all columns will be exported in the order they appear in the columnDefs.\n * When `false` only the columns currently being displayed will be exported.\n * Default: `false` */",
       "columnKeys?": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
       "rowNodes?": "/** Row node positions. */",
-      "fileName?": "/** String to use as the file name.\n * Default: `export.xlsx` */",
+      "fileName?": "/** String to use as the file name. */",
       "onlySelected?": "/** Export only selected rows.\n * Default: `false` */",
       "onlySelectedAllPages?": "/** Only export selected rows including other pages (only makes sense when using pagination).\n * Default: `false` */",
       "skipColumnGroupHeaders?": "/** Set to `true` to exclude header column groups.\n * Default: `false` */",
@@ -6010,9 +6010,17 @@
   },
   "CsvCell": {
     "meta": {},
-    "type": { "data": "CsvCellData", "mergeAcross?": "number" }
+    "type": { "data": "CsvCellData", "mergeAcross?": "number" },
+    "docs": {
+      "data": "/** The data that will be added to the cell. */",
+      "mergeAcross?": "/** The number of cells to span across (1 means span 2 columns).\n * Default: `0` */"
+    }
   },
-  "CsvCellData": { "meta": {}, "type": { "value": "string | null" } },
+  "CsvCellData": {
+    "meta": {},
+    "type": { "value": "string | null" },
+    "docs": { "value": "/** The value of the cell. */" }
+  },
   "CsvCustomContent": {
     "meta": { "isTypeAlias": true },
     "type": "CsvCell[][] | string"
@@ -6048,6 +6056,8 @@
       "skipHeader?": "boolean"
     },
     "docs": {
+      "columnSeparator?": "/** Delimiter to insert between cell values.\n * Default: `,` */",
+      "suppressQuotes?": "/** By default cell values are encoded according to CSV format rules: values are wrapped in double quotes, and any double quotes within the values are escaped, so my value becomes \\\"my\\\"\\\"value\\\". Pass `true` to insert the value into the CSV file without escaping.\n * In this case it is your responsibility to ensure that no cells contain the columnSeparator character.\n * Default: `false` */",
       "prependContent?": "/** Content to put at the top of the exported sheet. */",
       "appendContent?": "/** Content to put at the bottom of the exported sheet. */",
       "customHeader?": "/** @deprecated Use prependContent\n */",
@@ -6056,7 +6066,7 @@
       "allColumns?": "/** If `true`, all columns will be exported in the order they appear in the columnDefs.\n * When `false` only the columns currently being displayed will be exported.\n * Default: `false` */",
       "columnKeys?": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
       "rowNodes?": "/** Row node positions. */",
-      "fileName?": "/** String to use as the file name.\n * Default: `export.xlsx` */",
+      "fileName?": "/** String to use as the file name. */",
       "onlySelected?": "/** Export only selected rows.\n * Default: `false` */",
       "onlySelectedAllPages?": "/** Only export selected rows including other pages (only makes sense when using pagination).\n * Default: `false` */",
       "skipColumnGroupHeaders?": "/** Set to `true` to exclude header column groups.\n * Default: `false` */",
@@ -9022,7 +9032,7 @@
       "allColumns?": "/** If `true`, all columns will be exported in the order they appear in the columnDefs.\n * When `false` only the columns currently being displayed will be exported.\n * Default: `false` */",
       "columnKeys?": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
       "rowNodes?": "/** Row node positions. */",
-      "fileName?": "/** String to use as the file name.\n * Default: `export.xlsx` */",
+      "fileName?": "/** String to use as the file name. */",
       "onlySelected?": "/** Export only selected rows.\n * Default: `false` */",
       "onlySelectedAllPages?": "/** Only export selected rows including other pages (only makes sense when using pagination).\n * Default: `false` */",
       "skipColumnGroupHeaders?": "/** Set to `true` to exclude header column groups.\n * Default: `false` */",

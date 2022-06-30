@@ -10440,7 +10440,7 @@
       "type": { "returnType": "RowPosition[]", "optional": true }
     },
     "fileName": {
-      "description": "/** String to use as the file name.\n * Default: `export.xlsx` */",
+      "description": "/** String to use as the file name. */",
       "type": { "returnType": "string", "optional": true }
     },
     "onlySelected": {
@@ -10563,7 +10563,7 @@
       "type": { "returnType": "RowPosition[]", "optional": true }
     },
     "fileName": {
-      "description": "/** String to use as the file name.\n * Default: `export.xlsx` */",
+      "description": "/** String to use as the file name. */",
       "type": { "returnType": "string", "optional": true }
     },
     "onlySelected": {
@@ -10649,16 +10649,31 @@
   },
   "PackageFileParams": { "meta": { "typeParams": ["T"] } },
   "CsvCell": {
-    "data": { "type": { "returnType": "CsvCellData", "optional": false } },
-    "mergeAcross": { "type": { "returnType": "number", "optional": true } }
+    "data": {
+      "description": "/** The data that will be added to the cell. */",
+      "type": { "returnType": "CsvCellData", "optional": false }
+    },
+    "mergeAcross": {
+      "description": "/** The number of cells to span across (1 means span 2 columns).\n * Default: `0` */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "CsvCellData": {
-    "value": { "type": { "returnType": "string | null", "optional": false } }
+    "value": {
+      "description": "/** The value of the cell. */",
+      "type": { "returnType": "string | null", "optional": false }
+    }
   },
   "CsvCustomContent": {},
   "CsvExportParams": {
-    "columnSeparator": { "type": { "returnType": "string", "optional": true } },
-    "suppressQuotes": { "type": { "returnType": "boolean", "optional": true } },
+    "columnSeparator": {
+      "description": "/** Delimiter to insert between cell values.\n * Default: `,` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "suppressQuotes": {
+      "description": "/** By default cell values are encoded according to CSV format rules: values are wrapped in double quotes, and any double quotes within the values are escaped, so my value becomes \\\"my\\\"\\\"value\\\". Pass `true` to insert the value into the CSV file without escaping.\n * In this case it is your responsibility to ensure that no cells contain the columnSeparator character.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "prependContent": {
       "description": "/** Content to put at the top of the exported sheet. */",
       "type": { "returnType": "CsvCustomContent", "optional": true }
@@ -10696,7 +10711,7 @@
       "type": { "returnType": "RowPosition[]", "optional": true }
     },
     "fileName": {
-      "description": "/** String to use as the file name.\n * Default: `export.xlsx` */",
+      "description": "/** String to use as the file name. */",
       "type": { "returnType": "string", "optional": true }
     },
     "onlySelected": {
@@ -15418,7 +15433,7 @@
       "type": { "returnType": "RowPosition[]", "optional": true }
     },
     "fileName": {
-      "description": "/** String to use as the file name.\n * Default: `export.xlsx` */",
+      "description": "/** String to use as the file name. */",
       "type": { "returnType": "string", "optional": true }
     },
     "onlySelected": {
