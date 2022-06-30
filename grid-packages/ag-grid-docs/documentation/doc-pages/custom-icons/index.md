@@ -2,271 +2,197 @@
 title: "Custom Icons"
 ---
 
-[[warning]]
-| TODO rework this page with up-to-date examples of changing icons using CSS variables. Needs 4 examples:
-| 1. fontawesome
-| 2. Material Design Icons
-| 3. SVG icons
-| 4. Using a different icon font
-
 This sections details how to provide your own icons for the grid and style grid icons for your application requirements.
 
-## Change Individual Icons Using CSS
+## Swapping the Provided Icon Fonts
 
+Each provided theme comes with its own icon font. It is simple to use one provided theme with another theme's icons. Set `--ag-icon-font-family` to one of: `agGridAlpine`, `agGridBalham` or `agGridMaterial`. You can compare the available icon fonts in the [Provided Icons list](#provided-icons).
 
-You can change individual icons by overriding the background images for the respective CSS selector. The following code snippet overrides the Alpine theme pin icon used in the drag hint when reordering columns:
+If you are using the Sass API, it will embed the required font data for you. Apps using CSS should load the font's CSS file from whatever location they are loading `ag-grid.css` and other CSS files. For example to use the Alpine icons in the Material theme:
 
+1. Load `agGridMaterialFont.css`
+2. (optional) switch `ag-theme-alpine.css` for `ag-theme-alpine-no-font.css` to save a few kB if you no longer require the Material icons
+3. Set the CSS variable `--ag-icon-font-family: agGridMaterial`
+
+This example uses the Alpine theme with the Material icons:
+
+<grid-example title='Swapping the Icon Font' name='icons-swapping-font' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"]  }'></grid-example>
+
+## Using an Alternative Icon Font
+
+The grid exposes a number of CSS variables to control the icon font. `--ag-icon-font-family` sets the icon font to use, and variables in the form `--ag-icon-font-code-{icon-name}` set the character within the icon font. You can get the icon names from the [Provided Icons list](#provided-icons) below.
+
+If you intend to replace every icon in the grid using the same font then you can set these variables using a CSS selector targeting the theme name, as you would any other CSS variable:
 
 ```css
-/*
-* The override should be placed after the import of the theme.
-* Alternatively, you can also increase the selector's specificity.
-*/
+/* replace all icons in the grid with icons from Font Awesome */
 .ag-theme-alpine .ag-icon-pin {
-   font-family: "Font Awesome 5 Free";
-   /* FontAwesome uses font-weight bold */
-   font-weight: bold;
-}
-
-.ag-theme-alpine .ag-icon-pin::before {
-   content: '\\f08d';
+  --ag-icon-font-family: "Font Awesome 5 Free";
+  --ag-icon-font-code-aggregation: "\f247";
+  --ag-icon-font-code-arrows: "\f0b2";
+  --ag-icon-font-code-asc: "\f062";
+  /* ... and so on - you must set every other icon here too */
 }
 ```
 
-## Replace the Icons by Changing the Icon Font
+Or to replace some icons without affecting others, set the variables using a CSS selector targeting the icon class:
 
-
-If you are using a [custom theme](/themes/) in your project, you can use theme parameters to change the icon font. We [provide an example](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla) that does this, and the relevant code looks like this:
-
-```scss
-@import "~ag-grid-community/src/styles/ag-grid.scss";
-@import "~ag-grid-community/src/styles/ag-theme-alpine-mixin.scss";
-
-.ag-theme-alpine {
-    @include ag-theme-alpine((
-        "icon-font-family": "Font Awesome 5 Free",
-        "icons-data": null, // prevent default font from being embedded
-        // define icon map - not required when changing between two
-        // provided theme fonts, see next code sample for more details
-        "icons-font-codes": (
-            "aggregation": "\\f247",
-            "arrows": "\\f0b2",
-            "asc": "\\f062",
-            "cancel": "\\f057",
-            "chart": "\\f080",
-            "color-picker": "\\f576",
-            "columns": "\\f0db",
-            "contracted": "\\f146",
-            "copy": "\\f0c5",
-            "cross": "\\f00d",
-            "desc": "\\f063",
-            "expanded": "\\f0fe",
-            "eye-slash": "\\f070",
-            "eye": "\\f06e",
-            "filter": "\\f0b0",
-            "first": "\\f100",
-            "grip": "\\f58e",
-            "group": "\\f5fd",
-            "last": "\\f101",
-            "left": "\\f060",
-            "linked": "\\f0c1",
-            "loading": "\\f110",
-            "maximize": "\\f2d0",
-            "menu": "\\f0c9",
-            "minimize": "\\f2d1",
-            "next": "\\f105",
-            "none": "\\f338",
-            "not-allowed": "\\f05e",
-            "paste": "\\f0ea",
-            "pin": "\\f276",
-            "pivot": "\\f074",
-            "previous": "\\f104",
-            "right": "\\f061",
-            "save": "\\f0c7",
-            "small-down": "\\f107",
-            "small-left": "\\f104",
-            "small-right": "\\f105",
-            "small-up": "\\f106",
-            "tick": "\\f00c",
-            "tree-closed": "\\f105",
-            "tree-indeterminate": "\\f068",
-            "tree-open": "\\f107",
-            "unlinked": "\\f127",
-        )
-    ));
-
-    .ag-icon {
-        // required because Font Awesome uses bold for its icons
-        font-weight: bold;
-    }
-}
-```
-If you are swapping one theme's icon set for another, you do not need to define an icon map because all theme fonts use the same map. This example shows the use of Alpine with the Material font:
-
-
-```scss
-@import "~ag-grid-community/src/styles/ag-grid.scss";
-@import "~ag-grid-community/src/styles/ag-theme-alpine-mixin.scss";
-
-// embed the Material font
-@import "~ag-grid-community/src/styles/webfont/agGridMaterialFont.scss";
-
-.ag-theme-alpine {
-    @include ag-theme-alpine((
-        "icon-font-family": "agGridMaterial", // use Material font
-        "icons-data": null, // prevent default Alpine font from being embedded
-    ));
+```css
+/* selectively replace the group icon with one from Material Design Icons */
+.ag-theme-alpine .ag-icon-group {
+    --ag-icon-font-family: "Material Design Icons";
+    --ag-icon-font-code-group: "\F0328";
 }
 ```
 
+This example demonstrates both techniques - most icons are replaced by Font Awesome icons and the group and aggregation icons (highlighted in red) are from Material Design Icons:
 
-A working project with Sass / Webpack set up to customise an icon set is available in the [ag grid customising theme repository](https://github.com/ag-grid/ag-grid-customise-theme).
+<grid-example title='Alternative Icon Font' name='icons-alternative-font' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"]  }'></grid-example>
 
-
-## Set the Icons Through gridOptions (JavaScript)
-
-
-The icons can either be set on the grid options (all icons) or on the column definition (all except group). If defined in both the grid options and column definitions, the column definition will get used. This allows you to specify defaults in the grid options to fall back on, and then provide individual icons for specific columns. This is handy if, for example, you want to include 'A..Z' as string sort icons and just the simple arrow for other columns.
-
-The icons are set as follows:
-
-
-```js
-// header column group shown when expanded (click to contract)
-columnGroupOpened
-// header column group shown when contracted (click to expand)
-columnGroupClosed
-// tool panel column group contracted (click to expand)
-columnSelectClosed
-// tool panel column group expanded (click to contract)
-columnSelectOpen
-// column tool panel header expand/collapse all button, shown when some children are expanded and
-//     others are collapsed
-columnSelectIndeterminate
-// shown on ghost icon while dragging column to the side of the grid to pin
-columnMovePin
-// shown on ghost icon while dragging over part of the page that is not a drop zone
-columnMoveHide
-// shown on ghost icon while dragging columns to reorder
-columnMoveMove
-// animating icon shown when dragging a column to the right of the grid causes horizontal scrolling
-columnMoveLeft
-// animating icon shown when dragging a column to the left of the grid causes horizontal scrolling
-columnMoveRight
-// shown on ghost icon while dragging over Row Groups drop zone
-columnMoveGroup
-// shown on ghost icon while dragging over Values drop zone
-columnMoveValue
-// shown on ghost icon while dragging over pivot drop zone
-columnMovePivot
-// shown on ghost icon while dragging over drop zone that doesn't support it, e.g.
-//     string column over aggregation drop zone
-dropNotAllowed
-// shown on row group when contracted (click to expand)
-groupContracted
-// shown on row group when expanded (click to contract)
-groupExpanded
-// context menu chart item
-chart
-// chart window title bar
-close
-// X (remove) on column 'pill' after adding it to a drop zone list
-cancel
-// indicates the currently active pin state in the "Pin column" sub-menu of the column menu
-check
-// "go to first" button in pagination controls
-first
-// "go to previous" button in pagination controls
-previous
-// "go to next" button in pagination controls
-next
-// "go to last" button in pagination controls
-last
-// shown on top right of chart when chart is linked to range data (click to unlink)
-linked
-// shown on top right of chart when chart is not linked to range data (click to link)
-unlinked
-// "Choose colour" button on chart settings tab
-colorPicker
-// rotating spinner shown by the loading cell renderer
-groupLoading
-// button to launch enterprise column menu
-menu
-// filter tool panel tab
-filter
-// column tool panel tab
-columns
-// button in chart regular size window title bar (click to maximise)
-maximize
-// button in chart maximised window title bar (click to make regular size)
-minimize
-// "Pin column" item in column header menu
-menuPin
-// "Value aggregation" column menu item (shown on numeric columns when grouping is active)"
-menuValue
-// "Group by {column-name}" item in column header menu
-menuAddRowGroup
-// "Un-Group by {column-name}" item in column header menu
-menuRemoveRowGroup
-// context menu copy item
-clipboardCopy
-// context menu paste item
-clipboardPaste
-// identifies the pivot drop zone
-pivotPanel
-// "Row groups" drop zone in column tool panel
-rowGroupPanel
-// columns tool panel Values drop zone
-valuePanel
-// drag handle used to pick up draggable columns
-columnDrag
-// drag handle used to pick up draggable rows
-rowDrag
-// context menu export item
-save
-// version of small-right used in RTL mode
-smallLeft
-// separator between column 'pills' when you add multiple columns to the header drop zone
-smallRight
-// show on column header when column is sorted ascending
-sortAscending
-// show on column header when column is sorted descending
-sortDescending
-// show on column header when column has no sort, only when enabled with gridOptions.unSortIcon=true
-sortUnSort
-```
-
-
-Setting the icons on the column definitions is identical, except group icons are not used in column definitions.
-
-The icon can be any of the following:
-
-- **String:** The string will be treated as html. Use to return just text, or HTML tags.
-- **Function:** A function that returns either a String or a DOM node or element.
-
-## Changing Checkbox and Radio Button Icons
-
-
-As of version 23, checkboxes and radio buttons are native browser inputs styled using CSS. This means that you can change the appearance of the checkbox with Sass, but not using the JavaScript `gridOptions` technique. Using Sass, you can either change the icon font (set the `checkbox-*` and `radio-button-*` entries in the icon font codes map) or add CSS rules to override the appearance of the checkbox.
-
-## Example
-
-
-The example below shows a mixture of different methods for providing icons. The grouping is done with images, and the header icons use a mix of Font Awesome and strings.
-
-<grid-example title='Icons' name='icons' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "sidebar", "columnpanel", "filterpanel"], "exampleHeight": 660, "extras": ["fontawesome"] }'></grid-example>
 
 ## SVG Icons
 
-When you create your own theme as described in [Customising Themes](/themes-customising/), you are also able to replace the WebFont with SVG Icons. To do that you will need to override the `ag-icon` SASS rules and also the rules for each icon. You can see the example `styles.scss` file in our custom theme with SVG icons example here: [SVG Icons Example](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-svg-icons).
+To replace icons with an image, including SVG images, use the following CSS selector:
 
-[[note]]
-| The grid uses the CSS `color` property to change the colour of icons. This works for webfont-based icons,
-| but not for SVG. If you are using SVG for icons, you should ensure that the provided SVG image is already the
-| correct colour.
+```css
+.ag-theme-alpine .ag-icon-pin {
+    background: transparent url('../resources/icons/pin.svg') center contain no-repeat;
+    height: 16px;
+    width: 16px;
+}
+```
 
-## Provided Theme Icons
+The following example replaces the grid's icons with SVG images:
 
-Below you can see a list with all available icons for each theme, their names, and download them.
+TODO SVG example
+
+## Set the Icons Through gridOptions (JavaScript)
+
+You can pass an `icons` property either on the [Grid Options](/grid-options/) to apply across the whole grid, or the [Column Definition](/column-properties/). If both are provided, icons specified at the column level will take priority.
+
+The `icons` property takes an object of name/value pairs where the name is one of the icon names below (note that these are different from the CSS names above) and the value is one of:
+
+- An HTML string to be inserted in place of the usual DOM element for an icon
+- A function that returns either an HTML string or a DOM node
+
+<grid-example title='Icon Grid Options' name='icons-grid-options' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "sidebar", "columnpanel", "filterpanel"], "exampleHeight": 660, "extras": ["fontawesome"] }'></grid-example>
+
+In the following list, the name to use in the grid options is to the left, and on the right is the CSS icon name as listed in the [Provided Icons](#provided-icons) table below.
+
+```js
+// header column group shown when expanded (click to contract)
+columnGroupOpened: 'expanded'
+// header column group shown when contracted (click to expand)
+columnGroupClosed: 'contracted'
+// tool panel column group contracted (click to expand)
+columnSelectClosed: 'tree-closed'
+// tool panel column group expanded (click to contract)
+columnSelectOpen: 'tree-open'
+// column tool panel header expand/collapse all button, shown when some children are expanded and
+//     others are collapsed
+columnSelectIndeterminate: 'tree-indeterminate'
+// shown on ghost icon while dragging column to the side of the grid to pin
+columnMovePin: 'pin'
+// shown on ghost icon while dragging over part of the page that is not a drop zone
+columnMoveHide: 'eye-slash'
+// shown on ghost icon while dragging columns to reorder
+columnMoveMove: 'arrows'
+// animating icon shown when dragging a column to the right of the grid causes horizontal scrolling
+columnMoveLeft: 'left'
+// animating icon shown when dragging a column to the left of the grid causes horizontal scrolling
+columnMoveRight: 'right'
+// shown on ghost icon while dragging over Row Groups drop zone
+columnMoveGroup: 'group'
+// shown on ghost icon while dragging over Values drop zone
+columnMoveValue: 'aggregation'
+// shown on ghost icon while dragging over pivot drop zone
+columnMovePivot: 'pivot'
+// shown on ghost icon while dragging over drop zone that doesn't support it, e.g.
+//     string column over aggregation drop zone
+dropNotAllowed: 'not-allowed'
+// shown on row group when contracted (click to expand)
+groupContracted: 'tree-closed'
+// shown on row group when expanded (click to contract)
+groupExpanded: 'tree-open'
+// context menu chart item
+chart: 'chart'
+// chart window title bar
+close: 'cross'
+// X (remove) on column 'pill' after adding it to a drop zone list
+cancel: 'cancel'
+// indicates the currently active pin state in the "Pin column" sub-menu of the column menu
+check: 'tick'
+// "go to first" button in pagination controls
+first: 'first'
+// "go to previous" button in pagination controls
+previous: 'previous'
+// "go to next" button in pagination controls
+next: 'next'
+// "go to last" button in pagination controls
+last: 'last'
+// shown on top right of chart when chart is linked to range data (click to unlink)
+linked: 'linked'
+// shown on top right of chart when chart is not linked to range data (click to link)
+unlinked: 'unlinked'
+// "Choose colour" button on chart settings tab
+colorPicker: 'color-picker'
+// rotating spinner shown by the loading cell renderer
+groupLoading: 'loading'
+// button to launch enterprise column menu
+menu: 'menu'
+// filter tool panel tab
+filter: 'filter'
+// column tool panel tab
+columns: 'columns'
+// button in chart regular size window title bar (click to maximise)
+maximize: 'maximize'
+// button in chart maximised window title bar (click to make regular size)
+minimize: 'minimize'
+// "Pin column" item in column header menu
+menuPin: 'pin'
+// "Value aggregation" column menu item (shown on numeric columns when grouping is active)"
+menuValue: 'aggregation'
+// "Group by {column-name}" item in column header menu
+menuAddRowGroup: 'group'
+// "Un-Group by {column-name}" item in column header menu
+menuRemoveRowGroup: 'group'
+// context menu copy item
+clipboardCopy: 'copy'
+// context menu paste item
+clipboardPaste: 'paste'
+// identifies the pivot drop zone
+pivotPanel: 'pivot'
+// "Row groups" drop zone in column tool panel
+rowGroupPanel: 'group'
+// columns tool panel Values drop zone
+valuePanel: 'aggregation'
+// drag handle used to pick up draggable columns
+columnDrag: 'grip'
+// drag handle used to pick up draggable rows
+rowDrag: 'grip'
+// context menu export item
+save: 'save'
+// csv export
+csvExport: 'csv'
+// excel export
+excelExport: 'excel'
+// icon on dropdown editors
+smallDown: 'small-down'
+// version of small-right used in RTL mode
+smallLeft: 'small-left'
+// separater between column 'pills' when you add multiple columns to the header drop zone
+smallRight: 'small-right'
+smallUp: 'small-up'
+// show on column header when column is sorted ascending
+sortAscending: 'asc'
+// show on column header when column is sorted descending
+sortDescending: 'desc'
+// show on column header when column has no sort, only when enabled with gridOptions.unSortIcon=true
+sortUnSort: 'none'
+```
+
+## Provided Icons
+
+Below you can see a list with all available icons for each provided theme. The name next to each icon is the CSS name, e.g. the `pin` icon will have the CSS class `ag-icon-pin` and uses the CSS variable `--ag-icon-font-code-pin`.
 
 <icons-panel></icons-panel>

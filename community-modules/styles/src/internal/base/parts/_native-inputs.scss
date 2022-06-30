@@ -45,7 +45,7 @@
         // these styles without also updating the icons examples.
 
         &::after {
-            content: ag.icon-char(checkbox-unchecked);
+            content: ag.icon-content(checkbox-unchecked);
             color: var(--ag-checkbox-unchecked-color);
             position: absolute;
             top: 0;
@@ -54,7 +54,7 @@
         }
 
         &.ag-checked::after {
-            content: ag.icon-char(checkbox-checked);
+            content: ag.icon-content(checkbox-checked);
             color: var(--ag-checkbox-checked-color);
             position: absolute;
             top: 0;
@@ -63,7 +63,7 @@
         }
 
         &.ag-indeterminate::after {
-            content: ag.icon-char(checkbox-indeterminate);
+            content: ag.icon-content(checkbox-indeterminate);
             color: var(--ag-checkbox-indeterminate-color);
             position: absolute;
             top: 0;
@@ -133,7 +133,7 @@
         border-radius: var(--ag-icon-size);
 
         &::after {
-            content: ag.icon-char(radio-button-off);
+            content: ag.icon-content(radio-button-off);
             color: var(--ag-checkbox-unchecked-color);
             position: absolute;
             top: 0;
@@ -142,7 +142,7 @@
         }
 
         &.ag-checked::after {
-            content: ag.icon-char(radio-button-on);
+            content: ag.icon-content(radio-button-on);
             color: var(--ag-checkbox-checked-color);
             position: absolute;
             top: 0;

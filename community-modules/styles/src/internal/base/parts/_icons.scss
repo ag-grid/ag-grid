@@ -11,7 +11,7 @@
 
     @each $icon-name, $font-code in ag.$icon-font-codes {
         .ag-icon-#{$icon-name}::before {
-            content: var(--ag-icon-font-code-#{$icon-name}, #{$font-code});
+            content: ag.icon-content($icon-name);
         }
     }
 
