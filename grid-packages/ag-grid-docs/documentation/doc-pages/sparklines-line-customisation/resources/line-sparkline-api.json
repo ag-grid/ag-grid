@@ -2,16 +2,12 @@
     "_config_": {},
     "LineSparklineOptions": {
         "marker": {
-            "description": "The configuration for the marker styles.",
-            "type": "SparklineMarkerOptions",
             "more": {
                 "name": "SparklineMarkerOptions",
                 "url": "/sparklines-line-customisation/#sparklinemarkeroptions"
             }
         },
         "axis": {
-            "description": "Configuration for the x-axis.",
-            "type": "SparklineAxisOptions",
             "more": {
                 "name": "SparklineAxisOptions",
                 "url": "/sparklines-line-customisation/#sparklineaxisoptions"
@@ -19,74 +15,11 @@
         }
     },
     "SparklineMarkerOptions": {
-        "enabled": {
-            "description": "By default this is set to `true` whilst marker `size` is set to `0`, which means the markers are present but not visible.",
-            "type": "boolean",
-            "default": true
-        },
         "shape": {
-            "description": "The shape of the markers.",
-            "type": "string",
-            "default": "circle",
             "options": [
                 "circle",
                 "diamond",
                 "square"
-            ]
-        },
-        "size": {
-            "description": "The width in pixels of markers. By default this is `0`, increase the size to make markers visible.",
-            "type": "number",
-            "default": 0
-        },
-        "fill": {
-            "description": "The CSS colour value for the fill of the markers.",
-            "type": "string",
-            "default": "rgb(124, 181, 236)"
-        },
-        "stroke": {
-            "description": "The CSS colour value for the outline of the markers.",
-            "type": "string",
-            "default": "rgb(124, 181, 236)"
-        },
-        "strokeWidth": {
-            "description": "The thickness in pixels for the stroke of the markers.",
-            "type": "number",
-            "default": 1
-        },
-        "formatter": {
-            "description": "A callback function to return format styles for individual markers.",
-            "type": {
-                "meta": {
-                    "name": "MarkerFormatterParams"
-                },
-                "parameters": {
-                    "datum": "any",
-                    "xValue": "any",
-                    "yValue": "number",
-                    "highlighted": "boolean",
-                    "min?": "boolean",
-                    "max?": "boolean",
-                    "first?": "boolean",
-                    "last?": "boolean",
-                    "fill?": "string",
-                    "stroke?": "string",
-                    "strokeWidth": "number",
-                    "size": "number"
-                },
-                "returnType": "MarkerFormat"
-            }
-        }
-    },
-    "SparklineAxisOptions": {
-        "type": {
-            "description": "The type of the x-axis.",
-            "type": "string",
-            "default": "category",
-            "options": [
-                "category",
-                "number",
-                "time"
             ]
         }
     }

@@ -10252,7 +10252,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10279,7 +10279,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10308,7 +10308,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10345,7 +10345,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10382,7 +10382,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10400,13 +10400,13 @@
       "placement?": "BarColumnLabelPlacement"
     },
     "docs": {
-      "enabled?": "/** Set to true to enable labels. */",
-      "fontSize?": "/** Set size of the font. */",
-      "fontFamily?": "/** Specify the font for the label text. */",
+      "enabled?": "/** Set to true to enable labels.\n * Default: `false` */",
+      "fontSize?": "/** Set size of the font.\n * Default: `8` */",
+      "fontFamily?": "/** Specify the font for the label text.\n * Default: `Verdana, sans-serif` */",
       "fontStyle?": "/** Specify the font style for the label text. */",
       "fontWeight?": "/** Set how thick or thin characters in label text should be displayed. */",
-      "color?": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */",
-      "formatter?": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified. */",
+      "color?": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value.\n * Default: `rgba(70, 70, 70, 1)` */",
+      "formatter?": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar.\n * By default the values are simply stringified. */",
       "placement?": "/** Where to render labels relative to the segments.\n * Default: `insideEnd` */"
     }
   },

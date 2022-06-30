@@ -18128,7 +18128,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the x-axis in the sparklines. */",
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18170,7 +18170,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the x-axis in the sparklines. */",
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18216,7 +18216,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the x-axis in the sparklines. */",
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18278,7 +18278,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the x-axis in the sparklines. */",
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18340,7 +18340,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the x-axis in the sparklines. */",
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18354,15 +18354,15 @@
   },
   "SparklineLabelOptions": {
     "enabled": {
-      "description": "/** Set to true to enable labels. */",
+      "description": "/** Set to true to enable labels.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "fontSize": {
-      "description": "/** Set size of the font. */",
+      "description": "/** Set size of the font.\n * Default: `8` */",
       "type": { "returnType": "number", "optional": true }
     },
     "fontFamily": {
-      "description": "/** Specify the font for the label text. */",
+      "description": "/** Specify the font for the label text.\n * Default: `Verdana, sans-serif` */",
       "type": { "returnType": "string", "optional": true }
     },
     "fontStyle": {
@@ -18380,11 +18380,11 @@
       }
     },
     "color": {
-      "description": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */",
+      "description": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value.\n * Default: `rgba(70, 70, 70, 1)` */",
       "type": { "returnType": "string", "optional": true }
     },
     "formatter": {
-      "description": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified. */",
+      "description": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar.\n * By default the values are simply stringified. */",
       "type": {
         "arguments": { "params": "LabelFormatterParams" },
         "returnType": "string",

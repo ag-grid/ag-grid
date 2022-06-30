@@ -2,7 +2,6 @@
     "_config_": {},
     "SparklineTooltipOptions": {
         "renderer": {
-            "description": "A callback function used to create the content for the tooltips. This function should return an object or a HTML string used to render the tooltip.",
             "more": {
                 "name": "TooltipRendererResult",
                 "url": "/sparklines-tooltips/#tooltiprendererparams"
