@@ -88,7 +88,7 @@
 
     .ag-cell.ag-selection-fill-right,
     .ag-cell.ag-selection-fill-right.ag-cell-range-selected {
-        @include ag-theme-rtl((border-right: 1px dashed), $color-param: range-selection-border-color, $color-param-important: true);
+        @include ag-theme-rtl((border-right: 1px dashed !important), $color-param: range-selection-border-color, $color-param-important: true);
     }
 
     .ag-cell.ag-selection-fill-bottom,
@@ -99,7 +99,7 @@
 
     .ag-cell.ag-selection-fill-left,
     .ag-cell.ag-selection-fill-left.ag-cell-range-selected {
-        @include ag-theme-rtl((border-left: 1px dashed), $color-param: range-selection-border-color, $color-param-important: true);
+        @include ag-theme-rtl((border-left: 1px dashed !important), $color-param: range-selection-border-color, $color-param-important: true);
     }
 
     %ag-selection-handle {

@@ -1,6 +1,6 @@
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
-import { clearElement, setElementWidth } from "../utils/dom";
+import { clearElement, setDisabled, setElementWidth } from "../utils/dom";
 import { setAriaRole } from "../utils/aria";
 
 export type LabelAlignment = 'left' | 'right' | 'top';
@@ -18,6 +18,7 @@ export abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabel> exten
     protected readonly config: TConfig;
     protected labelSeparator: string = '';
     protected labelAlignment: LabelAlignment = 'left';
+    protected disabled: boolean = false;
     private label: HTMLElement | string = '';
 
     constructor(config?: TConfig, template?: string) {
@@ -122,5 +123,22 @@ export abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabel> exten
         setElementWidth(this.eLabel, width);
 
         return this;
+    }
+
+    public setDisabled(disabled: boolean): this {
+        disabled = !!disabled;
+
+        const element = this.getGui();
+
+        setDisabled(element, disabled);
+        element.classList.toggle('ag-disabled', disabled);
+
+        this.disabled = disabled;
+
+        return this;
+    }
+
+    public isDisabled(): boolean {
+        return !!this.disabled;
     }
 }

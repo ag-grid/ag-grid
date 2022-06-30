@@ -230,6 +230,14 @@ export class AgAngleSelect extends AgAbstractLabel {
         return this;
     }
 
+    public setDisabled(disabled: boolean): this {
+        super.setDisabled(disabled);
+
+        this.eAngleValue.setDisabled(disabled);
+
+        return this;
+    }
+
     protected destroy(): void {
         this.dragService.removeDragSource(this.dragListener);
         super.destroy();

@@ -250,6 +250,14 @@
         margin-bottom: calc(var(--ag-grid-size) * 0.5);
     }
 
+    .ag-angle-select[disabled] {
+        color: var(--ag-disabled-foreground-color);
+        pointer-events: none;
+        .ag-angle-select-field {
+            opacity: 0.4;
+        }
+    }
+
     .ag-slider-field,
     .ag-angle-select-field {
         @include ag.unthemed-rtl((margin-right: calc(var(--ag-grid-size) * 2)));
