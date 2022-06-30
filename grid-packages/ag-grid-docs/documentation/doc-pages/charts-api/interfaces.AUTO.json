@@ -929,7 +929,7 @@
   },
   "AgCrossLineLabelPosition": {
     "meta": { "isTypeAlias": true },
-    "type": "'top' | 'left' | 'right' | 'bottom' | 'inside' | 'insideLeft' | 'insideRight' | 'insideTop' | 'insideBottom' | 'insideTopLeft' | 'insideBottomLeft' | 'insideTopRight' | 'insideBottomRight'"
+    "type": "'top' | 'left' | 'right' | 'bottom' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'inside' | 'insideLeft' | 'insideRight' | 'insideTop' | 'insideBottom' | 'insideTopLeft' | 'insideBottomLeft' | 'insideTopRight' | 'insideBottomRight'"
   },
   "AgNumberAxisOptions": {
     "meta": {},
@@ -2281,7 +2281,7 @@
   "CrossLinePathData": { "meta": {}, "type": { "points": "Point[]" } },
   "CrossLineLabelPosition": {
     "meta": { "isTypeAlias": true },
-    "type": "'top' | 'left' | 'right' | 'bottom' | 'inside' | 'insideLeft' | 'insideRight' | 'insideTop' | 'insideBottom' | 'insideTopLeft' | 'insideBottomLeft' | 'insideTopRight' | 'insideBottomRight'"
+    "type": "'top' | 'left' | 'right' | 'bottom' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'inside' | 'insideLeft' | 'insideRight' | 'insideTop' | 'insideBottom' | 'insideTopLeft' | 'insideBottomLeft' | 'insideTopRight' | 'insideBottomRight'"
   },
   "Point": { "meta": {}, "type": { "x": "number", "y": "number" } },
   "CoordinatesFnOpts": {
