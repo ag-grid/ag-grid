@@ -279,6 +279,14 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
         let mainFile = getFileContents(mainScript);
         const indexHtml = getFileContents(document);
 
+        // inline styles in the examples index.html
+        // will be added to styles.css in the various generated fw examples
+        const style = /<style>(.*)<\/style>/s.exec(indexHtml);
+        let inlineStyles = style && style.length > 0 && format(style[1], 'css');
+
+        // for anything but vanilla JS we need all stylesheets (including any created styles.css from inline styles)
+        const allStylesheets = stylesheets.concat(inlineStyles ? ['styles.css'] : []);
+
         const { bindings, typedBindings } = parser(examplePath, mainScript, mainFile, indexHtml, options, type, providedExamples);
 
         const writeExampleFiles = (importType, framework, tokenToReplace, frameworkScripts, files, subdirectory, componentPostfix = '') => {
@@ -334,11 +342,6 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
 
         fs.emptyDirSync(createExamplePath(`_gen`));
 
-        // inline styles in the examples index.html
-        // will be added to styles.css in the various generated fw examples
-        const style = /<style>(.*)<\/style>/s.exec(indexHtml);
-        let inlineStyles = style && style.length > 0 && format(style[1], 'css');
-
         if (type !== 'typescript') {
             // When the type == typescript we only want to generate the vanilla option and so skip all other frameworks
 
@@ -349,7 +352,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                 let reactConfigs = new Map();
 
                 try {
-                    const getSource = vanillaToReact(deepCloneObject(bindings), extractComponentFileNames(reactScripts, '_react'));
+                    const getSource = vanillaToReact(deepCloneObject(bindings), extractComponentFileNames(reactScripts, '_react'), allStylesheets);
                     importTypes.forEach(importType => reactConfigs.set(importType, { 'index.jsx': getSource(importType) }));
                     reactConfigs = addRawScripts(reactConfigs, true)
                 } catch (e) {
@@ -373,7 +376,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.*`, { ignore: ['**/*.tsx'] });
 
                     try {
-                        const getSource = vanillaToReactFunctional(deepCloneObject(bindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`));
+                        const getSource = vanillaToReactFunctional(deepCloneObject(bindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`), allStylesheets);
                         importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { 'index.jsx': getSource(importType) }));
                         reactDeclarativeConfigs = addRawScripts(reactDeclarativeConfigs, true)
                     } catch (e) {
@@ -398,7 +401,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.tsx`);
 
                     try {
-                        const getSource = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}.tsx`, ''));
+                        const getSource = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}.tsx`, ''), allStylesheets);
                         importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { 'index.tsx': getSource(importType) }));
                         reactDeclarativeConfigs = addRawScripts(reactDeclarativeConfigs, false, '.tsx');
 
@@ -431,7 +434,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                 let angularConfigs = new Map();
                 try {
                     const angularComponentFileNames = extractComponentFileNames(angularScripts, '_angular');
-                    const getSource = vanillaToAngular(deepCloneObject(typedBindings), angularComponentFileNames);
+                    const getSource = vanillaToAngular(deepCloneObject(typedBindings), angularComponentFileNames, allStylesheets);
 
                     importTypes.forEach(importType => {
                         let frameworkFiles = {
@@ -461,7 +464,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                 const vueScripts = getMatchingPaths('*_vue*');
                 let vueConfigs = new Map();
                 try {
-                    const getSource = vanillaToVue(deepCloneObject(bindings), extractComponentFileNames(vueScripts, '_vue', 'Vue'));
+                    const getSource = vanillaToVue(deepCloneObject(bindings), extractComponentFileNames(vueScripts, '_vue', 'Vue'), allStylesheets);
 
                     importTypes.forEach(importType => vueConfigs.set(importType, { 'main.js': getSource(importType) }));
                     vueConfigs = addRawScripts(vueConfigs, true);
@@ -482,7 +485,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     const vueScripts = getMatchingPaths('*_vue*');
                     let vueConfigs = new Map();
                     try {
-                        const getSource = vanillaToVue3(bindings, extractComponentFileNames(vueScripts, '_vue', 'Vue'));
+                        const getSource = vanillaToVue3(bindings, extractComponentFileNames(vueScripts, '_vue', 'Vue'), allStylesheets);
 
                         importTypes.forEach(importType => vueConfigs.set(importType, { 'main.js': getSource(importType) }));
                         vueConfigs = addRawScripts(vueConfigs, true);
@@ -533,7 +536,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
             const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts'] });
             const tsConfigs = new Map();
             try {
-                const getSource = vanillaToTypescript(deepCloneObject(typedBindings), mainScript);
+                const getSource = vanillaToTypescript(deepCloneObject(typedBindings), mainScript, allStylesheets);
                 importTypes.forEach(importType => {
                     tsConfigs.set(importType, {
                         'main.ts': getSource(importType),

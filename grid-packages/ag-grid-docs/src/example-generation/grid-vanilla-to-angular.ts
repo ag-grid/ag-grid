@@ -1,6 +1,7 @@
 import { convertTemplate, getImport, toMemberWithValue, toConst, toInput, toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 import { addBindingImports, addGenericInterfaceImport, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
+const path = require('path');
 
 function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
     data: { url: string, callback: string; },
@@ -33,7 +34,7 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
     }`;
 }
 
-function addModuleImports(imports: string[], bindings: any): string[] {
+function addModuleImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
     const { gridSettings, imports: bindingImports, properties } = bindings;
 
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
@@ -43,6 +44,10 @@ function addModuleImports(imports: string[], bindings: any): string[] {
     // "source" non dark version
     const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
+
+    if(allStylesheets && allStylesheets.length > 0) {
+        allStylesheets.forEach(styleSheet => imports.push(`import '../${path.basename(styleSheet)}';`));
+    }
 
     let propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
@@ -61,7 +66,7 @@ function addModuleImports(imports: string[], bindings: any): string[] {
     return imports;
 }
 
-function addPackageImports(imports: string[], bindings: any): string[] {
+function addPackageImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
     const { gridSettings, imports: bindingImports, properties } = bindings;
 
     if (gridSettings.enterprise) {
@@ -75,6 +80,10 @@ function addPackageImports(imports: string[], bindings: any): string[] {
     // "source" non dark version
     const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
     imports.push(`import "ag-grid-community/styles/${theme}.css";`);
+
+    if(allStylesheets && allStylesheets.length > 0) {
+        allStylesheets.forEach(styleSheet => imports.push(`import '../${path.basename(styleSheet)}';`));
+    }
 
     let propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
@@ -91,7 +100,7 @@ function addPackageImports(imports: string[], bindings: any): string[] {
     return imports;
 }
 
-function getImports(bindings: any, componentFileNames: string[], importType: ImportType): string[] {
+function getImports(bindings: any, componentFileNames: string[], importType: ImportType, allStylesheets: string[]): string[] {
 
     let imports = ["import { Component } from '@angular/core';"];
 
@@ -100,9 +109,9 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
     }
 
     if (importType === "packages") {
-        addPackageImports(imports, bindings);
+        addPackageImports(imports, bindings, allStylesheets);
     } else {
-        addModuleImports(imports, bindings);
+        addModuleImports(imports, bindings, allStylesheets);
     }
 
     if (componentFileNames) {
@@ -130,7 +139,7 @@ function getTemplate(bindings: any, attributes: string[]): string {
     return convertTemplate(template);
 }
 
-export function vanillaToAngular(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
+export function vanillaToAngular(bindings: any, componentFileNames: string[], allStylesheets: string[]): (importType: ImportType) => string {
     const { data, properties, typeDeclares, interfaces, tData } = bindings;
     const rowDataType = tData || 'any';
     const diParams = [];
@@ -150,7 +159,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
     const genericParams = rowDataType !== 'any' ? `<${rowDataType}>` : ''
 
     return importType => {
-        const imports = getImports(bindings, componentFileNames, importType);
+        const imports = getImports(bindings, componentFileNames, importType, allStylesheets);
         const propertyAttributes = [];
         const propertyVars = [];
         const propertyAssignments = [];
