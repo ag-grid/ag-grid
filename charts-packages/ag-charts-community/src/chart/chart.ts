@@ -872,7 +872,6 @@ export abstract class Chart extends Observable {
         if (title.enabled) {
             title.node.x = this.width / 2;
             title.node.y = paddingTop;
-            title.node.visible = true;
             const titleBBox = title.node.computeBBox(); // make sure to set node's x/y, then computeBBox
             if (titleBBox) {
                 paddingTop = titleBBox.y + titleBBox.height;
@@ -887,7 +886,6 @@ export abstract class Chart extends Observable {
         if (title.enabled && subtitle.enabled) {
             subtitle.node.x = this.width / 2;
             subtitle.node.y = paddingTop + spacing;
-            subtitle.node.visible = true;
             const subtitleBBox = subtitle.node.computeBBox();
             if (subtitleBBox) {
                 paddingTop = subtitleBBox.y + subtitleBBox.height;

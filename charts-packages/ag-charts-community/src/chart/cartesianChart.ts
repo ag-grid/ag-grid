@@ -266,9 +266,6 @@ export class CartesianChart extends Chart {
             const { position, direction } = axis;
             visited[position] = (visited[position] ?? 0) + 1;
 
-            // for multiple axes in the same direction and position, apply padding at the top of each inner axis (i.e. between axes).
-            const axisPadding = axis.title ? Caption.PADDING : 15;
-
             const axisLeftRightRange = (axis: ChartAxis<any>) => {
                 if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
                     return [0, seriesRect.height];
@@ -323,6 +320,8 @@ export class CartesianChart extends Chart {
                 axisThickness = direction === ChartAxisDirection.X ? bbox.height : bbox.width;
             }
 
+            // for multiple axes in the same direction and position, apply padding at the top of each inner axis (i.e. between axes).
+            const axisPadding = 15;
             const visitCount = (visited[position] ?? 0);
             if (visitCount > 1) {
                 axisThickness += axisPadding;
