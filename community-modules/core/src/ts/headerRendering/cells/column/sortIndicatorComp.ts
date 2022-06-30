@@ -77,9 +77,7 @@ export class SortIndicatorComp extends Component {
     }
 
     private updateIcons(): void {
-        const isColumnCoupled = this.isColumnCoupled();
-
-        const sortDirection = isColumnCoupled ? this.getGroupSortDirection() : this.column.getSort();
+        const sortDirection = this.sortController.getDisplaySortForColumn(this.column);
 
         if (this.eSortAsc) {
             const isAscending = sortDirection === 'asc';
@@ -112,34 +110,9 @@ export class SortIndicatorComp extends Component {
         }
     }
 
-    private isColumnCoupled() {
-        const areGroupsCoupled = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
-        const isColumnGroupDisplay = !!this.column.getColDef().showRowGroup;
-        return areGroupsCoupled && isColumnGroupDisplay;
-    }
-
-    private getGroupSortDirection(): 'asc' | 'desc' | 'mixed' | null | undefined {
-        const columnHasUniqueData = this.column.getColDef().field;
-        const linkedColumns = this.columnModel.getSourceColumnsForGroupColumn(this.column);
-        if (!linkedColumns) {
-            return this.column.getSort();
-        }
-        const sortableColumns = columnHasUniqueData ? [this.column, ...linkedColumns] : linkedColumns;
-
-        if (sortableColumns.length === 0) {
-            return undefined;
-        }
-        const firstSort = sortableColumns[0].getSort();
-        const allMatch = sortableColumns.every(col => col.getSort() === firstSort);
-        if (!allMatch) {
-            return 'mixed';
-        }
-        return firstSort;
-    }
-
     private updateMultiSortIndicator() {
         if (this.eSortMixed) {
-            const isMixedSort = this.isColumnCoupled() && this.getGroupSortDirection() === 'mixed';
+            const isMixedSort = this.sortController.getDisplaySortForColumn(this.column) === 'mixed';
             this.eSortMixed.classList.toggle('ag-hidden', !isMixedSort);
         }
     }
@@ -152,10 +125,9 @@ export class SortIndicatorComp extends Component {
 
         const allColumnsWithSorting = this.sortController.getColumnsWithSortingOrdered();
 
-        const indexThisCol = this.column.getSortIndex() ?? -1;
-        const moreThanOneColSorting = allColumnsWithSorting.some(col => col.getSortIndex() ?? -1 >= 1);
-        const showIndex = this.column.isSorting() && moreThanOneColSorting;
-
+        const indexThisCol = this.sortController.getDisplaySortIndexForColumn(this.column) ?? -1;
+        const moreThanOneColSorting = allColumnsWithSorting.some(col => this.sortController.getDisplaySortIndexForColumn(col) ?? -1 >= 1);
+        const showIndex = indexThisCol >= 0 && moreThanOneColSorting;
         setDisplayed(this.eSortOrder, showIndex);
 
         if (indexThisCol >= 0) {
