@@ -91,8 +91,8 @@ export class AxisLabel {
      * The color of the labels.
      * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
      */
-     @Validate(STRING)
-     color?: string = 'rgba(87, 87, 87, 1)';
+    @Validate(STRING)
+    color?: string = 'rgba(87, 87, 87, 1)';
 
     /**
      * Custom label rotation in degrees.
@@ -139,8 +139,8 @@ export class AxisLabel {
      * Setting this config to `true` makes labels render parallel to the axis line
      * and center aligns labels' text at the ticks.
      */
-     @Validate(BOOLEAN)
-     parallel: boolean = false;
+    @Validate(BOOLEAN)
+    parallel: boolean = false;
 
     /**
      * In case {@param value} is a number, the {@param fractionDigits} parameter will
@@ -197,7 +197,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     ticks: any[];
 
     readonly axisGroup = new Group({ name: `${this.id}-axis`, layer: true, zIndex: 50 });
-    readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines`, zIndex: 150 });
+    readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
 
     private readonly tickLineGroup = this.axisGroup.appendChild(new Group());
     private readonly titleGroup = this.axisGroup.appendChild(new Group());
@@ -256,11 +256,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._calculatedTickCount ?? this.tick.count;
     }
 
-    attachCrossLine(crossLine: CrossLine) {
+    private attachCrossLine(crossLine: CrossLine) {
         this.crossLineGroup.appendChild(crossLine.group);
     }
 
-    detachCrossLine(crossLine: CrossLine) {
+    private detachCrossLine(crossLine: CrossLine) {
         this.crossLineGroup.removeChild(crossLine.group);
     }
 
@@ -775,10 +775,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
             const padding = Caption.PADDING;
             const titleNode = title.node;
             const titleRotationFlag = sideFlag === -1 && parallelFlipRotation > Math.PI && parallelFlipRotation < Math.PI * 2 ? -1 : 1;
-            
+
             titleNode.rotation = titleRotationFlag * sideFlag * Math.PI / 2;
             titleNode.x = Math.floor(titleRotationFlag * sideFlag * (requestedRange[0] + requestedRange[1]) / 2);
-            
+
             const bbox = this.tickLineGroup.computeBBox();
             const bboxYDimension = rotation === 0 ? bbox.width : bbox.height;
             if (sideFlag === -1) {

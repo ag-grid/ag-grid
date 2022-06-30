@@ -34,7 +34,7 @@ interface CrossLinePathData {
 
 export class CrossLine {
 
-    protected static readonly ANNOTATION_LAYER_ZINDEX = Series.SERIES_LAYER_ZINDEX + 20;
+    protected static readonly ANNOTATION_LAYER_ZINDEX = Series.SERIES_LAYER_ZINDEX - 10;
 
     static className = "CrossLine";
     readonly id = createId(this);
@@ -232,10 +232,10 @@ export class CrossLine {
 
         crossLineLabel.rotation = autoRotation + labelRotation;
 
-        const bbox = crossLineLabel.computeTransformedBBox();
-
         crossLineLabel.textBaseline = 'middle';
         crossLineLabel.textAlign = 'center';
+
+        const bbox = crossLineLabel.computeTransformedBBox();
 
         if (!bbox) { return; }
 
