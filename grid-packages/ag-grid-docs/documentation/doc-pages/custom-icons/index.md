@@ -47,7 +47,8 @@ Or to replace some icons without affecting others, set the variables using a CSS
 
 This example demonstrates both techniques - most icons are replaced by Font Awesome icons and the group and aggregation icons (highlighted in red) are from Material Design Icons:
 
-<grid-example title='Alternative Icon Font' name='icons-alternative-font' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"]  }'></grid-example>
+<grid
+-example title='Alternative Icon Font' name='icons-alternative-font' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"]  }'></grid-example>
 
 
 ## SVG Icons
