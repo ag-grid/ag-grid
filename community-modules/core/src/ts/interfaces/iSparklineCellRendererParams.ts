@@ -17,7 +17,7 @@ export interface BaseSparklineOptions {
     yKey?: string;
     /** Configuration for the padding in pixels shown around the sparklines. */
     padding?: PaddingOptions;
-    /** The options for the x-axis in the sparklines. */
+    /** The options for the horizontal axis line in the sparklines. */
     axis?: SparklineAxisOptions;
     /** The configuration for the highlighting used when the items are hovered over. */
     highlightStyle?: HighlightStyleOptions;
@@ -118,19 +118,33 @@ export interface BarSparklineOptions extends BaseSparklineOptions {
 }
 
 export interface SparklineLabelOptions {
-    /** Set to true to enable labels. */
+    /**
+     * Set to true to enable labels.
+     * Default: `false`
+     */
     enabled?: boolean;
-    /** Set size of the font. */
+    /**
+     * Set size of the font.
+     * Default: `8`
+     */
     fontSize?: number;
-    /** Specify the font for the label text. */
+    /**
+     * Specify the font for the label text.
+     * Default: `Verdana, sans-serif`
+     */
     fontFamily?: string;
     /** Specify the font style for the label text. */
     fontStyle?: 'normal' | 'italic' | 'oblique';
     /** Set how thick or thin characters in label text should be displayed. */
     fontWeight?: 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
-    /** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */
+    /**
+     * Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value.
+     * Default: `rgba(70, 70, 70, 1)`
+     */
     color?: string;
-    /** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified. */
+    /**
+     * A callback function to return the text to be displayed as the label, based on the value represented by the column or bar.
+     * By default the values are simply stringified. */
     formatter?: (params: LabelFormatterParams) => string;
     /** Where to render labels relative to the segments.
     * Default: `insideEnd`

@@ -212,7 +212,6 @@ export interface AgDropShadowOptions {
 export interface AgChartCaptionOptions {
     /** Whether or not the title should be shown. */
     enabled?: boolean;
-    padding?: AgChartPaddingOptions;
     /** The text to show in the title. */
     text?: string;
     /** The font style to use for the title. */
@@ -672,10 +671,6 @@ export interface AgSeriesMarker {
     stroke?: CssColor;
     /** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */
     strokeWidth?: PixelSize;
-    /**  */
-    fillOpacity?: Opacity;
-    /**  */
-    strokeOpacity?: Opacity;
 }
 
 export interface AgSeriesMarkerFormatterParams {

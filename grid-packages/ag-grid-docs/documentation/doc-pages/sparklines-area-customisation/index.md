@@ -240,11 +240,11 @@ More advanced customisations are discussed separately in the following sections:
 
 ### SparklineMarkerOptions
 
-<api-documentation source='sparklines-area-customisation/resources/area-sparkline-api.json' section='SparklineMarkerOptions'></api-documentation>
+<interface-documentation interfaceName='SparklineMarkerOptions'  overrideSrc='sparklines-area-customisation/resources/area-sparkline-api.json'></interface-documentation>
 
 ### SparklineAxisOptions
 
-<api-documentation source='sparklines-area-customisation/resources/area-sparkline-api.json' section='SparklineAxisOptions'></api-documentation>
+<interface-documentation interfaceName='SparklineAxisOptions' ></interface-documentation>
 
 ## Next Up
 

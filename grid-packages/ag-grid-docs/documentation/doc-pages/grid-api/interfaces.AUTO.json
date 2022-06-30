@@ -4011,14 +4011,35 @@
       "type": "/** Event identifier */"
     }
   },
-  "RowEvent": {
+  "BaseRowEvent": {
     "meta": {
-      "typeParams": ["TData = any"],
+      "typeParams": ["TData"],
       "doc": "/** ------------ */\n/** ROW EVENTS */\n/** ------------ */"
     },
     "type": {
       "node": "RowNode<TData>",
+      "rowIndex": "number | null",
+      "rowPinned": "string | null",
+      "context": "any",
+      "event?": "Event | null",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "node": "/** The row node. */",
+      "rowIndex": "/** The visible row index for the row */",
+      "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
+      "context": "/** The context as provided on `gridOptions.context` */",
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "RowEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4029,6 +4050,33 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
+      "rowIndex": "/** The visible row index for the row */",
+      "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
+      "context": "/** The context as provided on `gridOptions.context` */",
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "RowWithDataEvent": {
+    "meta": {
+      "typeParams": ["TData = any"],
+      "doc": "/** Base interface for row events that always have data set. */"
+    },
+    "type": {
+      "data": "TData",
+      "node": "RowNode<TData>",
+      "rowIndex": "number | null",
+      "rowPinned": "string | null",
+      "context": "any",
+      "event?": "Event | null",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "data": "/** The user provided data for the row. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4040,8 +4088,8 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "expanded": "boolean",
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4053,6 +4101,7 @@
     "docs": {
       "expanded": "/** True if the group is expanded. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4063,8 +4112,8 @@
   "RowValueChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4075,6 +4124,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4085,8 +4135,8 @@
   "RowSelectedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4097,6 +4147,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4107,8 +4158,8 @@
   "VirtualRowRemovedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4119,6 +4170,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4129,8 +4181,8 @@
   "RowClickedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4141,6 +4193,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4151,8 +4204,8 @@
   "RowDoubleClickedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4163,6 +4216,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4173,8 +4227,8 @@
   "RowEditingStartedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4185,6 +4239,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4195,8 +4250,8 @@
   "RowEditingStoppedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4207,6 +4262,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4217,8 +4273,8 @@
   "FullWidthCellKeyDownEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4229,6 +4285,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4239,8 +4296,8 @@
   "FullWidthCellKeyPressEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4251,6 +4308,7 @@
     },
     "docs": {
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4260,15 +4318,45 @@
   },
   "CellEvent": {
     "meta": {
-      "typeParams": ["TData = any"],
+      "typeParams": ["TData = any", "TValue = any"],
       "doc": "/** ------------ */\n/** CELL EVENTS */\n/** ------------ */"
     },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
+      "rowIndex": "number | null",
+      "rowPinned": "string | null",
+      "context": "any",
+      "event?": "Event | null",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "value": "/** The value for the cell if available otherwise undefined. */",
+      "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
+      "rowIndex": "/** The visible row index for the row */",
+      "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
+      "context": "/** The context as provided on `gridOptions.context` */",
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "CellWithDataEvent": {
+    "meta": {
+      "typeParams": ["TData = any", "TValue = any"],
+      "doc": "/** Use for cell events that will always have a value and data property. */"
+    },
+    "type": {
+      "column": "Column",
+      "colDef": "ColDef<TData>",
+      "value": "TValue",
+      "data": "TData",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4279,7 +4367,8 @@
     },
     "docs": {
       "value": "/** The value for the cell */",
-      "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "data": "/** The user provided data for the row. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4288,13 +4377,13 @@
     }
   },
   "CellKeyDownEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4304,8 +4393,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4314,13 +4404,13 @@
     }
   },
   "CellKeyPressEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4330,8 +4420,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4340,13 +4431,13 @@
     }
   },
   "CellClickedEvent": {
-    "meta": { "typeParams": ["TData = any"], "doc": "/** Cell is clicked */" },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4356,8 +4447,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4366,13 +4458,13 @@
     }
   },
   "CellMouseDownEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4382,8 +4474,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4392,13 +4485,13 @@
     }
   },
   "CellDoubleClickedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4408,8 +4501,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4418,13 +4512,13 @@
     }
   },
   "CellMouseOverEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4434,8 +4528,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4444,13 +4539,13 @@
     }
   },
   "CellMouseOutEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4460,8 +4555,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4470,13 +4566,13 @@
     }
   },
   "CellContextMenuEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
-      "node": "RowNode<TData>",
+      "value": "TValue | undefined",
       "data": "TData | undefined",
+      "node": "RowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4486,8 +4582,9 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
       "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4496,13 +4593,13 @@
     }
   },
   "CellEditingStartedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
+      "value": "TValue",
+      "data": "TData",
       "node": "RowNode<TData>",
-      "data": "TData | undefined",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4513,7 +4610,8 @@
     },
     "docs": {
       "value": "/** The value for the cell */",
-      "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "data": "/** The user provided data for the row. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4522,15 +4620,15 @@
     }
   },
   "CellEditingStoppedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue",
+      "newValue": "TValue",
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
+      "value": "TValue",
+      "data": "TData",
       "node": "RowNode<TData>",
-      "data": "TData | undefined",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4543,7 +4641,8 @@
       "oldValue": "/** The old value before editing */",
       "newValue": "/** The new value after editing */",
       "value": "/** The value for the cell */",
-      "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "data": "/** The user provided data for the row. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4552,16 +4651,16 @@
     }
   },
   "CellValueChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue",
+      "newValue": "TValue",
       "source": "string | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
+      "value": "TValue",
+      "data": "TData",
       "node": "RowNode<TData>",
-      "data": "TData | undefined",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4572,7 +4671,8 @@
     },
     "docs": {
       "value": "/** The value for the cell */",
-      "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "data": "/** The user provided data for the row. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -4581,16 +4681,16 @@
     }
   },
   "CellEditRequestEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue",
+      "newValue": "TValue",
       "source": "string | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "value": "any",
+      "value": "TValue",
+      "data": "TData",
       "node": "RowNode<TData>",
-      "data": "TData | undefined",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
@@ -4601,7 +4701,8 @@
     },
     "docs": {
       "value": "/** The value for the cell */",
-      "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "data": "/** The user provided data for the row. */",
+      "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -6649,7 +6750,6 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
-      "padding?": "AgChartPaddingOptions",
       "text?": "string",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -7284,9 +7384,7 @@
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
       "stroke?": "CssColor",
-      "strokeWidth?": "PixelSize",
-      "fillOpacity?": "Opacity",
-      "strokeOpacity?": "Opacity"
+      "strokeWidth?": "PixelSize"
     },
     "docs": {
       "enabled?": "/** Whether or not to show markers. */",
@@ -7295,9 +7393,7 @@
       "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
       "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
       "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
-      "fillOpacity?": "/** */",
-      "strokeOpacity?": "/** */"
+      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */"
     }
   },
   "AgSeriesMarkerFormatterParams": {
@@ -7347,9 +7443,7 @@
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
       "stroke?": "CssColor",
-      "strokeWidth?": "PixelSize",
-      "fillOpacity?": "Opacity",
-      "strokeOpacity?": "Opacity"
+      "strokeWidth?": "PixelSize"
     },
     "docs": {
       "formatter?": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
@@ -7359,9 +7453,7 @@
       "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
       "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
       "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
-      "fillOpacity?": "/** */",
-      "strokeOpacity?": "/** */"
+      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */"
     }
   },
   "AgAreaSeriesMarker": {
@@ -7374,9 +7466,7 @@
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
       "stroke?": "CssColor",
-      "strokeWidth?": "PixelSize",
-      "fillOpacity?": "Opacity",
-      "strokeOpacity?": "Opacity"
+      "strokeWidth?": "PixelSize"
     },
     "docs": {
       "formatter?": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
@@ -7386,9 +7476,7 @@
       "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
       "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
       "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
-      "fillOpacity?": "/** */",
-      "strokeOpacity?": "/** */"
+      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */"
     }
   },
   "AgSeriesTooltip": {
@@ -7918,7 +8006,6 @@
     "type": {
       "showInLegend?": "boolean",
       "enabled?": "boolean",
-      "padding?": "AgChartPaddingOptions",
       "text?": "string",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -10165,7 +10252,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10192,7 +10279,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10221,7 +10308,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10258,7 +10345,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10295,7 +10382,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10313,13 +10400,13 @@
       "placement?": "BarColumnLabelPlacement"
     },
     "docs": {
-      "enabled?": "/** Set to true to enable labels. */",
-      "fontSize?": "/** Set size of the font. */",
-      "fontFamily?": "/** Specify the font for the label text. */",
+      "enabled?": "/** Set to true to enable labels.\n * Default: `false` */",
+      "fontSize?": "/** Set size of the font.\n * Default: `8` */",
+      "fontFamily?": "/** Specify the font for the label text.\n * Default: `Verdana, sans-serif` */",
       "fontStyle?": "/** Specify the font style for the label text. */",
       "fontWeight?": "/** Set how thick or thin characters in label text should be displayed. */",
-      "color?": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */",
-      "formatter?": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified. */",
+      "color?": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value.\n * Default: `rgba(70, 70, 70, 1)` */",
+      "formatter?": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar.\n * By default the values are simply stringified. */",
       "placement?": "/** Where to render labels relative to the segments.\n * Default: `insideEnd` */"
     }
   },

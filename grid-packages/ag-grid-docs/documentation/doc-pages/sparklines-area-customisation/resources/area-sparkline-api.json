@@ -2,102 +2,25 @@
     "_config_": {},
     "AreaSparklineOptions": {
         "axis": {
-            "description": "The options for the horizontal axis line in the sparklines.",
-            "type": "SparklineAxisOptions",
             "more": {
                 "name": "SparklineAxisOptions",
                 "url": "/sparklines-area-customisation/#sparklineaxisoptions"
             }
         },
         "marker": {
-            "description": "The configuration for the marker styles.",
-            "type": "SparklineMarkerOptions",
             "more": {
                 "name": "SparklineMarkerOptions",
                 "url": "/sparklines-area-customisation/#sparklinemarkeroptions"
             }
         }
     },
-    "SparklineAxisOptions": {
-        "type": {
-            "description": "The type of the x-axis.",
-            "type": "string",
-            "default": "category",
-            "options": [
-                "category",
-                "number",
-                "time"
-            ]
-        },
-        "stroke": {
-            "description": "The CSS colour value for the outline of the horizontal axis line.",
-            "type": "string",
-            "default": "rgb(204, 214, 235)"
-        },
-        "strokeWidth": {
-            "description": "The thickness in pixels for the stroke of the horizontal axis line.",
-            "type": "number",
-            "default": 1
-        }
-    },
     "SparklineMarkerOptions": {
-        "enabled": {
-            "description": "By default this is set to `true` whilst marker `size` is set to `0`, which means the markers are present but not visible.",
-            "type": "boolean",
-            "default": true
-        },
         "shape": {
-            "description": "The shape of the markers.",
-            "type": "string",
-            "default": "circle",
             "options": [
                 "circle",
                 "diamond",
                 "square"
             ]
-        },
-        "size": {
-            "description": "The width in pixels of markers. By default this is `0`, increase the size to make markers visible.",
-            "type": "number",
-            "default": 0
-        },
-        "fill": {
-            "description": "The CSS colour value for the fill of the markers.",
-            "type": "string",
-            "default": "rgb(124, 181, 236)"
-        },
-        "stroke": {
-            "description": "The CSS colour value for the outline of the markers.",
-            "type": "string",
-            "default": "rgb(124, 181, 236)"
-        },
-        "strokeWidth": {
-            "description": "The thickness in pixels for the stroke of the markers.",
-            "type": "number",
-            "default": 1
-        },
-        "formatter": {
-            "description": "A callback function to return format styles for individual markers.",
-            "type": {
-                "meta": {
-                    "name": "MarkerFormatterParams"
-                },
-                "parameters": {
-                    "datum": "any",
-                    "xValue": "any",
-                    "yValue": "number",
-                    "highlighted": "boolean",
-                    "min?": "boolean",
-                    "max?": "boolean",
-                    "first?": "boolean",
-                    "last?": "boolean",
-                    "fill?": "string",
-                    "stroke?": "string",
-                    "strokeWidth": "number",
-                    "size": "number"
-                },
-                "returnType": "MarkerFormat"
-            }
         }
     }
 }

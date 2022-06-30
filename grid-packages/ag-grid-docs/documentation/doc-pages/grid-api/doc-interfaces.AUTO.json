@@ -7316,11 +7316,10 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "RowEvent": {
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
-    "data": {
-      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
-      "type": { "returnType": "TData | undefined", "optional": false }
+  "BaseRowEvent": {
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7338,7 +7337,73 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "meta": { "typeParams": ["TData"] },
+    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "RowEvent": {
+    "data": {
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
+    },
     "meta": { "typeParams": ["TData = any"] },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
+    },
+    "rowIndex": {
+      "description": "/** The visible row index for the row */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "event": {
+      "description": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": { "returnType": "Event | null", "optional": true }
+    },
+    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "RowWithDataEvent": {
+    "data": {
+      "description": "/** The user provided data for the row. */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
+    },
+    "rowIndex": {
+      "description": "/** The visible row index for the row */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "event": {
+      "description": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": { "returnType": "Event | null", "optional": true }
+    },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
@@ -7352,10 +7417,13 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7382,10 +7450,13 @@
   },
   "RowValueChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7412,10 +7483,13 @@
   },
   "RowSelectedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7442,10 +7516,13 @@
   },
   "VirtualRowRemovedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7472,10 +7549,13 @@
   },
   "RowClickedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7502,10 +7582,13 @@
   },
   "RowDoubleClickedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7532,10 +7615,13 @@
   },
   "RowEditingStartedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7562,10 +7648,13 @@
   },
   "RowEditingStoppedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7592,10 +7681,13 @@
   },
   "FullWidthCellKeyDownEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7622,10 +7714,13 @@
   },
   "FullWidthCellKeyPressEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7654,14 +7749,56 @@
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
+    },
+    "rowIndex": {
+      "description": "/** The visible row index for the row */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "event": {
+      "description": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": { "returnType": "Event | null", "optional": true }
+    },
+    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "CellWithDataEvent": {
+    "column": { "type": { "returnType": "Column", "optional": false } },
+    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "value": {
+      "description": "/** The value for the cell */",
+      "type": { "returnType": "TValue", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
+    "data": {
+      "description": "/** The user provided data for the row. */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7687,17 +7824,20 @@
     }
   },
   "CellKeyDownEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7723,17 +7863,20 @@
     }
   },
   "CellKeyPressEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7759,17 +7902,20 @@
     }
   },
   "CellClickedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7795,17 +7941,20 @@
     }
   },
   "CellMouseDownEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7831,17 +7980,20 @@
     }
   },
   "CellDoubleClickedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7867,17 +8019,20 @@
     }
   },
   "CellMouseOverEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7903,17 +8058,20 @@
     }
   },
   "CellMouseOutEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7939,17 +8097,20 @@
     }
   },
   "CellContextMenuEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | undefined", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7975,17 +8136,20 @@
     }
   },
   "CellEditingStartedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
       "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
-      "type": { "returnType": "TData | undefined", "optional": false }
+      "description": "/** The user provided data for the row. */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -8013,23 +8177,26 @@
   "CellEditingStoppedEvent": {
     "oldValue": {
       "description": "/** The old value before editing */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "newValue": {
       "description": "/** The new value after editing */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
       "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
-      "type": { "returnType": "TData | undefined", "optional": false }
+      "description": "/** The user provided data for the row. */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -8055,22 +8222,25 @@
     }
   },
   "CellValueChangedEvent": {
-    "oldValue": { "type": { "returnType": "any", "optional": false } },
-    "newValue": { "type": { "returnType": "any", "optional": false } },
+    "oldValue": { "type": { "returnType": "TValue", "optional": false } },
+    "newValue": { "type": { "returnType": "TValue", "optional": false } },
     "source": {
       "type": { "returnType": "string | undefined", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
       "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
-      "type": { "returnType": "TData | undefined", "optional": false }
+      "description": "/** The user provided data for the row. */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -8096,22 +8266,25 @@
     }
   },
   "CellEditRequestEvent": {
-    "oldValue": { "type": { "returnType": "any", "optional": false } },
-    "newValue": { "type": { "returnType": "any", "optional": false } },
+    "oldValue": { "type": { "returnType": "TValue", "optional": false } },
+    "newValue": { "type": { "returnType": "TValue", "optional": false } },
     "source": {
       "type": { "returnType": "string | undefined", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
     "value": {
       "description": "/** The value for the cell */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
     "data": {
-      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
-      "type": { "returnType": "TData | undefined", "optional": false }
+      "description": "/** The user provided data for the row. */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -11687,9 +11860,6 @@
       "description": "/** Whether or not the title should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "padding": {
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
-    },
     "text": {
       "description": "/** The text to show in the title. */",
       "type": { "returnType": "string", "optional": true }
@@ -12539,14 +12709,6 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "type": { "returnType": "PixelSize", "optional": true }
-    },
-    "fillOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
-    },
-    "strokeOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgSeriesMarkerFormatterParams": {
@@ -12609,14 +12771,6 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "type": { "returnType": "PixelSize", "optional": true }
-    },
-    "fillOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
-    },
-    "strokeOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgAreaSeriesMarker": {
@@ -12654,14 +12808,6 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "type": { "returnType": "PixelSize", "optional": true }
-    },
-    "fillOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
-    },
-    "strokeOpacity": {
-      "description": "/** */",
-      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgSeriesTooltip": {
@@ -13506,9 +13652,6 @@
     "enabled": {
       "description": "/** Whether or not the title should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "padding": {
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "text": {
       "description": "/** The text to show in the title. */",
@@ -17985,7 +18128,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the x-axis in the sparklines. */",
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18027,7 +18170,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the x-axis in the sparklines. */",
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18073,7 +18216,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the x-axis in the sparklines. */",
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18135,7 +18278,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the x-axis in the sparklines. */",
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18197,7 +18340,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the x-axis in the sparklines. */",
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18211,15 +18354,15 @@
   },
   "SparklineLabelOptions": {
     "enabled": {
-      "description": "/** Set to true to enable labels. */",
+      "description": "/** Set to true to enable labels.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "fontSize": {
-      "description": "/** Set size of the font. */",
+      "description": "/** Set size of the font.\n * Default: `8` */",
       "type": { "returnType": "number", "optional": true }
     },
     "fontFamily": {
-      "description": "/** Specify the font for the label text. */",
+      "description": "/** Specify the font for the label text.\n * Default: `Verdana, sans-serif` */",
       "type": { "returnType": "string", "optional": true }
     },
     "fontStyle": {
@@ -18237,11 +18380,11 @@
       }
     },
     "color": {
-      "description": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */",
+      "description": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value.\n * Default: `rgba(70, 70, 70, 1)` */",
       "type": { "returnType": "string", "optional": true }
     },
     "formatter": {
-      "description": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified. */",
+      "description": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar.\n * By default the values are simply stringified. */",
       "type": {
         "arguments": { "params": "LabelFormatterParams" },
         "returnType": "string",

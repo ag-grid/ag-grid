@@ -70,12 +70,6 @@ export class ChartTheme {
             thickness: 0,
             title: {
                 enabled: false,
-                padding: {
-                    top: 10,
-                    right: 10,
-                    bottom: 10,
-                    left: 10
-                },
                 text: 'Axis Title',
                 fontStyle: undefined,
                 fontWeight: BOLD,
@@ -201,12 +195,6 @@ export class ChartTheme {
             },
             title: {
                 enabled: false,
-                padding: {
-                    top: 10,
-                    right: 10,
-                    bottom: 10,
-                    left: 10
-                },
                 text: 'Title',
                 fontStyle: undefined,
                 fontWeight: BOLD,
@@ -216,12 +204,6 @@ export class ChartTheme {
             },
             subtitle: {
                 enabled: false,
-                padding: {
-                    top: 10,
-                    right: 10,
-                    bottom: 10,
-                    left: 10
-                },
                 text: 'Subtitle',
                 fontStyle: undefined,
                 fontWeight: undefined,
@@ -447,12 +429,6 @@ export class ChartTheme {
                 ...ChartTheme.getSeriesDefaults(),
                 title: {
                     enabled: true,
-                    padding: {
-                        top: 10,
-                        right: 10,
-                        bottom: 10,
-                        left: 10
-                    },
                     text: '',
                     fontStyle: undefined,
                     fontWeight: 'bold',

@@ -32,8 +32,8 @@ export class HierarchyChart extends Chart {
 
         const shrinkRect = new BBox(0, 0, width, height);
 
-        this.positionCaptions();
-        this.positionLegend();
+        const { captionAutoPadding = 0 } = this.positionCaptions();
+        this.positionLegend(captionAutoPadding);
 
         if (legend.enabled && legend.data.length) {
             const { legendAutoPadding } = this;
@@ -62,8 +62,7 @@ export class HierarchyChart extends Chart {
             }
         }
 
-        const { captionAutoPadding, padding } = this;
-
+        const { padding } = this;
         shrinkRect.x += padding.left;
         shrinkRect.width -= padding.left + padding.right;
 
