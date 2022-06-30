@@ -110,7 +110,7 @@ export class CrossLine {
         this.pathData = { points: [] };
 
         [xStart, xEnd] = [0, sideFlag * gridLength];
-        [yStart, yEnd] = range ? [Math.min(...range), Math.max(...range)] : [value, undefined];
+        [yStart, yEnd] = range ?? [value, undefined];
         [yStart, yEnd] = [scale.convert(yStart) + halfBandwidth, scale.convert(yEnd) + halfBandwidth];
 
         if (this.label.text) {
