@@ -772,7 +772,7 @@
     "type": { "returnType": "ServerSideStoreType" }
   },
   "serverSideInfiniteScroll": {
-    "description": "/** Whether Server-side Row Model will use Infinite Scrolling */",
+    "description": "/** Whether Server-side Row Model will use Infinite Scrolling\n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "cacheBlockSize": {
@@ -808,11 +808,11 @@
     "type": { "returnType": "boolean" }
   },
   "serverSideSortOnServer": {
-    "description": "/** When enabled, the grid will always request the server to provide the sort results */",
+    "description": "/** When enabled, the grid will always request the server to provide the sort results.\n * Default: `1` */",
     "type": { "returnType": "boolean" }
   },
   "serverSideFilterOnServer": {
-    "description": "/** When enabled, the grid will always request the server to provide the filter results */",
+    "description": "/** When enabled, the grid will always request the server to provide the filter results.\n * Default: `1` */",
     "type": { "returnType": "boolean" }
   },
   "serverSideSortingAlwaysResets": {

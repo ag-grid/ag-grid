@@ -645,7 +645,9 @@ export interface GridOptions<TData = any> {
      * Full Store is used.
      */
     serverSideStoreType?: ServerSideStoreType;
-    /** Whether Server-side Row Model will use Infinite Scrolling */
+    /** Whether Server-side Row Model will use Infinite Scrolling
+     * Default: `false`
+     */
     serverSideInfiniteScroll?: boolean;
     /**
      * How many rows for each block in the store, i.e. how many rows returned from the server at a time.
@@ -671,9 +673,13 @@ export interface GridOptions<TData = any> {
     serverSideSortAllLevels?: boolean;
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */
     serverSideFilterAllLevels?: boolean;
-    /** When enabled, the grid will always request the server to provide the sort results */
+    /** When enabled, the grid will always request the server to provide the sort results.
+     * Default: `1`
+     */
     serverSideSortOnServer?: boolean;
-    /** When enabled, the grid will always request the server to provide the filter results */
+    /** When enabled, the grid will always request the server to provide the filter results.
+     * Default: `1`
+     */
     serverSideFilterOnServer?: boolean;
 
     /** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead. */
