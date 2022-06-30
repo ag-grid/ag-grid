@@ -56,7 +56,7 @@ export { ComponentType } from "ag-grid-community";
 export { BeanStub } from "ag-grid-community";
 export { Context, ComponentMeta, Autowired, PostConstruct, PreConstruct, Optional, Bean, Qualifier, PreDestroy } from "ag-grid-community";
 export { QuerySelector, RefSelector } from "ag-grid-community";
-export { ColumnWidthCallbackParams, RowHeightCallbackParams, IExcelCreator, ExcelAlignment, ExcelBorder, ExcelBorders, ExcelCell, ExcelColumn, ExcelContentType, ExcelData, ExcelDataType, ExcelExportParams, ExcelHeaderFooterConfig, ExcelHeaderFooter, ExcelHeaderFooterContent, ExcelImage, ExcelSheetMargin, ExcelExportMultipleSheetParams, ExcelSheetPageSetup, ExcelFont, ExcelInterior, ExcelNumberFormat, ExcelOOXMLDataType, ExcelOOXMLTemplate, ExcelProtection, ExcelRelationship, ExcelFactoryMode, ExcelRow, ExcelStyle, ExcelTable, ExcelXMLTemplate, ExcelWorksheet } from "ag-grid-community";
+export { ColumnWidthCallbackParams, RowHeightCallbackParams, IExcelCreator, ExcelAlignment, ExcelBorder, ExcelBorders, ExcelCell, ExcelColumn, ExcelContentType, ExcelData, ExcelDataType, ExcelExportParams, ExcelHeaderFooterConfig, ExcelHeaderFooter, ExcelHeaderFooterContent, ExcelImage, ExcelImagePosition, ExcelSheetMargin, ExcelExportMultipleSheetParams, ExcelSheetPageSetup, ExcelFont, ExcelInterior, ExcelNumberFormat, ExcelOOXMLDataType, ExcelOOXMLTemplate, ExcelProtection, ExcelRelationship, ExcelFactoryMode, ExcelRow, ExcelStyle, ExcelTable, ExcelXMLTemplate, ExcelWorksheet } from "ag-grid-community";
 export { DragAndDropService, DragSourceType, HorizontalDirection, VerticalDirection, DropTarget, DragSource, DraggingEvent } from "ag-grid-community";
 export { RowDropZoneParams } from "ag-grid-community";
 export { DragService } from "ag-grid-community";

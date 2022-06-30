@@ -36,16 +36,13 @@ The header and footer object accepts the following placeholders:
 <grid-example title='Excel Export - Custom Header and Footer' name='excel-export-header-footer' type='generated' options='{ "enterprise": true,"modules": ["clientside", "excel", "menu"], "exampleHeight": 815 }'></grid-example>
 
 ### ExcelHeaderFooterConfig
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelHeaderFooterConfig'></api-documentation>
+<interface-documentation interfaceName='ExcelHeaderFooterConfig'></interface-documentation>
 
 ### ExcelHeaderFooter
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelHeaderFooter'></api-documentation>
+<interface-documentation interfaceName='ExcelHeaderFooter'></interface-documentation>
 
 ### ExcelHeaderFooterContent
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelHeaderFooterContent'></api-documentation>
+<interface-documentation interfaceName='ExcelHeaderFooterContent' overrideSrc='excel-export-api/resources/excel-api.json'></interface-documentation>
 
 ## Export Cover Page
 
