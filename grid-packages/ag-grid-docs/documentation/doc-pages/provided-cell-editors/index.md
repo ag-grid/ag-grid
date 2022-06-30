@@ -46,7 +46,7 @@ Takes the following parameters:
 ```js
 columnDefs: [
     {
-        cellEditor: 'agTextCellEditor',
+        cellEditor: 'agLargeTextCellEditor',
         cellEditorPopup: true,
         cellEditorParams: {
             maxLength: 100,
