@@ -45,7 +45,7 @@ export const OPT_FONT_STYLE = (v: any) => v === undefined || v === 'normal' || v
 export const OPT_FONT_WEIGHT = (v: any) => v === undefined || FONT_WEIGHTS.includes(v);
 
 export function Deprecated(message?: string) {
-    let logged = false;
+    let logged = true;
 
     return function (target: any, key: any) {
         // `target` is either a constructor (static member) or prototype (instance member)
