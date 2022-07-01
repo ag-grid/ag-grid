@@ -105,6 +105,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowDrag: '<i class="fa fa-circle"/>',
   },
   rowSelection: 'multiple',
+  suppressMenuHide: true,
 }
 
 // setup the grid after the page has finished loading

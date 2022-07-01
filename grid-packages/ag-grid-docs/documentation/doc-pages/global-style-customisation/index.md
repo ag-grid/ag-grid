@@ -22,18 +22,3 @@ The grid exposes many CSS variables that allow you to control its appearance usi
 
 You can consult the [full list of CSS variables](/global-style-customisation-variables/) or feature customisation under this page in the menu.
 
-## Creating a Reusable Package of Design Customisations
-
-To create a reusable set of design customisations that can be shared between projects you can use a CSS class that is applied in addition to the theme you're extending:
-
-```html
-<!-- grid div applies your class after the theme class -->
-<div id="myGrid" class="ag-theme-alpine acmecorp-house-style"></div>
-```
-
-```css
-/* acmecorp-house-style.css */
-.acmecorp-house-style {
-    --ag-odd-row-background-color: #aaa;
-}
-```

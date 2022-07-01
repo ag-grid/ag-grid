@@ -65,6 +65,11 @@ const extrasMap = {
             'https://unpkg.com/@angular/material/prebuilt-themes/indigo-pink.css',
             'https://fonts.googleapis.com/icon?family=Material+Icons'
         ]
+    },
+    materialdesignicons: {
+        styles: [
+            'https://unpkg.com/@mdi/font/css/materialdesignicons.css'
+        ]
     }
 };
 

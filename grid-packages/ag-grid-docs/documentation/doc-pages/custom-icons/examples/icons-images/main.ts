@@ -36,4 +36,3 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(response => response.json())
     .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })
-
