@@ -411,6 +411,13 @@ export class ColumnFactory extends BeanStub {
         // merge properties from column definitions
         mergeDeep(colDefMerged, colDef, false, true);
 
+        const autoGroupColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
+        const isSortingCoupled = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
+        if (colDef.rowGroup && autoGroupColDef && isSortingCoupled) {
+            // override the sort for row group columns where the autoGroupColDef defines these values.
+            mergeDeep(colDefMerged, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef, false, true);
+        }
+
         return colDefMerged;
     }
 

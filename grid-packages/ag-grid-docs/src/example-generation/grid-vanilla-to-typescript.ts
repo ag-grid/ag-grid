@@ -1,4 +1,5 @@
 import { addBindingImports, addGenericInterfaceImport, getModuleRegistration, ImportType } from './parser-utils';
+const path = require('path');
 const fs = require('fs-extra');
 
 export function toTitleCase(value) {
@@ -18,7 +19,7 @@ function getPropertyInterfaces(properties) {
     return [...new Set(propTypesUsed)];
 }
 
-function getModuleImports(bindings: any): string[] {
+function getModuleImports(bindings: any, allStylesheets: string[]): string[] {
     const { gridSettings, imports: bindingImports, properties } = bindings;
 
     let imports = [];
@@ -28,6 +29,10 @@ function getModuleImports(bindings: any): string[] {
     // "source" non dark version
     const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
+
+    if(allStylesheets && allStylesheets.length > 0) {
+        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
+    }
 
     let propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
@@ -48,7 +53,7 @@ function getModuleImports(bindings: any): string[] {
     return imports;
 }
 
-function getPackageImports(bindings: any): string[] {
+function getPackageImports(bindings: any, allStylesheets: string[]): string[] {
     const { gridSettings, imports: bindingImports, properties } = bindings;
     const imports = [];
 
@@ -63,6 +68,10 @@ function getPackageImports(bindings: any): string[] {
     // "source" non dark version
     const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
     imports.push(`import "ag-grid-community/styles/${theme}.css";`);
+
+    if(allStylesheets && allStylesheets.length > 0) {
+        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
+    }
 
     let propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
@@ -81,15 +90,15 @@ function getPackageImports(bindings: any): string[] {
     return imports;
 }
 
-function getImports(bindings: any, importType: ImportType): string[] {
+function getImports(bindings: any, importType: ImportType, allStylesheets: string[]): string[] {
     if (importType === "packages") {
-        return getPackageImports(bindings);
+        return getPackageImports(bindings, allStylesheets);
     } else {
-        return getModuleImports(bindings);
+        return getModuleImports(bindings, allStylesheets);
     }
 }
 
-export function vanillaToTypescript(bindings: any, mainFilePath: string): (importType: ImportType) => string {
+export function vanillaToTypescript(bindings: any, mainFilePath: string, allStylesheets: string[]): (importType: ImportType) => string {
     const { gridSettings, externalEventHandlers, imports } = bindings;
 
     // attach external handlers to window
@@ -120,7 +129,7 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string): (impor
     }
 
     return importType => {
-        const importStrings = getImports(bindings, importType);
+        const importStrings = getImports(bindings, importType, allStylesheets);
         const formattedImports = `${importStrings.join('\n')}\n`;
 
         // Remove the original import statements

@@ -37,7 +37,7 @@ The example below demonstrates Client-side Sorting with no Infinite Scroll. Note
 
 ## Server-side Sorting
 
-When [Infinite Scroll](/server-side-model-row-stores/) is active, the grid does not have all the rows needed to sort on the client. As such, the SRRM will request rows again when the sort changes and expect the server to sort the rows.
+When [Infinite Scroll](/server-side-model-row-stores/) is active, the grid does not have all the rows needed to sort on the client. As such, the server-side row model will request rows again each time the sort changes and expect the server to sort the rows.
 
 The request object sent to the server contains sort metadata in the `sortModel` property. An example of the `sortModel` is as follows:
 
@@ -82,19 +82,21 @@ As previously mentioned, when not using Infinite Scroll, the grid will sort on t
 |
 | However, note that the Server-Side Row Model does not impose any restrictions on the server-side technologies used.
 
-## Client-side Group Sorting
+## Client-side Row Group Sorting
 
-Sorting groups Client-side (Infinite Scroll is off) happens inside the grid out of the box.
+Sorting groups Client-side (Infinite Scroll is off) happens inside the grid by default.
 
 The example below shows Client-side sorting of groups. Note the following:
  
  - The grid is not using [Infinite Scroll](/server-side-model-row-stores/), the property  `serverSideInfiniteScroll` is not set.
- - All columns can be sorted. The grid sors without reloading the rows.
+ - All columns have sorting enabled via defaultColDef.sortable = true.
+ - Click the Gold column header to sort, open the browser console and note there are no requests to the server - the grid sorts client-side without reloading the rows.
+
 
 <grid-example title='Client-side Group Sorting' name='group-sort-client-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 
-## Server-side Group Sorting
+## Server-side Row Group Sorting
 
 When grouping and Server-side sorting, the grid will reload the data if it needs to be sorted.
 

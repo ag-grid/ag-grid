@@ -41,11 +41,11 @@ $-fonts-emitted: ();
     -moz-osx-font-smoothing: grayscale;
 }
 
-// Get the glyph for a named icon
-@function icon-char($name) {
+// Get the content for a named icon
+@function icon-content($name) {
     $glyph: map.get($icon-font-codes, $name);
     @if not $glyph {
         @error "No such icon: #{$name}";
     }
-    @return $glyph;
+    @return var(--ag-icon-font-code-#{$name}, #{$glyph});
 }
