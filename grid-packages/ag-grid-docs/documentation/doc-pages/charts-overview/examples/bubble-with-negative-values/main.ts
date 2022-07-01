@@ -28,8 +28,9 @@ const options: AgChartOptions = {
       marker: {
         size: 5,
         maxSize: 100,
+        fillOpacity: 0.5,
+        strokeOpacity: 0.5,
       },
-      fillOpacity: 0.5,
     },
   ],
   axes: [

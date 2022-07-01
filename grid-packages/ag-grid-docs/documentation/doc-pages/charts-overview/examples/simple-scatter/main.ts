@@ -18,9 +18,9 @@ const options: AgChartOptions = {
       type: 'scatter',
       xKey: 'weight',
       yKey: 'height',
-      fillOpacity: 0.5,
-      strokeOpacity: 0,
       marker: {
+        fillOpacity: 0.5,
+        strokeOpacity: 0,
         size: 12,
         fill: '#002D72',
       },

@@ -27,8 +27,9 @@ const options: AgChartOptions = {
         size: 0,
         maxSize: 30,
         fill: '#cc5b58',
+        fillOpacity: 0.85,
+        strokeOpacity: 0.85,
       },
-      fillOpacity: 0.85,
     },
   ],
   axes: [

@@ -1771,8 +1771,6 @@ Object {
   "series": Array [
     Object {
       "cursor": "default",
-      "fill": "#f3622d",
-      "fillOpacity": 0.7,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -1794,19 +1792,18 @@ Object {
       "marker": Object {
         "enabled": true,
         "fill": "#f3622d",
+        "fillOpacity": 0.7,
         "formatter": [Function],
         "maxSize": 100,
         "shape": "circle",
         "size": 5,
         "stroke": "#aa4520",
+        "strokeOpacity": 0.7,
         "strokeWidth": 0,
       },
       "showInLegend": true,
       "sizeKey": "magnitude",
       "sizeName": "Magnitude",
-      "stroke": "#f3622d",
-      "strokeOpacity": 1,
-      "strokeWidth": 2,
       "title": undefined,
       "tooltip": Object {
         "enabled": true,
@@ -3451,8 +3448,6 @@ Object {
   "series": Array [
     Object {
       "cursor": "default",
-      "fill": "#f3622d",
-      "fillOpacity": 0.85,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -3474,19 +3469,18 @@ Object {
       "marker": Object {
         "enabled": true,
         "fill": "#cc5b58",
+        "fillOpacity": 0.85,
         "formatter": undefined,
         "maxSize": 30,
         "shape": "circle",
         "size": 0,
         "stroke": "#aa4520",
+        "strokeOpacity": 0.85,
         "strokeWidth": 1,
       },
       "showInLegend": true,
       "sizeKey": "size",
       "sizeName": "Commits",
-      "stroke": "#f3622d",
-      "strokeOpacity": 1,
-      "strokeWidth": 2,
       "title": "Punch Card",
       "tooltip": Object {
         "enabled": true,
@@ -3691,8 +3685,6 @@ Object {
   "series": Array [
     Object {
       "cursor": "default",
-      "fill": "#f3622d",
-      "fillOpacity": 0.5,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -3714,19 +3706,18 @@ Object {
       "marker": Object {
         "enabled": true,
         "fill": "#f3622d",
+        "fillOpacity": 0.5,
         "formatter": undefined,
         "maxSize": 100,
         "shape": "circle",
         "size": 5,
         "stroke": "#aa4520",
+        "strokeOpacity": 0.5,
         "strokeWidth": 1,
       },
       "showInLegend": true,
       "sizeKey": "population",
       "sizeName": "Population",
-      "stroke": "#f3622d",
-      "strokeOpacity": 1,
-      "strokeWidth": 2,
       "title": "Most populous cities",
       "tooltip": Object {
         "enabled": true,
@@ -4491,11 +4482,11 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "strokeWidth": 1,
         },
         "series": Object {
           "dimOpacity": 1,
         },
-        "strokeWidth": 1,
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -4587,7 +4578,9 @@ Object {
       "column": Object {
         "series": Object {
           "highlightStyle": Object {
-            "strokeWidth": 1,
+            "item": Object {
+              "strokeWidth": 1,
+            },
           },
           "strokeWidth": 0,
         },
@@ -8860,8 +8853,6 @@ Object {
   "series": Array [
     Object {
       "cursor": "default",
-      "fill": "#f3622d",
-      "fillOpacity": 0.5,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -8883,19 +8874,18 @@ Object {
       "marker": Object {
         "enabled": true,
         "fill": "#002D72",
+        "fillOpacity": 1,
         "formatter": undefined,
         "maxSize": 30,
         "shape": "circle",
         "size": 12,
         "stroke": "#aa4520",
+        "strokeOpacity": 1,
         "strokeWidth": 1,
       },
       "showInLegend": true,
       "sizeKey": undefined,
       "sizeName": "Size",
-      "stroke": "#f3622d",
-      "strokeOpacity": 0,
-      "strokeWidth": 2,
       "title": undefined,
       "tooltip": Object {
         "enabled": true,

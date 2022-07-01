@@ -690,6 +690,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             yKeys,
             fills,
             strokes,
+            fillOpacity,
+            strokeOpacity,
             highlightStyle: {
                 fill: deprecatedFill,
                 stroke: deprecatedStroke,
@@ -737,6 +739,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             node.fill = (format && format.fill) || fill;
             node.stroke = (format && format.stroke) || stroke;
             node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
+            node.fillOpacity = marker.fillOpacity ?? fillOpacity ?? 1;
+            node.strokeOpacity = marker.strokeOpacity ?? strokeOpacity ?? 1;
             node.size = format && format.size !== undefined ? format.size : size;
 
             node.translationX = datum.point.x;
@@ -908,8 +912,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                         shape: marker.shape,
                         fill: marker.fill || fills[index % fills.length],
                         stroke: marker.stroke || strokes[index % strokes.length],
-                        fillOpacity,
-                        strokeOpacity,
+                        fillOpacity: marker.fillOpacity ?? fillOpacity,
+                        strokeOpacity: marker.strokeOpacity ?? strokeOpacity,
                     },
                 });
             });

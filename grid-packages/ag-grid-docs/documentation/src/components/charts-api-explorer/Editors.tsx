@@ -20,6 +20,7 @@ type AliasTypeProps<T> = {
     breakIndex?: number,
     min?: T,
     max?: T,
+    step?: T,
     unit?: string,
 };
 
@@ -47,6 +48,7 @@ const FONT_SIZE_EDITOR_PROPS: AliasTypeProps<FontSize> = {
 };
 
 const OPACITY_PROPS: AliasTypeProps<Opacity> = {
+    step: 0.1,
     min: 0,
     max: 1,
 };
@@ -190,13 +192,13 @@ export const getPrimitiveEditor = ({ meta, desc }: JsonModelProperty, key: strin
     return { editor, editorProps: { ...meta, ...editorProps } };
 };
 
-const setStepEditorProp = (editorProps: Record<string, any>, { min, max }: JsonModelProperty['meta']) => {
-    if (min == null || max == null) {
+const setStepEditorProp = (editorProps: Record<string, any>, { min, max, step }: JsonModelProperty['meta']) => {
+    if (min == null || max == null || step != null) {
         return;
     }
-    if (max - min <= 1) {
+    if ((max - min) <= 1) {
         editorProps.step = 0.05;
-    } else if (max - min <= 10) {
+    } else if ((max - min) <= 10) {
         editorProps.step = 0.1;
     }
 };

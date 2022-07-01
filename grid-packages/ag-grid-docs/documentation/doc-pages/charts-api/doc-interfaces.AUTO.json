@@ -1642,6 +1642,10 @@
       "description": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
+    "fillOpacity": {
+      "description": "/** Opacity of the marker fills. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    },
     "stroke": {
       "description": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
       "type": { "returnType": "CssColor", "optional": true }
@@ -1649,6 +1653,10 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** Opacity of the marker strokes. */",
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgSeriesMarkerFormatterParams": {
@@ -1704,6 +1712,10 @@
       "description": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
+    "fillOpacity": {
+      "description": "/** Opacity of the marker fills. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    },
     "stroke": {
       "description": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
       "type": { "returnType": "CssColor", "optional": true }
@@ -1711,6 +1723,10 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** Opacity of the marker strokes. */",
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgAreaSeriesMarker": {
@@ -1741,6 +1757,10 @@
       "description": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
+    "fillOpacity": {
+      "description": "/** Opacity of the marker fills. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    },
     "stroke": {
       "description": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
       "type": { "returnType": "CssColor", "optional": true }
@@ -1748,6 +1768,10 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** Opacity of the marker strokes. */",
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgSeriesTooltip": {
