@@ -1,20 +1,25 @@
 import { Grid, GridOptions, ColDef } from '@ag-grid-community/core'
 
+interface ICar {
+  make: string;
+  model: string;
+  price: number;
+}
 
-var columnDefs: ColDef[] = [
+var columnDefs: ColDef<ICar>[] = [
   {field: "make"},
   {field: "model"},
   {field: "price"}
 ];
 
 // specify the data
-var rowDataA = [
+var rowDataA: ICar[] = [
   {make: "Toyota", model: "Celica", price: 35000},
   {make: "Porsche", model: "Boxster", price: 72000},
   {make: "Aston Martin", model: "DBX", price: 190000}
 ];
 
-var rowDataB = [
+var rowDataB: ICar[] = [
   {make: "Toyota", model: "Celica", price: 35000},
   {make: "Ford", model: "Mondeo", price: 32000},
   {make: "Porsche", model: "Boxster", price: 72000},
@@ -23,7 +28,7 @@ var rowDataB = [
 ];
 
 // let the grid know which columns and what data to use
-var gridOptions: GridOptions = {
+var gridOptions: GridOptions<ICar> = {
   columnDefs: columnDefs,
   rowData: rowDataA,
   rowSelection: 'single',

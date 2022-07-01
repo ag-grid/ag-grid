@@ -1,5 +1,5 @@
 ---
-title: "Typescript Generics"
+title: "Using Typescript Generics"
 frameworks: ["javascript","angular","react"]
 ---
 
@@ -46,7 +46,10 @@ const gridOptions: GridOptions<ICar> = {
 }
 
 // Grid Api methods use ICar interface
-const cars: ICar[] = gridOptions.api!.getSelectedRows();
+function onSelection() {
+  // api.getSelectedRows() : ICar[]
+  const cars: ICar[] = gridOptions.api!.getSelectedRows();  
+}
 ```
 
 [[note]]

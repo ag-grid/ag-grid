@@ -97,6 +97,8 @@
 | The `gridOptions` object is a 'one stop shop' for the entire interface into the grid, commonly used if using plain JavaScript.
 | Grid options can however be used instead of, or in addition to, normal framework bindings. If an option is set via `gridOptions`, as well as a property on the component, then the component property will take precedence.
 |
+| The GridOptions interface supports a generic parameter for row data as detailed in [Using Typescript Generics](/typescript-generics).
+|
 | The example below shows the different types of items available on `gridOptions`.
 |
 | ```js
