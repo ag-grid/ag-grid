@@ -289,7 +289,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
         }
     }
 
-    @Input() public gridOptions: GridOptions;
+    @Input() public gridOptions: GridOptions<TData>;
     @Input() public modules: Module[];
 
     // @START@
@@ -960,40 +960,40 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     @Input() public isFullWidthRow: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined = undefined;
 
     /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status.     */
-    @Output() public toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent> = new EventEmitter<ToolPanelVisibleChangedEvent>();
+    @Output() public toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent<TData>> = new EventEmitter<ToolPanelVisibleChangedEvent<TData>>();
     /** Paste operation has started.     */
-    @Output() public pasteStart: EventEmitter<PasteStartEvent> = new EventEmitter<PasteStartEvent>();
+    @Output() public pasteStart: EventEmitter<PasteStartEvent<TData>> = new EventEmitter<PasteStartEvent<TData>>();
     /** Paste operation has ended.     */
-    @Output() public pasteEnd: EventEmitter<PasteEndEvent> = new EventEmitter<PasteEndEvent>();
+    @Output() public pasteEnd: EventEmitter<PasteEndEvent<TData>> = new EventEmitter<PasteEndEvent<TData>>();
     /** A column, or group of columns, was hidden / shown.     */
-    @Output() public columnVisible: EventEmitter<ColumnVisibleEvent> = new EventEmitter<ColumnVisibleEvent>();
+    @Output() public columnVisible: EventEmitter<ColumnVisibleEvent<TData>> = new EventEmitter<ColumnVisibleEvent<TData>>();
     /** A column, or group of columns, was pinned / unpinned.     */
-    @Output() public columnPinned: EventEmitter<ColumnPinnedEvent> = new EventEmitter<ColumnPinnedEvent>();
+    @Output() public columnPinned: EventEmitter<ColumnPinnedEvent<TData>> = new EventEmitter<ColumnPinnedEvent<TData>>();
     /** A column was resized.     */
-    @Output() public columnResized: EventEmitter<ColumnResizedEvent> = new EventEmitter<ColumnResizedEvent>();
+    @Output() public columnResized: EventEmitter<ColumnResizedEvent<TData>> = new EventEmitter<ColumnResizedEvent<TData>>();
     /** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below.     */
-    @Output() public columnMoved: EventEmitter<ColumnMovedEvent> = new EventEmitter<ColumnMovedEvent>();
+    @Output() public columnMoved: EventEmitter<ColumnMovedEvent<TData>> = new EventEmitter<ColumnMovedEvent<TData>>();
     /** A value column was added or removed.     */
-    @Output() public columnValueChanged: EventEmitter<ColumnValueChangedEvent> = new EventEmitter<ColumnValueChangedEvent>();
+    @Output() public columnValueChanged: EventEmitter<ColumnValueChangedEvent<TData>> = new EventEmitter<ColumnValueChangedEvent<TData>>();
     /** The pivot mode flag was changed.     */
-    @Output() public columnPivotModeChanged: EventEmitter<ColumnPivotModeChangedEvent> = new EventEmitter<ColumnPivotModeChangedEvent>();
+    @Output() public columnPivotModeChanged: EventEmitter<ColumnPivotModeChangedEvent<TData>> = new EventEmitter<ColumnPivotModeChangedEvent<TData>>();
     /** A pivot column was added, removed or order changed.     */
-    @Output() public columnPivotChanged: EventEmitter<ColumnPivotChangedEvent> = new EventEmitter<ColumnPivotChangedEvent>();
+    @Output() public columnPivotChanged: EventEmitter<ColumnPivotChangedEvent<TData>> = new EventEmitter<ColumnPivotChangedEvent<TData>>();
     /** A column group was opened / closed.     */
-    @Output() public columnGroupOpened: EventEmitter<ColumnGroupOpenedEvent> = new EventEmitter<ColumnGroupOpenedEvent>();
+    @Output() public columnGroupOpened: EventEmitter<ColumnGroupOpenedEvent<TData>> = new EventEmitter<ColumnGroupOpenedEvent<TData>>();
     /** User set new columns.     */
-    @Output() public newColumnsLoaded: EventEmitter<NewColumnsLoadedEvent> = new EventEmitter<NewColumnsLoadedEvent>();
+    @Output() public newColumnsLoaded: EventEmitter<NewColumnsLoadedEvent<TData>> = new EventEmitter<NewColumnsLoadedEvent<TData>>();
     /** The list of grid columns changed.     */
-    @Output() public gridColumnsChanged: EventEmitter<GridColumnsChangedEvent> = new EventEmitter<GridColumnsChangedEvent>();
+    @Output() public gridColumnsChanged: EventEmitter<GridColumnsChangedEvent<TData>> = new EventEmitter<GridColumnsChangedEvent<TData>>();
     /** The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc.     */
-    @Output() public displayedColumnsChanged: EventEmitter<DisplayedColumnsChangedEvent> = new EventEmitter<DisplayedColumnsChangedEvent>();
+    @Output() public displayedColumnsChanged: EventEmitter<DisplayedColumnsChangedEvent<TData>> = new EventEmitter<DisplayedColumnsChangedEvent<TData>>();
     /** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default).     */
-    @Output() public virtualColumnsChanged: EventEmitter<VirtualColumnsChangedEvent> = new EventEmitter<VirtualColumnsChangedEvent>();
+    @Output() public virtualColumnsChanged: EventEmitter<VirtualColumnsChangedEvent<TData>> = new EventEmitter<VirtualColumnsChangedEvent<TData>>();
     /** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed.     */
-    @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent> = new EventEmitter<ColumnEverythingChangedEvent>();
+    @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent<TData>> = new EventEmitter<ColumnEverythingChangedEvent<TData>>();
     /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
      * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.     */
-    @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent> = new EventEmitter<ComponentStateChangedEvent>();
+    @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent<TData>> = new EventEmitter<ComponentStateChangedEvent<TData>>();
     /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed).     */
     @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent<TData>> = new EventEmitter<CellValueChangedEvent<TData>>();
     /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`.     */
@@ -1009,49 +1009,49 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing.     */
     @Output() public rowEditingStopped: EventEmitter<RowEditingStoppedEvent<TData>> = new EventEmitter<RowEditingStoppedEvent<TData>>();
     /** Filter has been opened.     */
-    @Output() public filterOpened: EventEmitter<FilterOpenedEvent> = new EventEmitter<FilterOpenedEvent>();
+    @Output() public filterOpened: EventEmitter<FilterOpenedEvent<TData>> = new EventEmitter<FilterOpenedEvent<TData>>();
     /** Filter has been modified and applied.     */
-    @Output() public filterChanged: EventEmitter<FilterChangedEvent> = new EventEmitter<FilterChangedEvent>();
+    @Output() public filterChanged: EventEmitter<FilterChangedEvent<TData>> = new EventEmitter<FilterChangedEvent<TData>>();
     /** Filter was modified but not applied. Used when filters have 'Apply' buttons.     */
-    @Output() public filterModified: EventEmitter<FilterModifiedEvent> = new EventEmitter<FilterModifiedEvent>();
+    @Output() public filterModified: EventEmitter<FilterModifiedEvent<TData>> = new EventEmitter<FilterModifiedEvent<TData>>();
     /** A chart has been created.     */
-    @Output() public chartCreated: EventEmitter<ChartCreated> = new EventEmitter<ChartCreated>();
+    @Output() public chartCreated: EventEmitter<ChartCreated<TData>> = new EventEmitter<ChartCreated<TData>>();
     /** The data range for the chart has been changed.     */
-    @Output() public chartRangeSelectionChanged: EventEmitter<ChartRangeSelectionChanged> = new EventEmitter<ChartRangeSelectionChanged>();
+    @Output() public chartRangeSelectionChanged: EventEmitter<ChartRangeSelectionChanged<TData>> = new EventEmitter<ChartRangeSelectionChanged<TData>>();
     /** Formatting changes have been made by users through the Format Panel.     */
-    @Output() public chartOptionsChanged: EventEmitter<ChartOptionsChanged> = new EventEmitter<ChartOptionsChanged>();
+    @Output() public chartOptionsChanged: EventEmitter<ChartOptionsChanged<TData>> = new EventEmitter<ChartOptionsChanged<TData>>();
     /** A chart has been destroyed.     */
-    @Output() public chartDestroyed: EventEmitter<ChartDestroyed> = new EventEmitter<ChartDestroyed>();
+    @Output() public chartDestroyed: EventEmitter<ChartDestroyed<TData>> = new EventEmitter<ChartDestroyed<TData>>();
     /** DOM event `keyDown` happened on a cell.     */
     @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>> = new EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>>();
     /** DOM event `keyPress` happened on a cell.     */
     @Output() public cellKeyPress: EventEmitter<CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>> = new EventEmitter<CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>>();
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet     */
-    @Output() public gridReady: EventEmitter<GridReadyEvent> = new EventEmitter<GridReadyEvent>();
+    @Output() public gridReady: EventEmitter<GridReadyEvent<TData>> = new EventEmitter<GridReadyEvent<TData>>();
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents     */
-    @Output() public firstDataRendered: EventEmitter<FirstDataRenderedEvent> = new EventEmitter<FirstDataRenderedEvent>();
+    @Output() public firstDataRendered: EventEmitter<FirstDataRenderedEvent<TData>> = new EventEmitter<FirstDataRenderedEvent<TData>>();
     /** The size of the grid `div` has changed. In other words, the grid was resized.     */
-    @Output() public gridSizeChanged: EventEmitter<GridSizeChangedEvent> = new EventEmitter<GridSizeChangedEvent>();
+    @Output() public gridSizeChanged: EventEmitter<GridSizeChangedEvent<TData>> = new EventEmitter<GridSizeChangedEvent<TData>>();
     /** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events.     */
-    @Output() public modelUpdated: EventEmitter<ModelUpdatedEvent> = new EventEmitter<ModelUpdatedEvent>();
+    @Output() public modelUpdated: EventEmitter<ModelUpdatedEvent<TData>> = new EventEmitter<ModelUpdatedEvent<TData>>();
     /** A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row.     */
     @Output() public virtualRowRemoved: EventEmitter<VirtualRowRemovedEvent<TData>> = new EventEmitter<VirtualRowRemovedEvent<TData>>();
     /** Which rows are rendered in the DOM has changed.     */
-    @Output() public viewportChanged: EventEmitter<ViewportChangedEvent> = new EventEmitter<ViewportChangedEvent>();
+    @Output() public viewportChanged: EventEmitter<ViewportChangedEvent<TData>> = new EventEmitter<ViewportChangedEvent<TData>>();
     /** The body was scrolled horizontally or vertically.     */
-    @Output() public bodyScroll: EventEmitter<BodyScrollEvent> = new EventEmitter<BodyScrollEvent>();
+    @Output() public bodyScroll: EventEmitter<BodyScrollEvent<TData>> = new EventEmitter<BodyScrollEvent<TData>>();
     /** Main body of the grid has stopped scrolling, either horizontally or vertically.     */
-    @Output() public bodyScrollEnd: EventEmitter<BodyScrollEndEvent> = new EventEmitter<BodyScrollEndEvent>();
+    @Output() public bodyScrollEnd: EventEmitter<BodyScrollEndEvent<TData>> = new EventEmitter<BodyScrollEndEvent<TData>>();
     /** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc.     */
-    @Output() public dragStarted: EventEmitter<DragStartedEvent> = new EventEmitter<DragStartedEvent>();
+    @Output() public dragStarted: EventEmitter<DragStartedEvent<TData>> = new EventEmitter<DragStartedEvent<TData>>();
     /** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc.     */
-    @Output() public dragStopped: EventEmitter<DragStoppedEvent> = new EventEmitter<DragStoppedEvent>();
+    @Output() public dragStopped: EventEmitter<DragStoppedEvent<TData>> = new EventEmitter<DragStoppedEvent<TData>>();
     /** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:
      * 
      *  - The page size changes.
      *  - The current shown page is changed.
      *  - New data is loaded onto the grid.     */
-    @Output() public paginationChanged: EventEmitter<PaginationChangedEvent> = new EventEmitter<PaginationChangedEvent>();
+    @Output() public paginationChanged: EventEmitter<PaginationChangedEvent<TData>> = new EventEmitter<PaginationChangedEvent<TData>>();
     /** A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid.     */
     @Output() public rowDragEnter: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
     /** The mouse has moved while dragging.     */
@@ -1061,17 +1061,17 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** The drag has finished over the grid.     */
     @Output() public rowDragEnd: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
     /** A row group column was added or removed.     */
-    @Output() public columnRowGroupChanged: EventEmitter<ColumnRowGroupChangedEvent> = new EventEmitter<ColumnRowGroupChangedEvent>();
+    @Output() public columnRowGroupChanged: EventEmitter<ColumnRowGroupChangedEvent<TData>> = new EventEmitter<ColumnRowGroupChangedEvent<TData>>();
     /** A row group was opened or closed.     */
     @Output() public rowGroupOpened: EventEmitter<RowGroupOpenedEvent<TData>> = new EventEmitter<RowGroupOpenedEvent<TData>>();
     /** Fired when calling either of the API methods `expandAll()` or `collapseAll()`.     */
-    @Output() public expandOrCollapseAll: EventEmitter<ExpandCollapseAllEvent> = new EventEmitter<ExpandCollapseAllEvent>();
+    @Output() public expandOrCollapseAll: EventEmitter<ExpandCollapseAllEvent<TData>> = new EventEmitter<ExpandCollapseAllEvent<TData>>();
     /** The client has set new pinned row data into the grid.     */
-    @Output() public pinnedRowDataChanged: EventEmitter<PinnedRowDataChangedEvent> = new EventEmitter<PinnedRowDataChangedEvent>();
+    @Output() public pinnedRowDataChanged: EventEmitter<PinnedRowDataChangedEvent<TData>> = new EventEmitter<PinnedRowDataChangedEvent<TData>>();
     /** @deprecated No longer fired, use onRowDataUpdated instead     */
-    @Output() public rowDataChanged: EventEmitter<RowDataChangedEvent> = new EventEmitter<RowDataChangedEvent>();
+    @Output() public rowDataChanged: EventEmitter<RowDataChangedEvent<TData>> = new EventEmitter<RowDataChangedEvent<TData>>();
     /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction.     */
-    @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent> = new EventEmitter<RowDataUpdatedEvent>();
+    @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent<TData>> = new EventEmitter<RowDataUpdatedEvent<TData>>();
     /** Async transactions have been applied. Contains a list of all transaction results.     */
     @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushed<TData>> = new EventEmitter<AsyncTransactionsFlushed<TData>>();
     /** Cell is clicked.     */
@@ -1079,7 +1079,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Cell is double clicked.     */
     @Output() public cellDoubleClicked: EventEmitter<CellDoubleClickedEvent<TData>> = new EventEmitter<CellDoubleClickedEvent<TData>>();
     /** Cell is focused.     */
-    @Output() public cellFocused: EventEmitter<CellFocusedEvent> = new EventEmitter<CellFocusedEvent>();
+    @Output() public cellFocused: EventEmitter<CellFocusedEvent<TData>> = new EventEmitter<CellFocusedEvent<TData>>();
     /** Mouse entered cell.     */
     @Output() public cellMouseOver: EventEmitter<CellMouseOverEvent<TData>> = new EventEmitter<CellMouseOverEvent<TData>>();
     /** Mouse left cell.     */
@@ -1093,17 +1093,17 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected.     */
     @Output() public rowSelected: EventEmitter<RowSelectedEvent<TData>> = new EventEmitter<RowSelectedEvent<TData>>();
     /** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes.     */
-    @Output() public selectionChanged: EventEmitter<SelectionChangedEvent> = new EventEmitter<SelectionChangedEvent>();
+    @Output() public selectionChanged: EventEmitter<SelectionChangedEvent<TData>> = new EventEmitter<SelectionChangedEvent<TData>>();
     /** Cell is right clicked.     */
     @Output() public cellContextMenu: EventEmitter<CellContextMenuEvent<TData>> = new EventEmitter<CellContextMenuEvent<TData>>();
     /** A change to range selection has occurred.     */
-    @Output() public rangeSelectionChanged: EventEmitter<RangeSelectionChangedEvent> = new EventEmitter<RangeSelectionChangedEvent>();
+    @Output() public rangeSelectionChanged: EventEmitter<RangeSelectionChangedEvent<TData>> = new EventEmitter<RangeSelectionChangedEvent<TData>>();
     /** Sort has changed. The grid also listens for this and updates the model.     */
-    @Output() public sortChanged: EventEmitter<SortChangedEvent> = new EventEmitter<SortChangedEvent>();
-    @Output() public columnRowGroupChangeRequest: EventEmitter<ColumnRowGroupChangeRequestEvent> = new EventEmitter<ColumnRowGroupChangeRequestEvent>();
-    @Output() public columnPivotChangeRequest: EventEmitter<ColumnPivotChangeRequestEvent> = new EventEmitter<ColumnPivotChangeRequestEvent>();
-    @Output() public columnValueChangeRequest: EventEmitter<ColumnValueChangeRequestEvent> = new EventEmitter<ColumnValueChangeRequestEvent>();
-    @Output() public columnAggFuncChangeRequest: EventEmitter<ColumnAggFuncChangeRequestEvent> = new EventEmitter<ColumnAggFuncChangeRequestEvent>();
+    @Output() public sortChanged: EventEmitter<SortChangedEvent<TData>> = new EventEmitter<SortChangedEvent<TData>>();
+    @Output() public columnRowGroupChangeRequest: EventEmitter<ColumnRowGroupChangeRequestEvent<TData>> = new EventEmitter<ColumnRowGroupChangeRequestEvent<TData>>();
+    @Output() public columnPivotChangeRequest: EventEmitter<ColumnPivotChangeRequestEvent<TData>> = new EventEmitter<ColumnPivotChangeRequestEvent<TData>>();
+    @Output() public columnValueChangeRequest: EventEmitter<ColumnValueChangeRequestEvent<TData>> = new EventEmitter<ColumnValueChangeRequestEvent<TData>>();
+    @Output() public columnAggFuncChangeRequest: EventEmitter<ColumnAggFuncChangeRequestEvent<TData>> = new EventEmitter<ColumnAggFuncChangeRequestEvent<TData>>();
 
 
     // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"' 
