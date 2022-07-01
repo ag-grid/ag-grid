@@ -28,10 +28,14 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
         }
     }
     const gridReadyEventParam = rowDataType !== 'any' ? `<${rowDataType}>` : ''
-    return `
-    onGridReady(params: GridReadyEvent${gridReadyEventParam}) {
-        ${hasApi ? 'this.gridApi = params.api;' : ''}${hasColApi ? 'this.gridColumnApi = params.columnApi;' : ''}${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
-    }`;
+    if (hasApi || hasColApi || additionalLines.length > 0) {
+        return `
+        onGridReady(params: GridReadyEvent${gridReadyEventParam}) {
+            ${hasApi ? 'this.gridApi = params.api;' : ''}${hasColApi ? 'this.gridColumnApi = params.columnApi;' : ''}${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
+        }`;
+    } else {
+        return '';
+    }
 }
 
 function addModuleImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
@@ -149,10 +153,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
     }
 
     const instanceMethods = bindings.instanceMethods.map(removeFunctionKeyword);
-    const eventAttributes = bindings.eventHandlers
-        .filter(event => event.name !== 'onGridReady')
-        .map(toOutput)
-        .concat('(gridReady)="onGridReady($event)"');
+
 
     const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunctionKeyword);
     const externalEventHandlers = bindings.externalEventHandlers.map(handler => removeFunctionKeyword(handler.body));
@@ -190,8 +191,6 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
             propertyAssignments.push(`public rowData!: ${rowDataType}[];`);
         }
 
-        const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
-
         const componentForCheckBody = eventHandlers
             .concat(externalEventHandlers)
             .concat(instanceMethods)
@@ -200,8 +199,20 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
 
         const hasGridApi = componentForCheckBody.includes('gridApi');
         const hasGridColumnApi = componentForCheckBody.includes('gridColumnApi');
+        const gridReadyCode = getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data, rowDataType, hasGridApi, hasGridColumnApi);
+        const additional = [];
 
-        const additional = [getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data, rowDataType, hasGridApi, hasGridColumnApi)];
+        if (gridReadyCode) {
+            additional.push(gridReadyCode)
+        }
+
+        const eventAttributes = bindings.eventHandlers
+            .filter(event => event.name !== 'onGridReady')
+            .map(toOutput)
+            .concat(gridReadyCode ? '(gridReady)="onGridReady($event)"' : '');
+
+        const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
+
         const componentBody = eventHandlers
             .concat(externalEventHandlers)
             .concat(additional)
