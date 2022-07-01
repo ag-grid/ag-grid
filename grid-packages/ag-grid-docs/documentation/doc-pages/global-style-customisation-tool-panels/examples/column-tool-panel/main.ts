@@ -1,7 +1,5 @@
 import { Grid, CellKeyDownEvent, CellKeyPressEvent, ColDef, GridOptions } from '@ag-grid-community/core'
 
-const columnDefs: ColDef[] = [
-]
 
 const gridOptions: GridOptions<IOlympicData> = {
   rowData: null,
