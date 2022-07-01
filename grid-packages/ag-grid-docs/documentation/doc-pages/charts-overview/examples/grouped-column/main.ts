@@ -12,7 +12,9 @@ const options: AgChartOptions = {
         series: {
           strokeWidth: 0,
           highlightStyle: {
-            strokeWidth: 1,
+            item: {
+              strokeWidth: 1,
+            },
           },
         },
       },

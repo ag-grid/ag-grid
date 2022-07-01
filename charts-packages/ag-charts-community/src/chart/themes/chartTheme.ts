@@ -311,11 +311,11 @@ export class ChartTheme {
                 yName: '',
                 sizeName: 'Size',
                 labelName: 'Label',
-                strokeWidth: 2,
-                fillOpacity: 1,
-                strokeOpacity: 1,
-                    marker: {
-                    ...ChartTheme.getCartesianSeriesMarkerDefaults()
+                marker: {
+                    ...ChartTheme.getCartesianSeriesMarkerDefaults(),
+                    strokeWidth: 1,
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
                 },
                 label: {
                     enabled: false,
@@ -345,7 +345,7 @@ export class ChartTheme {
                     yOffset: 3,
                     blur: 5
                 },
-                    marker: {
+                marker: {
                     ...ChartTheme.getCartesianSeriesMarkerDefaults(),
                     enabled: false
                 },

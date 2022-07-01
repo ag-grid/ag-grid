@@ -69,30 +69,30 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     /**
      * @deprecated Use {@link marker.fill} instead.
      */
-     @Deprecated('Use marker.fill instead.')
+     @Deprecated('Use marker.fill instead.', { default: '#c16068' })
      fill: string | undefined = '#c16068';
 
     /**
      * @deprecated Use {@link marker.stroke} instead.
      */
-     @Deprecated('Use marker.stroke instead.')
+     @Deprecated('Use marker.stroke instead.', { default: '#874349' })
      stroke: string | undefined = '#874349';
 
     /**
      * @deprecated Use {@link marker.strokeWidth} instead.
      */
-     @Deprecated('Use marker.strokeWidth instead.')
+     @Deprecated('Use marker.strokeWidth instead.', { default: 2 })
     strokeWidth: number = 2;
     /**
      * @deprecated Use {@link marker.fillOpacity} instead.
      */
-     @Deprecated('Use marker.fillOpacity instead.')
+     @Deprecated('Use marker.fillOpacity instead.', { default: 1 })
     fillOpacity: number = 1;
 
     /**
      * @deprecated Use {@link marker.strokeOpacity} instead.
      */
-     @Deprecated('Use marker.strokeOpacity instead.')
+     @Deprecated('Use marker.strokeOpacity instead.', { default: 1 })
     strokeOpacity: number = 1;
 
     title?: string = undefined;

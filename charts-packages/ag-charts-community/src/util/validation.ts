@@ -44,8 +44,9 @@ const FONT_WEIGHTS = ['normal', 'bold', 'bolder', 'lighter', '100', '200', '300'
 export const OPT_FONT_STYLE = (v: any) => v === undefined || v === 'normal' || v === 'italic' || v === 'oblique';
 export const OPT_FONT_WEIGHT = (v: any) => v === undefined || FONT_WEIGHTS.includes(v);
 
-export function Deprecated(message?: string) {
-    let logged = true;
+export function Deprecated(message?: string, opts?: { default: any }) {
+    let logged = false;
+    const { default: def = undefined} = opts ?? {};
 
     return function (target: any, key: any) {
         // `target` is either a constructor (static member) or prototype (instance member)
@@ -53,7 +54,7 @@ export function Deprecated(message?: string) {
 
         if (!target[key]) {
             const setter = function(v: any) {
-                if (!logged) {
+                if (v !== def && !logged) {
                     const msg = [
                         `AG Charts - Property [${target.constructor?.name ?? target.className}.${key}] is deprecated.`,
                         message,

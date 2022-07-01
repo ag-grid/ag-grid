@@ -75,8 +75,9 @@ const options: AgChartOptions = {
           }
         },
         strokeWidth: 0,
+        fillOpacity: 0.7,
+        strokeOpacity: 0.7,
       },
-      fillOpacity: 0.7,
     },
   ],
   axes: [
