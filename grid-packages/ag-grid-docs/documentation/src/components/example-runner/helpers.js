@@ -126,7 +126,8 @@ export const getExampleInfo = (
 const getFrameworkFiles = (framework, internalFramework) => {
     if (framework === 'javascript' && internalFramework !== 'typescript') { return []; }
 
-    let files = ['systemjs.config.js'];
+    // spl temporary css loader
+    let files = ['systemjs.config.js', 'css.js'];
 
     if (isDevelopment()) {
         files.push('systemjs.config.dev.js');
