@@ -13,7 +13,7 @@ const gridOptions: GridOptions = {
         sparklineOptions: {
           type: 'area',
           axis: {
-            // this can be omitted as the x-axis type is 'category' by default
+            // this can be omitted as the axis type is 'category' by default
             type: 'category',
           },
         } as AreaSparklineOptions,

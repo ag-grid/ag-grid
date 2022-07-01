@@ -101,7 +101,7 @@ Here is the result of the configuration shown in the above snippet.
 
 ## Area Fill Options
 
-To change the color of the area between the data points to the horizontal axis line, add the `fill` property to `sparklineOptions` as shown in the code snippet below.
+To change the color of the area between the data points and the axis line, add the `fill` property to `sparklineOptions` as shown in the code snippet below.
 
 ```js
 sparklineOptions: {
@@ -125,7 +125,7 @@ The given `fill` string can be in one of the following formats:
 
 ## Axis Line Options
 
-By default, an x-axis line is displayed. This setting can be modified using the `axis` options.
+By default, an axis line is displayed. This setting can be modified using the `axis` options.
 
 See the code snippet below showing how to customise the axis line color and thickness.
 
@@ -133,8 +133,8 @@ See the code snippet below showing how to customise the axis line color and thic
 sparklineOptions: {
     type: 'area',
     axis: {
-        stroke: 'coral', // sets the x-axis line stroke
-        strokeWidth: 3, // sets the x-axis line strokeWidth
+        stroke: 'coral', // sets the axis line stroke
+        strokeWidth: 3, // sets the axis line strokeWidth
     }
 }
 ```
@@ -147,7 +147,7 @@ Here is the result of the configuration shown in the above snippet:
 </div>
 
 [[note]]
-| It is possible to remove the x-axis line entirely by setting the axis `strokeWidth` to `0`.
+| It is possible to remove the axis line entirely by setting the axis `strokeWidth` to `0`.
 
 
 ## Crosshairs Options
@@ -228,7 +228,7 @@ Here is the result of the configuration shown in the above snippet:
 
 More advanced customisations are discussed separately in the following sections:
 
-- [Axis](/sparklines-axis-types/) - configure the x-axis type via `axis` options.
+- [Axis](/sparklines-axis-types/) - configure the axis type via `axis` options.
 - [Tooltips](/sparklines-tooltips/) - configure tooltips using `tooltip` options.
 - [Points of Interest](/sparklines-points-of-interest/) - configure individual points of interest using a `formatter`.
 

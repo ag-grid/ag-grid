@@ -18128,7 +18128,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the horizontal axis line in the sparklines. */",
+      "description": "/** The options for the axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18170,7 +18170,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the horizontal axis line in the sparklines. */",
+      "description": "/** The options for the axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18216,7 +18216,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the horizontal axis line in the sparklines. */",
+      "description": "/** The options for the axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18278,7 +18278,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the horizontal axis line in the sparklines. */",
+      "description": "/** The options for the axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18340,7 +18340,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the horizontal axis line in the sparklines. */",
+      "description": "/** The options for the axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18423,15 +18423,15 @@
   },
   "SparklineAxisOptions": {
     "type": {
-      "description": "/** The type of x-axis used to plot the data.\n * Default: `'category'` */",
+      "description": "/** The type of axis used to plot the data.\n * Default: `'category'` */",
       "type": { "returnType": "AxisType", "optional": true }
     },
     "stroke": {
-      "description": "/** The CSS colour value for the outline of the horizontal axis line.\n * Default: `'rgb(204, 214, 235)'` */",
+      "description": "/** The CSS colour value for the outline of the axis line.\n * Default: `'rgb(204, 214, 235)'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** The thickness in pixels for the stroke of the horizontal axis line.\n * Default: `1` */",
+      "description": "/** The thickness in pixels for the stroke of the axis line.\n * Default: `1` */",
       "type": { "returnType": "number", "optional": true }
     }
   },

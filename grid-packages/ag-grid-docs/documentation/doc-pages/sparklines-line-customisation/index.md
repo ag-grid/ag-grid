@@ -175,7 +175,7 @@ sparklineOptions: {
 
 More advanced customisations are discussed separately in the following sections:
 
-- [Axis](/sparklines-axis-types/) - configure the x-axis type via `axis` options.
+- [Axis](/sparklines-axis-types/) - configure the axis type via `axis` options.
 - [Tooltips](/sparklines-tooltips/) - configure tooltips using `tooltip` options.
 - [Points of Interest](/sparklines-points-of-interest/) - configure individual points of interest using a `formatter`.
 

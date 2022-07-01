@@ -10252,7 +10252,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
+      "axis?": "/** The options for the axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10279,7 +10279,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
+      "axis?": "/** The options for the axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10308,7 +10308,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
+      "axis?": "/** The options for the axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10345,7 +10345,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
+      "axis?": "/** The options for the axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10382,7 +10382,7 @@
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
+      "axis?": "/** The options for the axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
@@ -10448,9 +10448,9 @@
       "strokeWidth?": "number"
     },
     "docs": {
-      "type?": "/** The type of x-axis used to plot the data.\n * Default: `'category'` */",
-      "stroke?": "/** The CSS colour value for the outline of the horizontal axis line.\n * Default: `'rgb(204, 214, 235)'` */",
-      "strokeWidth?": "/** The thickness in pixels for the stroke of the horizontal axis line.\n * Default: `1` */"
+      "type?": "/** The type of axis used to plot the data.\n * Default: `'category'` */",
+      "stroke?": "/** The CSS colour value for the outline of the axis line.\n * Default: `'rgb(204, 214, 235)'` */",
+      "strokeWidth?": "/** The thickness in pixels for the stroke of the axis line.\n * Default: `1` */"
     }
   },
   "AxisType": {
