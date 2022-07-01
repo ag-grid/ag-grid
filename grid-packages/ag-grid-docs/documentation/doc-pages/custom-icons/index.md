@@ -16,7 +16,7 @@ If you are using the Sass API, it will embed the required font data for you. App
 
 This example uses the Alpine theme with the Material icons:
 
-<grid-example title='Swapping the Icon Font' name='icons-swapping-font' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"]  }'></grid-example>
+<grid-example title='Swapping the Icon Font' name='icons-swapping-font' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel"]  }'></grid-example>
 
 ## Using an Alternative Icon Font
 
@@ -47,25 +47,22 @@ Or to replace some icons without affecting others, set the variables using a CSS
 
 This example demonstrates both techniques - most icons are replaced by Font Awesome icons and the group and aggregation icons (highlighted in red) are from Material Design Icons:
 
-<grid
--example title='Alternative Icon Font' name='icons-alternative-font' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"], "extras": ["fontawesome", "materialdesign"]  }'></grid-example>
-
+<grid-example title='Alternative Icon Font' name='icons-alternative-font' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel"], "extras": ["fontawesome", "materialdesignicons"]  }'></grid-example>
 
 ## SVG Icons
 
-To replace icons with an image, including SVG images, use the following CSS selector:
+To replace icons with an image, including SVG images, use CSS selectors that target the icon class. You can hide the existing icon character by setting the `color` to transparent.
 
 ```css
-.ag-theme-alpine .ag-icon-pin {
-    background: transparent url('../resources/icons/pin.svg') center contain no-repeat;
-    height: 16px;
-    width: 16px;
+.ag-theme-alpine .ag-icon-menu {
+  background: transparent url("https://www.ag-grid.com/example-assets/svg-icons/menu.svg") center/contain no-repeat;
+  color: transparent;
 }
 ```
 
 The following example replaces the grid's icons with SVG images:
 
-TODO SVG example
+<grid-example title='SVG Icons' name='icons-images' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel"], "extras": ["fontawesome", "materialdesignicons"]  }'></grid-example>
 
 ## Set the Icons Through gridOptions (JavaScript)
 
