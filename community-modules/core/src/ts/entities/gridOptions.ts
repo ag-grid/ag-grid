@@ -1286,39 +1286,3 @@ export interface LoadingCellRendererSelectorResult {
     /** Equivalent of setting `loadingCellRendererParams` */
     params?: any;
 }
-
-// Row Interface
-interface ICar {
-    make: string;
-    model: string;
-    price: number;
-}
-
-interface AppColDef extends ColDef {
-    month: string;
-}
-
-const cols: AppColDef[] = [
-    { month: 'Jan', field: 'january' },
-    { month: 'Jan', field: 'january' },
-]
-
-// Pass ICar to GridOptions as a generic
-const gridOptions: GridOptions<ICar> = {
-    // rowData is typed as ICar[]
-    rowData: [],
-    columnDefs: cols,
-    // Callback data property typed as ICar
-    getRowId: (params: GetRowIdParams<ICar>) => {
-        return params.data.make + params.data.model;
-    },
-
-    // Event data property typed as ICar | undefined
-    onRowSelected: (event: RowSelectedEvent<ICar>) => {
-        if (event.data) {
-            const price = event.data.price;
-        }
-    }
-}
-
-const cars: ICar[] = gridOptions.api!.getSelectedRows();
