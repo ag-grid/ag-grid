@@ -108,7 +108,12 @@
         }
     }
 
-    .ag-row-hover:not(.ag-full-width-row)::before {
+
+    .ag-row-hover:not(.ag-full-width-row)::before,
+    .ag-row-hover.ag-full-width-row.ag-row-group::before {
+        // add a background on hover - use an absolutely positioned rectangle instead of
+        // a `background-color` so that `--ag-row-hover-color: transparent` doesn't remove
+        // an existing background color
         content: "";
         background-color: var(--ag-row-hover-color);
         display: block;
@@ -118,6 +123,12 @@
         right: 0;
         bottom: 0;
         pointer-events: none;
+    }
+
+    // Default the content position to relative so that it doesn't
+    // appear under the background
+    .ag-row-hover.ag-full-width-row.ag-row-group > * {
+        position: relative
     }
 
     .ag-row-hover.ag-row-selected::before {

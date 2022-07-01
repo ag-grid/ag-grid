@@ -9,12 +9,12 @@ import MetaData from './MetaData';
 /**
  * This is the template for executing React examples in the example runner.
  */
-const ReactTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles, importType, internalFramework }) =>
+const ReactTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles, importType, type, internalFramework }) =>
     <html lang="en">
         <head>
             <MetaData title="React example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
             <ExampleStyle rootId="root" />
-            {/*<Styles files={styleFiles} />*/}
+            {type === "mixed" && <Styles files={styleFiles} />}
             <Extras options={options} />
         </head>
         <body>

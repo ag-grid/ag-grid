@@ -1,4 +1,4 @@
-import { Grid, CellKeyDownEvent, CellKeyPressEvent, ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', minWidth: 170 },
@@ -22,7 +22,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     filter: true,
     resizable: true,
   },
-  sideBar: 'columns'
+  sideBar: true,
+  suppressMenuHide: true
 }
 
 

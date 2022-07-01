@@ -1,0 +1,5 @@
+<svg width="100%" height="100%" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="checkbox-unchecked" transform="matrix(0.0175781,0,0,0.0175781,0,0)">
+        <path fill="#03a9f4" d="M810.667,213.333L810.667,810.666L213.334,810.666L213.334,213.333L810.667,213.333ZM810.667,128L213.334,128C166.401,128 128.001,166.4 128.001,213.333L128.001,810.666C128.001,857.599 166.401,895.999 213.334,895.999L810.667,895.999C857.6,895.999 896,857.599 896,810.666L896,213.333C896,166.4 857.6,128 810.667,128Z" style="fill-rule:nonzero;"/>
+    </g>
+</svg>

@@ -136,12 +136,12 @@ When a data point has a missing or invalid Y value, it will be rendered as a gap
 
 ### Missing X values
 
-If X values are supplied in the sparkline data but are inconsistent with the configured [x-axis type](/sparklines-axis-types/),
+If X values are supplied in the sparkline data but are inconsistent with the configured [axis type](/sparklines-axis-types/),
 they are considered invalid and will be skipped in the sparkline.
 
 There won't be any gaps, only the data points with valid x values will appear in the sparklines.
 
-For example if the x-axis is configured to be a [Number Axis](/sparklines-axis-types/#number-axis), but some data points
+For example if the axis is configured to be a [Number Axis](/sparklines-axis-types/#number-axis), but some data points
 have X values which are not of type `number`, these values will be considered invalid and will be ignored when the
 sparkline is rendered.
 

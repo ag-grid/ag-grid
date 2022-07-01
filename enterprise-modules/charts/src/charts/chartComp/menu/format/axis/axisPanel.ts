@@ -40,6 +40,9 @@ export class AxisPanel extends Component {
     private activePanels: Component[] = [];
     private axisLabelUpdateFuncs: Function[] = [];
 
+    private prevXRotation = 0;
+    private prevYRotation = 0;
+
     constructor(
         private readonly chartController: ChartController,
         private readonly chartOptionsService: ChartOptionsService) {
@@ -148,27 +151,64 @@ export class AxisPanel extends Component {
         this.addLabelPadding(labelPanelComp);
 
         const { xRotationComp, yRotationComp } = this.createRotationWidgets();
-
-        const autoRotateCb = this.createBean(new AgCheckbox());
-        const autoRotateValue = this.chartOptionsService.getAxisProperty<boolean>("label.autoRotate") || false;
-
-        function toggleRotateDisable(disabled: boolean) {
-            xRotationComp.setDisabled(disabled);
-            yRotationComp.setDisabled(disabled);
-        }
-
-        autoRotateCb
-            .setLabel(this.translate('autoRotate'))
-            .setValue(autoRotateValue)
-            .onValueChange(newValue => {
-                toggleRotateDisable(!!newValue);
-            });
-
-        toggleRotateDisable(autoRotateValue);
+        const autoRotateCb = this.initLabelRotations(xRotationComp, yRotationComp);
 
         labelPanelComp.addCompToPanel(autoRotateCb);
         labelPanelComp.addCompToPanel(xRotationComp);
         labelPanelComp.addCompToPanel(yRotationComp);
+    }
+
+    private initLabelRotations(xRotationComp: AgAngleSelect, yRotationComp: AgAngleSelect) {
+        const getLabelRotation = (axisType: 'xAxis' | 'yAxis'): number => {
+            return this.chartOptionsService.getLabelRotation(axisType);
+        }
+
+        const setLabelRotation = (axisType: 'xAxis' | 'yAxis', value: number | undefined) => {
+            this.chartOptionsService.setLabelRotation(axisType, value);
+        }
+
+        const updateAutoRotate = (autoRotate: boolean) => {
+            this.chartOptionsService.setAxisProperty("label.autoRotate", autoRotate);
+
+            if (autoRotate) {
+                // store prev rotations before we remove them from the options
+                this.prevXRotation = getLabelRotation("xAxis");
+                this.prevYRotation = getLabelRotation("yAxis");
+
+                // `autoRotate` is only
+                setLabelRotation("xAxis", undefined);
+                setLabelRotation("yAxis", undefined);
+            } else {
+                // reinstate prev rotations
+                setLabelRotation("xAxis", this.prevXRotation);
+                setLabelRotation("yAxis", this.prevYRotation);
+            }
+
+            xRotationComp.setDisabled(autoRotate);
+            yRotationComp.setDisabled(autoRotate);
+        }
+
+        const getAutoRotateValue = () => {
+            const xRotation = getLabelRotation("xAxis");
+            const yRotation = getLabelRotation("yAxis");
+            if (xRotation == undefined && yRotation == undefined) {
+                return this.chartOptionsService.getAxisProperty<boolean>("label.autoRotate");
+            }
+            return false;
+        }
+
+        const autoRotate = getAutoRotateValue();
+        const autoRotateCheckbox = this.createBean(new AgCheckbox())
+            .setLabel(this.translate('autoRotate'))
+            .setValue(autoRotate)
+            .onValueChange(updateAutoRotate);
+
+
+        // init rotation comp state
+        xRotationComp.setDisabled(autoRotate);
+        yRotationComp.setDisabled(autoRotate);
+
+        return autoRotateCheckbox;
     }
 
     private createRotationWidgets() {
@@ -186,7 +226,7 @@ export class AxisPanel extends Component {
             // the axis label rotation needs to be updated when the default category changes in the data panel
             this.axisLabelUpdateFuncs.push(() => {
                 const value = this.chartOptionsService.getLabelRotation(axisType) as number;
-                angleSelect.setValue(value);
+                angleSelect.setValue(value || 0);
             });
 
             return this.createBean(angleSelect);
