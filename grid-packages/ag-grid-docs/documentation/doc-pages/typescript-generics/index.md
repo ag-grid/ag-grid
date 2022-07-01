@@ -1,14 +1,15 @@
 ---
 title: "Typescript Generics"
+frameworks: ["javascript","angular","react"]
 ---
 
 As of v28 AG Grid now supports Typescript Generics for row data and cell values. This leads to greatly improved developer experience via code completion and compile time validation of row data properties.
 
-## Row Data
+## Row Data: \<TData\>
 
-### Configure via GridOptions
+Provide a Typescript interface for row data to the grid to enable auto-completion and type-checking whenever properties are accessed from a row `data` variable. There are multiple ways to configure the generic interface: via the `GridOptions<TData>` interface, via other individual interfaces and finally via framework components.
 
-To provide a row data interface to the grid set this as the generic `TData` parameter on the `GridOptions<TData>` interface. The generic row data interface will then be used throughout the grid options whenever row data is accessible. This includes properties, callbacks, events and even the gridApi.
+In the examples below we will use the `ICar` interface for our row data.
 
 ```ts 
 // Row Data interface
@@ -17,7 +18,13 @@ interface ICar {
     model: string;
     price: number;
 }
+```
 
+### Configure via GridOptions
+
+Set the row data interface on the grid options interface via `GridOptions<ICar>`. The `ICar` interface will then be used throughout the grid options whenever row data is present. This true for: properties, callbacks, events and even the gridApi.
+
+```ts 
 // Pass ICar to GridOptions as a generic
 const gridOptions: GridOptions<ICar> = {
     // rowData is typed as ICar[]
@@ -45,9 +52,9 @@ const cars: ICar[] = gridOptions.api!.getSelectedRows();
 [[note]]
 | You do not need to explicitly type callbacks and events that are defined as part of `GridOptions`. Typescript will correctly pass the generic type down the interface hierarchy.
 
-### Stand-alone Use
+### Configure via Interfaces
 
-It is possible to configure the generic row data type on standalone functions / properties. For example, a stand alone grid event handler can accept the generic parameter on the event type.
+Each individual interface that accepts a generic of `TData` can also be configured. For example, a stand alone grid event handler can accept the generic parameter on the event type `RowSelectedEvent`.
 
 ```ts
 function onRowSelected(event: RowSelectedEvent<ICar>) {
@@ -57,11 +64,65 @@ function onRowSelected(event: RowSelectedEvent<ICar>) {
 }
 ```
 
-### Typed as TData | undefined
+[[only-angular]]
+|### Configure via Component
+|
+|The `<ag-grid-angular>` component supports is defined as `AgGridComponent<TData>`. To activate the generic parameter, configure any valid Input property with the row data interface.
+|
+|For example, type the `rowData` property in your component as `rowData: ICar[]`. 
+|
+|```ts
+|const rowData: ICar[] = [...];
+|```
+|
+|Set this on your component template `[rowData]="rowData"`. This assigns `ICar` to `TData` for the component.
+|
+|```html
+|<ag-grid-angular 
+|    [rowData]="rowData"    
+|    (rowSelected)="onRowSelected($event)"
+|></ag-grid-angular>
+|```
+|
+|This generic parameter is used for all other Inputs and Outputs ensuring consistency across the component. If `onRowSelected` is defined with a different interface the application code will fail to compile.
+|
+|```ts
+|// ERROR: INotACar is not assignable to ICar
+|onRowSelected(event: RowSelectedEvent<INotACar>) {}
+|
+|// SUCCESS: ICar is correct interface
+|onRowSelected(event: RowSelectedEvent<ICar>) {}
+|```
 
-For a number of events and callbacks when a generic interface is provided the `data` property is typed as `TData | undefined` instead of `any`. This is because it is possible for the `data` property to be undefined under certain grid configurations. 
+[[only-react]]
+|### Configure via Component
+|
+|The `<AgGridReact>` component accepts a generic parameter as `<AgGridReact<ICar>>`.
+|
+|```tsx
+|<AgGridReact<ICar>
+|    ref={gridRef}
+|    rowData={rowData}
+|    onRowSelected={onRowSelected}
+|>
+|</AgGridReact>
+|```
+|
+|This ensures all the props defined on `<AgGridReact>` conform to the `ICar` interface. These props can be defined with types like this.
+|
+|```ts
+|const gridRef = useRef<AgGridReact<ICar>>(null);
+|
+|const [rowData, setRowData] = useState<ICar[]>([ ... ]);
+|
+|const onRowSelected = useCallback((event: RowSelectedEvent<ICar>) => { ... }, [])
+|```
 
-A good example of this is when Row Grouping is enabled. The `onRowSelected` event is fired for both leaf and group rows. Data is only present on leaf nodes and so the event should be written to handle cases when `data` is undefined.
+### Type: TData | undefined
+
+For a number of events and callbacks, when a generic interface is provided, the `data` property is typed as `TData | undefined` instead of `any`. The undefined is required because it is possible for the `data` property to be undefined under certain grid configurations. 
+
+A good example of this is [Row Grouping](/row-grouping). The `onRowSelected` event is fired for both leaf and group rows. Data is only present on leaf nodes and so the event should be written to handle cases when `data` is undefined for groups.
 
 ```ts 
 function onRowSelected(event: RowSelectedEvent<ICar>) {
@@ -75,13 +136,13 @@ function onRowSelected(event: RowSelectedEvent<ICar>) {
 }
 ```
 
-## Cell Value
+## Cell Value: \<TValue\>
 
-When working with cell values it is now possible to provide a generic interface for the `value` property where this exists.
+When working with cell values it is possible to provide a generic interface for the `value` property. While this will often be a primitive type, such as `string` or `number`, it can also be a complex type. Using a generic for the cell value will enable accurate auto-completion and type-checking.
 
-### Stand-alone Use
+### Configure via Interfaces
 
-The generic parameter `TValue` needs to be explicitly provided to the interfaces when it is required. Here is an example of a `valueFormatter` for the price column where the `params.value` is now correctly typed as a `number` as we provide `number` to the `ValueFormatterParams` interface.
+The generic parameter `TValue` needs to be explicitly provided to each interface as required. Here is an example of a `valueFormatter` for the price column. The `params.value` property is correctly typed as a `number` due to setting `ValueFormatterParams<ICar, number>`.
 
 ```ts
 const colDefs: ColDef<ICar>[] = [
@@ -95,9 +156,9 @@ const colDefs: ColDef<ICar>[] = [
 ];
 ```
 
-The `TValue` generic type is also supported by the `ICellRendererParams<TData, TValue>` interface which is used when creating custom [Cell Renderers](/component-cell-renderer).
+The `TValue` generic type is also supported for cell renderers / editors by `ICellRendererParams<TData, TValue>` and `ICellEditorParams<TData, TValue>` respectively.
 
-### Typed as TValue | undefined
+### Typed: TValue | undefined
 
 For a number of events and callbacks when a generic interface is provided the `value` property is typed as `TValue | undefined` instead of `any`. This is because it is possible for the `value` property to be undefined under certain grid configurations. 
 
@@ -107,6 +168,6 @@ For a number of events and callbacks when a generic interface is provided the `v
 
 ## Fallback Default
 
-If generic interfaces are not provided then the grid will use the default type of `any`. This means that generics in AG Grid are completely optional and are opt in. Grid options is defined as `GridOptions<TData = any>` so if a generic parameter is not provided then `any` is used in its place. 
+If generic interfaces are not provided then the grid will use the default type of `any`. This means that generics in AG Grid are completely optional. GridOptions is defined as `GridOptions<TData = any>`, so if a generic parameter is not provided then `any` is used in its place for row data properties. 
 
-Likewise for cell values if you do not provide a generic parameter `any` is used for the value property. For example cell renderer params is defined as `ICellRendererParams<TData = any, TValue = any>`.
+Likewise for cell values, if a generic parameter is not provided, `any` is used for the value property. For example, cell renderer params are defined as `ICellRendererParams<TData = any, TValue = any>`.

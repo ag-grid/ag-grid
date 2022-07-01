@@ -29,7 +29,7 @@ var rowData: ICar[] = [
 const gridOptions: GridOptions<ICar> = {
   columnDefs: columnDefs,
   rowData: rowData,
-  rowSelection: 'single',
+  rowSelection: 'multiple',
   // Type specified her but can be omitted and inferred by Typescript
   getRowId: (params: GetRowIdParams<ICar>) => {
     // params.data : ICar

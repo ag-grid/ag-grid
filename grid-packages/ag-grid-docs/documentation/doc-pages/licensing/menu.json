@@ -155,7 +155,12 @@
           {
             "title": "Typescript Generics",
             "url": "/typescript-generics/",
-            "showInCollapsed": true
+            "showInCollapsed": true,
+            "frameworks": [
+              "javascript",
+              "angular",
+              "react"
+            ]
           }
         ]
       },
@@ -347,15 +352,6 @@
                 "url": "/modules-building/",
                 "frameworks": [
                   "javascript"
-                ]
-              },
-              {
-                "title": "Modules - Example",
-                "url": "/modules-building/",
-                "frameworks": [
-                  "angular",
-                  "react",
-                  "vue"
                 ]
               }
             ]
