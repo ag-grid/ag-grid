@@ -151,6 +151,11 @@
                 "showInCollapsed": true
               }
             ]
+          },
+          {
+            "title": "Typescript Generics",
+            "url": "/typescript-generics/",
+            "showInCollapsed": true
           }
         ]
       },
