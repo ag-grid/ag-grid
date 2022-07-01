@@ -109,35 +109,27 @@
     }
 
 
-    // as suggested by Gil
-    .ag-row-hover:not(.ag-full-width-row),
-    .ag-row-hover.ag-full-width-row.ag-row-group {
-
-        &::before {
-            content: "";
-            background-color: var(--ag-row-hover-color);
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-        }
-
-
-        // Addition: need to make sure that any children of a group row
-        // are relatively positioned, so that they never get covered by
-        // the absolutely positioned background. I think that this is OK
-        // though, provided that there are no user created elements as direct
-        // children of a group row. And at least in the examples, the
-        // user-created elements get wrapped in a .ag-cell-wrapper div
-        // https://localhost:8000/javascript-data-grid/grouping-group-rows/#example-full-width-groups-rendering
-        & > * {
-            position: relative
-        }
+    .ag-row-hover:not(.ag-full-width-row)::before,
+    .ag-row-hover.ag-full-width-row.ag-row-group::before {
+        // add a background on hover - use an absolutely positioned rectangle instead of
+        // a `background-color` so that `--ag-row-hover-color: transparent` doesn't remove
+        // an existing background color
+        content: "";
+        background-color: var(--ag-row-hover-color);
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
     }
-    // .ag-row-hover.ag-full-width-row.ag-row-group 
+
+    // Default the content position to relative so that it doesn't
+    // appear under the background
+    .ag-row-hover.ag-full-width-row.ag-row-group > * {
+        position: relative
+    }
 
     .ag-row-hover.ag-row-selected::before {
         background-color: var(--ag-row-hover-color);
