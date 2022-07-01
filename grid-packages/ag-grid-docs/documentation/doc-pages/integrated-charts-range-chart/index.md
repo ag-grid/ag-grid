@@ -91,6 +91,8 @@ The example below demonstrates the different ways columns can be defined for cha
 
 <grid-example title='Defining categories and series' name='defining-categories-and-series' type='generated' options='{ "exampleHeight": 710, "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"] }'></grid-example>
 
+Cell ranges from which categories and data are taken will be highlighted on the grid. The highlight colours can be customised using the `--ag-range-selection-chart-category-background-color` and `--ag-range-selection-chart-background-color` CSS variables. See `style.css` in the example above.
+
 ## Next Up
 
 Continue to the next section to learn about the: [Pivot Chart](/integrated-charts-pivot-chart/).

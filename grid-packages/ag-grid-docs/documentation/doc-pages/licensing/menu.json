@@ -459,18 +459,8 @@
                     "showInCollapsed": false
                   },
                   {
-                    "title": "Charts",
-                    "url": "/global-style-customisation-charts/",
-                    "showInCollapsed": false
-                  },
-                  {
                     "title": "Inputs & Widgets",
                     "url": "/global-style-customisation-widgets/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Tabs",
-                    "url": "/global-style-customisation-tabs/",
                     "showInCollapsed": false
                   },
                   {

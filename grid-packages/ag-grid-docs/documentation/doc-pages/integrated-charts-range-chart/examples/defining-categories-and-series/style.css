@@ -10,5 +10,13 @@
 }
 
 .my-chart {
-     flex: 1;
- }
+    flex: 1;
+}
+
+.ag-theme-alpine {
+    /* pink category range */
+    --ag-range-selection-chart-category-background-color: rgba(255, 0, 132, 0.1);
+    
+    /* orange data range */
+    --ag-range-selection-chart-background-color: rgba(255, 115, 0, 0.1);
+}

@@ -1,21 +1,37 @@
 import { Grid, CellKeyDownEvent, CellKeyPressEvent, ColDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', minWidth: 170 },
-  { field: 'age' },
-  { field: 'country' },
-  { field: 'year' },
-  { field: 'date' },
-  { field: 'sport' },
-  { field: 'gold' },
-  { field: 'silver' },
-  { field: 'bronze' },
-  { field: 'total' },
 ]
 
 const gridOptions: GridOptions<IOlympicData> = {
   rowData: null,
-  columnDefs: columnDefs,
+  columnDefs: [
+    {
+      headerName: 'Athlete',
+      children: [
+        { field: 'athlete', minWidth: 170, rowGroup: true },
+        { field: 'age', rowGroup: true },
+        { field: 'country' },
+      ]
+    },
+    {
+      headerName: 'Event',
+      children: [
+        { field: 'year' },
+        { field: 'date' },
+        { field: 'sport' },
+      ]
+    },
+    {
+      headerName: 'Medals',
+      children: [
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
+      ]
+    }
+  ],
   defaultColDef: {
     editable: true,
     sortable: true,
