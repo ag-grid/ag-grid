@@ -167,7 +167,7 @@ When the filter for the **Country** column is changed, the values for the **Spor
 
 Filtering groups Client-side (Infinite Scroll is off) happens inside the grid out of the box.
 
-The example below shows Client-side row group filtering of row groups. Note the following:
+The example below shows Client-side row group filtering. Note the following:
  
  - The grid is not using [Infinite Scroll](/server-side-model-row-stores/), the property  `serverSideInfiniteScroll` is not set.
  - All columns have Text or Number filters configured. Setting filters on these columns will filter leaf values within the dataset.
