@@ -199,6 +199,8 @@ To do this, set the `theme` parameter to your custom theme and the `extend-theme
 
 To use this theme, add the `ag-theme-acmecorp` class to your grid div.
 
+Theme extension is only available in the Sass API. The alternative method of creating a [reusable package of design customisations](/global-style-customisation#creating-a-reusable-package-of-design-customisations) works in both Sass and pure CSS projects.
+
 Theme extension works with multiple themes too, set the `extend-theme` parameter at the theme level:
 
 ```scss
@@ -214,5 +216,3 @@ Theme extension works with multiple themes too, set the `extend-theme` parameter
 
 [[note]]
 | `extend-theme` internally uses the Sass `@extend` rule, which generates new selectors for `.ag-theme-acmecorp` while leaving the original selectors for `.ag-theme-alpine` intact. This slightly increases the output of the compiled CSS, but the difference is likely to be too small to measure in real world conditions (less than 1kb gzipped)
-
-##
