@@ -743,10 +743,10 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
     @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
     /** When enabled, the grid will always request the server to provide the sort results.
-     * Default: `1`     */
+     * Default: `false`     */
     @Input() public serverSideSortOnServer: boolean | undefined = undefined;
     /** When enabled, the grid will always request the server to provide the filter results.
-     * Default: `1`     */
+     * Default: `false`     */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
     /** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.     */
     @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
