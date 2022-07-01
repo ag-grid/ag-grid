@@ -20,7 +20,11 @@ This example uses the Alpine theme with the Material icons:
 
 ## Using an Alternative Icon Font
 
-The grid exposes a number of CSS variables to control the icon font. `--ag-icon-font-family` sets the icon font to use, and variables in the form `--ag-icon-font-code-{icon-name}` set the character within the icon font. You can get the icon names from the [Provided Icons list](#provided-icons) below.
+The grid exposes a number of CSS variables to control the icon font:
+
+- `--ag-icon-font-family` sets the icon font to use.
+- `--ag-icon-font-code-{icon-name}` sets the character within the icon font for the `{icon-name}` icon. You can get the icon names from the [Provided Icons list](#provided-icons) below.
+- `--ag-icon-size` sets the height of icons in pixels. Width is automatic depending on the character in the icon font.
 
 If you intend to replace every icon in the grid using the same font then you can set these variables using a CSS selector targeting the theme name, as you would any other CSS variable:
 
@@ -31,7 +35,7 @@ If you intend to replace every icon in the grid using the same font then you can
   --ag-icon-font-code-aggregation: "\f247";
   --ag-icon-font-code-arrows: "\f0b2";
   --ag-icon-font-code-asc: "\f062";
-  /* ... and so on - you must set every other icon here too */
+  /* ... and so on - you must define a font code for every icon */
 }
 ```
 
