@@ -3,13 +3,13 @@ title: "Typescript Generics"
 frameworks: ["javascript","angular","react"]
 ---
 
-As of v28 AG Grid now supports Typescript Generics for row data and cell values. This leads to greatly improved developer experience via code completion and compile time validation of row data properties.
+As of v28 AG Grid now supports Typescript [Generics](https://www.typescriptlang.org/docs/handbook/2/generics.html) for row data and cell values. This leads to greatly improved developer experience via code completion and compile time validation of row data properties.
 
 ## Row Data: \<TData\>
 
 Provide a Typescript interface for row data to the grid to enable auto-completion and type-checking whenever properties are accessed from a row `data` variable. There are multiple ways to configure the generic interface: via the `GridOptions<TData>` interface, via other individual interfaces and finally via framework components.
 
-In the examples below we will use the `ICar` interface for our row data.
+In the examples below we will use the `ICar` interface to represent row data.
 
 ```ts 
 // Row Data interface
@@ -22,7 +22,7 @@ interface ICar {
 
 ### Configure via GridOptions
 
-Set the row data interface on the grid options interface via `GridOptions<ICar>`. The `ICar` interface will then be used throughout the grid options whenever row data is present. This true for: properties, callbacks, events and even the gridApi.
+Set the row data type on the grid options interface via `GridOptions<ICar>`. The `ICar` interface will then be used throughout the grid options whenever row data is present. This is true for: properties, callbacks, events and the gridApi.
 
 ```ts 
 // Pass ICar to GridOptions as a generic
@@ -54,11 +54,12 @@ const cars: ICar[] = gridOptions.api!.getSelectedRows();
 
 ### Configure via Interfaces
 
-Each individual interface that accepts a generic of `TData` can also be configured. For example, a stand alone grid event handler can accept the generic parameter on the event type `RowSelectedEvent`.
+Each interface that accepts a generic type of `TData` can also be configured individually. For example, an event handler function can accept the generic parameter on the event `RowSelectedEvent`.
 
 ```ts
 function onRowSelected(event: RowSelectedEvent<ICar>) {
     if (event.data) {
+        // event.data: ICar | undefined
         const price = event.data.price;
     }
 }
@@ -67,7 +68,7 @@ function onRowSelected(event: RowSelectedEvent<ICar>) {
 [[only-angular]]
 |### Configure via Component
 |
-|The `<ag-grid-angular>` component supports is defined as `AgGridComponent<TData>`. To activate the generic parameter, configure any valid Input property with the row data interface.
+|The `<ag-grid-angular>` component is defined as `AgGridComponent<TData = any>`. To activate the generic parameter, configure any valid Input property with the row data interface.
 |
 |For example, type the `rowData` property in your component as `rowData: ICar[]`. 
 |
@@ -84,7 +85,7 @@ function onRowSelected(event: RowSelectedEvent<ICar>) {
 |></ag-grid-angular>
 |```
 |
-|This generic parameter is used for all other Inputs and Outputs ensuring consistency across the component. If `onRowSelected` is defined with a different interface the application code will fail to compile.
+|This generic parameter is used for all other Inputs and Outputs ensuring consistency across the component. If `(rowSelected)` is defined with a different interface the application code will fail to compile.
 |
 |```ts
 |// ERROR: INotACar is not assignable to ICar
@@ -138,11 +139,11 @@ function onRowSelected(event: RowSelectedEvent<ICar>) {
 
 ## Cell Value: \<TValue\>
 
-When working with cell values it is possible to provide a generic interface for the `value` property. While this will often be a primitive type, such as `string` or `number`, it can also be a complex type. Using a generic for the cell value will enable accurate auto-completion and type-checking.
+When working with cell values it is possible to provide a generic interface for the `value` property. While this will often be a primitive type, such as `string` or `number`, it can also be a complex type. Using a generic for the cell value will enable auto-completion and type-checking.
 
 ### Configure via Interfaces
 
-The generic parameter `TValue` needs to be explicitly provided to each interface as required. Here is an example of a `valueFormatter` for the price column. The `params.value` property is correctly typed as a `number` due to setting `ValueFormatterParams<ICar, number>`.
+The generic parameter `TValue` needs to be explicitly provided to each interface. Here is an example of a `valueFormatter` for the price column. The `params.value` property is correctly typed as a `number` due to typing the params argument as `ValueFormatterParams<ICar, number>`.
 
 ```ts
 const colDefs: ColDef<ICar>[] = [
@@ -164,7 +165,9 @@ For a number of events and callbacks when a generic interface is provided the `v
 
 ## Generic Type Example
 
-<grid-example title='Generic Types' name='generic' type='generated'></grid-example>
+Inspect the code in the following example or open in Plunker to experiment with generic typing yourself.
+
+<grid-example title='Generic Types' name='generic' type='generated' options='{ "exampleHeight": 500 }'></grid-example>
 
 ## Fallback Default
 
