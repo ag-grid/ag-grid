@@ -324,6 +324,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             xKey,
             yKey,
             stroke: lineStroke,
+            strokeOpacity,
             highlightStyle: {
                 fill: deprecatedFill,
                 stroke: deprecatedStroke,
@@ -364,6 +365,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
             node.fill = (format && format.fill) || fill;
             node.stroke = (format && format.stroke) || stroke;
             node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
+            node.fillOpacity = marker.fillOpacity ?? 1;
+            node.strokeOpacity = marker.strokeOpacity ?? strokeOpacity ?? 1;
             node.size = format && format.size !== undefined ? format.size : size;
 
             node.translationX = datum.point.x;
@@ -514,8 +517,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     shape: marker.shape,
                     fill: marker.fill || 'rgba(0, 0, 0, 0)',
                     stroke: marker.stroke || stroke || 'rgba(0, 0, 0, 0)',
-                    fillOpacity: 1,
-                    strokeOpacity,
+                    fillOpacity: marker.fillOpacity ?? 1,
+                    strokeOpacity: marker.strokeOpacity ?? strokeOpacity ?? 1,
                 },
             });
         }
