@@ -10,7 +10,7 @@ import isDevelopment from 'utils/is-development';
  */
 const ExampleRunnerResult = ({ isOnScreen = true, resultFrameIsVisible = true, exampleInfo }) => {
     const [isExecuting, setExecuting] = useState(isOnScreen && resultFrameIsVisible);
-    const { pageName, name, internalFramework, importType } = exampleInfo;
+    const { pageName, name, internalFramework, importType, type } = exampleInfo;
 
     useEffect(() => {
         // trigger the example to execute when it is on screen and the result pane is visible
