@@ -226,7 +226,7 @@ export class AxisPanel extends Component {
             // the axis label rotation needs to be updated when the default category changes in the data panel
             this.axisLabelUpdateFuncs.push(() => {
                 const value = this.chartOptionsService.getLabelRotation(axisType) as number;
-                angleSelect.setValue(value);
+                angleSelect.setValue(value || 0);
             });
 
             return this.createBean(angleSelect);
