@@ -39,6 +39,9 @@ export type Opacity = number;
 /** Alias to denote that a value is a measurement in pixels. */
 export type PixelSize = number;
 
+/** Alias to denote that a value is a data value. */
+export type DataValue = any;
+
 export interface AgChartThemePalette {
     /** The array of fills to be used. */
     fills: string[];
@@ -498,9 +501,9 @@ export interface AgCrossLineOptions {
     /** Type of cross line to render. */
     kind: 'line' | 'range';
     /** The data value at which the line should be positioned. This property is used if the crossLine type is `line`. */
-    value?: any;
+    value?: DataValue;
     /** The range of values from the data used to display lines at a desired chart region. This property is only used for crossLine type `range`. */
-    range?: [any, any];
+    range?: [DataValue, DataValue];
     /** The colour to use for the fill of the range. */
     fill?: CssColor;
     /** The opacity of the fill for the range. */

@@ -47,6 +47,7 @@
   "CssColor": { "meta": { "isTypeAlias": true }, "type": "string" },
   "Opacity": { "meta": { "isTypeAlias": true }, "type": "number" },
   "PixelSize": { "meta": { "isTypeAlias": true }, "type": "number" },
+  "DataValue": { "meta": { "isTypeAlias": true }, "type": "any" },
   "AgChartThemePalette": {
     "meta": {},
     "type": { "fills": "string[]", "strokes": "string[]" },
@@ -878,8 +879,8 @@
     "meta": {},
     "type": {
       "kind": "'line' | 'range'",
-      "value?": "any",
-      "range?": "[any, any]",
+      "value?": "DataValue",
+      "range?": "[DataValue, DataValue]",
       "fill?": "CssColor",
       "fillOpacity?": "Opacity",
       "stroke?": "CssColor",
