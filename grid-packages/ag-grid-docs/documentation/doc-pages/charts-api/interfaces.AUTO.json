@@ -2239,7 +2239,7 @@
     "meta": { "typeParams": ["T"] },
     "type": {
       "outputProp": "string",
-      "reducer": "(r: T, n: any) => T",
+      "reducer": "(r: T, n: any, idx: number, length: number) => T",
       "start": "T",
       "seriesType?": "string[]"
     }

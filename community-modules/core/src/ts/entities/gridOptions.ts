@@ -674,11 +674,11 @@ export interface GridOptions<TData = any> {
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */
     serverSideFilterAllLevels?: boolean;
     /** When enabled, the grid will always request the server to provide the sort results.
-     * Default: `1`
+     * Default: `false`
      */
     serverSideSortOnServer?: boolean;
     /** When enabled, the grid will always request the server to provide the filter results.
-     * Default: `1`
+     * Default: `false`
      */
     serverSideFilterOnServer?: boolean;
 

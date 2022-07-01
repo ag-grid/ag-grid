@@ -3203,7 +3203,12 @@
     "outputProp": { "type": { "returnType": "string", "optional": false } },
     "reducer": {
       "type": {
-        "arguments": { "r": "T", "n": "any" },
+        "arguments": {
+          "r": "T",
+          "n": "any",
+          "idx": "number",
+          "length": "number"
+        },
         "returnType": "T",
         "optional": false
       }

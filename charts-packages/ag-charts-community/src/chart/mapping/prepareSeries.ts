@@ -48,11 +48,25 @@ const BOOLEAN_OR_REDUCER = (prop: string, activationValue: any) => (result: bool
     }
     return result;
 };
-const DEFAULTING_ARRAY_REDUCER = (prop: string, defaultValue: any) => (result: string[], next: any) => {
+const DEFAULTING_ARRAY_REDUCER = (prop: string, defaultValue: any) => (result: string[], next: any, idx: number, length: number) => {
+    const sparse = defaultValue === SKIP || defaultValue === FAIL;
     const nextValue = next[prop] ?? defaultValue;
     if (nextValue === FAIL) {
         throw new Error(`AG Charts - missing value for property [${prop}] on series config.`);
     } else if (nextValue === SKIP) {
+        return result;
+    }
+
+    if (result.length === 0 && !sparse) {
+        // Pre-populate values on first invocation as we will only be invoked for series with a
+        // value specified.
+        while (result.length < length) {
+            result = result.concat(defaultValue);
+        }
+    }
+
+    if (!sparse) {
+        result[idx] = nextValue;
         return result;
     }
 
@@ -67,7 +81,7 @@ const YKEYS_REDUCER = (prop: string, activationValue: any) => (result: string[][
 
 interface ReduceConfig<T> {
     outputProp: string;
-    reducer: (r: T, n: any) => T;
+    reducer: (r: T, n: any, idx: number, length: number) => T;
     start: T,
     seriesType?: string[];
 }
@@ -95,7 +109,7 @@ const REDUCE_CONFIG: Record<string, ReduceConfig<unknown>> = {
 export function reduceSeries(series: any[]) {
     let options: any = {};
 
-    series.forEach((s) => {
+    series.forEach((s, idx) => {
         Object.keys(s).forEach((prop) => {
             const reducerConfig = REDUCE_CONFIG[prop];
     
@@ -113,7 +127,7 @@ export function reduceSeries(series: any[]) {
                 return;
             }
     
-            options[outputProp] = reducer(options[outputProp] ?? start, s);
+            options[outputProp] = reducer(options[outputProp] ?? start, s, idx, series.length);
         });
     })
 

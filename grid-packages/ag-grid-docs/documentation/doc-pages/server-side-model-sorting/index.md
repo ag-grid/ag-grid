@@ -84,7 +84,7 @@ As previously mentioned, when not using Infinite Scroll, the grid will sort on t
 
 ## Client-side Row Group Sorting
 
-Sorting groups Client-side (Infinite Scroll is off) happens inside the grid by default.
+Sorting row groups Client-side (Infinite Scroll is off) happens inside the grid by default.
 
 The example below shows Client-side sorting of groups. Note the following:
  
