@@ -135,6 +135,46 @@ describe('transform series options', () => {
         expect(result).toEqual(columnSeriesOptions);
     });
 
+    test('reduceSeries - sparse properties', () => {
+        const columnSeriesGroup: any[] = [
+            {
+                type: 'column',
+                xKey: 'quarter',
+                yKey: 'iphone',
+                fill: 'pink',
+                yName: 'Iphone',
+            },
+            {
+                type: 'column',
+                xKey: 'quarter',
+                yKey: 'mac',
+                fill: 'red',
+                yName: 'Mac',
+                visible: false,
+            },
+            {
+                type: 'column',
+                xKey: 'quarter',
+                yKeys: ['wearables', 'services'],
+                yNames: ['Wearables', 'Services'],
+                fills: ['blue', 'orange'],
+            },
+        ];
+
+        const result = reduceSeries(columnSeriesGroup);
+
+        const columnSeriesOptions = {
+            type: 'column',
+            xKey: 'quarter',
+            yKeys: ['iphone', 'mac', 'wearables', 'services'],
+            yNames: ['Iphone', 'Mac', 'Wearables', 'Services'],
+            fills: ['pink', 'red', 'blue', 'orange'],
+            visibles: [true, false, true],
+        };
+
+        expect(result).toEqual(columnSeriesOptions);
+    });
+
     test('processSeriesOptions', () => {
         const result = processSeriesOptions(seriesOptions);
 
