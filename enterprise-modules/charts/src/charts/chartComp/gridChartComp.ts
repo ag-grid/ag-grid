@@ -23,7 +23,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./chartTitle/titleEdit";
-import { ChartController } from "./chartController";
+import { ChartController, ChartModelUpdatedEvent } from "./chartController";
 import { ChartDataModel, ChartModelParams } from "./chartDataModel";
 import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
 import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
@@ -54,6 +54,7 @@ export interface GridChartParams {
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes?: SeriesChartType[];
+    crossFilteringResetCallback?: () => void;
 }
 
 export class GridChartComp extends Component {
@@ -181,6 +182,9 @@ export class GridChartComp extends Component {
         const crossFilterCallback = (event: any, reset: boolean) => {
             const ctx = this.params.crossFilteringContext;
             ctx.lastSelectedChartId = reset ? '' : this.chartController.getChartId();
+            if (reset) {
+                this.params.crossFilteringResetCallback!();
+            }
             this.crossFilterService.filter(event, reset);
         }
 
@@ -198,7 +202,7 @@ export class GridChartComp extends Component {
             grouping: this.chartController.isGrouping(),
             chartOptionsToRestore: this.params.chartOptionsToRestore,
             chartPaletteToRestore: this.params.chartPaletteToRestore,
-            seriesChartTypes: this.chartController.getSeriesChartTypes()
+            seriesChartTypes: this.chartController.getSeriesChartTypes(),
         };
 
         // ensure 'restoring' options are not reused when switching chart types
@@ -412,19 +416,8 @@ export class GridChartComp extends Component {
         return this.chartProxy.getChart();
     }
 
-    public refreshCanvasSize(): void {
-        if (!this.params.insideDialog) {
-            return;
-        }
-
-        const { eChart } = this;
-        if (this.chartMenu.isVisible()) {
-            // we don't want the menu showing to affect the chart options
-            const chart = this.chartProxy.getChart();
-
-            chart.height = _.getInnerHeight(eChart);
-            chart.width = _.getInnerWidth(eChart);
-        }
+    public crossFilteringReset(): void {
+        this.chartProxy.crossFilteringReset();
     }
 
     private setActiveChartCellRange(focusEvent: FocusEvent): void {

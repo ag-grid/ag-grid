@@ -14,6 +14,10 @@ export class AreaChartProxy extends CartesianChartProxy {
         this.recreateChart();
     }
 
+    public getData(params: UpdateChartParams): any[] {
+        return this.crossFiltering ? this.getLineAreaCrossFilterData(params) : this.getDataTransformedData(params);
+    }
+
     public getAxes(): AgCartesianAxisOptions[] {
         const axisOptions = this.getAxesOptions();
         const options = [
@@ -39,7 +43,7 @@ export class AreaChartProxy extends CartesianChartProxy {
         return options;
     }
 
-    public getSeries(params: UpdateChartParams): AgAreaSeriesOptions[] {
+    public getSeries(params: UpdateChartParams) {
         const series: AgAreaSeriesOptions[] = params.fields.map(f => (
             {
                 ...this.extractSeriesOverrides(),
@@ -53,10 +57,6 @@ export class AreaChartProxy extends CartesianChartProxy {
             }
         ));
 
-        return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
-    }
-
-    private extractCrossFilterSeries(series: AgAreaSeriesOptions[]): AgAreaSeriesOptions[] {
-        return []; //TODO
+        return this.crossFiltering ? this.extractLineAreaCrossFilterSeries(series, params) : series;
     }
 }

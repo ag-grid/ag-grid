@@ -22,6 +22,10 @@ export class ScatterChartProxy extends CartesianChartProxy {
         this.recreateChart();
     }
 
+    public getData(params: UpdateChartParams): any[] {
+        return this.getDataTransformedData(params);
+    }
+
     public getAxes(): AgCartesianAxisOptions[] {
         const axisOptions = this.getAxesOptions();
         return [

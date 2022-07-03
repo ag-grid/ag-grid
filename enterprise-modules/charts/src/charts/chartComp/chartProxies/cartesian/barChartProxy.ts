@@ -17,6 +17,10 @@ export class BarChartProxy extends CartesianChartProxy {
         this.recreateChart();
     }
 
+    public getData(params: UpdateChartParams): any[] {
+        return this.getDataTransformedData(params);
+    }
+
     public getAxes(): AgCartesianAxisOptions[] {
         const isBar = this.standaloneChartType === 'bar';
 
