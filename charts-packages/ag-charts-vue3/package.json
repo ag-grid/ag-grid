@@ -26,7 +26,7 @@
     "clean": "rimraf dist lib .hash",
     "bundle": "npx vue-cli-service build --target lib src/AgChartsVue.ts",
     "npm": "npx tsc -p tsconfig-lib.json",
-    "build": "npm run npm && npm run bundle && npm run hash",
+    "build": "echo \"module.exports = require('./build')\" > ./node_modules/vue-template-compiler/index.js && npm run npm && npm run bundle && npm run hash",
     "build-prod": "npm run build",
     "lint": "npx vue-cli-service lint",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
