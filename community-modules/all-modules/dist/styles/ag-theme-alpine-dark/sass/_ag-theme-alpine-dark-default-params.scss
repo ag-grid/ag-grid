@@ -1,0 +1,22 @@
+@import "../../ag-theme-alpine/sass/ag-theme-alpine-default-params";
+
+$ag-theme-alpine-dark-default-params: (
+    alpine-active-color: #2196f3,
+    background-color: #181d1f,
+    foreground-color: #fff,
+    border-color: #68686e,
+    secondary-border-color: rgba(#585652, 0.5),
+    header-background-color: #222628,
+    odd-row-background-color: #222628,
+    control-panel-background-color: #222628,
+    subheader-background-color: #000,
+    input-focus-box-shadow: (
+        // add a second tighter white shadow to make the glow stand out better
+        0 0 2px 0.5px rgba(255, 255, 255, 0.5),
+        0 0 4px 3px ag-derived(input-focus-border-color, $opacity: 0.6)
+    ),
+    card-shadow: 0 1px 20px 1px black,
+    invalid-color: #e02525,
+);
+
+$ag-theme-alpine-dark-default-params: map-merge($ag-theme-alpine-default-params, $ag-theme-alpine-dark-default-params);
