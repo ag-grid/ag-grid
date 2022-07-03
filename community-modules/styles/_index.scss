@@ -65,7 +65,7 @@
             }
         }
 
-        // Emit CSS variable declarations for a st of params, converting (foo: bar) to `--ag-foo: bar`
+        // Emit CSS variable declarations for a set of params, converting (foo: bar) to `--ag-foo: bar`
         .ag-theme-#{$theme-name} {
             $color-blend-theme-name: $extended-theme-name;
             $color-blend-theme-name: $theme-name !default;
@@ -206,15 +206,15 @@ $-theme-fonts: (
     }
     
     @if list.length($themes) == 0 {
-        @return ("alpine": ());
+        $themes: (alpine: ());
     }
 
     $params: map.remove($params, "theme", "themes");
 
     $cleaned: ();
     @each $name, $extra-params in $themes {
-        $params: -preprocess-params(map.merge($params, $extra-params));
-        $cleaned: map.set($cleaned, -clean-theme-name($name), $params);
+        $theme-params: internal-preprocess-params(map.merge($params, $extra-params));
+        $cleaned: map.set($cleaned, -clean-theme-name($name), $theme-params);
     }
     @return $cleaned;
 }
@@ -359,9 +359,9 @@ $-param-type-descriptions: (
     "size": "a CSS size (e.g. `0`, `4px` or `50%`)",
     "border-style": "a CSS border style (e.g. `dotted` or `solid`)",
     "duration": "a number with time duration units (e.g. `3s` or `250ms`)",
-    "border-style-and-size": "either `none`, or a border-style and size (e.g. `solid 1px`), or a boolean (true -> `solid 1px` and false -> `none`)",
-    "border-style-and-color": "a border-style and color (e.g. `solid red`)",
-    "display": "`block` or `true` to show, `none` or `false` to hide",
+    "border-style-and-size": "either `none`, or a CSS border-style and size (e.g. `solid 1px`), or a boolean (true -> `solid 1px` and false -> `none`)",
+    "border-style-and-color": "a CSS border-style and color (e.g. `solid red`)",
+    "display": "A CSS display value (`block` to show, `none` to hide - `true` and `false` are also accepted)",
     "any": "any value",
 );
 
@@ -441,7 +441,7 @@ $-variable-param-types: (
     --ag-toggle-button-height: "size",
     --ag-toggle-button-width: "size",
     --ag-input-focus-box-shadow: "any",
-    --ag-input-focus-border-color: "any",
+    --ag-input-focus-border-color: "color",
     --ag-minichart-selected-chart-color: "color",
     --ag-minichart-selected-page-color: "color",
     --ag-grid-size: "size",
@@ -484,7 +484,7 @@ $-non-variable-param-types: (
 );
 
 // Apply Sass API sugar over CSS variable API
-@function -preprocess-params($params) {
+@function internal-preprocess-params($params) {
     $processed: ();
     @each $name, $value in $params {
         $name: -clean-variable-name($name);
@@ -516,12 +516,17 @@ $-non-variable-param-types: (
 }
 
 @mixin -validate-params($params, $theme: null) {
+    $error: internal-get-params-error($params, $theme);
+    @if $error {
+        @error $error;
+    }
+}
+
+@function internal-get-params-error($params, $theme: null) {
     $theme-variables: ();
     @if $theme and map.has-key($-theme-variables, $theme) {
         $theme-variables: map.get($-theme-variables, $theme);
     }
-
-    // TODO what's going on here? Merging param types with params?
 
     $param-types: map.merge($-variable-param-types, $theme-variables);
     $errors: ();
@@ -530,7 +535,6 @@ $-non-variable-param-types: (
         @if $name == "suppress-native-widget-styling" {
             $errors: list.append($errors, "suppress-native-widget-styling can not be specified at the theme level, only at the top level");
         }
-        
 
         @if -is-runtime-expression($value) {
             // You can pass variable expressions as values and we'll just trust
@@ -538,12 +542,7 @@ $-non-variable-param-types: (
         } @else {
             $expected-type: map.get($param-types, $name);
             @if $expected-type {
-                $validator-name: "-validate-#{$expected-type}";
-                $validator: meta.get-function($validator-name);
-                @if not $validator {
-                    @error "Internal error: no validator function #{$validator-name}";
-                }
-                $is-valid: meta.call($validator, $value);
+                $is-valid: -validate-value($value, $expected-type);
                 @if not $is-valid {
                     $expected: map.get($-param-type-descriptions, $expected-type);
                     $expected: $expected-type !default;
@@ -570,8 +569,18 @@ $-non-variable-param-types: (
         @else {
             $message: "Error in #{$theme} parameters: #{$message}";
         }
-        @error $message;
+        @return $message;
     }
+    @return null;
+}
+
+@function -validate-value($value, $expected-type) {
+    $validator-name: "-validate-#{$expected-type}";
+    $validator: meta.get-function($validator-name);
+    @if not $validator {
+        @error "Internal error: no validator function #{$validator-name}";
+    }
+    @return meta.call($validator, $value);
 }
 
 @function -is-runtime-expression($value) {
@@ -584,41 +593,29 @@ $-non-variable-param-types: (
 }
 
 @function -validate-size($value) {
-    // TODO implement me
-    @return true;
+    @return meta.type-of($value) == "number" and (unit($value) != "" or $value == 0);
 }
 
-@function -validate-border($value) {
-    // TODO implement me
-    @return true;
-}
-
+$border-styles: (none, hidden, dotted, dashed, solid, double, groove, ridge, inset, outset, initial);
 @function -validate-border-style($value) {
-    // TODO implement me
-    // Note: check for style, number and color in any order
-    @return true;
+    $value-preserve-quotes: meta.inspect($value);
+    @return list.index($border-styles, $value-preserve-quotes) != null;
 }
 
 @function -validate-duration($value) {
-    // TODO implement me
-    @return true;
+    @return meta.type-of($value) == "number" and (unit($value) == "s" or unit($value) == "ms" or $value == 0);
 }
 
 @function -validate-display($value) {
-    // TODO implement me
     @return $value == block or $value == none;
 }
 
 @function -validate-border-style-and-size($value) {
-    // TODO implement me
-    // Note: check for style and number in any order
-    @return true;
+    @return -validate-two-in-any-order($value, "border-style", "size");
 }
 
 @function -validate-border-style-and-color($value) {
-    // TODO implement me
-    // Note: check for style and color in any order
-    @return true;
+    @return -validate-two-in-any-order($value, "border-style", "color");
 }
 
 @function -validate-bool($value) {
@@ -631,6 +628,22 @@ $-non-variable-param-types: (
 
 @function -validate-any($value) {
     @return true;
+}
+
+@function -validate-two-in-any-order($value, $type-a, $type-b) {
+    @if meta.type-of($value) != "list" {
+        @return false;
+    }
+    @if list.length($value) != 2 {
+        @return false;
+    }
+    $value-1: list.nth($value, 1);
+    $value-2: list.nth($value, 2);
+    @return (
+        (-validate-value($value-1, $type-a) and -validate-value($value-2, $type-b))
+        or
+        (-validate-value($value-2, $type-a) and -validate-value($value-1, $type-b))
+    );
 }
 
 // check that we defined all the validator functions
