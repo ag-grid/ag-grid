@@ -1,16 +1,16 @@
 {
   "name": "ag-grid-angular",
-  "version": "27.3.0",
+  "version": "28.0.0",
   "license": "MIT",
   "peerDependencies": {
-    "ag-grid-community": "~27.3.0",
+    "ag-grid-community": "~28.0.0",
     "@angular/common": ">= 12.0.0",
     "@angular/core": ">= 12.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
   },
-   "repository": {
+  "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
   }
