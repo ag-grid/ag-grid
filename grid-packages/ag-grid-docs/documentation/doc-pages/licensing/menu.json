@@ -155,12 +155,7 @@
           {
             "title": "Using Typescript Generics",
             "url": "/typescript-generics/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "javascript",
-              "angular",
-              "react"
-            ]
+            "showInCollapsed": true
           }
         ]
       },
