@@ -346,7 +346,7 @@
         "cellEditorSelector": {
             "more": {
                 "name": "Many Editors One Column",
-                "url": "/cell-editing/#many-editors-one-column"
+                "url": "/cell-editors/#many-editors-one-column"
             }
         },
         "cellEditorPopup": {},
