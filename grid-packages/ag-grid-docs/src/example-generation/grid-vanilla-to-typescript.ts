@@ -1,14 +1,17 @@
-import { addBindingImports, addGenericInterfaceImport, getModuleRegistration, ImportType } from './parser-utils';
+import {addBindingImports, addGenericInterfaceImport, getModuleRegistration, ImportType} from './parser-utils';
+
 const path = require('path');
 const fs = require('fs-extra');
 
 export function toTitleCase(value) {
     return value[0].toUpperCase() + value.slice(1);
-};
+}
+
 export function getImport(filename: string) {
     const componentName = filename.split('.')[0];
     return `import { ${toTitleCase(componentName)} } from './${componentName}';`;
 }
+
 function getPropertyInterfaces(properties) {
     let propTypesUsed = [];
     properties.forEach(prop => {
@@ -20,7 +23,7 @@ function getPropertyInterfaces(properties) {
 }
 
 function getModuleImports(bindings: any, allStylesheets: string[]): string[] {
-    const { gridSettings, imports: bindingImports, properties } = bindings;
+    const {gridSettings, imports: bindingImports, properties} = bindings;
 
     let imports = [];
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
@@ -29,10 +32,6 @@ function getModuleImports(bindings: any, allStylesheets: string[]): string[] {
     // "source" non dark version
     const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
-
-    if(allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
-    }
 
     let propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
@@ -54,7 +53,7 @@ function getModuleImports(bindings: any, allStylesheets: string[]): string[] {
 }
 
 function getPackageImports(bindings: any, allStylesheets: string[]): string[] {
-    const { gridSettings, imports: bindingImports, properties } = bindings;
+    const {gridSettings, imports: bindingImports, properties} = bindings;
     const imports = [];
 
     if (gridSettings.enterprise) {
@@ -68,10 +67,6 @@ function getPackageImports(bindings: any, allStylesheets: string[]): string[] {
     // "source" non dark version
     const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
     imports.push(`import "ag-grid-community/styles/${theme}.css";`);
-
-    if(allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
-    }
 
     let propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
@@ -99,7 +94,7 @@ function getImports(bindings: any, importType: ImportType, allStylesheets: strin
 }
 
 export function vanillaToTypescript(bindings: any, mainFilePath: string, allStylesheets: string[]): (importType: ImportType) => string {
-    const { gridSettings, externalEventHandlers, imports } = bindings;
+    const {gridSettings, externalEventHandlers, imports} = bindings;
 
     // attach external handlers to window
     let toAttach = '';
