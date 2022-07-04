@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$#" -lt 2 ]
+if [ "$#" -lt 1 ]
   then
     echo "You must supply a release version"
     echo "For example: ./scripts/release/uploadAndUnzipArchive.sh 19.1.2"
@@ -43,7 +43,7 @@ fi
 ARCHIVE="archive_`date +%Y%m%d`_$VERSION.tar.gz"
 
 # $3 is optional skipWarning argument
-if [ "$3" != "skipWarning" ]; then
+if [ "$2" != "skipWarning" ]; then
     while true; do
         echo    "*********************************** WARNING ************************************************"
         read -p "This script will DELETE the existing archive of $VERSION (if it exists) and will REPLACE it. Do you wish to continue [y/n]? " yn
