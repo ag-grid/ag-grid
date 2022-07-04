@@ -40,14 +40,14 @@
     "typescript": "3.6.5",
     "vue": "2.6.10",
     "vue-class-component": "7.0.0",
-    "vue-property-decorator": "8.2.0",
+    "vue-property-decorator": "9.1.2",
     "vue-template-compiler": "2.6.10",
     "rimraf": "3.0.2"
   },
   "peerDependencies": {
     "ag-charts-community": "~6.0.0",
     "vue": ">= 2.2 <= 2.5.17 || >= 2.5.20",
-    "vue-property-decorator": "7.2.0 || 8.0.0"
+    "vue-property-decorator": "^7.2.0 || ^8.0.0 || ^9.1.2"
   },
   "publishConfig": {
     "access": "public"
