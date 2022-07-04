@@ -4,10 +4,8 @@ title: "Legacy Sass API"
 
 In v28, the [Sass Styling API](/global-style-customisation-sass) was introduced as the preferred way for Sass users to control themes and design customisations. The Legacy Sass API is deprecated and will be removed from the Grid in a future major release.
 
-[[note]]
-| If you a) created an app on v27 or earlier, b) have not updated your import paths, and c) are using Sass to modify the provided themes; then you will be using the Legacy Sass API even if you upgraded your ag-Grid dependency to v28. You can recognise Legacy Sass API import paths because they will have `/dist/` or `/src/` in them, e.g. `@import "ag-grid-community/src/styles/ag-grid.scss"`.
-|
-| New apps that follow the setup instructions in the current documentation will use the new Sass Styling API, recognisable by its import paths in this form `@import "ag-grid-community/styles" as ag;`. For new apps, we recommend using the new API.
+[[warning]]
+| This page describes the Legacy Sass API. New applications should not use it. This page is for applications that have not yet upgraded to the new Sass API, and need to make changes to code using the Legacy API.
 
 ## Loading the Legacy Sass API
 
@@ -19,7 +17,7 @@ In order to opt in to the Legacy Sass API, set your project up to compile Sass a
 [[note]]
 | Both stylesheets need to be included with the structural styles (`ag-grid.css`) loaded before theme styles (`ag-theme-{theme-name}.css`).
 
-It's up to you how to integrate Sass into your project build, but we like to use webpack, since it provides various loaders that optimise and reduce the final size of the bundle. We provide a [general webpack example](https://github.com/ag-grid ag-grid-customise-theme/tree/v28-theme-refactor/src/legacy/vanilla) appropriate for Vanilla JS and React projects, and an [angular example](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/legacy/angular) using Angular CLI.
+It's up to you how to integrate Sass into your project build, but we like to use webpack, since it provides various loaders that optimise and reduce the final size of the bundle. We provide a [general webpack example](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/legacy/vanilla) appropriate for Vanilla JS and React projects, and an [angular example](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/legacy/angular) using Angular CLI.
 
 ### Loading the Roboto font for Material theme
 
@@ -84,7 +82,7 @@ The grid uses [DOM virtualisation](/dom-virtualisation/) for rendering large amo
 which means that it needs to know the size of various elements like columns and grid rows in order to calculate their
 layout. The grid uses several strategies to work out the right size:
 
-1. Firstly, the grid will attempt to measure the size of an element. This works when styles have loaded, but will not work if the grid initialises before the theme loads. Our [theme customisation examples](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/legacy/vanilla/grid.js) demonstrate how to wait for CSS to load before initialising the grid (see the cssHasLoaded function).
+1. Firstly, the grid will attempt to measure the size of an element. This works when styles have loaded, but will not work if the grid initialises before the theme loads. Our [theme customisation examples](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/legacy/vanilla/grid.js) demonstrate how to wait for CSS to load before initialising the grid (see the cssHasLoaded function).
 
 1. If CSS has not loaded and one of the provided themes is in use, the grid contains hard-coded fallback values for these themes. For this reason we recommend that if you are extending a provided theme like `ag-theme-alpine` and have not changed the row and header heights, you keep the same theme name so that the grid knows what fallback sizes to apply.
 
@@ -121,7 +119,7 @@ and a built in variable (`--ag-foreground-color`) are set at runtime, the built 
 can disable built in variables for your theme by setting the parameter `suppress-css-var-overrides: false`.
 
 We have created an example that demonstrates both methods of CSS variable use in our
-[theme examples GitHub repo](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/legacy/vanilla-css-variables).
+[theme examples GitHub repo](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/legacy/vanilla-css-variables).
 
 ## Customising themes using CSS rules
 

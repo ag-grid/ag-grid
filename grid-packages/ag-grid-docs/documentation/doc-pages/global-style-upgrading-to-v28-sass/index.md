@@ -5,7 +5,7 @@ title: "Upgrading from the Legacy Sass API"
 The Legacy Sass API is deprecated and will be removed from the Grid in a future major release. The new API has been designed to be easy to upgrade to - it supports almost the same set of properties as the old API, with a few minor differences documented below. 
 
 [[warning]]
-| If you upgrade an app from v27 to 28 you will be automatically opted in to the Legacy API. Follow the instructions in this document to upgrade.
+| If you created an app on v27 or earlier and have not updated your import paths, you will be using the Legacy Sass API even if you upgraded your ag-Grid dependency to v28. You can recognise Legacy Sass API import paths because they will have `/dist/` or `/src/` in them, e.g. `@import "ag-grid-community/src/styles/ag-grid.scss"`. Follow the instructions in this document to upgrade.
 
 [[note]]
 | If you need to make changes to an app that is still using the legacy API, you can consult the [Archived Documentation for the Legacy API](/global-style-customisation-sass-legacy/).
