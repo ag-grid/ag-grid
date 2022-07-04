@@ -1,6 +1,5 @@
 ---
 title: "Building Applications With AG Grid Modules"
-frameworks: ["javascript"]
 ---
 
 In this section we demonstrate how you to cherry pick modules to provide the features you need with a reduced application bundle size.
