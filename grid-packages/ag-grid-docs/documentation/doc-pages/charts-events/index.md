@@ -36,8 +36,6 @@ Notice how we also provide:
 - a marker formatter to make selected nodes stand out
 - set the series' `cursor` property to `pointer` to indicate that a node is clickable when hovered
 
-Also note how we call the `event.series.update()` method to redraw the series after altering one of its data points.
-
 <chart-example title='Node Click Event' name='node-click-select' type='generated'></chart-example>
 
 ### Interfaces
