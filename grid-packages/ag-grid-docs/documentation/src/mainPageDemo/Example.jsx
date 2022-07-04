@@ -471,14 +471,12 @@ function createDataSizeValue(rows, cols) {
 const Example = () => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
-    const [gridTheme, setGridTheme] = useState(() => {
-        if(IS_SSR) {
-            return 'ag-theme-alpine';
-        }
-
+    const [gridTheme, setGridTheme] = useState(null);
+    useEffect(() => {
         const params = new URLSearchParams(window.location.search);
-        return params.get('theme') || 'ag-theme-alpine';
-    });
+        const theme = params.get('theme') || 'ag-theme-alpine';
+        setGridTheme(theme);
+    }, [])
     const [bodyClass, setBodyClass] = useState('');
     const [toolbarCollapsed, setToolbarCollapsed] = useState(false);
     const [base64Flags, setBase64Flags] = useState();
@@ -1241,6 +1239,7 @@ const Example = () => {
     }, [dataSize]);
 
     useEffect(() => {
+        if (!gridTheme) return;
         const isDark = gridTheme.indexOf('dark') >= 0;
 
         if (isDark) {
@@ -1309,7 +1308,7 @@ const Example = () => {
                         </div>
                         <div>
                             <label htmlFor="grid-theme">Theme:</label>
-                            <select id="grid-theme" onChange={onThemeChanged} value={gridTheme}>
+                            <select id="grid-theme" onChange={onThemeChanged} value={gridTheme || ""}>
                                 <option value="ag-theme-none">-none-</option>
                                 <option value="ag-theme-alpine">Alpine</option>
                                 <option value="ag-theme-alpine-dark">Alpine Dark</option>
@@ -1342,18 +1341,21 @@ const Example = () => {
                     <span>&nbsp;</span>
                 </div>
                 <section className={styles['example-wrapper__grid-wrapper']} style={{padding: "1rem", paddingTop: 0}}>
-                    <div id="myGrid" style={{flex: "1 1 auto", overflow: "hidden"}} className={gridTheme}>
-                        <AgGridReactMemo
-                            key={gridTheme}
-                            ref={gridRef}
-                            modules={modules}
-                            gridOptions={gridOptions}
-                            columnDefs={columnDefs}
-                            rowData={rowData}
-                            defaultCsvExportParams={defaultExportParams}
-                            defaultExcelExportParams={defaultExportParams}
-                        />
-                    </div>
+                    {
+                        gridTheme &&
+                        <div id="myGrid" style={{flex: "1 1 auto", overflow: "hidden"}} className={gridTheme}>
+                            <AgGridReactMemo
+                                key={gridTheme}
+                                ref={gridRef}
+                                modules={modules}
+                                gridOptions={gridOptions}
+                                columnDefs={columnDefs}
+                                rowData={rowData}
+                                defaultCsvExportParams={defaultExportParams}
+                                defaultExcelExportParams={defaultExportParams}
+                            />
+                        </div>
+                    }
                 </section>
             </div>
         </>

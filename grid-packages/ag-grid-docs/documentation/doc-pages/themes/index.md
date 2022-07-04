@@ -6,8 +6,7 @@ The grid is styled with CSS, and a theme is simply a CSS class that applies styl
 
 ## Provided Themes
 
-The grid comes with several provided themes which act as a great starting point for any application-specific customisations. Click the theme name to see a demo see the themes in action take a look at our [Demo Application](../../example)
-and try switching between the available themes.
+The grid comes with several provided themes which act as a great starting point for any application-specific customisations. Click the theme name to see a demo.
 
 | Theme Name | Description |
 |------------|-------------|

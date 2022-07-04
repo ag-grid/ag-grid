@@ -24,7 +24,7 @@ You can consult the [full list of CSS variables](/global-style-customisation-var
 
 ## Creating a Reusable Package of Design Customisations
 
-To create a reusable set of design customisations that can be shared between projects you can use a CSS class that is applied in addition to the theme you're modifying. This class ust begin with `ag-theme-`.
+To create a reusable set of design customisations that can be shared between projects you can use a CSS class that is applied in addition to the theme you're modifying. The name of this class must begin with `ag-theme-`.
 
 The grid wrapper element should specify both the class name of the theme you're modifying, and the name of the custom theme.
 
