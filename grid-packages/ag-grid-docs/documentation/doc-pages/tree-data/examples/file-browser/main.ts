@@ -89,8 +89,8 @@ function getFileCellRenderer() {
   return FileCellRenderer
 }
 
-function addNewGroup() {
-  var newGroupData = [
+function addNewWav() {
+  var newWavData = [
     {
       id: getNextId(),
       filePath: ['Music', 'wav', 'hit_' + new Date().getTime() + '.wav'],
@@ -98,7 +98,7 @@ function addNewGroup() {
       size: 58.9,
     },
   ]
-  gridOptions.api!.applyTransaction({ add: newGroupData })
+  gridOptions.api!.applyTransaction({ add: newWavData })
 }
 
 function removeSelected() {
