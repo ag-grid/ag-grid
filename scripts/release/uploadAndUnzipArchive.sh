@@ -2,8 +2,8 @@
 
 if [ "$#" -lt 2 ]
   then
-    echo "You must supply a release version and archive file"
-    echo "For example: ./scripts/release/uploadAndUnzipArchive.sh 19.1.2 archive_20181120_19.1.3.tar.gz"
+    echo "You must supply a release version"
+    echo "For example: ./scripts/release/uploadAndUnzipArchive.sh 19.1.2"
     exit 1
 fi
 
@@ -17,7 +17,6 @@ function checkFileExists {
 }
 
 VERSION=$1
-ARCHIVE=$2
 
 export CREDENTIALS_LOCATION=$HOME/$CREDENTIALS_FILE
 export SSH_LOCATION=$HOME/$SSH_FILE
@@ -40,6 +39,8 @@ then
       echo "\$SSH_LOCATION is not set"
       exit;
 fi
+
+ARCHIVE="archive_`date +%Y%m%d`_$VERSION.tar.gz"
 
 # $3 is optional skipWarning argument
 if [ "$3" != "skipWarning" ]; then
