@@ -20,7 +20,7 @@ const TypescriptTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplateP
         <head>
             <MetaData title="Typescript example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
             <ExampleStyle />
-            <TypescriptStyles library={library} importType={importType} files={isDevelopment() ? styleFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : styleFiles} />
+            <TypescriptStyles library={library} importType={importType} files={isDevelopment() ? styleFiles.filter(file => !file.includes('style.css') && !file.includes('styles.css')).map(file => getCacheBustingUrl(file, modifiedTimeMs)) : styleFiles} />
             <Extras options={options} />
         </head>
         <TypescriptBody
@@ -31,6 +31,7 @@ const TypescriptTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplateP
             scriptFiles={isDevelopment() ? scriptFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : scriptFiles}
             indexFragment={indexFragment}
             importType={importType} />
+        <Styles files={styleFiles.filter(file => file.includes('style.css') || file.includes('styles.css'))} />
     </html>;
 
 }

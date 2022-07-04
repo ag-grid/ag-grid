@@ -19,7 +19,7 @@ const VanillaTemplate = ({ isExecuting, modifiedTimeMs, library, appLocation, op
         <head>
             <MetaData title="JavaScript example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
             <ExampleStyle />
-            <VanillaStyles library={library} importType={importType} files={isDevelopment() ? styleFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : styleFiles} />
+            <VanillaStyles library={library} importType={importType} files={isDevelopment() ? styleFiles.filter(file => !file.includes('style.css') && !file.includes('styles.css')).map(file => getCacheBustingUrl(file, modifiedTimeMs)) : styleFiles} />
             <Extras options={options} />
         </head>
         <VanillaBody
@@ -28,6 +28,7 @@ const VanillaTemplate = ({ isExecuting, modifiedTimeMs, library, appLocation, op
             options={options}
             scriptFiles={isDevelopment() ? scriptFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : scriptFiles}
             indexFragment={indexFragment} />
+        <Styles files={styleFiles.filter(file => file.includes('style.css') || file.includes('styles.css'))} />
     </html>;
 
 const VanillaBody = ({ library, appLocation, options, scriptFiles, indexFragment }) => {
