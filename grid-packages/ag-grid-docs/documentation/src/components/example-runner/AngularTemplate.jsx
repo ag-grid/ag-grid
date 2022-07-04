@@ -14,7 +14,7 @@ const AngularTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath
         <head>
             <MetaData title="Angular example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
             <ExampleStyle rootId="app" />
-            {type !== "generated" && <Styles files={styleFiles} />}
+            {(type !== "generated" || library !== "grid") && <Styles files={styleFiles}/>}
             <Extras options={options} />
         </head>
         <body>
