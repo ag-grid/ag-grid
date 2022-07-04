@@ -253,7 +253,7 @@ function applySeries<
 
             debug(`applying series diff idx ${i}`, seriesDiff);
 
-            applySeriesValues(s, seriesDiff, {path: `series[${i}]`});
+            applySeriesValues(s as any, seriesDiff, {path: `series[${i}]`});
             s.markNodeDataDirty();
         });
 
