@@ -348,6 +348,15 @@
                 ]
               },
               {
+                "title": "Modules - Example",
+                "url": "/modules-building/",
+                "frameworks": [
+                  "angular",
+                  "react",
+                  "vue"
+                ]
+              },
+              {
                 "title": "Custom UMD Bundle",
                 "url": "/modules-building/",
                 "frameworks": [
