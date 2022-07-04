@@ -19,6 +19,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   suppressDragLeaveHidesColumns: true,
   suppressMakeColumnVisibleAfterUnGroup: true,
+  suppressRowGroupHidesColumns: true,
   rowGroupPanelShow: 'always',
 }
 
