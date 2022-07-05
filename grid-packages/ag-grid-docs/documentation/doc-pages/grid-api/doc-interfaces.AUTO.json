@@ -1938,13 +1938,13 @@
   "NewValueParams": {
     "oldValue": {
       "description": "/** The value before the change */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
     "newValue": {
       "description": "/** The value after the change */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any", "TValue = any"] },
+    "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "RowNode<TData> | null", "optional": false }
@@ -1978,11 +1978,11 @@
     "meta": { "typeParams": ["TData = any"] },
     "oldValue": {
       "description": "/** The value before the change */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
     "newValue": {
       "description": "/** The value after the change */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
     "node": {
       "description": "/** Row node for the given row */",
@@ -2018,11 +2018,11 @@
     "meta": { "typeParams": ["TData = any"] },
     "oldValue": {
       "description": "/** The value before the change */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
     "newValue": {
       "description": "/** The value after the change */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
     "node": {
       "description": "/** Row node for the given row */",
@@ -8182,11 +8182,11 @@
   "CellEditingStoppedEvent": {
     "oldValue": {
       "description": "/** The old value before editing */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
     "newValue": {
       "description": "/** The new value after editing */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
@@ -8227,8 +8227,8 @@
     }
   },
   "CellValueChangedEvent": {
-    "oldValue": { "type": { "returnType": "TValue", "optional": false } },
-    "newValue": { "type": { "returnType": "TValue", "optional": false } },
+    "oldValue": { "type": { "returnType": "any", "optional": false } },
+    "newValue": { "type": { "returnType": "any", "optional": false } },
     "source": {
       "type": { "returnType": "string | undefined", "optional": false }
     },
@@ -8271,8 +8271,8 @@
     }
   },
   "CellEditRequestEvent": {
-    "oldValue": { "type": { "returnType": "TValue", "optional": false } },
-    "newValue": { "type": { "returnType": "TValue", "optional": false } },
+    "oldValue": { "type": { "returnType": "any", "optional": false } },
+    "newValue": { "type": { "returnType": "any", "optional": false } },
     "source": {
       "type": { "returnType": "string | undefined", "optional": false }
     },

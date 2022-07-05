@@ -1154,10 +1154,10 @@
     }
   },
   "NewValueParams": {
-    "meta": { "typeParams": ["TData = any", "TValue = any"] },
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "oldValue": "TValue",
-      "newValue": "TValue",
+      "oldValue": "any",
+      "newValue": "any",
       "node": "RowNode<TData> | null",
       "data": "TData",
       "column": "Column",
@@ -1181,8 +1181,8 @@
   "ValueSetterParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "oldValue": "TValue",
-      "newValue": "TValue",
+      "oldValue": "any",
+      "newValue": "any",
       "node": "RowNode<TData> | null",
       "data": "TData",
       "column": "Column",
@@ -1213,8 +1213,8 @@
   "ValueParserParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "oldValue": "TValue",
-      "newValue": "TValue",
+      "oldValue": "any",
+      "newValue": "any",
       "node": "RowNode<TData> | null",
       "data": "TData",
       "column": "Column",
@@ -4622,8 +4622,8 @@
   "CellEditingStoppedEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "TValue",
-      "newValue": "TValue",
+      "oldValue": "any",
+      "newValue": "any",
       "column": "Column",
       "colDef": "ColDef<TData>",
       "value": "TValue",
@@ -4653,8 +4653,8 @@
   "CellValueChangedEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "TValue",
-      "newValue": "TValue",
+      "oldValue": "any",
+      "newValue": "any",
       "source": "string | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -4683,8 +4683,8 @@
   "CellEditRequestEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "TValue",
-      "newValue": "TValue",
+      "oldValue": "any",
+      "newValue": "any",
       "source": "string | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
