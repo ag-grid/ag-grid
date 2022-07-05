@@ -363,10 +363,15 @@ function createAxis(options: AgCartesianAxisOptions[]): ChartAxis[] {
     return axes;
 }
 
-function registerListeners<T extends { addEventListener(key: string, cb: SourceEventListener<any>): void }>(
+type ObservableLike = {
+    addEventListener(key: string, cb: SourceEventListener<any>): void;
+    clearEventListeners(): void;
+};
+function registerListeners<T extends ObservableLike>(
     source: T,
     listeners?: { [K: string]: Function }
 ) {
+    source.clearEventListeners();
     for (const property in listeners) {
         source.addEventListener(property, listeners[property] as SourceEventListener<any>);
     }
