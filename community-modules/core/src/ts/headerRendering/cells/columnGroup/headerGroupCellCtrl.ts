@@ -247,12 +247,14 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
             onDragStopped: () => allLeafColumns.forEach(col => col.setMoving(false, "uiColumnDragged")),
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
-                    this.columnModel.setColumnsVisible(dragItem?.columns || [], true, "uiColumnMoved");
+                    const unlockedColumns = dragItem?.columns?.filter(col => !col.getColDef().lockVisible) || [];
+                    this.columnModel.setColumnsVisible(unlockedColumns, true, "uiColumnMoved");
                 }
             },
             onGridExit: (dragItem) => {
                 if (hideColumnOnExit) {
-                    this.columnModel.setColumnsVisible(dragItem?.columns || [], false, "uiColumnMoved");
+                    const unlockedColumns = dragItem?.columns?.filter(col => !col.getColDef().lockVisible) || [];
+                    this.columnModel.setColumnsVisible(unlockedColumns, false, "uiColumnMoved");
                 }
             },
         };
