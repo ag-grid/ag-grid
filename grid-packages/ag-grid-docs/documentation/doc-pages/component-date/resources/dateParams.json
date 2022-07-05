@@ -4,7 +4,14 @@
         "filterParams": {
             "interfaceHierarchyOverrides": {
                 "exclude": [
-                    "IRowModel"
+                    "IRowModel",
+                    "IDateComparatorFunc",
+                    "IFilterOptionDef",
+                    "ISimpleFilterModelType",
+                    "JoinOperator",
+                    "FilterButtonType",
+                    "ValueGetterFunc",
+                    "ValueGetterParams"
                 ],
                 "include": []
             }
