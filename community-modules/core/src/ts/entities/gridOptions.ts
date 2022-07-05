@@ -673,11 +673,13 @@ export interface GridOptions<TData = any> {
     serverSideSortAllLevels?: boolean;
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */
     serverSideFilterAllLevels?: boolean;
-    /** When enabled, the grid will always request the server to provide the sort results.
+    /**
+     * (Without Infinite Scroll Only) When enabled, the grid will always request the server to provide the sort results.
      * Default: `false`
      */
     serverSideSortOnServer?: boolean;
-    /** When enabled, the grid will always request the server to provide the filter results.
+    /**
+     * (Without Infinite Scroll Only) When enabled, the grid will always request the server to provide the filter results.
      * Default: `false`
      */
     serverSideFilterOnServer?: boolean;
