@@ -3371,6 +3371,8 @@ Object {
         "color": undefined,
         "width": 1,
       },
+      "paddingInner": 0.2,
+      "paddingOuter": 0.3,
       "position": "bottom",
       "thickness": 0,
       "tick": Object {
@@ -3406,6 +3408,8 @@ Object {
         "color": undefined,
         "width": 1,
       },
+      "paddingInner": 0.2,
+      "paddingOuter": 0.3,
       "position": "left",
       "thickness": 0,
       "tick": Object {
