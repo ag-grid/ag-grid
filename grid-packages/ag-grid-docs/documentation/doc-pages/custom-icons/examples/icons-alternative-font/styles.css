@@ -48,6 +48,11 @@
     --ag-icon-font-code-checkbox-unchecked: "\f00d";
 }
 
+.ag-theme-alpine .ag-icon {
+    /* Font Awesome requires bold */
+    font-weight: bold;
+}
+
 /* selectively replace the group and aggregation icons with Material Design Icons */
 
 .ag-theme-alpine .ag-icon-group {
