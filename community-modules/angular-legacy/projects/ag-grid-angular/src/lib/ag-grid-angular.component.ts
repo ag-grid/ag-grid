@@ -762,10 +762,12 @@ Full Store is used.
     @Input() public serverSideSortAllLevels: boolean | undefined = undefined;
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
     @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
-    /** When enabled, the grid will always request the server to provide the sort results.
+    /** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
+     * as Sorting is always server side when Infinite Scroll is active.
      * Default: `false`     */
     @Input() public serverSideSortOnServer: boolean | undefined = undefined;
-    /** When enabled, the grid will always request the server to provide the filter results.
+    /** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
+     * as Filtering is always server side when Infinite Scroll is active.
      * Default: `false`     */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
     /** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.
