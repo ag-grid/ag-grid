@@ -3164,6 +3164,7 @@
   "ChartOptionType": { "meta": { "typeParams": ["T extends ChartType"] } },
   "SeriesOptionType": {},
   "AxisOptionType": { "meta": { "typeParams": ["T extends Axis<any, any>"] } },
+  "ObservableLike": {},
   "ChartClickEvent": {
     "event": { "type": { "returnType": "MouseEvent", "optional": false } },
     "source": { "type": { "returnType": "Chart", "optional": false } },
