@@ -20,7 +20,7 @@ export class AreaChartProxy extends CartesianChartProxy {
 
     public getAxes(): AgCartesianAxisOptions[] {
         const axisOptions = this.getAxesOptions();
-        const options = [
+        return [
             {
                 ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
                 type: this.xAxisType,
@@ -32,8 +32,6 @@ export class AreaChartProxy extends CartesianChartProxy {
                 position: ChartAxisPosition.Left
             },
         ];
-
-        return options;
     }
 
     public getSeries(params: UpdateChartParams) {

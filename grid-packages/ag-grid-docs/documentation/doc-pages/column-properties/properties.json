@@ -73,10 +73,7 @@
     "charts": {
         "meta": {
             "displayName": "Columns: Integrated Charts",
-            "page": {
-                "name": "Integrated Charts",
-                "url": "/integrated-charts/"
-            }
+            "description": "(Enterprise only) See [Integrated Charts](/integrated-charts/)"
         },
         "chartDataType": {}
     },
