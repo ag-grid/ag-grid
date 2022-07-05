@@ -4,10 +4,10 @@ title: "Provided Cell Editors"
 
 The grid comes with some cell editors provided out of the box. These cell editors are listed here.
 
-- Text Cell Editor
-- Large Text Cell Editor
-- Select Cell Editor
-- Rich Select Cell Editor (AG Grid Enterprise Only)
+- [Text Cell Editor](/provided-cell-editors/#text-cell-editor)
+- [Large Text Cell Editor](/provided-cell-editors/#large-text-cell-editor)
+- [Select Cell Editor](/provided-cell-editors/#select-cell-editor)
+- [Rich Select Cell Editor](/provided-cell-editors/#rich-select-cell-editor) (AG Grid Enterprise Only)
 
 <grid-example title='Editors' name='editors' type='generated' options='{ "enterprise": true, "modules": ["clientside","richselect"] }'></grid-example>
 
@@ -18,12 +18,13 @@ Simple text editor that uses the standard HTML `input`. This editor is the defau
 Specified with `agTextCellEditor`.
 
 Takes the following parameters:
-- `useFormatter`: If `true`, the editor will use the provided `colDef.cellFormatter` to format the value displayed in the editor.
+- `useFormatter`: If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.
 
 ```js
 columnDefs: [
     {
         cellEditor: 'agTextCellEditor',
+        valueFormatter: (params) => '£' + params.value,
         cellEditorParams: {
             useFormatter: true
         }
