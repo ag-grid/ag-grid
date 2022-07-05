@@ -35,7 +35,10 @@ In order to upgrade, you need to:
 .ag-theme-alpine {
   @include ag-theme-alpine((
     alpine-active-color: red
-  ))
+  ));
+  .ag-header-cell {
+    font-style: italic;
+  }
 }
 
 // NOTE: Depending on how you have configured your Sass build the import paths may be
@@ -53,6 +56,12 @@ In order to upgrade, you need to:
   // ^^^ Pass the same parameters. The new API validates parameters so you will be
   //     notified if any of the names or values you pass are not valid for the new API
 ));
+.ag-theme-alpine {
+  .ag-header-cell {
+    font-style: italic;
+  }
+}
+// ^^^ put any custom CSS rules below the grid-styles mixin, wrapped in the theme class
 ```
 
 In the above example the Alpine theme is modified but not renamed. If you have renamed the theme, use the new `extend-theme` parameter:
@@ -62,15 +71,24 @@ In the above example the Alpine theme is modified but not renamed. If you have r
 .ag-theme-custom-name {
   @include ag-theme-alpine((
     alpine-active-color: red
-  ))
+  ));
+  .ag-header-cell {
+    font-style: italic;
+  }
 }
 
-// Renaming Alpine ag-theme-custom-name in the new API
+// Renaming Alpine to ag-theme-custom-name in the new API
 @include ag.grid-styles((
   theme: custom-name,
   extend-theme: alpine,
   alpine-active-color: red,
 ));
+.ag-theme-custom-name {
+  .ag-header-cell {
+    font-style: italic;
+  }
+}
+// ^^^ put any custom CSS rules below the grid-styles mixin, wrapped in the theme class
 ```
 
 ### Breaking changes

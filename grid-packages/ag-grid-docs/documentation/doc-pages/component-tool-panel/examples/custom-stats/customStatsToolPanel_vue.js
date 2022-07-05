@@ -21,6 +21,9 @@ export default {
     },
     methods: {
         renderStats() {
+            this.numGold = 0;
+            this.numSilver = 0;
+            this.numBronze = 0;
             this.params.api.forEachNode((rowNode) => {
                 const data = rowNode.data;
                 if (data.gold) this.numGold += data.gold;
