@@ -1,5 +1,4 @@
 import { CellValueChangedEvent, ColDef, Grid, GridOptions, ValueGetterParams, ValueSetterParams } from '@ag-grid-community/core';
-import { param } from 'jquery';
 import { getData } from "./data";
 
 
