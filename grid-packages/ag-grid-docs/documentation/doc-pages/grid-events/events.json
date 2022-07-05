@@ -98,7 +98,7 @@
         "rowValueChanged": {
             "more": {
                 "name": "Full Row Editing",
-                "url": "/cell-editing/#full-row-editing"
+                "url": "/cell-editing-full-row/"
             }
         },
         "cellEditingStarted": {},
@@ -106,13 +106,13 @@
         "rowEditingStarted": {
             "more": {
                 "name": "Full Row Editing",
-                "url": "/cell-editing/#full-row-editing"
+                "url": "/cell-editing-full-row/"
             }
         },
         "rowEditingStopped": {
             "more": {
                 "name": "Full Row Editing",
-                "url": "/cell-editing/#full-row-editing"
+                "url": "/cell-editing-full-row/"
             }
         }
     },

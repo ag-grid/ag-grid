@@ -14,9 +14,9 @@ The Sass API provides a few benefits on top of the CSS API:
 
 First, set up your project to compile Sass (.scss) files. We provide examples for the major frameworks:
 
- - Vanilla JS and React: use the [Sass CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/vanilla) or [Webpack and sass-loader](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/vanilla-webpack)
- - Angular: see our [Angular CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/angular) example
- - Vue: see our [Vue CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/vue) example
+ - Vanilla JS and React: use the [Sass CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla) or [Webpack and sass-loader](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-webpack)
+ - Angular: see our [Angular CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/angular) example
+ - Vue: see our [Vue CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vue) example
 
 Next, create import the Sass API in your .scss file:
 

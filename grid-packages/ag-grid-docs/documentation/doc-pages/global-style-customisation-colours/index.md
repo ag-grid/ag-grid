@@ -17,7 +17,7 @@ The grid exposes many CSS `--ag-*-color` variables that affect the colour of ele
     --ag-odd-row-background-color: rgb(0, 0, 0, 0.03);
     --ag-header-column-resize-handle-color: rgb(126, 46, 132);
 
-    --ag-font-size: 15px;
+    --ag-font-size: 17px;
     --ag-font-family: monospace;
 }
 ```

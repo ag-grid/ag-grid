@@ -14,7 +14,7 @@ const ReactTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, 
         <head>
             <MetaData title="React example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
             <ExampleStyle rootId="root" />
-            {type === "mixed" && <Styles files={styleFiles} />}
+            {(type !== "generated" || library !== "grid") && <Styles files={styleFiles}/>}
             <Extras options={options} />
         </head>
         <body>

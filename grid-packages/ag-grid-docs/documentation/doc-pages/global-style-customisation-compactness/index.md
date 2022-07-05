@@ -2,7 +2,7 @@
 title: "Customising Compactness & Row Height"
 ---
 
-Add more white space or pack more data into a the UI.
+Add more white space or pack more data into the UI.
 
 - `--ag-grid-size` is the main control for affecting how tightly data and UI elements are packed together. It should be a value in pixels. All padding and spacing in the grid is defined as a multiple of grid-size, so increasing it will make most components larger by increasing their internal white space while leaving the size of text and icons unchanged.
 - `--ag-row-height` sets the height of a grid row. It often needs fine-tuning when the `--ag-grid-size` is changed.

@@ -14,7 +14,7 @@ const VueTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, ap
         <head>
             <MetaData title="Vue example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
             <ExampleStyle rootId="app" />
-            {type === "mixed" && <Styles files={styleFiles} />}
+            {(type !== "generated" || library !== "grid") && <Styles files={styleFiles}/>}
             <Extras options={options} />
         </head>
         <body>
