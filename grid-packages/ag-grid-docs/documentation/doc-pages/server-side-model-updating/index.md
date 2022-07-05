@@ -3,21 +3,21 @@ title: "SSRM Updating Data"
 enterprise: true
 ---
 
-It is possible to manage data updates using the Server-Side Row Model (SSRM). The different options for updating dare as follows:
+It is possible to manage data updates using the Server-Side Row Model (SSRM). The different options for updating are as follows:
 
 - [Single Row](#single-row-updates) - Update Attributes of a Single Row.
 - [Transactions](/server-side-model-transactions/) - Add, remove and update rows in the grid.
 - [High Frequency](/server-side-model-high-frequency/) - Apply transactions at high speed.
 
-If using [Infinite Scroll](/server-side-model-row-stores/) (`serverSideInfiniteScroll=true`) then [Transactions](/server-side-model-transactions/) and [High Frequency](/server-side-model-high-frequency/) updates are not permitted. The only availalbe when using Infinite Scroll is [Single Row](#single-row-updates).
+If using [Infinite Scroll](/server-side-model-row-stores/) (`serverSideInfiniteScroll=true`) then [Transactions](/server-side-model-transactions/) and [High Frequency](/server-side-model-high-frequency/) updates are not permitted. The only available option for updating data when using Infinite Scroll is [Single Row Updates](#single-row-updates).
 
 [[note]]
-| The reason inserts and removes are not allowed is that doing inserts or removes would impact the block
-| boundaries. For example suppose a block of 100 rows is read back from the server, and you try to insert 10
+| The reason row inserts and removes are not allowed is that they impact the block boundaries. For example
+| suppose a block of 100 rows is received from the server, and you try to insert 10
 | rows into the middle of the block - this would result in 10 rows falling off the end of the block as they
 | get pushed out. Similarly, if rows were removed, rows would be missing from the end of the block.
 | 
-| If you do need to insert or remove rows while using Infinite Scroll, then the update needs to be done on the server and then have the grid refresh. The example [Update & Refresh](#update--refresh) below demonstrates this.
+| If you do need to insert or remove rows while using Infinite Scroll, then the update needs to be done on the server and then the grid should be refreshed. The example [Update & Refresh](#update--refresh) below demonstrates this.
 
 If not using Infinite Scroll (`serverSideInfiniteScroll=false`), there are no restrictions, you can use any of the provided ways described here.
 
