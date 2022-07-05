@@ -29,7 +29,7 @@ For more details on filtering configurations see the section on [Column Filterin
 
 ## Client-side Filtering
 
-When Infinite Scroll is not active, the grid has all the rows needed to filter on the client. As such, the SSRM will filter on the client-side when Infinite Scroll is not active.
+When Infinite Scroll is not active, the grid has all the rows needed to filter on the client. As such, the SSRM will filter on the client-side.
 
 The example below demonstrates Client-side Filtering with no Infinite Scroll. Note the following:
 

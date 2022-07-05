@@ -25,7 +25,7 @@ For more details on sorting configurations see the section on [Row Sorting](/row
 
 ## Client-side Sorting
 
-When [Infinite Scroll](/server-side-model-row-stores/) is not active, the grid has all the rows needed to sort on the client. As such, the SSRM will sort on the client-side when Infinite Scroll is not active.
+When [Infinite Scroll](/server-side-model-row-stores/) is not active, the grid has all the rows needed to sort on the client. As such, the SSRM will sort on the client-side.
 
 The example below demonstrates Client-side Sorting with no Infinite Scroll. Note the following:
 
@@ -72,15 +72,6 @@ As previously mentioned, when not using Infinite Scroll, the grid will sort on t
 - Rows are loaded every time the sort order changes.
 
 <grid-example title='No Infinite Scroll Server-side Sorting' name='full-sort-server-side' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
-
-[[note]]
-| **Fake Server Implementation**
-|
-| Most of the Server-Side Row Model examples include a fake server that generates SQL to imitate how a real server
-| might use the requests sent from the grid. These examples use [AlaSQL](http://alasql.org/) which is a
-| JavaScript SQL database that works in browsers.
-|
-| However, note that the Server-Side Row Model does not impose any restrictions on the server-side technologies used.
 
 ## Client-side Row Group Sorting
 
