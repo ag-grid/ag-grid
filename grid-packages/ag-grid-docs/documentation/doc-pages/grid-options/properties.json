@@ -1173,7 +1173,7 @@
                 "url": "/range-selection-fill-handle/"
             }
         },
-        "fillHandleDirection": {        },
+        "fillHandleDirection": {},
         "fillOperation": {},
         "suppressClearOnFillReduction": {}
     },
