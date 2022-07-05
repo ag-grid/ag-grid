@@ -18,7 +18,7 @@ First, set up your project to compile Sass (.scss) files. We provide examples fo
  - Angular: see our [Angular CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/angular) example
  - Vue: see our [Vue CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vue) example
 
-Next, create import the Sass API in your .scss file:
+Next, import the Sass API in your .scss file:
 
 ```scss
 @use "ag-grid-community/styles" as ag;
@@ -32,7 +32,7 @@ The above import path assumes that `node_modules` is added to the Sass load path
 
 ## Simple example
 
-To emit all the styles you need for an ag-Grid application, include the `grid-styles` mixin:
+To emit all the styles you need for an AG Grid application, include the `grid-styles` mixin:
 
 ```scss
 @use "ag-grid-community/styles" as ag;
@@ -88,7 +88,7 @@ The Sass API provides a little bit of sugar to make it easier to read and rememb
 
 ## Adding your own CSS rules
 
-When there is not a variable that achieves the effect you want, add custom CSS rules below the `grid-styles` mixin:
+When you cannot achieve the effect you want with variables, add custom CSS rules below the `grid-styles` mixin:
 
 ```scss
 @use "ag-grid-community/styles" as ag;
