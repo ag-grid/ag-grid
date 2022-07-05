@@ -4,6 +4,8 @@ title: "Parsing Values"
 
 After editing cells in the grid you have the opportunity to parse the value before inserting it into your data. This is done using Value Parsers.
 
+## Value Parser
+
 For example suppose you are editing a number using the default editor. The result will be a String, however you will probably want to store the result as a number. Use a Value Parser to convert the String to a Number.
 
 <snippet spaceBetweenProperties="true">
