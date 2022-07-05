@@ -282,7 +282,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
         switch (this.isItemIdHighlighted(datum)) {
             case 'highlighted':
-                return defaultZIndex + 1;
+                return Series.SERIES_HIGHLIGHT_LAYER_ZINDEX - 1;
             case 'no-highlight':
             case 'other-highlighted':
                 return defaultZIndex;
