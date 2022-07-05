@@ -58,15 +58,57 @@ the following:
 
 Read Only Edit is a mode in the grid whereby Cell Editing will not update the data inside the grid. Instead the grid fires `cellEditRequest` events allowing the application to process the update request. To enable this mode, set the grid property `readOnlyEdit=true`.
 
-<snippet>
-const gridOptions = {
-    readOnlyEdit: true,
-    onCellEditRequest: event => {
-        console.log('Cell Editing updated a cell, but the grid did nothing!');
-        // the application should update the data somehow
-    }
-}
-</snippet>
+[[only-javascript]]
+|```ts
+|const gridOptions = {
+|    readOnlyEdit: true,
+|    onCellEditRequest: event => {
+|        console.log('Cell Editing updated a cell, but the grid did nothing!');
+|        // the application should update the data somehow
+|    }
+|}
+|```
+
+[[only-angular]]
+|```ts
+|<ag-grid-angular
+|    [readOnlyEdit]="true"
+|    (cellEditRequest)="onCellEditRequest($event)"
+|    /* other grid options ... */>
+|</ag-grid-angular>
+|
+|this.onCellEditRequest = event => {
+|    console.log('Cell Editing updated a cell, but the grid did nothing!');
+|    // the application should update the data somehow
+|};
+|```
+
+
+[[only-react]]
+|```jsx
+|const readOnlyEdit = true;
+|const onCellEditRequest = event => {
+|    console.log('Cell Editing updated a cell, but the grid did nothing!');
+|    // the application should update the data somehow
+|};
+|
+|<AgGridReact readOnlyEdit={readOnlyEdit} onCellEditRequest={onCellEditRequest}></AgGridReact>
+|```
+
+
+[[only-vue]]
+|```ts
+|<ag-grid-vue
+|    :readOnlyEdit="true"
+|    @cell-edit-request="onCellEditRequest"
+|    /* other grid options ... */>
+|</ag-grid-vue>
+|
+|this.onCellEditRequest = event => {
+|    console.log('Cell Editing updated a cell, but the grid did nothing!');
+|    // the application should update the data somehow
+|};
+|```
 
 The example has Cell Editing enabled, however the editing does nothing because `readOnlyEdit=true` is set. The application listens for `cellEditRequest` event and prints to the console. Because the application does not try to update the data, the cell keeps its old value, giving the impression that editing is not working.
 
