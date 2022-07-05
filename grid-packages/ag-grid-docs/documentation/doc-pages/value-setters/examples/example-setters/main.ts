@@ -1,4 +1,5 @@
 import { CellValueChangedEvent, ColDef, Grid, GridOptions, ValueGetterParams, ValueSetterParams } from '@ag-grid-community/core';
+import { param } from 'jquery';
 import { getData } from "./data";
 
 
@@ -55,11 +56,16 @@ const columnDefs: ColDef[] = [
             }
         },
         valueSetter: (params: ValueSetterParams) => {
+            var newValInt = parseInt(params.newValue)
             if (!params.data.c) {
-                params.data.c = {}
+                params.data.c = {};
             }
-            params.data.c.x = params.newValue
-            return true
+
+            var valueChanged = params.data.c.x !== newValInt
+            if (valueChanged) {
+                params.data.c.x = newValInt
+            }
+            return valueChanged
         },
     },
     {
@@ -72,11 +78,16 @@ const columnDefs: ColDef[] = [
             }
         },
         valueSetter: (params: ValueSetterParams) => {
+            var newValInt = parseInt(params.newValue)
             if (!params.data.c) {
-                params.data.c = {}
+                params.data.c = {};
             }
-            params.data.c.y = params.newValue
-            return true
+
+            var valueChanged = params.data.c.y !== newValInt
+            if (valueChanged) {
+                params.data.c.y = newValInt
+            }
+            return valueChanged
         },
     },
 ]
