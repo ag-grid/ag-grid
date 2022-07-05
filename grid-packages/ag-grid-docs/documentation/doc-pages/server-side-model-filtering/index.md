@@ -191,7 +191,7 @@ The example below demonstrates this functionality. Note the following:
 - Open the Sport column filter and enter "ing" in the input. Note the grid reloads the data from the server as Sport is a grouped column
 - Expand the Swimming row group
 - Open the Athlete column filter and enter "Phelps" in the input. Note the grid is filtered without reloading data from the server
-- Expand the Speed Skating row group. Note it is empty because its child rows were not loaded prior to filtering
+- Expand the Speed Skating row group. Note it is empty because it has no child nodes matching the filters.
 
 
 <grid-example title='Server-side Group Filtering' name='group-filter-server-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
