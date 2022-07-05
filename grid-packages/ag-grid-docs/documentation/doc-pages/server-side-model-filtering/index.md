@@ -7,7 +7,7 @@ This section covers Filtering using the Server-Side Row Model (SSRM).
 
 ## Enabling Filtering
 
-Filtering is enabled in the grid via the `filter` column definition attribute. Some example column definitions with filtering enabled are shown below:
+Filtering is enabled in the grid via the `filter` column definition attribute.
 
 <snippet>
 |const gridOptions = {

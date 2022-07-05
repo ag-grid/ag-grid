@@ -7,8 +7,7 @@ This section covers Server-Side Sorting using the Server-Side Row Model.
 
 ## Enabling Sorting
 
-Sorting is enabled in the grid via the `sortable` column definition attribute. Some example column definitions
-with sorting enabled are shown below:
+Sorting is enabled in the grid via the `sortable` column definition attribute.
 
 
 <snippet>
