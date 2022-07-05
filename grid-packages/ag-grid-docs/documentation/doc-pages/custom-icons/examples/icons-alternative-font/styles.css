@@ -48,13 +48,15 @@
     --ag-icon-font-code-checkbox-unchecked: "\f00d";
 }
 
-.ag-theme-alpine .ag-icon {
-    /* Font Awesome requires bold */
+.ag-theme-alpine .ag-icon,
+.ag-theme-alpine .ag-checkbox-input-wrapper,
+.ag-theme-alpine .ag-radio-button-input-wrapper,
+.ag-theme-alpine .ag-group-title::after, .ag-theme-alpine .ag-icon {
+    /* Font Awesome requires bold on all icon elements */
     font-weight: bold;
 }
 
 /* selectively replace the group and aggregation icons with Material Design Icons */
-
 .ag-theme-alpine .ag-icon-group {
     --ag-icon-font-family: "Material Design Icons";
     --ag-icon-font-code-group: "\F0328";
