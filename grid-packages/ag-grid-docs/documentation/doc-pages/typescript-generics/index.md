@@ -1,5 +1,5 @@
 ---
-title: "Using Typescript Generics"
+title: "Typescript Generics"
 ---
 
 AG Grid supports Typescript [Generics](https://www.typescriptlang.org/docs/handbook/2/generics.html) for row data and cell values. This leads to greatly improved developer experience via code completion and compile time validation of row data and cell value properties.
