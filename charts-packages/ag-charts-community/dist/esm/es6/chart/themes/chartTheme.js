@@ -276,7 +276,7 @@ ChartTheme.cartesianDefaults = Object.assign(Object.assign({}, ChartTheme.getCha
     }, series: {
         column: Object.assign(Object.assign({}, ChartTheme.getBarSeriesDefaults()), { flipXY: false }),
         bar: Object.assign(Object.assign({}, ChartTheme.getBarSeriesDefaults()), { flipXY: true }),
-        line: Object.assign(Object.assign({}, ChartTheme.getLineSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, marker: Object.assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), label: {
+        line: Object.assign(Object.assign({}, ChartTheme.getLineSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, marker: Object.assign(Object.assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1 }), label: {
                 enabled: false,
                 fontStyle: undefined,
                 fontWeight: undefined,
@@ -285,7 +285,7 @@ ChartTheme.cartesianDefaults = Object.assign(Object.assign({}, ChartTheme.getCha
                 color: 'rgb(70, 70, 70)',
                 formatter: undefined
             } }),
-        scatter: Object.assign(Object.assign({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', marker: Object.assign(Object.assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1 }), label: {
+        scatter: Object.assign(Object.assign({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, marker: Object.assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), label: {
                 enabled: false,
                 fontStyle: undefined,
                 fontWeight: undefined,
@@ -299,7 +299,7 @@ ChartTheme.cartesianDefaults = Object.assign(Object.assign({}, ChartTheme.getCha
                 xOffset: 3,
                 yOffset: 3,
                 blur: 5
-            }, marker: Object.assign(Object.assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { enabled: false }), label: {
+            }, marker: Object.assign(Object.assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1, enabled: false }), label: {
                 enabled: false,
                 fontStyle: undefined,
                 fontWeight: undefined,

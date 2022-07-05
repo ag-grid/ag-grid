@@ -60,11 +60,7 @@
 }
 
 // Use a parameter in SCSS, e.g. `color: ag-param(foreground-color)`
-// Note, it is not possible to use this for color params, use the ag-color-property mixin instead
-@function ag-param($name, $caller: null) {
-    @if $-ag-allow-color-param-access-with-ag-param != true and str-index($name, "-color") and $caller != "permitted internal _ag-theme-params.scss access" {
-        @error "Illegal call to ag-param(#{$name}) - all colour params must be accessed through the ag-color-property mixin.";
-    }
+@function ag-param($name) {
     $resolved: -ag-param-unchecked($name);
     @if str-index(inspect($resolved), "ag-derived(") != null {
         @error "#{$name} param contains a ag-derived() as a CSS function call expression. This means that you have tried to use ag-derived() before the function is defined - you need to include the file that defines it.";
@@ -106,7 +102,7 @@
 //
 // The optional $important argument can be used to add a CSS !important directive
 @mixin ag-color-property($property, $param, $important: false) {
-    $value: ag-param($param, $caller: "permitted internal _ag-theme-params.scss access");
+    $value: ag-param($param);
     $important: if($important, !important, null);
 
     @if $value != null {
@@ -172,7 +168,7 @@ $-ag-params: null !default;
     @if -is-ag-derived($value) {
         $has-modificatons: length($value) > 2;
         @if $has-modificatons {
-            $value: ag-param($name, $caller: "permitted internal _ag-theme-params.scss access");
+            $value: ag-param($name);
         }
         @else {
             $reference-name: map-get($value, "reference-name");

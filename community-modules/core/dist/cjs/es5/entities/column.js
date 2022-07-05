@@ -205,7 +205,7 @@ var Column = /** @class */ (function () {
             });
         }
         if (!moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.RichSelectModule)) {
-            if (this.colDef.cellEditor === 'agRichSelect') {
+            if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
                 if (moduleRegistry_1.ModuleRegistry.isPackageBased()) {
                     warnOnce("AG Grid: " + this.colDef.cellEditor + " can only be used with ag-grid-enterprise", 'ColumnRichSelectMissing');
                 }

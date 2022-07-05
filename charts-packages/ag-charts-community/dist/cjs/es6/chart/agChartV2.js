@@ -167,7 +167,7 @@ function applySeries(chart, options) {
                 return;
             }
             debug(`applying series diff idx ${i}`, seriesDiff);
-            json_1.jsonApply(s, seriesDiff);
+            applySeriesValues(s, seriesDiff, { path: `series[${i}]` });
             s.markNodeDataDirty();
         });
         return;
@@ -200,46 +200,37 @@ function applyAxes(chart, options) {
 }
 function createSeries(options) {
     const series = [];
-    const skip = ['listeners'];
     let index = 0;
     for (const seriesOptions of options || []) {
         const path = `series[${index++}]`;
         switch (seriesOptions.type) {
             case 'area':
-                series.push(applySeriesValues(new areaSeries_1.AreaSeries(), seriesOptions, { path, skip }));
+                series.push(applySeriesValues(new areaSeries_1.AreaSeries(), seriesOptions, { path }));
                 break;
             case 'bar':
             // fall-through - bar and column are synonyms.
             case 'column':
-                series.push(applySeriesValues(new barSeries_1.BarSeries(), seriesOptions, { path, skip }));
+                series.push(applySeriesValues(new barSeries_1.BarSeries(), seriesOptions, { path }));
                 break;
             case 'histogram':
-                series.push(applySeriesValues(new histogramSeries_1.HistogramSeries(), seriesOptions, { path, skip }));
+                series.push(applySeriesValues(new histogramSeries_1.HistogramSeries(), seriesOptions, { path }));
                 break;
             case 'line':
-                series.push(applySeriesValues(new lineSeries_1.LineSeries(), seriesOptions, { path, skip }));
+                series.push(applySeriesValues(new lineSeries_1.LineSeries(), seriesOptions, { path }));
                 break;
             case 'scatter':
-                series.push(applySeriesValues(new scatterSeries_1.ScatterSeries(), seriesOptions, { path, skip }));
+                series.push(applySeriesValues(new scatterSeries_1.ScatterSeries(), seriesOptions, { path }));
                 break;
             case 'pie':
-                series.push(applySeriesValues(new pieSeries_1.PieSeries(), seriesOptions, { path, skip }));
+                series.push(applySeriesValues(new pieSeries_1.PieSeries(), seriesOptions, { path }));
                 break;
             case 'treemap':
-                series.push(applySeriesValues(new treemapSeries_1.TreemapSeries(), seriesOptions, { path, skip }));
+                series.push(applySeriesValues(new treemapSeries_1.TreemapSeries(), seriesOptions, { path }));
                 break;
             default:
                 throw new Error('AG Charts - unknown series type: ' + seriesOptions.type);
         }
     }
-    series.forEach((next, index) => {
-        var _a, _b;
-        const listeners = (_b = (_a = options) === null || _a === void 0 ? void 0 : _a[index]) === null || _b === void 0 ? void 0 : _b.listeners;
-        if (listeners == null) {
-            return;
-        }
-        registerListeners(next, listeners);
-    });
     return series;
 }
 function createAxis(options) {
@@ -270,6 +261,7 @@ function createAxis(options) {
     return axes;
 }
 function registerListeners(source, listeners) {
+    source.clearEventListeners();
     for (const property in listeners) {
         source.addEventListener(property, listeners[property]);
     }
@@ -289,14 +281,20 @@ function applyOptionValues(target, options, { skip, path } = {}) {
     const applyOpts = Object.assign(Object.assign(Object.assign({}, JSON_APPLY_OPTIONS), { skip: ['type', ...(skip || [])] }), (path ? { path } : {}));
     return json_1.jsonApply(target, options, applyOpts);
 }
-function applySeriesValues(target, options, { skip, path } = {}) {
-    var _a;
+function applySeriesValues(target, options, { path } = {}) {
+    var _a, _b;
+    const skip = ['listeners'];
     const ctrs = ((_a = JSON_APPLY_OPTIONS) === null || _a === void 0 ? void 0 : _a.constructors) || {};
     const seriesTypeOverrides = {
         constructors: Object.assign(Object.assign({}, ctrs), { 'title': target.type === 'pie' ? pieSeries_1.PieTitle : ctrs['title'] }),
     };
     const applyOpts = Object.assign(Object.assign(Object.assign(Object.assign({}, JSON_APPLY_OPTIONS), seriesTypeOverrides), { skip: ['type', ...(skip || [])] }), (path ? { path } : {}));
-    return json_1.jsonApply(target, options, applyOpts);
+    const result = json_1.jsonApply(target, options, applyOpts);
+    const listeners = (_b = options) === null || _b === void 0 ? void 0 : _b.listeners;
+    if (listeners != null) {
+        registerListeners(target, listeners);
+    }
+    return result;
 }
 function applyAxisValues(target, options, { skip, path } = {}) {
     const applyOpts = Object.assign(Object.assign(Object.assign({}, JSON_APPLY_OPTIONS), { skip: ['type', ...(skip || [])] }), (path ? { path } : {}));

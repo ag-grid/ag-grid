@@ -581,10 +581,16 @@ export class CellCtrl extends BeanStub {
         this.cellComp.addOrRemoveCssClass(animationFullName, false);
         // then once that is applied, we remove the highlight with animation
         window.setTimeout(() => {
+            if (!this.isAlive()) {
+                return;
+            }
             this.cellComp.addOrRemoveCssClass(fullName, false);
             this.cellComp.addOrRemoveCssClass(animationFullName, true);
             this.eGui.style.transition = `background-color ${fadeDelay}ms`;
             window.setTimeout(() => {
+                if (!this.isAlive()) {
+                    return;
+                }
                 // and then to leave things as we got them, we remove the animation
                 this.cellComp.addOrRemoveCssClass(animationFullName, false);
                 this.eGui.style.transition = '';

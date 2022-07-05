@@ -542,6 +542,14 @@ class AreaSeries extends cartesianSeries_1.CartesianSeries {
             }
         });
     }
+    getZIndex(datum) {
+        const defaultZIndex = super.getZIndex(datum);
+        if (this._yKeys.length > 1) {
+            // Stacked case - need special handling so that markers don't end-up overlapped.
+            return defaultZIndex - 10;
+        }
+        return defaultZIndex;
+    }
     fireNodeClickEvent(event, datum) {
         this.fireEvent({
             type: 'nodeClick',

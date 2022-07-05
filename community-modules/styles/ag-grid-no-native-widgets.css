@@ -253,7 +253,7 @@
   --ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1);
   --ag-header-cell-hover-background-color: transparent;
   --ag-header-cell-moving-background-color: var(--ag-header-cell-hover-background-color);
-  --ag-value-change-value-highlight-background-color: rgba(22, 160, 133, 0.1);
+  --ag-value-change-value-highlight-background-color: rgba(22, 160, 133, 0.5);
   --ag-value-change-delta-up-color: #43a047;
   --ag-value-change-delta-down-color: #e53935;
   --ag-chip-background-color: transparent;
@@ -5997,6 +5997,17 @@ input[class^=ag-][type=button]:focus, button[class^=ag-]:focus {
   border-left: var(--ag-borders-critical) var(--ag-border-color);
 }
 
+.ag-row-selected::before {
+  content: "";
+  background-color: var(--ag-selected-row-background-color);
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
 .ag-row-hover:not(.ag-full-width-row)::before,
 .ag-row-hover.ag-full-width-row.ag-row-group::before {
   content: "";
@@ -6161,17 +6172,6 @@ input[class^=ag-][type=button]:focus, button[class^=ag-]:focus {
 
 .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell) {
   border-right: var(--ag-borders-critical) var(--ag-border-color);
-}
-
-.ag-row-selected::before {
-  content: "";
-  background-color: var(--ag-selected-row-background-color);
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
 }
 
 .ag-cell-range-selected:not(.ag-cell-focus),

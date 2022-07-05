@@ -134,7 +134,7 @@ class CartesianSeries extends series_1.Series {
                 new group_1.Group({
                     name: `${this.id}-series-sub${this.subGroupId++}-markers`,
                     layer: true,
-                    zIndex: series_1.Series.SERIES_MARKER_LAYER_ZINDEX,
+                    zIndex: series_1.Series.SERIES_LAYER_ZINDEX,
                 }) :
                 undefined;
             const pickGroup = new group_1.Group();
@@ -185,7 +185,7 @@ class CartesianSeries extends series_1.Series {
             group.visible = visible && (_a = seriesItemEnabled.get(itemId), (_a !== null && _a !== void 0 ? _a : true));
             if (markerGroup) {
                 markerGroup.opacity = group.opacity;
-                markerGroup.zIndex = group.zIndex + (series_1.Series.SERIES_MARKER_LAYER_ZINDEX - series_1.Series.SERIES_LAYER_ZINDEX);
+                markerGroup.zIndex = group.zIndex >= series_1.Series.SERIES_LAYER_ZINDEX ? group.zIndex : group.zIndex + 1;
                 markerGroup.visible = group.visible;
             }
             if (!group.visible) {

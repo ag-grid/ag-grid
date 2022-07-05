@@ -93,7 +93,6 @@ var SortController = /** @class */ (function (_super) {
         var allSortedCols = this.getIndexableColumnsOrdered();
         // reset sort index on everything
         this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach(function (col) { return col.setSortIndex(null); });
-        debugger;
         var allSortedColsWithoutChanges = allSortedCols.filter(function (col) { return col !== lastColToChange; });
         __spread(allSortedColsWithoutChanges, [lastSortIndexCol]).forEach(function (col, idx) { return (col.setSortIndex(idx)); });
     };

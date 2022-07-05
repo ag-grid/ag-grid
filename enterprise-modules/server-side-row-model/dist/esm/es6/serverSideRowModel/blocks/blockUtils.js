@@ -31,7 +31,7 @@ let BlockUtils = class BlockUtils extends BeanStub {
     }
     destroyRowNodes(rowNodes) {
         if (rowNodes) {
-            rowNodes.forEach(this.destroyRowNode.bind(this));
+            rowNodes.forEach((row) => this.destroyRowNode(row));
         }
     }
     destroyRowNode(rowNode, preserveStore = false) {

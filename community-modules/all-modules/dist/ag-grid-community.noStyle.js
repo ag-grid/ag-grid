@@ -2286,7 +2286,7 @@ var Column = /** @class */ (function () {
             });
         }
         if (!_modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_4__["ModuleRegistry"].isRegistered(_modules_moduleNames__WEBPACK_IMPORTED_MODULE_3__["ModuleNames"].RichSelectModule)) {
-            if (this.colDef.cellEditor === 'agRichSelect') {
+            if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
                 if (_modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_4__["ModuleRegistry"].isPackageBased()) {
                     warnOnce("AG Grid: " + this.colDef.cellEditor + " can only be used with ag-grid-enterprise", 'ColumnRichSelectMissing');
                 }
@@ -17588,7 +17588,7 @@ var SelectCellEditor = /** @class */ (function (_super) {
         var hasValue = false;
         params.values.forEach(function (value) {
             var option = { value: value };
-            var valueFormatted = _this.valueFormatterService.formatValue(params.column, null, null, value);
+            var valueFormatted = _this.valueFormatterService.formatValue(params.column, null, value);
             var valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             option.text = valueFormattedExits ? valueFormatted : value;
             _this.eSelect.addOption(option);
@@ -28731,10 +28731,16 @@ var CellCtrl = /** @class */ (function (_super) {
         this.cellComp.addOrRemoveCssClass(animationFullName, false);
         // then once that is applied, we remove the highlight with animation
         window.setTimeout(function () {
+            if (!_this.isAlive()) {
+                return;
+            }
             _this.cellComp.addOrRemoveCssClass(fullName, false);
             _this.cellComp.addOrRemoveCssClass(animationFullName, true);
             _this.eGui.style.transition = "background-color " + fadeDelay + "ms";
             window.setTimeout(function () {
+                if (!_this.isAlive()) {
+                    return;
+                }
                 // and then to leave things as we got them, we remove the animation
                 _this.cellComp.addOrRemoveCssClass(animationFullName, false);
                 _this.eGui.style.transition = '';
@@ -37529,15 +37535,17 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
             onDragStarted: function () { return _this.column.setMoving(true, "uiColumnMoved"); },
             onDragStopped: function () { return _this.column.setMoving(false, "uiColumnMoved"); },
             onGridEnter: function (dragItem) {
-                var _a;
+                var _a, _b;
                 if (hideColumnOnExit) {
-                    _this.columnModel.setColumnsVisible(((_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) || [], true, "uiColumnMoved");
+                    var unlockedColumns = ((_b = (_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) === null || _b === void 0 ? void 0 : _b.filter(function (col) { return !col.getColDef().lockVisible; })) || [];
+                    _this.columnModel.setColumnsVisible(unlockedColumns, true, "uiColumnMoved");
                 }
             },
             onGridExit: function (dragItem) {
-                var _a;
+                var _a, _b;
                 if (hideColumnOnExit) {
-                    _this.columnModel.setColumnsVisible(((_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) || [], false, "uiColumnMoved");
+                    var unlockedColumns = ((_b = (_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) === null || _b === void 0 ? void 0 : _b.filter(function (col) { return !col.getColDef().lockVisible; })) || [];
+                    _this.columnModel.setColumnsVisible(unlockedColumns, false, "uiColumnMoved");
                 }
             },
         };
@@ -38597,15 +38605,17 @@ var HeaderGroupCellCtrl = /** @class */ (function (_super) {
             onDragStarted: function () { return allLeafColumns.forEach(function (col) { return col.setMoving(true, "uiColumnDragged"); }); },
             onDragStopped: function () { return allLeafColumns.forEach(function (col) { return col.setMoving(false, "uiColumnDragged"); }); },
             onGridEnter: function (dragItem) {
-                var _a;
+                var _a, _b;
                 if (hideColumnOnExit) {
-                    _this.columnModel.setColumnsVisible(((_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) || [], true, "uiColumnMoved");
+                    var unlockedColumns = ((_b = (_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) === null || _b === void 0 ? void 0 : _b.filter(function (col) { return !col.getColDef().lockVisible; })) || [];
+                    _this.columnModel.setColumnsVisible(unlockedColumns, true, "uiColumnMoved");
                 }
             },
             onGridExit: function (dragItem) {
-                var _a;
+                var _a, _b;
                 if (hideColumnOnExit) {
-                    _this.columnModel.setColumnsVisible(((_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) || [], false, "uiColumnMoved");
+                    var unlockedColumns = ((_b = (_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) === null || _b === void 0 ? void 0 : _b.filter(function (col) { return !col.getColDef().lockVisible; })) || [];
+                    _this.columnModel.setColumnsVisible(unlockedColumns, false, "uiColumnMoved");
                 }
             },
         };
@@ -51001,7 +51011,6 @@ var SortController = /** @class */ (function (_super) {
         var allSortedCols = this.getIndexableColumnsOrdered();
         // reset sort index on everything
         this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach(function (col) { return col.setSortIndex(null); });
-        debugger;
         var allSortedColsWithoutChanges = allSortedCols.filter(function (col) { return col !== lastColToChange; });
         __spread(allSortedColsWithoutChanges, [lastSortIndexCol]).forEach(function (col, idx) { return (col.setSortIndex(idx)); });
     };

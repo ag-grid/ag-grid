@@ -673,6 +673,14 @@ var AreaSeries = /** @class */ (function (_super) {
             }
         });
     };
+    AreaSeries.prototype.getZIndex = function (datum) {
+        var defaultZIndex = _super.prototype.getZIndex.call(this, datum);
+        if (this._yKeys.length > 1) {
+            // Stacked case - need special handling so that markers don't end-up overlapped.
+            return defaultZIndex - 10;
+        }
+        return defaultZIndex;
+    };
     AreaSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',

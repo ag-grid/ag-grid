@@ -171,7 +171,7 @@ export class Series extends Observable {
         const defaultZIndex = Series.SERIES_LAYER_ZINDEX;
         switch (this.isItemIdHighlighted(datum)) {
             case 'highlighted':
-                return defaultZIndex + 1;
+                return Series.SERIES_HIGHLIGHT_LAYER_ZINDEX - 2;
             case 'no-highlight':
             case 'other-highlighted':
                 return defaultZIndex;

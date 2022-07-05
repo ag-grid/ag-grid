@@ -3282,9 +3282,38 @@
   border-left-color: #bdc3c7;
   border-left-color: var(--ag-border-color, #bdc3c7);
 }
-.ag-theme-balham .ag-row-hover:not(.ag-full-width-row) {
+.ag-theme-balham .ag-row-selected::before {
+  content: "";
+  background-color: #b7e4ff;
+  background-color: var(--ag-selected-row-background-color, #b7e4ff);
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.ag-theme-balham .ag-row-hover:not(.ag-full-width-row)::before,
+.ag-theme-balham .ag-row-hover.ag-full-width-row.ag-row-group::before {
+  content: "";
   background-color: #ecf0f1;
   background-color: var(--ag-row-hover-color, #ecf0f1);
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+.ag-theme-balham .ag-row-hover.ag-row-selected::before {
+  background-color: #ecf0f1;
+  background-color: var(--ag-row-hover-color, #ecf0f1);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#b7e4ff), to(#b7e4ff));
+  background-image: linear-gradient(#b7e4ff, #b7e4ff);
+}
+.ag-theme-balham .ag-row-hover.ag-full-width-row.ag-row-group > * {
+  position: relative;
 }
 .ag-theme-balham .ag-column-hover {
   background-color: #ecf0f1;
@@ -3456,10 +3485,6 @@
   border-right: solid 1px;
   border-right-color: #bdc3c7;
   border-right-color: var(--ag-border-color, #bdc3c7);
-}
-.ag-theme-balham .ag-row-selected {
-  background-color: #b7e4ff;
-  background-color: var(--ag-selected-row-background-color, #b7e4ff);
 }
 .ag-theme-balham .ag-cell-range-selected:not(.ag-cell-focus),
 .ag-theme-balham .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell:not(.ag-cell-inline-editing) {

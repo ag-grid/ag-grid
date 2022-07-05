@@ -3251,9 +3251,38 @@
   border-left-color: #e2e2e2;
   border-left-color: var(--ag-border-color, #e2e2e2);
 }
-.ag-theme-material .ag-row-hover:not(.ag-full-width-row) {
+.ag-theme-material .ag-row-selected::before {
+  content: "";
+  background-color: #eee;
+  background-color: var(--ag-selected-row-background-color, #eee);
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.ag-theme-material .ag-row-hover:not(.ag-full-width-row)::before,
+.ag-theme-material .ag-row-hover.ag-full-width-row.ag-row-group::before {
+  content: "";
   background-color: #fafafa;
   background-color: var(--ag-row-hover-color, #fafafa);
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+.ag-theme-material .ag-row-hover.ag-row-selected::before {
+  background-color: #fafafa;
+  background-color: var(--ag-row-hover-color, #fafafa);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#eee));
+  background-image: linear-gradient(#eee, #eee);
+}
+.ag-theme-material .ag-row-hover.ag-full-width-row.ag-row-group > * {
+  position: relative;
 }
 .ag-theme-material .ag-column-hover {
   background-color: #fafafa;
@@ -3416,10 +3445,6 @@
   border-right: solid 1px;
   border-right-color: #e2e2e2;
   border-right-color: var(--ag-border-color, #e2e2e2);
-}
-.ag-theme-material .ag-row-selected {
-  background-color: #eee;
-  background-color: var(--ag-selected-row-background-color, #eee);
 }
 .ag-theme-material .ag-cell-range-selected:not(.ag-cell-focus),
 .ag-theme-material .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell:not(.ag-cell-inline-editing) {

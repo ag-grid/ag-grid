@@ -39,15 +39,16 @@ var CategoryAxis = /** @class */ (function (_super) {
     __extends(CategoryAxis, _super);
     function CategoryAxis() {
         var _this = _super.call(this, new bandScale_1.BandScale()) || this;
-        _this.scale.paddingInner = 0.2;
-        _this.scale.paddingOuter = 0.3;
+        _this._paddingOverrideEnabled = false;
         return _this;
     }
     Object.defineProperty(CategoryAxis.prototype, "paddingInner", {
         get: function () {
+            this._paddingOverrideEnabled = true;
             return this.scale.paddingInner;
         },
         set: function (value) {
+            this._paddingOverrideEnabled = true;
             this.scale.paddingInner = value;
         },
         enumerable: true,
@@ -75,6 +76,21 @@ var CategoryAxis = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    CategoryAxis.prototype.calculateDomain = function (_a) {
+        var primaryTickCount = _a.primaryTickCount;
+        if (!this._paddingOverrideEnabled) {
+            var boundSeries = this.boundSeries;
+            if (boundSeries.some(function (s) { return ['bar', 'column'].includes(s.type); })) {
+                this.scale.paddingInner = 0.2;
+                this.scale.paddingOuter = 0.3;
+            }
+            else {
+                this.scale.paddingInner = 1;
+                this.scale.paddingOuter = 0;
+            }
+        }
+        return _super.prototype.calculateDomain.call(this, { primaryTickCount: primaryTickCount });
+    };
     CategoryAxis.className = 'CategoryAxis';
     CategoryAxis.type = 'category';
     return CategoryAxis;

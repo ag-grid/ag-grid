@@ -217,7 +217,7 @@ function applySeries(chart, options) {
                 return;
             }
             debug("applying series diff idx " + i, seriesDiff);
-            jsonApply(s, seriesDiff);
+            applySeriesValues(s, seriesDiff, { path: "series[" + i + "]" });
             s.markNodeDataDirty();
         });
         return;
@@ -251,7 +251,6 @@ function applyAxes(chart, options) {
 function createSeries(options) {
     var e_1, _a;
     var series = [];
-    var skip = ['listeners'];
     var index = 0;
     try {
         for (var _b = __values(options || []), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -259,27 +258,27 @@ function createSeries(options) {
             var path = "series[" + index++ + "]";
             switch (seriesOptions.type) {
                 case 'area':
-                    series.push(applySeriesValues(new AreaSeries(), seriesOptions, { path: path, skip: skip }));
+                    series.push(applySeriesValues(new AreaSeries(), seriesOptions, { path: path }));
                     break;
                 case 'bar':
                 // fall-through - bar and column are synonyms.
                 case 'column':
-                    series.push(applySeriesValues(new BarSeries(), seriesOptions, { path: path, skip: skip }));
+                    series.push(applySeriesValues(new BarSeries(), seriesOptions, { path: path }));
                     break;
                 case 'histogram':
-                    series.push(applySeriesValues(new HistogramSeries(), seriesOptions, { path: path, skip: skip }));
+                    series.push(applySeriesValues(new HistogramSeries(), seriesOptions, { path: path }));
                     break;
                 case 'line':
-                    series.push(applySeriesValues(new LineSeries(), seriesOptions, { path: path, skip: skip }));
+                    series.push(applySeriesValues(new LineSeries(), seriesOptions, { path: path }));
                     break;
                 case 'scatter':
-                    series.push(applySeriesValues(new ScatterSeries(), seriesOptions, { path: path, skip: skip }));
+                    series.push(applySeriesValues(new ScatterSeries(), seriesOptions, { path: path }));
                     break;
                 case 'pie':
-                    series.push(applySeriesValues(new PieSeries(), seriesOptions, { path: path, skip: skip }));
+                    series.push(applySeriesValues(new PieSeries(), seriesOptions, { path: path }));
                     break;
                 case 'treemap':
-                    series.push(applySeriesValues(new TreemapSeries(), seriesOptions, { path: path, skip: skip }));
+                    series.push(applySeriesValues(new TreemapSeries(), seriesOptions, { path: path }));
                     break;
                 default:
                     throw new Error('AG Charts - unknown series type: ' + seriesOptions.type);
@@ -293,14 +292,6 @@ function createSeries(options) {
         }
         finally { if (e_1) throw e_1.error; }
     }
-    series.forEach(function (next, index) {
-        var _a, _b;
-        var listeners = (_b = (_a = options) === null || _a === void 0 ? void 0 : _a[index]) === null || _b === void 0 ? void 0 : _b.listeners;
-        if (listeners == null) {
-            return;
-        }
-        registerListeners(next, listeners);
-    });
     return series;
 }
 function createAxis(options) {
@@ -342,6 +333,7 @@ function createAxis(options) {
     return axes;
 }
 function registerListeners(source, listeners) {
+    source.clearEventListeners();
     for (var property in listeners) {
         source.addEventListener(property, listeners[property]);
     }
@@ -363,14 +355,20 @@ function applyOptionValues(target, options, _a) {
     return jsonApply(target, options, applyOpts);
 }
 function applySeriesValues(target, options, _a) {
-    var _b = _a === void 0 ? {} : _a, skip = _b.skip, path = _b.path;
-    var _c;
-    var ctrs = ((_c = JSON_APPLY_OPTIONS) === null || _c === void 0 ? void 0 : _c.constructors) || {};
+    var path = (_a === void 0 ? {} : _a).path;
+    var _b, _c;
+    var skip = ['listeners'];
+    var ctrs = ((_b = JSON_APPLY_OPTIONS) === null || _b === void 0 ? void 0 : _b.constructors) || {};
     var seriesTypeOverrides = {
         constructors: __assign(__assign({}, ctrs), { 'title': target.type === 'pie' ? PieTitle : ctrs['title'] }),
     };
     var applyOpts = __assign(__assign(__assign(__assign({}, JSON_APPLY_OPTIONS), seriesTypeOverrides), { skip: __spread(['type'], (skip || [])) }), (path ? { path: path } : {}));
-    return jsonApply(target, options, applyOpts);
+    var result = jsonApply(target, options, applyOpts);
+    var listeners = (_c = options) === null || _c === void 0 ? void 0 : _c.listeners;
+    if (listeners != null) {
+        registerListeners(target, listeners);
+    }
+    return result;
 }
 function applyAxisValues(target, options, _a) {
     var _b = _a === void 0 ? {} : _a, skip = _b.skip, path = _b.path;

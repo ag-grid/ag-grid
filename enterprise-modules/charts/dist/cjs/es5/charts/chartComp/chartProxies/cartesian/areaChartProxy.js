@@ -41,15 +41,10 @@ var AreaChartProxy = /** @class */ (function (_super) {
     };
     AreaChartProxy.prototype.getAxes = function () {
         var axisOptions = this.getAxesOptions();
-        var options = [
-            __assign(__assign({}, object_1.deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom)), { type: this.xAxisType, position: ag_charts_community_1.ChartAxisPosition.Bottom, paddingInner: 1, paddingOuter: 0 }),
+        return [
+            __assign(__assign({}, object_1.deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom)), { type: this.xAxisType, position: ag_charts_community_1.ChartAxisPosition.Bottom }),
             __assign(__assign({}, object_1.deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left)), { type: this.yAxisType, position: ag_charts_community_1.ChartAxisPosition.Left }),
         ];
-        if (this.xAxisType === 'time') {
-            delete options[0].paddingInner;
-            delete options[0].paddingOuter;
-        }
-        return options;
     };
     AreaChartProxy.prototype.getSeries = function (params) {
         var _this = this;

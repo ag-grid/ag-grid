@@ -1213,10 +1213,12 @@ let AgGridAngular = class AgGridAngular {
         this.serverSideSortAllLevels = undefined;
         /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
         this.serverSideFilterAllLevels = undefined;
-        /** When enabled, the grid will always request the server to provide the sort results.
+        /** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
+         * as Sorting is always server side when Infinite Scroll is active.
          * Default: `false`     */
         this.serverSideSortOnServer = undefined;
-        /** When enabled, the grid will always request the server to provide the filter results.
+        /** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
+         * as Filtering is always server side when Infinite Scroll is active.
          * Default: `false`     */
         this.serverSideFilterOnServer = undefined;
         /** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.

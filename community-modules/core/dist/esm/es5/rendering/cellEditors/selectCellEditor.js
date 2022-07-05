@@ -46,7 +46,7 @@ var SelectCellEditor = /** @class */ (function (_super) {
         var hasValue = false;
         params.values.forEach(function (value) {
             var option = { value: value };
-            var valueFormatted = _this.valueFormatterService.formatValue(params.column, null, null, value);
+            var valueFormatted = _this.valueFormatterService.formatValue(params.column, null, value);
             var valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             option.text = valueFormattedExits ? valueFormatted : value;
             _this.eSelect.addOption(option);

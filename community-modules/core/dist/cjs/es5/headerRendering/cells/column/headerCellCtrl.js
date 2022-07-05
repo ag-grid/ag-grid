@@ -232,15 +232,17 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
             onDragStarted: function () { return _this.column.setMoving(true, "uiColumnMoved"); },
             onDragStopped: function () { return _this.column.setMoving(false, "uiColumnMoved"); },
             onGridEnter: function (dragItem) {
-                var _a;
+                var _a, _b;
                 if (hideColumnOnExit) {
-                    _this.columnModel.setColumnsVisible(((_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) || [], true, "uiColumnMoved");
+                    var unlockedColumns = ((_b = (_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) === null || _b === void 0 ? void 0 : _b.filter(function (col) { return !col.getColDef().lockVisible; })) || [];
+                    _this.columnModel.setColumnsVisible(unlockedColumns, true, "uiColumnMoved");
                 }
             },
             onGridExit: function (dragItem) {
-                var _a;
+                var _a, _b;
                 if (hideColumnOnExit) {
-                    _this.columnModel.setColumnsVisible(((_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) || [], false, "uiColumnMoved");
+                    var unlockedColumns = ((_b = (_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) === null || _b === void 0 ? void 0 : _b.filter(function (col) { return !col.getColDef().lockVisible; })) || [];
+                    _this.columnModel.setColumnsVisible(unlockedColumns, false, "uiColumnMoved");
                 }
             },
         };

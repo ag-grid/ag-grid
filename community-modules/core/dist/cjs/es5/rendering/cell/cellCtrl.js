@@ -623,10 +623,16 @@ var CellCtrl = /** @class */ (function (_super) {
         this.cellComp.addOrRemoveCssClass(animationFullName, false);
         // then once that is applied, we remove the highlight with animation
         window.setTimeout(function () {
+            if (!_this.isAlive()) {
+                return;
+            }
             _this.cellComp.addOrRemoveCssClass(fullName, false);
             _this.cellComp.addOrRemoveCssClass(animationFullName, true);
             _this.eGui.style.transition = "background-color " + fadeDelay + "ms";
             window.setTimeout(function () {
+                if (!_this.isAlive()) {
+                    return;
+                }
                 // and then to leave things as we got them, we remove the animation
                 _this.cellComp.addOrRemoveCssClass(animationFullName, false);
                 _this.eGui.style.transition = '';

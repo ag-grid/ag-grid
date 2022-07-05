@@ -19,6 +19,7 @@ export declare class Observable {
     protected notifyPropertyListeners<K extends string & keyof this>(name: K, oldValue: this[K], value: this[K]): void;
     addEventListener(type: string, listener: SourceEventListener<this>, scope?: Object): void;
     removeEventListener(type: string, listener?: SourceEventListener<this>, scope?: Object): void;
+    clearEventListeners(): void;
     protected notifyEventListeners(types: string[]): void;
     fireEvent<E extends TypedEvent>(event: Omit<E, 'source'>): void;
 }

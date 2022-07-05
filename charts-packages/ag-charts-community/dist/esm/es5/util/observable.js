@@ -101,6 +101,9 @@ var Observable = /** @class */ (function () {
             }
         }
     };
+    Observable.prototype.clearEventListeners = function () {
+        this.allEventListeners = new Map();
+    };
     Observable.prototype.notifyEventListeners = function (types) {
         var _this = this;
         var allEventListeners = this.allEventListeners;

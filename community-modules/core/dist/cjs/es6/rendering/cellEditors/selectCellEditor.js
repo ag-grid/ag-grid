@@ -32,7 +32,7 @@ class SelectCellEditor extends popupComponent_1.PopupComponent {
         let hasValue = false;
         params.values.forEach((value) => {
             const option = { value };
-            const valueFormatted = this.valueFormatterService.formatValue(params.column, null, null, value);
+            const valueFormatted = this.valueFormatterService.formatValue(params.column, null, value);
             const valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             option.text = valueFormattedExits ? valueFormatted : value;
             this.eSelect.addOption(option);

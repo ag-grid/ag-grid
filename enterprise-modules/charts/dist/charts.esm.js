@@ -1250,7 +1250,7 @@ var Column = /** @class */ (function () {
             });
         }
         if (!ModuleRegistry.isRegistered(ModuleNames.RichSelectModule)) {
-            if (this.colDef.cellEditor === 'agRichSelect') {
+            if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
                 if (ModuleRegistry.isPackageBased()) {
                     warnOnce("AG Grid: " + this.colDef.cellEditor + " can only be used with ag-grid-enterprise", 'ColumnRichSelectMissing');
                 }
@@ -14771,7 +14771,7 @@ var SelectCellEditor = /** @class */ (function (_super) {
         var hasValue = false;
         params.values.forEach(function (value) {
             var option = { value: value };
-            var valueFormatted = _this.valueFormatterService.formatValue(params.column, null, null, value);
+            var valueFormatted = _this.valueFormatterService.formatValue(params.column, null, value);
             var valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             option.text = valueFormattedExits ? valueFormatted : value;
             _this.eSelect.addOption(option);
@@ -24359,10 +24359,16 @@ var CellCtrl = /** @class */ (function (_super) {
         this.cellComp.addOrRemoveCssClass(animationFullName, false);
         // then once that is applied, we remove the highlight with animation
         window.setTimeout(function () {
+            if (!_this.isAlive()) {
+                return;
+            }
             _this.cellComp.addOrRemoveCssClass(fullName, false);
             _this.cellComp.addOrRemoveCssClass(animationFullName, true);
             _this.eGui.style.transition = "background-color " + fadeDelay + "ms";
             window.setTimeout(function () {
+                if (!_this.isAlive()) {
+                    return;
+                }
                 // and then to leave things as we got them, we remove the animation
                 _this.cellComp.addOrRemoveCssClass(animationFullName, false);
                 _this.eGui.style.transition = '';
@@ -33167,15 +33173,17 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
             onDragStarted: function () { return _this.column.setMoving(true, "uiColumnMoved"); },
             onDragStopped: function () { return _this.column.setMoving(false, "uiColumnMoved"); },
             onGridEnter: function (dragItem) {
-                var _a;
+                var _a, _b;
                 if (hideColumnOnExit) {
-                    _this.columnModel.setColumnsVisible(((_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) || [], true, "uiColumnMoved");
+                    var unlockedColumns = ((_b = (_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) === null || _b === void 0 ? void 0 : _b.filter(function (col) { return !col.getColDef().lockVisible; })) || [];
+                    _this.columnModel.setColumnsVisible(unlockedColumns, true, "uiColumnMoved");
                 }
             },
             onGridExit: function (dragItem) {
-                var _a;
+                var _a, _b;
                 if (hideColumnOnExit) {
-                    _this.columnModel.setColumnsVisible(((_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) || [], false, "uiColumnMoved");
+                    var unlockedColumns = ((_b = (_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) === null || _b === void 0 ? void 0 : _b.filter(function (col) { return !col.getColDef().lockVisible; })) || [];
+                    _this.columnModel.setColumnsVisible(unlockedColumns, false, "uiColumnMoved");
                 }
             },
         };
@@ -33910,15 +33918,17 @@ var HeaderGroupCellCtrl = /** @class */ (function (_super) {
             onDragStarted: function () { return allLeafColumns.forEach(function (col) { return col.setMoving(true, "uiColumnDragged"); }); },
             onDragStopped: function () { return allLeafColumns.forEach(function (col) { return col.setMoving(false, "uiColumnDragged"); }); },
             onGridEnter: function (dragItem) {
-                var _a;
+                var _a, _b;
                 if (hideColumnOnExit) {
-                    _this.columnModel.setColumnsVisible(((_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) || [], true, "uiColumnMoved");
+                    var unlockedColumns = ((_b = (_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) === null || _b === void 0 ? void 0 : _b.filter(function (col) { return !col.getColDef().lockVisible; })) || [];
+                    _this.columnModel.setColumnsVisible(unlockedColumns, true, "uiColumnMoved");
                 }
             },
             onGridExit: function (dragItem) {
-                var _a;
+                var _a, _b;
                 if (hideColumnOnExit) {
-                    _this.columnModel.setColumnsVisible(((_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) || [], false, "uiColumnMoved");
+                    var unlockedColumns = ((_b = (_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) === null || _b === void 0 ? void 0 : _b.filter(function (col) { return !col.getColDef().lockVisible; })) || [];
+                    _this.columnModel.setColumnsVisible(unlockedColumns, false, "uiColumnMoved");
                 }
             },
         };
@@ -45017,7 +45027,6 @@ var __spread$i = (undefined && undefined.__spread) || function () {
         var allSortedCols = this.getIndexableColumnsOrdered();
         // reset sort index on everything
         this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach(function (col) { return col.setSortIndex(null); });
-        debugger;
         var allSortedColsWithoutChanges = allSortedCols.filter(function (col) { return col !== lastColToChange; });
         __spread$i(allSortedColsWithoutChanges, [lastSortIndexCol]).forEach(function (col, idx) { return (col.setSortIndex(idx)); });
     };
@@ -51735,6 +51744,9 @@ var Observable = /** @class */ (function () {
             }
         }
     };
+    Observable.prototype.clearEventListeners = function () {
+        this.allEventListeners = new Map();
+    };
     Observable.prototype.notifyEventListeners = function (types) {
         var _this = this;
         var allEventListeners = this.allEventListeners;
@@ -57196,15 +57208,16 @@ var CategoryAxis = /** @class */ (function (_super) {
     __extends$1J(CategoryAxis, _super);
     function CategoryAxis() {
         var _this = _super.call(this, new BandScale()) || this;
-        _this.scale.paddingInner = 0.2;
-        _this.scale.paddingOuter = 0.3;
+        _this._paddingOverrideEnabled = false;
         return _this;
     }
     Object.defineProperty(CategoryAxis.prototype, "paddingInner", {
         get: function () {
+            this._paddingOverrideEnabled = true;
             return this.scale.paddingInner;
         },
         set: function (value) {
+            this._paddingOverrideEnabled = true;
             this.scale.paddingInner = value;
         },
         enumerable: true,
@@ -57232,6 +57245,21 @@ var CategoryAxis = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    CategoryAxis.prototype.calculateDomain = function (_a) {
+        var primaryTickCount = _a.primaryTickCount;
+        if (!this._paddingOverrideEnabled) {
+            var boundSeries = this.boundSeries;
+            if (boundSeries.some(function (s) { return ['bar', 'column'].includes(s.type); })) {
+                this.scale.paddingInner = 0.2;
+                this.scale.paddingOuter = 0.3;
+            }
+            else {
+                this.scale.paddingInner = 1;
+                this.scale.paddingOuter = 0;
+            }
+        }
+        return _super.prototype.calculateDomain.call(this, { primaryTickCount: primaryTickCount });
+    };
     CategoryAxis.className = 'CategoryAxis';
     CategoryAxis.type = 'category';
     return CategoryAxis;
@@ -61319,7 +61347,7 @@ var Series = /** @class */ (function (_super) {
         var defaultZIndex = Series.SERIES_LAYER_ZINDEX;
         switch (this.isItemIdHighlighted(datum)) {
             case 'highlighted':
-                return defaultZIndex + 1;
+                return Series.SERIES_HIGHLIGHT_LAYER_ZINDEX - 2;
             case 'no-highlight':
             case 'other-highlighted':
                 return defaultZIndex;
@@ -61648,7 +61676,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                 new Group({
                     name: this.id + "-series-sub" + this.subGroupId++ + "-markers",
                     layer: true,
-                    zIndex: Series.SERIES_MARKER_LAYER_ZINDEX,
+                    zIndex: Series.SERIES_LAYER_ZINDEX,
                 }) :
                 undefined;
             var pickGroup = new Group();
@@ -61700,7 +61728,7 @@ var CartesianSeries = /** @class */ (function (_super) {
             group.visible = visible && (_a = seriesItemEnabled.get(itemId), (_a !== null && _a !== void 0 ? _a : true));
             if (markerGroup) {
                 markerGroup.opacity = group.opacity;
-                markerGroup.zIndex = group.zIndex + (Series.SERIES_MARKER_LAYER_ZINDEX - Series.SERIES_LAYER_ZINDEX);
+                markerGroup.zIndex = group.zIndex >= Series.SERIES_LAYER_ZINDEX ? group.zIndex : group.zIndex + 1;
                 markerGroup.visible = group.visible;
             }
             if (!group.visible) {
@@ -65301,6 +65329,14 @@ var AreaSeries = /** @class */ (function (_super) {
                 text.visible = false;
             }
         });
+    };
+    AreaSeries.prototype.getZIndex = function (datum) {
+        var defaultZIndex = _super.prototype.getZIndex.call(this, datum);
+        if (this._yKeys.length > 1) {
+            // Stacked case - need special handling so that markers don't end-up overlapped.
+            return defaultZIndex - 10;
+        }
+        return defaultZIndex;
     };
     AreaSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
@@ -69445,7 +69481,7 @@ var ChartTheme = /** @class */ (function () {
         }, series: {
             column: __assign$l(__assign$l({}, ChartTheme.getBarSeriesDefaults()), { flipXY: false }),
             bar: __assign$l(__assign$l({}, ChartTheme.getBarSeriesDefaults()), { flipXY: true }),
-            line: __assign$l(__assign$l({}, ChartTheme.getLineSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, marker: __assign$l({}, ChartTheme.getCartesianSeriesMarkerDefaults()), label: {
+            line: __assign$l(__assign$l({}, ChartTheme.getLineSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, marker: __assign$l(__assign$l({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1 }), label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -69454,7 +69490,7 @@ var ChartTheme = /** @class */ (function () {
                     color: 'rgb(70, 70, 70)',
                     formatter: undefined
                 } }),
-            scatter: __assign$l(__assign$l({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', marker: __assign$l(__assign$l({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1 }), label: {
+            scatter: __assign$l(__assign$l({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, marker: __assign$l({}, ChartTheme.getCartesianSeriesMarkerDefaults()), label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -69468,7 +69504,7 @@ var ChartTheme = /** @class */ (function () {
                     xOffset: 3,
                     yOffset: 3,
                     blur: 5
-                }, marker: __assign$l(__assign$l({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { enabled: false }), label: {
+                }, marker: __assign$l(__assign$l({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1, enabled: false }), label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -71631,7 +71667,7 @@ function applySeries(chart, options) {
                 return;
             }
             debug("applying series diff idx " + i, seriesDiff);
-            jsonApply(s, seriesDiff);
+            applySeriesValues(s, seriesDiff, { path: "series[" + i + "]" });
             s.markNodeDataDirty();
         });
         return;
@@ -71665,7 +71701,6 @@ function applyAxes(chart, options) {
 function createSeries(options) {
     var e_1, _a;
     var series = [];
-    var skip = ['listeners'];
     var index = 0;
     try {
         for (var _b = __values$2(options || []), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -71673,27 +71708,27 @@ function createSeries(options) {
             var path = "series[" + index++ + "]";
             switch (seriesOptions.type) {
                 case 'area':
-                    series.push(applySeriesValues(new AreaSeries(), seriesOptions, { path: path, skip: skip }));
+                    series.push(applySeriesValues(new AreaSeries(), seriesOptions, { path: path }));
                     break;
                 case 'bar':
                 // fall-through - bar and column are synonyms.
                 case 'column':
-                    series.push(applySeriesValues(new BarSeries(), seriesOptions, { path: path, skip: skip }));
+                    series.push(applySeriesValues(new BarSeries(), seriesOptions, { path: path }));
                     break;
                 case 'histogram':
-                    series.push(applySeriesValues(new HistogramSeries(), seriesOptions, { path: path, skip: skip }));
+                    series.push(applySeriesValues(new HistogramSeries(), seriesOptions, { path: path }));
                     break;
                 case 'line':
-                    series.push(applySeriesValues(new LineSeries(), seriesOptions, { path: path, skip: skip }));
+                    series.push(applySeriesValues(new LineSeries(), seriesOptions, { path: path }));
                     break;
                 case 'scatter':
-                    series.push(applySeriesValues(new ScatterSeries(), seriesOptions, { path: path, skip: skip }));
+                    series.push(applySeriesValues(new ScatterSeries(), seriesOptions, { path: path }));
                     break;
                 case 'pie':
-                    series.push(applySeriesValues(new PieSeries(), seriesOptions, { path: path, skip: skip }));
+                    series.push(applySeriesValues(new PieSeries(), seriesOptions, { path: path }));
                     break;
                 case 'treemap':
-                    series.push(applySeriesValues(new TreemapSeries(), seriesOptions, { path: path, skip: skip }));
+                    series.push(applySeriesValues(new TreemapSeries(), seriesOptions, { path: path }));
                     break;
                 default:
                     throw new Error('AG Charts - unknown series type: ' + seriesOptions.type);
@@ -71707,14 +71742,6 @@ function createSeries(options) {
         }
         finally { if (e_1) throw e_1.error; }
     }
-    series.forEach(function (next, index) {
-        var _a, _b;
-        var listeners = (_b = (_a = options) === null || _a === void 0 ? void 0 : _a[index]) === null || _b === void 0 ? void 0 : _b.listeners;
-        if (listeners == null) {
-            return;
-        }
-        registerListeners(next, listeners);
-    });
     return series;
 }
 function createAxis(options) {
@@ -71756,6 +71783,7 @@ function createAxis(options) {
     return axes;
 }
 function registerListeners(source, listeners) {
+    source.clearEventListeners();
     for (var property in listeners) {
         source.addEventListener(property, listeners[property]);
     }
@@ -71777,14 +71805,20 @@ function applyOptionValues(target, options, _a) {
     return jsonApply(target, options, applyOpts);
 }
 function applySeriesValues(target, options, _a) {
-    var _b = _a === void 0 ? {} : _a, skip = _b.skip, path = _b.path;
-    var _c;
-    var ctrs = ((_c = JSON_APPLY_OPTIONS) === null || _c === void 0 ? void 0 : _c.constructors) || {};
+    var path = (_a === void 0 ? {} : _a).path;
+    var _b, _c;
+    var skip = ['listeners'];
+    var ctrs = ((_b = JSON_APPLY_OPTIONS) === null || _b === void 0 ? void 0 : _b.constructors) || {};
     var seriesTypeOverrides = {
         constructors: __assign$e(__assign$e({}, ctrs), { 'title': target.type === 'pie' ? PieTitle : ctrs['title'] }),
     };
     var applyOpts = __assign$e(__assign$e(__assign$e(__assign$e({}, JSON_APPLY_OPTIONS), seriesTypeOverrides), { skip: __spread$3(['type'], (skip || [])) }), (path ? { path: path } : {}));
-    return jsonApply(target, options, applyOpts);
+    var result = jsonApply(target, options, applyOpts);
+    var listeners = (_c = options) === null || _c === void 0 ? void 0 : _c.listeners;
+    if (listeners != null) {
+        registerListeners(target, listeners);
+    }
+    return result;
 }
 function applyAxisValues(target, options, _a) {
     var _b = _a === void 0 ? {} : _a, skip = _b.skip, path = _b.path;
@@ -76909,15 +76943,10 @@ var AreaChartProxy = /** @class */ (function (_super) {
     };
     AreaChartProxy.prototype.getAxes = function () {
         var axisOptions = this.getAxesOptions();
-        var options = [
-            __assign$9(__assign$9({}, deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom)), { type: this.xAxisType, position: ChartAxisPosition.Bottom, paddingInner: 1, paddingOuter: 0 }),
+        return [
+            __assign$9(__assign$9({}, deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom)), { type: this.xAxisType, position: ChartAxisPosition.Bottom }),
             __assign$9(__assign$9({}, deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left)), { type: this.yAxisType, position: ChartAxisPosition.Left }),
         ];
-        if (this.xAxisType === 'time') {
-            delete options[0].paddingInner;
-            delete options[0].paddingOuter;
-        }
-        return options;
     };
     AreaChartProxy.prototype.getSeries = function (params) {
         var _this = this;

@@ -15,15 +15,10 @@ class AreaChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
     }
     getAxes() {
         const axisOptions = this.getAxesOptions();
-        const options = [
-            Object.assign(Object.assign({}, object_1.deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom)), { type: this.xAxisType, position: ag_charts_community_1.ChartAxisPosition.Bottom, paddingInner: 1, paddingOuter: 0 }),
+        return [
+            Object.assign(Object.assign({}, object_1.deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom)), { type: this.xAxisType, position: ag_charts_community_1.ChartAxisPosition.Bottom }),
             Object.assign(Object.assign({}, object_1.deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left)), { type: this.yAxisType, position: ag_charts_community_1.ChartAxisPosition.Left }),
         ];
-        if (this.xAxisType === 'time') {
-            delete options[0].paddingInner;
-            delete options[0].paddingOuter;
-        }
-        return options;
     }
     getSeries(params) {
         const series = params.fields.map(f => (Object.assign(Object.assign({}, this.extractSeriesOverrides()), { type: this.standaloneChartType, xKey: params.category.id, xName: params.category.name, yKey: f.colId, yName: f.displayName, normalizedTo: this.chartType === 'normalizedArea' ? 100 : undefined, stacked: ['normalizedArea', 'stackedArea'].includes(this.chartType) })));

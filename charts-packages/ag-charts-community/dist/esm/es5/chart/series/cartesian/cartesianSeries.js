@@ -183,7 +183,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                 new Group({
                     name: this.id + "-series-sub" + this.subGroupId++ + "-markers",
                     layer: true,
-                    zIndex: Series.SERIES_MARKER_LAYER_ZINDEX,
+                    zIndex: Series.SERIES_LAYER_ZINDEX,
                 }) :
                 undefined;
             var pickGroup = new Group();
@@ -235,7 +235,7 @@ var CartesianSeries = /** @class */ (function (_super) {
             group.visible = visible && (_a = seriesItemEnabled.get(itemId), (_a !== null && _a !== void 0 ? _a : true));
             if (markerGroup) {
                 markerGroup.opacity = group.opacity;
-                markerGroup.zIndex = group.zIndex + (Series.SERIES_MARKER_LAYER_ZINDEX - Series.SERIES_LAYER_ZINDEX);
+                markerGroup.zIndex = group.zIndex >= Series.SERIES_LAYER_ZINDEX ? group.zIndex : group.zIndex + 1;
                 markerGroup.visible = group.visible;
             }
             if (!group.visible) {

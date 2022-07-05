@@ -226,7 +226,6 @@
 .ag-theme-material.ag-dnd-ghost {
   font-size: calc(var(--ag-font-size) - 1px);
   font-weight: 600;
-  color: var(--ag-header-foreground-color);
 }
 .ag-theme-material .ag-filter-toolpanel-header {
   height: calc(var(--ag-grid-size) * 4);

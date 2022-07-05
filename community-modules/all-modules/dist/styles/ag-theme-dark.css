@@ -3261,6 +3261,20 @@
   border-left-color: darkgrey;
   border-left-color: var(--ag-border-color, darkgrey);
 }
+.ag-theme-dark .ag-row-selected::before {
+  content: "";
+  background-color: #4a708b;
+  background-color: var(--ag-selected-row-background-color, #4a708b);
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.ag-theme-dark .ag-row-hover.ag-full-width-row.ag-row-group > * {
+  position: relative;
+}
 .ag-theme-dark .ag-ltr .ag-right-aligned-cell {
   text-align: right;
 }
@@ -3427,10 +3441,6 @@
   border-right: solid 1px;
   border-right-color: darkgrey;
   border-right-color: var(--ag-border-color, darkgrey);
-}
-.ag-theme-dark .ag-row-selected {
-  background-color: #4a708b;
-  background-color: var(--ag-selected-row-background-color, #4a708b);
 }
 .ag-theme-dark .ag-cell-range-selected:not(.ag-cell-focus),
 .ag-theme-dark .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell:not(.ag-cell-inline-editing) {

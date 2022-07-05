@@ -150,6 +150,9 @@ export declare class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContex
     protected updateLabelNodes(opts: {
         labelSelection: Selection<Text, Group, LabelSelectionDatum, any>;
     }): void;
+    protected getZIndex(datum?: {
+        itemId?: any;
+    }): number;
     fireNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): void;
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string;
     listSeriesItems(legendData: LegendDatum[]): void;

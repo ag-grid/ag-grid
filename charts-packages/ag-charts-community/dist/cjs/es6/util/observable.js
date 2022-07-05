@@ -87,6 +87,9 @@ class Observable {
             }
         }
     }
+    clearEventListeners() {
+        this.allEventListeners = new Map();
+    }
     notifyEventListeners(types) {
         const allEventListeners = this.allEventListeners;
         types.forEach(type => {

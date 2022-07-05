@@ -33,7 +33,7 @@ let BlockUtils = class BlockUtils extends core_1.BeanStub {
     }
     destroyRowNodes(rowNodes) {
         if (rowNodes) {
-            rowNodes.forEach(this.destroyRowNode.bind(this));
+            rowNodes.forEach((row) => this.destroyRowNode(row));
         }
     }
     destroyRowNode(rowNode, preserveStore = false) {

@@ -527,11 +527,11 @@ export interface HeaderValueGetterParams<TData = any> extends AgGridCommon<TData
 export interface HeaderValueGetterFunc<TData = any> {
     (params: HeaderValueGetterParams<TData>): any;
 }
-export interface NewValueParams<TData = any, TValue = any> extends BaseColDefParams<TData> {
+export interface NewValueParams<TData = any> extends BaseColDefParams<TData> {
     /** The value before the change */
-    oldValue: TValue;
+    oldValue: any;
     /** The value after the change */
-    newValue: TValue;
+    newValue: any;
 }
 export interface ValueSetterParams<TData = any> extends NewValueParams<TData> {
 }

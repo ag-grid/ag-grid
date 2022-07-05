@@ -115,7 +115,6 @@
 }
 .ag-theme-balham.ag-dnd-ghost, .ag-theme-balham-dark.ag-dnd-ghost {
   font-size: var(--ag-font-size);
-  color: var(--ag-header-foreground-color);
   font-weight: 600;
 }
 .ag-theme-balham .ag-tab, .ag-theme-balham-dark .ag-tab {

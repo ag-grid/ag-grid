@@ -212,15 +212,17 @@ class HeaderCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl {
             onDragStarted: () => this.column.setMoving(true, "uiColumnMoved"),
             onDragStopped: () => this.column.setMoving(false, "uiColumnMoved"),
             onGridEnter: (dragItem) => {
-                var _a;
+                var _a, _b;
                 if (hideColumnOnExit) {
-                    this.columnModel.setColumnsVisible(((_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) || [], true, "uiColumnMoved");
+                    const unlockedColumns = ((_b = (_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) === null || _b === void 0 ? void 0 : _b.filter(col => !col.getColDef().lockVisible)) || [];
+                    this.columnModel.setColumnsVisible(unlockedColumns, true, "uiColumnMoved");
                 }
             },
             onGridExit: (dragItem) => {
-                var _a;
+                var _a, _b;
                 if (hideColumnOnExit) {
-                    this.columnModel.setColumnsVisible(((_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) || [], false, "uiColumnMoved");
+                    const unlockedColumns = ((_b = (_a = dragItem) === null || _a === void 0 ? void 0 : _a.columns) === null || _b === void 0 ? void 0 : _b.filter(col => !col.getColDef().lockVisible)) || [];
+                    this.columnModel.setColumnsVisible(unlockedColumns, false, "uiColumnMoved");
                 }
             },
         };

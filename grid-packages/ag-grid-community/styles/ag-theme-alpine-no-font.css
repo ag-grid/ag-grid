@@ -194,7 +194,6 @@
 .ag-theme-alpine.ag-dnd-ghost, .ag-theme-alpine-dark.ag-dnd-ghost {
   font-size: calc(var(--ag-font-size) - 1px);
   font-weight: 700;
-  color: var(--ag-header-foreground-color);
 }
 .ag-theme-alpine .ag-side-buttons, .ag-theme-alpine-dark .ag-side-buttons {
   width: calc(var(--ag-grid-size) * 5);

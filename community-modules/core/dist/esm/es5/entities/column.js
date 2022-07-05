@@ -203,7 +203,7 @@ var Column = /** @class */ (function () {
             });
         }
         if (!ModuleRegistry.isRegistered(ModuleNames.RichSelectModule)) {
-            if (this.colDef.cellEditor === 'agRichSelect') {
+            if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
                 if (ModuleRegistry.isPackageBased()) {
                     warnOnce("AG Grid: " + this.colDef.cellEditor + " can only be used with ag-grid-enterprise", 'ColumnRichSelectMissing');
                 }

@@ -488,8 +488,9 @@ $-non-variable-param-types: (
     $processed: ();
     @each $name, $value in $params {
         $name: -clean-variable-name($name);
+        $type: map.get($-variable-param-types, $name);
         // Allow `null` for colours
-        @if -string-ends-with($name, "-color") and $value == null {
+        @if $type == "color" and $value == null {
             $value: transparent;
         }
         // Allow booleans for borders params
@@ -500,19 +501,15 @@ $-non-variable-param-types: (
             $value: none;
         }
         // Allow booleans for display params
-        @if -string-ends-with($name, "-display") and not $value {
+        @if $type == "display" and not $value {
             $value: none;
         }
-        @if -string-ends-with($name, "-display") and $value == true {
+        @if $type == "display" and $value == true {
             $value: block;
         }
         $processed: map.set($processed, $name, $value);
     }
     @return $processed;
-}
-
-@function -string-ends-with($string, $substring) {
-    @return string.index($string, $substring) == string.length($string) - string.length($substring) + 1;
 }
 
 @mixin -validate-params($params, $theme: null) {

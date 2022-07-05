@@ -47,8 +47,9 @@ var BlockUtils = /** @class */ (function (_super) {
         return rowNode;
     };
     BlockUtils.prototype.destroyRowNodes = function (rowNodes) {
+        var _this = this;
         if (rowNodes) {
-            rowNodes.forEach(this.destroyRowNode.bind(this));
+            rowNodes.forEach(function (row) { return _this.destroyRowNode(row); });
         }
     };
     BlockUtils.prototype.destroyRowNode = function (rowNode, preserveStore) {
