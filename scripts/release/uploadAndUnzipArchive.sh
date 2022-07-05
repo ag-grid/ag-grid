@@ -62,7 +62,7 @@ ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "cd public_html/archive/ && rm 
 curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
 
 ##unzip archive
-ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "cd public_html/archive/$VERSION && tar -xf $ARCHIVE"
+ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "cd public_html/archive/$VERSION && tar -m -xf $ARCHIVE"
 
 
 #update folder permissions (default is 777 - change to 755)

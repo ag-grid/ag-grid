@@ -12,10 +12,12 @@ VERSION=""${RAW_VERSION//./}""
 
 echo "Starting Archive Docs Bundle Process"
 cd grid-packages/ag-grid-docs
+npm run clean
 
 echo "Gatsby Archive Package"
 cd documentation
-GATSBY_HOST=www.ag-grid.com GATSBY_ROOT_DIRECTORY="/archive/$RAW_VERSION" npm run package
+npm run clean
+GATSBY_HOST=www.ag-grid.com GATSBY_ROOT_DIRECTORY="/archive/28.0.0" npm run package
 cd ..
 
 echo "Building Docs Archive"
