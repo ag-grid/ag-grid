@@ -2,6 +2,8 @@
 title: "Cell Editing"
 ---
 
+## Enable Editing
+
 To enable Cell Editing for a Column, set `editable=true` on the Column Definition.
 
 <snippet spaceBetweenProperties="true">
@@ -11,16 +13,12 @@ const gridOptions = {
             field: 'name',
             // turns on editing
             editable: true
-        },
-        {
-            field: 'age',
-            editable: true
         }
     ]
 }
 </snippet>
 
-By default the grid provides for simple String editing and stores the result as a String. The example below shows simple String editing on all Columns by setting `editable=true` on the Default Column Definition.
+By default the grid provides simple string editing and stores the result as a string. The example below shows string editing enabled on all columns by setting `editable=true` on the `defaultColDef`.
 
 <grid-example title='Simple Cell Editing' name='simple-editing' type='generated'></grid-example>
 

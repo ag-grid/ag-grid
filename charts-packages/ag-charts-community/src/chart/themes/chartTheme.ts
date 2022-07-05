@@ -287,8 +287,10 @@ export class ChartTheme {
                 strokeOpacity: 1,
                 lineDash: [0],
                 lineDashOffset: 0,
-                    marker: {
-                    ...ChartTheme.getCartesianSeriesMarkerDefaults()
+                marker: {
+                    ...ChartTheme.getCartesianSeriesMarkerDefaults(),
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
                 },
                 label: {
                     enabled: false,
@@ -311,11 +313,11 @@ export class ChartTheme {
                 yName: '',
                 sizeName: 'Size',
                 labelName: 'Label',
+                strokeWidth: 2,
+                fillOpacity: 1,
+                strokeOpacity: 1,
                 marker: {
                     ...ChartTheme.getCartesianSeriesMarkerDefaults(),
-                    strokeWidth: 1,
-                    fillOpacity: 1,
-                    strokeOpacity: 1,
                 },
                 label: {
                     enabled: false,
@@ -347,7 +349,9 @@ export class ChartTheme {
                 },
                 marker: {
                     ...ChartTheme.getCartesianSeriesMarkerDefaults(),
-                    enabled: false
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
+                    enabled: false,
                 },
                 label: {
                     enabled: false,

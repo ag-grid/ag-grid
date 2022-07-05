@@ -313,7 +313,7 @@
   },
   "loadingCellRendererSelector": {
     "description": "/** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */",
-    "type": { "returnType": "LoadingCellRendererSelectorFunc" }
+    "type": { "returnType": "LoadingCellRendererSelectorFunc<TData>" }
   },
   "localeText": {
     "description": "/** A map of key->value pairs for localising text within the grid. */",
@@ -507,7 +507,7 @@
   },
   "aggFuncs": {
     "description": "/** A map of 'function name' to 'function' for custom aggregation functions. */",
-    "type": { "returnType": "{ [key: string]: IAggFunc; }" }
+    "type": { "returnType": "{ [key: string]: IAggFunc<TData>; }" }
   },
   "suppressAggFuncInHeader": {
     "description": "/** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false` */",
@@ -808,11 +808,11 @@
     "type": { "returnType": "boolean" }
   },
   "serverSideSortOnServer": {
-    "description": "/** When enabled, the grid will always request the server to provide the sort results.\n * Default: `false` */",
+    "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n * as Sorting is always server side when Infinite Scroll is active.\n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "serverSideFilterOnServer": {
-    "description": "/** When enabled, the grid will always request the server to provide the filter results.\n * Default: `false` */",
+    "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n * as Filtering is always server side when Infinite Scroll is active.\n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "serverSideSortingAlwaysResets": {
@@ -1019,49 +1019,49 @@
   "processCellForClipboard": {
     "description": "/** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */",
     "type": {
-      "arguments": { "params": "ProcessCellForExportParams" },
+      "arguments": { "params": "ProcessCellForExportParams<TData>" },
       "returnType": "any"
     }
   },
   "processHeaderForClipboard": {
     "description": "/** Allows you to process header values for the clipboard. */",
     "type": {
-      "arguments": { "params": "ProcessHeaderForExportParams" },
+      "arguments": { "params": "ProcessHeaderForExportParams<TData>" },
       "returnType": "any"
     }
   },
   "processGroupHeaderForClipboard": {
     "description": "/** Allows you to process group header values for the clipboard. */",
     "type": {
-      "arguments": { "params": "ProcessGroupHeaderForExportParams" },
+      "arguments": { "params": "ProcessGroupHeaderForExportParams<TData>" },
       "returnType": "any"
     }
   },
   "processCellFromClipboard": {
     "description": "/** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */",
     "type": {
-      "arguments": { "params": "ProcessCellForExportParams" },
+      "arguments": { "params": "ProcessCellForExportParams<TData>" },
       "returnType": "any"
     }
   },
   "sendToClipboard": {
     "description": "/** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */",
     "type": {
-      "arguments": { "params": "SendToClipboardParams" },
+      "arguments": { "params": "SendToClipboardParams<TData>" },
       "returnType": "void"
     }
   },
   "processDataFromClipboard": {
     "description": "/** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */",
     "type": {
-      "arguments": { "params": "ProcessDataFromClipboardParams" },
+      "arguments": { "params": "ProcessDataFromClipboardParams<TData>" },
       "returnType": "string[][] | null"
     }
   },
   "isExternalFilterPresent": {
     "description": "/** Grid calls this method to know if an external filter is present. */",
     "type": {
-      "arguments": { "params": "IsExternalFilterPresentParams" },
+      "arguments": { "params": "IsExternalFilterPresentParams<TData>" },
       "returnType": "boolean"
     }
   },
@@ -1079,42 +1079,42 @@
   "createChartContainer": {
     "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
     "type": {
-      "arguments": { "params": "ChartRefParams" },
+      "arguments": { "params": "ChartRefParams<TData>" },
       "returnType": "void"
     }
   },
   "navigateToNextHeader": {
     "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
     "type": {
-      "arguments": { "params": "NavigateToNextHeaderParams" },
+      "arguments": { "params": "NavigateToNextHeaderParams<TData>" },
       "returnType": "(HeaderPosition | null)"
     }
   },
   "tabToNextHeader": {
     "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
     "type": {
-      "arguments": { "params": "TabToNextHeaderParams" },
+      "arguments": { "params": "TabToNextHeaderParams<TData>" },
       "returnType": "(HeaderPosition | null)"
     }
   },
   "navigateToNextCell": {
     "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
     "type": {
-      "arguments": { "params": "NavigateToNextCellParams" },
+      "arguments": { "params": "NavigateToNextCellParams<TData>" },
       "returnType": "(CellPosition | null)"
     }
   },
   "tabToNextCell": {
     "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
     "type": {
-      "arguments": { "params": "TabToNextCellParams" },
+      "arguments": { "params": "TabToNextCellParams<TData>" },
       "returnType": "(CellPosition | null)"
     }
   },
   "suppressKeyboardEvent": {
     "description": "/** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.\n */",
     "type": {
-      "arguments": { "params": "SuppressKeyboardEventParams" },
+      "arguments": { "params": "SuppressKeyboardEventParams<TData>" },
       "returnType": "boolean"
     }
   },
@@ -1132,7 +1132,7 @@
   "getLocaleText": {
     "description": "/** A callback for localising text within the grid. */",
     "type": {
-      "arguments": { "params": "GetLocaleTextParams" },
+      "arguments": { "params": "GetLocaleTextParams<TData>" },
       "returnType": "string"
     }
   },
@@ -1143,7 +1143,7 @@
   "paginationNumberFormatter": {
     "description": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
     "type": {
-      "arguments": { "params": "PaginationNumberFormatterParams" },
+      "arguments": { "params": "PaginationNumberFormatterParams<TData>" },
       "returnType": "string"
     }
   },

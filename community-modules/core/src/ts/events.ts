@@ -476,20 +476,20 @@ export interface CellEditingStartedEvent<TData = any, TValue = any> extends Cell
 
 export interface CellEditingStoppedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
     /** The old value before editing */
-    oldValue: TValue;
+    oldValue: any;
     /** The new value after editing */
-    newValue: TValue;
+    newValue: any;
 }
 
 export interface CellValueChangedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
-    oldValue: TValue;
-    newValue: TValue;
+    oldValue: any;
+    newValue: any;
     source: string | undefined;
 }
 
 export interface CellEditRequestEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
-    oldValue: TValue;
-    newValue: TValue;
+    oldValue: any;
+    newValue: any;
     source: string | undefined;
 }
 

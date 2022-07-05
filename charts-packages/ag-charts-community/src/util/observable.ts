@@ -112,6 +112,10 @@ export class Observable {
         }
     }
 
+    clearEventListeners() {
+        this.allEventListeners = new Map();
+    }
+
     protected notifyEventListeners(types: string[]): void {
         const allEventListeners = this.allEventListeners as Map<string, Map<SourceEventListener<this>, Set<Object>>>;
 

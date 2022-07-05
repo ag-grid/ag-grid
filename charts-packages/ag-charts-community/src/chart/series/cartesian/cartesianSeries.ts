@@ -251,7 +251,7 @@ export abstract class CartesianSeries<
             group.visible = visible && (seriesItemEnabled.get(itemId) ?? true);
             if (markerGroup) {
                 markerGroup.opacity = group.opacity;
-                markerGroup.zIndex = group.zIndex + (Series.SERIES_MARKER_LAYER_ZINDEX - Series.SERIES_LAYER_ZINDEX);
+                markerGroup.zIndex = group.zIndex + 1;
                 markerGroup.visible = group.visible;
             }
 

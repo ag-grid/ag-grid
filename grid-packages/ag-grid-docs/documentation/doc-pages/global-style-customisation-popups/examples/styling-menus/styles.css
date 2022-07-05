@@ -1,0 +1,18 @@
+.ag-theme-alpine {
+    --ag-card-radius: 10px;
+    --ag-card-shadow: 0 10px 40px rgb(83, 0, 106);
+    --ag-popup-shadow: var(--ag-card-shadow);
+    --ag-tab-min-width: 350px;
+}
+
+.ag-theme-alpine .ag-menu {
+    background-color: rgb(244, 220, 250); /* light purple */
+}
+
+.ag-theme-alpine .ag-tabs-header {
+    background-color: rgb(100, 32, 119); /* dark purple */
+}
+
+.ag-theme-alpine .ag-tabs-header .ag-icon {
+    color: white;
+}

@@ -311,7 +311,7 @@ export interface GridOptions<TData = any> {
     /** Params to be passed to the `loadingCellRenderer` component. */
     loadingCellRendererParams?: any;
     /** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */
-    loadingCellRendererSelector?: LoadingCellRendererSelectorFunc;
+    loadingCellRendererSelector?: LoadingCellRendererSelectorFunc<TData>;
 
     // *** Localisation *** //
     // just set once
@@ -451,7 +451,7 @@ export interface GridOptions<TData = any> {
     /** If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection. Default: `false` */
     functionsReadOnly?: boolean;
     /** A map of 'function name' to 'function' for custom aggregation functions. */
-    aggFuncs?: { [key: string]: IAggFunc; };
+    aggFuncs?: { [key: string]: IAggFunc<TData>; };
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false` */
     suppressAggFuncInHeader?: boolean;
     /** When `true`, the aggregations won't be computed for the root node of the grid. Default: `false` */
@@ -673,15 +673,18 @@ export interface GridOptions<TData = any> {
     serverSideSortAllLevels?: boolean;
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */
     serverSideFilterAllLevels?: boolean;
-    /** When enabled, the grid will always request the server to provide the sort results.
+    /**
+     * When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
+     * as Sorting is always server side when Infinite Scroll is active.
      * Default: `false`
      */
-    serverSideSortOnServer?: boolean;
-    /** When enabled, the grid will always request the server to provide the filter results.
-     * Default: `false`
-     */
-    serverSideFilterOnServer?: boolean;
-
+     serverSideSortOnServer?: boolean;
+     /**
+      * When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
+      * as Filtering is always server side when Infinite Scroll is active.
+      * Default: `false`
+      */
+     serverSideFilterOnServer?: boolean;
     /** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead. */
     serverSideSortingAlwaysResets?: boolean;
     /** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead. */
@@ -813,21 +816,21 @@ export interface GridOptions<TData = any> {
 
     // *** Clipboard *** //
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */
-    processCellForClipboard?: (params: ProcessCellForExportParams) => any;
+    processCellForClipboard?: (params: ProcessCellForExportParams<TData>) => any;
     /** Allows you to process header values for the clipboard.  */
-    processHeaderForClipboard?: (params: ProcessHeaderForExportParams) => any;
+    processHeaderForClipboard?: (params: ProcessHeaderForExportParams<TData>) => any;
     /** Allows you to process group header values for the clipboard.  */
-    processGroupHeaderForClipboard?: (params: ProcessGroupHeaderForExportParams) => any;
+    processGroupHeaderForClipboard?: (params: ProcessGroupHeaderForExportParams<TData>) => any;
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */
-    processCellFromClipboard?: (params: ProcessCellForExportParams) => any;
+    processCellFromClipboard?: (params: ProcessCellForExportParams<TData>) => any;
     /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */
-    sendToClipboard?: (params: SendToClipboardParams) => void;
+    sendToClipboard?: (params: SendToClipboardParams<TData>) => void;
     /** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */
-    processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
+    processDataFromClipboard?: (params: ProcessDataFromClipboardParams<TData>) => string[][] | null;
 
     // *** Filtering *** //
     /** Grid calls this method to know if an external filter is present. */
-    isExternalFilterPresent?: (params: IsExternalFilterPresentParams) => boolean;
+    isExternalFilterPresent?: (params: IsExternalFilterPresentParams<TData>) => boolean;
     /** Should return `true` if external filter passes, otherwise `false`. */
     doesExternalFilterPass?: (node: RowNode<TData>) => boolean;
 
@@ -835,25 +838,25 @@ export interface GridOptions<TData = any> {
     /** Callback to be used to customise the chart toolbar items. */
     getChartToolbarItems?: GetChartToolbarItems;
     /** Callback to enable displaying the chart in an alternative chart container. */
-    createChartContainer?: (params: ChartRefParams) => void;
+    createChartContainer?: (params: ChartRefParams<TData>) => void;
 
     // *** Keyboard Navigation *** //
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */
-    navigateToNextHeader?: (params: NavigateToNextHeaderParams) => (HeaderPosition | null);
+    navigateToNextHeader?: (params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null);
     /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.  */
-    tabToNextHeader?: (params: TabToNextHeaderParams) => (HeaderPosition | null);
+    tabToNextHeader?: (params: TabToNextHeaderParams<TData>) => (HeaderPosition | null);
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.  */
-    navigateToNextCell?: (params: NavigateToNextCellParams) => (CellPosition | null);
+    navigateToNextCell?: (params: NavigateToNextCellParams<TData>) => (CellPosition | null);
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.  */
-    tabToNextCell?: (params: TabToNextCellParams) => (CellPosition | null);
+    tabToNextCell?: (params: TabToNextCellParams<TData>) => (CellPosition | null);
     /** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property. */
-    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
+    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams<TData>) => boolean;
 
     // *** Localisation *** //
     /** @deprecated - Use `getLocaleText` instead. */
     localeTextFunc?: (key: string, defaultValue: string, variableValues?: string[]) => string;
     /** A callback for localising text within the grid. */
-    getLocaleText?: (params: GetLocaleTextParams) => string;
+    getLocaleText?: (params: GetLocaleTextParams<TData>) => string;
 
     // *** Miscellaneous *** //
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports) */
@@ -861,7 +864,7 @@ export interface GridOptions<TData = any> {
 
     // *** Pagination *** //
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */
-    paginationNumberFormatter?: (params: PaginationNumberFormatterParams) => string;
+    paginationNumberFormatter?: (params: PaginationNumberFormatterParams<TData>) => string;
 
     // *** Row Grouping and Pivoting *** //
     /** @deprecated - Use `getGroupRowAgg` instead. */
@@ -1275,8 +1278,8 @@ export interface ServerSideGroupLevelParams {
 /** @deprecated use ServerSideGroupLevelParams instead */
 export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
 
-export interface LoadingCellRendererSelectorFunc {
-    (params: ILoadingCellRendererParams): LoadingCellRendererSelectorResult | undefined;
+export interface LoadingCellRendererSelectorFunc<TData = any> {
+    (params: ILoadingCellRendererParams<TData>): LoadingCellRendererSelectorResult | undefined;
 }
 export interface LoadingCellRendererSelectorResult {
     /** Equivalent of setting `loadingCellRenderer` */

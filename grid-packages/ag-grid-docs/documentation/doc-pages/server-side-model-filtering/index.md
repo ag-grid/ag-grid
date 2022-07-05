@@ -7,7 +7,7 @@ This section covers Filtering using the Server-Side Row Model (SSRM).
 
 ## Enabling Filtering
 
-Filtering is enabled in the grid via the `filter` column definition attribute. Some example column definitions with filtering enabled are shown below:
+Filtering is enabled in the grid via the `filter` column definition attribute.
 
 <snippet>
 |const gridOptions = {
@@ -29,7 +29,7 @@ For more details on filtering configurations see the section on [Column Filterin
 
 ## Client-side Filtering
 
-When Infinite Scroll is not active, the grid has all the rows needed to filter on the client. As such, the SSRM will filter on the client-side when Infinite Scroll is not active.
+When Infinite Scroll is not active, the grid has all the rows needed to filter on the client. As such, the SSRM will filter on the client-side.
 
 The example below demonstrates Client-side Filtering with no Infinite Scroll. Note the following:
 
@@ -191,7 +191,7 @@ The example below demonstrates this functionality. Note the following:
 - Open the Sport column filter and enter "ing" in the input. Note the grid reloads the data from the server as Sport is a grouped column
 - Expand the Swimming row group
 - Open the Athlete column filter and enter "Phelps" in the input. Note the grid is filtered without reloading data from the server
-- Expand the Speed Skating row group. Note it is empty because its child rows were not loaded prior to filtering
+- Expand the Speed Skating row group. Note it is empty because it has no child nodes matching the filters.
 
 
 <grid-example title='Server-side Group Filtering' name='group-filter-server-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>

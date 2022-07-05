@@ -1,10 +1,10 @@
 [[only-angular]]
 | ## Properties, Events, Callbacks and APIs
 |
-| - **Attributes**: attributes are properties, but aren't bound - they are instead provided literal values (e.g. `rowSelection="multiple"`).
-| - **Properties**: properties are bound attributes (e.g. `[columnDefs]="columnDefs"`).
-| - **Callbacks**: callbacks are bound in the same as properties are (e.g. `[getRowHeight]="myGetRowHeight"`).
-| - **Event Handlers**: event handlers are are bound in the standard Angular way (e.g. `(cellClicked)="onCellClicked($event)"`).
+| - **Properties**: properties are bound via @Inputs (e.g. `[columnDefs]="columnDefs"`).
+| - **Attributes**: attributes are properties that also accept literal values (e.g. `rowSelection="multiple"`).
+| - **Callbacks**: callbacks are bound via @Inputs like properties (e.g. `[getRowHeight]="myGetRowHeight"`).
+| - **Event Handlers**: event handlers are are bound via @Outputs (e.g. `(cellClicked)="onCellClicked($event)"`).
 | - **API**: the grid API and column API are accessible through the component.
 |
 | ```jsx
@@ -35,8 +35,10 @@
 | ## Access the Grid & Column API
 |
 | When the grid is initialised, it will fire the `gridReady` event. If you want to use the APIs of
-| the grid, you should put an `onGridReady(params)` callback onto the grid and grab the api(s)
-| from the params. You can then call these apis at a later stage to interact with the
+| the grid, you can put an `onGridReady(params)` callback onto the grid and grab the api(s)
+| from the params. Alternatively, you can retrieve the grid component with a `@ViewChild` attribute from within your component.
+| 
+| You can then call these apis at a later stage to interact with the
 | grid (on top of the interaction that can be done by setting and changing the properties).
 |
 | ```jsx
@@ -53,6 +55,13 @@
 |     this.api = params.api;
 |     this.columnApi = params.columnApi;
 | }
+| ```
+|
+| ```ts
+| @ViewChild('myGrid') grid!: AgGridAngular;
+|
+| // Then later access api
+| this.grid.api.deselectRows();
 | ```
 |
 | The APIs are also accessible through the component. For example in the snippet above the Grid is give the ID of `'#myGrid'` which then allows the API to be accessed as follows:

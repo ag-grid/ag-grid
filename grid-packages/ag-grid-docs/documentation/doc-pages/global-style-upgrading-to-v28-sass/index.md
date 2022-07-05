@@ -35,7 +35,10 @@ In order to upgrade, you need to:
 .ag-theme-alpine {
   @include ag-theme-alpine((
     alpine-active-color: red
-  ))
+  ));
+  .ag-header-cell {
+    font-style: italic;
+  }
 }
 
 // NOTE: Depending on how you have configured your Sass build the import paths may be
@@ -53,6 +56,12 @@ In order to upgrade, you need to:
   // ^^^ Pass the same parameters. The new API validates parameters so you will be
   //     notified if any of the names or values you pass are not valid for the new API
 ));
+.ag-theme-alpine {
+  .ag-header-cell {
+    font-style: italic;
+  }
+}
+// ^^^ put any custom CSS rules below the grid-styles mixin, wrapped in the theme class
 ```
 
 In the above example the Alpine theme is modified but not renamed. If you have renamed the theme, use the new `extend-theme` parameter:
@@ -62,15 +71,24 @@ In the above example the Alpine theme is modified but not renamed. If you have r
 .ag-theme-custom-name {
   @include ag-theme-alpine((
     alpine-active-color: red
-  ))
+  ));
+  .ag-header-cell {
+    font-style: italic;
+  }
 }
 
-// Renaming Alpine ag-theme-custom-name in the new API
+// Renaming Alpine to ag-theme-custom-name in the new API
 @include ag.grid-styles((
   theme: custom-name,
   extend-theme: alpine,
   alpine-active-color: red,
 ));
+.ag-theme-custom-name {
+  .ag-header-cell {
+    font-style: italic;
+  }
+}
+// ^^^ put any custom CSS rules below the grid-styles mixin, wrapped in the theme class
 ```
 
 ### Breaking changes
@@ -78,7 +96,7 @@ In the above example the Alpine theme is modified but not renamed. If you have r
 We have tried to make the new Sass Styling API as backwards-compatible as possible, but there are a few breaking changes:
 
 1. The backwards-compatibility layer introduced in v23 (released 2020) for the benefit of applications written for v22 and below has been removed. This is necessary in order to prepare for the [upcoming release of Sass in late 2022](https://github.com/sass/sass/blob/main/accepted/module-system.md#timeline) which will remove support for global variables. In practice, this means that if your application was initially created before March 2020 and you are still using the v22 method of configuring themes (setting global variables like `$ag-foreground-color: red;`) then you will need to switch to using the map-based configuration API that is shared by both the Legacy Sass API and the new Sass Styling API.
-1. `borders-side-button` used to both add both a border to the side buttons (vertical tabs), and set the background color when the tab was selected. Not it only sets the border. Use `side-button-selected-background-color` to set the background color.
+1. `borders-side-button` used to both add a border to the side buttons (vertical tabs), and set the background color when the tab was selected. Now it only sets the border. Use `side-button-selected-background-color` to set the background color.
 1. Removed `full-width-tabs`. This caused the tabs to expand to fill the space available and was used by the Material theme. If you need the same effect, use CSS:
 
     ```css
@@ -87,7 +105,7 @@ We have tried to make the new Sass Styling API as backwards-compatible as possib
     }
     ```
 
-1. Removed `ag-param($param)`, a Sass function that was replaced at compile time with the value of `$param`, has been removed. All theme variables are now dynamic. Use `var` instead:
+1. Removed `ag-param($param)`, a Sass function that was replaced at compile time with the value of `$param`. All theme variables are now dynamic. Use `var` instead:
 
     ```scss
     // old way:
@@ -100,7 +118,7 @@ We have tried to make the new Sass Styling API as backwards-compatible as possib
       // ^^^ note the --ag- prefix
     }
     ```
-1. Removed `ag-color-property()`, a Sass mixin that outputted a CSS variables with a fallback for IE11, has been removed. It is no longer required now that IE11 is not a supported browser. Use `var` instead:
+1. Removed `ag-color-property()`, a Sass mixin that outputted a CSS variables with a fallback for IE11. It is no longer required now that IE11 is not a supported browser. Use `var` instead:
 
     ```scss
     // old way
