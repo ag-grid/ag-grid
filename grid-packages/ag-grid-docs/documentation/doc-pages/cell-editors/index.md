@@ -72,7 +72,7 @@ This following shows the Selector always returning back an AG Rich Select Cell E
 ```js
 cellEditorSelector: params => {
     return {
-        component: 'agRichSelect',
+        component: 'agRichSelectCellEditor',
         params: { values: ['Male', 'Female'] },
         popup: true
     };
