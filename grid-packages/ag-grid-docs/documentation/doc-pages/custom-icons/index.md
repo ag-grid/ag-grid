@@ -2,7 +2,7 @@
 title: "Custom Icons"
 ---
 
-This sections details how to provide your own icons for the grid and style grid icons for your application requirements.
+This section details how to provide your own icons for the grid and style grid icons for your application requirements
 
 ## Swapping the Provided Icon Fonts
 
@@ -14,9 +14,11 @@ If you are using the Sass API, it will embed the required font data for you. App
 2. (optional) switch `ag-theme-alpine.css` for `ag-theme-alpine-no-font.css` to save a few kB if you no longer require the Material icons
 3. Set the CSS variable `--ag-icon-font-family: agGridMaterial`
 
-This example uses the Alpine theme with the Material icons:
-
-<grid-example title='Swapping the Icon Font' name='icons-swapping-font' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel"]  }'></grid-example>
+<!-- NOTE: this example javascript-only because framework examples only load the Alpine theme, so material icons don't work -->
+[[only-javascript]]
+| This example uses the Alpine theme with icons from the Material theme:
+|
+| <grid-example title='Swapping the Icon Font' name='icons-swapping-font' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel"]  }'></grid-example>
 
 ## Using an Alternative Icon Font
 

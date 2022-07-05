@@ -6,7 +6,7 @@ Style text inputs, checkboxes, toggle buttons and range sliders.
 
 ## Styling Text Inputs
 
-Text inputs can be styles with a combination of CSS variables and selectors:
+Text inputs can be styled with a combination of CSS variables and selectors:
 
 ```css
 .ag-theme-alpine {
