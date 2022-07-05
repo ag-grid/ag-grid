@@ -14,17 +14,6 @@
         border-right: var(--ag-borders-critical) var(--ag-border-color);
     }
 
-    .ag-row-selected::before {
-        content: "";
-        background-color: var(--ag-selected-row-background-color);
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-    }
-
     // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected:not(.ag-cell-focus),
     .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell:not(.ag-cell-inline-editing) {

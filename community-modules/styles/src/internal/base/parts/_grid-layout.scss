@@ -108,6 +108,16 @@
         }
     }
 
+    .ag-row-selected::before {
+        content: "";
+        background-color: var(--ag-selected-row-background-color);
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
 
     .ag-row-hover:not(.ag-full-width-row)::before,
     .ag-row-hover.ag-full-width-row.ag-row-group::before {

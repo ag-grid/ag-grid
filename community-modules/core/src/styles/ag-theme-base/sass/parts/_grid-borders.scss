@@ -14,10 +14,6 @@
         @include ag-border(critical, right);
     }
 
-    .ag-row-selected {
-        @include ag-color-property(background-color, selected-row-background-color);
-    }
-
     // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected:not(.ag-cell-focus),
     .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell:not(.ag-cell-inline-editing) {
