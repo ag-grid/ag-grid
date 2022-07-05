@@ -166,7 +166,7 @@ Also note the [Set Filter](/filter-set/) will contain a list of all unique value
 
 The following example presents a more complex example which includes Aggregation and Filtering:
 
-- **'Add New Wav' Button** - will add a '.wav' file to a 'wav' group under 'Music'.
+- **'Add New Group' Button** - will add a new group under Music.
 - **'Move Selected to stuff' Button** - will move any non parent groups into the 'stuff' folder.
 - **'Remove Selected' Button** - will remove selected group along with children.
 - **'Files' Filter** - you can filter group and leaf names across the entire file tree.
