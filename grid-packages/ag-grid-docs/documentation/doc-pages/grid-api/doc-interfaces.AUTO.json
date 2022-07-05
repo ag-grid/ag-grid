@@ -13015,6 +13015,55 @@
       "type": { "returnType": "CssColor", "optional": true }
     }
   },
+  "AgScatterSeriesMarker": {
+    "domain": {
+      "description": "/** If sizeKey is used, explicitly specifies the extent of the domain of it's values. */",
+      "type": { "returnType": "[number, number]", "optional": true }
+    },
+    "formatter": {
+      "description": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
+      "type": {
+        "returnType": "AgCartesianSeriesMarkerFormatter",
+        "optional": true
+      }
+    },
+    "enabled": {
+      "description": "/** Whether or not to show markers. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "shape": {
+      "description": "/** The shape to use for the markers. You can also supply a custom marker by providing a `Marker` subclass. */",
+      "type": { "returnType": "MarkerShape", "optional": true }
+    },
+    "size": {
+      "description": "/** The size in pixels of the markers. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxSize": {
+      "description": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "fill": {
+      "description": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** Opacity of the marker fills. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** Opacity of the marker strokes. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    }
+  },
   "AgScatterSeriesOptions": {
     "type": {
       "description": "/** Configuration for the treemap series. */",
@@ -13022,7 +13071,7 @@
     },
     "marker": {
       "description": "/** Configuration for the markers used in the series. */",
-      "type": { "returnType": "AgCartesianSeriesMarker", "optional": true }
+      "type": { "returnType": "AgScatterSeriesMarker", "optional": true }
     },
     "label": {
       "description": "/** Configuration for the labels shown on top of data points. */",

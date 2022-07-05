@@ -3,6 +3,7 @@ import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartPr
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
 import { ChartDataModel } from "../../chartDataModel";
+import { AgScatterSeriesMarker } from "ag-charts-community/src/chart/agChartOptions";
 
 interface SeriesDefinition {
     xField: FieldDefinition;
@@ -63,11 +64,60 @@ export class ScatterChartProxy extends CartesianChartProxy {
             }
         ));
 
-        return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
+        return this.crossFiltering ? this.extractCrossFilterSeries(series, params) : series;
     }
 
-    private extractCrossFilterSeries(series: AgScatterSeriesOptions[]): AgScatterSeriesOptions[] {
-        return []; //TODO
+    private extractCrossFilterSeries(
+        series: AgScatterSeriesOptions[],
+        params: UpdateChartParams,
+    ): AgScatterSeriesOptions[] {
+        const { data } = params;
+
+        return series.concat(...series.map((series) => {
+            let markerDomain: [number, number] = [Infinity, -Infinity];
+            if (series.sizeKey != null) {
+                for (const datum of data) {
+                    const value = datum[series.sizeKey];
+                    if (value < markerDomain[0]) {
+                        markerDomain[0] = value;
+                    }
+                    if (value > markerDomain[1]) {
+                        markerDomain[1] = value;
+                    }
+                }
+            }
+            console.log({markerDomain});
+
+            const seriesOverrides = this.extractSeriesOverrides();
+            const marker: AgScatterSeriesMarker = {
+                formatter: (p: any) => {
+                    return {
+                        fill: p.highlighted ? 'yellow' : p.fill,
+                    };
+                },
+                fillOpacity: this.crossFilteringDeselectedPoints() ? 0.3 : 1,
+                strokeOpacity: this.crossFilteringDeselectedPoints() ? 0.3 : 1,
+            };
+            if (markerDomain[0] <= markerDomain[1]) {
+                marker.domain = markerDomain;
+            }
+            return {
+                ...series,
+                marker,
+                yKey: series.yKey + '-filtered-out',
+                xKey: series.xKey + '-filtered-out',
+                listeners: {
+                    ...seriesOverrides.listeners,
+                    nodeClick: (e: any) => {
+                        const value = e.datum![series.xKey!];
+                        const multiSelection = e.event.metaKey || e.event.ctrlKey;
+                        this.crossFilteringAddSelectedPoint(multiSelection, value);
+                        this.crossFilterCallback(e);
+                    }
+                },
+                showInLegend: false,
+            };
+        }));
     }
 
     private getSeriesDefinitions(fields: FieldDefinition[], paired: boolean): (SeriesDefinition | null)[] {

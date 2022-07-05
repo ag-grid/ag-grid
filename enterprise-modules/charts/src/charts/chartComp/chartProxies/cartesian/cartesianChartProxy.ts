@@ -212,7 +212,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
         });
     }
 
-    private crossFilteringAddSelectedPoint(multiSelection: boolean, value: string): void {
+    protected crossFilteringAddSelectedPoint(multiSelection: boolean, value: string): void {
         multiSelection ? this.crossFilteringSelectedPoints.push(value) : this.crossFilteringSelectedPoints = [value];
     }
 }
