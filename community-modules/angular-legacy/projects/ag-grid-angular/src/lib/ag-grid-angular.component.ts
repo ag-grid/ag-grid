@@ -467,7 +467,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Params to be passed to the `loadingCellRenderer` component.     */
     @Input() public loadingCellRendererParams: any = undefined;
     /** Callback to select which loading cell renderer to be used when data is loading via a DataSource.     */
-    @Input() public loadingCellRendererSelector: LoadingCellRendererSelectorFunc | undefined = undefined;
+    @Input() public loadingCellRendererSelector: LoadingCellRendererSelectorFunc<TData> | undefined = undefined;
     /** A map of key->value pairs for localising text within the grid.     */
     @Input() public localeText: { [key: string]: string } | undefined = undefined;
     /** Set to `true` to enable Master Detail. Default: `false`     */
@@ -577,7 +577,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection. Default: `false`     */
     @Input() public functionsReadOnly: boolean | undefined = undefined;
     /** A map of 'function name' to 'function' for custom aggregation functions.     */
-    @Input() public aggFuncs: { [key: string]: IAggFunc; } | undefined = undefined;
+    @Input() public aggFuncs: { [key: string]: IAggFunc<TData>; } | undefined = undefined;
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false`     */
     @Input() public suppressAggFuncInHeader: boolean | undefined = undefined;
     /** When `true`, the aggregations won't be computed for the root node of the grid. Default: `false`     */
@@ -762,10 +762,12 @@ Full Store is used.
     @Input() public serverSideSortAllLevels: boolean | undefined = undefined;
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
     @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
-    /** When enabled, the grid will always request the server to provide the sort results.
+    /** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
+     * as Sorting is always server side when Infinite Scroll is active.
      * Default: `false`     */
     @Input() public serverSideSortOnServer: boolean | undefined = undefined;
-    /** When enabled, the grid will always request the server to provide the filter results.
+    /** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
+     * as Filtering is always server side when Infinite Scroll is active.
      * Default: `false`     */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
     /** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.
@@ -875,45 +877,45 @@ Full Store is used.
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.     */
     @Input() public postProcessPopup: ((params: PostProcessPopupParams<TData>) => void) | undefined = undefined;
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.     */
-    @Input() public processCellForClipboard: ((params: ProcessCellForExportParams) => any) | undefined = undefined;
+    @Input() public processCellForClipboard: ((params: ProcessCellForExportParams<TData>) => any) | undefined = undefined;
     /** Allows you to process header values for the clipboard.     */
-    @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams) => any) | undefined = undefined;
+    @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams<TData>) => any) | undefined = undefined;
     /** Allows you to process group header values for the clipboard.     */
-    @Input() public processGroupHeaderForClipboard: ((params: ProcessGroupHeaderForExportParams) => any) | undefined = undefined;
+    @Input() public processGroupHeaderForClipboard: ((params: ProcessGroupHeaderForExportParams<TData>) => any) | undefined = undefined;
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid.     */
-    @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams) => any) | undefined = undefined;
+    @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams<TData>) => any) | undefined = undefined;
     /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself.     */
-    @Input() public sendToClipboard: ((params: SendToClipboardParams) => void) | undefined = undefined;
+    @Input() public sendToClipboard: ((params: SendToClipboardParams<TData>) => void) | undefined = undefined;
     /** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data.     */
-    @Input() public processDataFromClipboard: ((params: ProcessDataFromClipboardParams) => string[][] | null) | undefined = undefined;
+    @Input() public processDataFromClipboard: ((params: ProcessDataFromClipboardParams<TData>) => string[][] | null) | undefined = undefined;
     /** Grid calls this method to know if an external filter is present.     */
-    @Input() public isExternalFilterPresent: ((params: IsExternalFilterPresentParams) => boolean) | undefined = undefined;
+    @Input() public isExternalFilterPresent: ((params: IsExternalFilterPresentParams<TData>) => boolean) | undefined = undefined;
     /** Should return `true` if external filter passes, otherwise `false`.     */
     @Input() public doesExternalFilterPass: ((node: RowNode<TData>) => boolean) | undefined = undefined;
     /** Callback to be used to customise the chart toolbar items.     */
     @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
     /** Callback to enable displaying the chart in an alternative chart container.     */
-    @Input() public createChartContainer: ((params: ChartRefParams) => void) | undefined = undefined;
+    @Input() public createChartContainer: ((params: ChartRefParams<TData>) => void) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.     */
-    @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams) => (HeaderPosition | null)) | undefined = undefined;
+    @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null)) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.     */
-    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams) => (HeaderPosition | null)) | undefined = undefined;
+    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams<TData>) => (HeaderPosition | null)) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.     */
-    @Input() public navigateToNextCell: ((params: NavigateToNextCellParams) => (CellPosition | null)) | undefined = undefined;
+    @Input() public navigateToNextCell: ((params: NavigateToNextCellParams<TData>) => (CellPosition | null)) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.     */
-    @Input() public tabToNextCell: ((params: TabToNextCellParams) => (CellPosition | null)) | undefined = undefined;
+    @Input() public tabToNextCell: ((params: TabToNextCellParams<TData>) => (CellPosition | null)) | undefined = undefined;
     /** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.
      */
-    @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams) => boolean) | undefined = undefined;
+    @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams<TData>) => boolean) | undefined = undefined;
     /** @deprecated - Use `getLocaleText` instead.
      */
     @Input() public localeTextFunc: ((key: string, defaultValue: string, variableValues?: string[]) => string) | undefined = undefined;
     /** A callback for localising text within the grid.     */
-    @Input() public getLocaleText: ((params: GetLocaleTextParams) => string) | undefined = undefined;
+    @Input() public getLocaleText: ((params: GetLocaleTextParams<TData>) => string) | undefined = undefined;
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports)     */
     @Input() public getDocument: (() => Document) | undefined = undefined;
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.     */
-    @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams) => string) | undefined = undefined;
+    @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams<TData>) => string) | undefined = undefined;
     /** @deprecated - Use `getGroupRowAgg` instead.
      */
     @Input() public groupRowAggNodes: ((nodes: RowNode[]) => any) | undefined = undefined;
