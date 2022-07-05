@@ -725,7 +725,7 @@ export interface GridOptions<TData = any> {
 
     // *** Selection *** //
     /** Type of Row Selection: `single`, `multiple`. */
-    rowSelection?: string;
+    rowSelection?: 'single' | 'multiple';
     /** Set to `true` to allow multiple rows to be selected using single click. Default: `false` */
     rowMultiSelectWithClick?: boolean;
     /** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`. Default: `false` */
@@ -754,7 +754,7 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to enable the Fill Handle. Default: `false` */
     enableFillHandle?: boolean;
     /** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. Default: `xy` */
-    fillHandleDirection?: string;
+    fillHandleDirection?: 'x' | 'y' | 'xy';
     /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`*/
     suppressClearOnFillReduction?: boolean;
 

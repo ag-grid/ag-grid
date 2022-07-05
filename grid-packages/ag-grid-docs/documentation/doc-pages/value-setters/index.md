@@ -44,11 +44,11 @@ the following:
 
 - All columns are editable. After an edit, the example prints the updated row data to the console to show the impact of the edit.
 
+- Column Name uses `valueGetter` to combine the values from the two attributes `firstName` and `lastName` (separated by a space) and `valueSetter` is used to break the value up into the two same attributes.
+
 - Column A uses `field` for both getting and setting the value. This is the simple case for comparison.
 
 - Column B uses `valueGetter` and `valueSetter` instead of field for getting and setting the value. This allows the value to be parsed into the correct type before being saved.
-
-- Column Name uses `valueGetter` to combine the value from the two attributes `firstName` and `lastName` and `valueSetter` is used to break the value up into the two same attributes.
 
 - Column C.X and C.Y use `valueGetter` to get the value from an embedded object. They then use `valueSetter` to set the value into the embedded object while also making sure the correct structure exists (this structure creation would not happen if using field).
 

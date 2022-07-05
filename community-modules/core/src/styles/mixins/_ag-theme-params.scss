@@ -60,7 +60,7 @@
 }
 
 // Use a parameter in SCSS, e.g. `color: ag-param(foreground-color)`
-@function ag-param($name, $caller: null) {
+@function ag-param($name) {
     $resolved: -ag-param-unchecked($name);
     @if str-index(inspect($resolved), "ag-derived(") != null {
         @error "#{$name} param contains a ag-derived() as a CSS function call expression. This means that you have tried to use ag-derived() before the function is defined - you need to include the file that defines it.";

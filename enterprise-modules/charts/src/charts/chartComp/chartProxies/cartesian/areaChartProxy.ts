@@ -25,8 +25,6 @@ export class AreaChartProxy extends CartesianChartProxy {
                 ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
                 type: this.xAxisType,
                 position: ChartAxisPosition.Bottom,
-                paddingInner: 1,
-                paddingOuter: 0,
             },
             {
                 ...deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left),
@@ -34,11 +32,6 @@ export class AreaChartProxy extends CartesianChartProxy {
                 position: ChartAxisPosition.Left
             },
         ];
-
-        if (this.xAxisType === 'time') {
-            delete options[0].paddingInner;
-            delete options[0].paddingOuter;
-        }
 
         return options;
     }

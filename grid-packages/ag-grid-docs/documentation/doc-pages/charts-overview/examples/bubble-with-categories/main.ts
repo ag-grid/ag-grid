@@ -42,6 +42,8 @@ const options: AgChartOptions = {
           lineDash: [0, 5, 0],
         },
       ],
+      paddingInner: 0.2,
+      paddingOuter: 0.3,
       tick: {
         color: 'black',
       },
@@ -53,6 +55,8 @@ const options: AgChartOptions = {
       position: 'left',
       type: 'category',
       gridStyle: [],
+      paddingInner: 0.2,
+      paddingOuter: 0.3,
       tick: {
         color: 'black',
       },

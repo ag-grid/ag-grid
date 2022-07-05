@@ -1125,10 +1125,6 @@
             }
         },
         "rowSelection": {
-            "options": [
-                "single",
-                "multiple"
-            ],
             "more": {
                 "name": "Row Selection",
                 "url": "/row-selection"
@@ -1177,13 +1173,7 @@
                 "url": "/range-selection-fill-handle/"
             }
         },
-        "fillHandleDirection": {
-            "options": [
-                "x",
-                "y",
-                "xy"
-            ]
-        },
+        "fillHandleDirection": {},
         "fillOperation": {},
         "suppressClearOnFillReduction": {}
     },

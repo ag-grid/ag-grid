@@ -17,6 +17,10 @@ export function getData(): any[] {
             b: Math.floor(Math.random() * 100),
             firstName: firstNames[i % firstNames.length],
             lastName: lastNames[i % lastNames.length],
+            c: {
+                x: Math.floor(Math.random() * 100),
+                y: Math.floor(Math.random() * 100),
+            },
         })
     }
 

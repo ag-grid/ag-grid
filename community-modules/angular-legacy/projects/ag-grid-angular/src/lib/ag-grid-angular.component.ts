@@ -805,7 +805,7 @@ Full Store is used.
     /** Tell the grid how wide in pixels the scrollbar is, which is used in grid width calculations. Set only if using non-standard browser-provided scrollbars, so the grid can use the non-standard size in its calculations.     */
     @Input() public scrollbarWidth: number | undefined = undefined;
     /** Type of Row Selection: `single`, `multiple`.     */
-    @Input() public rowSelection: string | undefined = undefined;
+    @Input() public rowSelection: 'single' | 'multiple' | undefined = undefined;
     /** Set to `true` to allow multiple rows to be selected using single click. Default: `false`     */
     @Input() public rowMultiSelectWithClick: boolean | undefined = undefined;
     /** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`. Default: `false`     */
@@ -831,7 +831,7 @@ Full Store is used.
     /** Set to `true` to enable the Fill Handle. Default: `false`     */
     @Input() public enableFillHandle: boolean | undefined = undefined;
     /** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. Default: `xy`     */
-    @Input() public fillHandleDirection: string | undefined = undefined;
+    @Input() public fillHandleDirection: 'x' | 'y' | 'xy' | undefined = undefined;
     /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`     */
     @Input() public suppressClearOnFillReduction: boolean | undefined = undefined;
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`     */

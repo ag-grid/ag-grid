@@ -881,7 +881,7 @@
   },
   "rowSelection": {
     "description": "/** Type of Row Selection: `single`, `multiple`. */",
-    "type": { "returnType": "string" }
+    "type": { "returnType": "'single' | 'multiple'" }
   },
   "rowMultiSelectWithClick": {
     "description": "/** Set to `true` to allow multiple rows to be selected using single click. Default: `false` */",
@@ -925,7 +925,7 @@
   },
   "fillHandleDirection": {
     "description": "/** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. Default: `xy` */",
-    "type": { "returnType": "string" }
+    "type": { "returnType": "'x' | 'y' | 'xy'" }
   },
   "suppressClearOnFillReduction": {
     "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false` */",
