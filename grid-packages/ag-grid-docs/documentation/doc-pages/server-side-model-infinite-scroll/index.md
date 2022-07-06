@@ -29,7 +29,7 @@ It is useful to understand how the grid organises data into caches for Infinite 
 `cacheBlockSize` and `maxBlocksInCache`.
 
 The grid arranges rows into blocks which are in turn stored in a cache. There is a cache containing the top-level rows
-(i.e. on the root node) and for each individual [Row Grouping](/server-side-model-row-grouping/) level. When the grid 
+(i.e. on the root node) and for each individual [Row Grouping](/server-side-model-grouping/) level. When the grid 
 initialises, it will retrieve an initial number (as per configuration) of blocks containing rows. As the user scrolls down,
 more blocks will be loaded.
 

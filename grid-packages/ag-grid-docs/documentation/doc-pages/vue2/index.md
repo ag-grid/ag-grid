@@ -147,7 +147,7 @@ new Vue({
 |
 | This tutorial, as well as ll of our examples, use Vue 2 by default.
 |
-| For the Vue 3 version of this tutorial please see the documentation [here.](/vue3/)
+| For the Vue 3 version of this tutorial please see the documentation [here.](/getting-started/)
 |
 
 ## Add AG Grid to Your Project
@@ -696,8 +696,7 @@ the provided AG Grid SCSS files - replace the `style` block in `src/App.vue` wit
 If everything is configured correctly, the second row of the grid will be blue. Congratulations!
 You now know now bend the grid look to your will - there are a few dozens more Sass variables that
 let you control the font family and size, border color, header background color and even the amount
-of spacing in the cells and columns. The full [Sass variable list](/themes-customising/#full-list-of-theme-parameters)
-is available in the themes documentation section.
+of spacing in the cells and columns. 
 
 ## Summary
 

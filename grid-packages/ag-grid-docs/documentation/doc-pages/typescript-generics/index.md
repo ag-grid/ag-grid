@@ -125,7 +125,7 @@ function onRowSelected(event: RowSelectedEvent<ICar>) {
 
 For a number of events and callbacks, when a generic interface is provided, the `data` property is typed as `TData | undefined` instead of `any`. The undefined is required because it is possible for the `data` property to be undefined under certain grid configurations. 
 
-A good example of this is [Row Grouping](/row-grouping). The `onRowSelected` event is fired for both leaf and group rows. Data is only present on leaf nodes and so the event should be written to handle cases when `data` is undefined for groups.
+A good example of this is [Row Grouping](/grouping). The `onRowSelected` event is fired for both leaf and group rows. Data is only present on leaf nodes and so the event should be written to handle cases when `data` is undefined for groups.
 
 ```ts 
 function onRowSelected(event: RowSelectedEvent<ICar>) {
