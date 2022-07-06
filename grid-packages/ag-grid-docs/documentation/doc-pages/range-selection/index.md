@@ -20,7 +20,7 @@ When enabled, ranges can be selected in the following ways:
 
 - **Ctrl & Shift & Arrow Keys:** Focusing a cell and then holding down <kbd>Ctrl</kbd> + <kbd>Shift</kbd> and using the arrow keys will create a range starting from the focused cell to the last cell in the direction of the Arrow pressed.
 
-### Range deselection
+### Range Deselection
 
 It is possible to deselect part of existing ranges in the following ways:
 
@@ -32,7 +32,7 @@ Note that deselecting part of a range can split the range into multiple ranges, 
 
 The example below demonstrates simple range selection. Ranges can be selected in all the ways described above.
 
-<grid-example title='Range Selection' name='range-selection' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "menu", "clipboard"] }'></grid-example>
+<grid-example title='Range Selection / Deselection' name='range-selection' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "menu", "clipboard"] }'></grid-example>
 
 ## Suppress Multi Range Selection
 

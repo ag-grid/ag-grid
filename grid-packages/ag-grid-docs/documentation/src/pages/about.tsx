@@ -100,7 +100,7 @@ const AboutPage = () => {
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='../images/team/sean.jpeg' alt="Sean Landsman, Lead Developer"/>
+                                        <img src='../images/team/sean.jpg' alt="Sean Landsman, Lead Developer"/>
                                     </div>
                                     <h3>Sean Landsman</h3>
                                     <h4>Lead Developer, Frameworks</h4>
@@ -109,6 +109,7 @@ const AboutPage = () => {
                             <div className="row">
                                 <div className="col-md-4">
                                     <div>
+
                                         <img src='../images/team/gil.jpg' alt="Guilherme Lopes, Lead Developer"/>
                                     </div>
                                     <h3>Guilherme Lopes</h3>

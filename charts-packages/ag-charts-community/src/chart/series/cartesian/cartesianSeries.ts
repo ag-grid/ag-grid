@@ -195,7 +195,7 @@ export abstract class CartesianSeries<
                 new Group({
                     name: `${this.id}-series-sub${this.subGroupId++}-markers`,
                     layer: true,
-                    zIndex: Series.SERIES_MARKER_LAYER_ZINDEX,
+                    zIndex: Series.SERIES_LAYER_ZINDEX,
                 }) :
                 undefined;
             const pickGroup = new Group();
@@ -251,7 +251,7 @@ export abstract class CartesianSeries<
             group.visible = visible && (seriesItemEnabled.get(itemId) ?? true);
             if (markerGroup) {
                 markerGroup.opacity = group.opacity;
-                markerGroup.zIndex = group.zIndex + 1;
+                markerGroup.zIndex = group.zIndex >= Series.SERIES_LAYER_ZINDEX ? group.zIndex : group.zIndex + 1;
                 markerGroup.visible = group.visible;
             }
 

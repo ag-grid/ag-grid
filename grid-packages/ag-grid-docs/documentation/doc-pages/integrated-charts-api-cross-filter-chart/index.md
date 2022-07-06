@@ -73,9 +73,10 @@ The following examples show the different chart types that support cross-filteri
 
 <grid-example title='Sales Dashboard 2' name='sales-dashboard2' type='generated' options='{ "exampleHeight": 1000, "enterprise":  true,  "modules": ["clientside", "menu", "charts", "setfilter", "multifilter", "filterpanel", "columnpanel"] }'></grid-example>
 
-### Example: Most Populous Cities
+[//]: # (### Example: Most Populous Cities)
 
-<grid-example title='Most Populous Cities' name='most-populous-cities' type='generated' options='{ "exampleHeight": 1000, "enterprise":  true,  "modules": ["clientside", "menu", "charts", "setfilter", "multifilter", "filterpanel", "columnpanel"] }'></grid-example>
+[//]: # ()
+[//]: # (<grid-example title='Most Populous Cities' name='most-populous-cities' type='generated' options='{ "exampleHeight": 1000, "enterprise":  true,  "modules": ["clientside", "menu", "charts", "setfilter", "multifilter", "filterpanel", "columnpanel"] }'></grid-example>)
 
 ## Next Up
 
