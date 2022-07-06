@@ -241,7 +241,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     @PreDestroy
     private destroyCtrls(): void {
-        iterateObject(this.headerCellCtrls, (key, ctrl)=> {
+        iterateObject(this.headerCellCtrls, (key, ctrl) => {
             this.destroyBean(ctrl);
         });
         this.headerCellCtrls = {};
