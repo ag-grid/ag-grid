@@ -1,13 +1,6 @@
 #!/bin/bash
 
-if [ "$#" -lt 1 ]
-  then
-    echo "You must supply a timestamp"
-    echo "For example: ./scripts/release/switchRelease.sh 20191210"
-    exit 1
-fi
-
-TIMESTAMP=$1
+TIMESTAMP=`date +%Y%m%d`
 
 CREDENTIALS_LOCATION=$HOME/$CREDENTIALS_FILE
 SSH_LOCATION=$HOME/$SSH_FILE
@@ -36,8 +29,8 @@ function checkFileExists {
 checkFileExists $SSH_LOCATION
 checkFileExists $CREDENTIALS_LOCATION
 
-# $2 is optional skipWarning argument
-if [ "$2" != "skipWarning" ]; then
+# $1 is optional skipWarning argument
+if [ "$1" != "skipWarning" ]; then
     while true; do
       echo    ""
       echo    "*********************************** ******* ************************************************"
