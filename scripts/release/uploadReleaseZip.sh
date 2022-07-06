@@ -28,13 +28,13 @@ SSH_LOCATION=$HOME/$SSH_FILE
 if [ -z "$CREDENTIALS_LOCATION" ]
 then
       echo "\$CREDENTIALS_LOCATION is not set"
-      exit;
+      exit 1;
 fi
 
 if [ -z "$SSH_LOCATION" ]
 then
       echo "\$SSH_LOCATION is not set"
-      exit;
+      exit 1;
 fi
 
 checkFileExists $FILENAME

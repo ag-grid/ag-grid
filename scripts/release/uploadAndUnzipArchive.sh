@@ -12,7 +12,7 @@ function checkFileExists {
     if ! [[ -f "$file" ]]
     then
         echo "File [$file] doesn't exist - exiting script.";
-        exit;
+        exit 1;
     fi
 }
 
@@ -25,19 +25,19 @@ export SSH_LOCATION=$HOME/$SSH_FILE
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
 then
     echo "Version isn't in the expected format. Valid format is: Number.Number.number. For example 19.1.2";
-    exit;
+    exit 1;
 fi
 
 if [ -z "$CREDENTIALS_LOCATION" ]
 then
       echo "\$CREDENTIALS_LOCATION is not set"
-      exit;
+      exit 1;
 fi
 
 if [ -z "$SSH_LOCATION" ]
 then
       echo "\$SSH_LOCATION is not set"
-      exit;
+      exit 1;
 fi
 
 ARCHIVE="archive_`date +%Y%m%d`_$VERSION.tar.gz"

@@ -5,7 +5,7 @@ SSH_LOCATION=$HOME/$SSH_FILE
 if [ -z "$SSH_LOCATION" ]
 then
       echo "\$SSH_LOCATION is not set"
-      exit;
+      exit ;
 fi
 
 function checkFileExists {
@@ -13,7 +13,7 @@ function checkFileExists {
     if ! [[ -f "$file" ]]
     then
         echo "File [$file] doesn't exist - exiting script.";
-        exit;
+        exit 1;
     fi
 }
 
