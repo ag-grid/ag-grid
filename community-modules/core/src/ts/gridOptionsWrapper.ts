@@ -918,6 +918,14 @@ export class GridOptionsWrapper {
         return this.gridOptions.infiniteInitialRowCount;
     }
 
+    public getServerSideInitialRowCount(): number {
+        const rowCount = this.gridOptions.serverSideInitialRowCount;
+        if (typeof rowCount === 'number' && rowCount > 0) {
+            return rowCount;
+        }
+        return 1;
+    }
+
     public isPurgeClosedRowNodes() {
         return isTrue(this.gridOptions.purgeClosedRowNodes);
     }

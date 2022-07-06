@@ -2049,6 +2049,22 @@ export class GridApi<TData = any> {
         return this.getFirstDisplayedRow();
     }
 
+    /** Get the index of the first visible row in the viewport. */
+    public getFirstVisibleRowIndex(): number {
+        const pageOffset = this.paginationProxy.getPixelOffset();
+        const firstVisiblePx = this.gridBodyCtrl.getScrollFeature().getVScrollPosition().top;
+        const firstRowPx = pageOffset + firstVisiblePx;
+        return this.rowModel.getRowIndexAtPixel(firstRowPx);
+    }
+
+    /** Get the index of the last visible row in the viewport. */
+    public getLastVisibleRowIndex(): number {
+        const pageOffset = this.paginationProxy.getPixelOffset();
+        const lastVisiblePx = this.gridBodyCtrl.getScrollFeature().getVScrollPosition().bottom;
+        const lastRowPx = pageOffset + lastVisiblePx;
+        return this.rowModel.getRowIndexAtPixel(lastRowPx);
+    }
+
     /** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */
     public getFirstDisplayedRow(): number {
         return this.rowRenderer.getFirstVirtualRenderedRow();
