@@ -187,9 +187,9 @@ const AboutPage = () => {
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='../images/team/abs.jpeg' alt="Abdiwali Jama, Developer"/>
+                                        <img src='../images/team/abs.jpeg' alt="AbdiWali Jama, Developer"/>
                                     </div>
-                                    <h3>Abdiwali Jama</h3>
+                                    <h3>AbdiWali Jama</h3>
                                     <h4>Developer</h4>
                                 </div>
                                 <div className="col-md-4">
