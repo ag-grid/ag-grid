@@ -5,7 +5,7 @@ function checkFileExists {
     if ! [[ -f "$file" ]]
     then
         echo "File [$file] doesn't exist - exiting script.";
-        exit;
+        exit 1;
     fi
 }
 
