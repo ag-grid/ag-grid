@@ -1596,7 +1596,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 // Default values for themes that do not use the mixins
-@for $i from 1 to 100 {
+@for $i from 1 to 10 {
     .ag-column-select-indent-#{$i} {
         @include ag-unthemed-rtl(( padding-left: $i * 20px ));
     }
