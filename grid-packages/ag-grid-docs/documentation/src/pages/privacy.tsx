@@ -270,17 +270,7 @@ const Privacy = () => {
                                         approved by the European Commission which give personal data the same protection it has in Europe;
                                         or
                                     </li>
-                                    <li>
-                                        If we use US-based providers that are part of EU-US Privacy Shield, we may transfer data to them,
-                                        as they have equivalent
-                                        safeguards in place.
-                                    </li>
                                 </ul>
-                                <p>
-                                    If none of the above safeguards is available, we may request your explicit consent to the specific
-                                    transfer. You will have the
-                                    right to withdraw this consent at any time.
-                                </p>
                             </li>
                             <li>
                                 <h3 id="data-security">Data Security</h3>
