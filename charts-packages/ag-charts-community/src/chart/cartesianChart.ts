@@ -1,12 +1,10 @@
 import { Chart } from "./chart";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
-import { ChartAxisPosition, ChartAxisDirection } from "./chartAxis";
+import { ChartAxis, ChartAxisPosition, ChartAxisDirection } from "./chartAxis";
 import { BBox } from "../scene/bbox";
 import { ClipRect } from "../scene/clipRect";
 import { Navigator } from "./navigator/navigator";
-import { ChartAxis } from "./chartAxis";
-import { Caption } from "../caption";
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
@@ -32,7 +30,7 @@ export class CartesianChart extends Chart {
     performLayout(): void {
         this.scene.root!.visible = true;
 
-        const { width, height, axes, legend, navigator } = this;
+        const { width, height, legend, navigator } = this;
 
         let shrinkRect = new BBox(0, 0, width, height);
 
@@ -150,11 +148,11 @@ export class CartesianChart extends Chart {
         }
     }
 
-    protected onTouchEnd(event: TouchEvent) {
+    protected onTouchEnd(_event: TouchEvent) {
         this.navigator.onDragStop();
     }
 
-    protected onTouchCancel(event: TouchEvent) {
+    protected onTouchCancel(_event: TouchEvent) {
         this.navigator.onDragStop();
     }
 
@@ -202,7 +200,7 @@ export class CartesianChart extends Chart {
         // ticks/labels.
         let lastPass: typeof axisWidths = {};
         let clipSeries = false;
-        let seriesRect: BBox = inputShrinkRect.clone();
+        let seriesRect: BBox;
         let count = 0;
         do {
             Object.assign(axisWidths, lastPass);
@@ -277,17 +275,11 @@ export class CartesianChart extends Chart {
             const axisOffset = newAxisWidths[position] ?? 0;
             switch (position) {
                 case ChartAxisPosition.Top:
-                    axis.range = [0, seriesRect.width];
-                    axis.gridLength = seriesRect.height;
-                    break;
-                case ChartAxisPosition.Right:
-                    axis.range = axisLeftRightRange(axis);
-                    axis.gridLength = seriesRect.width;
-                    break;
                 case ChartAxisPosition.Bottom:
                     axis.range = [0, seriesRect.width];
                     axis.gridLength = seriesRect.height;
                     break;
+                case ChartAxisPosition.Right:
                 case ChartAxisPosition.Left:
                     axis.range = axisLeftRightRange(axis);
                     axis.gridLength = seriesRect.width;

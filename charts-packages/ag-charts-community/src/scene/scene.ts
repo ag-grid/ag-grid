@@ -85,10 +85,10 @@ export class Scene {
         width = Math.round(width);
         height = Math.round(height);
 
-        if (width === this.width && height === this.height) {
-            return false;
-        } else if (width <= 0 || height <= 0) {
-            // HdpiCanvas doesn't allow width/height <= 0.
+        // HdpiCanvas doesn't allow width/height <= 0.
+        const lessThanZero = width <= 0 || height <= 0;
+        const unchanged = width === this.width && height === this.height;
+        if (unchanged || lessThanZero) {
             return false;
         }
 

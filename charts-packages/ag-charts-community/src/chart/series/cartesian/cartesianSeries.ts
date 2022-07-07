@@ -362,7 +362,7 @@ export abstract class CartesianSeries<
         // Override point for sub-classes.
         return opts.datumSelection;
     }
-    protected updateDatumNodes(opts: {
+    protected updateDatumNodes(_opts: {
         datumSelection: NodeDataSelection<N, C>;
         isHighlight: boolean;
         seriesIdx: number;
@@ -378,7 +378,7 @@ export abstract class CartesianSeries<
         // Override point for sub-classes.
         return opts.markerSelection;
     }
-    protected updateMarkerNodes(opts: {
+    protected updateMarkerNodes(_opts: {
         markerSelection: NodeDataSelection<Marker, C>;
         isHighlight: boolean;
         seriesIdx: number;

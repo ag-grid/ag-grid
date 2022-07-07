@@ -27,7 +27,7 @@ export class Diamond extends Marker {
         ctx.lineTo((x += hs), (y += hs));
         ctx.lineTo((x -= hs), (y += hs));
         ctx.lineTo((x -= hs), (y -= hs));
-        ctx.lineTo((x += hs), (y -= hs));
+        ctx.lineTo((x + hs), (y - hs));
 
         ctx.closePath();
 

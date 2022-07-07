@@ -652,7 +652,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
     function formatUTCZone(): string {
         return '+0000';
     }
-    function formatLiteralPercent(date: Date): string {
+    function formatLiteralPercent(): string {
         return '%';
     }
     function formatUnixTimestamp(date: Date): number {
@@ -765,7 +765,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
         const n = /^(Z)|^([+-]\d\d)(?::?(\d\d))?/.exec(string.slice(i, i + 6));
         return n ? (d.Z = n[1] ? 0 : -(n[2] + (n[3] || '00')), i + n[0].length) : -1;
     }
-    function parseLiteralPercent(d: ParsedDate, string: string, i: number): number {
+    function parseLiteralPercent(_: any, string: string, i: number): number {
         const n = percentRe.exec(string.slice(i, i + 1));
         return n ? i + n[0].length : -1;
     }

@@ -11,7 +11,7 @@ export class HierarchyNode {
     }
 
     private countFn(node: HierarchyNode) {
-        var sum = 0,
+        let sum = 0,
             children = node.children;
 
         if (!children || !children.length) {
@@ -140,12 +140,6 @@ export class HierarchyNode {
             nodes.splice(k, 0, end);
             end = end.parent;
         }
-        // const otherBranch = [];
-        // while (end !== ancestor) {
-        //     otherBranch.push(end);
-        //     end = end.parent;
-        // }
-        // nodes.concat(otherBranch.reverse());
         return nodes;
     }
 
@@ -185,30 +179,20 @@ export class HierarchyNode {
         return links;
     }
 
-    copy() {
-        // TODO
-    }
-
     iterator(callback: (node: HierarchyNode) => any) {
-        let node: HierarchyNode | undefined = this;
-        let next: HierarchyNode[] = [node];
-        let current;
+        const { children = [] } = this;
 
-        doLoop: do {
-            current = next.reverse();
-            next = [];
-            while (node = current.pop()) {
-                if (callback(node) === false) {
-                    break doLoop;
-                }
-                const { children } = node;
-                if (children) {
-                    for (let i = 0, n = children.length; i < n; ++i) {
-                        next.push(children[i]);
-                    }
-                }
+        if (callback(this) === false) {
+            return false;
+        }
+
+        for (const child of children) {
+            if (child.iterator(callback) === false) {
+                return false;
             }
-        } while (next.length);
+        }
+
+        return true;
     }
 }
 

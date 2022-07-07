@@ -107,11 +107,11 @@ export abstract class AgChart {
         return null;
     }
 
-    public static create<T extends AgChartOptions>(options: T, container?: HTMLElement, data?: any[]): AgChartType<T> {
+    public static create<T extends AgChartOptions>(options: T, _container?: HTMLElement, _data?: any[]): AgChartType<T> {
         return AgChartV2.create(options as any);
     }
 
-    public static update<T extends AgChartOptions>(chart: AgChartType<T>, options: T, container?: HTMLElement, data?: any[]) {
+    public static update<T extends AgChartOptions>(chart: AgChartType<T>, options: T, _container?: HTMLElement, _data?: any[]) {
         return AgChartV2.update(chart, options as any);
     }
 }
@@ -341,19 +341,19 @@ function createAxis(options: AgCartesianAxisOptions[]): ChartAxis[] {
         const path = `axis[${index++}]`;
         switch (axisOptions.type) {
             case 'number':
-                axes.push(applyAxisValues(new NumberAxis(), axisOptions, {path}));
+                axes.push(applyOptionValues(new NumberAxis(), axisOptions, {path}));
                 break;
             case LogAxis.type:
-                axes.push(applyAxisValues(new LogAxis(), axisOptions, {path}));
+                axes.push(applyOptionValues(new LogAxis(), axisOptions, {path}));
                 break;
             case CategoryAxis.type:
-                axes.push(applyAxisValues(new CategoryAxis(), axisOptions, {path}));
+                axes.push(applyOptionValues(new CategoryAxis(), axisOptions, {path}));
                 break;
             case GroupedCategoryAxis.type:
-                axes.push(applyAxisValues(new GroupedCategoryAxis(), axisOptions, {path}));
+                axes.push(applyOptionValues(new GroupedCategoryAxis(), axisOptions, {path}));
                 break;
             case TimeAxis.type:
-                axes.push(applyAxisValues(new TimeAxis(), axisOptions, {path}));
+                axes.push(applyOptionValues(new TimeAxis(), axisOptions, {path}));
                 break;
             default:
                 throw new Error('AG Charts - unknown axis type: ' + axisOptions['type']);
@@ -389,14 +389,14 @@ const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
     },
 };
 
-function applyOptionValues<T extends ChartType, S extends ChartOptionType<T>>(
+function applyOptionValues<T, S>(
     target: T,
     options?: S,
     { skip, path }: { skip?: (keyof T | keyof S)[], path?: string } = {},
 ): T {
     const applyOpts = {
         ...JSON_APPLY_OPTIONS,
-        skip: ['type' as keyof (T|S), ...(skip || [])], 
+        skip: ['type' as keyof (T), ...(skip || [])], 
         ...(path ? { path } : {}),
     };
     return jsonApply<T, any>(target, options, applyOpts);
@@ -431,17 +431,4 @@ function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>
     }
 
     return result;
-}
-
-function applyAxisValues<T extends Axis<any, any>, S extends AxisOptionType<T>>(
-    target: T,
-    options?: S,
-    { skip, path }: { skip?: (keyof T | keyof S)[], path?: string } = {},
-): T {
-    const applyOpts = {
-        ...JSON_APPLY_OPTIONS,
-        skip: ['type' as keyof (T|S), ...(skip || [])], 
-        ...(path ? { path } : {}),
-    };
-    return jsonApply<T, any>(target, options, applyOpts);
 }

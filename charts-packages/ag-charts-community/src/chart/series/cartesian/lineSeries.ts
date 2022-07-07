@@ -5,7 +5,7 @@ import { Group } from '../../../scene/group';
 import { SeriesNodeDatum, CartesianTooltipRendererParams, SeriesTooltip, SeriesNodeDataContext } from '../series';
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
-import { Text } from '../../../scene/shape/text';
+import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
 import { LegendDatum } from '../../legend';
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxis';
@@ -13,7 +13,6 @@ import { getMarker } from '../../marker/util';
 import { TypedEvent } from '../../../util/observable';
 import { TooltipRendererResult, toTooltipHtml } from '../../chart';
 import { interpolate } from '../../../util/string';
-import { FontStyle, FontWeight } from '../../../scene/shape/text';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { isContinuous } from '../../../util/value';
@@ -388,7 +387,6 @@ export class LineSeries extends CartesianSeries<LineContext> {
             marker: { shape, enabled },
         } = this;
         labelData = shape && enabled ? labelData : [];
-        const MarkerShape = getMarker(shape);
 
         const updateTextSelection = labelSelection.setData(labelData);
         updateTextSelection.exit.remove();

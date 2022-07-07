@@ -20,7 +20,7 @@ export class Cross extends Marker {
         path.lineTo(x -= s, y += s);
         path.lineTo(x -= s, y -= s);
         path.lineTo(x -= s, y += s);
-        path.lineTo(x -= s, y -= s);
+        path.lineTo(x - s, y - s);
         path.closePath();
     }
 }

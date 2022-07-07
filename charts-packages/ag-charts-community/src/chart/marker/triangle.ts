@@ -11,7 +11,7 @@ export class Triangle extends Marker {
         path.clear();
         path.moveTo(x, y -= s * 0.48);
         path.lineTo(x += s * 0.5, y += s * 0.87);
-        path.lineTo(x -= s, y);
+        path.lineTo(x - s, y);
         path.closePath();
     }
 }

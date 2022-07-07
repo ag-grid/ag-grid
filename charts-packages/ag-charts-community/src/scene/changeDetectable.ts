@@ -76,7 +76,7 @@ export abstract class ChangeDetectable {
         this._dirty = type;
     }
 
-    markClean(opts?: {force?: boolean, recursive?: boolean}) {
+    markClean(_opts?: {force?: boolean, recursive?: boolean}) {
         this._dirty = RedrawType.NONE;
     }
 

@@ -38,7 +38,7 @@ export class Line extends Shape {
         );
     }
 
-    isPointInPath(x: number, y: number): boolean {
+    isPointInPath(_x: number, _y: number): boolean {
         return false;
     }
 

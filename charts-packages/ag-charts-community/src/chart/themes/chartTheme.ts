@@ -26,7 +26,7 @@ const palette: AgChartThemePalette = {
     ]
 };
 
-function arrayMerge(target: any, source: any, options: any) {
+function arrayMerge(_target: any, source: any, _options: any) {
     return source;
 }
 
