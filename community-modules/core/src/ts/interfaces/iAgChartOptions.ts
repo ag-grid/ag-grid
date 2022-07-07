@@ -762,12 +762,16 @@ export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
 
 export interface AgScatterSeriesLabelOptions extends AgChartLabelOptions {}
 
+export interface AgScatterSeriesMarker extends AgCartesianSeriesMarker {
+    /** If sizeKey is used, explicitly specifies the extent of the domain of it's values. */
+    domain?: [number, number];
+}
 /** Configuration for scatter/bubble series. */
 export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     /** Configuration for the treemap series.  */
     type?: 'scatter';
     /** Configuration for the markers used in the series.  */
-    marker?: AgCartesianSeriesMarker;
+    marker?: AgScatterSeriesMarker;
     /** Configuration for the labels shown on top of data points.  */
     label?: AgScatterSeriesLabelOptions;
     /** The key to use to retrieve x-values from the data.  */
