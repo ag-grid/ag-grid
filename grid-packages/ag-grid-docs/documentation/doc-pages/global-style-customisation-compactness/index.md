@@ -34,7 +34,7 @@ If you have made any customisations that affect the height of the header or indi
 The grid uses [DOM virtualisation](/dom-virtualisation/) for rendering large amounts of data,
 which means that it needs to know the size of various elements like columns and grid rows in order to calculate their layout. The grid uses several strategies to work out the right size:
 
-1. Firstly, the grid will attempt to measure the size of an element. This works when styles have loaded, but will not work if the grid initialises before the theme loads. Our [theme customisation examples](https://github.com/ag-grid/ag-grid-customise-theme/blob/master/src/vanilla/grid.js) demonstrate how to wait for CSS to load before initialising the grid (see the cssHasLoaded function).
+1. Firstly, the grid will attempt to measure the size of an element. This works when styles have loaded, but will not work if the grid initialises before the theme loads. Our [theme customisation examples](https://github.com/ag-grid/ag-grid-customise-theme/blob/master/src/vanilla/src/grid.js) demonstrate how to wait for CSS to load before initialising the grid (see the cssHasLoaded function).
 
 2. If CSS has not loaded and one of the provided themes is in use, the grid contains hard-coded fallback values for these themes. For this reason we recommend that if you are extending a provided theme like `ag-theme-alpine` and have not changed the row and header heights, you keep the same theme name so that the grid knows what fallback sizes to apply.
 
@@ -56,4 +56,3 @@ The grid performs its measurement of elements as described above when it starts 
 The following variables are all defined as multiples of `--ag-grid-size`, if you've updated the grid size and you many want to update them to fine-tuning the compactness:
 
 <api-documentation source='global-style-customisation-variables/resources/variables.json' section='variables' names='["--ag-widget-container-horizontal-padding", "--ag-widget-container-vertical-padding", "--ag-widget-horizontal-spacing", "--ag-widget-vertical-spacing", "--ag-cell-horizontal-padding", "--ag-row-height", "--ag-list-item-height", "--ag-column-select-indent-size"]' config='{"maxLeftColumnWidth": 35, "hideHeader": true}'></api-documentation>
- 
