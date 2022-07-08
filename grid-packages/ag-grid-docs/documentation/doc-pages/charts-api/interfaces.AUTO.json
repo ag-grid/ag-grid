@@ -26,6 +26,11 @@
     "meta": { "isTypeAlias": true },
     "type": "{ width: number; height: number; }"
   },
+  "OffscreenCanvasRenderingContext2D": {
+    "meta": { "isTypeAlias": true },
+    "type": "any"
+  },
+  "OffscreenCanvas": { "meta": { "isTypeAlias": true }, "type": "any" },
   "FontStyle": {
     "meta": { "isTypeAlias": true },
     "type": "'normal' | 'italic' | 'oblique'"
@@ -2889,10 +2894,6 @@
   "GradientColorStop": {
     "meta": {},
     "type": { "offset": "number", "color": "string" }
-  },
-  "OffscreenCanvasRenderingContext2D": {
-    "meta": { "isTypeAlias": true },
-    "type": "any"
   },
   "PointerEvents": {
     "meta": { "isEnum": true },
