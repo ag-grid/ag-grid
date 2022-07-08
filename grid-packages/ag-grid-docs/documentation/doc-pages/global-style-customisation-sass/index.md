@@ -77,7 +77,7 @@ The Sass Styling API is a wrapper around the CSS variable API for design customi
 );
 ```
 
-For information about what CSS variables and rules to use to control grid features, see the [feature customisation reference](/global-style-customisation-features/) or [full list of CSS variables](/global-style-customisation-variables/)
+For information about what CSS variables and rules to use to control grid features, see the [full list of CSS variables](/global-style-customisation-variables/)
 
 The Sass API provides a little bit of sugar to make it easier to read and remember some parameter values and assists migration from the [Legacy Sass API](/global-style-customisation-sass-legacy/).
 
