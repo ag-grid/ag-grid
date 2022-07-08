@@ -26,8 +26,6 @@ const gridOptions: GridOptions = {
   chartThemeOverrides: {
     scatter: {
       series: {
-        fillOpacity: 0.7,
-        strokeOpacity: 0.6,
         strokeWidth: 2,
         highlightStyle: {
           item: {
@@ -41,6 +39,8 @@ const gridOptions: GridOptions = {
           size: 5,
           maxSize: 12,
           strokeWidth: 4,
+          fillOpacity: 0.7,
+          strokeOpacity: 0.6,
         },
         tooltip: {
           renderer: (params) => {
