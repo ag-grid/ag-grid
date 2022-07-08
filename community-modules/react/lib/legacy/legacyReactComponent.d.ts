@@ -1,4 +1,4 @@
-// @ag-grid-community/react v28.0.1
+// @ag-grid-community/react v28.0.2
 import { AgPromise, ComponentType } from '@ag-grid-community/core';
 import { ReactComponent } from '../shared/reactComponent';
 import { AgGridReactLegacy } from './agGridReactLegacy';

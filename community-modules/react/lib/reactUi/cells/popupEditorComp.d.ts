@@ -1,4 +1,4 @@
-// @ag-grid-community/react v28.0.1
+// @ag-grid-community/react v28.0.2
 import { CellCtrl } from '@ag-grid-community/core';
 import React from 'react';
 import { EditDetails } from './cellComp';

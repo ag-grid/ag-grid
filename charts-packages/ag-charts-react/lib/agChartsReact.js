@@ -1,4 +1,4 @@
-// ag-charts-react v6.0.1
+// ag-charts-react v6.0.2
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = require("react");

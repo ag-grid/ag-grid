@@ -1,4 +1,4 @@
-// ag-grid-react v28.0.1
+// ag-grid-react v28.0.2
 import { ComponentType, AgPromise } from 'ag-grid-community';
 import { ReactComponent } from './reactComponent';
 import { PortalManager } from './portalManager';

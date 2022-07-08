@@ -1,4 +1,4 @@
-// ag-grid-react v28.0.1
+// ag-grid-react v28.0.2
 import { Component } from 'react';
 import { ColDef, ColGroupDef } from 'ag-grid-community';
 export interface AgGridColumnProps extends ColDef {

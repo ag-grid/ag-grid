@@ -1,4 +1,4 @@
-// @ag-grid-community/react v28.0.1
+// @ag-grid-community/react v28.0.2
 import { ColumnApi, GridApi, GridOptions } from '@ag-grid-community/core';
 import React, { Component } from 'react';
 import { ChangeDetectionService } from '../shared/changeDetectionService';

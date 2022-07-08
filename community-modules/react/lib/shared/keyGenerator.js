@@ -1,4 +1,4 @@
-// @ag-grid-community/react v28.0.1
+// @ag-grid-community/react v28.0.2
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 let counter = 0;

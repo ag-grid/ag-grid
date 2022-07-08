@@ -1,4 +1,4 @@
-// ag-grid-react v28.0.1
+// ag-grid-react v28.0.2
 export { AgGridReact } from './agGridReact';
 export { AgGridReactLegacy } from './legacy/agGridReactLegacy';
 export { AgGridReactUi as AgGridReactFire } from './reactUi/agGridReactUi';
