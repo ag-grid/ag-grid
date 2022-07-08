@@ -5631,6 +5631,7 @@
     "meta": {},
     "type": {
       "setHeight(height: number)": "void",
+      "setBottom(bottom: number)": "void",
       "setViewportHeight(height: number)": "void",
       "setContainerHeight(height: number)": "void",
       "setRightSpacerFixedWidth(width: number)": "void",

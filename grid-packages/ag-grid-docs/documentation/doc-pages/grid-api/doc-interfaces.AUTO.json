@@ -9716,6 +9716,13 @@
         "optional": false
       }
     },
+    "setBottom": {
+      "type": {
+        "arguments": { "bottom": "number" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "setViewportHeight": {
       "type": {
         "arguments": { "height": "number" },
