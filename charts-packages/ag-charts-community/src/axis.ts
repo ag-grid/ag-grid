@@ -89,8 +89,8 @@ export class AxisLabel {
      * The color of the labels.
      * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
      */
-     @Validate(STRING)
-     color?: string = 'rgba(87, 87, 87, 1)';
+    @Validate(STRING)
+    color?: string = 'rgba(87, 87, 87, 1)';
 
     /**
      * Custom label rotation in degrees.

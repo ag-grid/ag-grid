@@ -65,6 +65,7 @@ export class SeriesItemHighlightStyle {
 export class SeriesHighlightStyle {
     strokeWidth?: number = undefined;
     dimOpacity?: number = undefined;
+    enabled?: boolean = undefined;
 }
 
 export class HighlightStyle {
@@ -238,12 +239,12 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     protected getOpacity(datum?: { itemId?: any }): number {
         const {
             highlightStyle: {
-                series: { dimOpacity = 1 },
+                series: { dimOpacity = 1, enabled = true },
             },
         } = this;
 
         const defaultOpacity = 1;
-        if (dimOpacity === defaultOpacity) {
+        if (enabled === false || dimOpacity === defaultOpacity) {
             return defaultOpacity;
         }
 
@@ -259,11 +260,11 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     protected getStrokeWidth(defaultStrokeWidth: number, datum?: { itemId?: any }): number {
         const {
             highlightStyle: {
-                series: { strokeWidth },
+                series: { strokeWidth, enabled = true },
             },
         } = this;
 
-        if (strokeWidth === undefined) {
+        if (enabled === false || strokeWidth === undefined) {
             // No change in styling for highlight cases.
             return defaultStrokeWidth;
         }
