@@ -1,5 +1,8 @@
 type Size = { width: number, height: number };
 
+// Work-around for typing issues with Angular 13+ (see AG-6969),
+type OffscreenCanvasRenderingContext2D = any;
+
 /**
  * Wraps the native Canvas element and overrides its CanvasRenderingContext2D to
  * provide resolution independent rendering based on `window.devicePixelRatio`.

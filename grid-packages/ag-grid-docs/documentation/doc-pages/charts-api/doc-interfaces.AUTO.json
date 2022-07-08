@@ -3829,6 +3829,7 @@
     "offset": { "type": { "returnType": "number", "optional": false } },
     "color": { "type": { "returnType": "string", "optional": false } }
   },
+  "OffscreenCanvasRenderingContext2D": {},
   "PointerEvents": {},
   "RenderContext": {},
   "DebugOptions": {

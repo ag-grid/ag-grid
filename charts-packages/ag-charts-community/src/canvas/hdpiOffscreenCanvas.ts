@@ -1,5 +1,9 @@
 import { HdpiCanvas } from "./hdpiCanvas";
 
+// Work-around for typing issues with Angular 13+ (see AG-6969),
+type OffscreenCanvasRenderingContext2D = any;
+type OffscreenCanvas = any;
+
 /**
  * Wraps a native OffscreenCanvas and overrides its OffscreenCanvasRenderingContext2D to
  * provide resolution independent rendering based on `window.devicePixelRatio`.

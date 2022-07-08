@@ -2890,6 +2890,10 @@
     "meta": {},
     "type": { "offset": "number", "color": "string" }
   },
+  "OffscreenCanvasRenderingContext2D": {
+    "meta": { "isTypeAlias": true },
+    "type": "any"
+  },
   "PointerEvents": {
     "meta": { "isEnum": true },
     "type": ["All", "None"],

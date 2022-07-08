@@ -6,6 +6,9 @@ import { ChangeDetectable, SceneChangeDetection, RedrawType } from './changeDete
 
 export { SceneChangeDetection, RedrawType };
 
+// Work-around for typing issues with Angular 13+ (see AG-6969),
+type OffscreenCanvasRenderingContext2D = any;
+
 export enum PointerEvents {
     All,
     None
