@@ -3997,6 +3997,7 @@
   },
   "SourceEventListener": { "meta": { "typeParams": ["S"] } },
   "PropertyChangeEventListener": { "meta": { "typeParams": ["S", "V"] } },
+  "Callback": {},
   "OnSizeChange": {},
   "Entry": {},
   "NumberFormat": {},

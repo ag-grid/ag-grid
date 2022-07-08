@@ -3086,6 +3086,10 @@
     "meta": { "isTypeAlias": true, "typeParams": ["S", "V"] },
     "type": "(event: PropertyChangeEvent<S, V>) => any"
   },
+  "Callback": {
+    "meta": { "isTypeAlias": true },
+    "type": "(params: { count: number; }) => void"
+  },
   "OnSizeChange": {
     "meta": { "isTypeAlias": true },
     "type": "(size: Size, element: HTMLElement) => void"
