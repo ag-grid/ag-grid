@@ -12,7 +12,7 @@ import MetaData from './MetaData';
 const ReactTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles, importType, type, internalFramework }) =>
     <html lang="en">
         <head>
-            <MetaData title="React example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
+            <MetaData title="React example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} options={options} />
             <ExampleStyle rootId="root" />
             {(type !== "generated" || library !== "grid") && <Styles files={styleFiles}/>}
             <Extras options={options} />

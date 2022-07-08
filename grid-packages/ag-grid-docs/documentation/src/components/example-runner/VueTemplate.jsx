@@ -12,7 +12,7 @@ import MetaData from './MetaData';
 const VueTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles, type, importType }) =>
     <html lang="en">
         <head>
-            <MetaData title="Vue example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
+            <MetaData title="Vue example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} options={options}/>
             <ExampleStyle rootId="app" />
             {(type !== "generated" || library !== "grid") && <Styles files={styleFiles}/>}
             <Extras options={options} />

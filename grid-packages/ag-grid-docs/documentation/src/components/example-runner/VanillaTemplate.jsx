@@ -17,7 +17,7 @@ const getCacheBustingUrl = (url, timestamp) => `${url}?t=${timestamp}`;
 const VanillaTemplate = ({ isExecuting, modifiedTimeMs, library, appLocation, options, scriptFiles, styleFiles, indexFragment, importType }) =>
     <html lang="en">
         <head>
-            <MetaData title="JavaScript example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
+            <MetaData title="JavaScript example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} options={options}/>
             <ExampleStyle />
             <VanillaStyles library={library} importType={importType} files={isDevelopment() ? styleFiles.filter(file => !file.includes('style.css') && !file.includes('styles.css')).map(file => getCacheBustingUrl(file, modifiedTimeMs)) : styleFiles} />
             <Extras options={options} />
