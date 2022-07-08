@@ -31,6 +31,7 @@ export class FakeHScrollComp extends Component {
         const compProxy: IFakeHScrollComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setHeight: height => setFixedHeight(this.getGui(), height),
+            setBottom: bottom => this.getGui().style.bottom = `${bottom}px`,
             setContainerHeight: height => setFixedHeight(this.eContainer, height),
             setViewportHeight: height => setFixedHeight(this.eViewport, height),
             setRightSpacerFixedWidth: width => setFixedWidth(this.eRightSpacer, width),
