@@ -95,6 +95,15 @@ export class HeaderComp extends Component implements IHeaderComp {
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('eText') private eText: HTMLElement;
 
+    /**
+     * Selectors for custom headers templates
+     */
+     @RefSelector('eSortOrder') private eSortOrder: HTMLElement;
+     @RefSelector('eSortAsc') private eSortAsc: HTMLElement;
+     @RefSelector('eSortDesc') private eSortDesc: HTMLElement;
+     @RefSelector('eSortMixed') private eSortMixed: HTMLElement;
+     @RefSelector('eSortNone') private eSortNone: HTMLElement;
+
     private params: IHeaderParams;
 
     private lastMovingChanged = 0;
@@ -258,9 +267,20 @@ export class HeaderComp extends Component implements IHeaderComp {
     public setupSort(): void {
         this.currentSort = this.params.enableSorting;
 
-        if (this.eSortIndicator) {
-            this.eSortIndicator.setupSort(this.params.column);
+        // eSortIndicator will not be present when customers provided custom header
+        // templates, in that case, we need to look for provided sort elements and
+        // manually create eSortIndicator.
+        if (!this.eSortIndicator) {
+            this.eSortIndicator = this.context.createBean(new SortIndicatorComp(true));
+            this.eSortIndicator.attachCustomElements(
+                this.eSortOrder,
+                this.eSortAsc,
+                this.eSortDesc,
+                this.eSortMixed,
+                this.eSortNone
+            );
         }
+        this.eSortIndicator.setupSort(this.params.column);
 
         // we set up the indicator prior to the check for whether this column is sortable, as it allows the indicator to
         // set up the multi sort indicator which can appear irrelevant of whether this column can itself be sorted.
