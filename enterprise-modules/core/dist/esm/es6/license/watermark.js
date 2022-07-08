@@ -40,4 +40,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], WatermarkComp.prototype, "postConstruct", null);
-//# sourceMappingURL=watermark.js.map

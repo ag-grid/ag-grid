@@ -277,4 +277,3 @@ export class CartesianSeriesMarker extends SeriesMarker {
 __decorate([
     SceneChangeDetection({ redraw: RedrawType.MAJOR })
 ], CartesianSeriesMarker.prototype, "formatter", void 0);
-//# sourceMappingURL=cartesianSeries.js.map

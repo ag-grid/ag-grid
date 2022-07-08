@@ -33,4 +33,3 @@ export function initFontPanelParams(chartTranslationService, chartOptionsService
     };
     return params;
 }
-//# sourceMappingURL=fontPanelParams.js.map

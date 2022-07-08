@@ -38,4 +38,3 @@ export default function (a, b) {
     }
     return number(a, b);
 }
-//# sourceMappingURL=value.js.map

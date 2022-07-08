@@ -64,4 +64,3 @@ __decorate([
     core_1.Autowired('sparklineTooltipSingleton')
 ], SparklineCellRenderer.prototype, "sparklineTooltipSingleton", void 0);
 exports.SparklineCellRenderer = SparklineCellRenderer;
-//# sourceMappingURL=sparklineCellRenderer.js.map

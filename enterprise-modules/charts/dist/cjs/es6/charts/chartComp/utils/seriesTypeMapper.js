@@ -31,4 +31,3 @@ function getSeriesType(chartType) {
     }
 }
 exports.getSeriesType = getSeriesType;
-//# sourceMappingURL=seriesTypeMapper.js.map

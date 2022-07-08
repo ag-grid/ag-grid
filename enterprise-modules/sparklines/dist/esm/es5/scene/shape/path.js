@@ -98,4 +98,3 @@ var Path = /** @class */ (function (_super) {
     return Path;
 }(Shape));
 export { Path };
-//# sourceMappingURL=path.js.map

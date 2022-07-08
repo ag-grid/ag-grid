@@ -41,4 +41,3 @@ var Circle = /** @class */ (function (_super) {
     return Circle;
 }(marker_1.Marker));
 exports.Circle = Circle;
-//# sourceMappingURL=circle.js.map

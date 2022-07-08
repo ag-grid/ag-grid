@@ -8,4 +8,3 @@ class MiniPie extends miniDoughnut_1.MiniDoughnut {
 }
 exports.MiniPie = MiniPie;
 MiniPie.chartType = 'pie';
-//# sourceMappingURL=miniPie.js.map

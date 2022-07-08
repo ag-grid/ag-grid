@@ -365,4 +365,3 @@ class Legend {
 }
 exports.Legend = Legend;
 Legend.className = 'Legend';
-//# sourceMappingURL=legend.js.map

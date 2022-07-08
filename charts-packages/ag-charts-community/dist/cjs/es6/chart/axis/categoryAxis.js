@@ -47,4 +47,3 @@ class CategoryAxis extends chartAxis_1.ChartAxis {
 exports.CategoryAxis = CategoryAxis;
 CategoryAxis.className = 'CategoryAxis';
 CategoryAxis.type = 'category';
-//# sourceMappingURL=categoryAxis.js.map

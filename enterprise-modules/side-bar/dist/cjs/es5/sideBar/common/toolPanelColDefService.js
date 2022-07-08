@@ -206,4 +206,3 @@ var ToolPanelColDefService = /** @class */ (function (_super) {
     return ToolPanelColDefService;
 }(core_1.BeanStub));
 exports.ToolPanelColDefService = ToolPanelColDefService;
-//# sourceMappingURL=toolPanelColDefService.js.map

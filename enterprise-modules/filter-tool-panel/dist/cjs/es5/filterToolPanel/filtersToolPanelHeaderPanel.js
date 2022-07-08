@@ -102,4 +102,3 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
     return FiltersToolPanelHeaderPanel;
 }(core_1.Component));
 exports.FiltersToolPanelHeaderPanel = FiltersToolPanelHeaderPanel;
-//# sourceMappingURL=filtersToolPanelHeaderPanel.js.map

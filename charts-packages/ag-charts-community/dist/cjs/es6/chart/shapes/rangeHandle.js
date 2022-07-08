@@ -111,4 +111,3 @@ class RangeHandle extends path_1.Path {
 }
 exports.RangeHandle = RangeHandle;
 RangeHandle.className = 'RangeHandle';
-//# sourceMappingURL=rangeHandle.js.map

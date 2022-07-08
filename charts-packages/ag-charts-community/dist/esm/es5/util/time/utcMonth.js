@@ -14,4 +14,3 @@ function field(date) {
 }
 export var utcMonth = new CountableTimeInterval(floor, offset, count, field);
 export default utcMonth;
-//# sourceMappingURL=utcMonth.js.map

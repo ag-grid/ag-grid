@@ -251,4 +251,3 @@ export class Matrix {
     }
 }
 Matrix.matrix = new Matrix();
-//# sourceMappingURL=matrix.js.map

@@ -109,4 +109,3 @@ class PieChartProxy extends chartProxy_1.ChartProxy {
     }
 }
 exports.PieChartProxy = PieChartProxy;
-//# sourceMappingURL=pieChartProxy.js.map

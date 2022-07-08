@@ -41,4 +41,3 @@ var LinearGradient = /** @class */ (function (_super) {
     return LinearGradient;
 }(Gradient));
 export { LinearGradient };
-//# sourceMappingURL=linearGradient.js.map

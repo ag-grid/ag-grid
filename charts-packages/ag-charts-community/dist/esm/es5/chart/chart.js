@@ -1238,4 +1238,3 @@ var Chart = /** @class */ (function (_super) {
     return Chart;
 }(Observable));
 export { Chart };
-//# sourceMappingURL=chart.js.map

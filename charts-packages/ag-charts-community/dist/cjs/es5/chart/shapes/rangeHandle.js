@@ -151,4 +151,3 @@ var RangeHandle = /** @class */ (function (_super) {
     return RangeHandle;
 }(path_1.Path));
 exports.RangeHandle = RangeHandle;
-//# sourceMappingURL=rangeHandle.js.map

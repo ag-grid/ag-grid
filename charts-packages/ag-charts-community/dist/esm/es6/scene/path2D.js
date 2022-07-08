@@ -682,4 +682,3 @@ Path2D.quadraticCommandRe = /[QqTt]/;
 Path2D.cubicCommandRe = /[CcSs]/;
 Path2D.xmlDeclaration = '<?xml version="1.0" encoding="UTF-8"?>';
 Path2D.xmlns = 'http://www.w3.org/2000/svg';
-//# sourceMappingURL=path2D.js.map

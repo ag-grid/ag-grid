@@ -34,4 +34,3 @@ function linearRegression(X, Y) {
     return { slope, intercept };
 }
 exports.linearRegression = linearRegression;
-//# sourceMappingURL=stat.js.map

@@ -308,4 +308,3 @@ Shape.defaultStyles = object_1.chainObjects({}, {
     fillShadow: undefined,
     strokeShadow: undefined
 });
-//# sourceMappingURL=shape.js.map

@@ -47,4 +47,3 @@ export class BBox {
     }
 }
 BBox.noParams = {};
-//# sourceMappingURL=bbox.js.map

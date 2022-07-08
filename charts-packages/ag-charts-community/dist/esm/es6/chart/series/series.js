@@ -243,4 +243,3 @@ Series.highlightedZIndex = 1000000000000;
 Series.SERIES_LAYER_ZINDEX = 100;
 Series.SERIES_MARKER_LAYER_ZINDEX = 110;
 Series.SERIES_HIGHLIGHT_LAYER_ZINDEX = 150;
-//# sourceMappingURL=series.js.map

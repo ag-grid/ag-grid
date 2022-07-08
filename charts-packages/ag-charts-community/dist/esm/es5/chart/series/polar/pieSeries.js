@@ -558,4 +558,3 @@ var PieSeries = /** @class */ (function (_super) {
     return PieSeries;
 }(PolarSeries));
 export { PieSeries };
-//# sourceMappingURL=pieSeries.js.map

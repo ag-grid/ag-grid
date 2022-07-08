@@ -198,4 +198,3 @@ var BandScale = /** @class */ (function () {
     return BandScale;
 }());
 export { BandScale };
-//# sourceMappingURL=bandScale.js.map

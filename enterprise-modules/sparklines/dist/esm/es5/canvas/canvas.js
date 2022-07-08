@@ -83,4 +83,3 @@ export function resizeCanvas(canvas, width, height) {
     canvas.style.height = Math.round(height) + 'px';
     canvas.getContext('2d').resetTransform();
 }
-//# sourceMappingURL=canvas.js.map

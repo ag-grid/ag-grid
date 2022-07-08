@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -143,5 +143,3 @@ export class AgDialog extends AgPanel {
 __decorate([
     Autowired('popupService')
 ], AgDialog.prototype, "popupService", void 0);
-
-//# sourceMappingURL=agDialog.js.map

@@ -24,4 +24,3 @@ StatusBarService = __decorate([
     core_1.Bean('statusBarService')
 ], StatusBarService);
 exports.StatusBarService = StatusBarService;
-//# sourceMappingURL=statusBarService.js.map

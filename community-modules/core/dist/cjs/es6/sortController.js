@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -240,5 +240,3 @@ SortController = SortController_1 = __decorate([
     context_1.Bean('sortController')
 ], SortController);
 exports.SortController = SortController;
-
-//# sourceMappingURL=sortController.js.map

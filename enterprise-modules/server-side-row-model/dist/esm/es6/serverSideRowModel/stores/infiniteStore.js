@@ -665,4 +665,3 @@ __decorate([
 __decorate([
     __param(0, Qualifier('loggerFactory'))
 ], InfiniteStore.prototype, "setBeans", null);
-//# sourceMappingURL=infiniteStore.js.map

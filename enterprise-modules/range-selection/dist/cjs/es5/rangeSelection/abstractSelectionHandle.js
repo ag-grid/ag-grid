@@ -196,4 +196,3 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
     return AbstractSelectionHandle;
 }(core_1.Component));
 exports.AbstractSelectionHandle = AbstractSelectionHandle;
-//# sourceMappingURL=abstractSelectionHandle.js.map

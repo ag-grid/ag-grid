@@ -172,4 +172,3 @@ __decorate([
     core_1.PostConstruct
 ], PrimaryColsListPanelItemDragFeature.prototype, "postConstruct", null);
 exports.PrimaryColsListPanelItemDragFeature = PrimaryColsListPanelItemDragFeature;
-//# sourceMappingURL=primaryColsListPanelItemDragFeature.js.map

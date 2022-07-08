@@ -137,4 +137,3 @@ function isObject(value) {
     return typeof value === 'object' && !Array.isArray(value);
 }
 exports.isObject = isObject;
-//# sourceMappingURL=object.js.map

@@ -115,4 +115,3 @@ var MiniChartsContainer = /** @class */ (function (_super) {
     return MiniChartsContainer;
 }(Component));
 export { MiniChartsContainer };
-//# sourceMappingURL=miniChartsContainer.js.map

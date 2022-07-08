@@ -706,4 +706,3 @@ var Path2D = /** @class */ (function () {
     return Path2D;
 }());
 export { Path2D };
-//# sourceMappingURL=path2D.js.map

@@ -6,4 +6,3 @@ export function createId(instance) {
     }
     return className + '-' + (constructor.id = (constructor.id || 0) + 1);
 }
-//# sourceMappingURL=id.js.map

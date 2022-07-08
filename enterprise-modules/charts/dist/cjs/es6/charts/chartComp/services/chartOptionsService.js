@@ -153,4 +153,3 @@ __decorate([
     core_1.Autowired('columnApi')
 ], ChartOptionsService.prototype, "columnApi", void 0);
 exports.ChartOptionsService = ChartOptionsService;
-//# sourceMappingURL=chartOptionsService.js.map

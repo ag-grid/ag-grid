@@ -281,4 +281,3 @@ __decorate([
     changeDetectable_1.SceneChangeDetection({ redraw: changeDetectable_1.RedrawType.MAJOR })
 ], CartesianSeriesMarker.prototype, "formatter", void 0);
 exports.CartesianSeriesMarker = CartesianSeriesMarker;
-//# sourceMappingURL=cartesianSeries.js.map

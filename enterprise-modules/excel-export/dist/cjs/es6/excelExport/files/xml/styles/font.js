@@ -32,4 +32,3 @@ const font = {
     }
 };
 exports.default = font;
-//# sourceMappingURL=font.js.map

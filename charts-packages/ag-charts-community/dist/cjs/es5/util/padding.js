@@ -34,4 +34,3 @@ var Padding = /** @class */ (function (_super) {
     return Padding;
 }(observable_1.Observable));
 exports.Padding = Padding;
-//# sourceMappingURL=padding.js.map

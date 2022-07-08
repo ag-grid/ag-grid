@@ -247,7 +247,7 @@ let LicenseManager = LicenseManager_1 = class LicenseManager extends core_1.Bean
         this.watermarkMessage = "License Expired";
     }
 };
-LicenseManager.RELEASE_INFORMATION = 'MTY1Njg3Mzg0NDQzOQ==';
+LicenseManager.RELEASE_INFORMATION = 'MTY1NzIxMjEzNTQ0Ng==';
 __decorate([
     core_1.Autowired('md5')
 ], LicenseManager.prototype, "md5", void 0);
@@ -258,4 +258,3 @@ LicenseManager = LicenseManager_1 = __decorate([
     core_1.Bean('licenseManager')
 ], LicenseManager);
 exports.LicenseManager = LicenseManager;
-//# sourceMappingURL=licenseManager.js.map

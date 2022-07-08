@@ -68,4 +68,3 @@ var OrdinalScale = /** @class */ (function () {
     return OrdinalScale;
 }());
 exports.OrdinalScale = OrdinalScale;
-//# sourceMappingURL=ordinalScale.js.map

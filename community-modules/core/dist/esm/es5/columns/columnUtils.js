@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -124,5 +124,3 @@ var ColumnUtils = /** @class */ (function (_super) {
     return ColumnUtils;
 }(BeanStub));
 export { ColumnUtils };
-
-//# sourceMappingURL=columnUtils.js.map

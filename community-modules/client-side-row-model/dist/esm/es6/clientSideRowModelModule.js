@@ -11,4 +11,3 @@ export const ClientSideRowModelModule = {
     beans: [FilterStage, SortStage, FlattenStage, SortService, FilterService, ImmutableService],
     rowModels: { clientSide: ClientSideRowModel }
 };
-//# sourceMappingURL=clientSideRowModelModule.js.map

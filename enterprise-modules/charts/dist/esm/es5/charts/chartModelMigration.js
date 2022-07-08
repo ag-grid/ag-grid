@@ -1,6 +1,6 @@
 // the line below is automatically modified during releases - do not modify
 // (see scripts/release/updateChartModel.js)
-export var CURRENT_VERSION = "28.0.0";
+export var CURRENT_VERSION = "28.0.1";
 export function upgradeChartModel(model) {
     if (model.version == null) {
         // First release with version field.
@@ -26,4 +26,3 @@ function versionParts(version) {
         patch: split[2],
     };
 }
-//# sourceMappingURL=chartModelMigration.js.map

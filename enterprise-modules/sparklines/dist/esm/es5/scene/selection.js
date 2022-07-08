@@ -477,4 +477,3 @@ var Selection = /** @class */ (function () {
     return Selection;
 }());
 export { Selection };
-//# sourceMappingURL=selection.js.map

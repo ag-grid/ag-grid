@@ -79,4 +79,3 @@ function range(a, b, step) {
     }
     return values;
 }
-//# sourceMappingURL=ticks.js.map

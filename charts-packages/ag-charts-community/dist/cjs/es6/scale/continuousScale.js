@@ -139,4 +139,3 @@ class ContinuousScale {
     }
 }
 exports.ContinuousScale = ContinuousScale;
-//# sourceMappingURL=continuousScale.js.map

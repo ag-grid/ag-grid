@@ -184,4 +184,3 @@ export class BaseExcelSerializingSession extends BaseGridSerializingSession {
         this.stylesByIds[excelId] = resultantStyle;
     }
 }
-//# sourceMappingURL=baseExcelSerializingSession.js.map

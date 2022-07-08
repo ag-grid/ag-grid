@@ -148,4 +148,3 @@ function reactive(...events) {
     };
 }
 exports.reactive = reactive;
-//# sourceMappingURL=observable.js.map

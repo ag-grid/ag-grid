@@ -24,4 +24,3 @@ export default function (a, b) {
         return c;
     };
 }
-//# sourceMappingURL=object.js.map

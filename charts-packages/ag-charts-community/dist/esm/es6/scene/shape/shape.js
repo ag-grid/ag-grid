@@ -210,4 +210,3 @@ __decorate([
 __decorate([
     SceneChangeDetection({ redraw: RedrawType.MINOR, checkDirtyOnAssignment: true })
 ], Shape.prototype, "strokeShadow", void 0);
-//# sourceMappingURL=shape.js.map

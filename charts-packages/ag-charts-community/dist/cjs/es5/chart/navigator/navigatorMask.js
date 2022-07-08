@@ -47,4 +47,3 @@ var NavigatorMask = /** @class */ (function () {
     return NavigatorMask;
 }());
 exports.NavigatorMask = NavigatorMask;
-//# sourceMappingURL=navigatorMask.js.map

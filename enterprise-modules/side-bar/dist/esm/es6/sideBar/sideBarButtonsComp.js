@@ -61,4 +61,3 @@ __decorate([
 __decorate([
     PreDestroy
 ], SideBarButtonsComp.prototype, "clearButtons", null);
-//# sourceMappingURL=sideBarButtonsComp.js.map

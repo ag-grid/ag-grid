@@ -63,4 +63,3 @@ var MaterialLight = /** @class */ (function (_super) {
     return MaterialLight;
 }(chartTheme_1.ChartTheme));
 exports.MaterialLight = MaterialLight;
-//# sourceMappingURL=materialLight.js.map

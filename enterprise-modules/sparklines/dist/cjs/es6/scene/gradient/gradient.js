@@ -6,4 +6,3 @@ class Gradient {
     }
 }
 exports.Gradient = Gradient;
-//# sourceMappingURL=gradient.js.map

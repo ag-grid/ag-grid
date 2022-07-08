@@ -63,4 +63,3 @@ var Marker = /** @class */ (function (_super) {
     return Marker;
 }(Shape));
 export { Marker };
-//# sourceMappingURL=marker.js.map

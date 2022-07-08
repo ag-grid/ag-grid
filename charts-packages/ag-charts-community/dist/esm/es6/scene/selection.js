@@ -463,4 +463,3 @@ export class Selection {
     }
 }
 Selection.keyPrefix = '$'; // Protect against keys like '__proto__'.
-//# sourceMappingURL=selection.js.map

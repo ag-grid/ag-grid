@@ -37,4 +37,3 @@ function isContinuous(value) {
     return isNumeric(value) || isDate(value);
 }
 exports.isContinuous = isContinuous;
-//# sourceMappingURL=value.js.map

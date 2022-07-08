@@ -300,4 +300,3 @@ export class HdpiCanvas {
     }
 }
 HdpiCanvas.textSizeCache = {};
-//# sourceMappingURL=hdpiCanvas.js.map

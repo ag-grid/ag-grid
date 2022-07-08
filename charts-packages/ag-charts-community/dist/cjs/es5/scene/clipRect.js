@@ -139,4 +139,3 @@ var ClipRect = /** @class */ (function (_super) {
     return ClipRect;
 }(node_1.Node));
 exports.ClipRect = ClipRect;
-//# sourceMappingURL=clipRect.js.map

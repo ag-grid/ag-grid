@@ -390,4 +390,3 @@ class LineSeries extends cartesianSeries_1.CartesianSeries {
 exports.LineSeries = LineSeries;
 LineSeries.className = 'LineSeries';
 LineSeries.type = 'line';
-//# sourceMappingURL=lineSeries.js.map

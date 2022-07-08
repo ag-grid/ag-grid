@@ -52,4 +52,3 @@ var MiniStackedColumn = /** @class */ (function (_super) {
     return MiniStackedColumn;
 }(MiniChartWithAxes));
 export { MiniStackedColumn };
-//# sourceMappingURL=miniStackedColumn.js.map

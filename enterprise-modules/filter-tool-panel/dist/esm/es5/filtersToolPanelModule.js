@@ -19,4 +19,3 @@ export var FiltersToolPanelModule = {
         EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=filtersToolPanelModule.js.map

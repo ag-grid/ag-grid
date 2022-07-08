@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -23,5 +23,3 @@ export function defaultGroupComparator(valueA, valueB, nodeA, nodeB, accentedCom
     }
     return -1;
 }
-
-//# sourceMappingURL=functions.js.map

@@ -179,4 +179,3 @@ var CartesianChartProxy = /** @class */ (function (_super) {
     return CartesianChartProxy;
 }(ChartProxy));
 export { CartesianChartProxy };
-//# sourceMappingURL=cartesianChartProxy.js.map

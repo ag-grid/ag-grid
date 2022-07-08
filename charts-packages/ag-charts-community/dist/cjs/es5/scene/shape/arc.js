@@ -128,4 +128,3 @@ var Arc = /** @class */ (function (_super) {
     return Arc;
 }(path_1.Path));
 exports.Arc = Arc;
-//# sourceMappingURL=arc.js.map

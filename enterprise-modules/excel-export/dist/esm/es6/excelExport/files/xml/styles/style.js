@@ -16,4 +16,3 @@ const style = {
     }
 };
 export default style;
-//# sourceMappingURL=style.js.map

@@ -287,4 +287,3 @@ class CartesianChart extends chart_1.Chart {
 exports.CartesianChart = CartesianChart;
 CartesianChart.className = 'CartesianChart';
 CartesianChart.type = 'cartesian';
-//# sourceMappingURL=cartesianChart.js.map

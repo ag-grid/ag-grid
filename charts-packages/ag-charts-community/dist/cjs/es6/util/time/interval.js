@@ -154,4 +154,3 @@ class CountableTimeInterval extends TimeInterval {
     }
 }
 exports.CountableTimeInterval = CountableTimeInterval;
-//# sourceMappingURL=interval.js.map

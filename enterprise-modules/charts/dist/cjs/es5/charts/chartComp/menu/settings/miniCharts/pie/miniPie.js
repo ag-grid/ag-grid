@@ -23,4 +23,3 @@ var MiniPie = /** @class */ (function (_super) {
     return MiniPie;
 }(miniDoughnut_1.MiniDoughnut));
 exports.MiniPie = MiniPie;
-//# sourceMappingURL=miniPie.js.map

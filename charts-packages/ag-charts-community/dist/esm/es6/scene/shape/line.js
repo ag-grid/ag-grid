@@ -75,4 +75,3 @@ __decorate([
 __decorate([
     SceneChangeDetection({ redraw: RedrawType.MAJOR })
 ], Line.prototype, "y2", void 0);
-//# sourceMappingURL=line.js.map

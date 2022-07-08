@@ -30,4 +30,3 @@ class NavigatorMask {
     }
 }
 exports.NavigatorMask = NavigatorMask;
-//# sourceMappingURL=navigatorMask.js.map

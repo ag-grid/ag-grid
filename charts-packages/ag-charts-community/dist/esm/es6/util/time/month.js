@@ -14,4 +14,3 @@ function field(date) {
 }
 export const month = new CountableTimeInterval(floor, offset, count, field);
 export default month;
-//# sourceMappingURL=month.js.map

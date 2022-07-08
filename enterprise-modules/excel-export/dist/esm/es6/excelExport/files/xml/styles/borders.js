@@ -24,4 +24,3 @@ const borders = {
     }
 };
 export default borders;
-//# sourceMappingURL=borders.js.map

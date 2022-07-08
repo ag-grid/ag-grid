@@ -102,4 +102,3 @@ function copy(array, start, count) {
     return result;
 }
 exports.copy = copy;
-//# sourceMappingURL=array.js.map

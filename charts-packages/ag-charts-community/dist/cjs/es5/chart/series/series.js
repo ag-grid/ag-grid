@@ -308,4 +308,3 @@ var Series = /** @class */ (function (_super) {
     return Series;
 }(observable_1.Observable));
 exports.Series = Series;
-//# sourceMappingURL=series.js.map

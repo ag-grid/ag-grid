@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -297,5 +297,3 @@ var VirtualList = /** @class */ (function (_super) {
     return VirtualList;
 }(tabGuardComp_1.TabGuardComp));
 exports.VirtualList = VirtualList;
-
-//# sourceMappingURL=virtualList.js.map

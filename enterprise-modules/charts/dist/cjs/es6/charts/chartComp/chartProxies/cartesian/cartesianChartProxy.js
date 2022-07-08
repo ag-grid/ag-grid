@@ -150,4 +150,3 @@ class CartesianChartProxy extends chartProxy_1.ChartProxy {
     }
 }
 exports.CartesianChartProxy = CartesianChartProxy;
-//# sourceMappingURL=cartesianChartProxy.js.map

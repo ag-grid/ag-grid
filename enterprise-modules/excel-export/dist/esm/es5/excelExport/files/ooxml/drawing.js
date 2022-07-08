@@ -303,4 +303,3 @@ var drawingFactory = {
     }
 };
 export default drawingFactory;
-//# sourceMappingURL=drawing.js.map

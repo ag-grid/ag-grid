@@ -215,4 +215,3 @@ var TimeScale = /** @class */ (function (_super) {
     return TimeScale;
 }(continuousScale_1.ContinuousScale));
 exports.TimeScale = TimeScale;
-//# sourceMappingURL=timeScale.js.map

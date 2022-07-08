@@ -112,4 +112,3 @@ __decorate([
     core_1.PostConstruct
 ], SetFilterListItem.prototype, "init", null);
 exports.SetFilterListItem = SetFilterListItem;
-//# sourceMappingURL=setFilterListItem.js.map

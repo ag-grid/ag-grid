@@ -92,4 +92,3 @@ var ShadowPanel = /** @class */ (function (_super) {
     return ShadowPanel;
 }(core_1.Component));
 exports.ShadowPanel = ShadowPanel;
-//# sourceMappingURL=shadowPanel.js.map

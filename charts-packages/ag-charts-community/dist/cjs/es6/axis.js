@@ -686,4 +686,3 @@ class Axis {
     }
 }
 exports.Axis = Axis;
-//# sourceMappingURL=axis.js.map

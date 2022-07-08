@@ -87,4 +87,3 @@ var BaseGridSerializingSession = /** @class */ (function () {
     return BaseGridSerializingSession;
 }());
 exports.BaseGridSerializingSession = BaseGridSerializingSession;
-//# sourceMappingURL=baseGridSerializingSession.js.map

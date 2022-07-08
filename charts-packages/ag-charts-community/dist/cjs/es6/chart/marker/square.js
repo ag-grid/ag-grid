@@ -16,4 +16,3 @@ class Square extends marker_1.Marker {
 }
 exports.Square = Square;
 Square.className = 'Square';
-//# sourceMappingURL=square.js.map

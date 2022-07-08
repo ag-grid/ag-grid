@@ -6,4 +6,3 @@ function convertToMap(list) {
     return map;
 }
 exports.convertToMap = convertToMap;
-//# sourceMappingURL=map.js.map

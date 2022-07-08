@@ -300,4 +300,3 @@ class Scene {
 }
 exports.Scene = Scene;
 Scene.className = 'Scene';
-//# sourceMappingURL=scene.js.map

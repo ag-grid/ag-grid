@@ -86,4 +86,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], StatusBar.prototype, "postConstruct", null);
-//# sourceMappingURL=statusBar.js.map

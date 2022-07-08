@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -146,5 +146,3 @@ export function camelCaseToHumanText(camelCase) {
     var words = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
     return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
 }
-
-//# sourceMappingURL=string.js.map

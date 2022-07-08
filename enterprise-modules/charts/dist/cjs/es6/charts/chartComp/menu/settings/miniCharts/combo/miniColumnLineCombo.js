@@ -36,4 +36,3 @@ class MiniColumnLineCombo extends miniChartWithAxes_1.MiniChartWithAxes {
 }
 exports.MiniColumnLineCombo = MiniColumnLineCombo;
 MiniColumnLineCombo.chartType = 'columnLineCombo';
-//# sourceMappingURL=miniColumnLineCombo.js.map

@@ -30,4 +30,3 @@ export class SolarLight extends ChartTheme {
         return palette;
     }
 }
-//# sourceMappingURL=solarLight.js.map

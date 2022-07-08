@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -94,5 +94,3 @@ __decorate([
     context_1.Autowired('userComponentFactory')
 ], AbstractHeaderCellCtrl.prototype, "userComponentFactory", void 0);
 exports.AbstractHeaderCellCtrl = AbstractHeaderCellCtrl;
-
-//# sourceMappingURL=abstractHeaderCellCtrl.js.map

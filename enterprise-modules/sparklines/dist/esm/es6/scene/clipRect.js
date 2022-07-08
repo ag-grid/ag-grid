@@ -116,4 +116,3 @@ export class ClipRect extends Node {
     }
 }
 ClipRect.className = 'ClipRect';
-//# sourceMappingURL=clipRect.js.map

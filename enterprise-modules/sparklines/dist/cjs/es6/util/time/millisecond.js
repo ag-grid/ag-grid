@@ -12,4 +12,3 @@ function count(start, end) {
 }
 exports.millisecond = new interval_1.CountableTimeInterval(floor, offset, count);
 exports.default = exports.millisecond;
-//# sourceMappingURL=millisecond.js.map

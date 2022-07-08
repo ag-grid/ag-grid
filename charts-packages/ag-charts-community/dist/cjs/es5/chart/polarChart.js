@@ -85,4 +85,3 @@ var PolarChart = /** @class */ (function (_super) {
     return PolarChart;
 }(chart_1.Chart));
 exports.PolarChart = PolarChart;
-//# sourceMappingURL=polarChart.js.map

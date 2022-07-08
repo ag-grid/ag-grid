@@ -53,4 +53,3 @@ var Label = /** @class */ (function (_super) {
     return Label;
 }(Observable));
 export { Label };
-//# sourceMappingURL=label.js.map

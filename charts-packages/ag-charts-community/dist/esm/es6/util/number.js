@@ -41,4 +41,3 @@ export function toReadableNumber(value, fractionDigits = 2) {
     const thousands = ~~(log10(value) / log10(1000)); // discard the floating point part
     return prefix + (value / Math.pow(1000.0, thousands)).toFixed(fractionDigits) + numberUnits[thousands];
 }
-//# sourceMappingURL=number.js.map

@@ -16,4 +16,3 @@ function field(date) {
 }
 exports.utcMinute = new interval_1.CountableTimeInterval(floor, offset, count, field);
 exports.default = exports.utcMinute;
-//# sourceMappingURL=utcMinute.js.map

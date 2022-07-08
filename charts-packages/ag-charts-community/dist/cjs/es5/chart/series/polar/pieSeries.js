@@ -560,4 +560,3 @@ var PieSeries = /** @class */ (function (_super) {
     return PieSeries;
 }(polarSeries_1.PolarSeries));
 exports.PieSeries = PieSeries;
-//# sourceMappingURL=pieSeries.js.map

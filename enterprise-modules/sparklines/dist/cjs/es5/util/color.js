@@ -465,4 +465,3 @@ var Color = /** @class */ (function () {
     return Color;
 }());
 exports.Color = Color;
-//# sourceMappingURL=color.js.map

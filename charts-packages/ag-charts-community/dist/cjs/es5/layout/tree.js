@@ -325,4 +325,3 @@ function logTree(root, formatter) {
         console.log(root);
     }
 }
-//# sourceMappingURL=tree.js.map

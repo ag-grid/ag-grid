@@ -36,4 +36,3 @@ __decorate([
 __decorate([
     reactive('change')
 ], Label.prototype, "color", void 0);
-//# sourceMappingURL=label.js.map

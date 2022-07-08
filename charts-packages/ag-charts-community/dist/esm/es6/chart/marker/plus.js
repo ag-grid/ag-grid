@@ -22,4 +22,3 @@ export class Plus extends Marker {
     }
 }
 Plus.className = 'Plus';
-//# sourceMappingURL=plus.js.map

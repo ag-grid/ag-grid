@@ -36,4 +36,3 @@ function initFontPanelParams(chartTranslationService, chartOptionsService, getSe
     return params;
 }
 exports.initFontPanelParams = initFontPanelParams;
-//# sourceMappingURL=fontPanelParams.js.map

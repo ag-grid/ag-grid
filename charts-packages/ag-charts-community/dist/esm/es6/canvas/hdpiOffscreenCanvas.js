@@ -71,4 +71,3 @@ export class HdpiOffscreenCanvas {
         this._height = height;
     }
 }
-//# sourceMappingURL=hdpiOffscreenCanvas.js.map

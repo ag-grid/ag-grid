@@ -200,4 +200,3 @@ var BandScale = /** @class */ (function () {
     return BandScale;
 }());
 exports.BandScale = BandScale;
-//# sourceMappingURL=bandScale.js.map

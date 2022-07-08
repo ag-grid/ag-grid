@@ -33,4 +33,3 @@ var cell = {
     }
 };
 export default cell;
-//# sourceMappingURL=cell.js.map

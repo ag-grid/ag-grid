@@ -18,4 +18,3 @@ class LogAxis extends numberAxis_1.NumberAxis {
 exports.LogAxis = LogAxis;
 LogAxis.className = 'LogAxis';
 LogAxis.type = 'log';
-//# sourceMappingURL=logAxis.js.map

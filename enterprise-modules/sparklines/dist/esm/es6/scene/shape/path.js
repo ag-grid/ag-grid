@@ -73,4 +73,3 @@ export class Path extends Shape {
     }
 }
 Path.className = 'Path';
-//# sourceMappingURL=path.js.map

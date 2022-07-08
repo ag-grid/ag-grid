@@ -78,4 +78,3 @@ var LinearScale = /** @class */ (function (_super) {
     return LinearScale;
 }(ContinuousScale));
 export { LinearScale };
-//# sourceMappingURL=linearScale.js.map

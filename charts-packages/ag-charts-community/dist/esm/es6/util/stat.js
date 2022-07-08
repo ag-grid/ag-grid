@@ -31,4 +31,3 @@ export function linearRegression(X, Y) {
     const intercept = (sumY * sumXX - sumX * sumXY) / denominator;
     return { slope, intercept };
 }
-//# sourceMappingURL=stat.js.map

@@ -383,4 +383,3 @@ export function classify(value) {
     }
     return 'primitive';
 }
-//# sourceMappingURL=json.js.map

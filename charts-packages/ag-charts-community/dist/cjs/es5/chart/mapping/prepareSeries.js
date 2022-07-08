@@ -209,4 +209,3 @@ function processSeriesOptions(seriesOptions) {
     return result;
 }
 exports.processSeriesOptions = processSeriesOptions;
-//# sourceMappingURL=prepareSeries.js.map

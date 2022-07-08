@@ -120,4 +120,3 @@ TransactionManager = __decorate([
     core_1.Bean('ssrmTransactionManager')
 ], TransactionManager);
 exports.TransactionManager = TransactionManager;
-//# sourceMappingURL=transactionManager.js.map

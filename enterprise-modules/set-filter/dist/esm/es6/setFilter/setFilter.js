@@ -654,4 +654,3 @@ class ModelWrapperWithSelectAll {
         return index === 0 ? this.isSelectAllSelected() : this.model.isValueSelected(this.getRow(index));
     }
 }
-//# sourceMappingURL=setFilter.js.map

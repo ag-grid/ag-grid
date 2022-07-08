@@ -6,4 +6,3 @@ class GroupedCategoryChart extends cartesianChart_1.CartesianChart {
 exports.GroupedCategoryChart = GroupedCategoryChart;
 GroupedCategoryChart.className = 'GroupedCategoryChart';
 GroupedCategoryChart.type = 'groupedCategory';
-//# sourceMappingURL=groupedCategoryChart.js.map

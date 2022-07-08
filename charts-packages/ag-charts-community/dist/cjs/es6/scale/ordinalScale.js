@@ -59,4 +59,3 @@ class OrdinalScale {
     }
 }
 exports.OrdinalScale = OrdinalScale;
-//# sourceMappingURL=ordinalScale.js.map

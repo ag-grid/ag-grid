@@ -13,4 +13,3 @@ var cellStylesXfsFactory = {
     }
 };
 export default cellStylesXfsFactory;
-//# sourceMappingURL=cellStyleXfs.js.map

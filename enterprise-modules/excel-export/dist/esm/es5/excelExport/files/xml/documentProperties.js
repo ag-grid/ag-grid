@@ -15,4 +15,3 @@ var documentProperties = {
     }
 };
 export default documentProperties;
-//# sourceMappingURL=documentProperties.js.map

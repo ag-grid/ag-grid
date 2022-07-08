@@ -94,4 +94,3 @@ class DarkTheme extends chartTheme_1.ChartTheme {
     }
 }
 exports.DarkTheme = DarkTheme;
-//# sourceMappingURL=darkTheme.js.map

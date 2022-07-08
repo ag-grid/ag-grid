@@ -398,4 +398,3 @@ ServerSideRowModel = __decorate([
     core_1.Bean('rowModel')
 ], ServerSideRowModel);
 exports.ServerSideRowModel = ServerSideRowModel;
-//# sourceMappingURL=serverSideRowModel.js.map

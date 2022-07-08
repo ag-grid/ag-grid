@@ -10,4 +10,3 @@ MiniNormalizedColumn.data = [
     [6, 7, 8],
     [2, 4, 6]
 ];
-//# sourceMappingURL=miniNormalizedColumn.js.map

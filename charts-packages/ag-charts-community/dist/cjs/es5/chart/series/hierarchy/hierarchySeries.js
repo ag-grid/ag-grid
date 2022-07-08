@@ -22,4 +22,3 @@ var HierarchySeries = /** @class */ (function (_super) {
     return HierarchySeries;
 }(series_1.Series));
 exports.HierarchySeries = HierarchySeries;
-//# sourceMappingURL=hierarchySeries.js.map

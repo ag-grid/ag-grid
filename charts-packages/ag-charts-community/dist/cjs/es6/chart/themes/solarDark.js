@@ -33,4 +33,3 @@ class SolarDark extends darkTheme_1.DarkTheme {
     }
 }
 exports.SolarDark = SolarDark;
-//# sourceMappingURL=solarDark.js.map

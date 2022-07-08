@@ -17,4 +17,3 @@ export const RowGroupingModule = {
         EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=rowGroupingModule.js.map

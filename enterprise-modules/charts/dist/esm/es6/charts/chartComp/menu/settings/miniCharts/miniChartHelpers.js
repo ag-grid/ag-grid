@@ -51,4 +51,3 @@ export function createLinePaths(root, data, size, padding) {
     root.append(clipRect);
     return lines;
 }
-//# sourceMappingURL=miniChartHelpers.js.map

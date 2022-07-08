@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -182,5 +182,3 @@ __decorate([
     context_1.PostConstruct
 ], AgPanel.prototype, "postConstruct", null);
 exports.AgPanel = AgPanel;
-
-//# sourceMappingURL=agPanel.js.map

@@ -29,4 +29,3 @@ export const DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES = {
             position: ChartAxisPosition.Left,
         }],
 };
-//# sourceMappingURL=defaults.js.map

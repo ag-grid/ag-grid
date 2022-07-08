@@ -244,4 +244,3 @@ function leastCommonAncestor(a, b) {
     }
     return c;
 }
-//# sourceMappingURL=hierarchy.js.map

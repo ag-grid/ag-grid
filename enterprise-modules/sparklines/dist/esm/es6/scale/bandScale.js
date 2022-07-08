@@ -147,4 +147,3 @@ export class BandScale {
         this.ordinalRange = reversed ? values.reverse() : values;
     }
 }
-//# sourceMappingURL=bandScale.js.map

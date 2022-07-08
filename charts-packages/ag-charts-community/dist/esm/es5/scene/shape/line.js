@@ -92,4 +92,3 @@ var Line = /** @class */ (function (_super) {
     return Line;
 }(Shape));
 export { Line };
-//# sourceMappingURL=line.js.map

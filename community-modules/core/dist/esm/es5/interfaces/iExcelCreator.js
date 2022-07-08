@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -10,5 +10,3 @@ export var ExcelFactoryMode;
     ExcelFactoryMode[ExcelFactoryMode["SINGLE_SHEET"] = 0] = "SINGLE_SHEET";
     ExcelFactoryMode[ExcelFactoryMode["MULTI_SHEET"] = 1] = "MULTI_SHEET";
 })(ExcelFactoryMode || (ExcelFactoryMode = {}));
-
-//# sourceMappingURL=iExcelCreator.js.map

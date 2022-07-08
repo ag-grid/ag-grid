@@ -371,4 +371,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], GridChartComp.prototype, "init", null);
-//# sourceMappingURL=gridChartComp.js.map

@@ -68,4 +68,3 @@ var XmlFactory = /** @class */ (function () {
     return XmlFactory;
 }());
 exports.XmlFactory = XmlFactory;
-//# sourceMappingURL=xmlFactory.js.map

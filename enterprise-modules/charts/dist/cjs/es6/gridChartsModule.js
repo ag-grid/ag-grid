@@ -16,4 +16,3 @@ exports.GridChartsModule = {
         core_2.EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=gridChartsModule.js.map

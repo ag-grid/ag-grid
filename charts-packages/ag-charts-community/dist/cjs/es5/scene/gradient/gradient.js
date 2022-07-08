@@ -7,4 +7,3 @@ var Gradient = /** @class */ (function () {
     return Gradient;
 }());
 exports.Gradient = Gradient;
-//# sourceMappingURL=gradient.js.map

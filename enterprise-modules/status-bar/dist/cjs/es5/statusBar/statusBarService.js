@@ -40,4 +40,3 @@ var StatusBarService = /** @class */ (function (_super) {
     return StatusBarService;
 }(core_1.BeanStub));
 exports.StatusBarService = StatusBarService;
-//# sourceMappingURL=statusBarService.js.map

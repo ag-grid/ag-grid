@@ -270,4 +270,3 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     return ToolPanelColumnComp;
 }(Component));
 export { ToolPanelColumnComp };
-//# sourceMappingURL=toolPanelColumnComp.js.map

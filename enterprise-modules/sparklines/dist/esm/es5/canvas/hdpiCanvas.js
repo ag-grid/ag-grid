@@ -296,4 +296,3 @@ var HdpiCanvas = /** @class */ (function () {
     return HdpiCanvas;
 }());
 export { HdpiCanvas };
-//# sourceMappingURL=hdpiCanvas.js.map

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -74,5 +74,3 @@ var PaginationAutoPageSizeService = /** @class */ (function (_super) {
     return PaginationAutoPageSizeService;
 }(beanStub_1.BeanStub));
 exports.PaginationAutoPageSizeService = PaginationAutoPageSizeService;
-
-//# sourceMappingURL=paginationAutoPageSizeService.js.map

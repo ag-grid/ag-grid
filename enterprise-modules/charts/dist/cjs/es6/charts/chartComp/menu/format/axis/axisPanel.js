@@ -237,4 +237,3 @@ __decorate([
     core_1.PostConstruct
 ], AxisPanel.prototype, "init", null);
 exports.AxisPanel = AxisPanel;
-//# sourceMappingURL=axisPanel.js.map

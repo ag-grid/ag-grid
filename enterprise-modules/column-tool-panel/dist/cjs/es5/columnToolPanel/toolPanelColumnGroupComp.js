@@ -357,4 +357,3 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     return ToolPanelColumnGroupComp;
 }(core_1.Component));
 exports.ToolPanelColumnGroupComp = ToolPanelColumnGroupComp;
-//# sourceMappingURL=toolPanelColumnGroupComp.js.map

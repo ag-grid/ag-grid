@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -208,5 +208,3 @@ var TextFilter = /** @class */ (function (_super) {
     return TextFilter;
 }(simpleFilter_1.SimpleFilter));
 exports.TextFilter = TextFilter;
-
-//# sourceMappingURL=textFilter.js.map

@@ -88,4 +88,3 @@ var HdpiOffscreenCanvas = /** @class */ (function () {
     return HdpiOffscreenCanvas;
 }());
 exports.HdpiOffscreenCanvas = HdpiOffscreenCanvas;
-//# sourceMappingURL=hdpiOffscreenCanvas.js.map

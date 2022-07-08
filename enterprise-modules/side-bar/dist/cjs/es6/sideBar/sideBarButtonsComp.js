@@ -64,4 +64,3 @@ __decorate([
     core_1.PreDestroy
 ], SideBarButtonsComp.prototype, "clearButtons", null);
 exports.SideBarButtonsComp = SideBarButtonsComp;
-//# sourceMappingURL=sideBarButtonsComp.js.map

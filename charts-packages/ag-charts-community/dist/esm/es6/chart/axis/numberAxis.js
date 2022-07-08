@@ -107,4 +107,3 @@ export class NumberAxis extends ChartAxis {
 }
 NumberAxis.className = 'NumberAxis';
 NumberAxis.type = 'number';
-//# sourceMappingURL=numberAxis.js.map

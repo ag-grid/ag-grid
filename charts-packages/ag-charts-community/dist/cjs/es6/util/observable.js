@@ -113,4 +113,3 @@ class Observable {
 }
 exports.Observable = Observable;
 Observable.privateKeyPrefix = '_';
-//# sourceMappingURL=observable.js.map

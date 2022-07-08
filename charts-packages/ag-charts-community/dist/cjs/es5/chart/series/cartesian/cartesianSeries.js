@@ -348,4 +348,3 @@ var CartesianSeriesMarker = /** @class */ (function (_super) {
     return CartesianSeriesMarker;
 }(seriesMarker_1.SeriesMarker));
 exports.CartesianSeriesMarker = CartesianSeriesMarker;
-//# sourceMappingURL=cartesianSeries.js.map

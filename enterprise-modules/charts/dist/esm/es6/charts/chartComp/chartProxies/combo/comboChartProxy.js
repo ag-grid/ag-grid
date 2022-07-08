@@ -89,4 +89,3 @@ export class ComboChartProxy extends CartesianChartProxy {
         return { primaryYKeys, secondaryYKeys };
     }
 }
-//# sourceMappingURL=comboChartProxy.js.map

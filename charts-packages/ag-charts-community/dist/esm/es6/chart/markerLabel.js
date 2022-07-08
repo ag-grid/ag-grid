@@ -129,4 +129,3 @@ export class MarkerLabel extends Group {
     }
 }
 MarkerLabel.className = 'MarkerLabel';
-//# sourceMappingURL=markerLabel.js.map

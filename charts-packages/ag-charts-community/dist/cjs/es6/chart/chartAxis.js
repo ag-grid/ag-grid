@@ -143,4 +143,3 @@ class ChartAxis extends axis_1.Axis {
     }
 }
 exports.ChartAxis = ChartAxis;
-//# sourceMappingURL=chartAxis.js.map

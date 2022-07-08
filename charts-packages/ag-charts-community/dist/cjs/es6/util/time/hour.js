@@ -16,4 +16,3 @@ function field(date) {
 }
 exports.hour = new interval_1.CountableTimeInterval(floor, offset, count, field);
 exports.default = exports.hour;
-//# sourceMappingURL=hour.js.map

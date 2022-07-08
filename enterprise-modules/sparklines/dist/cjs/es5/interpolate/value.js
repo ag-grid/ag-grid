@@ -41,4 +41,3 @@ function default_1(a, b) {
     return number_1.default(a, b);
 }
 exports.default = default_1;
-//# sourceMappingURL=value.js.map

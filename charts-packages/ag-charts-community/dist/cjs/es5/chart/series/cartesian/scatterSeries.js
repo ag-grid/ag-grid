@@ -421,4 +421,3 @@ var ScatterSeries = /** @class */ (function (_super) {
     return ScatterSeries;
 }(cartesianSeries_1.CartesianSeries));
 exports.ScatterSeries = ScatterSeries;
-//# sourceMappingURL=scatterSeries.js.map

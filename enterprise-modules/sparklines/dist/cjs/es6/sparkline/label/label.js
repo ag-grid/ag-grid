@@ -39,4 +39,3 @@ __decorate([
     observable_1.reactive('change')
 ], Label.prototype, "color", void 0);
 exports.Label = Label;
-//# sourceMappingURL=label.js.map

@@ -64,4 +64,3 @@ class ScatterChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
     }
 }
 exports.ScatterChartProxy = ScatterChartProxy;
-//# sourceMappingURL=scatterChartProxy.js.map

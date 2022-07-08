@@ -407,4 +407,3 @@ var Legend = /** @class */ (function () {
     return Legend;
 }());
 export { Legend };
-//# sourceMappingURL=legend.js.map

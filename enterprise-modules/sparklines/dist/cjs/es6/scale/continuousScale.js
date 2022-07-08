@@ -114,4 +114,3 @@ class ContinuousScale {
     }
 }
 exports.default = ContinuousScale;
-//# sourceMappingURL=continuousScale.js.map

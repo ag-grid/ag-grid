@@ -695,4 +695,3 @@ var InfiniteStore = /** @class */ (function (_super) {
     return InfiniteStore;
 }(core_1.BeanStub));
 exports.InfiniteStore = InfiniteStore;
-//# sourceMappingURL=infiniteStore.js.map

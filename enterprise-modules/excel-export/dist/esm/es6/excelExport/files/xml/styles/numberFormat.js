@@ -15,4 +15,3 @@ const numberFormat = {
     }
 };
 export default numberFormat;
-//# sourceMappingURL=numberFormat.js.map

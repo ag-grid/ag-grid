@@ -17,4 +17,3 @@ var Padding = /** @class */ (function () {
     return Padding;
 }());
 exports.Padding = Padding;
-//# sourceMappingURL=padding.js.map

@@ -703,4 +703,3 @@ var ClipboardService = /** @class */ (function (_super) {
     return ClipboardService;
 }(core_1.BeanStub));
 exports.ClipboardService = ClipboardService;
-//# sourceMappingURL=clipboardService.js.map

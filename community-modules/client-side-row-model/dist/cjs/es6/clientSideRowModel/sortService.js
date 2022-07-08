@@ -212,4 +212,3 @@ SortService = __decorate([
     core_1.Bean('sortService')
 ], SortService);
 exports.SortService = SortService;
-//# sourceMappingURL=sortService.js.map

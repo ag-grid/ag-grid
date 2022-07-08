@@ -44,4 +44,3 @@ export function getChartTheme(value) {
     }
     return lightTheme;
 }
-//# sourceMappingURL=themes.js.map

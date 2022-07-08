@@ -168,4 +168,3 @@ export function reactive() {
         }
     };
 }
-//# sourceMappingURL=observable.js.map

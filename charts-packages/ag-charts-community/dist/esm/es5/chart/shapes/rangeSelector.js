@@ -170,4 +170,3 @@ var RangeSelector = /** @class */ (function (_super) {
     return RangeSelector;
 }(Group));
 export { RangeSelector };
-//# sourceMappingURL=rangeSelector.js.map

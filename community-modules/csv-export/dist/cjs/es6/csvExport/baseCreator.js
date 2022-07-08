@@ -18,4 +18,3 @@ class BaseCreator {
     }
 }
 exports.BaseCreator = BaseCreator;
-//# sourceMappingURL=baseCreator.js.map

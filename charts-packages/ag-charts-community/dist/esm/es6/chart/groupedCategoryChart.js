@@ -3,4 +3,3 @@ export class GroupedCategoryChart extends CartesianChart {
 }
 GroupedCategoryChart.className = 'GroupedCategoryChart';
 GroupedCategoryChart.type = 'groupedCategory';
-//# sourceMappingURL=groupedCategoryChart.js.map

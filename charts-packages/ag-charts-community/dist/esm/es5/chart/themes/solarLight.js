@@ -49,4 +49,3 @@ var SolarLight = /** @class */ (function (_super) {
     return SolarLight;
 }(ChartTheme));
 export { SolarLight };
-//# sourceMappingURL=solarLight.js.map

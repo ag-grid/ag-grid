@@ -25,4 +25,3 @@ export class Diamond extends Marker {
     }
 }
 Diamond.className = 'Diamond';
-//# sourceMappingURL=diamond.js.map

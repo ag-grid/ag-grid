@@ -166,4 +166,3 @@ var Treemap = /** @class */ (function () {
     return Treemap;
 }());
 export { Treemap };
-//# sourceMappingURL=treemap.js.map

@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-angular",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "scripts": {
     "clean": "rimraf dist .hash",
     "ng": "ng",

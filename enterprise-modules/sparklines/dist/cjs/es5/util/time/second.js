@@ -13,4 +13,3 @@ function count(start, end) {
 }
 exports.second = new interval_1.CountableTimeInterval(floor, offset, count);
 exports.default = exports.second;
-//# sourceMappingURL=second.js.map

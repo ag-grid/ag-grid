@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -102,5 +102,3 @@ PropertyKeys.ALL_PROPERTIES = [
 PropertyKeys.FRAMEWORK_PROPERTIES = [
     '__ob__', '__v_skip', '__metadata__', 'mappedColumnProperties', 'hasChildColumns', 'toColDef', 'createColDefFromGridColumn'
 ];
-
-//# sourceMappingURL=propertyKeys.js.map

@@ -68,4 +68,3 @@ export function placeLabels(data, bounds, padding = 5) {
     }
     return result;
 }
-//# sourceMappingURL=labelPlacement.js.map

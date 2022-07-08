@@ -385,4 +385,3 @@ var GridChartComp = /** @class */ (function (_super) {
     return GridChartComp;
 }(core_1.Component));
 exports.GridChartComp = GridChartComp;
-//# sourceMappingURL=gridChartComp.js.map

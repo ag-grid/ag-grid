@@ -234,4 +234,3 @@ AggregationStage = __decorate([
     Bean('aggregationStage')
 ], AggregationStage);
 export { AggregationStage };
-//# sourceMappingURL=aggregationStage.js.map

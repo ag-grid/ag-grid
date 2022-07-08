@@ -366,4 +366,3 @@ export class HistogramSeries extends CartesianSeries {
 }
 HistogramSeries.className = 'HistogramSeries';
 HistogramSeries.type = 'histogram';
-//# sourceMappingURL=histogramSeries.js.map

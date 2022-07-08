@@ -105,4 +105,3 @@ var StoreFactory = /** @class */ (function () {
     return StoreFactory;
 }());
 exports.StoreFactory = StoreFactory;
-//# sourceMappingURL=storeFactory.js.map

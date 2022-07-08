@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -105,5 +105,3 @@ __decorate([
     componentAnnotations_1.RefSelector('eInput')
 ], AgAbstractInputField.prototype, "eInput", void 0);
 exports.AgAbstractInputField = AgAbstractInputField;
-
-//# sourceMappingURL=agAbstractInputField.js.map

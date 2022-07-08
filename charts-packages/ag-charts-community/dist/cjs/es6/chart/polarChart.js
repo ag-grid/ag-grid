@@ -64,4 +64,3 @@ class PolarChart extends chart_1.Chart {
 exports.PolarChart = PolarChart;
 PolarChart.className = 'PolarChart';
 PolarChart.type = 'polar';
-//# sourceMappingURL=polarChart.js.map

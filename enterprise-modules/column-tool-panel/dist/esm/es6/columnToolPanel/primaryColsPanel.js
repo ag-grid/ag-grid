@@ -85,4 +85,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], PrimaryColsPanel.prototype, "postConstruct", null);
-//# sourceMappingURL=primaryColsPanel.js.map

@@ -11,4 +11,3 @@ export function changeOpacity(fills, alpha) {
         return new Color(c.r, c.g, c.b, alpha).toHexString();
     });
 }
-//# sourceMappingURL=color.js.map

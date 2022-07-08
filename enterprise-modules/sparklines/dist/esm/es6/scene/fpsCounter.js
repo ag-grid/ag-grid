@@ -49,4 +49,3 @@ export class FpsCounter {
         }
     }
 }
-//# sourceMappingURL=fpsCounter.js.map

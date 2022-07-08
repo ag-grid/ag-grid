@@ -36,4 +36,3 @@ function getMarker(shape) {
     return square_1.Square;
 }
 exports.getMarker = getMarker;
-//# sourceMappingURL=util.js.map

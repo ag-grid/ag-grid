@@ -458,4 +458,3 @@ function formatLocale(locale) {
     };
 }
 exports.formatLocale = formatLocale;
-//# sourceMappingURL=numberFormat.js.map

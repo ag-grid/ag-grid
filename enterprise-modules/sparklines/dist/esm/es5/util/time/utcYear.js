@@ -14,4 +14,3 @@ function field(date) {
 }
 export var utcYear = new CountableTimeInterval(floor, offset, count, field);
 export default utcYear;
-//# sourceMappingURL=utcYear.js.map

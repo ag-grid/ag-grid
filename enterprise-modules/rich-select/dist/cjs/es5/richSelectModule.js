@@ -14,4 +14,3 @@ exports.RichSelectModule = {
         core_2.EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=richSelectModule.js.map

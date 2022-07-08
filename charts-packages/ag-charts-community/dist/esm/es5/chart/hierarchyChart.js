@@ -88,4 +88,3 @@ var HierarchyChart = /** @class */ (function (_super) {
     return HierarchyChart;
 }(Chart));
 export { HierarchyChart };
-//# sourceMappingURL=hierarchyChart.js.map

@@ -606,4 +606,3 @@ function formatLocale(timeLocale) {
     };
 }
 exports.default = formatLocale;
-//# sourceMappingURL=locale.js.map

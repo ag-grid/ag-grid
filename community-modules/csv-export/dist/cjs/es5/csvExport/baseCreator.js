@@ -21,4 +21,3 @@ var BaseCreator = /** @class */ (function () {
     return BaseCreator;
 }());
 exports.BaseCreator = BaseCreator;
-//# sourceMappingURL=baseCreator.js.map

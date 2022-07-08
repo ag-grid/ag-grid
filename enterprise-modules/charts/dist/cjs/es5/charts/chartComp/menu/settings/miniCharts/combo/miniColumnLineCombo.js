@@ -52,4 +52,3 @@ var MiniColumnLineCombo = /** @class */ (function (_super) {
     return MiniColumnLineCombo;
 }(miniChartWithAxes_1.MiniChartWithAxes));
 exports.MiniColumnLineCombo = MiniColumnLineCombo;
-//# sourceMappingURL=miniColumnLineCombo.js.map

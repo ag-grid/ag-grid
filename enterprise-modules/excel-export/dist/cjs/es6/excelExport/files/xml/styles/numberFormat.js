@@ -17,4 +17,3 @@ const numberFormat = {
     }
 };
 exports.default = numberFormat;
-//# sourceMappingURL=numberFormat.js.map

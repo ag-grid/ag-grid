@@ -371,4 +371,3 @@ var AreaSparkline = /** @class */ (function (_super) {
     return AreaSparkline;
 }(sparkline_1.Sparkline));
 exports.AreaSparkline = AreaSparkline;
-//# sourceMappingURL=areaSparkline.js.map

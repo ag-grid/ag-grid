@@ -37,4 +37,3 @@ class Marker extends shape_1.Shape {
     }
 }
 exports.Marker = Marker;
-//# sourceMappingURL=marker.js.map

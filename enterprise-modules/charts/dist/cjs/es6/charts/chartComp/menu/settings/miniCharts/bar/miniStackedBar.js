@@ -44,4 +44,3 @@ MiniStackedBar.data = [
     [6, 9, 12],
     [2, 3, 4]
 ];
-//# sourceMappingURL=miniStackedBar.js.map

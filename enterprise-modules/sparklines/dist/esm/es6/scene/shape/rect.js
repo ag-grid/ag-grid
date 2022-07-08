@@ -248,4 +248,3 @@ export class Rect extends Path {
     }
 }
 Rect.className = 'Rect';
-//# sourceMappingURL=rect.js.map

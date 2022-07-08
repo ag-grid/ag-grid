@@ -50,4 +50,3 @@ export class TimeAxis extends ChartAxis {
 }
 TimeAxis.className = 'TimeAxis';
 TimeAxis.type = 'time';
-//# sourceMappingURL=timeAxis.js.map

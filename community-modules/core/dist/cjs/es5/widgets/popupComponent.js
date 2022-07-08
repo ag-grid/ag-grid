@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -43,5 +43,3 @@ var PopupComponent = /** @class */ (function (_super) {
     return PopupComponent;
 }(component_1.Component));
 exports.PopupComponent = PopupComponent;
-
-//# sourceMappingURL=popupComponent.js.map

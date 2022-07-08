@@ -292,4 +292,3 @@ __decorate([
     core_1.Optional('aggregationStage')
 ], ChartDatasource.prototype, "aggregationStage", void 0);
 exports.ChartDatasource = ChartDatasource;
-//# sourceMappingURL=chartDatasource.js.map

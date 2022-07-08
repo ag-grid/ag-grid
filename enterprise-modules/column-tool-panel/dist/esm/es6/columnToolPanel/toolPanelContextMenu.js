@@ -167,4 +167,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], ToolPanelContextMenu.prototype, "postConstruct", null);
-//# sourceMappingURL=toolPanelContextMenu.js.map

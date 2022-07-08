@@ -1,5 +1,5 @@
 /**
- * ag-grid-enterprise - AG Grid Enterprise Features * @version v28.0.0
+ * ag-grid-enterprise - AG Grid Enterprise Features * @version v28.0.1
  * @link https://www.ag-grid.com/
 ' * @license Commercial
  */
@@ -287,7 +287,7 @@ var LicenseManager = /** @class */ (function (_super) {
         this.watermarkMessage = "License Expired";
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTY1Njg3Mzg0NDQzOQ==';
+    LicenseManager.RELEASE_INFORMATION = 'MTY1NzIxMjEzNTQ0Ng==';
     __decorate([
         agGridCommunity.Autowired('md5')
     ], LicenseManager.prototype, "md5", void 0);
@@ -50887,7 +50887,7 @@ var GridChartComp = /** @class */ (function (_super) {
 
 // the line below is automatically modified during releases - do not modify
 // (see scripts/release/updateChartModel.js)
-var CURRENT_VERSION = "28.0.0";
+var CURRENT_VERSION = "28.0.1";
 function upgradeChartModel(model) {
     if (model.version == null) {
         // First release with version field.

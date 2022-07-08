@@ -101,4 +101,3 @@ Line.defaultStyles = chainObjects(Shape.defaultStyles, {
     fill: undefined,
     strokeWidth: 1
 });
-//# sourceMappingURL=line.js.map

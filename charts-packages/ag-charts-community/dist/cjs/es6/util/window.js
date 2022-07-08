@@ -9,4 +9,3 @@ function windowValue(name) {
     return (_a = WINDOW) === null || _a === void 0 ? void 0 : _a[name];
 }
 exports.windowValue = windowValue;
-//# sourceMappingURL=window.js.map

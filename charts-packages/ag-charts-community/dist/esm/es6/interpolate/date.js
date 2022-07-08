@@ -7,4 +7,3 @@ export default function (a, b) {
         return date;
     };
 }
-//# sourceMappingURL=date.js.map

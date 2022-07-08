@@ -697,4 +697,3 @@ class BarSeries extends cartesianSeries_1.CartesianSeries {
 exports.BarSeries = BarSeries;
 BarSeries.className = 'BarSeries';
 BarSeries.type = 'bar';
-//# sourceMappingURL=barSeries.js.map

@@ -117,4 +117,3 @@ SortListener = __decorate([
     Bean('ssrmSortService')
 ], SortListener);
 export { SortListener };
-//# sourceMappingURL=sortListener.js.map

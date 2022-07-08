@@ -52,4 +52,3 @@ class FpsCounter {
     }
 }
 exports.FpsCounter = FpsCounter;
-//# sourceMappingURL=fpsCounter.js.map

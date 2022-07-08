@@ -65,4 +65,3 @@ var Marker = /** @class */ (function (_super) {
     return Marker;
 }(shape_1.Shape));
 exports.Marker = Marker;
-//# sourceMappingURL=marker.js.map

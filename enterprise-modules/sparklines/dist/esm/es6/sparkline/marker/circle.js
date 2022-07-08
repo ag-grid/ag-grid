@@ -20,4 +20,3 @@ export class Circle extends Marker {
     }
 }
 Circle.className = 'Circle';
-//# sourceMappingURL=circle.js.map

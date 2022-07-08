@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -104,5 +104,3 @@ RowNodeSorter = __decorate([
     Bean('rowNodeSorter')
 ], RowNodeSorter);
 export { RowNodeSorter };
-
-//# sourceMappingURL=rowNodeSorter.js.map

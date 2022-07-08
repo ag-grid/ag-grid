@@ -681,4 +681,3 @@ export class Axis {
         return this.axisGroup.computeBBox();
     }
 }
-//# sourceMappingURL=axis.js.map

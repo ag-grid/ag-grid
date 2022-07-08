@@ -50,4 +50,3 @@ class BBox {
 }
 exports.BBox = BBox;
 BBox.noParams = {};
-//# sourceMappingURL=bbox.js.map

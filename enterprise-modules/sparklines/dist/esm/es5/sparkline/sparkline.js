@@ -595,4 +595,3 @@ var Sparkline = /** @class */ (function (_super) {
     return Sparkline;
 }(Observable));
 export { Sparkline };
-//# sourceMappingURL=sparkline.js.map

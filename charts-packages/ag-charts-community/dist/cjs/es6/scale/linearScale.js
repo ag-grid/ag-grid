@@ -62,4 +62,3 @@ class LinearScale extends continuousScale_1.ContinuousScale {
     }
 }
 exports.LinearScale = LinearScale;
-//# sourceMappingURL=linearScale.js.map

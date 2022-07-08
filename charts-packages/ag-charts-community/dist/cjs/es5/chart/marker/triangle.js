@@ -33,4 +33,3 @@ var Triangle = /** @class */ (function (_super) {
     return Triangle;
 }(marker_1.Marker));
 exports.Triangle = Triangle;
-//# sourceMappingURL=triangle.js.map

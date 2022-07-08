@@ -64,4 +64,3 @@ export var time = {
 export { getChartTheme, themes } from "./chart/mapping/themes";
 export * from "./chart/agChartV2";
 export * from "./chart/themes/chartTheme";
-//# sourceMappingURL=main.js.map

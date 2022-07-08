@@ -34,4 +34,3 @@ export class Marker extends Shape {
         return this._size;
     }
 }
-//# sourceMappingURL=marker.js.map

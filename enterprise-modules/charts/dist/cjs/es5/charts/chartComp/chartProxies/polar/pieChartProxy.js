@@ -139,4 +139,3 @@ var PieChartProxy = /** @class */ (function (_super) {
     return PieChartProxy;
 }(chartProxy_1.ChartProxy));
 exports.PieChartProxy = PieChartProxy;
-//# sourceMappingURL=pieChartProxy.js.map

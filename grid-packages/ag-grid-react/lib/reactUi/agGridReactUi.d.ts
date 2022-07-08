@@ -1,4 +1,4 @@
-// ag-grid-react v28.0.0
+// ag-grid-react v28.0.1
 import { ColumnApi, Context, GridApi } from 'ag-grid-community';
 import { Component } from 'react';
 import { AgReactUiProps } from '../shared/interfaces';

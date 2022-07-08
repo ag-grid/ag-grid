@@ -15,4 +15,3 @@ class Label {
     }
 }
 exports.Label = Label;
-//# sourceMappingURL=label.js.map

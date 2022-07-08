@@ -17,4 +17,3 @@ const documentProperties = {
     }
 };
 exports.default = documentProperties;
-//# sourceMappingURL=documentProperties.js.map

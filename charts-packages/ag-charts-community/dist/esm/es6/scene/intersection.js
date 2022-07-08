@@ -74,4 +74,3 @@ export function bezierCoefficients(P1, P2, P3, P4) {
         P1 //                 | 1  0  0  0| |P4|
     ];
 }
-//# sourceMappingURL=intersection.js.map

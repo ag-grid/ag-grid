@@ -253,4 +253,3 @@ Text.defaultStyles = chainObjects(Shape.defaultStyles, {
 export function getFont(fontSize, fontFamily, fontStyle, fontWeight) {
     return [fontStyle || '', fontWeight || '', fontSize + 'px', fontFamily].join(' ').trim();
 }
-//# sourceMappingURL=text.js.map

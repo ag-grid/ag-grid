@@ -305,4 +305,3 @@ var drawingFactory = {
     }
 };
 exports.default = drawingFactory;
-//# sourceMappingURL=drawing.js.map

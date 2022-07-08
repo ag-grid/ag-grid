@@ -173,4 +173,3 @@ var CountableTimeInterval = /** @class */ (function (_super) {
     return CountableTimeInterval;
 }(TimeInterval));
 export { CountableTimeInterval };
-//# sourceMappingURL=interval.js.map

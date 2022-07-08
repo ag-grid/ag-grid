@@ -41,4 +41,3 @@ var PastelLight = /** @class */ (function (_super) {
     return PastelLight;
 }(ChartTheme));
 export { PastelLight };
-//# sourceMappingURL=pastelLight.js.map

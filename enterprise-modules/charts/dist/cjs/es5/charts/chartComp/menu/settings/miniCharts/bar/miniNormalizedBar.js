@@ -28,4 +28,3 @@ var MiniNormalizedBar = /** @class */ (function (_super) {
     return MiniNormalizedBar;
 }(miniStackedBar_1.MiniStackedBar));
 exports.MiniNormalizedBar = MiniNormalizedBar;
-//# sourceMappingURL=miniNormalizedBar.js.map

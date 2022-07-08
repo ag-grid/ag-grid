@@ -692,4 +692,3 @@ export class BarSeries extends CartesianSeries {
 }
 BarSeries.className = 'BarSeries';
 BarSeries.type = 'bar';
-//# sourceMappingURL=barSeries.js.map

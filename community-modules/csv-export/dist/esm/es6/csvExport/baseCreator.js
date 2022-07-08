@@ -15,4 +15,3 @@ export class BaseCreator {
         return data;
     }
 }
-//# sourceMappingURL=baseCreator.js.map

@@ -257,4 +257,3 @@ function getFont(fontSize, fontFamily, fontStyle, fontWeight) {
     return [fontStyle || '', fontWeight || '', fontSize + 'px', fontFamily].join(' ').trim();
 }
 exports.getFont = getFont;
-//# sourceMappingURL=text.js.map

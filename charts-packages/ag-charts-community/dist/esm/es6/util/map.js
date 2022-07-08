@@ -3,4 +3,3 @@ export function convertToMap(list) {
     list.forEach(([key, value]) => map.set(key, value));
     return map;
 }
-//# sourceMappingURL=map.js.map

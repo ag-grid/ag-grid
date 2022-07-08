@@ -202,4 +202,3 @@ var MarkerLabel = /** @class */ (function (_super) {
     return MarkerLabel;
 }(Group));
 export { MarkerLabel };
-//# sourceMappingURL=markerLabel.js.map

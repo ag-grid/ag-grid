@@ -11,4 +11,3 @@ __export(require("@ag-grid-community/client-side-row-model"));
 __export(require("@ag-grid-community/csv-export"));
 __export(require("@ag-grid-community/infinite-row-model"));
 __export(require("@ag-grid-community/core"));
-//# sourceMappingURL=main.js.map

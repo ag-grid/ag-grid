@@ -187,4 +187,3 @@ ToolPanelColDefService = __decorate([
     core_1.Bean('toolPanelColDefService')
 ], ToolPanelColDefService);
 exports.ToolPanelColDefService = ToolPanelColDefService;
-//# sourceMappingURL=toolPanelColDefService.js.map

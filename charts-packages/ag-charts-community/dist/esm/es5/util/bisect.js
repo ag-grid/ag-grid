@@ -86,4 +86,3 @@ function ascendingComparator(map) {
         return ascending(map(item), x);
     };
 }
-//# sourceMappingURL=bisect.js.map

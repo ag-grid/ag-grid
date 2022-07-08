@@ -340,4 +340,3 @@ var AggItemComp = /** @class */ (function (_super) {
     }
     return AggItemComp;
 }(core_1.Component));
-//# sourceMappingURL=dropZoneColumnComp.js.map

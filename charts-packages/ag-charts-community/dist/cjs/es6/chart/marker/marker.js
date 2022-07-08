@@ -31,4 +31,3 @@ __decorate([
     path_1.ScenePathChangeDetection({ convertor: Math.abs })
 ], Marker.prototype, "size", void 0);
 exports.Marker = Marker;
-//# sourceMappingURL=marker.js.map

@@ -12,4 +12,3 @@ class Padding {
     }
 }
 exports.Padding = Padding;
-//# sourceMappingURL=padding.js.map

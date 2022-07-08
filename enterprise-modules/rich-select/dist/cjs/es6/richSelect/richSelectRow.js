@@ -65,4 +65,3 @@ __decorate([
     core_1.Autowired('userComponentFactory')
 ], RichSelectRow.prototype, "userComponentFactory", void 0);
 exports.RichSelectRow = RichSelectRow;
-//# sourceMappingURL=richSelectRow.js.map

@@ -71,4 +71,3 @@ exports.getChartTheme = themes_1.getChartTheme;
 exports.themes = themes_1.themes;
 __export(require("./chart/agChartV2"));
 __export(require("./chart/themes/chartTheme"));
-//# sourceMappingURL=main.js.map

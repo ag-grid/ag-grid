@@ -30,4 +30,3 @@ __decorate([
 __decorate([
     reactive('change')
 ], DropShadow.prototype, "blur", void 0);
-//# sourceMappingURL=dropShadow.js.map

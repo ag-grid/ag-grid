@@ -40,4 +40,3 @@ class MiniBar extends miniChartWithAxes_1.MiniChartWithAxes {
 }
 exports.MiniBar = MiniBar;
 MiniBar.chartType = 'groupedBar';
-//# sourceMappingURL=miniBar.js.map

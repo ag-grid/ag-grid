@@ -76,4 +76,3 @@ class Path extends shape_1.Shape {
 }
 exports.Path = Path;
 Path.className = 'Path';
-//# sourceMappingURL=path.js.map

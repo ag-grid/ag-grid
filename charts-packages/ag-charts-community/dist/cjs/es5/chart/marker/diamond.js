@@ -35,4 +35,3 @@ var Diamond = /** @class */ (function (_super) {
     return Diamond;
 }(marker_1.Marker));
 exports.Diamond = Diamond;
-//# sourceMappingURL=diamond.js.map

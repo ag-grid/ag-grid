@@ -37,4 +37,3 @@ exports.defaultTooltipCss = `
     overflow: hidden;
 }
 `;
-//# sourceMappingURL=defaultTooltipCss.js.map

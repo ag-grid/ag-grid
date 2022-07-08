@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -26,5 +26,3 @@ import * as SetUtils from './set';
 import * as StringUtils from './string';
 const utils = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, GeneralUtils), AriaUtils), ArrayUtils), BrowserUtils), CsvUtils), DateUtils), DomUtils), EventUtils), FunctionUtils), FuzzyMatchUtils), GenericUtils), IconUtils), KeyboardUtils), MapUtils), MouseUtils), NumberUtils), ObjectUtils), RowNodeUtils), SetUtils), StringUtils);
 export const _ = utils;
-
-//# sourceMappingURL=utils.js.map

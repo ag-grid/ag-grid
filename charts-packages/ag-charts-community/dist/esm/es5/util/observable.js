@@ -130,4 +130,3 @@ var Observable = /** @class */ (function () {
     return Observable;
 }());
 export { Observable };
-//# sourceMappingURL=observable.js.map

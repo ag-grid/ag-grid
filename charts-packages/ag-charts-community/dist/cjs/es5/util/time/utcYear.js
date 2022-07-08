@@ -16,4 +16,3 @@ function field(date) {
 }
 exports.utcYear = new interval_1.CountableTimeInterval(floor, offset, count, field);
 exports.default = exports.utcYear;
-//# sourceMappingURL=utcYear.js.map

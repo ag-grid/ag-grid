@@ -189,4 +189,3 @@ var ChartAxis = /** @class */ (function (_super) {
     return ChartAxis;
 }(axis_1.Axis));
 exports.ChartAxis = ChartAxis;
-//# sourceMappingURL=chartAxis.js.map

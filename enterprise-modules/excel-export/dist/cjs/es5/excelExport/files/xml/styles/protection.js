@@ -17,4 +17,3 @@ var protection = {
     }
 };
 exports.default = protection;
-//# sourceMappingURL=protection.js.map

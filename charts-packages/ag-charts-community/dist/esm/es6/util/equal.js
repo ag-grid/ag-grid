@@ -60,4 +60,3 @@ export function equal(a, b) {
     // true if both NaN, false otherwise
     return a !== a && b !== b;
 }
-//# sourceMappingURL=equal.js.map

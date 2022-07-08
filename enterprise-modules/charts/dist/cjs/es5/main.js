@@ -6,4 +6,3 @@ var ag_charts_community_1 = require("ag-charts-community");
 exports.agCharts = {
     time: ag_charts_community_1.time
 };
-//# sourceMappingURL=main.js.map

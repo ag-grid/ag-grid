@@ -194,4 +194,3 @@ __decorate([
     core_1.PostConstruct
 ], AggregationComp.prototype, "postConstruct", null);
 exports.AggregationComp = AggregationComp;
-//# sourceMappingURL=aggregationComp.js.map

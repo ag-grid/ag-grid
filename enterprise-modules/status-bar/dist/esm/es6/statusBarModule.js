@@ -26,4 +26,3 @@ export const StatusBarModule = {
         EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=statusBarModule.js.map

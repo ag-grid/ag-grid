@@ -41,4 +41,3 @@ var Plus = /** @class */ (function (_super) {
     return Plus;
 }(Marker));
 export { Plus };
-//# sourceMappingURL=plus.js.map

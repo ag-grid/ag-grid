@@ -100,4 +100,3 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
     return FiltersToolPanelHeaderPanel;
 }(Component));
 export { FiltersToolPanelHeaderPanel };
-//# sourceMappingURL=filtersToolPanelHeaderPanel.js.map

@@ -216,4 +216,3 @@ class LogScale extends continuousScale_1.ContinuousScale {
     }
 }
 exports.LogScale = LogScale;
-//# sourceMappingURL=logScale.js.map

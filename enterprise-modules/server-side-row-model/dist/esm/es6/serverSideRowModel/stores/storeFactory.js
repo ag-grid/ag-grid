@@ -100,4 +100,3 @@ StoreFactory = __decorate([
     Bean('ssrmStoreFactory')
 ], StoreFactory);
 export { StoreFactory };
-//# sourceMappingURL=storeFactory.js.map

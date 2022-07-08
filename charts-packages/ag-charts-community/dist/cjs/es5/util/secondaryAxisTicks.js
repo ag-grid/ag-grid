@@ -71,4 +71,3 @@ function calculateNextNiceStep(rawStep) {
     }
     return step;
 }
-//# sourceMappingURL=secondaryAxisTicks.js.map

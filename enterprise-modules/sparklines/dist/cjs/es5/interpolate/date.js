@@ -10,4 +10,3 @@ function default_1(a, b) {
     };
 }
 exports.default = default_1;
-//# sourceMappingURL=date.js.map

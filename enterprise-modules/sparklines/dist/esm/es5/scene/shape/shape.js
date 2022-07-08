@@ -374,4 +374,3 @@ var Shape = /** @class */ (function (_super) {
     return Shape;
 }(Node));
 export { Shape };
-//# sourceMappingURL=shape.js.map

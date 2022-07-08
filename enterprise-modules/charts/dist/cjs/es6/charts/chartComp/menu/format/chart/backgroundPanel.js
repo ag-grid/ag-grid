@@ -57,4 +57,3 @@ __decorate([
     core_1.PostConstruct
 ], BackgroundPanel.prototype, "init", null);
 exports.BackgroundPanel = BackgroundPanel;
-//# sourceMappingURL=backgroundPanel.js.map

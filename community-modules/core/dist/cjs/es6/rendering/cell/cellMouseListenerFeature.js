@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -177,5 +177,3 @@ class CellMouseListenerFeature extends beans_1.Beans {
     }
 }
 exports.CellMouseListenerFeature = CellMouseListenerFeature;
-
-//# sourceMappingURL=cellMouseListenerFeature.js.map

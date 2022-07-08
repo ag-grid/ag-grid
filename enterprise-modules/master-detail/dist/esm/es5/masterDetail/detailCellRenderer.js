@@ -121,4 +121,3 @@ var DetailCellRenderer = /** @class */ (function (_super) {
     return DetailCellRenderer;
 }(Component));
 export { DetailCellRenderer };
-//# sourceMappingURL=detailCellRenderer.js.map

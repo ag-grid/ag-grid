@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -83,5 +83,3 @@ RowNodeBlock.STATE_WAITING_TO_LOAD = 'needsLoading';
 RowNodeBlock.STATE_LOADING = 'loading';
 RowNodeBlock.STATE_LOADED = 'loaded';
 RowNodeBlock.STATE_FAILED = 'failed';
-
-//# sourceMappingURL=rowNodeBlock.js.map

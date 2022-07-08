@@ -11,4 +11,3 @@ export function doOnce(func, key) {
     func();
     doOnceFlags[key] = true;
 }
-//# sourceMappingURL=function.js.map

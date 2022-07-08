@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -14,5 +14,3 @@ export var CellRangeType;
     CellRangeType[CellRangeType["VALUE"] = 0] = "VALUE";
     CellRangeType[CellRangeType["DIMENSION"] = 1] = "DIMENSION";
 })(CellRangeType || (CellRangeType = {}));
-
-//# sourceMappingURL=IRangeService.js.map

@@ -136,4 +136,3 @@ var Line = /** @class */ (function (_super) {
     return Line;
 }(shape_1.Shape));
 exports.Line = Line;
-//# sourceMappingURL=line.js.map

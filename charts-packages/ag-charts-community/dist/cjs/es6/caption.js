@@ -52,4 +52,3 @@ class Caption extends observable_1.Observable {
 }
 exports.Caption = Caption;
 Caption.PADDING = 10;
-//# sourceMappingURL=caption.js.map

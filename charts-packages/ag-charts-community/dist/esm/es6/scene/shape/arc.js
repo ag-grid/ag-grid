@@ -105,4 +105,3 @@ __decorate([
 __decorate([
     ScenePathChangeDetection()
 ], Arc.prototype, "type", void 0);
-//# sourceMappingURL=arc.js.map

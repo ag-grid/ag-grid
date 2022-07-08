@@ -97,4 +97,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], MiniChartsContainer.prototype, "init", null);
-//# sourceMappingURL=miniChartsContainer.js.map

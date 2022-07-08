@@ -435,4 +435,3 @@ export class TreemapSeries extends HierarchySeries {
 }
 TreemapSeries.className = 'TreemapSeries';
 TreemapSeries.type = 'treemap';
-//# sourceMappingURL=treemapSeries.js.map

@@ -118,4 +118,3 @@ RangeSelector.defaults = {
     min: 0,
     max: 1
 };
-//# sourceMappingURL=rangeSelector.js.map

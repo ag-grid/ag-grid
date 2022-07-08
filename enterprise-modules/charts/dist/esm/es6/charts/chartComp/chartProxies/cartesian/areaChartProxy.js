@@ -23,4 +23,3 @@ export class AreaChartProxy extends CartesianChartProxy {
         return this.crossFiltering ? this.extractLineAreaCrossFilterSeries(series, params) : series;
     }
 }
-//# sourceMappingURL=areaChartProxy.js.map

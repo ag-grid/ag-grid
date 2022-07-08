@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -140,5 +140,3 @@ AutoWidthCalculator = __decorate([
     context_1.Bean('autoWidthCalculator')
 ], AutoWidthCalculator);
 exports.AutoWidthCalculator = AutoWidthCalculator;
-
-//# sourceMappingURL=autoWidthCalculator.js.map

@@ -9,4 +9,3 @@ export class Padding {
         this.top = this.right = this.bottom = this.left = 0;
     }
 }
-//# sourceMappingURL=padding.js.map

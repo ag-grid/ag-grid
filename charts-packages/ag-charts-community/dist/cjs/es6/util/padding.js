@@ -14,4 +14,3 @@ class Padding extends observable_1.Observable {
     }
 }
 exports.Padding = Padding;
-//# sourceMappingURL=padding.js.map

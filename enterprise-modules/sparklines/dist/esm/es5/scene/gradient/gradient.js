@@ -5,4 +5,3 @@ var Gradient = /** @class */ (function () {
     return Gradient;
 }());
 export { Gradient };
-//# sourceMappingURL=gradient.js.map

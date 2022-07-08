@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -57,5 +57,3 @@ LargeTextCellEditor.TEMPLATE = `<div class="ag-large-text" tabindex="0">
 __decorate([
     RefSelector("eTextArea")
 ], LargeTextCellEditor.prototype, "eTextArea", void 0);
-
-//# sourceMappingURL=largeTextCellEditor.js.map

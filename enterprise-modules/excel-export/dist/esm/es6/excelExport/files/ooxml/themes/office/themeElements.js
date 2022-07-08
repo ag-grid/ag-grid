@@ -14,4 +14,3 @@ const themeElements = {
     }
 };
 export default themeElements;
-//# sourceMappingURL=themeElements.js.map

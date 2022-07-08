@@ -28,4 +28,3 @@ export const numberFormatMap = {
     '##0.0E+0': 48,
     '@': 49
 };
-//# sourceMappingURL=excelConstants.js.map

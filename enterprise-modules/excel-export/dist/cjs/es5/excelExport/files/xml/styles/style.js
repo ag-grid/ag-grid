@@ -18,4 +18,3 @@ var style = {
     }
 };
 exports.default = style;
-//# sourceMappingURL=style.js.map

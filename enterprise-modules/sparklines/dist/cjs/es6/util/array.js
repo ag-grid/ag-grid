@@ -78,4 +78,3 @@ function copy(array, start = 0, count = array.length) {
     return result;
 }
 exports.copy = copy;
-//# sourceMappingURL=array.js.map

@@ -435,4 +435,3 @@ var HistogramSeries = /** @class */ (function (_super) {
     return HistogramSeries;
 }(cartesianSeries_1.CartesianSeries));
 exports.HistogramSeries = HistogramSeries;
-//# sourceMappingURL=histogramSeries.js.map

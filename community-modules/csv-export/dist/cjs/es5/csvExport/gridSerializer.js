@@ -302,4 +302,3 @@ var GridSerializer = /** @class */ (function (_super) {
     return GridSerializer;
 }(core_1.BeanStub));
 exports.GridSerializer = GridSerializer;
-//# sourceMappingURL=gridSerializer.js.map

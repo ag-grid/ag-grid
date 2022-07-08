@@ -27,4 +27,3 @@ export function isDiscrete(value) {
 export function isContinuous(value) {
     return isNumeric(value) || isDate(value);
 }
-//# sourceMappingURL=value.js.map

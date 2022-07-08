@@ -184,4 +184,3 @@ __decorate([
 __decorate([
     ScenePathChangeDetection({ changeCb: (o) => o.updateGradientInstance() })
 ], Rect.prototype, "sizing", void 0);
-//# sourceMappingURL=rect.js.map

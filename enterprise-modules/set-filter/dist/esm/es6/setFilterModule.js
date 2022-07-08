@@ -13,4 +13,3 @@ export const SetFilterModule = {
         EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=setFilterModule.js.map

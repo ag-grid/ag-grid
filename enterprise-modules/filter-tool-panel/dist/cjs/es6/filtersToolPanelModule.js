@@ -21,4 +21,3 @@ exports.FiltersToolPanelModule = {
         core_2.EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=filtersToolPanelModule.js.map

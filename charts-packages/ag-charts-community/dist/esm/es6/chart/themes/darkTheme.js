@@ -91,4 +91,3 @@ export class DarkTheme extends ChartTheme {
         super(options);
     }
 }
-//# sourceMappingURL=darkTheme.js.map

@@ -40,4 +40,3 @@ __decorate([
     changeDetectable_1.SceneChangeDetection({ redraw: changeDetectable_1.RedrawType.MAJOR })
 ], PolarSeriesMarker.prototype, "formatter", void 0);
 exports.PolarSeriesMarker = PolarSeriesMarker;
-//# sourceMappingURL=polarSeries.js.map

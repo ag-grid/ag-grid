@@ -358,4 +358,3 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
     return FiltersToolPanelListPanel;
 }(core_1.Component));
 exports.FiltersToolPanelListPanel = FiltersToolPanelListPanel;
-//# sourceMappingURL=filtersToolPanelListPanel.js.map

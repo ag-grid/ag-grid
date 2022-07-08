@@ -21,4 +21,3 @@ export class Cross extends Marker {
     }
 }
 Cross.className = 'Cross';
-//# sourceMappingURL=cross.js.map

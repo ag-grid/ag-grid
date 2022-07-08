@@ -75,4 +75,3 @@ var NavigatorHandle = /** @class */ (function () {
     return NavigatorHandle;
 }());
 export { NavigatorHandle };
-//# sourceMappingURL=navigatorHandle.js.map

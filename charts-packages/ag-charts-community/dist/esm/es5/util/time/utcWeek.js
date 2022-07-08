@@ -26,4 +26,3 @@ export var utcThursday = weekday(4);
 export var utcFriday = weekday(5);
 export var utcSaturday = weekday(6);
 export default utcSunday;
-//# sourceMappingURL=utcWeek.js.map

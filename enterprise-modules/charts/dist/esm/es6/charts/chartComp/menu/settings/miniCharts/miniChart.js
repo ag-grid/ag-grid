@@ -31,4 +31,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], MiniChart.prototype, "init", null);
-//# sourceMappingURL=miniChart.js.map

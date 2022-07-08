@@ -21,4 +21,3 @@ __export(require("./histogram/miniHistogram"));
 __export(require("./combo/miniColumnLineCombo"));
 __export(require("./combo/miniAreaColumnCombo"));
 __export(require("./combo/miniCustomCombo"));
-//# sourceMappingURL=index.js.map

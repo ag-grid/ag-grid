@@ -16,4 +16,3 @@ var borderFactory = {
     }
 };
 exports.default = borderFactory;
-//# sourceMappingURL=cellStyle.js.map

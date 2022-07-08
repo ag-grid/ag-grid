@@ -62,4 +62,3 @@ export class RichSelectRow extends Component {
 __decorate([
     Autowired('userComponentFactory')
 ], RichSelectRow.prototype, "userComponentFactory", void 0);
-//# sourceMappingURL=richSelectRow.js.map

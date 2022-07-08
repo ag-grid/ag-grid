@@ -439,4 +439,3 @@ __decorate([
     core_1.PostConstruct
 ], EnterpriseMenu.prototype, "init", null);
 exports.EnterpriseMenu = EnterpriseMenu;
-//# sourceMappingURL=enterpriseMenu.js.map

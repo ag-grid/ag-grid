@@ -117,4 +117,3 @@ var SparklineTooltip = /** @class */ (function (_super) {
     return SparklineTooltip;
 }(observable_1.Observable));
 exports.SparklineTooltip = SparklineTooltip;
-//# sourceMappingURL=sparklineTooltip.js.map

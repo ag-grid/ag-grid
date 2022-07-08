@@ -27,4 +27,3 @@ export class NavigatorMask {
         return this.rm.fillOpacity;
     }
 }
-//# sourceMappingURL=navigatorMask.js.map

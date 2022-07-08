@@ -15,4 +15,3 @@ export class LogAxis extends NumberAxis {
 }
 LogAxis.className = 'LogAxis';
 LogAxis.type = 'log';
-//# sourceMappingURL=logAxis.js.map

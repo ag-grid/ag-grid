@@ -183,4 +183,3 @@ class Sector extends shape_1.Shape {
 }
 exports.Sector = Sector;
 Sector.className = 'Sector';
-//# sourceMappingURL=sector.js.map

@@ -122,4 +122,3 @@ __decorate([
 __decorate([
     ScenePathChangeDetection()
 ], Path.prototype, "clipMode", void 0);
-//# sourceMappingURL=path.js.map

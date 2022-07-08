@@ -100,4 +100,3 @@ var Path = /** @class */ (function (_super) {
     return Path;
 }(shape_1.Shape));
 exports.Path = Path;
-//# sourceMappingURL=path.js.map

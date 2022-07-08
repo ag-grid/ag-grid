@@ -137,4 +137,3 @@ var ImmutableService = /** @class */ (function (_super) {
     return ImmutableService;
 }(BeanStub));
 export { ImmutableService };
-//# sourceMappingURL=immutableService.js.map

@@ -369,4 +369,3 @@ __decorate([
     })
 ], Group.prototype, "opacity", void 0);
 exports.Group = Group;
-//# sourceMappingURL=group.js.map

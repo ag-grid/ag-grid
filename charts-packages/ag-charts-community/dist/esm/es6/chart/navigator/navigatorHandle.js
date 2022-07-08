@@ -45,4 +45,3 @@ export class NavigatorHandle {
         return this.rh.gripLineLength;
     }
 }
-//# sourceMappingURL=navigatorHandle.js.map

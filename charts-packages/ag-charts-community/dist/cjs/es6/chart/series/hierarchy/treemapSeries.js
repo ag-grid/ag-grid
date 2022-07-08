@@ -440,4 +440,3 @@ class TreemapSeries extends hierarchySeries_1.HierarchySeries {
 exports.TreemapSeries = TreemapSeries;
 TreemapSeries.className = 'TreemapSeries';
 TreemapSeries.type = 'treemap';
-//# sourceMappingURL=treemapSeries.js.map

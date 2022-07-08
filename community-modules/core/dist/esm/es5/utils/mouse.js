@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -21,5 +21,3 @@ export function areEventsNear(e1, e2, pixelCount) {
     var diffY = Math.abs(e1.clientY - e2.clientY);
     return Math.max(diffX, diffY) <= pixelCount;
 }
-
-//# sourceMappingURL=mouse.js.map

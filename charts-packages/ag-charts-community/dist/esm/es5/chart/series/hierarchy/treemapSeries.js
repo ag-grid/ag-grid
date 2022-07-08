@@ -488,4 +488,3 @@ var TreemapSeries = /** @class */ (function (_super) {
     return TreemapSeries;
 }(HierarchySeries));
 export { TreemapSeries };
-//# sourceMappingURL=treemapSeries.js.map

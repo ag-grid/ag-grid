@@ -90,4 +90,3 @@ export class MultiFloatingFilterComp extends Component {
 __decorate([
     Autowired('userComponentFactory')
 ], MultiFloatingFilterComp.prototype, "userComponentFactory", void 0);
-//# sourceMappingURL=multiFloatingFilter.js.map

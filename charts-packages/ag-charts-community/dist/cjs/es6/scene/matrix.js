@@ -254,4 +254,3 @@ class Matrix {
 }
 exports.Matrix = Matrix;
 Matrix.matrix = new Matrix();
-//# sourceMappingURL=matrix.js.map

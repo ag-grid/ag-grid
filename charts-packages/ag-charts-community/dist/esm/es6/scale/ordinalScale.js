@@ -56,4 +56,3 @@ export class OrdinalScale {
         return this.range[(i - 1) % this.range.length];
     }
 }
-//# sourceMappingURL=ordinalScale.js.map

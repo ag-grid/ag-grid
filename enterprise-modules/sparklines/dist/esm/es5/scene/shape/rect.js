@@ -305,4 +305,3 @@ var Rect = /** @class */ (function (_super) {
     return Rect;
 }(Path));
 export { Rect };
-//# sourceMappingURL=rect.js.map

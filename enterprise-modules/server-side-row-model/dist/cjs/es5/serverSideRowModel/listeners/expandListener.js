@@ -86,4 +86,3 @@ var ExpandListener = /** @class */ (function (_super) {
     return ExpandListener;
 }(core_1.BeanStub));
 exports.ExpandListener = ExpandListener;
-//# sourceMappingURL=expandListener.js.map

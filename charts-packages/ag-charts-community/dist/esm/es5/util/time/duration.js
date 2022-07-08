@@ -6,4 +6,3 @@ export var durationDay = durationHour * 24;
 export var durationWeek = durationDay * 7;
 export var durationMonth = durationDay * 30;
 export var durationYear = durationDay * 365;
-//# sourceMappingURL=duration.js.map

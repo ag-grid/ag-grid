@@ -14,4 +14,3 @@ function field(date) {
 }
 export const hour = new CountableTimeInterval(floor, offset, count, field);
 export default hour;
-//# sourceMappingURL=hour.js.map

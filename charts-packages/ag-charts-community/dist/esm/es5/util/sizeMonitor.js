@@ -81,4 +81,3 @@ var SizeMonitor = /** @class */ (function () {
     return SizeMonitor;
 }());
 export { SizeMonitor };
-//# sourceMappingURL=sizeMonitor.js.map

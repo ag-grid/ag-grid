@@ -770,4 +770,3 @@ var Axis = /** @class */ (function () {
     return Axis;
 }());
 export { Axis };
-//# sourceMappingURL=axis.js.map

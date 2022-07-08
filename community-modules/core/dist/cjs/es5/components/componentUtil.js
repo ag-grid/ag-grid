@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -255,5 +255,3 @@ ComponentUtil.EXCLUDED_INTERNAL_EVENTS = [
 ];
 /** EVENTS that should be exposed via code generation for the framework components.  */
 ComponentUtil.PUBLIC_EVENTS = ComponentUtil.EVENTS.filter(function (e) { return !array_1.includes(ComponentUtil.EXCLUDED_INTERNAL_EVENTS, e); });
-
-//# sourceMappingURL=componentUtil.js.map

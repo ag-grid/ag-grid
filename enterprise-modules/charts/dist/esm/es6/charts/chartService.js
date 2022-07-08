@@ -229,4 +229,3 @@ ChartService = __decorate([
     Bean('chartService')
 ], ChartService);
 export { ChartService };
-//# sourceMappingURL=chartService.js.map

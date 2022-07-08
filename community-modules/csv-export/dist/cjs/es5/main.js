@@ -17,4 +17,3 @@ var xmlFactory_1 = require("./csvExport/xmlFactory");
 exports.XmlFactory = xmlFactory_1.XmlFactory;
 var zipContainer_1 = require("./csvExport/zipContainer");
 exports.ZipContainer = zipContainer_1.ZipContainer;
-//# sourceMappingURL=main.js.map

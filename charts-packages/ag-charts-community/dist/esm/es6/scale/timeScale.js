@@ -172,4 +172,3 @@ export class TimeScale extends ContinuousScale {
         return domain;
     }
 }
-//# sourceMappingURL=timeScale.js.map

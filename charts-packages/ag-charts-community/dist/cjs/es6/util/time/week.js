@@ -31,4 +31,3 @@ exports.thursday = weekday(4);
 exports.friday = weekday(5);
 exports.saturday = weekday(6);
 exports.default = exports.sunday;
-//# sourceMappingURL=week.js.map

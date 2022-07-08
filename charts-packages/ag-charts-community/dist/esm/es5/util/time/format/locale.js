@@ -602,4 +602,3 @@ export default function formatLocale(timeLocale) {
         }
     };
 }
-//# sourceMappingURL=locale.js.map

@@ -342,4 +342,3 @@ __decorate([
     core_1.PostConstruct
 ], ToolPanelColumnGroupComp.prototype, "init", null);
 exports.ToolPanelColumnGroupComp = ToolPanelColumnGroupComp;
-//# sourceMappingURL=toolPanelColumnGroupComp.js.map

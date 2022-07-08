@@ -460,4 +460,3 @@ FillHandle.TEMPLATE = `<div class="ag-fill-handle"></div>`;
 __decorate([
     Autowired('valueService')
 ], FillHandle.prototype, "valueService", void 0);
-//# sourceMappingURL=fillHandle.js.map

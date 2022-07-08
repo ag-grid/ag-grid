@@ -82,4 +82,3 @@ __decorate([
     core_1.PostConstruct
 ], ShadowPanel.prototype, "init", null);
 exports.ShadowPanel = ShadowPanel;
-//# sourceMappingURL=shadowPanel.js.map

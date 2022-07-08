@@ -175,4 +175,3 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
     return ToolPanelFilterComp;
 }(core_1.Component));
 exports.ToolPanelFilterComp = ToolPanelFilterComp;
-//# sourceMappingURL=toolPanelFilterComp.js.map

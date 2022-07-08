@@ -103,4 +103,3 @@ __decorate([
     core_1.Autowired('columnApi')
 ], FiltersToolPanel.prototype, "columnApi", void 0);
 exports.FiltersToolPanel = FiltersToolPanel;
-//# sourceMappingURL=filtersToolPanel.js.map

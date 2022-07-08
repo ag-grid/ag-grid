@@ -22,4 +22,3 @@ export class PastelDark extends DarkTheme {
         return palette;
     }
 }
-//# sourceMappingURL=pastelDark.js.map

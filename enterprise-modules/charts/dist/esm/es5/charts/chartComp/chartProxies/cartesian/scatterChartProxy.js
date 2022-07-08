@@ -90,4 +90,3 @@ var ScatterChartProxy = /** @class */ (function (_super) {
     return ScatterChartProxy;
 }(CartesianChartProxy));
 export { ScatterChartProxy };
-//# sourceMappingURL=scatterChartProxy.js.map

@@ -378,4 +378,3 @@ __decorate([
     core_1.PreDestroy
 ], PrimaryColsListPanel.prototype, "destroyColumnTree", null);
 exports.PrimaryColsListPanel = PrimaryColsListPanel;
-//# sourceMappingURL=primaryColsListPanel.js.map

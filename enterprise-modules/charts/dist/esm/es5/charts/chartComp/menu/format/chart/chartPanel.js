@@ -85,4 +85,3 @@ var ChartPanel = /** @class */ (function (_super) {
     return ChartPanel;
 }(Component));
 export { ChartPanel };
-//# sourceMappingURL=chartPanel.js.map

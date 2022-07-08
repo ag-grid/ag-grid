@@ -42,4 +42,3 @@ export class MaterialLight extends ChartTheme {
         return palette;
     }
 }
-//# sourceMappingURL=materialLight.js.map

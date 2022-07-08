@@ -119,4 +119,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], MarkersPanel.prototype, "init", null);
-//# sourceMappingURL=markersPanel.js.map

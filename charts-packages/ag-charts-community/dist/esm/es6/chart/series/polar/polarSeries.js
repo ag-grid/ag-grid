@@ -36,4 +36,3 @@ export class PolarSeriesMarker extends SeriesMarker {
 __decorate([
     SceneChangeDetection({ redraw: RedrawType.MAJOR })
 ], PolarSeriesMarker.prototype, "formatter", void 0);
-//# sourceMappingURL=polarSeries.js.map

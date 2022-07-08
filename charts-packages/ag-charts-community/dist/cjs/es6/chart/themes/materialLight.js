@@ -45,4 +45,3 @@ class MaterialLight extends chartTheme_1.ChartTheme {
     }
 }
 exports.MaterialLight = MaterialLight;
-//# sourceMappingURL=materialLight.js.map

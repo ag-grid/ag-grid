@@ -175,4 +175,3 @@ class TimeScale extends continuousScale_1.ContinuousScale {
     }
 }
 exports.TimeScale = TimeScale;
-//# sourceMappingURL=timeScale.js.map

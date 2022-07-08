@@ -37,4 +37,3 @@ var MiniLine = /** @class */ (function (_super) {
     return MiniLine;
 }(miniChartWithAxes_1.MiniChartWithAxes));
 exports.MiniLine = MiniLine;
-//# sourceMappingURL=miniLine.js.map

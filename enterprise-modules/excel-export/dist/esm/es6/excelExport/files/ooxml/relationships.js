@@ -14,4 +14,3 @@ const relationshipsFactory = {
     }
 };
 export default relationshipsFactory;
-//# sourceMappingURL=relationships.js.map

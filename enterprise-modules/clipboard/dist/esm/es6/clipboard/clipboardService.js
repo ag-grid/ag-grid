@@ -640,4 +640,3 @@ ClipboardService = __decorate([
     Bean('clipboardService')
 ], ClipboardService);
 export { ClipboardService };
-//# sourceMappingURL=clipboardService.js.map

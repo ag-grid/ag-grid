@@ -63,4 +63,3 @@ class XmlFactory {
     }
 }
 exports.XmlFactory = XmlFactory;
-//# sourceMappingURL=xmlFactory.js.map

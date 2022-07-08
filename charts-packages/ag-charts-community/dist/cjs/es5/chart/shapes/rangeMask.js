@@ -158,4 +158,3 @@ var RangeMask = /** @class */ (function (_super) {
     return RangeMask;
 }(path_1.Path));
 exports.RangeMask = RangeMask;
-//# sourceMappingURL=rangeMask.js.map

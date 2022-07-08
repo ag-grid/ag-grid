@@ -189,4 +189,3 @@ var FontPanel = /** @class */ (function (_super) {
     return FontPanel;
 }(Component));
 export { FontPanel };
-//# sourceMappingURL=fontPanel.js.map

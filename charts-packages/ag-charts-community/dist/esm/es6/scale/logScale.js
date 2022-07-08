@@ -213,4 +213,3 @@ export class LogScale extends ContinuousScale {
         };
     }
 }
-//# sourceMappingURL=logScale.js.map

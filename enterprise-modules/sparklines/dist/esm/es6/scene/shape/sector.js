@@ -180,4 +180,3 @@ export class Sector extends Shape {
     }
 }
 Sector.className = 'Sector';
-//# sourceMappingURL=sector.js.map

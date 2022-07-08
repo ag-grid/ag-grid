@@ -100,4 +100,3 @@ __decorate([
 __decorate([
     Autowired('columnApi')
 ], FiltersToolPanel.prototype, "columnApi", void 0);
-//# sourceMappingURL=filtersToolPanel.js.map

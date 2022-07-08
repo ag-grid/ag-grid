@@ -191,4 +191,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], AggregationComp.prototype, "postConstruct", null);
-//# sourceMappingURL=aggregationComp.js.map

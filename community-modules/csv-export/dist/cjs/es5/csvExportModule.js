@@ -7,4 +7,3 @@ exports.CsvExportModule = {
     moduleName: core_1.ModuleNames.CsvExportModule,
     beans: [csvCreator_1.CsvCreator, gridSerializer_1.GridSerializer]
 };
-//# sourceMappingURL=csvExportModule.js.map

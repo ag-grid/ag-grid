@@ -19,4 +19,3 @@ export const ServerSideRowModelModule = {
         EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=serverSideRowModelModule.js.map

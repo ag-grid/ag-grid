@@ -16,4 +16,3 @@ function field(date) {
 }
 exports.utcDay = new interval_1.CountableTimeInterval(floor, offset, count, field);
 exports.default = exports.utcDay;
-//# sourceMappingURL=utcDay.js.map

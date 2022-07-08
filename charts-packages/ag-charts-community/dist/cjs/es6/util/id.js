@@ -9,4 +9,3 @@ function createId(instance) {
     return className + '-' + (constructor.id = (constructor.id || 0) + 1);
 }
 exports.createId = createId;
-//# sourceMappingURL=id.js.map

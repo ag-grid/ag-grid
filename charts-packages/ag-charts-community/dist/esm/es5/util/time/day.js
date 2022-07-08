@@ -15,4 +15,3 @@ function field(date) {
 }
 export var day = new CountableTimeInterval(floor, offset, count, field);
 export default day;
-//# sourceMappingURL=day.js.map

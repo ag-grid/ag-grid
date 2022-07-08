@@ -525,4 +525,3 @@ export class Sparkline extends Observable {
     }
 }
 Sparkline.tooltipDocuments = [];
-//# sourceMappingURL=sparkline.js.map

@@ -102,4 +102,3 @@ StoreFactory = __decorate([
     core_1.Bean('ssrmStoreFactory')
 ], StoreFactory);
 exports.StoreFactory = StoreFactory;
-//# sourceMappingURL=storeFactory.js.map

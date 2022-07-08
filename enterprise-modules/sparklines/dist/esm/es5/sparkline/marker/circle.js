@@ -39,4 +39,3 @@ var Circle = /** @class */ (function (_super) {
     return Circle;
 }(Marker));
 export { Circle };
-//# sourceMappingURL=circle.js.map

@@ -276,7 +276,7 @@ var LicenseManager = /** @class */ (function (_super) {
         this.watermarkMessage = "License Expired";
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTY1Njg3Mzg0NDQzOQ==';
+    LicenseManager.RELEASE_INFORMATION = 'MTY1NzIxMjEzNTQ0Ng==';
     __decorate([
         Autowired('md5')
     ], LicenseManager.prototype, "md5", void 0);
@@ -289,4 +289,3 @@ var LicenseManager = /** @class */ (function (_super) {
     return LicenseManager;
 }(BeanStub));
 export { LicenseManager };
-//# sourceMappingURL=licenseManager.js.map

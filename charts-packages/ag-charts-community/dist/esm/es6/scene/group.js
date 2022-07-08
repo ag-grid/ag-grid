@@ -366,4 +366,3 @@ __decorate([
         changeCb: (o) => o.opacityChanged(),
     })
 ], Group.prototype, "opacity", void 0);
-//# sourceMappingURL=group.js.map

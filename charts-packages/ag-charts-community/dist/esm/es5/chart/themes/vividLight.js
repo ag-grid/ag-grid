@@ -41,4 +41,3 @@ var VividLight = /** @class */ (function (_super) {
     return VividLight;
 }(ChartTheme));
 export { VividLight };
-//# sourceMappingURL=vividLight.js.map

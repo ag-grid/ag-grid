@@ -13,4 +13,3 @@ const bordersFactory = {
     }
 };
 export default bordersFactory;
-//# sourceMappingURL=borders.js.map

@@ -6,4 +6,3 @@ export function windowValue(name) {
     const WINDOW = typeof window === "undefined" ? undefined : window;
     return (_a = WINDOW) === null || _a === void 0 ? void 0 : _a[name];
 }
-//# sourceMappingURL=window.js.map

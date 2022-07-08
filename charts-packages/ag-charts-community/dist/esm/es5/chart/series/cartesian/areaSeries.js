@@ -788,4 +788,3 @@ var AreaSeries = /** @class */ (function (_super) {
     return AreaSeries;
 }(CartesianSeries));
 export { AreaSeries };
-//# sourceMappingURL=areaSeries.js.map

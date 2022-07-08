@@ -33,4 +33,3 @@ class SolarLight extends chartTheme_1.ChartTheme {
     }
 }
 exports.SolarLight = SolarLight;
-//# sourceMappingURL=solarLight.js.map

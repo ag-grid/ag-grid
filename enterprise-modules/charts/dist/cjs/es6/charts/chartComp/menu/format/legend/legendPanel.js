@@ -168,4 +168,3 @@ __decorate([
     core_1.PostConstruct
 ], LegendPanel.prototype, "init", null);
 exports.LegendPanel = LegendPanel;
-//# sourceMappingURL=legendPanel.js.map

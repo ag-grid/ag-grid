@@ -30,4 +30,3 @@ export class SolarDark extends DarkTheme {
         return palette;
     }
 }
-//# sourceMappingURL=solarDark.js.map

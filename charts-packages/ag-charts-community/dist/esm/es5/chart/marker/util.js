@@ -33,4 +33,3 @@ export function getMarker(shape) {
     }
     return Square;
 }
-//# sourceMappingURL=util.js.map

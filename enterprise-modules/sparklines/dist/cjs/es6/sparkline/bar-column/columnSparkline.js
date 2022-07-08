@@ -134,4 +134,3 @@ class ColumnSparkline extends barColumnSparkline_1.BarColumnSparkline {
 }
 exports.ColumnSparkline = ColumnSparkline;
 ColumnSparkline.className = 'ColumnSparkline';
-//# sourceMappingURL=columnSparkline.js.map

@@ -144,4 +144,3 @@ export function reactive(...events) {
         }
     };
 }
-//# sourceMappingURL=observable.js.map

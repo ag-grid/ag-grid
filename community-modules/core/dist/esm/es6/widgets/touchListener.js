@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -125,5 +125,3 @@ TouchListener.EVENT_TAP = "tap";
 TouchListener.EVENT_DOUBLE_TAP = "doubleTap";
 TouchListener.EVENT_LONG_TAP = "longTap";
 TouchListener.DOUBLE_TAP_MILLIS = 500;
-
-//# sourceMappingURL=touchListener.js.map

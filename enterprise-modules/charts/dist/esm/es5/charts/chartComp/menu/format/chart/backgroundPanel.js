@@ -69,4 +69,3 @@ var BackgroundPanel = /** @class */ (function (_super) {
     return BackgroundPanel;
 }(Component));
 export { BackgroundPanel };
-//# sourceMappingURL=backgroundPanel.js.map

@@ -71,4 +71,3 @@ export function copy(array, start = 0, count = array.length) {
     }
     return result;
 }
-//# sourceMappingURL=array.js.map

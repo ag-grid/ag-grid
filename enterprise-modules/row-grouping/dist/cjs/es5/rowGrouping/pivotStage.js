@@ -161,4 +161,3 @@ var PivotStage = /** @class */ (function (_super) {
     return PivotStage;
 }(core_1.BeanStub));
 exports.PivotStage = PivotStage;
-//# sourceMappingURL=pivotStage.js.map

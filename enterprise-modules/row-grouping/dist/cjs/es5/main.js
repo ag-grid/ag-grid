@@ -8,4 +8,3 @@ var valueDropZonePanel_1 = require("./rowGrouping/columnDropZones/valueDropZoneP
 exports.ValuesDropZonePanel = valueDropZonePanel_1.ValuesDropZonePanel;
 var pivotDropZonePanel_1 = require("./rowGrouping/columnDropZones/pivotDropZonePanel");
 exports.PivotDropZonePanel = pivotDropZonePanel_1.PivotDropZonePanel;
-//# sourceMappingURL=main.js.map

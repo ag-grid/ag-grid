@@ -101,4 +101,3 @@ var StatusBar = /** @class */ (function (_super) {
     return StatusBar;
 }(core_1.Component));
 exports.StatusBar = StatusBar;
-//# sourceMappingURL=statusBar.js.map

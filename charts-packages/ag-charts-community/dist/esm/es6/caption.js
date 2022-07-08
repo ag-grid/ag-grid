@@ -49,4 +49,3 @@ export class Caption extends Observable {
     }
 }
 Caption.PADDING = 10;
-//# sourceMappingURL=caption.js.map

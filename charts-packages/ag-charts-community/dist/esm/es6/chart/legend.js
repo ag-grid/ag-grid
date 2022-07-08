@@ -358,4 +358,3 @@ export class Legend {
     }
 }
 Legend.className = 'Legend';
-//# sourceMappingURL=legend.js.map

@@ -53,4 +53,3 @@ class TimeAxis extends chartAxis_1.ChartAxis {
 exports.TimeAxis = TimeAxis;
 TimeAxis.className = 'TimeAxis';
 TimeAxis.type = 'time';
-//# sourceMappingURL=timeAxis.js.map

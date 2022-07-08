@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -88,5 +88,3 @@ MouseEventService = MouseEventService_1 = __decorate([
     Bean('mouseEventService')
 ], MouseEventService);
 export { MouseEventService };
-
-//# sourceMappingURL=mouseEventService.js.map

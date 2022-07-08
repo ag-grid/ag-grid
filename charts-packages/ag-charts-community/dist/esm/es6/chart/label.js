@@ -12,4 +12,3 @@ export class Label {
         return getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
     }
 }
-//# sourceMappingURL=label.js.map

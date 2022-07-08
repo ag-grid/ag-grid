@@ -54,4 +54,3 @@ export class SizeMonitor {
 }
 SizeMonitor.elements = new Map();
 SizeMonitor.ready = false;
-//# sourceMappingURL=sizeMonitor.js.map

@@ -54,4 +54,3 @@ var LineChartProxy = /** @class */ (function (_super) {
     return LineChartProxy;
 }(cartesianChartProxy_1.CartesianChartProxy));
 exports.LineChartProxy = LineChartProxy;
-//# sourceMappingURL=lineChartProxy.js.map

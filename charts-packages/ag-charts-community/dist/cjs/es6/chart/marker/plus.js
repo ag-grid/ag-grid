@@ -25,4 +25,3 @@ class Plus extends marker_1.Marker {
 }
 exports.Plus = Plus;
 Plus.className = 'Plus';
-//# sourceMappingURL=plus.js.map

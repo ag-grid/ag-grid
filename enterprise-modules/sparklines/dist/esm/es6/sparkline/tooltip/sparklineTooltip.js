@@ -103,4 +103,3 @@ export class SparklineTooltip extends Observable {
     }
 }
 SparklineTooltip.class = 'ag-sparkline-tooltip';
-//# sourceMappingURL=sparklineTooltip.js.map

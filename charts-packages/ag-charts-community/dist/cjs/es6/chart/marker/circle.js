@@ -12,4 +12,3 @@ class Circle extends marker_1.Marker {
 }
 exports.Circle = Circle;
 Circle.className = 'Circle';
-//# sourceMappingURL=circle.js.map

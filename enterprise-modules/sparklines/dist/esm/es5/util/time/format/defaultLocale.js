@@ -13,4 +13,3 @@ setDefaultLocale({
 export default function setDefaultLocale(definition) {
     return locale = formatLocale(definition);
 }
-//# sourceMappingURL=defaultLocale.js.map

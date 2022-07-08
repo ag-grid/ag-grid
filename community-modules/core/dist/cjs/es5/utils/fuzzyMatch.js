@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -98,5 +98,3 @@ function string_weighted_distances(str1, str2) {
     return weight;
 }
 exports.string_weighted_distances = string_weighted_distances;
-
-//# sourceMappingURL=fuzzyMatch.js.map

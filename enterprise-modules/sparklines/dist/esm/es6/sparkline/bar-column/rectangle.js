@@ -82,4 +82,3 @@ export class Rectangle extends Shape {
     }
 }
 Rectangle.className = 'Column';
-//# sourceMappingURL=rectangle.js.map

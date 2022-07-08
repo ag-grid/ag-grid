@@ -236,4 +236,3 @@ AggregationStage = __decorate([
     core_1.Bean('aggregationStage')
 ], AggregationStage);
 exports.AggregationStage = AggregationStage;
-//# sourceMappingURL=aggregationStage.js.map

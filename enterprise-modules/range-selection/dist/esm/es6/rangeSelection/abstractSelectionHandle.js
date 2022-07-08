@@ -176,4 +176,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], AbstractSelectionHandle.prototype, "init", null);
-//# sourceMappingURL=abstractSelectionHandle.js.map

@@ -36,4 +36,3 @@ var Heart = /** @class */ (function (_super) {
     return Heart;
 }(marker_1.Marker));
 exports.Heart = Heart;
-//# sourceMappingURL=heart.js.map

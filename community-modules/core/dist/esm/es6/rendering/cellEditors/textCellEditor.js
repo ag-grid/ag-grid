@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -106,5 +106,3 @@ TextCellEditor.TEMPLATE = '<div class="ag-cell-edit-wrapper"><ag-input-text-fiel
 __decorate([
     RefSelector('eInput')
 ], TextCellEditor.prototype, "eInput", void 0);
-
-//# sourceMappingURL=textCellEditor.js.map

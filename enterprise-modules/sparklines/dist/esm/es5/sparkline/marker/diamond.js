@@ -44,4 +44,3 @@ var Diamond = /** @class */ (function (_super) {
     return Diamond;
 }(Marker));
 export { Diamond };
-//# sourceMappingURL=diamond.js.map

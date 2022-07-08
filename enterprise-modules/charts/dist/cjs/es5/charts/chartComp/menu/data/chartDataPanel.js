@@ -423,4 +423,3 @@ var ChartDataPanel = /** @class */ (function (_super) {
     return ChartDataPanel;
 }(core_1.Component));
 exports.ChartDataPanel = ChartDataPanel;
-//# sourceMappingURL=chartDataPanel.js.map

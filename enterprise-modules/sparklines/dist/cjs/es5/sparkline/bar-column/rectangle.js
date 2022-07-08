@@ -121,4 +121,3 @@ var Rectangle = /** @class */ (function (_super) {
     return Rectangle;
 }(shape_1.Shape));
 exports.Rectangle = Rectangle;
-//# sourceMappingURL=rectangle.js.map

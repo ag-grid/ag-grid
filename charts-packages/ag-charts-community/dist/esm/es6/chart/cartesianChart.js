@@ -284,4 +284,3 @@ export class CartesianChart extends Chart {
 }
 CartesianChart.className = 'CartesianChart';
 CartesianChart.type = 'cartesian';
-//# sourceMappingURL=cartesianChart.js.map

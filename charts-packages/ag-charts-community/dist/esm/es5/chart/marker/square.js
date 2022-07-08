@@ -32,4 +32,3 @@ var Square = /** @class */ (function (_super) {
     return Square;
 }(Marker));
 export { Square };
-//# sourceMappingURL=square.js.map

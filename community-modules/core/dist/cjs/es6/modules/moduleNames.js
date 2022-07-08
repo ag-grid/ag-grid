@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -48,5 +48,3 @@ var ModuleNames;
     // on the grid (ie shouldn't even reference the Module interface)
     // ChartsModule = "@ag-grid-community/charts-core",
 })(ModuleNames = exports.ModuleNames || (exports.ModuleNames = {}));
-
-//# sourceMappingURL=moduleNames.js.map

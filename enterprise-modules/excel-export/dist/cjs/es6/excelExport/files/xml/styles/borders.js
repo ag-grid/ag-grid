@@ -26,4 +26,3 @@ const borders = {
     }
 };
 exports.default = borders;
-//# sourceMappingURL=borders.js.map

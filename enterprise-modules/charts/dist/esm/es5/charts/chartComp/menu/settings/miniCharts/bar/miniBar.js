@@ -54,4 +54,3 @@ var MiniBar = /** @class */ (function (_super) {
     return MiniBar;
 }(MiniChartWithAxes));
 export { MiniBar };
-//# sourceMappingURL=miniBar.js.map

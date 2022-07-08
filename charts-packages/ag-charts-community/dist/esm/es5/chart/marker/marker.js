@@ -45,4 +45,3 @@ var Marker = /** @class */ (function (_super) {
     return Marker;
 }(Path));
 export { Marker };
-//# sourceMappingURL=marker.js.map

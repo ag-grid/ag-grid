@@ -21,4 +21,3 @@ class MiniLine extends miniChartWithAxes_1.MiniChartWithAxes {
 }
 exports.MiniLine = MiniLine;
 MiniLine.chartType = 'line';
-//# sourceMappingURL=miniLine.js.map

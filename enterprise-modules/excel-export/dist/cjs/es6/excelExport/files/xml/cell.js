@@ -35,4 +35,3 @@ const cell = {
     }
 };
 exports.default = cell;
-//# sourceMappingURL=cell.js.map

@@ -25,4 +25,3 @@ class PastelDark extends darkTheme_1.DarkTheme {
     }
 }
 exports.PastelDark = PastelDark;
-//# sourceMappingURL=pastelDark.js.map

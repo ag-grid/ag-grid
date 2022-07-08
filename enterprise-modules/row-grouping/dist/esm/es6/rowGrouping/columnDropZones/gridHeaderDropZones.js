@@ -61,4 +61,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], GridHeaderDropZones.prototype, "postConstruct", null);
-//# sourceMappingURL=gridHeaderDropZones.js.map

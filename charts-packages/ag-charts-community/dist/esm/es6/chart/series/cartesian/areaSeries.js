@@ -652,4 +652,3 @@ export class AreaSeries extends CartesianSeries {
 }
 AreaSeries.className = 'AreaSeries';
 AreaSeries.type = 'area';
-//# sourceMappingURL=areaSeries.js.map

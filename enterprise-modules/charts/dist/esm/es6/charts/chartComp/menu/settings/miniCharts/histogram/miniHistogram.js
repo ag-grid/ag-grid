@@ -38,4 +38,3 @@ export class MiniHistogram extends MiniChartWithAxes {
     }
 }
 MiniHistogram.chartType = 'histogram';
-//# sourceMappingURL=miniHistogram.js.map

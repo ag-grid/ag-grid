@@ -307,4 +307,3 @@ var Rect = /** @class */ (function (_super) {
     return Rect;
 }(path_1.Path));
 exports.Rect = Rect;
-//# sourceMappingURL=rect.js.map

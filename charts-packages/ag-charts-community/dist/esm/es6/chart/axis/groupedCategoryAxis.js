@@ -375,4 +375,3 @@ export class GroupedCategoryAxis extends ChartAxis {
 }
 GroupedCategoryAxis.className = 'GroupedCategoryAxis';
 GroupedCategoryAxis.type = 'groupedCategory';
-//# sourceMappingURL=groupedCategoryAxis.js.map

@@ -41,4 +41,3 @@ var VividDark = /** @class */ (function (_super) {
     return VividDark;
 }(DarkTheme));
 export { VividDark };
-//# sourceMappingURL=vividDark.js.map

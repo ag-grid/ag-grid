@@ -25,4 +25,3 @@ class PastelLight extends chartTheme_1.ChartTheme {
     }
 }
 exports.PastelLight = PastelLight;
-//# sourceMappingURL=pastelLight.js.map

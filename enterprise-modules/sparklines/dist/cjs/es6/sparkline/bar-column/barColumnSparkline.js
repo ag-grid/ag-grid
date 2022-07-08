@@ -220,4 +220,3 @@ class BarColumnSparkline extends sparkline_1.Sparkline {
     }
 }
 exports.BarColumnSparkline = BarColumnSparkline;
-//# sourceMappingURL=barColumnSparkline.js.map

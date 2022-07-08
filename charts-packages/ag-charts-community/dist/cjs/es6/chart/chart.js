@@ -1121,4 +1121,3 @@ class Chart extends observable_1.Observable {
 exports.Chart = Chart;
 Chart.defaultTooltipClass = 'ag-chart-tooltip';
 Chart.tooltipDocuments = [];
-//# sourceMappingURL=chart.js.map

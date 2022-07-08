@@ -187,4 +187,3 @@ __decorate([
     path_1.ScenePathChangeDetection({ changeCb: (o) => o.updateGradientInstance() })
 ], Rect.prototype, "sizing", void 0);
 exports.Rect = Rect;
-//# sourceMappingURL=rect.js.map

@@ -46,4 +46,3 @@ var BBox = /** @class */ (function () {
     return BBox;
 }());
 export { BBox };
-//# sourceMappingURL=bbox.js.map

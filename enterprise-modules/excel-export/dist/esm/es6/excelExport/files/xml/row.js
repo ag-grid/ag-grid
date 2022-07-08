@@ -9,4 +9,3 @@ const row = {
     }
 };
 export default row;
-//# sourceMappingURL=row.js.map

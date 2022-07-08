@@ -24,4 +24,3 @@ const alignment = {
     }
 };
 exports.default = alignment;
-//# sourceMappingURL=alignment.js.map

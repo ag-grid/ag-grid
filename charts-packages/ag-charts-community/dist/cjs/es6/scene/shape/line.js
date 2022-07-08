@@ -78,4 +78,3 @@ __decorate([
     node_1.SceneChangeDetection({ redraw: node_1.RedrawType.MAJOR })
 ], Line.prototype, "y2", void 0);
 exports.Line = Line;
-//# sourceMappingURL=line.js.map

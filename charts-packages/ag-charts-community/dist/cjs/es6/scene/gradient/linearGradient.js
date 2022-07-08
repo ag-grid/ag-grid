@@ -27,4 +27,3 @@ class LinearGradient extends gradient_1.Gradient {
     }
 }
 exports.LinearGradient = LinearGradient;
-//# sourceMappingURL=linearGradient.js.map

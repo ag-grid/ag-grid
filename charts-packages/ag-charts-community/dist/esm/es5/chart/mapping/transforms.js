@@ -82,4 +82,3 @@ export function applySeriesTransform(options) {
     var transform = SERIES_TRANSFORMS[type || 'line'];
     return transform(options);
 }
-//# sourceMappingURL=transforms.js.map

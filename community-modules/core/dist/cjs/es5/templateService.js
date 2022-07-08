@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -87,5 +87,3 @@ var TemplateService = /** @class */ (function (_super) {
     return TemplateService;
 }(beanStub_1.BeanStub));
 exports.TemplateService = TemplateService;
-
-//# sourceMappingURL=templateService.js.map

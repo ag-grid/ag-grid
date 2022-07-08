@@ -328,4 +328,3 @@ function getFont(fontSize, fontFamily, fontStyle, fontWeight) {
     ].join(' ').trim();
 }
 exports.getFont = getFont;
-//# sourceMappingURL=text.js.map

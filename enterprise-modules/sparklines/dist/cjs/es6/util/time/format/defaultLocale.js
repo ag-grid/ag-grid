@@ -15,4 +15,3 @@ function setDefaultLocale(definition) {
     return exports.locale = locale_1.default(definition);
 }
 exports.default = setDefaultLocale;
-//# sourceMappingURL=defaultLocale.js.map

@@ -3,4 +3,3 @@ export default function (a, b) {
     b = +b;
     return t => a * (1 - t) + b * t;
 }
-//# sourceMappingURL=number.js.map

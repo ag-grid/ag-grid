@@ -22,4 +22,3 @@ export class VividDark extends DarkTheme {
         return palette;
     }
 }
-//# sourceMappingURL=vividDark.js.map

@@ -34,4 +34,3 @@ var SelectionHandleFactory = /** @class */ (function (_super) {
     return SelectionHandleFactory;
 }(BeanStub));
 export { SelectionHandleFactory };
-//# sourceMappingURL=selectionHandleFactory.js.map

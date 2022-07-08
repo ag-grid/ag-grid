@@ -164,4 +164,3 @@ class Treemap {
     }
 }
 exports.Treemap = Treemap;
-//# sourceMappingURL=treemap.js.map

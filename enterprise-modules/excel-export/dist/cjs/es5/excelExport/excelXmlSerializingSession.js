@@ -109,4 +109,3 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
     return ExcelXmlSerializingSession;
 }(baseExcelSerializingSession_1.BaseExcelSerializingSession));
 exports.ExcelXmlSerializingSession = ExcelXmlSerializingSession;
-//# sourceMappingURL=excelXmlSerializingSession.js.map

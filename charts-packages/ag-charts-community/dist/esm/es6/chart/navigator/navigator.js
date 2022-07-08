@@ -165,4 +165,3 @@ export class Navigator {
         this.panHandleOffset = NaN;
     }
 }
-//# sourceMappingURL=navigator.js.map

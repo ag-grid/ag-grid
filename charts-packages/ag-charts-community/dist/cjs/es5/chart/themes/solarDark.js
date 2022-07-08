@@ -51,4 +51,3 @@ var SolarDark = /** @class */ (function (_super) {
     return SolarDark;
 }(darkTheme_1.DarkTheme));
 exports.SolarDark = SolarDark;
-//# sourceMappingURL=solarDark.js.map

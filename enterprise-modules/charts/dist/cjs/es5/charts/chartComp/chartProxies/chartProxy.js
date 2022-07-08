@@ -161,4 +161,3 @@ var ChartProxy = /** @class */ (function () {
     return ChartProxy;
 }());
 exports.ChartProxy = ChartProxy;
-//# sourceMappingURL=chartProxy.js.map

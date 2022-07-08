@@ -22,4 +22,3 @@ export function convertToMap(list) {
     });
     return map;
 }
-//# sourceMappingURL=map.js.map

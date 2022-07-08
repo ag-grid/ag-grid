@@ -77,4 +77,3 @@ var TimeAxis = /** @class */ (function (_super) {
     return TimeAxis;
 }(chartAxis_1.ChartAxis));
 exports.TimeAxis = TimeAxis;
-//# sourceMappingURL=timeAxis.js.map

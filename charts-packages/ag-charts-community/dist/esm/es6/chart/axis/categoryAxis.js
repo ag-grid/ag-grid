@@ -44,4 +44,3 @@ export class CategoryAxis extends ChartAxis {
 }
 CategoryAxis.className = 'CategoryAxis';
 CategoryAxis.type = 'category';
-//# sourceMappingURL=categoryAxis.js.map

@@ -188,4 +188,3 @@ var Scene = /** @class */ (function () {
     return Scene;
 }());
 export { Scene };
-//# sourceMappingURL=scene.js.map

@@ -119,4 +119,3 @@ var Rectangle = /** @class */ (function (_super) {
     return Rectangle;
 }(Shape));
 export { Rectangle };
-//# sourceMappingURL=rectangle.js.map

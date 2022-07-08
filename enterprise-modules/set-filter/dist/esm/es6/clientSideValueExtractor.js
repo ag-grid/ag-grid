@@ -61,4 +61,3 @@ export class ClientSideValuesExtractor {
         return _.values(values);
     }
 }
-//# sourceMappingURL=clientSideValueExtractor.js.map

@@ -66,4 +66,3 @@ class ExcelXmlFactory {
 }
 exports.ExcelXmlFactory = ExcelXmlFactory;
 ExcelXmlFactory.factoryMode = core_1.ExcelFactoryMode.SINGLE_SHEET;
-//# sourceMappingURL=excelXmlFactory.js.map

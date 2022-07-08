@@ -436,4 +436,3 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
     return GroupedCategoryAxis;
 }(chartAxis_1.ChartAxis));
 exports.GroupedCategoryAxis = GroupedCategoryAxis;
-//# sourceMappingURL=groupedCategoryAxis.js.map

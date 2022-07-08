@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // the line below is automatically modified during releases - do not modify
 // (see scripts/release/updateChartModel.js)
-exports.CURRENT_VERSION = "28.0.0";
+exports.CURRENT_VERSION = "28.0.1";
 function upgradeChartModel(model) {
     if (model.version == null) {
         // First release with version field.
@@ -29,4 +29,3 @@ function versionParts(version) {
         patch: split[2],
     };
 }
-//# sourceMappingURL=chartModelMigration.js.map

@@ -241,4 +241,3 @@ function aggAvg(params) {
         }
     };
 }
-//# sourceMappingURL=aggFuncService.js.map

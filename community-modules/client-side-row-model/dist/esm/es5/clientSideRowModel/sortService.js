@@ -235,4 +235,3 @@ var SortService = /** @class */ (function (_super) {
     return SortService;
 }(BeanStub));
 export { SortService };
-//# sourceMappingURL=sortService.js.map

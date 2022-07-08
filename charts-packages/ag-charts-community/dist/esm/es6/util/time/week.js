@@ -29,4 +29,3 @@ export const thursday = weekday(4);
 export const friday = weekday(5);
 export const saturday = weekday(6);
 export default sunday;
-//# sourceMappingURL=week.js.map

@@ -25,4 +25,3 @@ class VividLight extends chartTheme_1.ChartTheme {
     }
 }
 exports.VividLight = VividLight;
-//# sourceMappingURL=vividLight.js.map

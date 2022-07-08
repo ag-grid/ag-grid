@@ -24,4 +24,3 @@ class Cross extends marker_1.Marker {
 }
 exports.Cross = Cross;
 Cross.className = 'Cross';
-//# sourceMappingURL=cross.js.map

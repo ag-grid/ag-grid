@@ -296,4 +296,3 @@ exports.registerStyles = function (styles, _currentSheet) {
     styles.forEach(registerStyle);
 };
 exports.default = stylesheetFactory;
-//# sourceMappingURL=stylesheet.js.map

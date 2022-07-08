@@ -132,4 +132,3 @@ class MarkerLabel extends group_1.Group {
 }
 exports.MarkerLabel = MarkerLabel;
 MarkerLabel.className = 'MarkerLabel';
-//# sourceMappingURL=markerLabel.js.map

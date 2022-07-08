@@ -85,4 +85,3 @@ class Rectangle extends shape_1.Shape {
 }
 exports.Rectangle = Rectangle;
 Rectangle.className = 'Column';
-//# sourceMappingURL=rectangle.js.map

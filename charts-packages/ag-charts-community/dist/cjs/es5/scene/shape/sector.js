@@ -123,4 +123,3 @@ var Sector = /** @class */ (function (_super) {
     return Sector;
 }(path_1.Path));
 exports.Sector = Sector;
-//# sourceMappingURL=sector.js.map

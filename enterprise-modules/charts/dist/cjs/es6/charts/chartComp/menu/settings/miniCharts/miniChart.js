@@ -34,4 +34,3 @@ __decorate([
     core_1.PostConstruct
 ], MiniChart.prototype, "init", null);
 exports.MiniChart = MiniChart;
-//# sourceMappingURL=miniChart.js.map

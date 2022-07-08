@@ -75,4 +75,3 @@ var TimeAxis = /** @class */ (function (_super) {
     return TimeAxis;
 }(ChartAxis));
 export { TimeAxis };
-//# sourceMappingURL=timeAxis.js.map

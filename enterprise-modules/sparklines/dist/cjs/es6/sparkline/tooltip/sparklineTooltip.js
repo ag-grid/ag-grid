@@ -107,4 +107,3 @@ class SparklineTooltip extends observable_1.Observable {
 }
 exports.SparklineTooltip = SparklineTooltip;
 SparklineTooltip.class = 'ag-sparkline-tooltip';
-//# sourceMappingURL=sparklineTooltip.js.map

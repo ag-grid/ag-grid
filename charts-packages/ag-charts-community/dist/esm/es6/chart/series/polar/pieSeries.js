@@ -490,4 +490,3 @@ export class PieSeries extends PolarSeries {
 }
 PieSeries.className = 'PieSeries';
 PieSeries.type = 'pie';
-//# sourceMappingURL=pieSeries.js.map

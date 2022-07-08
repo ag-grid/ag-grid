@@ -128,4 +128,3 @@ export function deepMerge(target, source, options) {
 export function isObject(value) {
     return typeof value === 'object' && !Array.isArray(value);
 }
-//# sourceMappingURL=object.js.map

@@ -118,4 +118,3 @@ class RangeMask extends path_1.Path {
 }
 exports.RangeMask = RangeMask;
 RangeMask.className = 'RangeMask';
-//# sourceMappingURL=rangeMask.js.map

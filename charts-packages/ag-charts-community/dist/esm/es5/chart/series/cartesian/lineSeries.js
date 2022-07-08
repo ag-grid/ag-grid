@@ -468,4 +468,3 @@ var LineSeries = /** @class */ (function (_super) {
     return LineSeries;
 }(CartesianSeries));
 export { LineSeries };
-//# sourceMappingURL=lineSeries.js.map

@@ -63,4 +63,3 @@ function equal(a, b) {
     return a !== a && b !== b;
 }
 exports.equal = equal;
-//# sourceMappingURL=equal.js.map

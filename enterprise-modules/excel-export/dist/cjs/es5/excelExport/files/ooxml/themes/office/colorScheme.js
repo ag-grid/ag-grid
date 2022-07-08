@@ -58,4 +58,3 @@ var colorScheme = {
     }
 };
 exports.default = colorScheme;
-//# sourceMappingURL=colorScheme.js.map

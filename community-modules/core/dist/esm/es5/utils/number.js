@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -62,5 +62,3 @@ export function formatNumberCommas(value, thousandSeparator, decimalSeparator) {
 export function sum(values) {
     return values == null ? null : values.reduce(function (total, value) { return total + value; }, 0);
 }
-
-//# sourceMappingURL=number.js.map

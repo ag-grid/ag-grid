@@ -90,4 +90,3 @@ __decorate([
     path_1.ScenePathChangeDetection()
 ], ClipRect.prototype, "height", void 0);
 exports.ClipRect = ClipRect;
-//# sourceMappingURL=clipRect.js.map

@@ -15,4 +15,3 @@ const protection = {
     }
 };
 export default protection;
-//# sourceMappingURL=protection.js.map

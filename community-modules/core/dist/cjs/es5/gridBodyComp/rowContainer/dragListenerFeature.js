@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -63,5 +63,3 @@ var DragListenerFeature = /** @class */ (function (_super) {
     return DragListenerFeature;
 }(beanStub_1.BeanStub));
 exports.DragListenerFeature = DragListenerFeature;
-
-//# sourceMappingURL=dragListenerFeature.js.map

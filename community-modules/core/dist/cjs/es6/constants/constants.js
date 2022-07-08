@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -36,5 +36,3 @@ Constants.SORT_DESC = 'desc';
 Constants.INPUT_SELECTOR = 'input, select, button, textarea';
 Constants.FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea';
 Constants.FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled, .ag-disabled *';
-
-//# sourceMappingURL=constants.js.map

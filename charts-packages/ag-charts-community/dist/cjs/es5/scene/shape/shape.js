@@ -233,4 +233,3 @@ var Shape = /** @class */ (function (_super) {
     return Shape;
 }(node_1.Node));
 exports.Shape = Shape;
-//# sourceMappingURL=shape.js.map

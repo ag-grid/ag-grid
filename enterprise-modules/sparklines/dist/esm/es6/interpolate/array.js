@@ -18,4 +18,3 @@ export default function (a, b) {
         return c;
     };
 }
-//# sourceMappingURL=array.js.map

@@ -43,4 +43,3 @@ __decorate([
     core_1.PostConstruct
 ], WatermarkComp.prototype, "postConstruct", null);
 exports.WatermarkComp = WatermarkComp;
-//# sourceMappingURL=watermark.js.map

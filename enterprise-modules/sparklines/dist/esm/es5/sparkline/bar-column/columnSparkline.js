@@ -150,4 +150,3 @@ var ColumnSparkline = /** @class */ (function (_super) {
     return ColumnSparkline;
 }(BarColumnSparkline));
 export { ColumnSparkline };
-//# sourceMappingURL=columnSparkline.js.map

@@ -43,4 +43,3 @@ var coreFactory = {
     }
 };
 export default coreFactory;
-//# sourceMappingURL=core.js.map

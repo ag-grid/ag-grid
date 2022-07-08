@@ -13,4 +13,3 @@ export const MultiFilterModule = {
         EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=multiFilterModule.js.map

@@ -25,4 +25,3 @@ export default function (a, b) {
         return Color.fromArray([red(t), green(t), blue(t), alpha(t)]).toRgbaString();
     };
 }
-//# sourceMappingURL=color.js.map

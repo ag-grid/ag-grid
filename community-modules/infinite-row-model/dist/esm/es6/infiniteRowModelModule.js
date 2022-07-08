@@ -4,4 +4,3 @@ export const InfiniteRowModelModule = {
     moduleName: ModuleNames.InfiniteRowModelModule,
     rowModels: { infinite: InfiniteRowModel }
 };
-//# sourceMappingURL=infiniteRowModelModule.js.map

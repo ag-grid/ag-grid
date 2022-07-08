@@ -6,4 +6,3 @@ exports.InfiniteRowModelModule = {
     moduleName: core_1.ModuleNames.InfiniteRowModelModule,
     rowModels: { infinite: infiniteRowModel_1.InfiniteRowModel }
 };
-//# sourceMappingURL=infiniteRowModelModule.js.map

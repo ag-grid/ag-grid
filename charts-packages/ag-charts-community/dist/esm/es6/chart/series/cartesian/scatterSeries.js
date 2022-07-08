@@ -372,4 +372,3 @@ __decorate([
 __decorate([
     Deprecated('Use marker.strokeOpacity instead.', { default: 1 })
 ], ScatterSeries.prototype, "strokeOpacity", void 0);
-//# sourceMappingURL=scatterSeries.js.map

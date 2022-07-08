@@ -375,4 +375,3 @@ var PivotColDefService = /** @class */ (function (_super) {
     return PivotColDefService;
 }(core_1.BeanStub));
 exports.PivotColDefService = PivotColDefService;
-//# sourceMappingURL=pivotColDefService.js.map

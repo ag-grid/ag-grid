@@ -15,4 +15,3 @@ export class Heart extends Marker {
     }
 }
 Heart.className = 'Heart';
-//# sourceMappingURL=heart.js.map

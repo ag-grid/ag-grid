@@ -86,4 +86,3 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
     return ToolPanelWrapper;
 }(Component));
 export { ToolPanelWrapper };
-//# sourceMappingURL=toolPanelWrapper.js.map

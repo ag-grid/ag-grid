@@ -118,4 +118,3 @@ var DarkTheme = /** @class */ (function (_super) {
     return DarkTheme;
 }(ChartTheme));
 export { DarkTheme };
-//# sourceMappingURL=darkTheme.js.map

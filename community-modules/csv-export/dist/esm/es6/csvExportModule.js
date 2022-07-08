@@ -5,4 +5,3 @@ export const CsvExportModule = {
     moduleName: ModuleNames.CsvExportModule,
     beans: [CsvCreator, GridSerializer]
 };
-//# sourceMappingURL=csvExportModule.js.map

@@ -320,4 +320,3 @@ var CartesianChart = /** @class */ (function (_super) {
     return CartesianChart;
 }(Chart));
 export { CartesianChart };
-//# sourceMappingURL=cartesianChart.js.map

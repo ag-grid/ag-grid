@@ -104,4 +104,3 @@ function cubicRoots(a, b, c, d) {
     return roots;
 }
 exports.cubicRoots = cubicRoots;
-//# sourceMappingURL=polyRoots.js.map

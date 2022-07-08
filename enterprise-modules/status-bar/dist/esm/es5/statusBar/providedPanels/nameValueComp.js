@@ -42,4 +42,3 @@ var NameValueComp = /** @class */ (function (_super) {
     return NameValueComp;
 }(Component));
 export { NameValueComp };
-//# sourceMappingURL=nameValueComp.js.map

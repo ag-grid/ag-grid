@@ -42,4 +42,3 @@ var Cross = /** @class */ (function (_super) {
     return Cross;
 }(marker_1.Marker));
 exports.Cross = Cross;
-//# sourceMappingURL=cross.js.map

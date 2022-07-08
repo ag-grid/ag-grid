@@ -104,4 +104,3 @@ __decorate([
 __decorate([
     ScenePathChangeDetection()
 ], Sector.prototype, "angleOffset", void 0);
-//# sourceMappingURL=sector.js.map

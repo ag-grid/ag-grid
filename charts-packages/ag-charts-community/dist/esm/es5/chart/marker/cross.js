@@ -40,4 +40,3 @@ var Cross = /** @class */ (function (_super) {
     return Cross;
 }(Marker));
 export { Cross };
-//# sourceMappingURL=cross.js.map

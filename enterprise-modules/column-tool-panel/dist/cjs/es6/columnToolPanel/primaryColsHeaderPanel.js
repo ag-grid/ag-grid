@@ -112,4 +112,3 @@ __decorate([
     core_1.PostConstruct
 ], PrimaryColsHeaderPanel.prototype, "postConstruct", null);
 exports.PrimaryColsHeaderPanel = PrimaryColsHeaderPanel;
-//# sourceMappingURL=primaryColsHeaderPanel.js.map

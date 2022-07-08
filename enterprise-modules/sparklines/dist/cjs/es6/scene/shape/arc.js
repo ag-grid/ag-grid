@@ -150,4 +150,3 @@ Arc.defaultStyles = object_1.chainObjects(shape_1.Shape.defaultStyles, {
     lineWidth: 1,
     fillStyle: null
 });
-//# sourceMappingURL=arc.js.map

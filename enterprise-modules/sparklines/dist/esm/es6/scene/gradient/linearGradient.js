@@ -24,4 +24,3 @@ export class LinearGradient extends Gradient {
         return 'black';
     }
 }
-//# sourceMappingURL=linearGradient.js.map

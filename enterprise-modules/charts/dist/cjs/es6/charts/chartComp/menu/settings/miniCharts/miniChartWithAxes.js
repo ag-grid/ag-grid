@@ -39,4 +39,3 @@ __decorate([
     core_1.PostConstruct
 ], MiniChartWithAxes.prototype, "addAxes", null);
 exports.MiniChartWithAxes = MiniChartWithAxes;
-//# sourceMappingURL=miniChartWithAxes.js.map

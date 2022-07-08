@@ -251,4 +251,3 @@ class Rect extends path_1.Path {
 }
 exports.Rect = Rect;
 Rect.className = 'Rect';
-//# sourceMappingURL=rect.js.map

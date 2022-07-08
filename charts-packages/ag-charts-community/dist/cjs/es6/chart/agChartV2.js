@@ -300,4 +300,3 @@ function applyAxisValues(target, options, { skip, path } = {}) {
     const applyOpts = Object.assign(Object.assign(Object.assign({}, JSON_APPLY_OPTIONS), { skip: ['type', ...(skip || [])] }), (path ? { path } : {}));
     return json_1.jsonApply(target, options, applyOpts);
 }
-//# sourceMappingURL=agChartV2.js.map

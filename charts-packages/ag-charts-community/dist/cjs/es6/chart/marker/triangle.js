@@ -15,4 +15,3 @@ class Triangle extends marker_1.Marker {
 }
 exports.Triangle = Triangle;
 Triangle.className = 'Triangle';
-//# sourceMappingURL=triangle.js.map

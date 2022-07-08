@@ -139,4 +139,3 @@ export class ChartAxis extends Axis {
         return primaryTickCount;
     }
 }
-//# sourceMappingURL=chartAxis.js.map

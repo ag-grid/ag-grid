@@ -772,4 +772,3 @@ var Axis = /** @class */ (function () {
     return Axis;
 }());
 exports.Axis = Axis;
-//# sourceMappingURL=axis.js.map

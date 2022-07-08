@@ -88,4 +88,3 @@ __decorate([
     core_1.PostConstruct
 ], PrimaryColsPanel.prototype, "postConstruct", null);
 exports.PrimaryColsPanel = PrimaryColsPanel;
-//# sourceMappingURL=primaryColsPanel.js.map

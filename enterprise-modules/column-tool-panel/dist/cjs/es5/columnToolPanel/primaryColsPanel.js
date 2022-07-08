@@ -100,4 +100,3 @@ var PrimaryColsPanel = /** @class */ (function (_super) {
     return PrimaryColsPanel;
 }(core_1.TabGuardComp));
 exports.PrimaryColsPanel = PrimaryColsPanel;
-//# sourceMappingURL=primaryColsPanel.js.map

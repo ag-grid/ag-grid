@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -168,5 +168,3 @@ class ProvidedColumnGroup {
 exports.ProvidedColumnGroup = ProvidedColumnGroup;
 ProvidedColumnGroup.EVENT_EXPANDED_CHANGED = 'expandedChanged';
 ProvidedColumnGroup.EVENT_EXPANDABLE_CHANGED = 'expandableChanged';
-
-//# sourceMappingURL=providedColumnGroup.js.map

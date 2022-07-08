@@ -108,4 +108,3 @@ export class RangeHandle extends Path {
     }
 }
 RangeHandle.className = 'RangeHandle';
-//# sourceMappingURL=rangeHandle.js.map

@@ -94,4 +94,3 @@ export class Group extends Node {
     }
 }
 Group.className = 'Group';
-//# sourceMappingURL=group.js.map

@@ -57,4 +57,3 @@ var WatermarkComp = /** @class */ (function (_super) {
     return WatermarkComp;
 }(core_1.Component));
 exports.WatermarkComp = WatermarkComp;
-//# sourceMappingURL=watermark.js.map

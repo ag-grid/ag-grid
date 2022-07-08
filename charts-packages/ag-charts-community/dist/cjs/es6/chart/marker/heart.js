@@ -18,4 +18,3 @@ class Heart extends marker_1.Marker {
 }
 exports.Heart = Heart;
 Heart.className = 'Heart';
-//# sourceMappingURL=heart.js.map

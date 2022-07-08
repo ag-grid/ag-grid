@@ -175,4 +175,3 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
     return ChartSettingsPanel;
 }(core_1.Component));
 exports.ChartSettingsPanel = ChartSettingsPanel;
-//# sourceMappingURL=chartSettingsPanel.js.map

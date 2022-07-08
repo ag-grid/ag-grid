@@ -476,4 +476,3 @@ var ChartTheme = /** @class */ (function () {
     return ChartTheme;
 }());
 exports.ChartTheme = ChartTheme;
-//# sourceMappingURL=chartTheme.js.map

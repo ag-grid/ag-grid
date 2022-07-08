@@ -375,4 +375,3 @@ function applyAxisValues(target, options, _a) {
     var applyOpts = __assign(__assign(__assign({}, JSON_APPLY_OPTIONS), { skip: __spread(['type'], (skip || [])) }), (path ? { path: path } : {}));
     return jsonApply(target, options, applyOpts);
 }
-//# sourceMappingURL=agChartV2.js.map

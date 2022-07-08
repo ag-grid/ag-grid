@@ -806,4 +806,3 @@ var BarSeries = /** @class */ (function (_super) {
     return BarSeries;
 }(CartesianSeries));
 export { BarSeries };
-//# sourceMappingURL=barSeries.js.map

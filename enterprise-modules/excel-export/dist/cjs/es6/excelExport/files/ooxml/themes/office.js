@@ -29,4 +29,3 @@ const officeTheme = {
     }
 };
 exports.default = officeTheme;
-//# sourceMappingURL=office.js.map

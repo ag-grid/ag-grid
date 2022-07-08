@@ -447,4 +447,3 @@ ChartTheme.hierarchySeriesTypes = ['treemap'];
 ChartTheme.seriesTypes = ChartTheme.cartesianSeriesTypes
     .concat(ChartTheme.polarSeriesTypes)
     .concat(ChartTheme.hierarchySeriesTypes);
-//# sourceMappingURL=chartTheme.js.map

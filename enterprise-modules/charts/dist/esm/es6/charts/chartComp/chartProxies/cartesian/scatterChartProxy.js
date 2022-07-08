@@ -61,4 +61,3 @@ export class ScatterChartProxy extends CartesianChartProxy {
         return fields.filter((value, i) => i > 0).map(yField => ({ xField, yField }));
     }
 }
-//# sourceMappingURL=scatterChartProxy.js.map

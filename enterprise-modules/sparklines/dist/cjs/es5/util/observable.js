@@ -171,4 +171,3 @@ function reactive() {
     };
 }
 exports.reactive = reactive;
-//# sourceMappingURL=observable.js.map

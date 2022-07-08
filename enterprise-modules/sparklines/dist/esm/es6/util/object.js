@@ -13,4 +13,3 @@ export function chainObjects(parent, child) {
     }
     return obj;
 }
-//# sourceMappingURL=object.js.map

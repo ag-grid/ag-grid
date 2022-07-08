@@ -19,4 +19,3 @@ const interior = {
     }
 };
 exports.default = interior;
-//# sourceMappingURL=interior.js.map

@@ -240,4 +240,3 @@ var BaseExcelSerializingSession = /** @class */ (function (_super) {
     return BaseExcelSerializingSession;
 }(csv_export_1.BaseGridSerializingSession));
 exports.BaseExcelSerializingSession = BaseExcelSerializingSession;
-//# sourceMappingURL=baseExcelSerializingSession.js.map

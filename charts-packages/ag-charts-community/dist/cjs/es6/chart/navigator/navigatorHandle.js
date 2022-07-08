@@ -48,4 +48,3 @@ class NavigatorHandle {
     }
 }
 exports.NavigatorHandle = NavigatorHandle;
-//# sourceMappingURL=navigatorHandle.js.map

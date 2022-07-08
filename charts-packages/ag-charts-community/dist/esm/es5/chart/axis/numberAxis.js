@@ -157,4 +157,3 @@ var NumberAxis = /** @class */ (function (_super) {
     return NumberAxis;
 }(ChartAxis));
 export { NumberAxis };
-//# sourceMappingURL=numberAxis.js.map

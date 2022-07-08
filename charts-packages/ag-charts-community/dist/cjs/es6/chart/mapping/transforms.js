@@ -76,4 +76,3 @@ function applySeriesTransform(options) {
     return transform(options);
 }
 exports.applySeriesTransform = applySeriesTransform;
-//# sourceMappingURL=transforms.js.map

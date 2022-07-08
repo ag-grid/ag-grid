@@ -52,4 +52,3 @@ var FpsCounter = /** @class */ (function () {
     return FpsCounter;
 }());
 export { FpsCounter };
-//# sourceMappingURL=fpsCounter.js.map

@@ -43,4 +43,3 @@ export function interpolate(input, values, formats) {
         return '';
     });
 }
-//# sourceMappingURL=string.js.map

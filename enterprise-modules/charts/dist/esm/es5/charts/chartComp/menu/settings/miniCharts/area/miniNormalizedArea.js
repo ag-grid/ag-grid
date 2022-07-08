@@ -26,4 +26,3 @@ var MiniNormalizedArea = /** @class */ (function (_super) {
     return MiniNormalizedArea;
 }(MiniStackedArea));
 export { MiniNormalizedArea };
-//# sourceMappingURL=miniNormalizedArea.js.map

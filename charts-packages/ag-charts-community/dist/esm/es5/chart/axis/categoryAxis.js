@@ -94,4 +94,3 @@ var CategoryAxis = /** @class */ (function (_super) {
     return CategoryAxis;
 }(ChartAxis));
 export { CategoryAxis };
-//# sourceMappingURL=categoryAxis.js.map

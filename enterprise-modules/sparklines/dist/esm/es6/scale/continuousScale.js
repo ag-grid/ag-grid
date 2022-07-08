@@ -111,4 +111,3 @@ export default class ContinuousScale {
         return this._clamp(this.untransform(this.input(y)));
     }
 }
-//# sourceMappingURL=continuousScale.js.map

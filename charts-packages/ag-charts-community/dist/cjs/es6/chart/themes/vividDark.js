@@ -25,4 +25,3 @@ class VividDark extends darkTheme_1.DarkTheme {
     }
 }
 exports.VividDark = VividDark;
-//# sourceMappingURL=vividDark.js.map

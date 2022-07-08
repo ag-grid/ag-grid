@@ -160,4 +160,3 @@ var NumberAxis = /** @class */ (function (_super) {
     return NumberAxis;
 }(chartAxis_1.ChartAxis));
 exports.NumberAxis = NumberAxis;
-//# sourceMappingURL=numberAxis.js.map

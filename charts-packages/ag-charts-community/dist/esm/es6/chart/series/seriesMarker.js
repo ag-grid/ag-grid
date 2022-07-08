@@ -61,4 +61,3 @@ __decorate([
 __decorate([
     SceneChangeDetection({ redraw: RedrawType.MAJOR })
 ], SeriesMarker.prototype, "strokeOpacity", void 0);
-//# sourceMappingURL=seriesMarker.js.map

@@ -14,4 +14,3 @@ function field(date) {
 }
 export var utcMinute = new CountableTimeInterval(floor, offset, count, field);
 export default utcMinute;
-//# sourceMappingURL=utcMinute.js.map

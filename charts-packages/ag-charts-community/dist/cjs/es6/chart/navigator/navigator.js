@@ -168,4 +168,3 @@ class Navigator {
     }
 }
 exports.Navigator = Navigator;
-//# sourceMappingURL=navigator.js.map

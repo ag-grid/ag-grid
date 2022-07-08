@@ -256,4 +256,3 @@ var LogScale = /** @class */ (function (_super) {
     return LogScale;
 }(continuousScale_1.ContinuousScale));
 exports.LogScale = LogScale;
-//# sourceMappingURL=logScale.js.map

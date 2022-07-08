@@ -94,4 +94,3 @@ __decorate([
     core_1.Autowired('columnModel')
 ], SetFloatingFilterComp.prototype, "columnModel", void 0);
 exports.SetFloatingFilterComp = SetFloatingFilterComp;
-//# sourceMappingURL=setFloatingFilter.js.map

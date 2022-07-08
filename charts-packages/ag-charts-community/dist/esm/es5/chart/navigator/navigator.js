@@ -200,4 +200,3 @@ var Navigator = /** @class */ (function () {
     return Navigator;
 }());
 export { Navigator };
-//# sourceMappingURL=navigator.js.map

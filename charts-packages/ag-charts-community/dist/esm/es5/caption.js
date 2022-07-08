@@ -90,4 +90,3 @@ var Caption = /** @class */ (function (_super) {
     return Caption;
 }(Observable));
 export { Caption };
-//# sourceMappingURL=caption.js.map

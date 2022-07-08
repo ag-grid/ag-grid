@@ -22,4 +22,3 @@ StatusBarService = __decorate([
     Bean('statusBarService')
 ], StatusBarService);
 export { StatusBarService };
-//# sourceMappingURL=statusBarService.js.map

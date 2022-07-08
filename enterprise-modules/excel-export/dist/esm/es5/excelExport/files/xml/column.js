@@ -15,4 +15,3 @@ var column = {
     }
 };
 export default column;
-//# sourceMappingURL=column.js.map

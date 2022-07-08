@@ -16,4 +16,3 @@ export var ExcelExportModule = {
         EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=excelExportModule.js.map

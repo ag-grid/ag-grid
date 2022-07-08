@@ -150,4 +150,3 @@ __decorate([
 __decorate([
     Autowired('columnApi')
 ], ChartOptionsService.prototype, "columnApi", void 0);
-//# sourceMappingURL=chartOptionsService.js.map

@@ -7,4 +7,3 @@ export function sanitizeHtml(text) {
     element.innerText = text;
     return element.innerHTML;
 }
-//# sourceMappingURL=sanitize.js.map

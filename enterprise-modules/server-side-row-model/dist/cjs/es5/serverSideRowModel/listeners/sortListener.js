@@ -137,4 +137,3 @@ var SortListener = /** @class */ (function (_super) {
     return SortListener;
 }(core_1.BeanStub));
 exports.SortListener = SortListener;
-//# sourceMappingURL=sortListener.js.map

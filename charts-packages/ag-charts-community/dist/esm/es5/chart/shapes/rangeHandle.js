@@ -149,4 +149,3 @@ var RangeHandle = /** @class */ (function (_super) {
     return RangeHandle;
 }(Path));
 export { RangeHandle };
-//# sourceMappingURL=rangeHandle.js.map

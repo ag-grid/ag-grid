@@ -8,4 +8,3 @@ exports.durationDay = exports.durationHour * 24;
 exports.durationWeek = exports.durationDay * 7;
 exports.durationMonth = exports.durationDay * 30;
 exports.durationYear = exports.durationDay * 365;
-//# sourceMappingURL=duration.js.map

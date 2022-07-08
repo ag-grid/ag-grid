@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -174,5 +174,3 @@ var GroupResizeFeature = /** @class */ (function (_super) {
     return GroupResizeFeature;
 }(beanStub_1.BeanStub));
 exports.GroupResizeFeature = GroupResizeFeature;
-
-//# sourceMappingURL=groupResizeFeature.js.map

@@ -398,4 +398,3 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
     return PrimaryColsListPanel;
 }(Component));
 export { PrimaryColsListPanel };
-//# sourceMappingURL=primaryColsListPanel.js.map

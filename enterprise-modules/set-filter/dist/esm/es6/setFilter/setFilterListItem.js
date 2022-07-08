@@ -109,4 +109,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], SetFilterListItem.prototype, "init", null);
-//# sourceMappingURL=setFilterListItem.js.map

@@ -26,4 +26,3 @@ class AreaChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
     }
 }
 exports.AreaChartProxy = AreaChartProxy;
-//# sourceMappingURL=areaChartProxy.js.map

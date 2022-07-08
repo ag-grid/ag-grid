@@ -24,4 +24,3 @@ var GroupedCategoryChart = /** @class */ (function (_super) {
     return GroupedCategoryChart;
 }(cartesianChart_1.CartesianChart));
 exports.GroupedCategoryChart = GroupedCategoryChart;
-//# sourceMappingURL=groupedCategoryChart.js.map

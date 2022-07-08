@@ -18,4 +18,3 @@ exports.SideBarModule = {
         core_2.EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=sideBarModule.js.map

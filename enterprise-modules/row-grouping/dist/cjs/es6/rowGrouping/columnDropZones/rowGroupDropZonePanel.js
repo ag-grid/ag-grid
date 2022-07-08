@@ -88,4 +88,3 @@ __decorate([
     core_1.PostConstruct
 ], RowGroupDropZonePanel.prototype, "passBeansUp", null);
 exports.RowGroupDropZonePanel = RowGroupDropZonePanel;
-//# sourceMappingURL=rowGroupDropZonePanel.js.map

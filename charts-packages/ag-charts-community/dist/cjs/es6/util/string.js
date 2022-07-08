@@ -30,4 +30,3 @@ function interpolate(input, values, formats) {
     });
 }
 exports.interpolate = interpolate;
-//# sourceMappingURL=string.js.map

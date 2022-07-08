@@ -148,4 +148,3 @@ var ContinuousScale = /** @class */ (function () {
     return ContinuousScale;
 }());
 exports.default = ContinuousScale;
-//# sourceMappingURL=continuousScale.js.map

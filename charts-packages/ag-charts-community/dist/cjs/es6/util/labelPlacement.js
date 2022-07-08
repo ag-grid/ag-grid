@@ -72,4 +72,3 @@ function placeLabels(data, bounds, padding = 5) {
     return result;
 }
 exports.placeLabels = placeLabels;
-//# sourceMappingURL=labelPlacement.js.map

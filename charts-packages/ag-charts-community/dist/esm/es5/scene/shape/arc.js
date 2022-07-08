@@ -126,4 +126,3 @@ var Arc = /** @class */ (function (_super) {
     return Arc;
 }(Path));
 export { Arc };
-//# sourceMappingURL=arc.js.map

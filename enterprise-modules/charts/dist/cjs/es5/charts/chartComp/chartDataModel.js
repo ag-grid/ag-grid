@@ -494,4 +494,3 @@ var ChartDataModel = /** @class */ (function (_super) {
     return ChartDataModel;
 }(core_1.BeanStub));
 exports.ChartDataModel = ChartDataModel;
-//# sourceMappingURL=chartDataModel.js.map

@@ -300,4 +300,3 @@ var Matrix = /** @class */ (function () {
     return Matrix;
 }());
 export { Matrix };
-//# sourceMappingURL=matrix.js.map

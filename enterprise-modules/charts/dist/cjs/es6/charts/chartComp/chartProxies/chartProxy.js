@@ -146,4 +146,3 @@ class ChartProxy {
     }
 }
 exports.ChartProxy = ChartProxy;
-//# sourceMappingURL=chartProxy.js.map

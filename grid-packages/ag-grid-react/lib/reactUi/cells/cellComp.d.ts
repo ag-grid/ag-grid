@@ -1,4 +1,4 @@
-// ag-grid-react v28.0.0
+// ag-grid-react v28.0.1
 import { CellCtrl, UserCompDetails } from 'ag-grid-community';
 import React from 'react';
 export declare enum CellCompState {

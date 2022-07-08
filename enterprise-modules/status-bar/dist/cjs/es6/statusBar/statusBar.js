@@ -89,4 +89,3 @@ __decorate([
     core_1.PostConstruct
 ], StatusBar.prototype, "postConstruct", null);
 exports.StatusBar = StatusBar;
-//# sourceMappingURL=statusBar.js.map

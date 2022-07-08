@@ -76,4 +76,3 @@ var HorizontalResizeComp = /** @class */ (function (_super) {
     return HorizontalResizeComp;
 }(core_1.Component));
 exports.HorizontalResizeComp = HorizontalResizeComp;
-//# sourceMappingURL=horizontalResizeComp.js.map

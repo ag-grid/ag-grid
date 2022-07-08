@@ -59,4 +59,3 @@ export class LinearScale extends ContinuousScale {
         return tickFormat(d[0], d[d.length - 1], count == undefined ? 10 : count, specifier);
     }
 }
-//# sourceMappingURL=linearScale.js.map

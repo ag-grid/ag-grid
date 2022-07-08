@@ -139,4 +139,3 @@ export class Scene {
     }
 }
 Scene.className = 'Scene';
-//# sourceMappingURL=scene.js.map

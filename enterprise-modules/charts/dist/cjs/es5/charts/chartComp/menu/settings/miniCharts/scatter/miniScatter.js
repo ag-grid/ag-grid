@@ -79,4 +79,3 @@ var MiniScatter = /** @class */ (function (_super) {
     return MiniScatter;
 }(miniChartWithAxes_1.MiniChartWithAxes));
 exports.MiniScatter = MiniScatter;
-//# sourceMappingURL=miniScatter.js.map

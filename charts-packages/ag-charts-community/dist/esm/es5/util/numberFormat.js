@@ -456,4 +456,3 @@ export function formatLocale(locale) {
         formatPrefix: formatPrefix
     };
 }
-//# sourceMappingURL=numberFormat.js.map

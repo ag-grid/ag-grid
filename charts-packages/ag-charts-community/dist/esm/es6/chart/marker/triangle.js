@@ -12,4 +12,3 @@ export class Triangle extends Marker {
     }
 }
 Triangle.className = 'Triangle';
-//# sourceMappingURL=triangle.js.map

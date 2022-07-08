@@ -47,4 +47,3 @@ var Marker = /** @class */ (function (_super) {
     return Marker;
 }(path_1.Path));
 exports.Marker = Marker;
-//# sourceMappingURL=marker.js.map

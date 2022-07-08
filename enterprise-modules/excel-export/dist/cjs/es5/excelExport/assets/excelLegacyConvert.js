@@ -98,4 +98,3 @@ exports.convertLegacyHorizontalAlignment = function (alignment) {
 exports.convertLegacyVerticalAlignment = function (alignment) {
     return verticalAlignmentMap[alignment] || undefined;
 };
-//# sourceMappingURL=excelLegacyConvert.js.map

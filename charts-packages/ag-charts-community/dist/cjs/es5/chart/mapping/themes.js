@@ -58,4 +58,3 @@ function getChartTheme(value) {
     return lightTheme;
 }
 exports.getChartTheme = getChartTheme;
-//# sourceMappingURL=themes.js.map

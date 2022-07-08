@@ -47,4 +47,3 @@ __decorate([
     core_1.PreConstruct
 ], PivotModePanel.prototype, "init", null);
 exports.PivotModePanel = PivotModePanel;
-//# sourceMappingURL=pivotModePanel.js.map

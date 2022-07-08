@@ -126,4 +126,3 @@ __decorate([
     ScenePathChangeDetection()
 ], Path.prototype, "clipMode", void 0);
 exports.Path = Path;
-//# sourceMappingURL=path.js.map

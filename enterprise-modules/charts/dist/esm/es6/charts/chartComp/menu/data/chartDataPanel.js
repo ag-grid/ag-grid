@@ -356,4 +356,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], ChartDataPanel.prototype, "init", null);
-//# sourceMappingURL=chartDataPanel.js.map

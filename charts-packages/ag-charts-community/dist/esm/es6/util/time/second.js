@@ -11,4 +11,3 @@ function count(start, end) {
 }
 export const second = new CountableTimeInterval(floor, offset, count);
 export default second;
-//# sourceMappingURL=second.js.map

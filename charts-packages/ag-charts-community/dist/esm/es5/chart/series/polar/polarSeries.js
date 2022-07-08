@@ -60,4 +60,3 @@ var PolarSeriesMarker = /** @class */ (function (_super) {
     return PolarSeriesMarker;
 }(SeriesMarker));
 export { PolarSeriesMarker };
-//# sourceMappingURL=polarSeries.js.map

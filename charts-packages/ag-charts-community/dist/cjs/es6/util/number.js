@@ -48,4 +48,3 @@ function toReadableNumber(value, fractionDigits = 2) {
     return prefix + (value / Math.pow(1000.0, thousands)).toFixed(fractionDigits) + numberUnits[thousands];
 }
 exports.toReadableNumber = toReadableNumber;
-//# sourceMappingURL=number.js.map

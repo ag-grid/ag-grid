@@ -17,4 +17,3 @@ var column = {
     }
 };
 exports.default = column;
-//# sourceMappingURL=column.js.map

@@ -44,4 +44,3 @@ __decorate([
 __decorate([
     PreConstruct
 ], PivotModePanel.prototype, "init", null);
-//# sourceMappingURL=pivotModePanel.js.map

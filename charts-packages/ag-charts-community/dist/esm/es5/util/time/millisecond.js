@@ -10,4 +10,3 @@ function count(start, end) {
 }
 export var millisecond = new CountableTimeInterval(floor, offset, count);
 export default millisecond;
-//# sourceMappingURL=millisecond.js.map

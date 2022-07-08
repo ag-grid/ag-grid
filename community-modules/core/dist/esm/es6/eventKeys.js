@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v28.0.0
+ * @version v28.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -156,5 +156,3 @@ Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
 Events.EVENT_KEYBOARD_FOCUS = 'keyboardFocus';
 Events.EVENT_MOUSE_FOCUS = 'mouseFocus';
 Events.EVENT_STORE_UPDATED = 'storeUpdated';
-
-//# sourceMappingURL=eventKeys.js.map

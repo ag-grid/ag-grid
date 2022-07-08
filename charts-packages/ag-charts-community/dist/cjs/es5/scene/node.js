@@ -580,4 +580,3 @@ var Node = /** @class */ (function (_super) {
     return Node;
 }(changeDetectable_1.ChangeDetectable));
 exports.Node = Node;
-//# sourceMappingURL=node.js.map

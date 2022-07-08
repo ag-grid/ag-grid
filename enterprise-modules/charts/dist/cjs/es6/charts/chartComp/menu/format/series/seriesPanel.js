@@ -249,4 +249,3 @@ __decorate([
     core_1.PostConstruct
 ], SeriesPanel.prototype, "init", null);
 exports.SeriesPanel = SeriesPanel;
-//# sourceMappingURL=seriesPanel.js.map

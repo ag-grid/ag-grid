@@ -52,4 +52,3 @@ var SparklineTooltipSingleton = /** @class */ (function (_super) {
     return SparklineTooltipSingleton;
 }(core_1.BeanStub));
 exports.SparklineTooltipSingleton = SparklineTooltipSingleton;
-//# sourceMappingURL=sparklineTooltipSingleton.js.map

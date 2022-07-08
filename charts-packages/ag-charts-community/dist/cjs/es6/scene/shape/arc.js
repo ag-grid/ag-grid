@@ -108,4 +108,3 @@ __decorate([
     path_1.ScenePathChangeDetection()
 ], Arc.prototype, "type", void 0);
 exports.Arc = Arc;
-//# sourceMappingURL=arc.js.map

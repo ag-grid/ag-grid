@@ -44,4 +44,3 @@ function toDegrees(radians) {
     return radians / Math.PI * 180;
 }
 exports.toDegrees = toDegrees;
-//# sourceMappingURL=angle.js.map

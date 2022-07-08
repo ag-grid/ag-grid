@@ -313,4 +313,3 @@ __decorate([
     core_1.PostConstruct
 ], ChartController.prototype, "init", null);
 exports.ChartController = ChartController;
-//# sourceMappingURL=chartController.js.map

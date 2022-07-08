@@ -26,4 +26,3 @@ const alignmentFactory = {
     }
 };
 exports.default = alignmentFactory;
-//# sourceMappingURL=alignment.js.map

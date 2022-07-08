@@ -442,4 +442,3 @@ Color.nameToHex = Object.freeze({
     yellow: '#FFFF00',
     yellowgreen: '#9ACD32'
 });
-//# sourceMappingURL=color.js.map

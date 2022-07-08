@@ -22,4 +22,3 @@ export class PastelLight extends ChartTheme {
         return palette;
     }
 }
-//# sourceMappingURL=pastelLight.js.map

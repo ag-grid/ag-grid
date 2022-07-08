@@ -15,4 +15,3 @@ function isTouchDevice() {
     return touchDevice;
 }
 exports.isTouchDevice = isTouchDevice;
-//# sourceMappingURL=touch.js.map

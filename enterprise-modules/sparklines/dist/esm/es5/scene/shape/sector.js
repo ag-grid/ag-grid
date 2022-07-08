@@ -237,4 +237,3 @@ var Sector = /** @class */ (function (_super) {
     return Sector;
 }(Shape));
 export { Sector };
-//# sourceMappingURL=sector.js.map

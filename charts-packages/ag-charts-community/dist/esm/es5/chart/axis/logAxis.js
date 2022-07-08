@@ -36,4 +36,3 @@ var LogAxis = /** @class */ (function (_super) {
     return LogAxis;
 }(NumberAxis));
 export { LogAxis };
-//# sourceMappingURL=logAxis.js.map

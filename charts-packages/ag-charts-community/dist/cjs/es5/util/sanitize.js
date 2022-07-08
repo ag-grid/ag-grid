@@ -10,4 +10,3 @@ function sanitizeHtml(text) {
     return element.innerHTML;
 }
 exports.sanitizeHtml = sanitizeHtml;
-//# sourceMappingURL=sanitize.js.map

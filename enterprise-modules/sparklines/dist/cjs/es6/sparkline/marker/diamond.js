@@ -28,4 +28,3 @@ class Diamond extends marker_1.Marker {
 }
 exports.Diamond = Diamond;
 Diamond.className = 'Diamond';
-//# sourceMappingURL=diamond.js.map

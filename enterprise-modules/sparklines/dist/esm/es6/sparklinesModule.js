@@ -8,4 +8,3 @@ export const SparklinesModule = {
     userComponents: [{ componentName: 'agSparklineCellRenderer', componentClass: SparklineCellRenderer }],
     dependantModules: [EnterpriseCoreModule],
 };
-//# sourceMappingURL=sparklinesModule.js.map

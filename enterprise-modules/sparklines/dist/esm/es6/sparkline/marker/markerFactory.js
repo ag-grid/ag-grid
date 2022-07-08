@@ -13,4 +13,3 @@ export function getMarker(shape) {
             return Circle;
     }
 }
-//# sourceMappingURL=markerFactory.js.map

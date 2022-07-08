@@ -642,4 +642,3 @@ ClipboardService = __decorate([
     core_1.Bean('clipboardService')
 ], ClipboardService);
 exports.ClipboardService = ClipboardService;
-//# sourceMappingURL=clipboardService.js.map

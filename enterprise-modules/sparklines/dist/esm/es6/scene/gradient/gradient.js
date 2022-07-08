@@ -3,4 +3,3 @@ export class Gradient {
         this.stops = [];
     }
 }
-//# sourceMappingURL=gradient.js.map

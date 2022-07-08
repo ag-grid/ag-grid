@@ -42,4 +42,3 @@ export class MaterialDark extends DarkTheme {
         return palette;
     }
 }
-//# sourceMappingURL=materialDark.js.map
