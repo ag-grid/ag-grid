@@ -286,7 +286,12 @@ function applyAxes<
 
                 debug(`applying axis diff idx ${i}`, axisDiff);
 
-                jsonApply(a, axisDiff);
+                const applyOpts = {
+                    ...JSON_APPLY_OPTIONS,
+                    path: `axes[${i}]`,
+                };
+
+                jsonApply(a, axisDiff, applyOpts);
             });
             return true;
         }
@@ -339,7 +344,7 @@ function createAxis(options: AgCartesianAxisOptions[]): ChartAxis[] {
 
     let index = 0;
     for (const axisOptions of options || []) {
-        const path = `axis[${index++}]`;
+        const path = `axes[${index++}]`;
         switch (axisOptions.type) {
             case 'number':
                 axes.push(applyOptionValues(new NumberAxis(), axisOptions, {path}));
@@ -383,7 +388,7 @@ const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
         'title': Caption,
         'subtitle': Caption,
         'shadow': DropShadow,
-        'crossLines': CrossLine,
+        'axes[].crossLines[]': CrossLine,
     },
     allowedTypes: {
         'series[].marker.shape': ['primitive', 'function'],
