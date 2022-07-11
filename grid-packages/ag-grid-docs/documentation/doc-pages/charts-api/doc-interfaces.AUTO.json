@@ -1318,7 +1318,7 @@
     }
   },
   "AgCrossLineOptions": {
-    "kind": {
+    "type": {
       "description": "/** Type of cross line to render. */",
       "type": { "returnType": "'line' | 'range'", "optional": false }
     },

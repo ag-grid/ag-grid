@@ -39,7 +39,7 @@ export class CrossLine {
     static className = "CrossLine";
     readonly id = createId(this);
 
-    kind?: "line" | "range" = undefined;
+    type?: "line" | "range" = undefined;
     range?: [any, any] = undefined;
     value?: any = undefined;
     fill?: string = undefined;
@@ -76,7 +76,7 @@ export class CrossLine {
     }
 
     update(visible: boolean) {
-        if (!this.kind) { return; }
+        if (!this.type) { return; }
 
         this.group.visible = visible;
 
@@ -90,7 +90,7 @@ export class CrossLine {
         this.updateLinePath();
         this.updateLineNode();
 
-        if (this.kind === 'range') {
+        if (this.type === 'range') {
             this.updateRangePath();
             this.updateRangeNode();
         }

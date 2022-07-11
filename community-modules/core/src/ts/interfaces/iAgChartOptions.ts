@@ -499,7 +499,7 @@ export interface AgBaseCartesianAxisOptions extends AgBaseAxisOptions {
 
 export interface AgCrossLineOptions {
     /** Type of cross line to render. */
-    kind: 'line' | 'range';
+    type: 'line' | 'range';
     /** The data value at which the line should be positioned. This property is used if the crossLine type is `line`. */
     value?: DataValue;
     /** The range of values from the data used to display lines at a desired chart region. This property is only used for crossLine type `range`. */

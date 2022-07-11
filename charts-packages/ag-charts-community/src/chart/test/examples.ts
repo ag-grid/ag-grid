@@ -1114,7 +1114,7 @@ export const SCATTER_CROSSLINES: AgCartesianChartOptions = {
             type: 'number',
             crossLines: [
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: [10, 30],
                     label: {
                         text: '10 - 30',
@@ -1123,7 +1123,7 @@ export const SCATTER_CROSSLINES: AgCartesianChartOptions = {
                     ...yAxisCrossLineStyle
                 },
                 {
-                    kind: 'line',
+                    type: 'line',
                     value: 60,
                     label: {
                         text: '60',
@@ -1138,7 +1138,7 @@ export const SCATTER_CROSSLINES: AgCartesianChartOptions = {
             type: 'number',
             crossLines: [
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: [2001, 2003],
                     label: {
                         text: '2001 - 2003',
@@ -1146,7 +1146,7 @@ export const SCATTER_CROSSLINES: AgCartesianChartOptions = {
                     ...xAxisCrossLineStyle
                 },
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: [2013, 2014],
                     label: {
                         text: '2013 - 20014',
@@ -1154,7 +1154,7 @@ export const SCATTER_CROSSLINES: AgCartesianChartOptions = {
                     ...xAxisCrossLineStyle
                 },
                 {
-                    kind: 'line',
+                    type: 'line',
                     value: 2008,
                     label: {
                         text: '2008',
@@ -1188,7 +1188,7 @@ export const LINE_CROSSLINES: AgCartesianChartOptions = {
             },
             crossLines: [
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: ['1', '13'],
                     label: {
                         text: '1 - 13',
@@ -1197,7 +1197,7 @@ export const LINE_CROSSLINES: AgCartesianChartOptions = {
                     ...xAxisCrossLineStyle
                 },
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: ['34', '45'],
                     label: {
                         text: '34 - 45',
@@ -1206,7 +1206,7 @@ export const LINE_CROSSLINES: AgCartesianChartOptions = {
                     ...xAxisCrossLineStyle
                 },
                 {
-                    kind: 'line',
+                    type: 'line',
                     value: '27',
                     label: {
                         text: '27',
@@ -1227,7 +1227,7 @@ export const LINE_CROSSLINES: AgCartesianChartOptions = {
             max: 1,
             crossLines: [
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: [0.25, 0.33],
                     label: {
                         text: '0.25 - 0.33',
@@ -1237,7 +1237,7 @@ export const LINE_CROSSLINES: AgCartesianChartOptions = {
                     ...yAxisCrossLineStyle
                 },
                 {
-                    kind: 'line',
+                    type: 'line',
                     value: 0.87,
                     label: {
                         text: '0.87',
@@ -1262,7 +1262,7 @@ export const AREA_CROSSLINES: AgCartesianChartOptions = {
             position: 'bottom',
             crossLines: [
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: ['Q1', 'Q2'],
                     label: {
                         text: 'Q1 - Q2',
@@ -1270,7 +1270,7 @@ export const AREA_CROSSLINES: AgCartesianChartOptions = {
                     ...xAxisCrossLineStyle
                 },
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: ['Q3', 'Q4'],
                     label: {
                         text: 'Q3 - Q4',
@@ -1287,7 +1287,7 @@ export const AREA_CROSSLINES: AgCartesianChartOptions = {
             },
             crossLines: [
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: [800, 1000],
                     label: {
                         text: '800 - 1000',
@@ -1296,7 +1296,7 @@ export const AREA_CROSSLINES: AgCartesianChartOptions = {
                     ...yAxisCrossLineStyle
                 },
                 {
-                    kind: 'line',
+                    type: 'line',
                     value: -700,
                     label: {
                         text: '-700',
@@ -1321,7 +1321,7 @@ export const COLUMN_CROSSLINES: AgCartesianChartOptions = {
             type: 'category',
             crossLines: [
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: ['2015', '2016'],
                     label: {
                         text: '2015 - 2016',
@@ -1329,7 +1329,7 @@ export const COLUMN_CROSSLINES: AgCartesianChartOptions = {
                     ...xAxisCrossLineStyle
                 },
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: ['2017', '2019'],
                     label: {
                         text: '2017 - 2019',
@@ -1337,7 +1337,7 @@ export const COLUMN_CROSSLINES: AgCartesianChartOptions = {
                     ...xAxisCrossLineStyle
                 },
                 {
-                    kind: 'line',
+                    type: 'line',
                     value: '2012',
                     label: {
                         text: '2012',
@@ -1351,7 +1351,7 @@ export const COLUMN_CROSSLINES: AgCartesianChartOptions = {
             type: 'number',
             crossLines: [
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: [7000, 8000],
                     label: {
                         text: '7000 - 8000',
@@ -1361,7 +1361,7 @@ export const COLUMN_CROSSLINES: AgCartesianChartOptions = {
                     ...yAxisCrossLineStyle
                 },
                 {
-                    kind: 'line',
+                    type: 'line',
                     value: 3500,
                     label: {
                         text: '3500',
@@ -1387,7 +1387,7 @@ export const BAR_CROSSLINES: AgCartesianChartOptions = {
             type: 'category',
             crossLines: [
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: ['Whole economy', 'Public sector'],
                     label: {
                         text: 'Whole economy - Public sector',
@@ -1397,7 +1397,7 @@ export const BAR_CROSSLINES: AgCartesianChartOptions = {
                     ...yAxisCrossLineStyle
                 },
                 {
-                    kind: 'line',
+                    type: 'line',
                     value: 'Manufacturing',
                     label: {
                         text: 'Manufacturing',
@@ -1413,7 +1413,7 @@ export const BAR_CROSSLINES: AgCartesianChartOptions = {
             type: 'number',
             crossLines: [
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: [0.5, 1.4],
                     label: {
                         text: '0.5 - 1.4',
@@ -1421,7 +1421,7 @@ export const BAR_CROSSLINES: AgCartesianChartOptions = {
                     ...xAxisCrossLineStyle
                 },
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: [2.3, 2.5],
                     label: {
                         text: '2.3 - 2.5',
@@ -1429,7 +1429,7 @@ export const BAR_CROSSLINES: AgCartesianChartOptions = {
                     ...xAxisCrossLineStyle
                 },
                 {
-                    kind: 'line',
+                    type: 'line',
                     value: 3.6,
                     label: {
                         text: '3.6',
@@ -1457,7 +1457,7 @@ export const HISTOGRAM_CROSSLINES: AgCartesianChartOptions = {
             },
             crossLines: [
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: [70, 100],
                     label: {
                         text: '70 - 100'
@@ -1465,7 +1465,7 @@ export const HISTOGRAM_CROSSLINES: AgCartesianChartOptions = {
                     ...xAxisCrossLineStyle,
                 },
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: [200, 285],
                     label: {
                         text: '200 - 285'
@@ -1473,7 +1473,7 @@ export const HISTOGRAM_CROSSLINES: AgCartesianChartOptions = {
                     ...xAxisCrossLineStyle
                 },
                 {
-                    kind: 'line',
+                    type: 'line',
                     value: 300,
                     label: {
                         text: '300'
@@ -1490,7 +1490,7 @@ export const HISTOGRAM_CROSSLINES: AgCartesianChartOptions = {
             },
             crossLines: [
                 {
-                    kind: 'range',
+                    type: 'range',
                     range: [10, 15],
                     label: {
                         text: '70 - 100',
@@ -1500,7 +1500,7 @@ export const HISTOGRAM_CROSSLINES: AgCartesianChartOptions = {
                     ...yAxisCrossLineStyle
                 },
                 {
-                    kind: 'line',
+                    type: 'line',
                     value: 50,
                     label: {
                         text: '50',
