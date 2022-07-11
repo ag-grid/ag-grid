@@ -6944,7 +6944,7 @@
   "AgBaseChartListeners": {
     "meta": {},
     "type": {
-      "seriesNodeClick": "(type: 'seriesNodeClick', series: any, datum: any, xKey: string, yKey: string) => any",
+      "seriesNodeClick": "(event: { type: 'seriesNodeClick'; series: any; datum: any; xKey: string; yKey: string; }) => any",
       "[key: string]": "Function"
     },
     "docs": {
