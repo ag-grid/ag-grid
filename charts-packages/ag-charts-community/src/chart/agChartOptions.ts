@@ -364,13 +364,13 @@ export interface AgChartBackground {
 
 export interface AgBaseChartListeners {
     /** The listener to call when a node (marker, column, bar, tile or a pie slice) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */
-    seriesNodeClick: (
+    seriesNodeClick: (event: {
         type: 'seriesNodeClick',
         series: any,
         datum: any,
         xKey: string,
         yKey: string,
-    ) => any;
+    }) => any;
     /** Generic listeners. */
     [key: string]: Function;
 }

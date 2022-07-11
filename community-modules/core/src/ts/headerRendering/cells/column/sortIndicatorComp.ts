@@ -31,16 +31,32 @@ export class SortIndicatorComp extends Component {
     private column: Column;
     private suppressOrder: boolean;
 
-    constructor() {
+    constructor(skipTemplate?: boolean) {
         super();
 
-        this.setTemplate(SortIndicatorComp.TEMPLATE);
+        if (!skipTemplate) {
+            this.setTemplate(SortIndicatorComp.TEMPLATE);
+        }
+    }
+
+    public attachCustomElements(
+        eSortOrder: HTMLElement,
+        eSortAsc: HTMLElement,
+        eSortDesc: HTMLElement,
+        eSortMixed: HTMLElement,
+        eSortNone: HTMLElement
+    ) {
+        this.eSortOrder = eSortOrder;
+        this.eSortAsc = eSortAsc;
+        this.eSortDesc = eSortDesc;
+        this.eSortMixed = eSortMixed;
+        this.eSortNone = eSortNone;
     }
 
     public setupSort(column: Column, suppressOrder: boolean = false): void {
         this.column = column;
         this.suppressOrder = suppressOrder;
-        
+
         this.setupMultiSortIndicator();
 
         const canSort = !!this.column.getColDef().sortable;
@@ -98,7 +114,7 @@ export class SortIndicatorComp extends Component {
 
     private setupMultiSortIndicator() {
         this.addInIcon('sortUnSort', this.eSortMixed, this.column);
-    
+
         const isColumnShowingRowGroup = this.column.getColDef().showRowGroup;
         const areGroupsCoupled = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
         if (areGroupsCoupled && isColumnShowingRowGroup) {

@@ -43,27 +43,18 @@ const options: AgChartOptions = {
     tracking: false
   },
   listeners: {
-    seriesNodeClick: (event: any) => {
-      var datum = event.datum
+    seriesNodeClick: ({ datum, xKey, yKey, series }) => {
       window.alert(
         'Temperature in ' +
-        datum[event.xKey] +
+        datum[xKey] +
         ': ' +
-        String(datum[event.yKey]) +
+        String(datum[yKey]) +
         '°C' +
         '\nSeries: ' +
-        event.series.id
+        series.id
       )
     },
   },
 }
 
-var chart = agCharts.AgChart.create(options)
-
-function listUnitsSoldByBrand(brands: Record<string, number>) {
-  var result = ''
-  for (var key in brands) {
-    result += key + ': ' + brands[key] + '\n'
-  }
-  return result
-}
+agCharts.AgChart.create(options)

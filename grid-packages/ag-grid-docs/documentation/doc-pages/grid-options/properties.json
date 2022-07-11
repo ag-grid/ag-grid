@@ -1031,6 +1031,7 @@
         "serverSideFilterAllLevels": {},
         "serverSideSortOnServer": {},
         "serverSideFilterOnServer": {},
+        "serverSideInitialRowCount": {},
         "getChildCount": {},
         "getServerSideGroupLevelParams": {},
         "isServerSideGroupOpenByDefault": {},

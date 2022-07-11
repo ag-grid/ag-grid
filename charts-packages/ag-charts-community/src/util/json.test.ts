@@ -381,10 +381,12 @@ describe('json module', () => {
 
             jsonApply(target, json as any, opts);
             expect(target.recurse.recurse.recurse.str).toEqual(testString);
+            expect(target.recurse).toBeInstanceOf(TestApply);
+            expect(target.recurse.recurse).toBeInstanceOf(TestApply);
             expect(target.recurse.recurse.recurse).toBeInstanceOf(TestApply);
         });
 
-        it('should instantiate complex types by path', () => {
+        it('should instantiate complex types by path with nested arrays', () => {
             const testString1 = 'hello!';
             const testString2 = 'world!';
             const target = new TestApply({});
