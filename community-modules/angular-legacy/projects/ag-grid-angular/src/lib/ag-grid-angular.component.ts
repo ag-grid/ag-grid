@@ -735,12 +735,15 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     /** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.
      * Default: `1`     */
     @Input() public infiniteInitialRowCount: number | undefined = undefined;
+    /** Set how many loading rows to display to the user for the root level group.
+     * Default: `1`     */
+    @Input() public serverSideInitialRowCount: number | undefined = undefined;
     /** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.
 Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,
 Full Store is used.
      */
     @Input() public serverSideStoreType: ServerSideStoreType | undefined = undefined;
-    /** Whether Server-side Row Model will use Infinite Scrolling
+    /** Set whether Server-side Row Model will use Infinite Scrolling
      * Default: `false`     */
     @Input() public serverSideInfiniteScroll: boolean | undefined = undefined;
     /** How many rows for each block in the store, i.e. how many rows returned from the server at a time.
