@@ -286,12 +286,8 @@ function applyAxes<
 
                 debug(`applying axis diff idx ${i}`, axisDiff);
 
-                const applyOpts = {
-                    ...JSON_APPLY_OPTIONS,
-                    path: `axes[${i}]`,
-                };
-
-                jsonApply(a, axisDiff, applyOpts);
+                const path = `axes[${i}]`;
+                applyOptionValues(a, axisDiff, { path });
             });
             return true;
         }
