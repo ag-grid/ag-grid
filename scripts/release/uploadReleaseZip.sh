@@ -2,7 +2,7 @@
 
 if [ "$#" -ne 1 ]
   then
-    echo "You must supply a release file to upload"
+    echo "You must supply a version file to upload"
     echo "For example: ./scripts/release/uploadReleaseZip.sh release_20190222_v2010.zip"
     exit 1
 fi
@@ -12,11 +12,15 @@ function checkFileExists {
     if ! [[ -f "$file" ]]
     then
         echo "File [$file] doesn't exist - exiting script.";
-        exit;
+        exit 1;
     fi
 }
 
-FILENAME=$1
+RAW_VERSION=$1
+VERSION=""${RAW_VERSION//./}""
+TIMESTAMP=`date +%Y%m%d`
+FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
+
 CREDENTIALS_LOCATION=$HOME/$CREDENTIALS_FILE
 SSH_LOCATION=$HOME/$SSH_FILE
 
@@ -24,13 +28,13 @@ SSH_LOCATION=$HOME/$SSH_FILE
 if [ -z "$CREDENTIALS_LOCATION" ]
 then
       echo "\$CREDENTIALS_LOCATION is not set"
-      exit;
+      exit 1;
 fi
 
 if [ -z "$SSH_LOCATION" ]
 then
       echo "\$SSH_LOCATION is not set"
-      exit;
+      exit 1;
 fi
 
 checkFileExists $FILENAME

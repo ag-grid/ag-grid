@@ -66,10 +66,12 @@ function updateMenu(galleryConfig) {
         disableActive: true,
         // by including children but hiding them, the menu will still expand correctly when those children pages are open
         hideChildren: true,
-        items: Object.keys(galleryConfig[category]).map(name => ({
-            title: name,
-            url: `${rootPath}gallery/${toKebabCase(name)}/`,
-        }))
+        items: Object.keys(galleryConfig[category])
+            .filter(name => !name.startsWith('_'))
+            .map(name => ({
+                title: name,
+                url: `${rootPath}gallery/${toKebabCase(name)}/`,
+            })),
     }));
 
     writeFile(options.menuJsonPath, JSON.stringify(menu, null, 2));
@@ -163,7 +165,9 @@ export default thumbnails;`;
 }
 
 function getExampleNames(galleryConfig) {
-    return Object.keys(galleryConfig).reduce((names, c) => names.concat(Object.keys(galleryConfig[c])), []);
+    return Object.keys(galleryConfig)
+        .reduce((names, c) => names.concat(Object.keys(galleryConfig[c])), [])
+        .map((name) => name.startsWith('_') ? name.substr(1) : name);
 }
 
 function findItemWithUrl(items, url) {

@@ -370,11 +370,24 @@ const restrictSearchForPageQueries = () => {
         )
     });
 };
+const renameSitemapXml = () => {
+    // renames sitemap-index.xml to sitemap.xml (which is standard
+
+    return applyCustomisation('gatsby-plugin-sitemap', '4.10.0', {
+        name: 'Rename sitemap reference',
+        apply: () => updateFileContents(
+            './node_modules/gatsby-plugin-sitemap/gatsby-ssr.js',
+            `href: withPrefix(_path.posix.join(output, "/sitemap-index.xml"))`,
+            `href: withPrefix(_path.posix.join(output, "/sitemap.xml"))`,
+        )
+    });
+};
 
 console.log(`--------------------------------------------------------------------------------`);
 console.log(`Applying customisations...`);
 
 const success = [
+    renameSitemapXml(),
     addMarkdownIncludeSupport(),
     fixScrollingIssue(),
     fixFileLoadingIssue(),

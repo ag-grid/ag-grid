@@ -42,8 +42,6 @@
 |
 | ```jsx
 | <ag-grid-vue
-|     #myGrid // assign an angular ID to the grid - optional
-|
 |     // provide gridReady callback to the grid
 |     @grid-ready="onGridReady"
 |     // ...
@@ -56,10 +54,10 @@
 | }
 | ```
 |
-| The APIs are accessible through the component. For example, above the ID is given as `'#myGrid'` which then allows the API to be accessed like this:
+| The APIs are then accessible through the component:
 |
 | ```html
-| <button @click="myGrid.api.deselectAll()">Clear Selection</button>
+| <button @click="this.api.deselectAll()">Clear Selection</button>
 | ```
 |
 | ## Grid Options

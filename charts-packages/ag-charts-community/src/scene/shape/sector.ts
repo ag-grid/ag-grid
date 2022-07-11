@@ -71,12 +71,6 @@ export class Sector extends Path {
                 centerX + innerRadius * Math.cos(startAngle),
                 centerY + innerRadius * Math.sin(startAngle)
             );
-            // if (showTip) {
-            //     path.lineTo(
-            //         centerX + 0.5 * (innerRadius + outerRadius) * Math.cos(startAngle) + tipOffset * Math.cos(startAngle + Math.PI / 2),
-            //         centerY + 0.5 * (innerRadius + outerRadius) * Math.sin(startAngle) + tipOffset * Math.sin(startAngle + Math.PI / 2)
-            //     );
-            // }
             path.lineTo(
                 centerX + outerRadius * Math.cos(startAngle),
                 centerY + outerRadius * Math.sin(startAngle)
@@ -84,22 +78,12 @@ export class Sector extends Path {
         }
 
         path.cubicArc(centerX, centerY, outerRadius, outerRadius, 0, startAngle, endAngle, 0);
-        // path[fullPie ? 'moveTo' : 'lineTo'](
-        //     centerX + innerRadius * Math.cos(endAngle),
-        //     centerY + innerRadius * Math.sin(endAngle)
-        // );
         if (fullPie) {
             path.moveTo(
                 centerX + innerRadius * Math.cos(endAngle),
                 centerY + innerRadius * Math.sin(endAngle)
             );
         } else {
-            // if (showTip) {
-            //     path.lineTo(
-            //         centerX + 0.5 * (innerRadius + outerRadius) * Math.cos(endAngle) + tipOffset * Math.cos(endAngle + Math.PI / 2),
-            //         centerY + 0.5 * (innerRadius + outerRadius) * Math.sin(endAngle) + tipOffset * Math.sin(endAngle + Math.PI / 2)
-            //     );
-            // }
             // Temp workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=993330
             // Revert this commit when fixed ^^.
             const x = centerX + innerRadius * Math.cos(endAngle);

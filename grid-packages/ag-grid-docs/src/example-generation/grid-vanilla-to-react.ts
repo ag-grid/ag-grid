@@ -1,8 +1,9 @@
 import { ImportType, isInstanceMethod, convertFunctionToProperty, getModuleRegistration } from './parser-utils';
 import { convertTemplate, getImport } from './react-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
+const path = require('path');
 
-function getModuleImports(bindings: any, componentFilenames: string[]): string[] {
+function getModuleImports(bindings: any, componentFilenames: string[], allStylesheets: string[]): string[] {
     const { gridSettings } = bindings;
 
     let imports = [
@@ -18,6 +19,10 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
     const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
+    if(allStylesheets && allStylesheets.length > 0) {
+        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
+    }
+
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
     }
@@ -27,7 +32,7 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
     return imports;
 }
 
-function getPackageImports(bindings: any, componentFilenames: string[]): string[] {
+function getPackageImports(bindings: any, componentFilenames: string[], allStylesheets: string[]): string[] {
     const { gridSettings } = bindings;
 
     const imports = [
@@ -48,6 +53,10 @@ function getPackageImports(bindings: any, componentFilenames: string[]): string[
     const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
+    if(allStylesheets && allStylesheets.length > 0) {
+        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
+    }
+
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
     }
@@ -55,8 +64,8 @@ function getPackageImports(bindings: any, componentFilenames: string[]): string[
     return imports;
 }
 
-function getImports(bindings: any, componentFileNames: string[], importType: ImportType): string[] {
-    return (importType === 'packages' ? getPackageImports : getModuleImports)(bindings, componentFileNames);
+function getImports(bindings: any, componentFileNames: string[], importType: ImportType, allStylesheets: string[]): string[] {
+    return (importType === 'packages' ? getPackageImports : getModuleImports)(bindings, componentFileNames, allStylesheets);
 }
 
 function getTemplate(bindings: any, componentAttributes: string[]): string {
@@ -77,7 +86,7 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
     return convertTemplate(template);
 }
 
-export function vanillaToReact(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
+export function vanillaToReact(bindings: any, componentFilenames: string[], allStylesheets: string[]): (importType: ImportType) => string {
     const { properties, data, gridSettings, onGridReady, resizeToFit } = bindings;
     const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToProperty(event.handler));
     const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToProperty(handler.body));
@@ -112,7 +121,7 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): (im
     }
 
     return importType => {
-        const imports = getImports(bindings, componentFilenames, importType);
+        const imports = getImports(bindings, componentFilenames, importType, allStylesheets);
         const instanceBindings = [];
         const stateProperties = [];
         const componentAttributes = [];

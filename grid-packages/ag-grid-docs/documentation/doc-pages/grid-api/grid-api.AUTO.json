@@ -729,7 +729,9 @@
   },
   "setIsFullWidthRow": {
     "type": {
-      "arguments": { "isFullWidthRowFunc": "(rowNode: RowNode) => boolean" },
+      "arguments": {
+        "isFullWidthRowFunc": "(params: IsFullWidthRowParams) => boolean"
+      },
       "returnType": "void"
     }
   },

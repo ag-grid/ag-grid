@@ -13,7 +13,7 @@ import { getEntryFile } from './helpers';
  * This generates the HTML to execute an example.
  */
 export const getIndexHtml = (exampleInfo, isExecuting = false) => {
-    const { sourcePath, options, library, importType } = exampleInfo;
+    const { sourcePath, options, library, importType, type } = exampleInfo;
     let { boilerplatePath, appLocation, framework, internalFramework } = exampleInfo;
 
     const getFileUrl = file =>
@@ -46,7 +46,8 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
         options,
         styleFiles,
         importType,
-        internalFramework
+        internalFramework,
+        type
     };
 
     switch (framework) {

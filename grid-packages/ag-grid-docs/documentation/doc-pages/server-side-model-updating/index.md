@@ -3,42 +3,23 @@ title: "SSRM Updating Data"
 enterprise: true
 ---
 
-It is possible to manage data updates using the Server-Side Row Model (SSRM).
+It is possible to manage data updates using the Server-Side Row Model (SSRM). The different options for updating are as follows:
 
-The options available for doing updates depends on whether Infinite Scrolling is used. The options are as follows:
+- [Single Row](#single-row-updates) - Update Attributes of a Single Row.
+- [Transactions](/server-side-model-transactions/) - Add, remove and update rows in the grid.
+- [High Frequency](/server-side-model-high-frequency/) - Apply transactions at high speed.
 
-| Update Type    | Description                              | Infinite Support |
-| -------------- | ---------------------------------------- | ---------------- |
-| Single Row     | Update attributes of a single row.       | Yes              |
-| Transaction    | Add, remove and update rows in the grid. | No               |
-| High Frequency | Apply transactions at high speed.        | No               |
+If using [Infinite Scroll](/server-side-model-row-stores/) (`serverSideInfiniteScroll=true`) then [Transactions](/server-side-model-transactions/) and [High Frequency](/server-side-model-high-frequency/) updates are not permitted. The only available option for updating data when using Infinite Scroll is [Single Row Updates](#single-row-updates).
 
+[[note]]
+| The reason row inserts and removes are not allowed while using Infinite Scroll is that they impact the block boundaries.
+| For example suppose a block of 100 rows is received from the server, and you try to insert 10
+| rows into the middle of the block - this would result in 10 rows falling off the end of the block as they
+| get pushed out. Similarly, if rows were removed, rows would be missing from the end of the block.
+| 
+| If you do need to insert or remove rows while using Infinite Scroll, then the update needs to be done on the server and then the grid should be refreshed. The example [Update & Refresh](#update--refresh) below demonstrates this.
 
-- **Update Single Row**: This means changing an attribute for a particular row.
-
-- **Update Transactions**: This means adding, removing or updating rows.
-
-- **High Frequency**: This means adding, removing or updating rows at high frequency.
-
-In other words, if Infinite Scrolling is enabled, Transaction and High Frequency Updates are not permitted.
-
-## Updates for Infinite Scroll
-
-If using Infinite Scroll, then it is not possible to insert or remove rows from the set provided to the grid. The only update option is [Single Row](#single-row-updates) updates which is explained below.
-
-The reason inserts and removes are not allowed is that doing inserts or removes would impact the block
-boundaries. For example suppose a block of 100 rows is read back from the server, and you try to insert 10
-rows into the middle of the block - this would result in 10 rows falling off the end of the block as they
-get pushed out. Similarly, if rows were removed, rows would be missing from the end of the block.
-
-If you do need to insert or remove rows while using Infinite Scroll, then the update needs to be done on the server and then have the grid refresh. The example [Update & Refresh](#update--refresh) below demonstrates this.
-
-## Updates for No Infinite Scroll
-
-If not using Infinite Scroll, you can still update using [Single Row](#single-row-updates) and [Update & Refresh](#update--refresh) just like the when using Infinite Scroll.
-
-
-On top of that, you can also update using [Transactions](/server-side-model-transactions/) and [High Frequency](/server-side-model-high-frequency/) Transactions.
+If not using Infinite Scroll (`serverSideInfiniteScroll=false`), there are no restrictions, you can use any of the provided ways described here.
 
 ## Single Row Updates
 

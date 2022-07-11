@@ -113,7 +113,7 @@ Here is the result of the configuration shown in the above snippet.
 </div>
 
 [[note]]
-| If `strokeWidth` is set to a value greater than `1`, it is recommended to set the axis line `strokeWidth` to the same value in order to preserve the alignment of the bars with the x-axis line.
+| If `strokeWidth` is set to a value greater than `1`, it is recommended to set the axis line `strokeWidth` to the same value in order to preserve the alignment of the bars with the axis line.
 
 ## Bar Padding Options
 
@@ -137,7 +137,7 @@ sparklineOptions: {
 
 The padding on the outer edges of the first and last bars can also be adjusted. As with `paddingInner`, this value can be between 0 and 1.
 
-If the value of `paddingOuter` is increased, the x-axis line will stick out more at both ends of the sparkline.
+If the value of `paddingOuter` is increased, the axis line will stick out more at both ends of the sparkline.
 
 Here's a snippet where the `paddingOuter` is set to `0`.
 
@@ -246,7 +246,7 @@ Label `placement` options include `insideBase`, `center`, `insideEnd` and `outsi
 
 ## Axis Line Options
 
-By default, an x-axis line is displayed which can be modified using the `axis` options.
+By default, an axis line is displayed which can be modified using the `axis` options.
 
 Here is a snippet to demonstrate axis formatting.
 
@@ -254,8 +254,8 @@ Here is a snippet to demonstrate axis formatting.
 sparklineOptions: {
     type: 'bar',
     axis: {
-        stroke: '#7cecb3', // sets the x-axis line stroke
-        strokeWidth: 3, // sets the x-axis line strokeWidth
+        stroke: '#7cecb3', // sets the axis line stroke
+        strokeWidth: 3, // sets the axis line strokeWidth
     },
 }
 ```
@@ -266,7 +266,7 @@ sparklineOptions: {
 </div>
 
 [[note]]
-| It's possible to remove the x-axis line entirely by setting the axis `strokeWidth` to `0`.
+| It's possible to remove the axis line entirely by setting the axis `strokeWidth` to `0`.
 
 ## Sparkline Padding Options
 
@@ -311,7 +311,7 @@ The following example shows how to build progress bars using bar sparklines. Not
 
 More advanced customisations are discussed separately in the following sections:
 
-- [Axis](/sparklines-axis-types/) - configure the x-axis type via `axis` options.
+- [Axis](/sparklines-axis-types/) - configure the axis type via `axis` options.
 - [Tooltips](/sparklines-tooltips/) - configure tooltips using `tooltip` options.
 - [Points of Interest](/sparklines-points-of-interest/) - configure individual points of interest using a `formatter`.
 

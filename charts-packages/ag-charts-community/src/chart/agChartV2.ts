@@ -108,11 +108,11 @@ export abstract class AgChart {
         return null;
     }
 
-    public static create<T extends AgChartOptions>(options: T, container?: HTMLElement, data?: any[]): AgChartType<T> {
+    public static create<T extends AgChartOptions>(options: T, _container?: HTMLElement, _data?: any[]): AgChartType<T> {
         return AgChartV2.create(options as any);
     }
 
-    public static update<T extends AgChartOptions>(chart: AgChartType<T>, options: T, container?: HTMLElement, data?: any[]) {
+    public static update<T extends AgChartOptions>(chart: AgChartType<T>, options: T, _container?: HTMLElement, _data?: any[]) {
         return AgChartV2.update(chart, options as any);
     }
 }
@@ -254,7 +254,7 @@ function applySeries<
 
             debug(`applying series diff idx ${i}`, seriesDiff);
 
-            jsonApply(s, seriesDiff);
+            applySeriesValues(s as any, seriesDiff, {path: `series[${i}]`});
             s.markNodeDataDirty();
         });
 
@@ -298,45 +298,38 @@ function applyAxes<
 
 function createSeries(options: SeriesOptionsTypes[]): Series[] {
     const series: Series<any>[] = [];
-    const skip: (keyof NonNullable<SeriesOptionsTypes>)[] = ['listeners'];
 
     let index = 0;
     for (const seriesOptions of options || []) {
         const path = `series[${index++}]`;
         switch (seriesOptions.type) {
             case 'area':
-                series.push(applySeriesValues(new AreaSeries(), seriesOptions, {path, skip}));
+                series.push(applySeriesValues(new AreaSeries(), seriesOptions, {path}));
                 break;
             case 'bar':
                 // fall-through - bar and column are synonyms.
             case 'column':
-                series.push(applySeriesValues(new BarSeries(), seriesOptions, {path, skip}));
+                series.push(applySeriesValues(new BarSeries(), seriesOptions, {path}));
                 break;
             case 'histogram':
-                series.push(applySeriesValues(new HistogramSeries(), seriesOptions, {path, skip}));
+                series.push(applySeriesValues(new HistogramSeries(), seriesOptions, {path}));
                 break;
             case 'line':
-                series.push(applySeriesValues(new LineSeries(), seriesOptions, {path, skip}));
+                series.push(applySeriesValues(new LineSeries(), seriesOptions, {path}));
                 break;
             case 'scatter':
-                series.push(applySeriesValues(new ScatterSeries(), seriesOptions, {path, skip}));
+                series.push(applySeriesValues(new ScatterSeries(), seriesOptions, {path}));
                 break;
             case 'pie':
-                series.push(applySeriesValues(new PieSeries(), seriesOptions, {path, skip}));
+                series.push(applySeriesValues(new PieSeries(), seriesOptions, {path}));
                 break;
             case 'treemap':
-                series.push(applySeriesValues(new TreemapSeries(), seriesOptions, {path, skip}));
+                series.push(applySeriesValues(new TreemapSeries(), seriesOptions, {path}));
                 break;
             default:
                 throw new Error('AG Charts - unknown series type: ' + (seriesOptions as any).type);
         }
     }
-
-    series.forEach((next, index) => {
-        const listeners = options?.[index]?.listeners;
-        if (listeners == null) { return; }
-        registerListeners(next, listeners as {[key: string]: Function});
-    });
 
     return series;
 }
@@ -349,19 +342,19 @@ function createAxis(options: AgCartesianAxisOptions[]): ChartAxis[] {
         const path = `axis[${index++}]`;
         switch (axisOptions.type) {
             case 'number':
-                axes.push(applyAxisValues(new NumberAxis(), axisOptions, {path}));
+                axes.push(applyOptionValues(new NumberAxis(), axisOptions, {path}));
                 break;
             case LogAxis.type:
-                axes.push(applyAxisValues(new LogAxis(), axisOptions, {path}));
+                axes.push(applyOptionValues(new LogAxis(), axisOptions, {path}));
                 break;
             case CategoryAxis.type:
-                axes.push(applyAxisValues(new CategoryAxis(), axisOptions, {path}));
+                axes.push(applyOptionValues(new CategoryAxis(), axisOptions, {path}));
                 break;
             case GroupedCategoryAxis.type:
-                axes.push(applyAxisValues(new GroupedCategoryAxis(), axisOptions, {path}));
+                axes.push(applyOptionValues(new GroupedCategoryAxis(), axisOptions, {path}));
                 break;
             case TimeAxis.type:
-                axes.push(applyAxisValues(new TimeAxis(), axisOptions, {path}));
+                axes.push(applyOptionValues(new TimeAxis(), axisOptions, {path}));
                 break;
             default:
                 throw new Error('AG Charts - unknown axis type: ' + axisOptions['type']);
@@ -371,10 +364,15 @@ function createAxis(options: AgCartesianAxisOptions[]): ChartAxis[] {
     return axes;
 }
 
-function registerListeners<T extends { addEventListener(key: string, cb: SourceEventListener<any>): void }>(
+type ObservableLike = {
+    addEventListener(key: string, cb: SourceEventListener<any>): void;
+    clearEventListeners(): void;
+};
+function registerListeners<T extends ObservableLike>(
     source: T,
     listeners?: { [K: string]: Function }
 ) {
+    source.clearEventListeners();
     for (const property in listeners) {
         source.addEventListener(property, listeners[property] as SourceEventListener<any>);
     }
@@ -385,7 +383,7 @@ const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
         'title': Caption,
         'subtitle': Caption,
         'shadow': DropShadow,
-        'axes[].crossLines[]': CrossLine,
+        'crossLines': CrossLine,
     },
     allowedTypes: {
         'series[].marker.shape': ['primitive', 'function'],
@@ -393,14 +391,14 @@ const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
     },
 };
 
-function applyOptionValues<T extends ChartType, S extends ChartOptionType<T>>(
+function applyOptionValues<T, S>(
     target: T,
     options?: S,
     { skip, path }: { skip?: (keyof T | keyof S)[], path?: string } = {},
 ): T {
     const applyOpts = {
         ...JSON_APPLY_OPTIONS,
-        skip: ['type' as keyof (T|S), ...(skip || [])],
+        skip: ['type' as keyof (T), ...(skip || [])],
         ...(path ? { path } : {}),
     };
     return jsonApply<T, any>(target, options, applyOpts);
@@ -409,8 +407,9 @@ function applyOptionValues<T extends ChartType, S extends ChartOptionType<T>>(
 function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>(
     target: T,
     options?: S,
-    { skip, path }: { skip?: (keyof T | keyof S)[], path?: string } = {},
+    { path }: { path?: string } = {},
 ): T {
+    const skip: (keyof NonNullable<SeriesOptionsTypes>)[] = ['listeners'];
     const ctrs = JSON_APPLY_OPTIONS?.constructors || {};
     const seriesTypeOverrides = {
         constructors: {
@@ -425,27 +424,13 @@ function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>
         skip: ['type' as keyof (T|S), ...(skip || [])],
         ...(path ? { path } : {}),
     };
-    return jsonApply<T, any>(target, options, applyOpts);
-}
 
-function applyAxisValues<T extends Axis<any, any>, S extends AxisOptionType<T>>(
-    target: T,
-    options?: S,
-    { skip, path }: { skip?: (keyof T | keyof S)[], path?: string } = {},
-): T {
-    const ctrs = JSON_APPLY_OPTIONS?.constructors || {};
-    const axisOverrides = {
-        constructors: {
-            ...ctrs,
-            'crossLines': ctrs['axes[].crossLines[]'],
-        },
-    };
+    const result = jsonApply<T, any>(target, options, applyOpts);
 
-    const applyOpts = {
-        ...JSON_APPLY_OPTIONS,
-        ...axisOverrides,
-        skip: ['type' as keyof (T|S), ...(skip || [])],
-        ...(path ? { path } : {}),
-    };
-    return jsonApply<T, any>(target, options, applyOpts);
+    const listeners = options?.listeners;
+    if (listeners != null) {
+        registerListeners(target, listeners as {[key: string]: Function});
+    }
+
+    return result;
 }

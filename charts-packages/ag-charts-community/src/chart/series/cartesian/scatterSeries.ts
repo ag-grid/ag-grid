@@ -17,6 +17,7 @@ import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Marker } from '../../marker/marker';
 import { MeasuredLabel } from '../../../util/labelPlacement';
 import { isContinuous } from '../../../util/value';
+import { Deprecated } from '../../../util/validation';
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -68,25 +69,30 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     /**
      * @deprecated Use {@link marker.fill} instead.
      */
-    fill: string | undefined = '#c16068';
+     @Deprecated('Use marker.fill instead.', { default: '#c16068' })
+     fill: string | undefined = '#c16068';
 
     /**
      * @deprecated Use {@link marker.stroke} instead.
      */
-    stroke: string | undefined = '#874349';
+     @Deprecated('Use marker.stroke instead.', { default: '#874349' })
+     stroke: string | undefined = '#874349';
 
     /**
      * @deprecated Use {@link marker.strokeWidth} instead.
      */
+     @Deprecated('Use marker.strokeWidth instead.', { default: 2 })
     strokeWidth: number = 2;
     /**
      * @deprecated Use {@link marker.fillOpacity} instead.
      */
+     @Deprecated('Use marker.fillOpacity instead.', { default: 1 })
     fillOpacity: number = 1;
 
     /**
      * @deprecated Use {@link marker.strokeOpacity} instead.
      */
+     @Deprecated('Use marker.strokeOpacity instead.', { default: 1 })
     strokeOpacity: number = 1;
 
     title?: string = undefined;
@@ -135,8 +141,6 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     setColors(fills: string[], strokes: string[]) {
-        this.fill = fills[0];
-        this.stroke = strokes[0];
         this.marker.fill = fills[0];
         this.marker.stroke = strokes[0];
     }
@@ -357,7 +361,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         labelData: ScatterNodeDatum[];
         labelSelection: Selection<Text, Group, ScatterNodeDatum, any>;
     }): Selection<Text, Group, ScatterNodeDatum, any> {
-        const { labelSelection, labelData } = opts;
+        const { labelSelection } = opts;
 
         const placedLabels = this.chart?.placeLabels().get(this) ?? [];
 

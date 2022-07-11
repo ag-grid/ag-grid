@@ -126,7 +126,8 @@ export const getExampleInfo = (
 const getFrameworkFiles = (framework, internalFramework) => {
     if (framework === 'javascript' && internalFramework !== 'typescript') { return []; }
 
-    let files = ['systemjs.config.js'];
+    // spl temporary css loader
+    let files = ['systemjs.config.js', 'css.js'];
 
     if (isDevelopment()) {
         files.push('systemjs.config.dev.js');
@@ -231,7 +232,7 @@ export const openPlunker = exampleInfo => {
 
 export const isUsingPublishedPackages = () => process.env.GATSBY_USE_PUBLISHED_PACKAGES === 'true';
 
-export const getCssFilePaths = theme => {
+export const getCssFilePaths = (importType, theme) => {
     const themeFiles = theme ?
         [theme] :
         ['alpine', 'balham', 'material'];
@@ -241,9 +242,11 @@ export const getCssFilePaths = theme => {
         ...themeFiles.map(theme => `ag-theme-${theme}.css`)
     ];
 
+    const agCommunityPackage = importType === 'packages' ? 'ag-grid-community' : '@ag-grid-community';
+
     const getCssFilePath = file => isUsingPublishedPackages() ?
         `https://unpkg.com/@ag-grid-community/styles@${agGridVersion}/styles/${file}` :
-        `${localPrefix}/@ag-grid-community/styles/${file}`;
+        `${localPrefix}/${agCommunityPackage}/styles/${file}`;
 
     return cssFiles.map(getCssFilePath);
 };

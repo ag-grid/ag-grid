@@ -14,7 +14,7 @@ export type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[numb
 export function optionsType(
     input: { type?: AgChartOptions['type'], series?: { type?: SeriesOptionsTypes['type']}[]}
 ): NonNullable<AgChartOptions['type']> {
-    return input.type || input.series?.[0]?.type || 'cartesian';
+    return input.type ?? input.series?.[0]?.type ?? 'line';
 }
 
 export function isAgCartesianChartOptions(input: AgChartOptions): input is AgCartesianChartOptions {
@@ -221,8 +221,11 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
             paletteOptions.stroke = takeColours(context, strokes, 1)[0];
             break;
         case 'scatter':
-            paletteOptions.fill = takeColours(context, fills, 1)[0];
-            // fall-through - only fills varies for `scatter`.
+            paletteOptions.marker = {
+                stroke: takeColours(context, strokes, 1)[0],
+                fill: takeColours(context, fills, 1)[0],
+            };
+            break;
         case 'line':
             paletteOptions.stroke = takeColours(context, fills, 1)[0];
             paletteOptions.marker = {

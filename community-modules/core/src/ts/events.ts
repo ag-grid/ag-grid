@@ -135,9 +135,9 @@ export interface DragEvent<TData = any> extends AgGridEvent<TData> {
     target: HTMLElement;
 }
 
-export interface DragStartedEvent extends DragEvent { }
+export interface DragStartedEvent<TData = any> extends DragEvent<TData> { }
 
-export interface DragStoppedEvent extends DragEvent { }
+export interface DragStoppedEvent<TData = any> extends DragEvent<TData> { }
 
 // For internal use only.
 // This event allows us to detect when other inputs in the same named group are changed, so for example we can ensure
@@ -279,7 +279,7 @@ export interface BodyScrollEvent<TData = any> extends AgGridEvent<TData> {
     top: number;
 }
 
-export interface BodyScrollEndEvent extends BodyScrollEvent { }
+export interface BodyScrollEndEvent<TData = any> extends BodyScrollEvent<TData> { }
 
 // not documented
 export interface FlashCellsEvent<TData = any> extends AgGridEvent<TData> {
@@ -313,7 +313,7 @@ export interface CellFocusedParams {
 // the rowNode.
 export interface CellFocusedEvent<TData = any> extends AgGridEvent<TData>, CellFocusedParams {}
 
-export interface FullWidthRowFocusedEvent extends CellFocusedEvent {
+export interface FullWidthRowFocusedEvent<TData = any> extends CellFocusedEvent<TData> {
     fromBelow: boolean;
 }
 
@@ -358,30 +358,30 @@ export interface ColumnEvent<TData = any> extends AgGridEvent<TData> {
     source: ColumnEventType;
 }
 
-export interface ColumnResizedEvent extends ColumnEvent {
+export interface ColumnResizedEvent<TData = any> extends ColumnEvent<TData> {
     /** Set to true for last event in a sequence of move events */
     finished: boolean;
     /** Any columns resized due to flex */
     flexColumns: Column[] | null;
 }
 
-export interface ColumnPivotChangedEvent extends ColumnEvent { }
+export interface ColumnPivotChangedEvent<TData = any> extends ColumnEvent<TData> { }
 
-export interface ColumnRowGroupChangedEvent extends ColumnEvent { }
+export interface ColumnRowGroupChangedEvent<TData = any> extends ColumnEvent<TData> { }
 
-export interface ColumnValueChangedEvent extends ColumnEvent { }
+export interface ColumnValueChangedEvent<TData = any> extends ColumnEvent<TData> { }
 
-export interface ColumnMovedEvent extends ColumnEvent {
+export interface ColumnMovedEvent<TData = any> extends ColumnEvent<TData> {
     /** The position the column was moved to */
     toIndex?: number;
 }
 
-export interface ColumnVisibleEvent extends ColumnEvent {
+export interface ColumnVisibleEvent<TData = any> extends ColumnEvent<TData> {
     /** True if column was set to visible, false if set to hide */
     visible?: boolean;
 }
 
-export interface ColumnPinnedEvent extends ColumnEvent {
+export interface ColumnPinnedEvent<TData = any> extends ColumnEvent<TData> {
     /** Either 'left', 'right', or null (it not pinned) */
     pinned: string | null;
 }
@@ -476,20 +476,20 @@ export interface CellEditingStartedEvent<TData = any, TValue = any> extends Cell
 
 export interface CellEditingStoppedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
     /** The old value before editing */
-    oldValue: TValue;
+    oldValue: any;
     /** The new value after editing */
-    newValue: TValue;
+    newValue: any;
 }
 
 export interface CellValueChangedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
-    oldValue: TValue;
-    newValue: TValue;
+    oldValue: any;
+    newValue: any;
     source: string | undefined;
 }
 
 export interface CellEditRequestEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
-    oldValue: TValue;
-    newValue: TValue;
+    oldValue: any;
+    newValue: any;
     source: string | undefined;
 }
 
@@ -507,13 +507,13 @@ export interface ColumnRequestEvent<TData = any> extends AgGridEvent<TData> {
     columns: Column[];
 }
 
-export interface ColumnRowGroupChangeRequestEvent extends ColumnRequestEvent { }
+export interface ColumnRowGroupChangeRequestEvent<TData = any> extends ColumnRequestEvent<TData> { }
 
-export interface ColumnPivotChangeRequestEvent extends ColumnRequestEvent { }
+export interface ColumnPivotChangeRequestEvent<TData = any> extends ColumnRequestEvent<TData> { }
 
-export interface ColumnValueChangeRequestEvent extends ColumnRequestEvent { }
+export interface ColumnValueChangeRequestEvent<TData = any> extends ColumnRequestEvent<TData> { }
 
-export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
+export interface ColumnAggFuncChangeRequestEvent<TData = any> extends ColumnRequestEvent<TData> {
     aggFunc: any;
 }
 

@@ -81,7 +81,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
 })
 
 export class AppComponent {
-    private options: ${opsTypeInfo.typeStr};
+    public options: ${opsTypeInfo.typeStr};
     ${propertyVars.filter(p => p.name === 'options').join('\n')}
 
     constructor() {

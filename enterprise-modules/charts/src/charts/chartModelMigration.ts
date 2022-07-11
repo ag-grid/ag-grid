@@ -2,7 +2,7 @@ import { ChartModel } from "@ag-grid-community/core";
 
 // the line below is automatically modified during releases - do not modify
 // (see scripts/release/updateChartModel.js)
-export const CURRENT_VERSION = "27.3.0";
+export const CURRENT_VERSION = "28.0.1";
 
 export function upgradeChartModel(model: ChartModel): ChartModel {
     if (model.version == null) {

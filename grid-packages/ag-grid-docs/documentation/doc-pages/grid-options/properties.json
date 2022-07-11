@@ -222,32 +222,40 @@
             ],
             "more": {
                 "name": "Full Row Editing",
-                "url": "/cell-editing/#full-row-editing"
+                "url": "/cell-editing-full-row/"
             }
         },
         "singleClickEdit": {
             "more": {
                 "name": "Single Click Editing",
-                "url": "/cell-editing/#single-click-editing"
+                "url": "/cell-editing-start-stop/#single-click-editing"
             }
         },
         "suppressClickEdit": {
             "more": {
-                "name": "Single Click, Double Click, No Click Editing",
-                "url": "/cell-editing/#single-click-double-click-no-click-editing"
+                "name": "No Click Editing",
+                "url": "/cell-editing-start-stop/#no-click-editing"
             }
         },
         "stopEditingWhenCellsLoseFocus": {
             "more": {
                 "name": "Stop cell editing",
-                "url": "/cell-editing/#stop-editing-when-grid-loses-focus"
+                "url": "/cell-editing-start-stop/#stop-editing-when-grid-loses-focus"
             }
         },
         "enterMovesDown": {
-            "description": "Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath [as described here](/cell-editing/#enter-key-navigation). Default: `false` "
+            "description": "Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath. Default: `false` ",
+            "more": {
+                "name": "Enter Key Navigation",
+                "url": "/cell-editing-start-stop/#enter-key-navigation"
+            }
         },
         "enterMovesDownAfterEdit": {
-            "description": "Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath [as described here](/cell-editing/#enter-key-navigation). Default: `false` "
+            "description": "Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath. Default: `false` ",
+            "more": {
+                "name": "Enter Key Navigation",
+                "url": "/cell-editing-start-stop/#enter-key-navigation"
+            }
         },
         "undoRedoCellEditing": {
             "more": {
@@ -950,7 +958,8 @@
             "page": {
                 "name": "Row Pinning",
                 "url": "/row-pinning/"
-            }
+            },
+            "description": "Row data uses the [generic type](/typescript-generics) `TData` if provided via `GridOptions&lt;TData&gt;`. Otherwise `TData` will default to `any`."
         },
         "pinnedTopRowData": {},
         "pinnedBottomRowData": {}
@@ -972,7 +981,8 @@
             "page": {
                 "name": "Client-Side Row Model",
                 "url": "/client-side-model/"
-            }
+            },
+            "description": "Row data uses the [generic type](/typescript-generics) `TData` if provided via `GridOptions&lt;TData&gt;`. Otherwise `TData` will default to `any`."
         },
         "rowData": {},
         "resetRowDataOnUpdate": {},
@@ -1115,10 +1125,6 @@
             }
         },
         "rowSelection": {
-            "options": [
-                "single",
-                "multiple"
-            ],
             "more": {
                 "name": "Row Selection",
                 "url": "/row-selection"
@@ -1167,13 +1173,7 @@
                 "url": "/range-selection-fill-handle/"
             }
         },
-        "fillHandleDirection": {
-            "options": [
-                "x",
-                "y",
-                "xy"
-            ]
-        },
+        "fillHandleDirection": {},
         "fillOperation": {},
         "suppressClearOnFillReduction": {}
     },

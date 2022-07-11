@@ -26,7 +26,7 @@ const palette: AgChartThemePalette = {
     ]
 };
 
-function arrayMerge(target: any, source: any, options: any) {
+function arrayMerge(_target: any, source: any, _options: any) {
     return source;
 }
 
@@ -287,8 +287,10 @@ export class ChartTheme {
                 strokeOpacity: 1,
                 lineDash: [0],
                 lineDashOffset: 0,
-                    marker: {
-                    ...ChartTheme.getCartesianSeriesMarkerDefaults()
+                marker: {
+                    ...ChartTheme.getCartesianSeriesMarkerDefaults(),
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
                 },
                 label: {
                     enabled: false,
@@ -314,8 +316,8 @@ export class ChartTheme {
                 strokeWidth: 2,
                 fillOpacity: 1,
                 strokeOpacity: 1,
-                    marker: {
-                    ...ChartTheme.getCartesianSeriesMarkerDefaults()
+                marker: {
+                    ...ChartTheme.getCartesianSeriesMarkerDefaults(),
                 },
                 label: {
                     enabled: false,
@@ -345,9 +347,11 @@ export class ChartTheme {
                     yOffset: 3,
                     blur: 5
                 },
-                    marker: {
+                marker: {
                     ...ChartTheme.getCartesianSeriesMarkerDefaults(),
-                    enabled: false
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
+                    enabled: false,
                 },
                 label: {
                     enabled: false,

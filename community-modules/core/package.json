@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/core",
-  "version": "27.3.0",
+  "version": "28.0.1",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/cjs/es5/main.js",
   "module": "./dist/esm/es5/main.js",
@@ -16,8 +16,7 @@
     "package": "node ../../module-build/rollup/build.js",
     "clean": "npx rimraf dist typings .hash",
     "check-scss-vars": "npx ts-node scripts/check-scss-vars.ts",
-    "hash": "sh ../../scripts/hashDirectory.sh > .hash",
-    "apply-generics": "npx ts-node applyGenerics.ts"
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",

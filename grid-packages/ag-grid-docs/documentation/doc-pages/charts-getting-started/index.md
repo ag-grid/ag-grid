@@ -132,13 +132,14 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 [[only-angular]]
 | ```jsx
 | import { Component } from '@angular/core';
+| import { AgChartOptions } from 'ag-charts-community';
 |
 | @Component({
 |     selector: 'my-app',
 |     templateUrl: './app.component.html'
 | })
 | export class AppComponent {
-|     private options: any;
+|     public options: AgChartOptions;
 |
 |     beverageSpending = [
 |         {

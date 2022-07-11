@@ -78,77 +78,77 @@ export interface PropertyChangedEvent extends AgEvent {
 export class GridOptionsWrapper {
     private static MIN_COL_WIDTH = 10;
 
-    public static PROP_HEADER_HEIGHT = 'headerHeight';
-    public static PROP_GROUP_REMOVE_SINGLE_CHILDREN = 'groupRemoveSingleChildren';
-    public static PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN = 'groupRemoveLowestSingleChildren';
-    public static PROP_PIVOT_HEADER_HEIGHT = 'pivotHeaderHeight';
-    public static PROP_SUPPRESS_CLIPBOARD_PASTE = 'suppressClipboardPaste';
+    public static PROP_HEADER_HEIGHT: 'headerHeight' = 'headerHeight';
+    public static PROP_GROUP_REMOVE_SINGLE_CHILDREN: 'groupRemoveSingleChildren' = 'groupRemoveSingleChildren';
+    public static PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN: 'groupRemoveLowestSingleChildren' = 'groupRemoveLowestSingleChildren';
+    public static PROP_PIVOT_HEADER_HEIGHT: 'pivotHeaderHeight' = 'pivotHeaderHeight';
+    public static PROP_SUPPRESS_CLIPBOARD_PASTE: 'suppressClipboardPaste' = 'suppressClipboardPaste';
 
-    public static PROP_GROUP_HEADER_HEIGHT = 'groupHeaderHeight';
-    public static PROP_PIVOT_GROUP_HEADER_HEIGHT = 'pivotGroupHeaderHeight';
+    public static PROP_GROUP_HEADER_HEIGHT: 'groupHeaderHeight' = 'groupHeaderHeight';
+    public static PROP_PIVOT_GROUP_HEADER_HEIGHT: 'pivotGroupHeaderHeight' = 'pivotGroupHeaderHeight';
 
-    public static PROP_NAVIGATE_TO_NEXT_CELL = 'navigateToNextCell';
-    public static PROP_TAB_TO_NEXT_CELL = 'tabToNextCell';
-    public static PROP_NAVIGATE_TO_NEXT_HEADER = 'navigateToNextHeader';
-    public static PROP_TAB_TO_NEXT_HEADER = 'tabToNextHeader';
+    public static PROP_NAVIGATE_TO_NEXT_CELL: 'navigateToNextCell' = 'navigateToNextCell';
+    public static PROP_TAB_TO_NEXT_CELL: 'tabToNextCell' = 'tabToNextCell';
+    public static PROP_NAVIGATE_TO_NEXT_HEADER: 'navigateToNextHeader' = 'navigateToNextHeader';
+    public static PROP_TAB_TO_NEXT_HEADER: 'tabToNextHeader' = 'tabToNextHeader';
 
-    public static PROP_IS_EXTERNAL_FILTER_PRESENT = 'isExternalFilterPresent';
-    public static PROP_DOES_EXTERNAL_FILTER_PASS = 'doesExternalFilterPass';
+    public static PROP_IS_EXTERNAL_FILTER_PRESENT: 'isExternalFilterPresent' = 'isExternalFilterPresent';
+    public static PROP_DOES_EXTERNAL_FILTER_PASS: 'doesExternalFilterPass' = 'doesExternalFilterPass';
 
-    public static PROP_FLOATING_FILTERS_HEIGHT = 'floatingFiltersHeight';
+    public static PROP_FLOATING_FILTERS_HEIGHT: 'floatingFiltersHeight' = 'floatingFiltersHeight';
 
-    public static PROP_SUPPRESS_ROW_CLICK_SELECTION = 'suppressRowClickSelection';
-    public static PROP_SUPPRESS_ROW_DRAG = 'suppressRowDrag';
-    public static PROP_SUPPRESS_MOVE_WHEN_ROW_DRAG = 'suppressMoveWhenRowDragging';
+    public static PROP_SUPPRESS_ROW_CLICK_SELECTION: 'suppressRowClickSelection' = 'suppressRowClickSelection';
+    public static PROP_SUPPRESS_ROW_DRAG: 'suppressRowDrag' = 'suppressRowDrag';
+    public static PROP_SUPPRESS_MOVE_WHEN_ROW_DRAG: 'suppressMoveWhenRowDragging' = 'suppressMoveWhenRowDragging';
 
-    public static PROP_GET_ROW_CLASS = 'getRowClass';
-    public static PROP_GET_ROW_STYLE = 'getRowStyle';
+    public static PROP_GET_ROW_CLASS: 'getRowClass' = 'getRowClass';
+    public static PROP_GET_ROW_STYLE: 'getRowStyle' = 'getRowStyle';
 
-    public static PROP_GET_ROW_HEIGHT = 'getRowHeight';
+    public static PROP_GET_ROW_HEIGHT: 'getRowHeight' = 'getRowHeight';
 
-    public static PROP_POPUP_PARENT = 'popupParent';
+    public static PROP_POPUP_PARENT: 'popupParent' = 'popupParent';
 
-    public static PROP_DOM_LAYOUT = 'domLayout';
-    public static PROP_ROW_CLASS = 'rowClass';
+    public static PROP_DOM_LAYOUT: 'domLayout' = 'domLayout';
+    public static PROP_ROW_CLASS: 'rowClass' = 'rowClass';
 
-    public static PROP_FILL_HANDLE_DIRECTION = 'fillHandleDirection';
+    public static PROP_FILL_HANDLE_DIRECTION: 'fillHandleDirection' = 'fillHandleDirection';
 
-    public static PROP_GROUP_ROW_AGG_NODES = 'groupRowAggNodes';
-    public static PROP_GET_GROUP_ROW_AGG = 'getGroupRowAgg';
-    public static PROP_GET_BUSINESS_KEY_FOR_NODE = 'getBusinessKeyForNode';
-    public static PROP_GET_CHILD_COUNT = 'getChildCount';
-    public static PROP_PROCESS_ROW_POST_CREATE = 'processRowPostCreate';
-    public static PROP_GET_ROW_NODE_ID = 'getRowNodeId';
-    public static PROP_GET_ROW_ID = 'getRowId';
-    public static PROP_IS_FULL_WIDTH_CELL = 'isFullWidthCell';
-    public static PROP_IS_FULL_WIDTH_ROW = 'isFullWidthRow';
-    public static PROP_IS_ROW_SELECTABLE = 'isRowSelectable';
-    public static PROP_IS_ROW_MASTER = 'isRowMaster';
-    public static PROP_POST_SORT = 'postSort';
-    public static PROP_POST_SORT_ROWS = 'postSortRows';
-    public static PROP_GET_DOCUMENT = 'getDocument';
-    public static PROP_POST_PROCESS_POPUP = 'postProcessPopup';
-    public static PROP_DEFAULT_GROUP_ORDER_COMPARATOR = 'defaultGroupOrderComparator';
-    public static PROP_INITIAL_GROUP_ORDER_COMPARATOR = 'initialGroupOrderComparator';
-    public static PROP_PAGINATION_NUMBER_FORMATTER = 'paginationNumberFormatter';
+    public static PROP_GROUP_ROW_AGG_NODES: 'groupRowAggNodes' = 'groupRowAggNodes';
+    public static PROP_GET_GROUP_ROW_AGG: 'getGroupRowAgg' = 'getGroupRowAgg';
+    public static PROP_GET_BUSINESS_KEY_FOR_NODE: 'getBusinessKeyForNode' = 'getBusinessKeyForNode';
+    public static PROP_GET_CHILD_COUNT: 'getChildCount' = 'getChildCount';
+    public static PROP_PROCESS_ROW_POST_CREATE: 'processRowPostCreate' = 'processRowPostCreate';
+    public static PROP_GET_ROW_NODE_ID: 'getRowNodeId' = 'getRowNodeId';
+    public static PROP_GET_ROW_ID: 'getRowId' = 'getRowId';
+    public static PROP_IS_FULL_WIDTH_CELL: 'isFullWidthCell' = 'isFullWidthCell';
+    public static PROP_IS_FULL_WIDTH_ROW: 'isFullWidthRow' = 'isFullWidthRow';
+    public static PROP_IS_ROW_SELECTABLE: 'isRowSelectable' = 'isRowSelectable';
+    public static PROP_IS_ROW_MASTER: 'isRowMaster' = 'isRowMaster';
+    public static PROP_POST_SORT: 'postSort' = 'postSort';
+    public static PROP_POST_SORT_ROWS: 'postSortRows' = 'postSortRows';
+    public static PROP_GET_DOCUMENT: 'getDocument' = 'getDocument';
+    public static PROP_POST_PROCESS_POPUP: 'postProcessPopup' = 'postProcessPopup';
+    public static PROP_DEFAULT_GROUP_ORDER_COMPARATOR: 'defaultGroupOrderComparator' = 'defaultGroupOrderComparator';
+    public static PROP_INITIAL_GROUP_ORDER_COMPARATOR: 'initialGroupOrderComparator' = 'initialGroupOrderComparator';
+    public static PROP_PAGINATION_NUMBER_FORMATTER: 'paginationNumberFormatter' = 'paginationNumberFormatter';
 
-    public static PROP_GET_CONTEXT_MENU_ITEMS = 'getContextMenuItems';
-    public static PROP_GET_MAIN_MENU_ITEMS = 'getMainMenuItems';
+    public static PROP_GET_CONTEXT_MENU_ITEMS: 'getContextMenuItems' = 'getContextMenuItems';
+    public static PROP_GET_MAIN_MENU_ITEMS: 'getMainMenuItems' = 'getMainMenuItems';
 
-    public static PROP_PROCESS_CELL_FOR_CLIPBOARD = 'processCellForClipboard';
-    public static PROP_PROCESS_CELL_FROM_CLIPBOARD = 'processCellFromClipboard';
-    public static PROP_SEND_TO_CLIPBOARD = 'sendToClipboard';
+    public static PROP_PROCESS_CELL_FOR_CLIPBOARD: 'processCellForClipboard' = 'processCellForClipboard';
+    public static PROP_PROCESS_CELL_FROM_CLIPBOARD: 'processCellFromClipboard' = 'processCellFromClipboard';
+    public static PROP_SEND_TO_CLIPBOARD: 'sendToClipboard' = 'sendToClipboard';
 
-    public static PROP_PROCESS_PIVOT_RESULT_COL_DEF = 'processPivotResultColDef';
-    public static PROP_PROCESS_PIVOT_RESULT_COL_GROUP_DEF = 'processPivotResultColGroupDef';
+    public static PROP_PROCESS_PIVOT_RESULT_COL_DEF: 'processPivotResultColDef' = 'processPivotResultColDef';
+    public static PROP_PROCESS_PIVOT_RESULT_COL_GROUP_DEF: 'processPivotResultColGroupDef' = 'processPivotResultColGroupDef';
 
-    public static PROP_GET_CHART_TOOLBAR_ITEMS = 'getChartToolbarItems';
+    public static PROP_GET_CHART_TOOLBAR_ITEMS: 'getChartToolbarItems' = 'getChartToolbarItems';
 
-    public static PROP_GET_SERVER_SIDE_GROUP_PARAMS = 'getServerSideGroupLevelParams';
-    public static PROP_IS_SERVER_SIDE_GROUPS_OPEN_BY_DEFAULT = 'isServerSideGroupOpenByDefault';
-    public static PROP_IS_APPLY_SERVER_SIDE_TRANSACTION = 'isApplyServerSideTransaction';
-    public static PROP_IS_SERVER_SIDE_GROUP = 'isServerSideGroup';
-    public static PROP_GET_SERVER_SIDE_GROUP_KEY = 'getServerSideGroupKey';
+    public static PROP_GET_SERVER_SIDE_GROUP_PARAMS: 'getServerSideGroupLevelParams' = 'getServerSideGroupLevelParams';
+    public static PROP_IS_SERVER_SIDE_GROUPS_OPEN_BY_DEFAULT: 'isServerSideGroupOpenByDefault' = 'isServerSideGroupOpenByDefault';
+    public static PROP_IS_APPLY_SERVER_SIDE_TRANSACTION: 'isApplyServerSideTransaction' = 'isApplyServerSideTransaction';
+    public static PROP_IS_SERVER_SIDE_GROUP: 'isServerSideGroup' = 'isServerSideGroup';
+    public static PROP_GET_SERVER_SIDE_GROUP_KEY: 'getServerSideGroupKey' = 'getServerSideGroupKey';
 
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('eventService') private readonly eventService: EventService;
@@ -1502,12 +1502,11 @@ export class GridOptionsWrapper {
         return exists(this.gridOptions.clipboardDelimiter) ? this.gridOptions.clipboardDelimiter : '\t';
     }
 
-    public setProperty(key: string, value: any, force = false): void {
-        const gridOptionsNoType = this.gridOptions as any;
-        const previousValue = gridOptionsNoType[key];
+    public setProperty<K extends keyof GridOptions>(key: K, value: GridOptions[K], force = false): void {
+        const previousValue = this.gridOptions[key];
 
         if (force || previousValue !== value) {
-            gridOptionsNoType[key] = value;
+            this.gridOptions[key] = value;
             const event: PropertyChangedEvent = {
                 type: key,
                 currentValue: value,

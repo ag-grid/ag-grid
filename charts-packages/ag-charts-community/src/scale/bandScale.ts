@@ -166,6 +166,9 @@ export class BandScale<D> implements Scale<D, number> {
             values.push(a + step * i);
         }
 
-        this.ordinalRange = reversed ? values.reverse() : values;
+        if (reversed) {
+            values.reverse();
+        }
+        this.ordinalRange = values;
     }
 }

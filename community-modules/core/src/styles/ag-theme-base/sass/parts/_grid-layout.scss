@@ -117,10 +117,46 @@
         }
     }
 
-    .ag-row-hover:not(.ag-full-width-row) {
-        @if ag-param-is-set(row-hover-color) {
+    .ag-row-selected::before {
+        content: "";
+        @include ag-color-property(background-color, selected-row-background-color);
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    @if ag-param-is-set(row-hover-color) {
+        .ag-row-hover:not(.ag-full-width-row)::before,
+        .ag-row-hover.ag-full-width-row.ag-row-group::before {
+            // add a background on hover - use an absolutely positioned rectangle instead of
+            // a `background-color` so that `--ag-row-hover-color: transparent` doesn't remove
+            // an existing background color
+            content: "";
             @include ag-color-property(background-color, row-hover-color);
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
         }
+
+        .ag-row-hover.ag-row-selected::before {
+            @include ag-color-property(background-color, row-hover-color);
+            // overlay the background color on the hover color when hovering over a selected row,
+            // if the background color is semi-transparent it will blend properly
+            background-image: linear-gradient(ag-param(selected-row-background-color), ag-param(selected-row-background-color));
+        }
+    }
+
+    // Default the content position to relative so that it doesn't
+    // appear under the background
+    .ag-row-hover.ag-full-width-row.ag-row-group > * {
+        position: relative
     }
 
     .ag-column-hover {

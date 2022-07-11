@@ -26,6 +26,11 @@
     "meta": { "isTypeAlias": true },
     "type": "{ width: number; height: number; }"
   },
+  "OffscreenCanvasRenderingContext2D": {
+    "meta": { "isTypeAlias": true },
+    "type": "any"
+  },
+  "OffscreenCanvas": { "meta": { "isTypeAlias": true }, "type": "any" },
   "FontStyle": {
     "meta": { "isTypeAlias": true },
     "type": "'normal' | 'italic' | 'oblique'"
@@ -1210,8 +1215,10 @@
       "size?": "PixelSize",
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
+      "fillOpacity?": "Opacity",
       "stroke?": "CssColor",
-      "strokeWidth?": "PixelSize"
+      "strokeWidth?": "PixelSize",
+      "strokeOpacity?": "Opacity"
     },
     "docs": {
       "enabled?": "/** Whether or not to show markers. */",
@@ -1219,8 +1226,10 @@
       "size?": "/** The size in pixels of the markers. */",
       "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
       "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
+      "fillOpacity?": "/** Opacity of the marker fills. */",
       "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */"
+      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
+      "strokeOpacity?": "/** Opacity of the marker strokes. */"
     }
   },
   "AgSeriesMarkerFormatterParams": {
@@ -1269,8 +1278,10 @@
       "size?": "PixelSize",
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
+      "fillOpacity?": "Opacity",
       "stroke?": "CssColor",
-      "strokeWidth?": "PixelSize"
+      "strokeWidth?": "PixelSize",
+      "strokeOpacity?": "Opacity"
     },
     "docs": {
       "formatter?": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
@@ -1279,8 +1290,10 @@
       "size?": "/** The size in pixels of the markers. */",
       "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
       "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
+      "fillOpacity?": "/** Opacity of the marker fills. */",
       "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */"
+      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
+      "strokeOpacity?": "/** Opacity of the marker strokes. */"
     }
   },
   "AgAreaSeriesMarker": {
@@ -1292,8 +1305,10 @@
       "size?": "PixelSize",
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
+      "fillOpacity?": "Opacity",
       "stroke?": "CssColor",
-      "strokeWidth?": "PixelSize"
+      "strokeWidth?": "PixelSize",
+      "strokeOpacity?": "Opacity"
     },
     "docs": {
       "formatter?": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
@@ -1302,8 +1317,10 @@
       "size?": "/** The size in pixels of the markers. */",
       "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
       "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
+      "fillOpacity?": "/** Opacity of the marker fills. */",
       "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */"
+      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
+      "strokeOpacity?": "/** Opacity of the marker strokes. */"
     }
   },
   "AgSeriesTooltip": {
@@ -1421,11 +1438,40 @@
       "color?": "/** The colour to use for the labels. */"
     }
   },
+  "AgScatterSeriesMarker": {
+    "meta": {},
+    "type": {
+      "domain?": "[number, number]",
+      "formatter?": "AgCartesianSeriesMarkerFormatter",
+      "enabled?": "boolean",
+      "shape?": "MarkerShape",
+      "size?": "PixelSize",
+      "maxSize?": "PixelSize",
+      "fill?": "CssColor",
+      "fillOpacity?": "Opacity",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize",
+      "strokeOpacity?": "Opacity"
+    },
+    "docs": {
+      "domain?": "/** If sizeKey is used, explicitly specifies the extent of the domain of it's values. */",
+      "formatter?": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
+      "enabled?": "/** Whether or not to show markers. */",
+      "shape?": "/** The shape to use for the markers. You can also supply a custom marker by providing a `Marker` subclass. */",
+      "size?": "/** The size in pixels of the markers. */",
+      "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
+      "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
+      "fillOpacity?": "/** Opacity of the marker fills. */",
+      "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
+      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
+      "strokeOpacity?": "/** Opacity of the marker strokes. */"
+    }
+  },
   "AgScatterSeriesOptions": {
     "meta": { "doc": "/** Configuration for scatter/bubble series. */" },
     "type": {
       "type?": "'scatter'",
-      "marker?": "AgCartesianSeriesMarker",
+      "marker?": "AgScatterSeriesMarker",
       "label?": "AgScatterSeriesLabelOptions",
       "xKey?": "string",
       "yKey?": "string",
@@ -2211,6 +2257,10 @@
     "meta": { "isTypeAlias": true, "typeParams": ["T extends Axis<any, any>"] },
     "type": "T extends LogAxis ? AgLogAxisOptions : T extends NumberAxis ? AgNumberAxisOptions : T extends CategoryAxis ? AgCategoryAxisOptions : T extends GroupedCategoryAxis ? AgGroupedCategoryAxisOptions : T extends TimeAxis ? AgTimeAxisOptions : never"
   },
+  "ObservableLike": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ addEventListener(key: string, cb: SourceEventListener<any>): void; clearEventListeners(): void; }"
+  },
   "ChartClickEvent": {
     "meta": {},
     "type": { "event": "MouseEvent", "source": "Chart", "type": "string" }
@@ -2344,7 +2394,7 @@
     "meta": { "typeParams": ["T"] },
     "type": {
       "outputProp": "string",
-      "reducer": "(r: T, n: any) => T",
+      "reducer": "(r: T, n: any, idx: number, length: number) => T",
       "start": "T",
       "seriesType?": "string[]"
     }
@@ -3145,6 +3195,10 @@
   "PropertyChangeEventListener": {
     "meta": { "isTypeAlias": true, "typeParams": ["S", "V"] },
     "type": "(event: PropertyChangeEvent<S, V>) => any"
+  },
+  "Callback": {
+    "meta": { "isTypeAlias": true },
+    "type": "(params: { count: number; }) => void"
   },
   "OnSizeChange": {
     "meta": { "isTypeAlias": true },

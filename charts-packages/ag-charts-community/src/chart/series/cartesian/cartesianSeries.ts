@@ -195,7 +195,7 @@ export abstract class CartesianSeries<
                 new Group({
                     name: `${this.id}-series-sub${this.subGroupId++}-markers`,
                     layer: true,
-                    zIndex: Series.SERIES_MARKER_LAYER_ZINDEX,
+                    zIndex: Series.SERIES_LAYER_ZINDEX,
                 }) :
                 undefined;
             const pickGroup = new Group();
@@ -251,7 +251,7 @@ export abstract class CartesianSeries<
             group.visible = visible && (seriesItemEnabled.get(itemId) ?? true);
             if (markerGroup) {
                 markerGroup.opacity = group.opacity;
-                markerGroup.zIndex = group.zIndex + (Series.SERIES_MARKER_LAYER_ZINDEX - Series.SERIES_LAYER_ZINDEX);
+                markerGroup.zIndex = group.zIndex >= Series.SERIES_LAYER_ZINDEX ? group.zIndex : group.zIndex + 1;
                 markerGroup.visible = group.visible;
             }
 
@@ -362,7 +362,7 @@ export abstract class CartesianSeries<
         // Override point for sub-classes.
         return opts.datumSelection;
     }
-    protected updateDatumNodes(opts: {
+    protected updateDatumNodes(_opts: {
         datumSelection: NodeDataSelection<N, C>;
         isHighlight: boolean;
         seriesIdx: number;
@@ -378,7 +378,7 @@ export abstract class CartesianSeries<
         // Override point for sub-classes.
         return opts.markerSelection;
     }
-    protected updateMarkerNodes(opts: {
+    protected updateMarkerNodes(_opts: {
         markerSelection: NodeDataSelection<Marker, C>;
         isHighlight: boolean;
         seriesIdx: number;

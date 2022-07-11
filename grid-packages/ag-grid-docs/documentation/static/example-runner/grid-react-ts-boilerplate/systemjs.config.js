@@ -32,7 +32,8 @@
         map: assign(
             {
                 // css plugin
-                css: 'npm:systemjs-plugin-css@0.1.37/css.js',
+                css: boilerplatePath + "css.js",
+                // css: 'npm:systemjs-plugin-css@0.1.37/css.js',
 
                 // babel transpiler
                 'plugin-babel':
@@ -56,6 +57,8 @@
         ), // systemJsMap comes from index.html
 
         packages: {
+            css: {
+            },
             react: {
                 main: './umd/react.profiling.min.js',
             },

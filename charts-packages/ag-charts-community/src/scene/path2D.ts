@@ -164,16 +164,6 @@ export class Path2D {
         const theta1 = Math.atan2((yp - cpy) / ry, (xp - cpx) / rx);
         const deltaTheta = Math.atan2((-yp - cpy) / ry, (-xp - cpx) / rx) - theta1;
 
-        // if (fS) {
-        //     if (deltaTheta <= 0) {
-        //         deltaTheta += Math.PI * 2;
-        //     }
-        // }
-        // else {
-        //     if (deltaTheta >= 0) {
-        //         deltaTheta -= Math.PI * 2;
-        //     }
-        // }
         this.cubicArc(cx, cy, rx, ry, rotation, theta1, theta1 + deltaTheta, 1 - fS);
     }
 

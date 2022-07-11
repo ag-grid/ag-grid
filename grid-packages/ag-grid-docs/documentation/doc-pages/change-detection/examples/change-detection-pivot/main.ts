@@ -92,8 +92,8 @@ function pivotMode() {
   gridOptions.columnApi!.applyColumnState({
     state: [
       { colId: 'yearGroup', rowGroup: pivotModeOn },
-      { colId: 'course', pivot: pivotModeOn },
-      { colId: 'ageRange', pivot: pivotModeOn },
+      { colId: 'course', pivot: pivotModeOn, pivotIndex: 1 },
+      { colId: 'ageRange', pivot: pivotModeOn, pivotIndex: 0 },
     ],
   })
 }

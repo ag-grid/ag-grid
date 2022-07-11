@@ -1,13 +1,17 @@
-import { addBindingImports, addGenericInterfaceImport, getModuleRegistration, ImportType } from './parser-utils';
+import {addBindingImports, addGenericInterfaceImport, getModuleRegistration, ImportType} from './parser-utils';
+
+const path = require('path');
 const fs = require('fs-extra');
 
 export function toTitleCase(value) {
     return value[0].toUpperCase() + value.slice(1);
-};
+}
+
 export function getImport(filename: string) {
     const componentName = filename.split('.')[0];
     return `import { ${toTitleCase(componentName)} } from './${componentName}';`;
 }
+
 function getPropertyInterfaces(properties) {
     let propTypesUsed = [];
     properties.forEach(prop => {
@@ -18,8 +22,8 @@ function getPropertyInterfaces(properties) {
     return [...new Set(propTypesUsed)];
 }
 
-function getModuleImports(bindings: any): string[] {
-    const { gridSettings, imports: bindingImports, properties } = bindings;
+function getModuleImports(bindings: any, allStylesheets: string[]): string[] {
+    const {gridSettings, imports: bindingImports, properties} = bindings;
 
     let imports = [];
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
@@ -48,8 +52,8 @@ function getModuleImports(bindings: any): string[] {
     return imports;
 }
 
-function getPackageImports(bindings: any): string[] {
-    const { gridSettings, imports: bindingImports, properties } = bindings;
+function getPackageImports(bindings: any, allStylesheets: string[]): string[] {
+    const {gridSettings, imports: bindingImports, properties} = bindings;
     const imports = [];
 
     if (gridSettings.enterprise) {
@@ -81,16 +85,16 @@ function getPackageImports(bindings: any): string[] {
     return imports;
 }
 
-function getImports(bindings: any, importType: ImportType): string[] {
+function getImports(bindings: any, importType: ImportType, allStylesheets: string[]): string[] {
     if (importType === "packages") {
-        return getPackageImports(bindings);
+        return getPackageImports(bindings, allStylesheets);
     } else {
-        return getModuleImports(bindings);
+        return getModuleImports(bindings, allStylesheets);
     }
 }
 
-export function vanillaToTypescript(bindings: any, mainFilePath: string): (importType: ImportType) => string {
-    const { gridSettings, externalEventHandlers, imports } = bindings;
+export function vanillaToTypescript(bindings: any, mainFilePath: string, allStylesheets: string[]): (importType: ImportType) => string {
+    const {gridSettings, externalEventHandlers, imports} = bindings;
 
     // attach external handlers to window
     let toAttach = '';
@@ -120,7 +124,7 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string): (impor
     }
 
     return importType => {
-        const importStrings = getImports(bindings, importType);
+        const importStrings = getImports(bindings, importType, allStylesheets);
         const formattedImports = `${importStrings.join('\n')}\n`;
 
         // Remove the original import statements

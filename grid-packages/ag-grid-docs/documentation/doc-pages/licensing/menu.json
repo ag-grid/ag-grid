@@ -151,6 +151,11 @@
                 "showInCollapsed": true
               }
             ]
+          },
+          {
+            "title": "Typescript Generics",
+            "url": "/typescript-generics/",
+            "showInCollapsed": true
           }
         ]
       },
@@ -338,19 +343,19 @@
                 ]
               },
               {
-                "title": "Custom UMD Bundle",
-                "url": "/modules-building/",
-                "frameworks": [
-                  "javascript"
-                ]
-              },
-              {
                 "title": "Modules - Example",
                 "url": "/modules-building/",
                 "frameworks": [
                   "angular",
                   "react",
                   "vue"
+                ]
+              },
+              {
+                "title": "Custom UMD Bundle",
+                "url": "/modules-building/",
+                "frameworks": [
+                  "javascript"
                 ]
               }
             ]
@@ -458,18 +463,8 @@
                     "showInCollapsed": false
                   },
                   {
-                    "title": "Charts",
-                    "url": "/global-style-customisation-charts/",
-                    "showInCollapsed": false
-                  },
-                  {
                     "title": "Inputs & Widgets",
                     "url": "/global-style-customisation-widgets/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Tabs",
-                    "url": "/global-style-customisation-tabs/",
                     "showInCollapsed": false
                   },
                   {

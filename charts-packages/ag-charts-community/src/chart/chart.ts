@@ -551,6 +551,7 @@ export abstract class Chart extends Observable {
             case ChartUpdateType.PROCESS_DATA:
                 this.processData();
                 splits.push(performance.now());
+                // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (!firstRenderComplete && !firstResizeReceived) {
                     if (this.debug) {
@@ -564,16 +565,19 @@ export abstract class Chart extends Observable {
 
                 this.performLayout();
                 splits.push(performance.now());
+                // Fall-through to next pipeline stage.
             case ChartUpdateType.SERIES_UPDATE:
                 this.seriesToUpdate.forEach(series => {
                     series.update();
                 });
                 this.seriesToUpdate.clear();
                 splits.push(performance.now());
+                // Fall-through to next pipeline stage.
             case ChartUpdateType.SCENE_RENDER:
                 this.scene.render({ debugSplitTimes: splits, extraDebugStats });
                 this.firstRenderComplete = true;
                 this.extraDebugStats = {};
+                // Fall-through to next pipeline stage.
             case ChartUpdateType.NONE:
                 // Do nothing.
                 this._performUpdateType = ChartUpdateType.NONE;
@@ -1207,7 +1211,9 @@ export abstract class Chart extends Observable {
     private checkSeriesNodeClick(): boolean {
         const { lastPick } = this;
 
-        if (lastPick && lastPick.event && lastPick.node) {
+        // TODO: verify if it's safe to remove `lastPick.node` check
+        // if (lastPick && lastPick.event && lastPick.node) {
+        if (lastPick && lastPick.event) {
             const { event, datum } = lastPick;
             datum.series.fireNodeClickEvent(event, datum);
             return true;

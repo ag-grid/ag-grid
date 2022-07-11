@@ -9,12 +9,12 @@ import MetaData from './MetaData';
 /**
  * This is the template for executing Angular examples in the example runner.
  */
-const AngularTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles, importType }) =>
+const AngularTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles, type, importType }) =>
     <html lang="en">
         <head>
-            <MetaData title="Angular example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
+            <MetaData title="Angular example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} options={options} />
             <ExampleStyle rootId="app" />
-            <Styles files={styleFiles} />
+            {(type !== "generated" || library !== "grid") && <Styles files={styleFiles}/>}
             <Extras options={options} />
         </head>
         <body>

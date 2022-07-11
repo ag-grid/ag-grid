@@ -65,7 +65,7 @@ export class BlockUtils extends BeanStub {
 
     public destroyRowNodes(rowNodes: RowNode[]): void {
         if (rowNodes) {
-            rowNodes.forEach(this.destroyRowNode.bind(this));
+            rowNodes.forEach((row) => this.destroyRowNode(row));
         }
     }
 

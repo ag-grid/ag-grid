@@ -1,8 +1,9 @@
 import { convertFunctionToConstProperty, getFunctionName, getModuleRegistration, ImportType, isInstanceMethod } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType } from './react-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
+const path = require('path');
 
-function getModuleImports(bindings: any, componentFilenames: string[]): string[] {
+function getModuleImports(bindings: any, componentFilenames: string[], allStylesheets: string[]): string[] {
     let imports = [
         "import React, { useCallback, useMemo, useRef, useState } from 'react';",
         "import { render } from 'react-dom';",
@@ -16,6 +17,10 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
     const theme = bindings.gridSettings.theme ? bindings.gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
     imports.push(`import '@ag-grid-community/styles/${theme}.css';`);
 
+    if(allStylesheets && allStylesheets.length > 0) {
+        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
+    }
+
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
     }
@@ -25,7 +30,7 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
     return imports;
 }
 
-function getPackageImports(bindings: any, componentFilenames: string[]): string[] {
+function getPackageImports(bindings: any, componentFilenames: string[], allStylesheets: string[]): string[] {
     const { gridSettings } = bindings;
 
     const imports = [
@@ -46,6 +51,10 @@ function getPackageImports(bindings: any, componentFilenames: string[]): string[
     const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
+    if(allStylesheets && allStylesheets.length > 0) {
+        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
+    }
+
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
     }
@@ -53,11 +62,11 @@ function getPackageImports(bindings: any, componentFilenames: string[]): string[
     return imports;
 }
 
-function getImports(bindings: any, componentFileNames: string[], importType: ImportType): string[] {
+function getImports(bindings: any, componentFileNames: string[], importType: ImportType, allStylesheets: string[]): string[] {
     if (importType === 'packages') {
-        return getPackageImports(bindings, componentFileNames);
+        return getPackageImports(bindings, componentFileNames, allStylesheets);
     } else {
-        return getModuleImports(bindings, componentFileNames);
+        return getModuleImports(bindings, componentFileNames, allStylesheets);
     }
 }
 
@@ -114,7 +123,7 @@ function getEventAndCallbackNames() {
     return callbacksAndEvents;;
 }
 
-export function vanillaToReactFunctional(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
+export function vanillaToReactFunctional(bindings: any, componentFilenames: string[], allStylesheets: string[]): (importType: ImportType) => string {
     const { properties, data, gridSettings, onGridReady, resizeToFit } = bindings;
 
     const eventAndCallbackNames = getEventAndCallbackNames();
@@ -134,7 +143,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
             `const [rowData, setRowData] = useState();`
         ];
 
-        const imports = getImports(bindings, componentFilenames, importType);
+        const imports = getImports(bindings, componentFilenames, importType, allStylesheets);
 
         // for when binding a method
         // see javascript-grid-keyboard-navigation for an example

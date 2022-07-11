@@ -14,12 +14,12 @@ const getCacheBustingUrl = (url, timestamp) => `${url}?t=${timestamp}`;
 /**
  * This is the template for executing vanilla JavaScript examples in the example runner.
  */
-const VanillaTemplate = ({ isExecuting, modifiedTimeMs, library, appLocation, options, scriptFiles, styleFiles, indexFragment }) =>
+const VanillaTemplate = ({ isExecuting, modifiedTimeMs, library, appLocation, options, scriptFiles, styleFiles, indexFragment, importType }) =>
     <html lang="en">
         <head>
-            <MetaData title="JavaScript example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
+            <MetaData title="JavaScript example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} options={options}/>
             <ExampleStyle />
-            <VanillaStyles library={library} files={isDevelopment() ? styleFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : styleFiles} />
+            <VanillaStyles library={library} importType={importType} files={isDevelopment() ? styleFiles.filter(file => !file.includes('style.css') && !file.includes('styles.css')).map(file => getCacheBustingUrl(file, modifiedTimeMs)) : styleFiles} />
             <Extras options={options} />
         </head>
         <VanillaBody
@@ -28,6 +28,7 @@ const VanillaTemplate = ({ isExecuting, modifiedTimeMs, library, appLocation, op
             options={options}
             scriptFiles={isDevelopment() ? scriptFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : scriptFiles}
             indexFragment={indexFragment} />
+        <Styles files={styleFiles.filter(file => file.includes('style.css') || file.includes('styles.css'))} />
     </html>;
 
 const VanillaBody = ({ library, appLocation, options, scriptFiles, indexFragment }) => {
@@ -67,10 +68,10 @@ const VanillaBody = ({ library, appLocation, options, scriptFiles, indexFragment
     return <body dangerouslySetInnerHTML={{ __html: `${indexFragment}\n${bodySuffix}` }}></body>;
 };
 
-const VanillaStyles = ({ library, files }) => {
+const VanillaStyles = ({ library, files, importType }) => {
     if (!isDevelopment() || library !== 'grid') { return <Styles files={files} />; }
 
-    const cssPaths = getCssFilePaths();
+    const cssPaths = getCssFilePaths(importType);
 
     return <Styles files={[...cssPaths, ...files]} />;
 };

@@ -22,7 +22,6 @@ const options: AgCartesianChartOptions = {
       listeners: {
         nodeClick: (event: any) => {
           event.datum.selected = !event.datum.selected
-          event.series.update()
         },
       },
       marker: {

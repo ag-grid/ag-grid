@@ -8,6 +8,7 @@ import { Label } from '../label';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
 import { Node } from '../../scene/node';
+import { Deprecated } from '../../util/validation';
 
 /**
  * Processed series datum used in node selections,
@@ -64,20 +65,24 @@ export class SeriesItemHighlightStyle {
 export class SeriesHighlightStyle {
     strokeWidth?: number = undefined;
     dimOpacity?: number = undefined;
+    enabled?: boolean = undefined;
 }
 
 export class HighlightStyle {
     /**
      * @deprecated Use item.fill instead.
      */
+    @Deprecated('Use item.fill instead.')
     fill?: string = undefined;
     /**
      * @deprecated Use item.stroke instead.
      */
+    @Deprecated('Use item.stroke instead.')
     stroke?: string = undefined;
     /**
      * @deprecated Use item.strokeWidth instead.
      */
+    @Deprecated('Use item.strokeWidth instead.')
     strokeWidth?: number = undefined;
     readonly item = new SeriesItemHighlightStyle();
     readonly series = new SeriesHighlightStyle();
@@ -234,12 +239,12 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     protected getOpacity(datum?: { itemId?: any }): number {
         const {
             highlightStyle: {
-                series: { dimOpacity = 1 },
+                series: { dimOpacity = 1, enabled = true },
             },
         } = this;
 
         const defaultOpacity = 1;
-        if (dimOpacity === defaultOpacity) {
+        if (enabled === false || dimOpacity === defaultOpacity) {
             return defaultOpacity;
         }
 
@@ -255,11 +260,11 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     protected getStrokeWidth(defaultStrokeWidth: number, datum?: { itemId?: any }): number {
         const {
             highlightStyle: {
-                series: { strokeWidth },
+                series: { strokeWidth, enabled = true },
             },
         } = this;
 
-        if (strokeWidth === undefined) {
+        if (enabled === false || strokeWidth === undefined) {
             // No change in styling for highlight cases.
             return defaultStrokeWidth;
         }
@@ -278,7 +283,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
         switch (this.isItemIdHighlighted(datum)) {
             case 'highlighted':
-                return defaultZIndex + 1;
+                return Series.SERIES_HIGHLIGHT_LAYER_ZINDEX - 2;
             case 'no-highlight':
             case 'other-highlighted':
                 return defaultZIndex;

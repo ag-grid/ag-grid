@@ -50,7 +50,7 @@ export class TimeAxis extends ChartAxis<TimeScale> {
             super.onLabelFormatChange(format);
         } else {
             // For time axis labels to look nice, even if date format wasn't set.
-            this.labelFormatter = this.scale.tickFormat(this.calculatedTickCount, undefined);
+            this.labelFormatter = this.scale.tickFormat(this.calculatedTickCount);
         }
     }
 

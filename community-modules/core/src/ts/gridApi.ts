@@ -28,6 +28,7 @@ import {
     GetGroupRowAggParams,
     GetServerSideGroupLevelParamsParams,
     InitialGroupOrderComparatorParams,
+    IsFullWidthRowParams,
     IsServerSideGroupOpenByDefaultParams,
     NavigateToNextCellParams,
     NavigateToNextHeaderParams,
@@ -1208,7 +1209,7 @@ export class GridApi<TData = any> {
     public setIsFullWidthCell(isFullWidthCellFunc: (rowNode: RowNode) => boolean): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_FULL_WIDTH_CELL, isFullWidthCellFunc);
     }
-    public setIsFullWidthRow(isFullWidthRowFunc: (rowNode: RowNode) => boolean): void {
+    public setIsFullWidthRow(isFullWidthRowFunc: (params: IsFullWidthRowParams) => boolean): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_FULL_WIDTH_ROW, isFullWidthRowFunc);
     }
 

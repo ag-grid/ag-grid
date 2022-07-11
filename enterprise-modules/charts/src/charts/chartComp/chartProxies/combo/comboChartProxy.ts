@@ -16,6 +16,10 @@ export class ComboChartProxy extends CartesianChartProxy {
         this.recreateChart();
     }
 
+    public getData(params: UpdateChartParams): any[] {
+        return this.getDataTransformedData(params);
+    }
+
     public getAxes(params: UpdateChartParams): AgCartesianAxisOptions[] {
         this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
 

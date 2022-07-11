@@ -1,7 +1,6 @@
 import { BeanStub } from "../context/beanStub";
 import { Autowired, Optional } from "../context/context";
 import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
-import { Constants } from "../constants/constants";
 import { Events } from "../eventKeys";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
 import { CtrlsService } from "../ctrlsService";
@@ -225,7 +224,7 @@ export class GridBodyCtrl extends BeanStub {
 
     public updateRowCount(): void {
         const headerCount = this.headerNavigationService.getHeaderRowCount();
-        
+
         const rowCount = this.rowModel.isLastRowIndexKnown() ? this.rowModel.getRowCount() : -1;
         const total = rowCount === -1 ? -1 : (headerCount + rowCount);
 

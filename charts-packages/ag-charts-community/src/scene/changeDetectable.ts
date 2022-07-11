@@ -13,6 +13,18 @@ export enum RedrawType {
     MAJOR, // Significant change in rendering.
 }
 
+/** @returns true if eval() is disabled in the current execution context. */
+function evalAvailable() {
+    try {
+        eval('');
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+const EVAL_USEABLE = evalAvailable();
+
 export function SceneChangeDetection(opts?: {
     redraw?: RedrawType,
     type?: 'normal' | 'transform' | 'path' | 'font',
@@ -28,7 +40,13 @@ export function SceneChangeDetection(opts?: {
         // `target` is either a constructor (static member) or prototype (instance member)
         const privateKey = `__${key}`;
 
-        if (!target[key]) {
+        if (target[key]) {
+            return;
+        }
+
+        if (EVAL_USEABLE) {
+            // Optimised code-path.
+
             // Remove all conditional logic from runtime - generate a setter with the exact necessary
             // steps, as these setters are called a LOT during update cycles.        
             const setterJs = `
@@ -61,6 +79,32 @@ export function SceneChangeDetection(opts?: {
                 enumerable: true,
                 configurable: false,
             });
+        } else {
+            // Unoptimised but 'safe' code-path, for environments with CSP headers and no 'unsafe-eval'.
+            // We deliberately do not support debug branches found in the optimised path above, since
+            // for large data-set series performance deteriorates with every extra branch here.
+            const setter = function(value: any) {
+                const oldValue = this[privateKey];
+                value = convertor ? convertor(value) : value;
+                if (value !== oldValue) {
+                    this[privateKey] = value;
+                    if (type === 'normal') this.markDirty(this, redraw);
+                    if (type === 'transform') this.markDirtyTransform(redraw);
+                    if (type === 'path' && !this._dirtyPath) { this._dirtyPath = true; this.markDirty(this, redraw); }
+                    if (type === 'font' && !this._dirtyFont) { this._dirtyFont = true; this.markDirty(this, redraw); }
+                    if (changeCb) changeCb(this);
+                }
+                if (checkDirtyOnAssignment && value != null && value._dirty > RedrawType.NONE) this.markDirty(value, value._dirty);
+            };
+            const getter = function() {
+                return this[privateKey];
+            }
+            Object.defineProperty(target, key, {
+                set: setter,
+                get: getter,
+                enumerable: true,
+                configurable: false,
+            });
         }
     }
 }
@@ -76,7 +120,7 @@ export abstract class ChangeDetectable {
         this._dirty = type;
     }
 
-    markClean(opts?: {force?: boolean, recursive?: boolean}) {
+    markClean(_opts?: {force?: boolean, recursive?: boolean}) {
         this._dirty = RedrawType.NONE;
     }
 

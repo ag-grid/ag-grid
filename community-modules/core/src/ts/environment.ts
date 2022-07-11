@@ -125,21 +125,26 @@ export class Environment extends BeanStub {
         return this.getSassVariable(theme!, 'chartMenuPanelWidth');
     }
 
-    public getTheme(): { theme?: string; el?: HTMLElement; themeFamily?: string; } {
-        const reg = /\bag-(material|(?:theme-([\w\-]*)))\b/;
+    public getTheme(): { theme?: string; el?: HTMLElement; themeFamily?: string; allThemes: string[] } {
+        const reg = /\bag-(material|(?:theme-([\w\-]*)))\b/g;
         let el: HTMLElement | undefined = this.eGridDiv;
         let themeMatch: RegExpMatchArray | null = null;
+        let allThemes: string[] = [];
 
         while (el) {
             themeMatch = reg.exec(el.className);
             if (!themeMatch) {
                 el = el.parentElement || undefined;
             } else {
+                const matched = el.className.match(reg);
+                if (matched) {
+                    allThemes = matched;
+                }
                 break;
             }
         }
 
-        if (!themeMatch) { return {}; }
+        if (!themeMatch) { return { allThemes }; }
 
         const theme = themeMatch[0];
         const usingOldTheme = themeMatch[2] === undefined;
@@ -149,6 +154,6 @@ export class Environment extends BeanStub {
             doOnce(() => console.warn(`AG Grid: As of v19 old theme are no longer provided. Please replace ${theme} with ${newTheme}.`), 'using-old-theme');
         }
 
-        return { theme, el, themeFamily: theme.replace(/-dark$/, '') };
+        return { theme, el, themeFamily: theme.replace(/-dark$/, ''), allThemes };
     }
 }

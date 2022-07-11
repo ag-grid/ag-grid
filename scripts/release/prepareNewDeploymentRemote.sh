@@ -9,12 +9,15 @@
 
 if [ "$#" -lt 1 ]
   then
-    echo "You must supply a release filename"
-    echo "For example: deployAgGridReleaseRemote.sh release_20191210.zip"
+    echo "You must supply a release version"
+    echo "For example: deployAgGridReleaseRemote.sh 28.0.0"
     exit 1
 fi
 
-FILENAME=$1
+RAW_VERSION=$1
+VERSION=""${RAW_VERSION//./}""
+TIMESTAMP=`date +%Y%m%d`
+FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
 
 # delete old temp folder if it exists
 rm -f public_html_tmp > /dev/null
@@ -36,12 +39,8 @@ cp -R ./public_html/ecommerce public_html_tmp/
 cp -R ./public_html/ecommerce-uat public_html_tmp/
 cp -R ./public_html/zendesk public_html_tmp/
 cp -R ./public_html/services public_html_tmp/
-cp -R ./public_html/robots.txt public_html_tmp/
+cd cp -R ./public_html/robots.txt public_html_tmp/
 cp -R ./public_html/__shared public_html_tmp/
-
-# jira stuff
-echo "Copying JIRA stuff"
-cp -R public_html/dist/aui public_html_tmp/dist
 
 #update folder permissions (default is 777 - change to 755)
 echo "Updating folder permissions"

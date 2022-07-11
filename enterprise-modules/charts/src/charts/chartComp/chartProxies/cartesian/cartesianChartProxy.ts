@@ -1,16 +1,16 @@
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import {
+    AgAreaSeriesOptions,
     AgBaseSeriesOptions,
     AgCartesianAxisOptions,
     AgCartesianAxisType,
     AgCartesianChartOptions,
     AgChart,
     AgChartLegendClickEvent,
-    AreaSeries,
+    AgLineSeriesOptions,
     CartesianChart,
     CategoryAxis,
     GroupedCategoryAxis,
-    LineSeries,
     NumberAxis,
     TimeAxis
 } from "ag-charts-community";
@@ -25,15 +25,18 @@ export abstract class CartesianChartProxy extends ChartProxy {
         number: NumberAxis,
         category: CategoryAxis,
         groupedCategory: GroupedCategoryAxis,
-        time: TimeAxis
+        time: TimeAxis,
     };
+
+    protected crossFilteringAllPoints = new Set<string>();
+    protected crossFilteringSelectedPoints: string[] = [];
 
     protected constructor(params: ChartProxyParams) {
         super(params);
     }
 
+    abstract getData(params: UpdateChartParams): any[];
     abstract getAxes(params: UpdateChartParams): AgCartesianAxisOptions[];
-
     abstract getSeries(params: UpdateChartParams): AgBaseSeriesOptions[];
 
     protected createChart(): CartesianChart {
@@ -48,13 +51,11 @@ export abstract class CartesianChartProxy extends ChartProxy {
             this.updateAxes(params);
         }
 
-        const categoryAxis = this.xAxisType === 'category';
-
         let options: AgCartesianChartOptions = {
             ...this.getCommonChartOptions(),
-            data: this.transformData(params.data, params.category.id, categoryAxis),
+            data: this.getData(params),
             axes: this.getAxes(params),
-            series: this.getSeries(params)
+            series: this.getSeries(params),
         }
 
         if (this.crossFiltering) {
@@ -64,26 +65,33 @@ export abstract class CartesianChartProxy extends ChartProxy {
         AgChart.update(this.chart as CartesianChart, options);
     }
 
+    protected getDataTransformedData(params: UpdateChartParams) {
+        const isCategoryAxis = this.xAxisType === 'category';
+        return this.transformData(params.data, params.category.id, isCategoryAxis);
+    }
+
     private addCrossFilterOptions(options: AgCartesianChartOptions) {
         const seriesOverrides = this.extractSeriesOverrides();
 
-        return {
-            ...options,
-            tooltip: {
-                ...seriesOverrides.tooltip,
-                delay: 500,
-            },
-            legend: {
-                ...seriesOverrides.legend,
-                listeners: {
-                    legendItemClick: (e: AgChartLegendClickEvent) => {
-                        // TODO
-                        // options?.series?.forEach(s => s.visible = e.enabled);
-                        // this.updateChart(options);
-                    }
+        options.tooltip = {
+            ...options.tooltip,
+            delay: 500,
+        }
+
+        options.legend = {
+            ...options.legend,
+            ...seriesOverrides.legend,
+            listeners: {
+                legendItemClick: (e: AgChartLegendClickEvent) => {
+                    this.chart.series.forEach(s => {
+                        s.toggleSeriesItem(e.itemId, e.enabled);
+                        s.toggleSeriesItem(`${e.itemId}-filtered-out` , e.enabled);
+                    });
                 }
             }
         }
+
+        return options;
     }
 
     protected extractSeriesOverrides(chartSeriesType?: ChartSeriesType) {
@@ -118,67 +126,93 @@ export abstract class CartesianChartProxy extends ChartProxy {
         return this.chartOptions[chartSeriesType].axes;
     }
 
-    // protected processDataForCrossFiltering(data: any[], colId: string, params: UpdateChartParams) {
-    //     let yKey = colId;
-    //     let atLeastOneSelectedPoint = false;
-    //     if (this.crossFiltering) {
-    //         // data.forEach(d => {
-    //         //     d[colId + '-total'] = d[colId] + d[colId + '-filtered-out'];
-    //         //     if (d[colId + '-filtered-out'] > 0) {
-    //         //         atLeastOneSelectedPoint = true;
-    //         //     }
-    //         // });
-    //         //
-    //         // const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
-    //         // if (lastSelectedChartId === params.chartId) {
-    //         //     yKey = colId + '-total';
-    //         // }
-    //     }
-    //     return {yKey, atLeastOneSelectedPoint};
-    // }
-
-    protected updateSeriesForCrossFiltering(
-        series: AreaSeries | LineSeries,
-        colId: string,
-        chart: CartesianChart,
-        params: UpdateChartParams,
-        atLeastOneSelectedPoint: boolean) {
-
-        if (this.crossFiltering) {
-            // special custom marker handling to show and hide points
-            series!.marker.enabled = true;
-            series!.marker.formatter = (p: any) => {
-                return {
-                    fill: p.highlighted ? 'yellow' : p.fill,
-                    size: p.highlighted ? 12 : p.datum[colId] > 0 ? 8 : 0,
-                };
-            }
-
-            chart.tooltip.delay = 500;
-
-            // make line opaque when some points are deselected
-            const ctx = params.getCrossFilteringContext();
-            const lastSelectionOnThisChart = ctx.lastSelectedChartId === params.chartId;
-            const deselectedPoints = lastSelectionOnThisChart && atLeastOneSelectedPoint;
-
-            if (series instanceof AreaSeries) {
-                series!.fillOpacity = deselectedPoints ? 0.3 : 1;
-            }
-
-            if (series instanceof LineSeries) {
-                series!.strokeOpacity = deselectedPoints ? 0.3 : 1;
-            }
-
-            // add node click cross filtering callback to series
-            series!.addEventListener('nodeClick', this.crossFilterCallback);
-        }
-    }
-
     private static isTimeAxis(params: UpdateChartParams): boolean {
         if (params.category && params.category.chartDataType) {
             return params.category.chartDataType === 'time';
         }
         const testDatum = params.data[0];
         return (testDatum && testDatum[params.category.id]) instanceof Date;
+    }
+
+    public crossFilteringReset(): void {
+        this.crossFilteringSelectedPoints = [];
+        this.crossFilteringAllPoints.clear();
+    }
+
+    protected crossFilteringPointSelected(point: string): boolean {
+        return this.crossFilteringSelectedPoints.length == 0 || this.crossFilteringSelectedPoints.includes(point);
+    }
+
+    protected crossFilteringDeselectedPoints(): boolean {
+        return this.crossFilteringSelectedPoints.length > 0 &&
+            this.crossFilteringAllPoints.size !== this.crossFilteringSelectedPoints.length;
+    }
+
+    protected extractLineAreaCrossFilterSeries(series: (AgLineSeriesOptions | AgAreaSeriesOptions)[], params: UpdateChartParams) {
+        const getYKey = (yKey: string) => {
+            if(this.standaloneChartType === 'area') {
+                const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
+                return (lastSelectedChartId === params.chartId) ? yKey + '-total' : yKey;
+            }
+            return yKey + '-total';
+        }
+
+        return series.map(s => {
+            const seriesOverrides = this.extractSeriesOverrides();
+
+            s.yKey = getYKey(s.yKey!);
+            s.listeners = {
+                ...seriesOverrides.listeners,
+                nodeClick: (e: any) => {
+                    const value = e.datum![s.xKey!];
+                    const multiSelection = e.event.metaKey || e.event.ctrlKey;
+                    this.crossFilteringAddSelectedPoint(multiSelection, value);
+                    this.crossFilterCallback(e);
+                }
+            };
+            s.marker = {
+                formatter: (p: any) => {
+                    const category = p.datum[params.category.id];
+                    return {
+                        fill: p.highlighted ? 'yellow' : p.fill,
+                        size: p.highlighted ? 14 : this.crossFilteringPointSelected(category) ? 8 : 0,
+                    };
+                }
+            };
+            if (this.standaloneChartType === 'area') {
+                (s as AgAreaSeriesOptions).fillOpacity = this.crossFilteringDeselectedPoints() ? 0.3 : 1;
+            }
+            if (this.standaloneChartType === 'line') {
+                (s as AgLineSeriesOptions).strokeOpacity = this.crossFilteringDeselectedPoints() ? 0.3 : 1;
+            }
+
+            return s;
+        });
+    }
+
+    protected getLineAreaCrossFilterData(params: UpdateChartParams): any[] {
+        this.crossFilteringAllPoints.clear();
+        const colId = params.fields[0].colId;
+        const filteredOutColId = `${colId}-filtered-out`;
+        const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
+
+        return params.data.map(d => {
+            const category = d[params.category.id];
+            this.crossFilteringAllPoints.add(category);
+
+            const pointSelected = this.crossFilteringPointSelected(category);
+            if (this.standaloneChartType === 'area' && lastSelectedChartId === params.chartId) {
+                d[`${colId}-total`] = pointSelected ? d[colId] : d[colId] + d[filteredOutColId];
+            }
+            if (this.standaloneChartType === 'line') {
+                d[`${colId}-total`] = pointSelected ? d[colId] : d[colId] + d[filteredOutColId];
+            }
+
+            return d;
+        });
+    }
+
+    private crossFilteringAddSelectedPoint(multiSelection: boolean, value: string): void {
+        multiSelection ? this.crossFilteringSelectedPoints.push(value) : this.crossFilteringSelectedPoints = [value];
     }
 }

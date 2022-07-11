@@ -302,7 +302,6 @@ export class Group extends Node {
             dirtyZIndex,
             clipPath,
             layer,
-            children,
             dirtyChildren = {},
             visibleChildren = {},
             visible: groupVisible,
@@ -319,10 +318,6 @@ export class Group extends Node {
         if (name && consoleLog) {
             console.log({ name, group: this, isDirty, isChildDirty, renderCtx });
         }
-
-        // By default there is no need to force redraw a group which has it's own canvas layer
-        // as the layer is independent of any other layer.
-        let forceRender = false;
 
         if (!isDirty && !isChildDirty) {
             if (name && consoleLog && stats) {
@@ -346,7 +341,6 @@ export class Group extends Node {
         ctx.save();
         ctx.setTransform(renderCtx.ctx.getTransform());
 
-        forceRender = true;
         layer.clear();
 
         if (clipBBox) {
@@ -373,15 +367,14 @@ export class Group extends Node {
 
         if (dirtyZIndex) {
             this.sortChildren();
-            forceRender = true;
         }
 
         // Reduce churn if renderCtx is identical.
-        const renderContextChanged = forceRender !== renderCtx.forceRender ||
+        const renderContextChanged = renderCtx.forceRender !== true ||
                 clipBBox !== renderCtx.clipBBox ||
                 ctx !== renderCtx.ctx;
         const childRenderContext =  renderContextChanged ?
-            { ...renderCtx, ctx, forceRender, clipBBox } :
+            { ...renderCtx, ctx, forceRender: true, clipBBox } :
             renderCtx;
 
         if (consoleLog) {
@@ -391,12 +384,6 @@ export class Group extends Node {
         let skipped = 0;
         if (groupVisible) {
             for (const child of Object.values(visibleChildren)) {
-                if (!forceRender && child.dirty === RedrawType.NONE) {
-                    // Skip children that don't need to be redrawn.
-                    if (stats) skipped += child.nodeCount.count;
-                    continue;
-                }
-
                 ctx.save();
                 child.render(childRenderContext);
                 ctx.restore();
@@ -444,7 +431,7 @@ export class Group extends Node {
             if (result !== 0) {
                 return result;
             }
-            return a.id < b.id ? -1 : 
+            return a.id < b.id ? -1 :
                 a.id > b.id ? 1 :
                 0;
         });

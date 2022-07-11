@@ -130,21 +130,6 @@ describe('ag-param', () => {
         expect(rendered.message).toBe('');
         expect(rendered.isFatalError).toBe(false);
     });
-
-    it('throws an error when used with a color property and color access is disabled', () => {
-        expect(() => {
-            renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
-            @include ag-register-params((
-                 my-color: red
-            ));
-            @include ag-allow-color-param-access-with-ag-param(false);
-            .foo {
-                x: ag-param(my-color);
-            }
-        `);
-        }).toThrowError("Illegal call to ag-param(my-color) - all colour params must be accessed through the ag-color-property mixin.");
-    });
 });
 
 describe('ag-color-property', () => {

@@ -71,6 +71,7 @@ export abstract class ChartProxy {
         this.chartPalette = this.chartTheme.palette;
     }
 
+    public abstract crossFilteringReset(): void;
     protected abstract createChart(options?: AgChartThemeOverrides): Chart;
 
     public abstract update(params: UpdateChartParams): void;

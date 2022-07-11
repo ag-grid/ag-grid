@@ -735,10 +735,14 @@ export interface AgSeriesMarker {
     maxSize?: PixelSize;
     /** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */
     fill?: CssColor;
+    /** Opacity of the marker fills. */
+    fillOpacity?: Opacity;
     /** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */
     stroke?: CssColor;
     /** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */
     strokeWidth?: PixelSize;
+    /** Opacity of the marker strokes. */
+    strokeOpacity?: Opacity;
 }
 
 export interface AgSeriesMarkerFormatterParams {
@@ -826,12 +830,16 @@ export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
 
 export interface AgScatterSeriesLabelOptions extends AgChartLabelOptions { }
 
+export interface AgScatterSeriesMarker extends AgCartesianSeriesMarker {
+    /** If sizeKey is used, explicitly specifies the extent of the domain of it's values. */
+    domain?: [number, number];
+}
 /** Configuration for scatter/bubble series. */
 export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     /** Configuration for the treemap series.  */
     type?: 'scatter';
     /** Configuration for the markers used in the series.  */
-    marker?: AgCartesianSeriesMarker;
+    marker?: AgScatterSeriesMarker;
     /** Configuration for the labels shown on top of data points.  */
     label?: AgScatterSeriesLabelOptions;
     /** The key to use to retrieve x-values from the data.  */

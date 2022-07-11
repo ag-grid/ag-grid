@@ -220,19 +220,19 @@
         "startEditingCell": {
             "more": {
                 "name": "Editing API",
-                "url": "/cell-editing/#editing-api"
+                "url": "/cell-editing-start-stop/#editing-api"
             }
         },
         "stopEditing": {
             "more": {
                 "name": "Editing API",
-                "url": "/cell-editing/#editing-api"
+                "url": "/cell-editing-start-stop/#editing-api"
             }
         },
         "getEditingCells": {
             "more": {
                 "name": "Editing API",
-                "url": "/cell-editing/#editing-api"
+                "url": "/cell-editing-start-stop/#editing-api"
             }
         },
         "getCellEditorInstances": {

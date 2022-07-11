@@ -15,7 +15,7 @@ const gridOptions: GridOptions = {
           xKey: 'xVal',
           yKey: 'yVal',
           axis: {
-            // set x-axis type to 'number'
+            // set axis type to 'number'
             type: 'number',
           },
         } as AreaSparklineOptions,

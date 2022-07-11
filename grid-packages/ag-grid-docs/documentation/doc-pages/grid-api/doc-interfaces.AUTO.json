@@ -1938,13 +1938,13 @@
   "NewValueParams": {
     "oldValue": {
       "description": "/** The value before the change */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
     "newValue": {
       "description": "/** The value after the change */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any", "TValue = any"] },
+    "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "RowNode<TData> | null", "optional": false }
@@ -1978,11 +1978,11 @@
     "meta": { "typeParams": ["TData = any"] },
     "oldValue": {
       "description": "/** The value before the change */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
     "newValue": {
       "description": "/** The value after the change */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
     "node": {
       "description": "/** Row node for the given row */",
@@ -2018,11 +2018,11 @@
     "meta": { "typeParams": ["TData = any"] },
     "oldValue": {
       "description": "/** The value before the change */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
     "newValue": {
       "description": "/** The value after the change */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
     "node": {
       "description": "/** Row node for the given row */",
@@ -2674,7 +2674,7 @@
     "loadingCellRendererSelector": {
       "description": "/** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */",
       "type": {
-        "returnType": "LoadingCellRendererSelectorFunc",
+        "returnType": "LoadingCellRendererSelectorFunc<TData>",
         "optional": true
       }
     },
@@ -2871,7 +2871,10 @@
     },
     "aggFuncs": {
       "description": "/** A map of 'function name' to 'function' for custom aggregation functions. */",
-      "type": { "returnType": "{ [key: string]: IAggFunc; }", "optional": true }
+      "type": {
+        "returnType": "{ [key: string]: IAggFunc<TData>; }",
+        "optional": true
+      }
     },
     "suppressAggFuncInHeader": {
       "description": "/** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false` */",
@@ -3179,11 +3182,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the sort results.\n * Default: `1` */",
+      "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n * as Sorting is always server side when Infinite Scroll is active.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the filter results.\n * Default: `1` */",
+      "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n * as Filtering is always server side when Infinite Scroll is active.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -3252,7 +3255,7 @@
     },
     "rowSelection": {
       "description": "/** Type of Row Selection: `single`, `multiple`. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'single' | 'multiple'", "optional": true }
     },
     "rowMultiSelectWithClick": {
       "description": "/** Set to `true` to allow multiple rows to be selected using single click. Default: `false` */",
@@ -3296,7 +3299,7 @@
     },
     "fillHandleDirection": {
       "description": "/** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. Default: `xy` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'x' | 'y' | 'xy'", "optional": true }
     },
     "suppressClearOnFillReduction": {
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false` */",
@@ -3404,7 +3407,7 @@
     "processCellForClipboard": {
       "description": "/** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams" },
+        "arguments": { "params": "ProcessCellForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -3412,7 +3415,7 @@
     "processHeaderForClipboard": {
       "description": "/** Allows you to process header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessHeaderForExportParams" },
+        "arguments": { "params": "ProcessHeaderForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -3420,7 +3423,7 @@
     "processGroupHeaderForClipboard": {
       "description": "/** Allows you to process group header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessGroupHeaderForExportParams" },
+        "arguments": { "params": "ProcessGroupHeaderForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -3428,7 +3431,7 @@
     "processCellFromClipboard": {
       "description": "/** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams" },
+        "arguments": { "params": "ProcessCellForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -3436,7 +3439,7 @@
     "sendToClipboard": {
       "description": "/** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */",
       "type": {
-        "arguments": { "params": "SendToClipboardParams" },
+        "arguments": { "params": "SendToClipboardParams<TData>" },
         "returnType": "void",
         "optional": true
       }
@@ -3444,7 +3447,7 @@
     "processDataFromClipboard": {
       "description": "/** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */",
       "type": {
-        "arguments": { "params": "ProcessDataFromClipboardParams" },
+        "arguments": { "params": "ProcessDataFromClipboardParams<TData>" },
         "returnType": "string[][] | null",
         "optional": true
       }
@@ -3452,7 +3455,7 @@
     "isExternalFilterPresent": {
       "description": "/** Grid calls this method to know if an external filter is present. */",
       "type": {
-        "arguments": { "params": "IsExternalFilterPresentParams" },
+        "arguments": { "params": "IsExternalFilterPresentParams<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -3472,7 +3475,7 @@
     "createChartContainer": {
       "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
       "type": {
-        "arguments": { "params": "ChartRefParams" },
+        "arguments": { "params": "ChartRefParams<TData>" },
         "returnType": "void",
         "optional": true
       }
@@ -3480,7 +3483,7 @@
     "navigateToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "NavigateToNextHeaderParams" },
+        "arguments": { "params": "NavigateToNextHeaderParams<TData>" },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -3488,7 +3491,7 @@
     "tabToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "TabToNextHeaderParams" },
+        "arguments": { "params": "TabToNextHeaderParams<TData>" },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -3496,7 +3499,7 @@
     "navigateToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
       "type": {
-        "arguments": { "params": "NavigateToNextCellParams" },
+        "arguments": { "params": "NavigateToNextCellParams<TData>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -3504,7 +3507,7 @@
     "tabToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
       "type": {
-        "arguments": { "params": "TabToNextCellParams" },
+        "arguments": { "params": "TabToNextCellParams<TData>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -3512,7 +3515,7 @@
     "suppressKeyboardEvent": {
       "description": "/** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.\n */",
       "type": {
-        "arguments": { "params": "SuppressKeyboardEventParams" },
+        "arguments": { "params": "SuppressKeyboardEventParams<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -3532,7 +3535,7 @@
     "getLocaleText": {
       "description": "/** A callback for localising text within the grid. */",
       "type": {
-        "arguments": { "params": "GetLocaleTextParams" },
+        "arguments": { "params": "GetLocaleTextParams<TData>" },
         "returnType": "string",
         "optional": true
       }
@@ -3544,7 +3547,7 @@
     "paginationNumberFormatter": {
       "description": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
       "type": {
-        "arguments": { "params": "PaginationNumberFormatterParams" },
+        "arguments": { "params": "PaginationNumberFormatterParams<TData>" },
         "returnType": "string",
         "optional": true
       }
@@ -3780,7 +3783,7 @@
     "onToolPanelVisibleChanged": {
       "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "type": {
-        "arguments": { "event": "ToolPanelVisibleChangedEvent" },
+        "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3789,7 +3792,7 @@
     "toolPanelVisibleChanged": {
       "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "type": {
-        "arguments": { "event": "ToolPanelVisibleChangedEvent" },
+        "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3798,7 +3801,7 @@
     "onPasteStart": {
       "description": "/** Paste operation has started. */",
       "type": {
-        "arguments": { "event": "PasteStartEvent" },
+        "arguments": { "event": "PasteStartEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3807,7 +3810,7 @@
     "pasteStart": {
       "description": "/** Paste operation has started. */",
       "type": {
-        "arguments": { "event": "PasteStartEvent" },
+        "arguments": { "event": "PasteStartEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3816,7 +3819,7 @@
     "onPasteEnd": {
       "description": "/** Paste operation has ended. */",
       "type": {
-        "arguments": { "event": "PasteEndEvent" },
+        "arguments": { "event": "PasteEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3825,7 +3828,7 @@
     "pasteEnd": {
       "description": "/** Paste operation has ended. */",
       "type": {
-        "arguments": { "event": "PasteEndEvent" },
+        "arguments": { "event": "PasteEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3834,7 +3837,7 @@
     "onColumnVisible": {
       "description": "/** A column, or group of columns, was hidden / shown. */",
       "type": {
-        "arguments": { "event": "ColumnVisibleEvent" },
+        "arguments": { "event": "ColumnVisibleEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3843,7 +3846,7 @@
     "columnVisible": {
       "description": "/** A column, or group of columns, was hidden / shown. */",
       "type": {
-        "arguments": { "event": "ColumnVisibleEvent" },
+        "arguments": { "event": "ColumnVisibleEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3852,7 +3855,7 @@
     "onColumnPinned": {
       "description": "/** A column, or group of columns, was pinned / unpinned. */",
       "type": {
-        "arguments": { "event": "ColumnPinnedEvent" },
+        "arguments": { "event": "ColumnPinnedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3861,7 +3864,7 @@
     "columnPinned": {
       "description": "/** A column, or group of columns, was pinned / unpinned. */",
       "type": {
-        "arguments": { "event": "ColumnPinnedEvent" },
+        "arguments": { "event": "ColumnPinnedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3870,7 +3873,7 @@
     "onColumnResized": {
       "description": "/** A column was resized. */",
       "type": {
-        "arguments": { "event": "ColumnResizedEvent" },
+        "arguments": { "event": "ColumnResizedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3879,7 +3882,7 @@
     "columnResized": {
       "description": "/** A column was resized. */",
       "type": {
-        "arguments": { "event": "ColumnResizedEvent" },
+        "arguments": { "event": "ColumnResizedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3888,7 +3891,7 @@
     "onColumnMoved": {
       "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
       "type": {
-        "arguments": { "event": "ColumnMovedEvent" },
+        "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3897,7 +3900,7 @@
     "columnMoved": {
       "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
       "type": {
-        "arguments": { "event": "ColumnMovedEvent" },
+        "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3906,7 +3909,7 @@
     "onColumnValueChanged": {
       "description": "/** A value column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnValueChangedEvent" },
+        "arguments": { "event": "ColumnValueChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3915,7 +3918,7 @@
     "columnValueChanged": {
       "description": "/** A value column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnValueChangedEvent" },
+        "arguments": { "event": "ColumnValueChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3924,7 +3927,7 @@
     "onColumnPivotModeChanged": {
       "description": "/** The pivot mode flag was changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotModeChangedEvent" },
+        "arguments": { "event": "ColumnPivotModeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3933,7 +3936,7 @@
     "columnPivotModeChanged": {
       "description": "/** The pivot mode flag was changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotModeChangedEvent" },
+        "arguments": { "event": "ColumnPivotModeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3942,7 +3945,7 @@
     "onColumnPivotChanged": {
       "description": "/** A pivot column was added, removed or order changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotChangedEvent" },
+        "arguments": { "event": "ColumnPivotChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3951,7 +3954,7 @@
     "columnPivotChanged": {
       "description": "/** A pivot column was added, removed or order changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotChangedEvent" },
+        "arguments": { "event": "ColumnPivotChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3960,7 +3963,7 @@
     "onColumnGroupOpened": {
       "description": "/** A column group was opened / closed. */",
       "type": {
-        "arguments": { "event": "ColumnGroupOpenedEvent" },
+        "arguments": { "event": "ColumnGroupOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3969,7 +3972,7 @@
     "columnGroupOpened": {
       "description": "/** A column group was opened / closed. */",
       "type": {
-        "arguments": { "event": "ColumnGroupOpenedEvent" },
+        "arguments": { "event": "ColumnGroupOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3978,7 +3981,7 @@
     "onNewColumnsLoaded": {
       "description": "/** User set new columns. */",
       "type": {
-        "arguments": { "event": "NewColumnsLoadedEvent" },
+        "arguments": { "event": "NewColumnsLoadedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3987,7 +3990,7 @@
     "newColumnsLoaded": {
       "description": "/** User set new columns. */",
       "type": {
-        "arguments": { "event": "NewColumnsLoadedEvent" },
+        "arguments": { "event": "NewColumnsLoadedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -3996,7 +3999,7 @@
     "onGridColumnsChanged": {
       "description": "/** The list of grid columns changed. */",
       "type": {
-        "arguments": { "event": "GridColumnsChangedEvent" },
+        "arguments": { "event": "GridColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4005,7 +4008,7 @@
     "gridColumnsChanged": {
       "description": "/** The list of grid columns changed. */",
       "type": {
-        "arguments": { "event": "GridColumnsChangedEvent" },
+        "arguments": { "event": "GridColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4014,7 +4017,7 @@
     "onDisplayedColumnsChanged": {
       "description": "/** The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc. */",
       "type": {
-        "arguments": { "event": "DisplayedColumnsChangedEvent" },
+        "arguments": { "event": "DisplayedColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4023,7 +4026,7 @@
     "displayedColumnsChanged": {
       "description": "/** The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc. */",
       "type": {
-        "arguments": { "event": "DisplayedColumnsChangedEvent" },
+        "arguments": { "event": "DisplayedColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4032,7 +4035,7 @@
     "onVirtualColumnsChanged": {
       "description": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "type": {
-        "arguments": { "event": "VirtualColumnsChangedEvent" },
+        "arguments": { "event": "VirtualColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4041,7 +4044,7 @@
     "virtualColumnsChanged": {
       "description": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "type": {
-        "arguments": { "event": "VirtualColumnsChangedEvent" },
+        "arguments": { "event": "VirtualColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4050,7 +4053,7 @@
     "onColumnEverythingChanged": {
       "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "type": {
-        "arguments": { "event": "ColumnEverythingChangedEvent" },
+        "arguments": { "event": "ColumnEverythingChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4059,7 +4062,7 @@
     "columnEverythingChanged": {
       "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "type": {
-        "arguments": { "event": "ColumnEverythingChangedEvent" },
+        "arguments": { "event": "ColumnEverythingChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4068,7 +4071,7 @@
     "onComponentStateChanged": {
       "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "type": {
-        "arguments": { "event": "ComponentStateChangedEvent" },
+        "arguments": { "event": "ComponentStateChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4077,7 +4080,7 @@
     "componentStateChanged": {
       "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "type": {
-        "arguments": { "event": "ComponentStateChangedEvent" },
+        "arguments": { "event": "ComponentStateChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4212,7 +4215,7 @@
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
       "type": {
-        "arguments": { "event": "FilterOpenedEvent" },
+        "arguments": { "event": "FilterOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4221,7 +4224,7 @@
     "filterOpened": {
       "description": "/** Filter has been opened. */",
       "type": {
-        "arguments": { "event": "FilterOpenedEvent" },
+        "arguments": { "event": "FilterOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4230,7 +4233,7 @@
     "onFilterChanged": {
       "description": "/** Filter has been modified and applied. */",
       "type": {
-        "arguments": { "event": "FilterChangedEvent" },
+        "arguments": { "event": "FilterChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4239,7 +4242,7 @@
     "filterChanged": {
       "description": "/** Filter has been modified and applied. */",
       "type": {
-        "arguments": { "event": "FilterChangedEvent" },
+        "arguments": { "event": "FilterChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4248,7 +4251,7 @@
     "onFilterModified": {
       "description": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
       "type": {
-        "arguments": { "event": "FilterModifiedEvent" },
+        "arguments": { "event": "FilterModifiedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4257,7 +4260,7 @@
     "filterModified": {
       "description": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
       "type": {
-        "arguments": { "event": "FilterModifiedEvent" },
+        "arguments": { "event": "FilterModifiedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4266,7 +4269,7 @@
     "onChartCreated": {
       "description": "/** A chart has been created. */",
       "type": {
-        "arguments": { "event": "ChartCreated" },
+        "arguments": { "event": "ChartCreated<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4275,7 +4278,7 @@
     "chartCreated": {
       "description": "/** A chart has been created. */",
       "type": {
-        "arguments": { "event": "ChartCreated" },
+        "arguments": { "event": "ChartCreated<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4284,7 +4287,7 @@
     "onChartRangeSelectionChanged": {
       "description": "/** The data range for the chart has been changed. */",
       "type": {
-        "arguments": { "event": "ChartRangeSelectionChanged" },
+        "arguments": { "event": "ChartRangeSelectionChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4293,7 +4296,7 @@
     "chartRangeSelectionChanged": {
       "description": "/** The data range for the chart has been changed. */",
       "type": {
-        "arguments": { "event": "ChartRangeSelectionChanged" },
+        "arguments": { "event": "ChartRangeSelectionChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4302,7 +4305,7 @@
     "onChartOptionsChanged": {
       "description": "/** Formatting changes have been made by users through the Format Panel. */",
       "type": {
-        "arguments": { "event": "ChartOptionsChanged" },
+        "arguments": { "event": "ChartOptionsChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4311,7 +4314,7 @@
     "chartOptionsChanged": {
       "description": "/** Formatting changes have been made by users through the Format Panel. */",
       "type": {
-        "arguments": { "event": "ChartOptionsChanged" },
+        "arguments": { "event": "ChartOptionsChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4320,7 +4323,7 @@
     "onChartDestroyed": {
       "description": "/** A chart has been destroyed. */",
       "type": {
-        "arguments": { "event": "ChartDestroyed" },
+        "arguments": { "event": "ChartDestroyed<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4329,7 +4332,7 @@
     "chartDestroyed": {
       "description": "/** A chart has been destroyed. */",
       "type": {
-        "arguments": { "event": "ChartDestroyed" },
+        "arguments": { "event": "ChartDestroyed<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4382,7 +4385,7 @@
     "onGridReady": {
       "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
-        "arguments": { "event": "GridReadyEvent" },
+        "arguments": { "event": "GridReadyEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4391,7 +4394,7 @@
     "gridReady": {
       "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
-        "arguments": { "event": "GridReadyEvent" },
+        "arguments": { "event": "GridReadyEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4400,7 +4403,7 @@
     "onFirstDataRendered": {
       "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
-        "arguments": { "event": "FirstDataRenderedEvent" },
+        "arguments": { "event": "FirstDataRenderedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4409,7 +4412,7 @@
     "firstDataRendered": {
       "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
-        "arguments": { "event": "FirstDataRenderedEvent" },
+        "arguments": { "event": "FirstDataRenderedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4418,7 +4421,7 @@
     "onGridSizeChanged": {
       "description": "/** The size of the grid `div` has changed. In other words, the grid was resized. */",
       "type": {
-        "arguments": { "event": "GridSizeChangedEvent" },
+        "arguments": { "event": "GridSizeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4427,7 +4430,7 @@
     "gridSizeChanged": {
       "description": "/** The size of the grid `div` has changed. In other words, the grid was resized. */",
       "type": {
-        "arguments": { "event": "GridSizeChangedEvent" },
+        "arguments": { "event": "GridSizeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4436,7 +4439,7 @@
     "onModelUpdated": {
       "description": "/** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events. */",
       "type": {
-        "arguments": { "event": "ModelUpdatedEvent" },
+        "arguments": { "event": "ModelUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4445,7 +4448,7 @@
     "modelUpdated": {
       "description": "/** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events. */",
       "type": {
-        "arguments": { "event": "ModelUpdatedEvent" },
+        "arguments": { "event": "ModelUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4472,7 +4475,7 @@
     "onViewportChanged": {
       "description": "/** Which rows are rendered in the DOM has changed. */",
       "type": {
-        "arguments": { "event": "ViewportChangedEvent" },
+        "arguments": { "event": "ViewportChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4481,7 +4484,7 @@
     "viewportChanged": {
       "description": "/** Which rows are rendered in the DOM has changed. */",
       "type": {
-        "arguments": { "event": "ViewportChangedEvent" },
+        "arguments": { "event": "ViewportChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4490,7 +4493,7 @@
     "onBodyScroll": {
       "description": "/** The body was scrolled horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEvent" },
+        "arguments": { "event": "BodyScrollEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4499,7 +4502,7 @@
     "bodyScroll": {
       "description": "/** The body was scrolled horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEvent" },
+        "arguments": { "event": "BodyScrollEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4508,7 +4511,7 @@
     "onBodyScrollEnd": {
       "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEndEvent" },
+        "arguments": { "event": "BodyScrollEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4517,7 +4520,7 @@
     "bodyScrollEnd": {
       "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEndEvent" },
+        "arguments": { "event": "BodyScrollEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4526,7 +4529,7 @@
     "onDragStarted": {
       "description": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStartedEvent" },
+        "arguments": { "event": "DragStartedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4535,7 +4538,7 @@
     "dragStarted": {
       "description": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStartedEvent" },
+        "arguments": { "event": "DragStartedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4544,7 +4547,7 @@
     "onDragStopped": {
       "description": "/** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStoppedEvent" },
+        "arguments": { "event": "DragStoppedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4553,7 +4556,7 @@
     "dragStopped": {
       "description": "/** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStoppedEvent" },
+        "arguments": { "event": "DragStoppedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4562,7 +4565,7 @@
     "onPaginationChanged": {
       "description": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n * \n *   - The page size changes.\n *   - The current shown page is changed.\n *   - New data is loaded onto the grid. */",
       "type": {
-        "arguments": { "event": "PaginationChangedEvent" },
+        "arguments": { "event": "PaginationChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4571,7 +4574,7 @@
     "paginationChanged": {
       "description": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n * \n *   - The page size changes.\n *   - The current shown page is changed.\n *   - New data is loaded onto the grid. */",
       "type": {
-        "arguments": { "event": "PaginationChangedEvent" },
+        "arguments": { "event": "PaginationChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4652,7 +4655,7 @@
     "onColumnRowGroupChanged": {
       "description": "/** A row group column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangedEvent" },
+        "arguments": { "event": "ColumnRowGroupChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4661,7 +4664,7 @@
     "columnRowGroupChanged": {
       "description": "/** A row group column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangedEvent" },
+        "arguments": { "event": "ColumnRowGroupChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4688,7 +4691,7 @@
     "onExpandOrCollapseAll": {
       "description": "/** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */",
       "type": {
-        "arguments": { "event": "ExpandCollapseAllEvent" },
+        "arguments": { "event": "ExpandCollapseAllEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4697,7 +4700,7 @@
     "expandOrCollapseAll": {
       "description": "/** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */",
       "type": {
-        "arguments": { "event": "ExpandCollapseAllEvent" },
+        "arguments": { "event": "ExpandCollapseAllEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4706,7 +4709,7 @@
     "onPinnedRowDataChanged": {
       "description": "/** The client has set new pinned row data into the grid. */",
       "type": {
-        "arguments": { "event": "PinnedRowDataChangedEvent" },
+        "arguments": { "event": "PinnedRowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4715,7 +4718,7 @@
     "pinnedRowDataChanged": {
       "description": "/** The client has set new pinned row data into the grid. */",
       "type": {
-        "arguments": { "event": "PinnedRowDataChangedEvent" },
+        "arguments": { "event": "PinnedRowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4724,7 +4727,7 @@
     "onRowDataChanged": {
       "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
-        "arguments": { "event": "RowDataChangedEvent" },
+        "arguments": { "event": "RowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4733,7 +4736,7 @@
     "rowDataChanged": {
       "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
-        "arguments": { "event": "RowDataChangedEvent" },
+        "arguments": { "event": "RowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4742,7 +4745,7 @@
     "onRowDataUpdated": {
       "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
-        "arguments": { "event": "RowDataUpdatedEvent" },
+        "arguments": { "event": "RowDataUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4751,7 +4754,7 @@
     "rowDataUpdated": {
       "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
-        "arguments": { "event": "RowDataUpdatedEvent" },
+        "arguments": { "event": "RowDataUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4814,7 +4817,7 @@
     "onCellFocused": {
       "description": "/** Cell is focused. */",
       "type": {
-        "arguments": { "event": "CellFocusedEvent" },
+        "arguments": { "event": "CellFocusedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4823,7 +4826,7 @@
     "cellFocused": {
       "description": "/** Cell is focused. */",
       "type": {
-        "arguments": { "event": "CellFocusedEvent" },
+        "arguments": { "event": "CellFocusedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4940,7 +4943,7 @@
     "onSelectionChanged": {
       "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
       "type": {
-        "arguments": { "event": "SelectionChangedEvent" },
+        "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4949,7 +4952,7 @@
     "selectionChanged": {
       "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
       "type": {
-        "arguments": { "event": "SelectionChangedEvent" },
+        "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4976,7 +4979,7 @@
     "onRangeSelectionChanged": {
       "description": "/** A change to range selection has occurred. */",
       "type": {
-        "arguments": { "event": "RangeSelectionChangedEvent" },
+        "arguments": { "event": "RangeSelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4985,7 +4988,7 @@
     "rangeSelectionChanged": {
       "description": "/** A change to range selection has occurred. */",
       "type": {
-        "arguments": { "event": "RangeSelectionChangedEvent" },
+        "arguments": { "event": "RangeSelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -4994,7 +4997,7 @@
     "onSortChanged": {
       "description": "/** Sort has changed. The grid also listens for this and updates the model. */",
       "type": {
-        "arguments": { "event": "SortChangedEvent" },
+        "arguments": { "event": "SortChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -5003,7 +5006,7 @@
     "sortChanged": {
       "description": "/** Sort has changed. The grid also listens for this and updates the model. */",
       "type": {
-        "arguments": { "event": "SortChangedEvent" },
+        "arguments": { "event": "SortChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -5011,7 +5014,7 @@
     },
     "onColumnRowGroupChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangeRequestEvent" },
+        "arguments": { "event": "ColumnRowGroupChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -5019,7 +5022,7 @@
     },
     "columnRowGroupChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangeRequestEvent" },
+        "arguments": { "event": "ColumnRowGroupChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -5027,7 +5030,7 @@
     },
     "onColumnPivotChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnPivotChangeRequestEvent" },
+        "arguments": { "event": "ColumnPivotChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -5035,7 +5038,7 @@
     },
     "columnPivotChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnPivotChangeRequestEvent" },
+        "arguments": { "event": "ColumnPivotChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -5043,7 +5046,7 @@
     },
     "onColumnValueChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnValueChangeRequestEvent" },
+        "arguments": { "event": "ColumnValueChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -5051,7 +5054,7 @@
     },
     "columnValueChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnValueChangeRequestEvent" },
+        "arguments": { "event": "ColumnValueChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -5059,7 +5062,7 @@
     },
     "onColumnAggFuncChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnAggFuncChangeRequestEvent" },
+        "arguments": { "event": "ColumnAggFuncChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -5067,7 +5070,7 @@
     },
     "columnAggFuncChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnAggFuncChangeRequestEvent" },
+        "arguments": { "event": "ColumnAggFuncChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -5284,7 +5287,9 @@
       "type": { "returnType": "number", "optional": true }
     }
   },
-  "LoadingCellRendererSelectorFunc": {},
+  "LoadingCellRendererSelectorFunc": {
+    "meta": { "typeParams": ["TData = any"] }
+  },
   "LoadingCellRendererSelectorResult": {
     "component": {
       "description": "/** Equivalent of setting `loadingCellRenderer` */",
@@ -6544,6 +6549,7 @@
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "DragStartedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "description": "/** One of {'cell','row','headerCell','toolPanel'} */",
       "type": { "returnType": "string", "optional": false }
@@ -6552,11 +6558,11 @@
       "description": "/** The DOM element that started the event. */",
       "type": { "returnType": "HTMLElement", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "DragStoppedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "description": "/** One of {'cell','row','headerCell','toolPanel'} */",
       "type": { "returnType": "string", "optional": false }
@@ -6565,7 +6571,6 @@
       "description": "/** The DOM element that started the event. */",
       "type": { "returnType": "HTMLElement", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
@@ -6989,12 +6994,12 @@
     }
   },
   "BodyScrollEndEvent": {
+    "meta": { "typeParams": ["TData = any"] },
     "direction": {
       "type": { "returnType": "ScrollDirection", "optional": false }
     },
     "left": { "type": { "returnType": "number", "optional": false } },
     "top": { "type": { "returnType": "number", "optional": false } },
-    "meta": { "typeParams": ["TData = any"] },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
@@ -7158,6 +7163,7 @@
       "description": "/** Any columns resized due to flex */",
       "type": { "returnType": "Column[] | null", "optional": false }
     },
+    "meta": { "typeParams": ["TData = any"] },
     "column": {
       "description": "/** The impacted column, only set if action was on one column */",
       "type": { "returnType": "Column | null", "optional": false }
@@ -7170,7 +7176,6 @@
       "description": "/** String describing where the event is coming from */",
       "type": { "returnType": "ColumnEventType", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
@@ -7179,6 +7184,7 @@
     }
   },
   "ColumnPivotChangedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
     "column": {
       "description": "/** The impacted column, only set if action was on one column */",
       "type": { "returnType": "Column | null", "optional": false }
@@ -7191,7 +7197,6 @@
       "description": "/** String describing where the event is coming from */",
       "type": { "returnType": "ColumnEventType", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
@@ -7200,6 +7205,7 @@
     }
   },
   "ColumnRowGroupChangedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
     "column": {
       "description": "/** The impacted column, only set if action was on one column */",
       "type": { "returnType": "Column | null", "optional": false }
@@ -7212,7 +7218,6 @@
       "description": "/** String describing where the event is coming from */",
       "type": { "returnType": "ColumnEventType", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
@@ -7221,6 +7226,7 @@
     }
   },
   "ColumnValueChangedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
     "column": {
       "description": "/** The impacted column, only set if action was on one column */",
       "type": { "returnType": "Column | null", "optional": false }
@@ -7233,7 +7239,6 @@
       "description": "/** String describing where the event is coming from */",
       "type": { "returnType": "ColumnEventType", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
@@ -7246,6 +7251,7 @@
       "description": "/** The position the column was moved to */",
       "type": { "returnType": "number", "optional": true }
     },
+    "meta": { "typeParams": ["TData = any"] },
     "column": {
       "description": "/** The impacted column, only set if action was on one column */",
       "type": { "returnType": "Column | null", "optional": false }
@@ -7258,7 +7264,6 @@
       "description": "/** String describing where the event is coming from */",
       "type": { "returnType": "ColumnEventType", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
@@ -7271,6 +7276,7 @@
       "description": "/** True if column was set to visible, false if set to hide */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "meta": { "typeParams": ["TData = any"] },
     "column": {
       "description": "/** The impacted column, only set if action was on one column */",
       "type": { "returnType": "Column | null", "optional": false }
@@ -7283,7 +7289,6 @@
       "description": "/** String describing where the event is coming from */",
       "type": { "returnType": "ColumnEventType", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
@@ -7296,6 +7301,7 @@
       "description": "/** Either 'left', 'right', or null (it not pinned) */",
       "type": { "returnType": "string | null", "optional": false }
     },
+    "meta": { "typeParams": ["TData = any"] },
     "column": {
       "description": "/** The impacted column, only set if action was on one column */",
       "type": { "returnType": "Column | null", "optional": false }
@@ -7308,7 +7314,6 @@
       "description": "/** String describing where the event is coming from */",
       "type": { "returnType": "ColumnEventType", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
@@ -8177,11 +8182,11 @@
   "CellEditingStoppedEvent": {
     "oldValue": {
       "description": "/** The old value before editing */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
     "newValue": {
       "description": "/** The new value after editing */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "any", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
@@ -8222,8 +8227,8 @@
     }
   },
   "CellValueChangedEvent": {
-    "oldValue": { "type": { "returnType": "TValue", "optional": false } },
-    "newValue": { "type": { "returnType": "TValue", "optional": false } },
+    "oldValue": { "type": { "returnType": "any", "optional": false } },
+    "newValue": { "type": { "returnType": "any", "optional": false } },
     "source": {
       "type": { "returnType": "string | undefined", "optional": false }
     },
@@ -8266,8 +8271,8 @@
     }
   },
   "CellEditRequestEvent": {
-    "oldValue": { "type": { "returnType": "TValue", "optional": false } },
-    "newValue": { "type": { "returnType": "TValue", "optional": false } },
+    "oldValue": { "type": { "returnType": "any", "optional": false } },
+    "newValue": { "type": { "returnType": "any", "optional": false } },
     "source": {
       "type": { "returnType": "string | undefined", "optional": false }
     },
@@ -8336,8 +8341,8 @@
     }
   },
   "ColumnRowGroupChangeRequestEvent": {
-    "columns": { "type": { "returnType": "Column[]", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
+    "columns": { "type": { "returnType": "Column[]", "optional": false } },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
@@ -8346,8 +8351,8 @@
     }
   },
   "ColumnPivotChangeRequestEvent": {
-    "columns": { "type": { "returnType": "Column[]", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
+    "columns": { "type": { "returnType": "Column[]", "optional": false } },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
@@ -8356,8 +8361,8 @@
     }
   },
   "ColumnValueChangeRequestEvent": {
-    "columns": { "type": { "returnType": "Column[]", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
+    "columns": { "type": { "returnType": "Column[]", "optional": false } },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
@@ -8367,8 +8372,8 @@
   },
   "ColumnAggFuncChangeRequestEvent": {
     "aggFunc": { "type": { "returnType": "any", "optional": false } },
-    "columns": { "type": { "returnType": "Column[]", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
+    "columns": { "type": { "returnType": "Column[]", "optional": false } },
     "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
@@ -9707,6 +9712,13 @@
     "setHeight": {
       "type": {
         "arguments": { "height": "number" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setBottom": {
+      "type": {
+        "arguments": { "bottom": "number" },
         "returnType": "void",
         "optional": false
       }
@@ -12828,6 +12840,10 @@
       "description": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
+    "fillOpacity": {
+      "description": "/** Opacity of the marker fills. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    },
     "stroke": {
       "description": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
       "type": { "returnType": "CssColor", "optional": true }
@@ -12835,6 +12851,10 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** Opacity of the marker strokes. */",
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgSeriesMarkerFormatterParams": {
@@ -12890,6 +12910,10 @@
       "description": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
+    "fillOpacity": {
+      "description": "/** Opacity of the marker fills. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    },
     "stroke": {
       "description": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
       "type": { "returnType": "CssColor", "optional": true }
@@ -12897,6 +12921,10 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** Opacity of the marker strokes. */",
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgAreaSeriesMarker": {
@@ -12927,6 +12955,10 @@
       "description": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
+    "fillOpacity": {
+      "description": "/** Opacity of the marker fills. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    },
     "stroke": {
       "description": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
       "type": { "returnType": "CssColor", "optional": true }
@@ -12934,6 +12966,10 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** Opacity of the marker strokes. */",
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgSeriesTooltip": {
@@ -13112,6 +13148,55 @@
       "type": { "returnType": "CssColor", "optional": true }
     }
   },
+  "AgScatterSeriesMarker": {
+    "domain": {
+      "description": "/** If sizeKey is used, explicitly specifies the extent of the domain of it's values. */",
+      "type": { "returnType": "[number, number]", "optional": true }
+    },
+    "formatter": {
+      "description": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
+      "type": {
+        "returnType": "AgCartesianSeriesMarkerFormatter",
+        "optional": true
+      }
+    },
+    "enabled": {
+      "description": "/** Whether or not to show markers. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "shape": {
+      "description": "/** The shape to use for the markers. You can also supply a custom marker by providing a `Marker` subclass. */",
+      "type": { "returnType": "MarkerShape", "optional": true }
+    },
+    "size": {
+      "description": "/** The size in pixels of the markers. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxSize": {
+      "description": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "fill": {
+      "description": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** Opacity of the marker fills. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** Opacity of the marker strokes. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    }
+  },
   "AgScatterSeriesOptions": {
     "type": {
       "description": "/** Configuration for the treemap series. */",
@@ -13119,7 +13204,7 @@
     },
     "marker": {
       "description": "/** Configuration for the markers used in the series. */",
-      "type": { "returnType": "AgCartesianSeriesMarker", "optional": true }
+      "type": { "returnType": "AgScatterSeriesMarker", "optional": true }
     },
     "label": {
       "description": "/** Configuration for the labels shown on top of data points. */",
@@ -18254,7 +18339,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the horizontal axis line in the sparklines. */",
+      "description": "/** The options for the axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18296,7 +18381,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the horizontal axis line in the sparklines. */",
+      "description": "/** The options for the axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18342,7 +18427,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the horizontal axis line in the sparklines. */",
+      "description": "/** The options for the axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18404,7 +18489,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the horizontal axis line in the sparklines. */",
+      "description": "/** The options for the axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18466,7 +18551,7 @@
       "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the horizontal axis line in the sparklines. */",
+      "description": "/** The options for the axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
@@ -18549,15 +18634,15 @@
   },
   "SparklineAxisOptions": {
     "type": {
-      "description": "/** The type of x-axis used to plot the data.\n * Default: `'category'` */",
+      "description": "/** The type of axis used to plot the data.\n * Default: `'category'` */",
       "type": { "returnType": "AxisType", "optional": true }
     },
     "stroke": {
-      "description": "/** The CSS colour value for the outline of the horizontal axis line.\n * Default: `'rgb(204, 214, 235)'` */",
+      "description": "/** The CSS colour value for the outline of the axis line.\n * Default: `'rgb(204, 214, 235)'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** The thickness in pixels for the stroke of the horizontal axis line.\n * Default: `1` */",
+      "description": "/** The thickness in pixels for the stroke of the axis line.\n * Default: `1` */",
       "type": { "returnType": "number", "optional": true }
     }
   },
@@ -23121,7 +23206,7 @@
     "loadingCellRendererSelector": {
       "description": "/** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */",
       "type": {
-        "returnType": "LoadingCellRendererSelectorFunc",
+        "returnType": "LoadingCellRendererSelectorFunc<TData>",
         "optional": true
       }
     },
@@ -23318,7 +23403,10 @@
     },
     "aggFuncs": {
       "description": "/** A map of 'function name' to 'function' for custom aggregation functions. */",
-      "type": { "returnType": "{ [key: string]: IAggFunc; }", "optional": true }
+      "type": {
+        "returnType": "{ [key: string]: IAggFunc<TData>; }",
+        "optional": true
+      }
     },
     "suppressAggFuncInHeader": {
       "description": "/** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false` */",
@@ -23626,11 +23714,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the sort results.\n * Default: `1` */",
+      "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n * as Sorting is always server side when Infinite Scroll is active.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the filter results.\n * Default: `1` */",
+      "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n * as Filtering is always server side when Infinite Scroll is active.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -23699,7 +23787,7 @@
     },
     "rowSelection": {
       "description": "/** Type of Row Selection: `single`, `multiple`. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'single' | 'multiple'", "optional": true }
     },
     "rowMultiSelectWithClick": {
       "description": "/** Set to `true` to allow multiple rows to be selected using single click. Default: `false` */",
@@ -23743,7 +23831,7 @@
     },
     "fillHandleDirection": {
       "description": "/** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. Default: `xy` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'x' | 'y' | 'xy'", "optional": true }
     },
     "suppressClearOnFillReduction": {
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false` */",
@@ -23851,7 +23939,7 @@
     "processCellForClipboard": {
       "description": "/** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams" },
+        "arguments": { "params": "ProcessCellForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -23859,7 +23947,7 @@
     "processHeaderForClipboard": {
       "description": "/** Allows you to process header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessHeaderForExportParams" },
+        "arguments": { "params": "ProcessHeaderForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -23867,7 +23955,7 @@
     "processGroupHeaderForClipboard": {
       "description": "/** Allows you to process group header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessGroupHeaderForExportParams" },
+        "arguments": { "params": "ProcessGroupHeaderForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -23875,7 +23963,7 @@
     "processCellFromClipboard": {
       "description": "/** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams" },
+        "arguments": { "params": "ProcessCellForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -23883,7 +23971,7 @@
     "sendToClipboard": {
       "description": "/** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */",
       "type": {
-        "arguments": { "params": "SendToClipboardParams" },
+        "arguments": { "params": "SendToClipboardParams<TData>" },
         "returnType": "void",
         "optional": true
       }
@@ -23891,7 +23979,7 @@
     "processDataFromClipboard": {
       "description": "/** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */",
       "type": {
-        "arguments": { "params": "ProcessDataFromClipboardParams" },
+        "arguments": { "params": "ProcessDataFromClipboardParams<TData>" },
         "returnType": "string[][] | null",
         "optional": true
       }
@@ -23899,7 +23987,7 @@
     "isExternalFilterPresent": {
       "description": "/** Grid calls this method to know if an external filter is present. */",
       "type": {
-        "arguments": { "params": "IsExternalFilterPresentParams" },
+        "arguments": { "params": "IsExternalFilterPresentParams<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -23919,7 +24007,7 @@
     "createChartContainer": {
       "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
       "type": {
-        "arguments": { "params": "ChartRefParams" },
+        "arguments": { "params": "ChartRefParams<TData>" },
         "returnType": "void",
         "optional": true
       }
@@ -23927,7 +24015,7 @@
     "navigateToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "NavigateToNextHeaderParams" },
+        "arguments": { "params": "NavigateToNextHeaderParams<TData>" },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -23935,7 +24023,7 @@
     "tabToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "TabToNextHeaderParams" },
+        "arguments": { "params": "TabToNextHeaderParams<TData>" },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -23943,7 +24031,7 @@
     "navigateToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
       "type": {
-        "arguments": { "params": "NavigateToNextCellParams" },
+        "arguments": { "params": "NavigateToNextCellParams<TData>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -23951,7 +24039,7 @@
     "tabToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
       "type": {
-        "arguments": { "params": "TabToNextCellParams" },
+        "arguments": { "params": "TabToNextCellParams<TData>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -23959,7 +24047,7 @@
     "suppressKeyboardEvent": {
       "description": "/** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.\n */",
       "type": {
-        "arguments": { "params": "SuppressKeyboardEventParams" },
+        "arguments": { "params": "SuppressKeyboardEventParams<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -23979,7 +24067,7 @@
     "getLocaleText": {
       "description": "/** A callback for localising text within the grid. */",
       "type": {
-        "arguments": { "params": "GetLocaleTextParams" },
+        "arguments": { "params": "GetLocaleTextParams<TData>" },
         "returnType": "string",
         "optional": true
       }
@@ -23991,7 +24079,7 @@
     "paginationNumberFormatter": {
       "description": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
       "type": {
-        "arguments": { "params": "PaginationNumberFormatterParams" },
+        "arguments": { "params": "PaginationNumberFormatterParams<TData>" },
         "returnType": "string",
         "optional": true
       }
@@ -24227,7 +24315,7 @@
     "onToolPanelVisibleChanged": {
       "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "type": {
-        "arguments": { "event": "ToolPanelVisibleChangedEvent" },
+        "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24236,7 +24324,7 @@
     "toolPanelVisibleChanged": {
       "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "type": {
-        "arguments": { "event": "ToolPanelVisibleChangedEvent" },
+        "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24245,7 +24333,7 @@
     "onPasteStart": {
       "description": "/** Paste operation has started. */",
       "type": {
-        "arguments": { "event": "PasteStartEvent" },
+        "arguments": { "event": "PasteStartEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24254,7 +24342,7 @@
     "pasteStart": {
       "description": "/** Paste operation has started. */",
       "type": {
-        "arguments": { "event": "PasteStartEvent" },
+        "arguments": { "event": "PasteStartEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24263,7 +24351,7 @@
     "onPasteEnd": {
       "description": "/** Paste operation has ended. */",
       "type": {
-        "arguments": { "event": "PasteEndEvent" },
+        "arguments": { "event": "PasteEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24272,7 +24360,7 @@
     "pasteEnd": {
       "description": "/** Paste operation has ended. */",
       "type": {
-        "arguments": { "event": "PasteEndEvent" },
+        "arguments": { "event": "PasteEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24281,7 +24369,7 @@
     "onColumnVisible": {
       "description": "/** A column, or group of columns, was hidden / shown. */",
       "type": {
-        "arguments": { "event": "ColumnVisibleEvent" },
+        "arguments": { "event": "ColumnVisibleEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24290,7 +24378,7 @@
     "columnVisible": {
       "description": "/** A column, or group of columns, was hidden / shown. */",
       "type": {
-        "arguments": { "event": "ColumnVisibleEvent" },
+        "arguments": { "event": "ColumnVisibleEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24299,7 +24387,7 @@
     "onColumnPinned": {
       "description": "/** A column, or group of columns, was pinned / unpinned. */",
       "type": {
-        "arguments": { "event": "ColumnPinnedEvent" },
+        "arguments": { "event": "ColumnPinnedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24308,7 +24396,7 @@
     "columnPinned": {
       "description": "/** A column, or group of columns, was pinned / unpinned. */",
       "type": {
-        "arguments": { "event": "ColumnPinnedEvent" },
+        "arguments": { "event": "ColumnPinnedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24317,7 +24405,7 @@
     "onColumnResized": {
       "description": "/** A column was resized. */",
       "type": {
-        "arguments": { "event": "ColumnResizedEvent" },
+        "arguments": { "event": "ColumnResizedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24326,7 +24414,7 @@
     "columnResized": {
       "description": "/** A column was resized. */",
       "type": {
-        "arguments": { "event": "ColumnResizedEvent" },
+        "arguments": { "event": "ColumnResizedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24335,7 +24423,7 @@
     "onColumnMoved": {
       "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
       "type": {
-        "arguments": { "event": "ColumnMovedEvent" },
+        "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24344,7 +24432,7 @@
     "columnMoved": {
       "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
       "type": {
-        "arguments": { "event": "ColumnMovedEvent" },
+        "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24353,7 +24441,7 @@
     "onColumnValueChanged": {
       "description": "/** A value column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnValueChangedEvent" },
+        "arguments": { "event": "ColumnValueChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24362,7 +24450,7 @@
     "columnValueChanged": {
       "description": "/** A value column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnValueChangedEvent" },
+        "arguments": { "event": "ColumnValueChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24371,7 +24459,7 @@
     "onColumnPivotModeChanged": {
       "description": "/** The pivot mode flag was changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotModeChangedEvent" },
+        "arguments": { "event": "ColumnPivotModeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24380,7 +24468,7 @@
     "columnPivotModeChanged": {
       "description": "/** The pivot mode flag was changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotModeChangedEvent" },
+        "arguments": { "event": "ColumnPivotModeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24389,7 +24477,7 @@
     "onColumnPivotChanged": {
       "description": "/** A pivot column was added, removed or order changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotChangedEvent" },
+        "arguments": { "event": "ColumnPivotChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24398,7 +24486,7 @@
     "columnPivotChanged": {
       "description": "/** A pivot column was added, removed or order changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotChangedEvent" },
+        "arguments": { "event": "ColumnPivotChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24407,7 +24495,7 @@
     "onColumnGroupOpened": {
       "description": "/** A column group was opened / closed. */",
       "type": {
-        "arguments": { "event": "ColumnGroupOpenedEvent" },
+        "arguments": { "event": "ColumnGroupOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24416,7 +24504,7 @@
     "columnGroupOpened": {
       "description": "/** A column group was opened / closed. */",
       "type": {
-        "arguments": { "event": "ColumnGroupOpenedEvent" },
+        "arguments": { "event": "ColumnGroupOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24425,7 +24513,7 @@
     "onNewColumnsLoaded": {
       "description": "/** User set new columns. */",
       "type": {
-        "arguments": { "event": "NewColumnsLoadedEvent" },
+        "arguments": { "event": "NewColumnsLoadedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24434,7 +24522,7 @@
     "newColumnsLoaded": {
       "description": "/** User set new columns. */",
       "type": {
-        "arguments": { "event": "NewColumnsLoadedEvent" },
+        "arguments": { "event": "NewColumnsLoadedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24443,7 +24531,7 @@
     "onGridColumnsChanged": {
       "description": "/** The list of grid columns changed. */",
       "type": {
-        "arguments": { "event": "GridColumnsChangedEvent" },
+        "arguments": { "event": "GridColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24452,7 +24540,7 @@
     "gridColumnsChanged": {
       "description": "/** The list of grid columns changed. */",
       "type": {
-        "arguments": { "event": "GridColumnsChangedEvent" },
+        "arguments": { "event": "GridColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24461,7 +24549,7 @@
     "onDisplayedColumnsChanged": {
       "description": "/** The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc. */",
       "type": {
-        "arguments": { "event": "DisplayedColumnsChangedEvent" },
+        "arguments": { "event": "DisplayedColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24470,7 +24558,7 @@
     "displayedColumnsChanged": {
       "description": "/** The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc. */",
       "type": {
-        "arguments": { "event": "DisplayedColumnsChangedEvent" },
+        "arguments": { "event": "DisplayedColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24479,7 +24567,7 @@
     "onVirtualColumnsChanged": {
       "description": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "type": {
-        "arguments": { "event": "VirtualColumnsChangedEvent" },
+        "arguments": { "event": "VirtualColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24488,7 +24576,7 @@
     "virtualColumnsChanged": {
       "description": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "type": {
-        "arguments": { "event": "VirtualColumnsChangedEvent" },
+        "arguments": { "event": "VirtualColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24497,7 +24585,7 @@
     "onColumnEverythingChanged": {
       "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "type": {
-        "arguments": { "event": "ColumnEverythingChangedEvent" },
+        "arguments": { "event": "ColumnEverythingChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24506,7 +24594,7 @@
     "columnEverythingChanged": {
       "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "type": {
-        "arguments": { "event": "ColumnEverythingChangedEvent" },
+        "arguments": { "event": "ColumnEverythingChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24515,7 +24603,7 @@
     "onComponentStateChanged": {
       "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "type": {
-        "arguments": { "event": "ComponentStateChangedEvent" },
+        "arguments": { "event": "ComponentStateChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24524,7 +24612,7 @@
     "componentStateChanged": {
       "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "type": {
-        "arguments": { "event": "ComponentStateChangedEvent" },
+        "arguments": { "event": "ComponentStateChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24659,7 +24747,7 @@
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
       "type": {
-        "arguments": { "event": "FilterOpenedEvent" },
+        "arguments": { "event": "FilterOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24668,7 +24756,7 @@
     "filterOpened": {
       "description": "/** Filter has been opened. */",
       "type": {
-        "arguments": { "event": "FilterOpenedEvent" },
+        "arguments": { "event": "FilterOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24677,7 +24765,7 @@
     "onFilterChanged": {
       "description": "/** Filter has been modified and applied. */",
       "type": {
-        "arguments": { "event": "FilterChangedEvent" },
+        "arguments": { "event": "FilterChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24686,7 +24774,7 @@
     "filterChanged": {
       "description": "/** Filter has been modified and applied. */",
       "type": {
-        "arguments": { "event": "FilterChangedEvent" },
+        "arguments": { "event": "FilterChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24695,7 +24783,7 @@
     "onFilterModified": {
       "description": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
       "type": {
-        "arguments": { "event": "FilterModifiedEvent" },
+        "arguments": { "event": "FilterModifiedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24704,7 +24792,7 @@
     "filterModified": {
       "description": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
       "type": {
-        "arguments": { "event": "FilterModifiedEvent" },
+        "arguments": { "event": "FilterModifiedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24713,7 +24801,7 @@
     "onChartCreated": {
       "description": "/** A chart has been created. */",
       "type": {
-        "arguments": { "event": "ChartCreated" },
+        "arguments": { "event": "ChartCreated<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24722,7 +24810,7 @@
     "chartCreated": {
       "description": "/** A chart has been created. */",
       "type": {
-        "arguments": { "event": "ChartCreated" },
+        "arguments": { "event": "ChartCreated<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24731,7 +24819,7 @@
     "onChartRangeSelectionChanged": {
       "description": "/** The data range for the chart has been changed. */",
       "type": {
-        "arguments": { "event": "ChartRangeSelectionChanged" },
+        "arguments": { "event": "ChartRangeSelectionChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24740,7 +24828,7 @@
     "chartRangeSelectionChanged": {
       "description": "/** The data range for the chart has been changed. */",
       "type": {
-        "arguments": { "event": "ChartRangeSelectionChanged" },
+        "arguments": { "event": "ChartRangeSelectionChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24749,7 +24837,7 @@
     "onChartOptionsChanged": {
       "description": "/** Formatting changes have been made by users through the Format Panel. */",
       "type": {
-        "arguments": { "event": "ChartOptionsChanged" },
+        "arguments": { "event": "ChartOptionsChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24758,7 +24846,7 @@
     "chartOptionsChanged": {
       "description": "/** Formatting changes have been made by users through the Format Panel. */",
       "type": {
-        "arguments": { "event": "ChartOptionsChanged" },
+        "arguments": { "event": "ChartOptionsChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24767,7 +24855,7 @@
     "onChartDestroyed": {
       "description": "/** A chart has been destroyed. */",
       "type": {
-        "arguments": { "event": "ChartDestroyed" },
+        "arguments": { "event": "ChartDestroyed<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24776,7 +24864,7 @@
     "chartDestroyed": {
       "description": "/** A chart has been destroyed. */",
       "type": {
-        "arguments": { "event": "ChartDestroyed" },
+        "arguments": { "event": "ChartDestroyed<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24829,7 +24917,7 @@
     "onGridReady": {
       "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
-        "arguments": { "event": "GridReadyEvent" },
+        "arguments": { "event": "GridReadyEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24838,7 +24926,7 @@
     "gridReady": {
       "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
-        "arguments": { "event": "GridReadyEvent" },
+        "arguments": { "event": "GridReadyEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24847,7 +24935,7 @@
     "onFirstDataRendered": {
       "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
-        "arguments": { "event": "FirstDataRenderedEvent" },
+        "arguments": { "event": "FirstDataRenderedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24856,7 +24944,7 @@
     "firstDataRendered": {
       "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
-        "arguments": { "event": "FirstDataRenderedEvent" },
+        "arguments": { "event": "FirstDataRenderedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24865,7 +24953,7 @@
     "onGridSizeChanged": {
       "description": "/** The size of the grid `div` has changed. In other words, the grid was resized. */",
       "type": {
-        "arguments": { "event": "GridSizeChangedEvent" },
+        "arguments": { "event": "GridSizeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24874,7 +24962,7 @@
     "gridSizeChanged": {
       "description": "/** The size of the grid `div` has changed. In other words, the grid was resized. */",
       "type": {
-        "arguments": { "event": "GridSizeChangedEvent" },
+        "arguments": { "event": "GridSizeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24883,7 +24971,7 @@
     "onModelUpdated": {
       "description": "/** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events. */",
       "type": {
-        "arguments": { "event": "ModelUpdatedEvent" },
+        "arguments": { "event": "ModelUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24892,7 +24980,7 @@
     "modelUpdated": {
       "description": "/** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events. */",
       "type": {
-        "arguments": { "event": "ModelUpdatedEvent" },
+        "arguments": { "event": "ModelUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24919,7 +25007,7 @@
     "onViewportChanged": {
       "description": "/** Which rows are rendered in the DOM has changed. */",
       "type": {
-        "arguments": { "event": "ViewportChangedEvent" },
+        "arguments": { "event": "ViewportChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24928,7 +25016,7 @@
     "viewportChanged": {
       "description": "/** Which rows are rendered in the DOM has changed. */",
       "type": {
-        "arguments": { "event": "ViewportChangedEvent" },
+        "arguments": { "event": "ViewportChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24937,7 +25025,7 @@
     "onBodyScroll": {
       "description": "/** The body was scrolled horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEvent" },
+        "arguments": { "event": "BodyScrollEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24946,7 +25034,7 @@
     "bodyScroll": {
       "description": "/** The body was scrolled horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEvent" },
+        "arguments": { "event": "BodyScrollEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24955,7 +25043,7 @@
     "onBodyScrollEnd": {
       "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEndEvent" },
+        "arguments": { "event": "BodyScrollEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24964,7 +25052,7 @@
     "bodyScrollEnd": {
       "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEndEvent" },
+        "arguments": { "event": "BodyScrollEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24973,7 +25061,7 @@
     "onDragStarted": {
       "description": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStartedEvent" },
+        "arguments": { "event": "DragStartedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24982,7 +25070,7 @@
     "dragStarted": {
       "description": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStartedEvent" },
+        "arguments": { "event": "DragStartedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -24991,7 +25079,7 @@
     "onDragStopped": {
       "description": "/** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStoppedEvent" },
+        "arguments": { "event": "DragStoppedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25000,7 +25088,7 @@
     "dragStopped": {
       "description": "/** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStoppedEvent" },
+        "arguments": { "event": "DragStoppedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25009,7 +25097,7 @@
     "onPaginationChanged": {
       "description": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n * \n *   - The page size changes.\n *   - The current shown page is changed.\n *   - New data is loaded onto the grid. */",
       "type": {
-        "arguments": { "event": "PaginationChangedEvent" },
+        "arguments": { "event": "PaginationChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25018,7 +25106,7 @@
     "paginationChanged": {
       "description": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n * \n *   - The page size changes.\n *   - The current shown page is changed.\n *   - New data is loaded onto the grid. */",
       "type": {
-        "arguments": { "event": "PaginationChangedEvent" },
+        "arguments": { "event": "PaginationChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25099,7 +25187,7 @@
     "onColumnRowGroupChanged": {
       "description": "/** A row group column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangedEvent" },
+        "arguments": { "event": "ColumnRowGroupChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25108,7 +25196,7 @@
     "columnRowGroupChanged": {
       "description": "/** A row group column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangedEvent" },
+        "arguments": { "event": "ColumnRowGroupChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25135,7 +25223,7 @@
     "onExpandOrCollapseAll": {
       "description": "/** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */",
       "type": {
-        "arguments": { "event": "ExpandCollapseAllEvent" },
+        "arguments": { "event": "ExpandCollapseAllEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25144,7 +25232,7 @@
     "expandOrCollapseAll": {
       "description": "/** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */",
       "type": {
-        "arguments": { "event": "ExpandCollapseAllEvent" },
+        "arguments": { "event": "ExpandCollapseAllEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25153,7 +25241,7 @@
     "onPinnedRowDataChanged": {
       "description": "/** The client has set new pinned row data into the grid. */",
       "type": {
-        "arguments": { "event": "PinnedRowDataChangedEvent" },
+        "arguments": { "event": "PinnedRowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25162,7 +25250,7 @@
     "pinnedRowDataChanged": {
       "description": "/** The client has set new pinned row data into the grid. */",
       "type": {
-        "arguments": { "event": "PinnedRowDataChangedEvent" },
+        "arguments": { "event": "PinnedRowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25171,7 +25259,7 @@
     "onRowDataChanged": {
       "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
-        "arguments": { "event": "RowDataChangedEvent" },
+        "arguments": { "event": "RowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25180,7 +25268,7 @@
     "rowDataChanged": {
       "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
-        "arguments": { "event": "RowDataChangedEvent" },
+        "arguments": { "event": "RowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25189,7 +25277,7 @@
     "onRowDataUpdated": {
       "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
-        "arguments": { "event": "RowDataUpdatedEvent" },
+        "arguments": { "event": "RowDataUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25198,7 +25286,7 @@
     "rowDataUpdated": {
       "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
-        "arguments": { "event": "RowDataUpdatedEvent" },
+        "arguments": { "event": "RowDataUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25261,7 +25349,7 @@
     "onCellFocused": {
       "description": "/** Cell is focused. */",
       "type": {
-        "arguments": { "event": "CellFocusedEvent" },
+        "arguments": { "event": "CellFocusedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25270,7 +25358,7 @@
     "cellFocused": {
       "description": "/** Cell is focused. */",
       "type": {
-        "arguments": { "event": "CellFocusedEvent" },
+        "arguments": { "event": "CellFocusedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25387,7 +25475,7 @@
     "onSelectionChanged": {
       "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
       "type": {
-        "arguments": { "event": "SelectionChangedEvent" },
+        "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25396,7 +25484,7 @@
     "selectionChanged": {
       "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
       "type": {
-        "arguments": { "event": "SelectionChangedEvent" },
+        "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25423,7 +25511,7 @@
     "onRangeSelectionChanged": {
       "description": "/** A change to range selection has occurred. */",
       "type": {
-        "arguments": { "event": "RangeSelectionChangedEvent" },
+        "arguments": { "event": "RangeSelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25432,7 +25520,7 @@
     "rangeSelectionChanged": {
       "description": "/** A change to range selection has occurred. */",
       "type": {
-        "arguments": { "event": "RangeSelectionChangedEvent" },
+        "arguments": { "event": "RangeSelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25441,7 +25529,7 @@
     "onSortChanged": {
       "description": "/** Sort has changed. The grid also listens for this and updates the model. */",
       "type": {
-        "arguments": { "event": "SortChangedEvent" },
+        "arguments": { "event": "SortChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25450,7 +25538,7 @@
     "sortChanged": {
       "description": "/** Sort has changed. The grid also listens for this and updates the model. */",
       "type": {
-        "arguments": { "event": "SortChangedEvent" },
+        "arguments": { "event": "SortChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25458,7 +25546,7 @@
     },
     "onColumnRowGroupChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangeRequestEvent" },
+        "arguments": { "event": "ColumnRowGroupChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25466,7 +25554,7 @@
     },
     "columnRowGroupChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangeRequestEvent" },
+        "arguments": { "event": "ColumnRowGroupChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25474,7 +25562,7 @@
     },
     "onColumnPivotChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnPivotChangeRequestEvent" },
+        "arguments": { "event": "ColumnPivotChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25482,7 +25570,7 @@
     },
     "columnPivotChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnPivotChangeRequestEvent" },
+        "arguments": { "event": "ColumnPivotChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25490,7 +25578,7 @@
     },
     "onColumnValueChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnValueChangeRequestEvent" },
+        "arguments": { "event": "ColumnValueChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25498,7 +25586,7 @@
     },
     "columnValueChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnValueChangeRequestEvent" },
+        "arguments": { "event": "ColumnValueChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25506,7 +25594,7 @@
     },
     "onColumnAggFuncChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnAggFuncChangeRequestEvent" },
+        "arguments": { "event": "ColumnAggFuncChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25514,7 +25602,7 @@
     },
     "columnAggFuncChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnAggFuncChangeRequestEvent" },
+        "arguments": { "event": "ColumnAggFuncChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -25886,7 +25974,7 @@
     "loadingCellRendererSelector": {
       "description": "/** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */",
       "type": {
-        "returnType": "LoadingCellRendererSelectorFunc",
+        "returnType": "LoadingCellRendererSelectorFunc<TData>",
         "optional": true
       }
     },
@@ -26083,7 +26171,10 @@
     },
     "aggFuncs": {
       "description": "/** A map of 'function name' to 'function' for custom aggregation functions. */",
-      "type": { "returnType": "{ [key: string]: IAggFunc; }", "optional": true }
+      "type": {
+        "returnType": "{ [key: string]: IAggFunc<TData>; }",
+        "optional": true
+      }
     },
     "suppressAggFuncInHeader": {
       "description": "/** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false` */",
@@ -26391,11 +26482,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the sort results.\n * Default: `1` */",
+      "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n * as Sorting is always server side when Infinite Scroll is active.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the filter results.\n * Default: `1` */",
+      "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n * as Filtering is always server side when Infinite Scroll is active.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -26464,7 +26555,7 @@
     },
     "rowSelection": {
       "description": "/** Type of Row Selection: `single`, `multiple`. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'single' | 'multiple'", "optional": true }
     },
     "rowMultiSelectWithClick": {
       "description": "/** Set to `true` to allow multiple rows to be selected using single click. Default: `false` */",
@@ -26508,7 +26599,7 @@
     },
     "fillHandleDirection": {
       "description": "/** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. Default: `xy` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'x' | 'y' | 'xy'", "optional": true }
     },
     "suppressClearOnFillReduction": {
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false` */",
@@ -26616,7 +26707,7 @@
     "processCellForClipboard": {
       "description": "/** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams" },
+        "arguments": { "params": "ProcessCellForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -26624,7 +26715,7 @@
     "processHeaderForClipboard": {
       "description": "/** Allows you to process header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessHeaderForExportParams" },
+        "arguments": { "params": "ProcessHeaderForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -26632,7 +26723,7 @@
     "processGroupHeaderForClipboard": {
       "description": "/** Allows you to process group header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessGroupHeaderForExportParams" },
+        "arguments": { "params": "ProcessGroupHeaderForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -26640,7 +26731,7 @@
     "processCellFromClipboard": {
       "description": "/** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams" },
+        "arguments": { "params": "ProcessCellForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -26648,7 +26739,7 @@
     "sendToClipboard": {
       "description": "/** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */",
       "type": {
-        "arguments": { "params": "SendToClipboardParams" },
+        "arguments": { "params": "SendToClipboardParams<TData>" },
         "returnType": "void",
         "optional": true
       }
@@ -26656,7 +26747,7 @@
     "processDataFromClipboard": {
       "description": "/** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */",
       "type": {
-        "arguments": { "params": "ProcessDataFromClipboardParams" },
+        "arguments": { "params": "ProcessDataFromClipboardParams<TData>" },
         "returnType": "string[][] | null",
         "optional": true
       }
@@ -26664,7 +26755,7 @@
     "isExternalFilterPresent": {
       "description": "/** Grid calls this method to know if an external filter is present. */",
       "type": {
-        "arguments": { "params": "IsExternalFilterPresentParams" },
+        "arguments": { "params": "IsExternalFilterPresentParams<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -26684,7 +26775,7 @@
     "createChartContainer": {
       "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
       "type": {
-        "arguments": { "params": "ChartRefParams" },
+        "arguments": { "params": "ChartRefParams<TData>" },
         "returnType": "void",
         "optional": true
       }
@@ -26692,7 +26783,7 @@
     "navigateToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "NavigateToNextHeaderParams" },
+        "arguments": { "params": "NavigateToNextHeaderParams<TData>" },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -26700,7 +26791,7 @@
     "tabToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "TabToNextHeaderParams" },
+        "arguments": { "params": "TabToNextHeaderParams<TData>" },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -26708,7 +26799,7 @@
     "navigateToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
       "type": {
-        "arguments": { "params": "NavigateToNextCellParams" },
+        "arguments": { "params": "NavigateToNextCellParams<TData>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -26716,7 +26807,7 @@
     "tabToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
       "type": {
-        "arguments": { "params": "TabToNextCellParams" },
+        "arguments": { "params": "TabToNextCellParams<TData>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -26724,7 +26815,7 @@
     "suppressKeyboardEvent": {
       "description": "/** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.\n */",
       "type": {
-        "arguments": { "params": "SuppressKeyboardEventParams" },
+        "arguments": { "params": "SuppressKeyboardEventParams<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -26744,7 +26835,7 @@
     "getLocaleText": {
       "description": "/** A callback for localising text within the grid. */",
       "type": {
-        "arguments": { "params": "GetLocaleTextParams" },
+        "arguments": { "params": "GetLocaleTextParams<TData>" },
         "returnType": "string",
         "optional": true
       }
@@ -26756,7 +26847,7 @@
     "paginationNumberFormatter": {
       "description": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
       "type": {
-        "arguments": { "params": "PaginationNumberFormatterParams" },
+        "arguments": { "params": "PaginationNumberFormatterParams<TData>" },
         "returnType": "string",
         "optional": true
       }
@@ -26992,7 +27083,7 @@
     "onToolPanelVisibleChanged": {
       "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "type": {
-        "arguments": { "event": "ToolPanelVisibleChangedEvent" },
+        "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27001,7 +27092,7 @@
     "toolPanelVisibleChanged": {
       "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "type": {
-        "arguments": { "event": "ToolPanelVisibleChangedEvent" },
+        "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27010,7 +27101,7 @@
     "onPasteStart": {
       "description": "/** Paste operation has started. */",
       "type": {
-        "arguments": { "event": "PasteStartEvent" },
+        "arguments": { "event": "PasteStartEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27019,7 +27110,7 @@
     "pasteStart": {
       "description": "/** Paste operation has started. */",
       "type": {
-        "arguments": { "event": "PasteStartEvent" },
+        "arguments": { "event": "PasteStartEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27028,7 +27119,7 @@
     "onPasteEnd": {
       "description": "/** Paste operation has ended. */",
       "type": {
-        "arguments": { "event": "PasteEndEvent" },
+        "arguments": { "event": "PasteEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27037,7 +27128,7 @@
     "pasteEnd": {
       "description": "/** Paste operation has ended. */",
       "type": {
-        "arguments": { "event": "PasteEndEvent" },
+        "arguments": { "event": "PasteEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27046,7 +27137,7 @@
     "onColumnVisible": {
       "description": "/** A column, or group of columns, was hidden / shown. */",
       "type": {
-        "arguments": { "event": "ColumnVisibleEvent" },
+        "arguments": { "event": "ColumnVisibleEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27055,7 +27146,7 @@
     "columnVisible": {
       "description": "/** A column, or group of columns, was hidden / shown. */",
       "type": {
-        "arguments": { "event": "ColumnVisibleEvent" },
+        "arguments": { "event": "ColumnVisibleEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27064,7 +27155,7 @@
     "onColumnPinned": {
       "description": "/** A column, or group of columns, was pinned / unpinned. */",
       "type": {
-        "arguments": { "event": "ColumnPinnedEvent" },
+        "arguments": { "event": "ColumnPinnedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27073,7 +27164,7 @@
     "columnPinned": {
       "description": "/** A column, or group of columns, was pinned / unpinned. */",
       "type": {
-        "arguments": { "event": "ColumnPinnedEvent" },
+        "arguments": { "event": "ColumnPinnedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27082,7 +27173,7 @@
     "onColumnResized": {
       "description": "/** A column was resized. */",
       "type": {
-        "arguments": { "event": "ColumnResizedEvent" },
+        "arguments": { "event": "ColumnResizedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27091,7 +27182,7 @@
     "columnResized": {
       "description": "/** A column was resized. */",
       "type": {
-        "arguments": { "event": "ColumnResizedEvent" },
+        "arguments": { "event": "ColumnResizedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27100,7 +27191,7 @@
     "onColumnMoved": {
       "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
       "type": {
-        "arguments": { "event": "ColumnMovedEvent" },
+        "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27109,7 +27200,7 @@
     "columnMoved": {
       "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
       "type": {
-        "arguments": { "event": "ColumnMovedEvent" },
+        "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27118,7 +27209,7 @@
     "onColumnValueChanged": {
       "description": "/** A value column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnValueChangedEvent" },
+        "arguments": { "event": "ColumnValueChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27127,7 +27218,7 @@
     "columnValueChanged": {
       "description": "/** A value column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnValueChangedEvent" },
+        "arguments": { "event": "ColumnValueChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27136,7 +27227,7 @@
     "onColumnPivotModeChanged": {
       "description": "/** The pivot mode flag was changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotModeChangedEvent" },
+        "arguments": { "event": "ColumnPivotModeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27145,7 +27236,7 @@
     "columnPivotModeChanged": {
       "description": "/** The pivot mode flag was changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotModeChangedEvent" },
+        "arguments": { "event": "ColumnPivotModeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27154,7 +27245,7 @@
     "onColumnPivotChanged": {
       "description": "/** A pivot column was added, removed or order changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotChangedEvent" },
+        "arguments": { "event": "ColumnPivotChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27163,7 +27254,7 @@
     "columnPivotChanged": {
       "description": "/** A pivot column was added, removed or order changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotChangedEvent" },
+        "arguments": { "event": "ColumnPivotChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27172,7 +27263,7 @@
     "onColumnGroupOpened": {
       "description": "/** A column group was opened / closed. */",
       "type": {
-        "arguments": { "event": "ColumnGroupOpenedEvent" },
+        "arguments": { "event": "ColumnGroupOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27181,7 +27272,7 @@
     "columnGroupOpened": {
       "description": "/** A column group was opened / closed. */",
       "type": {
-        "arguments": { "event": "ColumnGroupOpenedEvent" },
+        "arguments": { "event": "ColumnGroupOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27190,7 +27281,7 @@
     "onNewColumnsLoaded": {
       "description": "/** User set new columns. */",
       "type": {
-        "arguments": { "event": "NewColumnsLoadedEvent" },
+        "arguments": { "event": "NewColumnsLoadedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27199,7 +27290,7 @@
     "newColumnsLoaded": {
       "description": "/** User set new columns. */",
       "type": {
-        "arguments": { "event": "NewColumnsLoadedEvent" },
+        "arguments": { "event": "NewColumnsLoadedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27208,7 +27299,7 @@
     "onGridColumnsChanged": {
       "description": "/** The list of grid columns changed. */",
       "type": {
-        "arguments": { "event": "GridColumnsChangedEvent" },
+        "arguments": { "event": "GridColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27217,7 +27308,7 @@
     "gridColumnsChanged": {
       "description": "/** The list of grid columns changed. */",
       "type": {
-        "arguments": { "event": "GridColumnsChangedEvent" },
+        "arguments": { "event": "GridColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27226,7 +27317,7 @@
     "onDisplayedColumnsChanged": {
       "description": "/** The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc. */",
       "type": {
-        "arguments": { "event": "DisplayedColumnsChangedEvent" },
+        "arguments": { "event": "DisplayedColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27235,7 +27326,7 @@
     "displayedColumnsChanged": {
       "description": "/** The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc. */",
       "type": {
-        "arguments": { "event": "DisplayedColumnsChangedEvent" },
+        "arguments": { "event": "DisplayedColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27244,7 +27335,7 @@
     "onVirtualColumnsChanged": {
       "description": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "type": {
-        "arguments": { "event": "VirtualColumnsChangedEvent" },
+        "arguments": { "event": "VirtualColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27253,7 +27344,7 @@
     "virtualColumnsChanged": {
       "description": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "type": {
-        "arguments": { "event": "VirtualColumnsChangedEvent" },
+        "arguments": { "event": "VirtualColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27262,7 +27353,7 @@
     "onColumnEverythingChanged": {
       "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "type": {
-        "arguments": { "event": "ColumnEverythingChangedEvent" },
+        "arguments": { "event": "ColumnEverythingChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27271,7 +27362,7 @@
     "columnEverythingChanged": {
       "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "type": {
-        "arguments": { "event": "ColumnEverythingChangedEvent" },
+        "arguments": { "event": "ColumnEverythingChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27280,7 +27371,7 @@
     "onComponentStateChanged": {
       "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "type": {
-        "arguments": { "event": "ComponentStateChangedEvent" },
+        "arguments": { "event": "ComponentStateChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27289,7 +27380,7 @@
     "componentStateChanged": {
       "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "type": {
-        "arguments": { "event": "ComponentStateChangedEvent" },
+        "arguments": { "event": "ComponentStateChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27424,7 +27515,7 @@
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
       "type": {
-        "arguments": { "event": "FilterOpenedEvent" },
+        "arguments": { "event": "FilterOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27433,7 +27524,7 @@
     "filterOpened": {
       "description": "/** Filter has been opened. */",
       "type": {
-        "arguments": { "event": "FilterOpenedEvent" },
+        "arguments": { "event": "FilterOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27442,7 +27533,7 @@
     "onFilterChanged": {
       "description": "/** Filter has been modified and applied. */",
       "type": {
-        "arguments": { "event": "FilterChangedEvent" },
+        "arguments": { "event": "FilterChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27451,7 +27542,7 @@
     "filterChanged": {
       "description": "/** Filter has been modified and applied. */",
       "type": {
-        "arguments": { "event": "FilterChangedEvent" },
+        "arguments": { "event": "FilterChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27460,7 +27551,7 @@
     "onFilterModified": {
       "description": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
       "type": {
-        "arguments": { "event": "FilterModifiedEvent" },
+        "arguments": { "event": "FilterModifiedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27469,7 +27560,7 @@
     "filterModified": {
       "description": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
       "type": {
-        "arguments": { "event": "FilterModifiedEvent" },
+        "arguments": { "event": "FilterModifiedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27478,7 +27569,7 @@
     "onChartCreated": {
       "description": "/** A chart has been created. */",
       "type": {
-        "arguments": { "event": "ChartCreated" },
+        "arguments": { "event": "ChartCreated<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27487,7 +27578,7 @@
     "chartCreated": {
       "description": "/** A chart has been created. */",
       "type": {
-        "arguments": { "event": "ChartCreated" },
+        "arguments": { "event": "ChartCreated<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27496,7 +27587,7 @@
     "onChartRangeSelectionChanged": {
       "description": "/** The data range for the chart has been changed. */",
       "type": {
-        "arguments": { "event": "ChartRangeSelectionChanged" },
+        "arguments": { "event": "ChartRangeSelectionChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27505,7 +27596,7 @@
     "chartRangeSelectionChanged": {
       "description": "/** The data range for the chart has been changed. */",
       "type": {
-        "arguments": { "event": "ChartRangeSelectionChanged" },
+        "arguments": { "event": "ChartRangeSelectionChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27514,7 +27605,7 @@
     "onChartOptionsChanged": {
       "description": "/** Formatting changes have been made by users through the Format Panel. */",
       "type": {
-        "arguments": { "event": "ChartOptionsChanged" },
+        "arguments": { "event": "ChartOptionsChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27523,7 +27614,7 @@
     "chartOptionsChanged": {
       "description": "/** Formatting changes have been made by users through the Format Panel. */",
       "type": {
-        "arguments": { "event": "ChartOptionsChanged" },
+        "arguments": { "event": "ChartOptionsChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27532,7 +27623,7 @@
     "onChartDestroyed": {
       "description": "/** A chart has been destroyed. */",
       "type": {
-        "arguments": { "event": "ChartDestroyed" },
+        "arguments": { "event": "ChartDestroyed<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27541,7 +27632,7 @@
     "chartDestroyed": {
       "description": "/** A chart has been destroyed. */",
       "type": {
-        "arguments": { "event": "ChartDestroyed" },
+        "arguments": { "event": "ChartDestroyed<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27594,7 +27685,7 @@
     "onGridReady": {
       "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
-        "arguments": { "event": "GridReadyEvent" },
+        "arguments": { "event": "GridReadyEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27603,7 +27694,7 @@
     "gridReady": {
       "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
-        "arguments": { "event": "GridReadyEvent" },
+        "arguments": { "event": "GridReadyEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27612,7 +27703,7 @@
     "onFirstDataRendered": {
       "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
-        "arguments": { "event": "FirstDataRenderedEvent" },
+        "arguments": { "event": "FirstDataRenderedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27621,7 +27712,7 @@
     "firstDataRendered": {
       "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
-        "arguments": { "event": "FirstDataRenderedEvent" },
+        "arguments": { "event": "FirstDataRenderedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27630,7 +27721,7 @@
     "onGridSizeChanged": {
       "description": "/** The size of the grid `div` has changed. In other words, the grid was resized. */",
       "type": {
-        "arguments": { "event": "GridSizeChangedEvent" },
+        "arguments": { "event": "GridSizeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27639,7 +27730,7 @@
     "gridSizeChanged": {
       "description": "/** The size of the grid `div` has changed. In other words, the grid was resized. */",
       "type": {
-        "arguments": { "event": "GridSizeChangedEvent" },
+        "arguments": { "event": "GridSizeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27648,7 +27739,7 @@
     "onModelUpdated": {
       "description": "/** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events. */",
       "type": {
-        "arguments": { "event": "ModelUpdatedEvent" },
+        "arguments": { "event": "ModelUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27657,7 +27748,7 @@
     "modelUpdated": {
       "description": "/** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events. */",
       "type": {
-        "arguments": { "event": "ModelUpdatedEvent" },
+        "arguments": { "event": "ModelUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27684,7 +27775,7 @@
     "onViewportChanged": {
       "description": "/** Which rows are rendered in the DOM has changed. */",
       "type": {
-        "arguments": { "event": "ViewportChangedEvent" },
+        "arguments": { "event": "ViewportChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27693,7 +27784,7 @@
     "viewportChanged": {
       "description": "/** Which rows are rendered in the DOM has changed. */",
       "type": {
-        "arguments": { "event": "ViewportChangedEvent" },
+        "arguments": { "event": "ViewportChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27702,7 +27793,7 @@
     "onBodyScroll": {
       "description": "/** The body was scrolled horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEvent" },
+        "arguments": { "event": "BodyScrollEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27711,7 +27802,7 @@
     "bodyScroll": {
       "description": "/** The body was scrolled horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEvent" },
+        "arguments": { "event": "BodyScrollEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27720,7 +27811,7 @@
     "onBodyScrollEnd": {
       "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEndEvent" },
+        "arguments": { "event": "BodyScrollEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27729,7 +27820,7 @@
     "bodyScrollEnd": {
       "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEndEvent" },
+        "arguments": { "event": "BodyScrollEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27738,7 +27829,7 @@
     "onDragStarted": {
       "description": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStartedEvent" },
+        "arguments": { "event": "DragStartedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27747,7 +27838,7 @@
     "dragStarted": {
       "description": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStartedEvent" },
+        "arguments": { "event": "DragStartedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27756,7 +27847,7 @@
     "onDragStopped": {
       "description": "/** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStoppedEvent" },
+        "arguments": { "event": "DragStoppedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27765,7 +27856,7 @@
     "dragStopped": {
       "description": "/** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStoppedEvent" },
+        "arguments": { "event": "DragStoppedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27774,7 +27865,7 @@
     "onPaginationChanged": {
       "description": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n * \n *   - The page size changes.\n *   - The current shown page is changed.\n *   - New data is loaded onto the grid. */",
       "type": {
-        "arguments": { "event": "PaginationChangedEvent" },
+        "arguments": { "event": "PaginationChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27783,7 +27874,7 @@
     "paginationChanged": {
       "description": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n * \n *   - The page size changes.\n *   - The current shown page is changed.\n *   - New data is loaded onto the grid. */",
       "type": {
-        "arguments": { "event": "PaginationChangedEvent" },
+        "arguments": { "event": "PaginationChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27864,7 +27955,7 @@
     "onColumnRowGroupChanged": {
       "description": "/** A row group column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangedEvent" },
+        "arguments": { "event": "ColumnRowGroupChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27873,7 +27964,7 @@
     "columnRowGroupChanged": {
       "description": "/** A row group column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangedEvent" },
+        "arguments": { "event": "ColumnRowGroupChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27900,7 +27991,7 @@
     "onExpandOrCollapseAll": {
       "description": "/** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */",
       "type": {
-        "arguments": { "event": "ExpandCollapseAllEvent" },
+        "arguments": { "event": "ExpandCollapseAllEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27909,7 +28000,7 @@
     "expandOrCollapseAll": {
       "description": "/** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */",
       "type": {
-        "arguments": { "event": "ExpandCollapseAllEvent" },
+        "arguments": { "event": "ExpandCollapseAllEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27918,7 +28009,7 @@
     "onPinnedRowDataChanged": {
       "description": "/** The client has set new pinned row data into the grid. */",
       "type": {
-        "arguments": { "event": "PinnedRowDataChangedEvent" },
+        "arguments": { "event": "PinnedRowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27927,7 +28018,7 @@
     "pinnedRowDataChanged": {
       "description": "/** The client has set new pinned row data into the grid. */",
       "type": {
-        "arguments": { "event": "PinnedRowDataChangedEvent" },
+        "arguments": { "event": "PinnedRowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27936,7 +28027,7 @@
     "onRowDataChanged": {
       "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
-        "arguments": { "event": "RowDataChangedEvent" },
+        "arguments": { "event": "RowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27945,7 +28036,7 @@
     "rowDataChanged": {
       "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
-        "arguments": { "event": "RowDataChangedEvent" },
+        "arguments": { "event": "RowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27954,7 +28045,7 @@
     "onRowDataUpdated": {
       "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
-        "arguments": { "event": "RowDataUpdatedEvent" },
+        "arguments": { "event": "RowDataUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -27963,7 +28054,7 @@
     "rowDataUpdated": {
       "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
-        "arguments": { "event": "RowDataUpdatedEvent" },
+        "arguments": { "event": "RowDataUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28026,7 +28117,7 @@
     "onCellFocused": {
       "description": "/** Cell is focused. */",
       "type": {
-        "arguments": { "event": "CellFocusedEvent" },
+        "arguments": { "event": "CellFocusedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28035,7 +28126,7 @@
     "cellFocused": {
       "description": "/** Cell is focused. */",
       "type": {
-        "arguments": { "event": "CellFocusedEvent" },
+        "arguments": { "event": "CellFocusedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28152,7 +28243,7 @@
     "onSelectionChanged": {
       "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
       "type": {
-        "arguments": { "event": "SelectionChangedEvent" },
+        "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28161,7 +28252,7 @@
     "selectionChanged": {
       "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
       "type": {
-        "arguments": { "event": "SelectionChangedEvent" },
+        "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28188,7 +28279,7 @@
     "onRangeSelectionChanged": {
       "description": "/** A change to range selection has occurred. */",
       "type": {
-        "arguments": { "event": "RangeSelectionChangedEvent" },
+        "arguments": { "event": "RangeSelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28197,7 +28288,7 @@
     "rangeSelectionChanged": {
       "description": "/** A change to range selection has occurred. */",
       "type": {
-        "arguments": { "event": "RangeSelectionChangedEvent" },
+        "arguments": { "event": "RangeSelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28206,7 +28297,7 @@
     "onSortChanged": {
       "description": "/** Sort has changed. The grid also listens for this and updates the model. */",
       "type": {
-        "arguments": { "event": "SortChangedEvent" },
+        "arguments": { "event": "SortChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28215,7 +28306,7 @@
     "sortChanged": {
       "description": "/** Sort has changed. The grid also listens for this and updates the model. */",
       "type": {
-        "arguments": { "event": "SortChangedEvent" },
+        "arguments": { "event": "SortChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28223,7 +28314,7 @@
     },
     "onColumnRowGroupChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangeRequestEvent" },
+        "arguments": { "event": "ColumnRowGroupChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28231,7 +28322,7 @@
     },
     "columnRowGroupChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangeRequestEvent" },
+        "arguments": { "event": "ColumnRowGroupChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28239,7 +28330,7 @@
     },
     "onColumnPivotChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnPivotChangeRequestEvent" },
+        "arguments": { "event": "ColumnPivotChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28247,7 +28338,7 @@
     },
     "columnPivotChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnPivotChangeRequestEvent" },
+        "arguments": { "event": "ColumnPivotChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28255,7 +28346,7 @@
     },
     "onColumnValueChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnValueChangeRequestEvent" },
+        "arguments": { "event": "ColumnValueChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28263,7 +28354,7 @@
     },
     "columnValueChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnValueChangeRequestEvent" },
+        "arguments": { "event": "ColumnValueChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28271,7 +28362,7 @@
     },
     "onColumnAggFuncChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnAggFuncChangeRequestEvent" },
+        "arguments": { "event": "ColumnAggFuncChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28279,7 +28370,7 @@
     },
     "columnAggFuncChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnAggFuncChangeRequestEvent" },
+        "arguments": { "event": "ColumnAggFuncChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -28661,7 +28752,7 @@
     "loadingCellRendererSelector": {
       "description": "/** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */",
       "type": {
-        "returnType": "LoadingCellRendererSelectorFunc",
+        "returnType": "LoadingCellRendererSelectorFunc<TData>",
         "optional": true
       }
     },
@@ -28858,7 +28949,10 @@
     },
     "aggFuncs": {
       "description": "/** A map of 'function name' to 'function' for custom aggregation functions. */",
-      "type": { "returnType": "{ [key: string]: IAggFunc; }", "optional": true }
+      "type": {
+        "returnType": "{ [key: string]: IAggFunc<TData>; }",
+        "optional": true
+      }
     },
     "suppressAggFuncInHeader": {
       "description": "/** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false` */",
@@ -29166,11 +29260,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the sort results.\n * Default: `1` */",
+      "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n * as Sorting is always server side when Infinite Scroll is active.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, the grid will always request the server to provide the filter results.\n * Default: `1` */",
+      "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n * as Filtering is always server side when Infinite Scroll is active.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -29239,7 +29333,7 @@
     },
     "rowSelection": {
       "description": "/** Type of Row Selection: `single`, `multiple`. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'single' | 'multiple'", "optional": true }
     },
     "rowMultiSelectWithClick": {
       "description": "/** Set to `true` to allow multiple rows to be selected using single click. Default: `false` */",
@@ -29283,7 +29377,7 @@
     },
     "fillHandleDirection": {
       "description": "/** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. Default: `xy` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'x' | 'y' | 'xy'", "optional": true }
     },
     "suppressClearOnFillReduction": {
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false` */",
@@ -29391,7 +29485,7 @@
     "processCellForClipboard": {
       "description": "/** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams" },
+        "arguments": { "params": "ProcessCellForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -29399,7 +29493,7 @@
     "processHeaderForClipboard": {
       "description": "/** Allows you to process header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessHeaderForExportParams" },
+        "arguments": { "params": "ProcessHeaderForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -29407,7 +29501,7 @@
     "processGroupHeaderForClipboard": {
       "description": "/** Allows you to process group header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessGroupHeaderForExportParams" },
+        "arguments": { "params": "ProcessGroupHeaderForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -29415,7 +29509,7 @@
     "processCellFromClipboard": {
       "description": "/** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams" },
+        "arguments": { "params": "ProcessCellForExportParams<TData>" },
         "returnType": "any",
         "optional": true
       }
@@ -29423,7 +29517,7 @@
     "sendToClipboard": {
       "description": "/** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */",
       "type": {
-        "arguments": { "params": "SendToClipboardParams" },
+        "arguments": { "params": "SendToClipboardParams<TData>" },
         "returnType": "void",
         "optional": true
       }
@@ -29431,7 +29525,7 @@
     "processDataFromClipboard": {
       "description": "/** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */",
       "type": {
-        "arguments": { "params": "ProcessDataFromClipboardParams" },
+        "arguments": { "params": "ProcessDataFromClipboardParams<TData>" },
         "returnType": "string[][] | null",
         "optional": true
       }
@@ -29439,7 +29533,7 @@
     "isExternalFilterPresent": {
       "description": "/** Grid calls this method to know if an external filter is present. */",
       "type": {
-        "arguments": { "params": "IsExternalFilterPresentParams" },
+        "arguments": { "params": "IsExternalFilterPresentParams<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -29459,7 +29553,7 @@
     "createChartContainer": {
       "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
       "type": {
-        "arguments": { "params": "ChartRefParams" },
+        "arguments": { "params": "ChartRefParams<TData>" },
         "returnType": "void",
         "optional": true
       }
@@ -29467,7 +29561,7 @@
     "navigateToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "NavigateToNextHeaderParams" },
+        "arguments": { "params": "NavigateToNextHeaderParams<TData>" },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -29475,7 +29569,7 @@
     "tabToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "TabToNextHeaderParams" },
+        "arguments": { "params": "TabToNextHeaderParams<TData>" },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -29483,7 +29577,7 @@
     "navigateToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
       "type": {
-        "arguments": { "params": "NavigateToNextCellParams" },
+        "arguments": { "params": "NavigateToNextCellParams<TData>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -29491,7 +29585,7 @@
     "tabToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
       "type": {
-        "arguments": { "params": "TabToNextCellParams" },
+        "arguments": { "params": "TabToNextCellParams<TData>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -29499,7 +29593,7 @@
     "suppressKeyboardEvent": {
       "description": "/** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.\n */",
       "type": {
-        "arguments": { "params": "SuppressKeyboardEventParams" },
+        "arguments": { "params": "SuppressKeyboardEventParams<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -29519,7 +29613,7 @@
     "getLocaleText": {
       "description": "/** A callback for localising text within the grid. */",
       "type": {
-        "arguments": { "params": "GetLocaleTextParams" },
+        "arguments": { "params": "GetLocaleTextParams<TData>" },
         "returnType": "string",
         "optional": true
       }
@@ -29531,7 +29625,7 @@
     "paginationNumberFormatter": {
       "description": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
       "type": {
-        "arguments": { "params": "PaginationNumberFormatterParams" },
+        "arguments": { "params": "PaginationNumberFormatterParams<TData>" },
         "returnType": "string",
         "optional": true
       }
@@ -29767,7 +29861,7 @@
     "onToolPanelVisibleChanged": {
       "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "type": {
-        "arguments": { "event": "ToolPanelVisibleChangedEvent" },
+        "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29776,7 +29870,7 @@
     "toolPanelVisibleChanged": {
       "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "type": {
-        "arguments": { "event": "ToolPanelVisibleChangedEvent" },
+        "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29785,7 +29879,7 @@
     "onPasteStart": {
       "description": "/** Paste operation has started. */",
       "type": {
-        "arguments": { "event": "PasteStartEvent" },
+        "arguments": { "event": "PasteStartEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29794,7 +29888,7 @@
     "pasteStart": {
       "description": "/** Paste operation has started. */",
       "type": {
-        "arguments": { "event": "PasteStartEvent" },
+        "arguments": { "event": "PasteStartEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29803,7 +29897,7 @@
     "onPasteEnd": {
       "description": "/** Paste operation has ended. */",
       "type": {
-        "arguments": { "event": "PasteEndEvent" },
+        "arguments": { "event": "PasteEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29812,7 +29906,7 @@
     "pasteEnd": {
       "description": "/** Paste operation has ended. */",
       "type": {
-        "arguments": { "event": "PasteEndEvent" },
+        "arguments": { "event": "PasteEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29821,7 +29915,7 @@
     "onColumnVisible": {
       "description": "/** A column, or group of columns, was hidden / shown. */",
       "type": {
-        "arguments": { "event": "ColumnVisibleEvent" },
+        "arguments": { "event": "ColumnVisibleEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29830,7 +29924,7 @@
     "columnVisible": {
       "description": "/** A column, or group of columns, was hidden / shown. */",
       "type": {
-        "arguments": { "event": "ColumnVisibleEvent" },
+        "arguments": { "event": "ColumnVisibleEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29839,7 +29933,7 @@
     "onColumnPinned": {
       "description": "/** A column, or group of columns, was pinned / unpinned. */",
       "type": {
-        "arguments": { "event": "ColumnPinnedEvent" },
+        "arguments": { "event": "ColumnPinnedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29848,7 +29942,7 @@
     "columnPinned": {
       "description": "/** A column, or group of columns, was pinned / unpinned. */",
       "type": {
-        "arguments": { "event": "ColumnPinnedEvent" },
+        "arguments": { "event": "ColumnPinnedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29857,7 +29951,7 @@
     "onColumnResized": {
       "description": "/** A column was resized. */",
       "type": {
-        "arguments": { "event": "ColumnResizedEvent" },
+        "arguments": { "event": "ColumnResizedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29866,7 +29960,7 @@
     "columnResized": {
       "description": "/** A column was resized. */",
       "type": {
-        "arguments": { "event": "ColumnResizedEvent" },
+        "arguments": { "event": "ColumnResizedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29875,7 +29969,7 @@
     "onColumnMoved": {
       "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
       "type": {
-        "arguments": { "event": "ColumnMovedEvent" },
+        "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29884,7 +29978,7 @@
     "columnMoved": {
       "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
       "type": {
-        "arguments": { "event": "ColumnMovedEvent" },
+        "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29893,7 +29987,7 @@
     "onColumnValueChanged": {
       "description": "/** A value column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnValueChangedEvent" },
+        "arguments": { "event": "ColumnValueChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29902,7 +29996,7 @@
     "columnValueChanged": {
       "description": "/** A value column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnValueChangedEvent" },
+        "arguments": { "event": "ColumnValueChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29911,7 +30005,7 @@
     "onColumnPivotModeChanged": {
       "description": "/** The pivot mode flag was changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotModeChangedEvent" },
+        "arguments": { "event": "ColumnPivotModeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29920,7 +30014,7 @@
     "columnPivotModeChanged": {
       "description": "/** The pivot mode flag was changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotModeChangedEvent" },
+        "arguments": { "event": "ColumnPivotModeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29929,7 +30023,7 @@
     "onColumnPivotChanged": {
       "description": "/** A pivot column was added, removed or order changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotChangedEvent" },
+        "arguments": { "event": "ColumnPivotChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29938,7 +30032,7 @@
     "columnPivotChanged": {
       "description": "/** A pivot column was added, removed or order changed. */",
       "type": {
-        "arguments": { "event": "ColumnPivotChangedEvent" },
+        "arguments": { "event": "ColumnPivotChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29947,7 +30041,7 @@
     "onColumnGroupOpened": {
       "description": "/** A column group was opened / closed. */",
       "type": {
-        "arguments": { "event": "ColumnGroupOpenedEvent" },
+        "arguments": { "event": "ColumnGroupOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29956,7 +30050,7 @@
     "columnGroupOpened": {
       "description": "/** A column group was opened / closed. */",
       "type": {
-        "arguments": { "event": "ColumnGroupOpenedEvent" },
+        "arguments": { "event": "ColumnGroupOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29965,7 +30059,7 @@
     "onNewColumnsLoaded": {
       "description": "/** User set new columns. */",
       "type": {
-        "arguments": { "event": "NewColumnsLoadedEvent" },
+        "arguments": { "event": "NewColumnsLoadedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29974,7 +30068,7 @@
     "newColumnsLoaded": {
       "description": "/** User set new columns. */",
       "type": {
-        "arguments": { "event": "NewColumnsLoadedEvent" },
+        "arguments": { "event": "NewColumnsLoadedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29983,7 +30077,7 @@
     "onGridColumnsChanged": {
       "description": "/** The list of grid columns changed. */",
       "type": {
-        "arguments": { "event": "GridColumnsChangedEvent" },
+        "arguments": { "event": "GridColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -29992,7 +30086,7 @@
     "gridColumnsChanged": {
       "description": "/** The list of grid columns changed. */",
       "type": {
-        "arguments": { "event": "GridColumnsChangedEvent" },
+        "arguments": { "event": "GridColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30001,7 +30095,7 @@
     "onDisplayedColumnsChanged": {
       "description": "/** The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc. */",
       "type": {
-        "arguments": { "event": "DisplayedColumnsChangedEvent" },
+        "arguments": { "event": "DisplayedColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30010,7 +30104,7 @@
     "displayedColumnsChanged": {
       "description": "/** The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc. */",
       "type": {
-        "arguments": { "event": "DisplayedColumnsChangedEvent" },
+        "arguments": { "event": "DisplayedColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30019,7 +30113,7 @@
     "onVirtualColumnsChanged": {
       "description": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "type": {
-        "arguments": { "event": "VirtualColumnsChangedEvent" },
+        "arguments": { "event": "VirtualColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30028,7 +30122,7 @@
     "virtualColumnsChanged": {
       "description": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "type": {
-        "arguments": { "event": "VirtualColumnsChangedEvent" },
+        "arguments": { "event": "VirtualColumnsChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30037,7 +30131,7 @@
     "onColumnEverythingChanged": {
       "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "type": {
-        "arguments": { "event": "ColumnEverythingChangedEvent" },
+        "arguments": { "event": "ColumnEverythingChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30046,7 +30140,7 @@
     "columnEverythingChanged": {
       "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "type": {
-        "arguments": { "event": "ColumnEverythingChangedEvent" },
+        "arguments": { "event": "ColumnEverythingChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30055,7 +30149,7 @@
     "onComponentStateChanged": {
       "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "type": {
-        "arguments": { "event": "ComponentStateChangedEvent" },
+        "arguments": { "event": "ComponentStateChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30064,7 +30158,7 @@
     "componentStateChanged": {
       "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "type": {
-        "arguments": { "event": "ComponentStateChangedEvent" },
+        "arguments": { "event": "ComponentStateChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30199,7 +30293,7 @@
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
       "type": {
-        "arguments": { "event": "FilterOpenedEvent" },
+        "arguments": { "event": "FilterOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30208,7 +30302,7 @@
     "filterOpened": {
       "description": "/** Filter has been opened. */",
       "type": {
-        "arguments": { "event": "FilterOpenedEvent" },
+        "arguments": { "event": "FilterOpenedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30217,7 +30311,7 @@
     "onFilterChanged": {
       "description": "/** Filter has been modified and applied. */",
       "type": {
-        "arguments": { "event": "FilterChangedEvent" },
+        "arguments": { "event": "FilterChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30226,7 +30320,7 @@
     "filterChanged": {
       "description": "/** Filter has been modified and applied. */",
       "type": {
-        "arguments": { "event": "FilterChangedEvent" },
+        "arguments": { "event": "FilterChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30235,7 +30329,7 @@
     "onFilterModified": {
       "description": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
       "type": {
-        "arguments": { "event": "FilterModifiedEvent" },
+        "arguments": { "event": "FilterModifiedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30244,7 +30338,7 @@
     "filterModified": {
       "description": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
       "type": {
-        "arguments": { "event": "FilterModifiedEvent" },
+        "arguments": { "event": "FilterModifiedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30253,7 +30347,7 @@
     "onChartCreated": {
       "description": "/** A chart has been created. */",
       "type": {
-        "arguments": { "event": "ChartCreated" },
+        "arguments": { "event": "ChartCreated<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30262,7 +30356,7 @@
     "chartCreated": {
       "description": "/** A chart has been created. */",
       "type": {
-        "arguments": { "event": "ChartCreated" },
+        "arguments": { "event": "ChartCreated<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30271,7 +30365,7 @@
     "onChartRangeSelectionChanged": {
       "description": "/** The data range for the chart has been changed. */",
       "type": {
-        "arguments": { "event": "ChartRangeSelectionChanged" },
+        "arguments": { "event": "ChartRangeSelectionChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30280,7 +30374,7 @@
     "chartRangeSelectionChanged": {
       "description": "/** The data range for the chart has been changed. */",
       "type": {
-        "arguments": { "event": "ChartRangeSelectionChanged" },
+        "arguments": { "event": "ChartRangeSelectionChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30289,7 +30383,7 @@
     "onChartOptionsChanged": {
       "description": "/** Formatting changes have been made by users through the Format Panel. */",
       "type": {
-        "arguments": { "event": "ChartOptionsChanged" },
+        "arguments": { "event": "ChartOptionsChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30298,7 +30392,7 @@
     "chartOptionsChanged": {
       "description": "/** Formatting changes have been made by users through the Format Panel. */",
       "type": {
-        "arguments": { "event": "ChartOptionsChanged" },
+        "arguments": { "event": "ChartOptionsChanged<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30307,7 +30401,7 @@
     "onChartDestroyed": {
       "description": "/** A chart has been destroyed. */",
       "type": {
-        "arguments": { "event": "ChartDestroyed" },
+        "arguments": { "event": "ChartDestroyed<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30316,7 +30410,7 @@
     "chartDestroyed": {
       "description": "/** A chart has been destroyed. */",
       "type": {
-        "arguments": { "event": "ChartDestroyed" },
+        "arguments": { "event": "ChartDestroyed<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30369,7 +30463,7 @@
     "onGridReady": {
       "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
-        "arguments": { "event": "GridReadyEvent" },
+        "arguments": { "event": "GridReadyEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30378,7 +30472,7 @@
     "gridReady": {
       "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
-        "arguments": { "event": "GridReadyEvent" },
+        "arguments": { "event": "GridReadyEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30387,7 +30481,7 @@
     "onFirstDataRendered": {
       "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
-        "arguments": { "event": "FirstDataRenderedEvent" },
+        "arguments": { "event": "FirstDataRenderedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30396,7 +30490,7 @@
     "firstDataRendered": {
       "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
-        "arguments": { "event": "FirstDataRenderedEvent" },
+        "arguments": { "event": "FirstDataRenderedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30405,7 +30499,7 @@
     "onGridSizeChanged": {
       "description": "/** The size of the grid `div` has changed. In other words, the grid was resized. */",
       "type": {
-        "arguments": { "event": "GridSizeChangedEvent" },
+        "arguments": { "event": "GridSizeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30414,7 +30508,7 @@
     "gridSizeChanged": {
       "description": "/** The size of the grid `div` has changed. In other words, the grid was resized. */",
       "type": {
-        "arguments": { "event": "GridSizeChangedEvent" },
+        "arguments": { "event": "GridSizeChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30423,7 +30517,7 @@
     "onModelUpdated": {
       "description": "/** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events. */",
       "type": {
-        "arguments": { "event": "ModelUpdatedEvent" },
+        "arguments": { "event": "ModelUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30432,7 +30526,7 @@
     "modelUpdated": {
       "description": "/** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events. */",
       "type": {
-        "arguments": { "event": "ModelUpdatedEvent" },
+        "arguments": { "event": "ModelUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30459,7 +30553,7 @@
     "onViewportChanged": {
       "description": "/** Which rows are rendered in the DOM has changed. */",
       "type": {
-        "arguments": { "event": "ViewportChangedEvent" },
+        "arguments": { "event": "ViewportChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30468,7 +30562,7 @@
     "viewportChanged": {
       "description": "/** Which rows are rendered in the DOM has changed. */",
       "type": {
-        "arguments": { "event": "ViewportChangedEvent" },
+        "arguments": { "event": "ViewportChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30477,7 +30571,7 @@
     "onBodyScroll": {
       "description": "/** The body was scrolled horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEvent" },
+        "arguments": { "event": "BodyScrollEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30486,7 +30580,7 @@
     "bodyScroll": {
       "description": "/** The body was scrolled horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEvent" },
+        "arguments": { "event": "BodyScrollEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30495,7 +30589,7 @@
     "onBodyScrollEnd": {
       "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEndEvent" },
+        "arguments": { "event": "BodyScrollEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30504,7 +30598,7 @@
     "bodyScrollEnd": {
       "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
       "type": {
-        "arguments": { "event": "BodyScrollEndEvent" },
+        "arguments": { "event": "BodyScrollEndEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30513,7 +30607,7 @@
     "onDragStarted": {
       "description": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStartedEvent" },
+        "arguments": { "event": "DragStartedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30522,7 +30616,7 @@
     "dragStarted": {
       "description": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStartedEvent" },
+        "arguments": { "event": "DragStartedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30531,7 +30625,7 @@
     "onDragStopped": {
       "description": "/** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStoppedEvent" },
+        "arguments": { "event": "DragStoppedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30540,7 +30634,7 @@
     "dragStopped": {
       "description": "/** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
-        "arguments": { "event": "DragStoppedEvent" },
+        "arguments": { "event": "DragStoppedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30549,7 +30643,7 @@
     "onPaginationChanged": {
       "description": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n * \n *   - The page size changes.\n *   - The current shown page is changed.\n *   - New data is loaded onto the grid. */",
       "type": {
-        "arguments": { "event": "PaginationChangedEvent" },
+        "arguments": { "event": "PaginationChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30558,7 +30652,7 @@
     "paginationChanged": {
       "description": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n * \n *   - The page size changes.\n *   - The current shown page is changed.\n *   - New data is loaded onto the grid. */",
       "type": {
-        "arguments": { "event": "PaginationChangedEvent" },
+        "arguments": { "event": "PaginationChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30639,7 +30733,7 @@
     "onColumnRowGroupChanged": {
       "description": "/** A row group column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangedEvent" },
+        "arguments": { "event": "ColumnRowGroupChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30648,7 +30742,7 @@
     "columnRowGroupChanged": {
       "description": "/** A row group column was added or removed. */",
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangedEvent" },
+        "arguments": { "event": "ColumnRowGroupChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30675,7 +30769,7 @@
     "onExpandOrCollapseAll": {
       "description": "/** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */",
       "type": {
-        "arguments": { "event": "ExpandCollapseAllEvent" },
+        "arguments": { "event": "ExpandCollapseAllEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30684,7 +30778,7 @@
     "expandOrCollapseAll": {
       "description": "/** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */",
       "type": {
-        "arguments": { "event": "ExpandCollapseAllEvent" },
+        "arguments": { "event": "ExpandCollapseAllEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30693,7 +30787,7 @@
     "onPinnedRowDataChanged": {
       "description": "/** The client has set new pinned row data into the grid. */",
       "type": {
-        "arguments": { "event": "PinnedRowDataChangedEvent" },
+        "arguments": { "event": "PinnedRowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30702,7 +30796,7 @@
     "pinnedRowDataChanged": {
       "description": "/** The client has set new pinned row data into the grid. */",
       "type": {
-        "arguments": { "event": "PinnedRowDataChangedEvent" },
+        "arguments": { "event": "PinnedRowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30711,7 +30805,7 @@
     "onRowDataChanged": {
       "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
-        "arguments": { "event": "RowDataChangedEvent" },
+        "arguments": { "event": "RowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30720,7 +30814,7 @@
     "rowDataChanged": {
       "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
       "type": {
-        "arguments": { "event": "RowDataChangedEvent" },
+        "arguments": { "event": "RowDataChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30729,7 +30823,7 @@
     "onRowDataUpdated": {
       "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
-        "arguments": { "event": "RowDataUpdatedEvent" },
+        "arguments": { "event": "RowDataUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30738,7 +30832,7 @@
     "rowDataUpdated": {
       "description": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "type": {
-        "arguments": { "event": "RowDataUpdatedEvent" },
+        "arguments": { "event": "RowDataUpdatedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30801,7 +30895,7 @@
     "onCellFocused": {
       "description": "/** Cell is focused. */",
       "type": {
-        "arguments": { "event": "CellFocusedEvent" },
+        "arguments": { "event": "CellFocusedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30810,7 +30904,7 @@
     "cellFocused": {
       "description": "/** Cell is focused. */",
       "type": {
-        "arguments": { "event": "CellFocusedEvent" },
+        "arguments": { "event": "CellFocusedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30927,7 +31021,7 @@
     "onSelectionChanged": {
       "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
       "type": {
-        "arguments": { "event": "SelectionChangedEvent" },
+        "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30936,7 +31030,7 @@
     "selectionChanged": {
       "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
       "type": {
-        "arguments": { "event": "SelectionChangedEvent" },
+        "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30963,7 +31057,7 @@
     "onRangeSelectionChanged": {
       "description": "/** A change to range selection has occurred. */",
       "type": {
-        "arguments": { "event": "RangeSelectionChangedEvent" },
+        "arguments": { "event": "RangeSelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30972,7 +31066,7 @@
     "rangeSelectionChanged": {
       "description": "/** A change to range selection has occurred. */",
       "type": {
-        "arguments": { "event": "RangeSelectionChangedEvent" },
+        "arguments": { "event": "RangeSelectionChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30981,7 +31075,7 @@
     "onSortChanged": {
       "description": "/** Sort has changed. The grid also listens for this and updates the model. */",
       "type": {
-        "arguments": { "event": "SortChangedEvent" },
+        "arguments": { "event": "SortChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30990,7 +31084,7 @@
     "sortChanged": {
       "description": "/** Sort has changed. The grid also listens for this and updates the model. */",
       "type": {
-        "arguments": { "event": "SortChangedEvent" },
+        "arguments": { "event": "SortChangedEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -30998,7 +31092,7 @@
     },
     "onColumnRowGroupChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangeRequestEvent" },
+        "arguments": { "event": "ColumnRowGroupChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -31006,7 +31100,7 @@
     },
     "columnRowGroupChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnRowGroupChangeRequestEvent" },
+        "arguments": { "event": "ColumnRowGroupChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -31014,7 +31108,7 @@
     },
     "onColumnPivotChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnPivotChangeRequestEvent" },
+        "arguments": { "event": "ColumnPivotChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -31022,7 +31116,7 @@
     },
     "columnPivotChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnPivotChangeRequestEvent" },
+        "arguments": { "event": "ColumnPivotChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -31030,7 +31124,7 @@
     },
     "onColumnValueChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnValueChangeRequestEvent" },
+        "arguments": { "event": "ColumnValueChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -31038,7 +31132,7 @@
     },
     "columnValueChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnValueChangeRequestEvent" },
+        "arguments": { "event": "ColumnValueChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -31046,7 +31140,7 @@
     },
     "onColumnAggFuncChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnAggFuncChangeRequestEvent" },
+        "arguments": { "event": "ColumnAggFuncChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },
@@ -31054,7 +31148,7 @@
     },
     "columnAggFuncChangeRequest": {
       "type": {
-        "arguments": { "event": "ColumnAggFuncChangeRequestEvent" },
+        "arguments": { "event": "ColumnAggFuncChangeRequestEvent<TData>" },
         "returnType": "void",
         "optional": true
       },

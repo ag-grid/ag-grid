@@ -21,7 +21,7 @@ export class Plus extends Marker {
         path.lineTo(x -= s, y);
         path.lineTo(x, y -= s);
         path.lineTo(x -= s, y);
-        path.lineTo(x, y -= s);
+        path.lineTo(x, y - s);
         path.closePath();
     }
 }

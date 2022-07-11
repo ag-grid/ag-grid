@@ -19,7 +19,7 @@ const icons = [
 
 const capitalizeName = (name) => `${name.slice(0, 1).toUpperCase()}${name.slice(1)}`;
 
-const themes = ['alpine', 'balham', 'material', 'base'];
+const themes = ['alpine', 'balham', 'material'];
 
 const onTabClick = (e, setActiveTheme, theme) => {
     e.preventDefault();

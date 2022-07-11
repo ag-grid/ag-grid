@@ -17,7 +17,7 @@ export interface BaseSparklineOptions {
     yKey?: string;
     /** Configuration for the padding in pixels shown around the sparklines. */
     padding?: PaddingOptions;
-    /** The options for the horizontal axis line in the sparklines. */
+    /** The options for the axis line in the sparklines. */
     axis?: SparklineAxisOptions;
     /** The configuration for the highlighting used when the items are hovered over. */
     highlightStyle?: HighlightStyleOptions;
@@ -184,15 +184,15 @@ export interface PaddingOptions {
 }
 
 export interface SparklineAxisOptions {
-    /** The type of x-axis used to plot the data.
+    /** The type of axis used to plot the data.
      * Default: `'category'`
      */
     type?: AxisType;
-    /** The CSS colour value for the outline of the horizontal axis line.
+    /** The CSS colour value for the outline of the axis line.
      * Default: `'rgb(204, 214, 235)'`
      */
     stroke?: string;
-    /** The thickness in pixels for the stroke of the horizontal axis line.
+    /** The thickness in pixels for the stroke of the axis line.
      * Default: `1`
      */
     strokeWidth?: number;

@@ -150,10 +150,7 @@ export class Navigator {
             return Math.min(Math.max((offsetX - x) / width, 0), 1);
         }
 
-        if (minHandle.containsPoint(offsetX, offsetY)) {
-            this.changedCursor = true;
-            style.cursor = 'ew-resize';
-        } else if (maxHandle.containsPoint(offsetX, offsetY)) {
+        if (minHandle.containsPoint(offsetX, offsetY) || maxHandle.containsPoint(offsetX, offsetY)) {
             this.changedCursor = true;
             style.cursor = 'ew-resize';
         } else if (visibleRange.containsPoint(offsetX, offsetY)) {

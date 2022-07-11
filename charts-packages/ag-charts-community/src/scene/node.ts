@@ -6,6 +6,9 @@ import { ChangeDetectable, SceneChangeDetection, RedrawType } from './changeDete
 
 export { SceneChangeDetection, RedrawType };
 
+// Work-around for typing issues with Angular 13+ (see AG-6969),
+type OffscreenCanvasRenderingContext2D = any;
+
 export enum PointerEvents {
     All,
     None
@@ -311,7 +314,7 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
     @SceneChangeDetection({ type: 'transform' })
     translationY: number = 0;
 
-    containsPoint(x: number, y: number): boolean {
+    containsPoint(_x: number, _y: number): boolean {
         return false;
     }
 
@@ -514,7 +517,9 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
 
     @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o) => o.visibilityChanged() })
     visible: boolean = true;
-    protected visibilityChanged() {}
+    protected visibilityChanged() {
+        // Override point for sub-classes to react to visibility changes.
+    }
 
     protected dirtyZIndex: boolean = false;
 
@@ -532,8 +537,6 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
     pointerEvents: PointerEvents = PointerEvents.All;
 
     get nodeCount() {
-        const { children } = this;
-
         let count = 1;
         let dirtyCount = this._dirty >= RedrawType.NONE || this._dirtyTransform ? 1 : 0;
         let visibleCount = this.visible ? 1 : 0;

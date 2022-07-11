@@ -230,20 +230,19 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             return 0;
         });
 
-        let currentBin = 0;
         const bins: HistogramBin[] = [new HistogramBin(derivedBins[0])];
-
-        loop: for (let i = 0, ln = sortedData.length; i < ln; i++) {
+        
+        let currentBin = 0;
+        for (let i = 0; i < sortedData.length && currentBin < derivedBins.length; i++) {
             const datum = sortedData[i];
-            while (datum[xKey] > derivedBins[currentBin][1]) {
+            while (datum[xKey] > derivedBins[currentBin][1] && currentBin < derivedBins.length) {
                 currentBin++;
-                const bin = derivedBins[currentBin];
-                if (!bin) {
-                    break loop;
-                }
-                bins.push(new HistogramBin(bin));
+                bins.push(new HistogramBin(derivedBins[currentBin]));
             }
-            bins[currentBin].addDatum(datum);
+
+            if (currentBin < derivedBins.length) {
+                bins[currentBin].addDatum(datum);
+            }
         }
 
         bins.forEach((b) => b.calculateAggregatedValue(this.aggregation, this.yKey));

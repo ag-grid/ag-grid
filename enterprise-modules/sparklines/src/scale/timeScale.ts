@@ -159,7 +159,7 @@ export class TimeScale extends ContinuousScale {
      * the {@link TimeLocaleObject.format} method.
      * If no specifier is provided, this method returns the default time format function.
      */
-    tickFormat(count: any, specifier?: string): (date: Date) => string {
+    tickFormat(_count: any, specifier?: string): (date: Date) => string {
         return specifier == undefined ? this.defaultTickFormat.bind(this) : this.format(specifier);
     }
 

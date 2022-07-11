@@ -15,6 +15,10 @@ export class HistogramChartProxy extends CartesianChartProxy {
         this.recreateChart();
     }
 
+    public getData(params: UpdateChartParams): any[] {
+        return this.getDataTransformedData(params);
+    }
+
     public getSeries(params: UpdateChartParams): AgHistogramSeriesOptions[] {
         const firstField = params.fields[0]; // multiple series are not supported!
         return [{

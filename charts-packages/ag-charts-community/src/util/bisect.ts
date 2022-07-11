@@ -14,18 +14,6 @@ import { Comparator, ascending } from "./compare";
  * @param lo
  * @param hi
  */
-export function bisectLeft<T>(list: T[], x: T, comparator: Comparator<T>, lo: number = 0, hi: number = list.length): number {
-    while (lo < hi) {
-        const mid = (lo + hi) >>> 1;
-        if (comparator(list[mid], x) < 0) { // list[mid] < x
-            lo = mid + 1;
-        } else {
-            hi = mid;
-        }
-    }
-    return lo;
-}
-
 export function bisectRight<T>(list: T[], x: T, comparator: Comparator<T>, lo: number = 0, hi: number = list.length): number {
     while (lo < hi) {
         const mid = (lo + hi) >>> 1;
@@ -39,7 +27,7 @@ export function bisectRight<T>(list: T[], x: T, comparator: Comparator<T>, lo: n
 }
 
 /**
- * A specialized version of `bisectLeft` that works with the arrays whose elements cannot be compared directly.
+ * A specialized version of `bisectRight` that works with the arrays whose elements cannot be compared directly.
  * The map function is used instead to produce a comparable value for a given array element, then the values
  * returned by the map are compared using the `ascendingComparator`.
  * @param list
@@ -48,19 +36,6 @@ export function bisectRight<T>(list: T[], x: T, comparator: Comparator<T>, lo: n
  * @param lo
  * @param hi
  */
-export function complexBisectLeft<T, U>(list: T[], x: U, map: (item: T) => U, lo: number = 0, hi: number = list.length): number {
-    const comparator = ascendingComparator(map);
-    while (lo < hi) {
-        const mid = (lo + hi) >>> 1;
-        if (comparator(list[mid], x) < 0) {
-            lo = mid + 1;
-        } else {
-            hi = mid;
-        }
-    }
-    return lo;
-}
-
 export function complexBisectRight<T, U>(list: T[], x: U, map: (item: T) => U, lo: number = 0, hi: number = list.length): number {
     const comparator = ascendingComparator(map);
     while (lo < hi) {

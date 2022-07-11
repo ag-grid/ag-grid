@@ -1,5 +1,5 @@
 import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
-import { AgChart, PieTooltipRendererParams, PolarChart } from "ag-charts-community";
+import { AgChart, PieTooltipRendererParams, PolarChart, AgChartLegendClickEvent } from "ag-charts-community";
 import {
     AgPieSeriesOptions,
     AgPolarChartOptions,
@@ -102,8 +102,9 @@ export class PieChartProxy extends ChartProxy {
             legend: {
                 ...seriesOverrides.legend,
                 listeners: {
-                    // TODO: standalone changes are required to handle pie series legend item toggling
-                    // legendItemClick: (e: AgChartLegendClickEvent) => { }
+                    legendItemClick: (e: AgChartLegendClickEvent) => {
+                        this.chart.series.forEach(s => s.toggleSeriesItem(e.itemId, e.enabled));
+                    }
                 }
             }
         }
@@ -201,5 +202,9 @@ export class PieChartProxy extends ChartProxy {
 
     protected extractSeriesOverrides() {
         return this.chartOptions[this.standaloneChartType].series;
+    }
+
+    public crossFilteringReset() {
+        // not required in pie charts
     }
 }

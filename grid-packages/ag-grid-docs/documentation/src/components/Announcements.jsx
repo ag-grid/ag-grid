@@ -10,64 +10,35 @@ import styles from './Announcements.module.scss';
  */
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
 
-    <Announcement date="May 17" version="27.3.0">
+    <Announcement date="Jul 6" version="28.0.0">
         <p className="card-text">
-            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-27-3/">What's new in AG Grid 27.3.0</a><br/><br/>
-            Minor release with new features and bug fixes.
+            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-28/">What's new in AG Grid 28.0.0</a><br/><br/>
+            Major release with new features and bug fixes.
         </p>
         <ul>
             <li className={styles['announcement__list-item']}>
-                Getting Started Videos: <br/>
-                <a href="https://www.ag-grid.com/react-data-grid/videos/">React</a>,
-                <a href="https://www.ag-grid.com/angular-data-grid/videos/"> Angular</a>,
-                <a href="https://www.ag-grid.com/vue-data-grid/videos/"> Vue</a>,
-                <a href="https://www.ag-grid.com/javascript-data-grid/videos/"> JS</a>
-            </li>
-            <li className={styles['announcement__list-item']}>
-                Chart Axis Label Improvements
-            </li>
-            <li className={styles['announcement__list-item']}>
-                Accessibility Enhancements
+                <a href="https://ag-grid.com/javascript-data-grid/global-style-customisation-variables/">CSS Variables</a>
             </li>
         </ul>
-    </Announcement>
+        <ul>
+            <li className={styles['announcement__list-item']}>
+                <a href="https://ag-grid.com/javascript-data-grid/grouping-sticky-groups/">Sticky Groups</a>
+            </li>
+        </ul>
 
-
-    <Announcement date="Apr 19" version="27.2.0">
-        <p className="card-text">
-            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-27-2/">What's new in AG Grid 27.2.0</a><br/><br/>
-            Minor release with new features and bug fixes.
-        </p>
         <ul>
             <li className={styles['announcement__list-item']}>
-                <a href="https://www.ag-grid.com/javascript-data-grid/aggregation-filtering/#filtering-group-aggregations">Filtering Group Aggregations</a>
+                <a href="https://ag-grid.com/javascript-data-grid/column-headers/#auto-header-height">Auto Header Height</a>
             </li>
         </ul>
         <ul>
             <li className={styles['announcement__list-item']}>
-                <a href="https://www.ag-grid.com/javascript-data-grid/pivoting/#filtering-on-secondary-columns">Filtering on Secondary Columns</a>
+                <a href="https://ag-grid.com/angular-data-grid/typescript-generics/">Typescript Generics</a>
             </li>
         </ul>
         <ul>
             <li className={styles['announcement__list-item']}>
-                <a href="https://www.ag-grid.com/javascript-data-grid/pivoting/#saving--restoring-column-state-with-pivot">Saving & Restoring Column State with Pivot</a>
-            </li>
-        </ul>
-    </Announcement>
-
-    <Announcement date="Mar 15" version="27.1.0">
-        <p className="card-text">
-            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-27-1/">What's new in AG Grid 27.1.0</a><br/><br/>
-            Minor release with new features and bug fixes.
-        </p>
-        <ul>
-            <li className={styles['announcement__list-item']}>
-                <a href="https://www.ag-grid.com/javascript-data-grid/integrated-charts-api-range-chart/#combination-charts">Integrated Combo Charts</a>
-            </li>
-        </ul>
-        <ul>
-            <li className={styles['announcement__list-item']}>
-                <a href="https://www.ag-grid.com/javascript-charts/api/">Chart Option Enhancements</a>
+                <a href="https://ag-grid.com/angular-data-grid/angular-compatibility/">Angular Ivy Support</a>
             </li>
         </ul>
     </Announcement>

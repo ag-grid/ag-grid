@@ -18,9 +18,9 @@ const TypescriptTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplateP
 
     return <html lang="en">
         <head>
-            <MetaData title="Typescript example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
+            <MetaData title="Typescript example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} options={options}/>
             <ExampleStyle />
-            <TypescriptStyles library={library} files={isDevelopment() ? styleFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : styleFiles} />
+            <TypescriptStyles library={library} importType={importType} files={isDevelopment() ? styleFiles.filter(file => !file.includes('style.css') && !file.includes('styles.css')).map(file => getCacheBustingUrl(file, modifiedTimeMs)) : styleFiles} />
             <Extras options={options} />
         </head>
         <TypescriptBody
@@ -31,6 +31,7 @@ const TypescriptTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplateP
             scriptFiles={isDevelopment() ? scriptFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : scriptFiles}
             indexFragment={indexFragment}
             importType={importType} />
+        <Styles files={styleFiles.filter(file => file.includes('style.css') || file.includes('styles.css'))} />
     </html>;
 
 }
@@ -56,10 +57,10 @@ const TypescriptBody = ({ library, boilerplatePath, appLocation, options, script
     return <body dangerouslySetInnerHTML={{ __html: `${indexFragment}\n${bodySuffix}` }}></body>;
 };
 
-const TypescriptStyles = ({ library, files }) => {
+const TypescriptStyles = ({ library, files, importType }) => {
     if (!isDevelopment() || library !== 'grid') { return <Styles files={files} />; }
 
-    const cssPaths = getCssFilePaths();
+    const cssPaths = getCssFilePaths(importType);
 
     return <Styles files={[...cssPaths, ...files]} />;
 };

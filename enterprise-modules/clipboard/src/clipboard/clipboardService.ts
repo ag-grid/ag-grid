@@ -77,6 +77,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private clientSideRowModel: IClientSideRowModel;
     private logger: Logger;
     private gridCtrl: GridCtrl;
+    private lastPasteOperationTime: number = 0;
 
     private navigatorApiFailed = false;
 
@@ -125,13 +126,45 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     private pasteFromClipboardLegacy(): void {
         // Method 2 - if modern API fails, the old school hack
+        let defaultPrevented = false;
+        const handlePasteEvent = (e: ClipboardEvent) => {
+            const currentPastOperationTime = (new Date()).getTime();
+            if (currentPastOperationTime - this.lastPasteOperationTime < 50) {
+                defaultPrevented = true;
+                e.preventDefault();
+            }
+            this.lastPasteOperationTime = currentPastOperationTime;
+        }
+
         this.executeOnTempElement(
-            (textArea: HTMLTextAreaElement) => textArea.focus({ preventScroll: true }),
+            (textArea: HTMLTextAreaElement) => {
+                textArea.addEventListener('paste', handlePasteEvent);
+                textArea.focus({ preventScroll: true });
+
+            },
             (element: HTMLTextAreaElement) => {
                 const data = element.value;
-                this.processClipboardData(data);
+                if (!defaultPrevented) {
+                    this.processClipboardData(data);
+                } else {
+                    this.refocusLastFocusedCell();
+                }
+                element.removeEventListener('paste', handlePasteEvent);
             }
         );
+    }
+
+    private refocusLastFocusedCell(): void {
+        const focusedCell = this.focusService.getFocusedCell();
+
+        if (focusedCell) {
+            this.focusService.setFocusedCell({
+                rowIndex: focusedCell.rowIndex,
+                column: focusedCell.column, 
+                rowPinned: focusedCell.rowPinned, 
+                forceBrowserFocus: true
+            });
+        }
     }
 
     private processClipboardData(data: string): void {
@@ -212,14 +245,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         // if using the clipboard hack with a temp element, then the focus has been lost,
         // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
         // navigation stops.
-        if (focusedCell) {
-            this.focusService.setFocusedCell({
-                rowIndex: focusedCell.rowIndex,
-                column: focusedCell.column, 
-                rowPinned: focusedCell.rowPinned, 
-                forceBrowserFocus: true
-            });
-        }
+        this.refocusLastFocusedCell();
 
         this.eventService.dispatchEvent({
             type: Events.EVENT_PASTE_END,

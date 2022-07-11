@@ -289,7 +289,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
         }
     }
 
-    @Input() public gridOptions: GridOptions;
+    @Input() public gridOptions: GridOptions<TData>;
     @Input() public modules: Module[];
 
     // @START@
@@ -460,7 +460,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Params to be passed to the `loadingCellRenderer` component.     */
     @Input() public loadingCellRendererParams: any = undefined;
     /** Callback to select which loading cell renderer to be used when data is loading via a DataSource.     */
-    @Input() public loadingCellRendererSelector: LoadingCellRendererSelectorFunc | undefined = undefined;
+    @Input() public loadingCellRendererSelector: LoadingCellRendererSelectorFunc<TData> | undefined = undefined;
     /** A map of key->value pairs for localising text within the grid.     */
     @Input() public localeText: { [key: string]: string } | undefined = undefined;
     /** Set to `true` to enable Master Detail. Default: `false`     */
@@ -567,7 +567,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection. Default: `false`     */
     @Input() public functionsReadOnly: boolean | undefined = undefined;
     /** A map of 'function name' to 'function' for custom aggregation functions.     */
-    @Input() public aggFuncs: { [key: string]: IAggFunc; } | undefined = undefined;
+    @Input() public aggFuncs: { [key: string]: IAggFunc<TData>; } | undefined = undefined;
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false`     */
     @Input() public suppressAggFuncInHeader: boolean | undefined = undefined;
     /** When `true`, the aggregations won't be computed for the root node of the grid. Default: `false`     */
@@ -742,11 +742,13 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     @Input() public serverSideSortAllLevels: boolean | undefined = undefined;
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
     @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
-    /** When enabled, the grid will always request the server to provide the sort results.
-     * Default: `1`     */
+    /** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
+     * as Sorting is always server side when Infinite Scroll is active.
+     * Default: `false`     */
     @Input() public serverSideSortOnServer: boolean | undefined = undefined;
-    /** When enabled, the grid will always request the server to provide the filter results.
-     * Default: `1`     */
+    /** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
+     * as Filtering is always server side when Infinite Scroll is active.
+     * Default: `false`     */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
     /** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.     */
     @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
@@ -781,7 +783,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Tell the grid how wide in pixels the scrollbar is, which is used in grid width calculations. Set only if using non-standard browser-provided scrollbars, so the grid can use the non-standard size in its calculations.     */
     @Input() public scrollbarWidth: number | undefined = undefined;
     /** Type of Row Selection: `single`, `multiple`.     */
-    @Input() public rowSelection: string | undefined = undefined;
+    @Input() public rowSelection: 'single' | 'multiple' | undefined = undefined;
     /** Set to `true` to allow multiple rows to be selected using single click. Default: `false`     */
     @Input() public rowMultiSelectWithClick: boolean | undefined = undefined;
     /** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`. Default: `false`     */
@@ -807,7 +809,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Set to `true` to enable the Fill Handle. Default: `false`     */
     @Input() public enableFillHandle: boolean | undefined = undefined;
     /** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. Default: `xy`     */
-    @Input() public fillHandleDirection: string | undefined = undefined;
+    @Input() public fillHandleDirection: 'x' | 'y' | 'xy' | undefined = undefined;
     /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`     */
     @Input() public suppressClearOnFillReduction: boolean | undefined = undefined;
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`     */
@@ -853,43 +855,43 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.     */
     @Input() public postProcessPopup: ((params: PostProcessPopupParams<TData>) => void) | undefined = undefined;
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.     */
-    @Input() public processCellForClipboard: ((params: ProcessCellForExportParams) => any) | undefined = undefined;
+    @Input() public processCellForClipboard: ((params: ProcessCellForExportParams<TData>) => any) | undefined = undefined;
     /** Allows you to process header values for the clipboard.     */
-    @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams) => any) | undefined = undefined;
+    @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams<TData>) => any) | undefined = undefined;
     /** Allows you to process group header values for the clipboard.     */
-    @Input() public processGroupHeaderForClipboard: ((params: ProcessGroupHeaderForExportParams) => any) | undefined = undefined;
+    @Input() public processGroupHeaderForClipboard: ((params: ProcessGroupHeaderForExportParams<TData>) => any) | undefined = undefined;
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid.     */
-    @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams) => any) | undefined = undefined;
+    @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams<TData>) => any) | undefined = undefined;
     /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself.     */
-    @Input() public sendToClipboard: ((params: SendToClipboardParams) => void) | undefined = undefined;
+    @Input() public sendToClipboard: ((params: SendToClipboardParams<TData>) => void) | undefined = undefined;
     /** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data.     */
-    @Input() public processDataFromClipboard: ((params: ProcessDataFromClipboardParams) => string[][] | null) | undefined = undefined;
+    @Input() public processDataFromClipboard: ((params: ProcessDataFromClipboardParams<TData>) => string[][] | null) | undefined = undefined;
     /** Grid calls this method to know if an external filter is present.     */
-    @Input() public isExternalFilterPresent: ((params: IsExternalFilterPresentParams) => boolean) | undefined = undefined;
+    @Input() public isExternalFilterPresent: ((params: IsExternalFilterPresentParams<TData>) => boolean) | undefined = undefined;
     /** Should return `true` if external filter passes, otherwise `false`.     */
     @Input() public doesExternalFilterPass: ((node: RowNode<TData>) => boolean) | undefined = undefined;
     /** Callback to be used to customise the chart toolbar items.     */
     @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
     /** Callback to enable displaying the chart in an alternative chart container.     */
-    @Input() public createChartContainer: ((params: ChartRefParams) => void) | undefined = undefined;
+    @Input() public createChartContainer: ((params: ChartRefParams<TData>) => void) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.     */
-    @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams) => (HeaderPosition | null)) | undefined = undefined;
+    @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null)) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.     */
-    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams) => (HeaderPosition | null)) | undefined = undefined;
+    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams<TData>) => (HeaderPosition | null)) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.     */
-    @Input() public navigateToNextCell: ((params: NavigateToNextCellParams) => (CellPosition | null)) | undefined = undefined;
+    @Input() public navigateToNextCell: ((params: NavigateToNextCellParams<TData>) => (CellPosition | null)) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.     */
-    @Input() public tabToNextCell: ((params: TabToNextCellParams) => (CellPosition | null)) | undefined = undefined;
+    @Input() public tabToNextCell: ((params: TabToNextCellParams<TData>) => (CellPosition | null)) | undefined = undefined;
     /** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.     */
-    @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams) => boolean) | undefined = undefined;
+    @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams<TData>) => boolean) | undefined = undefined;
     /** @deprecated - Use `getLocaleText` instead.     */
     @Input() public localeTextFunc: ((key: string, defaultValue: string, variableValues?: string[]) => string) | undefined = undefined;
     /** A callback for localising text within the grid.     */
-    @Input() public getLocaleText: ((params: GetLocaleTextParams) => string) | undefined = undefined;
+    @Input() public getLocaleText: ((params: GetLocaleTextParams<TData>) => string) | undefined = undefined;
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports)     */
     @Input() public getDocument: (() => Document) | undefined = undefined;
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.     */
-    @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams) => string) | undefined = undefined;
+    @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams<TData>) => string) | undefined = undefined;
     /** @deprecated - Use `getGroupRowAgg` instead.     */
     @Input() public groupRowAggNodes: ((nodes: RowNode[]) => any) | undefined = undefined;
     /** Callback to use when you need access to more then the current column for aggregation.     */
@@ -960,40 +962,40 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     @Input() public isFullWidthRow: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined = undefined;
 
     /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status.     */
-    @Output() public toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent> = new EventEmitter<ToolPanelVisibleChangedEvent>();
+    @Output() public toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent<TData>> = new EventEmitter<ToolPanelVisibleChangedEvent<TData>>();
     /** Paste operation has started.     */
-    @Output() public pasteStart: EventEmitter<PasteStartEvent> = new EventEmitter<PasteStartEvent>();
+    @Output() public pasteStart: EventEmitter<PasteStartEvent<TData>> = new EventEmitter<PasteStartEvent<TData>>();
     /** Paste operation has ended.     */
-    @Output() public pasteEnd: EventEmitter<PasteEndEvent> = new EventEmitter<PasteEndEvent>();
+    @Output() public pasteEnd: EventEmitter<PasteEndEvent<TData>> = new EventEmitter<PasteEndEvent<TData>>();
     /** A column, or group of columns, was hidden / shown.     */
-    @Output() public columnVisible: EventEmitter<ColumnVisibleEvent> = new EventEmitter<ColumnVisibleEvent>();
+    @Output() public columnVisible: EventEmitter<ColumnVisibleEvent<TData>> = new EventEmitter<ColumnVisibleEvent<TData>>();
     /** A column, or group of columns, was pinned / unpinned.     */
-    @Output() public columnPinned: EventEmitter<ColumnPinnedEvent> = new EventEmitter<ColumnPinnedEvent>();
+    @Output() public columnPinned: EventEmitter<ColumnPinnedEvent<TData>> = new EventEmitter<ColumnPinnedEvent<TData>>();
     /** A column was resized.     */
-    @Output() public columnResized: EventEmitter<ColumnResizedEvent> = new EventEmitter<ColumnResizedEvent>();
+    @Output() public columnResized: EventEmitter<ColumnResizedEvent<TData>> = new EventEmitter<ColumnResizedEvent<TData>>();
     /** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below.     */
-    @Output() public columnMoved: EventEmitter<ColumnMovedEvent> = new EventEmitter<ColumnMovedEvent>();
+    @Output() public columnMoved: EventEmitter<ColumnMovedEvent<TData>> = new EventEmitter<ColumnMovedEvent<TData>>();
     /** A value column was added or removed.     */
-    @Output() public columnValueChanged: EventEmitter<ColumnValueChangedEvent> = new EventEmitter<ColumnValueChangedEvent>();
+    @Output() public columnValueChanged: EventEmitter<ColumnValueChangedEvent<TData>> = new EventEmitter<ColumnValueChangedEvent<TData>>();
     /** The pivot mode flag was changed.     */
-    @Output() public columnPivotModeChanged: EventEmitter<ColumnPivotModeChangedEvent> = new EventEmitter<ColumnPivotModeChangedEvent>();
+    @Output() public columnPivotModeChanged: EventEmitter<ColumnPivotModeChangedEvent<TData>> = new EventEmitter<ColumnPivotModeChangedEvent<TData>>();
     /** A pivot column was added, removed or order changed.     */
-    @Output() public columnPivotChanged: EventEmitter<ColumnPivotChangedEvent> = new EventEmitter<ColumnPivotChangedEvent>();
+    @Output() public columnPivotChanged: EventEmitter<ColumnPivotChangedEvent<TData>> = new EventEmitter<ColumnPivotChangedEvent<TData>>();
     /** A column group was opened / closed.     */
-    @Output() public columnGroupOpened: EventEmitter<ColumnGroupOpenedEvent> = new EventEmitter<ColumnGroupOpenedEvent>();
+    @Output() public columnGroupOpened: EventEmitter<ColumnGroupOpenedEvent<TData>> = new EventEmitter<ColumnGroupOpenedEvent<TData>>();
     /** User set new columns.     */
-    @Output() public newColumnsLoaded: EventEmitter<NewColumnsLoadedEvent> = new EventEmitter<NewColumnsLoadedEvent>();
+    @Output() public newColumnsLoaded: EventEmitter<NewColumnsLoadedEvent<TData>> = new EventEmitter<NewColumnsLoadedEvent<TData>>();
     /** The list of grid columns changed.     */
-    @Output() public gridColumnsChanged: EventEmitter<GridColumnsChangedEvent> = new EventEmitter<GridColumnsChangedEvent>();
+    @Output() public gridColumnsChanged: EventEmitter<GridColumnsChangedEvent<TData>> = new EventEmitter<GridColumnsChangedEvent<TData>>();
     /** The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc.     */
-    @Output() public displayedColumnsChanged: EventEmitter<DisplayedColumnsChangedEvent> = new EventEmitter<DisplayedColumnsChangedEvent>();
+    @Output() public displayedColumnsChanged: EventEmitter<DisplayedColumnsChangedEvent<TData>> = new EventEmitter<DisplayedColumnsChangedEvent<TData>>();
     /** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default).     */
-    @Output() public virtualColumnsChanged: EventEmitter<VirtualColumnsChangedEvent> = new EventEmitter<VirtualColumnsChangedEvent>();
+    @Output() public virtualColumnsChanged: EventEmitter<VirtualColumnsChangedEvent<TData>> = new EventEmitter<VirtualColumnsChangedEvent<TData>>();
     /** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed.     */
-    @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent> = new EventEmitter<ColumnEverythingChangedEvent>();
+    @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent<TData>> = new EventEmitter<ColumnEverythingChangedEvent<TData>>();
     /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
      * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.     */
-    @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent> = new EventEmitter<ComponentStateChangedEvent>();
+    @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent<TData>> = new EventEmitter<ComponentStateChangedEvent<TData>>();
     /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed).     */
     @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent<TData>> = new EventEmitter<CellValueChangedEvent<TData>>();
     /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`.     */
@@ -1009,49 +1011,49 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing.     */
     @Output() public rowEditingStopped: EventEmitter<RowEditingStoppedEvent<TData>> = new EventEmitter<RowEditingStoppedEvent<TData>>();
     /** Filter has been opened.     */
-    @Output() public filterOpened: EventEmitter<FilterOpenedEvent> = new EventEmitter<FilterOpenedEvent>();
+    @Output() public filterOpened: EventEmitter<FilterOpenedEvent<TData>> = new EventEmitter<FilterOpenedEvent<TData>>();
     /** Filter has been modified and applied.     */
-    @Output() public filterChanged: EventEmitter<FilterChangedEvent> = new EventEmitter<FilterChangedEvent>();
+    @Output() public filterChanged: EventEmitter<FilterChangedEvent<TData>> = new EventEmitter<FilterChangedEvent<TData>>();
     /** Filter was modified but not applied. Used when filters have 'Apply' buttons.     */
-    @Output() public filterModified: EventEmitter<FilterModifiedEvent> = new EventEmitter<FilterModifiedEvent>();
+    @Output() public filterModified: EventEmitter<FilterModifiedEvent<TData>> = new EventEmitter<FilterModifiedEvent<TData>>();
     /** A chart has been created.     */
-    @Output() public chartCreated: EventEmitter<ChartCreated> = new EventEmitter<ChartCreated>();
+    @Output() public chartCreated: EventEmitter<ChartCreated<TData>> = new EventEmitter<ChartCreated<TData>>();
     /** The data range for the chart has been changed.     */
-    @Output() public chartRangeSelectionChanged: EventEmitter<ChartRangeSelectionChanged> = new EventEmitter<ChartRangeSelectionChanged>();
+    @Output() public chartRangeSelectionChanged: EventEmitter<ChartRangeSelectionChanged<TData>> = new EventEmitter<ChartRangeSelectionChanged<TData>>();
     /** Formatting changes have been made by users through the Format Panel.     */
-    @Output() public chartOptionsChanged: EventEmitter<ChartOptionsChanged> = new EventEmitter<ChartOptionsChanged>();
+    @Output() public chartOptionsChanged: EventEmitter<ChartOptionsChanged<TData>> = new EventEmitter<ChartOptionsChanged<TData>>();
     /** A chart has been destroyed.     */
-    @Output() public chartDestroyed: EventEmitter<ChartDestroyed> = new EventEmitter<ChartDestroyed>();
+    @Output() public chartDestroyed: EventEmitter<ChartDestroyed<TData>> = new EventEmitter<ChartDestroyed<TData>>();
     /** DOM event `keyDown` happened on a cell.     */
     @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>> = new EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>>();
     /** DOM event `keyPress` happened on a cell.     */
     @Output() public cellKeyPress: EventEmitter<CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>> = new EventEmitter<CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>>();
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet     */
-    @Output() public gridReady: EventEmitter<GridReadyEvent> = new EventEmitter<GridReadyEvent>();
+    @Output() public gridReady: EventEmitter<GridReadyEvent<TData>> = new EventEmitter<GridReadyEvent<TData>>();
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents     */
-    @Output() public firstDataRendered: EventEmitter<FirstDataRenderedEvent> = new EventEmitter<FirstDataRenderedEvent>();
+    @Output() public firstDataRendered: EventEmitter<FirstDataRenderedEvent<TData>> = new EventEmitter<FirstDataRenderedEvent<TData>>();
     /** The size of the grid `div` has changed. In other words, the grid was resized.     */
-    @Output() public gridSizeChanged: EventEmitter<GridSizeChangedEvent> = new EventEmitter<GridSizeChangedEvent>();
+    @Output() public gridSizeChanged: EventEmitter<GridSizeChangedEvent<TData>> = new EventEmitter<GridSizeChangedEvent<TData>>();
     /** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events.     */
-    @Output() public modelUpdated: EventEmitter<ModelUpdatedEvent> = new EventEmitter<ModelUpdatedEvent>();
+    @Output() public modelUpdated: EventEmitter<ModelUpdatedEvent<TData>> = new EventEmitter<ModelUpdatedEvent<TData>>();
     /** A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row.     */
     @Output() public virtualRowRemoved: EventEmitter<VirtualRowRemovedEvent<TData>> = new EventEmitter<VirtualRowRemovedEvent<TData>>();
     /** Which rows are rendered in the DOM has changed.     */
-    @Output() public viewportChanged: EventEmitter<ViewportChangedEvent> = new EventEmitter<ViewportChangedEvent>();
+    @Output() public viewportChanged: EventEmitter<ViewportChangedEvent<TData>> = new EventEmitter<ViewportChangedEvent<TData>>();
     /** The body was scrolled horizontally or vertically.     */
-    @Output() public bodyScroll: EventEmitter<BodyScrollEvent> = new EventEmitter<BodyScrollEvent>();
+    @Output() public bodyScroll: EventEmitter<BodyScrollEvent<TData>> = new EventEmitter<BodyScrollEvent<TData>>();
     /** Main body of the grid has stopped scrolling, either horizontally or vertically.     */
-    @Output() public bodyScrollEnd: EventEmitter<BodyScrollEndEvent> = new EventEmitter<BodyScrollEndEvent>();
+    @Output() public bodyScrollEnd: EventEmitter<BodyScrollEndEvent<TData>> = new EventEmitter<BodyScrollEndEvent<TData>>();
     /** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc.     */
-    @Output() public dragStarted: EventEmitter<DragStartedEvent> = new EventEmitter<DragStartedEvent>();
+    @Output() public dragStarted: EventEmitter<DragStartedEvent<TData>> = new EventEmitter<DragStartedEvent<TData>>();
     /** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc.     */
-    @Output() public dragStopped: EventEmitter<DragStoppedEvent> = new EventEmitter<DragStoppedEvent>();
+    @Output() public dragStopped: EventEmitter<DragStoppedEvent<TData>> = new EventEmitter<DragStoppedEvent<TData>>();
     /** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:
      * 
      *  - The page size changes.
      *  - The current shown page is changed.
      *  - New data is loaded onto the grid.     */
-    @Output() public paginationChanged: EventEmitter<PaginationChangedEvent> = new EventEmitter<PaginationChangedEvent>();
+    @Output() public paginationChanged: EventEmitter<PaginationChangedEvent<TData>> = new EventEmitter<PaginationChangedEvent<TData>>();
     /** A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid.     */
     @Output() public rowDragEnter: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
     /** The mouse has moved while dragging.     */
@@ -1061,17 +1063,17 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** The drag has finished over the grid.     */
     @Output() public rowDragEnd: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
     /** A row group column was added or removed.     */
-    @Output() public columnRowGroupChanged: EventEmitter<ColumnRowGroupChangedEvent> = new EventEmitter<ColumnRowGroupChangedEvent>();
+    @Output() public columnRowGroupChanged: EventEmitter<ColumnRowGroupChangedEvent<TData>> = new EventEmitter<ColumnRowGroupChangedEvent<TData>>();
     /** A row group was opened or closed.     */
     @Output() public rowGroupOpened: EventEmitter<RowGroupOpenedEvent<TData>> = new EventEmitter<RowGroupOpenedEvent<TData>>();
     /** Fired when calling either of the API methods `expandAll()` or `collapseAll()`.     */
-    @Output() public expandOrCollapseAll: EventEmitter<ExpandCollapseAllEvent> = new EventEmitter<ExpandCollapseAllEvent>();
+    @Output() public expandOrCollapseAll: EventEmitter<ExpandCollapseAllEvent<TData>> = new EventEmitter<ExpandCollapseAllEvent<TData>>();
     /** The client has set new pinned row data into the grid.     */
-    @Output() public pinnedRowDataChanged: EventEmitter<PinnedRowDataChangedEvent> = new EventEmitter<PinnedRowDataChangedEvent>();
+    @Output() public pinnedRowDataChanged: EventEmitter<PinnedRowDataChangedEvent<TData>> = new EventEmitter<PinnedRowDataChangedEvent<TData>>();
     /** @deprecated No longer fired, use onRowDataUpdated instead     */
-    @Output() public rowDataChanged: EventEmitter<RowDataChangedEvent> = new EventEmitter<RowDataChangedEvent>();
+    @Output() public rowDataChanged: EventEmitter<RowDataChangedEvent<TData>> = new EventEmitter<RowDataChangedEvent<TData>>();
     /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction.     */
-    @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent> = new EventEmitter<RowDataUpdatedEvent>();
+    @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent<TData>> = new EventEmitter<RowDataUpdatedEvent<TData>>();
     /** Async transactions have been applied. Contains a list of all transaction results.     */
     @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushed<TData>> = new EventEmitter<AsyncTransactionsFlushed<TData>>();
     /** Cell is clicked.     */
@@ -1079,7 +1081,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Cell is double clicked.     */
     @Output() public cellDoubleClicked: EventEmitter<CellDoubleClickedEvent<TData>> = new EventEmitter<CellDoubleClickedEvent<TData>>();
     /** Cell is focused.     */
-    @Output() public cellFocused: EventEmitter<CellFocusedEvent> = new EventEmitter<CellFocusedEvent>();
+    @Output() public cellFocused: EventEmitter<CellFocusedEvent<TData>> = new EventEmitter<CellFocusedEvent<TData>>();
     /** Mouse entered cell.     */
     @Output() public cellMouseOver: EventEmitter<CellMouseOverEvent<TData>> = new EventEmitter<CellMouseOverEvent<TData>>();
     /** Mouse left cell.     */
@@ -1093,17 +1095,17 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected.     */
     @Output() public rowSelected: EventEmitter<RowSelectedEvent<TData>> = new EventEmitter<RowSelectedEvent<TData>>();
     /** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes.     */
-    @Output() public selectionChanged: EventEmitter<SelectionChangedEvent> = new EventEmitter<SelectionChangedEvent>();
+    @Output() public selectionChanged: EventEmitter<SelectionChangedEvent<TData>> = new EventEmitter<SelectionChangedEvent<TData>>();
     /** Cell is right clicked.     */
     @Output() public cellContextMenu: EventEmitter<CellContextMenuEvent<TData>> = new EventEmitter<CellContextMenuEvent<TData>>();
     /** A change to range selection has occurred.     */
-    @Output() public rangeSelectionChanged: EventEmitter<RangeSelectionChangedEvent> = new EventEmitter<RangeSelectionChangedEvent>();
+    @Output() public rangeSelectionChanged: EventEmitter<RangeSelectionChangedEvent<TData>> = new EventEmitter<RangeSelectionChangedEvent<TData>>();
     /** Sort has changed. The grid also listens for this and updates the model.     */
-    @Output() public sortChanged: EventEmitter<SortChangedEvent> = new EventEmitter<SortChangedEvent>();
-    @Output() public columnRowGroupChangeRequest: EventEmitter<ColumnRowGroupChangeRequestEvent> = new EventEmitter<ColumnRowGroupChangeRequestEvent>();
-    @Output() public columnPivotChangeRequest: EventEmitter<ColumnPivotChangeRequestEvent> = new EventEmitter<ColumnPivotChangeRequestEvent>();
-    @Output() public columnValueChangeRequest: EventEmitter<ColumnValueChangeRequestEvent> = new EventEmitter<ColumnValueChangeRequestEvent>();
-    @Output() public columnAggFuncChangeRequest: EventEmitter<ColumnAggFuncChangeRequestEvent> = new EventEmitter<ColumnAggFuncChangeRequestEvent>();
+    @Output() public sortChanged: EventEmitter<SortChangedEvent<TData>> = new EventEmitter<SortChangedEvent<TData>>();
+    @Output() public columnRowGroupChangeRequest: EventEmitter<ColumnRowGroupChangeRequestEvent<TData>> = new EventEmitter<ColumnRowGroupChangeRequestEvent<TData>>();
+    @Output() public columnPivotChangeRequest: EventEmitter<ColumnPivotChangeRequestEvent<TData>> = new EventEmitter<ColumnPivotChangeRequestEvent<TData>>();
+    @Output() public columnValueChangeRequest: EventEmitter<ColumnValueChangeRequestEvent<TData>> = new EventEmitter<ColumnValueChangeRequestEvent<TData>>();
+    @Output() public columnAggFuncChangeRequest: EventEmitter<ColumnAggFuncChangeRequestEvent<TData>> = new EventEmitter<ColumnAggFuncChangeRequestEvent<TData>>();
 
 
     // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"' 

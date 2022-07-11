@@ -1,7 +1,7 @@
 [[only-javascript]]
 | ## Grid Options
 |
-| The `gridOptions` object is a 'one stop shop' for the entire interface into the grid. 
+| The `gridOptions` object is a 'one stop shop' for the entire interface into the grid. The GridOptions interface supports a generic parameter for row data as detailed in [Typescript Generics](/typescript-generics).
 |
 | The example below shows the different types of items available on `gridOptions`.
 |

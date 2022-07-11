@@ -7,6 +7,7 @@ import { ColumnModel } from "./columns/columnModel";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
 import { GridApi } from "./gridApi";
 import { SortOption } from "./rowNodes/rowNodeSorter";
+import { last } from "./utils/array";
 
 export interface SortModelItem {
     /** Column Id to apply the sort to. */
@@ -64,37 +65,18 @@ export class SortController extends BeanStub {
     }
 
     private updateSortIndex(lastColToChange: Column) {
-        // update sortIndex on all sorting cols
-        const allSortedCols = this.getColumnsWithSortingOrdered();
-        let sortIndex = 0;
-        const sortedRowGroupColumns: Column[] = [];
-        const doesGroupDisplaySortGroup = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
-        allSortedCols.forEach(col => {
-            const groupColumn = this.columnModel.getGroupDisplayColumnForGroup(col.getId());
-            if (groupColumn && doesGroupDisplaySortGroup) {
-                // Update row group columns last as they replicate their group columns sort index
-                sortedRowGroupColumns.push(col);
-                return;
-            }
-            if (col !== lastColToChange) {
-                col.setSortIndex(sortIndex);
-                sortIndex++;
-            }
-        });
-        // last col to change always gets the last sort index, it's added to the end
-        if (lastColToChange.getSort()) {
-            lastColToChange.setSortIndex(sortIndex);
-        }
+        const isCoupled = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
+        const groupParent = this.columnModel.getGroupDisplayColumnForGroup(lastColToChange.getId());
+        const lastSortIndexCol = isCoupled ? groupParent || lastColToChange : lastColToChange;
 
-        // set row grouped columns sort index to match the row group display column
-        sortedRowGroupColumns.forEach(col => {
-            const groupColumn = this.columnModel.getGroupDisplayColumnForGroup(col.getId());
-            col.setSortIndex(groupColumn!.getSortIndex());
-        });
+        const allSortedCols = this.getIndexableColumnsOrdered();
 
-        // clear sort index on all cols not sorting
-        const allCols = this.columnModel.getPrimaryAndSecondaryAndAutoColumns();
-        allCols.filter(col => col.getSort() == null).forEach(col => col.setSortIndex());
+        // reset sort index on everything
+        this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach(col => col.setSortIndex(null));
+        const allSortedColsWithoutChanges = allSortedCols.filter(col => col !== lastColToChange);
+        [...allSortedColsWithoutChanges, lastSortIndexCol].forEach((col, idx) => (
+            col.setSortIndex(idx)
+        ));
     }
 
     // gets called by API, so if data changes, use can call this, which will end up
@@ -167,10 +149,9 @@ export class SortController extends BeanStub {
         return result;
     }
 
-    public getColumnsWithSortingOrdered(): Column[] {
+    private getColumnsOrderedForSort(): Column[] {
         // pull out all the columns that have sorting set
         const allColumnsIncludingAuto = this.columnModel.getPrimaryAndSecondaryAndAutoColumns();
-        const columnsWithSorting = allColumnsIncludingAuto.filter(column => !!column.getSort());
 
         // when both cols are missing sortIndex, we use the position of the col in all cols list.
         // this means if colDefs only have sort, but no sortIndex, we deterministically pick which
@@ -179,7 +160,7 @@ export class SortController extends BeanStub {
         allColumnsIncludingAuto.forEach((col: Column, index: number) => allColsIndexes[col.getId()] = index);
 
         // put the columns in order of which one got sorted first
-        columnsWithSorting.sort((a: Column, b: Column) => {
+        allColumnsIncludingAuto.sort((a: Column, b: Column) => {
             const iA = a.getSortIndex();
             const iB = b.getSortIndex();
             if (iA != null && iB != null) {
@@ -196,7 +177,33 @@ export class SortController extends BeanStub {
             }
         });
 
-        return columnsWithSorting;
+        return allColumnsIncludingAuto;
+    }
+
+    private getIndexableColumnsOrdered(): Column[] {{}
+        if (!this.gridOptionsWrapper.isColumnsSortingCoupledToGroup()) {
+            return this.getColumnsWithSortingOrdered();
+        }
+
+        return this.getColumnsOrderedForSort()
+            .filter(col => {
+                if (!!col.getColDef().showRowGroup) {
+                    if (col.getColDef().field && col.getSort()) {
+                        return true;
+                    }
+    
+                    const sourceCols = this.columnModel.getSourceColumnsForGroupColumn(col);
+                    return sourceCols?.some(col => !!col.getSort());
+                }
+
+                return !!col.getSort();
+            });
+    }
+
+    public getColumnsWithSortingOrdered(): Column[] {
+        // pull out all the columns that have sorting set
+        const orderedColumns = this.getColumnsOrderedForSort();
+        return orderedColumns.filter(column => !!column.getSort());
     }
 
     // used by server side row models, to sent sort to server
@@ -212,5 +219,49 @@ export class SortController extends BeanStub {
             sort: column.getSort()!,
             column
         }));
+    }
+
+    public canColumnDisplayMixedSort(column: Column): boolean {
+        const isColumnSortCouplingActive = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
+        const isGroupDisplayColumn = !!column.getColDef().showRowGroup;
+        return isColumnSortCouplingActive && isGroupDisplayColumn;
+    }
+
+    public getDisplaySortForColumn(column: Column): 'asc' | 'desc' | 'mixed' | null | undefined {
+        const linkedColumns = this.columnModel.getSourceColumnsForGroupColumn(column);
+        if (!this.canColumnDisplayMixedSort(column) || !linkedColumns?.length) {
+            return column.getSort();
+        }
+
+        // if column has unique data, its sorting is independent - but can still be mixed
+        const columnHasUniqueData = !!column.getColDef().field;
+        const sortableColumns = columnHasUniqueData ? [column, ...linkedColumns] : linkedColumns;
+
+        const firstSort = sortableColumns[0].getSort();
+        // the == is intentional, as null and undefined both represent no sort, which means they are equivalent
+        const allMatch = sortableColumns.every(col => col.getSort() == firstSort);
+        if (!allMatch) {
+            return 'mixed';
+        }
+        return firstSort;
+    }
+
+    public getDisplaySortIndexForColumn(column: Column): number | null | undefined {
+        const isColumnSortCouplingActive = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
+        if (!isColumnSortCouplingActive) {
+            return this.getColumnsWithSortingOrdered().indexOf(column);
+        }
+
+        const displayColumn = this.columnModel.getGroupDisplayColumnForGroup(column.getId());
+        if (displayColumn) {
+            if (!!column.getSort()) {
+                return this.getDisplaySortIndexForColumn(displayColumn);
+            }
+            return null;
+        }
+
+        const allSortedCols = this.getIndexableColumnsOrdered()
+            .filter(col => !this.columnModel.getGroupDisplayColumnForGroup(col.getId()));
+        return allSortedCols.indexOf(column);
     }
 }

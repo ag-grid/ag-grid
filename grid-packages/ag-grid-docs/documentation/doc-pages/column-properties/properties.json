@@ -73,10 +73,7 @@
     "charts": {
         "meta": {
             "displayName": "Columns: Integrated Charts",
-            "page": {
-                "name": "Integrated Charts",
-                "url": "/integrated-charts/"
-            }
+            "description": "(Enterprise only) See [Integrated Charts](/integrated-charts/)"
         },
         "chartDataType": {}
     },
@@ -346,7 +343,7 @@
         "cellEditorSelector": {
             "more": {
                 "name": "Many Editors One Column",
-                "url": "/cell-editing/#many-editors-one-column"
+                "url": "/cell-editors/#many-editors-one-column"
             }
         },
         "cellEditorPopup": {},

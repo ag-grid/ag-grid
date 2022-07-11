@@ -27,8 +27,9 @@ const options: AgChartOptions = {
         size: 0,
         maxSize: 30,
         fill: '#cc5b58',
+        fillOpacity: 0.85,
+        strokeOpacity: 0.85,
       },
-      fillOpacity: 0.85,
     },
   ],
   axes: [
@@ -41,6 +42,8 @@ const options: AgChartOptions = {
           lineDash: [0, 5, 0],
         },
       ],
+      paddingInner: 0.2,
+      paddingOuter: 0.3,
       tick: {
         color: 'black',
       },
@@ -52,6 +55,8 @@ const options: AgChartOptions = {
       position: 'left',
       type: 'category',
       gridStyle: [],
+      paddingInner: 0.2,
+      paddingOuter: 0.3,
       tick: {
         color: 'black',
       },

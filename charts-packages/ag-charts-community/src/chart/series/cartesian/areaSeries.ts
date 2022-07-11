@@ -19,10 +19,9 @@ import { extent } from '../../../util/array';
 import { equal } from '../../../util/equal';
 import { TypedEvent } from '../../../util/observable';
 import { interpolate } from '../../../util/string';
-import { Text } from '../../../scene/shape/text';
+import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { FontStyle, FontWeight } from '../../../scene/shape/text';
 import { isContinuous, isNumber } from '../../../util/value';
 import { clamper, ContinuousScale } from '../../../scale/continuousScale';
 import { doOnce } from '../../../util/function';
@@ -690,6 +689,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             yKeys,
             fills,
             strokes,
+            fillOpacity,
+            strokeOpacity,
             highlightStyle: {
                 fill: deprecatedFill,
                 stroke: deprecatedStroke,
@@ -737,6 +738,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             node.fill = (format && format.fill) || fill;
             node.stroke = (format && format.stroke) || stroke;
             node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
+            node.fillOpacity = marker.fillOpacity ?? fillOpacity ?? 1;
+            node.strokeOpacity = marker.strokeOpacity ?? strokeOpacity ?? 1;
             node.size = format && format.size !== undefined ? format.size : size;
 
             node.translationX = datum.point.x;
@@ -786,6 +789,17 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 text.visible = false;
             }
         });
+    }
+
+    protected getZIndex(datum?: { itemId?: any }): number {
+        const defaultZIndex = super.getZIndex(datum);
+
+        if (this._yKeys.length > 1) {
+            // Stacked case - need special handling so that markers don't end-up overlapped.
+            return defaultZIndex - 10;
+        }
+
+        return defaultZIndex;
     }
 
     fireNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): void {
@@ -908,8 +922,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                         shape: marker.shape,
                         fill: marker.fill || fills[index % fills.length],
                         stroke: marker.stroke || strokes[index % strokes.length],
-                        fillOpacity,
-                        strokeOpacity,
+                        fillOpacity: marker.fillOpacity ?? fillOpacity,
+                        strokeOpacity: marker.strokeOpacity ?? strokeOpacity,
                     },
                 });
             });

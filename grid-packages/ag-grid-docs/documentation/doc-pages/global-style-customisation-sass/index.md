@@ -14,11 +14,11 @@ The Sass API provides a few benefits on top of the CSS API:
 
 First, set up your project to compile Sass (.scss) files. We provide examples for the major frameworks:
 
- - Vanilla JS and React: use the [Sass CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/vanilla) or [Webpack and sass-loader](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/vanilla-webpack)
- - Angular: see our [Angular CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/angular) example
- - Vue: see our [Vue CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/vue) example
+ - Vanilla JS and React: use the [Sass CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla) or [Webpack and sass-loader](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-webpack)
+ - Angular: see our [Angular CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/angular) example
+ - Vue: see our [Vue CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vue) example
 
-Next, create import the Sass API in your .scss file:
+Next, import the Sass API in your .scss file:
 
 ```scss
 @use "ag-grid-community/styles" as ag;
@@ -32,7 +32,7 @@ The above import path assumes that `node_modules` is added to the Sass load path
 
 ## Simple example
 
-To emit all the styles you need for an ag-Grid application, include the `grid-styles` mixin:
+To emit all the styles you need for an AG Grid application, include the `grid-styles` mixin:
 
 ```scss
 @use "ag-grid-community/styles" as ag;
@@ -77,7 +77,7 @@ The Sass Styling API is a wrapper around the CSS variable API for design customi
 );
 ```
 
-For information about what CSS variables and rules to use to control grid features, see the [feature customisation reference](/global-style-customisation-features/) or [full list of CSS variables](/global-style-customisation-variables/)
+For information about what CSS variables and rules to use to control grid features, see the [full list of CSS variables](/global-style-customisation-variables/)
 
 The Sass API provides a little bit of sugar to make it easier to read and remember some parameter values and assists migration from the [Legacy Sass API](/global-style-customisation-sass-legacy/).
 
@@ -88,7 +88,7 @@ The Sass API provides a little bit of sugar to make it easier to read and rememb
 
 ## Adding your own CSS rules
 
-When there is not a variable that achieves the effect you want, add custom CSS rules below the `grid-styles` mixin:
+When you cannot achieve the effect you want with variables, add custom CSS rules below the `grid-styles` mixin:
 
 ```scss
 @use "ag-grid-community/styles" as ag;
@@ -216,5 +216,3 @@ Theme extension works with multiple themes too, set the `extend-theme` parameter
 
 [[note]]
 | `extend-theme` internally uses the Sass `@extend` rule, which generates new selectors for `.ag-theme-acmecorp` while leaving the original selectors for `.ag-theme-alpine` intact. This slightly increases the output of the compiled CSS, but the difference is likely to be too small to measure in real world conditions (less than 1kb gzipped)
-
-##

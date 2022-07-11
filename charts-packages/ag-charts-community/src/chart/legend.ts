@@ -100,7 +100,9 @@ export class LegendItem {
     paddingY = 8;
 }
 
-const NO_OP_LISTENER = () => {};
+const NO_OP_LISTENER = () => {
+    // Default listener that does nothing.
+};
 
 export class LegendListeners implements Required<AgChartLegendListeners> {
     legendItemClick: (event: AgChartLegendClickEvent) => void = NO_OP_LISTENER;
@@ -409,7 +411,7 @@ export class Legend {
         columnWidth = 0;
 
         // Position legend items using the layout computed above.
-        itemSelection.each((markerLabel, datum, i) => {
+        itemSelection.each((markerLabel, _, i) => {
             // Round off for pixel grid alignment to work properly.
             markerLabel.translationX = Math.floor(startX + x);
             markerLabel.translationY = Math.floor(startY + y);

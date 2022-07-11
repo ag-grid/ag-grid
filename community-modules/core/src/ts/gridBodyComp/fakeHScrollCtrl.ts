@@ -1,15 +1,17 @@
 import { BeanStub } from "../context/beanStub";
 import { isInvisibleScrollbar, isIOSUserAgent, isMacOsUserAgent } from "../utils/browser";
-import { Autowired, PostConstruct } from "../context/context";
+import { Autowired } from "../context/context";
 import { ScrollVisibleService } from "./scrollVisibleService";
 import { Events } from "../eventKeys";
 import { ColumnModel } from "../columns/columnModel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { CtrlsService } from "../ctrlsService";
 import { BodyScrollEvent } from "../events";
+import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 
 export interface IFakeHScrollComp {
     setHeight(height: number): void;
+    setBottom(bottom: number): void;
     setViewportHeight(height: number): void;
     setContainerHeight(height: number): void;
     setRightSpacerFixedWidth(width: number): void;
@@ -25,6 +27,7 @@ export class FakeHScrollCtrl extends BeanStub {
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
+    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
 
     private view: IFakeHScrollComp;
 
@@ -34,10 +37,6 @@ export class FakeHScrollCtrl extends BeanStub {
     private eContainer: HTMLElement;
     private eGui: HTMLElement;
 
-    constructor() {
-        super();
-    }
-
     public setComp(view: IFakeHScrollComp, eGui: HTMLElement, eViewport: HTMLElement, eContainer: HTMLElement): void {
         this.view = view;
         this.eViewport = eViewport;
@@ -45,19 +44,14 @@ export class FakeHScrollCtrl extends BeanStub {
         this.eGui = eGui;
 
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
-        this.onScrollVisibilityChanged();
 
         // When doing printing, this changes whether cols are pinned or not
         const spacerWidthsListener = this.setFakeHScrollSpacerWidths.bind(this);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, spacerWidthsListener);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, spacerWidthsListener);
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, spacerWidthsListener);
-        this.setFakeHScrollSpacerWidths();
-
-        if (this.invisibleScrollbar) {
-            this.hideAndShowInvisibleScrollAsNeeded();
-            this.addActiveListenerToggles();
-        }
+        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
+        this.onScrollVisibilityChanged();
 
         this.ctrlsService.registerFakeHScrollCtrl(this);
         this.view.addOrRemoveCssClass('ag-apple-scrollbar', isMacOsUserAgent() || isIOSUserAgent());
@@ -79,13 +73,37 @@ export class FakeHScrollCtrl extends BeanStub {
         );
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    private initialiseInvisibleScrollbar(): void {
+        if (this.invisibleScrollbar !== undefined) { return; }
+
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.invisibleScrollbar = isInvisibleScrollbar();
+
+        if (this.invisibleScrollbar) {
+            this.hideAndShowInvisibleScrollAsNeeded();
+            this.addActiveListenerToggles();
+            this.refreshCompBottom();
+        }
+    }
+
+    private onPinnedRowDataChanged(): void {
+        this.refreshCompBottom();
+    }
+
+    private refreshCompBottom(): void {
+        if (!this.invisibleScrollbar) { return; }
+        const bottomPinnedHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
+
+        this.view.setBottom(bottomPinnedHeight);
     }
 
     private onScrollVisibilityChanged(): void {
+        // initialiseInvisibleScrollbar should only be called once, but the reason
+        // this can't be inside `setComp` or `PostConstruct` is the DOM might not
+        // be ready, so we call it until eventually, it gets calculated.
+        if (this.invisibleScrollbar === undefined) {
+            this.initialiseInvisibleScrollbar();
+        }
         this.setScrollVisible();
         this.setFakeHScrollSpacerWidths();
     }

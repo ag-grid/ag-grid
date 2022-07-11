@@ -1,20 +1,26 @@
 import { Grid, GridOptions, ColDef, GetRowIdParams } from '@ag-grid-community/core'
 
+interface ICar {
+  id: string;
+  make: string;
+  model: string;
+  price: number;
+}
 
-var columnDefs: ColDef[] = [
+var columnDefs: ColDef<ICar>[] = [
   { field: "make" },
   { field: "model" },
   { field: "price" }
 ];
 
 // specify the data
-var rowDataA = [
+var rowDataA: ICar[] = [
   { id: '1', make: "Toyota", model: "Celica", price: 35000 },
   { id: '4', make: "BMW", model: "M50", price: 60000 },
   { id: '5', make: "Aston Martin", model: "DBX", price: 190000 }
 ];
 
-var rowDataB = [
+var rowDataB: ICar[] = [
   { id: '1', make: "Toyota", model: "Celica", price: 35000 },
   { id: '2', make: "Ford", model: "Mondeo", price: 32000 },
   { id: '3', make: "Porsche", model: "Boxster", price: 72000 },
@@ -23,12 +29,12 @@ var rowDataB = [
 ];
 
 // let the grid know which columns and what data to use
-var gridOptions: GridOptions = {
+var gridOptions: GridOptions<ICar> = {
   columnDefs: columnDefs,
   rowData: rowDataA,
   rowSelection: 'single',
   animateRows: true,
-  getRowId: (params: GetRowIdParams) => params.data.id
+  getRowId: (params: GetRowIdParams<ICar>) => params.data.id
 };
 
 function onRowDataA() {

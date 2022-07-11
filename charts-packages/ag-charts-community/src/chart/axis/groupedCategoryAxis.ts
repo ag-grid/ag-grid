@@ -275,9 +275,6 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                 node.fontFamily = label.fontFamily;
                 node.fill = label.color;
                 node.textBaseline = parallelFlipFlag === -1 ? 'bottom' : 'hanging';
-                // label.textBaseline = parallelLabels && !labelRotation
-                //     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
-                //     : 'middle';
                 node.textAlign = 'center';
                 node.translationX = datum.screenY - label.fontSize * 0.25;
                 node.translationY = datum.screenX;
@@ -389,7 +386,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         this.separatorSelection = separatorSelection;
 
         const epsilon = 0.0000001;
-        separatorSelection.each((line, datum, i) => {
+        separatorSelection.each((line, datum) => {
             line.x1 = datum.x1;
             line.x2 = datum.x2;
             line.y1 = datum.y;

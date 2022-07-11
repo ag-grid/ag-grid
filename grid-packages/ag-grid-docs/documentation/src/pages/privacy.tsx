@@ -13,7 +13,7 @@ const Privacy = () => {
                         <div id="introduction" className="text-left">
                             <h1 className={styles['page-title']}>AG Grid Privacy Policy</h1>
                             <hr/>
-                            <h4 className="mb-5">Effective Date: May 17, 2018</h4>
+                            <h4 className="mb-5">Effective Date: 6 July 2022</h4>
                             <p>Welcome to AG Grid's Privacy Policy.</p>
                             <p><strong>Your privacy is important to us.</strong></p>
                             <p>At ag-grid, we are fully committed to protecting your personal data and complying with all data privacy laws. </p>
@@ -118,10 +118,15 @@ const Privacy = () => {
                                     our website and other online
                                     services, to administer and protect our business and website, to deliver relevant website content and
                                     advertisements to you and to
-                                    understand the effectiveness of our advertising. Our lawful ground for this processing is our
-                                    legitimate interests which in this case
-                                    are to enable us to properly administer our website and our business and to grow our business and to
-                                    decide our marketing strategy.
+                                    understand the effectiveness of our advertising. Our lawful ground for this
+                                    processing where essential cookies are used (those which are
+                                    required to enable the website to function) is our legitimate
+                                    interests which in this case are to enable us to properly administer
+                                    our website and our business and to grow our business and to
+                                    decide our marketing strategy. Where non-essential cookies, such
+                                    as analytics or advertising cookies are used, we will rely on your
+                                    consent obtained through the cookie banner to process your
+                                    personal data.
                                 </p>
                                 <p><strong>Marketing Data</strong> that includes data about your preferences in receiving marketing from
                                     us and our third parties and
@@ -129,16 +134,18 @@ const Privacy = () => {
                                     as competitions, prize draws and
                                     free give-aways, to deliver relevant website content and advertisements to you and measure or
                                     understand the effectiveness of this
-                                    advertising. Our lawful ground for this processing is our legitimate interests which in this case are
-                                    to study how customers use our
-                                    products/services, to develop them, to grow our business and to decide our marketing strategy.
+                                    advertising. Our lawful ground for this processing is our
+                                    consent, where we have asked for it or legitimate interests, where
+                                    you have previously purchased from us or expressed an interest in
+                                    our services or products, which in this case are to study how
+                                    customers use our products/services, to develop them, to grow our
+                                    business and to decide our marketing strategy.
                                 </p>
                                 <p>We may use Customer Data, User Data, Technical Data and Marketing Data to deliver relevant website
                                     content and advertisements
                                     to you (including Facebook adverts or other display advertisements) and to measure or understand the
                                     effectiveness of the advertising
-                                    we serve you. Our lawful ground for this processing is legitimate interests which is to grow our
-                                    business. We may also use such data
+                                    we serve you. Our lawful ground for this processing your consent. We may also use such data
                                     to send other marketing communications to you. Our lawful ground for this processing is either consent
                                     or legitimate interests (namely
                                     to grow our business). <strong>[NOTE SEE SECTION 4 BELOW]</strong>
@@ -243,13 +250,13 @@ const Privacy = () => {
                                     the EEA unless
                                     the transfer meets certain criteria.
                                 </p>
-                                <p>Many of our third parties service providers are based outside the European Economic
+                                <p>Many of our third party service providers are based outside the European Economic
                                     Area <strong>(EEA)</strong> so their
                                     processing of your personal data will involve a transfer of data outside the EEA.
                                 </p>
                                 <p>Whenever we transfer your personal data out of the EEA, we do our best to ensure a similar degree of
                                     security of
-                                    data by ensuring at least one of the following safeguards is in place:
+                                    data by ensuring one of the following safeguards is in place:
                                 </p>
                                 <ul>
                                     <li>
@@ -263,17 +270,7 @@ const Privacy = () => {
                                         approved by the European Commission which give personal data the same protection it has in Europe;
                                         or
                                     </li>
-                                    <li>
-                                        If we use US-based providers that are part of EU-US Privacy Shield, we may transfer data to them,
-                                        as they have equivalent
-                                        safeguards in place.
-                                    </li>
                                 </ul>
-                                <p>
-                                    If none of the above safeguards is available, we may request your explicit consent to the specific
-                                    transfer. You will have the
-                                    right to withdraw this consent at any time.
-                                </p>
                             </li>
                             <li>
                                 <h3 id="data-security">Data Security</h3>

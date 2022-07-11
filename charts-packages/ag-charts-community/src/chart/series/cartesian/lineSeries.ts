@@ -5,7 +5,7 @@ import { Group } from '../../../scene/group';
 import { SeriesNodeDatum, CartesianTooltipRendererParams, SeriesTooltip, SeriesNodeDataContext } from '../series';
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
-import { Text } from '../../../scene/shape/text';
+import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
 import { LegendDatum } from '../../legend';
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxis';
@@ -13,7 +13,6 @@ import { getMarker } from '../../marker/util';
 import { TypedEvent } from '../../../util/observable';
 import { TooltipRendererResult, toTooltipHtml } from '../../chart';
 import { interpolate } from '../../../util/string';
-import { FontStyle, FontWeight } from '../../../scene/shape/text';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { isContinuous } from '../../../util/value';
@@ -324,6 +323,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             xKey,
             yKey,
             stroke: lineStroke,
+            strokeOpacity,
             highlightStyle: {
                 fill: deprecatedFill,
                 stroke: deprecatedStroke,
@@ -364,6 +364,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
             node.fill = (format && format.fill) || fill;
             node.stroke = (format && format.stroke) || stroke;
             node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
+            node.fillOpacity = marker.fillOpacity ?? 1;
+            node.strokeOpacity = marker.strokeOpacity ?? strokeOpacity ?? 1;
             node.size = format && format.size !== undefined ? format.size : size;
 
             node.translationX = datum.point.x;
@@ -385,7 +387,6 @@ export class LineSeries extends CartesianSeries<LineContext> {
             marker: { shape, enabled },
         } = this;
         labelData = shape && enabled ? labelData : [];
-        const MarkerShape = getMarker(shape);
 
         const updateTextSelection = labelSelection.setData(labelData);
         updateTextSelection.exit.remove();
@@ -514,8 +515,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     shape: marker.shape,
                     fill: marker.fill || 'rgba(0, 0, 0, 0)',
                     stroke: marker.stroke || stroke || 'rgba(0, 0, 0, 0)',
-                    fillOpacity: 1,
-                    strokeOpacity,
+                    fillOpacity: marker.fillOpacity ?? 1,
+                    strokeOpacity: marker.strokeOpacity ?? strokeOpacity ?? 1,
                 },
             });
         }
