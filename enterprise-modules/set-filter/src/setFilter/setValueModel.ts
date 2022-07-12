@@ -161,9 +161,7 @@ export class SetValueModel implements IEventEmitter {
                 case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
                 case SetFilterModelValuesType.PROVIDED_LIST: {
                     const values = this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ?
-                        this.getValuesFromRows(false) :
-                        _.values(this.uniqueValues(_.toStrings(this.providedValues as any[]) || []));
-
+                        this.getValuesFromRows(false) : this.uniqueUnsortedStringArray(this.providedValues as any[]);
                     const sortedValues = this.sortValues(values || []);
 
                     this.allValues = sortedValues;
@@ -180,7 +178,7 @@ export class SetValueModel implements IEventEmitter {
                     const { columnApi, api, context, column, colDef } = this.filterParams;
                     const params: SetFilterValuesFuncParams = {
                         success: values => {
-                            const processedValues = _.values(this.uniqueValues(_.toStrings(values) || []));
+                            const processedValues = this.uniqueUnsortedStringArray(values || []);
 
                             this.setIsLoading(false);
 
@@ -400,6 +398,31 @@ export class SetValueModel implements IEventEmitter {
                     }
                 });
             }
+        });
+    }
+
+    private uniqueUnsortedStringArray(values: any[]): (string | null)[] {
+        const stringifiedResults = _.toStrings(values);
+        if (!stringifiedResults) {
+            return [];
+        }
+
+        const uniqueValues = this.uniqueValues(stringifiedResults);
+
+        /*
+        * It is not possible to simply use Object.values(uniqueValues) here as the keys inside uniqueValues could be numeric.
+        * Javascript objects sort numeric keys and do not fully respect the insert order, as such to trust the results are unsorted
+        * we need to reference the order of the original array as done here.
+        */
+        return stringifiedResults.filter(item => {
+            const value = _.makeNull(item);
+            const key = this.uniqueKey(value);
+
+            if (uniqueValues[key]) {
+                delete uniqueValues[key];
+                return true;
+            }
+            return false;
         });
     }
 
