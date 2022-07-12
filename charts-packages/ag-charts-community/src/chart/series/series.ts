@@ -350,9 +350,10 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     readonly highlightStyle = new HighlightStyle();
 
-    protected fixNumericExtent(extent?: [number | Date, number | Date], axis?: ChartAxis): [number, number] {
-        if (!extent) {
-            return [0, 1];
+    protected fixNumericExtent(extent?: [number | Date, number | Date], axis?: ChartAxis): number[] {
+        if (extent === undefined) {
+            // Don't return a range, there is no range.
+            return [];
         }
 
         let [min, max] = extent;

@@ -125,8 +125,8 @@
 |
 | ```jsx
 |"dependencies": {
-|    "ag-grid-community": "^27.0.1",
-|    "ag-grid-react": "^27.0.1",
+|    "ag-grid-community": "@AG_GRID_VERSION@",
+|    "ag-grid-react": "@AG_GRID_VERSION@",
 |    ...
 | ```
 |
@@ -365,9 +365,9 @@
 |
 | ```jsx
 |"dependencies": {
-|    "ag-grid-community": "^27.0.1",
-|    "ag-grid-enterprise": "^27.0.1",
-|    "ag-grid-react": "^27.0.1",
+|    "ag-grid-community": "@AG_GRID_VERSION@",
+|    "ag-grid-enterprise": "@AG_GRID_VERSION@",
+|    "ag-grid-react": "@AG_GRID_VERSION@",
 |    ...
 | ```
 |

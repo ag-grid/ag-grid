@@ -14,4 +14,4 @@ Notice that the example (including calculating the expression on the fly, the gr
 
 This example is best viewed by opening it in a new tab.
 
-<grid-example title='Monthly Sales' name='monthly-sales' type='typescript' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "setfilter", "filterpanel"], "extras": ["fontawesome", "bootstrap"] }'></grid-example>
+<grid-example title='Monthly Sales' name='monthly-sales' type='typescript' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "setfilter", "filterpanel"], "extras": ["fontawesome"] }'></grid-example>

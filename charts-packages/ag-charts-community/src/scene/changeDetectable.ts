@@ -57,10 +57,10 @@ export function SceneChangeDetection(opts?: {
                     if (value !== oldValue) {
                         this.${privateKey} = value;
                         ${debug ? `console.log({ t: this, property: '${key}', oldValue, value, stack: new Error().stack });` : ''}
-                        ${type === 'normal' ? 'this.markDirty(this, ' + redraw + ');' : ''}
-                        ${type === 'transform' ? 'this.markDirtyTransform(' + redraw + ');' : ''}
-                        ${type === 'path' ? `if (!this._dirtyPath) { this._dirtyPath = true; this.markDirty(this, redraw); }` : ''}
-                        ${type === 'font' ? `if (!this._dirtyFont) { this._dirtyFont = true; this.markDirty(this, redraw); }` : ''}
+                        ${type === 'normal' ? `this.markDirty(this, ${redraw});` : ''}
+                        ${type === 'transform' ? `this.markDirtyTransform(${redraw});` : ''}
+                        ${type === 'path' ? `if (!this._dirtyPath) { this._dirtyPath = true; this.markDirty(this, ${redraw}); }` : ''}
+                        ${type === 'font' ? `if (!this._dirtyFont) { this._dirtyFont = true; this.markDirty(this, ${redraw}); }` : ''}
                         ${changeCb ? 'changeCb(this);' : ''}
                     }
                     ${checkDirtyOnAssignment ? `if (value != null && value._dirty > ${RedrawType.NONE}) { this.markDirty(value, value._dirty); }` : ''}
