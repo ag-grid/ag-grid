@@ -187,7 +187,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         this.requestedRange = value.range.slice();
         this.onLabelFormatChange();
         this.crossLines?.forEach((crossLine) => {
-            crossLine.scale = value;
+            this.initCrossLine(crossLine);
         });
     }
     get scale(): S {
@@ -215,6 +215,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         this._crossLines?.forEach(crossLine => {
             this.attachCrossLine(crossLine);
+            this.initCrossLine(crossLine);
         });
     }
     get crossLines(): CrossLine[] | undefined {
@@ -404,7 +405,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         this._gridLength = value;
 
         this.crossLines?.forEach((crossLine) => {
-            crossLine.gridLength = value;
+            this.initCrossLine(crossLine);
         });
     }
     get gridLength(): number {
@@ -745,8 +746,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
         this.positionTitle();
 
         this.crossLines?.forEach((crossLine) => {
-            crossLine.scale = scale;
-            crossLine.gridLength = gridLength;
             crossLine.sideFlag = -sideFlag as (-1 | 1);
             crossLine.direction = rotation === -Math.PI / 2 ? ChartAxisDirection.X : ChartAxisDirection.Y;
             crossLine.label.parallel = crossLine.label.parallel !== undefined ? crossLine.label.parallel : parallelLabels;
@@ -823,5 +822,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     computeBBox(): BBox {
         return this.axisGroup.computeBBox();
+    }
+
+    initCrossLine(crossLine: CrossLine) {
+        crossLine.scale = this.scale;
+        crossLine.gridLength = this.gridLength;
     }
 }
