@@ -56,7 +56,7 @@ export abstract class ContinuousScale implements Scale<any, any> {
 
     protected _domain: any[] = [0, 1];
     protected setDomain(values: any[]) {
-        this._domain = Array.prototype.map.call(values, (v: any) => +v);
+        this._domain = values.map((v) => +v);
         if (this._clamp !== identity) {
             this._clamp = this.clamper(this.domain);
         }
@@ -74,7 +74,7 @@ export abstract class ContinuousScale implements Scale<any, any> {
 
     protected _range: any[] = [0, 1];
     set range(values: any[]) {
-        this._range = Array.prototype.slice.call(values);
+        this._range = values.slice();
         this.rescale();
     }
     get range(): any[] {
