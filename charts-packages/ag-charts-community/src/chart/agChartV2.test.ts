@@ -15,6 +15,7 @@ import {
     extractImageData,
     CANVAS_WIDTH,
     CANVAS_HEIGHT,
+    TestCase,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -55,11 +56,6 @@ function consoleWarnAssertions(options: AgCartesianChartOptions) {
     };
 }
 
-type TestCase = {
-    options: AgChartOptions;
-    assertions: (chart: Chart) => Promise<void>;
-    extraScreenshotActions?: (chart: Chart) => Promise<void>;
-};
 const EXAMPLES: Record<string, TestCase> = {
     AREA_MISSING_Y_DATA_EXAMPLE: {
         options: examples.AREA_MISSING_Y_DATA_EXAMPLE,
@@ -183,30 +179,6 @@ const EXAMPLES: Record<string, TestCase> = {
     TRUNCATED_LEGEND_ITEMS: {
         options: examples.TRUNCATED_LEGEND_ITEMS,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'category'], seriesTypes: ['bar'] }),
-    },
-    SCATTER_CROSSLINES: {
-        options: examples.SCATTER_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['scatter'] }),
-    },
-    LINE_CROSSLINES: {
-        options: examples.LINE_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: repeat('line', 16) }),
-    },
-    AREA_CROSSLINES: {
-        options: examples.AREA_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: repeat('area', 5) }),
-    },
-    COLUMN_CROSSLINES: {
-        options: examples.COLUMN_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['bar'] }),
-    },
-    BAR_CROSSLINES: {
-        options: examples.BAR_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['bar'] }),
-    },
-    HISTOGRAM_CROSSLINES: {
-        options: examples.HISTOGRAM_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['histogram', 'scatter'] }),
     },
 };
 

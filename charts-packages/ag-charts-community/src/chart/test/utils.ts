@@ -4,10 +4,21 @@ import * as pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
 import * as fs from 'fs';
 
-import { Chart, ChartUpdateType } from "../chart";
+import { Chart } from "../chart";
 import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
+import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
+
+export interface TestCase {
+    options: AgChartOptions;
+    assertions: (chart: Chart) => Promise<void>;
+    extraScreenshotActions?: (chart: Chart) => Promise<void>;
+};
+
+export interface CartesianTestCase extends TestCase {
+    options: AgCartesianChartOptions;
+}
 
 const FAILURE_THRESHOLD = Number(process.env.SNAPSHOT_FAILURE_THRESHOLD ?? 0.05);
 export const IMAGE_SNAPSHOT_DEFAULTS = { failureThreshold: FAILURE_THRESHOLD, failureThresholdType: "percent" };
@@ -20,6 +31,41 @@ process.env.FONTCONFIG_NAME = `${__dirname}/fonts.conf`;
 
 export const CANVAS_WIDTH = 800;
 export const CANVAS_HEIGHT = 600;
+
+export function loadExampleOptions(name: string, evalFn = 'options'): any {
+    const filters = [/^import .*/, /.*AgChart\.(update|create)/, /.* container\: .*/ /*, /.* data/*/];
+    const dataFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/data.ts`;
+    const exampleFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/main.ts`;
+
+    const cleanTs = (content: Buffer) => content
+        .toString()
+        .split('\n')
+        // Remove grossly unsupported lines.
+        .filter((line) => !filters.some(f => f.test(line)))
+        // Remove types, without matching string literals.
+        .map((line) => ["'", '"'].some(v => line.indexOf(v) >= 0) ? line : line.replace(/: [A-Z][A-Za-z<, >]*/g, ''))
+        // Remove declares.
+        .map((line) => line.replace(/declare var.*;/g, ''))
+        // Remove sugars.
+        .map((line) => line.replace(/[a-z]!/g, ''))
+        // Remove primitives + primitive arrays.
+        .map((line) => line.replace(/: (number|string|any)(\[\]){0,}/g, ''))
+        // Remove unsupported keywords.
+        .map((line) => line.replace(/export /g, ''));
+
+    const dataFileContent = cleanTs(fs.readFileSync(dataFile));
+    const exampleFileLines = cleanTs(fs.readFileSync(exampleFile));
+
+    let evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
+    try {
+        const agCharts = require('../../main');
+        return eval(evalExpr);
+    } catch (error) {
+        console.error(`AG Charts - unable to read example data for [${name}]; error: ${error.message}`);
+        // console.log(evalExpr);
+        return [];
+    }
+}
 
 export function repeat<T>(value: T, count: number): T[] {
     const result = new Array(count);
@@ -42,7 +88,7 @@ export function range(start: number, end: number, step = 1): number[] {
 
 export function dateRange(start: Date, end: Date, step = 24 * 60 * 60 * 1000): Date[] {
     const result = [];
-    
+
     let next = start.getTime();
     const endTime = end.getTime();
     while (next <= endTime) {
@@ -173,13 +219,13 @@ export function setupMockCanvas(): { nodeCanvas?: Canvas } {
                     }
                     canvases.push(nextCanvas);
 
-                    mockedElement.getContext = (p) => { 
+                    mockedElement.getContext = (p) => {
                         const context2d = nextCanvas.getContext(p, { alpha: true });
                         context2d.patternQuality = 'good';
                         context2d.quality = 'good';
                         context2d.textDrawingMode = 'path';
                         context2d.antialias = 'subpixel';
-                
+
                         return context2d as any;
                     };
 
