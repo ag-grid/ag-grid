@@ -162,4 +162,4 @@ The example below illustrates:
 
 - 'Date' column uses a Component cell editor that allows you to pick a date using jQuery UI Datepicker.
 
-<grid-example title='Datepicker Cell Editing' name='datepicker-cell-editing' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel"], "extras": ["jquery", "jqueryui", "bootstrap"] }'></grid-example>
+<grid-example title='Datepicker Cell Editing' name='datepicker-cell-editing' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel"], "extras": ["jquery", "jqueryui"] }'></grid-example>
