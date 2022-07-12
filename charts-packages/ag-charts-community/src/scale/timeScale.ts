@@ -121,7 +121,7 @@ export class TimeScale extends ContinuousScale {
 
     protected _domain: Date[] = [new Date(2000, 0, 1), new Date(2000, 0, 2)];
     set domain(values: Date[]) {
-        super.setDomain(Array.prototype.map.call(values, (t: any) => t instanceof Date ? +t : +new Date(+t)));
+        super.setDomain(values.map((t: any) => t instanceof Date ? +t : +new Date(+t)));
     }
     get domain(): Date[] {
         return super.getDomain().map((t: any) => new Date(t));
