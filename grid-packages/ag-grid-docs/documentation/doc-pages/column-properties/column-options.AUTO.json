@@ -135,6 +135,10 @@
     "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
     "type": { "returnType": "boolean | CheckboxSelectionCallback<TData>" }
   },
+  "showDisabledCheckboxes": {
+    "description": "/** `boolean`. Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
+    "type": { "returnType": "boolean" }
+  },
   "icons": {
     "description": "/** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults. */",
     "type": { "returnType": "{ [key: string]: Function | string; }" }

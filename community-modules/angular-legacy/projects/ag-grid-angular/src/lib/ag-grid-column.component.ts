@@ -120,6 +120,8 @@ export class AgGridColumn<TData = any> {
     @Input() public tooltipValueGetter: ((params: ITooltipParams<TData>) => string | any) | undefined;
     /** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false`     */
     @Input() public checkboxSelection: boolean | CheckboxSelectionCallback<TData> | undefined;
+    /** `boolean`. Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false`     */
+    @Input() public showDisabledCheckboxes: boolean | undefined;
     /** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults.     */
     @Input() public icons: { [key: string]: Function | string; } | undefined;
     /** Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.
@@ -368,6 +370,7 @@ export class AgGridColumn<TData = any> {
     static ngAcceptInputType_pivot: boolean | null | '';
     static ngAcceptInputType_initialPivot: boolean | null | '';
     static ngAcceptInputType_checkboxSelection: boolean | null | '';
+    static ngAcceptInputType_showDisabledCheckboxes: boolean | null | '';
     static ngAcceptInputType_headerCheckboxSelection: boolean | null | '';
     static ngAcceptInputType_headerCheckboxSelectionFilteredOnly: boolean | null | '';
     static ngAcceptInputType_suppressMenu: boolean | null | '';

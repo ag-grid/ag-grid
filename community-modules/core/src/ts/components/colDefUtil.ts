@@ -94,6 +94,7 @@ export class ColDefUtil {
         'pivot',
         'initialPivot',
         'checkboxSelection',
+        'showDisabledCheckboxes',
         'headerCheckboxSelection',
         'headerCheckboxSelectionFilteredOnly',
         'suppressMenu',

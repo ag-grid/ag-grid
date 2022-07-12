@@ -6,6 +6,7 @@ import { Events } from '../events';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { RowNode } from '../entities/rowNode';
 import { stopPropagationForAgGrid } from '../utils/event';
+import { CheckboxSelectionCallback } from '../entities/colDef';
 
 export class CheckboxSelectionComponent extends Component {
 
@@ -13,6 +14,11 @@ export class CheckboxSelectionComponent extends Component {
 
     private rowNode: RowNode;
     private column: Column | undefined;
+    private overrides?: {
+        isVisible: boolean | CheckboxSelectionCallback<any>,
+        callbackParams: any,
+        removeHidden: boolean;
+    };
 
     constructor() {
         super(/* html*/`
@@ -68,9 +74,18 @@ export class CheckboxSelectionComponent extends Component {
         return updatedCount;
     }
 
-    public init(params: {rowNode: RowNode, column?: Column}): void {
+    public init(params: {
+        rowNode: RowNode,
+        column?: Column,
+        overrides?: {
+            isVisible: boolean | CheckboxSelectionCallback<any>,
+            callbackParams: any,
+            removeHidden: boolean;
+        },
+    }): void {
         this.rowNode = params.rowNode;
         this.column = params.column;
+        this.overrides = params.overrides;
 
         this.onSelectionChanged();
 
@@ -102,7 +117,7 @@ export class CheckboxSelectionComponent extends Component {
         this.addManagedListener(this.rowNode, RowNode.EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
 
         const isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
-        const checkboxVisibleIsDynamic = isRowSelectableFunc || this.checkboxCallbackExists();
+        const checkboxVisibleIsDynamic = isRowSelectableFunc || typeof this.getIsVisible() === 'function';
 
         if (checkboxVisibleIsDynamic) {
             const showOrHideSelectListener = this.showOrHideSelect.bind(this);
@@ -122,17 +137,40 @@ export class CheckboxSelectionComponent extends Component {
         // checkboxSelection callback is deemed a legacy solution however we will still consider it's result.
         // If selectable, then also check the colDef callback. if not selectable, this it short circuits - no need
         // to call the colDef callback.
-        if (selectable && this.checkboxCallbackExists()) {
-            selectable = this.column!.isCellCheckboxSelection(this.rowNode);
+        const isVisible = this.getIsVisible();
+        if (selectable) {
+            if (typeof isVisible === 'function') {
+                const extraParams = this.overrides?.callbackParams;
+                const params = this.column?.createColumnFunctionCallbackParams(this.rowNode);
+
+                selectable = params ? isVisible({ ...extraParams, ...params }) : false;
+            } else {
+                selectable = isVisible ?? false;
+            }
         }
 
-        // show checkbox if both conditions are true
+        const disableInsteadOfHide = this.column?.getColDef().showDisabledCheckboxes;
+        if (disableInsteadOfHide) {
+            this.eCheckbox.setDisabled(!selectable);
+            this.setVisible(true);
+            this.setDisplayed(true);
+            return;
+        }
+
+        if (this.overrides?.removeHidden) {
+            this.setDisplayed(selectable);
+            return;
+        }
+
         this.setVisible(selectable);
     }
 
-    private checkboxCallbackExists(): boolean {
+    private getIsVisible(): boolean | CheckboxSelectionCallback<any> | undefined {
+        if (this.overrides) {
+            return this.overrides.isVisible;
+        }
+
         // column will be missing if groupUseEntireRow=true
-        const colDef = this.column ? this.column.getColDef() : null;
-        return !!colDef && typeof colDef.checkboxSelection === 'function';
+        return this.column?.getColDef()?.checkboxSelection;
     }
 }

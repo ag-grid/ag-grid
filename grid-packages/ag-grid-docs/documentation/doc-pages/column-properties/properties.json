@@ -46,6 +46,7 @@
             }
         },
         "checkboxSelection": {},
+        "showDisabledCheckboxes": {},
         "toolPanelClass": {},
         "suppressColumnsToolPanel": {},
         "columnGroupShow": {},

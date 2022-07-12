@@ -54,7 +54,7 @@ The example below shows multi-select with click. Clicking multiple rows will sel
 
 Checkbox selection can be used in two places: row selection and group selection.
 
-<api-documentation source='column-properties/properties.json' section='columns' names='["checkboxSelection"]'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='columns' names='["checkboxSelection", "showDisabledCheckboxes"]'></api-documentation>
 
 To include checkbox selection for a column, set the attribute `'checkboxSelection'` to `true` on the column definition. 
 You can set this attribute on as many columns as you like, however it doesn't make sense to have it in more than one 
@@ -85,6 +85,11 @@ colDef.checkboxSelection = false;
 // create checkbox, make checkbox not visible
 colDef.checkboxSelection = () => false;
 ```
+### Example: Displaying Disabled Checkboxes
+
+It is possible to change the default behaviour for when a checkbox is not displayed, and instead have the checkbox visible but disabled. This can be done by enabling the column property `showDisabledCheckboxes`.
+
+<grid-example title='Displaying Disabled Checkboxes' name='disabled-checkboxes' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
 ## Group Selection
 
