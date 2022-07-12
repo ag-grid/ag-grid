@@ -164,15 +164,14 @@ export class ChartTooltip extends Observable {
      */
     tracking: boolean = true;
 
-    constructor(chart: Chart, document: Document) {
+    constructor(chart: Chart, document: Document, private readonly tooltipRoot: HTMLElement) {
         super();
 
         this.chart = chart;
         this.class = '';
 
-        const tooltipRoot = document.body;
         const element = document.createElement('div');
-        this.element = tooltipRoot.appendChild(element);
+        this.element = this.tooltipRoot.appendChild(element);
 
         // Detect when the chart becomes invisible and hide the tooltip as well.
         if (window.IntersectionObserver) {
@@ -183,7 +182,7 @@ export class ChartTooltip extends Observable {
                         this.toggle(false);
                     }
                 }
-            }, { root: tooltipRoot });
+            }, { root: this.tooltipRoot });
             observer.observe(target);
             this.observer = observer;
         }
@@ -264,8 +263,9 @@ export class ChartTooltip extends Observable {
             }
         }
 
-        el.style.left = `${Math.round(left)}px`;
-        el.style.top = `${Math.round(top)}px`;
+        const rootRect = this.tooltipRoot.getBoundingClientRect();
+        el.style.left = `${Math.round(left - rootRect.left)}px`;
+        el.style.top = `${Math.round(top - rootRect.top)}px`;
 
         if (this.delay > 0 && !instantly) {
             this.toggle(false);
@@ -475,7 +475,7 @@ export abstract class Chart extends Observable {
             this.resize(width, height);
         });
 
-        this.tooltip = new ChartTooltip(this, document);
+        this.tooltip = new ChartTooltip(this, document, element);
         this.tooltip.addPropertyListener('class', () => this.tooltip.toggle());
 
         if (Chart.tooltipDocuments.indexOf(document) < 0) {
