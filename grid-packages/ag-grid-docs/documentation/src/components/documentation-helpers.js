@@ -315,13 +315,37 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
     const alreadyIncluded = {};
     allDefs.forEach((v) => { alreadyIncluded[v.name] = true; });
 
+    const addDef = (def) => {
+        if (!alreadyIncluded[def.name]) {
+            allDefs.push(def);
+            alreadyIncluded[def.name] = true;
+
+            return true;
+        }
+
+        return false;
+    };
+    const recurse = (defs, overrideFn) => {
+        if (Array.isArray(defs)) {
+            defs.forEach(def => recurse(def, overrideFn));
+            return;
+        }
+
+        if (typeof defs !== 'string') {
+            return;
+        }
+
+        if (alreadyIncluded[defs]) {
+            return;
+        }
+
+        extractInterfaces(defs, interfaceLookup, overrideFn, allDefs)
+            .forEach(addDef);
+    };
+
     if (Array.isArray(definitionOrArray)) {
         definitionOrArray.forEach(def => {
-            if (alreadyIncluded[def]) {
-                return;
-            }
-            allDefs = [...allDefs, ...extractInterfaces(def, interfaceLookup, overrideIncludeInterfaceFunc, allDefs)]
-            alreadyIncluded[def] = true;
+            recurse(def, overrideIncludeInterfaceFunc);
         })
         return allDefs;
     }
@@ -356,7 +380,10 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
                 || (isLinkedType && numMembers < 12)
                 || (overrideInclusion === true)) && !alreadyIncluded[type]) {
 
-                allDefs.push({ name: type, interfaceType })
+                if (!addDef({ name: type, interfaceType })) {
+                    // Previously added - no need to continue.
+                    return;
+                }
 
                 // Now if this is a top level interface see if we should include any interfaces for its properties
                 if (interfaceType.type) {
@@ -381,12 +408,9 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
                             });
                     }
 
-
-                    const uniqueInterfacesToInclude = Object.keys(interfacesToInclude)
-                        .filter(v => !alreadyIncluded[v]);
-                    if (uniqueInterfacesToInclude.length > 0) {
-                        // Be sure to pass true to dontIncludeChildrenTypes so we do not recurse indefinitely
-                        allDefs = [...allDefs, ...extractInterfaces(uniqueInterfacesToInclude, interfaceLookup, overrideIncludeInterfaceFunc, allDefs)];
+                    const toAdd = Object.keys(interfacesToInclude);
+                    if (toAdd.length > 0) {
+                        toAdd.forEach(v => recurse(v, overrideIncludeInterfaceFunc));
                     }
                 }
             }
@@ -394,25 +418,17 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
             // If a call signature we unwrap the interface and recurse on the call signature arguments instead.
             if (interfaceType.meta.isCallSignature) {
                 const args = interfaceType.type && interfaceType.type.arguments;
-                if (args) {
-                    const argInterfaces = Object.values(args)
-                    allDefs = [...allDefs, ...extractInterfaces(argInterfaces, interfaceLookup, overrideIncludeInterfaceFunc)];
-                }
+                Object.values(args ?? {})
+                    .forEach(v => recurse(v, overrideIncludeInterfaceFunc))
             }
 
         });
         return allDefs;
-    } else {
-
-        Object.values(definition).forEach(v => {
-            if (!alreadyIncluded[v]) {
-                allDefs = [...allDefs, ...extractInterfaces(v, interfaceLookup, overrideIncludeInterfaceFunc, allDefs)];
-            }
-            alreadyIncluded[v] = true;
-        })
-        return allDefs;
     }
 
+    Object.values(definition)
+        .forEach(v => recurse(v, overrideIncludeInterfaceFunc))
+    return allDefs;
 }
 
 export function getLongestNameLength(nameWithBreaks) {
