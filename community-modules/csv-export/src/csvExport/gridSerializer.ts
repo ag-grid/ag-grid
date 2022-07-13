@@ -65,7 +65,8 @@ export class GridSerializer extends BeanStub {
         const skipLowestSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
         // if onlySelected, we ignore groupHideOpenParents as the user has explicitly selected the rows they wish to export.
         // similarly, if specific rowNodes are provided we do the same. (the clipboard service uses rowNodes to define which rows to export)
-        const isExplicitExportSelection = params.rowNodes || params.onlySelected;
+        const isClipboardExport = params.rowPositions != null;
+        const isExplicitExportSelection = isClipboardExport || !!params.onlySelected;
         const hideOpenParents = gridOptionsWrapper.isGroupHideOpenParents() && !isExplicitExportSelection;
         const isLeafNode = this.columnModel.isPivotMode() ? node.leafGroup : !node.group;
         const skipRowGroups = params.skipGroups || params.skipRowGroups;
@@ -80,7 +81,7 @@ export class GridSerializer extends BeanStub {
         if (
             (!isLeafNode && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||
             (params.onlySelected && !node.isSelected()) ||
-            (params.rowNodes && !params.rowNodes.some(position => this.rowPositionUtils.sameRow(position, rowPosition))) ||
+            (params.rowPositions && !params.rowPositions.some(position => this.rowPositionUtils.sameRow(position, rowPosition))) ||
             (params.skipPinnedTop && node.rowPinned === 'top') ||
             (params.skipPinnedBottom && node.rowPinned === 'bottom')
         ) {
@@ -91,7 +92,9 @@ export class GridSerializer extends BeanStub {
         // if it's not a leaf group
         const nodeIsRootNode = node.level === -1;
 
-        if (nodeIsRootNode && !node.leafGroup) { return; }
+        if (nodeIsRootNode && !node.leafGroup && (!node.footer || !isClipboardExport)) { 
+            return;
+        }
 
         const shouldRowBeSkipped: boolean = rowSkipper({ node, api, columnApi, context });
 
@@ -213,7 +216,14 @@ export class GridSerializer extends BeanStub {
                     // here is everything else - including standard row model and selected. we don't use
                     // the selection model even when just using selected, so that the result is the order
                     // of the rows appearing on the screen.
-                    if (usingCsrm) {
+                    if (params.rowPositions) {
+                        params.rowPositions
+                            // pinnedRows are processed by `processPinnedTopRows` and `processPinnedBottomsRows`
+                            .filter(position => position.rowPinned == null)
+                            .sort((a, b) => a.rowIndex - b.rowIndex)
+                            .map(position => rowModel.getRow(position.rowIndex))
+                            .forEach(processRow);
+                    } else if (usingCsrm) {
                         (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(processRow);
                     } else if (usingSsrm) {
                         (rowModel as IServerSideRowModel).forEachNodeAfterFilterAndSort(processRow);
