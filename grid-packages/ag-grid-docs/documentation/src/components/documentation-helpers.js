@@ -307,10 +307,21 @@ export function writeAllInterfaces(interfacesToWrite, framework, printConfig) {
 export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIncludeInterfaceFunc, allDefs = []) {
     if (!definitionOrArray) return [];
 
-    if (Array.isArray(definitionOrArray)) {
+    if (allDefs.length > 1000) {
+        console.warn('AG Charts - Possible recursion error on type: ', definitionOrArray, allDefs);
+        return allDefs;
+    }
 
+    const alreadyIncluded = {};
+    allDefs.forEach((v) => { alreadyIncluded[v.name] = true; });
+
+    if (Array.isArray(definitionOrArray)) {
         definitionOrArray.forEach(def => {
+            if (alreadyIncluded[def]) {
+                return;
+            }
             allDefs = [...allDefs, ...extractInterfaces(def, interfaceLookup, overrideIncludeInterfaceFunc, allDefs)]
+            alreadyIncluded[def] = true;
         })
         return allDefs;
     }
@@ -343,16 +354,16 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
             // Always show event interfaces
             if ((!isLinkedType
                 || (isLinkedType && numMembers < 12)
-                || (overrideInclusion === true)) && !allDefs.some(a => a.name === type)) {
+                || (overrideInclusion === true)) && !alreadyIncluded[type]) {
 
                 allDefs.push({ name: type, interfaceType })
 
                 // Now if this is a top level interface see if we should include any interfaces for its properties
                 if (interfaceType.type) {
-                    let interfacesToInclude = [];
+                    let interfacesToInclude = {};
 
                     if (typeof (interfaceType.type) === 'string') {
-                        interfacesToInclude.push(interfaceType.type);
+                        interfacesToInclude[interfaceType.type] = true;;
                     } else {
                         let propertyTypes = Object.entries(interfaceType.type);
                         propertyTypes.filter(([k, v]) => !!v && typeof v == 'string')
@@ -366,17 +377,16 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
                                 return words.filter(w => !TYPE_LINKS[w] && interfaceLookup[w]);
 
                             }).forEach((s) => {
-                                if (s.length > 0) {
-                                    interfacesToInclude = [...interfacesToInclude, ...s];
-                                }
+                                s.forEach(v => { interfacesToInclude[v] = true; })
                             });
                     }
 
 
-
-                    if (interfacesToInclude.length > 0) {
+                    const uniqueInterfacesToInclude = Object.keys(interfacesToInclude)
+                        .filter(v => !alreadyIncluded[v]);
+                    if (uniqueInterfacesToInclude.length > 0) {
                         // Be sure to pass true to dontIncludeChildrenTypes so we do not recurse indefinitely
-                        allDefs = [...allDefs, ...extractInterfaces(interfacesToInclude, interfaceLookup, overrideIncludeInterfaceFunc, allDefs)];
+                        allDefs = [...allDefs, ...extractInterfaces(uniqueInterfacesToInclude, interfaceLookup, overrideIncludeInterfaceFunc, allDefs)];
                     }
                 }
             }
@@ -395,7 +405,10 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
     } else {
 
         Object.values(definition).forEach(v => {
-            allDefs = [...allDefs, ...extractInterfaces(v, interfaceLookup, overrideIncludeInterfaceFunc, allDefs)];
+            if (!alreadyIncluded[v]) {
+                allDefs = [...allDefs, ...extractInterfaces(v, interfaceLookup, overrideIncludeInterfaceFunc, allDefs)];
+            }
+            alreadyIncluded[v] = true;
         })
         return allDefs;
     }
