@@ -228,7 +228,12 @@ export function removeElement(parent: HTMLElement, cssSelector: string) {
 
 export function removeFromParent(node: Element | null) {
     if (node && node.parentNode) {
-        node.parentNode.removeChild(node);
+        // sometimes competing events could be trying to remove the same
+        // node from the dom, so we wrap this call in a try/catch block
+        try {
+            node.parentNode.removeChild(node);
+        // tslint:disable-next-line: no-empty
+        } catch (ignore) {}
     }
 }
 
@@ -243,15 +248,9 @@ export function isVisible(element: HTMLElement) {
  * @returns {HTMLElement}
  */
 export function loadTemplate(template: string): HTMLElement {
-    // we try the DOMParser first, as SalesForce doesn't like using innerHTML on a div
-    if (DOMParser !== null) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(template, "text/html");
-        return doc.body.firstChild as HTMLElement;
-    }
-
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = (template || '').trim();
+
     return tempDiv.firstChild as HTMLElement;
 }
 

@@ -3902,6 +3902,44 @@
     "size": { "type": { "returnType": "number", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } }
   },
+  "TestCase": {
+    "options": {
+      "type": { "returnType": "AgChartOptions", "optional": false }
+    },
+    "assertions": {
+      "type": {
+        "arguments": { "chart": "Chart" },
+        "returnType": "Promise<void>",
+        "optional": false
+      }
+    },
+    "extraScreenshotActions": {
+      "type": {
+        "arguments": { "chart": "Chart" },
+        "returnType": "Promise<void>",
+        "optional": true
+      }
+    }
+  },
+  "CartesianTestCase": {
+    "options": {
+      "type": { "returnType": "AgCartesianChartOptions", "optional": false }
+    },
+    "assertions": {
+      "type": {
+        "arguments": { "chart": "Chart" },
+        "returnType": "Promise<void>",
+        "optional": false
+      }
+    },
+    "extraScreenshotActions": {
+      "type": {
+        "arguments": { "chart": "Chart" },
+        "returnType": "Promise<void>",
+        "optional": true
+      }
+    }
+  },
   "ChartThemeDefaults": {},
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }

@@ -970,11 +970,18 @@ export class RowCtrl extends BeanStub {
     }
 
     public stopEditing(cancel = false): void {
-        const cellEdits = this.getAllCellCtrls().map(cellCtrl => cellCtrl.stopEditing(cancel));
+        const cellControls = this.getAllCellCtrls();
+        const isRowEdit = this.editingRow;
 
-        if (!this.editingRow) { return; }
+        let fireRowEditEvent = false;
+        for (const ctrl of cellControls) {
+            const valueChanged = ctrl.stopEditing(cancel);
+            if (isRowEdit && !cancel && !fireRowEditEvent && valueChanged) {
+                fireRowEditEvent = true;
+            }
+        }
 
-        if (!cancel && cellEdits.some(edit => edit)) {
+        if (fireRowEditEvent) {
             const event: RowValueChangedEvent = this.createRowEvent(Events.EVENT_ROW_VALUE_CHANGED);
             this.beans.eventService.dispatchEvent(event);
         }

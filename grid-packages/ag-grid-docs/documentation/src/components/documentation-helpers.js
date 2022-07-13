@@ -307,10 +307,45 @@ export function writeAllInterfaces(interfacesToWrite, framework, printConfig) {
 export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIncludeInterfaceFunc, allDefs = []) {
     if (!definitionOrArray) return [];
 
-    if (Array.isArray(definitionOrArray)) {
+    if (allDefs.length > 1000) {
+        console.warn('AG Charts - Possible recursion error on type: ', definitionOrArray, allDefs);
+        return allDefs;
+    }
 
+    const alreadyIncluded = {};
+    allDefs.forEach((v) => { alreadyIncluded[v.name] = true; });
+
+    const addDef = (def) => {
+        if (!alreadyIncluded[def.name]) {
+            allDefs.push(def);
+            alreadyIncluded[def.name] = true;
+
+            return true;
+        }
+
+        return false;
+    };
+    const recurse = (defs, overrideFn) => {
+        if (Array.isArray(defs)) {
+            defs.forEach(def => recurse(def, overrideFn));
+            return;
+        }
+
+        if (typeof defs !== 'string') {
+            return;
+        }
+
+        if (alreadyIncluded[defs]) {
+            return;
+        }
+
+        extractInterfaces(defs, interfaceLookup, overrideFn, allDefs)
+            .forEach(addDef);
+    };
+
+    if (Array.isArray(definitionOrArray)) {
         definitionOrArray.forEach(def => {
-            allDefs = [...allDefs, ...extractInterfaces(def, interfaceLookup, overrideIncludeInterfaceFunc, allDefs)]
+            recurse(def, overrideIncludeInterfaceFunc);
         })
         return allDefs;
     }
@@ -343,16 +378,19 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
             // Always show event interfaces
             if ((!isLinkedType
                 || (isLinkedType && numMembers < 12)
-                || (overrideInclusion === true)) && !allDefs.some(a => a.name === type)) {
+                || (overrideInclusion === true)) && !alreadyIncluded[type]) {
 
-                allDefs.push({ name: type, interfaceType })
+                if (!addDef({ name: type, interfaceType })) {
+                    // Previously added - no need to continue.
+                    return;
+                }
 
                 // Now if this is a top level interface see if we should include any interfaces for its properties
                 if (interfaceType.type) {
-                    let interfacesToInclude = [];
+                    let interfacesToInclude = {};
 
                     if (typeof (interfaceType.type) === 'string') {
-                        interfacesToInclude.push(interfaceType.type);
+                        interfacesToInclude[interfaceType.type] = true;;
                     } else {
                         let propertyTypes = Object.entries(interfaceType.type);
                         propertyTypes.filter(([k, v]) => !!v && typeof v == 'string')
@@ -366,17 +404,13 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
                                 return words.filter(w => !TYPE_LINKS[w] && interfaceLookup[w]);
 
                             }).forEach((s) => {
-                                if (s.length > 0) {
-                                    interfacesToInclude = [...interfacesToInclude, ...s];
-                                }
+                                s.forEach(v => { interfacesToInclude[v] = true; })
                             });
                     }
 
-
-
-                    if (interfacesToInclude.length > 0) {
-                        // Be sure to pass true to dontIncludeChildrenTypes so we do not recurse indefinitely
-                        allDefs = [...allDefs, ...extractInterfaces(interfacesToInclude, interfaceLookup, overrideIncludeInterfaceFunc, allDefs)];
+                    const toAdd = Object.keys(interfacesToInclude);
+                    if (toAdd.length > 0) {
+                        toAdd.forEach(v => recurse(v, overrideIncludeInterfaceFunc));
                     }
                 }
             }
@@ -384,22 +418,17 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
             // If a call signature we unwrap the interface and recurse on the call signature arguments instead.
             if (interfaceType.meta.isCallSignature) {
                 const args = interfaceType.type && interfaceType.type.arguments;
-                if (args) {
-                    const argInterfaces = Object.values(args)
-                    allDefs = [...allDefs, ...extractInterfaces(argInterfaces, interfaceLookup, overrideIncludeInterfaceFunc)];
-                }
+                Object.values(args ?? {})
+                    .forEach(v => recurse(v, overrideIncludeInterfaceFunc))
             }
 
         });
         return allDefs;
-    } else {
-
-        Object.values(definition).forEach(v => {
-            allDefs = [...allDefs, ...extractInterfaces(v, interfaceLookup, overrideIncludeInterfaceFunc, allDefs)];
-        })
-        return allDefs;
     }
 
+    Object.values(definition)
+        .forEach(v => recurse(v, overrideIncludeInterfaceFunc))
+    return allDefs;
 }
 
 export function getLongestNameLength(nameWithBreaks) {

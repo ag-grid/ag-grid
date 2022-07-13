@@ -59,13 +59,13 @@ export class RowDragComp extends Component {
         this.addDragSource(dragStartPixels);
     }
 
-    private getSelectedCount(): number {
+    private getSelectedNodes(): RowNode[] {
         const isRowDragMultiRow = this.beans.gridOptionsWrapper.isRowDragMultiRow();
-        if (!isRowDragMultiRow) { return 1; }
+        if (!isRowDragMultiRow) { return [this.rowNode] }
 
         const selection = this.beans.selectionService.getSelectedNodes();
 
-        return selection.indexOf(this.rowNode) !== -1 ? selection.length : 1;
+        return selection.indexOf(this.rowNode) !== -1 ? selection : [this.rowNode];
     }
 
     // returns true if all compatibility items work out
@@ -81,15 +81,18 @@ export class RowDragComp extends Component {
         }
     }
 
-    private addDragSource(dragStartPixels: number = 4): void {
-        // if this is changing the drag element, delete the previous dragSource
-        if (this.dragSource) { this.removeDragSource(); }
-
-        const dragItem: IRowDragItem = {
+    private getDragItem(): IRowDragItem {
+        return {
             rowNode: this.rowNode,
+            rowNodes: this.getSelectedNodes(),
             columns: this.column ? [this.column] : undefined,
             defaultTextValue: this.cellValueFn(),
         };
+    }
+
+    private addDragSource(dragStartPixels: number = 4): void {
+        // if this is changing the drag element, delete the previous dragSource
+        if (this.dragSource) { this.removeDragSource(); }
 
         const rowDragText = this.column && this.column.getColDef().rowDragText;
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -98,14 +101,16 @@ export class RowDragComp extends Component {
             type: DragSourceType.RowDrag,
             eElement: this.getGui(),
             dragItemName: () => {
-                const dragItemCount = this.getSelectedCount();
+                const dragItem = this.getDragItem();
+                const dragItemCount = dragItem.rowNodes?.length || 1;
+
                 if (rowDragText) {
                     return rowDragText(dragItem, dragItemCount);
                 }
 
                 return dragItemCount === 1 ? this.cellValueFn() : `${dragItemCount} ${translate('rowDragRows', 'rows')}`;
             },
-            getDragItem: () => dragItem,
+            getDragItem: () => this.getDragItem(),
             dragStartPixels,
             dragSourceDomDataKey: this.beans.gridOptionsWrapper.getDomDataKey()
         };
