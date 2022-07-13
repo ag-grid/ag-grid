@@ -10624,7 +10624,7 @@
       "description": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
       "type": { "returnType": "(string | Column)[]", "optional": true }
     },
-    "rowNodes": {
+    "rowPositions": {
       "description": "/** Row node positions. */",
       "type": { "returnType": "RowPosition[]", "optional": true }
     },
@@ -10747,7 +10747,7 @@
       "description": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
       "type": { "returnType": "(string | Column)[]", "optional": true }
     },
-    "rowNodes": {
+    "rowPositions": {
       "description": "/** Row node positions. */",
       "type": { "returnType": "RowPosition[]", "optional": true }
     },
@@ -10895,7 +10895,7 @@
       "description": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
       "type": { "returnType": "(string | Column)[]", "optional": true }
     },
-    "rowNodes": {
+    "rowPositions": {
       "description": "/** Row node positions. */",
       "type": { "returnType": "RowPosition[]", "optional": true }
     },
@@ -15782,7 +15782,7 @@
       "description": "/** Provide a list (an array) of column keys or Column objects if you want to export specific columns. */",
       "type": { "returnType": "(string | Column)[]", "optional": true }
     },
-    "rowNodes": {
+    "rowPositions": {
       "description": "/** Row node positions. */",
       "type": { "returnType": "RowPosition[]", "optional": true }
     },

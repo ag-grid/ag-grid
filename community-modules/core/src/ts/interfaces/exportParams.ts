@@ -16,7 +16,7 @@ export interface BaseExportParams {
      */
     columnKeys?: (string | Column)[];
     /** Row node positions. */
-    rowNodes?: RowPosition[];
+    rowPositions?: RowPosition[];
     /**
      * String to use as the file name.
      */

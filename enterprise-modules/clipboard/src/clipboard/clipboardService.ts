@@ -600,13 +600,20 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private buildDataFromMergedRanges(params: IClipboardCopyParams): DataForCellRangesType {
         const columnsSet: Set<Column> = new Set();
         const ranges = this.rangeService.getCellRanges();
+        const rowPositionsMap: Map<string, boolean> = new Map();
         const allRowPositions: RowPosition[] = [];
         const allCellsToFlash: CellsToFlashType = {};
 
         ranges.forEach(range => {
             range.columns.forEach(col => columnsSet.add(col));
             const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(range);
-            allRowPositions.push(...rowPositions);
+            rowPositions.forEach(rowPosition => {
+                const rowPositionAsString = `${rowPosition.rowIndex}-${rowPosition.rowPinned || 'null'}`;
+                if (!rowPositionsMap.get(rowPositionAsString)) {
+                    rowPositionsMap.set(rowPositionAsString, true);
+                    allRowPositions.push(rowPosition);
+                }
+            })
             Object.assign(allCellsToFlash, cellsToFlash);
         });
 
@@ -713,7 +720,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         const exportParams: CsvExportParams = {
             columnKeys: columns,
-            rowNodes: rowPositions,
+            rowPositions,
             skipColumnHeaders: !includeHeaders,
             skipColumnGroupHeaders: !includeGroupHeaders,
             suppressQuotes: true,
