@@ -375,6 +375,59 @@ Note, that we are:
 
 <chart-example title='Multiple y-axes' name='multiple-axes' type='generated'></chart-example>
 
+
+## Cross Lines
+
+Cross lines display a vertical or horizontal line or region running across a desired chart region. This feature can be useful for data analysis as the cross lines or shaded regions will emphasise trends and draw attention to important information such as a threshold.
+
+To render a cross line at a specific data value associated with a particular axis, the `crossLines` property can be specified on the individual `axes` options objects. The cross lines will span the entire chart width or height depending on which axis they are configured on.
+
+```js
+axes: [
+	{
+		position: 'bottom',
+		type: 'number',
+		crossLines: [
+			// an Array of cross lines to be displayed at specific values at the bottom axis.
+			{
+				type: 'line',
+				value: 20
+			}
+		]
+	}
+]
+```
+
+The snippet above will render a vertical line running across the height of the chart at the data value `20` on the bottom axis.
+
+To display a region bound by two lines, the cross line `type` can be set to `range` and the `range` property defined as an array of two data values corresponding to the boundaries of the cross line region:
+
+```js
+axes: [
+	{
+		position: 'right',
+		type: 'number',
+		crossLines: [
+			// an Array of cross lines to be displayed at specific values at the bottom axis.
+			{
+				type: 'range',
+				range: [10, 20]
+			}
+		]
+	}
+]
+```
+
+The snippet above will mark a horizontal region between the values 10 and 20, running across the width of the chart.
+
+Cross lines styles such as `stroke`, `strokeWidth` and `fill` are customisable via the `AgCrossLineOptions`. A `label` can also be added and positioned with respect to the cross line.
+
+### Example: Cross Lines
+
+- Note that data values can be numbers or categories such as string values or Date objects in accordance with values provided in the chart data.
+
+<chart-example title='Cross Lines' name='axis-cross-lines' type='generated'></chart-example>
+
 ## Axis API Reference
 
 <interface-documentation interfaceName='AgBaseCartesianAxisOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
