@@ -350,9 +350,9 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
         const updateNodeFn = (text: Text, datum: TreemapNodeDatum, index: number, highlighted: boolean) => {
             const { hasTitle } = datum;
-            const { label, nodeBaseline: textBaseline } = labelMeta[index];
+            const { label, nodeBaseline: textBaseline } = labelMeta[index] ?? {};
 
-            if (textBaseline != null) {
+            if (label != null && textBaseline != null) {
                 text.textBaseline = textBaseline;
                 text.fontWeight = label.fontWeight;
                 text.fontSize = label.fontSize;
@@ -387,10 +387,10 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             });
 
         const updateValueFn = (text: Text, datum: TreemapNodeDatum, index: number, highlighted: boolean) => {
-            const { valueBaseline: textBaseline, valueText } = labelMeta[index];
+            const { valueBaseline: textBaseline, valueText } = labelMeta[index] ?? {};
             const label = labels.color;
 
-            if (textBaseline != null && valueText) {
+            if (label.enabled && textBaseline != null && valueText) {
                 text.fontSize = label.fontSize;
                 text.fontFamily = label.fontFamily;
                 text.fontStyle = label.fontStyle;
@@ -423,12 +423,12 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     buildLabelMeta(data: TreemapNodeDatum[]) {
         const { labels, title, subtitle, nodePadding, colorKey } = this;
 
-        const labelMeta: {
+        const labelMeta: ({
             label: Label,
             nodeBaseline?: CanvasTextBaseline,
             valueBaseline?: CanvasTextBaseline,
             valueText?: string,
-        }[] = [];
+        } | undefined)[] = [];
         labelMeta.length = this.groupSelection.data.length;
 
         const text = new Text();
@@ -453,6 +453,11 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 label = subtitle;
             } else {
                 label = title;
+            }
+
+            if (!label.enabled) {
+                labelMeta[index++] = undefined;
+                continue;
             }
 
             text.fontWeight = label.fontWeight;
