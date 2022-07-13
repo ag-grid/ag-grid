@@ -329,7 +329,7 @@ describe('json module', () => {
 
         it('should skip specified properties', () => {
             const target = new TestApply();
-            jsonApply(target, json, { skip: ['str'], constructors: { recurse: TestApply }});
+            jsonApply(target, json, { skip: ['recurse.str', 'str'], constructors: { recurse: TestApply }});
             expect(target.str).toEqual(undefined);
             expect(target.recurse.str).toEqual(undefined);
         });

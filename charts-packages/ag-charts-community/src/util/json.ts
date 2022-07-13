@@ -229,7 +229,7 @@ export function jsonApply<
     params: {
         path?: string,
         matcherPath?: string,
-        skip?: (keyof Source | keyof Target)[],
+        skip?: string[],
         constructors?: Record<string, new () => any>,
         allowedTypes?: Record<string, ReturnType<typeof classify>[]>,
     } = {},
@@ -247,11 +247,11 @@ export function jsonApply<
 
     const targetType = classify(target);
     for (const property in source) {
-        if (skip.indexOf(property) >= 0) { continue; }
+        const propertyMatcherPath = `${matcherPath ? matcherPath + '.' : ''}${property}`;
+        if (skip.indexOf(propertyMatcherPath) >= 0) { continue; }
 
         const newValue = source[property];
         const propertyPath = `${path ? path + '.' : ''}${property}`;
-        const propertyMatcherPath = `${matcherPath ? matcherPath + '.' : ''}${property}`;
         const targetAny = (target as any);
         const targetClass = targetAny.constructor;
         const currentValue = targetAny[property];

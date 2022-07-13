@@ -1,10 +1,9 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgCartesianChartOptions, AgChartOptions } from './agChartOptions';
-import { AgChart, AgChartV2 } from './agChartV2';
+import { AgChartV2 } from './agChartV2';
 import { CartesianChart } from './cartesianChart';
 import { Chart, ChartUpdateType } from './chart';
-import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { SeriesNodeDataContext } from './series/series';
 import {
     waitForChartStability,
@@ -93,7 +92,7 @@ export function getData(): any[] {
       },
     ];
   };
-  
+
 const OPTIONS: AgCartesianChartOptions = {
     autoSize: true,
     data: getData(),

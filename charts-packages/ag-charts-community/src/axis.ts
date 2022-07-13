@@ -12,7 +12,9 @@ import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util
 import { doOnce } from "./util/function";
 import { ContinuousScale } from "./scale/continuousScale";
 import { CountableTimeInterval } from "./util/time/interval";
+import { CrossLine } from "./chart/crossline/crossLine";
 import { Validate, BOOLEAN, OPT_BOOLEAN, NUMBER, OPT_NUMBER, OPT_FONT_STYLE, OPT_FONT_WEIGHT, STRING, OPT_STRING } from './util/validation';
+import { ChartAxisDirection } from "./chart/chartAxis";
 
 enum Tags {
     Tick,
@@ -137,8 +139,8 @@ export class AxisLabel {
      * Setting this config to `true` makes labels render parallel to the axis line
      * and center aligns labels' text at the ticks.
      */
-     @Validate(BOOLEAN)
-     parallel: boolean = false;
+    @Validate(BOOLEAN)
+    parallel: boolean = false;
 
     /**
      * In case {@param value} is a number, the {@param fractionDigits} parameter will
@@ -184,6 +186,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
         this._scale = value;
         this.requestedRange = value.range.slice();
         this.onLabelFormatChange();
+        this.crossLines?.forEach((crossLine) => {
+            this.initCrossLine(crossLine);
+        });
     }
     get scale(): S {
         return this._scale;
@@ -192,6 +197,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
     ticks: any[];
 
     readonly axisGroup = new Group({ name: `${this.id}-axis`, layer: true, zIndex: 50 });
+    readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
+
     private readonly tickLineGroup = this.axisGroup.appendChild(new Group());
     private readonly titleGroup = this.axisGroup.appendChild(new Group());
     private tickLineGroupSelection = Selection.select(this.tickLineGroup).selectAll<Group>();
@@ -199,6 +206,21 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     readonly gridlineGroup = new Group({ name: `${this.id}-gridline`, layer: true, zIndex: 0 });
     private gridlineGroupSelection = Selection.select(this.gridlineGroup).selectAll<Group>();
+
+    private _crossLines?: CrossLine[] = [];
+    set crossLines(value: CrossLine[] | undefined) {
+        this._crossLines?.forEach(crossLine => this.detachCrossLine(crossLine));
+
+        this._crossLines = value;
+
+        this._crossLines?.forEach(crossLine => {
+            this.attachCrossLine(crossLine);
+            this.initCrossLine(crossLine);
+        });
+    }
+    get crossLines(): CrossLine[] | undefined {
+        return this._crossLines;
+    }
 
     readonly line: {
         /**
@@ -233,6 +255,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
     protected _calculatedTickCount?: TickCount = undefined;
     get calculatedTickCount() {
         return this._calculatedTickCount ?? this.tick.count;
+    }
+
+    private attachCrossLine(crossLine: CrossLine) {
+        this.crossLineGroup.appendChild(crossLine.group);
+    }
+
+    private detachCrossLine(crossLine: CrossLine) {
+        this.crossLineGroup.removeChild(crossLine.group);
     }
 
     /**
@@ -373,6 +403,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
         }
 
         this._gridLength = value;
+
+        this.crossLines?.forEach((crossLine) => {
+            this.initCrossLine(crossLine);
+        });
     }
     get gridLength(): number {
         return this._gridLength;
@@ -421,7 +455,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
      * it will also make it harder to reason about the program.
      */
     update() {
-        const { axisGroup, gridlineGroup, scale, tick, label, gridStyle, requestedRange } = this;
+        const { axisGroup, gridlineGroup, crossLineGroup, scale, gridLength, tick, label, gridStyle, requestedRange, translation } = this;
         const requestedRangeMin = Math.min(requestedRange[0], requestedRange[1]);
         const requestedRangeMax = Math.max(requestedRange[0], requestedRange[1]);
         const rotation = toRadians(this.rotation);
@@ -429,12 +463,19 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const parallelLabels = label.parallel;
         let labelAutoRotation = 0;
 
-        axisGroup.translationX = Math.floor(this.translation.x);
-        axisGroup.translationY = Math.floor(this.translation.y);
+        const translationX = Math.floor(translation.x);
+        const translationY = Math.floor(translation.y);
+
+        crossLineGroup.translationX = translationX;
+        crossLineGroup.translationY = translationY;
+        crossLineGroup.rotation = rotation;
+
+        axisGroup.translationX = translationX;
+        axisGroup.translationY = translationY;
         axisGroup.rotation = rotation;
 
-        gridlineGroup.translationX = Math.floor(this.translation.x);
-        gridlineGroup.translationY = Math.floor(this.translation.y);
+        gridlineGroup.translationX = translationX;
+        gridlineGroup.translationY = translationY;
         gridlineGroup.rotation = rotation;
 
         const halfBandwidth = (scale.bandwidth || 0) / 2;
@@ -470,10 +511,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const tickLineGroupSelection = updateAxis.merge(enterAxis);
 
-        const updateGridlines = this.gridlineGroupSelection.setData(this.gridLength ? ticks : []);
+        const updateGridlines = this.gridlineGroupSelection.setData(gridLength ? ticks : []);
         updateGridlines.exit.remove();
         let gridlineGroupSelection = updateGridlines;
-        if (this.gridLength) {
+        if (gridLength) {
             const tagFn = (node: Line | Arc) => node.tag = Tags.GridLine;
             const enterGridline = updateGridlines.enter.append(Group);
             if (this.radialGrid) {
@@ -650,12 +691,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
             .attr('y1', 0)
             .attr('y2', 0);
 
-        if (this.gridLength && gridStyle.length) {
+        if (gridLength && gridStyle.length) {
             const styleCount = gridStyle.length;
             let gridLines: Selection<Shape, Group, D, D>;
 
             if (this.radialGrid) {
-                const angularGridLength = normalizeAngle360Inclusive(toRadians(this.gridLength));
+                const angularGridLength = normalizeAngle360Inclusive(toRadians(gridLength));
 
                 gridLines = gridlineGroupSelection.selectByTag<Arc>(Tags.GridLine)
                     .each((arc, datum, index) => {
@@ -672,7 +713,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 gridLines = gridlineGroupSelection.selectByTag<Line>(Tags.GridLine)
                     .each((line, _, index) => {
                         line.x1 = 0;
-                        line.x2 = -sideFlag * this.gridLength;
+                        line.x2 = -sideFlag * gridLength;
                         line.y1 = 0;
                         line.y2 = 0;
                         line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1 && labelBboxes.has(index);
@@ -703,6 +744,15 @@ export class Axis<S extends Scale<D, number>, D = any> {
         lineNode.visible = ticks.length > 0;
 
         this.positionTitle();
+
+        this.crossLines?.forEach((crossLine) => {
+            crossLine.sideFlag = -sideFlag as (-1 | 1);
+            crossLine.direction = rotation === -Math.PI / 2 ? ChartAxisDirection.X : ChartAxisDirection.Y;
+            crossLine.label.parallel = crossLine.label.parallel !== undefined ? crossLine.label.parallel : parallelLabels;
+            crossLine.parallelFlipRotation = parallelFlipRotation;
+            crossLine.regularFlipRotation = regularFlipRotation;
+            crossLine.update(anyVisible); // fix visible
+        });
     }
 
     private positionTitle(): void {
@@ -724,10 +774,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
             const padding = Caption.PADDING;
             const titleNode = title.node;
             const titleRotationFlag = sideFlag === -1 && parallelFlipRotation > Math.PI && parallelFlipRotation < Math.PI * 2 ? -1 : 1;
-            
+
             titleNode.rotation = titleRotationFlag * sideFlag * Math.PI / 2;
             titleNode.x = Math.floor(titleRotationFlag * sideFlag * (requestedRange[0] + requestedRange[1]) / 2);
-            
+
             const bbox = this.tickLineGroup.computeBBox();
             const bboxYDimension = rotation === 0 ? bbox.width : bbox.height;
             if (sideFlag === -1) {
@@ -772,5 +822,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     computeBBox(): BBox {
         return this.axisGroup.computeBBox();
+    }
+
+    initCrossLine(crossLine: CrossLine) {
+        crossLine.scale = this.scale;
+        crossLine.gridLength = this.gridLength;
     }
 }

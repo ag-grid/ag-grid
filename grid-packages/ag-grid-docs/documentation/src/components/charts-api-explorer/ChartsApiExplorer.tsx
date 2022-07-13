@@ -25,11 +25,16 @@ const createOptionsJson = (chartType, options) => {
         }] : undefined,
     };
 
-    const gridStyle = json.axes && json.axes[1].gridStyle;
+    const { gridStyle, crossLines } = json.axes?.[1] ?? {};
 
     if (gridStyle) {
         // special handling for gridStyle which requires an array
         json.axes[1].gridStyle = [gridStyle];
+    }
+
+    if (crossLines) {
+        // special handling for crossLines which requires an array
+        json.axes[1].crossLines = [crossLines];
     }
 
     switch (chartType) {

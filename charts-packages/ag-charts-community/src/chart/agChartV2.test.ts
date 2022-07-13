@@ -15,6 +15,7 @@ import {
     extractImageData,
     CANVAS_WIDTH,
     CANVAS_HEIGHT,
+    TestCase,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -55,11 +56,6 @@ function consoleWarnAssertions(options: AgCartesianChartOptions) {
     };
 }
 
-type TestCase = {
-    options: AgChartOptions;
-    assertions: (chart: Chart) => Promise<void>;
-    extraScreenshotActions?: (chart: Chart) => Promise<void>;
-};
 const EXAMPLES: Record<string, TestCase> = {
     AREA_MISSING_Y_DATA_EXAMPLE: {
         options: examples.AREA_MISSING_Y_DATA_EXAMPLE,

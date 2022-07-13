@@ -96,6 +96,8 @@ export const getPrimitivePropertyEditor = (desc: JsonProperty) => {
             case 'FontStyle':
             case 'FontWeight':
                 return PresetEditor;
+            case 'DataValue':
+                return JsonEditor;
         }
     }
 
@@ -273,6 +275,20 @@ export const ArrayEditor = props =>
         }}
         {...props}
     />;
+
+export const JsonEditor = (props) => (
+    <StringEditor
+        toStringValue={(json) => (json ? JSON.stringify(json) : '')}
+        fromStringValue={(value) => {
+            try {
+                return JSON.parse(value);
+            } catch (error) {
+                return undefined;
+            }
+        }}
+        {...props}
+    />
+);
 
 export const BooleanEditor = ({ value, onChange }) => <PresetEditor options={[false, true]} value={value} onChange={onChange} />;
 

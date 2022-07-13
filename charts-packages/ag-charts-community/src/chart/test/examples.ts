@@ -1,41 +1,6 @@
 import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
 import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY, DATA_INTERNET_EXPLORER_MARKET_SHARE, DATA_BROWSER_MARKET_SHARE, DATA_TIME_SENSOR, DATA_SINGLE_DATUM_TIME_SENSOR, DATA_MISSING_X, DATA_TIME_MISSING_X, DATA_VISITORS, DATA_MEAN_SEA_LEVEL, DATA_REVENUE, DATA_APPLE_REVENUE_BY_PRODUCT } from './data';
-import { readFileSync } from 'fs';
-
-function loadExampleOptions(name: string, evalFn = 'options'): any {
-    const filters = [/^import .*/, /.*AgChart\.(update|create)/, /.* container\: .*/ /*, /.* data/*/];
-    const dataFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/data.ts`;
-    const exampleFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/main.ts`;
-
-    const cleanTs = (content: Buffer) => content
-        .toString()
-        .split('\n')
-        // Remove grossly unsupported lines.
-        .filter((line) => !filters.some(f => f.test(line)))
-        // Remove types, without matching string literals.
-        .map((line) => ["'", '"'].some(v => line.indexOf(v) >= 0) ? line : line.replace(/: [A-Z][A-Za-z<, >]*/g, ''))
-        // Remove declares.
-        .map((line) => line.replace(/declare var.*;/g, ''))
-        // Remove sugars.
-        .map((line) => line.replace(/[a-z]!/g, ''))
-        // Remove primitives + primitive arrays.
-        .map((line) => line.replace(/: (number|string|any)(\[\]){0,}/g, ''))
-        // Remove unsupported keywords.
-        .map((line) => line.replace(/export /g, ''));
-
-    const dataFileContent = cleanTs(readFileSync(dataFile));
-    const exampleFileLines = cleanTs(readFileSync(exampleFile));
-
-    let evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
-    try {
-        const agCharts = require('../../main');
-        return eval(evalExpr);
-    } catch (error) {
-        console.error(`AG Charts - unable to read example data for [${name}]; error: ${error.message}`);
-        // console.log(evalExpr);
-        return [];
-    }
-}
+import { loadExampleOptions } from './utils';
 
 export const DOCS_EXAMPLES = {
     '100--stacked-area': loadExampleOptions('100--stacked-area'),
@@ -77,19 +42,19 @@ export const DOCS_EXAMPLES = {
 
 export const BAR_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES["simple-bar"];
 
-export const GROUPED_BAR_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['grouped-bar'];
+export const GROUPED_BAR_CHART_EXAMPLE: AgCartesianChartOptions = DOCS_EXAMPLES['grouped-bar'];
 export const STACKED_BAR_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['stacked-bar'];
 export const ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['100--stacked-bar'];
 export const BAR_CHART_WITH_LABELS_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['bar-with-labels'];
 export const SIMPLE_COLUMN_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-column'];
-export const GROUPED_COLUMN_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['grouped-column'];
+export const GROUPED_COLUMN_EXAMPLE: AgCartesianChartOptions = DOCS_EXAMPLES['grouped-column'];
 export const STACKED_COLUMN_GRAPH_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['stacked-column'];
 export const ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['100--stacked-column'];
 export const COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['column-with-negative-values'];
 export const SIMPLE_PIE_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-pie'];
 export const SIMPLE_DOUGHNUT_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-doughnut'];
 export const SIMPLE_LINE_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-line'];
-export const LINE_GRAPH_WITH_GAPS_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['line-with-gaps'];
+export const LINE_GRAPH_WITH_GAPS_EXAMPLE: AgCartesianChartOptions = DOCS_EXAMPLES['line-with-gaps'];
 export const SIMPLE_SCATTER_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-scatter'];
 export const BUBBLE_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['bubble-with-negative-values'];
 export const BUBBLE_GRAPH_WITH_CATEGORIES_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['bubble-with-categories'];
@@ -100,7 +65,7 @@ export const AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = DOCS_EXAM
 export const MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['market-index-treemap'];
 export const SIMPLE_HISTOGRAM_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-histogram'];
 export const HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['histogram-with-specified-bins'];
-export const XY_HISTOGRAM_WITH_MEAN_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['xy-histogram-with-mean-aggregation'];
+export const XY_HISTOGRAM_WITH_MEAN_EXAMPLE: AgCartesianChartOptions = DOCS_EXAMPLES['xy-histogram-with-mean-aggregation'];
 
 export const GROUPED_CATEGORY_AXIS_EXAMPLE: AgChartOptions = {};
 {

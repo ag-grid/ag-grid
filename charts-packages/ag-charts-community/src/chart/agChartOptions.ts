@@ -39,6 +39,9 @@ export type Opacity = number;
 /** Alias to denote that a value is a measurement in pixels. */
 export type PixelSize = number;
 
+/** Alias to denote that a value is a data value. */
+export type DataValue = any;
+
 export interface AgChartThemePalette {
     /** The array of fills to be used. */
     fills: string[];
@@ -126,19 +129,19 @@ export interface AgHierarchyThemeOptions<S = AgHierarchySeriesTheme> extends AgB
 
 export interface AgNumberAxisThemeOptions
     extends Omit<AgNumberAxisOptions, 'type'>,
-        AgCartesianAxisThemeOptions<AgNumberAxisOptions> {}
+    AgCartesianAxisThemeOptions<AgNumberAxisOptions> { }
 export interface AgLogAxisThemeOptions
     extends Omit<AgLogAxisOptions, 'type'>,
-        AgCartesianAxisThemeOptions<AgLogAxisOptions> {}
+    AgCartesianAxisThemeOptions<AgLogAxisOptions> { }
 export interface AgCategoryAxisThemeOptions
     extends Omit<AgCategoryAxisOptions, 'type'>,
-        AgCartesianAxisThemeOptions<AgCategoryAxisOptions> {}
+    AgCartesianAxisThemeOptions<AgCategoryAxisOptions> { }
 export interface AgGroupedCategoryAxisThemeOptions
     extends Omit<AgGroupedCategoryAxisOptions, 'type'>,
-        AgCartesianAxisThemeOptions<AgGroupedCategoryAxisOptions> {}
+    AgCartesianAxisThemeOptions<AgGroupedCategoryAxisOptions> { }
 export interface AgTimeAxisThemeOptions
     extends Omit<AgTimeAxisOptions, 'type'>,
-        AgCartesianAxisThemeOptions<AgTimeAxisOptions> {}
+    AgCartesianAxisThemeOptions<AgTimeAxisOptions> { }
 
 export interface AgCartesianAxesTheme {
     /** This extends the common axis configuration with options specific to number axes. */
@@ -490,7 +493,72 @@ export interface AgBaseCartesianAxisOptions extends AgBaseAxisOptions {
     label?: AgAxisLabelOptions;
     /** Configuration of the lines used to form the grid in the chart area. */
     gridStyle?: AgAxisGridStyle[];
+    /** Add cross lines or regions corresponding to data values. */
+    crossLines?: AgCrossLineOptions[];
 }
+
+export interface AgCrossLineOptions {
+    /** Type of cross line to render. */
+    type: 'line' | 'range';
+    /** The data value at which the line should be positioned. This property is used if the crossLine type is `line`. */
+    value?: DataValue;
+    /** The range of values from the data used to display lines at a desired chart region. This property is only used for crossLine type `range`. */
+    range?: [DataValue, DataValue];
+    /** The colour to use for the fill of the range. */
+    fill?: CssColor;
+    /** The opacity of the fill for the range. */
+    fillOpacity?: Opacity;
+    /** The colour of the stroke for the lines. */
+    stroke?: CssColor;
+    /** The width in pixels of the stroke for the lines. */
+    strokeWidth?: PixelSize;
+    /** The opacity of the stroke for the lines. */
+    strokeOpacity?: Opacity;
+    /** Defines how the line stroke is rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
+    lineDash?: PixelSize[];
+    /** Configuration for the crossLine label. */
+    label?: AgCrossLineLabelOptions;
+}
+
+export interface AgCrossLineLabelOptions {
+    /** The text to show in the label. */
+    text?: string;
+    /** The font style to use for the label. */
+    fontStyle?: FontStyle;
+    /** The font weight to use for the label. */
+    fontWeight?: FontWeight;
+    /** The font size in pixels to use for the label. */
+    fontSize?: FontSize;
+    /** The font family to use for the label. */
+    fontFamily?: FontFamily;
+    /** Padding in pixels between the label and the edge of the crossLine. */
+    padding?: PixelSize;
+    /** The colour to use for the label. */
+    color?: CssColor;
+    /** The position of the crossLine label. */
+    position?: AgCrossLineLabelPosition;
+    /** The rotation of the crossLine label in degrees. */
+    rotation?: number;
+}
+
+export type AgCrossLineLabelPosition =
+    'top'
+    | 'left'
+    | 'right'
+    | 'bottom'
+    | 'topLeft'
+    | 'topRight'
+    | 'bottomLeft'
+    | 'bottomRight'
+    | 'inside'
+    | 'insideLeft'
+    | 'insideRight'
+    | 'insideTop'
+    | 'insideBottom'
+    | 'insideTopLeft'
+    | 'insideBottomLeft'
+    | 'insideTopRight'
+    | 'insideBottomRight';
 
 export interface AgNumberAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'number';
@@ -612,7 +680,7 @@ export interface AgBaseSeriesOptions {
     /** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */
     cursor?: string;
     /** A map of event names to event listeners. */
-    listeners?: AgBaseSeriesListeners | {[key: string]: Function};
+    listeners?: AgBaseSeriesListeners | { [key: string]: Function };
     /** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */
     highlightStyle?: AgSeriesHighlightStyle;
 }
@@ -707,7 +775,7 @@ export interface AgCartesianSeriesMarker extends AgSeriesMarker {
     formatter?: AgCartesianSeriesMarkerFormatter;
 }
 
-export interface AgAreaSeriesMarker extends AgCartesianSeriesMarker {}
+export interface AgAreaSeriesMarker extends AgCartesianSeriesMarker { }
 
 export interface AgSeriesTooltip {
     /** Whether or not to show tooltips when the series are hovered over. */
@@ -760,7 +828,7 @@ export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
-export interface AgScatterSeriesLabelOptions extends AgChartLabelOptions {}
+export interface AgScatterSeriesLabelOptions extends AgChartLabelOptions { }
 
 export interface AgScatterSeriesMarker extends AgCartesianSeriesMarker {
     /** If sizeKey is used, explicitly specifies the extent of the domain of it's values. */

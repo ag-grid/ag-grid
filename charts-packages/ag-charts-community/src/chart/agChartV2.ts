@@ -43,6 +43,7 @@ import { Axis } from '../axis';
 import { GroupedCategoryChart } from './groupedCategoryChart';
 import { prepareOptions, isAgCartesianChartOptions, isAgHierarchyChartOptions, isAgPolarChartOptions, optionsType } from './mapping/prepare';
 import { SeriesOptionsTypes } from './mapping/defaults';
+import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
@@ -118,7 +119,7 @@ export abstract class AgChart {
 
 export abstract class AgChartV2 {
     static DEBUG = () => windowValue('agChartsDebug') ?? false;
-    
+
     static create<T extends ChartType>(userOptions: ChartOptionType<T>): T {
         debug('user options', userOptions);
         const mixinOpts: any = {};
@@ -285,7 +286,9 @@ function applyAxes<
 
                 debug(`applying axis diff idx ${i}`, axisDiff);
 
-                jsonApply(a, axisDiff);
+                const path = `axes[${i}]`;
+                const skip = ['axes[].type'];
+                applyOptionValues(a, axisDiff, { path, skip });
             });
             return true;
         }
@@ -338,22 +341,23 @@ function createAxis(options: AgCartesianAxisOptions[]): ChartAxis[] {
 
     let index = 0;
     for (const axisOptions of options || []) {
-        const path = `axis[${index++}]`;
+        const path = `axes[${index++}]`;
+        const skip = ['axes[].type'];
         switch (axisOptions.type) {
             case 'number':
-                axes.push(applyOptionValues(new NumberAxis(), axisOptions, {path}));
+                axes.push(applyOptionValues(new NumberAxis(), axisOptions, {path, skip }));
                 break;
             case LogAxis.type:
-                axes.push(applyOptionValues(new LogAxis(), axisOptions, {path}));
+                axes.push(applyOptionValues(new LogAxis(), axisOptions, { path, skip }));
                 break;
             case CategoryAxis.type:
-                axes.push(applyOptionValues(new CategoryAxis(), axisOptions, {path}));
+                axes.push(applyOptionValues(new CategoryAxis(), axisOptions, { path, skip }));
                 break;
             case GroupedCategoryAxis.type:
-                axes.push(applyOptionValues(new GroupedCategoryAxis(), axisOptions, {path}));
+                axes.push(applyOptionValues(new GroupedCategoryAxis(), axisOptions, { path, skip }));
                 break;
             case TimeAxis.type:
-                axes.push(applyOptionValues(new TimeAxis(), axisOptions, {path}));
+                axes.push(applyOptionValues(new TimeAxis(), axisOptions, { path, skip }));
                 break;
             default:
                 throw new Error('AG Charts - unknown axis type: ' + axisOptions['type']);
@@ -382,6 +386,7 @@ const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
         'title': Caption,
         'subtitle': Caption,
         'shadow': DropShadow,
+        'axes[].crossLines[]': CrossLine,
     },
     allowedTypes: {
         'series[].marker.shape': ['primitive', 'function'],
@@ -392,11 +397,11 @@ const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
 function applyOptionValues<T, S>(
     target: T,
     options?: S,
-    { skip, path }: { skip?: (keyof T | keyof S)[], path?: string } = {},
+    { skip, path }: { skip?: string[], path?: string } = {},
 ): T {
     const applyOpts = {
         ...JSON_APPLY_OPTIONS,
-        skip: ['type' as keyof (T), ...(skip || [])], 
+        skip,
         ...(path ? { path } : {}),
     };
     return jsonApply<T, any>(target, options, applyOpts);
@@ -407,7 +412,7 @@ function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>
     options?: S,
     { path }: { path?: string } = {},
 ): T {
-    const skip: (keyof NonNullable<SeriesOptionsTypes>)[] = ['listeners'];
+    const skip: string[] = ['series[].listeners'];
     const ctrs = JSON_APPLY_OPTIONS?.constructors || {};
     const seriesTypeOverrides = {
         constructors: {
@@ -419,10 +424,10 @@ function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>
     const applyOpts = {
         ...JSON_APPLY_OPTIONS,
         ...seriesTypeOverrides,
-        skip: ['type' as keyof (T|S), ...(skip || [])], 
+        skip: ['series[].type', ...(skip || [])],
         ...(path ? { path } : {}),
     };
-    
+
     const result = jsonApply<T, any>(target, options, applyOpts);
 
     const listeners = options?.listeners;
