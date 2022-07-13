@@ -370,6 +370,7 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
         const matrix = Matrix.flyweight(this.matrix);
         let parent = this.parent;
         while (parent) {
+            parent.computeTransformMatrix();
             matrix.preMultiplySelf(parent.matrix);
             parent = parent.parent;
         }
