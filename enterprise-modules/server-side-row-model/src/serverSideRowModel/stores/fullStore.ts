@@ -95,14 +95,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             this.rowGroupColumn = this.columnModel.getRowGroupColumns()[this.level];
         }
 
-
-        let initialRowCount = 1;
-        const isRootStore = this.parentRowNode.level === -1;
-        const userInitialRowCount = this.gridOptionsWrapper.getServerSideInitialRowCount();
-        if (isRootStore && userInitialRowCount !== undefined) {
-            initialRowCount = userInitialRowCount;
-        }
-        this.initialiseRowNodes(initialRowCount);
+        this.initialiseRowNodes();
 
         this.rowNodeBlockLoader.addBlock(this);
         this.addDestroyFunc(() => this.rowNodeBlockLoader.removeBlock(this));
@@ -118,7 +111,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.allNodesMap = {};
     }
 
-    private initialiseRowNodes(loadingRowsCount: number, failedLoad = false): void {
+    private initialiseRowNodes(loadingRowsCount = 1, failedLoad = false): void {
         this.destroyRowNodes();
         for (let i = 0; i < loadingRowsCount; i++) {
             const loadingRowNode = this.blockUtils.createRowNode(

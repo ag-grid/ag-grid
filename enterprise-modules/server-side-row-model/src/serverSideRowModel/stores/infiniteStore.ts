@@ -79,14 +79,12 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         this.ssrmParams = ssrmParams;
         this.storeParams = storeParams;
         this.parentRowNode = parentRowNode;
+        this.rowCount = InfiniteStore.INITIAL_ROW_COUNT;
     }
 
     @PostConstruct
     private postConstruct(): void {
         this.defaultRowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        const isRootStore = this.parentRowNode.level === -1;
-        const initialRowCount = isRootStore ? this.gridOptionsWrapper.getServerSideInitialRowCount() : InfiniteStore.INITIAL_ROW_COUNT;
-        this.rowCount = initialRowCount;
     }
 
     @PreDestroy

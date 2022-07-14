@@ -640,17 +640,12 @@ export interface GridOptions<TData = any> {
      * Default: `1`
      */
     infiniteInitialRowCount?: number;
-    /**
-     * Set how many loading rows to display to the user for the root level group.
-     * Default: `1`
-     */
-    serverSideInitialRowCount?: number;
     /** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.
      * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,
      * Full Store is used.
      */
     serverSideStoreType?: ServerSideStoreType;
-    /** Set whether Server-side Row Model will use Infinite Scrolling
+    /** Whether Server-side Row Model will use Infinite Scrolling
      * Default: `false`
      */
     serverSideInfiniteScroll?: boolean;

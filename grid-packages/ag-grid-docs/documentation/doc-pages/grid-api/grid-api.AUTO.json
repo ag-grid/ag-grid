@@ -1423,14 +1423,6 @@
   "getFirstRenderedRow": {
     "type": { "arguments": {}, "returnType": "number" }
   },
-  "getFirstVisibleRowIndex": {
-    "description": "/** Get the index of the first visible row in the viewport. */",
-    "type": { "arguments": {}, "returnType": "number" }
-  },
-  "getLastVisibleRowIndex": {
-    "description": "/** Get the index of the last visible row in the viewport. */",
-    "type": { "arguments": {}, "returnType": "number" }
-  },
   "getFirstDisplayedRow": {
     "description": "/** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */",
     "type": { "arguments": {}, "returnType": "number" }

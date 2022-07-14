@@ -767,16 +767,12 @@
     "description": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
     "type": { "returnType": "number" }
   },
-  "serverSideInitialRowCount": {
-    "description": "/** Set how many loading rows to display to the user for the root level group.\n * Default: `1` */",
-    "type": { "returnType": "number" }
-  },
   "serverSideStoreType": {
     "description": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
     "type": { "returnType": "ServerSideStoreType" }
   },
   "serverSideInfiniteScroll": {
-    "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n * Default: `false` */",
+    "description": "/** Whether Server-side Row Model will use Infinite Scrolling\n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "cacheBlockSize": {
