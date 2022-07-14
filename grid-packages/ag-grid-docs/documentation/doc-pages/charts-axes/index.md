@@ -121,7 +121,7 @@ Luckily, an axis can have a title just like a chart. In the example below we can
 - the horizontal dimension shows desktop operating systems
 - the vertical dimension shows their percentage market share
 
-Please see the [API reference](#reference-axis.title) for axis title styling options like font and colour.
+Please see the [API reference](#reference-AgBaseCartesianAxisOptions-title) for axis title styling options like font and colour.
 
 ### Example: Axis Title
 
@@ -131,7 +131,7 @@ Please see the [API reference](#reference-axis.title) for axis title styling opt
 
 Category axes show a tick for every category. Number and time axes try to segment the whole range into a certain number of intervals depending on the available rendering space.
 
-The `width`, `size` and `color` of chart axis ticks can be configured as explained in the [API reference](#reference-axis.tick) below. These configs apply to all axis types.
+The `width`, `size` and `color` of chart axis ticks can be configured as explained in the [API reference](#reference-AgNumberAxisOptions-tick) below. These configs apply to all axis types.
 
 With number and time axes you can additionally set the `count` property - this will override the dynamic
 calculation based upon available rendering space:
@@ -331,7 +331,7 @@ The `label` config of the bottom axis in the example below uses the `'%b&nbsp;%Y
 
 Notice that the `label.format` property only affects label formatting but not segmentation. The fact that axis labels were configured to show the name of the month and the year doesn't mean that the axis will show a tick every month. To ensure that it does, we also set the `tick.count` config to use the `agCharts.time.month` interval.
 
-Please see the documentation for the `count` property of the axis tick in the [API reference](#reference-axis.tick) to learn about all the available intervals.
+Please see the documentation for the `count` property of the axis tick in the [API reference](#reference-AgTimeAxisOptions-tick) to learn about all the available intervals.
 
 The example below also allows you to switch to a derived interval `agCharts.time.month.every(2)` produced
 from the default `agCharts.time.month` interval by using its `every` method. Switching to this interval
@@ -374,6 +374,83 @@ Note, that we are:
 - set the right number axis `keys` to match the `yKey` of the `line` series
 
 <chart-example title='Multiple y-axes' name='multiple-axes' type='generated'></chart-example>
+
+
+## Cross Lines
+
+Cross lines display a vertical or horizontal line or region running across a desired chart region. This feature can be useful for data analysis as the cross lines or shaded regions will emphasise trends and draw attention to important information such as a threshold.
+
+To render a cross line at a specific data value associated with a particular axis, the `crossLines` property can be specified on the individual `axes` options objects. The cross lines will span the entire chart width or height depending on which axis they are configured on.
+
+```js
+axes: [
+	{
+		position: 'bottom',
+		type: 'number',
+		crossLines: [
+			// an Array of cross lines to be displayed at specific values at the bottom axis.
+			{
+				type: 'line',
+				value: 20
+			}
+		]
+	}
+]
+```
+
+The snippet above will render a vertical line running across the height of the chart at the data value `20` on the bottom axis.
+
+To display a region bound by two lines, the cross line `type` can be configured to `range` and the `range` property set to an array containing two data values corresponding to the boundaries of the cross line region:
+
+```js
+axes: [
+	{
+		position: 'right',
+		type: 'number',
+		crossLines: [
+			// an Array of cross lines to be displayed at specific values at the right axis.
+			{
+				type: 'range',
+				range: [10, 20]
+			}
+		]
+	}
+]
+```
+
+The snippet above will mark a horizontal region between the values `10` and `20`, running across the width of the chart.
+
+Cross lines styles such as `stroke`, `strokeWidth` and `fill` are customisable via `AgCrossLineOptions`. A `label` can also be added and positioned with respect to the cross line.
+
+```js
+crossLines: [
+  {
+    type: 'range',
+    range: ['apple', 'orange'],
+    label: {
+      text: 'Peak',
+      position: 'top',
+      fontSize: 14,
+      // other cross line label options...
+    },
+    strokeWidth: 0,
+    fill: '#7290C4',
+    fillOpacity: 0.4,
+  },
+],
+```
+
+Please see the [API reference](#reference-AgBaseCartesianAxisOptions-crossLines) for the full cross lines styling options.
+
+### Example: Cross Lines
+
+The example below demonstrates how one or more cross lines can be configured in each axis direction. Note that:
+
+- Data values can be numbers or categories such as string values or Date objects in accordance with values provided in the chart data.
+- The right Y axis has cross lines with type `line`, so the `value` property on each cross lines options object is used to position the lines on the chart.
+- The bottom X axis has a cross line of type `range`; the `range` property is used to configure the range of the cross line boundaries.
+
+<chart-example title='Cross Lines' name='axis-cross-lines' type='generated'></chart-example>
 
 ## Axis API Reference
 

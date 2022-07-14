@@ -7037,7 +7037,7 @@
       "color?": "CssColor"
     },
     "docs": {
-      "count?": "/** A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given. */",
+      "count?": "/** A hint of how many ticks to use across an axis.\n * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */"
@@ -7052,7 +7052,7 @@
       "color?": "CssColor"
     },
     "docs": {
-      "count?": "/** A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.<br/><br/>The following intervals from the `agCharts.time` namespace can be used: `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`. And derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month.<br/><br/> */",
+      "count?": "/** A hint of how many ticks to use across an axis.\n * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n * The following intervals from the `agCharts.time` namespace can be used:\n * `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`.\n * Derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */"
