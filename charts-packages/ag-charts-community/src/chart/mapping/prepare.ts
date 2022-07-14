@@ -141,7 +141,7 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
                     isSeriesOptionType(userSuppliedOptionsType) ? userSuppliedOptionsType :
                     defaultSeriesType;
 
-                return jsonMerge(seriesThemes[type], { ...s, type });
+                return jsonMerge(seriesThemes[type] || {}, { ...s, type });
             })
     )
         .map(s => prepareSeries(context, s)) as any[];
