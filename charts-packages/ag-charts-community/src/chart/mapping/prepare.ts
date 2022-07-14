@@ -1,4 +1,4 @@
-import { AgChartOptions, AgHierarchyChartOptions, AgPolarChartOptions, AgCartesianChartOptions, AgChartThemePalette } from "../agChartOptions";
+import { AgChartOptions, AgHierarchyChartOptions, AgPolarChartOptions, AgCartesianChartOptions, AgChartThemePalette, AgCrossLineOptions } from "../agChartOptions";
 import { CartesianChart } from "../cartesianChart";
 import { PolarChart } from "../polarChart";
 import { HierarchyChart } from "../hierarchyChart";
@@ -140,11 +140,11 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
             return prepareSeries(context, series, seriesThemes[type] || {});
         });
     if (isAgCartesianChartOptions(mergedOptions)) {
-        (mergedOptions.axes || []).forEach((a, i) => {
+        mergedOptions.axes = mergedOptions.axes?.map(a => {
             const type = a.type || 'number';
             const axis = { ...a, type };
             const axesTheme = jsonMerge(axesThemes[type], axesThemes[type][a.position || 'unknown'] || {});
-            mergedOptions.axes![i] = prepareAxis(axis, axesTheme);
+            return prepareAxis(axis, axesTheme);
         });
     }
 
@@ -243,10 +243,17 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
     return paletteOptions as T;
 }
 
-function prepareAxis<T extends AxesOptionsTypes>(input: T, ...defaults: T[]): T {
+function prepareAxis<T extends AxesOptionsTypes>(axis: T, defaults: Omit<T, "crossLines"> & { crossLines: AgCrossLineOptions }): T {
     // Remove redundant theme overload keys.
     const removeOptions = { top: DELETE, bottom: DELETE, left: DELETE, right: DELETE } as any;
-    return jsonMerge(...defaults, input, removeOptions);
+
+    // Special cross lines case where we have an arrays of cross line elements which need their own defaults.
+    if (axis.crossLines) {
+        const { crossLines: crossLinesTheme } = defaults;
+        axis.crossLines = axis.crossLines.map((crossLine) => jsonMerge(crossLinesTheme, crossLine));
+    }
+
+    return jsonMerge(defaults, axis, removeOptions);
 }
 
 function prepareEnabledOptions<T extends AgChartOptions>(options: T, mergedOptions: any) {

@@ -99,13 +99,13 @@ export interface AgChartThemeOverrides {
 /** This is the configuration shared by all types of axis. */
 export interface AgCartesianAxisThemeOptions<T> {
     /** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */
-    top?: Omit<T, 'position' | 'type'>;
+    top?: Omit<T, 'position' | 'type' | 'crossLines'>;
     /** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */
-    right?: Omit<T, 'position' | 'type'>;
+    right?: Omit<T, 'position' | 'type' | 'crossLines'>;
     /** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */
-    bottom?: Omit<T, 'position' | 'type'>;
+    bottom?: Omit<T, 'position' | 'type' | 'crossLines'>;
     /** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */
-    left?: Omit<T, 'position' | 'type'>;
+    left?: Omit<T, 'position' | 'type' | 'crossLines'>;
 }
 
 export interface AgCartesianThemeOptions<S = AgCartesianSeriesTheme> extends AgBaseChartOptions {
@@ -127,21 +127,27 @@ export interface AgHierarchyThemeOptions<S = AgHierarchySeriesTheme> extends AgB
     series?: S;
 }
 
+export interface AgCrossLineThemeOptions extends Omit<AgCrossLineOptions, 'type'> { }
+
+export interface AgCartesianAxesCrossLineThemeOptions {
+    crossLines?: AgCrossLineThemeOptions;
+}
+
 export interface AgNumberAxisThemeOptions
-    extends Omit<AgNumberAxisOptions, 'type'>,
-    AgCartesianAxisThemeOptions<AgNumberAxisOptions> { }
+    extends Omit<AgNumberAxisOptions, 'type' | 'crossLines'>,
+    AgCartesianAxisThemeOptions<AgNumberAxisOptions>, AgCartesianAxesCrossLineThemeOptions { }
 export interface AgLogAxisThemeOptions
-    extends Omit<AgLogAxisOptions, 'type'>,
-    AgCartesianAxisThemeOptions<AgLogAxisOptions> { }
+    extends Omit<AgLogAxisOptions, 'type' | 'crossLines'>,
+    AgCartesianAxisThemeOptions<AgLogAxisOptions>, AgCartesianAxesCrossLineThemeOptions { }
 export interface AgCategoryAxisThemeOptions
-    extends Omit<AgCategoryAxisOptions, 'type'>,
-    AgCartesianAxisThemeOptions<AgCategoryAxisOptions> { }
+    extends Omit<AgCategoryAxisOptions, 'type' | 'crossLines'>,
+    AgCartesianAxisThemeOptions<AgCategoryAxisOptions>, AgCartesianAxesCrossLineThemeOptions { }
 export interface AgGroupedCategoryAxisThemeOptions
-    extends Omit<AgGroupedCategoryAxisOptions, 'type'>,
-    AgCartesianAxisThemeOptions<AgGroupedCategoryAxisOptions> { }
+    extends Omit<AgGroupedCategoryAxisOptions, 'type' | 'crossLines'>,
+    AgCartesianAxisThemeOptions<AgGroupedCategoryAxisOptions>, AgCartesianAxesCrossLineThemeOptions { }
 export interface AgTimeAxisThemeOptions
-    extends Omit<AgTimeAxisOptions, 'type'>,
-    AgCartesianAxisThemeOptions<AgTimeAxisOptions> { }
+    extends Omit<AgTimeAxisOptions, 'type' | 'crossLines'>,
+    AgCartesianAxisThemeOptions<AgTimeAxisOptions>, AgCartesianAxesCrossLineThemeOptions { }
 
 export interface AgCartesianAxesTheme {
     /** This extends the common axis configuration with options specific to number axes. */
@@ -432,7 +438,7 @@ export interface AgAxisBaseTickOptions {
 export interface AgAxisNumberTickOptions extends AgAxisBaseTickOptions {
     /** A hint of how many ticks to use across an axis.
      * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.
-     * */
+     */
     count?: number;
 }
 

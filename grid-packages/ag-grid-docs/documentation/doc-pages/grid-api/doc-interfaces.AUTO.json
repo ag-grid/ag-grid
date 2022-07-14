@@ -11225,19 +11225,31 @@
   "AgCartesianAxisThemeOptions": {
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
-      "type": { "returnType": "Omit<T, 'position' | 'type'>", "optional": true }
+      "type": {
+        "returnType": "Omit<T, 'position' | 'type' | 'crossLines'>",
+        "optional": true
+      }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
-      "type": { "returnType": "Omit<T, 'position' | 'type'>", "optional": true }
+      "type": {
+        "returnType": "Omit<T, 'position' | 'type' | 'crossLines'>",
+        "optional": true
+      }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
-      "type": { "returnType": "Omit<T, 'position' | 'type'>", "optional": true }
+      "type": {
+        "returnType": "Omit<T, 'position' | 'type' | 'crossLines'>",
+        "optional": true
+      }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
-      "type": { "returnType": "Omit<T, 'position' | 'type'>", "optional": true }
+      "type": {
+        "returnType": "Omit<T, 'position' | 'type' | 'crossLines'>",
+        "optional": true
+      }
     },
     "meta": { "typeParams": ["T"] }
   },
@@ -11426,6 +11438,49 @@
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     }
   },
+  "AgCrossLineThemeOptions": {
+    "value": {
+      "description": "/** The data value at which the line should be positioned. This property is used if the crossLine type is `line`. */",
+      "type": { "returnType": "DataValue", "optional": true }
+    },
+    "range": {
+      "description": "/** The range of values from the data used to display lines at a desired chart region. This property is only used for crossLine type `range`. */",
+      "type": { "returnType": "[DataValue, DataValue]", "optional": true }
+    },
+    "fill": {
+      "description": "/** The colour to use for the fill of the range. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** The opacity of the fill for the range. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The colour of the stroke for the lines. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the stroke for the lines. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** The opacity of the stroke for the lines. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    },
+    "lineDash": {
+      "description": "/** Defines how the line stroke is rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */",
+      "type": { "returnType": "PixelSize[]", "optional": true }
+    },
+    "label": {
+      "description": "/** Configuration for the crossLine label. */",
+      "type": { "returnType": "AgCrossLineLabelOptions", "optional": true }
+    }
+  },
+  "AgCartesianAxesCrossLineThemeOptions": {
+    "crossLines": {
+      "type": { "returnType": "AgCrossLineThemeOptions", "optional": true }
+    }
+  },
   "AgNumberAxisThemeOptions": {
     "nice": {
       "description": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -11446,30 +11501,33 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
+    },
+    "crossLines": {
+      "type": { "returnType": "AgCrossLineThemeOptions", "optional": true }
     },
     "position": {
       "description": "/** The position on the chart where the axis should be rendered. */",
@@ -11490,10 +11548,6 @@
     "gridStyle": {
       "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
-    },
-    "crossLines": {
-      "description": "/** Add cross lines or regions corresponding to the data values. */",
-      "type": { "returnType": "AgCrossLineOptions[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
@@ -11525,30 +11579,33 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
+    },
+    "crossLines": {
+      "type": { "returnType": "AgCrossLineThemeOptions", "optional": true }
     },
     "position": {
       "description": "/** The position on the chart where the axis should be rendered. */",
@@ -11569,10 +11626,6 @@
     "gridStyle": {
       "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
-    },
-    "crossLines": {
-      "description": "/** Add cross lines or regions corresponding to the data values. */",
-      "type": { "returnType": "AgCrossLineOptions[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
@@ -11590,30 +11643,33 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
+    },
+    "crossLines": {
+      "type": { "returnType": "AgCrossLineThemeOptions", "optional": true }
     },
     "position": {
       "description": "/** The position on the chart where the axis should be rendered. */",
@@ -11634,10 +11690,6 @@
     "gridStyle": {
       "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
-    },
-    "crossLines": {
-      "description": "/** Add cross lines or regions corresponding to the data values. */",
-      "type": { "returnType": "AgCrossLineOptions[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
@@ -11653,30 +11705,33 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
+    },
+    "crossLines": {
+      "type": { "returnType": "AgCrossLineThemeOptions", "optional": true }
     },
     "position": {
       "description": "/** The position on the chart where the axis should be rendered. */",
@@ -11697,10 +11752,6 @@
     "gridStyle": {
       "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
-    },
-    "crossLines": {
-      "description": "/** Add cross lines or regions corresponding to the data values. */",
-      "type": { "returnType": "AgCrossLineOptions[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
@@ -11720,30 +11771,33 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type' | 'crossLines'>",
         "optional": true
       }
+    },
+    "crossLines": {
+      "type": { "returnType": "AgCrossLineThemeOptions", "optional": true }
     },
     "position": {
       "description": "/** The position on the chart where the axis should be rendered. */",
@@ -11764,10 +11818,6 @@
     "gridStyle": {
       "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
-    },
-    "crossLines": {
-      "description": "/** Add cross lines or regions corresponding to the data values. */",
-      "type": { "returnType": "AgCrossLineOptions[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
@@ -12378,7 +12428,7 @@
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
     "crossLines": {
-      "description": "/** Add cross lines or regions corresponding to the data values. */",
+      "description": "/** Add cross lines or regions corresponding to data values. */",
       "type": { "returnType": "AgCrossLineOptions[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } },
@@ -12507,7 +12557,7 @@
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
     "crossLines": {
-      "description": "/** Add cross lines or regions corresponding to the data values. */",
+      "description": "/** Add cross lines or regions corresponding to data values. */",
       "type": { "returnType": "AgCrossLineOptions[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } },
@@ -12559,7 +12609,7 @@
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
     "crossLines": {
-      "description": "/** Add cross lines or regions corresponding to the data values. */",
+      "description": "/** Add cross lines or regions corresponding to data values. */",
       "type": { "returnType": "AgCrossLineOptions[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } },
@@ -12597,7 +12647,7 @@
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
     "crossLines": {
-      "description": "/** Add cross lines or regions corresponding to the data values. */",
+      "description": "/** Add cross lines or regions corresponding to data values. */",
       "type": { "returnType": "AgCrossLineOptions[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } },
@@ -12635,7 +12685,7 @@
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
     "crossLines": {
-      "description": "/** Add cross lines or regions corresponding to the data values. */",
+      "description": "/** Add cross lines or regions corresponding to data values. */",
       "type": { "returnType": "AgCrossLineOptions[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } },
@@ -12675,7 +12725,7 @@
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
     "crossLines": {
-      "description": "/** Add cross lines or regions corresponding to the data values. */",
+      "description": "/** Add cross lines or regions corresponding to data values. */",
       "type": { "returnType": "AgCrossLineOptions[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } },

@@ -100,7 +100,11 @@ export class ChartTheme {
             gridStyle: [{
                 stroke: 'rgb(219, 219, 219)',
                 lineDash: [4, 2]
-            }]
+            }],
+            crossLines: {
+                fill: 'rgb(187,221,232)',
+                stroke: 'rgb(70,162,192)'
+            }
         };
     }
 
