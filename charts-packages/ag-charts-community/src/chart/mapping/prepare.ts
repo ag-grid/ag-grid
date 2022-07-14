@@ -243,17 +243,19 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
     return paletteOptions as T;
 }
 
-function prepareAxis<T extends AxesOptionsTypes>(axis: T, defaults: Omit<T, "crossLines"> & { crossLines: AgCrossLineOptions }): T {
+function prepareAxis<T extends AxesOptionsTypes>(axis: T, axisTheme: Omit<T, "crossLines"> & { crossLines?: AgCrossLineOptions }): T {
     // Remove redundant theme overload keys.
     const removeOptions = { top: DELETE, bottom: DELETE, left: DELETE, right: DELETE } as any;
 
     // Special cross lines case where we have an arrays of cross line elements which need their own defaults.
-    if (axis.crossLines) {
-        const { crossLines: crossLinesTheme } = defaults;
+    const { crossLines: crossLinesTheme } = axisTheme;
+    if (axis.crossLines && crossLinesTheme) {
         axis.crossLines = axis.crossLines.map((crossLine) => jsonMerge(crossLinesTheme, crossLine));
     }
 
-    return jsonMerge(defaults, axis, removeOptions);
+    delete axisTheme.crossLines;
+
+    return jsonMerge(axisTheme, axis, removeOptions);
 }
 
 function prepareEnabledOptions<T extends AgChartOptions>(options: T, mergedOptions: any) {
