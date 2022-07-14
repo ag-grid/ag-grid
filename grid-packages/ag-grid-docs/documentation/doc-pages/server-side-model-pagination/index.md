@@ -74,26 +74,6 @@ The example below demonstrates pagination with grouping and `paginateChildRows=t
 
 <grid-example title='Paginate Child Rows' name='paginate-child-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 551, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
-## Initial row count
-
-It is possible to set an initial row count to enable scrolling and pagination before the grid has received the first response from your server. Providing this can enable behaviours such as preserving the users page, or scroll index when they return to the grid. This has added benefits when using `serverSideInfiniteScroll=true` as it can lower the load on your server by allowing users to recover their position without manually loading blocks in order to find it.
-
-<snippet>
-const gridOptions = {
-    serverSideInitialRowCount: 5000,
-    onFirstDataRendered: (params) => {
-        params.api.paginationGoToPage(4);
-        params.api.ensureIndexVisible(4500, 'top');
-    },
-}
-</snippet>
-
-In the below example, we store the first visible index when the grid is scrolled, and the current page when pagination changes in the browsers local storage. When the grid renders the loading rows defined by the `serverSideInitialRowCount` we can instruct the grid to return to the page and index stored within our local storage.
-
-Note how this example specifies an initial row count of 5000, which the grid uses for initial page count and scroll positions, however this is updated when the server provides an actual row count via the data source response.
-
-<grid-example title='Preserving position' name='preserving-position' type='mixed' options='{ "enterprise": true, "exampleHeight": 551, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
-
 ## Next Up
 
 Continue to the next section to learn about [Row Selection](/server-side-model-selection/).
