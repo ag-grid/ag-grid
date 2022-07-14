@@ -471,6 +471,24 @@ export class RowRenderer extends BeanStub {
 
         this.redraw(rowsToRecycle, animate);
 
+        // We only want to dispatch the firstDataRendered event if we have rows & they're not loading.
+        const hasNonLoadingRows = this.allRowCtrls.some(ctrl => ctrl.getRowType() !== 'FullWidthLoading');
+        if (hasNonLoadingRows) {
+            // only dispatch firstDataRendered if we have actually rendered some data
+            const event: FirstDataRenderedEvent = {
+                type: Events.EVENT_FIRST_DATA_RENDERED,
+                firstRow: this.firstRenderedRow,
+                lastRow: this.lastRenderedRow,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+
+            // added a small delay here because in some scenarios this can be fired
+            // before the grid is actually rendered, causing component creation
+            // on EVENT_FIRST_DATA_RENDERED to fail. (Timeout introduced by AG-3325)
+            window.setTimeout(() => this.eventService.dispatchEventOnce(event), 50);
+        }
+
         this.gridBodyCtrl.updateRowCount();
 
         if (!params.onlyBody) {
@@ -1162,22 +1180,6 @@ export class RowRenderer extends BeanStub {
             };
 
             this.eventService.dispatchEvent(event);
-        }
-
-        // only dispatch firstDataRendered if we have actually rendered some data
-        if (this.paginationProxy.isRowsToRender()) {
-            const event: FirstDataRenderedEvent = {
-                type: Events.EVENT_FIRST_DATA_RENDERED,
-                firstRow: newFirst,
-                lastRow: newLast,
-                api: this.gridApi,
-                columnApi: this.columnApi
-            };
-
-            // added a small delay here because in some scenarios this can be fired
-            // before the grid is actually rendered, causing component creation
-            // on EVENT_FIRST_DATA_RENDERED to fail.
-            window.setTimeout(() => this.eventService.dispatchEventOnce(event), 50);
         }
     }
 
