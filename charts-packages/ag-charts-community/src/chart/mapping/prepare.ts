@@ -6,7 +6,7 @@ import { SeriesOptionsTypes, DEFAULT_CARTESIAN_CHART_OVERRIDES, DEFAULT_BAR_CHAR
 import { jsonMerge, DELETE, jsonWalk } from "../../util/json";
 import { applySeriesTransform } from "./transforms";
 import { getChartTheme } from "./themes";
-import { processSeriesOptions } from "./prepareSeries";
+import { processSeriesOptions, SeriesOptions } from "./prepareSeries";
 
 export type ChartType = CartesianChart | PolarChart | HierarchyChart;
 export type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
@@ -131,14 +131,21 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
         prepareMainOptions<T>(defaultOverrides as T, options);
 
     // Special cases where we have arrays of elements which need their own defaults.
-    mergedOptions.series = processSeriesOptions(mergedOptions.series || [])
-        .map((s: SeriesOptionsTypes) => {
-            const type = s.type ? s.type :
-                isSeriesOptionType(userSuppliedOptionsType) ? userSuppliedOptionsType :
-                defaultSeriesType;
-            const series = { ...s, type };
-            return prepareSeries(context, series, seriesThemes[type] || {});
-        });
+
+    // Apply series themes before calling processSeriesOptions() as it reduces and renames some
+    // properties, and in that case then cannot correctly have themes applied.
+    mergedOptions.series = processSeriesOptions(
+        (mergedOptions.series as SeriesOptions[] || [])
+            .map(s => {
+                const type = s.type ? s.type :
+                    isSeriesOptionType(userSuppliedOptionsType) ? userSuppliedOptionsType :
+                    defaultSeriesType;
+
+                return jsonMerge(seriesThemes[type], { ...s, type });
+            })
+    )
+        .map(s => prepareSeries(context, s)) as any[];
+
     if (isAgCartesianChartOptions(mergedOptions)) {
         (mergedOptions.axes || []).forEach((a, i) => {
             const type = a.type || 'number';
