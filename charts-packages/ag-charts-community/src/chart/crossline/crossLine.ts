@@ -1,4 +1,4 @@
-import { PointerEvents } from "../../scene/node";
+import { PointerEvents, RedrawType, SceneChangeDetection } from "../../scene/node";
 import { Group } from "../../scene/group";
 import { Path } from "../../scene/shape/path";
 import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
@@ -34,15 +34,19 @@ interface CrossLinePathData {
     readonly points: Point[];
 }
 
+type CrossLineType = "line" | "range";
+
 export class CrossLine {
 
-    protected static readonly ANNOTATION_LAYER_ZINDEX = Series.SERIES_LAYER_ZINDEX - 10;
+    protected static readonly LINE_LAYER_ZINDEX = Series.SERIES_LAYER_ZINDEX + 10;
+    protected static readonly RANGE_LAYER_ZINDEX = Series.SERIES_LAYER_ZINDEX - 10;
+
 
     static className = "CrossLine";
     readonly id = createId(this);
 
     enabled?: boolean = undefined;
-    type?: "line" | "range" = undefined;
+    type?: CrossLineType = undefined;
     range?: [any, any] = undefined;
     value?: any = undefined;
     fill?: string = undefined;
@@ -60,7 +64,7 @@ export class CrossLine {
     regularFlipRotation: number = 0;
     direction: ChartAxisDirection = ChartAxisDirection.X;
 
-    readonly group = new Group({ name: `${this.id}`, layer: true, zIndex: CrossLine.ANNOTATION_LAYER_ZINDEX });
+    readonly group = new Group({ name: `${this.id}`, layer: true, zIndex: CrossLine.LINE_LAYER_ZINDEX });
     private crossLineLabel = new Text();
     private crossLineLine: Path = new Path();
     private crossLineRange: Path = new Path();
@@ -78,12 +82,22 @@ export class CrossLine {
         crossLineRange.pointerEvents = PointerEvents.None;
     }
 
+    protected getZIndex(type: CrossLineType = 'line'): number {
+        if (type === 'range') {
+            return CrossLine.RANGE_LAYER_ZINDEX;
+        }
+
+        return CrossLine.LINE_LAYER_ZINDEX;
+    }
+
     update(visible: boolean) {
         if (!this.enabled || !this.type) { return; }
 
         this.group.visible = visible;
 
         if (!visible) { return; }
+
+        this.group.zIndex = this.getZIndex(this.type);
 
         this.createNodeData();
         this.updatePaths();
