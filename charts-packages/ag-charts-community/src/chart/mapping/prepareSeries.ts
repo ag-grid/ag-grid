@@ -1,7 +1,6 @@
 import { AgCartesianSeriesOptions, AgPolarSeriesOptions, AgHierarchySeriesOptions } from '../agChartOptions';
 
-type SeriesOptions = AgCartesianSeriesOptions | AgPolarSeriesOptions | AgHierarchySeriesOptions;
-type SeriesOptionType = NonNullable<SeriesOptions['type']>;
+export type SeriesOptions = AgCartesianSeriesOptions | AgPolarSeriesOptions | AgHierarchySeriesOptions;
 
 /**
  * Groups the series options objects if they are of type `column` or `bar` and places them in an array at the index where the first instance of this series type was found.
@@ -42,11 +41,12 @@ const SKIP = Symbol();
 const ARRAY_REDUCER = (prop: string) => (result: string[], next: any) => {
     return result.concat(...(next[prop] ?? []));
 };
-const BOOLEAN_OR_REDUCER = (prop: string, activationValue: any) => (result: boolean, next: any) => {
-    if (next[prop] === activationValue) {
-        return result || (next[prop] ?? false);
+const BOOLEAN_OR_REDUCER = (prop: string, defaultValue?: boolean) => (result: boolean, next: any) => {
+    if (typeof next[prop] === 'boolean') {
+        return (result ?? false) || next[prop];
     }
-    return result;
+
+    return result ?? defaultValue;
 };
 const DEFAULTING_ARRAY_REDUCER = (prop: string, defaultValue: any) => (result: string[], next: any, idx: number, length: number) => {
     const sparse = defaultValue === SKIP || defaultValue === FAIL;
@@ -99,7 +99,7 @@ const REDUCE_CONFIG: Record<string, ReduceConfig<unknown>> = {
     'yName': { outputProp: 'yNames', reducer: DEFAULTING_ARRAY_REDUCER('yName', SKIP), start: [] },
     'visible': { outputProp: 'visibles', reducer: DEFAULTING_ARRAY_REDUCER('visible', true), start: [] },
 
-    'grouped': { outputProp: 'grouped', reducer: BOOLEAN_OR_REDUCER('grouped', true), seriesType: ['bar', 'column'], start: undefined },
+    'grouped': { outputProp: 'grouped', reducer: BOOLEAN_OR_REDUCER('grouped', undefined), seriesType: ['bar', 'column'], start: undefined },
     'showInLegend': { outputProp: 'hideInLegend', reducer: YKEYS_REDUCER('showInLegend', false), seriesType: ['bar', 'column'], start: []},
 };
 
@@ -127,7 +127,10 @@ export function reduceSeries(series: any[]) {
                 return;
             }
     
-            options[outputProp] = reducer(options[outputProp] ?? start, s, idx, series.length);
+            const result = reducer(options[outputProp] ?? start, s, idx, series.length);
+            if (result !== undefined) {
+                options[outputProp] = result;
+            }
         });
     })
 
