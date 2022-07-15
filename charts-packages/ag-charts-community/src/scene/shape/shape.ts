@@ -47,8 +47,7 @@ export abstract class Shape extends Node {
         lineCap: undefined as ShapeLineCap,
         lineJoin: undefined as ShapeLineJoin,
         opacity: 1,
-        fillShadow: undefined,
-        strokeShadow: undefined
+        fillShadow: undefined
     });
 
     /**
@@ -153,9 +152,6 @@ export abstract class Shape extends Node {
     @SceneChangeDetection({ redraw: RedrawType.MINOR, checkDirtyOnAssignment: true })
     fillShadow: DropShadow | undefined = Shape.defaultStyles.fillShadow;
 
-    @SceneChangeDetection({ redraw: RedrawType.MINOR, checkDirtyOnAssignment: true })
-    strokeShadow: DropShadow | undefined = Shape.defaultStyles.strokeShadow;
-
     protected fillStroke(ctx: CanvasFillStrokeStyles & CanvasCompositing & CanvasShadowStyles & CanvasPathDrawingStyles & CanvasDrawPath) {
         if (!this.scene) {
             return;
@@ -201,13 +197,6 @@ export abstract class Shape extends Node {
                 ctx.lineJoin = this.lineJoin;
             }
 
-            const strokeShadow = this.strokeShadow;
-            if (strokeShadow && strokeShadow.enabled) {
-                ctx.shadowColor = strokeShadow.color;
-                ctx.shadowOffsetX = strokeShadow.xOffset * pixelRatio;
-                ctx.shadowOffsetY = strokeShadow.yOffset * pixelRatio;
-                ctx.shadowBlur = strokeShadow.blur * pixelRatio;
-            }
             ctx.stroke();
         }
     }

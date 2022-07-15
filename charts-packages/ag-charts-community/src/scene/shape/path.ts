@@ -53,8 +53,7 @@ export class Path extends Shape {
         }
 
         this.dirtyPath = this.path.isDirty() ||
-            (this.fillShadow?.isDirty() ?? false) ||
-            (this.strokeShadow?.isDirty() ?? false);
+            (this.fillShadow?.isDirty() ?? false);
     }
 
     /**
@@ -129,7 +128,6 @@ export class Path extends Shape {
         }
 
         this.fillShadow?.markClean();
-        this.strokeShadow?.markClean();
         super.render(renderCtx);
     }
 }
