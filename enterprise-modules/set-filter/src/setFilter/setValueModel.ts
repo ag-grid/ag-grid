@@ -408,17 +408,14 @@ export class SetValueModel implements IEventEmitter {
         }
 
         const uniqueValues = this.uniqueValues(stringifiedResults);
-
         /*
         * It is not possible to simply use Object.values(uniqueValues) here as the keys inside uniqueValues could be numeric.
         * Javascript objects sort numeric keys and do not fully respect the insert order, as such to trust the results are unsorted
         * we need to reference the order of the original array as done here.
         */
-        return stringifiedResults.filter(item => {
-            const value = _.makeNull(item);
+        return stringifiedResults.map(_.makeNull).filter(value => {
             const key = this.uniqueKey(value);
-
-            if (uniqueValues[key]) {
+            if (key in uniqueValues) {
                 delete uniqueValues[key];
                 return true;
             }
