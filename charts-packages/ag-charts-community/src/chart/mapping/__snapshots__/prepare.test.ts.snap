@@ -592,6 +592,7 @@ Object {
       ],
       "flipXY": false,
       "grouped": true,
+      "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -622,7 +623,6 @@ Object {
         "xOffset": 3,
         "yOffset": 3,
       },
-      "showInLegend": true,
       "strokeOpacity": 1,
       "strokeWidth": 0,
       "strokes": Array [
@@ -634,7 +634,10 @@ Object {
         "renderer": undefined,
       },
       "type": "column",
-      "visible": true,
+      "visibles": Array [
+        true,
+        true,
+      ],
       "xKey": "year",
       "xName": "",
       "yKeys": Array [
@@ -1520,7 +1523,7 @@ Object {
         "#888888",
       ],
       "flipXY": false,
-      "grouped": false,
+      "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -1551,7 +1554,6 @@ Object {
         "xOffset": 3,
         "yOffset": 3,
       },
-      "showInLegend": true,
       "strokeOpacity": 1,
       "strokeWidth": 0,
       "strokes": Array [
@@ -1569,7 +1571,16 @@ Object {
         "renderer": [Function],
       },
       "type": "column",
-      "visible": true,
+      "visibles": Array [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+      ],
       "xKey": "quarter",
       "xName": "",
       "yKeys": Array [
@@ -2504,7 +2515,9 @@ Object {
         "renderer": undefined,
       },
       "type": "area",
-      "visible": true,
+      "visibles": Array [
+        true,
+      ],
       "xKey": "quarter",
       "xName": "",
       "yKeys": Array [
@@ -2571,7 +2584,9 @@ Object {
         "renderer": undefined,
       },
       "type": "area",
-      "visible": true,
+      "visibles": Array [
+        true,
+      ],
       "xKey": "quarter",
       "xName": "",
       "yKeys": Array [
@@ -2638,7 +2653,9 @@ Object {
         "renderer": undefined,
       },
       "type": "area",
-      "visible": true,
+      "visibles": Array [
+        true,
+      ],
       "xKey": "quarter",
       "xName": "",
       "yKeys": Array [
@@ -2705,7 +2722,9 @@ Object {
         "renderer": undefined,
       },
       "type": "area",
-      "visible": true,
+      "visibles": Array [
+        true,
+      ],
       "xKey": "quarter",
       "xName": "",
       "yKeys": Array [
@@ -2772,7 +2791,9 @@ Object {
         "renderer": undefined,
       },
       "type": "area",
-      "visible": true,
+      "visibles": Array [
+        true,
+      ],
       "xKey": "quarter",
       "xName": "",
       "yKeys": Array [
@@ -3005,6 +3026,7 @@ Object {
       ],
       "flipXY": true,
       "grouped": true,
+      "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -3035,7 +3057,6 @@ Object {
         "xOffset": 3,
         "yOffset": 3,
       },
-      "showInLegend": true,
       "strokeOpacity": 1,
       "strokeWidth": 0,
       "strokes": Array [
@@ -3046,7 +3067,9 @@ Object {
         "renderer": undefined,
       },
       "type": "bar",
-      "visible": true,
+      "visibles": Array [
+        true,
+      ],
       "xKey": "type",
       "xName": "",
       "yKeys": Array [
@@ -3054,9 +3077,6 @@ Object {
           "earnings",
         ],
       ],
-      "yNames": Object {
-        "earnings": undefined,
-      },
     },
   ],
   "subtitle": Object {
@@ -3259,6 +3279,7 @@ Object {
       ],
       "flipXY": true,
       "grouped": true,
+      "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
           "fill": "#0ab9ff",
@@ -3289,7 +3310,6 @@ Object {
         "xOffset": 3,
         "yOffset": 3,
       },
-      "showInLegend": true,
       "strokeOpacity": 1,
       "strokeWidth": 1,
       "strokes": Array [
@@ -3300,7 +3320,9 @@ Object {
         "renderer": undefined,
       },
       "type": "bar",
-      "visible": true,
+      "visibles": Array [
+        true,
+      ],
       "xKey": "job",
       "xName": "",
       "yKeys": Array [
@@ -3308,9 +3330,6 @@ Object {
           "change",
         ],
       ],
-      "yNames": Object {
-        "change": undefined,
-      },
     },
   ],
   "subtitle": Object {
@@ -3976,6 +3995,7 @@ Object {
       ],
       "flipXY": false,
       "grouped": true,
+      "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -4006,7 +4026,6 @@ Object {
         "xOffset": 3,
         "yOffset": 3,
       },
-      "showInLegend": true,
       "strokeOpacity": 1,
       "strokeWidth": 1,
       "strokes": Array [
@@ -4018,7 +4037,10 @@ Object {
         "renderer": undefined,
       },
       "type": "column",
-      "visible": true,
+      "visibles": Array [
+        true,
+        true,
+      ],
       "xKey": "month",
       "xName": "",
       "yKeys": Array [
@@ -4250,6 +4272,7 @@ Object {
       ],
       "flipXY": true,
       "grouped": true,
+      "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -4281,7 +4304,6 @@ Object {
         "xOffset": 3,
         "yOffset": 3,
       },
-      "showInLegend": true,
       "strokeOpacity": 1,
       "strokeWidth": 0,
       "strokes": Array [
@@ -4293,7 +4315,10 @@ Object {
         "renderer": undefined,
       },
       "type": "bar",
-      "visible": true,
+      "visibles": Array [
+        true,
+        true,
+      ],
       "xKey": "type",
       "xName": "",
       "yKeys": Array [
@@ -4532,6 +4557,7 @@ Object {
       ],
       "flipXY": false,
       "grouped": true,
+      "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -4563,7 +4589,6 @@ Object {
         "xOffset": 3,
         "yOffset": 3,
       },
-      "showInLegend": true,
       "strokeOpacity": 1,
       "strokeWidth": 0,
       "strokes": Array [
@@ -4580,7 +4605,15 @@ Object {
         "renderer": undefined,
       },
       "type": "column",
-      "visible": true,
+      "visibles": Array [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+      ],
       "xKey": "year",
       "xName": "",
       "yKeys": Array [
@@ -4606,15 +4639,6 @@ Object {
           "75+",
         ],
       ],
-      "yNames": Object {
-        "16-24": undefined,
-        "25-34": undefined,
-        "35-44": undefined,
-        "45-54": undefined,
-        "55-64": undefined,
-        "65-74": undefined,
-        "75+": undefined,
-      },
     },
   ],
   "subtitle": Object {
@@ -6612,7 +6636,15 @@ Object {
         "renderer": undefined,
       },
       "type": "area",
-      "visible": true,
+      "visibles": Array [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+      ],
       "xKey": "month",
       "xName": "",
       "yKeys": Array [
@@ -6842,7 +6874,7 @@ Object {
         "#ff4444",
       ],
       "flipXY": true,
-      "grouped": false,
+      "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6874,7 +6906,6 @@ Object {
         "xOffset": 3,
         "yOffset": 3,
       },
-      "showInLegend": true,
       "strokeOpacity": 1,
       "strokeWidth": 0,
       "strokes": Array [
@@ -6887,7 +6918,11 @@ Object {
         "renderer": undefined,
       },
       "type": "bar",
-      "visible": true,
+      "visibles": Array [
+        true,
+        true,
+        true,
+      ],
       "xKey": "area",
       "xName": "",
       "yKeys": Array [
@@ -7127,7 +7162,7 @@ Object {
         "#34495e",
       ],
       "flipXY": false,
-      "grouped": false,
+      "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -7158,7 +7193,6 @@ Object {
         "xOffset": 3,
         "yOffset": 3,
       },
-      "showInLegend": true,
       "strokeOpacity": 1,
       "strokeWidth": 0,
       "strokes": Array [
@@ -7174,7 +7208,14 @@ Object {
         "renderer": undefined,
       },
       "type": "column",
-      "visible": true,
+      "visibles": Array [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+      ],
       "xKey": "type",
       "xName": "",
       "yKeys": Array [
@@ -7468,13 +7509,14 @@ Object {
         "renderer": undefined,
       },
       "type": "area",
-      "visible": true,
+      "visibles": Array [
+        true,
+      ],
       "xKey": "date",
       "xName": "",
       "yKeys": Array [
         "Tate Modern",
       ],
-      "yNames": Array [],
     },
     Object {
       "cursor": "default",
@@ -7532,13 +7574,14 @@ Object {
         "renderer": undefined,
       },
       "type": "area",
-      "visible": true,
+      "visibles": Array [
+        true,
+      ],
       "xKey": "date",
       "xName": "",
       "yKeys": Array [
         "Tate Britain",
       ],
-      "yNames": Array [],
     },
     Object {
       "cursor": "default",
@@ -7596,13 +7639,14 @@ Object {
         "renderer": undefined,
       },
       "type": "area",
-      "visible": true,
+      "visibles": Array [
+        true,
+      ],
       "xKey": "date",
       "xName": "",
       "yKeys": Array [
         "Tate Liverpool",
       ],
-      "yNames": Array [],
     },
     Object {
       "cursor": "default",
@@ -7660,13 +7704,14 @@ Object {
         "renderer": undefined,
       },
       "type": "area",
-      "visible": true,
+      "visibles": Array [
+        true,
+      ],
       "xKey": "date",
       "xName": "",
       "yKeys": Array [
         "Tate St Ives",
       ],
-      "yNames": Array [],
     },
   ],
   "subtitle": Object {
@@ -7869,6 +7914,7 @@ Object {
       ],
       "flipXY": false,
       "grouped": true,
+      "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -7899,7 +7945,6 @@ Object {
         "xOffset": 3,
         "yOffset": 3,
       },
-      "showInLegend": true,
       "strokeOpacity": 1,
       "strokeWidth": 0,
       "strokes": Array [
@@ -7910,7 +7955,9 @@ Object {
         "renderer": undefined,
       },
       "type": "column",
-      "visible": true,
+      "visibles": Array [
+        true,
+      ],
       "xKey": "year",
       "xName": "",
       "yKeys": Array [
@@ -7918,9 +7965,6 @@ Object {
           "visitors",
         ],
       ],
-      "yNames": Object {
-        "visitors": undefined,
-      },
     },
   ],
   "subtitle": Object {
@@ -9253,7 +9297,14 @@ Object {
         "renderer": undefined,
       },
       "type": "area",
-      "visible": true,
+      "visibles": Array [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+      ],
       "xKey": "date",
       "xName": "",
       "yKeys": Array [
@@ -9264,7 +9315,6 @@ Object {
         "Museum of Science and Industry, Manchester",
         "National Coal Mining Museum for England",
       ],
-      "yNames": Array [],
     },
   ],
   "subtitle": Object {
@@ -9494,7 +9544,7 @@ Object {
         "#41a9c9",
       ],
       "flipXY": true,
-      "grouped": false,
+      "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -9526,7 +9576,6 @@ Object {
         "xOffset": 3,
         "yOffset": 3,
       },
-      "showInLegend": true,
       "strokeOpacity": 1,
       "strokeWidth": 0,
       "strokes": Array [
@@ -9540,7 +9589,12 @@ Object {
         "renderer": undefined,
       },
       "type": "bar",
-      "visible": true,
+      "visibles": Array [
+        true,
+        true,
+        true,
+        true,
+      ],
       "xKey": "type",
       "xName": "",
       "yKeys": Array [
@@ -9768,7 +9822,7 @@ Object {
         "#FA7921",
       ],
       "flipXY": false,
-      "grouped": false,
+      "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -9800,7 +9854,6 @@ Object {
         "xOffset": 3,
         "yOffset": 3,
       },
-      "showInLegend": true,
       "strokeOpacity": 1,
       "strokeWidth": 0,
       "strokes": Array [
@@ -9815,7 +9868,13 @@ Object {
         "renderer": undefined,
       },
       "type": "column",
-      "visible": true,
+      "visibles": Array [
+        true,
+        true,
+        true,
+        true,
+        true,
+      ],
       "xKey": "station",
       "xName": "",
       "yKeys": Array [

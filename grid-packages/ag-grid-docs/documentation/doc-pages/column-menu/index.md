@@ -61,17 +61,6 @@ If not happy with the position of the popup, you can override it's position usin
 
 <api-documentation source='grid-options/properties.json' section='accessories' names='["postProcessPopup"]'  ></api-documentation>
 
-
-## Overriding Column Menu Width
-
-You can override the menu width by overriding the corresponding CSS:
-
-```css
-.ag-set-filter-list {
-    width: 500px !important;
-}
-```
-
 ## Hiding the Column Menu
 
 Hide the column menu with the grid API `hidePopupMenu()`, which will hide either the [context menu](/context-menu/) or the column menu, whichever is showing.
