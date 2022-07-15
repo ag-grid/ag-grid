@@ -116,6 +116,9 @@ export abstract class Shape extends Node {
 
     /**
      * Returns a device-pixel aligned coordinate (or length if length is supplied).
+     * 
+     * NOTE: Not suitable for strokes, since the stroke needs to be offset to the middle
+     * of a device pixel.
      */
     align(start: number, length?: number) {
         const pixelRatio = this.scene?.canvas?.pixelRatio ?? 1;
@@ -127,8 +130,7 @@ export abstract class Shape extends Node {
 
         // Account for the rounding of alignedStart by increasing length to compensate before
         // alignment.
-        const alignedStartOffset = start - alignedStart;
-        return Math.ceil((length + alignedStartOffset) * pixelRatio) / pixelRatio;
+        return (Math.ceil((length + start) * pixelRatio) / pixelRatio) - alignedStart;
     }
 
     @SceneChangeDetection({ redraw: RedrawType.MINOR })

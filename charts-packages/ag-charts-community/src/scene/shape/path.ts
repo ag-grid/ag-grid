@@ -28,6 +28,12 @@ export class Path extends Shape {
     @ScenePathChangeDetection()
     clipMode?: 'normal' | 'punch-out';
 
+    constructor(
+        private readonly renderOverride?: (ctx: CanvasRenderingContext2D) => void
+    ) {
+        super();
+    }
+
      /**
      * The path only has to be updated when certain attributes change.
      * For example, if transform attributes (such as `translationX`)
@@ -109,8 +115,12 @@ export class Path extends Shape {
                 ctx.clip();
             }
 
-            this.path.draw(ctx);
-            this.fillStroke(ctx);
+            if (this.renderOverride) {
+                this.renderOverride(ctx);
+            } else {
+                this.path.draw(ctx);
+                this.fillStroke(ctx);
+            }
 
             if (this.clipMode === 'punch-out') {
                 // Bound the shape rendered to outside the clipping path.
@@ -122,6 +132,8 @@ export class Path extends Shape {
             }
 
             ctx.restore();
+        } else if (this.renderOverride) {
+            this.renderOverride(ctx);
         } else {
             this.path.draw(ctx);
             this.fillStroke(ctx);
