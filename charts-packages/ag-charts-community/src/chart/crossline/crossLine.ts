@@ -3,6 +3,7 @@ import { Group } from "../../scene/group";
 import { Path } from "../../scene/shape/path";
 import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
 import { Scale } from "../../scale/scale";
+import { clamper, ContinuousScale } from "../../scale/continuousScale";
 import { createId } from "../../util/id";
 import { Series } from "../series/series";
 import { normalizeAngle360, toRadians } from "../../util/angle";
@@ -104,6 +105,7 @@ export class CrossLine {
 
         if (!scale) { return; }
 
+        const continuous = scale instanceof ContinuousScale;
         const halfBandwidth = (scale.bandwidth || 0) / 2;
 
         let xStart, xEnd, yStart, yEnd;
@@ -111,7 +113,7 @@ export class CrossLine {
 
         [xStart, xEnd] = [0, sideFlag * gridLength];
         [yStart, yEnd] = range ?? [value, undefined];
-        [yStart, yEnd] = [scale.convert(yStart) + halfBandwidth, scale.convert(yEnd) + halfBandwidth];
+        [yStart, yEnd] = [scale.convert(yStart, continuous ? clamper : undefined) + halfBandwidth, scale.convert(yEnd, continuous ? clamper : undefined) + halfBandwidth];
 
         if (this.label.text) {
             const yDirection = direction === ChartAxisDirection.Y;
