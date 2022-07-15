@@ -510,6 +510,8 @@ export interface AgBaseCartesianAxisOptions extends AgBaseAxisOptions {
 }
 
 export interface AgCrossLineOptions {
+    /** Whether or not to show the cross line. */
+    enabled?: boolean;
     /** Type of cross line to render. */
     type: 'line' | 'range';
     /** The data value at which the line should be positioned. This property is used if the crossLine type is `line`. */
@@ -533,6 +535,8 @@ export interface AgCrossLineOptions {
 }
 
 export interface AgCrossLineLabelOptions {
+    /** Whether or not to show the cross line label. */
+    enabled?: boolean;
     /** The text to show in the label. */
     text?: string;
     /** The font style to use for the label. */

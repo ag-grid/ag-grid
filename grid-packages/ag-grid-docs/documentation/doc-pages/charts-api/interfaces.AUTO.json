@@ -248,6 +248,7 @@
   "AgCrossLineThemeOptions": {
     "meta": {},
     "type": {
+      "enabled?": "boolean",
       "value?": "DataValue",
       "range?": "[DataValue, DataValue]",
       "fill?": "CssColor",
@@ -259,6 +260,7 @@
       "label?": "AgCrossLineLabelOptions"
     },
     "docs": {
+      "enabled?": "/** Whether or not to show the cross line. */",
       "value?": "/** The data value at which the line should be positioned. This property is used if the crossLine type is `line`. */",
       "range?": "/** The range of values from the data used to display lines at a desired chart region. This property is only used for crossLine type `range`. */",
       "fill?": "/** The colour to use for the fill of the range. */",
@@ -912,6 +914,7 @@
   "AgCrossLineOptions": {
     "meta": {},
     "type": {
+      "enabled?": "boolean",
       "type": "'line' | 'range'",
       "value?": "DataValue",
       "range?": "[DataValue, DataValue]",
@@ -924,6 +927,7 @@
       "label?": "AgCrossLineLabelOptions"
     },
     "docs": {
+      "enabled?": "/** Whether or not to show the cross line. */",
       "type": "/** Type of cross line to render. */",
       "value?": "/** The data value at which the line should be positioned. This property is used if the crossLine type is `line`. */",
       "range?": "/** The range of values from the data used to display lines at a desired chart region. This property is only used for crossLine type `range`. */",
@@ -939,6 +943,7 @@
   "AgCrossLineLabelOptions": {
     "meta": {},
     "type": {
+      "enabled?": "boolean",
       "text?": "string",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -950,6 +955,7 @@
       "rotation?": "number"
     },
     "docs": {
+      "enabled?": "/** Whether or not to show the cross line label. */",
       "text?": "/** The text to show in the label. */",
       "fontStyle?": "/** The font style to use for the label. */",
       "fontWeight?": "/** The font weight to use for the label. */",
@@ -2279,8 +2285,8 @@
     "type": "T extends GroupedCategoryChart ? AgCartesianChartOptions : T extends CartesianChart ? AgCartesianChartOptions : T extends PolarChart ? AgPolarChartOptions : T extends HierarchyChart ? AgHierarchyChartOptions : never"
   },
   "SeriesOptionType": {
-    "meta": { "isTypeAlias": true },
-    "type": "NonNullable<SeriesOptions['type']>"
+    "meta": { "isTypeAlias": true, "typeParams": ["T extends Series"] },
+    "type": "T extends LineSeries ? AgLineSeriesOptions : T extends BarSeries ? AgBarSeriesOptions : T extends AreaSeries ? AgAreaSeriesOptions : T extends ScatterSeries ? AgScatterSeriesOptions : T extends HistogramSeries ? AgHistogramSeriesOptions : T extends PieSeries ? AgPieSeriesOptions : T extends TreemapSeries ? AgTreemapSeriesOptions : never"
   },
   "AxisOptionType": {
     "meta": { "isTypeAlias": true, "typeParams": ["T extends Axis<any, any>"] },

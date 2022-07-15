@@ -11,6 +11,7 @@ import { ChartAxisDirection } from "../chartAxis";
 import { CrossLineLabelPosition, Point, labeldDirectionHandling, POSITION_TOP_COORDINATES, calculateLabelTranslation } from "./crossLineLabelPosition";
 
 export class CrossLineLabel {
+    enabled?: boolean = undefined;
     text?: string = undefined;
     fontStyle?: FontStyle = undefined;
     fontWeight?: FontWeight = undefined;
@@ -40,6 +41,7 @@ export class CrossLine {
     static className = "CrossLine";
     readonly id = createId(this);
 
+    enabled?: boolean = undefined;
     type?: "line" | "range" = undefined;
     range?: [any, any] = undefined;
     value?: any = undefined;
@@ -77,7 +79,7 @@ export class CrossLine {
     }
 
     update(visible: boolean) {
-        if (!this.type) { return; }
+        if (!this.enabled || !this.type) { return; }
 
         this.group.visible = visible;
 
@@ -96,8 +98,10 @@ export class CrossLine {
             this.updateRangeNode();
         }
 
-        this.updateLabel();
-        this.positionLabel();
+        if (this.label.enabled) {
+            this.updateLabel();
+            this.positionLabel();
+        }
     }
 
     private createNodeData() {
