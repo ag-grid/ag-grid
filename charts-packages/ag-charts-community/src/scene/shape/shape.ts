@@ -115,17 +115,21 @@ export abstract class Shape extends Node {
     @SceneChangeDetection({ redraw: RedrawType.MINOR })
     strokeWidth: number = Shape.defaultStyles.strokeWidth;
 
-    // An offset value to align to the pixel grid.
-    get alignment(): number {
-        return Math.floor(this.strokeWidth) % 2 / 2;
-    }
-    // Returns the aligned `start` or `length` value.
-    // For example: `start` could be `y` and `length` could be `height` of a rectangle.
-    align(alignment: number, start: number, length?: number) {
-        if (length != undefined) {
-            return Math.floor(length) + Math.floor(start % 1 + length % 1);
+    /**
+     * Returns a device-pixel aligned coordinate (or length if length is supplied).
+     */
+    align(start: number, length?: number) {
+        const pixelRatio = this.scene?.canvas?.pixelRatio ?? 1;
+
+        const alignedStart = Math.floor(start * pixelRatio) / pixelRatio;
+        if (length == undefined) {
+            return alignedStart;
         }
-        return Math.floor(start) + alignment;
+
+        // Account for the rounding of alignedStart by increasing length to compensate before
+        // alignment.
+        const alignedStartOffset = start - alignedStart;
+        return Math.ceil((length + alignedStartOffset) * pixelRatio) / pixelRatio;
     }
 
     @SceneChangeDetection({ redraw: RedrawType.MINOR })

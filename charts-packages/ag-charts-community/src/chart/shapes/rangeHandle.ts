@@ -96,17 +96,16 @@ export class RangeHandle extends Path {
 
     updatePath() {
         const { path, centerX, centerY, width, height } = this;
-        const { alignment: a, align: al } = this;
 
         path.clear();
 
         const x = centerX - width / 2;
         const y = centerY - height / 2;
 
-        const ax = al(a, x);
-        const ay = al(a, y);
-        const axw = ax + al(a, x, width);
-        const ayh = ay + al(a, y, height);
+        const ax = this.align(x);
+        const ay = this.align(y);
+        const axw = ax + this.align(x, width);
+        const ayh = ay + this.align(y, height);
 
         // Handle.
         path.moveTo(ax, ay);
@@ -118,9 +117,9 @@ export class RangeHandle extends Path {
         // Grip lines.
         const dx = this.gripLineGap / 2;
         const dy = this.gripLineLength / 2;
-        path.moveTo(al(a, centerX - dx), al(a, centerY - dy));
-        path.lineTo(al(a, centerX - dx), al(a, centerY + dy));
-        path.moveTo(al(a, centerX + dx), al(a, centerY - dy));
-        path.lineTo(al(a, centerX + dx), al(a, centerY + dy));
+        path.moveTo(this.align(centerX - dx), this.align(centerY - dy));
+        path.lineTo(this.align(centerX - dx), this.align(centerY + dy));
+        path.moveTo(this.align(centerX + dx), this.align(centerY - dy));
+        path.lineTo(this.align(centerX + dx), this.align(centerY + dy));
     }
 }
