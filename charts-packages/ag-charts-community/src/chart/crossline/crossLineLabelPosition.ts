@@ -80,8 +80,10 @@ const verticalCrossLineTranslationDirections: Record<CrossLineLabelPosition, Cro
 export const calculateLabelTranslation = ({ yDirection, padding = 0, position, bbox }: { yDirection: boolean, padding: number, position: CrossLineLabelPosition, bbox: BBox }): { xTranslation: number, yTranslation: number } => {
     const crossLineTranslationDirections = yDirection ? horizontalCrosslineTranslationDirections : verticalCrossLineTranslationDirections;
     const { xTranslationDirection, yTranslationDirection } = crossLineTranslationDirections[position] ?? crossLineTranslationDirections['top'];
-    const xTranslation = xTranslationDirection * (padding + bbox.width / 2);
-    const yTranslation = yTranslationDirection * (padding + bbox.height / 2);
+    const w = yDirection ? bbox.width : bbox.height;
+    const h = yDirection ? bbox.height : bbox.width;
+    const xTranslation = xTranslationDirection * (padding + w / 2);
+    const yTranslation = yTranslationDirection * (padding + h / 2);
     return {
         xTranslation,
         yTranslation

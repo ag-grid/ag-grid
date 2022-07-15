@@ -228,14 +228,16 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
                 extended = a.params[0];
                 const fullInterface = interfaces[extended];
                 a.params.slice(1).forEach(toRemove => {
-                    const typeName = toRemove.replace(/'/g, "");
-                    omitFields.push(typeName);
+                    toRemove.split("|").forEach(property => {
+                        const typeName = property.replace(/'/g, "").trim();
+                        omitFields.push(typeName);
+                    });
                 });
             }
             extInt = interfaces[extended];
 
             if (!extInt) {
-                //Check for type params                
+                //Check for type params
                 throw new Error('Missing interface' + a);
             }
 
