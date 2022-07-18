@@ -136,7 +136,6 @@ export class Rect extends Path {
         const borderActive = !!stroke && !!effectiveStrokeWidth && borderPath.commands.length > 0;
 
         path.draw(ctx);
-        ctx.clip();
 
         if (fill) {
             const { gradientFill, fillOpacity, fillShadow } = this;
