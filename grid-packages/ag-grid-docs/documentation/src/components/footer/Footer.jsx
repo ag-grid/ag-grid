@@ -27,7 +27,7 @@ const Footer = ({ framework }) => (
                 <MenuColumns framework={framework} />
             </div>
             <div className={styles['footer__row']}>
-                <p>AG Grid Limited registered in the United Kingdom. Company No. 07318192.</p>
+                <p>AG Grid Ltd registered in the United Kingdom. Company No. 07318192.</p>
                 <p>&copy; AG Grid Ltd. 2015-{new Date().getFullYear()}</p>
             </div>
         </div>
