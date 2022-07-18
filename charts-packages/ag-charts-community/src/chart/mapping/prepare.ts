@@ -256,6 +256,11 @@ function prepareAxis<T extends AxesOptionsTypes>(axis: T, axisTheme: Omit<T, "cr
 
     // Special cross lines case where we have an arrays of cross line elements which need their own defaults.
     if (axis.crossLines) {
+        if (!Array.isArray(axis.crossLines)) {
+            console.warn('AG Charts - axis[].crossLines should be an array.');
+            axis.crossLines = [];
+        }
+
         const { crossLines: crossLinesTheme } = axisTheme;
         axis.crossLines = axis.crossLines.map((crossLine) => jsonMerge(crossLinesTheme, crossLine));
     }
