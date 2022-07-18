@@ -366,6 +366,10 @@
     }
   },
   "AgCrossLineThemeOptions": {
+    "enabled": {
+      "description": "/** Whether or not to show the cross line. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "value": {
       "description": "/** The data value at which the line should be positioned. This property is used if the crossLine type is `line`. */",
       "type": { "returnType": "DataValue", "optional": true }
@@ -1365,6 +1369,10 @@
     }
   },
   "AgCrossLineOptions": {
+    "enabled": {
+      "description": "/** Whether or not to show the cross line. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "type": {
       "description": "/** Type of cross line to render. */",
       "type": { "returnType": "'line' | 'range'", "optional": false }
@@ -1407,6 +1415,10 @@
     }
   },
   "AgCrossLineLabelOptions": {
+    "enabled": {
+      "description": "/** Whether or not to show the cross line label. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "text": {
       "description": "/** The text to show in the label. */",
       "type": { "returnType": "string", "optional": true }
@@ -3417,6 +3429,7 @@
   "CrossLinePathData": {
     "points": { "type": { "returnType": "Point[]", "optional": false } }
   },
+  "CrossLineType": {},
   "CrossLineLabelPosition": {},
   "Point": {
     "x": { "type": { "returnType": "number", "optional": false } },

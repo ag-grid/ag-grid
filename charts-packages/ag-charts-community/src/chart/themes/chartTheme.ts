@@ -102,8 +102,12 @@ export class ChartTheme {
                 lineDash: [4, 2]
             }],
             crossLines: {
+                enabled: true,
                 fill: 'rgb(187,221,232)',
-                stroke: 'rgb(70,162,192)'
+                stroke: 'rgb(70,162,192)',
+                label: {
+                    enabled: true
+                }
             }
         };
     }
