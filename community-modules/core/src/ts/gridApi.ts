@@ -906,6 +906,9 @@ export class GridApi<TData = any> {
 
     /**
      *  Ensures the column is visible by scrolling the table if needed.
+     * 
+     * This will have no effect before the firstDataRendered event has fired.
+     * 
      * @param key - The column to ensure visible
      * @param position - Where the column will be positioned.
      * - `auto` - Scrolls the minimum amount to make sure the column is visible.
@@ -918,27 +921,24 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Ensures the row index is visible by vertically scrolling the grid.
-     * If a position of `'top'`, `'middle'` or `'bottom'` is supplied, the grid will scroll the grid to place the row at the top, middle or bottom respectively.
-     * Otherwise, the grid will do the minimum scrolling possible to show the row.
-     * i.e.
-     * - if the grid needs to scroll up then it will scroll so that the row is at the top,
-     * - if the grid needs to scroll down then it will scroll so that the row is at the bottom,
-     * - if the row is already in view then the grid will do nothing.
+     * Vertically scrolls the grid until the provided row index is inside the visible viewport.
+     * If a position is provided, the grid will attempt to scroll until the row is at the given position within the viewport.
+     * This will have no effect before the firstDataRendered event has fired.
      */
-    public ensureIndexVisible(index: any, position?: 'top' | 'bottom' | 'middle' | null) {
+    public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null) {
         this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(index, position);
     }
 
     /**
-     * Ensures a row node is visible, scrolling the grid if needed.
-     * Provide either:
-     * - the node,
-     * - the data object
-     * - a comparator function (that takes the node as a parameter, and returns `true` for match or `false` for no match).
+     * Vertically scrolls the grid until the provided row (or a row matching the provided comparator) is inside the visible viewport.
+     * If a position is provided, the grid will attempt to scroll until the row is at the given position within the viewport.
+     * This will have no effect before the firstDataRendered event has fired.
      */
-    public ensureNodeVisible(comparator: any, position: 'top' | 'bottom' | 'middle' | null = null) {
-        this.gridBodyCtrl.getScrollFeature().ensureNodeVisible(comparator, position);
+    public ensureNodeVisible(
+        nodeSelector: TData | RowNode<TData> | ((row: RowNode<TData>) => boolean),
+        position: 'top' | 'bottom' | 'middle' | null = null
+    ) {
+        this.gridBodyCtrl.getScrollFeature().ensureNodeVisible(nodeSelector, position);
     }
 
     /**

@@ -17,6 +17,7 @@ import { RowRenderer } from "../rendering/rowRenderer";
 import { ColumnModel } from "../columns/columnModel";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
 import { Column } from "../entities/column";
+import { RowNode } from "../entities/rowNode";
 
 type ScrollDirection = 'horizontal' | 'vertical';
 
@@ -340,17 +341,20 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     // Valid values for position are bottom, middle and top
-    public ensureNodeVisible(comparator: any, position: 'top' | 'bottom' | 'middle' | null = null) {
-
+    public ensureNodeVisible<TData = any>(
+        comparator: TData | RowNode<TData> | ((row: RowNode<TData>) => boolean),
+        position: 'top' | 'bottom' | 'middle' | null = null
+    ) {
         // look for the node index we want to display
         const rowCount = this.rowModel.getRowCount();
-        const comparatorIsAFunction = typeof comparator === 'function';
         let indexToSelect = -1;
         // go through all the nodes, find the one we want to show
         for (let i = 0; i < rowCount; i++) {
             const node = this.rowModel.getRow(i);
-            if (comparatorIsAFunction) {
-                if (comparator(node)) {
+            if (typeof comparator === 'function') {
+                // Have to assert type here, as type could be TData & Function 
+                const predicate = comparator as ((row: RowNode<TData>) => boolean);
+                if (node && predicate(node)) {
                     indexToSelect = i;
                     break;
                 }
@@ -373,7 +377,7 @@ export class GridBodyScrollFeature extends BeanStub {
     // eg if grid needs to scroll up, it scrolls until row is on top,
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
-    public ensureIndexVisible(index: any, position?: 'top' | 'bottom' | 'middle' | null) {
+    public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null) {
         // if for print or auto height, everything is always visible
         if (this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT) { return; }
 
