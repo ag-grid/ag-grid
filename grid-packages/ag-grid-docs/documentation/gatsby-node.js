@@ -21,7 +21,7 @@ const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
 const lzString = require('lz-string');
 const {graphql} = require("gatsby");
 
-const PRELOAD_PAGE_DATA = false;
+const PRELOAD_PAGE_DATA = true;
 
 /**
  * This hides the config file that we use to show linting in IDEs from Gatsby.

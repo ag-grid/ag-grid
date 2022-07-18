@@ -440,8 +440,8 @@ export function getLongestNameLength(nameWithBreaks) {
 
 export function getJsonFromFile(jsonData, nodes, pageName, source) {
     if(jsonData) {
-        if (jsonData[`${pageName}/${source}`]) {
-            return {...jsonData[`${pageName}/${source}`]};
+        if (!!jsonData[`${pageName}/${source}`] || !!jsonData[source]) {
+            return {...(jsonData[`${pageName}/${source}`] || jsonData[source])};
         }
     } else {
         const json = nodes.filter(n => n.relativePath === source || n.relativePath === `${pageName}/${source}`)[0];
