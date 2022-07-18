@@ -3428,6 +3428,7 @@
   "CrossLinePathData": {
     "points": { "type": { "returnType": "Point[]", "optional": false } }
   },
+  "CrossLineType": {},
   "CrossLineLabelPosition": {},
   "Point": {
     "x": { "type": { "returnType": "number", "optional": false } },
