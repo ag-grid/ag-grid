@@ -116,6 +116,9 @@ export interface ChartClickEvent extends SourceEvent<Chart> {
 export interface TooltipMeta {
     pageX: number;
     pageY: number;
+    offsetX: number;
+    offsetY: number;
+    event: MouseEvent;
 }
 
 export interface TooltipRendererResult {
@@ -1116,18 +1119,24 @@ export abstract class Chart extends Observable {
             if (this.tooltip.delay > 0) {
                 this.tooltip.toggle(false);
             }
-            this.lastTooltipEvent = event;
+            this.lastTooltipMeta = {
+                pageX: event.pageX,
+                pageY: event.pageY,
+                offsetX: event.offsetX,
+                offsetY: event.offsetY,
+                event,
+            };
             this.handleTooltipTrigger.schedule();
         }
     }
 
-    private lastTooltipEvent?: MouseEvent = undefined;
+    private lastTooltipMeta?: TooltipMeta = undefined;
     private handleTooltipTrigger = debouncedAnimationFrame(() => {
-        this.handleTooltip(this.lastTooltipEvent!);
+        this.handleTooltip(this.lastTooltipMeta!);
     });
-    protected handleTooltip(event: MouseEvent) {
+    protected handleTooltip(meta: TooltipMeta) {
         const { lastPick, tooltip: { tracking: tooltipTracking } } = this;
-        const { offsetX, offsetY } = event;
+        const { offsetX, offsetY } = meta;
         const pick = this.pickSeriesNode(offsetX, offsetY);
         let nodeDatum: SeriesNodeDatum | undefined;
 
@@ -1136,16 +1145,16 @@ export abstract class Chart extends Observable {
             nodeDatum = node.datum as SeriesNodeDatum;
             if (lastPick && lastPick.datum === nodeDatum) {
                 lastPick.node = node;
-                lastPick.event = event;
+                lastPick.event = meta.event;
             }
             // Marker nodes will have the `point` info in their datums.
             // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
             if ((!node.datum.point || !tooltipTracking)) {
                 if (!lastPick // cursor moved from empty space to a node
                     || lastPick.node !== node) { // cursor moved from one node to another
-                        this.onSeriesDatumPick(event, node.datum, node, event);
+                        this.onSeriesDatumPick(meta, node.datum, node);
                 } else if (pick.series.tooltip.enabled) { // cursor moved within the same node
-                    this.tooltip.show(event);
+                    this.tooltip.show(meta);
                 }
                 // A non-marker node (takes precedence over marker nodes) was highlighted.
                 // Or we are not in the tracking mode.
@@ -1167,9 +1176,12 @@ export abstract class Chart extends Observable {
                 const point = closestDatum.series.group.inverseTransformPoint(x, y);
                 const canvasRect = canvas.element.getBoundingClientRect();
                 this.onSeriesDatumPick({
+                    ...meta,
                     pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
-                    pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
-                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node as Shape : undefined, event);
+                    pageY: Math.round(canvasRect.top + window.pageYOffset + point.y),
+                    offsetX: Math.round(canvasRect.left + point.y),
+                    offsetY: Math.round(canvasRect.top + point.y),
+                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node as Shape : undefined);
             } else {
                 hideTooltip = true;
             }
@@ -1324,7 +1336,7 @@ export abstract class Chart extends Observable {
         }
     }
 
-    private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum, node?: Shape, event?: MouseEvent) {
+    private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum, node?: Shape) {
         const { lastPick } = this;
         if (lastPick) {
             if (lastPick.datum === datum) { return; }
@@ -1333,7 +1345,7 @@ export abstract class Chart extends Observable {
         this.changeHighlightDatum({
             datum,
             node,
-            event
+            event: meta.event,
         });
 
         const html = datum.series.tooltip.enabled && datum.series.getTooltipHtml(datum);
