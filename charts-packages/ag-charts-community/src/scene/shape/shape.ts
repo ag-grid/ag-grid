@@ -123,14 +123,14 @@ export abstract class Shape extends Node {
     align(start: number, length?: number) {
         const pixelRatio = this.scene?.canvas?.pixelRatio ?? 1;
 
-        const alignedStart = Math.floor(start * pixelRatio) / pixelRatio;
+        const alignedStart = Math.round(start * pixelRatio) / pixelRatio;
         if (length == undefined) {
             return alignedStart;
         }
 
         // Account for the rounding of alignedStart by increasing length to compensate before
         // alignment.
-        return (Math.ceil((length + start) * pixelRatio) / pixelRatio) - alignedStart;
+        return (Math.round((length + start) * pixelRatio) / pixelRatio) - alignedStart;
     }
 
     @SceneChangeDetection({ redraw: RedrawType.MINOR })

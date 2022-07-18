@@ -78,6 +78,10 @@ export class Rect extends Path {
             return true;
         }
 
+        if (this.path.isDirty() || this.borderPath.isDirty()) {
+            return true;
+        }
+
         return false;
     }
 
@@ -87,14 +91,15 @@ export class Rect extends Path {
         const { path, borderPath, strokeWidth, crisp } = this;
         let { x, y, width: w, height: h } = this;
 
-        path.clear();
-        borderPath.clear();
+        path.clear({ trackChanges: true });
+        borderPath.clear({ trackChanges: true });
 
         if (crisp) {
-            x = this.align(x);
-            y = this.align(y);
+            // Order matters here, since we need unaligned x/y for w/h calculations.
             w = this.align(x, w);
             h = this.align(y, h);
+            x = this.align(x);
+            y = this.align(y);
         }
 
         path.rect(x, y, w, h);

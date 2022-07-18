@@ -723,6 +723,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     yKey: datum.yKey,
                 });
             }
+            rect.crisp = true;
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
