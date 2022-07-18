@@ -794,6 +794,10 @@ export class RowCtrl extends BeanStub {
         const node = this.rowNode;
         const columnModel = this.beans.columnModel;
 
+        if (this.beans.rangeService) {
+            this.beans.rangeService.removeAllCellRanges();
+        }
+
         this.beans.focusService.setFocusedCell({
             rowIndex: node.rowIndex!,
             column: columnModel.getAllDisplayedColumns()[0],
