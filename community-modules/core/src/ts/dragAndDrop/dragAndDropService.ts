@@ -274,14 +274,16 @@ export class DragAndDropService extends BeanStub {
         const dropTarget: DropTarget | null = this.findCurrentDropTarget(mouseEvent, validDropTargets);
 
         if (dropTarget !== this.lastDropTarget) {
+            this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
+
             if (this.lastDropTarget !== null && dropTarget === null) {
                 this.dragSource.onGridExit?.(this.dragItem);
             }
             if (this.lastDropTarget === null && dropTarget !== null) {
                 this.dragSource.onGridEnter?.(this.dragItem);
             }
-            this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
+
             this.lastDropTarget = dropTarget;
         } else if (dropTarget && dropTarget.onDragging) {
             const draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
