@@ -148,32 +148,33 @@
       "type": { "returnType": "any", "optional": true }
     }
   },
+  "AgCartesianAxisThemeSpecialOptions": {},
   "AgCartesianAxisThemeOptions": {
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<T, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<T, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<T, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<T, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<T, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<T, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<T, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<T, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
@@ -427,28 +428,28 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgNumberAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgNumberAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgNumberAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgNumberAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
@@ -505,28 +506,28 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgLogAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgLogAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgLogAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgLogAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
@@ -569,28 +570,28 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
@@ -631,28 +632,28 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
@@ -697,28 +698,28 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgTimeAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgTimeAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgTimeAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type' | 'crossLines'>",
+        "returnType": "Omit<AgTimeAxisOptions, AgCartesianAxisThemeSpecialOptions>",
         "optional": true
       }
     },
@@ -3385,7 +3386,7 @@
   "ChartType": {},
   "AgChartType": { "meta": { "typeParams": ["T"] } },
   "ChartOptionType": { "meta": { "typeParams": ["T extends ChartType"] } },
-  "SeriesOptionType": {},
+  "SeriesOptionType": { "meta": { "typeParams": ["T extends Series"] } },
   "AxisOptionType": { "meta": { "typeParams": ["T extends Axis<any, any>"] } },
   "ObservableLike": {},
   "ChartClickEvent": {

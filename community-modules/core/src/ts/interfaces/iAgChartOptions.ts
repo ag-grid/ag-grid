@@ -96,16 +96,17 @@ export interface AgChartThemeOverrides {
     common?: any;
 }
 
+type AgCartesianAxisThemeSpecialOptions = 'position' | 'type' | 'crossLines';
 /** This is the configuration shared by all types of axis. */
 export interface AgCartesianAxisThemeOptions<T> {
     /** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */
-    top?: Omit<T, 'position' | 'type' | 'crossLines'>;
+    top?: Omit<T, AgCartesianAxisThemeSpecialOptions>;
     /** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */
-    right?: Omit<T, 'position' | 'type' | 'crossLines'>;
+    right?: Omit<T, AgCartesianAxisThemeSpecialOptions>;
     /** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */
-    bottom?: Omit<T, 'position' | 'type' | 'crossLines'>;
+    bottom?: Omit<T, AgCartesianAxisThemeSpecialOptions>;
     /** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */
-    left?: Omit<T, 'position' | 'type' | 'crossLines'>;
+    left?: Omit<T, AgCartesianAxisThemeSpecialOptions>;
 }
 
 export interface AgCartesianThemeOptions<S = AgCartesianSeriesTheme> extends AgBaseChartOptions {

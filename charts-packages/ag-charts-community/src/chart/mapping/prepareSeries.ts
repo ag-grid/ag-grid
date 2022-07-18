@@ -99,7 +99,7 @@ const REDUCE_CONFIG: Record<string, ReduceConfig<unknown>> = {
     'yName': { outputProp: 'yNames', reducer: DEFAULTING_ARRAY_REDUCER('yName', SKIP), start: [] },
     'visible': { outputProp: 'visibles', reducer: DEFAULTING_ARRAY_REDUCER('visible', true), start: [] },
 
-    'grouped': { outputProp: 'grouped', reducer: BOOLEAN_OR_REDUCER('grouped', undefined), seriesType: ['bar', 'column'], start: undefined },
+    'grouped': { outputProp: 'grouped', reducer: BOOLEAN_OR_REDUCER('grouped'), seriesType: ['bar', 'column'], start: undefined },
     'showInLegend': { outputProp: 'hideInLegend', reducer: YKEYS_REDUCER('showInLegend', false), seriesType: ['bar', 'column'], start: []},
 };
 
