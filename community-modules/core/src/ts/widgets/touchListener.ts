@@ -135,7 +135,7 @@ export class TouchListener implements IEventEmitter {
         }
 
         // stops the tap from also been processed as a mouse click
-        if (this.preventMouseClick) {
+        if (this.preventMouseClick && touchEvent.cancelable) {
             touchEvent.preventDefault();
         }
 
