@@ -1,5 +1,5 @@
 import { _, AgChartThemeOverrides, ChartType, SeriesChartType } from "@ag-grid-community/core";
-import { AgChartTheme, AgChartThemePalette, Chart, ChartTheme, getChartTheme, themes } from "ag-charts-community";
+import { AgChartTheme, AgChartThemePalette, Chart, ChartTheme, getIntegratedChartTheme, themes } from "ag-charts-community";
 import { deepMerge } from "../utils/object";
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
@@ -62,7 +62,7 @@ export abstract class ChartProxy {
             this.chartOptions = this.chartProxyParams.chartOptionsToRestore;
             this.chartPalette = this.chartProxyParams.chartPaletteToRestore;
             const themeOverrides = { overrides:  this.chartOptions, palette: this.chartPalette } as any;
-            this.chartTheme = getChartTheme({baseTheme: this.getSelectedTheme(), ...themeOverrides});
+            this.chartTheme = getIntegratedChartTheme({baseTheme: this.getSelectedTheme(), ...themeOverrides});
             return;
         }
 
@@ -105,9 +105,9 @@ export abstract class ChartProxy {
                 overrides: ChartProxy.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides)
             };
             const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);
-            return getChartTheme(stockTheme ? {baseTheme: themeName, ...themeOverrides} : getCustomTheme());
+            return getIntegratedChartTheme(stockTheme ? {baseTheme: themeName, ...themeOverrides} : getCustomTheme());
         }
-        return getChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
+        return getIntegratedChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
     }
 
     public isStockTheme(themeName: string): boolean {
