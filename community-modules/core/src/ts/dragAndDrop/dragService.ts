@@ -81,7 +81,8 @@ export class DragService extends BeanStub {
                 if (touchEvent.cancelable) { touchEvent.preventDefault(); }
                 this.onTouchStart(params, touchEvent);
             };
-            params.eElement.addEventListener('touchstart', touchListener, { passive: true });
+            // we set passive=false, as we want to prevent default on this event
+            params.eElement.addEventListener('touchstart', touchListener, { passive: false });
         }
 
         this.dragSources.push({

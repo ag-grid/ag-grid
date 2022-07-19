@@ -340,7 +340,7 @@ export class DragAndDropService extends BeanStub {
 
         // elementsFromPoint return a list of elements under
         // the mouseEvent sorted from topMost to bottomMost
-        const elementStack = eDocument.elementsFromPoint(mouseEvent.x, mouseEvent.y) as HTMLElement[];
+        const elementStack = eDocument.elementsFromPoint(mouseEvent.clientX, mouseEvent.clientY) as HTMLElement[];
 
         // loop over the sorted elementStack to find which dropTarget comes first
         for (const el of elementStack) {
