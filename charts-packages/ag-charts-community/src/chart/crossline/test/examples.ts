@@ -29,10 +29,6 @@ export const SCATTER_CROSSLINES: AgCartesianChartOptions = {
         text: 'Mean Sea Level (mm)',
     },
     data: DATA_MEAN_SEA_LEVEL,
-    padding: {
-        top: 40,
-        right: 60
-    },
     series: [
         {
             type: 'scatter',
@@ -104,10 +100,6 @@ export const SCATTER_CROSSLINES: AgCartesianChartOptions = {
 
 export const LINE_CROSSLINES: AgCartesianChartOptions = {
     ...LINE_GRAPH_WITH_GAPS_EXAMPLE,
-    padding: {
-        top: 30,
-        right: 30
-    },
     axes: [
         {
             type: 'category',
@@ -184,10 +176,6 @@ export const LINE_CROSSLINES: AgCartesianChartOptions = {
 
 export const AREA_CROSSLINES: AgCartesianChartOptions = {
     ...AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE,
-    padding: {
-        top: 30,
-        right: 30
-    },
     axes: [
         {
             type: 'category',
@@ -243,10 +231,6 @@ export const AREA_CROSSLINES: AgCartesianChartOptions = {
 
 export const COLUMN_CROSSLINES: AgCartesianChartOptions = {
     ...GROUPED_COLUMN_EXAMPLE,
-    padding: {
-        top: 30,
-        right: 30
-    },
     axes: [
         {
             position: 'bottom',
@@ -309,10 +293,6 @@ export const COLUMN_CROSSLINES: AgCartesianChartOptions = {
 
 export const BAR_CROSSLINES: AgCartesianChartOptions = {
     ...GROUPED_BAR_CHART_EXAMPLE,
-    padding: {
-        top: 30,
-        right: 30
-    },
     axes: [
         {
             position: 'left',
@@ -375,10 +355,6 @@ export const BAR_CROSSLINES: AgCartesianChartOptions = {
 
 export const HISTOGRAM_CROSSLINES: AgCartesianChartOptions = {
     ...XY_HISTOGRAM_WITH_MEAN_EXAMPLE,
-    padding: {
-        top: 30,
-        right: 30
-    },
     axes: [
         {
             position: 'bottom',
