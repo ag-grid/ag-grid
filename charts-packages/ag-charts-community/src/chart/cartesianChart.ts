@@ -210,6 +210,24 @@ export class CartesianChart extends Chart {
             clipSeries = result.clipSeries;
             seriesRect = result.seriesRect;
 
+            if (count === 0) {
+                const crossLinePadding: Partial<Record<ChartAxisPosition, number>> = {};
+
+                this.axes.forEach(axis => {
+                    if (axis.crossLines) {
+                        axis.crossLines.forEach(crossLine => {
+                            crossLine.calculatePadding(crossLinePadding, inputShrinkRect.clone());
+                        });
+                    }
+                });
+
+                const { top = 0, right = 0, bottom = 0, left = 0 } = crossLinePadding;
+                inputShrinkRect.x += left;
+                inputShrinkRect.y += top;
+                inputShrinkRect.width -= left + right;
+                inputShrinkRect.height -= top + bottom;
+            }
+
             if (count++ > 10) {
                 throw new Error('AG Charts - unable to find stable axis layout.');
             }
@@ -249,7 +267,7 @@ export class CartesianChart extends Chart {
         const seriesRect = buildSeriesRect();
 
         const clampToOutsideSeriesRect = (value: number, dimension: 'x' | 'y', direction: -1 | 1) => {
-            const {x, y, width, height} = seriesRect;
+            const { x, y, width, height } = seriesRect;
             const bounds = [x, y, x + width, y + height];
             const fn = direction === 1 ? Math.min : Math.max;
             const compareTo = bounds[(dimension === 'x' ? 0 : 1) + (direction === 1 ? 0 : 2)];
@@ -299,10 +317,10 @@ export class CartesianChart extends Chart {
             if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {
                 clipSeries = true;
             }
-    
+
             primaryTickCount = axis.calculateDomain({ primaryTickCount }).primaryTickCount;
             axis.update();
-            
+
             let axisThickness = 0;
             if (axis.thickness) {
                 axisThickness = axis.thickness;
