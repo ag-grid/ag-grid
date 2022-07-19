@@ -88,7 +88,7 @@ export class StickyRowFeature extends BeanStub {
                 parents.push(p);
                 p = p.parent!;
             }
-            const firstMissingParent = parents.reverse().find(parent => stickyRows.indexOf(parent) < 0);
+            const firstMissingParent = parents.reverse().find(parent => stickyRows.indexOf(parent) < 0 && parent.displayed);
             if (firstMissingParent) {
                 addStickyRow(firstMissingParent);
                 continue;
