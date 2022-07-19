@@ -18,6 +18,8 @@
         "autowire",
         "autowired",
         "csrm",
+        "Sparkline",
+        "sparklines",
         "tran",
         "trans",
         "treemap"

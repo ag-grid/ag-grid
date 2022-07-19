@@ -5,7 +5,9 @@ export default class CountryCellRenderer extends Component {
         super(props);
 
         let value;
-        if (!props.value || props.value === '(Select All)') {
+        if (!props.value) {
+            value = props.isFilterRenderer ? '(Blanks)' : props.value; '(Blanks)';
+        } else if (props.value === '(Select All)') {
             value = props.value;
         } else {
             const url = `https://flags.fmcdn.net/data/flags/mini/${props.context.COUNTRY_CODES[props.value]}.png`;
