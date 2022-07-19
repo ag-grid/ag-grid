@@ -13,12 +13,9 @@ const options: AgChartOptions = {
           number: {
             gridStyle: [],
           },
-          category: {
+          time: {
             gridStyle: [],
           }
-        },
-        padding: {
-          right: 50,
         },
         series: {
           highlightStyle: {
