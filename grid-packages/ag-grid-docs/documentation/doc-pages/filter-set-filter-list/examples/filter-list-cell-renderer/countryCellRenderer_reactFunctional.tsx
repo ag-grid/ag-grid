@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { ICellRendererParams } from '@ag-grid-community/core';
 
-export default (props: ICellRendererParams) => {
+export default (props: ICellRendererParams & { isFilterRenderer?: boolean }) => {
     const [value, setValue] = useState<string>('');
 
     useEffect(() => {
-        if (!props.value || props.value === '(Select All)') {
+        if (!props.value) {
+            setValue(props.isFilterRenderer ? '(Blanks)' : props.value);
+        } else if (props.value === '(Select All)') {
             setValue(props.value);
         } else {
             const url = `https://flags.fmcdn.net/data/flags/mini/${props.context.COUNTRY_CODES[props.value]}.png`;

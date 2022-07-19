@@ -41,6 +41,7 @@ const gridOptions: GridOptions<IOlympicData> = {
             filter: 'agSetColumnFilter',
             filterParams: {
                 cellRenderer: CountryCellRenderer,
+                cellRendererParams: { isFilterRenderer: true }
             },
         },
     ],
@@ -80,6 +81,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const dataWithFlags = data.filter(function (d: any) {
                 return COUNTRY_CODES[d.country]
             });
+
+            // Empty data used to demonstrate custom (Blanks) handling in filter cell renderer
+            dataWithFlags[0].country = '';
 
             gridOptions.api!.setRowData(dataWithFlags)
         })

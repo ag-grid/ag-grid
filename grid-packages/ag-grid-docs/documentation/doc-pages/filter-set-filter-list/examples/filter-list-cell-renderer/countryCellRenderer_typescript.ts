@@ -1,13 +1,14 @@
 import { ICellRendererParams, ICellRendererComp } from "@ag-grid-community/core";
-import React from "react";
 
 export class CountryCellRenderer implements ICellRendererComp {
     eGui!: HTMLDivElement;
 
-    init(params: ICellRendererParams) {
+    init(params: ICellRendererParams & { isFilterRenderer?: boolean }) {
         this.eGui = document.createElement('div');
 
-        if (!params.value || params.value === '(Select All)') {
+        if (!params.value) {
+            this.eGui.innerHTML = params.isFilterRenderer ? '(Blanks)' : params.value;
+        } else if (params.value === '(Select All)') {
             this.eGui.innerHTML = params.value;
         } else {
 
