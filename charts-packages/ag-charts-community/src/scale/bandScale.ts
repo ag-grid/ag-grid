@@ -80,6 +80,11 @@ export class BandScale<D> implements Scale<D, number> {
         return this._bandwidth;
     }
 
+    private _rawBandwidth: number = 1;
+    get rawBandwidth(): number {
+        return this._rawBandwidth;
+    }
+
     set padding(value: number) {
         value = Math.max(0, Math.min(1, value));
         this._paddingInner = value;
@@ -150,12 +155,14 @@ export class BandScale<D> implements Scale<D, number> {
         if (reversed) {
             [a, b] = [b, a];
         }
-        let step = (b - a) / Math.max(1, n - this._paddingInner + this._paddingOuter * 2);
+        const rawStep = (b - a) / Math.max(1, n - this._paddingInner + this._paddingOuter * 2);
+        let step = rawStep;
         if (this._round) {
             step = Math.floor(step);
         }
         a += (b - a - step * (n - this._paddingInner)) * this._align;
         this._bandwidth = step * (1 - this._paddingInner);
+        this._rawBandwidth = rawStep * (1 - this._paddingInner);
         if (this._round) {
             a = Math.round(a);
             this._bandwidth = Math.round(this._bandwidth);

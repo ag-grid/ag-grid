@@ -496,12 +496,22 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             return [];
         }
 
-        const { flipXY } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
 
-        const { groupScale, yKeys, cumYKeyCount, fills, strokes, strokeWidth, seriesItemEnabled, xData, yData, label } =
-            this;
+        const {
+            groupScale,
+            yKeys,
+            cumYKeyCount,
+            fills,
+            strokes,
+            strokeWidth,
+            seriesItemEnabled,
+            xData,
+            yData,
+            label,
+            flipXY,
+        } = this;
 
         const {
             fontStyle: labelFontStyle,
@@ -528,8 +538,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         groupScale.range = [0, xBandWidth!];
 
-        const grouped = true;
-        const barWidth = grouped ? groupScale.bandwidth : xBandWidth!;
+        const barWidth = groupScale.bandwidth >= 1 ?
+            // Pixel-rounded value for low-volume bar charts.
+            groupScale.bandwidth :
+            // Handle high-volume bar charts gracefully.
+            groupScale.rawBandwidth;
         const contexts: SeriesNodeDataContext<BarNodeDatum>[][] = [];
 
         xData.forEach((group, groupIndex) => {
@@ -547,7 +560,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 for (let levelIndex = 0; levelIndex < stackYs.length; levelIndex++) {
                     const currY = +stackYs[levelIndex];
                     const yKey = yKeys[stackIndex][levelIndex];
-                    const barX = grouped ? x + groupScale.convert(String(stackIndex)) : x;
+                    const barX = x + groupScale.convert(String(stackIndex));
                     contexts[stackIndex][levelIndex] = contexts[stackIndex][levelIndex] ?? {
                         itemId: yKey,
                         nodeData: [],
@@ -690,7 +703,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             },
         } = this;
 
-        const crisp = !datumSelection.data.some((d => d.width < 3 || d.height < 3));
+        const crisp = !datumSelection.data.some((d => d.width <= 0.5 || d.height <= 0.5));
         datumSelection.each((rect, datum) => {
             rect.visible = !isDatumHighlighted || isDatumHighlighted;
             if (!rect.visible) {

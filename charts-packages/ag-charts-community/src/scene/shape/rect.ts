@@ -88,8 +88,8 @@ export class Rect extends Path {
     private effectiveStrokeWidth: number = Shape.defaultStyles.strokeWidth;
 
     protected updatePath() {
-        const { path, borderPath, strokeWidth, crisp } = this;
-        let { x, y, width: w, height: h } = this;
+        const { path, borderPath, crisp } = this;
+        let { x, y, width: w, height: h, strokeWidth } = this;
 
         path.clear({ trackChanges: true });
         borderPath.clear({ trackChanges: true });
@@ -104,10 +104,9 @@ export class Rect extends Path {
 
         path.rect(x, y, w, h);
 
-        this.effectiveStrokeWidth = strokeWidth;
-        this.lastUpdatePathStrokeWidth = strokeWidth;
-
         if (strokeWidth) {
+            // Ensure that the strokeWidth isn't > width or height.
+            strokeWidth = Math.min(w, h, strokeWidth);
             const halfStokeWidth = strokeWidth / 2;
             x += halfStokeWidth;
             y += halfStokeWidth;
@@ -116,6 +115,9 @@ export class Rect extends Path {
 
             borderPath.rect(x, y, w, h);
         }
+
+        this.effectiveStrokeWidth = strokeWidth;
+        this.lastUpdatePathStrokeWidth = strokeWidth;
     }
 
     computeBBox(): BBox {
