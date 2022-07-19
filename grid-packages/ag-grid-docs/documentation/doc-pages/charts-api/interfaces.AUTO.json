@@ -2306,7 +2306,13 @@
   },
   "TooltipMeta": {
     "meta": {},
-    "type": { "pageX": "number", "pageY": "number" }
+    "type": {
+      "pageX": "number",
+      "pageY": "number",
+      "offsetX": "number",
+      "offsetY": "number",
+      "event": "MouseEvent"
+    }
   },
   "TooltipRendererResult": {
     "meta": {},
