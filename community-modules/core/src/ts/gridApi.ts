@@ -1729,7 +1729,7 @@ export class GridApi<TData = any> {
         }
 
         const cell = this.navigationService.getCellByPosition(cellPosition);
-        if (!cell) { return; }
+        if (!cell || !cell.isReady()) { return; }
         cell.startRowOrCellEdit(params.key, params.charPress);
     }
 
