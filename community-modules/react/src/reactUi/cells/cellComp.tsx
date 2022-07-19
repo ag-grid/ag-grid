@@ -154,7 +154,7 @@ const CellComp = (props: {
 
     const [jsEditorComp, setJsEditorComp] = useState<ICellEditorComp>();
 
-    const forceWrapper = useMemo( ()=> cellCtrl.isForceWrapper(), [] );
+    const forceWrapper = useMemo(() => cellCtrl.isForceWrapper(), []);
     const eGui = useRef<HTMLDivElement>(null);
     const cellRendererRef = useRef<any>(null);
     const jsCellRendererRef = useRef<ICellRendererComp>();
@@ -177,7 +177,7 @@ const CellComp = (props: {
     }, []);
     
     const showTools = renderDetails != null && (includeSelection || includeDndSource || includeRowDrag);
-    const showCellWrapper = forceWrapper || showTools;
+    const showCellWrapper = (forceWrapper && !cellCtrl.isEditing()) || showTools;
 
     const setCellEditorRef = useCallback((popup: boolean, cellEditor: ICellEditor | undefined) => {
         cellEditorRef.current = cellEditor;
@@ -186,7 +186,7 @@ const CellComp = (props: {
             const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
             if (editingCancelledByUserComp) {
                 // we cannot set state inside render, so hack is to do it in next VM turn
-                setTimeout( ()=> cellCtrl.stopEditing(), 0);
+                setTimeout(() => cellCtrl.stopEditing(), 0);
             }
         }
     }, []);
