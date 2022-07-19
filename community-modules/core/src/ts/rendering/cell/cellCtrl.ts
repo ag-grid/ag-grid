@@ -113,8 +113,6 @@ export class CellCtrl extends BeanStub {
     // this comp used only for custom row drag handle (ie when user calls params.registerRowDragger)
     private customRowDragComp: RowDragComp;
 
-    private ready = false;
-
     constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl) {
         super();
         this.column = column;
@@ -248,12 +246,6 @@ export class CellCtrl extends BeanStub {
         } else {
             this.showValue();
         }
-
-        this.ready = true;
-    }
-
-    public isReady(): boolean {
-        return this.ready;
     }
 
     private setupAutoHeight(): void {
@@ -961,6 +953,7 @@ export class CellCtrl extends BeanStub {
 
     // called by rowRenderer when user navigates via tab key
     public startRowOrCellEdit(key?: string | null, charPress?: string | null, event: KeyboardEvent | MouseEvent | null = null): void {
+        if (!this.cellComp) { return; }
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
             this.rowCtrl.startRowEditing(key, charPress, this);
         } else {
