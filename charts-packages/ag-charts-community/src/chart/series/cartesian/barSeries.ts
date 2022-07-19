@@ -660,7 +660,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         updateRects.exit.remove();
         const enterRects = updateRects.enter.append(Rect).each((rect) => {
             rect.tag = BarSeriesNodeTag.Bar;
-            rect.crisp = true;
         });
         return updateRects.merge(enterRects);
     }
@@ -691,6 +690,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             },
         } = this;
 
+        const crisp = !datumSelection.data.some((d => d.width < 3 || d.height < 3));
         datumSelection.each((rect, datum) => {
             rect.visible = !isDatumHighlighted || isDatumHighlighted;
             if (!rect.visible) {
@@ -723,7 +723,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     yKey: datum.yKey,
                 });
             }
-            rect.crisp = true;
+            rect.crisp = crisp;
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
