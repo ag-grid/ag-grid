@@ -1,4 +1,4 @@
-import { PointerEvents, RedrawType, SceneChangeDetection } from "../../scene/node";
+import { PointerEvents } from "../../scene/node";
 import { Group } from "../../scene/group";
 import { Path } from "../../scene/shape/path";
 import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
