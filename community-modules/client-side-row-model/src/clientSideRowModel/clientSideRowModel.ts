@@ -566,6 +566,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             return this.rowsToDisplay.length - 1;
         }
 
+        let oldBottomPointer = -1;
+        let oldTopPointer = -1;
+
         while (true) {
             const midPointer = Math.floor((bottomPointer + topPointer) / 2);
             const currentRowNode = this.rowsToDisplay[midPointer];
@@ -579,6 +582,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             } else if (currentRowNode.rowTop! > pixelToMatch) {
                 topPointer = midPointer - 1;
             }
+
+            // infinite loops happen when there is space between rows. this can happen
+            // when Auto Height is active, cos we re-calculate row tops asyncronously
+            // when row heights change, which can temporarly result in gaps between rows.
+            const caughtInInfiniteLoop = oldBottomPointer === bottomPointer 
+                                        && oldTopPointer === topPointer;
+            if (caughtInInfiniteLoop) { return midPointer; }
+
+            oldBottomPointer = bottomPointer;
+            oldTopPointer = topPointer;
         }
     }
 
