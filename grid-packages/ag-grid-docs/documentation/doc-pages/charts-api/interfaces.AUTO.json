@@ -2942,6 +2942,25 @@
       "point?": "{ readonly x: number; readonly y: number; }"
     }
   },
+  "SeriesNodePickMode": {
+    "meta": { "isEnum": true },
+    "type": [
+      "EXACT_SHAPE_MATCH",
+      "NEAREST_BY_MAIN_AXIS_FIRST",
+      "NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST",
+      "NEAREST_NODE"
+    ],
+    "docs": [
+      "/** Pick matches based upon pick coordinates being inside a matching shape/marker. */",
+      "/** Pick matches by nearest category/X-axis value, then distance within that category/X-value. */",
+      "/** Pick matches by nearest category value, then distance within that category. */",
+      "/** Pick matches based upon distance to ideal position */"
+    ]
+  },
+  "SeriesNodePickMatch": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ datum: SeriesNodeDatum; distance: number; }"
+  },
   "TooltipRendererParams": {
     "meta": {},
     "type": { "datum": "any", "title?": "string", "color?": "string" }
