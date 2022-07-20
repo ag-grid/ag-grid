@@ -106,7 +106,16 @@ export class ChartTheme {
                 fill: 'rgb(187,221,232)',
                 stroke: 'rgb(70,162,192)',
                 label: {
-                    enabled: true
+                    enabled: true,
+                    fontStyle: undefined,
+                    fontWeight: undefined,
+                    fontSize: 12,
+                    fontFamily: this.fontFamily,
+                    padding: 5,
+                    color: 'rgb(87, 87, 87)',
+                    rotation: undefined,
+                    position: 'top',
+                    parallel: undefined,
                 }
             }
         };
