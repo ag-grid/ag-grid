@@ -93,9 +93,9 @@ export class GridComp extends TabGuardComp {
         const watermark = this.ctrl.showWatermark() ? '<ag-watermark></ag-watermark>' : '';
 
         const template = /* html */
-            `<div class="ag-root-wrapper">
+            `<div class="ag-root-wrapper" role="presentation">
                 ${dropZones}
-                <div class="ag-root-wrapper-body" ref="rootWrapperBody">
+                <div class="ag-root-wrapper-body" ref="rootWrapperBody" role="presentation">
                     <ag-grid-body ref="gridBody"></ag-grid-body>
                     ${sideBar}
                 </div>

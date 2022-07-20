@@ -4,8 +4,8 @@ import { DetailCellRendererCtrl } from "./detailCellRendererCtrl";
 export class DetailCellRenderer extends Component implements ICellRenderer {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-details-row">
-            <div ref="eDetailGrid" class="ag-details-grid"></div>
+        `<div class="ag-details-row" role="gridcell">
+            <div ref="eDetailGrid" class="ag-details-grid" role="presentation"></div>
         </div>`;
 
     @RefSelector('eDetailGrid') private eDetailGrid: HTMLElement;

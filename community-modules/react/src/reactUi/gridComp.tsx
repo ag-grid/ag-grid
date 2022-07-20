@@ -161,8 +161,8 @@ const GridComp = ({ context }: GridCompProps) => {
         }
     }, [tabGuardReady])
 
-    const rootWrapperClasses = useMemo( ()=> classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass), [rtlClass, keyboardFocusClass, layoutClass]);
-    const rootWrapperBodyClasses = useMemo( () => classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass), [layoutClass]);
+    const rootWrapperClasses = useMemo(()=> classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass), [rtlClass, keyboardFocusClass, layoutClass]);
+    const rootWrapperBodyClasses = useMemo(() => classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass), [layoutClass]);
 
     const topStyle: React.CSSProperties = useMemo(() => ({
         userSelect: userSelect != null ? (userSelect as any) : '',
@@ -178,8 +178,8 @@ const GridComp = ({ context }: GridCompProps) => {
     }, []);
     
     return (
-        <div ref={ eRootWrapperRef } className={ rootWrapperClasses } style={ topStyle }>
-            <div className={ rootWrapperBodyClasses } ref={ eGridBodyParentRef }>
+        <div ref={ eRootWrapperRef } className={ rootWrapperClasses } style={ topStyle } role="presentation">
+            <div className={ rootWrapperBodyClasses } ref={ eGridBodyParentRef } role="presentation">
                 { initialised && eGridBodyParent &&
                     <BeansContext.Provider value={beans}>
                         <TabGuardComp
