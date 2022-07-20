@@ -194,13 +194,6 @@ export class CartesianChart extends Chart {
                     return true;
                 });
         };
-        const ceilValues = <T extends Record<string, number | undefined>>(records: T) => {
-            return Object.entries(records)
-                .reduce((out, [key, value]) => {
-                    out[key] = value != null ? Math.ceil(value) : value;
-                    return out;
-                }, {} as any)
-        };
 
         // Iteratively try to resolve axis widths - since X axis width affects Y axis range,
         // and vice-versa, we need to iteratively try and find a fit for the axes and their
@@ -213,7 +206,7 @@ export class CartesianChart extends Chart {
             Object.assign(axisWidths, lastPass);
 
             const result = this.updateAxesPass(axisWidths, inputShrinkRect.clone(), seriesRect);
-            lastPass = ceilValues(result.axisWidths);
+            lastPass = result.axisWidths;
             clipSeries = result.clipSeries;
             seriesRect = result.seriesRect;
 
