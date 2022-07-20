@@ -125,14 +125,14 @@ export class CrossLine {
         if (!scale) { return; }
 
         const continuous = scale instanceof ContinuousScale;
-        const halfBandwidth = (scale.bandwidth || 0) / 2;
+        const bandwidth = scale.bandwidth ?? 0;
 
         let xStart, xEnd, yStart, yEnd;
         this.pathData = { points: [] };
 
         [xStart, xEnd] = [0, sideFlag * gridLength];
         [yStart, yEnd] = range ?? [value, undefined];
-        [yStart, yEnd] = [scale.convert(yStart, continuous ? clamper : undefined) + halfBandwidth, scale.convert(yEnd, continuous ? clamper : undefined) + halfBandwidth];
+        [yStart, yEnd] = [scale.convert(yStart, continuous ? clamper : undefined) , scale.convert(yEnd, continuous ? clamper : undefined) + bandwidth];
 
         if (this.label.text) {
             const yDirection = direction === ChartAxisDirection.Y;
