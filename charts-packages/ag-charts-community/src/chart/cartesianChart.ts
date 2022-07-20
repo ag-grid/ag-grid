@@ -200,12 +200,12 @@ export class CartesianChart extends Chart {
         // ticks/labels.
         let lastPass: typeof axisWidths = {};
         let clipSeries = false;
-        let seriesRect: BBox;
+        let seriesRect: BBox | undefined = undefined;
         let count = 0;
         do {
             Object.assign(axisWidths, lastPass);
 
-            const result = this.updateAxesPass(axisWidths, inputShrinkRect.clone());
+            const result = this.updateAxesPass(axisWidths, inputShrinkRect.clone(), seriesRect);
             lastPass = result.axisWidths;
             clipSeries = result.clipSeries;
             seriesRect = result.seriesRect;
@@ -223,7 +223,8 @@ export class CartesianChart extends Chart {
 
     private updateAxesPass(
         axisWidths: Partial<Record<ChartAxisPosition, number>>,
-        shrinkRect: BBox,
+        bounds: BBox,
+        lastPassSeriesRect?: BBox
     ) {
         const { navigator, axes } = this;
         const visited: Partial<Record<ChartAxisPosition, number>> = {};
@@ -232,8 +233,27 @@ export class CartesianChart extends Chart {
         let clipSeries = false;
         let primaryTickCount: number | undefined;
 
+        const crossLinePadding: Partial<Record<ChartAxisPosition, number>> = {};
+
+        if (lastPassSeriesRect) {
+            this.axes.forEach(axis => {
+                if (axis.crossLines) {
+                    axis.crossLines.forEach(crossLine => {
+                        crossLine.calculatePadding(crossLinePadding, lastPassSeriesRect);
+                    });
+                }
+            });
+        }
+
+        const axisBound = bounds.clone();
+        const { top = 0, right = 0, bottom = 0, left = 0 } = crossLinePadding;
+        axisBound.x += left;
+        axisBound.y += top;
+        axisBound.width -= left + right;
+        axisBound.height -= top + bottom;
+
         const buildSeriesRect = () => {
-            let seriesRect = shrinkRect.clone();
+            let seriesRect = axisBound.clone();
             const { top, bottom, left, right } = axisWidths;
             seriesRect.x += left ?? 0;
             seriesRect.y += top ?? 0;
@@ -249,7 +269,7 @@ export class CartesianChart extends Chart {
         const seriesRect = buildSeriesRect();
 
         const clampToOutsideSeriesRect = (value: number, dimension: 'x' | 'y', direction: -1 | 1) => {
-            const {x, y, width, height} = seriesRect;
+            const { x, y, width, height } = seriesRect;
             const bounds = [x, y, x + width, y + height];
             const fn = direction === 1 ? Math.min : Math.max;
             const compareTo = bounds[(dimension === 'x' ? 0 : 1) + (direction === 1 ? 0 : 2)];
@@ -299,10 +319,10 @@ export class CartesianChart extends Chart {
             if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {
                 clipSeries = true;
             }
-    
+
             primaryTickCount = axis.calculateDomain({ primaryTickCount }).primaryTickCount;
             axis.update();
-            
+
             let axisThickness = 0;
             if (axis.thickness) {
                 axisThickness = axis.thickness;
@@ -320,33 +340,33 @@ export class CartesianChart extends Chart {
 
             switch (position) {
                 case ChartAxisPosition.Top:
-                    axis.translation.x = shrinkRect.x + (axisWidths.left ?? 0);
+                    axis.translation.x = axisBound.x + (axisWidths.left ?? 0);
                     axis.translation.y = clampToOutsideSeriesRect(
-                        shrinkRect.y + 1 + axisOffset + axisThickness,
+                        axisBound.y + 1 + axisOffset + axisThickness,
                         'y',
                         1,
                     );
                     break;
                 case ChartAxisPosition.Bottom:
-                    axis.translation.x = shrinkRect.x + (axisWidths.left ?? 0);
+                    axis.translation.x = axisBound.x + (axisWidths.left ?? 0);
                     axis.translation.y = clampToOutsideSeriesRect(
-                        shrinkRect.y + shrinkRect.height + 1 - axisThickness - axisOffset,
+                        axisBound.y + axisBound.height + 1 - axisThickness - axisOffset,
                         'y',
                         -1,
                     );
                     break;
                 case ChartAxisPosition.Left:
-                    axis.translation.y = shrinkRect.y + (axisWidths.top ?? 0);
+                    axis.translation.y = axisBound.y + (axisWidths.top ?? 0);
                     axis.translation.x = clampToOutsideSeriesRect(
-                        shrinkRect.x + axisOffset + axisThickness,
+                        axisBound.x + axisOffset + axisThickness,
                         'x',
                         1,
                     );
                     break;
                 case ChartAxisPosition.Right:
-                    axis.translation.y = shrinkRect.y + (axisWidths.top ?? 0);
+                    axis.translation.y = axisBound.y + (axisWidths.top ?? 0);
                     axis.translation.x = clampToOutsideSeriesRect(
-                        shrinkRect.x + shrinkRect.width - axisThickness - axisOffset,
+                        axisBound.x + axisBound.width - axisThickness - axisOffset,
                         'x',
                         -1,
                     );

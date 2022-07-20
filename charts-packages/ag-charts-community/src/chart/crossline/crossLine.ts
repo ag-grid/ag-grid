@@ -2,12 +2,13 @@ import { PointerEvents } from "../../scene/node";
 import { Group } from "../../scene/group";
 import { Path } from "../../scene/shape/path";
 import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
+import { BBox } from "../../scene/bbox";
 import { Scale } from "../../scale/scale";
 import { clamper, ContinuousScale } from "../../scale/continuousScale";
 import { createId } from "../../util/id";
 import { Series } from "../series/series";
 import { normalizeAngle360, toRadians } from "../../util/angle";
-import { ChartAxisDirection } from "../chartAxis";
+import { ChartAxisDirection, ChartAxisPosition } from "../chartAxis";
 import { CrossLineLabelPosition, Point, labeldDirectionHandling, POSITION_TOP_COORDINATES, calculateLabelTranslation } from "./crossLineLabelPosition";
 
 export class CrossLineLabel {
@@ -119,7 +120,7 @@ export class CrossLine {
     }
 
     private createNodeData() {
-        const { scale, gridLength, sideFlag, direction, range, value, label: { position = 'top', padding: labelPadding } } = this;
+        const { scale, gridLength, sideFlag, direction, range, value, label: { position = 'top' } } = this;
 
         if (!scale) { return; }
 
@@ -255,7 +256,7 @@ export class CrossLine {
         crossLineLabel.textBaseline = 'middle';
         crossLineLabel.textAlign = 'center';
 
-        const bbox = crossLineLabel.computeTransformedBBox();
+        const bbox = this.computeLabelBBox();
 
         if (!bbox) { return; }
 
@@ -264,5 +265,37 @@ export class CrossLine {
 
         crossLineLabel.translationX = x + xTranslation;
         crossLineLabel.translationY = y + yTranslation;
+    }
+
+    private computeLabelBBox(): BBox | undefined {
+        return this.crossLineLabel.computeTransformedBBox();
+    }
+
+    calculatePadding(padding: Partial<Record<ChartAxisPosition, number>>, seriesRect: BBox) {
+        const crossLineLabelBBox = this.computeLabelBBox();
+
+        const labelX = crossLineLabelBBox?.x;
+        const labelY = crossLineLabelBBox?.y;
+
+        if (labelX == undefined || labelY == undefined) { return; }
+
+        const labelWidth = crossLineLabelBBox?.width ?? 0;
+        const labelHeight = crossLineLabelBBox?.height ?? 0;
+
+        if (labelX + labelWidth >= seriesRect.x + seriesRect.width) {
+            const paddingRight = (labelX + labelWidth) - (seriesRect.x + seriesRect.width);
+            padding.right = (padding.right ?? 0) >= paddingRight ? padding.right : paddingRight;
+        } else if (labelX <= seriesRect.x) {
+            const paddingLeft = seriesRect.x - labelX;
+            padding.left = (padding.left ?? 0) >= paddingLeft ? padding.left : paddingLeft;
+        }
+
+        if (labelY + labelHeight >= seriesRect.y + seriesRect.height) {
+            const paddingbottom = (labelY + labelHeight) - (seriesRect.y + seriesRect.height);
+            padding.bottom = (padding.bottom ?? 0) >= paddingbottom ? padding.bottom : paddingbottom;
+        } else if (labelY <= seriesRect.y) {
+            const paddingTop = seriesRect.y - labelY;
+            padding.top = (padding.top ?? 0) >= paddingTop ? padding.top : paddingTop;
+        }
     }
 }
