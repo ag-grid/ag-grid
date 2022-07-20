@@ -9,6 +9,7 @@ import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
 import { Node } from '../../scene/node';
 import { Deprecated } from '../../util/validation';
+import { CategoryAxis } from '../axis/categoryAxis';
 
 /**
  * Processed series datum used in node selections,
@@ -28,6 +29,18 @@ export interface SeriesNodeDatum {
         readonly x: number;
         readonly y: number;
     };
+}
+
+/** Modes of matching user interactions to rendered nodes (e.g. hover or click) */
+export enum SeriesNodePickMode {
+    /** Pick matches based upon pick coordinates being inside a matching shape/marker. */
+    EXACT_SHAPE_MATCH,
+    /** Pick matches by nearest category/X-axis value, then distance within that category/X-value. */
+    NEAREST_BY_MAIN_AXIS_FIRST,
+    /** Pick matches by nearest category value, then distance within that category. */
+    NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+    /** Pick matches based upon distance to ideal position */
+    NEAREST_NODE,
 }
 
 export interface TooltipRendererParams {
@@ -158,10 +171,14 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     }
 
     showInLegend = true;
+    pickModes: SeriesNodePickMode[];
 
     cursor = 'default';
 
-    constructor({ seriesGroupUsesLayer = true } = {}) {
+    constructor({
+        seriesGroupUsesLayer = true,
+        pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST],
+    } = {}) {
         super();
 
         const { group } = this;
@@ -181,6 +198,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 optimiseDirtyTracking: true,
             })
         );
+        this.pickModes = pickModes;
     }
 
     set grouped(g: boolean) {
@@ -325,8 +343,77 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     abstract getTooltipHtml(seriesDatum: any): string;
 
-    pickNode(x: number, y: number): Node | undefined {
+    pickNode(
+        x: number,
+        y: number,
+        limitPickModes?: SeriesNodePickMode[],
+    ): { pickMode: SeriesNodePickMode, match: SeriesNodeDatum, distance: number } | undefined {
+        const { pickModes, visible, group, xAxis, yAxis } = this;
+
+        if (!visible || !group.visible) {
+            return;
+        }
+
+        for (const pickMode of pickModes) {
+            if (limitPickModes && limitPickModes.includes(pickMode)) {
+                continue;
+            }
+
+            let match: Node | SeriesNodeDatum | undefined = undefined;
+            let distance = Infinity;
+
+            switch (pickMode) {
+                case SeriesNodePickMode.EXACT_SHAPE_MATCH:
+                    match = this.pickNodeExactShape(x, y);
+                    distance = 0;
+                    break;
+
+                case SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST:
+                case SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST:
+                    const result1 = this.pickNodeMainAxisFirst(
+                        x,
+                        y,
+                        pickMode === SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                    );
+                    if (result1) {
+                        match = result1.datum;
+                        distance = result1.distance;
+                    }
+                    break;
+
+                case SeriesNodePickMode.NEAREST_NODE:
+                    const result2 = this.pickNodeClosestDatum(x, y);
+                    if (result2) {
+                        match = result2.datum;
+                        distance = result2.distance;
+                    }
+                    break;
+            }
+
+            if (match) {
+                return { pickMode, match: match instanceof Node ? match.datum : match, distance };
+            }
+        }
+    }
+
+    protected pickNodeExactShape(x: number, y: number): Node | undefined {
         return this.pickGroup.pickNode(x, y);
+    }
+
+    protected pickNodeClosestDatum(_x: number, _y: number): { datum: SeriesNodeDatum, distance: number } | undefined {
+        // Override point for sub-classes - but if this is invoked, the sub-class specified it wants
+        // to use this feature.
+        throw new Error('AG Charts - Series.pickNodeClosestDatum() not implemented');
+    }
+
+    protected pickNodeMainAxisFirst(
+        _x: number,
+        _y: number,
+        _requireCategoryAxis: boolean
+    ): { datum: SeriesNodeDatum, distance: number } | undefined {
+        // Override point for sub-classes - but if this is invoked, the sub-class specified it wants
+        // to use this feature.
+        throw new Error('AG Charts - Series.pickNodeMainAxisFirst() not implemented');
     }
 
     fireNodeClickEvent(_event: MouseEvent, _datum: C['nodeData'][number]): void {
