@@ -86,6 +86,7 @@ export class RowCtrl extends BeanStub {
 
     private active = true;
 
+    private stoppingRowEdit: boolean;
     private editingRow: boolean;
     private rowFocused: boolean;
 
@@ -974,8 +975,14 @@ export class RowCtrl extends BeanStub {
     }
 
     public stopEditing(cancel = false): void {
+        // if we are already stopping row edit, there is
+        // no need to start this process again.
+        if (this.stoppingRowEdit) { return; }
+
         const cellControls = this.getAllCellCtrls();
         const isRowEdit = this.editingRow;
+
+        this.stoppingRowEdit = true;
 
         let fireRowEditEvent = false;
         for (const ctrl of cellControls) {
@@ -990,6 +997,8 @@ export class RowCtrl extends BeanStub {
             this.beans.eventService.dispatchEvent(event);
         }
         this.setEditingRow(false);
+
+        this.stoppingRowEdit = false;
     }
 
     public setInlineEditingCss(editing: boolean): void {
