@@ -4,6 +4,7 @@ import { Column } from "../entities/column";
 import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { DragService, DragListenerParams } from "./dragService";
+import { MouseEventService } from "../gridBodyComp/mouseEventService";
 import { Environment } from "../environment";
 import { RowDropZoneParams } from "../gridBodyComp/rowDragFeature";
 import { RowNode } from "../entities/rowNode";
@@ -137,6 +138,7 @@ export interface DraggingEvent {
 export class DragAndDropService extends BeanStub {
 
     @Autowired('dragService') private dragService: DragService;
+    @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
     @Autowired('environment') private environment: Environment;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -485,6 +487,8 @@ export class DragAndDropService extends BeanStub {
 
     private createGhost(): void {
         this.eGhost = loadTemplate(DragAndDropService.GHOST_TEMPLATE);
+        this.mouseEventService.stampTopLevelGridCompWithGridInstance(this.eGhost);
+
         const { theme } = this.environment.getTheme();
 
         if (theme) {
