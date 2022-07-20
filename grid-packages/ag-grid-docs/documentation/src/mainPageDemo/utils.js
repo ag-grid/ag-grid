@@ -125,7 +125,7 @@ export const sharedNumberParser = (value) => {
 };
 
 export const numberParser = (params) => {
-    return this.sharedNumberParser(params.newValue);
+    return sharedNumberParser(params.newValue);
 };
 
 export const booleanComparator = (value1, value2) => {
