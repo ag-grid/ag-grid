@@ -547,6 +547,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
         if (!anyVisible) {
             this.tickLineGroupSelection = tickLineGroupSelection;
             this.gridlineGroupSelection = gridlineGroupSelection;
+
+            this.crossLines?.forEach((crossLine) => {
+                crossLine.update(anyVisible);
+            });
+
             return;
         }
 
@@ -751,7 +756,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             crossLine.label.parallel = crossLine.label.parallel !== undefined ? crossLine.label.parallel : parallelLabels;
             crossLine.parallelFlipRotation = parallelFlipRotation;
             crossLine.regularFlipRotation = regularFlipRotation;
-            crossLine.update(anyVisible); // fix visible
+            crossLine.update(anyVisible);
         });
     }
 
