@@ -124,7 +124,7 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, json
         return null;
     }
 
-    const nodes = useJsonFileNodes();
+    const nodes = jsonData ? null : useJsonFileNodes();
 
     if (source) {
         sources = [source];

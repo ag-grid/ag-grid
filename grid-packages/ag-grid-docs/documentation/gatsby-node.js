@@ -20,8 +20,7 @@ const isDevelopment = require('./src/utils/is-development');
 const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
 const lzString = require('lz-string');
 const {graphql} = require("gatsby");
-
-const PRELOAD_PAGE_DATA = true;
+const PRELOAD_PAGE_DATA = require("./src/preload-page-data.js");
 
 /**
  * This hides the config file that we use to show linting in IDEs from Gatsby.
@@ -273,6 +272,25 @@ const createDocPages = async (createPage, graphql, reporter) => {
         return;
     }
 
+    const results = await graphql(`
+    {
+      allFile(
+        filter: {sourceInstanceName: {eq: "doc-pages"}, relativeDirectory: {regex: "/.*/examples/.*/"}}
+      ) {
+        nodes {
+          publicURL
+          relativePath
+          mtimeMs
+        }
+      }
+    }
+    `);
+
+    if (results.errors) {
+        reporter.panicOnBuild(`Error while running GraphQL query while in setFieldsOnGraphQLNodeType.`);
+        return;
+    }
+
     // get all json data required by the api and interface doc components
     // doing this upfront allows us to exclude the content in the resultJsonNodes and allows for a much smaller overall page load size
     // (esp page-data.json)
@@ -283,25 +301,6 @@ const createDocPages = async (createPage, graphql, reporter) => {
         const frameworks = supportedFrameworks.filter(f => !specifiedFrameworks || specifiedFrameworks.includes(f));
         const parts = srcPath.split('/').filter(x => x !== '');
         const pageName = parts[parts.length - 1];
-
-        //     const regex = `/.*${srcPath.replace('/', '')}/examples/.*/`;
-        //     const result = await graphql(`query ExamplesQuery($regex: String!) {
-        //       allFile(
-        //         filter: {sourceInstanceName: {eq: "doc-pages"}, relativeDirectory: {regex: $regex}}
-        //       ) {
-        //         nodes {
-        //           relativePath
-        //           publicURL
-        //           base
-        //           childHtmlRehype {
-        //             html
-        //           }
-        //           mtimeMs
-        //         }
-        //       }
-        //     }
-        // `, {regex});
-        //     const exampleIndexData = result.data.allFile.nodes;
 
         const exampleIndexData = PRELOAD_PAGE_DATA ? getExampleIndexFilesForPage(`${srcPath.replace('/', '')}/examples`) : null;
 

@@ -1,6 +1,6 @@
-import { withPrefix } from 'gatsby';
+import {withPrefix} from 'gatsby';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
-import { TYPE_LINKS } from './type-links';
+import {TYPE_LINKS} from './type-links';
 
 export const inferType = value => {
     if (value == null) {
@@ -23,7 +23,9 @@ const prefixRegex = new RegExp(`^${withPrefix('/')}`);
 export const convertUrl = (href, framework) => {
     const link = href || '';
 
-    if (link.includes('/static/')) { return link; }
+    if (link.includes('/static/')) {
+        return link;
+    }
 
     return link.startsWith('/') ?
         // strip the prefix is case it's been applied, before creating the proper URL
@@ -179,13 +181,13 @@ export function applyUndefinedUnionType(typeName) {
     }
     if (trimmed.includes('=>')) {
         return `(${trimmed}) | undefined`;
-    }
-    else {
+    } else {
         return `${trimmed} | undefined`;
     }
 }
 
 const NEWLINE_DEFAULT_STRING = '<br> Default:';
+
 /** Handle correct placement of more link so that default is always at the end on a new line even if already included in JsDoc. */
 export function addMoreLink(description, seeMore) {
     // Get default string along with its value
@@ -283,19 +285,16 @@ export function appendTypeAlias(name, interfaceType, allLines) {
 export function writeAllInterfaces(interfacesToWrite, framework, printConfig) {
     let allLines = [];
     const alreadyWritten = {};
-    interfacesToWrite.forEach(({ name, interfaceType }) => {
+    interfacesToWrite.forEach(({name, interfaceType}) => {
         if (!alreadyWritten[name]) {
             allLines.push('')
             if (interfaceType.meta.isTypeAlias) {
                 appendTypeAlias(name, interfaceType, allLines);
-            }
-            else if (interfaceType.meta.isEnum) {
+            } else if (interfaceType.meta.isEnum) {
                 appendEnum(name, interfaceType, allLines);
-            }
-            else if (interfaceType.meta.isCallSignature) {
+            } else if (interfaceType.meta.isCallSignature) {
                 appendCallSignature(name, interfaceType, framework, allLines);
-            }
-            else {
+            } else {
                 appendInterface(name, interfaceType, framework, allLines, printConfig);
             }
             alreadyWritten[name] = true;
@@ -313,7 +312,9 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
     }
 
     const alreadyIncluded = {};
-    allDefs.forEach((v) => { alreadyIncluded[v.name] = true; });
+    allDefs.forEach((v) => {
+        alreadyIncluded[v.name] = true;
+    });
 
     const addDef = (def) => {
         if (!alreadyIncluded[def.name]) {
@@ -380,7 +381,7 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
                 || (isLinkedType && numMembers < 12)
                 || (overrideInclusion === true)) && !alreadyIncluded[type]) {
 
-                if (!addDef({ name: type, interfaceType })) {
+                if (!addDef({name: type, interfaceType})) {
                     // Previously added - no need to continue.
                     return;
                 }
@@ -390,7 +391,8 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
                     let interfacesToInclude = {};
 
                     if (typeof (interfaceType.type) === 'string') {
-                        interfacesToInclude[interfaceType.type] = true;;
+                        interfacesToInclude[interfaceType.type] = true;
+                        ;
                     } else {
                         let propertyTypes = Object.entries(interfaceType.type);
                         propertyTypes.filter(([k, v]) => !!v && typeof v == 'string')
@@ -404,8 +406,10 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
                                 return words.filter(w => !TYPE_LINKS[w] && interfaceLookup[w]);
 
                             }).forEach((s) => {
-                                s.forEach(v => { interfacesToInclude[v] = true; })
-                            });
+                            s.forEach(v => {
+                                interfacesToInclude[v] = true;
+                            })
+                        });
                     }
 
                     const toAdd = Object.keys(interfacesToInclude);
@@ -439,10 +443,8 @@ export function getLongestNameLength(nameWithBreaks) {
 
 
 export function getJsonFromFile(jsonData, nodes, pageName, source) {
-    if(jsonData) {
-        if (!!jsonData[`${pageName}/${source}`] || !!jsonData[source]) {
-            return {...(jsonData[`${pageName}/${source}`] || jsonData[source])};
-        }
+    if (!!jsonData[`${pageName}/${source}`] || !!jsonData[source]) {
+        return {...(jsonData[`${pageName}/${source}`] || jsonData[source])};
     } else {
         const json = nodes.filter(n => n.relativePath === source || n.relativePath === `${pageName}/${source}`)[0];
         if (json) {

@@ -20,8 +20,14 @@ const MatrixTable = ({
                          framework,
                          jsonData
                      }) => {
-    const nodes = useJsonFileNodes();
-    const file = jsonData[nodes.find(node => node.relativePath === src).relativePath];
+    let file;
+    if(jsonData) {
+        file = jsonData[src];
+    } else {
+        const nodes = useJsonFileNodes();
+        file = JSON.parse(nodes.find(node => node.relativePath === src).internal.content);
+    }
+
     const allRows = getRowsToProcess(file, rootNode, showCondition);
     const allColumns = JSON.parse(columns);
 
