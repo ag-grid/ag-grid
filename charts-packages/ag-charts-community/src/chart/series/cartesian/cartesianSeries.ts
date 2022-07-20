@@ -1,4 +1,4 @@
-import { Series, SeriesNodeDataContext } from '../series';
+import { Series, SeriesNodeDataContext, SeriesNodeDatum, SeriesNodePickMode, SeriesNodePickMatch } from '../series';
 import { ChartAxis, ChartAxisDirection } from '../../chartAxis';
 import { SeriesMarker, SeriesMarkerFormatterParams } from '../seriesMarker';
 import { isContinuous, isDiscrete } from '../../../util/value';
@@ -9,6 +9,7 @@ import { Group } from '../../../scene/group';
 import { Text } from '../../../scene/shape/text';
 import { Node } from '../../../scene/node';
 import { RedrawType, SceneChangeDetection } from '../../../scene/changeDetectable';
+import { CategoryAxis } from '../../axis/categoryAxis';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
@@ -60,8 +61,9 @@ export abstract class CartesianSeries<
      */
     protected readonly seriesItemEnabled = new Map<string, boolean>();
 
-    protected constructor(opts: Partial<SeriesOpts> = {}) {
-        super({ seriesGroupUsesLayer: false });
+    protected constructor(
+        opts: Partial<SeriesOpts> & { pickModes?: SeriesNodePickMode[] } = {}) {
+        super({ seriesGroupUsesLayer: false, pickModes: opts.pickModes });
 
         const {
             pickGroupIncludes = ['datumNodes'] as PickGroupInclude[],
@@ -279,28 +281,118 @@ export abstract class CartesianSeries<
         this.highlightSelection = this.updateHighlightSelectionItem({ item, highlightSelection });
     }
 
-    pickNode(x: number, y: number): Node | undefined {
-        let result = super.pickNode(x, y);
+    protected pickNodeExactShape(x: number, y: number): SeriesNodePickMatch | undefined {
+        let result = super.pickNodeExactShape(x, y);
 
-        if (!result) {
-            const { opts: { pickGroupIncludes } } = this;
-            const markerGroupIncluded = pickGroupIncludes.includes('markers');
+        if (result) {
+            return result;
+        }
 
-            for (const { pickGroup, markerGroup } of this.subGroups) {
-                result = pickGroup.pickNode(x, y);
+        const { opts: { pickGroupIncludes } } = this;
+        const markerGroupIncluded = pickGroupIncludes.includes('markers');
 
-                if (!result && markerGroupIncluded) {
-                    result = markerGroup?.pickNode(x, y);
-                }
+        for (const { pickGroup, markerGroup } of this.subGroups) {
+            let match = pickGroup.pickNode(x, y);
 
-                if (result) {
-                    break;
+            if (!match && markerGroupIncluded) {
+                match = markerGroup?.pickNode(x, y);
+            }
+
+            if (match) {
+                return { datum: match.datum, distance: 0 };
+            }
+        }
+    }
+
+    protected pickNodeClosestDatum(x: number, y: number): SeriesNodePickMatch | undefined {
+        const { xAxis, yAxis, group, contextNodeData } = this;
+        const hitPoint = group.transformPoint(x, y);
+
+        let minDistance = Infinity;
+        let closestDatum: SeriesNodeDatum | undefined;
+
+        for (const context of contextNodeData) {
+            for (const datum of context.nodeData) {
+                const { point: { x = NaN, y = NaN } = {} } = datum;
+                const isInRange = xAxis?.inRange(x) && yAxis?.inRange(y);
+                if (!isInRange) { continue; }
+    
+                // No need to use Math.sqrt() since x < y implies Math.sqrt(x) < Math.sqrt(y) for
+                // values > 1 
+                const distance = (hitPoint.x - x) ** 2 + (hitPoint.y - y) ** 2;
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestDatum = datum;
                 }
             }
         }
 
-        return result;
+        if (closestDatum) {
+            return { datum: closestDatum, distance: Math.sqrt(minDistance) };
+        }
     }
+
+    protected pickNodeMainAxisFirst(
+        x: number,
+        y: number,
+        requireCategoryAxis: boolean,
+    ): { datum: SeriesNodeDatum, distance: number } | undefined {
+        const { xAxis, yAxis, group, contextNodeData } = this;
+        
+        // Prefer to start search with any available category axis.
+        const directions = [ xAxis, yAxis ]
+            .filter((a): a is CategoryAxis => a instanceof CategoryAxis)
+            .map(a => a.direction);
+        if (requireCategoryAxis && directions.length === 0) {
+            return;
+        }
+
+        // Default to X-axis unless we found a suitable category axis.
+        const [ primaryDirection = ChartAxisDirection.X ] = directions;
+
+        const hitPoint = group.transformPoint(x, y);
+        const hitPointCoords = primaryDirection === ChartAxisDirection.X ?
+            [hitPoint.x, hitPoint.y] : 
+            [hitPoint.y, hitPoint.x];
+
+        let minDistance = [Infinity, Infinity];
+        let closestDatum: SeriesNodeDatum | undefined = undefined;
+
+        for (const context of contextNodeData) {
+            for (const datum of context.nodeData) {
+                const { point: { x = NaN, y = NaN } = {} } = datum;
+                const isInRange = xAxis?.inRange(x) && yAxis?.inRange(y);
+                if (!isInRange) { continue; }
+
+                const point = primaryDirection === ChartAxisDirection.X ?
+                    [x, y] : 
+                    [y, x];
+
+                // Compare distances from most significant dimension to least.
+                let newMinDistance = true;
+                for (let i = 0; i < point.length; i++) {
+                    const dist = Math.abs(point[i] - hitPointCoords[i]);
+                    if (dist > minDistance[i]) {
+                        newMinDistance = false;
+                        break;
+                    }
+                    if (dist < minDistance[i]) {
+                        minDistance[i] = dist;
+                        minDistance.fill(Infinity, i + 1, minDistance.length);
+                    }
+                }
+
+                if (newMinDistance) {
+                    closestDatum = datum;
+                }
+            }
+        }
+
+        if (closestDatum) {
+            return { datum: closestDatum, distance: Math.sqrt(minDistance[0] ** 2 + minDistance[1] ** 2) };
+        }
+    }
+
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {
         if (this.seriesItemEnabled.size > 0) {

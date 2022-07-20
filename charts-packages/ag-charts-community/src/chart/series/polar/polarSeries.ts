@@ -1,4 +1,4 @@
-import { Series, SeriesNodeDatum, SeriesNodeDataContext } from "../series";
+import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from "../series";
 import { ChartAxisDirection } from "../../chartAxis";
 import { SeriesMarker, SeriesMarkerFormatterParams } from "../seriesMarker";
 import { RedrawType, SceneChangeDetection } from '../../../scene/changeDetectable';
@@ -24,6 +24,10 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
      * and is not supposed to be set by the user.
      */
     radius: number = 0;
+
+    constructor() {
+        super({ pickModes: [ SeriesNodePickMode.EXACT_SHAPE_MATCH ] });
+    }
 }
 
 export class PolarSeriesMarker extends SeriesMarker {

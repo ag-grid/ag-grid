@@ -1,8 +1,7 @@
 import { Scene } from "../scene/scene";
 import { Group } from "../scene/group";
-import { Series, SeriesNodeDatum, SeriesNodeDataContext } from "./series/series";
+import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from "./series/series";
 import { Padding } from "../util/padding";
-import { Shape } from "../scene/shape/shape";
 import { Node } from "../scene/node";
 import { Rect } from "../scene/shape/rect";
 import { Legend, LegendDatum } from "./legend";
@@ -1026,25 +1025,28 @@ export abstract class Chart extends Observable {
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
     private pickSeriesNode(x: number, y: number): {
         series: Series<any>,
-        node: Node
+        datum: SeriesNodeDatum,
     } | undefined {
-        if (!(this.seriesRect && this.seriesRect.containsPoint(x, y))) {
-            return undefined;
-        }
+        const { tooltip: { tracking } } = this;
 
         const start = performance.now();
 
-        let result: {series: Series<any>,node: Node} | undefined = undefined;
+        // Disable 'nearest match' options if tooltip.tracking is enabled.
+        const pickModes = tracking ? undefined : [SeriesNodePickMode.EXACT_SHAPE_MATCH];
+
+        let result: { series: Series<any>, datum: SeriesNodeDatum, distance: number } | undefined = undefined;
         for (const series of this.series) {
             if (!series.visible || !series.group.visible) {
                 continue;
             }
-            const node = series.pickNode(x, y);
-            if (node) {
-                result = {
-                    series,
-                    node
-                };
+            let { match, distance } = series.pickNode(x, y, pickModes) ?? {};
+            if (!match || distance == null) {
+                continue;
+            }
+            if (!result || result.distance > distance) {
+                result = { series, distance, datum: match };
+            }
+            if (distance === 0) {
                 break;
             }
         }
@@ -1059,58 +1061,8 @@ export abstract class Chart extends Observable {
 
     lastPick?: {
         datum: SeriesNodeDatum;
-        node?: Shape; // We may not always have an associated node, for example
-        // when line series are rendered without markers.
         event?: MouseEvent;
     };
-
-    // Provided x/y are in canvas coordinates.
-    private pickClosestSeriesNodeDatum(x: number, y: number): SeriesNodeDatum | undefined {
-        if (!this.seriesRect || !this.seriesRect.containsPoint(x, y)) {
-            return undefined;
-        }
-
-        let minDistance = Infinity;
-        let closestDatum: SeriesNodeDatum | undefined;
-
-        const { series: allSeries, nodeData: nodeDataMap } = this;
-        for (const series of allSeries) {
-            if (!series.visible || !series.group.visible) {
-                continue;
-            }
-
-            // Ignore off-screen points when finding the closest series node datum in tracking mode.
-            const { xAxis, yAxis } = series;
-            const hitPoint = series.group.transformPoint(x, y);
-
-            const contexts = nodeDataMap.get(series) ?? [];
-            for (const context of contexts) {
-                for (const datum of context.nodeData) {
-                    const { point } = datum;
-                    if (!point) {
-                        continue;
-                    }
-        
-                    const { x, y } = point;
-                    const isInRange = xAxis?.inRange(x) && yAxis?.inRange(y);
-        
-                    if (!isInRange) {
-                        continue;
-                    }
-        
-                    // No need to use Math.sqrt() since x < y implies Math.sqrt(x) < Math.sqrt(y) for
-                    // values > 1 
-                    const distance = (hitPoint.x - x) ** 2 + (hitPoint.y - y) ** 2;
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        closestDatum = datum;
-                    }
-                }
-            }
-        }
-
-        return closestDatum;
-    }
 
     protected onMouseMove(event: MouseEvent): void {
         this.handleLegendMouseMove(event);
@@ -1135,63 +1087,36 @@ export abstract class Chart extends Observable {
         this.handleTooltip(this.lastTooltipMeta!);
     });
     protected handleTooltip(meta: TooltipMeta) {
-        const { lastPick, tooltip: { tracking: tooltipTracking } } = this;
+        const { lastPick, tooltip: { tracking } } = this;
         const { offsetX, offsetY } = meta;
+
+        const disableTooltip = () => {
+            if (lastPick) {
+                // Cursor moved from a non-marker node to empty space.
+                this.changeHighlightDatum();
+                this.tooltip.toggle(false);
+            }
+        };
+
+        if (!(this.seriesRect && this.seriesRect.containsPoint(offsetX, offsetY))) {
+            disableTooltip();
+            return;
+        }
+
         const pick = this.pickSeriesNode(offsetX, offsetY);
-        let nodeDatum: SeriesNodeDatum | undefined;
 
-        if (pick && pick.node instanceof Shape) {
-            const { node } = pick;
-            nodeDatum = node.datum as SeriesNodeDatum;
-            if (lastPick && lastPick.datum === nodeDatum) {
-                lastPick.node = node;
-                lastPick.event = meta.event;
-            }
-            // Marker nodes will have the `point` info in their datums.
-            // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
-            if ((!node.datum.point || !tooltipTracking)) {
-                if (!lastPick // cursor moved from empty space to a node
-                    || lastPick.node !== node) { // cursor moved from one node to another
-                        this.onSeriesDatumPick(meta, node.datum, node);
-                } else if (pick.series.tooltip.enabled) { // cursor moved within the same node
-                    this.tooltip.show(meta);
-                }
-                // A non-marker node (takes precedence over marker nodes) was highlighted.
-                // Or we are not in the tracking mode.
-                // Either way, we are done at this point.
-                return;
-            }
+        if (!pick) {
+            disableTooltip();
+            return;
         }
 
-        let hideTooltip = false;
-        // In tracking mode a tooltip is shown for the closest rendered datum.
-        // This makes it easier to show tooltips when markers are small and/or plentiful
-        // and also gives the ability to show tooltips even when the series were configured
-        // to not render markers.
-        if (tooltipTracking) {
-            const closestDatum = this.pickClosestSeriesNodeDatum(offsetX, offsetY);
-            if (closestDatum && closestDatum.point) {
-                const { x, y } = closestDatum.point;
-                const { canvas } = this.scene;
-                const point = closestDatum.series.group.inverseTransformPoint(x, y);
-                const canvasRect = canvas.element.getBoundingClientRect();
-                this.onSeriesDatumPick({
-                    ...meta,
-                    pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
-                    pageY: Math.round(canvasRect.top + window.pageYOffset + point.y),
-                    offsetX: Math.round(canvasRect.left + point.y),
-                    offsetY: Math.round(canvasRect.top + point.y),
-                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node as Shape : undefined);
-            } else {
-                hideTooltip = true;
-            }
+        if (!lastPick || lastPick.datum !== pick.datum) {
+            this.onSeriesDatumPick(meta, pick.datum);
+            return;
         }
 
-        if (lastPick && (hideTooltip || !tooltipTracking)) {
-            // Cursor moved from a non-marker node to empty space.
-            this.changeHighlightDatum();
-            this.tooltip.toggle(false);
-        }
+        lastPick.event = meta.event;
+        this.tooltip.show(this.mergeTooltipDatum(meta, pick.datum));
     }
 
     protected onMouseDown(_event: MouseEvent) {
@@ -1336,7 +1261,7 @@ export abstract class Chart extends Observable {
         }
     }
 
-    private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum, node?: Shape) {
+    private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum) {
         const { lastPick } = this;
         if (lastPick) {
             if (lastPick.datum === datum) { return; }
@@ -1344,20 +1269,40 @@ export abstract class Chart extends Observable {
 
         this.changeHighlightDatum({
             datum,
-            node,
             event: meta.event,
         });
 
-        const html = datum.series.tooltip.enabled && datum.series.getTooltipHtml(datum);
+        if (datum) {
+            meta = this.mergeTooltipDatum(meta, datum);
+        }
 
+        const html = datum.series.tooltip.enabled && datum.series.getTooltipHtml(datum);
         if (html) {
             this.tooltip.show(meta, html);
         }
     }
 
+    private mergeTooltipDatum(meta: TooltipMeta, datum: SeriesNodeDatum): TooltipMeta {
+        if (datum.point) {
+            const { x, y } = datum.point;
+            const { canvas } = this.scene;
+            const point = datum.series.group.inverseTransformPoint(x, y);
+            const canvasRect = canvas.element.getBoundingClientRect();
+            return {
+                ...meta,
+                pageX: Math.round(canvasRect.left + window.scrollX + point.x),
+                pageY: Math.round(canvasRect.top + window.scrollY + point.y),
+                offsetX: Math.round(canvasRect.left + point.y),
+                offsetY: Math.round(canvasRect.top + point.y),
+            };
+        }
+
+        return meta;
+}
+
     highlightedDatum?: SeriesNodeDatum;
 
-    changeHighlightDatum(newPick?: { datum: SeriesNodeDatum, node?: Shape, event?: MouseEvent}) {
+    changeHighlightDatum(newPick?: { datum: SeriesNodeDatum, event?: MouseEvent}) {
         const seriesToUpdate: Set<Series> = new Set<Series>();
         const { datum: { series: newSeries = undefined } = {}, datum = undefined } = newPick || {};
         const { lastPick: { datum: { series: lastSeries = undefined } = {} } = {} } = this;

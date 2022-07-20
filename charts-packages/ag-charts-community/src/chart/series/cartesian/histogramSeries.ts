@@ -9,6 +9,7 @@ import {
     SeriesTooltip,
     Series,
     SeriesNodeDataContext,
+    SeriesNodePickMode,
 } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
@@ -138,7 +139,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     lineDashOffset: number = 0;
 
     constructor() {
-        super();
+        super({ pickModes: [ SeriesNodePickMode.EXACT_SHAPE_MATCH ] });
 
         this.label.enabled = false;
     }

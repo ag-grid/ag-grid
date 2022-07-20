@@ -1,6 +1,6 @@
 import { Selection } from '../../../scene/selection';
 import { Group } from '../../../scene/group';
-import { SeriesNodeDatum, CartesianTooltipRendererParams, SeriesTooltip, SeriesNodeDataContext } from '../series';
+import { SeriesNodeDatum, CartesianTooltipRendererParams, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { extent } from '../../../util/array';
 import { LegendDatum } from '../../legend';
 import { LinearScale } from '../../../scale/linearScale';
@@ -133,7 +133,15 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     readonly tooltip: ScatterSeriesTooltip = new ScatterSeriesTooltip();
 
     constructor() {
-        super({ pickGroupIncludes: ['markers'], pathsPerSeries: 0, features: ['markers'] });
+        super({
+            pickGroupIncludes: ['markers'],
+            pickModes: [
+                SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                SeriesNodePickMode.NEAREST_NODE,
+            ],
+            pathsPerSeries: 0,
+            features: ['markers'],
+        });
 
         const { label } = this;
 

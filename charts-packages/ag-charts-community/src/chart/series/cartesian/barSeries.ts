@@ -18,6 +18,7 @@ import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { isNumber } from '../../../util/value';
 import { clamper, ContinuousScale } from '../../../scale/continuousScale';
+import { SeriesNodePickMode } from '../series';
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
@@ -135,7 +136,13 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     formatter?: (params: BarSeriesFormatterParams) => BarSeriesFormat = undefined;
 
     constructor() {
-        super({ pickGroupIncludes: ['datumNodes'], pathsPerSeries: 0 });
+        super({
+            pickGroupIncludes: ['datumNodes'],
+            pickModes: [
+                SeriesNodePickMode.EXACT_SHAPE_MATCH,
+            ],
+            pathsPerSeries: 0,
+        });
 
         this.label.enabled = false;
     }
