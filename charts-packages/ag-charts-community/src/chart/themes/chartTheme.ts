@@ -114,8 +114,6 @@ export class ChartTheme {
                     padding: 5,
                     color: 'rgb(87, 87, 87)',
                     rotation: undefined,
-                    position: 'top',
-                    parallel: undefined,
                 }
             }
         };
