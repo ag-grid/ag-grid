@@ -1290,8 +1290,8 @@ export abstract class Chart extends Observable {
             const canvasRect = canvas.element.getBoundingClientRect();
             return {
                 ...meta,
-                pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
-                pageY: Math.round(canvasRect.top + window.pageYOffset + point.y),
+                pageX: Math.round(canvasRect.left + window.scrollX + point.x),
+                pageY: Math.round(canvasRect.top + window.scrollY + point.y),
                 offsetX: Math.round(canvasRect.left + point.y),
                 offsetY: Math.round(canvasRect.top + point.y),
             };
