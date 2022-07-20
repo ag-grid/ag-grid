@@ -120,7 +120,7 @@ export class CrossLine {
     }
 
     private createNodeData() {
-        const { scale, gridLength, sideFlag, direction, range, value, label: { position = 'top', padding: labelPadding } } = this;
+        const { scale, gridLength, sideFlag, direction, range, value, label: { position = 'top' } } = this;
 
         if (!scale) { return; }
 
@@ -278,6 +278,7 @@ export class CrossLine {
         const labelY = crossLineLabelBBox?.y;
 
         if (labelX == undefined || labelY == undefined) { return; }
+
         const labelWidth = crossLineLabelBBox?.width ?? 0;
         const labelHeight = crossLineLabelBBox?.height ?? 0;
 
