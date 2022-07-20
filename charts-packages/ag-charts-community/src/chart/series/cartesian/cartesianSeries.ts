@@ -1,4 +1,4 @@
-import { Series, SeriesNodeDataContext, SeriesNodeDatum, SeriesNodePickMode } from '../series';
+import { Series, SeriesNodeDataContext, SeriesNodeDatum, SeriesNodePickMode, SeriesNodePickMatch } from '../series';
 import { ChartAxis, ChartAxisDirection } from '../../chartAxis';
 import { SeriesMarker, SeriesMarkerFormatterParams } from '../seriesMarker';
 import { isContinuous, isDiscrete } from '../../../util/value';
@@ -281,7 +281,7 @@ export abstract class CartesianSeries<
         this.highlightSelection = this.updateHighlightSelectionItem({ item, highlightSelection });
     }
 
-    protected pickNodeExactShape(x: number, y: number): Node | undefined {
+    protected pickNodeExactShape(x: number, y: number): SeriesNodePickMatch | undefined {
         let result = super.pickNodeExactShape(x, y);
 
         if (result) {
@@ -292,19 +292,19 @@ export abstract class CartesianSeries<
         const markerGroupIncluded = pickGroupIncludes.includes('markers');
 
         for (const { pickGroup, markerGroup } of this.subGroups) {
-            result = pickGroup.pickNode(x, y);
+            let match = pickGroup.pickNode(x, y);
 
-            if (!result && markerGroupIncluded) {
-                result = markerGroup?.pickNode(x, y);
+            if (!match && markerGroupIncluded) {
+                match = markerGroup?.pickNode(x, y);
             }
 
-            if (result) {
-                return result;
+            if (match) {
+                return { datum: match.datum, distance: 0 };
             }
         }
     }
 
-    protected pickNodeClosestDatum(x: number, y: number): { datum: SeriesNodeDatum, distance: number } | undefined {
+    protected pickNodeClosestDatum(x: number, y: number): SeriesNodePickMatch | undefined {
         const { xAxis, yAxis, group, contextNodeData } = this;
         const hitPoint = group.transformPoint(x, y);
 
