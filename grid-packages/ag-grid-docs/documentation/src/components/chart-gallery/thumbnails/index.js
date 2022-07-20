@@ -8,6 +8,7 @@ import thumbnailBubbleWithNegativeValues from './bubble-with-negative-values.png
 import thumbnailChartCustomisation from './chart-customisation.png';
 import thumbnailColumnWithNegativeValues from './column-with-negative-values.png';
 import thumbnailCombinationofDifferentSeriesTypes from './combination-of-different-series-types.png';
+import thumbnailCrossLines from './cross-lines.png';
 import thumbnailCustomMarkerShapes from './custom-marker-shapes.png';
 import thumbnailCustomTooltips from './custom-tooltips.png';
 import thumbnailGroupedBar from './grouped-bar.png';
@@ -45,6 +46,7 @@ const thumbnails = {
     'chart-customisation': thumbnailChartCustomisation,
     'column-with-negative-values': thumbnailColumnWithNegativeValues,
     'combination-of-different-series-types': thumbnailCombinationofDifferentSeriesTypes,
+    'cross-lines': thumbnailCrossLines,
     'custom-marker-shapes': thumbnailCustomMarkerShapes,
     'custom-tooltips': thumbnailCustomTooltips,
     'grouped-bar': thumbnailGroupedBar,
