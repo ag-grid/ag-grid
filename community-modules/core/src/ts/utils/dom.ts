@@ -228,12 +228,7 @@ export function removeElement(parent: HTMLElement, cssSelector: string) {
 
 export function removeFromParent(node: Element | null) {
     if (node && node.parentNode) {
-        // sometimes competing events could be trying to remove the same
-        // node from the dom, so we wrap this call in a try/catch block
-        try {
-            node.parentNode.removeChild(node);
-        // tslint:disable-next-line: no-empty
-        } catch (ignore) {}
+        node.parentNode.removeChild(node);
     }
 }
 
