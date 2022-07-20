@@ -17,7 +17,7 @@ npm run clean
 echo "Gatsby Archive Package"
 cd documentation
 npm run clean
-GATSBY_HOST=www.ag-grid.com GATSBY_ROOT_DIRECTORY="/archive/28.0.0" npm run package
+GATSBY_HOST=www.ag-grid.com GATSBY_ROOT_DIRECTORY="/archive/${RAW_VERSION}" npm run package
 cd ..
 
 echo "Building Docs Archive"

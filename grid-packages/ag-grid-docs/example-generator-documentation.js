@@ -57,8 +57,10 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
 
         const updateImports = (src) => {
 
-
-            if (!forceConversion && (!destinationFile.endsWith('.ts') && !destinationFile.endsWith('.tsx'))) {
+            if (!forceConversion &&
+                (!destinationFile.endsWith('.ts') &&
+                    !destinationFile.endsWith('.tsx') &&
+                    !destinationFile.endsWith('.jsx'))) {
                 return src;
             }
 

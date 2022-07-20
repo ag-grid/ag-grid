@@ -29,7 +29,7 @@ import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists, missing } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
-import { executeInAWhile } from "../utils/function";
+import { doOnce, executeInAWhile } from "../utils/function";
 import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
@@ -112,10 +112,16 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
         if (this.gridOptionsWrapper.isGroupRowsSticky()) {
-            this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
-                this.createRowCon.bind(this),
-                this.destroyRowCtrls.bind(this)
-            ));
+            if (this.rowModel.getType() != Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+                doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
+            } else if (this.gridOptionsWrapper.isTreeData()) {
+                doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups does not work with Tree Data.'), 'rowRenderer.stickyDoesNotWorkWithTreeData');
+            }  else {
+                this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
+                    this.createRowCon.bind(this),
+                    this.destroyRowCtrls.bind(this)
+                ));
+            }
         }
 
         this.registerCellEventListeners();

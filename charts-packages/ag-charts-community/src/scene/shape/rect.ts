@@ -3,6 +3,7 @@ import { BBox } from "../bbox";
 import { LinearGradient } from "../gradient/linearGradient";
 import { Color } from "../../util/color";
 import { Shape } from "./shape";
+import { Path2D } from "../path2D";
 
 export enum RectSizing {
     Content,
@@ -10,8 +11,9 @@ export enum RectSizing {
 }
 
 export class Rect extends Path {
-
     static className = 'Rect';
+
+    readonly borderPath = new Path2D();
 
     @ScenePathChangeDetection()
     x: number = 0;
@@ -42,6 +44,10 @@ export class Rect extends Path {
     private gradientFill?: string;
     private gradientInstance?: LinearGradient;
 
+    constructor() {
+        super((ctx) => this.renderRect(ctx));
+    }
+
     private updateGradientInstance() {
         const { fill } = this;
 
@@ -65,17 +71,15 @@ export class Rect extends Path {
         this.gradientFill = fill;
     }
 
-    /**
-     * Similar to https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing
-     */
-    @ScenePathChangeDetection({ changeCb: (o) => o.updateGradientInstance() })
-    sizing: RectSizing = RectSizing.Content;
-
     private lastUpdatePathStrokeWidth: number = Shape.defaultStyles.strokeWidth;
 
     protected isDirtyPath() {
         if (this.lastUpdatePathStrokeWidth !== this.strokeWidth) {
-            return this.crisp || this.sizing === RectSizing.Border;
+            return true;
+        }
+
+        if (this.path.isDirty() || this.borderPath.isDirty()) {
+            return true;
         }
 
         return false;
@@ -84,39 +88,36 @@ export class Rect extends Path {
     private effectiveStrokeWidth: number = Shape.defaultStyles.strokeWidth;
 
     protected updatePath() {
-        const borderSizing = this.sizing === RectSizing.Border;
+        const { path, borderPath, crisp } = this;
+        let { x, y, width: w, height: h, strokeWidth } = this;
 
-        const path = this.path;
-        path.clear();
+        path.clear({ trackChanges: true });
+        borderPath.clear({ trackChanges: true });
 
-        let x = this.x;
-        let y = this.y;
-        let width = this.width;
-        let height = this.height;
-        let strokeWidth: number;
+        if (crisp) {
+            // Order matters here, since we need unaligned x/y for w/h calculations.
+            w = this.align(x, w);
+            h = this.align(y, h);
+            x = this.align(x);
+            y = this.align(y);
+        }
 
-        if (borderSizing) {
-            const halfWidth = width / 2;
-            const halfHeight = height / 2;
-            strokeWidth = Math.min(this.strokeWidth, halfWidth, halfHeight);
+        path.rect(x, y, w, h);
 
-            x = Math.min(x + strokeWidth / 2, x + halfWidth);
-            y = Math.min(y + strokeWidth / 2, y + halfHeight);
-            width = Math.max(width - strokeWidth, 0);
-            height = Math.max(height - strokeWidth, 0);
-        } else {
-            strokeWidth = this.strokeWidth;
+        if (strokeWidth) {
+            // Ensure that the strokeWidth isn't > width or height.
+            strokeWidth = Math.min(w, h, strokeWidth);
+            const halfStokeWidth = strokeWidth / 2;
+            x += halfStokeWidth;
+            y += halfStokeWidth;
+            w -= strokeWidth;
+            h -= strokeWidth;
+
+            borderPath.rect(x, y, w, h);
         }
 
         this.effectiveStrokeWidth = strokeWidth;
-        this.lastUpdatePathStrokeWidth = this.strokeWidth;
-
-        if (this.crisp && !borderSizing) {
-            const { alignment: a, align: al } = this;
-            path.rect(al(a, x), al(a, y), al(a, x, width), al(a, y, height));
-        } else {
-            path.rect(x, y, width, height);
-        }
+        this.lastUpdatePathStrokeWidth = strokeWidth;
     }
 
     computeBBox(): BBox {
@@ -131,65 +132,63 @@ export class Rect extends Path {
         return bbox.containsPoint(point.x, point.y);
     }
 
-    protected fillStroke(ctx: CanvasRenderingContext2D) {
-        if (!this.scene) {
-            return;
-        }
+    private renderRect(ctx: CanvasRenderingContext2D) {
+        const { stroke, effectiveStrokeWidth, fill, path, borderPath, opacity } = this;
 
-        const pixelRatio = this.scene.canvas.pixelRatio || 1;
+        const borderActive = !!stroke && !!effectiveStrokeWidth && borderPath.commands.length > 0;
 
-        if (this.fill) {
-            if (this.fill !== this.gradientFill) {
+        path.draw(ctx);
+
+        if (fill) {
+            const { gradientFill, fillOpacity, fillShadow } = this;
+            if (fill !== gradientFill) {
                 this.updateGradientInstance();
             }
 
-            if (this.gradientInstance) {
-                ctx.fillStyle = this.gradientInstance.createGradient(ctx, this.computeBBox());
+            const { gradientInstance } = this;
+            if (gradientInstance) {
+                ctx.fillStyle = gradientInstance.createGradient(ctx, this.computeBBox());
             } else {
-                ctx.fillStyle = this.fill;
+                ctx.fillStyle = fill;
             }
-            ctx.globalAlpha = this.opacity * this.fillOpacity;
+            ctx.globalAlpha = opacity * fillOpacity;
 
             // The canvas context scaling (depends on the device's pixel ratio)
             // has no effect on shadows, so we have to account for the pixel ratio
             // manually here.
-            const fillShadow = this.fillShadow;
             if (fillShadow && fillShadow.enabled) {
+                const pixelRatio = this.scene?.canvas.pixelRatio ?? 1;
+
                 ctx.shadowColor = fillShadow.color;
                 ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
                 ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;
                 ctx.shadowBlur = fillShadow.blur * pixelRatio;
             }
             ctx.fill();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0)';
         }
 
-        ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+        if (borderActive) {
+            const { strokeOpacity, lineDash, lineDashOffset, lineCap, lineJoin } = this;
+            borderPath.draw(ctx);
 
-        if (this.stroke && this.effectiveStrokeWidth) {
-            ctx.strokeStyle = this.stroke;
-            ctx.globalAlpha = this.opacity * this.strokeOpacity;
+            ctx.strokeStyle = stroke!;
+            ctx.globalAlpha = opacity * strokeOpacity;
 
-            ctx.lineWidth = this.effectiveStrokeWidth;
-            if (this.lineDash) {
-                ctx.setLineDash(this.lineDash);
+            ctx.lineWidth = effectiveStrokeWidth;
+            if (lineDash) {
+                ctx.setLineDash(lineDash);
             }
-            if (this.lineDashOffset) {
-                ctx.lineDashOffset = this.lineDashOffset;
+            if (lineDashOffset) {
+                ctx.lineDashOffset = lineDashOffset;
             }
-            if (this.lineCap) {
-                ctx.lineCap = this.lineCap;
+            if (lineCap) {
+                ctx.lineCap = lineCap;
             }
-            if (this.lineJoin) {
-                ctx.lineJoin = this.lineJoin;
+            if (lineJoin) {
+                ctx.lineJoin = lineJoin;
             }
 
-            const strokeShadow = this.strokeShadow;
-            if (strokeShadow && strokeShadow.enabled) {
-                ctx.shadowColor = strokeShadow.color;
-                ctx.shadowOffsetX = strokeShadow.xOffset * pixelRatio;
-                ctx.shadowOffsetY = strokeShadow.yOffset * pixelRatio;
-                ctx.shadowBlur = strokeShadow.blur * pixelRatio;
-            }
             ctx.stroke();
         }
     }

@@ -70,7 +70,7 @@ describe('Documentation Overrides Sanity Check', () => {
         });
 
         it('should load and parse without error', () => {
-            expect(() => loadLookups('test', override)).not.toThrowError();
+            expect(() => loadLookups('test', {}, override)).not.toThrowError();
             expect(console.warn).not.toBeCalled();
         });
     });

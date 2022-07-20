@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { convertMarkdown, convertUrl, escapeGenericCode, getLinkedType, getLongestNameLength, getTypeUrl, inferType } from 'components/documentation-helpers';
+import { convertMarkdown, convertUrl, getJsonFromFile, escapeGenericCode, getLinkedType, getLongestNameLength, getTypeUrl, inferType } from 'components/documentation-helpers';
 import anchorIcon from 'images/anchor';
 import React, { useState } from 'react';
 import styles from './ApiDocumentation.module.scss';
@@ -8,12 +8,17 @@ import Code from './Code';
 import { extractInterfaces, writeAllInterfaces, formatJsDocString, sortAndFilterProperties, addMoreLink, getInterfaceWithGenericParams } from './documentation-helpers';
 import { useJsonFileNodes } from './use-json-file-nodes';
 
+const IS_SSR = typeof window === "undefined"
 
 /**
  * This generates tabulated interface documentation based on information in JSON files.
  */
-export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework, overridesrc, names = "", exclude = "", wrapNamesAt = null, config = {} }): any => {
-    const nodes = useJsonFileNodes();
+export const InterfaceDocumentation: React.FC<any> = ({ jsonData,interfacename, framework, overridesrc, names = "", exclude = "", wrapNamesAt = null, config = {} }): any => {
+    if(IS_SSR) {
+        return null;
+    }
+
+    const nodes = jsonData ? null : useJsonFileNodes();
     let codeSrcProvided = [interfacename];
     let namesArr = [];
     let excludeArr = exclude && exclude.length > 0 ? JSON.parse(exclude) : [];
@@ -28,8 +33,8 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     }
 
     const { lookupRoot = 'grid-api' } = config;
-    const interfaceLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/interfaces.AUTO.json`);
-    const codeLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/doc-interfaces.AUTO.json`);
+    const interfaceLookup = getJsonFromFile(jsonData, nodes, undefined, `${lookupRoot}/interfaces.AUTO.json`);
+    const codeLookup = getJsonFromFile(jsonData, nodes, undefined, `${lookupRoot}/doc-interfaces.AUTO.json`);
 
     const lookups = { codeLookup: codeLookup[interfacename], interfaces: interfaceLookup };
     let hideHeader = true;
@@ -55,7 +60,7 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     let overrides = {};
     let interfaceOverrides = {};
     if (overridesrc) {
-        overrides = getJsonFromFile(nodes, undefined, overridesrc);
+        overrides = getJsonFromFile(jsonData, nodes, undefined, overridesrc);
         interfaceOverrides = overrides[interfacename];
         if (!interfaceOverrides) {
             throw new Error(`overrideSrc:${overridesrc} provided but does not contain expected section named: '${interfacename}'!`);
@@ -114,7 +119,11 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
  * information about different parts of an API in multiple places across the website while pulling the information
  * from one source of truth, so we only have to update one file when the documentation needs to change.
  */
-export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, source, sources, section, names = "", config = {} as Config }): any => {
+export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, jsonData, source, sources, section, names = "", config = {} as Config }): any => {
+    if(IS_SSR) {
+        return null;
+    }
+
     const nodes = useJsonFileNodes();
 
     if (source) {
@@ -131,7 +140,7 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
         config = { hideMore: true, overrideBottomMargin: "1rem", ...config, };
     }
 
-    const propertiesFromFiles = sources.map(s => getJsonFromFile(nodes, pageName, s));
+    const propertiesFromFiles = sources.map(s => getJsonFromFile(jsonData, nodes, pageName, s));
 
 
     const configs = propertiesFromFiles.map(p => p['_config_']);
@@ -146,14 +155,15 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
         }
         if (c.codeSrc) {
             codeSrcProvided = [...codeSrcProvided, c.codeSrc];
-            codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, c.codeSrc) };
+            codeLookup = { ...codeLookup, ...getJsonFromFile(jsonData, nodes, undefined, c.codeSrc) };
         }
 
         if (c.suppressMissingPropCheck) {
             config = { ...config, suppressMissingPropCheck: true }
         }
     })
-    const interfaceLookup = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
+
+    const interfaceLookup = getJsonFromFile(jsonData, nodes, undefined, 'grid-api/interfaces.AUTO.json');
     const lookups = { codeLookup, interfaces: interfaceLookup };
     config = { ...config, lookups, codeSrcProvided }
 
@@ -189,6 +199,7 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
         config={{ ...config, isSubset: true }}
         names={namesArr} />;
 };
+
 
 const Section: React.FC<SectionProps> = ({ framework, title, properties, config = {} as Config, breadcrumbs = {}, names = [] }): any => {
     const { meta } = properties;
@@ -651,20 +662,6 @@ const getInterfacesToWrite = (name, definition, config) => {
     }
 
     return interfacesToWrite;
-};
-
-const getJsonFromFile = (nodes, pageName, source) => {
-    const json = nodes.filter(n => n.relativePath === source || n.relativePath === `${pageName}/${source}`)[0];
-
-    if (json) {
-        try {
-            return JSON.parse(json.internal.content);
-        } catch (e) {
-            throw new Error(`Unable to JSON parse: ${json.relativePath} ; Reason: ${e.message}`);
-        }
-    }
-
-    throw new Error(`Could not find JSON for source ${source}`);
 };
 
 const mergeObjects = objects => {

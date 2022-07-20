@@ -31,10 +31,10 @@
 |   data() {
 |       return {
 |           // JavaScript components are registered here, for when looking up component by name
-|           components: [
+|           components: {
 |               // declare the javascript component
 |               'javascriptComponent': JavascriptComponent
-|           ],          
+|           },          
 |           columnDefs: [
 |                {
 |                   headerName: "JS Cell",

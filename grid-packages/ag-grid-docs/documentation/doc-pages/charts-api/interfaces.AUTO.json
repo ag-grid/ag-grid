@@ -118,16 +118,20 @@
       "common?": "/** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts. */"
     }
   },
+  "AgCartesianAxisThemeSpecialOptions": {
+    "meta": { "isTypeAlias": true },
+    "type": "'position' | 'type' | 'crossLines'"
+  },
   "AgCartesianAxisThemeOptions": {
     "meta": {
       "typeParams": ["T"],
       "doc": "/** This is the configuration shared by all types of axis. */"
     },
     "type": {
-      "top?": "Omit<T, 'position' | 'type' | 'crossLines'>",
-      "right?": "Omit<T, 'position' | 'type' | 'crossLines'>",
-      "bottom?": "Omit<T, 'position' | 'type' | 'crossLines'>",
-      "left?": "Omit<T, 'position' | 'type' | 'crossLines'>"
+      "top?": "Omit<T, AgCartesianAxisThemeSpecialOptions>",
+      "right?": "Omit<T, AgCartesianAxisThemeSpecialOptions>",
+      "bottom?": "Omit<T, AgCartesianAxisThemeSpecialOptions>",
+      "left?": "Omit<T, AgCartesianAxisThemeSpecialOptions>"
     },
     "docs": {
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -283,10 +287,10 @@
       "min?": "number",
       "max?": "number",
       "tick?": "AgAxisNumberTickOptions",
-      "top?": "Omit<AgNumberAxisOptions, 'position' | 'type' | 'crossLines'>",
-      "right?": "Omit<AgNumberAxisOptions, 'position' | 'type' | 'crossLines'>",
-      "bottom?": "Omit<AgNumberAxisOptions, 'position' | 'type' | 'crossLines'>",
-      "left?": "Omit<AgNumberAxisOptions, 'position' | 'type' | 'crossLines'>",
+      "top?": "Omit<AgNumberAxisOptions, AgCartesianAxisThemeSpecialOptions>",
+      "right?": "Omit<AgNumberAxisOptions, AgCartesianAxisThemeSpecialOptions>",
+      "bottom?": "Omit<AgNumberAxisOptions, AgCartesianAxisThemeSpecialOptions>",
+      "left?": "Omit<AgNumberAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "crossLines?": "AgCrossLineThemeOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
@@ -322,10 +326,10 @@
       "max?": "number",
       "base?": "number",
       "tick?": "AgAxisNumberTickOptions",
-      "top?": "Omit<AgLogAxisOptions, 'position' | 'type' | 'crossLines'>",
-      "right?": "Omit<AgLogAxisOptions, 'position' | 'type' | 'crossLines'>",
-      "bottom?": "Omit<AgLogAxisOptions, 'position' | 'type' | 'crossLines'>",
-      "left?": "Omit<AgLogAxisOptions, 'position' | 'type' | 'crossLines'>",
+      "top?": "Omit<AgLogAxisOptions, AgCartesianAxisThemeSpecialOptions>",
+      "right?": "Omit<AgLogAxisOptions, AgCartesianAxisThemeSpecialOptions>",
+      "bottom?": "Omit<AgLogAxisOptions, AgCartesianAxisThemeSpecialOptions>",
+      "left?": "Omit<AgLogAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "crossLines?": "AgCrossLineThemeOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
@@ -360,10 +364,10 @@
       "paddingInner?": "number",
       "paddingOuter?": "number",
       "tick?": "AgAxisNumberTickOptions",
-      "top?": "Omit<AgCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
-      "right?": "Omit<AgCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
-      "bottom?": "Omit<AgCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
-      "left?": "Omit<AgCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
+      "top?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
+      "right?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
+      "bottom?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
+      "left?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "crossLines?": "AgCrossLineThemeOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
@@ -392,10 +396,10 @@
     "meta": {},
     "type": {
       "tick?": "AgAxisNumberTickOptions",
-      "top?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
-      "right?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
-      "bottom?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
-      "left?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type' | 'crossLines'>",
+      "top?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
+      "right?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
+      "bottom?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
+      "left?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "crossLines?": "AgCrossLineThemeOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
@@ -425,10 +429,10 @@
     "type": {
       "nice?": "boolean",
       "tick?": "AgAxisTimeTickOptions",
-      "top?": "Omit<AgTimeAxisOptions, 'position' | 'type' | 'crossLines'>",
-      "right?": "Omit<AgTimeAxisOptions, 'position' | 'type' | 'crossLines'>",
-      "bottom?": "Omit<AgTimeAxisOptions, 'position' | 'type' | 'crossLines'>",
-      "left?": "Omit<AgTimeAxisOptions, 'position' | 'type' | 'crossLines'>",
+      "top?": "Omit<AgTimeAxisOptions, AgCartesianAxisThemeSpecialOptions>",
+      "right?": "Omit<AgTimeAxisOptions, AgCartesianAxisThemeSpecialOptions>",
+      "bottom?": "Omit<AgTimeAxisOptions, AgCartesianAxisThemeSpecialOptions>",
+      "left?": "Omit<AgTimeAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "crossLines?": "AgCrossLineThemeOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
@@ -2302,7 +2306,13 @@
   },
   "TooltipMeta": {
     "meta": {},
-    "type": { "pageX": "number", "pageY": "number" }
+    "type": {
+      "pageX": "number",
+      "pageY": "number",
+      "offsetX": "number",
+      "offsetY": "number",
+      "event": "MouseEvent"
+    }
   },
   "TooltipRendererResult": {
     "meta": {},

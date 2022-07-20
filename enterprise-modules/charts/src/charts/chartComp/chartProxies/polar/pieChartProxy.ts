@@ -136,8 +136,6 @@ export class PieChartProxy extends ChartProxy {
                 angleKey: seriesOptions.angleKey + '-total',
                 radiusMin: 0,
                 radiusMax: 1,
-                fills: palette.fills,
-                strokes: palette.strokes,
                 listeners: {
                     ...seriesOverrides.listeners,
                     nodeClick: this.crossFilterCallback,
@@ -158,8 +156,8 @@ export class PieChartProxy extends ChartProxy {
                     ...seriesOverrides.callout,
                     colors: seriesOverrides.callout.colors ?? palette.strokes,
                 },
-                fills: changeOpacity(palette.fills, 0.3),
-                strokes: changeOpacity(palette.strokes, 0.3),
+                fills: changeOpacity(seriesOptions.fills ?? palette.fills, 0.3),
+                strokes: changeOpacity(seriesOptions.strokes ?? palette.strokes, 0.3),
                 showInLegend: false,
             };
         }

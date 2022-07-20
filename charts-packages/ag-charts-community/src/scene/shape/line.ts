@@ -77,7 +77,6 @@ export class Line extends Shape {
         this.fillStroke(ctx);
 
         this.fillShadow?.markClean();
-        this.strokeShadow?.markClean();
         super.render(renderCtx);
     }
 }

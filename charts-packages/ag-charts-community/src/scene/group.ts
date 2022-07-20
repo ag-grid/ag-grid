@@ -1,6 +1,5 @@
 import { Node, RedrawType, SceneChangeDetection, RenderContext } from "./node";
 import { BBox } from "./bbox";
-import { Matrix } from "./matrix";
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
 import { Scene } from "./scene";
 import { Path2D } from "./path2D";
@@ -89,6 +88,17 @@ export class Group extends Node {
         if (this.layer) {
             this.layer.enabled = this.visible;
         }
+    }
+
+    removeChild<T extends Node>(node: T): T {
+        super.removeChild(node);
+
+        if (this.dirtyChildren && this.visibleChildren) {
+            delete this.dirtyChildren[node.id];
+            delete this.visibleChildren[node.id];
+        }
+
+        return node;
     }
 
     markDirty(source: Node, type = RedrawType.TRIVIAL) {

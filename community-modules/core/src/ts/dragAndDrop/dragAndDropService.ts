@@ -274,14 +274,16 @@ export class DragAndDropService extends BeanStub {
         const dropTarget: DropTarget | null = this.findCurrentDropTarget(mouseEvent, validDropTargets);
 
         if (dropTarget !== this.lastDropTarget) {
+            this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
+
             if (this.lastDropTarget !== null && dropTarget === null) {
                 this.dragSource.onGridExit?.(this.dragItem);
             }
             if (this.lastDropTarget === null && dropTarget !== null) {
                 this.dragSource.onGridEnter?.(this.dragItem);
             }
-            this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
+
             this.lastDropTarget = dropTarget;
         } else if (dropTarget && dropTarget.onDragging) {
             const draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
@@ -338,7 +340,7 @@ export class DragAndDropService extends BeanStub {
 
         // elementsFromPoint return a list of elements under
         // the mouseEvent sorted from topMost to bottomMost
-        const elementStack = eDocument.elementsFromPoint(mouseEvent.x, mouseEvent.y) as HTMLElement[];
+        const elementStack = eDocument.elementsFromPoint(mouseEvent.clientX, mouseEvent.clientY) as HTMLElement[];
 
         // loop over the sorted elementStack to find which dropTarget comes first
         for (const el of elementStack) {

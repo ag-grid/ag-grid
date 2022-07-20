@@ -953,6 +953,7 @@ export class CellCtrl extends BeanStub {
 
     // called by rowRenderer when user navigates via tab key
     public startRowOrCellEdit(key?: string | null, charPress?: string | null, event: KeyboardEvent | MouseEvent | null = null): void {
+        if (!this.cellComp) { return; }
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
             this.rowCtrl.startRowEditing(key, charPress, this);
         } else {

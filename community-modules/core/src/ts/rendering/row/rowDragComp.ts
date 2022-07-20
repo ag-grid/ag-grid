@@ -61,7 +61,7 @@ export class RowDragComp extends Component {
 
     private getSelectedNodes(): RowNode[] {
         const isRowDragMultiRow = this.beans.gridOptionsWrapper.isRowDragMultiRow();
-        if (!isRowDragMultiRow) { return [this.rowNode] }
+        if (!isRowDragMultiRow) { return [this.rowNode]; }
 
         const selection = this.beans.selectionService.getSelectedNodes();
 

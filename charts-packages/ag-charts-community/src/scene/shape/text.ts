@@ -187,7 +187,7 @@ export class Text extends Shape {
             ctx.lineWidth = strokeWidth;
             ctx.globalAlpha = globalAlpha * this.opacity * this.strokeOpacity;
 
-            const { lineDash, lineDashOffset, lineCap, lineJoin, strokeShadow, text, x, y } = this;
+            const { lineDash, lineDashOffset, lineCap, lineJoin, text, x, y } = this;
 
             if (lineDash) {
                 ctx.setLineDash(lineDash);
@@ -203,13 +203,6 @@ export class Text extends Shape {
 
             if (lineJoin) {
                 ctx.lineJoin = lineJoin;
-            }
-
-            if (strokeShadow && strokeShadow.enabled) {
-                ctx.shadowColor = strokeShadow.color;
-                ctx.shadowOffsetX = strokeShadow.xOffset * pixelRatio;
-                ctx.shadowOffsetY = strokeShadow.yOffset * pixelRatio;
-                ctx.shadowBlur = strokeShadow.blur * pixelRatio;
             }
 
             ctx.strokeText(text, x, y);

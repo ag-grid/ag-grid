@@ -8,13 +8,13 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
         <div [innerHTML]="value"></div>`
 })
 export class CountryCellRenderer implements ICellRendererAngularComp {
-    private params!: ICellRendererParams;
-    private value!: string;
+    public value!: string;
 
-    agInit(params: ICellRendererParams): void {
-        this.params = params;
+    agInit(params: ICellRendererParams & { isFilterRenderer?: boolean }): void {
 
-        if (!params.value || params.value === '(Select All)') {
+        if (!params.value) {
+            this.value = params.isFilterRenderer ? '(Blanks)' : params.value;
+        } else if (params.value === '(Select All)') {
             this.value = params.value;
         } else {
 
