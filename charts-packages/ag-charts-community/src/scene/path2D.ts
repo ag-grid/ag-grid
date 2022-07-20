@@ -71,6 +71,10 @@ export class Path2D {
                     break;
             }
         }
+
+        if (commands.length === 0) {
+            ctx.closePath();
+        }
     }
 
     moveTo(x: number, y: number) {

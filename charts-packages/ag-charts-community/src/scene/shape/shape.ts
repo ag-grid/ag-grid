@@ -47,8 +47,7 @@ export abstract class Shape extends Node {
         lineCap: undefined as ShapeLineCap,
         lineJoin: undefined as ShapeLineJoin,
         opacity: 1,
-        fillShadow: undefined,
-        strokeShadow: undefined
+        fillShadow: undefined
     });
 
     /**
@@ -115,17 +114,23 @@ export abstract class Shape extends Node {
     @SceneChangeDetection({ redraw: RedrawType.MINOR })
     strokeWidth: number = Shape.defaultStyles.strokeWidth;
 
-    // An offset value to align to the pixel grid.
-    get alignment(): number {
-        return Math.floor(this.strokeWidth) % 2 / 2;
-    }
-    // Returns the aligned `start` or `length` value.
-    // For example: `start` could be `y` and `length` could be `height` of a rectangle.
-    align(alignment: number, start: number, length?: number) {
-        if (length != undefined) {
-            return Math.floor(length) + Math.floor(start % 1 + length % 1);
+    /**
+     * Returns a device-pixel aligned coordinate (or length if length is supplied).
+     * 
+     * NOTE: Not suitable for strokes, since the stroke needs to be offset to the middle
+     * of a device pixel.
+     */
+    align(start: number, length?: number) {
+        const pixelRatio = this.scene?.canvas?.pixelRatio ?? 1;
+
+        const alignedStart = Math.round(start * pixelRatio) / pixelRatio;
+        if (length == undefined) {
+            return alignedStart;
         }
-        return Math.floor(start) + alignment;
+
+        // Account for the rounding of alignedStart by increasing length to compensate before
+        // alignment.
+        return (Math.round((length + start) * pixelRatio) / pixelRatio) - alignedStart;
     }
 
     @SceneChangeDetection({ redraw: RedrawType.MINOR })
@@ -148,9 +153,6 @@ export abstract class Shape extends Node {
 
     @SceneChangeDetection({ redraw: RedrawType.MINOR, checkDirtyOnAssignment: true })
     fillShadow: DropShadow | undefined = Shape.defaultStyles.fillShadow;
-
-    @SceneChangeDetection({ redraw: RedrawType.MINOR, checkDirtyOnAssignment: true })
-    strokeShadow: DropShadow | undefined = Shape.defaultStyles.strokeShadow;
 
     protected fillStroke(ctx: CanvasFillStrokeStyles & CanvasCompositing & CanvasShadowStyles & CanvasPathDrawingStyles & CanvasDrawPath) {
         if (!this.scene) {
@@ -197,13 +199,6 @@ export abstract class Shape extends Node {
                 ctx.lineJoin = this.lineJoin;
             }
 
-            const strokeShadow = this.strokeShadow;
-            if (strokeShadow && strokeShadow.enabled) {
-                ctx.shadowColor = strokeShadow.color;
-                ctx.shadowOffsetX = strokeShadow.xOffset * pixelRatio;
-                ctx.shadowOffsetY = strokeShadow.yOffset * pixelRatio;
-                ctx.shadowBlur = strokeShadow.blur * pixelRatio;
-            }
             ctx.stroke();
         }
     }

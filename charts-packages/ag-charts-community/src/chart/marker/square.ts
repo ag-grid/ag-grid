@@ -6,14 +6,13 @@ export class Square extends Marker {
     updatePath() {
         const { path, x, y } = this;
         const hs = this.size / 2;
-        const { alignment: a, align: al } = this;
 
         path.clear();
 
-        path.moveTo(al(a, x - hs), al(a, y - hs));
-        path.lineTo(al(a, x + hs), al(a, y - hs));
-        path.lineTo(al(a, x + hs), al(a, y + hs));
-        path.lineTo(al(a, x - hs), al(a, y + hs));
+        path.moveTo(this.align(x - hs), this.align(y - hs));
+        path.lineTo(this.align(x + hs), this.align(y - hs));
+        path.lineTo(this.align(x + hs), this.align(y + hs));
+        path.lineTo(this.align(x - hs), this.align(y + hs));
         path.closePath();
     }
 }
