@@ -634,9 +634,8 @@ export class GroupCellRendererCtrl extends BeanStub {
     private isUserWantsSelected(): boolean {
         const paramsCheckbox = this.params.checkbox;
 
-        if (typeof paramsCheckbox === 'function') { return paramsCheckbox(this.params); }
-
-        return paramsCheckbox === true;
+        // if a function, we always return true as change detection can show or hide the checkbox.
+        return typeof paramsCheckbox === 'function' || paramsCheckbox === true;
     }
 
     private addCheckboxIfNeeded(): void {
@@ -653,7 +652,15 @@ export class GroupCellRendererCtrl extends BeanStub {
             const cbSelectionComponent = new CheckboxSelectionComponent();
             this.getContext().createBean(cbSelectionComponent);
 
-            cbSelectionComponent.init({ rowNode: rowNode, column: this.params.column });
+            cbSelectionComponent.init({
+                rowNode: rowNode,
+                column: this.params.column,
+                overrides: {
+                    isVisible: this.params.checkbox,
+                    callbackParams: this.params,
+                    removeHidden: true,
+                },
+            });
             this.eCheckbox.appendChild(cbSelectionComponent.getGui());
             this.addDestroyFunc(() => this.getContext().destroyBean(cbSelectionComponent));
         }

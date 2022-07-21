@@ -80,6 +80,12 @@
       "returnType": "void"
     }
   },
+  "createColumnFunctionCallbackParams": {
+    "type": {
+      "arguments": { "rowNode": "RowNode" },
+      "returnType": "ColumnFunctionCallbackParams"
+    }
+  },
   "isSuppressNavigable": {
     "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
   },

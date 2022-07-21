@@ -840,6 +840,10 @@
         "optional": true
       }
     },
+    "showDisabledCheckboxes": {
+      "description": "/** `boolean`. Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "icons": {
       "description": "/** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults. */",
       "type": {
@@ -22208,6 +22212,10 @@
         "returnType": "boolean | CheckboxSelectionCallback<TData>",
         "optional": true
       }
+    },
+    "showDisabledCheckboxes": {
+      "description": "/** `boolean`. Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
     },
     "icons": {
       "description": "/** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults. */",

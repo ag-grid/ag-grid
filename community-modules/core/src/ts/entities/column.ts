@@ -361,7 +361,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         this.eventService.removeEventListener(eventType, listener);
     }
 
-    private createColumnFunctionCallbackParams(rowNode: RowNode): ColumnFunctionCallbackParams {
+    public createColumnFunctionCallbackParams(rowNode: RowNode): ColumnFunctionCallbackParams {
         return {
             node: rowNode,
             data: rowNode.data,
