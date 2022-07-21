@@ -29,7 +29,6 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
     private separatorSelection: Selection<Line, Group, any, any>;
     private labelSelection: Selection<Text, Group, any, any>;
     private tickTreeLayout?: TreeLayout;
-    private longestSeparatorLength = 0;
 
     constructor() {
         super(new BandScale<string | number>());
@@ -371,7 +370,6 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         // Calculate the position of the long separator on the far bottom of the axis.
         let minX = 0;
         separatorData.forEach(d => minX = Math.min(minX, d.x2));
-        this.longestSeparatorLength = Math.abs(minX);
         separatorData.push({
             y: Math.max(rangeStart, rangeEnd),
             x1: 0,

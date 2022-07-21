@@ -7,9 +7,7 @@ import { createId } from '../../util/id';
 import { Label } from '../label';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
-import { Node } from '../../scene/node';
 import { Deprecated } from '../../util/validation';
-import { CategoryAxis } from '../axis/categoryAxis';
 
 /**
  * Processed series datum used in node selections,
@@ -353,7 +351,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         y: number,
         limitPickModes?: SeriesNodePickMode[],
     ): { pickMode: SeriesNodePickMode, match: SeriesNodeDatum, distance: number } | undefined {
-        const { pickModes, visible, group, xAxis, yAxis } = this;
+        const { pickModes, visible, group } = this;
 
         if (!visible || !group.visible) {
             return;

@@ -1087,7 +1087,7 @@ export abstract class Chart extends Observable {
         this.handleTooltip(this.lastTooltipMeta!);
     });
     protected handleTooltip(meta: TooltipMeta) {
-        const { lastPick, tooltip: { tracking } } = this;
+        const { lastPick } = this;
         const { offsetX, offsetY } = meta;
 
         const disableTooltip = () => {

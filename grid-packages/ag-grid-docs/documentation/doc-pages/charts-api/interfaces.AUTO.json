@@ -2292,10 +2292,6 @@
     "meta": { "isTypeAlias": true, "typeParams": ["T extends Series"] },
     "type": "T extends LineSeries ? AgLineSeriesOptions : T extends BarSeries ? AgBarSeriesOptions : T extends AreaSeries ? AgAreaSeriesOptions : T extends ScatterSeries ? AgScatterSeriesOptions : T extends HistogramSeries ? AgHistogramSeriesOptions : T extends PieSeries ? AgPieSeriesOptions : T extends TreemapSeries ? AgTreemapSeriesOptions : never"
   },
-  "AxisOptionType": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T extends Axis<any, any>"] },
-    "type": "T extends LogAxis ? AgLogAxisOptions : T extends NumberAxis ? AgNumberAxisOptions : T extends CategoryAxis ? AgCategoryAxisOptions : T extends GroupedCategoryAxis ? AgGroupedCategoryAxisOptions : T extends TimeAxis ? AgTimeAxisOptions : never"
-  },
   "ObservableLike": {
     "meta": { "isTypeAlias": true },
     "type": "{ addEventListener(key: string, cb: SourceEventListener<any>): void; clearEventListeners(): void; }"
@@ -3126,10 +3122,6 @@
     "meta": { "isTypeAlias": true, "typeParams": ["N", "G", "GDatum"] },
     "type": "(node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string"
   },
-  "NodeSelector": {
-    "meta": { "isTypeAlias": true, "typeParams": ["N", "G", "GDatum"] },
-    "type": "(node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N"
-  },
   "ArcType": {
     "meta": { "isEnum": true },
     "type": ["Open", "Chord", "Round"],
@@ -3162,7 +3154,7 @@
   },
   "IsLiteralProperty": {
     "meta": { "isTypeAlias": true, "typeParams": ["T", "K extends keyof T"] },
-    "type": "K extends LiteralProperties ? true : T[K] extends Array<infer E> ? true : false"
+    "type": "K extends LiteralProperties ? true : T[K] extends Array<any> ? true : false"
   },
   "IsSkippableProperty": {
     "meta": { "isTypeAlias": true, "typeParams": ["T", "K extends keyof T"] },

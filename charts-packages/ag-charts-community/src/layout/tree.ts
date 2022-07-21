@@ -337,12 +337,3 @@ export class TreeLayout {
         });
     }
 }
-
-function logTree(root: TreeNode, formatter?: (node: TreeNode) => string) {
-    root.children.forEach(child => logTree(child, formatter));
-    if (formatter) {
-        console.log(formatter(root));
-    } else {
-        console.log(root);
-    }
-}

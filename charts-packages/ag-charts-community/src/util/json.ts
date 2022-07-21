@@ -1,7 +1,7 @@
 type LiteralProperties = 'shape' | 'data';
 type SkippableProperties = 'axes' | 'series' | 'container' | 'customChartThemes';
 type IsLiteralProperty<T, K extends keyof T> = K extends LiteralProperties ? true :
-    T[K] extends Array<infer E> ? true :
+    T[K] extends Array<any> ? true :
     false;
 type IsSkippableProperty<T, K extends keyof T> = K extends SkippableProperties ? true : false;
 

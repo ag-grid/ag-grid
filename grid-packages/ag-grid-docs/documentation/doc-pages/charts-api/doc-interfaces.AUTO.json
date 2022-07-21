@@ -3399,7 +3399,6 @@
   "AgChartType": { "meta": { "typeParams": ["T"] } },
   "ChartOptionType": { "meta": { "typeParams": ["T extends ChartType"] } },
   "SeriesOptionType": { "meta": { "typeParams": ["T extends Series"] } },
-  "AxisOptionType": { "meta": { "typeParams": ["T extends Axis<any, any>"] } },
   "ObservableLike": {},
   "ChartClickEvent": {
     "event": { "type": { "returnType": "MouseEvent", "optional": false } },
@@ -4110,7 +4109,6 @@
   },
   "ValueFn": { "meta": { "typeParams": ["P", "GDatum", "PDatum"] } },
   "KeyFn": { "meta": { "typeParams": ["N", "G", "GDatum"] } },
-  "NodeSelector": { "meta": { "typeParams": ["N", "G", "GDatum"] } },
   "ArcType": {},
   "RectSizing": {},
   "ShapeLineCap": {},

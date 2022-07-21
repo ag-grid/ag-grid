@@ -39,7 +39,7 @@ export class Text extends Shape {
         this.lines = typeof this.text === 'string' ? this.text.split(/\r?\n/g) : [];
     }
 
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o) => o._splitText() })
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o: Text) => o._splitText() })
     text: string = '';
 
     private _dirtyFont: boolean = true;

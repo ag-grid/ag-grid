@@ -252,34 +252,38 @@ export class CartesianChart extends Chart {
             });
         }
 
-        const axisBound = bounds.clone();
-        const { top = 0, right = 0, bottom = 0, left = 0 } = crossLinePadding;
-        axisBound.x += left;
-        axisBound.y += top;
-        axisBound.width -= left + right;
-        axisBound.height -= top + bottom;
+        const buildAxisBound = () => {
+            const result = bounds.clone();
+            const { top = 0, right = 0, bottom = 0, left = 0 } = crossLinePadding;
+            result.x += left;
+            result.y += top;
+            result.width -= left + right;
+            result.height -= top + bottom;
+            return result;
+        };
+        const axisBound = buildAxisBound();
 
         const buildSeriesRect = () => {
-            let seriesRect = axisBound.clone();
+            let result = axisBound.clone();
             const { top, bottom, left, right } = axisWidths;
-            seriesRect.x += left ?? 0;
-            seriesRect.y += top ?? 0;
-            seriesRect.width -= (left ?? 0) + (right ?? 0);
-            seriesRect.height -= (top ?? 0) + (bottom ?? 0);
+            result.x += left ?? 0;
+            result.y += top ?? 0;
+            result.width -= (left ?? 0) + (right ?? 0);
+            result.height -= (top ?? 0) + (bottom ?? 0);
 
             // Width and height should not be negative.
-            seriesRect.width = Math.max(0, seriesRect.width);
-            seriesRect.height = Math.max(0, seriesRect.height);
+            result.width = Math.max(0, result.width);
+            result.height = Math.max(0, result.height);
 
-            return seriesRect;
+            return result;
         }
         const seriesRect = buildSeriesRect();
 
         const clampToOutsideSeriesRect = (value: number, dimension: 'x' | 'y', direction: -1 | 1) => {
             const { x, y, width, height } = seriesRect;
-            const bounds = [x, y, x + width, y + height];
+            const clampBounds = [x, y, x + width, y + height];
             const fn = direction === 1 ? Math.min : Math.max;
-            const compareTo = bounds[(dimension === 'x' ? 0 : 1) + (direction === 1 ? 0 : 2)];
+            const compareTo = clampBounds[(dimension === 'x' ? 0 : 1) + (direction === 1 ? 0 : 2)];
 
             return fn(value, compareTo);
         };

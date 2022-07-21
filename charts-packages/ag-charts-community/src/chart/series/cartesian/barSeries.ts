@@ -4,7 +4,13 @@ import { Rect } from '../../../scene/shape/rect';
 import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
 import { BandScale } from '../../../scale/bandScale';
 import { DropShadow } from '../../../scene/dropShadow';
-import { SeriesNodeDatum, SeriesNodeDataContext, CartesianTooltipRendererParams, SeriesTooltip } from '../series';
+import {
+    SeriesNodeDatum,
+    SeriesNodeDataContext,
+    CartesianTooltipRendererParams,
+    SeriesTooltip,
+    SeriesNodePickMode,
+} from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legend';
@@ -18,7 +24,6 @@ import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { isNumber } from '../../../util/value';
 import { clamper, ContinuousScale } from '../../../scale/continuousScale';
-import { SeriesNodePickMode } from '../series';
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
@@ -138,9 +143,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     constructor() {
         super({
             pickGroupIncludes: ['datumNodes'],
-            pickModes: [
-                SeriesNodePickMode.EXACT_SHAPE_MATCH,
-            ],
+            pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 0,
         });
 
@@ -238,7 +241,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     get yKeys(): string[][] {
         return this._yKeys;
     }
-    
+
     protected _visibles: boolean[][];
     set visibles(visibles: boolean[] | boolean[][]) {
         if (is2dArray(visibles)) {
@@ -545,11 +548,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         groupScale.range = [0, xBandWidth!];
 
-        const barWidth = groupScale.bandwidth >= 1 ?
-            // Pixel-rounded value for low-volume bar charts.
-            groupScale.bandwidth :
-            // Handle high-volume bar charts gracefully.
-            groupScale.rawBandwidth;
+        const barWidth =
+            groupScale.bandwidth >= 1
+                ? // Pixel-rounded value for low-volume bar charts.
+                  groupScale.bandwidth
+                : // Handle high-volume bar charts gracefully.
+                  groupScale.rawBandwidth;
         const contexts: SeriesNodeDataContext<BarNodeDatum>[][] = [];
 
         xData.forEach((group, groupIndex) => {
@@ -710,7 +714,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             },
         } = this;
 
-        const crisp = !datumSelection.data.some((d => d.width <= 0.5 || d.height <= 0.5));
+        const crisp = !datumSelection.data.some((d) => d.width <= 0.5 || d.height <= 0.5);
         datumSelection.each((rect, datum) => {
             rect.visible = !isDatumHighlighted || isDatumHighlighted;
             if (!rect.visible) {

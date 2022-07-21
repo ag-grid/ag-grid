@@ -313,13 +313,13 @@ export abstract class CartesianSeries<
 
         for (const context of contextNodeData) {
             for (const datum of context.nodeData) {
-                const { point: { x = NaN, y = NaN } = {} } = datum;
-                const isInRange = xAxis?.inRange(x) && yAxis?.inRange(y);
+                const { point: { x: datumX = NaN, y: datumY = NaN } = {} } = datum;
+                const isInRange = xAxis?.inRange(datumX) && yAxis?.inRange(datumY);
                 if (!isInRange) { continue; }
     
                 // No need to use Math.sqrt() since x < y implies Math.sqrt(x) < Math.sqrt(y) for
                 // values > 1 
-                const distance = (hitPoint.x - x) ** 2 + (hitPoint.y - y) ** 2;
+                const distance = (hitPoint.x - datumX) ** 2 + (hitPoint.y - datumY) ** 2;
                 if (distance < minDistance) {
                     minDistance = distance;
                     closestDatum = datum;
@@ -360,13 +360,13 @@ export abstract class CartesianSeries<
 
         for (const context of contextNodeData) {
             for (const datum of context.nodeData) {
-                const { point: { x = NaN, y = NaN } = {} } = datum;
-                const isInRange = xAxis?.inRange(x) && yAxis?.inRange(y);
+                const { point: { x: datumX = NaN, y: datumY = NaN } = {} } = datum;
+                const isInRange = xAxis?.inRange(datumX) && yAxis?.inRange(datumY);
                 if (!isInRange) { continue; }
 
                 const point = primaryDirection === ChartAxisDirection.X ?
-                    [x, y] : 
-                    [y, x];
+                    [datumX, datumY] : 
+                    [datumY, datumX];
 
                 // Compare distances from most significant dimension to least.
                 let newMinDistance = true;

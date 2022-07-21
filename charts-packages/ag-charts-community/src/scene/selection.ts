@@ -3,7 +3,6 @@ import { Scene } from "./scene";
 
 type ValueFn<P, GDatum, PDatum> = (parent: P, data: PDatum, index: number, groups: (P | undefined)[]) => GDatum[];
 type KeyFn<N, G, GDatum> = (node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string;
-type NodeSelector<N, G, GDatum> = (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N;
 
 export class EnterNode {
 
@@ -71,17 +70,6 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
     append<N extends Node>(Class: new () => N): Selection<N, P, GDatum, GDatum> {
         return this.select<N>(node => {
             return node.appendChild(new Class());
-        });
-    }
-
-    /**
-     * Same as the {@link append}, but accepts a custom creator function with the
-     * {@link NodeSelector} signature rather than a constructor function.
-     * @param creator
-     */
-    private appendFn<N extends Node>(creator: NodeSelector<N, G, GDatum>): Selection<N, P, GDatum, GDatum> {
-        return this.select<N>((node, data, index, group) => {
-            return node.appendChild(creator(node, data, index, group));
         });
     }
 

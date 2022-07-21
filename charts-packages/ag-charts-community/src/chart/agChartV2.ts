@@ -11,11 +11,6 @@ import {
     AgHistogramSeriesOptions,
     AgPieSeriesOptions,
     AgTreemapSeriesOptions,
-    AgNumberAxisOptions,
-    AgLogAxisOptions,
-    AgCategoryAxisOptions,
-    AgGroupedCategoryAxisOptions,
-    AgTimeAxisOptions,
 } from './agChartOptions';
 import { CartesianChart } from './cartesianChart';
 import { PolarChart } from './polarChart';
@@ -39,7 +34,6 @@ import { Chart, ChartUpdateType } from './chart';
 import { SourceEventListener } from '../util/observable';
 import { DropShadow } from '../scene/dropShadow';
 import { jsonDiff, jsonMerge, jsonApply } from '../util/json';
-import { Axis } from '../axis';
 import { GroupedCategoryChart } from './groupedCategoryChart';
 import { prepareOptions, isAgCartesianChartOptions, isAgHierarchyChartOptions, isAgPolarChartOptions, optionsType } from './mapping/prepare';
 import { SeriesOptionsTypes } from './mapping/defaults';
@@ -69,14 +63,6 @@ type SeriesOptionType<T extends Series> =
     T extends HistogramSeries ? AgHistogramSeriesOptions :
     T extends PieSeries ? AgPieSeriesOptions :
     T extends TreemapSeries ? AgTreemapSeriesOptions :
-    never;
-
-type AxisOptionType<T extends Axis<any, any>> =
-    T extends LogAxis ? AgLogAxisOptions :
-    T extends NumberAxis ? AgNumberAxisOptions :
-    T extends CategoryAxis ? AgCategoryAxisOptions :
-    T extends GroupedCategoryAxis ? AgGroupedCategoryAxisOptions :
-    T extends TimeAxis ? AgTimeAxisOptions :
     never;
 
 function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian' | 'polar' | 'hierarchy' {
