@@ -124,7 +124,7 @@ const GettingStarted = ({framework, data}) => {
 };
 
 const VideoPanel = ({framework, videos}) => {
-    const title = framework === 'javascript' ? 'JavaScript' : `${framework} Data Grid: Videos`;
+    const title = `${framework} Data Grid: Videos`;
     return (
         <div className={menuStyles['menu-view']}>
             <h2 className={menuStyles['menu-view__title']}>
