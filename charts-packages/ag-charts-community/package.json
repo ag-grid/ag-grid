@@ -82,6 +82,9 @@
         "access": "public"
     },
     "lint-staged": {
-        "*": "prettier --write"
+        "*.ts": "prettier --check",
+        "*.js": "prettier --check",
+        "*.md": "prettier --check",
+        "*.json": "prettier --check"
     }
 }
