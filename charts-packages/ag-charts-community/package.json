@@ -18,7 +18,7 @@
         "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
         "watch": "npx tsc -p tsconfig.json --watch",
         "hash": "sh ../../scripts/hashDirectory.sh > .hash",
-        "install-hooks": "cd ../.. && husky install charts-packages/ag-charts-community"
+        "install-hooks": "cd ../.. && husky install charts-packages/ag-charts-community/.husky"
     },
     "repository": {
         "type": "git",
@@ -82,9 +82,7 @@
         "access": "public"
     },
     "lint-staged": {
-        "*.ts": "prettier --check",
-        "*.js": "prettier --check",
-        "*.md": "prettier --check",
-        "*.json": "prettier --check"
+        "*.{ts,js,md,json}": "npx prettier --list-different",
+        "*.ts": "npx lerna run --scope @ag-grid-community/all-modules generate-doc-files -- -- --check"
     }
 }

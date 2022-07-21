@@ -5,10 +5,13 @@ const gulp = require('gulp');
 const prettier = require('gulp-prettier');
 const { ComponentUtil } = require("@ag-grid-community/core");
 const { getFormatterForTS } = require('../../scripts/formatAST');
+const prettierJs = require('prettier');
 
 const { formatNode, findNode, getJsDoc } = getFormatterForTS(ts);
 
 const EVENT_LOOKUP = ComponentUtil.getEventCallbacks();
+
+const VERIFY_MODE = process.argv.some(v => v === '--check');
 
 function buildGlob(basePath) {
     const opts = { ignore: [`${basePath}/**/*.test.ts`, `${basePath}/**/*.spec.ts`] };
@@ -442,10 +445,24 @@ function extractMethodsAndPropsFromNode(node, srcFile) {
 
 function writeFormattedFile(dir, filename, data) {
     const fullPath = dir + filename;
-    fs.writeFileSync(fullPath, JSON.stringify(data));
-    gulp.src(fullPath)
-        .pipe(prettier({}))
-        .pipe(gulp.dest(dir))
+
+    if (VERIFY_MODE) {
+        const currentContent = fs.readFileSync(fullPath).toString('utf-8');
+
+        const config = prettierJs.resolveConfig.sync(fullPath, {});
+        const fileOptions = { ...config, filepath: fullPath };
+        const newContent = prettierJs.format(JSON.stringify(data), fileOptions);
+
+        if (currentContent !== newContent) {
+            console.warn(`Needs to be updated: ${fullPath}`);
+            process.exit(1);
+        }
+    } else {
+        fs.writeFileSync(fullPath, JSON.stringify(data));
+        gulp.src(fullPath)
+            .pipe(prettier({}))
+            .pipe(gulp.dest(dir))
+    }
 }
 
 function getGridOptions() {
