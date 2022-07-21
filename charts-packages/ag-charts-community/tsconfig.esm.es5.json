@@ -7,8 +7,10 @@
       "@ag-*": [
         "node_modules/@ag-*/dist/esm/es5/main"
       ]
-    }
-  },
+    },
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+},
   "include": [
     "src/**/*"
   ],
