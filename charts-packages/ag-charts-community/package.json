@@ -18,7 +18,8 @@
         "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
         "watch": "npx tsc -p tsconfig.json --watch",
         "hash": "sh ../../scripts/hashDirectory.sh > .hash",
-        "install-hooks": "cd ../.. && husky install charts-packages/ag-charts-community/.husky"
+        "install-hooks": "cd ../.. && husky install charts-packages/ag-charts-community/.husky",
+        "fix": "npx lerna run --scope @ag-grid-community/all-modules generate-doc-files && npx prettier -w ."
     },
     "repository": {
         "type": "git",
