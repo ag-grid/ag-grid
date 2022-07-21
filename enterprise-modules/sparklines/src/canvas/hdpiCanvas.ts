@@ -53,6 +53,13 @@ export class HdpiCanvas {
         Object.freeze(this);
     }
 
+    clear() {
+        this.context.save();
+        this.context.resetTransform();
+        this.context.clearRect(0, 0, this.element.width, this.element.height);
+        this.context.restore();
+    }
+
     toImage(): HTMLImageElement {
         const img = this.document.createElement('img');
         img.src = this.getDataURL();
