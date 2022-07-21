@@ -561,8 +561,6 @@ export abstract class Sparkline extends Observable {
             if (distance <= minDistance) {
                 minDistance = distance;
                 closestDatum = datum;
-            } else {
-                return closestDatum;
             }
         }
 
