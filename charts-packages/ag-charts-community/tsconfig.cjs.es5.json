@@ -7,7 +7,9 @@
             "@ag-*": [
                 "node_modules/@ag-*/dist/cjs/es5/main"
             ]
-        }
+        },
+        "noUnusedParameters": true,
+        "noUnusedLocals": true,
     },
     "include": [
         "src/**/*"

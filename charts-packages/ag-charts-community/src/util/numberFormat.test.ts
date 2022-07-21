@@ -1,7 +1,6 @@
-import { describe, expect, test, it } from "@jest/globals";
+import { describe, expect, test } from "@jest/globals";
 import { format, formatDecimalParts, formatPrefix } from "./numberFormat";
 import { LinearScale } from "../scale/linearScale";
-import { NumericTicks } from "./ticks";
 
 describe('formatDecimalParts', () => {
     test('1.23', () => {

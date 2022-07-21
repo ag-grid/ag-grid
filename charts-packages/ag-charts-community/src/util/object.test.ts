@@ -1,4 +1,4 @@
-import { describe, expect, test, it } from "@jest/globals";
+import { expect, test } from "@jest/globals";
 import { getValue } from './object';
 
 test('getValue', () => {
