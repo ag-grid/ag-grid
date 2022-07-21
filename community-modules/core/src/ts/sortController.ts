@@ -73,8 +73,9 @@ export class SortController extends BeanStub {
 
         // reset sort index on everything
         this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach(col => col.setSortIndex(null));
-        const allSortedColsWithoutChanges = allSortedCols.filter(col => col !== lastColToChange);
-        [...allSortedColsWithoutChanges, lastSortIndexCol].forEach((col, idx) => (
+        const allSortedColsWithoutChanges = allSortedCols.filter(col => col !== lastSortIndexCol);
+        const sortedColsWithIndices = !!lastSortIndexCol.getSort() ? [...allSortedColsWithoutChanges, lastSortIndexCol] : allSortedColsWithoutChanges;
+        sortedColsWithIndices.forEach((col, idx) => (
             col.setSortIndex(idx)
         ));
     }
