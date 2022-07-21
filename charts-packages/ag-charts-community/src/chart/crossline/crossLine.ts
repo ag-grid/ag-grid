@@ -16,7 +16,7 @@ export class CrossLineLabel {
     text?: string = undefined;
     fontStyle?: FontStyle = undefined;
     fontWeight?: FontWeight = undefined;
-    fontSize: number = 15;
+    fontSize: number = 14;
     fontFamily: string = 'Verdana, sans-serif';
     /**
      * The padding between the label and the line.

@@ -92,6 +92,9 @@
         }
     },
     "Feature Highlights": {
+        "Cross Lines": {
+            "description": "Cross lines or shaded regions will emphasise trends and draw attention to important information such as a threshold."
+        },
         "Time Axis With Irregular Intervals": {
             "description": "A time axis represents a continuous length of time, and so can be easily used to visualise data with irregular time intervals."
         },

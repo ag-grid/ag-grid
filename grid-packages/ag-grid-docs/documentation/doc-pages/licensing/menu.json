@@ -1803,6 +1803,10 @@
                 "hideChildren": true,
                 "items": [
                   {
+                    "title": "Cross Lines",
+                    "url": "/charts-overview/gallery/cross-lines/"
+                  },
+                  {
                     "title": "Time Axis With Irregular Intervals",
                     "url": "/charts-overview/gallery/time-axis-with-irregular-intervals/"
                   },
