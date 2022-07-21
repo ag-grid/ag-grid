@@ -1,4 +1,4 @@
-import { describe, expect, test, it } from "@jest/globals";
+import { expect, test } from "@jest/globals";
 import { Path2D } from "./path2D";
 
 test('parseSvgPath', () => {

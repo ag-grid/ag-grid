@@ -58,7 +58,7 @@ export function loadExampleOptions(name: string, evalFn = 'options'): any {
 
     let evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
     try {
-        const agCharts = require('../../main');
+        require('../../main');
         return eval(evalExpr);
     } catch (error) {
         console.error(`AG Charts - unable to read example data for [${name}]; error: ${error.message}`);

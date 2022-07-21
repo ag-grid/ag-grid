@@ -1,8 +1,8 @@
 import { expect, test } from "@jest/globals";
-import { calculateNiceSecondaryAxis, getTicks } from "./secondaryAxisTicks";
+import { calculateNiceSecondaryAxis } from "./secondaryAxisTicks";
 
 function ticks(a: number, b: number, count: number): number[] {
-    let [domain, ticks] = calculateNiceSecondaryAxis([a, b], count);
+    let [, ticks] = calculateNiceSecondaryAxis([a, b], count);
     return ticks;
 }
 

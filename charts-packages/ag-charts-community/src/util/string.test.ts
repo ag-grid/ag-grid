@@ -1,4 +1,4 @@
-import { describe, expect, test, it } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import { interpolate } from "./string";
 import { locale } from "./time/format/defaultLocale";
 

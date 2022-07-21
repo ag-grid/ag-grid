@@ -4,7 +4,7 @@ import { LegendPosition } from "./legend";
 import { AreaSeries } from "./series/cartesian/areaSeries";
 import { BarSeries } from "./series/cartesian/barSeries";
 import { LineSeries } from "./series/cartesian/lineSeries";
-import { ChartAxis, ChartAxisPosition } from "./chartAxis";
+import { ChartAxisPosition } from "./chartAxis";
 import { NumberAxis } from "./axis/numberAxis";
 import { ChartTheme } from "./themes/chartTheme";
 import { AgChartV2 } from "./agChartV2";
@@ -29,24 +29,6 @@ const revenueProfitData = [{
     revenue: 185000,
     profit: 50000,
     foobar: 23500
-}];
-
-const data2 = [{
-    month: 'Mar',
-    apples: 2,
-    oranges: 3
-}, {
-    month: 'May',
-    apples: 4,
-    oranges: 5
-}, {
-    month: 'Jun',
-    apples: 6,
-    oranges: 7
-}, {
-    month: 'Jul',
-    apples: 8,
-    oranges: 9
 }];
 
 describe('update', () => {
