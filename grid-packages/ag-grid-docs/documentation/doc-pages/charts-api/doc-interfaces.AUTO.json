@@ -3455,7 +3455,7 @@
     },
     "label": {
       "type": {
-        "returnType": "{\n        text: string;  // display name for the sub-component\n    }",
+        "returnType": "{\n        text: string; // display name for the sub-component\n    }",
         "optional": false
       }
     }
@@ -4309,7 +4309,7 @@
       "description": "/** Returns a new parser for the given string specifier.\n * The specifier string may contain the same directives as locale.format (TimeLocaleObject.format).\n * The %d and %e directives are considered equivalent for parsing.\n * \n * The returned function parses a specified string, returning the corresponding date or undefined\n * if the string could not be parsed according to this format’s specifier.\n * Parsing is strict: if the specified string does not exactly match the associated specifier, this method returns undefined.\n * \n * For example, if the associated specifier is %Y-%m-%dT%H:%M:%SZ, then the string \"2011-07-01T19:15:28Z\"\n * will be parsed as expected, but \"2011-07-01T19:15:28\", \"2011-07-01 19:15:28\" and \"2011-07-01\" will return undefined.\n * (Note that the literal Z here is different from the time zone offset directive %Z.)\n * If a more flexible parser is desired, try multiple formats sequentially until one returns non-undefined.\n * @param specifier A specifier string for the date format.\n */",
       "type": {
         "arguments": { "specifier": "string" },
-        "returnType": "(dateString: string) => (Date | undefined)",
+        "returnType": "(dateString: string) => Date | undefined",
         "optional": false
       }
     },
@@ -4325,7 +4325,7 @@
       "description": "/** Equivalent to locale.parse (TimeLocaleObject.parse),\n * except all directives are interpreted as Coordinated Universal Time (UTC) rather than local time.\n * @param specifier A specifier string for the date format.\n */",
       "type": {
         "arguments": { "specifier": "string" },
-        "returnType": "(dateString: string) => (Date | undefined)",
+        "returnType": "(dateString: string) => Date | undefined",
         "optional": false
       }
     }
