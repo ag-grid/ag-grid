@@ -46,7 +46,7 @@ const HeaderRowContainerComp = (props: {pinned: string | null}) => {
 
     });
 
-    const className = useMemo( ()=> cssClasses.toString(), [cssClasses]);
+    const className = useMemo(() => cssClasses.toString(), [cssClasses]);
 
     const insertRowsJsx = ()=> headerRowCtrls.map( ctrl => <HeaderRowComp ctrl={ctrl} key={ctrl.getInstanceId()} /> );
 

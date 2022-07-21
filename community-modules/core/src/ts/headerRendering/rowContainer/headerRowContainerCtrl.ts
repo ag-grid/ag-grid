@@ -41,6 +41,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     private filtersRowCtrl: HeaderRowCtrl | undefined;
     private columnsRowCtrl: HeaderRowCtrl;
     private groupsRowCtrls: HeaderRowCtrl[] = [];
+    private eViewport: HTMLElement;
 
     constructor(pinned: string | null) {
         super();
@@ -49,11 +50,12 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     public setComp(comp: IHeaderRowContainerComp, eGui: HTMLElement): void {
         this.comp = comp;
+        this.eViewport = eGui;
 
         this.setupCenterWidth();
         this.setupPinnedWidth();
 
-        this.setupDragAndDrop(eGui);
+        this.setupDragAndDrop(this.eViewport);
 
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
 
@@ -160,6 +162,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     public setHorizontalScroll(offset: number): void {
         this.comp.setContainerTransform(`translateX(${offset}px)`);
+        this.eViewport.scrollLeft = 0;
     }
 
     private setupPinnedWidth(): void {
