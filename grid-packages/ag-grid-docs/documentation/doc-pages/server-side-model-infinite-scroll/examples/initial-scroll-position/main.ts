@@ -21,7 +21,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   serverSideInfiniteScroll: true,
   serverSideInitialRowCount: 5500,
 
-  onFirstDataRendered: (params) => {
+  onFirstDataRendered: function(params) {
     params.api.ensureIndexVisible(5000, 'top');
   },
 }
