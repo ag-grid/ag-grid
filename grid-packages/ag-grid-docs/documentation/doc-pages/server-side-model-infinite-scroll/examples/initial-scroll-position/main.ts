@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
+import { Grid, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest, FirstDataRenderedEvent } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -21,7 +21,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   serverSideInfiniteScroll: true,
   serverSideInitialRowCount: 5500,
 
-  onFirstDataRendered: function(params) {
+  onFirstDataRendered: function(params: FirstDataRenderedEvent<IOlympicData>) {
     params.api.ensureIndexVisible(5000, 'top');
   },
 }
