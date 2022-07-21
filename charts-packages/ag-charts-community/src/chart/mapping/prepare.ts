@@ -1,19 +1,32 @@
-import { AgChartOptions, AgHierarchyChartOptions, AgPolarChartOptions, AgCartesianChartOptions, AgChartThemePalette, AgCrossLineOptions } from "../agChartOptions";
-import { CartesianChart } from "../cartesianChart";
-import { PolarChart } from "../polarChart";
-import { HierarchyChart } from "../hierarchyChart";
-import { SeriesOptionsTypes, DEFAULT_CARTESIAN_CHART_OVERRIDES, DEFAULT_BAR_CHART_OVERRIDES, DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES } from "./defaults";
-import { jsonMerge, DELETE, jsonWalk } from "../../util/json";
-import { applySeriesTransform } from "./transforms";
-import { getChartTheme } from "./themes";
-import { processSeriesOptions, SeriesOptions } from "./prepareSeries";
+import {
+    AgChartOptions,
+    AgHierarchyChartOptions,
+    AgPolarChartOptions,
+    AgCartesianChartOptions,
+    AgChartThemePalette,
+    AgCrossLineOptions,
+} from '../agChartOptions';
+import { CartesianChart } from '../cartesianChart';
+import { PolarChart } from '../polarChart';
+import { HierarchyChart } from '../hierarchyChart';
+import {
+    SeriesOptionsTypes,
+    DEFAULT_CARTESIAN_CHART_OVERRIDES,
+    DEFAULT_BAR_CHART_OVERRIDES,
+    DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES,
+} from './defaults';
+import { jsonMerge, DELETE, jsonWalk } from '../../util/json';
+import { applySeriesTransform } from './transforms';
+import { getChartTheme } from './themes';
+import { processSeriesOptions, SeriesOptions } from './prepareSeries';
 
 export type ChartType = CartesianChart | PolarChart | HierarchyChart;
 export type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
 
-export function optionsType(
-    input: { type?: AgChartOptions['type'], series?: { type?: SeriesOptionsTypes['type']}[]}
-): NonNullable<AgChartOptions['type']> {
+export function optionsType(input: {
+    type?: AgChartOptions['type'];
+    series?: { type?: SeriesOptionsTypes['type'] }[];
+}): NonNullable<AgChartOptions['type']> {
     return input.type ?? input.series?.[0]?.type ?? 'line';
 }
 
@@ -47,7 +60,7 @@ export function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHie
 
     switch (input.type) {
         case 'hierarchy':
-            // fall-through - hierarchy and treemap are synonyms.
+        // fall-through - hierarchy and treemap are synonyms.
         case 'treemap':
             return true;
 
@@ -64,7 +77,7 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
 
     switch (input.type) {
         case 'polar':
-            // fall-through - polar and pie are synonyms.
+        // fall-through - polar and pie are synonyms.
         case 'pie':
             return true;
 
@@ -74,11 +87,13 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
 }
 
 export function isSeriesOptionType(input?: string): input is NonNullable<SeriesOptionsTypes['type']> {
-    if (input == null) { return false; }
+    if (input == null) {
+        return false;
+    }
     return ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'].indexOf(input) >= 0;
 }
 
-function countArrayElements<T extends any[]|any[][]>(input: T): number {
+function countArrayElements<T extends any[] | any[][]>(input: T): number {
     let count = 0;
     for (const next of input) {
         if (next instanceof Array) {
@@ -113,41 +128,47 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
     // Determine type and ensure it's explicit in the options config.
     const userSuppliedOptionsType = options.type;
     const type = optionsType(options);
-    options = {...options, type };
+    options = { ...options, type };
 
-    const defaultSeriesType = isAgCartesianChartOptions(options) ? 'line' :
-        isAgHierarchyChartOptions(options) ? 'treemap' :
-        isAgPolarChartOptions(options) ? 'pie' :
-        'line';
+    const defaultSeriesType = isAgCartesianChartOptions(options)
+        ? 'line'
+        : isAgHierarchyChartOptions(options)
+        ? 'treemap'
+        : isAgPolarChartOptions(options)
+        ? 'pie'
+        : 'line';
 
     const defaultOverrides =
-        type === 'bar' ? DEFAULT_BAR_CHART_OVERRIDES :
-        type === 'scatter' ? DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES :
-        type === 'histogram' ? DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES :
-        isAgCartesianChartOptions(options) ? DEFAULT_CARTESIAN_CHART_OVERRIDES :
-        {};
+        type === 'bar'
+            ? DEFAULT_BAR_CHART_OVERRIDES
+            : type === 'scatter'
+            ? DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES
+            : type === 'histogram'
+            ? DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES
+            : isAgCartesianChartOptions(options)
+            ? DEFAULT_CARTESIAN_CHART_OVERRIDES
+            : {};
 
-    const { context, mergedOptions, axesThemes, seriesThemes } =
-        prepareMainOptions<T>(defaultOverrides as T, options);
+    const { context, mergedOptions, axesThemes, seriesThemes } = prepareMainOptions<T>(defaultOverrides as T, options);
 
     // Special cases where we have arrays of elements which need their own defaults.
 
     // Apply series themes before calling processSeriesOptions() as it reduces and renames some
     // properties, and in that case then cannot correctly have themes applied.
     mergedOptions.series = processSeriesOptions(
-        (mergedOptions.series as SeriesOptions[] || [])
-            .map(s => {
-                const type = s.type ? s.type :
-                    isSeriesOptionType(userSuppliedOptionsType) ? userSuppliedOptionsType :
-                    defaultSeriesType;
+        ((mergedOptions.series as SeriesOptions[]) || []).map((s) => {
+            const type = s.type
+                ? s.type
+                : isSeriesOptionType(userSuppliedOptionsType)
+                ? userSuppliedOptionsType
+                : defaultSeriesType;
 
-                return jsonMerge(seriesThemes[type] || {}, { ...s, type });
-            })
-    )
-        .map(s => prepareSeries(context, s)) as any[];
+            return jsonMerge(seriesThemes[type] || {}, { ...s, type });
+        })
+    ).map((s) => prepareSeries(context, s)) as any[];
 
     if (isAgCartesianChartOptions(mergedOptions)) {
-        mergedOptions.axes = mergedOptions.axes?.map(a => {
+        mergedOptions.axes = mergedOptions.axes?.map((a) => {
             const type = a.type || 'number';
             const axis = { ...a, type };
             const axesTheme = jsonMerge(axesThemes[type], axesThemes[type][a.position || 'unknown'] || {});
@@ -161,16 +182,23 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
 }
 
 function sanityCheckOptions<T extends AgChartOptions>(options: T) {
-    if (options.series?.some((s: any) => s.yKeys != null && s.yKey != null )) {
-        console.warn('AG Charts - series options yKeys and yKey are mutually exclusive, please only use yKey for future compatibility.');
+    if (options.series?.some((s: any) => s.yKeys != null && s.yKey != null)) {
+        console.warn(
+            'AG Charts - series options yKeys and yKey are mutually exclusive, please only use yKey for future compatibility.'
+        );
     }
 
-    if (options.series?.some((s: any) => s.yNames != null && s.yName != null )) {
-        console.warn('AG Charts - series options yNames and yName are mutually exclusive, please only use yName for future compatibility.');
+    if (options.series?.some((s: any) => s.yNames != null && s.yName != null)) {
+        console.warn(
+            'AG Charts - series options yNames and yName are mutually exclusive, please only use yName for future compatibility.'
+        );
     }
 }
 
-function prepareMainOptions<T>(defaultOverrides: T, options: T): { context: PreparationContext, mergedOptions: T; axesThemes: any; seriesThemes: any; } {
+function prepareMainOptions<T>(
+    defaultOverrides: T,
+    options: T
+): { context: PreparationContext; mergedOptions: T; axesThemes: any; seriesThemes: any } {
     const { theme, cleanedTheme, axesThemes, seriesThemes } = prepareTheme(options);
     const context: PreparationContext = { colourIndex: 0, palette: theme.palette };
     const mergedOptions = jsonMerge(defaultOverrides, cleanedTheme, options);
@@ -205,18 +233,20 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
         fill?: string;
         fills?: string[];
         strokes?: string[];
-        marker?: { fill?: string; stroke?: string; };
-        callout?: { colors?: string[]; };
+        marker?: { fill?: string; stroke?: string };
+        callout?: { colors?: string[] };
     } = {};
 
-    const { palette: { fills, strokes } } = context;
+    const {
+        palette: { fills, strokes },
+    } = context;
 
-    const inputAny = (input as any);
+    const inputAny = input as any;
     let colourCount = countArrayElements(inputAny['yKeys'] || []) || 1; // Defaults to 1 if no yKeys.
     switch (input.type) {
         case 'pie':
             colourCount = Math.max(fills.length, strokes.length);
-            // fall-through - only colourCount varies for `pie`.
+        // fall-through - only colourCount varies for `pie`.
         case 'area':
         case 'bar':
         case 'column':
@@ -250,7 +280,10 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
     return paletteOptions as T;
 }
 
-function prepareAxis<T extends AxesOptionsTypes>(axis: T, axisTheme: Omit<T, "crossLines"> & { crossLines: AgCrossLineOptions }): T {
+function prepareAxis<T extends AxesOptionsTypes>(
+    axis: T,
+    axisTheme: Omit<T, 'crossLines'> & { crossLines: AgCrossLineOptions }
+): T {
     // Remove redundant theme overload keys.
     const removeOptions = { top: DELETE, bottom: DELETE, left: DELETE, right: DELETE } as any;
 
@@ -272,12 +305,17 @@ function prepareAxis<T extends AxesOptionsTypes>(axis: T, axisTheme: Omit<T, "cr
 
 function prepareEnabledOptions<T extends AgChartOptions>(options: T, mergedOptions: any) {
     // Set `enabled: true` for all option objects where the user has provided values.
-    jsonWalk(options, (_, userOpts, mergedOpts) => {
-        if (!mergedOpts) {
-            return;
-        }
-        if ('enabled' in mergedOpts && userOpts.enabled == null) {
-            mergedOpts.enabled = true;
-        }
-    }, { skip: ['data'] }, mergedOptions);
+    jsonWalk(
+        options,
+        (_, userOpts, mergedOpts) => {
+            if (!mergedOpts) {
+                return;
+            }
+            if ('enabled' in mergedOpts && userOpts.enabled == null) {
+                mergedOpts.enabled = true;
+            }
+        },
+        { skip: ['data'] },
+        mergedOptions
+    );
 }

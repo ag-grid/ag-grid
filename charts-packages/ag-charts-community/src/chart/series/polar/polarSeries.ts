@@ -1,12 +1,11 @@
-import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from "../series";
-import { ChartAxisDirection } from "../../chartAxis";
-import { SeriesMarker, SeriesMarkerFormatterParams } from "../seriesMarker";
+import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
+import { ChartAxisDirection } from '../../chartAxis';
+import { SeriesMarker, SeriesMarkerFormatterParams } from '../seriesMarker';
 import { RedrawType, SceneChangeDetection } from '../../../scene/changeDetectable';
 export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
-
     directionKeys = {
         [ChartAxisDirection.X]: ['angleKey'],
-        [ChartAxisDirection.Y]: ['radiusKey']
+        [ChartAxisDirection.Y]: ['radiusKey'],
     };
 
     /**
@@ -26,17 +25,17 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
     radius: number = 0;
 
     constructor() {
-        super({ pickModes: [ SeriesNodePickMode.EXACT_SHAPE_MATCH ] });
+        super({ pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH] });
     }
 }
 
 export class PolarSeriesMarker extends SeriesMarker {
     @SceneChangeDetection({ redraw: RedrawType.MAJOR })
     formatter?: (params: PolarSeriesMarkerFormatterParams) => {
-        fill?: string,
-        stroke?: string,
-        strokeWidth: number,
-        size: number
+        fill?: string;
+        stroke?: string;
+        strokeWidth: number;
+        size: number;
     };
 }
 

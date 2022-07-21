@@ -1,4 +1,4 @@
-type Callback = (params: { count: number}) => void;
+type Callback = (params: { count: number }) => void;
 
 /**
  * Wrap a function in debouncing trigger function. A requestAnimationFrame() is scheduled
@@ -26,6 +26,6 @@ function buildScheduler(scheduleFn: (cb: () => void) => void, cb: Callback) {
                 });
             }
             scheduleCount++;
-        }
+        },
     };
 }

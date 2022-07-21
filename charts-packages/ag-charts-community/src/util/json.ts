@@ -1,44 +1,53 @@
 type LiteralProperties = 'shape' | 'data';
 type SkippableProperties = 'axes' | 'series' | 'container' | 'customChartThemes';
-type IsLiteralProperty<T, K extends keyof T> = K extends LiteralProperties ? true :
-    T[K] extends Array<any> ? true :
-    false;
+type IsLiteralProperty<T, K extends keyof T> = K extends LiteralProperties
+    ? true
+    : T[K] extends Array<any>
+    ? true
+    : false;
 type IsSkippableProperty<T, K extends keyof T> = K extends SkippableProperties ? true : false;
 
 // Needs to be recursive when we move to TS 4.x+; only supports a maximum level of nesting right now.
 export type DeepPartial<T> = {
-    [P1 in keyof T]?:
-        IsSkippableProperty<T, P1> extends true ? any :
-        IsLiteralProperty<T, P1> extends true ? T[P1] :
-        { [P2 in keyof T[P1]]?:
-            IsSkippableProperty<T[P1], P2> extends true ? any :
-            IsLiteralProperty<T[P1], P2> extends true ? T[P1][P2] :
-            { [P3 in keyof T[P1][P2]]?:
-                IsSkippableProperty<T[P1][P2], P3> extends true ? any :
-                IsLiteralProperty<T[P1][P2], P3> extends true ? T[P1][P2][P3] :
-                { [P4 in keyof T[P1][P2][P3]]?:
-                    IsSkippableProperty<T[P1][P2][P3], P4> extends true ? any :
-                    IsLiteralProperty<T[P1][P2][P3], P4> extends true ? T[P1][P2][P3][P4] :
-                    Partial<T[P1][P2][P3][P4]>
-                }
-            }
-        }
+    [P1 in keyof T]?: IsSkippableProperty<T, P1> extends true
+        ? any
+        : IsLiteralProperty<T, P1> extends true
+        ? T[P1]
+        : {
+              [P2 in keyof T[P1]]?: IsSkippableProperty<T[P1], P2> extends true
+                  ? any
+                  : IsLiteralProperty<T[P1], P2> extends true
+                  ? T[P1][P2]
+                  : {
+                        [P3 in keyof T[P1][P2]]?: IsSkippableProperty<T[P1][P2], P3> extends true
+                            ? any
+                            : IsLiteralProperty<T[P1][P2], P3> extends true
+                            ? T[P1][P2][P3]
+                            : {
+                                  [P4 in keyof T[P1][P2][P3]]?: IsSkippableProperty<T[P1][P2][P3], P4> extends true
+                                      ? any
+                                      : IsLiteralProperty<T[P1][P2][P3], P4> extends true
+                                      ? T[P1][P2][P3][P4]
+                                      : Partial<T[P1][P2][P3][P4]>;
+                              };
+                    };
+          };
 };
 
 /**
  * Performs a JSON-diff between a source and target JSON structure.
- * 
+ *
  * On a per property basis, takes the target property value where:
  * - types are different.
  * - type is primitive.
  * - type is array and length or content have changed.
- * 
+ *
  * Recurses for object types.
- * 
+ *
  * @param source starting point for diff
  * @param target target for diff vs. source
  * @param opts.stringify properties to stringify for comparison purposes
- * 
+ *
  * @returns `null` if no differences, or an object with the subset of properties that have changed.
  */
 export function jsonDiff<T extends any>(source: T, target: T, opts?: { stringify: string[] }): Partial<T> | null {
@@ -48,11 +57,11 @@ export function jsonDiff<T extends any>(source: T, target: T, opts?: { stringify
 
     if (targetType === 'array') {
         if (sourceType !== 'array' || source.length !== target.length) {
-            return [ ...(target as any) ];
+            return [...(target as any)];
         }
 
         if (target.some((targetElement: any, i: number) => jsonDiff(source?.[i], targetElement) != null)) {
-            return [ ...(target as any) ];
+            return [...(target as any)];
         }
 
         return null;
@@ -70,19 +79,18 @@ export function jsonDiff<T extends any>(source: T, target: T, opts?: { stringify
         return null;
     }
 
-    const lhs = source || {} as any;
-    const rhs = target || {} as any;
+    const lhs = source || ({} as any);
+    const rhs = target || ({} as any);
 
-    const allProps = new Set([
-        ...Object.keys(lhs),
-        ...Object.keys(rhs),
-    ]);
+    const allProps = new Set([...Object.keys(lhs), ...Object.keys(rhs)]);
 
     let propsChangedCount = 0;
     const result: any = {};
     for (const prop of allProps) {
         // Cheap-and-easy equality check.
-        if (lhs[prop] === rhs[prop]) { continue; }
+        if (lhs[prop] === rhs[prop]) {
+            continue;
+        }
 
         const take = (v: any) => {
             result[prop] = v;
@@ -90,7 +98,7 @@ export function jsonDiff<T extends any>(source: T, target: T, opts?: { stringify
         };
 
         if (stringify.includes(prop)) {
-            if (JSON.stringify(lhs[prop] !== JSON.stringify(rhs[prop]))) { 
+            if (JSON.stringify(lhs[prop] !== JSON.stringify(rhs[prop]))) {
                 take(rhs[prop]);
             }
             continue;
@@ -145,25 +153,23 @@ const NOT_SPECIFIED = Symbol('<unspecified-property>') as any;
 /**
  * Merge together the provide JSON object structures, with the precedence of application running
  * from higher indexes to lower indexes.
- * 
+ *
  * Deep-clones all objects to avoid mutation of the inputs changing the output object. For arrays,
  * just performs a deep-clone of the entire array, no merging of elements attempted.
- * 
+ *
  * @param json all json objects to merge
- * 
+ *
  * @returns the combination of all of the json inputs
  */
 export function jsonMerge<T>(...json: T[]): T {
-    const jsonTypes = json.map(v => classify(v));
-    if (jsonTypes.some(v => v === 'array')) {
+    const jsonTypes = json.map((v) => classify(v));
+    if (jsonTypes.some((v) => v === 'array')) {
         // Clone final array.
         const finalValue = json[json.length - 1];
         if (finalValue instanceof Array) {
             return finalValue.map((v) => {
                 const type = classify(v);
-                return type === 'array' ? jsonMerge([], v) : 
-                    type === 'object' ? jsonMerge({}, v) :
-                    v;
+                return type === 'array' ? jsonMerge([], v) : type === 'object' ? jsonMerge({}, v) : v;
             }) as any;
         }
 
@@ -171,15 +177,13 @@ export function jsonMerge<T>(...json: T[]): T {
     }
 
     const result: any = {};
-    const props = new Set(
-        json.map((v) => v != null ? Object.keys(v) : [])
-            .reduce((r, n) => r.concat(n), []),
-    );
+    const props = new Set(json.map((v) => (v != null ? Object.keys(v) : [])).reduce((r, n) => r.concat(n), []));
 
     for (const nextProp of props) {
-        const values = json.map(j => j != null && nextProp in j ? (j as any)[nextProp] : NOT_SPECIFIED)
-            .filter(v => v !== NOT_SPECIFIED);
-        
+        const values = json
+            .map((j) => (j != null && nextProp in j ? (j as any)[nextProp] : NOT_SPECIFIED))
+            .filter((v) => v !== NOT_SPECIFIED);
+
         if (values.length === 0) {
             continue;
         }
@@ -188,9 +192,9 @@ export function jsonMerge<T>(...json: T[]): T {
             continue;
         }
 
-        const types = values.map(v => classify(v));
+        const types = values.map((v) => classify(v));
         const type = types[0];
-        if (types.some(t => t !== type && t !== null)) {
+        if (types.some((t) => t !== type && t !== null)) {
             // Short-circuit if mismatching types.
             result[nextProp] = lastValue;
             continue;
@@ -210,7 +214,7 @@ export function jsonMerge<T>(...json: T[]): T {
 /**
  * Recursively apply a JSON object into a class-hierarchy, optionally instantiating certain classes
  * by property name.
- * 
+ *
  * @param target to apply source JSON properties into
  * @param source to be applied
  * @param params.path path for logging/error purposes, to aid with pinpointing problems
@@ -220,19 +224,16 @@ export function jsonMerge<T>(...json: T[]): T {
  *                            require object construction
  * @param params.allowedTypes overrides by path for allowed property types
  */
-export function jsonApply<
-    Target,
-    Source extends DeepPartial<Target>,
->(
+export function jsonApply<Target, Source extends DeepPartial<Target>>(
     target: Target,
     source?: Source,
     params: {
-        path?: string,
-        matcherPath?: string,
-        skip?: string[],
-        constructors?: Record<string, new () => any>,
-        allowedTypes?: Record<string, ReturnType<typeof classify>[]>,
-    } = {},
+        path?: string;
+        matcherPath?: string;
+        skip?: string[];
+        constructors?: Record<string, new () => any>;
+        allowedTypes?: Record<string, ReturnType<typeof classify>[]>;
+    } = {}
 ): Target {
     const {
         path = undefined,
@@ -242,17 +243,23 @@ export function jsonApply<
         allowedTypes = {},
     } = params;
 
-    if (target == null) { throw new Error(`AG Charts - target is uninitialised: ${path || '<root>'}`); }
-    if (source == null) { return target; }
+    if (target == null) {
+        throw new Error(`AG Charts - target is uninitialised: ${path || '<root>'}`);
+    }
+    if (source == null) {
+        return target;
+    }
 
     const targetType = classify(target);
     for (const property in source) {
         const propertyMatcherPath = `${matcherPath ? matcherPath + '.' : ''}${property}`;
-        if (skip.indexOf(propertyMatcherPath) >= 0) { continue; }
+        if (skip.indexOf(propertyMatcherPath) >= 0) {
+            continue;
+        }
 
         const newValue = source[property];
         const propertyPath = `${path ? path + '.' : ''}${property}`;
-        const targetAny = (target as any);
+        const targetAny = target as any;
         const targetClass = targetAny.constructor;
         const currentValue = targetAny[property];
         let ctr = constructors[property] ?? constructors[propertyMatcherPath];
@@ -261,7 +268,9 @@ export function jsonApply<
             const newValueType = classify(newValue);
 
             if (targetType === 'class-instance' && !(property in target || targetAny.hasOwnProperty(property))) {
-                console.warn(`AG Charts - unable to set [${propertyPath}] in ${targetClass?.name} - property is unknown`);
+                console.warn(
+                    `AG Charts - unable to set [${propertyPath}] in ${targetClass?.name} - property is unknown`
+                );
                 continue;
             }
 
@@ -269,7 +278,9 @@ export function jsonApply<
             if (currentValueType === 'class-instance' && newValueType === 'object') {
                 // Allowed, this is the common case! - do not error.
             } else if (currentValueType != null && newValueType != null && !allowableTypes.includes(newValueType)) {
-                console.warn(`AG Charts - unable to set [${propertyPath}] in ${targetClass?.name} - can't apply type of [${newValueType}], allowed types are: [${allowableTypes}]`);
+                console.warn(
+                    `AG Charts - unable to set [${propertyPath}] in ${targetClass?.name} - can't apply type of [${newValueType}], allowed types are: [${allowableTypes}]`
+                );
                 continue;
             }
 
@@ -277,7 +288,13 @@ export function jsonApply<
                 ctr = ctr ?? constructors[`${propertyMatcherPath}[]`];
                 if (ctr != null) {
                     const newValueArray: any[] = newValue as any;
-                    targetAny[property] = newValueArray.map((v) => jsonApply(new ctr(), v, {...params, path: propertyPath, matcherPath: propertyMatcherPath + '[]' }));
+                    targetAny[property] = newValueArray.map((v) =>
+                        jsonApply(new ctr(), v, {
+                            ...params,
+                            path: propertyPath,
+                            matcherPath: propertyMatcherPath + '[]',
+                        })
+                    );
                 } else {
                     targetAny[property] = newValue;
                 }
@@ -285,9 +302,17 @@ export function jsonApply<
                 targetAny[property] = newValue;
             } else if (newValueType === 'object') {
                 if (currentValue != null) {
-                    jsonApply(currentValue, newValue as any, {...params, path: propertyPath, matcherPath: propertyMatcherPath });
+                    jsonApply(currentValue, newValue as any, {
+                        ...params,
+                        path: propertyPath,
+                        matcherPath: propertyMatcherPath,
+                    });
                 } else if (ctr != null) {
-                    targetAny[property] = jsonApply(new ctr(), newValue as any, {...params, path: propertyPath, matcherPath: propertyMatcherPath });
+                    targetAny[property] = jsonApply(new ctr(), newValue as any, {
+                        ...params,
+                        path: propertyPath,
+                        matcherPath: propertyMatcherPath,
+                    });
                 } else {
                     targetAny[property] = newValue;
                 }
@@ -295,7 +320,9 @@ export function jsonApply<
                 targetAny[property] = newValue;
             }
         } catch (error) {
-            console.warn(`AG Charts - unable to set [${propertyPath}] in [${targetClass?.name}]; nested error is: ${error.message}`);
+            console.warn(
+                `AG Charts - unable to set [${propertyPath}] in [${targetClass?.name}]; nested error is: ${error.message}`
+            );
             continue;
         }
     }
@@ -307,7 +334,7 @@ export function jsonApply<
  * Walk the given JSON object graphs, invoking the visit() callback for every object encountered.
  * Arrays are descended into without a callback, however their elements will have the visit()
  * callback invoked if they are objects.
- * 
+ *
  * @param json to traverse
  * @param visit callback for each non-primitive and non-array object found
  * @param opts.skip property names to skip when walking
@@ -317,7 +344,7 @@ export function jsonWalk(
     json: any,
     visit: (classification: Classification, node: any, ...otherNodes: any[]) => void,
     opts: {
-        skip?: string[],
+        skip?: string[];
     },
     ...jsons: any[]
 ) {
@@ -326,7 +353,7 @@ export function jsonWalk(
 
     if (jsonType === 'array') {
         json.forEach((element: any, index: number) => {
-            jsonWalk(element, visit, opts, ...jsons?.map(o => o?.[index]));
+            jsonWalk(element, visit, opts, ...jsons?.map((o) => o?.[index]));
         });
         return;
     } else if (jsonType !== 'object') {
@@ -335,10 +362,12 @@ export function jsonWalk(
 
     visit(jsonType, json, ...jsons);
     for (const property in json) {
-        if (skip.indexOf(property) >= 0) { continue; }
+        if (skip.indexOf(property) >= 0) {
+            continue;
+        }
 
         const value = json[property];
-        const otherValues = jsons?.map(o => o?.[property]);
+        const otherValues = jsons?.map((o) => o?.[property]);
         const valueType = classify(value);
 
         if (valueType === 'object' || valueType === 'array') {

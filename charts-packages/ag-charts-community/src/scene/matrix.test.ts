@@ -1,5 +1,5 @@
-import { expect, test } from "@jest/globals";
-import { Matrix } from "./matrix";
+import { expect, test } from '@jest/globals';
+import { Matrix } from './matrix';
 
 test('multiply', () => {
     const A = new Matrix([1, 2, 3, 4, 5, 6]);

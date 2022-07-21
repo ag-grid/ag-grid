@@ -1,22 +1,21 @@
-import { Group } from "../../scene/group";
-import { Selection } from "../../scene/selection";
-import { Line } from "../../scene/shape/line";
-import { normalizeAngle360, toRadians } from "../../util/angle";
-import { Text } from "../../scene/shape/text";
-import { BBox } from "../../scene/bbox";
-import { BandScale } from "../../scale/bandScale";
-import { ticksToTree, TreeLayout, treeLayout } from "../../layout/tree";
-import { AxisLabel } from "../../axis";
-import { ChartAxis, ChartAxisDirection } from "../chartAxis";
-import { extent } from "../../util/array";
-import { isContinuous } from "../../util/value";
+import { Group } from '../../scene/group';
+import { Selection } from '../../scene/selection';
+import { Line } from '../../scene/shape/line';
+import { normalizeAngle360, toRadians } from '../../util/angle';
+import { Text } from '../../scene/shape/text';
+import { BBox } from '../../scene/bbox';
+import { BandScale } from '../../scale/bandScale';
+import { ticksToTree, TreeLayout, treeLayout } from '../../layout/tree';
+import { AxisLabel } from '../../axis';
+import { ChartAxis, ChartAxisDirection } from '../chartAxis';
+import { extent } from '../../util/array';
+import { isContinuous } from '../../util/value';
 
 class GroupedCategoryAxisLabel extends AxisLabel {
     grid: boolean = false;
 }
 
 export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
-
     static className = 'GroupedCategoryAxis';
     static type = 'groupedCategory' as const;
 
@@ -97,7 +96,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                 layout.depth * lineHeight,
                 (Math.min(range[0], range[1]) || 0) + (s.bandwidth || 0) / 2,
                 -layout.depth * lineHeight,
-                (range[1] - range[0]) < 0
+                range[1] - range[0] < 0
             );
         }
     }
@@ -106,30 +105,30 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         /**
          * The horizontal translation of the axis group.
          */
-        x: number,
+        x: number;
         /**
          * The vertical translation of the axis group.
          */
-        y: number
+        y: number;
     } = {
-            x: 0,
-            y: 0
-        };
+        x: 0,
+        y: 0,
+    };
 
     readonly line: {
         /**
          * The line width to be used by the axis line.
          */
-        width: number,
+        width: number;
         /**
          * The color of the axis line.
          * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
          */
-        color?: string
+        color?: string;
     } = {
-            width: 1,
-            color: 'rgba(195, 195, 195, 1)'
-        };
+        width: 1,
+        color: 'rgba(195, 195, 195, 1)',
+    };
 
     // readonly tick = new AxisTick();
 
@@ -150,7 +149,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
      */
     set gridLength(value: number) {
         // Was visible and now invisible, or was invisible and now visible.
-        if (this._gridLength && !value || !this._gridLength && value) {
+        if ((this._gridLength && !value) || (!this._gridLength && value)) {
             this.gridLineSelection = this.gridLineSelection.remove().setData([]);
             this.labelSelection = this.labelSelection.remove().setData([]);
         }
@@ -164,21 +163,23 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         const { direction, boundSeries } = this;
         const domains: any[][] = [];
         let isNumericX: boolean | undefined = undefined;
-        boundSeries.filter(s => s.visible).forEach(series => {
-            if (direction === ChartAxisDirection.X) {
-                if (isNumericX === undefined) {
-                    // always add first X domain
-                    const domain = series.getDomain(direction);
-                    domains.push(domain);
-                    isNumericX = typeof domain[0] === 'number';
-                } else if (isNumericX) {
-                    // only add further X domains if the axis is numeric
+        boundSeries
+            .filter((s) => s.visible)
+            .forEach((series) => {
+                if (direction === ChartAxisDirection.X) {
+                    if (isNumericX === undefined) {
+                        // always add first X domain
+                        const domain = series.getDomain(direction);
+                        domains.push(domain);
+                        isNumericX = typeof domain[0] === 'number';
+                    } else if (isNumericX) {
+                        // only add further X domains if the axis is numeric
+                        domains.push(series.getDomain(direction));
+                    }
+                } else {
                     domains.push(series.getDomain(direction));
                 }
-            } else {
-                domains.push(series.getDomain(direction));
-            }
-        });
+            });
         const domain = new Array<any>().concat(...domains);
         this.domain = extent(domain, isContinuous) || domain;
 
@@ -203,11 +204,11 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         const rangeStart = scale.range[0];
         const rangeEnd = scale.range[1];
         const rangeLength = Math.abs(rangeEnd - rangeStart);
-        const bandwidth = (rangeLength / scale.domain.length) || 0;
+        const bandwidth = rangeLength / scale.domain.length || 0;
         const parallelLabels = label.parallel;
         const rotation = toRadians(this.rotation);
         const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8;
-        const labelRotation = this.label.rotation? normalizeAngle360(toRadians(this.label.rotation)) : 0;
+        const labelRotation = this.label.rotation ? normalizeAngle360(toRadians(this.label.rotation)) : 0;
 
         axisGroup.translationX = this.translation.x;
         axisGroup.translationY = this.translation.y;
@@ -245,11 +246,12 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         // -1 = flip
         //  1 = don't flip (default)
         const parallelFlipRotation = normalizeAngle360(rotation);
-        const parallelFlipFlag = (!labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI) ? -1 : 1;
+        const parallelFlipFlag =
+            !labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI ? -1 : 1;
 
         const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
         // Flip if the axis rotation angle is in the top hemisphere.
-        const regularFlipFlag = (!labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI) ? -1 : 1;
+        const regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
 
         const updateGridLines = this.gridLineSelection.setData(this.gridLength ? ticks : []);
         updateGridLines.exit.remove();
@@ -266,54 +268,50 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
 
         const labelBBoxes: Map<string, BBox> = new Map();
         let maxLeafLabelWidth = 0;
-        labelSelection
-            .each((node, datum, index) => {
-                node.fontStyle = label.fontStyle;
-                node.fontWeight = label.fontWeight;
-                node.fontSize = label.fontSize;
-                node.fontFamily = label.fontFamily;
-                node.fill = label.color;
-                node.textBaseline = parallelFlipFlag === -1 ? 'bottom' : 'hanging';
-                node.textAlign = 'center';
-                node.translationX = datum.screenY - label.fontSize * 0.25;
-                node.translationY = datum.screenX;
-                if (index === 0) { // use the phantom root as the axis title
-                    if (title && title.enabled && labels.length > 0) {
-                        node.visible = true;
-                        node.text = title.text;
-                        node.fontSize = title.fontSize;
-                        node.fontStyle = title.fontStyle;
-                        node.fontWeight = title.fontWeight;
-                        node.fontFamily = title.fontFamily;
-                        node.textBaseline = 'hanging';
-                    } else {
-                        node.visible = false;
-                    }
+        labelSelection.each((node, datum, index) => {
+            node.fontStyle = label.fontStyle;
+            node.fontWeight = label.fontWeight;
+            node.fontSize = label.fontSize;
+            node.fontFamily = label.fontFamily;
+            node.fill = label.color;
+            node.textBaseline = parallelFlipFlag === -1 ? 'bottom' : 'hanging';
+            node.textAlign = 'center';
+            node.translationX = datum.screenY - label.fontSize * 0.25;
+            node.translationY = datum.screenX;
+            if (index === 0) {
+                // use the phantom root as the axis title
+                if (title && title.enabled && labels.length > 0) {
+                    node.visible = true;
+                    node.text = title.text;
+                    node.fontSize = title.fontSize;
+                    node.fontStyle = title.fontStyle;
+                    node.fontWeight = title.fontWeight;
+                    node.fontFamily = title.fontFamily;
+                    node.textBaseline = 'hanging';
                 } else {
-                    node.text = labelFormatter
-                        ? labelFormatter({
-                            value: String(datum.label),
-                            index
-                        })
-                        : String(datum.label);
-                    node.visible =
-                        datum.screenX >= requestedRange[0] &&
-                        datum.screenX <= requestedRange[1];
+                    node.visible = false;
                 }
-                const bbox = node.computeBBox();
-                labelBBoxes.set(node.id, bbox);
-                if (bbox.width > maxLeafLabelWidth) {
-                    maxLeafLabelWidth = bbox.width;
-                }
-            });
+            } else {
+                node.text = labelFormatter
+                    ? labelFormatter({
+                          value: String(datum.label),
+                          index,
+                      })
+                    : String(datum.label);
+                node.visible = datum.screenX >= requestedRange[0] && datum.screenX <= requestedRange[1];
+            }
+            const bbox = node.computeBBox();
+            labelBBoxes.set(node.id, bbox);
+            if (bbox.width > maxLeafLabelWidth) {
+                maxLeafLabelWidth = bbox.width;
+            }
+        });
 
         const labelX = sideFlag * label.padding;
-        const autoRotation = parallelLabels
-            ? parallelFlipFlag * Math.PI / 2
-            : (regularFlipFlag === -1 ? Math.PI : 0);
+        const autoRotation = parallelLabels ? (parallelFlipFlag * Math.PI) / 2 : regularFlipFlag === -1 ? Math.PI : 0;
 
         const labelGrid = this.label.grid;
-        const separatorData = [] as { y: number, x1: number, x2: number, toString: () => string }[];
+        const separatorData = [] as { y: number; x1: number; x2: number; toString: () => string }[];
         labelSelection.each((label, datum, index) => {
             label.x = labelX;
             label.rotationCenterX = labelX;
@@ -344,15 +342,15 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             if (datum.parent && isLabelTree) {
                 let y = !datum.children.length
                     ? datum.screenX - bandwidth / 2
-                    : datum.screenX - datum.leafCount * bandwidth / 2;
+                    : datum.screenX - (datum.leafCount * bandwidth) / 2;
 
                 if (!datum.children.length) {
-                    if ((datum.number !== datum.children.length - 1) || labelGrid) {
+                    if (datum.number !== datum.children.length - 1 || labelGrid) {
                         separatorData.push({
                             y,
                             x1: 0,
                             x2: -maxLeafLabelWidth - this.label.padding * 2,
-                            toString: () => String(index)
+                            toString: () => String(index),
                         });
                     }
                 } else {
@@ -361,7 +359,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                         y,
                         x1: x + lineHeight,
                         x2: x,
-                        toString: () => String(index)
+                        toString: () => String(index),
                     });
                 }
             }
@@ -369,12 +367,12 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
 
         // Calculate the position of the long separator on the far bottom of the axis.
         let minX = 0;
-        separatorData.forEach(d => minX = Math.min(minX, d.x2));
+        separatorData.forEach((d) => (minX = Math.min(minX, d.x2)));
         separatorData.push({
             y: Math.max(rangeStart, rangeEnd),
             x1: 0,
             x2: minX,
-            toString: () => String(separatorData.length)
+            toString: () => String(separatorData.length),
         });
 
         const updateSeparators = this.separatorSelection.setData(separatorData);
@@ -426,22 +424,23 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             const styles = this.gridStyle;
             const styleCount = styles.length;
 
-            gridLineSelection
-                .each((line, datum, index) => {
-                    const y = Math.round(tickScale.convert(datum));
-                    line.x1 = 0;
-                    line.x2 = -sideFlag * this.gridLength;
-                    line.y1 = y;
-                    line.y2 = y;
-                    line.visible = y >= requestedRange[0] && y <= requestedRange[1] &&
-                        Math.abs(line.parent!.translationY - rangeStart) > 1;
+            gridLineSelection.each((line, datum, index) => {
+                const y = Math.round(tickScale.convert(datum));
+                line.x1 = 0;
+                line.x2 = -sideFlag * this.gridLength;
+                line.y1 = y;
+                line.y2 = y;
+                line.visible =
+                    y >= requestedRange[0] &&
+                    y <= requestedRange[1] &&
+                    Math.abs(line.parent!.translationY - rangeStart) > 1;
 
-                    const style = styles[index % styleCount];
-                    line.stroke = style.stroke;
-                    line.strokeWidth = this.tick.width;
-                    line.lineDash = style.lineDash;
-                    line.fill = undefined;
-                });
+                const style = styles[index % styleCount];
+                line.stroke = style.stroke;
+                line.strokeWidth = this.tick.width;
+                line.lineDash = style.lineDash;
+                line.fill = undefined;
+            });
         }
     }
 }

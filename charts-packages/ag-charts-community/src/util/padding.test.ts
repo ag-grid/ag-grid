@@ -1,4 +1,4 @@
-import { Padding } from "./padding";
+import { Padding } from './padding';
 
 test('constructor', () => {
     {

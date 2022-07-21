@@ -1,18 +1,18 @@
-import { Group } from "../scene/group";
-import { Selection } from "../scene/selection";
-import { MarkerLabel } from "./markerLabel";
-import { BBox } from "../scene/bbox";
-import { FontStyle, FontWeight, getFont } from "../scene/shape/text";
-import { Marker } from "./marker/marker";
-import { AgChartLegendClickEvent, AgChartLegendListeners } from "./agChartOptions";
-import { getMarker } from "./marker/util";
-import { createId } from "../util/id";
-import { RedrawType } from "../scene/node";
-import { HdpiCanvas } from "../canvas/hdpiCanvas";
+import { Group } from '../scene/group';
+import { Selection } from '../scene/selection';
+import { MarkerLabel } from './markerLabel';
+import { BBox } from '../scene/bbox';
+import { FontStyle, FontWeight, getFont } from '../scene/shape/text';
+import { Marker } from './marker/marker';
+import { AgChartLegendClickEvent, AgChartLegendListeners } from './agChartOptions';
+import { getMarker } from './marker/util';
+import { createId } from '../util/id';
+import { RedrawType } from '../scene/node';
+import { HdpiCanvas } from '../canvas/hdpiCanvas';
 
 export interface LegendDatum {
-    id: string;       // component ID
-    itemId: any;      // sub-component ID
+    id: string; // component ID
+    itemId: any; // sub-component ID
     enabled: boolean; // the current state of the sub-component
     marker: {
         shape?: string | (new () => Marker);
@@ -22,20 +22,20 @@ export interface LegendDatum {
         strokeOpacity: number;
     };
     label: {
-        text: string;  // display name for the sub-component
+        text: string; // display name for the sub-component
     };
 }
 
 export enum LegendOrientation {
     Vertical,
-    Horizontal
+    Horizontal,
 }
 
 export enum LegendPosition {
     Top = 'top',
     Right = 'right',
     Bottom = 'bottom',
-    Left = 'left'
+    Left = 'left',
 }
 
 interface LegendLabelFormatterParams {
@@ -78,7 +78,7 @@ export class LegendMarker {
     padding: number = 8;
     strokeWidth: number = 1;
 
-    parent?: { onMarkerShapeChange(): void }
+    parent?: { onMarkerShapeChange(): void };
 }
 
 export class LegendItem {
@@ -109,7 +109,6 @@ export class LegendListeners implements Required<AgChartLegendListeners> {
 }
 
 export class Legend {
-
     static className = 'Legend';
 
     readonly id = createId(this);
@@ -118,7 +117,9 @@ export class Legend {
 
     readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: 300 });
 
-    private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(this.group).selectAll<MarkerLabel>();
+    private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(
+        this.group
+    ).selectAll<MarkerLabel>();
 
     private oldSize: [number, number] = [0, 0];
 
@@ -214,19 +215,12 @@ export class Legend {
      */
     performLayout(width: number, height: number) {
         const {
-            paddingX, paddingY, label, maxWidth,
-            marker: {
-                size: markerSize,
-                padding: markerPadding,
-                shape: markerShape
-            },
-            label: {
-                maxLength = Infinity,
-                fontStyle,
-                fontWeight,
-                fontSize,
-                fontFamily
-            },
+            paddingX,
+            paddingY,
+            label,
+            maxWidth,
+            marker: { size: markerSize, padding: markerPadding, shape: markerShape },
+            label: { maxLength = Infinity, fontStyle, fontWeight, fontSize, fontFamily },
         } = this.item;
         const updateSelection = this.itemSelection.setData(this.data, (_, datum) => {
             const Marker = getMarker(markerShape || datum.marker.shape);
@@ -238,7 +232,7 @@ export class Legend {
             const Marker = getMarker(markerShape || datum.marker.shape);
             node.marker = new Marker();
         });
-        const itemSelection = this.itemSelection = updateSelection.merge(enterSelection);
+        const itemSelection = (this.itemSelection = updateSelection.merge(enterSelection));
         const itemCount = itemSelection.size;
 
         // Update properties that affect the size of the legend items and measure them.
@@ -248,7 +242,7 @@ export class Legend {
         const ellipsis = `...`;
 
         const itemMaxWidthPercentage = 0.8;
-        const maxItemWidth = maxWidth ?? (width * itemMaxWidthPercentage);
+        const maxItemWidth = maxWidth ?? width * itemMaxWidthPercentage;
 
         itemSelection.each((markerLabel, datum) => {
             // TODO: measure only when one of these properties or data change (in a separate routine)
@@ -277,7 +271,7 @@ export class Legend {
                 for (const char of textChars) {
                     if (!characterWidths[char]) {
                         characterWidths[char] = HdpiCanvas.getTextSize(char, font).width;
-                    };
+                    }
 
                     cumCharSize += characterWidths[char];
 
@@ -316,7 +310,6 @@ export class Legend {
 
         switch (this.orientation) {
             case LegendOrientation.Horizontal:
-
                 if (!(isFinite(width) && width > 0)) {
                     return false;
                 }
@@ -350,7 +343,6 @@ export class Legend {
                         columnCount++;
                     }
                     paddedItemsWidth = itemsWidth + (columnCount - 1) * paddingX;
-
                 } while (paddedItemsWidth > width && columnCount > 1);
 
                 paddedItemsHeight = itemHeight * rowCount + (rowCount - 1) * paddingY;
@@ -358,7 +350,6 @@ export class Legend {
                 break;
 
             case LegendOrientation.Vertical:
-
                 if (!(isFinite(height) && height > 0)) {
                     return false;
                 }
@@ -396,7 +387,6 @@ export class Legend {
                     }
                     paddedItemsWidth = itemsWidth + (columnCount - 1) * paddingX;
                     paddedItemsHeight = itemsHeight + (rowCount - 1) * paddingY;
-
                 } while (paddedItemsHeight > height && rowCount > 1);
 
                 break;
@@ -444,7 +434,10 @@ export class Legend {
     }
 
     update() {
-        const { marker: { strokeWidth }, label: { color } } = this.item;
+        const {
+            marker: { strokeWidth },
+            label: { color },
+        } = this.item;
         this.itemSelection.each((markerLabel, datum) => {
             const marker = datum.marker;
             markerLabel.markerFill = marker.fill;

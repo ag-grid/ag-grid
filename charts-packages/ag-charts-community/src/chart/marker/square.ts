@@ -1,4 +1,4 @@
-import { Marker } from "./marker";
+import { Marker } from './marker';
 
 export class Square extends Marker {
     static className = 'Square';

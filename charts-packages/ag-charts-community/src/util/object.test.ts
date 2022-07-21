@@ -1,11 +1,11 @@
-import { expect, test } from "@jest/globals";
+import { expect, test } from '@jest/globals';
 import { getValue } from './object';
 
 test('getValue', () => {
     const obj = {
         hello: {
-            world: 5
-        }
+            world: 5,
+        },
     };
     expect(getValue(obj, 'hello.world')).toBe(5);
     expect(getValue(obj, 'hello.earth')).toBe(undefined);

@@ -1,10 +1,10 @@
-import { Text, FontStyle, FontWeight } from "./scene/shape/text";
-import { PointerEvents } from "./scene/node";
-import { Observable } from "./util/observable";
+import { Text, FontStyle, FontWeight } from './scene/shape/text';
+import { PointerEvents } from './scene/node';
+import { Observable } from './util/observable';
 
 export class Caption extends Observable {
     static readonly PADDING = 10;
-    
+
     readonly node: Text = new Text();
 
     enabled = false;

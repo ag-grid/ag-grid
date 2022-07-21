@@ -1,137 +1,135 @@
-import { ChartTheme } from "./chartTheme";
-import { AgChartThemeOptions } from "../agChartOptions";
+import { ChartTheme } from './chartTheme';
+import { AgChartThemeOptions } from '../agChartOptions';
 
 export class DarkTheme extends ChartTheme {
-
     protected getDefaults(): typeof ChartTheme['defaults'] {
         const fontColor = 'rgb(200, 200, 200)';
         const mutedFontColor = 'rgb(150, 150, 150)';
 
         const axisDefaults = {
             title: {
-                color: fontColor
+                color: fontColor,
             },
             label: {
-                color: fontColor
+                color: fontColor,
             },
-            gridStyle: [{
-                stroke: 'rgb(88, 88, 88)',
-                lineDash: [4, 2]
-            }]
+            gridStyle: [
+                {
+                    stroke: 'rgb(88, 88, 88)',
+                    lineDash: [4, 2],
+                },
+            ],
         };
 
         const seriesLabelDefaults = {
             label: {
-                color: fontColor
-            }
+                color: fontColor,
+            },
         };
 
         const chartAxesDefaults = {
             axes: {
                 number: {
-                    ...axisDefaults
+                    ...axisDefaults,
                 },
                 category: {
-                    ...axisDefaults
+                    ...axisDefaults,
                 },
                 time: {
-                    ...axisDefaults
-                }
+                    ...axisDefaults,
+                },
             },
         };
 
         const chartDefaults = {
             background: {
-                fill: 'rgb(34, 38, 41)'
+                fill: 'rgb(34, 38, 41)',
             },
             title: {
-                color: fontColor
+                color: fontColor,
             },
             subtitle: {
-                color: mutedFontColor
+                color: mutedFontColor,
             },
             legend: {
                 item: {
                     label: {
-                        color: fontColor
-                    }
-                }
-            }
+                        color: fontColor,
+                    },
+                },
+            },
         };
 
-        return this.mergeWithParentDefaults(
-            super.getDefaults(),
-            {
-                cartesian: {
-                    ...chartDefaults,
-                    ...chartAxesDefaults,
-                    series: {
-                        bar: {
-                            ...seriesLabelDefaults
-                        },
-                        column: {
-                            ...seriesLabelDefaults
-                        },
-                        histogram: {
-                            ...seriesLabelDefaults
-                        }
-                    }
+        return this.mergeWithParentDefaults(super.getDefaults(), {
+            cartesian: {
+                ...chartDefaults,
+                ...chartAxesDefaults,
+                series: {
+                    bar: {
+                        ...seriesLabelDefaults,
+                    },
+                    column: {
+                        ...seriesLabelDefaults,
+                    },
+                    histogram: {
+                        ...seriesLabelDefaults,
+                    },
                 },
-                groupedCategory: {
-                    ...chartDefaults,
-                    ...chartAxesDefaults,
-                    series: {
-                        bar: {
-                            ...seriesLabelDefaults
-                        },
-                        column: {
-                            ...seriesLabelDefaults
-                        },
-                        histogram: {
-                            ...seriesLabelDefaults
-                        }
-                    }
+            },
+            groupedCategory: {
+                ...chartDefaults,
+                ...chartAxesDefaults,
+                series: {
+                    bar: {
+                        ...seriesLabelDefaults,
+                    },
+                    column: {
+                        ...seriesLabelDefaults,
+                    },
+                    histogram: {
+                        ...seriesLabelDefaults,
+                    },
                 },
-                polar: {
-                    ...chartDefaults,
-                    series: {
-                        pie: {
-                            ...seriesLabelDefaults,
-                            title: {
-                                color: fontColor
-                            }
-                        }
-                    }
+            },
+            polar: {
+                ...chartDefaults,
+                series: {
+                    pie: {
+                        ...seriesLabelDefaults,
+                        title: {
+                            color: fontColor,
+                        },
+                    },
                 },
-                hierarchy: {
-                    ...chartDefaults,
-                    series: {
-                        treemap: {
-                            title: {
+            },
+            hierarchy: {
+                ...chartDefaults,
+                series: {
+                    treemap: {
+                        title: {
+                            color: fontColor,
+                        },
+                        subtitle: {
+                            color: mutedFontColor,
+                        },
+                        labels: {
+                            large: {
                                 color: fontColor,
                             },
-                            subtitle: {
-                                color: mutedFontColor,
+                            medium: {
+                                color: fontColor,
                             },
-                            labels: {
-                                large: {
-                                    color: fontColor,
-                                },
-                                medium: {
-                                    color: fontColor,
-                                },
-                                small: {
-                                    color: fontColor,
-                                },
-                                color: {
-                                    color: fontColor,
-                                },
+                            small: {
+                                color: fontColor,
+                            },
+                            color: {
+                                color: fontColor,
                             },
                         },
                     },
                 },
-            }
-        );
+            },
+        });
     }
 
     constructor(options?: AgChartThemeOptions) {

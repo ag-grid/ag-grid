@@ -11,15 +11,19 @@ import {
 } from '../agChartOptions';
 import { BarLabelPlacement } from '../series/cartesian/barSeries';
 
-type Transforms<Source, Result extends {[R in keyof Source]?: any}, Keys extends keyof Source & keyof Result = keyof Source & keyof Result> = {
+type Transforms<
+    Source,
+    Result extends { [R in keyof Source]?: any },
+    Keys extends keyof Source & keyof Result = keyof Source & keyof Result
+> = {
     [Property in Keys]: (p: Source[Property], src: Source) => Result[Property];
 };
 
 export function transform<
     I,
-    R extends {[RKey in keyof I]: O[RKey]},
+    R extends { [RKey in keyof I]: O[RKey] },
     T extends Transforms<I, R>,
-    O extends {[OKey in keyof T]: ReturnType<T[OKey]>} & {[OKey in Exclude<keyof I, keyof T>]: I[OKey] },
+    O extends { [OKey in keyof T]: ReturnType<T[OKey]> } & { [OKey in Exclude<keyof I, keyof T>]: I[OKey] }
 >(input: I, transforms: T): O {
     const result: Partial<O> = {};
 
@@ -31,14 +35,21 @@ export function transform<
     return result as O;
 }
 
-function is2dArray<E>(input: E[]|E[][]): input is E[][] {
+function is2dArray<E>(input: E[] | E[][]): input is E[][] {
     return input != null && input instanceof Array && input[0] instanceof Array;
 }
 
-function yNamesMapping(p: string[] | Record<string, string> | undefined, src: AgBarSeriesOptions): Record<string, string> {
-    if (p == null) { return {}; }
+function yNamesMapping(
+    p: string[] | Record<string, string> | undefined,
+    src: AgBarSeriesOptions
+): Record<string, string> {
+    if (p == null) {
+        return {};
+    }
 
-    if (!(p instanceof Array)) { return p; }
+    if (!(p instanceof Array)) {
+        return p;
+    }
 
     const yKeys = src.yKeys;
     if (yKeys == null || is2dArray(yKeys)) {
@@ -53,27 +64,35 @@ function yNamesMapping(p: string[] | Record<string, string> | undefined, src: Ag
     return result;
 }
 
-function yKeysMapping(p: string[ ]| string[][] | undefined, src: AgBarSeriesOptions): string[][] {
-    if (p == null) { return [[]]; }
+function yKeysMapping(p: string[] | string[][] | undefined, src: AgBarSeriesOptions): string[][] {
+    if (p == null) {
+        return [[]];
+    }
 
     if (is2dArray(p)) {
         return p;
     }
 
-    return src.grouped ? p.map(v => [v]) : [p];
+    return src.grouped ? p.map((v) => [v]) : [p];
 }
 
-function labelMapping(p: AgBarSeriesLabelOptions | undefined): Omit<AgBarSeriesLabelOptions, 'placement'> & { placement?: BarLabelPlacement } | undefined {
-    if (p == null) { return undefined; }
+function labelMapping(
+    p: AgBarSeriesLabelOptions | undefined
+): (Omit<AgBarSeriesLabelOptions, 'placement'> & { placement?: BarLabelPlacement }) | undefined {
+    if (p == null) {
+        return undefined;
+    }
 
     const { placement } = p;
     return {
         ...p,
         placement:
-            placement === 'inside' ? BarLabelPlacement.Inside :
-            placement === 'outside' ? BarLabelPlacement.Outside :
-            undefined,
-    }
+            placement === 'inside'
+                ? BarLabelPlacement.Inside
+                : placement === 'outside'
+                ? BarLabelPlacement.Outside
+                : undefined,
+    };
 }
 
 export function barSeriesTransform<T extends AgBarSeriesOptions>(options: T): T {
@@ -91,20 +110,29 @@ export function barSeriesTransform<T extends AgBarSeriesOptions>(options: T): T 
 }
 
 type SeriesTypes = NonNullable<AgChartOptions['series']>[number];
-type SeriesType<T extends SeriesTypes['type']> = 
-    T extends 'area' ? AgAreaSeriesOptions :
-    T extends 'bar' ? AgBarSeriesOptions :
-    T extends 'column' ? AgBarSeriesOptions :
-    T extends 'histogram' ? AgHistogramSeriesOptions :
-    T extends 'line' ? AgLineSeriesOptions :
-    T extends 'pie' ? AgPieSeriesOptions :
-    T extends 'scatter' ? AgScatterSeriesOptions :
-    T extends 'treemap' ? AgTreemapSeriesOptions :
-    never;
-function identityTransform<T>(input: T): T { return input; };
+type SeriesType<T extends SeriesTypes['type']> = T extends 'area'
+    ? AgAreaSeriesOptions
+    : T extends 'bar'
+    ? AgBarSeriesOptions
+    : T extends 'column'
+    ? AgBarSeriesOptions
+    : T extends 'histogram'
+    ? AgHistogramSeriesOptions
+    : T extends 'line'
+    ? AgLineSeriesOptions
+    : T extends 'pie'
+    ? AgPieSeriesOptions
+    : T extends 'scatter'
+    ? AgScatterSeriesOptions
+    : T extends 'treemap'
+    ? AgTreemapSeriesOptions
+    : never;
+function identityTransform<T>(input: T): T {
+    return input;
+}
 
 const SERIES_TRANSFORMS: {
-    [ST in NonNullable<SeriesTypes['type']>]: <T extends SeriesType<ST>>(p: T) => T
+    [ST in NonNullable<SeriesTypes['type']>]: <T extends SeriesType<ST>>(p: T) => T;
 } = {
     area: identityTransform,
     bar: barSeriesTransform,

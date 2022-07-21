@@ -1,8 +1,8 @@
-import { Group } from "../../scene/group";
-import { RangeHandle } from "./rangeHandle";
-import { RangeMask } from "./rangeMask";
-import { BBox } from "../../scene/bbox";
-import { RedrawType, RenderContext } from "../../scene/node";
+import { Group } from '../../scene/group';
+import { RangeHandle } from './rangeHandle';
+import { RangeMask } from './rangeMask';
+import { BBox } from '../../scene/bbox';
+import { RedrawType, RenderContext } from '../../scene/node';
 
 export class RangeSelector extends Group {
     static className = 'Range';
@@ -13,7 +13,7 @@ export class RangeSelector extends Group {
         width: 200,
         height: 30,
         min: 0,
-        max: 1
+        max: 1,
     };
 
     readonly minHandle = new RangeHandle();
@@ -130,7 +130,7 @@ export class RangeSelector extends Group {
         this.matrix.toContext(ctx);
 
         const { mask, minHandle, maxHandle } = this;
-        [mask, minHandle, maxHandle].forEach(child => {
+        [mask, minHandle, maxHandle].forEach((child) => {
             if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
                 ctx.save();
                 child.render({ ...renderCtx, ctx, forceRender });

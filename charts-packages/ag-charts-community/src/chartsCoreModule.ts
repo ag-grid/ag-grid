@@ -1,3 +1,1 @@
-export const ChartsCoreModule = {
-};
-
+export const ChartsCoreModule = {};

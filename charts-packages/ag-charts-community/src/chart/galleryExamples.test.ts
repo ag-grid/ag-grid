@@ -188,7 +188,6 @@ describe('Gallery Examples', () => {
         });
 
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
-
             describe(`for ${exampleName}`, () => {
                 let chart: Chart;
                 let options: AgChartOptions;
@@ -198,7 +197,7 @@ describe('Gallery Examples', () => {
                     options.autoSize = false;
                     options.width = CANVAS_WIDTH;
                     options.height = CANVAS_HEIGHT;
-        
+
                     chart = AgChartV2.create<any>(options);
                     await waitForChartStability(chart);
                 });
@@ -208,29 +207,29 @@ describe('Gallery Examples', () => {
                     chart = null;
                     options = null;
                 });
-    
+
                 it(`it should update chart instance as expected`, async () => {
                     AgChartV2.update<any>(chart, options);
                     await waitForChartStability(chart);
 
                     await example.assertions(chart);
                 });
-    
+
                 it(`it should render the same after update`, async () => {
                     const snapshot = async () => {
                         await waitForChartStability(chart);
-    
+
                         return ctx.nodeCanvas.toBuffer('raw');
                     };
-    
+
                     AgChartV2.update<any>(chart, options);
-    
+
                     const before = await snapshot();
                     AgChartV2.update<any>(chart, options);
                     const after = await snapshot();
-    
+
                     (expect(after) as any).toMatchImage(before);
-                })
+                });
             });
         }
     });

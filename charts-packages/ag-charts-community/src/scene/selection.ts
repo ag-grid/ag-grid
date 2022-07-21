@@ -1,11 +1,10 @@
-import { Node } from "./node";
-import { Scene } from "./scene";
+import { Node } from './node';
+import { Scene } from './scene';
 
 type ValueFn<P, GDatum, PDatum> = (parent: P, data: PDatum, index: number, groups: (P | undefined)[]) => GDatum[];
 type KeyFn<N, G, GDatum> = (node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string;
 
 export class EnterNode {
-
     constructor(parent: Node | EnterNode, datum: any) {
         this.scene = parent.scene;
         this.parent = parent;
@@ -44,7 +43,6 @@ export class EnterNode {
  * PDatum - type of the datum of the parent node(s).
  */
 export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, GDatum = any, PDatum = any> {
-
     constructor(groups: (G | undefined)[][], parents: (P | undefined)[]) {
         this.groups = groups;
         this.parents = parents;
@@ -68,7 +66,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
      * @param Class The constructor function to use to create the new nodes.
      */
     append<N extends Node>(Class: new () => N): Selection<N, P, GDatum, GDatum> {
-        return this.select<N>(node => {
+        return this.select<N>((node) => {
             return node.appendChild(new Class());
         });
     }
@@ -79,7 +77,9 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
      * and returned as a new selection.
      * The selected nodes inherit the datums and the parents of the original nodes.
      */
-    select<N extends Node>(selector: (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N | undefined): Selection<N, P, GDatum, GDatum> {
+    select<N extends Node>(
+        selector: (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N | undefined
+    ): Selection<N, P, GDatum, GDatum> {
         const groups = this.groups;
         const numGroups = groups.length;
 
@@ -88,7 +88,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
         for (let j = 0; j < numGroups; j++) {
             const group = groups[j];
             const groupSize = group.length;
-            const subgroup = subgroups[j] = new Array<N | undefined>(groupSize);
+            const subgroup = (subgroups[j] = new Array<N | undefined>(groupSize));
 
             for (let i = 0; i < groupSize; i++) {
                 const node = group[i];
@@ -115,7 +115,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
      * @param Class The constructor function to use to find matching nodes.
      */
     selectByClass<N extends Node>(Class: new () => N): Selection<N, P, GDatum, GDatum> {
-        return this.select(node => {
+        return this.select((node) => {
             if (Node.isNode(node)) {
                 const children = node.children;
                 const n = children.length;
@@ -131,7 +131,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
     }
 
     selectByTag<N extends Node>(tag: number): Selection<N, P, GDatum, GDatum> {
-        return this.select<N>(node => {
+        return this.select<N>((node) => {
             if (Node.isNode(node)) {
                 const children = node.children;
                 const n = children.length;
@@ -147,7 +147,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
     }
 
     selectAllByClass<N extends Node, NDatum = any>(Class: new () => N): Selection<N, G, NDatum, GDatum> {
-        return this.selectAll<N, NDatum>(node => {
+        return this.selectAll<N, NDatum>((node) => {
             const nodes: N[] = [];
 
             if (Node.isNode(node)) {
@@ -166,7 +166,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
     }
 
     selectAllByTag<N extends Node, NDatum = any>(tag: number): Selection<N, G, NDatum, GDatum> {
-        return this.selectAll<N, NDatum>(node => {
+        return this.selectAll<N, NDatum>((node) => {
             const nodes: N[] = [];
 
             if (Node.isNode(node)) {
@@ -199,7 +199,6 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
     selectAll<N extends Node, NDatum = any>(
         selectorAll?: (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N[]
     ): Selection<N, G, NDatum, GDatum> {
-
         if (!selectorAll) {
             selectorAll = this.selectNone;
         }
@@ -249,7 +248,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
     }
 
     remove(): this {
-        return this.each(node => {
+        return this.each((node) => {
             if (Node.isNode(node)) {
                 const parent = node.parent;
                 if (parent) {
@@ -273,7 +272,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
             const group0 = groups0[j];
             const group1 = groups1[j];
             const n = group0.length;
-            const merge = merges[j] = new Array<G | undefined>(n);
+            const merge = (merges[j] = new Array<G | undefined>(n));
 
             for (let i = 0; i < n; i++) {
                 const node = group0[i] || group1[i];
@@ -314,14 +313,17 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
     }
 
     attr<K extends keyof G>(name: K, value: Exclude<G[K], Function>): this {
-        this.each(node => {
+        this.each((node) => {
             node[name] = value;
         });
 
         return this;
     }
 
-    attrFn<K extends keyof G>(name: K, value: (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => Exclude<G[K], Function>): this {
+    attrFn<K extends keyof G>(
+        name: K,
+        value: (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => Exclude<G[K], Function>
+    ): this {
         this.each((node, datum, index, group) => {
             node[name] = value(node, datum, index, group);
         });
@@ -379,17 +381,11 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
     private exitGroups?: (G | undefined)[][];
 
     get enter() {
-        return new Selection<EnterNode, P, GDatum, PDatum>(
-            this.enterGroups ? this.enterGroups : [[]],
-            this.parents
-        );
+        return new Selection<EnterNode, P, GDatum, PDatum>(this.enterGroups ? this.enterGroups : [[]], this.parents);
     }
 
     get exit() {
-        return new Selection<G, P, GDatum, PDatum>(
-            this.exitGroups ? this.exitGroups : [[]],
-            this.parents
-        );
+        return new Selection<G, P, GDatum, PDatum>(this.exitGroups ? this.exitGroups : [[]], this.parents);
     }
 
     /**
@@ -400,7 +396,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
      * @param value
      */
     setDatum<GDatum>(value: GDatum): Selection<G, P, GDatum, PDatum> {
-        return this.each(node => {
+        return this.each((node) => {
             node.datum = value;
         }) as unknown as Selection<G, P, GDatum, PDatum>;
     }
@@ -425,9 +421,10 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
      * @param values
      * @param key
      */
-    setData<GDatum>(values: GDatum[] | ValueFn<P, GDatum, PDatum>,
-                    key?: KeyFn<Node | EnterNode, G | GDatum, GDatum>): Selection<G, P, GDatum, PDatum> {
-
+    setData<GDatum>(
+        values: GDatum[] | ValueFn<P, GDatum, PDatum>,
+        key?: KeyFn<Node | EnterNode, G | GDatum, GDatum>
+    ): Selection<G, P, GDatum, PDatum> {
         if (typeof values !== 'function') {
             const data = values;
             values = () => data;
@@ -452,14 +449,13 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
             const data: GDatum[] = values(parent, parent.datum, j, parents);
             const dataSize = data.length;
 
-            const enterGroup = enterGroups[j] = new Array<EnterNode | undefined>(dataSize);
-            const updateGroup = updateGroups[j] = new Array<G | undefined>(dataSize);
-            const exitGroup = exitGroups[j] = new Array<G | undefined>(groupSize);
+            const enterGroup = (enterGroups[j] = new Array<EnterNode | undefined>(dataSize));
+            const updateGroup = (updateGroups[j] = new Array<G | undefined>(dataSize));
+            const exitGroup = (exitGroups[j] = new Array<G | undefined>(groupSize));
 
             if (key) {
                 this.bindKey(parent, group, enterGroup, updateGroup, exitGroup, data, key);
-            }
-            else {
+            } else {
                 this.bindIndex(parent, group, enterGroup, updateGroup, exitGroup, data);
             }
 
@@ -473,7 +469,9 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
                         i1 = i0 + 1;
                     }
                     let next;
-                    while (!(next = updateGroup[i1]) && i1 < dataSize) { i1++; }
+                    while (!(next = updateGroup[i1]) && i1 < dataSize) {
+                        i1++;
+                    }
                     previous.next = next || null;
                 }
             }
@@ -486,10 +484,14 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
         return result;
     }
 
-    private bindIndex<GDatum>(parent: P, group: (G | undefined)[],
-                              enter: (EnterNode | undefined)[], update: (G | undefined)[], exit: (G | undefined)[],
-                              data: GDatum[]) {
-
+    private bindIndex<GDatum>(
+        parent: P,
+        group: (G | undefined)[],
+        enter: (EnterNode | undefined)[],
+        update: (G | undefined)[],
+        exit: (G | undefined)[],
+        data: GDatum[]
+    ) {
         const groupSize = group.length;
         const dataSize = data.length;
 
@@ -501,7 +503,8 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
             if (node) {
                 node.datum = data[i];
                 update[i] = node;
-            } else { // more datums than group nodes
+            } else {
+                // more datums than group nodes
                 enter[i] = new EnterNode(parent, data[i]);
             }
         }
@@ -518,10 +521,15 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
 
     private static keyPrefix = '$'; // Protect against keys like '__proto__'.
 
-    private bindKey<GDatum>(parent: P, group: (G | undefined)[],
-                            enter: (EnterNode | undefined)[], update: (G | undefined)[], exit: (G | undefined)[],
-                            data: GDatum[], key: KeyFn<Node | EnterNode, G | GDatum, GDatum>) {
-
+    private bindKey<GDatum>(
+        parent: P,
+        group: (G | undefined)[],
+        enter: (EnterNode | undefined)[],
+        update: (G | undefined)[],
+        exit: (G | undefined)[],
+        data: GDatum[],
+        key: KeyFn<Node | EnterNode, G | GDatum, GDatum>
+    ) {
         const groupSize = group.length;
         const dataSize = data.length;
         const keyValues = new Array(groupSize);
@@ -533,7 +541,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
             const node = group[i];
 
             if (node) {
-                const keyValue = keyValues[i] = Selection.keyPrefix + key(node, node.datum, i, group);
+                const keyValue = (keyValues[i] = Selection.keyPrefix + key(node, node.datum, i, group));
                 if (keyValue in nodeByKeyValue) {
                     exit[i] = node;
                 } else {
@@ -562,7 +570,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
         for (let i = 0; i < groupSize; i++) {
             const node = group[i];
 
-            if (node && (nodeByKeyValue[keyValues[i]] === node)) {
+            if (node && nodeByKeyValue[keyValues[i]] === node) {
                 exit[i] = node;
             }
         }

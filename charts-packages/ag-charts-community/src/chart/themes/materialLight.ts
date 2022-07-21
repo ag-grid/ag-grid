@@ -1,5 +1,5 @@
-import { ChartTheme } from "./chartTheme";
-import { AgChartThemePalette } from "../agChartOptions";
+import { ChartTheme } from './chartTheme';
+import { AgChartThemePalette } from '../agChartOptions';
 
 const palette: AgChartThemePalette = {
     fills: [
@@ -18,7 +18,7 @@ const palette: AgChartThemePalette = {
         '#ffeb3b',
         '#ffc107',
         '#ff9800',
-        '#ff5722'
+        '#ff5722',
     ],
     strokes: [
         '#ab2f26',
@@ -36,8 +36,8 @@ const palette: AgChartThemePalette = {
         '#b3a429',
         '#b38705',
         '#b36a00',
-        '#b33d18'
-    ]
+        '#b33d18',
+    ],
 };
 
 export class MaterialLight extends ChartTheme {

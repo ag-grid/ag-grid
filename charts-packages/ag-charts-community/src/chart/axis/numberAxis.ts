@@ -1,10 +1,10 @@
-import { calculateNiceSecondaryAxis } from "../../util/secondaryAxisTicks";
-import { ContinuousScale } from "../../scale/continuousScale";
-import { LinearScale } from "../../scale/linearScale";
-import { extent } from "../../util/array";
-import { isContinuous } from "../../util/value";
-import { ChartAxis } from "../chartAxis";
-import { doOnce } from "../../util/function";
+import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
+import { ContinuousScale } from '../../scale/continuousScale';
+import { LinearScale } from '../../scale/linearScale';
+import { extent } from '../../util/array';
+import { isContinuous } from '../../util/value';
+import { ChartAxis } from '../chartAxis';
+import { doOnce } from '../../util/function';
 
 // Instead of clamping the values outside of domain to the range,
 // return NaNs to indicate invalid input.
@@ -16,7 +16,7 @@ export function clamper(domain: number[]): (x: number) => number {
         [a, b] = [b, a];
     }
 
-    return x => x >= a && x <= b ? x : NaN;
+    return (x) => (x >= a && x <= b ? x : NaN);
 }
 
 export class NumberAxis extends ChartAxis {
@@ -48,10 +48,7 @@ export class NumberAxis extends ChartAxis {
             domain = extent(domain, isContinuous, Number) || [0, 1];
         }
 
-        domain = [
-            isNaN(min) ? domain[0] : min,
-            isNaN(max) ? domain[1] : max
-        ];
+        domain = [isNaN(min) ? domain[0] : min, isNaN(max) ? domain[1] : max];
 
         if (primaryTickCount) {
             // when `primaryTickCount` is supplied the current axis is a secondary axis which needs to be aligned to
@@ -107,10 +104,16 @@ export class NumberAxis extends ChartAxis {
     }
 
     formatDatum(datum: number): string {
-        if (typeof datum === "number") {
+        if (typeof datum === 'number') {
             return datum.toFixed(2);
         } else {
-            doOnce(() => console.warn('AG Charts - Data contains Date objects which are being plotted against a number axis, please only use a number axis for numbers.'), `number axis config used with Date objects`);
+            doOnce(
+                () =>
+                    console.warn(
+                        'AG Charts - Data contains Date objects which are being plotted against a number axis, please only use a number axis for numbers.'
+                    ),
+                `number axis config used with Date objects`
+            );
             return String(datum);
         }
     }

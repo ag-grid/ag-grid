@@ -1,4 +1,4 @@
-import value from "./value";
+import value from './value';
 
 export default function (a: any, b: any): (t: number) => object {
     const i: any = {};
@@ -20,7 +20,7 @@ export default function (a: any, b: any): (t: number) => object {
         }
     }
 
-    return t => {
+    return (t) => {
         for (k in i) {
             c[k] = i[k](t);
         }

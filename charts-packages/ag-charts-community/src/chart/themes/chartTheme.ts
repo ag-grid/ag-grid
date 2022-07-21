@@ -1,29 +1,24 @@
-import { deepMerge, defaultIsMergeableObject, getValue, isObject } from "../../util/object";
-import { FontWeight, AgPolarSeriesTheme, AgChartThemePalette, AgChartThemeOptions, AgChartThemeOverrides, AgCartesianThemeOptions, AgBarSeriesLabelOptions, AgChartLegendPosition, AgPolarThemeOptions, AgHierarchyThemeOptions, AgCartesianSeriesTheme, AgHierarchySeriesTheme } from "../agChartOptions";
-import { Chart } from "../chart";
-import { TimeInterval } from "../../util/time/interval";
+import { deepMerge, defaultIsMergeableObject, getValue, isObject } from '../../util/object';
+import {
+    FontWeight,
+    AgPolarSeriesTheme,
+    AgChartThemePalette,
+    AgChartThemeOptions,
+    AgChartThemeOverrides,
+    AgCartesianThemeOptions,
+    AgBarSeriesLabelOptions,
+    AgChartLegendPosition,
+    AgPolarThemeOptions,
+    AgHierarchyThemeOptions,
+    AgCartesianSeriesTheme,
+    AgHierarchySeriesTheme,
+} from '../agChartOptions';
+import { Chart } from '../chart';
+import { TimeInterval } from '../../util/time/interval';
 
 const palette: AgChartThemePalette = {
-    fills: [
-        '#f3622d',
-        '#fba71b',
-        '#57b757',
-        '#41a9c9',
-        '#4258c9',
-        '#9a42c8',
-        '#c84164',
-        '#888888'
-    ],
-    strokes: [
-        '#aa4520',
-        '#b07513',
-        '#3d803d',
-        '#2d768d',
-        '#2e3e8d',
-        '#6c2e8c',
-        '#8c2d46',
-        '#5f5f5f'
-    ]
+    fills: ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'],
+    strokes: ['#aa4520', '#b07513', '#3d803d', '#2d768d', '#2e3e8d', '#6c2e8c', '#8c2d46', '#5f5f5f'],
 };
 
 function arrayMerge(_target: any, source: any, _options: any) {
@@ -41,16 +36,14 @@ export type ChartThemeDefaults = {
     groupedCategory: AgCartesianThemeOptions;
     polar: AgPolarThemeOptions;
     hierarchy: AgHierarchyThemeOptions;
-} &
-    { [key in keyof AgCartesianSeriesTheme]?: AgCartesianThemeOptions } &
-    { [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions } &
-    { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions };
+} & { [key in keyof AgCartesianSeriesTheme]?: AgCartesianThemeOptions } & {
+    [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions;
+} & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions };
 
 const BOLD: FontWeight = 'bold';
 const INSIDE: AgBarSeriesLabelOptions['placement'] = 'inside';
 const RIGHT: AgChartLegendPosition = 'right';
 export class ChartTheme {
-
     readonly palette: AgChartThemePalette;
 
     protected getPalette(): AgChartThemePalette {
@@ -75,7 +68,7 @@ export class ChartTheme {
                 fontWeight: BOLD,
                 fontSize: 12,
                 fontFamily: this.fontFamily,
-                color: 'rgb(70, 70, 70)'
+                color: 'rgb(70, 70, 70)',
             },
             label: {
                 fontStyle: undefined,
@@ -86,21 +79,23 @@ export class ChartTheme {
                 rotation: undefined,
                 color: 'rgb(87, 87, 87)',
                 formatter: undefined,
-                autoRotate: false
+                autoRotate: false,
             },
             line: {
                 width: 1,
-                color: 'rgb(195, 195, 195)'
+                color: 'rgb(195, 195, 195)',
             },
             tick: {
                 width: 1,
                 size: 6,
                 color: 'rgb(195, 195, 195)',
             },
-            gridStyle: [{
-                stroke: 'rgb(219, 219, 219)',
-                lineDash: [4, 2]
-            }],
+            gridStyle: [
+                {
+                    stroke: 'rgb(219, 219, 219)',
+                    lineDash: [4, 2],
+                },
+            ],
             crossLines: {
                 enabled: true,
                 fill: 'rgb(187,221,232)',
@@ -114,8 +109,8 @@ export class ChartTheme {
                     padding: 5,
                     color: 'rgb(87, 87, 87)',
                     rotation: undefined,
-                }
-            }
+                },
+            },
         };
     }
 
@@ -130,12 +125,12 @@ export class ChartTheme {
             cursor: 'default',
             highlightStyle: {
                 item: {
-                    fill: 'yellow'
+                    fill: 'yellow',
                 },
                 series: {
-                    dimOpacity: 1
-                }
-            }
+                    dimOpacity: 1,
+                },
+            },
         };
     }
 
@@ -166,8 +161,8 @@ export class ChartTheme {
                 color: 'rgba(0, 0, 0, 0.5)',
                 xOffset: 3,
                 yOffset: 3,
-                blur: 5
-            }
+                blur: 5,
+            },
         };
     }
 
@@ -189,7 +184,7 @@ export class ChartTheme {
             size: 6,
             maxSize: 30,
             strokeWidth: 1,
-            formatter: undefined
+            formatter: undefined,
         };
     }
 
@@ -197,13 +192,13 @@ export class ChartTheme {
         return {
             background: {
                 visible: true,
-                fill: 'white'
+                fill: 'white',
             },
             padding: {
                 top: 20,
                 right: 20,
                 bottom: 20,
-                left: 20
+                left: 20,
             },
             title: {
                 enabled: false,
@@ -212,7 +207,7 @@ export class ChartTheme {
                 fontWeight: BOLD,
                 fontSize: 16,
                 fontFamily: this.fontFamily,
-                color: 'rgb(70, 70, 70)'
+                color: 'rgb(70, 70, 70)',
             },
             subtitle: {
                 enabled: false,
@@ -221,7 +216,7 @@ export class ChartTheme {
                 fontWeight: undefined,
                 fontSize: 12,
                 fontFamily: this.fontFamily,
-                color: 'rgb(140, 140, 140)'
+                color: 'rgb(140, 140, 140)',
             },
             legend: {
                 enabled: true,
@@ -234,7 +229,7 @@ export class ChartTheme {
                         shape: undefined,
                         size: 15,
                         strokeWidth: 1,
-                        padding: 8
+                        padding: 8,
                     },
                     label: {
                         color: 'black',
@@ -242,16 +237,16 @@ export class ChartTheme {
                         fontWeight: undefined,
                         fontSize: 12,
                         fontFamily: this.fontFamily,
-                        formatter: undefined
-                    }
-                }
+                        formatter: undefined,
+                    },
+                },
             },
             tooltip: {
                 enabled: true,
                 tracking: true,
                 delay: 0,
-                class: Chart.defaultTooltipClass
-            }
+                class: Chart.defaultTooltipClass,
+            },
         };
     }
 
@@ -259,34 +254,34 @@ export class ChartTheme {
         ...ChartTheme.getChartDefaults(),
         axes: {
             number: {
-                ...ChartTheme.getAxisDefaults()
+                ...ChartTheme.getAxisDefaults(),
             },
             log: {
                 ...ChartTheme.getAxisDefaults(),
-                base: 10
+                base: 10,
             },
             category: {
                 ...ChartTheme.getAxisDefaults(),
                 label: {
                     ...ChartTheme.getAxisDefaults().label,
-                    autoRotate: true
-                }
+                    autoRotate: true,
+                },
             },
             groupedCategory: {
-                ...ChartTheme.getAxisDefaults()
+                ...ChartTheme.getAxisDefaults(),
             },
             time: {
-                ...ChartTheme.getAxisDefaults()
-            }
+                ...ChartTheme.getAxisDefaults(),
+            },
         },
         series: {
             column: {
                 ...ChartTheme.getBarSeriesDefaults(),
-                flipXY: false
+                flipXY: false,
             },
             bar: {
                 ...ChartTheme.getBarSeriesDefaults(),
-                flipXY: true
+                flipXY: true,
             },
             line: {
                 ...ChartTheme.getLineSeriesDefaults(),
@@ -311,8 +306,8 @@ export class ChartTheme {
                     fontSize: 12,
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
-                    formatter: undefined
-                }
+                    formatter: undefined,
+                },
             },
             scatter: {
                 ...ChartTheme.getSeriesDefaults(),
@@ -337,8 +332,8 @@ export class ChartTheme {
                     fontWeight: undefined,
                     fontSize: 12,
                     fontFamily: ChartTheme.fontFamily,
-                    color: 'rgb(70, 70, 70)'
-                }
+                    color: 'rgb(70, 70, 70)',
+                },
             },
             area: {
                 ...ChartTheme.getSeriesDefaults(),
@@ -355,7 +350,7 @@ export class ChartTheme {
                     color: 'rgba(0, 0, 0, 0.5)',
                     xOffset: 3,
                     yOffset: 3,
-                    blur: 5
+                    blur: 5,
                 },
                 marker: {
                     ...ChartTheme.getCartesianSeriesMarkerDefaults(),
@@ -370,8 +365,8 @@ export class ChartTheme {
                     fontSize: 12,
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
-                    formatter: undefined
-                }
+                    formatter: undefined,
+                },
             },
             histogram: {
                 ...ChartTheme.getSeriesDefaults(),
@@ -395,7 +390,7 @@ export class ChartTheme {
                     fontSize: 12,
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
-                    formatter: undefined
+                    formatter: undefined,
                 },
                 shadow: {
                     enabled: true,
@@ -404,7 +399,7 @@ export class ChartTheme {
                     yOffset: 0,
                     blur: 5,
                 },
-            }
+            },
         },
         navigator: {
             enabled: false,
@@ -413,7 +408,7 @@ export class ChartTheme {
                 fill: '#999999',
                 stroke: '#999999',
                 strokeWidth: 1,
-                fillOpacity: 0.2
+                fillOpacity: 0.2,
             },
             minHandle: {
                 fill: '#f2f2f2',
@@ -422,7 +417,7 @@ export class ChartTheme {
                 width: 8,
                 height: 16,
                 gripLineGap: 2,
-                gripLineLength: 8
+                gripLineLength: 8,
             },
             maxHandle: {
                 fill: '#f2f2f2',
@@ -431,9 +426,9 @@ export class ChartTheme {
                 width: 8,
                 height: 16,
                 gripLineGap: 2,
-                gripLineLength: 8
-            }
-        }
+                gripLineLength: 8,
+            },
+        },
     };
 
     private static readonly polarDefaults: AgPolarThemeOptions = {
@@ -448,7 +443,7 @@ export class ChartTheme {
                     fontWeight: 'bold',
                     fontSize: 14,
                     fontFamily: ChartTheme.fontFamily,
-                    color: 'rgb(70, 70, 70)'
+                    color: 'rgb(70, 70, 70)',
                 },
                 angleKey: '',
                 angleName: '',
@@ -464,11 +459,11 @@ export class ChartTheme {
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
                     offset: 3,
-                    minAngle: 20
+                    minAngle: 20,
                 },
                 callout: {
                     length: 10,
-                    strokeWidth: 2
+                    strokeWidth: 2,
                 },
                 fillOpacity: 1,
                 strokeOpacity: 1,
@@ -483,10 +478,10 @@ export class ChartTheme {
                     color: 'rgba(0, 0, 0, 0.5)',
                     xOffset: 3,
                     yOffset: 3,
-                    blur: 5
-                }
-            }
-        }
+                    blur: 5,
+                },
+            },
+        },
     };
 
     private static readonly hierarchyDefaults: AgHierarchyThemeOptions = {
@@ -510,7 +505,7 @@ export class ChartTheme {
                     fontWeight: 'bold',
                     fontSize: 12,
                     fontFamily: 'Verdana, sans-serif',
-                    padding: 15
+                    padding: 15,
                 },
                 subtitle: {
                     enabled: true,
@@ -519,7 +514,7 @@ export class ChartTheme {
                     fontWeight: undefined,
                     fontSize: 9,
                     fontFamily: 'Verdana, sans-serif',
-                    padding: 13
+                    padding: 13,
                 },
                 labels: {
                     large: {
@@ -528,7 +523,7 @@ export class ChartTheme {
                         fontWeight: 'bold',
                         fontSize: 18,
                         fontFamily: 'Verdana, sans-serif',
-                        color: 'white'
+                        color: 'white',
                     },
                     medium: {
                         enabled: true,
@@ -536,7 +531,7 @@ export class ChartTheme {
                         fontWeight: 'bold',
                         fontSize: 14,
                         fontFamily: 'Verdana, sans-serif',
-                        color: 'white'
+                        color: 'white',
                     },
                     small: {
                         enabled: true,
@@ -544,7 +539,7 @@ export class ChartTheme {
                         fontWeight: 'bold',
                         fontSize: 10,
                         fontFamily: 'Verdana, sans-serif',
-                        color: 'white'
+                        color: 'white',
                     },
                     color: {
                         enabled: true,
@@ -552,11 +547,11 @@ export class ChartTheme {
                         fontWeight: undefined,
                         fontSize: 12,
                         fontFamily: 'Verdana, sans-serif',
-                        color: 'white'
-                    }
-                }
-            }
-        }
+                        color: 'white',
+                    },
+                },
+            },
+        },
     };
 
     static readonly defaults: ChartThemeDefaults = {
@@ -575,10 +570,14 @@ export class ChartTheme {
         if (overrides) {
             const { common, cartesian, polar, hierarchy } = overrides;
 
-            const applyOverrides = <K extends keyof typeof defaults>(type: K, seriesTypes: (keyof typeof defaults)[], overrideOpts: AgChartThemeOverrides[K]) => {
+            const applyOverrides = <K extends keyof typeof defaults>(
+                type: K,
+                seriesTypes: (keyof typeof defaults)[],
+                overrideOpts: AgChartThemeOverrides[K]
+            ) => {
                 if (overrideOpts) {
                     defaults[type] = deepMerge(defaults[type], overrideOpts, mergeOptions);
-                    seriesTypes.forEach(seriesType => {
+                    seriesTypes.forEach((seriesType) => {
                         defaults[seriesType] = deepMerge(defaults[seriesType], overrideOpts, mergeOptions);
                     });
                 }
@@ -588,8 +587,8 @@ export class ChartTheme {
             applyOverrides('polar', ChartTheme.polarSeriesTypes, polar);
             applyOverrides('hierarchy', ChartTheme.hierarchySeriesTypes, hierarchy);
 
-            const seriesOverridesMap: {[key: string]: any} = {};
-            ChartTheme.seriesTypes.forEach(seriesType => {
+            const seriesOverridesMap: { [key: string]: any } = {};
+            ChartTheme.seriesTypes.forEach((seriesType) => {
                 const chartConfig = overrides[seriesType];
                 if (chartConfig) {
                     if (chartConfig.series) {
@@ -605,13 +604,19 @@ export class ChartTheme {
         this.config = Object.freeze(defaults);
     }
 
-    private static cartesianSeriesTypes: (keyof AgChartThemeOverrides)[] = ['line', 'area', 'bar', 'column', 'scatter', 'histogram'];
+    private static cartesianSeriesTypes: (keyof AgChartThemeOverrides)[] = [
+        'line',
+        'area',
+        'bar',
+        'column',
+        'scatter',
+        'histogram',
+    ];
     private static polarSeriesTypes: (keyof AgChartThemeOverrides)[] = ['pie'];
     private static hierarchySeriesTypes: (keyof AgChartThemeOverrides)[] = ['treemap'];
-    private static seriesTypes: (keyof AgChartThemeOverrides)[] =
-        ChartTheme.cartesianSeriesTypes
-            .concat(ChartTheme.polarSeriesTypes)
-            .concat(ChartTheme.hierarchySeriesTypes);
+    private static seriesTypes: (keyof AgChartThemeOverrides)[] = ChartTheme.cartesianSeriesTypes
+        .concat(ChartTheme.polarSeriesTypes)
+        .concat(ChartTheme.hierarchySeriesTypes);
 
     private createChartConfigPerSeries(config: ChartThemeDefaults) {
         const typeToAliases = {
@@ -623,7 +628,11 @@ export class ChartTheme {
         Object.entries(typeToAliases).forEach(([type, aliases]) => {
             aliases.forEach((alias) => {
                 if (!config[alias as keyof ChartThemeDefaults]) {
-                    config[alias as keyof ChartThemeDefaults] = deepMerge({}, config[type as keyof ChartThemeDefaults], mergeOptions);
+                    config[alias as keyof ChartThemeDefaults] = deepMerge(
+                        {},
+                        config[type as keyof ChartThemeDefaults],
+                        mergeOptions
+                    );
                 }
             });
         });
@@ -657,7 +666,7 @@ export class ChartTheme {
 
     protected mergeWithParentDefaults(
         parentDefaults: ChartThemeDefaults,
-        defaults: ChartThemeDefaults,
+        defaults: ChartThemeDefaults
     ): ChartThemeDefaults {
         return deepMerge(parentDefaults, defaults, mergeOptions);
     }

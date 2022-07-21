@@ -1,4 +1,4 @@
-import { HdpiCanvas } from "./hdpiCanvas";
+import { HdpiCanvas } from './hdpiCanvas';
 
 // Work-around for typing issues with Angular 13+ (see AG-6969),
 type OffscreenCanvasRenderingContext2D = any;
@@ -22,10 +22,7 @@ export class HdpiOffscreenCanvas {
 
     // The width/height attributes of the Canvas element default to
     // 300/150 according to w3.org.
-    constructor({
-        width = 600,
-        height = 300,
-    }) {
+    constructor({ width = 600, height = 300 }) {
         this.canvas = new OffscreenCanvas(width, height);
         this.context = this.canvas.getContext('2d')!;
         this.imageSource = this.canvas.transferToImageBitmap();

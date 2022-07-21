@@ -1,5 +1,4 @@
 export class Color {
-
     readonly r: number;
     readonly g: number;
     readonly b: number;
@@ -36,7 +35,8 @@ export class Color {
      */
     static fromString(str: string): Color {
         // hexadecimal notation
-        if (str.indexOf('#') >= 0) { // there can be some leading whitespace
+        if (str.indexOf('#') >= 0) {
+            // there can be some leading whitespace
             return Color.fromHexString(str);
         }
 
@@ -69,7 +69,10 @@ export class Color {
                 break;
             case 3:
             case 4:
-                parts = input.split('').map(p => parseInt(p, 16)).map(p => p + p * 16);
+                parts = input
+                    .split('')
+                    .map((p) => parseInt(p, 16))
+                    .map((p) => p + p * 16);
                 break;
         }
 
@@ -120,13 +123,16 @@ export class Color {
             if (isNaN(value)) {
                 return;
             }
-            if (part.indexOf('%') >= 0) { // percentage r, g, or b value
+            if (part.indexOf('%') >= 0) {
+                // percentage r, g, or b value
                 value = Math.max(0, Math.min(100, value));
                 value /= 100;
             } else {
-                if (i === 3) { // alpha component
+                if (i === 3) {
+                    // alpha component
                     value = Math.max(0, Math.min(1, value));
-                } else { // absolute r, g, or b value
+                } else {
+                    // absolute r, g, or b value
                     value = Math.max(0, Math.min(255, value));
                     value /= 255;
                 }
@@ -172,10 +178,11 @@ export class Color {
     }
 
     toHexString(): string {
-        let hex = '#'
-            + Color.padHex(Math.round(this.r * 255).toString(16))
-            + Color.padHex(Math.round(this.g * 255).toString(16))
-            + Color.padHex(Math.round(this.b * 255).toString(16));
+        let hex =
+            '#' +
+            Color.padHex(Math.round(this.r * 255).toString(16)) +
+            Color.padHex(Math.round(this.g * 255).toString(16)) +
+            Color.padHex(Math.round(this.b * 255).toString(16));
 
         if (this.a < 1) {
             hex += Color.padHex(Math.round(this.a * 255).toString(16));
@@ -185,11 +192,7 @@ export class Color {
     }
 
     toRgbaString(fractionDigits = 3): string {
-        const components: number[] = [
-            Math.round(this.r * 255),
-            Math.round(this.g * 255),
-            Math.round(this.b * 255)
-        ];
+        const components: number[] = [Math.round(this.r * 255), Math.round(this.g * 255), Math.round(this.b * 255)];
 
         const k = Math.pow(10, fractionDigits);
 
@@ -266,8 +269,10 @@ export class Color {
             const f = h - Math.floor(h);
             const p = B * (1 - S);
             const q = B * (1 - S * f);
-            const t = B * (1 - (S * (1 - f)));
-            switch (h >> 0) { // discard the floating point part of the number
+            const t = B * (1 - S * (1 - f));
+            switch (
+                h >> 0 // discard the floating point part of the number
+            ) {
                 case 0:
                     r = B;
                     g = t;
@@ -480,6 +485,6 @@ export class Color {
         white: '#FFFFFF',
         whitesmoke: '#F5F5F5',
         yellow: '#FFFF00',
-        yellowgreen: '#9ACD32'
+        yellowgreen: '#9ACD32',
     });
 }

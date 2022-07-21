@@ -1,6 +1,12 @@
 import { Selection } from '../../../scene/selection';
 import { Group } from '../../../scene/group';
-import { SeriesNodeDatum, CartesianTooltipRendererParams, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
+import {
+    SeriesNodeDatum,
+    CartesianTooltipRendererParams,
+    SeriesTooltip,
+    SeriesNodeDataContext,
+    SeriesNodePickMode,
+} from '../series';
 import { extent } from '../../../util/array';
 import { LegendDatum } from '../../legend';
 import { LinearScale } from '../../../scale/linearScale';
@@ -69,30 +75,30 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     /**
      * @deprecated Use {@link marker.fill} instead.
      */
-     @Deprecated('Use marker.fill instead.', { default: '#c16068' })
-     fill: string | undefined = '#c16068';
+    @Deprecated('Use marker.fill instead.', { default: '#c16068' })
+    fill: string | undefined = '#c16068';
 
     /**
      * @deprecated Use {@link marker.stroke} instead.
      */
-     @Deprecated('Use marker.stroke instead.', { default: '#874349' })
-     stroke: string | undefined = '#874349';
+    @Deprecated('Use marker.stroke instead.', { default: '#874349' })
+    stroke: string | undefined = '#874349';
 
     /**
      * @deprecated Use {@link marker.strokeWidth} instead.
      */
-     @Deprecated('Use marker.strokeWidth instead.', { default: 2 })
+    @Deprecated('Use marker.strokeWidth instead.', { default: 2 })
     strokeWidth: number = 2;
     /**
      * @deprecated Use {@link marker.fillOpacity} instead.
      */
-     @Deprecated('Use marker.fillOpacity instead.', { default: 1 })
+    @Deprecated('Use marker.fillOpacity instead.', { default: 1 })
     fillOpacity: number = 1;
 
     /**
      * @deprecated Use {@link marker.strokeOpacity} instead.
      */
-     @Deprecated('Use marker.strokeOpacity instead.', { default: 1 })
+    @Deprecated('Use marker.strokeOpacity instead.', { default: 1 })
     strokeOpacity: number = 1;
 
     title?: string = undefined;
@@ -135,10 +141,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     constructor() {
         super({
             pickGroupIncludes: ['markers'],
-            pickModes: [
-                SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
-                SeriesNodePickMode.NEAREST_NODE,
-            ],
+            pickModes: [SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST, SeriesNodePickMode.NEAREST_NODE],
             pathsPerSeries: 0,
             features: ['markers'],
         });

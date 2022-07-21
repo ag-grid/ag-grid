@@ -1,5 +1,5 @@
-import { BandScale } from "../../scale/bandScale";
-import { ChartAxis } from "../chartAxis";
+import { BandScale } from '../../scale/bandScale';
+import { ChartAxis } from '../chartAxis';
 export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
     static className = 'CategoryAxis';
     static type = 'category' as const;
@@ -40,7 +40,7 @@ export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
         if (!this._paddingOverrideEnabled) {
             const { boundSeries } = this;
 
-            if (boundSeries.some(s => ['bar', 'column'].includes(s.type))) {
+            if (boundSeries.some((s) => ['bar', 'column'].includes(s.type))) {
                 this.scale.paddingInner = 0.2;
                 this.scale.paddingOuter = 0.3;
             } else {

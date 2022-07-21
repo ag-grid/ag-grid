@@ -1,16 +1,40 @@
-import timeDay from "../day";
-import year from "../year";
-import {
-    sunday as timeSunday,
-    monday as timeMonday,
-    thursday as timeThursday,
-} from "../week";
-import utcDay from "../utcDay";
-import utcYear from "../utcYear";
-import utcSunday, { utcMonday, utcThursday } from "../utcWeek";
+import timeDay from '../day';
+import year from '../year';
+import { sunday as timeSunday, monday as timeMonday, thursday as timeThursday } from '../week';
+import utcDay from '../utcDay';
+import utcYear from '../utcYear';
+import utcSunday, { utcMonday, utcThursday } from '../utcWeek';
 
-type FormatKeys = 'a' | 'A' | 'b' | 'B' | 'c' | 'd' | 'e' | 'f' | 'H' | 'I' | 'j' | 'L' | 'm' | 'M' |
-                  'p' | 'Q' | 's' | 'S' | 'u' | 'U' | 'V' | 'w' | 'W' | 'x' | 'X' | 'y' | 'Y' | 'Z' | '%';
+type FormatKeys =
+    | 'a'
+    | 'A'
+    | 'b'
+    | 'B'
+    | 'c'
+    | 'd'
+    | 'e'
+    | 'f'
+    | 'H'
+    | 'I'
+    | 'j'
+    | 'L'
+    | 'm'
+    | 'M'
+    | 'p'
+    | 'Q'
+    | 's'
+    | 'S'
+    | 'u'
+    | 'U'
+    | 'V'
+    | 'w'
+    | 'W'
+    | 'x'
+    | 'X'
+    | 'y'
+    | 'Y'
+    | 'Z'
+    | '%';
 // The keys in the DateMap are actually FormatKeys, not all will be defined though, so to prevent
 // many checks and to avoid creating a more complicated type we just use `key in string` here.
 type ParsedDate = { [key in string]: number };
@@ -144,7 +168,7 @@ export interface TimeLocaleObject {
      *
      * @param specifier A specifier string for the date format.
      */
-    parse(specifier: string): (dateString: string) => (Date | undefined);
+    parse(specifier: string): (dateString: string) => Date | undefined;
     /**
      * Equivalent to locale.format (TimeLocaleObject.format),
      * except all directives are interpreted as Coordinated Universal Time (UTC) rather than local time.
@@ -158,7 +182,7 @@ export interface TimeLocaleObject {
      *
      * @param specifier A specifier string for the date format.
      */
-    utcParse(specifier: string): (dateString: string) => (Date | undefined);
+    utcParse(specifier: string): (dateString: string) => Date | undefined;
 }
 
 function localDate(d: ParsedDate): Date {
@@ -201,7 +225,7 @@ function newYear(y: number): ParsedDate {
         H: 0,
         M: 0,
         S: 0,
-        L: 0
+        L: 0,
     };
 }
 
@@ -223,8 +247,8 @@ export const formatRe = (names: string[]) => new RegExp('^(?:' + names.map(requo
 // A map of padding modifiers to padding strings. Default is `0`.
 const pads: { [key in string]: string } = {
     '-': '',
-    '_': ' ',
-    '0': '0'
+    _: ' ',
+    '0': '0',
 };
 
 export function pad(value: number, fill: string, width: number): string {
@@ -267,99 +291,99 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
     const shortMonthLookup = formatLookup(lShortMonths);
 
     const formats: FormatMap = {
-        'a': formatShortWeekday,
-        'A': formatWeekday,
-        'b': formatShortMonth,
-        'B': formatMonth,
-        'c': undefined,
-        'd': formatDayOfMonth,
-        'e': formatDayOfMonth,
-        'f': formatMicroseconds,
-        'H': formatHour24,
-        'I': formatHour12,
-        'j': formatDayOfYear,
-        'L': formatMilliseconds,
-        'm': formatMonthNumber,
-        'M': formatMinutes,
-        'p': formatPeriod,
-        'Q': formatUnixTimestamp,
-        's': formatUnixTimestampSeconds,
-        'S': formatSeconds,
-        'u': formatWeekdayNumberMonday,
-        'U': formatWeekNumberSunday,
-        'V': formatWeekNumberISO,
-        'w': formatWeekdayNumberSunday,
-        'W': formatWeekNumberMonday,
-        'x': undefined,
-        'X': undefined,
-        'y': formatYear,
-        'Y': formatFullYear,
-        'Z': formatZone,
-        '%': formatLiteralPercent
+        a: formatShortWeekday,
+        A: formatWeekday,
+        b: formatShortMonth,
+        B: formatMonth,
+        c: undefined,
+        d: formatDayOfMonth,
+        e: formatDayOfMonth,
+        f: formatMicroseconds,
+        H: formatHour24,
+        I: formatHour12,
+        j: formatDayOfYear,
+        L: formatMilliseconds,
+        m: formatMonthNumber,
+        M: formatMinutes,
+        p: formatPeriod,
+        Q: formatUnixTimestamp,
+        s: formatUnixTimestampSeconds,
+        S: formatSeconds,
+        u: formatWeekdayNumberMonday,
+        U: formatWeekNumberSunday,
+        V: formatWeekNumberISO,
+        w: formatWeekdayNumberSunday,
+        W: formatWeekNumberMonday,
+        x: undefined,
+        X: undefined,
+        y: formatYear,
+        Y: formatFullYear,
+        Z: formatZone,
+        '%': formatLiteralPercent,
     };
 
     const utcFormats: FormatMap = {
-        'a': formatUTCShortWeekday,
-        'A': formatUTCWeekday,
-        'b': formatUTCShortMonth,
-        'B': formatUTCMonth,
-        'c': undefined,
-        'd': formatUTCDayOfMonth,
-        'e': formatUTCDayOfMonth,
-        'f': formatUTCMicroseconds,
-        'H': formatUTCHour24,
-        'I': formatUTCHour12,
-        'j': formatUTCDayOfYear,
-        'L': formatUTCMilliseconds,
-        'm': formatUTCMonthNumber,
-        'M': formatUTCMinutes,
-        'p': formatUTCPeriod,
-        'Q': formatUnixTimestamp,
-        's': formatUnixTimestampSeconds,
-        'S': formatUTCSeconds,
-        'u': formatUTCWeekdayNumberMonday,
-        'U': formatUTCWeekNumberSunday,
-        'V': formatUTCWeekNumberISO,
-        'w': formatUTCWeekdayNumberSunday,
-        'W': formatUTCWeekNumberMonday,
-        'x': undefined,
-        'X': undefined,
-        'y': formatUTCYear,
-        'Y': formatUTCFullYear,
-        'Z': formatUTCZone,
-        '%': formatLiteralPercent
+        a: formatUTCShortWeekday,
+        A: formatUTCWeekday,
+        b: formatUTCShortMonth,
+        B: formatUTCMonth,
+        c: undefined,
+        d: formatUTCDayOfMonth,
+        e: formatUTCDayOfMonth,
+        f: formatUTCMicroseconds,
+        H: formatUTCHour24,
+        I: formatUTCHour12,
+        j: formatUTCDayOfYear,
+        L: formatUTCMilliseconds,
+        m: formatUTCMonthNumber,
+        M: formatUTCMinutes,
+        p: formatUTCPeriod,
+        Q: formatUnixTimestamp,
+        s: formatUnixTimestampSeconds,
+        S: formatUTCSeconds,
+        u: formatUTCWeekdayNumberMonday,
+        U: formatUTCWeekNumberSunday,
+        V: formatUTCWeekNumberISO,
+        w: formatUTCWeekdayNumberSunday,
+        W: formatUTCWeekNumberMonday,
+        x: undefined,
+        X: undefined,
+        y: formatUTCYear,
+        Y: formatUTCFullYear,
+        Z: formatUTCZone,
+        '%': formatLiteralPercent,
     };
 
     const parses: { [key in FormatKeys]: Parse } = {
-        'a': parseShortWeekday,
-        'A': parseWeekday,
-        'b': parseShortMonth,
-        'B': parseMonth,
-        'c': parseLocaleDateTime,
-        'd': parseDayOfMonth,
-        'e': parseDayOfMonth,
-        'f': parseMicroseconds,
-        'H': parseHour24,
-        'I': parseHour24,
-        'j': parseDayOfYear,
-        'L': parseMilliseconds,
-        'm': parseMonthNumber,
-        'M': parseMinutes,
-        'p': parsePeriod,
-        'Q': parseUnixTimestamp,
-        's': parseUnixTimestampSeconds,
-        'S': parseSeconds,
-        'u': parseWeekdayNumberMonday,
-        'U': parseWeekNumberSunday,
-        'V': parseWeekNumberISO,
-        'w': parseWeekdayNumberSunday,
-        'W': parseWeekNumberMonday,
-        'x': parseLocaleDate,
-        'X': parseLocaleTime,
-        'y': parseYear,
-        'Y': parseFullYear,
-        'Z': parseZone,
-        '%': parseLiteralPercent
+        a: parseShortWeekday,
+        A: parseWeekday,
+        b: parseShortMonth,
+        B: parseMonth,
+        c: parseLocaleDateTime,
+        d: parseDayOfMonth,
+        e: parseDayOfMonth,
+        f: parseMicroseconds,
+        H: parseHour24,
+        I: parseHour24,
+        j: parseDayOfYear,
+        L: parseMilliseconds,
+        m: parseMonthNumber,
+        M: parseMinutes,
+        p: parsePeriod,
+        Q: parseUnixTimestamp,
+        s: parseUnixTimestampSeconds,
+        S: parseSeconds,
+        u: parseWeekdayNumberMonday,
+        U: parseWeekNumberSunday,
+        V: parseWeekNumberISO,
+        w: parseWeekdayNumberSunday,
+        W: parseWeekNumberMonday,
+        x: parseLocaleDate,
+        X: parseLocaleTime,
+        y: parseYear,
+        Y: parseFullYear,
+        Z: parseZone,
+        '%': parseLiteralPercent,
     };
 
     // Recursive definitions.
@@ -371,9 +395,9 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
     utcFormats.c = newFormat(lDateTime, utcFormats);
 
     function newParse(specifier: string, newDate: (d: ParsedDate) => Date): (str: string) => Date | undefined {
-        return function(str: string) {
+        return function (str: string) {
             const d = newYear(1900);
-            const i = parseSpecifier(d, specifier, str += '', 0);
+            const i = parseSpecifier(d, specifier, (str += ''), 0);
 
             if (i != str.length) {
                 return undefined;
@@ -386,7 +410,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
 
             // The am-pm flag is 0 for AM, and 1 for PM.
             if ('p' in d) {
-                d.H = d.H % 12 + d.p * 12;
+                d.H = (d.H % 12) + d.p * 12;
             }
 
             // Convert day-of-week and week-of-year to day-of-year.
@@ -404,7 +428,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
                     week = utcDay.offset(week, (d.V - 1) * 7);
                     d.y = week.getUTCFullYear();
                     d.m = week.getUTCMonth();
-                    d.d = week.getUTCDate() + (d.w + 6) % 7;
+                    d.d = week.getUTCDate() + ((d.w + 6) % 7);
                 } else {
                     let week = newDate(newYear(d.y));
                     const day = week.getDay();
@@ -412,23 +436,21 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
                     week = timeDay.offset(week, (d.V - 1) * 7);
                     d.y = week.getFullYear();
                     d.m = week.getMonth();
-                    d.d = week.getDate() + (d.w + 6) % 7;
+                    d.d = week.getDate() + ((d.w + 6) % 7);
                 }
             } else if ('W' in d || 'U' in d) {
                 if (!('w' in d)) {
-                    d.w = 'u' in d
-                        ? d.u % 7
-                        : 'W' in d ? 1 : 0;
+                    d.w = 'u' in d ? d.u % 7 : 'W' in d ? 1 : 0;
                 }
                 const day = 'Z' in d ? utcDate(newYear(d.y)).getUTCDay() : newDate(newYear(d.y)).getDay();
                 d.m = 0;
-                d.d = 'W' in d ? (d.w + 6) % 7 + d.W * 7 - (day + 5) % 7 : d.w + d.U * 7 - (day + 6) % 7;
+                d.d = 'W' in d ? ((d.w + 6) % 7) + d.W * 7 - ((day + 5) % 7) : d.w + d.U * 7 - ((day + 6) % 7);
             }
 
             // If a time zone is specified, all fields are interpreted as UTC and then
             // offset according to the specified time zone.
             if ('Z' in d) {
-                d.H += d.Z / 100 | 0;
+                d.H += (d.Z / 100) | 0;
                 d.M += d.Z % 100;
                 return utcDate(d);
             }
@@ -444,7 +466,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
      * @param formats
      */
     function newFormat(specifier: string, formats: FormatMap): (date: Date | number) => string {
-        return date => {
+        return (date) => {
             const string: (string | number)[] = [];
             const n = specifier.length;
             let i = -1;
@@ -459,13 +481,15 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
                     string.push(specifier.slice(j, i)); // copy the chunks of specifier with no directives as is
                     let c: string | number = specifier.charAt(++i);
                     let pad = pads[c];
-                    if (pad != undefined) { // if format directive has a padding modifier in front of it
-                        c = specifier.charAt(++i);   // fetch the directive itself
+                    if (pad != undefined) {
+                        // if format directive has a padding modifier in front of it
+                        c = specifier.charAt(++i); // fetch the directive itself
                     } else {
                         pad = c === 'e' ? ' ' : '0'; // use the default padding modifier
                     }
                     const format = formats[c as FormatKeys];
-                    if (format) { // if the directive has a corresponding formatting function
+                    if (format) {
+                        // if the directive has a corresponding formatting function
                         c = format(date, pad); // replace the directive with the formatted date
                     }
                     string.push(c);
@@ -495,7 +519,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
             if (code === percentCharCode) {
                 const char = specifier.charAt(i++);
                 const parse = parses[(char in pads ? specifier.charAt(i++) : char) as FormatKeys];
-                if (!parse || ((j = parse(d, string, j)) < 0)) {
+                if (!parse || (j = parse(d, string, j)) < 0) {
                     return -1;
                 }
             } else if (code != string.charCodeAt(j++)) {
@@ -544,7 +568,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
     }
     function formatWeekNumberISO(date: Date, fill: string): string {
         const day = date.getDay();
-        date = (day >= 4 || day === 0) ? timeThursday.floor(date) : timeThursday.ceil(date);
+        date = day >= 4 || day === 0 ? timeThursday.floor(date) : timeThursday.ceil(date);
         const yearStart = year.floor(date);
         return pad(timeThursday.count(yearStart, date) + (yearStart.getDay() === 4 ? 1 : 0), fill, 2);
     }
@@ -577,7 +601,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
     }
     function formatZone(date: Date): string {
         let z = date.getTimezoneOffset();
-        return (z > 0 ? '-' : (z *= -1, '+')) + pad(Math.floor(z / 60), '0', 2) + pad(z % 60, '0', 2);
+        return (z > 0 ? '-' : ((z *= -1), '+')) + pad(Math.floor(z / 60), '0', 2) + pad(z % 60, '0', 2);
     }
 
     // -------------------------- UTC formats -----------------------------------
@@ -633,7 +657,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
     }
     function formatUTCWeekNumberISO(date: Date, fill: string): string {
         const day = date.getUTCDay();
-        date = (day >= 4 || day === 0) ? utcThursday.floor(date) : utcThursday.ceil(date);
+        date = day >= 4 || day === 0 ? utcThursday.floor(date) : utcThursday.ceil(date);
         const yearStart = utcYear.floor(date);
         return pad(utcThursday.count(yearStart, date) + (yearStart.getUTCDay() === 4 ? 1 : 0), fill, 4);
     }
@@ -666,75 +690,75 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
 
     function parseMicroseconds(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 6));
-        return n ? (d.L = Math.floor(parseFloat(n[0]) / 1000), i + n[0].length) : -1;
+        return n ? ((d.L = Math.floor(parseFloat(n[0]) / 1000)), i + n[0].length) : -1;
     }
     function parseMilliseconds(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 3));
-        return n ? (d.L = +n[0], i + n[0].length) : -1;
+        return n ? ((d.L = +n[0]), i + n[0].length) : -1;
     }
     function parseSeconds(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
-        return n ? (d.S = +n[0], i + n[0].length) : -1;
+        return n ? ((d.S = +n[0]), i + n[0].length) : -1;
     }
     function parseMinutes(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
-        return n ? (d.M = +n[0], i + n[0].length) : -1;
+        return n ? ((d.M = +n[0]), i + n[0].length) : -1;
     }
     function parseHour24(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
-        return n ? (d.H = +n[0], i + n[0].length) : -1;
+        return n ? ((d.H = +n[0]), i + n[0].length) : -1;
     }
     function parsePeriod(d: ParsedDate, string: string, i: number): number {
         const n = periodRe.exec(string.slice(i));
-        return n ? (d.p = periodLookup[n[0].toLowerCase()], i + n[0].length) : -1;
+        return n ? ((d.p = periodLookup[n[0].toLowerCase()]), i + n[0].length) : -1;
     }
     function parseDayOfMonth(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
-        return n ? (d.d = +n[0], i + n[0].length) : -1;
+        return n ? ((d.d = +n[0]), i + n[0].length) : -1;
     }
     function parseDayOfYear(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 3));
-        return n ? (d.m = 0, d.d = +n[0], i + n[0].length) : -1;
+        return n ? ((d.m = 0), (d.d = +n[0]), i + n[0].length) : -1;
     }
     function parseShortWeekday(d: ParsedDate, string: string, i: number): number {
         const n = shortWeekdayRe.exec(string.slice(i));
-        return n ? (d.w = shortWeekdayLookup[n[0].toLowerCase()], i + n[0].length) : -1;
+        return n ? ((d.w = shortWeekdayLookup[n[0].toLowerCase()]), i + n[0].length) : -1;
     }
     function parseWeekday(d: ParsedDate, string: string, i: number): number {
         const n = weekdayRe.exec(string.slice(i));
-        return n ? (d.w = weekdayLookup[n[0].toLowerCase()], i + n[0].length) : -1;
+        return n ? ((d.w = weekdayLookup[n[0].toLowerCase()]), i + n[0].length) : -1;
     }
     function parseWeekdayNumberMonday(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 1));
-        return n ? (d.u = +n[0], i + n[0].length) : -1;
+        return n ? ((d.u = +n[0]), i + n[0].length) : -1;
     }
     function parseWeekNumberSunday(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
-        return n ? (d.U = +n[0], i + n[0].length) : -1;
+        return n ? ((d.U = +n[0]), i + n[0].length) : -1;
     }
     function parseWeekNumberISO(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
-        return n ? (d.V = +n[0], i + n[0].length) : -1;
+        return n ? ((d.V = +n[0]), i + n[0].length) : -1;
     }
     function parseWeekNumberMonday(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
-        return n ? (d.W = +n[0], i + n[0].length) : -1;
+        return n ? ((d.W = +n[0]), i + n[0].length) : -1;
     }
     function parseWeekdayNumberSunday(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 1));
-        return n ? (d.w = +n[0], i + n[0].length) : -1;
+        return n ? ((d.w = +n[0]), i + n[0].length) : -1;
     }
     function parseShortMonth(d: ParsedDate, string: string, i: number): number {
         const n = shortMonthRe.exec(string.slice(i));
-        return n ? (d.m = shortMonthLookup[n[0].toLowerCase()], i + n[0].length) : -1;
+        return n ? ((d.m = shortMonthLookup[n[0].toLowerCase()]), i + n[0].length) : -1;
     }
     function parseMonth(d: ParsedDate, string: string, i: number): number {
         const n = monthRe.exec(string.slice(i));
-        return n ? (d.m = monthLookup[n[0].toLowerCase()], i + n[0].length) : -1;
+        return n ? ((d.m = monthLookup[n[0].toLowerCase()]), i + n[0].length) : -1;
     }
     function parseMonthNumber(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
-        return n ? (d.m = parseFloat(n[0]) - 1, i + n[0].length) : -1;
+        return n ? ((d.m = parseFloat(n[0]) - 1), i + n[0].length) : -1;
     }
     function parseLocaleDateTime(d: ParsedDate, string: string, i: number): number {
         return parseSpecifier(d, lDateTime, string, i);
@@ -747,23 +771,23 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
     }
     function parseUnixTimestamp(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i));
-        return n ? (d.Q = +n[0], i + n[0].length) : -1;
+        return n ? ((d.Q = +n[0]), i + n[0].length) : -1;
     }
     function parseUnixTimestampSeconds(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i));
-        return n ? (d.Q = (+n[0]) * 1000, i + n[0].length) : -1;
+        return n ? ((d.Q = +n[0] * 1000), i + n[0].length) : -1;
     }
     function parseYear(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
-        return n ? (d.y = +n[0] + (+n[0] > 68 ? 1900 : 2000), i + n[0].length) : -1;
+        return n ? ((d.y = +n[0] + (+n[0] > 68 ? 1900 : 2000)), i + n[0].length) : -1;
     }
     function parseFullYear(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 4));
-        return n ? (d.y = +n[0], i + n[0].length) : -1;
+        return n ? ((d.y = +n[0]), i + n[0].length) : -1;
     }
     function parseZone(d: ParsedDate, string: string, i: number): number {
         const n = /^(Z)|^([+-]\d\d)(?::?(\d\d))?/.exec(string.slice(i, i + 6));
-        return n ? (d.Z = n[1] ? 0 : -(n[2] + (n[3] || '00')), i + n[0].length) : -1;
+        return n ? ((d.Z = n[1] ? 0 : -(n[2] + (n[3] || '00'))), i + n[0].length) : -1;
     }
     function parseLiteralPercent(_: any, string: string, i: number): number {
         const n = percentRe.exec(string.slice(i, i + 1));
@@ -776,7 +800,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
             f.toString = () => specifier;
             return f;
         },
-        parse: (specifier: string): ((dateString: string) => (Date | undefined)) => {
+        parse: (specifier: string): ((dateString: string) => Date | undefined) => {
             const p = newParse(specifier, localDate);
             p.toString = () => specifier;
             return p;
@@ -786,10 +810,10 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
             f.toString = () => specifier;
             return f;
         },
-        utcParse: (specifier: string): ((dateString: string) => (Date | undefined)) => {
+        utcParse: (specifier: string): ((dateString: string) => Date | undefined) => {
             const p = newParse(specifier, utcDate);
             p.toString = () => specifier;
             return p;
-        }
+        },
     };
 }

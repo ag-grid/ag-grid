@@ -1,6 +1,6 @@
-import { ContinuousScale } from "./continuousScale";
-import ticks, { tickIncrement } from "../util/ticks";
-import { tickFormat } from "../util/numberFormat";
+import { ContinuousScale } from './continuousScale';
+import ticks, { tickIncrement } from '../util/ticks';
+import { tickFormat } from '../util/numberFormat';
 
 /**
  * Maps continuous domain to a continuous range.

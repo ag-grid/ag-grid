@@ -1,9 +1,9 @@
-import { Node, RedrawType, SceneChangeDetection } from "../node";
-import { chainObjects } from "../../util/object";
-import { DropShadow } from "../dropShadow";
+import { Node, RedrawType, SceneChangeDetection } from '../node';
+import { chainObjects } from '../../util/object';
+import { DropShadow } from '../dropShadow';
 
-export type ShapeLineCap = undefined | 'round' | 'square';  // null is for 'butt'
-export type ShapeLineJoin = undefined | 'round' | 'bevel';  // null is for 'miter'
+export type ShapeLineCap = undefined | 'round' | 'square'; // null is for 'butt'
+export type ShapeLineJoin = undefined | 'round' | 'bevel'; // null is for 'miter'
 
 export abstract class Shape extends Node {
     /**
@@ -38,17 +38,20 @@ export abstract class Shape extends Node {
      * has been applied (using the `restoreOwnStyles` and `restoreAllStyles` methods).
      * These static defaults are meant to be inherited by subclasses.
      */
-    protected static defaultStyles = chainObjects({}, {
-        fill: 'black',
-        stroke: undefined,
-        strokeWidth: 0,
-        lineDash: undefined,
-        lineDashOffset: 0,
-        lineCap: undefined as ShapeLineCap,
-        lineJoin: undefined as ShapeLineJoin,
-        opacity: 1,
-        fillShadow: undefined
-    });
+    protected static defaultStyles = chainObjects(
+        {},
+        {
+            fill: 'black',
+            stroke: undefined,
+            strokeWidth: 0,
+            lineDash: undefined,
+            lineDashOffset: 0,
+            lineCap: undefined as ShapeLineCap,
+            lineJoin: undefined as ShapeLineJoin,
+            opacity: 1,
+            fillShadow: undefined,
+        }
+    );
 
     /**
      * Restores the default styles introduced by this subclass.
@@ -116,7 +119,7 @@ export abstract class Shape extends Node {
 
     /**
      * Returns a device-pixel aligned coordinate (or length if length is supplied).
-     * 
+     *
      * NOTE: Not suitable for strokes, since the stroke needs to be offset to the middle
      * of a device pixel.
      */
@@ -130,7 +133,7 @@ export abstract class Shape extends Node {
 
         // Account for the rounding of alignedStart by increasing length to compensate before
         // alignment.
-        return (Math.round((length + start) * pixelRatio) / pixelRatio) - alignedStart;
+        return Math.round((length + start) * pixelRatio) / pixelRatio - alignedStart;
     }
 
     @SceneChangeDetection({ redraw: RedrawType.MINOR })
@@ -154,7 +157,9 @@ export abstract class Shape extends Node {
     @SceneChangeDetection({ redraw: RedrawType.MINOR, checkDirtyOnAssignment: true })
     fillShadow: DropShadow | undefined = Shape.defaultStyles.fillShadow;
 
-    protected fillStroke(ctx: CanvasFillStrokeStyles & CanvasCompositing & CanvasShadowStyles & CanvasPathDrawingStyles & CanvasDrawPath) {
+    protected fillStroke(
+        ctx: CanvasFillStrokeStyles & CanvasCompositing & CanvasShadowStyles & CanvasPathDrawingStyles & CanvasDrawPath
+    ) {
         if (!this.scene) {
             return;
         }

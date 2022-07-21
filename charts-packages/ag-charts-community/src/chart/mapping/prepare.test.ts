@@ -103,7 +103,7 @@ const EXAMPLES: Record<string, TestCase> = {
     },
     ADV_PER_MARKER_CUSTOMISATION_EXAMPLE: {
         options: examples.ADV_PER_MARKER_CUSTOMISATION,
-    }
+    },
 };
 
 describe('prepare', () => {
@@ -111,7 +111,7 @@ describe('prepare', () => {
         beforeEach(() => {
             console.warn = jest.fn();
         });
-    
+
         afterEach(() => {
             expect(console.warn).not.toBeCalled();
         });

@@ -139,7 +139,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     lineDashOffset: number = 0;
 
     constructor() {
-        super({ pickModes: [ SeriesNodePickMode.EXACT_SHAPE_MATCH ] });
+        super({ pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH] });
 
         this.label.enabled = false;
     }
@@ -232,7 +232,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         });
 
         const bins: HistogramBin[] = [new HistogramBin(derivedBins[0])];
-        
+
         let currentBin = 0;
         for (let i = 0; i < sortedData.length && currentBin < derivedBins.length; i++) {
             const datum = sortedData[i];

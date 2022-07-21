@@ -1,4 +1,4 @@
-import { BBox } from "../bbox";
+import { BBox } from '../bbox';
 
 export interface GradientColorStop {
     offset: number;
@@ -6,9 +6,7 @@ export interface GradientColorStop {
 }
 
 export abstract class Gradient {
-
     stops: GradientColorStop[] = [];
 
     abstract createGradient(ctx: CanvasRenderingContext2D, bbox: BBox): CanvasGradient | string;
-
 }

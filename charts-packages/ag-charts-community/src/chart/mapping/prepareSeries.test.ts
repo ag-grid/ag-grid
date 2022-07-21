@@ -1,9 +1,9 @@
-import { describe, expect, test } from "@jest/globals";
-import "jest-canvas-mock";
-import { groupSeriesByType, reduceSeries, processSeriesOptions } from "./prepareSeries";
-import { AgBarSeriesOptions, AgLineSeriesOptions } from "../agChartOptions";
+import { describe, expect, test } from '@jest/globals';
+import 'jest-canvas-mock';
+import { groupSeriesByType, reduceSeries, processSeriesOptions } from './prepareSeries';
+import { AgBarSeriesOptions, AgLineSeriesOptions } from '../agChartOptions';
 
-const seriesOptions: ((AgBarSeriesOptions | AgLineSeriesOptions) & {hideInLegend?: string[]})[] = [
+const seriesOptions: ((AgBarSeriesOptions | AgLineSeriesOptions) & { hideInLegend?: string[] })[] = [
     {
         type: 'column',
         xKey: 'quarter',
@@ -201,7 +201,9 @@ describe('transform series options', () => {
     });
 
     test('processSeriesOptions with grouped columns', () => {
-        const result = processSeriesOptions(seriesOptions.map((s) => s.type === 'column' ? {...s, grouped: true} : s));
+        const result = processSeriesOptions(
+            seriesOptions.map((s) => (s.type === 'column' ? { ...s, grouped: true } : s))
+        );
 
         const processedSeriesOptions = [
             {
@@ -226,7 +228,9 @@ describe('transform series options', () => {
     });
 
     test('processSeriesOptions with stacked columns', () => {
-        const result = processSeriesOptions(seriesOptions.map((s) => s.type === 'column' ? {...s, stacked: true, grouped: undefined } : s));
+        const result = processSeriesOptions(
+            seriesOptions.map((s) => (s.type === 'column' ? { ...s, stacked: true, grouped: undefined } : s))
+        );
 
         const processedSeriesOptions = [
             {

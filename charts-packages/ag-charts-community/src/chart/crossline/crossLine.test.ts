@@ -1,6 +1,16 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { CANVAS_HEIGHT, CANVAS_WIDTH, cartesianChartAssertions, CartesianTestCase, extractImageData, IMAGE_SNAPSHOT_DEFAULTS, repeat, setupMockCanvas, waitForChartStability } from "../test/utils";
+import {
+    CANVAS_HEIGHT,
+    CANVAS_WIDTH,
+    cartesianChartAssertions,
+    CartesianTestCase,
+    extractImageData,
+    IMAGE_SNAPSHOT_DEFAULTS,
+    repeat,
+    setupMockCanvas,
+    waitForChartStability,
+} from '../test/utils';
 import { AgCartesianChartOptions } from '../agChartOptions';
 import { AgChartV2 } from '../agChartV2';
 import { CartesianChart } from '../cartesianChart';
@@ -31,9 +41,12 @@ const EXAMPLES: Record<string, CartesianTestCase> = {
     },
     HISTOGRAM_CROSSLINES: {
         options: examples.HISTOGRAM_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['histogram', 'scatter'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'number'],
+            seriesTypes: ['histogram', 'scatter'],
+        }),
     },
-}
+};
 
 describe('crossLines', () => {
     let ctx = setupMockCanvas();
@@ -75,5 +88,5 @@ describe('crossLines', () => {
                 await compare();
             });
         }
-    })
-})
+    });
+});

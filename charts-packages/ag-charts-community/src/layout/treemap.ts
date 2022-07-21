@@ -11,7 +11,7 @@ function slice(parent: Node, x0: number, y0: number, x1: number, y1: number) {
     const nodes = parent.children;
     const k = parent.value && (y1 - y0) / parent.value;
 
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
         node.x0 = x0;
         node.x1 = x1;
         node.y0 = y0;
@@ -23,12 +23,12 @@ function dice(parent: Node, x0: number, y0: number, x1: number, y1: number) {
     const nodes = parent.children;
     const k = parent.value && (x1 - x0) / parent.value;
 
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
         node.x0 = x0;
         node.x1 = x0 += node.value * k;
         node.y0 = y0;
         node.y1 = y1;
-    })
+    });
 }
 
 function roundNode(node: Node) {
@@ -92,13 +92,13 @@ export function squarifyRatio(ratio: number, parent: any, x0: number, y0: number
         const row: any = {
             value: sumValue,
             dice: dx < dy,
-            children: nodes.slice(i0, i1)
+            children: nodes.slice(i0, i1),
         };
         rows.push(row);
         if (row.dice) {
-            dice(row, x0, y0, x1, value ? y0 += dy * sumValue / value : y1);
+            dice(row, x0, y0, x1, value ? (y0 += (dy * sumValue) / value) : y1);
         } else {
-            slice(row, x0, y0, value ? x0 += dx * sumValue / value : x1, y1);
+            slice(row, x0, y0, value ? (x0 += (dx * sumValue) / value) : x1, y1);
         }
         value -= sumValue;
         i0 = i1;
@@ -119,7 +119,6 @@ const squarify = (function custom(ratio: number) {
 })(phi);
 
 export class Treemap {
-
     private paddingStack: number[] = [0];
 
     private dx: number = 1;
@@ -134,11 +133,11 @@ export class Treemap {
 
     round: boolean = true;
     tile: (Node: any, x0: number, y0: number, x1: number, y1: number) => any = squarify;
-    paddingInner: (node: any) => number = _ => 0;
-    paddingTop: (node: any) => number = _ => 0;
-    paddingRight: (node: any) => number = _ => 0;
-    paddingBottom: (node: any) => number = _ => 0;
-    paddingLeft: (node: any) => number = _ => 0;
+    paddingInner: (node: any) => number = (_) => 0;
+    paddingTop: (node: any) => number = (_) => 0;
+    paddingRight: (node: any) => number = (_) => 0;
+    paddingBottom: (node: any) => number = (_) => 0;
+    paddingLeft: (node: any) => number = (_) => 0;
 
     processData(root: any): any {
         root.x0 = 0;
@@ -189,6 +188,5 @@ export class Treemap {
             }
             this.tile(node, x0, y0, x1, y1);
         }
-
     }
 }

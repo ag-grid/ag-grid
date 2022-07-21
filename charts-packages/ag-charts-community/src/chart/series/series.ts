@@ -42,8 +42,8 @@ export enum SeriesNodePickMode {
 }
 
 export type SeriesNodePickMatch = {
-    datum: SeriesNodeDatum,
-    distance: number,
+    datum: SeriesNodeDatum;
+    distance: number;
 };
 
 export interface TooltipRendererParams {
@@ -178,10 +178,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     cursor = 'default';
 
-    constructor({
-        seriesGroupUsesLayer = true,
-        pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST],
-    } = {}) {
+    constructor({ seriesGroupUsesLayer = true, pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST] } = {}) {
         super();
 
         const { group } = this;
@@ -349,8 +346,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     pickNode(
         x: number,
         y: number,
-        limitPickModes?: SeriesNodePickMode[],
-    ): { pickMode: SeriesNodePickMode, match: SeriesNodeDatum, distance: number } | undefined {
+        limitPickModes?: SeriesNodePickMode[]
+    ): { pickMode: SeriesNodePickMode; match: SeriesNodeDatum; distance: number } | undefined {
         const { pickModes, visible, group } = this;
 
         if (!visible || !group.visible) {
@@ -374,7 +371,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                     match = this.pickNodeMainAxisFirst(
                         x,
                         y,
-                        pickMode === SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                        pickMode === SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST
                     );
                     break;
 

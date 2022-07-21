@@ -1,4 +1,4 @@
-import { windowValue } from "../util/window";
+import { windowValue } from '../util/window';
 
 export enum RedrawType {
     NONE, // No change in rendering.
@@ -26,14 +26,20 @@ function evalAvailable() {
 const EVAL_USEABLE = evalAvailable();
 
 export function SceneChangeDetection(opts?: {
-    redraw?: RedrawType,
-    type?: 'normal' | 'transform' | 'path' | 'font',
-    convertor?: (o: any) => any,
-    changeCb?: (o: any) => any,
-    checkDirtyOnAssignment?: boolean,
+    redraw?: RedrawType;
+    type?: 'normal' | 'transform' | 'path' | 'font';
+    convertor?: (o: any) => any;
+    changeCb?: (o: any) => any;
+    checkDirtyOnAssignment?: boolean;
 }) {
-    const { redraw = RedrawType.TRIVIAL, type = 'normal', changeCb, convertor, checkDirtyOnAssignment = false } = opts || {};
-    
+    const {
+        redraw = RedrawType.TRIVIAL,
+        type = 'normal',
+        changeCb,
+        convertor,
+        checkDirtyOnAssignment = false,
+    } = opts || {};
+
     const debug = windowValue('agChartsSceneChangeDetectionDebug') != null;
 
     return function (target: any, key: string) {
@@ -48,7 +54,7 @@ export function SceneChangeDetection(opts?: {
             // Optimised code-path.
 
             // Remove all conditional logic from runtime - generate a setter with the exact necessary
-            // steps, as these setters are called a LOT during update cycles.        
+            // steps, as these setters are called a LOT during update cycles.
             const setterJs = `
                 ${debug ? 'var setCount = 0;' : ''}
                 function set_${key}(value) {
@@ -56,14 +62,30 @@ export function SceneChangeDetection(opts?: {
                     ${convertor ? 'value = convertor(value);' : ''}
                     if (value !== oldValue) {
                         this.${privateKey} = value;
-                        ${debug ? `console.log({ t: this, property: '${key}', oldValue, value, stack: new Error().stack });` : ''}
+                        ${
+                            debug
+                                ? `console.log({ t: this, property: '${key}', oldValue, value, stack: new Error().stack });`
+                                : ''
+                        }
                         ${type === 'normal' ? `this.markDirty(this, ${redraw});` : ''}
                         ${type === 'transform' ? `this.markDirtyTransform(${redraw});` : ''}
-                        ${type === 'path' ? `if (!this._dirtyPath) { this._dirtyPath = true; this.markDirty(this, ${redraw}); }` : ''}
-                        ${type === 'font' ? `if (!this._dirtyFont) { this._dirtyFont = true; this.markDirty(this, ${redraw}); }` : ''}
+                        ${
+                            type === 'path'
+                                ? `if (!this._dirtyPath) { this._dirtyPath = true; this.markDirty(this, ${redraw}); }`
+                                : ''
+                        }
+                        ${
+                            type === 'font'
+                                ? `if (!this._dirtyFont) { this._dirtyFont = true; this.markDirty(this, ${redraw}); }`
+                                : ''
+                        }
                         ${changeCb ? 'changeCb(this);' : ''}
                     }
-                    ${checkDirtyOnAssignment ? `if (value != null && value._dirty > ${RedrawType.NONE}) { this.markDirty(value, value._dirty); }` : ''}
+                    ${
+                        checkDirtyOnAssignment
+                            ? `if (value != null && value._dirty > ${RedrawType.NONE}) { this.markDirty(value, value._dirty); }`
+                            : ''
+                    }
                 };
                 set_${key};
             `;
@@ -83,22 +105,29 @@ export function SceneChangeDetection(opts?: {
             // Unoptimised but 'safe' code-path, for environments with CSP headers and no 'unsafe-eval'.
             // We deliberately do not support debug branches found in the optimised path above, since
             // for large data-set series performance deteriorates with every extra branch here.
-            const setter = function(value: any) {
+            const setter = function (value: any) {
                 const oldValue = this[privateKey];
                 value = convertor ? convertor(value) : value;
                 if (value !== oldValue) {
                     this[privateKey] = value;
                     if (type === 'normal') this.markDirty(this, redraw);
                     if (type === 'transform') this.markDirtyTransform(redraw);
-                    if (type === 'path' && !this._dirtyPath) { this._dirtyPath = true; this.markDirty(this, redraw); }
-                    if (type === 'font' && !this._dirtyFont) { this._dirtyFont = true; this.markDirty(this, redraw); }
+                    if (type === 'path' && !this._dirtyPath) {
+                        this._dirtyPath = true;
+                        this.markDirty(this, redraw);
+                    }
+                    if (type === 'font' && !this._dirtyFont) {
+                        this._dirtyFont = true;
+                        this.markDirty(this, redraw);
+                    }
                     if (changeCb) changeCb(this);
                 }
-                if (checkDirtyOnAssignment && value != null && value._dirty > RedrawType.NONE) this.markDirty(value, value._dirty);
+                if (checkDirtyOnAssignment && value != null && value._dirty > RedrawType.NONE)
+                    this.markDirty(value, value._dirty);
             };
-            const getter = function() {
+            const getter = function () {
                 return this[privateKey];
-            }
+            };
             Object.defineProperty(target, key, {
                 set: setter,
                 get: getter,
@@ -106,7 +135,7 @@ export function SceneChangeDetection(opts?: {
                 configurable: false,
             });
         }
-    }
+    };
 }
 
 export abstract class ChangeDetectable {
@@ -120,7 +149,7 @@ export abstract class ChangeDetectable {
         this._dirty = type;
     }
 
-    markClean(_opts?: {force?: boolean, recursive?: boolean}) {
+    markClean(_opts?: { force?: boolean; recursive?: boolean }) {
         this._dirty = RedrawType.NONE;
     }
 

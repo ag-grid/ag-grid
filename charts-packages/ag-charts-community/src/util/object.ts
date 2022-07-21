@@ -18,7 +18,7 @@ export function getValue(object: any, path: string | string[], defaultValue?: an
     const parts = Array.isArray(path) ? path : path.split('.');
     let value = object;
     try {
-        parts.forEach(part => {
+        parts.forEach((part) => {
             value = value[part];
         });
     } catch (e) {
@@ -36,7 +36,7 @@ function emptyTarget(value: any) {
 }
 
 export function cloneUnlessOtherwiseSpecified(value: any, options: any) {
-    return (options.clone !== false && options.isMergeableObject(value))
+    return options.clone !== false && options.isMergeableObject(value)
         ? deepMerge(emptyTarget(value), value, options)
         : value;
 }
@@ -58,8 +58,8 @@ function getMergeFunction(key: string, options: any) {
 function getEnumerableOwnPropertySymbols(target: any): any[] {
     return Object.getOwnPropertySymbols
         ? Object.getOwnPropertySymbols(target).filter(function (symbol) {
-            return target.propertyIsEnumerable(symbol);
-        })
+              return target.propertyIsEnumerable(symbol);
+          })
         : [];
 }
 
@@ -77,9 +77,13 @@ function propertyIsOnObject(object: any, property: string) {
 
 // Protects from prototype poisoning and unexpected merging up the prototype chain.
 function propertyIsUnsafe(target: any, key: string) {
-    return propertyIsOnObject(target, key) // Properties are safe to merge if they don't exist in the target yet,
-        && !(Object.hasOwnProperty.call(target, key) // unsafe if they exist up the prototype chain,
-            && Object.propertyIsEnumerable.call(target, key)); // and also unsafe if they're nonenumerable.
+    return (
+        propertyIsOnObject(target, key) && // Properties are safe to merge if they don't exist in the target yet,
+        !(
+            Object.hasOwnProperty.call(target, key) && // unsafe if they exist up the prototype chain,
+            Object.propertyIsEnumerable.call(target, key)
+        )
+    ); // and also unsafe if they're nonenumerable.
 }
 
 function mergeObject(target: any, source: any, options: any) {

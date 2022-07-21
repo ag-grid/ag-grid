@@ -1,28 +1,29 @@
-import { AgCartesianChartOptions } from "../../agChartOptions"
-import { DATA_MEAN_SEA_LEVEL } from "../../test/data";
-import { loadExampleOptions } from "../../test/utils";
-
+import { AgCartesianChartOptions } from '../../agChartOptions';
+import { DATA_MEAN_SEA_LEVEL } from '../../test/data';
+import { loadExampleOptions } from '../../test/utils';
 
 export const GROUPED_BAR_CHART_EXAMPLE: AgCartesianChartOptions = loadExampleOptions('grouped-bar');
 export const GROUPED_COLUMN_EXAMPLE: AgCartesianChartOptions = loadExampleOptions('grouped-column');
 export const LINE_GRAPH_WITH_GAPS_EXAMPLE: AgCartesianChartOptions = loadExampleOptions('line-with-gaps');
-export const XY_HISTOGRAM_WITH_MEAN_EXAMPLE: AgCartesianChartOptions = loadExampleOptions('xy-histogram-with-mean-aggregation');
-export const AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgCartesianChartOptions = loadExampleOptions('area-with-negative-values');
-
+export const XY_HISTOGRAM_WITH_MEAN_EXAMPLE: AgCartesianChartOptions = loadExampleOptions(
+    'xy-histogram-with-mean-aggregation'
+);
+export const AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgCartesianChartOptions =
+    loadExampleOptions('area-with-negative-values');
 
 const xAxisCrossLineStyle = {
     fill: 'rgba(0,118,0,0.5)',
     fillOpacity: 0.2,
     stroke: 'green',
     strokeWidth: 1,
-}
+};
 
 const yAxisCrossLineStyle = {
     fill: 'pink',
     fillOpacity: 0.2,
     stroke: 'red',
     strokeWidth: 1,
-}
+};
 
 export const SCATTER_CROSSLINES: AgCartesianChartOptions = {
     title: {
@@ -48,7 +49,7 @@ export const SCATTER_CROSSLINES: AgCartesianChartOptions = {
                         text: '10 - 30',
                         position: 'right',
                     },
-                    ...yAxisCrossLineStyle
+                    ...yAxisCrossLineStyle,
                 },
                 {
                     type: 'line',
@@ -57,7 +58,7 @@ export const SCATTER_CROSSLINES: AgCartesianChartOptions = {
                         text: '60',
                         position: 'right',
                     },
-                    ...yAxisCrossLineStyle
+                    ...yAxisCrossLineStyle,
                 },
             ],
         },
@@ -71,7 +72,7 @@ export const SCATTER_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: '2001 - 2003',
                     },
-                    ...xAxisCrossLineStyle
+                    ...xAxisCrossLineStyle,
                 },
                 {
                     type: 'range',
@@ -79,7 +80,7 @@ export const SCATTER_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: '2013 - 20014',
                     },
-                    ...xAxisCrossLineStyle
+                    ...xAxisCrossLineStyle,
                 },
                 {
                     type: 'line',
@@ -87,16 +88,16 @@ export const SCATTER_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: '2008',
                     },
-                    ...xAxisCrossLineStyle
+                    ...xAxisCrossLineStyle,
                 },
             ],
         },
     ],
     legend: {
         enabled: true,
-        position: "right"
+        position: 'right',
     },
-}
+};
 
 export const LINE_CROSSLINES: AgCartesianChartOptions = {
     ...LINE_GRAPH_WITH_GAPS_EXAMPLE,
@@ -116,27 +117,27 @@ export const LINE_CROSSLINES: AgCartesianChartOptions = {
                     range: ['1', '13'],
                     label: {
                         text: '1 - 13',
-                        position: 'top'
+                        position: 'top',
                     },
-                    ...xAxisCrossLineStyle
+                    ...xAxisCrossLineStyle,
                 },
                 {
                     type: 'range',
                     range: ['34', '45'],
                     label: {
                         text: '34 - 45',
-                        position: 'top'
+                        position: 'top',
                     },
-                    ...xAxisCrossLineStyle
+                    ...xAxisCrossLineStyle,
                 },
                 {
                     type: 'line',
                     value: '27',
                     label: {
                         text: '27',
-                        position: 'top'
+                        position: 'top',
                     },
-                    ...xAxisCrossLineStyle
+                    ...xAxisCrossLineStyle,
                 },
             ],
         },
@@ -156,9 +157,9 @@ export const LINE_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: '0.25 - 0.33',
                         position: 'insideLeft',
-                        padding: 10
+                        padding: 10,
                     },
-                    ...yAxisCrossLineStyle
+                    ...yAxisCrossLineStyle,
                 },
                 {
                     type: 'line',
@@ -167,12 +168,12 @@ export const LINE_CROSSLINES: AgCartesianChartOptions = {
                         text: '0.87',
                         position: 'topRight',
                     },
-                    ...yAxisCrossLineStyle
+                    ...yAxisCrossLineStyle,
                 },
             ],
         },
-    ]
-}
+    ],
+};
 
 export const AREA_CROSSLINES: AgCartesianChartOptions = {
     ...AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE,
@@ -187,7 +188,7 @@ export const AREA_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: 'Q1 - Q2',
                     },
-                    ...xAxisCrossLineStyle
+                    ...xAxisCrossLineStyle,
                 },
                 {
                     type: 'range',
@@ -195,7 +196,7 @@ export const AREA_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: 'Q3 - Q4',
                     },
-                    ...xAxisCrossLineStyle
+                    ...xAxisCrossLineStyle,
                 },
             ],
         },
@@ -211,23 +212,23 @@ export const AREA_CROSSLINES: AgCartesianChartOptions = {
                     range: [800, 1000],
                     label: {
                         text: '800 - 1000',
-                        position: 'insideBottomLeft'
+                        position: 'insideBottomLeft',
                     },
-                    ...yAxisCrossLineStyle
+                    ...yAxisCrossLineStyle,
                 },
                 {
                     type: 'line',
                     value: -700,
                     label: {
                         text: '-700',
-                        position: 'topLeft'
+                        position: 'topLeft',
                     },
-                    ...yAxisCrossLineStyle
+                    ...yAxisCrossLineStyle,
                 },
             ],
         },
     ],
-}
+};
 
 export const COLUMN_CROSSLINES: AgCartesianChartOptions = {
     ...GROUPED_COLUMN_EXAMPLE,
@@ -242,7 +243,7 @@ export const COLUMN_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: '2015 - 2016',
                     },
-                    ...xAxisCrossLineStyle
+                    ...xAxisCrossLineStyle,
                 },
                 {
                     type: 'range',
@@ -250,7 +251,7 @@ export const COLUMN_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: '2017 - 2019',
                     },
-                    ...xAxisCrossLineStyle
+                    ...xAxisCrossLineStyle,
                 },
                 {
                     type: 'line',
@@ -258,7 +259,7 @@ export const COLUMN_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: '2012',
                     },
-                    ...xAxisCrossLineStyle
+                    ...xAxisCrossLineStyle,
                 },
             ],
         },
@@ -272,9 +273,9 @@ export const COLUMN_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: '7000 - 8000',
                         position: 'right',
-                        rotation: -90
+                        rotation: -90,
                     },
-                    ...yAxisCrossLineStyle
+                    ...yAxisCrossLineStyle,
                 },
                 {
                     type: 'line',
@@ -282,14 +283,14 @@ export const COLUMN_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: '3500',
                         position: 'right',
-                        rotation: -90
+                        rotation: -90,
                     },
-                    ...yAxisCrossLineStyle
+                    ...yAxisCrossLineStyle,
                 },
             ],
         },
     ],
-}
+};
 
 export const BAR_CROSSLINES: AgCartesianChartOptions = {
     ...GROUPED_BAR_CHART_EXAMPLE,
@@ -304,9 +305,9 @@ export const BAR_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: 'Whole economy - Public sector',
                         position: 'right',
-                        rotation: -90
+                        rotation: -90,
                     },
-                    ...yAxisCrossLineStyle
+                    ...yAxisCrossLineStyle,
                 },
                 {
                     type: 'line',
@@ -314,9 +315,9 @@ export const BAR_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: 'Manufacturing',
                         position: 'right',
-                        rotation: -90
+                        rotation: -90,
                     },
-                    ...yAxisCrossLineStyle
+                    ...yAxisCrossLineStyle,
                 },
             ],
         },
@@ -330,7 +331,7 @@ export const BAR_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: '0.5 - 1.4',
                     },
-                    ...xAxisCrossLineStyle
+                    ...xAxisCrossLineStyle,
                 },
                 {
                     type: 'range',
@@ -338,7 +339,7 @@ export const BAR_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: '2.3 - 2.5',
                     },
-                    ...xAxisCrossLineStyle
+                    ...xAxisCrossLineStyle,
                 },
                 {
                     type: 'line',
@@ -346,12 +347,12 @@ export const BAR_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: '3.6',
                     },
-                    ...xAxisCrossLineStyle
-                }
+                    ...xAxisCrossLineStyle,
+                },
             ],
         },
     ],
-}
+};
 
 export const HISTOGRAM_CROSSLINES: AgCartesianChartOptions = {
     ...XY_HISTOGRAM_WITH_MEAN_EXAMPLE,
@@ -368,7 +369,7 @@ export const HISTOGRAM_CROSSLINES: AgCartesianChartOptions = {
                     type: 'range',
                     range: [70, 100],
                     label: {
-                        text: '70 - 100'
+                        text: '70 - 100',
                     },
                     ...xAxisCrossLineStyle,
                 },
@@ -376,17 +377,17 @@ export const HISTOGRAM_CROSSLINES: AgCartesianChartOptions = {
                     type: 'range',
                     range: [200, 285],
                     label: {
-                        text: '200 - 285'
+                        text: '200 - 285',
                     },
-                    ...xAxisCrossLineStyle
+                    ...xAxisCrossLineStyle,
                 },
                 {
                     type: 'line',
                     value: 300,
                     label: {
-                        text: '300'
+                        text: '300',
                     },
-                    ...xAxisCrossLineStyle
+                    ...xAxisCrossLineStyle,
                 },
             ],
         },
@@ -403,9 +404,9 @@ export const HISTOGRAM_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: '70 - 100',
                         position: 'insideTopRight',
-                        color: 'orange'
+                        color: 'orange',
                     },
-                    ...yAxisCrossLineStyle
+                    ...yAxisCrossLineStyle,
                 },
                 {
                     type: 'line',
@@ -413,11 +414,11 @@ export const HISTOGRAM_CROSSLINES: AgCartesianChartOptions = {
                     label: {
                         text: '50',
                         position: 'bottomRight',
-                        color: 'orange'
+                        color: 'orange',
                     },
-                    ...yAxisCrossLineStyle
+                    ...yAxisCrossLineStyle,
                 },
             ],
         },
     ],
-}
+};

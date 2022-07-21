@@ -1,6 +1,6 @@
-import { CartesianChart } from "./cartesianChart";
-import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
-import { ChartAxis } from "./chartAxis";
+import { CartesianChart } from './cartesianChart';
+import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
+import { ChartAxis } from './chartAxis';
 
 export type GroupedCategoryChartAxis = GroupedCategoryAxis | ChartAxis;
 

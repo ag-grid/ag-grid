@@ -1,4 +1,4 @@
-const doOnceFlags: { [key: string]: boolean; } = {};
+const doOnceFlags: { [key: string]: boolean } = {};
 
 /**
  * If the key was passed before, then doesn't execute the func
@@ -6,7 +6,9 @@ const doOnceFlags: { [key: string]: boolean; } = {};
  * @param {string} key
  */
 export function doOnce(func: () => void, key: string) {
-    if (doOnceFlags[key]) { return; }
+    if (doOnceFlags[key]) {
+        return;
+    }
 
     func();
     doOnceFlags[key] = true;

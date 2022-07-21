@@ -1,6 +1,6 @@
-import value from "./value";
+import value from './value';
 
-export default function(a: any[], b: any[]): (t: number) => any[] {
+export default function (a: any[], b: any[]): (t: number) => any[] {
     const nb = b ? b.length : 0;
     const na = a ? Math.min(nb, a.length) : 0;
     const x = new Array(na);

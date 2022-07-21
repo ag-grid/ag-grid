@@ -1,13 +1,13 @@
-type FloorFn = (date: Date) => void;                 // mutates the passed date
-type OffsetFn = (date: Date, step: number) => void;  // mutates the passed date
+type FloorFn = (date: Date) => void; // mutates the passed date
+type OffsetFn = (date: Date, step: number) => void; // mutates the passed date
 type CountFn = (start: Date, end: Date) => number;
 // Returns the number of boundaries between this date (exclusive) and the latest previous parent boundary.
 // This date is already floored to the current interval.
 // For example, for the d3.timeDay interval, this returns the number of days since the start of the month.
 type FieldFn = (date: Date) => number;
 
-const t0 = new Date;
-const t1 = new Date;
+const t0 = new Date();
+const t1 = new Date();
 
 /**
  * The interval methods don't mutate Date parameters.
@@ -130,7 +130,6 @@ export class TimeInterval {
 }
 
 export class CountableTimeInterval extends TimeInterval {
-
     private readonly _count: CountFn;
     private readonly _field?: FieldFn;
 
@@ -167,9 +166,9 @@ export class CountableTimeInterval extends TimeInterval {
             if (step > 1) {
                 const field = this._field;
                 if (field) {
-                    result = this.filter(d => field(d) % step === 0);
+                    result = this.filter((d) => field(d) % step === 0);
                 } else {
-                    result = this.filter(d => this.count(0, d) % step === 0);
+                    result = this.filter((d) => this.count(0, d) % step === 0);
                 }
             } else {
                 result = this;

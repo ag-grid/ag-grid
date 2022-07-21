@@ -1,4 +1,4 @@
-type Size = { width: number, height: number };
+type Size = { width: number; height: number };
 
 // Work-around for typing issues with Angular 13+ (see AG-6969),
 type OffscreenCanvasRenderingContext2D = any;
@@ -203,7 +203,7 @@ export class HdpiCanvas {
             return this._textMeasuringContext;
         }
         const canvas = document.createElement('canvas');
-        return this._textMeasuringContext = canvas.getContext('2d')!;
+        return (this._textMeasuringContext = canvas.getContext('2d')!);
     }
 
     // Offscreen SVGTextElement for measuring text. This fallback method
@@ -246,8 +246,8 @@ export class HdpiCanvas {
     }
 
     private static _has?: {
-        textMetrics: boolean,
-        getTransform: boolean
+        textMetrics: boolean;
+        getTransform: boolean;
     };
     static get has() {
         if (this._has) {
@@ -256,19 +256,24 @@ export class HdpiCanvas {
         const isChrome = navigator.userAgent.indexOf('Chrome') > -1;
         const isFirefox = navigator.userAgent.indexOf('Firefox') > -1;
         const isSafari = !isChrome && navigator.userAgent.indexOf('Safari') > -1;
-        return this._has = Object.freeze({
-            textMetrics: this.textMeasuringContext.measureText('test').actualBoundingBoxDescent !== undefined
+        return (this._has = Object.freeze({
+            textMetrics:
+                this.textMeasuringContext.measureText('test').actualBoundingBoxDescent !== undefined &&
                 // Firefox implemented advanced TextMetrics object in v74:
                 // https://bugzilla.mozilla.org/show_bug.cgi?id=1102584
                 // but it's buggy, so we'll keed using the SVG for text measurement in Firefox for now.
-                && !isFirefox && !isSafari,
-            getTransform: this.textMeasuringContext.getTransform !== undefined
-        });
+                !isFirefox &&
+                !isSafari,
+            getTransform: this.textMeasuringContext.getTransform !== undefined,
+        }));
     }
 
-    static measureText(text: string, font: string,
-                       textBaseline: CanvasTextBaseline,
-                       textAlign: CanvasTextAlign): TextMetrics {
+    static measureText(
+        text: string,
+        font: string,
+        textBaseline: CanvasTextBaseline,
+        textAlign: CanvasTextAlign
+    ): TextMetrics {
         const ctx = this.textMeasuringContext;
         ctx.font = font;
         ctx.textBaseline = textBaseline;
@@ -289,7 +294,7 @@ export class HdpiCanvas {
 
             return {
                 width: metrics.width,
-                height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+                height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent,
             };
         } else {
             return this.measureSvgText(text, font);
@@ -326,7 +331,7 @@ export class HdpiCanvas {
         const bbox = svgText.getBBox();
         const size: Size = {
             width: bbox.width,
-            height: bbox.height
+            height: bbox.height,
         };
 
         cache[font][text] = size;
@@ -353,21 +358,14 @@ export class HdpiCanvas {
                 if (typeof a === 'object') {
                     this.$setTransform(a);
                 } else {
-                    this.$setTransform(
-                        a * scale,
-                        b * scale,
-                        c * scale,
-                        d * scale,
-                        e * scale,
-                        f * scale
-                    );
+                    this.$setTransform(a * scale, b * scale, c * scale, d * scale, e * scale, f * scale);
                 }
             },
             resetTransform() {
                 // As of Jan 8, 2019, `resetTransform` is still an "experimental technology",
                 // and doesn't work in IE11 and Edge 44.
                 this.$setTransform(scale, 0, 0, scale, 0, 0);
-            }
+            },
         } as any;
 
         for (const name in overrides) {

@@ -1,5 +1,5 @@
-import { describe, expect, test } from "@jest/globals";
-import { equal } from "./equal";
+import { describe, expect, test } from '@jest/globals';
+import { equal } from './equal';
 
 describe('equal', () => {
     test('strings', () => {
@@ -14,24 +14,14 @@ describe('equal', () => {
     });
 
     test('objects', () => {
-        expect(equal(
-            [{a: 42, b: ['a', 'b']}],
-            [{a: 42, b: ['a', 'b']}]
-        )).toBe(true);
-        expect(equal(
-            [{a: 17, b: ['a', 'b']}],
-            [{a: 42, b: ['a', 'b']}]
-        )).toBe(false);
-        expect(equal(
-            [{a: 42, b: ['b', 'a']}],
-            [{a: 42, b: ['a', 'b']}]
-        )).toBe(false);
+        expect(equal([{ a: 42, b: ['a', 'b'] }], [{ a: 42, b: ['a', 'b'] }])).toBe(true);
+        expect(equal([{ a: 17, b: ['a', 'b'] }], [{ a: 42, b: ['a', 'b'] }])).toBe(false);
+        expect(equal([{ a: 42, b: ['b', 'a'] }], [{ a: 42, b: ['a', 'b'] }])).toBe(false);
     });
 
     test('mixed', () => {
-        expect(equal(
-            [{a: 42, b: [{c: 13, d: 17}, 'b']}, {}],
-            [{a: 42, b: [{c: 13, d: 17}, 'b']}, {}]
-        )).toBe(true);
+        expect(equal([{ a: 42, b: [{ c: 13, d: 17 }, 'b'] }, {}], [{ a: 42, b: [{ c: 13, d: 17 }, 'b'] }, {}])).toBe(
+            true
+        );
     });
 });

@@ -17,12 +17,15 @@ export function groupSeriesByType(seriesOptions: SeriesOptions[]) {
             result.push([s]);
             continue;
         }
-        
+
         const seriesType = s.type || 'line';
-        const groupingKey = (s as any).stacked ? 'stacked' :
-            (s as any).grouped ? 'grouped' :
-            s.yKeys ? 'stacked' :
-            'grouped';
+        const groupingKey = (s as any).stacked
+            ? 'stacked'
+            : (s as any).grouped
+            ? 'grouped'
+            : s.yKeys
+            ? 'stacked'
+            : 'grouped';
         const indexKey = `${seriesType}-${s.xKey}-${groupingKey}`;
         if (indexMap[indexKey] == null) {
             // Add indexed array to result on first addition.
@@ -48,30 +51,31 @@ const BOOLEAN_OR_REDUCER = (prop: string, defaultValue?: boolean) => (result: bo
 
     return result ?? defaultValue;
 };
-const DEFAULTING_ARRAY_REDUCER = (prop: string, defaultValue: any) => (result: string[], next: any, idx: number, length: number) => {
-    const sparse = defaultValue === SKIP || defaultValue === FAIL;
-    const nextValue = next[prop] ?? defaultValue;
-    if (nextValue === FAIL) {
-        throw new Error(`AG Charts - missing value for property [${prop}] on series config.`);
-    } else if (nextValue === SKIP) {
-        return result;
-    }
-
-    if (result.length === 0 && !sparse) {
-        // Pre-populate values on first invocation as we will only be invoked for series with a
-        // value specified.
-        while (result.length < length) {
-            result = result.concat(defaultValue);
+const DEFAULTING_ARRAY_REDUCER =
+    (prop: string, defaultValue: any) => (result: string[], next: any, idx: number, length: number) => {
+        const sparse = defaultValue === SKIP || defaultValue === FAIL;
+        const nextValue = next[prop] ?? defaultValue;
+        if (nextValue === FAIL) {
+            throw new Error(`AG Charts - missing value for property [${prop}] on series config.`);
+        } else if (nextValue === SKIP) {
+            return result;
         }
-    }
 
-    if (!sparse) {
-        result[idx] = nextValue;
-        return result;
-    }
+        if (result.length === 0 && !sparse) {
+            // Pre-populate values on first invocation as we will only be invoked for series with a
+            // value specified.
+            while (result.length < length) {
+                result = result.concat(defaultValue);
+            }
+        }
 
-    return result.concat(nextValue);
-};
+        if (!sparse) {
+            result[idx] = nextValue;
+            return result;
+        }
+
+        return result.concat(nextValue);
+    };
 const YKEYS_REDUCER = (prop: string, activationValue: any) => (result: string[][], next: any) => {
     if (next[prop] === activationValue) {
         return result.concat(...(next.yKey ? [next.yKey] : next.yKeys));
@@ -82,25 +86,35 @@ const YKEYS_REDUCER = (prop: string, activationValue: any) => (result: string[][
 interface ReduceConfig<T> {
     outputProp: string;
     reducer: (r: T, n: any, idx: number, length: number) => T;
-    start: T,
+    start: T;
     seriesType?: string[];
 }
 const REDUCE_CONFIG: Record<string, ReduceConfig<unknown>> = {
-    'yKeys': { outputProp: 'yKeys', reducer: ARRAY_REDUCER('yKeys'), start: [] },
-    'fills': { outputProp: 'fills', reducer: ARRAY_REDUCER('fills'), start: [] },
-    'strokes': { outputProp: 'strokes', reducer: ARRAY_REDUCER('strokes'), start: [] },
-    'yNames': { outputProp: 'yNames', reducer: ARRAY_REDUCER('yNames'), start: [] },
-    'hideInChart': { outputProp: 'hideInChart', reducer: ARRAY_REDUCER('hideInChart'), start: [] },
-    'hideInLegend': { outputProp: 'hideInLegend', reducer: ARRAY_REDUCER('hideInLegend'), start: [] },
+    yKeys: { outputProp: 'yKeys', reducer: ARRAY_REDUCER('yKeys'), start: [] },
+    fills: { outputProp: 'fills', reducer: ARRAY_REDUCER('fills'), start: [] },
+    strokes: { outputProp: 'strokes', reducer: ARRAY_REDUCER('strokes'), start: [] },
+    yNames: { outputProp: 'yNames', reducer: ARRAY_REDUCER('yNames'), start: [] },
+    hideInChart: { outputProp: 'hideInChart', reducer: ARRAY_REDUCER('hideInChart'), start: [] },
+    hideInLegend: { outputProp: 'hideInLegend', reducer: ARRAY_REDUCER('hideInLegend'), start: [] },
 
-    'yKey': { outputProp: 'yKeys', reducer: DEFAULTING_ARRAY_REDUCER('yKey', SKIP), start: [] },
-    'fill': { outputProp: 'fills', reducer: DEFAULTING_ARRAY_REDUCER('fill', SKIP), start: [] },
-    'stroke': { outputProp: 'strokes', reducer: DEFAULTING_ARRAY_REDUCER('stroke', SKIP), start: [] },
-    'yName': { outputProp: 'yNames', reducer: DEFAULTING_ARRAY_REDUCER('yName', SKIP), start: [] },
-    'visible': { outputProp: 'visibles', reducer: DEFAULTING_ARRAY_REDUCER('visible', true), start: [] },
+    yKey: { outputProp: 'yKeys', reducer: DEFAULTING_ARRAY_REDUCER('yKey', SKIP), start: [] },
+    fill: { outputProp: 'fills', reducer: DEFAULTING_ARRAY_REDUCER('fill', SKIP), start: [] },
+    stroke: { outputProp: 'strokes', reducer: DEFAULTING_ARRAY_REDUCER('stroke', SKIP), start: [] },
+    yName: { outputProp: 'yNames', reducer: DEFAULTING_ARRAY_REDUCER('yName', SKIP), start: [] },
+    visible: { outputProp: 'visibles', reducer: DEFAULTING_ARRAY_REDUCER('visible', true), start: [] },
 
-    'grouped': { outputProp: 'grouped', reducer: BOOLEAN_OR_REDUCER('grouped'), seriesType: ['bar', 'column'], start: undefined },
-    'showInLegend': { outputProp: 'hideInLegend', reducer: YKEYS_REDUCER('showInLegend', false), seriesType: ['bar', 'column'], start: []},
+    grouped: {
+        outputProp: 'grouped',
+        reducer: BOOLEAN_OR_REDUCER('grouped'),
+        seriesType: ['bar', 'column'],
+        start: undefined,
+    },
+    showInLegend: {
+        outputProp: 'hideInLegend',
+        reducer: YKEYS_REDUCER('showInLegend', false),
+        seriesType: ['bar', 'column'],
+        start: [],
+    },
 };
 
 /**
@@ -112,7 +126,7 @@ export function reduceSeries(series: any[]) {
     series.forEach((s, idx) => {
         Object.keys(s).forEach((prop) => {
             const reducerConfig = REDUCE_CONFIG[prop];
-    
+
             const defaultReduce = () => {
                 options[prop] = s[prop] ?? options[prop] ?? undefined;
             };
@@ -120,19 +134,19 @@ export function reduceSeries(series: any[]) {
                 defaultReduce();
                 return;
             }
-    
+
             const { outputProp, reducer, start = undefined, seriesType = [s.type] } = reducerConfig;
             if (!seriesType.includes(s.type)) {
                 defaultReduce();
                 return;
             }
-    
+
             const result = reducer(options[outputProp] ?? start, s, idx, series.length);
             if (result !== undefined) {
                 options[outputProp] = result;
             }
         });
-    })
+    });
 
     return options;
 }

@@ -39,17 +39,19 @@ export class BBox {
     }
 
     containsPoint(x: number, y: number): boolean {
-        return x >= this.x && x <= (this.x + this.width)
-            && y >= this.y && y <= (this.y + this.height);
+        return x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height;
     }
 
-    render(ctx: CanvasRenderingContext2D, params: {
-        resetTransform?: boolean,
-        label?: string,
-        fillStyle?: string,
-        lineWidth?: number,
-        strokeStyle?: string
-    } = BBox.noParams) {
+    render(
+        ctx: CanvasRenderingContext2D,
+        params: {
+            resetTransform?: boolean;
+            label?: string;
+            fillStyle?: string;
+            lineWidth?: number;
+            strokeStyle?: string;
+        } = BBox.noParams
+    ) {
         ctx.save();
 
         if (params.resetTransform) {

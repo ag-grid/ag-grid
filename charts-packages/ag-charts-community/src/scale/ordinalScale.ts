@@ -1,4 +1,4 @@
-import { Scale } from "./scale";
+import { Scale } from './scale';
 
 /**
  * Maps a discrete domain to a discrete range.
@@ -22,10 +22,10 @@ export class OrdinalScale<D, R> implements Scale<D, R> {
     private _domain: D[] = [];
     set domain(values: D[]) {
         const domain = this._domain;
-        const index = this.index = {} as { [key: string]: number };
+        const index = (this.index = {} as { [key: string]: number });
 
         domain.length = 0;
-        values.forEach(d => {
+        values.forEach((d) => {
             const key = d + '';
             if (!index[key]) {
                 index[key] = domain.push(d);

@@ -35,35 +35,52 @@ import { SourceEventListener } from '../util/observable';
 import { DropShadow } from '../scene/dropShadow';
 import { jsonDiff, jsonMerge, jsonApply } from '../util/json';
 import { GroupedCategoryChart } from './groupedCategoryChart';
-import { prepareOptions, isAgCartesianChartOptions, isAgHierarchyChartOptions, isAgPolarChartOptions, optionsType } from './mapping/prepare';
+import {
+    prepareOptions,
+    isAgCartesianChartOptions,
+    isAgHierarchyChartOptions,
+    isAgPolarChartOptions,
+    optionsType,
+} from './mapping/prepare';
 import { SeriesOptionsTypes } from './mapping/defaults';
 import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
 
-export type AgChartType<T> =
-    T extends AgCartesianChartOptions ? CartesianChart :
-    T extends AgPolarChartOptions ? PolarChart :
-    T extends AgHierarchyChartOptions ? HierarchyChart :
-    never;
+export type AgChartType<T> = T extends AgCartesianChartOptions
+    ? CartesianChart
+    : T extends AgPolarChartOptions
+    ? PolarChart
+    : T extends AgHierarchyChartOptions
+    ? HierarchyChart
+    : never;
 
-type ChartOptionType<T extends ChartType> =
-    T extends GroupedCategoryChart ? AgCartesianChartOptions :
-    T extends CartesianChart ? AgCartesianChartOptions :
-    T extends PolarChart ? AgPolarChartOptions :
-    T extends HierarchyChart ? AgHierarchyChartOptions :
-    never;
+type ChartOptionType<T extends ChartType> = T extends GroupedCategoryChart
+    ? AgCartesianChartOptions
+    : T extends CartesianChart
+    ? AgCartesianChartOptions
+    : T extends PolarChart
+    ? AgPolarChartOptions
+    : T extends HierarchyChart
+    ? AgHierarchyChartOptions
+    : never;
 
-type SeriesOptionType<T extends Series> =
-    T extends LineSeries ? AgLineSeriesOptions :
-    T extends BarSeries ? AgBarSeriesOptions :
-    T extends AreaSeries ? AgAreaSeriesOptions :
-    T extends ScatterSeries ? AgScatterSeriesOptions :
-    T extends HistogramSeries ? AgHistogramSeriesOptions :
-    T extends PieSeries ? AgPieSeriesOptions :
-    T extends TreemapSeries ? AgTreemapSeriesOptions :
-    never;
+type SeriesOptionType<T extends Series> = T extends LineSeries
+    ? AgLineSeriesOptions
+    : T extends BarSeries
+    ? AgBarSeriesOptions
+    : T extends AreaSeries
+    ? AgAreaSeriesOptions
+    : T extends ScatterSeries
+    ? AgScatterSeriesOptions
+    : T extends HistogramSeries
+    ? AgHistogramSeriesOptions
+    : T extends PieSeries
+    ? AgPieSeriesOptions
+    : T extends TreemapSeries
+    ? AgTreemapSeriesOptions
+    : never;
 
 function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian' | 'polar' | 'hierarchy' {
     if (isAgCartesianChartOptions(options)) {
@@ -94,11 +111,20 @@ export abstract class AgChart {
         return null;
     }
 
-    public static create<T extends AgChartOptions>(options: T, _container?: HTMLElement, _data?: any[]): AgChartType<T> {
+    public static create<T extends AgChartOptions>(
+        options: T,
+        _container?: HTMLElement,
+        _data?: any[]
+    ): AgChartType<T> {
         return AgChartV2.create(options as any);
     }
 
-    public static update<T extends AgChartOptions>(chart: AgChartType<T>, options: T, _container?: HTMLElement, _data?: any[]) {
+    public static update<T extends AgChartOptions>(
+        chart: AgChartType<T>,
+        options: T,
+        _container?: HTMLElement,
+        _data?: any[]
+    ) {
         return AgChartV2.update(chart, options as any);
     }
 }
@@ -115,13 +141,20 @@ export abstract class AgChartV2 {
 
         const mergedOptions = prepareOptions(userOptions, mixinOpts);
 
-        const chart = isAgCartesianChartOptions(mergedOptions) ? (mergedOptions.type === 'groupedCategory' ? new GroupedCategoryChart(document) : new CartesianChart(document)) :
-            isAgHierarchyChartOptions(mergedOptions) ? new HierarchyChart(document) :
-            isAgPolarChartOptions(mergedOptions) ? new PolarChart(document) :
-            undefined;
+        const chart = isAgCartesianChartOptions(mergedOptions)
+            ? mergedOptions.type === 'groupedCategory'
+                ? new GroupedCategoryChart(document)
+                : new CartesianChart(document)
+            : isAgHierarchyChartOptions(mergedOptions)
+            ? new HierarchyChart(document)
+            : isAgPolarChartOptions(mergedOptions)
+            ? new PolarChart(document)
+            : undefined;
 
         if (!chart) {
-            throw new Error(`AG Charts - couldn\'t apply configuration, check type of options: ${mergedOptions['type']}`);
+            throw new Error(
+                `AG Charts - couldn\'t apply configuration, check type of options: ${mergedOptions['type']}`
+            );
         }
 
         AgChartV2.updateDelta(chart, mergedOptions, userOptions);
@@ -139,11 +172,13 @@ export abstract class AgChartV2 {
 
         if (chartType(mergedOptions) !== chartType(chart.options as ChartOptionType<typeof chart>)) {
             chart.destroy();
-            console.warn('AG Charts - options supplied require a different type of chart, please recreate the chart.')
+            console.warn('AG Charts - options supplied require a different type of chart, please recreate the chart.');
             return;
         }
 
-        const deltaOptions = jsonDiff<ChartOptionType<T>>(chart.options as ChartOptionType<T>, mergedOptions, { stringify: ['data']});
+        const deltaOptions = jsonDiff<ChartOptionType<T>>(chart.options as ChartOptionType<T>, mergedOptions, {
+            stringify: ['data'],
+        });
         if (deltaOptions == null) {
             return;
         }
@@ -151,12 +186,16 @@ export abstract class AgChartV2 {
         AgChartV2.updateDelta<T>(chart as T, deltaOptions, userOptions);
     }
 
-    private static updateDelta<T extends ChartType>(chart: T, update: Partial<ChartOptionType<T>>, userOptions: ChartOptionType<T>): void {
+    private static updateDelta<T extends ChartType>(
+        chart: T,
+        update: Partial<ChartOptionType<T>>,
+        userOptions: ChartOptionType<T>
+    ): void {
         if (update.type == null) {
-            update = {...update, type: chart.options.type || optionsType(update)};
+            update = { ...update, type: chart.options.type || optionsType(update) };
         }
         debug('delta update', update);
-        applyChartOptions(chart, update as ChartOptionType<typeof chart>, userOptions)
+        applyChartOptions(chart, update as ChartOptionType<typeof chart>, userOptions);
     }
 }
 
@@ -166,18 +205,23 @@ function debug(message?: any, ...optionalParams: any[]): void {
     }
 }
 
-function applyChartOptions<
-    T extends CartesianChart | PolarChart | HierarchyChart,
-    O extends ChartOptionType<T>,
->(chart: T, options: O, userOptions: O): void {
+function applyChartOptions<T extends CartesianChart | PolarChart | HierarchyChart, O extends ChartOptionType<T>>(
+    chart: T,
+    options: O,
+    userOptions: O
+): void {
     if (isAgCartesianChartOptions(options)) {
-        applyOptionValues(chart, options, { skip: ['type', 'data', 'series', 'axes', 'autoSize', 'listeners', 'theme'] });
+        applyOptionValues(chart, options, {
+            skip: ['type', 'data', 'series', 'axes', 'autoSize', 'listeners', 'theme'],
+        });
     } else if (isAgPolarChartOptions(options)) {
         applyOptionValues(chart, options, { skip: ['type', 'data', 'series', 'autoSize', 'listeners', 'theme'] });
     } else if (isAgHierarchyChartOptions(options)) {
         applyOptionValues(chart, options, { skip: ['type', 'data', 'series', 'autoSize', 'listeners', 'theme'] });
     } else {
-        throw new Error(`AG Charts - couldn\'t apply configuration, check type of options and chart: ${options['type']}`);
+        throw new Error(
+            `AG Charts - couldn\'t apply configuration, check type of options and chart: ${options['type']}`
+        );
     }
 
     let updateType = ChartUpdateType.PERFORM_LAYOUT;
@@ -216,17 +260,17 @@ function applyChartOptions<
     chart.update(updateType);
 }
 
-function applySeries<
-    T extends CartesianChart | PolarChart | HierarchyChart,
-    O extends ChartOptionType<T>
->(chart: T, options: O) {
+function applySeries<T extends CartesianChart | PolarChart | HierarchyChart, O extends ChartOptionType<T>>(
+    chart: T,
+    options: O
+) {
     const optSeries = options.series;
     if (!optSeries) {
         return;
     }
 
-    const matchingTypes = chart.series.length === optSeries.length &&
-        chart.series.every((s, i) => s.type === optSeries[i]?.type);
+    const matchingTypes =
+        chart.series.length === optSeries.length && chart.series.every((s, i) => s.type === optSeries[i]?.type);
 
     // Try to optimise series updates if series count and types didn't change.
     if (matchingTypes) {
@@ -240,7 +284,7 @@ function applySeries<
 
             debug(`applying series diff idx ${i}`, seriesDiff);
 
-            applySeriesValues(s as any, seriesDiff, {path: `series[${i}]`});
+            applySeriesValues(s as any, seriesDiff, { path: `series[${i}]` });
             s.markNodeDataDirty();
         });
 
@@ -250,17 +294,17 @@ function applySeries<
     chart.series = createSeries(optSeries);
 }
 
-function applyAxes<
-    T extends CartesianChart | PolarChart | HierarchyChart,
-    O extends ChartOptionType<T>,
->(chart: T, options: O  & AgCartesianChartOptions) {
+function applyAxes<T extends CartesianChart | PolarChart | HierarchyChart, O extends ChartOptionType<T>>(
+    chart: T,
+    options: O & AgCartesianChartOptions
+) {
     const optAxes = options.axes;
     if (!optAxes) {
         return false;
     }
 
-    const matchingTypes = chart.axes.length === optAxes.length &&
-        chart.axes.every((a, i) => a.type === optAxes[i].type);
+    const matchingTypes =
+        chart.axes.length === optAxes.length && chart.axes.every((a, i) => a.type === optAxes[i].type);
 
     // Try to optimise series updates if series count and types didn't change.
     if (matchingTypes) {
@@ -292,27 +336,27 @@ function createSeries(options: SeriesOptionsTypes[]): Series[] {
         const path = `series[${index++}]`;
         switch (seriesOptions.type) {
             case 'area':
-                series.push(applySeriesValues(new AreaSeries(), seriesOptions, {path}));
+                series.push(applySeriesValues(new AreaSeries(), seriesOptions, { path }));
                 break;
             case 'bar':
-                // fall-through - bar and column are synonyms.
+            // fall-through - bar and column are synonyms.
             case 'column':
-                series.push(applySeriesValues(new BarSeries(), seriesOptions, {path}));
+                series.push(applySeriesValues(new BarSeries(), seriesOptions, { path }));
                 break;
             case 'histogram':
-                series.push(applySeriesValues(new HistogramSeries(), seriesOptions, {path}));
+                series.push(applySeriesValues(new HistogramSeries(), seriesOptions, { path }));
                 break;
             case 'line':
-                series.push(applySeriesValues(new LineSeries(), seriesOptions, {path}));
+                series.push(applySeriesValues(new LineSeries(), seriesOptions, { path }));
                 break;
             case 'scatter':
-                series.push(applySeriesValues(new ScatterSeries(), seriesOptions, {path}));
+                series.push(applySeriesValues(new ScatterSeries(), seriesOptions, { path }));
                 break;
             case 'pie':
-                series.push(applySeriesValues(new PieSeries(), seriesOptions, {path}));
+                series.push(applySeriesValues(new PieSeries(), seriesOptions, { path }));
                 break;
             case 'treemap':
-                series.push(applySeriesValues(new TreemapSeries(), seriesOptions, {path}));
+                series.push(applySeriesValues(new TreemapSeries(), seriesOptions, { path }));
                 break;
             default:
                 throw new Error('AG Charts - unknown series type: ' + (seriesOptions as any).type);
@@ -331,7 +375,7 @@ function createAxis(options: AgCartesianAxisOptions[]): ChartAxis[] {
         const skip = ['axes[].type'];
         switch (axisOptions.type) {
             case 'number':
-                axes.push(applyOptionValues(new NumberAxis(), axisOptions, {path, skip }));
+                axes.push(applyOptionValues(new NumberAxis(), axisOptions, { path, skip }));
                 break;
             case LogAxis.type:
                 axes.push(applyOptionValues(new LogAxis(), axisOptions, { path, skip }));
@@ -357,10 +401,7 @@ type ObservableLike = {
     addEventListener(key: string, cb: SourceEventListener<any>): void;
     clearEventListeners(): void;
 };
-function registerListeners<T extends ObservableLike>(
-    source: T,
-    listeners?: { [K: string]: Function }
-) {
+function registerListeners<T extends ObservableLike>(source: T, listeners?: { [K: string]: Function }) {
     source.clearEventListeners();
     for (const property in listeners) {
         source.addEventListener(property, listeners[property] as SourceEventListener<any>);
@@ -369,9 +410,9 @@ function registerListeners<T extends ObservableLike>(
 
 const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
     constructors: {
-        'title': Caption,
-        'subtitle': Caption,
-        'shadow': DropShadow,
+        title: Caption,
+        subtitle: Caption,
+        shadow: DropShadow,
         'axes[].crossLines[]': CrossLine,
     },
     allowedTypes: {
@@ -380,11 +421,7 @@ const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
     },
 };
 
-function applyOptionValues<T, S>(
-    target: T,
-    options?: S,
-    { skip, path }: { skip?: string[], path?: string } = {},
-): T {
+function applyOptionValues<T, S>(target: T, options?: S, { skip, path }: { skip?: string[]; path?: string } = {}): T {
     const applyOpts = {
         ...JSON_APPLY_OPTIONS,
         skip,
@@ -396,14 +433,14 @@ function applyOptionValues<T, S>(
 function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>(
     target: T,
     options?: S,
-    { path }: { path?: string } = {},
+    { path }: { path?: string } = {}
 ): T {
     const skip: string[] = ['series[].listeners'];
     const ctrs = JSON_APPLY_OPTIONS?.constructors || {};
     const seriesTypeOverrides = {
         constructors: {
             ...ctrs,
-            'title': target.type === 'pie' ? PieTitle : ctrs['title'],
+            title: target.type === 'pie' ? PieTitle : ctrs['title'],
         },
     };
 
@@ -418,7 +455,7 @@ function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>
 
     const listeners = options?.listeners;
     if (listeners != null) {
-        registerListeners(target, listeners as {[key: string]: Function});
+        registerListeners(target, listeners as { [key: string]: Function });
     }
 
     return result;

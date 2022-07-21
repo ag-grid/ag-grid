@@ -51,9 +51,7 @@ export class NumericTicks extends Array<number> {
 
 function range(a: number, b: number, step: number = 1): NumericTicks {
     const absStep = Math.abs(step);
-    const fractionDigits = (absStep > 0 && absStep < 1)
-        ? Math.abs(Math.floor(Math.log(absStep) / Math.LN10))
-        : 0;
+    const fractionDigits = absStep > 0 && absStep < 1 ? Math.abs(Math.floor(Math.log(absStep) / Math.LN10)) : 0;
     const f = Math.pow(10, fractionDigits);
     const n = Math.max(0, Math.ceil((b - a) / step)) || 0;
     const values = new NumericTicks(fractionDigits);

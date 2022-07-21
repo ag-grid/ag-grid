@@ -1,4 +1,4 @@
-import { BBox } from "./bbox";
+import { BBox } from './bbox';
 
 /**
  * As of Jan 8, 2019, Firefox still doesn't implement
@@ -14,7 +14,6 @@ import { BBox } from "./bbox";
  * https://www.w3.org/TR/geometry-1/
  */
 export class Matrix {
-
     // Using column-major order.
     // When identifiers such as `m12` are used:
     // `1` means first column
@@ -66,8 +65,7 @@ export class Matrix {
 
     get identity(): boolean {
         const e = this.elements;
-        return e[0] === 1 && e[1] === 0 && e[2] === 0 &&
-               e[3] === 1 && e[4] === 0 && e[5] === 0;
+        return e[0] === 1 && e[1] === 0 && e[2] === 0 && e[3] === 1 && e[4] === 0 && e[5] === 0;
     }
 
     set a(value: number) {
@@ -118,11 +116,11 @@ export class Matrix {
      */
     private AxB(A: number[], B: number[], C?: number[]) {
         const a = A[0] * B[0] + A[2] * B[1],
-              b = A[1] * B[0] + A[3] * B[1],
-              c = A[0] * B[2] + A[2] * B[3],
-              d = A[1] * B[2] + A[3] * B[3],
-              e = A[0] * B[4] + A[2] * B[5] + A[4],
-              f = A[1] * B[4] + A[3] * B[5] + A[5];
+            b = A[1] * B[0] + A[3] * B[1],
+            c = A[0] * B[2] + A[2] * B[3],
+            d = A[1] * B[2] + A[3] * B[3],
+            e = A[0] * B[4] + A[2] * B[5] + A[4],
+            f = A[1] * B[4] + A[3] * B[5] + A[5];
 
         C = C || A;
         C[0] = a;
@@ -197,7 +195,12 @@ export class Matrix {
 
     invertSelf(): Matrix {
         const el = this.elements;
-        let a = el[0], b = el[1], c = el[2], d = el[3], e = el[4], f = el[5];
+        let a = el[0],
+            b = el[1],
+            c = el[2],
+            d = el[3],
+            e = el[4],
+            f = el[5];
         const rD = 1 / (a * d - b * c); // reciprocal of determinant
 
         a *= rD;
@@ -219,11 +222,11 @@ export class Matrix {
         return new Matrix(this.elements.slice());
     }
 
-    transformPoint(x: number, y: number): { x: number, y: number } {
+    transformPoint(x: number, y: number): { x: number; y: number } {
         const e = this.elements;
         return {
             x: x * e[0] + y * e[2] + e[4],
-            y: x * e[1] + y * e[3] + e[5]
+            y: x * e[1] + y * e[3] + e[5],
         };
     }
 
@@ -298,12 +301,10 @@ export class Matrix {
         if (elements) {
             if (elements instanceof Matrix) {
                 Matrix.matrix.setElements(elements.elements);
-            }
-            else {
+            } else {
                 Matrix.matrix.setElements(elements);
             }
-        }
-        else {
+        } else {
             Matrix.matrix.setIdentityElements();
         }
 

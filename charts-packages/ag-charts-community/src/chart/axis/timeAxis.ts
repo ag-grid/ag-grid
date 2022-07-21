@@ -1,7 +1,7 @@
-import { TimeScale } from "../../scale/timeScale";
-import { extent } from "../../util/array";
-import { isContinuous } from "../../util/value";
-import { ChartAxis } from "../chartAxis";
+import { TimeScale } from '../../scale/timeScale';
+import { extent } from '../../util/array';
+import { isContinuous } from '../../util/value';
+import { ChartAxis } from '../chartAxis';
 
 export class TimeAxis extends ChartAxis<TimeScale> {
     static className = 'TimeAxis';
@@ -34,7 +34,7 @@ export class TimeAxis extends ChartAxis<TimeScale> {
 
     set domain(domain: Date[]) {
         if (domain.length > 2) {
-            domain = (extent(domain, isContinuous, Number) || [0, 1000]).map(x => new Date(x));
+            domain = (extent(domain, isContinuous, Number) || [0, 1000]).map((x) => new Date(x));
         }
         this.scale.domain = domain;
         if (this.nice && this.scale.nice) {

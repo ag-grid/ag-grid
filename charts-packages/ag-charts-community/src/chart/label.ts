@@ -1,4 +1,4 @@
-import { FontStyle, FontWeight, getFont } from "../scene/shape/text";
+import { FontStyle, FontWeight, getFont } from '../scene/shape/text';
 
 export class Label {
     enabled = true;

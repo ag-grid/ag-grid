@@ -1,5 +1,5 @@
-import { expect, test } from "@jest/globals";
-import { toFixed, toReadableNumber } from "./number";
+import { expect, test } from '@jest/globals';
+import { toFixed, toReadableNumber } from './number';
 
 test('toFixed', () => {
     expect(toFixed(0.000347985)).toBe('0.00035');

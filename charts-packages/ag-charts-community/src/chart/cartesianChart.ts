@@ -1,10 +1,10 @@
-import { Chart } from "./chart";
-import { CategoryAxis } from "./axis/categoryAxis";
-import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
-import { ChartAxis, ChartAxisPosition, ChartAxisDirection } from "./chartAxis";
-import { BBox } from "../scene/bbox";
-import { ClipRect } from "../scene/clipRect";
-import { Navigator } from "./navigator/navigator";
+import { Chart } from './chart';
+import { CategoryAxis } from './axis/categoryAxis';
+import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
+import { ChartAxis, ChartAxisPosition, ChartAxisDirection } from './chartAxis';
+import { BBox } from '../scene/bbox';
+import { ClipRect } from '../scene/clipRect';
+import { Navigator } from './navigator/navigator';
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
@@ -84,7 +84,7 @@ export class CartesianChart extends Chart {
         this.createNodeData();
 
         this.seriesRect = seriesRect;
-        this.series.forEach(series => {
+        this.series.forEach((series) => {
             series.group.translationX = Math.floor(seriesRect.x);
             series.group.translationY = Math.floor(seriesRect.y);
             series.update(); // this has to happen after the `updateAxes` call
@@ -125,13 +125,15 @@ export class CartesianChart extends Chart {
         chartElement.removeEventListener('touchcancel', this._onTouchCancel);
     }
 
-    private getTouchOffset(event: TouchEvent): { offsetX: number, offsetY: number } | undefined {
+    private getTouchOffset(event: TouchEvent): { offsetX: number; offsetY: number } | undefined {
         const rect = this.scene.canvas.element.getBoundingClientRect();
         const touch = event.touches[0];
-        return touch ? {
-            offsetX: touch.clientX - rect.left,
-            offsetY: touch.clientY - rect.top
-        } : undefined;
+        return touch
+            ? {
+                  offsetX: touch.clientX - rect.left,
+                  offsetY: touch.clientY - rect.top,
+              }
+            : undefined;
     }
 
     protected onTouchStart(event: TouchEvent) {
@@ -185,21 +187,19 @@ export class CartesianChart extends Chart {
         };
 
         const stableWidths = <T extends typeof axisWidths>(other: T) => {
-            return Object.entries(axisWidths)
-                .every(([p, w]) => {
-                    const otherW = (other as any)[p];
-                    if (w || otherW) {
-                        return w === otherW;
-                    }
-                    return true;
-                });
+            return Object.entries(axisWidths).every(([p, w]) => {
+                const otherW = (other as any)[p];
+                if (w || otherW) {
+                    return w === otherW;
+                }
+                return true;
+            });
         };
         const ceilValues = <T extends Record<string, number | undefined>>(records: T) => {
-            return Object.entries(records)
-                .reduce((out, [key, value]) => {
-                    out[key] = value != null ? Math.ceil(value) : value;
-                    return out;
-                }, {} as any)
+            return Object.entries(records).reduce((out, [key, value]) => {
+                out[key] = value != null ? Math.ceil(value) : value;
+                return out;
+            }, {} as any);
         };
 
         // Iteratively try to resolve axis widths - since X axis width affects Y axis range,
@@ -227,7 +227,6 @@ export class CartesianChart extends Chart {
         return { seriesRect };
     }
 
-
     private updateAxesPass(
         axisWidths: Partial<Record<ChartAxisPosition, number>>,
         bounds: BBox,
@@ -243,9 +242,9 @@ export class CartesianChart extends Chart {
         const crossLinePadding: Partial<Record<ChartAxisPosition, number>> = {};
 
         if (lastPassSeriesRect) {
-            this.axes.forEach(axis => {
+            this.axes.forEach((axis) => {
                 if (axis.crossLines) {
-                    axis.crossLines.forEach(crossLine => {
+                    axis.crossLines.forEach((crossLine) => {
                         crossLine.calculatePadding(crossLinePadding, lastPassSeriesRect);
                     });
                 }
@@ -276,7 +275,7 @@ export class CartesianChart extends Chart {
             result.height = Math.max(0, result.height);
 
             return result;
-        }
+        };
         const seriesRect = buildSeriesRect();
 
         const clampToOutsideSeriesRect = (value: number, dimension: 'x' | 'y', direction: -1 | 1) => {
@@ -290,7 +289,7 @@ export class CartesianChart extends Chart {
 
         // Set the number of ticks for continuous axes based on the available range
         // before updating the axis domain via `this.updateAxes()` as the tick count has an effect on the calculated `nice` domain extent
-        axes.forEach(axis => {
+        axes.forEach((axis) => {
             const { position, direction } = axis;
             visited[position] = (visited[position] ?? 0) + 1;
 
@@ -344,7 +343,7 @@ export class CartesianChart extends Chart {
 
             // for multiple axes in the same direction and position, apply padding at the top of each inner axis (i.e. between axes).
             const axisPadding = 15;
-            const visitCount = (visited[position] ?? 0);
+            const visitCount = visited[position] ?? 0;
             if (visitCount > 1) {
                 axisThickness += axisPadding;
             }
@@ -352,34 +351,26 @@ export class CartesianChart extends Chart {
             switch (position) {
                 case ChartAxisPosition.Top:
                     axis.translation.x = axisBound.x + (axisWidths.left ?? 0);
-                    axis.translation.y = clampToOutsideSeriesRect(
-                        axisBound.y + 1 + axisOffset + axisThickness,
-                        'y',
-                        1,
-                    );
+                    axis.translation.y = clampToOutsideSeriesRect(axisBound.y + 1 + axisOffset + axisThickness, 'y', 1);
                     break;
                 case ChartAxisPosition.Bottom:
                     axis.translation.x = axisBound.x + (axisWidths.left ?? 0);
                     axis.translation.y = clampToOutsideSeriesRect(
                         axisBound.y + axisBound.height + 1 - axisThickness - axisOffset,
                         'y',
-                        -1,
+                        -1
                     );
                     break;
                 case ChartAxisPosition.Left:
                     axis.translation.y = axisBound.y + (axisWidths.top ?? 0);
-                    axis.translation.x = clampToOutsideSeriesRect(
-                        axisBound.x + axisOffset + axisThickness,
-                        'x',
-                        1,
-                    );
+                    axis.translation.x = clampToOutsideSeriesRect(axisBound.x + axisOffset + axisThickness, 'x', 1);
                     break;
                 case ChartAxisPosition.Right:
                     axis.translation.y = axisBound.y + (axisWidths.top ?? 0);
                     axis.translation.x = clampToOutsideSeriesRect(
                         axisBound.x + axisBound.width - axisThickness - axisOffset,
                         'x',
-                        -1,
+                        -1
                     );
                     break;
             }

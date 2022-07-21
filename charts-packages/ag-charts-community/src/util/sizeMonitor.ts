@@ -1,11 +1,11 @@
 type Size = {
-    width: number,
-    height: number
+    width: number;
+    height: number;
 };
 type OnSizeChange = (size: Size, element: HTMLElement) => void;
 type Entry = {
-    cb: OnSizeChange,
-    size?: Size
+    cb: OnSizeChange;
+    size?: Size;
 };
 
 export class SizeMonitor {
@@ -23,12 +23,13 @@ export class SizeMonitor {
                     this.checkSize(this.elements.get(entry.target), entry.target, width, height);
                 }
             });
-        } else { // polyfill (more reliable even in browsers that support ResizeObserver)
+        } else {
+            // polyfill (more reliable even in browsers that support ResizeObserver)
             const step = () => {
                 this.elements.forEach((entry, element) => {
                     this.checkClientSize(element, entry);
                 });
-            }
+            };
             window.setInterval(step, 100);
         }
 
@@ -53,10 +54,10 @@ export class SizeMonitor {
         if (this.resizeObserver) {
             this.resizeObserver.observe(element);
         }
-        this.elements.set(element, {cb});
+        this.elements.set(element, { cb });
 
         // Ensure first size callback happens synchronously.
-        this.checkClientSize(element, {cb});
+        this.checkClientSize(element, { cb });
     }
 
     static unobserve(element: HTMLElement) {

@@ -1,6 +1,6 @@
-import { ContinuousScale } from "./continuousScale";
-import ticks from "../util/ticks";
-import { format } from "../util/numberFormat";
+import { ContinuousScale } from './continuousScale';
+import ticks from '../util/ticks';
+import { format } from '../util/numberFormat';
 
 const identity = (x: any) => x;
 export class LogScale extends ContinuousScale {
@@ -15,7 +15,7 @@ export class LogScale extends ContinuousScale {
         let df = values[0];
         let dl = values[values.length - 1];
 
-        if (df === 0 || dl === 0 || df < 0 && dl > 0 || df > 0 && dl < 0) {
+        if (df === 0 || dl === 0 || (df < 0 && dl > 0) || (df > 0 && dl < 0)) {
             console.warn('Log scale domain should not start at, end at or cross zero.');
             if (df === 0 && dl > 0) {
                 df = Number.EPSILON;
@@ -115,8 +115,8 @@ export class LogScale extends ContinuousScale {
         return isFinite(x)
             ? +('1e' + x) // to avoid precision issues, e.g. Math.pow(10, -4) is not 0.0001
             : x < 0
-                ? 0
-                : x;
+            ? 0
+            : x;
     }
 
     static makePowFn(base: number): (x: number) => number {
@@ -171,10 +171,8 @@ export class LogScale extends ContinuousScale {
                     for (let k = 1, p = this.basePow(p0); k < base; ++k) {
                         let t = p * k;
                         // The `t` checks are needed because we expanded the [p0, p1] by 1 in each direction.
-                        if (t < d0)
-                            continue;
-                        if (t > d1)
-                            break;
+                        if (t < d0) continue;
+                        if (t > d1) break;
                         z.push(t);
                     }
                 }
@@ -182,10 +180,8 @@ export class LogScale extends ContinuousScale {
                 for (; p0 < p1; ++p0) {
                     for (let k = base - 1, p = this.basePow(p0); k >= 1; --k) {
                         let t = p * k;
-                        if (t < d0)
-                            continue;
-                        if (t > d1)
-                            break;
+                        if (t < d0) continue;
+                        if (t > d1) break;
                         z.push(t);
                     }
                 }
@@ -222,7 +218,7 @@ export class LogScale extends ContinuousScale {
             count = 10;
         }
 
-        const k = Math.max(1, base * count / this.ticks().length);
+        const k = Math.max(1, (base * count) / this.ticks().length);
 
         return (d) => {
             let i = d / this.basePow(Math.round(this.baseLog(d)));

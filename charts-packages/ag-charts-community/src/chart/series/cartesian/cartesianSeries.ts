@@ -61,15 +61,10 @@ export abstract class CartesianSeries<
      */
     protected readonly seriesItemEnabled = new Map<string, boolean>();
 
-    protected constructor(
-        opts: Partial<SeriesOpts> & { pickModes?: SeriesNodePickMode[] } = {}) {
+    protected constructor(opts: Partial<SeriesOpts> & { pickModes?: SeriesNodePickMode[] } = {}) {
         super({ seriesGroupUsesLayer: false, pickModes: opts.pickModes });
 
-        const {
-            pickGroupIncludes = ['datumNodes'] as PickGroupInclude[],
-            pathsPerSeries = 1,
-            features = [],
-        } = opts;
+        const { pickGroupIncludes = ['datumNodes'] as PickGroupInclude[], pathsPerSeries = 1, features = [] } = opts;
         this.opts = { pickGroupIncludes, pathsPerSeries, features };
     }
 
@@ -131,7 +126,8 @@ export abstract class CartesianSeries<
         const { seriesItemEnabled, visible, chart: { highlightedDatum: { series = undefined } = {} } = {} } = this;
         const seriesHighlighted = series ? series === this : undefined;
 
-        const anySeriesItemEnabled = (visible && seriesItemEnabled.size === 0) || [...seriesItemEnabled.values()].some(v => v === true);
+        const anySeriesItemEnabled =
+            (visible && seriesItemEnabled.size === 0) || [...seriesItemEnabled.values()].some((v) => v === true);
 
         this.updateSelections(seriesHighlighted, anySeriesItemEnabled);
         this.updateNodes(seriesHighlighted, anySeriesItemEnabled);
@@ -148,7 +144,7 @@ export abstract class CartesianSeries<
         }
         if (this.nodeDataRefresh) {
             this.nodeDataRefresh = false;
-            
+
             this.contextNodeData = this.createNodeData();
             this.updateSeriesGroups();
         }
@@ -178,13 +174,12 @@ export abstract class CartesianSeries<
         }
 
         if (contextNodeData.length < subGroups.length) {
-            subGroups.splice(contextNodeData.length)
-                .forEach(({group, markerGroup}) => {
-                    this.seriesGroup.removeChild(group);
-                    if (markerGroup) {
-                        this.seriesGroup.removeChild(markerGroup);
-                    }
-                });
+            subGroups.splice(contextNodeData.length).forEach(({ group, markerGroup }) => {
+                this.seriesGroup.removeChild(group);
+                if (markerGroup) {
+                    this.seriesGroup.removeChild(markerGroup);
+                }
+            });
         }
 
         while (contextNodeData.length > subGroups.length) {
@@ -193,13 +188,13 @@ export abstract class CartesianSeries<
                 layer: true,
                 zIndex: Series.SERIES_LAYER_ZINDEX,
             });
-            const markerGroup = features.includes('markers') ? 
-                new Group({
-                    name: `${this.id}-series-sub${this.subGroupId++}-markers`,
-                    layer: true,
-                    zIndex: Series.SERIES_LAYER_ZINDEX,
-                }) :
-                undefined;
+            const markerGroup = features.includes('markers')
+                ? new Group({
+                      name: `${this.id}-series-sub${this.subGroupId++}-markers`,
+                      layer: true,
+                      zIndex: Series.SERIES_LAYER_ZINDEX,
+                  })
+                : undefined;
             const pickGroup = new Group();
 
             const pathParentGroup = pickGroupIncludes.includes('mainPath') ? pickGroup : group;
@@ -230,7 +225,12 @@ export abstract class CartesianSeries<
     }
 
     protected updateNodes(seriesHighlighted: boolean | undefined, anySeriesItemEnabled: boolean) {
-        const { highlightSelection, contextNodeData, seriesItemEnabled, opts: { features } } = this;
+        const {
+            highlightSelection,
+            contextNodeData,
+            seriesItemEnabled,
+            opts: { features },
+        } = this;
         const markersEnabled = features.includes('markers');
 
         const visible = this.visible && this.contextNodeData?.length > 0 && anySeriesItemEnabled;
@@ -240,7 +240,7 @@ export abstract class CartesianSeries<
         this.seriesGroup.opacity = this.getOpacity();
 
         if (markersEnabled) {
-            this.updateMarkerNodes({ markerSelection: (highlightSelection as any), isHighlight: true, seriesIdx: -1 });
+            this.updateMarkerNodes({ markerSelection: highlightSelection as any, isHighlight: true, seriesIdx: -1 });
         } else {
             this.updateDatumNodes({ datumSelection: highlightSelection, isHighlight: true, seriesIdx: -1 });
         }
@@ -288,7 +288,9 @@ export abstract class CartesianSeries<
             return result;
         }
 
-        const { opts: { pickGroupIncludes } } = this;
+        const {
+            opts: { pickGroupIncludes },
+        } = this;
         const markerGroupIncluded = pickGroupIncludes.includes('markers');
 
         for (const { pickGroup, markerGroup } of this.subGroups) {
@@ -315,10 +317,12 @@ export abstract class CartesianSeries<
             for (const datum of context.nodeData) {
                 const { point: { x: datumX = NaN, y: datumY = NaN } = {} } = datum;
                 const isInRange = xAxis?.inRange(datumX) && yAxis?.inRange(datumY);
-                if (!isInRange) { continue; }
-    
+                if (!isInRange) {
+                    continue;
+                }
+
                 // No need to use Math.sqrt() since x < y implies Math.sqrt(x) < Math.sqrt(y) for
-                // values > 1 
+                // values > 1
                 const distance = (hitPoint.x - datumX) ** 2 + (hitPoint.y - datumY) ** 2;
                 if (distance < minDistance) {
                     minDistance = distance;
@@ -335,25 +339,24 @@ export abstract class CartesianSeries<
     protected pickNodeMainAxisFirst(
         x: number,
         y: number,
-        requireCategoryAxis: boolean,
-    ): { datum: SeriesNodeDatum, distance: number } | undefined {
+        requireCategoryAxis: boolean
+    ): { datum: SeriesNodeDatum; distance: number } | undefined {
         const { xAxis, yAxis, group, contextNodeData } = this;
-        
+
         // Prefer to start search with any available category axis.
-        const directions = [ xAxis, yAxis ]
+        const directions = [xAxis, yAxis]
             .filter((a): a is CategoryAxis => a instanceof CategoryAxis)
-            .map(a => a.direction);
+            .map((a) => a.direction);
         if (requireCategoryAxis && directions.length === 0) {
             return;
         }
 
         // Default to X-axis unless we found a suitable category axis.
-        const [ primaryDirection = ChartAxisDirection.X ] = directions;
+        const [primaryDirection = ChartAxisDirection.X] = directions;
 
         const hitPoint = group.transformPoint(x, y);
-        const hitPointCoords = primaryDirection === ChartAxisDirection.X ?
-            [hitPoint.x, hitPoint.y] : 
-            [hitPoint.y, hitPoint.x];
+        const hitPointCoords =
+            primaryDirection === ChartAxisDirection.X ? [hitPoint.x, hitPoint.y] : [hitPoint.y, hitPoint.x];
 
         let minDistance = [Infinity, Infinity];
         let closestDatum: SeriesNodeDatum | undefined = undefined;
@@ -362,11 +365,11 @@ export abstract class CartesianSeries<
             for (const datum of context.nodeData) {
                 const { point: { x: datumX = NaN, y: datumY = NaN } = {} } = datum;
                 const isInRange = xAxis?.inRange(datumX) && yAxis?.inRange(datumY);
-                if (!isInRange) { continue; }
+                if (!isInRange) {
+                    continue;
+                }
 
-                const point = primaryDirection === ChartAxisDirection.X ?
-                    [datumX, datumY] : 
-                    [datumY, datumX];
+                const point = primaryDirection === ChartAxisDirection.X ? [datumX, datumY] : [datumY, datumX];
 
                 // Compare distances from most significant dimension to least.
                 let newMinDistance = true;
@@ -392,7 +395,6 @@ export abstract class CartesianSeries<
             return { datum: closestDatum, distance: Math.sqrt(minDistance[0] ** 2 + minDistance[1] ** 2) };
         }
     }
-
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {
         if (this.seriesItemEnabled.size > 0) {
@@ -432,7 +434,9 @@ export abstract class CartesianSeries<
         item?: C['nodeData'][number];
         highlightSelection: NodeDataSelection<N, C>;
     }): NodeDataSelection<N, C> {
-        const { opts: { features } } = this;
+        const {
+            opts: { features },
+        } = this;
         const markersEnabled = features.includes('markers');
 
         const { item, highlightSelection } = opts;

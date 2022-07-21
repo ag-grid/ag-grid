@@ -1,5 +1,5 @@
-import { expect, test } from "@jest/globals";
-import { isNumber, isContinuous, isStringObject, isNumberObject } from "./value";
+import { expect, test } from '@jest/globals';
+import { isNumber, isContinuous, isStringObject, isNumberObject } from './value';
 
 test('isNumber', () => {
     expect(isNumber(1)).toBe(true);
@@ -16,9 +16,11 @@ test('isNumber', () => {
     expect(isNumber({})).toBe(false);
     expect(isNumber([])).toBe(false);
     expect(isNumber('')).toBe(false);
-    expect(isNumber({
-        valueOf: () => 0
-    })).toBe(false);
+    expect(
+        isNumber({
+            valueOf: () => 0,
+        })
+    ).toBe(false);
 });
 
 test('isNumberObject', () => {
@@ -36,9 +38,11 @@ test('isNumberObject', () => {
     expect(isNumberObject({})).toBe(false);
     expect(isNumberObject([5])).toBe(false);
     expect(isNumberObject('')).toBe(false);
-    expect(isNumberObject({
-        valueOf: () => 0
-    })).toBe(true);
+    expect(
+        isNumberObject({
+            valueOf: () => 0,
+        })
+    ).toBe(true);
 });
 
 test('isContinuous', () => {
@@ -46,13 +50,17 @@ test('isContinuous', () => {
     expect(isContinuous(0)).toBe(true);
     expect(isContinuous(-1)).toBe(true);
     expect(isContinuous(new Date())).toBe(true);
-    expect(isContinuous(+(new Date()))).toBe(true);
-    expect(isContinuous({
-        valueOf: () => 5
-    })).toBe(true);
-    expect(isContinuous({
-        valueOf: () => ''
-    })).toBe(false);
+    expect(isContinuous(+new Date())).toBe(true);
+    expect(
+        isContinuous({
+            valueOf: () => 5,
+        })
+    ).toBe(true);
+    expect(
+        isContinuous({
+            valueOf: () => '',
+        })
+    ).toBe(false);
     expect(isContinuous(NaN)).toBe(false);
     expect(isContinuous(null)).toBe(false);
     expect(isContinuous(undefined)).toBe(false);
@@ -79,28 +87,44 @@ test('isStringObject', () => {
     expect(isStringObject(Number(5))).toBe(false);
     expect(isStringObject(String('hello'))).toBe(false);
     expect(isStringObject('hello')).toBe(false);
-    expect(isStringObject({
-        toString: () => 5
-    })).toBe(false);
-    expect(isStringObject({
-        toString: () => []
-    })).toBe(false);
-    expect(isStringObject({
-        toString: () => false
-    })).toBe(false);
-    expect(isStringObject({
-        toString: () => true
-    })).toBe(false);
-    expect(isStringObject({
-        toString: () => ({})
-    })).toBe(false);
-    expect(isStringObject({
-        toString: () => undefined
-    })).toBe(false);
-    expect(isStringObject({
-        toString: () => 'hello'
-    })).toBe(true);
-    expect(isStringObject({
-        toString: () => String('hello')
-    })).toBe(true);
+    expect(
+        isStringObject({
+            toString: () => 5,
+        })
+    ).toBe(false);
+    expect(
+        isStringObject({
+            toString: () => [],
+        })
+    ).toBe(false);
+    expect(
+        isStringObject({
+            toString: () => false,
+        })
+    ).toBe(false);
+    expect(
+        isStringObject({
+            toString: () => true,
+        })
+    ).toBe(false);
+    expect(
+        isStringObject({
+            toString: () => ({}),
+        })
+    ).toBe(false);
+    expect(
+        isStringObject({
+            toString: () => undefined,
+        })
+    ).toBe(false);
+    expect(
+        isStringObject({
+            toString: () => 'hello',
+        })
+    ).toBe(true);
+    expect(
+        isStringObject({
+            toString: () => String('hello'),
+        })
+    ).toBe(true);
 });

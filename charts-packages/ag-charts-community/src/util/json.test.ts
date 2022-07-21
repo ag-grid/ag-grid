@@ -1,7 +1,7 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { jsonDiff, jsonMerge, DELETE, jsonWalk, jsonApply } from './json';
 
-const FIXED_DATE = new Date("2022-01-27T00:00:00.000+00:00");
+const FIXED_DATE = new Date('2022-01-27T00:00:00.000+00:00');
 
 class TestApply {
     num?: number = undefined;
@@ -11,7 +11,7 @@ class TestApply {
     recurse?: TestApply = undefined;
     recurseArray?: TestApply[] = undefined;
 
-    constructor(params: {[K in keyof TestApply]?: TestApply[K]} = {}) {
+    constructor(params: { [K in keyof TestApply]?: TestApply[K] } = {}) {
         Object.assign(this, params);
     }
 }
@@ -80,7 +80,7 @@ describe('json module', () => {
 
             it('should correctly diff identical arrays', () => {
                 const source = {
-                    foo: [1, 2, 3 , 4],
+                    foo: [1, 2, 3, 4],
                 };
 
                 const diff = jsonDiff(source, source);
@@ -101,10 +101,10 @@ describe('json module', () => {
 
             it('should correctly diff function changes in arrays', () => {
                 const source = {
-                    foo: [{ fn: () => 'hello-world!'}],
+                    foo: [{ fn: () => 'hello-world!' }],
                 };
                 const target = {
-                    foo: [{ fn: () => 'foo-bar!?!?!'}],
+                    foo: [{ fn: () => 'foo-bar!?!?!' }],
                 };
 
                 const diff = jsonDiff(source, target as any);
@@ -199,7 +199,7 @@ describe('json module', () => {
 
     describe('#jsonWalk', () => {
         it('should visit no nodes for no object', () => {
-            for(const test of [undefined, null, 'a', 1, FIXED_DATE]) {
+            for (const test of [undefined, null, 'a', 1, FIXED_DATE]) {
                 const cb = jest.fn();
                 jsonWalk(test, cb, {}, test);
                 expect(cb).toHaveBeenCalledTimes(0);
@@ -207,7 +207,7 @@ describe('json module', () => {
         });
 
         it('should not visit property nodes for no object', () => {
-            for(const test of [undefined, null, 'a', 1, FIXED_DATE]) {
+            for (const test of [undefined, null, 'a', 1, FIXED_DATE]) {
                 const wrappedTest = { test };
 
                 const cb = jest.fn();
@@ -248,8 +248,8 @@ describe('json module', () => {
         });
 
         it('should visit every node of an array', () => {
-            const walked1 = [{a:1}, {b:2}, {c:3}, {d:4}];
-            const walked2 = [{x:1}, {y:2}, {z:3}];
+            const walked1 = [{ a: 1 }, { b: 2 }, { c: 3 }, { d: 4 }];
+            const walked2 = [{ x: 1 }, { y: 2 }, { z: 3 }];
 
             const cb = jest.fn();
             jsonWalk(walked1, cb, {}, walked2);
@@ -261,8 +261,8 @@ describe('json module', () => {
         });
 
         it('should visit every node of an array property', () => {
-            const walked1 = { prop1: [{a:1}, {b:2}, {c:3}, {d:4}] };
-            const walked2 = { prop1: [{x:1}, {y:2}, {z:3}] };
+            const walked1 = { prop1: [{ a: 1 }, { b: 2 }, { c: 3 }, { d: 4 }] };
+            const walked2 = { prop1: [{ x: 1 }, { y: 2 }, { z: 3 }] };
 
             const cb = jest.fn();
             jsonWalk(walked1, cb, {}, walked2);
@@ -295,8 +295,11 @@ describe('json module', () => {
 
     describe('#jsonApply', () => {
         const json = {
-            str: 'test-string', num: 123, date: FIXED_DATE, array: [1,2,3,4],
-            recurse: { str: 'test-string2', num: 789, date: FIXED_DATE, array: [1,2,3,4] }
+            str: 'test-string',
+            num: 123,
+            date: FIXED_DATE,
+            array: [1, 2, 3, 4],
+            recurse: { str: 'test-string2', num: 789, date: FIXED_DATE, array: [1, 2, 3, 4] },
         };
 
         it('should be able to populate an existing object graph', () => {
@@ -315,7 +318,7 @@ describe('json module', () => {
 
         it('should be able to instantiate a new object graph', () => {
             const target = new TestApply();
-            jsonApply(target, json, { constructors: { recurse: TestApply }});
+            jsonApply(target, json, { constructors: { recurse: TestApply } });
             expect(target.str).toEqual(json.str);
             expect(target.num).toEqual(json.num);
             expect(target.date).toEqual(json.date);
@@ -329,7 +332,7 @@ describe('json module', () => {
 
         it('should skip specified properties', () => {
             const target = new TestApply();
-            jsonApply(target, json, { skip: ['recurse.str', 'str'], constructors: { recurse: TestApply }});
+            jsonApply(target, json, { skip: ['recurse.str', 'str'], constructors: { recurse: TestApply } });
             expect(target.str).toEqual(undefined);
             expect(target.recurse.str).toEqual(undefined);
         });
@@ -340,7 +343,7 @@ describe('json module', () => {
 
             console.warn = jest.fn();
             jsonApply(target, badJson as any);
-            expect(console.warn).toBeCalledWith("AG Charts - unable to set [foo] in TestApply - property is unknown");
+            expect(console.warn).toBeCalledWith('AG Charts - unable to set [foo] in TestApply - property is unknown');
         });
 
         it('should error on incompatible properties', () => {
@@ -349,15 +352,17 @@ describe('json module', () => {
 
             console.warn = jest.fn();
             jsonApply(target, badJson as any);
-            expect(console.warn).toBeCalledWith("AG Charts - unable to set [recurse] in TestApply - can't apply type of [primitive], allowed types are: [class-instance]");
+            expect(console.warn).toBeCalledWith(
+                "AG Charts - unable to set [recurse] in TestApply - can't apply type of [primitive], allowed types are: [class-instance]"
+            );
         });
 
         it('should allow application of property type overrides', () => {
-            const target = new TestApply({ recurse: new TestApply({ str: 'string'} )});
+            const target = new TestApply({ recurse: new TestApply({ str: 'string' }) });
             const json = { recurse: { str: () => 'test' } };
             const opts = {
                 path: 'series[0]',
-                allowedTypes: {'series[].recurse.str': ['function' as const]},
+                allowedTypes: { 'series[].recurse.str': ['function' as const] },
                 constructors: { recurse: TestApply },
             };
 
@@ -371,7 +376,7 @@ describe('json module', () => {
             const json = { recurse: { str: () => 'test', recurse: { recurse: { str: testString } } } };
             const opts = {
                 path: 'series[0]',
-                allowedTypes: {'series[].recurse.str': ['function' as const]},
+                allowedTypes: { 'series[].recurse.str': ['function' as const] },
                 constructors: {
                     'series[].recurse': TestApply,
                     'series[].recurse.recurse': TestApply,
@@ -390,14 +395,11 @@ describe('json module', () => {
             const testString1 = 'hello!';
             const testString2 = 'world!';
             const target = new TestApply({});
-            const json = { recurseArray: [
-                { recurse: { str: testString1 } },
-                { recurse: { str: testString2 } },
-            ]};
+            const json = { recurseArray: [{ recurse: { str: testString1 } }, { recurse: { str: testString2 } }] };
 
             const opts = {
                 path: 'series[0]',
-                allowedTypes: {'series[].recurse.str': ['function' as const]},
+                allowedTypes: { 'series[].recurse.str': ['function' as const] },
                 constructors: {
                     'series[].recurseArray[]': TestApply,
                     'series[].recurseArray[].recurse': TestApply,

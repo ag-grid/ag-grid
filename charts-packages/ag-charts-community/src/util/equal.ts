@@ -8,8 +8,7 @@ export function equal(a: any, b: any): boolean {
         if (Array.isArray(a)) {
             length = a.length;
             if (length != b.length) return false;
-            for (i = length; i-- !== 0;)
-                if (!equal(a[i], b[i])) return false;
+            for (i = length; i-- !== 0; ) if (!equal(a[i], b[i])) return false;
             return true;
         }
 
@@ -21,10 +20,9 @@ export function equal(a: any, b: any): boolean {
         length = keys.length;
         if (length !== Object.keys(b).length) return false;
 
-        for (i = length; i-- !== 0;)
-            if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
+        for (i = length; i-- !== 0; ) if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
 
-        for (i = length; i-- !== 0;) {
+        for (i = length; i-- !== 0; ) {
             const key = keys[i];
             if (!equal(a[key], b[key])) return false;
         }

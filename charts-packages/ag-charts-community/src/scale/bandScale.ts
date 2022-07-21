@@ -35,7 +35,7 @@ export class BandScale<D> implements Scale<D, number> {
         // one should use objects rather than strings for domain values like so:
         // { toString: () => 'Italy' }
         // { toString: () => 'Italy' }
-        values.forEach(value => {
+        values.forEach((value) => {
             if (index.get(value) === undefined) {
                 index.set(value, domain.push(value) - 1);
             }
@@ -149,7 +149,7 @@ export class BandScale<D> implements Scale<D, number> {
             return;
         }
 
-        let [a, b] =  this._range;
+        let [a, b] = this._range;
         const reversed = b < a;
 
         if (reversed) {
@@ -169,7 +169,7 @@ export class BandScale<D> implements Scale<D, number> {
         }
 
         const values: number[] = [];
-        for (let i = 0; i < n ; i++) {
+        for (let i = 0; i < n; i++) {
             values.push(a + step * i);
         }
 

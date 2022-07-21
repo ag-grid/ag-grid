@@ -1,15 +1,21 @@
-import { PointerEvents } from "../../scene/node";
-import { Group } from "../../scene/group";
-import { Path } from "../../scene/shape/path";
-import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
-import { BBox } from "../../scene/bbox";
-import { Scale } from "../../scale/scale";
-import { clamper, ContinuousScale } from "../../scale/continuousScale";
-import { createId } from "../../util/id";
-import { Series } from "../series/series";
-import { normalizeAngle360, toRadians } from "../../util/angle";
-import { ChartAxisDirection, ChartAxisPosition } from "../chartAxis";
-import { CrossLineLabelPosition, Point, labeldDirectionHandling, POSITION_TOP_COORDINATES, calculateLabelTranslation } from "./crossLineLabelPosition";
+import { PointerEvents } from '../../scene/node';
+import { Group } from '../../scene/group';
+import { Path } from '../../scene/shape/path';
+import { Text, FontStyle, FontWeight } from '../../scene/shape/text';
+import { BBox } from '../../scene/bbox';
+import { Scale } from '../../scale/scale';
+import { clamper, ContinuousScale } from '../../scale/continuousScale';
+import { createId } from '../../util/id';
+import { Series } from '../series/series';
+import { normalizeAngle360, toRadians } from '../../util/angle';
+import { ChartAxisDirection, ChartAxisPosition } from '../chartAxis';
+import {
+    CrossLineLabelPosition,
+    Point,
+    labeldDirectionHandling,
+    POSITION_TOP_COORDINATES,
+    calculateLabelTranslation,
+} from './crossLineLabelPosition';
 
 export class CrossLineLabel {
     enabled?: boolean = undefined;
@@ -35,15 +41,13 @@ interface CrossLinePathData {
     readonly points: Point[];
 }
 
-type CrossLineType = "line" | "range";
+type CrossLineType = 'line' | 'range';
 
 export class CrossLine {
-
     protected static readonly LINE_LAYER_ZINDEX = Series.SERIES_LAYER_ZINDEX + 10;
     protected static readonly RANGE_LAYER_ZINDEX = Series.SERIES_LAYER_ZINDEX - 10;
 
-
-    static className = "CrossLine";
+    static className = 'CrossLine';
     readonly id = createId(this);
 
     enabled?: boolean = undefined;
@@ -92,11 +96,15 @@ export class CrossLine {
     }
 
     update(visible: boolean) {
-        if (!this.enabled || !this.type) { return; }
+        if (!this.enabled || !this.type) {
+            return;
+        }
 
         this.group.visible = visible;
 
-        if (!visible) { return; }
+        if (!visible) {
+            return;
+        }
 
         this.group.zIndex = this.getZIndex(this.type);
 
@@ -120,9 +128,19 @@ export class CrossLine {
     }
 
     private createNodeData() {
-        const { scale, gridLength, sideFlag, direction, range, value, label: { position = 'top' } } = this;
+        const {
+            scale,
+            gridLength,
+            sideFlag,
+            direction,
+            range,
+            value,
+            label: { position = 'top' },
+        } = this;
 
-        if (!scale) { return; }
+        if (!scale) {
+            return;
+        }
 
         const continuous = scale instanceof ContinuousScale;
         const bandwidth = scale.bandwidth ?? 0;
@@ -132,7 +150,10 @@ export class CrossLine {
 
         [xStart, xEnd] = [0, sideFlag * gridLength];
         [yStart, yEnd] = range ?? [value, undefined];
-        [yStart, yEnd] = [scale.convert(yStart, continuous ? clamper : undefined) , scale.convert(yEnd, continuous ? clamper : undefined) + bandwidth];
+        [yStart, yEnd] = [
+            scale.convert(yStart, continuous ? clamper : undefined),
+            scale.convert(yEnd, continuous ? clamper : undefined) + bandwidth,
+        ];
 
         if (this.label.text) {
             const yDirection = direction === ChartAxisDirection.Y;
@@ -142,26 +163,26 @@ export class CrossLine {
 
             this.labelPoint = {
                 x: labelX,
-                y: labelY
-            }
+                y: labelY,
+            };
         }
 
         this.pathData.points.push(
             {
                 x: xStart,
-                y: yStart
+                y: yStart,
             },
             {
                 x: xEnd,
-                y: yStart
+                y: yStart,
             },
             {
                 x: xEnd,
-                y: yEnd
+                y: yEnd,
             },
             {
                 x: xStart,
-                y: yEnd
+                y: yEnd,
             }
         );
     }
@@ -176,7 +197,7 @@ export class CrossLine {
         pathMethods.forEach((method, i) => {
             const { x, y } = points[i];
             path[method](x, y);
-        })
+        });
         path.closePath();
         crossLineLine.checkPathDirty();
     }
@@ -213,7 +234,9 @@ export class CrossLine {
     private updateLabel() {
         const { crossLineLabel, label } = this;
 
-        if (!label.text) { return; }
+        if (!label.text) {
+            return;
+        }
 
         crossLineLabel.fontStyle = label.fontStyle;
         crossLineLabel.fontWeight = label.fontWeight;
@@ -224,32 +247,26 @@ export class CrossLine {
     }
 
     private positionLabel() {
-        const { crossLineLabel,
-            labelPoint: {
-                x = undefined,
-                y = undefined
-            } = {},
-            label: {
-                parallel,
-                rotation,
-                position = 'top',
-                padding = 0
-            },
+        const {
+            crossLineLabel,
+            labelPoint: { x = undefined, y = undefined } = {},
+            label: { parallel, rotation, position = 'top', padding = 0 },
             direction,
             parallelFlipRotation,
             regularFlipRotation,
         } = this;
 
-        if (x === undefined || y === undefined) { return; }
+        if (x === undefined || y === undefined) {
+            return;
+        }
 
         const labelRotation = rotation ? normalizeAngle360(toRadians(rotation)) : 0;
 
-        const parallelFlipFlag = !labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI ? -1 : 1;
+        const parallelFlipFlag =
+            !labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI ? -1 : 1;
         const regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
 
-        const autoRotation = parallel
-            ? parallelFlipFlag * Math.PI / 2
-            : (regularFlipFlag === -1 ? Math.PI : 0);
+        const autoRotation = parallel ? (parallelFlipFlag * Math.PI) / 2 : regularFlipFlag === -1 ? Math.PI : 0;
 
         crossLineLabel.rotation = autoRotation + labelRotation;
 
@@ -258,7 +275,9 @@ export class CrossLine {
 
         const bbox = this.computeLabelBBox();
 
-        if (!bbox) { return; }
+        if (!bbox) {
+            return;
+        }
 
         const yDirection = direction === ChartAxisDirection.Y;
         const { xTranslation, yTranslation } = calculateLabelTranslation({ yDirection, padding, position, bbox });
@@ -277,13 +296,15 @@ export class CrossLine {
         const labelX = crossLineLabelBBox?.x;
         const labelY = crossLineLabelBBox?.y;
 
-        if (labelX == undefined || labelY == undefined) { return; }
+        if (labelX == undefined || labelY == undefined) {
+            return;
+        }
 
         const labelWidth = crossLineLabelBBox?.width ?? 0;
         const labelHeight = crossLineLabelBBox?.height ?? 0;
 
         if (labelX + labelWidth >= seriesRect.x + seriesRect.width) {
-            const paddingRight = (labelX + labelWidth) - (seriesRect.x + seriesRect.width);
+            const paddingRight = labelX + labelWidth - (seriesRect.x + seriesRect.width);
             padding.right = (padding.right ?? 0) >= paddingRight ? padding.right : paddingRight;
         } else if (labelX <= seriesRect.x) {
             const paddingLeft = seriesRect.x - labelX;
@@ -291,7 +312,7 @@ export class CrossLine {
         }
 
         if (labelY + labelHeight >= seriesRect.y + seriesRect.height) {
-            const paddingbottom = (labelY + labelHeight) - (seriesRect.y + seriesRect.height);
+            const paddingbottom = labelY + labelHeight - (seriesRect.y + seriesRect.height);
             padding.bottom = (padding.bottom ?? 0) >= paddingbottom ? padding.bottom : paddingbottom;
         } else if (labelY <= seriesRect.y) {
             const paddingTop = seriesRect.y - labelY;

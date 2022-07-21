@@ -1,26 +1,25 @@
-import { Shape } from "./shape";
-import { Path, ScenePathChangeDetection } from "./path";
-import { BBox } from "../bbox";
-import { normalizeAngle360 } from "../../util/angle";
-import { chainObjects } from "../../util/object";
-import { isEqual } from "../../util/number";
+import { Shape } from './shape';
+import { Path, ScenePathChangeDetection } from './path';
+import { BBox } from '../bbox';
+import { normalizeAngle360 } from '../../util/angle';
+import { chainObjects } from '../../util/object';
+import { isEqual } from '../../util/number';
 
 export enum ArcType {
     Open,
     Chord,
-    Round
+    Round,
 }
 
 /**
  * Elliptical arc node.
  */
 export class Arc extends Path {
-
     static className = 'Arc';
 
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
         lineWidth: 1,
-        fillStyle: null
+        fillStyle: null,
     });
 
     constructor() {
@@ -77,7 +76,16 @@ export class Arc extends Path {
         // where you can specify two radii and rotation, while Path2D's `arc` method simply produces
         // a circular arc. Maybe it's due to the experimental nature of the Path2D class,
         // maybe it's because we have to create a new instance of it on each render, who knows...
-        path.cubicArc(this.centerX, this.centerY, this.radiusX, this.radiusY, 0, this.startAngle, this.endAngle, this.counterClockwise ? 1 : 0);
+        path.cubicArc(
+            this.centerX,
+            this.centerY,
+            this.radiusX,
+            this.radiusY,
+            0,
+            this.startAngle,
+            this.endAngle,
+            this.counterClockwise ? 1 : 0
+        );
 
         if (this.type === ArcType.Chord) {
             path.closePath();
@@ -89,20 +97,17 @@ export class Arc extends Path {
 
     computeBBox(): BBox {
         // Only works with full arcs (circles) and untransformed ellipses.
-        return new BBox(
-            this.centerX - this.radiusX,
-            this.centerY - this.radiusY,
-            this.radiusX * 2,
-            this.radiusY * 2
-        );
+        return new BBox(this.centerX - this.radiusX, this.centerY - this.radiusY, this.radiusX * 2, this.radiusY * 2);
     }
 
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
         const bbox = this.computeBBox();
 
-        return this.type !== ArcType.Open
-            && bbox.containsPoint(point.x, point.y)
-            && this.path.isPointInPath(point.x, point.y);
+        return (
+            this.type !== ArcType.Open &&
+            bbox.containsPoint(point.x, point.y) &&
+            this.path.isPointInPath(point.x, point.y)
+        );
     }
 }

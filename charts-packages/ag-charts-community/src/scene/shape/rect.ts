@@ -1,13 +1,13 @@
-import { Path, ScenePathChangeDetection } from "./path";
-import { BBox } from "../bbox";
-import { LinearGradient } from "../gradient/linearGradient";
-import { Color } from "../../util/color";
-import { Shape } from "./shape";
-import { Path2D } from "../path2D";
+import { Path, ScenePathChangeDetection } from './path';
+import { BBox } from '../bbox';
+import { LinearGradient } from '../gradient/linearGradient';
+import { Color } from '../../util/color';
+import { Shape } from './shape';
+import { Path2D } from '../path2D';
 
 export enum RectSizing {
     Content,
-    Border
+    Border,
 }
 
 export class Rect extends Path {
@@ -55,13 +55,16 @@ export class Rect extends Path {
             if (fill) {
                 const gradient = new LinearGradient();
                 gradient.angle = 270;
-                gradient.stops = [{
-                    offset: 0,
-                    color: Color.fromString(fill).brighter().toString()
-                }, {
-                    offset: 1,
-                    color: Color.fromString(fill).darker().toString()
-                }];
+                gradient.stops = [
+                    {
+                        offset: 0,
+                        color: Color.fromString(fill).brighter().toString(),
+                    },
+                    {
+                        offset: 1,
+                        color: Color.fromString(fill).darker().toString(),
+                    },
+                ];
                 this.gradientInstance = gradient;
             }
         } else {

@@ -1,21 +1,21 @@
-import { Selection } from "../../../scene/selection";
-import { HdpiCanvas } from "../../../canvas/hdpiCanvas";
-import { TypedEvent } from "../../../util/observable";
-import { Label } from "../../label";
-import { SeriesNodeDatum, SeriesTooltip, TooltipRendererParams } from "../series";
-import { HierarchySeries } from "./hierarchySeries";
-import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import { Group } from "../../../scene/group";
-import { Text } from "../../../scene/shape/text";
-import { Rect } from "../../../scene/shape/rect";
-import { DropShadow } from "../../../scene/dropShadow";
-import { LinearScale } from "../../../scale/linearScale";
-import { ChartAxisDirection } from "../../chartAxis";
-import { LegendDatum } from "../../legend";
-import { Treemap } from "../../../layout/treemap";
-import { hierarchy } from "../../../layout/hierarchy";
-import { toFixed } from "../../../util/number";
-import { Path2D } from "../../../scene/path2D";
+import { Selection } from '../../../scene/selection';
+import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
+import { TypedEvent } from '../../../util/observable';
+import { Label } from '../../label';
+import { SeriesNodeDatum, SeriesTooltip, TooltipRendererParams } from '../series';
+import { HierarchySeries } from './hierarchySeries';
+import { TooltipRendererResult, toTooltipHtml } from '../../chart';
+import { Group } from '../../../scene/group';
+import { Text } from '../../../scene/shape/text';
+import { Rect } from '../../../scene/shape/rect';
+import { DropShadow } from '../../../scene/dropShadow';
+import { LinearScale } from '../../../scale/linearScale';
+import { ChartAxisDirection } from '../../chartAxis';
+import { LegendDatum } from '../../legend';
+import { Treemap } from '../../../layout/treemap';
+import { hierarchy } from '../../../layout/hierarchy';
+import { toFixed } from '../../../util/number';
+import { Path2D } from '../../../scene/path2D';
 
 interface TreemapNodeDatum extends SeriesNodeDatum {
     parent?: TreemapNodeDatum;
@@ -60,16 +60,19 @@ export class TreemapSeriesLabel extends Label {
 
 enum TextNodeTag {
     Name,
-    Value
+    Value,
 }
 
 export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
-
     static className = 'TreemapSeries';
     static type = 'treemap' as const;
 
-    private groupSelection: Selection<Group, Group, TreemapNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Group>();
-    private highlightSelection: Selection<Group, Group, TreemapNodeDatum, any> = Selection.select(this.highlightGroup).selectAll<Group>();
+    private groupSelection: Selection<Group, Group, TreemapNodeDatum, any> = Selection.select(
+        this.pickGroup
+    ).selectAll<Group>();
+    private highlightSelection: Selection<Group, Group, TreemapNodeDatum, any> = Selection.select(
+        this.highlightGroup
+    ).selectAll<Group>();
 
     private layout = new Treemap();
     private dataRoot?: TreemapNodeDatum;
@@ -119,8 +122,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             const label = new Label();
             label.color = 'white';
             return label;
-        })()
-    }
+        })(),
+    };
 
     protected _nodePadding = 2;
     set nodePadding(value: number) {
@@ -157,9 +160,9 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     private updateLayoutPadding() {
         const { title, subtitle, nodePadding, labelKey } = this;
 
-        this.layout.paddingRight = _ => nodePadding;
-        this.layout.paddingBottom = _ => nodePadding;
-        this.layout.paddingLeft = _ => nodePadding;
+        this.layout.paddingRight = (_) => nodePadding;
+        this.layout.paddingBottom = (_) => nodePadding;
+        this.layout.paddingLeft = (_) => nodePadding;
         this.layout.paddingTop = (node: TreemapNodeDatum) => {
             let name = node.datum[labelKey] || '';
             if (node.children) {
@@ -167,7 +170,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             }
             const font = node.depth > 1 ? subtitle : title;
             const textSize = HdpiCanvas.getTextSize(
-                name, [font.fontWeight, font.fontSize + 'px', font.fontFamily].join(' ').trim()
+                name,
+                [font.fontWeight, font.fontSize + 'px', font.fontFamily].join(' ').trim()
             );
             const innerNodeWidth = node.x1 - node.x0 - nodePadding * 2;
             const hasTitle = node.depth > 0 && node.children && textSize.width <= innerNodeWidth;
@@ -186,9 +190,9 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
         let dataRoot: unknown;
         if (sizeKey) {
-            dataRoot = hierarchy(data).sum(datum => datum.children ? 1 : datum[sizeKey]);
+            dataRoot = hierarchy(data).sum((datum) => (datum.children ? 1 : datum[sizeKey]));
         } else {
-            dataRoot = hierarchy(data).sum(datum => datum.children ? 0 : 1);
+            dataRoot = hierarchy(data).sum((datum) => (datum.children ? 0 : 1));
         }
         this.dataRoot = dataRoot as TreemapNodeDatum;
 
@@ -268,8 +272,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
             const enterGroups = updateGroups.enter.append(Group);
             enterGroups.append(Rect);
-            enterGroups.append(Text).each((node: any) => node.tag = TextNodeTag.Name);
-            enterGroups.append(Text).each((node: any) => node.tag = TextNodeTag.Value);
+            enterGroups.append(Text).each((node: any) => (node.tag = TextNodeTag.Name));
+            enterGroups.append(Text).each((node: any) => (node.tag = TextNodeTag.Value));
 
             return updateGroups.merge(enterGroups) as any;
         };
@@ -284,7 +288,10 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         }
 
         const {
-            nodePadding, labels, shadow, gradient,
+            nodePadding,
+            labels,
+            shadow,
+            gradient,
             chart: { highlightedDatum },
             highlightStyle: {
                 fill: deprecatedFill,
@@ -293,18 +300,22 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 item: {
                     fill: highlightedFill = deprecatedFill,
                     stroke: highlightedStroke = deprecatedStroke,
-                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth
-                }
-            }
+                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
+                },
+            },
         } = this;
 
         const labelMeta = this.buildLabelMeta(this.groupSelection.data);
         const updateRectFn = (rect: Rect, datum: TreemapNodeDatum, isDatumHighlighted: boolean) => {
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
-            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.depth < 2 ? undefined : 'black';
-            const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
-                ? highlightedDatumStrokeWidth
-                : 1;
+            const stroke =
+                isDatumHighlighted && highlightedStroke !== undefined
+                    ? highlightedStroke
+                    : datum.depth < 2
+                    ? undefined
+                    : 'black';
+            const strokeWidth =
+                isDatumHighlighted && highlightedDatumStrokeWidth !== undefined ? highlightedDatumStrokeWidth : 1;
 
             rect.fill = fill;
             rect.stroke = stroke;
@@ -338,7 +349,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 rect.clipPath.closePath();
             }
         };
-        this.groupSelection.selectByClass(Rect).each((rect, datum) => updateRectFn(rect,datum, false));
+        this.groupSelection.selectByClass(Rect).each((rect, datum) => updateRectFn(rect, datum, false));
         this.highlightSelection.selectByClass(Rect).each((rect, datum) => {
             const isDatumHighlighted = datum === highlightedDatum;
 
@@ -374,17 +385,17 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 text.y = this.getLabelCenterY(datum);
             }
         };
-        this.groupSelection.selectByTag<Text>(TextNodeTag.Name)
-            .each((text, datum, index) => updateNodeFn(text, datum, index, false) );
-        this.highlightSelection.selectByTag<Text>(TextNodeTag.Name)
-            .each((text, datum, index) => {
-                const isDatumHighlighted = datum === highlightedDatum;
+        this.groupSelection
+            .selectByTag<Text>(TextNodeTag.Name)
+            .each((text, datum, index) => updateNodeFn(text, datum, index, false));
+        this.highlightSelection.selectByTag<Text>(TextNodeTag.Name).each((text, datum, index) => {
+            const isDatumHighlighted = datum === highlightedDatum;
 
-                text.visible = isDatumHighlighted;
-                if (text.visible) {
-                    updateNodeFn(text, datum, index, isDatumHighlighted);
-                }
-            });
+            text.visible = isDatumHighlighted;
+            if (text.visible) {
+                updateNodeFn(text, datum, index, isDatumHighlighted);
+            }
+        });
 
         const updateValueFn = (text: Text, datum: TreemapNodeDatum, index: number, highlighted: boolean) => {
             const { valueBaseline: textBaseline, valueText } = labelMeta[index] ?? {};
@@ -407,28 +418,31 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 text.visible = false;
             }
         };
-        this.groupSelection.selectByTag<Text>(TextNodeTag.Value)
-            .each((text, datum, index) => updateValueFn(text, datum, index, false) );
-        this.highlightSelection.selectByTag<Text>(TextNodeTag.Value)
-            .each((text, datum, index) => {
-                const isDatumHighlighted = datum === highlightedDatum;
+        this.groupSelection
+            .selectByTag<Text>(TextNodeTag.Value)
+            .each((text, datum, index) => updateValueFn(text, datum, index, false));
+        this.highlightSelection.selectByTag<Text>(TextNodeTag.Value).each((text, datum, index) => {
+            const isDatumHighlighted = datum === highlightedDatum;
 
-                text.visible = isDatumHighlighted;
-                if (text.visible) {
-                    updateValueFn(text, datum, index, isDatumHighlighted);
-                }
-            });
+            text.visible = isDatumHighlighted;
+            if (text.visible) {
+                updateValueFn(text, datum, index, isDatumHighlighted);
+            }
+        });
     }
 
     buildLabelMeta(data: TreemapNodeDatum[]) {
         const { labels, title, subtitle, nodePadding, colorKey } = this;
 
-        const labelMeta: ({
-            label: Label,
-            nodeBaseline?: CanvasTextBaseline,
-            valueBaseline?: CanvasTextBaseline,
-            valueText?: string,
-        } | undefined)[] = [];
+        const labelMeta: (
+            | {
+                  label: Label;
+                  nodeBaseline?: CanvasTextBaseline;
+                  valueBaseline?: CanvasTextBaseline;
+                  valueText?: string;
+              }
+            | undefined
+        )[] = [];
         labelMeta.length = this.groupSelection.data.length;
 
         const text = new Text();
@@ -467,13 +481,11 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             text.text = datum.label;
 
             const nodeBBox = text.computeBBox();
-            const hasNode = isLeaf && !!nodeBBox
-                && nodeBBox.width <= innerNodeWidth
-                && nodeBBox.height * 2 + 8 <= innerNodeHeight;
+            const hasNode =
+                isLeaf && !!nodeBBox && nodeBBox.width <= innerNodeWidth && nodeBBox.height * 2 + 8 <= innerNodeHeight;
 
-            const valueText = typeof value === 'number' && isFinite(value)
-                ? String(toFixed(datum.colorValue)) + '%'
-                : '';
+            const valueText =
+                typeof value === 'number' && isFinite(value) ? String(toFixed(datum.colorValue)) + '%' : '';
             text.fontSize = labels.color.fontSize;
             text.fontFamily = labels.color.fontFamily;
             text.fontStyle = labels.color.fontStyle;
@@ -482,9 +494,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
             const valueBBox = text.computeBBox();
             const hasValue = isLeaf && !!colorKey && hasNode && !!valueBBox && valueBBox.width < innerNodeWidth;
-            const nodeBaseline = hasValue ? 'bottom' :
-                 isLeaf ? 'middle' :
-                 (hasTitle ? 'top' : 'middle');
+            const nodeBaseline = hasValue ? 'bottom' : isLeaf ? 'middle' : hasTitle ? 'top' : 'middle';
 
             labelMeta[index++] = {
                 label,
@@ -509,7 +519,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             datum: datum.datum,
             labelKey: this.labelKey,
             sizeKey: this.sizeKey,
-            colorKey: this.colorKey
+            colorKey: this.colorKey,
         });
     }
 
@@ -518,7 +528,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         const { datum } = nodeDatum;
         const { renderer: tooltipRenderer } = tooltip;
 
-        const title: string | undefined = nodeDatum.depth ? datum[labelKey] : (rootName || datum[labelKey]);
+        const title: string | undefined = nodeDatum.depth ? datum[labelKey] : rootName || datum[labelKey];
         let content: string | undefined = undefined;
         const color = nodeDatum.fill || 'gray';
 
@@ -532,18 +542,21 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         const defaults: TooltipRendererResult = {
             title,
             backgroundColor: color,
-            content
+            content,
         };
 
         if (tooltipRenderer) {
-            return toTooltipHtml(tooltipRenderer({
-                datum: nodeDatum,
-                sizeKey,
-                labelKey,
-                colorKey,
-                title,
-                color
-            }), defaults);
+            return toTooltipHtml(
+                tooltipRenderer({
+                    datum: nodeDatum,
+                    sizeKey,
+                    labelKey,
+                    colorKey,
+                    title,
+                    color,
+                }),
+                defaults
+            );
         }
 
         return toTooltipHtml(defaults);

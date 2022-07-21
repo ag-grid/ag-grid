@@ -1,6 +1,6 @@
-import { Path } from "../../scene/shape/path";
-import { BBox } from "../../scene/bbox";
-import { ShapeLineCap } from "../../scene/shape/shape";
+import { Path } from '../../scene/shape/path';
+import { BBox } from '../../scene/bbox';
+import { ShapeLineCap } from '../../scene/shape/shape';
 
 export class RangeMask extends Path {
     static className = 'RangeMask';

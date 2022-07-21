@@ -20,7 +20,7 @@ expect.extend({ toMatchImageSnapshot, toMatchImage });
 function applyRotation<T>(opts: T, rotation: number): T {
     return {
         ...opts,
-        axes: opts['axes']?.map(axis => ({ ...axis, label: { ...axis.label, rotation} })) || undefined,
+        axes: opts['axes']?.map((axis) => ({ ...axis, label: { ...axis.label, rotation } })) || undefined,
     };
 }
 
@@ -42,7 +42,7 @@ function applyAxesFlip<T>(opts: T): T {
 
     return {
         ...opts,
-        axes: opts['axes']?.map(axis => ({ ...axis, position: positionFlip(axis.position) })) || undefined,
+        axes: opts['axes']?.map((axis) => ({ ...axis, position: positionFlip(axis.position) })) || undefined,
     };
 }
 
@@ -66,11 +66,11 @@ const EXAMPLES = mixinDerivedCases({
     },
     BASIC_TIME_AXIS: {
         options: examples.TIME_AXIS_BASIC_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line']}),
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
     },
     NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE: {
         options: examples.NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['line']}),
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['line'] }),
     },
 });
 
@@ -94,7 +94,7 @@ function mixinDerivedCases(baseCases: Record<string, TestCase>): Record<string, 
     return result;
 }
 
-function calculateAxisBBox(axis: ChartAxis<any>): { x: number, y: number, width: number, height: number} {
+function calculateAxisBBox(axis: ChartAxis<any>): { x: number; y: number; width: number; height: number } {
     let bbox = axis.computeBBox();
 
     const { x, y, width, height } = bbox;

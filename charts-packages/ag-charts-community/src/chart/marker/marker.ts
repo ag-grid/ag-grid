@@ -1,8 +1,7 @@
-import { Path, ScenePathChangeDetection } from "../../scene/shape/path";
-import { BBox } from "../../scene/bbox";
+import { Path, ScenePathChangeDetection } from '../../scene/shape/path';
+import { BBox } from '../../scene/bbox';
 
 export abstract class Marker extends Path {
-
     @ScenePathChangeDetection()
     x: number = 0;
 

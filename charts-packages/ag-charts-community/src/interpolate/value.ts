@@ -1,10 +1,10 @@
-import constant from "./constant";
-import number from "./number";
-import date from "./date";
-import array from "./array";
-import object from "./object";
-import color from "./color";
-import { Color } from "../util/color";
+import constant from './constant';
+import number from './number';
+import date from './date';
+import array from './array';
+import object from './object';
+import color from './color';
+import { Color } from '../util/color';
 
 export default function (a: any, b: any): (t: number) => any {
     const t = typeof b;
@@ -40,7 +40,7 @@ export default function (a: any, b: any): (t: number) => any {
         return array(a, b);
     }
 
-    if (typeof b.valueOf !== 'function' && typeof b.toString !== 'function' || isNaN(b)) {
+    if ((typeof b.valueOf !== 'function' && typeof b.toString !== 'function') || isNaN(b)) {
         return object(a, b);
     }
 

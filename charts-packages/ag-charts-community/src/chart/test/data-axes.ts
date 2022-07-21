@@ -51,12 +51,14 @@ export const DATA_YOUTUBE_VIDEOS_STATS_BY_DAY_OF_YEAR = range(100, 300, 5).map((
 // Ensure we generate consistent 'random' numbers.
 const youtubeRandom2 = seedRandom(49275017231);
 
-export const DATA_YOUTUBE_VIDEOS_STATS_BY_DATE = dateRange(new Date(2022, 0, 1, 0, 0, 0), new Date(2022, 2, 31, 0, 0, 0))
-    .map((date) => {
-        return {
-            date,
-            likes: Math.floor(youtubeRandom2() * 500),
-            subscribes: Math.floor(youtubeRandom2() * 50),
-            comments: Math.floor(youtubeRandom2() * 25),
-        };
-    });
+export const DATA_YOUTUBE_VIDEOS_STATS_BY_DATE = dateRange(
+    new Date(2022, 0, 1, 0, 0, 0),
+    new Date(2022, 2, 31, 0, 0, 0)
+).map((date) => {
+    return {
+        date,
+        likes: Math.floor(youtubeRandom2() * 500),
+        subscribes: Math.floor(youtubeRandom2() * 50),
+        comments: Math.floor(youtubeRandom2() * 25),
+    };
+});

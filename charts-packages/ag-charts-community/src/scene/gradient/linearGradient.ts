@@ -1,13 +1,12 @@
-import { Gradient } from "./gradient";
-import { BBox } from "../bbox";
+import { Gradient } from './gradient';
+import { BBox } from '../bbox';
 
 export class LinearGradient extends Gradient {
-
     angle = 0;
 
     createGradient(ctx: CanvasRenderingContext2D, bbox: BBox): CanvasGradient | string {
         const { stops } = this;
-        const radians = (this.angle % 360) * Math.PI / 180;
+        const radians = ((this.angle % 360) * Math.PI) / 180;
         const cos = Math.cos(radians);
         const sin = Math.sin(radians);
         const w = bbox.width;
@@ -17,12 +16,9 @@ export class LinearGradient extends Gradient {
 
         if (w > 0 && h > 0) {
             const l = (Math.sqrt(h * h + w * w) * Math.abs(Math.cos(radians - Math.atan(h / w)))) / 2;
-            const gradient = ctx.createLinearGradient(
-                cx + cos * l, cy + sin * l,
-                cx - cos * l, cy - sin * l
-            );
+            const gradient = ctx.createLinearGradient(cx + cos * l, cy + sin * l, cx - cos * l, cy - sin * l);
 
-            stops.forEach(stop => {
+            stops.forEach((stop) => {
                 gradient.addColorStop(stop.offset, stop.color);
             });
 
@@ -31,5 +27,4 @@ export class LinearGradient extends Gradient {
 
         return 'black';
     }
-
 }

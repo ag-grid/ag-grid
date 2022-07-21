@@ -1,10 +1,9 @@
-import { Path, ScenePathChangeDetection } from "./path";
-import { normalizeAngle360 } from "../../util/angle";
-import { isEqual } from "../../util/number";
-import { BBox } from "../bbox";
+import { Path, ScenePathChangeDetection } from './path';
+import { normalizeAngle360 } from '../../util/angle';
+import { isEqual } from '../../util/number';
+import { BBox } from '../bbox';
 
 export class Sector extends Path {
-
     static className = 'Sector';
 
     @ScenePathChangeDetection()
@@ -33,12 +32,7 @@ export class Sector extends Path {
 
     computeBBox(): BBox {
         const radius = this.outerRadius;
-        return new BBox(
-            this.centerX - radius,
-            this.centerY - radius,
-            radius * 2,
-            radius * 2
-        );
+        return new BBox(this.centerX - radius, this.centerY - radius, radius * 2, radius * 2);
     }
 
     private isFullPie(): boolean {
@@ -67,30 +61,18 @@ export class Sector extends Path {
         }
 
         if (!fullPie) {
-            path.moveTo(
-                centerX + innerRadius * Math.cos(startAngle),
-                centerY + innerRadius * Math.sin(startAngle)
-            );
-            path.lineTo(
-                centerX + outerRadius * Math.cos(startAngle),
-                centerY + outerRadius * Math.sin(startAngle)
-            );
+            path.moveTo(centerX + innerRadius * Math.cos(startAngle), centerY + innerRadius * Math.sin(startAngle));
+            path.lineTo(centerX + outerRadius * Math.cos(startAngle), centerY + outerRadius * Math.sin(startAngle));
         }
 
         path.cubicArc(centerX, centerY, outerRadius, outerRadius, 0, startAngle, endAngle, 0);
         if (fullPie) {
-            path.moveTo(
-                centerX + innerRadius * Math.cos(endAngle),
-                centerY + innerRadius * Math.sin(endAngle)
-            );
+            path.moveTo(centerX + innerRadius * Math.cos(endAngle), centerY + innerRadius * Math.sin(endAngle));
         } else {
             // Temp workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=993330
             // Revert this commit when fixed ^^.
             const x = centerX + innerRadius * Math.cos(endAngle);
-            path.lineTo(
-                Math.abs(x) < 1e-8 ? 0 : x,
-                centerY + innerRadius * Math.sin(endAngle)
-            );
+            path.lineTo(Math.abs(x) < 1e-8 ? 0 : x, centerY + innerRadius * Math.sin(endAngle));
         }
         path.cubicArc(centerX, centerY, innerRadius, innerRadius, 0, endAngle, startAngle, 1);
         path.closePath();

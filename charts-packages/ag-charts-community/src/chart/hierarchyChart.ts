@@ -1,6 +1,6 @@
-import { BBox } from "../scene/bbox";
-import { ClipRect } from "../scene/clipRect";
-import { Chart } from "./chart";
+import { BBox } from '../scene/bbox';
+import { ClipRect } from '../scene/clipRect';
+import { Chart } from './chart';
 
 export class HierarchyChart extends Chart {
     static className = 'HierarchyChart';
@@ -70,7 +70,7 @@ export class HierarchyChart extends Chart {
         shrinkRect.height -= padding.top + captionAutoPadding + padding.bottom;
 
         this.seriesRect = shrinkRect;
-        this.series.forEach(series => {
+        this.series.forEach((series) => {
             series.group.translationX = Math.floor(shrinkRect.x);
             series.group.translationY = Math.floor(shrinkRect.y);
             series.update(); // this has to happen after the `updateAxes` call

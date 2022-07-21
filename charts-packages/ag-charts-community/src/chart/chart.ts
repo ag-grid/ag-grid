@@ -1,21 +1,21 @@
-import { Scene } from "../scene/scene";
-import { Group } from "../scene/group";
-import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from "./series/series";
-import { Padding } from "../util/padding";
-import { Node } from "../scene/node";
-import { Rect } from "../scene/shape/rect";
-import { Legend, LegendDatum } from "./legend";
-import { BBox } from "../scene/bbox";
-import { find } from "../util/array";
-import { SizeMonitor } from "../util/sizeMonitor";
-import { Caption } from "../caption";
-import { Observable, SourceEvent } from "../util/observable";
-import { ChartAxis, ChartAxisDirection } from "./chartAxis";
-import { createId } from "../util/id";
-import { PlacedLabel, placeLabels, PointLabelDatum, isPointLabelDatum } from "../util/labelPlacement";
-import { AgChartOptions } from "./agChartOptions";
-import { debouncedAnimationFrame, debouncedCallback } from "../util/render";
-import { CartesianSeries } from "./series/cartesian/cartesianSeries";
+import { Scene } from '../scene/scene';
+import { Group } from '../scene/group';
+import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from './series/series';
+import { Padding } from '../util/padding';
+import { Node } from '../scene/node';
+import { Rect } from '../scene/shape/rect';
+import { Legend, LegendDatum } from './legend';
+import { BBox } from '../scene/bbox';
+import { find } from '../util/array';
+import { SizeMonitor } from '../util/sizeMonitor';
+import { Caption } from '../caption';
+import { Observable, SourceEvent } from '../util/observable';
+import { ChartAxis, ChartAxisDirection } from './chartAxis';
+import { createId } from '../util/id';
+import { PlacedLabel, placeLabels, PointLabelDatum, isPointLabelDatum } from '../util/labelPlacement';
+import { AgChartOptions } from './agChartOptions';
+import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
+import { CartesianSeries } from './series/cartesian/cartesianSeries';
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
@@ -138,11 +138,13 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
         content = defaults.content || '',
         title = defaults.title || undefined,
         color = defaults.color || 'white',
-        backgroundColor = defaults.backgroundColor || '#888'
+        backgroundColor = defaults.backgroundColor || '#888',
     } = input;
 
-    const titleHtml = title ? `<div class="${Chart.defaultTooltipClass}-title"
-        style="color: ${color}; background-color: ${backgroundColor}">${title}</div>` : '';
+    const titleHtml = title
+        ? `<div class="${Chart.defaultTooltipClass}-title"
+        style="color: ${color}; background-color: ${backgroundColor}">${title}</div>`
+        : '';
 
     return `${titleHtml}<div class="${Chart.defaultTooltipClass}-content">${content}</div>`;
 }
@@ -179,13 +181,16 @@ export class ChartTooltip extends Observable {
         // Detect when the chart becomes invisible and hide the tooltip as well.
         if (window.IntersectionObserver) {
             const target = this.chart.scene.canvas.element;
-            const observer = new IntersectionObserver(entries => {
-                for (const entry of entries) {
-                    if (entry.target === target && entry.intersectionRatio === 0) {
-                        this.toggle(false);
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    for (const entry of entries) {
+                        if (entry.target === target && entry.intersectionRatio === 0) {
+                            this.toggle(false);
+                        }
                     }
-                }
-            }, { root: tooltipRoot });
+                },
+                { root: tooltipRoot }
+            );
             observer.observe(target);
             this.observer = observer;
         }
@@ -204,7 +209,8 @@ export class ChartTooltip extends Observable {
 
     isVisible(): boolean {
         const { element } = this;
-        if (element.classList) { // if not IE11
+        if (element.classList) {
+            // if not IE11
             return !element.classList.contains(Chart.defaultTooltipClass + '-hidden');
         }
 
@@ -254,15 +260,15 @@ export class ChartTooltip extends Observable {
             const maxLeft = window.innerWidth - tooltipRect.width - 1;
             if (left < minLeft) {
                 left = minLeft;
-                this.updateClass(true, this.constrained = true);
+                this.updateClass(true, (this.constrained = true));
             } else if (left > maxLeft) {
                 left = maxLeft;
-                this.updateClass(true, this.constrained = true);
+                this.updateClass(true, (this.constrained = true));
             }
 
             if (top < window.pageYOffset) {
                 top = meta.pageY + 20;
-                this.updateClass(true, this.constrained = true);
+                this.updateClass(true, (this.constrained = true));
             }
         }
 
@@ -348,7 +354,7 @@ export abstract class Chart extends Observable {
     protected _data: any = [];
     set data(data: any) {
         this._data = data;
-        this.series.forEach(series => series.data = data);
+        this.series.forEach((series) => (series.data = data));
     }
     get data(): any {
         return this._data;
@@ -425,7 +431,7 @@ export abstract class Chart extends Observable {
     get title() {
         return this._title;
     }
-    
+
     _subtitle?: Caption = undefined;
     set subtitle(caption: Caption | undefined) {
         const { root } = this.scene;
@@ -452,17 +458,17 @@ export abstract class Chart extends Observable {
         background.fill = 'white';
         root.appendChild(background);
 
-        const element = this.element = document.createElement('div');
+        const element = (this.element = document.createElement('div'));
         element.setAttribute('class', 'ag-chart-wrapper');
         element.style.position = 'relative';
 
-        this.scene = new Scene({document});
+        this.scene = new Scene({ document });
         this.scene.debug.consoleLog = this._debug;
         this.scene.root = root;
         this.scene.container = element;
         this.autoSize = true;
 
-        SizeMonitor.observe(this.element, size => {
+        SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
             this._lastAutoSize = [width, height];
 
@@ -526,13 +532,13 @@ export abstract class Chart extends Observable {
         }
     });
     public update(
-        type = ChartUpdateType.FULL, 
-        opts?: { forceNodeDataRefresh?: boolean, seriesToUpdate?: Iterable<Series> }
+        type = ChartUpdateType.FULL,
+        opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
     ) {
         const { forceNodeDataRefresh = false, seriesToUpdate = this.series } = opts || {};
 
         if (forceNodeDataRefresh) {
-            this.series.forEach(series => series.markNodeDataDirty());
+            this.series.forEach((series) => series.markNodeDataDirty());
         }
 
         for (const series of seriesToUpdate) {
@@ -545,7 +551,12 @@ export abstract class Chart extends Observable {
         }
     }
     private performUpdate(count: number) {
-        const { _performUpdateType: performUpdateType, firstRenderComplete, firstResizeReceived, extraDebugStats } = this;
+        const {
+            _performUpdateType: performUpdateType,
+            firstRenderComplete,
+            firstResizeReceived,
+            extraDebugStats,
+        } = this;
         const splits = [performance.now()];
 
         switch (performUpdateType) {
@@ -553,11 +564,11 @@ export abstract class Chart extends Observable {
             case ChartUpdateType.PROCESS_DATA:
                 this.processData();
                 splits.push(performance.now());
-                // Fall-through to next pipeline stage.
+            // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (!firstRenderComplete && !firstResizeReceived) {
                     if (this.debug) {
-                        console.log({firstRenderComplete, firstResizeReceived});
+                        console.log({ firstRenderComplete, firstResizeReceived });
                     }
                     // Reschedule if canvas size hasn't been set yet to avoid a race.
                     this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
@@ -567,19 +578,19 @@ export abstract class Chart extends Observable {
 
                 this.performLayout();
                 splits.push(performance.now());
-                // Fall-through to next pipeline stage.
+            // Fall-through to next pipeline stage.
             case ChartUpdateType.SERIES_UPDATE:
-                this.seriesToUpdate.forEach(series => {
+                this.seriesToUpdate.forEach((series) => {
                     series.update();
                 });
                 this.seriesToUpdate.clear();
                 splits.push(performance.now());
-                // Fall-through to next pipeline stage.
+            // Fall-through to next pipeline stage.
             case ChartUpdateType.SCENE_RENDER:
                 this.scene.render({ debugSplitTimes: splits, extraDebugStats });
                 this.firstRenderComplete = true;
                 this.extraDebugStats = {};
-                // Fall-through to next pipeline stage.
+            // Fall-through to next pipeline stage.
             case ChartUpdateType.NONE:
                 // Do nothing.
                 this._performUpdateType = ChartUpdateType.NONE;
@@ -589,7 +600,7 @@ export abstract class Chart extends Observable {
         if (this.debug) {
             console.log({
                 chart: this,
-                durationMs: Math.round((end - splits[0])*100) / 100,
+                durationMs: Math.round((end - splits[0]) * 100) / 100,
                 count,
                 performUpdateType: ChartUpdateType[performUpdateType],
             });
@@ -602,10 +613,10 @@ export abstract class Chart extends Observable {
 
     protected _axes: ChartAxis[] = [];
     set axes(values: ChartAxis[]) {
-        this._axes.forEach(axis => this.detachAxis(axis));
+        this._axes.forEach((axis) => this.detachAxis(axis));
         // make linked axes go after the regular ones (simulates stable sort by `linkedTo` property)
-        this._axes = values.filter(a => !a.linkedTo).concat(values.filter(a => a.linkedTo));
-        this._axes.forEach(axis => this.attachAxis(axis));
+        this._axes = values.filter((a) => !a.linkedTo).concat(values.filter((a) => a.linkedTo));
+        this._axes.forEach((axis) => this.attachAxis(axis));
     }
     get axes(): ChartAxis[] {
         return this._axes;
@@ -626,7 +637,7 @@ export abstract class Chart extends Observable {
     protected _series: Series[] = [];
     set series(values: Series[]) {
         this.removeAllSeries();
-        values.forEach(series => this.addSeries(series));
+        values.forEach((series) => this.addSeries(series));
     }
     get series(): Series[] {
         return this._series;
@@ -712,7 +723,7 @@ export abstract class Chart extends Observable {
     }
 
     removeAllSeries(): void {
-        this.series.forEach(series => {
+        this.series.forEach((series) => {
             this.freeSeries(series);
             this.seriesRoot.removeChild(series.group);
         });
@@ -720,9 +731,9 @@ export abstract class Chart extends Observable {
     }
 
     protected assignSeriesToAxes() {
-        this.axes.forEach(axis => {
+        this.axes.forEach((axis) => {
             axis.boundSeries = this.series.filter((s) => {
-                const seriesAxis =  axis.direction === ChartAxisDirection.X ? s.xAxis : s.yAxis;
+                const seriesAxis = axis.direction === ChartAxisDirection.X ? s.xAxis : s.yAxis;
                 return seriesAxis === axis;
             });
         });
@@ -732,29 +743,33 @@ export abstract class Chart extends Observable {
         // This method has to run before `assignSeriesToAxes`.
         const directionToAxesMap: { [key in ChartAxisDirection]?: ChartAxis[] } = {};
 
-        this.axes.forEach(axis => {
+        this.axes.forEach((axis) => {
             const direction = axis.direction;
             const directionAxes = directionToAxesMap[direction] || (directionToAxesMap[direction] = []);
             directionAxes.push(axis);
         });
 
-        this.series.forEach(series => {
+        this.series.forEach((series) => {
             series.directions.forEach((direction) => {
-                const currentAxis =  direction === ChartAxisDirection.X ? series.xAxis : series.yAxis;
+                const currentAxis = direction === ChartAxisDirection.X ? series.xAxis : series.yAxis;
                 if (currentAxis && !force) {
                     return;
                 }
 
                 const directionAxes = directionToAxesMap[direction];
                 if (!directionAxes) {
-                    console.warn(`AG Charts - no available axis for direction [${direction}]; check series and axes configuration.`)
+                    console.warn(
+                        `AG Charts - no available axis for direction [${direction}]; check series and axes configuration.`
+                    );
                     return;
                 }
 
                 const seriesKeys = series.getKeys(direction);
                 const newAxis = this.findMatchingAxis(directionAxes, series.getKeys(direction));
                 if (!newAxis) {
-                    console.warn(`AG Charts - no matching axis for direction [${direction}] and keys [${seriesKeys}]; check series and axes configuration.`)
+                    console.warn(
+                        `AG Charts - no matching axis for direction [${direction}] and keys [${seriesKeys}]; check series and axes configuration.`
+                    );
                     return;
                 }
 
@@ -778,7 +793,7 @@ export abstract class Chart extends Observable {
             if (!directionKeys) {
                 continue;
             }
-            
+
             for (const directionKey of directionKeys) {
                 if (axisKeys.indexOf(directionKey) >= 0) {
                     return axis;
@@ -793,18 +808,18 @@ export abstract class Chart extends Observable {
 
             this.background.width = this.width;
             this.background.height = this.height;
-    
+
             this.update(ChartUpdateType.PERFORM_LAYOUT, { forceNodeDataRefresh: true });
         }
     }
 
     processData(): void {
-        if (this.axes.length > 0 || this.series.some(s => s instanceof CartesianSeries)) {
+        if (this.axes.length > 0 || this.series.some((s) => s instanceof CartesianSeries)) {
             this.assignAxesToSeries(true);
             this.assignSeriesToAxes();
         }
 
-        this.series.forEach(s => s.processData());
+        this.series.forEach((s) => s.processData());
 
         this.updateLegend();
     }
@@ -812,7 +827,7 @@ export abstract class Chart extends Observable {
     private nodeData: Map<Series<any>, SeriesNodeDataContext<any>[]> = new Map();
     createNodeData(): void {
         this.nodeData.clear();
-        this.series.forEach(s => {
+        this.series.forEach((s) => {
             const data = s.visible ? s.createNodeData() : [];
             this.nodeData.set(s, data);
         });
@@ -849,15 +864,18 @@ export abstract class Chart extends Observable {
     private updateLegend() {
         const legendData: LegendDatum[] = [];
 
-        this.series.filter(s => s.showInLegend).forEach(series => series.listSeriesItems(legendData));
+        this.series.filter((s) => s.showInLegend).forEach((series) => series.listSeriesItems(legendData));
 
         const { formatter } = this.legend.item.label;
         if (formatter) {
-            legendData.forEach(datum => datum.label.text = formatter({
-                id: datum.id,
-                itemId: datum.itemId,
-                value: datum.label.text
-            }));
+            legendData.forEach(
+                (datum) =>
+                    (datum.label.text = formatter({
+                        id: datum.id,
+                        itemId: datum.itemId,
+                        value: datum.label.text,
+                    }))
+            );
         }
 
         this.legend.data = legendData;
@@ -889,7 +907,7 @@ export abstract class Chart extends Observable {
             return {};
         }
         subtitle.node.visible = title.enabled && subtitle.enabled;
-        
+
         if (title.enabled && subtitle.enabled) {
             subtitle.node.x = this.width / 2;
             subtitle.node.y = paddingTop + spacing;
@@ -923,7 +941,7 @@ export abstract class Chart extends Observable {
             case 'bottom':
                 legend.performLayout(width - legendSpacing * 2, 0);
                 legendBBox = legendGroup.computeBBox();
-                legendGroup.visible = legendBBox.height < Math.floor((height * 0.5)); // Remove legend if it takes up more than 50% of the chart height.
+                legendGroup.visible = legendBBox.height < Math.floor(height * 0.5); // Remove legend if it takes up more than 50% of the chart height.
 
                 if (legendGroup.visible) {
                     translationX = (width - legendBBox.width) / 2 - legendBBox.x;
@@ -939,7 +957,7 @@ export abstract class Chart extends Observable {
             case 'top':
                 legend.performLayout(width - legendSpacing * 2, 0);
                 legendBBox = legendGroup.computeBBox();
-                legendGroup.visible = legendBBox.height < Math.floor((height * 0.5));
+                legendGroup.visible = legendBBox.height < Math.floor(height * 0.5);
 
                 if (legendGroup.visible) {
                     translationX = (width - legendBBox.width) / 2 - legendBBox.x;
@@ -955,7 +973,7 @@ export abstract class Chart extends Observable {
             case 'left':
                 legend.performLayout(width, height - legendSpacing * 2);
                 legendBBox = legendGroup.computeBBox();
-                legendGroup.visible = legendBBox.width < Math.floor((width * 0.5)); // Remove legend if it takes up more than 50% of the chart width.
+                legendGroup.visible = legendBBox.width < Math.floor(width * 0.5); // Remove legend if it takes up more than 50% of the chart width.
 
                 if (legendGroup.visible) {
                     translationX = legendSpacing - legendBBox.x;
@@ -971,7 +989,7 @@ export abstract class Chart extends Observable {
             default: // case 'right':
                 legend.performLayout(width, height - legendSpacing * 2);
                 legendBBox = legendGroup.computeBBox();
-                legendGroup.visible = legendBBox.width < Math.floor((width * 0.5));
+                legendGroup.visible = legendBBox.width < Math.floor(width * 0.5);
 
                 if (legendGroup.visible) {
                     translationX = width - legendBBox.width - legendBBox.x - legendSpacing;
@@ -1023,18 +1041,25 @@ export abstract class Chart extends Observable {
     }
 
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
-    private pickSeriesNode(x: number, y: number): {
-        series: Series<any>,
-        datum: SeriesNodeDatum,
-    } | undefined {
-        const { tooltip: { tracking } } = this;
+    private pickSeriesNode(
+        x: number,
+        y: number
+    ):
+        | {
+              series: Series<any>;
+              datum: SeriesNodeDatum;
+          }
+        | undefined {
+        const {
+            tooltip: { tracking },
+        } = this;
 
         const start = performance.now();
 
         // Disable 'nearest match' options if tooltip.tracking is enabled.
         const pickModes = tracking ? undefined : [SeriesNodePickMode.EXACT_SHAPE_MATCH];
 
-        let result: { series: Series<any>, datum: SeriesNodeDatum, distance: number } | undefined = undefined;
+        let result: { series: Series<any>; datum: SeriesNodeDatum; distance: number } | undefined = undefined;
         for (const series of this.series) {
             if (!series.visible || !series.group.visible) {
                 continue;
@@ -1052,12 +1077,11 @@ export abstract class Chart extends Observable {
         }
 
         this.extraDebugStats['pickSeriesNode'] = Math.round(
-            (this.extraDebugStats['pickSeriesNode'] ?? 0) +
-            (performance.now() - start)
+            (this.extraDebugStats['pickSeriesNode'] ?? 0) + (performance.now() - start)
         );
 
         return result;
-}
+    }
 
     lastPick?: {
         datum: SeriesNodeDatum;
@@ -1141,7 +1165,7 @@ export abstract class Chart extends Observable {
         }
         this.fireEvent<ChartClickEvent>({
             type: 'click',
-            event
+            event,
         });
     }
 
@@ -1164,7 +1188,12 @@ export abstract class Chart extends Observable {
     }
 
     private checkLegendClick(event: MouseEvent): boolean {
-        const { legend, legend: { listeners: { legendItemClick } } } = this;
+        const {
+            legend,
+            legend: {
+                listeners: { legendItemClick },
+            },
+        } = this;
         const datum = legend.getDatumForPoint(event.offsetX, event.offsetY);
         if (!datum) {
             return false;
@@ -1189,7 +1218,7 @@ export abstract class Chart extends Observable {
             this.highlightedDatum = {
                 series,
                 itemId,
-                datum: undefined
+                datum: undefined,
             };
         }
 
@@ -1240,23 +1269,26 @@ export abstract class Chart extends Observable {
             const { id, itemId, enabled } = datum;
 
             if (enabled) {
-                const series = find(this.series, series => series.id === id);
+                const series = find(this.series, (series) => series.id === id);
 
                 if (series) {
                     this.highlightedDatum = {
                         series,
                         itemId,
-                        datum: undefined
+                        datum: undefined,
                     };
                 }
             }
         }
 
         // Careful to only schedule updates when necessary.
-        if ((this.highlightedDatum && !oldHighlightedDatum) ||
-            (this.highlightedDatum && oldHighlightedDatum &&
+        if (
+            (this.highlightedDatum && !oldHighlightedDatum) ||
+            (this.highlightedDatum &&
+                oldHighlightedDatum &&
                 (this.highlightedDatum.series !== oldHighlightedDatum.series ||
-                    this.highlightedDatum.itemId !== oldHighlightedDatum.itemId))) {
+                    this.highlightedDatum.itemId !== oldHighlightedDatum.itemId))
+        ) {
             this.update(ChartUpdateType.SERIES_UPDATE);
         }
     }
@@ -1264,7 +1296,9 @@ export abstract class Chart extends Observable {
     private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum) {
         const { lastPick } = this;
         if (lastPick) {
-            if (lastPick.datum === datum) { return; }
+            if (lastPick.datum === datum) {
+                return;
+            }
         }
 
         this.changeHighlightDatum({
@@ -1298,11 +1332,11 @@ export abstract class Chart extends Observable {
         }
 
         return meta;
-}
+    }
 
     highlightedDatum?: SeriesNodeDatum;
 
-    changeHighlightDatum(newPick?: { datum: SeriesNodeDatum, event?: MouseEvent}) {
+    changeHighlightDatum(newPick?: { datum: SeriesNodeDatum; event?: MouseEvent }) {
         const seriesToUpdate: Set<Series> = new Set<Series>();
         const { datum: { series: newSeries = undefined } = {}, datum = undefined } = newPick || {};
         const { lastPick: { datum: { series: lastSeries = undefined } = {} } = {} } = this;

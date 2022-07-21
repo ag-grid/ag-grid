@@ -1,5 +1,5 @@
-import number from "./number";
-import { Color } from "../util/color";
+import number from './number';
+import { Color } from '../util/color';
 
 export default function (a: Color | string, b: Color | string): (t: number) => string {
     if (typeof a === 'string') {
@@ -24,5 +24,5 @@ export default function (a: Color | string, b: Color | string): (t: number) => s
 
     return function (t: number) {
         return Color.fromArray([red(t), green(t), blue(t), alpha(t)]).toRgbaString();
-    }
+    };
 }

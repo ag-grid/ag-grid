@@ -1,4 +1,4 @@
-import { cubicSegmentIntersections, segmentIntersection } from "./intersection";
+import { cubicSegmentIntersections, segmentIntersection } from './intersection';
 
 export class Path2D {
     // The methods of this class will likely be called many times per animation frame,
@@ -35,13 +35,13 @@ export class Path2D {
                 return true;
             }
         }
-        
+
         for (let i = 0; i < this.params.length; i++) {
             if (this.params[i] !== this.previousParams[i]) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -60,11 +60,7 @@ export class Path2D {
                     ctx.lineTo(params[j++], params[j++]);
                     break;
                 case 'C':
-                    ctx.bezierCurveTo(
-                        params[j++], params[j++],
-                        params[j++], params[j++],
-                        params[j++], params[j++]
-                    );
+                    ctx.bezierCurveTo(params[j++], params[j++], params[j++], params[j++], params[j++], params[j++]);
                     break;
                 case 'Z':
                     ctx.closePath();
@@ -123,7 +119,9 @@ export class Path2D {
         // Convert from endpoint to center parametrization:
         // https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
         const xy = this.xy;
-        if (!xy) { return; }
+        if (!xy) {
+            return;
+        }
 
         if (rx < 0) {
             rx = -rx;
@@ -138,7 +136,7 @@ export class Path2D {
         const hdy = (y1 - y2) / 2;
         const sinPhi = Math.sin(rotation);
         const cosPhi = Math.cos(rotation);
-        const xp =  cosPhi * hdx + sinPhi * hdy;
+        const xp = cosPhi * hdx + sinPhi * hdy;
         const yp = -sinPhi * hdx + cosPhi * hdy;
 
         const ratX = xp / rx;
@@ -159,7 +157,7 @@ export class Path2D {
             if (fA === fS) {
                 lambda = -lambda;
             }
-            cpx =  lambda * rx * ratY;
+            cpx = lambda * rx * ratY;
             cpy = -lambda * ry * ratX;
             cx += cosPhi * cpx - sinPhi * cpy;
             cy += sinPhi * cpx + cosPhi * cpy;
@@ -185,9 +183,18 @@ export class Path2D {
      * @param anticlockwise The arc control points are always placed clockwise from `theta1` to `theta2`,
      * even when `theta1 > theta2`, unless this flag is set to `1`.
      */
-    static cubicArc(commands: string[], params: number[],
-                    cx: number, cy: number, rx: number, ry: number,
-                    phi: number, theta1: number, theta2: number, anticlockwise: number) {
+    static cubicArc(
+        commands: string[],
+        params: number[],
+        cx: number,
+        cy: number,
+        rx: number,
+        ry: number,
+        phi: number,
+        theta1: number,
+        theta2: number,
+        anticlockwise: number
+    ) {
         if (anticlockwise) {
             const temp = theta1;
             theta1 = theta2;
@@ -214,8 +221,8 @@ export class Path2D {
         // 3) rotate elliptical arc by φ
         // |cos(φ) -sin(φ)| |sx  0| |cos(θ) -sin(θ)| -> |xx xy|
         // |sin(φ)  cos(φ)| | 0 sy| |sin(θ)  cos(θ)| -> |yx yy|
-        let xx =  cosPhi * cosTheta1 * rx - sinPhi * sinTheta1 * ry;
-        let yx =  sinPhi * cosTheta1 * rx + cosPhi * sinTheta1 * ry;
+        let xx = cosPhi * cosTheta1 * rx - sinPhi * sinTheta1 * ry;
+        let yx = sinPhi * cosTheta1 * rx + cosPhi * sinTheta1 * ry;
         let xy = -cosPhi * sinTheta1 * rx - sinPhi * cosTheta1 * ry;
         let yy = -sinPhi * sinTheta1 * rx + cosPhi * cosTheta1 * ry;
 
@@ -243,9 +250,12 @@ export class Path2D {
             // Revert this commit when fixed ^^.
             const lastX = xy + cx;
             params.push(
-                xx + xy * f90 + cx, yx + yy * f90 + cy,
-                xx * f90 + xy + cx, yx * f90 + yy + cy,
-                Math.abs(lastX) < 1e-8 ? 0 : lastX, yy + cy
+                xx + xy * f90 + cx,
+                yx + yy * f90 + cy,
+                xx * f90 + xy + cx,
+                yx * f90 + yy + cy,
+                Math.abs(lastX) < 1e-8 ? 0 : lastX,
+                yy + cy
             );
             // Prepend π/2 rotation matrix.
             // |xx xy| | 0 1| -> | xy -xx|
@@ -266,7 +276,7 @@ export class Path2D {
             yy = -temp;
         }
         if (theta2) {
-            const f = 4 / 3 * Math.tan(theta2 / 4);
+            const f = (4 / 3) * Math.tan(theta2 / 4);
             const sinPhi2 = Math.sin(theta2);
             const cosPhi2 = Math.cos(theta2);
             const C2x = cosPhi2 + f * sinPhi2;
@@ -276,9 +286,12 @@ export class Path2D {
             // Revert this commit when fixed ^^.
             const lastX = xx * cosPhi2 + xy * sinPhi2 + cx;
             params.push(
-                xx + xy * f + cx, yx + yy * f + cy,
-                xx * C2x + xy * C2y + cx, yx * C2x + yy * C2y + cy,
-                Math.abs(lastX) < 1e-8 ? 0 : lastX, yx * cosPhi2 + yy * sinPhi2 + cy
+                xx + xy * f + cx,
+                yx + yy * f + cy,
+                xx * C2x + xy * C2y + cx,
+                yx * C2x + yy * C2y + cy,
+                Math.abs(lastX) < 1e-8 ? 0 : lastX,
+                yx * cosPhi2 + yy * sinPhi2 + cy
             );
         }
         if (anticlockwise) {
@@ -293,8 +306,16 @@ export class Path2D {
         }
     }
 
-    cubicArc(cx: number, cy: number, rx: number, ry: number,
-             phi: number, theta1: number, theta2: number, anticlockwise: number) {
+    cubicArc(
+        cx: number,
+        cy: number,
+        rx: number,
+        ry: number,
+        phi: number,
+        theta1: number,
+        theta2: number,
+        anticlockwise: number
+    ) {
         const commands = this.commands;
         const params = this.params;
         const start = commands.length;
@@ -332,8 +353,8 @@ export class Path2D {
 
             for (let i = 0; i < last; i += 2) {
                 newPoints.push(
-                    (1 - t) * points[i    ] + t * points[i + 2], // x
-                    (1 - t) * points[i + 1] + t * points[i + 3]  // y
+                    (1 - t) * points[i] + t * points[i + 2], // x
+                    (1 - t) * points[i + 1] + t * points[i + 3] // y
                 );
             }
             return this.deCasteljau(newPoints, t);
@@ -369,9 +390,12 @@ export class Path2D {
         }
         // See https://pomax.github.io/bezierinfo/#reordering
         this.cubicCurveTo(
-            (this.xy![0] + 2 * cx) / 3, (this.xy![1] + 2 * cy) / 3, // 1/3 start + 2/3 control
-            (2 * cx + x) / 3, (2 * cy + y) / 3,                     // 2/3 control + 1/3 end
-            x, y
+            (this.xy![0] + 2 * cx) / 3,
+            (this.xy![1] + 2 * cy) / 3, // 1/3 start + 2/3 control
+            (2 * cx + x) / 3,
+            (2 * cy + y) / 3, // 2/3 control + 1/3 end
+            x,
+            y
         );
     }
 
@@ -451,17 +475,24 @@ export class Path2D {
                     sy = py = params[pi++];
                     break;
                 case 'L':
-                    if (segmentIntersection(px, py, px = params[pi++], py = params[pi++], ox, oy, x, y)) {
+                    if (segmentIntersection(px, py, (px = params[pi++]), (py = params[pi++]), ox, oy, x, y)) {
                         intersectionCount++;
                     }
                     break;
                 case 'C':
                     intersectionCount += cubicSegmentIntersections(
-                        px, py,
-                        params[pi++], params[pi++],
-                        params[pi++], params[pi++],
-                        px = params[pi++], py = params[pi++],
-                        ox, oy, x, y
+                        px,
+                        py,
+                        params[pi++],
+                        params[pi++],
+                        params[pi++],
+                        params[pi++],
+                        (px = params[pi++]),
+                        (py = params[pi++]),
+                        ox,
+                        oy,
+                        x,
+                        y
                     ).length;
                     break;
                 case 'Z':
@@ -488,18 +519,23 @@ export class Path2D {
      * then extract the command letter and parameters from each substring.
      * @param value
      */
-    static parseSvgPath(value: string): {command: string, params: number[]}[] {
-        return value.trim().split(Path2D.splitCommandsRe).map(part => {
-            const strParams = part.match(Path2D.matchParamsRe);
-            return {
-                command: part.substr(0, 1),
-                params: strParams ? strParams.map(parseFloat) : []
-            };
-        });
+    static parseSvgPath(value: string): { command: string; params: number[] }[] {
+        return value
+            .trim()
+            .split(Path2D.splitCommandsRe)
+            .map((part) => {
+                const strParams = part.match(Path2D.matchParamsRe);
+                return {
+                    command: part.substr(0, 1),
+                    params: strParams ? strParams.map(parseFloat) : [],
+                };
+            });
     }
 
     static prettifySvgPath(value: string): string {
-        return Path2D.parseSvgPath(value).map(d => d.command + d.params.join(',')).join('\n');
+        return Path2D.parseSvgPath(value)
+            .map((d) => d.command + d.params.join(','))
+            .join('\n');
     }
 
     /**
@@ -537,49 +573,48 @@ export class Path2D {
 
         // But that will make compiler complain about x/y, cpx/cpy
         // being used without being set first.
-        parts.forEach(part => {
+        parts.forEach((part) => {
             const p = part.params;
             const n = p.length;
             let i = 0;
 
             switch (part.command) {
                 case 'M':
-                    this.moveTo(x = p[i++], y = p[i++]);
+                    this.moveTo((x = p[i++]), (y = p[i++]));
                     while (i < n) {
-                        this.lineTo(x = p[i++], y = p[i++]);
+                        this.lineTo((x = p[i++]), (y = p[i++]));
                     }
                     break;
                 case 'm':
-                    this.moveTo(x += p[i++], y += p[i++]);
+                    this.moveTo((x += p[i++]), (y += p[i++]));
                     while (i < n) {
-                        this.lineTo(x += p[i++], y += p[i++]);
+                        this.lineTo((x += p[i++]), (y += p[i++]));
                     }
                     break;
                 case 'L':
                     while (i < n) {
-                        this.lineTo(x = p[i++], y = p[i++]);
+                        this.lineTo((x = p[i++]), (y = p[i++]));
                     }
                     break;
                 case 'l':
                     while (i < n) {
-                        this.lineTo(x += p[i++], y += p[i++]);
+                        this.lineTo((x += p[i++]), (y += p[i++]));
                     }
                     break;
                 case 'C':
                     while (i < n) {
-                        this.cubicCurveTo(
-                            p[i++], p[i++],
-                            cpx = p[i++], cpy = p[i++],
-                            x = p[i++], y = p[i++]
-                        );
+                        this.cubicCurveTo(p[i++], p[i++], (cpx = p[i++]), (cpy = p[i++]), (x = p[i++]), (y = p[i++]));
                     }
                     break;
                 case 'c':
                     while (i < n) {
                         this.cubicCurveTo(
-                            x + p[i++], y + p[i++],
-                            cpx = x + p[i++], cpy = y + p[i++],
-                            x += p[i++], y += p[i++]
+                            x + p[i++],
+                            y + p[i++],
+                            (cpx = x + p[i++]),
+                            (cpy = y + p[i++]),
+                            (x += p[i++]),
+                            (y += p[i++])
                         );
                     }
                     break;
@@ -587,9 +622,12 @@ export class Path2D {
                     checkCubicCP();
                     while (i < n) {
                         this.cubicCurveTo(
-                            x + x - cpx, y + y - cpy,
-                            cpx = p[i++], cpy = p[i++],
-                            x = p[i++], y = p[i++]
+                            x + x - cpx,
+                            y + y - cpy,
+                            (cpx = p[i++]),
+                            (cpy = p[i++]),
+                            (x = p[i++]),
+                            (y = p[i++])
                         );
                     }
                     break;
@@ -597,63 +635,60 @@ export class Path2D {
                     checkCubicCP();
                     while (i < n) {
                         this.cubicCurveTo(
-                            x + x - cpx, y + y - cpy,
-                            cpx = x + p[i++], cpy = y + p[i++],
-                            x += p[i++], y += p[i++]
+                            x + x - cpx,
+                            y + y - cpy,
+                            (cpx = x + p[i++]),
+                            (cpy = y + p[i++]),
+                            (x += p[i++]),
+                            (y += p[i++])
                         );
                     }
                     break;
                 case 'Q':
                     while (i < n) {
-                        this.quadraticCurveTo(
-                            cpx = p[i++], cpy = p[i++],
-                            x = p[i++], y = p[i++]
-                        );
+                        this.quadraticCurveTo((cpx = p[i++]), (cpy = p[i++]), (x = p[i++]), (y = p[i++]));
                     }
                     break;
                 case 'q':
                     while (i < n) {
-                        this.quadraticCurveTo(
-                            cpx = x + p[i++], cpy = y + p[i++],
-                            x += p[i++], y += p[i++]
-                        );
+                        this.quadraticCurveTo((cpx = x + p[i++]), (cpy = y + p[i++]), (x += p[i++]), (y += p[i++]));
                     }
                     break;
                 case 'T':
                     checkQuadraticCP();
                     while (i < n) {
-                        this.quadraticCurveTo(
-                            cpx = x + x - cpx, cpy = y + y - cpy,
-                            x = p[i++], y = p[i++]
-                        );
+                        this.quadraticCurveTo((cpx = x + x - cpx), (cpy = y + y - cpy), (x = p[i++]), (y = p[i++]));
                     }
                     break;
                 case 't':
                     checkQuadraticCP();
                     while (i < n) {
-                        this.quadraticCurveTo(
-                            cpx = x + x - cpx, cpy = y + y - cpy,
-                            x += p[i++], y += p[i++]
-                        );
+                        this.quadraticCurveTo((cpx = x + x - cpx), (cpy = y + y - cpy), (x += p[i++]), (y += p[i++]));
                     }
                     break;
                 case 'A':
                     while (i < n) {
                         this.arcTo(
-                            p[i++], p[i++],
-                            p[i++] * Math.PI / 180,
-                            p[i++], p[i++],
-                            x = p[i++], y = p[i++]
+                            p[i++],
+                            p[i++],
+                            (p[i++] * Math.PI) / 180,
+                            p[i++],
+                            p[i++],
+                            (x = p[i++]),
+                            (y = p[i++])
                         );
                     }
                     break;
                 case 'a':
                     while (i < n) {
                         this.arcTo(
-                            p[i++], p[i++],
-                            p[i++] * Math.PI / 180,
-                            p[i++], p[i++],
-                            x += p[i++], y += p[i++]
+                            p[i++],
+                            p[i++],
+                            (p[i++] * Math.PI) / 180,
+                            p[i++],
+                            p[i++],
+                            (x += p[i++]),
+                            (y += p[i++])
                         );
                     }
                     break;
@@ -663,22 +698,22 @@ export class Path2D {
                     break;
                 case 'H':
                     while (i < n) {
-                        this.lineTo(x = p[i++], y);
+                        this.lineTo((x = p[i++]), y);
                     }
                     break;
                 case 'h':
                     while (i < n) {
-                        this.lineTo(x += p[i++], y);
+                        this.lineTo((x += p[i++]), y);
                     }
                     break;
                 case 'V':
                     while (i < n) {
-                        this.lineTo(x, y = p[i++]);
+                        this.lineTo(x, (y = p[i++]));
                     }
                     break;
                 case 'v':
                     while (i < n) {
-                        this.lineTo(x, y += p[i++]);
+                        this.lineTo(x, (y += p[i++]));
                     }
                     break;
             }
@@ -702,9 +737,9 @@ export class Path2D {
                     out.push('L' + p[pi++] + ',' + p[pi++]);
                     break;
                 case 'C':
-                    out.push('C' + p[pi++] + ',' + p[pi++] + ' ' +
-                        p[pi++] + ',' + p[pi++] + ' ' +
-                        p[pi++] + ',' + p[pi++]);
+                    out.push(
+                        'C' + p[pi++] + ',' + p[pi++] + ' ' + p[pi++] + ',' + p[pi++] + ' ' + p[pi++] + ',' + p[pi++]
+                    );
                     break;
                 case 'Z':
                     out.push('Z');
@@ -753,13 +788,10 @@ export class Path2D {
         let py: number;
         let i = 0; // current parameter
 
-        this.commands.forEach(command => {
+        this.commands.forEach((command) => {
             switch (command) {
                 case 'M':
-                    path = [
-                        sx = px = params[i++],
-                        sy = py = params[i++]
-                    ];
+                    path = [(sx = px = params[i++]), (sy = py = params[i++])];
                     paths.push(path);
                     break;
                 case 'L':
@@ -768,23 +800,32 @@ export class Path2D {
                     // Place control points along the line `a + (b - a) * t`
                     // at t = 1/3 and 2/3:
                     path.push(
-                        (px + px + x) / 3, (py + py + y) / 3,
-                        (px + x + x) / 3, (py + y + y) / 3,
-                        px = x, py = y
+                        (px + px + x) / 3,
+                        (py + py + y) / 3,
+                        (px + x + x) / 3,
+                        (py + y + y) / 3,
+                        (px = x),
+                        (py = y)
                     );
                     break;
                 case 'C':
                     path.push(
-                        params[i++], params[i++],
-                        params[i++], params[i++],
-                        px = params[i++], py = params[i++]
+                        params[i++],
+                        params[i++],
+                        params[i++],
+                        params[i++],
+                        (px = params[i++]),
+                        (py = params[i++])
                     );
                     break;
                 case 'Z':
                     path.push(
-                        (px + px + sx) / 3, (py + py + sy) / 3,
-                        (px + sx + sx) / 3, (py + sy + sy) / 3,
-                        px = sx, py = sy
+                        (px + px + sx) / 3,
+                        (py + py + sy) / 3,
+                        (px + sx + sx) / 3,
+                        (py + sy + sy) / 3,
+                        (px = sx),
+                        (py = sy)
                     );
                     break;
             }

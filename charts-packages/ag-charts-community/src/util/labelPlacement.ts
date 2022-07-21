@@ -34,25 +34,40 @@ function circleRectOverlap(cx: number, cy: number, r: number, x: number, y: numb
     // Find distance to closest edges.
     const dx = cx - edgeX;
     const dy = cy - edgeY;
-    const d = Math.sqrt((dx * dx) + (dy * dy));
+    const d = Math.sqrt(dx * dx + dy * dy);
     return d <= r;
 }
 
-function rectRectOverlap(x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number): boolean {
-    const xOverlap = (x1 + w1) > x2 && x1 < (x2 + w2);
-    const yOverlap = (y1 + h1) > y2 && y1 < (y2 + h2);
+function rectRectOverlap(
+    x1: number,
+    y1: number,
+    w1: number,
+    h1: number,
+    x2: number,
+    y2: number,
+    w2: number,
+    h2: number
+): boolean {
+    const xOverlap = x1 + w1 > x2 && x1 < x2 + w2;
+    const yOverlap = y1 + h1 > y2 && y1 < y2 + h2;
     return xOverlap && yOverlap;
 }
 
-function rectContainsRect(r1x: number, r1y: number, r1w: number, r1h: number, r2x: number, r2y: number, r2w: number, r2h: number) {
-    return (r2x + r2w) < (r1x + r1w) && (r2x) > (r1x) && (r2y) > (r1y) && (r2y + r2h) < (r1y + r1h);
+function rectContainsRect(
+    r1x: number,
+    r1y: number,
+    r1w: number,
+    r1h: number,
+    r2x: number,
+    r2y: number,
+    r2w: number,
+    r2h: number
+) {
+    return r2x + r2w < r1x + r1w && r2x > r1x && r2y > r1y && r2y + r2h < r1y + r1h;
 }
 
 export function isPointLabelDatum(x: any): x is PointLabelDatum {
-    return x != null && 
-        typeof x.point === 'object' &&
-        typeof x.size === 'number' &&
-        typeof x.label === 'object';
+    return x != null && typeof x.point === 'object' && typeof x.size === 'number' && typeof x.label === 'object';
 }
 
 /**
@@ -60,12 +75,16 @@ export function isPointLabelDatum(x: any): x is PointLabelDatum {
  * @param bounds Bounds to fit the labels into. If a label can't be fully contained, it doesn't fit.
  * @returns Placed labels for the given series (in the given order).
  */
-export function placeLabels(data: readonly (readonly PointLabelDatum[])[], bounds?: Bounds, padding = 5): PlacedLabel[][] {
+export function placeLabels(
+    data: readonly (readonly PointLabelDatum[])[],
+    bounds?: Bounds,
+    padding = 5
+): PlacedLabel[][] {
     const result: PlacedLabel[][] = [];
 
-    data = data.map(d => d.slice().sort((a, b) => b.size - a.size));
+    data = data.map((d) => d.slice().sort((a, b) => b.size - a.size));
     for (let j = 0; j < data.length; j++) {
-        const labels: PlacedLabel[] = result[j] = [];
+        const labels: PlacedLabel[] = (result[j] = []);
         const datum = data[j];
         if (!(datum && datum.length && datum[0].label)) {
             continue;
@@ -78,17 +97,22 @@ export function placeLabels(data: readonly (readonly PointLabelDatum[])[], bound
             const y = d.point.y - r - l.height - padding;
             const { width, height } = l;
 
-            const withinBounds = !bounds || rectContainsRect(bounds.x, bounds.y, bounds.width, bounds.height, x, y, width, height);
+            const withinBounds =
+                !bounds || rectContainsRect(bounds.x, bounds.y, bounds.width, bounds.height, x, y, width, height);
             if (!withinBounds) {
                 continue;
             }
 
-            const overlapPoints = data.some(datum => datum.some(d => circleRectOverlap(d.point.x, d.point.y, d.size * 0.5, x, y, width, height)));
+            const overlapPoints = data.some((datum) =>
+                datum.some((d) => circleRectOverlap(d.point.x, d.point.y, d.size * 0.5, x, y, width, height))
+            );
             if (overlapPoints) {
                 continue;
             }
 
-            const overlapLabels = result.some(labels => labels.some(l => rectRectOverlap(l.x, l.y, l.width, l.height, x, y, width, height)));
+            const overlapLabels = result.some((labels) =>
+                labels.some((l) => rectRectOverlap(l.x, l.y, l.width, l.height, x, y, width, height))
+            );
             if (overlapLabels) {
                 continue;
             }

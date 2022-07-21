@@ -1,8 +1,8 @@
-import { Chart } from "./chart";
-import { Node } from "../scene/node";
-import { PolarSeries } from "./series/polar/polarSeries";
-import { Padding } from "../util/padding";
-import { BBox } from "../scene/bbox";
+import { Chart } from './chart';
+import { Node } from '../scene/node';
+import { PolarSeries } from './series/polar/polarSeries';
+import { Padding } from '../util/padding';
+import { BBox } from '../scene/bbox';
 
 export class PolarChart extends Chart {
     static className = 'PolarChart';
@@ -66,7 +66,7 @@ export class PolarChart extends Chart {
         const centerY = shrinkRect.y + shrinkRect.height / 2;
         const radius = Math.max(0, Math.min(shrinkRect.width, shrinkRect.height) / 2); // radius shouldn't be negative
 
-        this.series.forEach(series => {
+        this.series.forEach((series) => {
             if (series instanceof PolarSeries) {
                 series.centerX = centerX;
                 series.centerY = centerY;

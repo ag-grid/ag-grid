@@ -1,22 +1,31 @@
-import { Shape } from "./shape";
-import { chainObjects } from "../../util/object";
-import { BBox } from "../bbox";
-import { HdpiCanvas } from "../../canvas/hdpiCanvas";
-import { RedrawType, SceneChangeDetection, RenderContext } from "../node";
+import { Shape } from './shape';
+import { chainObjects } from '../../util/object';
+import { BBox } from '../bbox';
+import { HdpiCanvas } from '../../canvas/hdpiCanvas';
+import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
 
 export type FontStyle = 'normal' | 'italic' | 'oblique';
-export type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
+export type FontWeight =
+    | 'normal'
+    | 'bold'
+    | 'bolder'
+    | 'lighter'
+    | '100'
+    | '200'
+    | '300'
+    | '400'
+    | '500'
+    | '600'
+    | '700'
+    | '800'
+    | '900';
 
-export function SceneFontChangeDetection(opts?: {
-    redraw?: RedrawType,
-    changeCb?: (t: any) => any,
-}) {
+export function SceneFontChangeDetection(opts?: { redraw?: RedrawType; changeCb?: (t: any) => any }) {
     const { redraw = RedrawType.MAJOR, changeCb } = opts || {};
 
     return SceneChangeDetection({ redraw, type: 'font', changeCb });
 }
 export class Text extends Shape {
-
     static className = 'Text';
 
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
@@ -25,7 +34,7 @@ export class Text extends Shape {
         fontWeight: undefined,
         fontSize: 10,
         fontFamily: 'sans-serif',
-        textBaseline: 'alphabetic' as CanvasTextBaseline
+        textBaseline: 'alphabetic' as CanvasTextBaseline,
     });
 
     @SceneChangeDetection({ redraw: RedrawType.MAJOR })
@@ -83,14 +92,11 @@ export class Text extends Shape {
     lineHeight: number = 14;
 
     computeBBox(): BBox {
-        return HdpiCanvas.has.textMetrics
-            ? this.getPreciseBBox()
-            : this.getApproximateBBox();
+        return HdpiCanvas.has.textMetrics ? this.getPreciseBBox() : this.getApproximateBBox();
     }
 
     private getPreciseBBox(): BBox {
-        const metrics = HdpiCanvas.measureText(this.text, this.font,
-            this.textBaseline, this.textAlign);
+        const metrics = HdpiCanvas.measureText(this.text, this.font, this.textBaseline, this.textAlign);
 
         return new BBox(
             this.x - metrics.actualBoundingBoxLeft,
@@ -212,11 +218,6 @@ export class Text extends Shape {
     }
 }
 
-export function getFont(fontSize: number, fontFamily: string, fontStyle ?: string, fontWeight ?: string): string {
-    return [
-        fontStyle || '',
-        fontWeight || '',
-        fontSize + 'px',
-        fontFamily
-    ].join(' ').trim();
+export function getFont(fontSize: number, fontFamily: string, fontStyle?: string, fontWeight?: string): string {
+    return [fontStyle || '', fontWeight || '', fontSize + 'px', fontFamily].join(' ').trim();
 }

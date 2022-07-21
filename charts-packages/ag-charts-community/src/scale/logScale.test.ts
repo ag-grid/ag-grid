@@ -1,20 +1,15 @@
-import { expect, test } from "@jest/globals";
-import { NumericTicks } from "../util/ticks";
-import { LogScale } from "./logScale";
+import { expect, test } from '@jest/globals';
+import { NumericTicks } from '../util/ticks';
+import { LogScale } from './logScale';
 
 test('ticks', () => {
     {
         const scale = new LogScale();
         scale.domain = [100, 1000000];
         expect(scale.ticks()).toEqual([
-            100,     200,    300,    400,    500,
-            600,     700,    800,    900,    1000,
-            2000,    3000,   4000,   5000,   6000,
-            7000,    8000,   9000,   10000,  20000,
-            30000,   40000,  50000,  60000,  70000,
-            80000,   90000,  100000, 200000, 300000,
-            400000,  500000, 600000, 700000, 800000,
-            900000, 1000000
+            100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000,
+            20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 200000, 300000, 400000, 500000, 600000,
+            700000, 800000, 900000, 1000000,
         ]);
         expect(scale.ticks(4)).toEqual(new NumericTicks(5, [100, 1000, 10000, 100000, 1000000]));
     }
@@ -29,8 +24,7 @@ test('ticks', () => {
         const scale = new LogScale();
         scale.domain = [-1000, -10];
         expect(scale.ticks()).toEqual([
-            -1000, -900, -800, -700, -600, -500, -400, -300, -200, -100,
-            -90, -80, -70, -60, -50, -40, -30, -20, -10
+            -1000, -900, -800, -700, -600, -500, -400, -300, -200, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10,
         ]);
     }
 });
@@ -50,12 +44,10 @@ test('convert', () => {
 });
 
 test('base', () => {
-    const expTicks = new NumericTicks(4, [
-        20.085536923187668,
-        54.598150033144236,
-        148.4131591025766,
-        403.4287934927351
-    ]);
+    const expTicks = new NumericTicks(
+        4,
+        [20.085536923187668, 54.598150033144236, 148.4131591025766, 403.4287934927351]
+    );
     const scale = new LogScale();
     scale.domain = [10, 1000];
     expect(scale.ticks()).not.toEqual(expTicks);

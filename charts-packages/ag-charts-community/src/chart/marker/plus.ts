@@ -1,4 +1,4 @@
-import { Marker } from "./marker";
+import { Marker } from './marker';
 
 export class Plus extends Marker {
     static className = 'Plus';
@@ -10,17 +10,17 @@ export class Plus extends Marker {
         const hs = s / 2;
 
         path.clear();
-        path.moveTo(x -= hs, y -= hs);
-        path.lineTo(x, y -= s);
-        path.lineTo(x += s, y);
-        path.lineTo(x, y += s);
-        path.lineTo(x += s, y);
-        path.lineTo(x, y += s);
-        path.lineTo(x -= s, y);
-        path.lineTo(x, y += s);
-        path.lineTo(x -= s, y);
-        path.lineTo(x, y -= s);
-        path.lineTo(x -= s, y);
+        path.moveTo((x -= hs), (y -= hs));
+        path.lineTo(x, (y -= s));
+        path.lineTo((x += s), y);
+        path.lineTo(x, (y += s));
+        path.lineTo((x += s), y);
+        path.lineTo(x, (y += s));
+        path.lineTo((x -= s), y);
+        path.lineTo(x, (y += s));
+        path.lineTo((x -= s), y);
+        path.lineTo(x, (y -= s));
+        path.lineTo((x -= s), y);
         path.lineTo(x, y - s);
         path.closePath();
     }

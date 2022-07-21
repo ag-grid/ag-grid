@@ -1,4 +1,4 @@
-import { find } from "../util/array";
+import { find } from '../util/array';
 
 interface Tick {
     labels: string[];
@@ -39,7 +39,7 @@ class TreeNode {
     }
 
     getLeftSibling(): TreeNode | undefined {
-        return this.number > 0  && this.parent ? this.parent.children[this.number - 1] : undefined;
+        return this.number > 0 && this.parent ? this.parent.children[this.number - 1] : undefined;
     }
 
     getLeftmostSibling(): TreeNode | undefined {
@@ -70,9 +70,9 @@ export function ticksToTree(ticks: Tick[], pad = true): TreeNode {
     let depth = 0;
 
     if (pad) {
-        ticks.forEach(tick => depth = Math.max(depth, tick.labels.length));
+        ticks.forEach((tick) => (depth = Math.max(depth, tick.labels.length)));
     }
-    ticks.forEach(tick => {
+    ticks.forEach((tick) => {
         if (pad) {
             while (tick.labels.length < depth) {
                 tick.labels.unshift('');
@@ -90,9 +90,10 @@ function insertTick(root: TreeNode, tick: Tick) {
 
     pathParts.forEach((pathPart, partIndex) => {
         const children = root.children;
-        const existingNode = find(children, child => child.label === pathPart);
+        const existingNode = find(children, (child) => child.label === pathPart);
         const isNotLeaf = partIndex !== lastPartIndex;
-        if (existingNode && isNotLeaf) { // the isNotLeaf check is to allow duplicate leafs
+        if (existingNode && isNotLeaf) {
+            // the isNotLeaf check is to allow duplicate leafs
             root = existingNode;
         } else {
             const node = new TreeNode(pathPart, root);
@@ -158,9 +159,9 @@ function apportion(v: TreeNode, defaultAncestor: TreeNode, distance: number) {
             vom = vom.nextLeft()!;
             vop = vop.nextRight()!;
             vop.ancestor = v;
-            const shift = (vim.prelim + sim) - (vip.prelim + sip) + distance;
+            const shift = vim.prelim + sim - (vip.prelim + sip) + distance;
             if (shift > 0) {
-                moveSubtree(ancestor(vim, v, defaultAncestor), v , shift);
+                moveSubtree(ancestor(vim, v, defaultAncestor), v, shift);
                 sip += shift;
                 sop += shift;
             }
@@ -191,7 +192,7 @@ function firstWalk(node: TreeNode, distance: number) {
 
     if (children.length) {
         let defaultAncestor = children[0];
-        children.forEach(child => {
+        children.forEach((child) => {
             firstWalk(child, distance);
             defaultAncestor = apportion(child, defaultAncestor, distance);
         });
@@ -218,8 +219,8 @@ class Dimensions {
     bottom: number = -Infinity;
     left: number = Infinity;
 
-    update(node: TreeNode, xy: (node: TreeNode) => {x: number, y: number}) {
-        const {x, y} = xy(node);
+    update(node: TreeNode, xy: (node: TreeNode) => { x: number; y: number }) {
+        const { x, y } = xy(node);
         if (x > this.right) {
             this.right = x;
         }
@@ -239,7 +240,7 @@ function secondWalk(v: TreeNode, m: number, layout: TreeLayout) {
     v.x = v.prelim + m;
     v.y = v.depth;
     layout.update(v);
-    v.children.forEach(w => secondWalk(w, m + v.mod, layout));
+    v.children.forEach((w) => secondWalk(w, m + v.mod, layout));
 }
 
 // After the second walk the parent nodes are positioned at the center of their immediate children.
@@ -248,7 +249,7 @@ function secondWalk(v: TreeNode, m: number, layout: TreeLayout) {
 function thirdWalk(v: TreeNode) {
     const children = v.children;
     let leafCount = 0;
-    children.forEach(w => {
+    children.forEach((w) => {
         thirdWalk(w);
         if (w.children.length) {
             leafCount += w.leafCount;
@@ -268,7 +269,7 @@ function thirdWalk(v: TreeNode) {
 }
 
 export function treeLayout(root: TreeNode): TreeLayout {
-    const layout = new TreeLayout;
+    const layout = new TreeLayout();
 
     firstWalk(root, 1);
     secondWalk(root, -root.prelim, layout);
@@ -278,7 +279,7 @@ export function treeLayout(root: TreeNode): TreeLayout {
 }
 
 export class TreeLayout {
-    dimensions = new Dimensions;
+    dimensions = new Dimensions();
     leafCount = 0;
     nodes: TreeNode[] = [];
     // One might want to process leaf nodes separately from the rest of the tree.
@@ -288,7 +289,7 @@ export class TreeLayout {
     depth = 0;
 
     update(node: TreeNode) {
-        this.dimensions.update(node, node => ({x: node.x, y: node.y}));
+        this.dimensions.update(node, (node) => ({ x: node.x, y: node.y }));
         if (!node.children.length) {
             this.leafCount++;
             this.leafNodes.push(node);
@@ -323,15 +324,15 @@ export class TreeLayout {
         }
 
         const screenDimensions = new Dimensions();
-        this.nodes.forEach(node => {
+        this.nodes.forEach((node) => {
             node.screenX = node.x * scalingX;
             node.screenY = node.y * scalingY;
-            screenDimensions.update(node, node => ({x: node.screenX, y: node.screenY}));
+            screenDimensions.update(node, (node) => ({ x: node.screenX, y: node.screenY }));
         });
         // Normalize so that root top and leftmost leaf left start at zero.
         const offsetX = -screenDimensions.left;
         const offsetY = -screenDimensions.top;
-        this.nodes.forEach(node => {
+        this.nodes.forEach((node) => {
             node.screenX += offsetX + shiftX;
             node.screenY += offsetY + shiftY;
         });

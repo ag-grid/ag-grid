@@ -1,4 +1,4 @@
-import { Observable } from "./observable";
+import { Observable } from './observable';
 
 export class Padding extends Observable {
     top: number;

@@ -1,11 +1,11 @@
-import { Shape } from "./shape";
-import { Path2D } from "../path2D";
-import { RedrawType, SceneChangeDetection, RenderContext } from "../node";
+import { Shape } from './shape';
+import { Path2D } from '../path2D';
+import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
 
 export function ScenePathChangeDetection(opts?: {
-    redraw?: RedrawType,
-    convertor?: (o: any) => any,
-    changeCb?: (t: any) => any,
+    redraw?: RedrawType;
+    convertor?: (o: any) => any;
+    changeCb?: (t: any) => any;
 }) {
     const { redraw = RedrawType.MAJOR, changeCb, convertor } = opts || {};
 
@@ -28,13 +28,11 @@ export class Path extends Shape {
     @ScenePathChangeDetection()
     clipMode?: 'normal' | 'punch-out';
 
-    constructor(
-        private readonly renderOverride?: (ctx: CanvasRenderingContext2D) => void
-    ) {
+    constructor(private readonly renderOverride?: (ctx: CanvasRenderingContext2D) => void) {
         super();
     }
 
-     /**
+    /**
      * The path only has to be updated when certain attributes change.
      * For example, if transform attributes (such as `translationX`)
      * are changed, we don't have to update the path. The `dirtyPath` flag
@@ -58,8 +56,7 @@ export class Path extends Shape {
             return;
         }
 
-        this.dirtyPath = this.path.isDirty() ||
-            (this.fillShadow?.isDirty() ?? false);
+        this.dirtyPath = this.path.isDirty() || (this.fillShadow?.isDirty() ?? false);
     }
 
     /**

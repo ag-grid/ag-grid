@@ -1,35 +1,40 @@
-import { describe, expect, test, jest, beforeEach, afterEach } from "@jest/globals";
-import "jest-canvas-mock";
-import { LegendPosition } from "./legend";
-import { AreaSeries } from "./series/cartesian/areaSeries";
-import { BarSeries } from "./series/cartesian/barSeries";
-import { LineSeries } from "./series/cartesian/lineSeries";
-import { ChartAxisPosition } from "./chartAxis";
-import { NumberAxis } from "./axis/numberAxis";
-import { ChartTheme } from "./themes/chartTheme";
-import { AgChartV2 } from "./agChartV2";
+import { describe, expect, test, jest, beforeEach, afterEach } from '@jest/globals';
+import 'jest-canvas-mock';
+import { LegendPosition } from './legend';
+import { AreaSeries } from './series/cartesian/areaSeries';
+import { BarSeries } from './series/cartesian/barSeries';
+import { LineSeries } from './series/cartesian/lineSeries';
+import { ChartAxisPosition } from './chartAxis';
+import { NumberAxis } from './axis/numberAxis';
+import { ChartTheme } from './themes/chartTheme';
+import { AgChartV2 } from './agChartV2';
 
-const revenueProfitData = [{
-    month: 'Jan',
-    revenue: 155000,
-    profit: 33000,
-    foobar: 44700
-}, {
-    month: 'Feb',
-    revenue: 123000,
-    profit: 35500,
-    foobar: 23400
-}, {
-    month: 'Mar',
-    revenue: 172500,
-    profit: 41000,
-    foobar: 43400
-}, {
-    month: 'Apr',
-    revenue: 185000,
-    profit: 50000,
-    foobar: 23500
-}];
+const revenueProfitData = [
+    {
+        month: 'Jan',
+        revenue: 155000,
+        profit: 33000,
+        foobar: 44700,
+    },
+    {
+        month: 'Feb',
+        revenue: 123000,
+        profit: 35500,
+        foobar: 23400,
+    },
+    {
+        month: 'Mar',
+        revenue: 172500,
+        profit: 41000,
+        foobar: 43400,
+    },
+    {
+        month: 'Apr',
+        revenue: 185000,
+        profit: 50000,
+        foobar: 23500,
+    },
+];
 
 describe('update', () => {
     beforeEach(() => {
@@ -45,25 +50,28 @@ describe('update', () => {
             // chart type is optional because it defaults to `cartesian`
             container: document.body,
             data: revenueProfitData,
-            series: [{
-                // series type if optional because `line` is default for `cartesian` charts
-                xKey: 'month',
-                yKey: 'revenue',
-                marker: {
-                    shape: 'plus',
-                    size: 20
-                }
-            }, {
-                type: 'column', // have to specify type explicitly here
-                xKey: 'month',
-                yKey: 'profit',
-                fill: 'lime',
-            }],
+            series: [
+                {
+                    // series type if optional because `line` is default for `cartesian` charts
+                    xKey: 'month',
+                    yKey: 'revenue',
+                    marker: {
+                        shape: 'plus',
+                        size: 20,
+                    },
+                },
+                {
+                    type: 'column', // have to specify type explicitly here
+                    xKey: 'month',
+                    yKey: 'profit',
+                    fill: 'lime',
+                },
+            ],
             legend: {
                 item: {
-                    paddingY: 16
-                }
-            }
+                    paddingY: 16,
+                },
+            },
         });
         AgChartV2.update(chart, {
             width: 500,
@@ -73,35 +81,38 @@ describe('update', () => {
                 top: 30,
                 right: 40,
                 bottom: 50,
-                left: 60
+                left: 60,
             },
             subtitle: {
                 enabled: false,
                 text: 'My Subtitle',
-                fontSize: 20
+                fontSize: 20,
             },
             background: {
                 fill: 'red',
-                visible: false
+                visible: false,
             },
-            series: [{
-                // series type if optional because `line` is default for `cartesian` charts
-                xKey: 'month',
-                yKey: 'revenue',
-                marker: {
-                    shape: 'plus',
-                    size: 20
-                }
-            }, {
-                type: 'column', // have to specify type explicitly here
-                xKey: 'month',
-                yKey: 'profit',
-                fill: 'lime',
-            }],
+            series: [
+                {
+                    // series type if optional because `line` is default for `cartesian` charts
+                    xKey: 'month',
+                    yKey: 'revenue',
+                    marker: {
+                        shape: 'plus',
+                        size: 20,
+                    },
+                },
+                {
+                    type: 'column', // have to specify type explicitly here
+                    xKey: 'month',
+                    yKey: 'profit',
+                    fill: 'lime',
+                },
+            ],
             legend: {
                 spacing: 50,
-                position: LegendPosition.Bottom
-            }
+                position: LegendPosition.Bottom,
+            },
         });
 
         const theme = new ChartTheme();
@@ -129,21 +140,24 @@ describe('update', () => {
 
         AgChartV2.update(chart, {
             data: revenueProfitData,
-            series: [{
-                xKey: 'month',
-                yKey: 'revenue',
-                marker: {}
-            }, {
-                type: 'column',
-                xKey: 'month',
-                yKey: 'profit',
-                fill: 'lime',
-            }],
+            series: [
+                {
+                    xKey: 'month',
+                    yKey: 'revenue',
+                    marker: {},
+                },
+                {
+                    type: 'column',
+                    xKey: 'month',
+                    yKey: 'profit',
+                    fill: 'lime',
+                },
+            ],
             legend: {
                 item: {
-                    paddingY: 16
-                }
-            }
+                    paddingY: 16,
+                },
+            },
         });
 
         expect(chart.title!.enabled).toBe(theme.getConfig('cartesian.title.enabled'));
@@ -161,50 +175,58 @@ describe('update', () => {
     test('series', () => {
         const chart = AgChartV2.create({
             data: revenueProfitData,
-            series: [{
-                // series type is optional because `line` is default for `cartesian` charts
-                xKey: 'month',
-                yKey: 'revenue',
-                marker: {
-                    shape: 'plus',
-                    size: 20
-                }
-            }, {
-                type: 'column', // have to specify type explicitly here
-                xKey: 'month',
-                yKey: 'profit',
-                fill: 'lime',
-            }]
+            series: [
+                {
+                    // series type is optional because `line` is default for `cartesian` charts
+                    xKey: 'month',
+                    yKey: 'revenue',
+                    marker: {
+                        shape: 'plus',
+                        size: 20,
+                    },
+                },
+                {
+                    type: 'column', // have to specify type explicitly here
+                    xKey: 'month',
+                    yKey: 'profit',
+                    fill: 'lime',
+                },
+            ],
         });
         const createdSeries = chart.series;
 
         AgChartV2.update(chart, {
             data: revenueProfitData,
-            series: [{
-                // series type if optional because `line` is default for `cartesian` charts
-                xKey: 'month',
-                yKey: 'revenue',
-                marker: {
-                    shape: 'square',
-                    size: 10,
+            series: [
+                {
+                    // series type if optional because `line` is default for `cartesian` charts
+                    xKey: 'month',
+                    yKey: 'revenue',
+                    marker: {
+                        shape: 'square',
+                        size: 10,
+                    },
                 },
-            }, {
-                type: 'column', // have to specify type explicitly here
-                xKey: 'month',
-                yKey: 'profit',
-                fill: 'lime',
-                stacked: true,
-            }, {
-                type: 'column', // have to specify type explicitly here
-                xKey: 'month',
-                yKey: 'foobar',
-                fill: 'cyan',
-                stacked: true,
-            }, {
-                type: 'area',
-                xKey: 'month',
-                yKey: 'foobar',
-            }]
+                {
+                    type: 'column', // have to specify type explicitly here
+                    xKey: 'month',
+                    yKey: 'profit',
+                    fill: 'lime',
+                    stacked: true,
+                },
+                {
+                    type: 'column', // have to specify type explicitly here
+                    xKey: 'month',
+                    yKey: 'foobar',
+                    fill: 'cyan',
+                    stacked: true,
+                },
+                {
+                    type: 'area',
+                    xKey: 'month',
+                    yKey: 'foobar',
+                },
+            ],
         });
         const updatedSeries = chart.series;
 
@@ -221,25 +243,29 @@ describe('update', () => {
 
         AgChartV2.update(chart, {
             data: revenueProfitData,
-            series: [{
-                // series type is optional because `line` is default for `cartesian` charts
-                xKey: 'month',
-                yKey: 'revenue',
-                marker: {
-                    shape: 'square',
-                    size: 10
-                }
-            }, {
-                type: 'column', // have to specify type explicitly here
-                xKey: 'month',
-                yKey: 'profit',
-                fill: 'lime',
-            }, {
-                type: 'column', // have to specify type explicitly here
-                xKey: 'month',
-                yKey: 'foobar',
-                fill: 'cyan',
-            }]
+            series: [
+                {
+                    // series type is optional because `line` is default for `cartesian` charts
+                    xKey: 'month',
+                    yKey: 'revenue',
+                    marker: {
+                        shape: 'square',
+                        size: 10,
+                    },
+                },
+                {
+                    type: 'column', // have to specify type explicitly here
+                    xKey: 'month',
+                    yKey: 'profit',
+                    fill: 'lime',
+                },
+                {
+                    type: 'column', // have to specify type explicitly here
+                    xKey: 'month',
+                    yKey: 'foobar',
+                    fill: 'cyan',
+                },
+            ],
         });
         const updatedSeries2 = chart.series;
 
@@ -249,27 +275,31 @@ describe('update', () => {
 
         AgChartV2.update(chart, {
             data: revenueProfitData,
-            series: [{
-                type: 'column', // have to specify type explicitly here
-                xKey: 'month',
-                yKey: 'profit',
-                stacked: true,
-                fill: 'lime',
-            }, {
-                type: 'column', // have to specify type explicitly here
-                xKey: 'month',
-                yKey: 'foobar',
-                stacked: true,
-                fill: 'cyan',
-            }, {
-                // series type is optional because `line` is default for `cartesian` charts
-                xKey: 'month',
-                yKey: 'revenue',
-                marker: {
-                    shape: 'square',
-                    size: 10
-                }
-            }]
+            series: [
+                {
+                    type: 'column', // have to specify type explicitly here
+                    xKey: 'month',
+                    yKey: 'profit',
+                    stacked: true,
+                    fill: 'lime',
+                },
+                {
+                    type: 'column', // have to specify type explicitly here
+                    xKey: 'month',
+                    yKey: 'foobar',
+                    stacked: true,
+                    fill: 'cyan',
+                },
+                {
+                    // series type is optional because `line` is default for `cartesian` charts
+                    xKey: 'month',
+                    yKey: 'revenue',
+                    marker: {
+                        shape: 'square',
+                        size: 10,
+                    },
+                },
+            ],
         });
         const updatedSeries3 = chart.series;
 
@@ -286,27 +316,31 @@ describe('update', () => {
 
         AgChartV2.update(chart, {
             data: revenueProfitData,
-            series: [{
-                type: 'area', // have to specify type explicitly here
-                xKey: 'month',
-                yKey: 'profit',
-                stacked: true,
-                fill: 'lime',
-            }, {
-                type: 'area', // have to specify type explicitly here
-                xKey: 'month',
-                yKey: 'foobar',
-                stacked: true,
-                fill: 'cyan',
-            }, {
-                // series type if optional because `line` is default for `cartesian` charts
-                xKey: 'month',
-                yKey: 'revenue',
-                marker: {
-                    shape: 'square',
-                    size: 10
-                }
-            }]
+            series: [
+                {
+                    type: 'area', // have to specify type explicitly here
+                    xKey: 'month',
+                    yKey: 'profit',
+                    stacked: true,
+                    fill: 'lime',
+                },
+                {
+                    type: 'area', // have to specify type explicitly here
+                    xKey: 'month',
+                    yKey: 'foobar',
+                    stacked: true,
+                    fill: 'cyan',
+                },
+                {
+                    // series type if optional because `line` is default for `cartesian` charts
+                    xKey: 'month',
+                    yKey: 'revenue',
+                    marker: {
+                        shape: 'square',
+                        size: 10,
+                    },
+                },
+            ],
         });
         const updatedSeries4 = chart.series;
 
@@ -319,75 +353,95 @@ describe('update', () => {
     test('axes', () => {
         let chart = AgChartV2.create({
             data: revenueProfitData,
-            series: [{
-                xKey: 'month',
-                yKey: 'revenue'
-            }]
+            series: [
+                {
+                    xKey: 'month',
+                    yKey: 'revenue',
+                },
+            ],
         });
 
         AgChartV2.update(chart, {
             data: revenueProfitData,
-            series: [{
-                xKey: 'blah',
-                yKey: 'revenue'
-            }],
-            axes: [{
-                type: 'number',
-                position: 'left',
-                title: {
-                    text: 'Hello'
-                }
-            }, {
-                type: 'number',
-                position: 'bottom'
-            }]
+            series: [
+                {
+                    xKey: 'blah',
+                    yKey: 'revenue',
+                },
+            ],
+            axes: [
+                {
+                    type: 'number',
+                    position: 'left',
+                    title: {
+                        text: 'Hello',
+                    },
+                },
+                {
+                    type: 'number',
+                    position: 'bottom',
+                },
+            ],
         });
 
         let axes = chart.axes;
         expect(axes.length).toBe(2);
         expect(axes[0] instanceof NumberAxis).toBe(true);
         expect(axes[1] instanceof NumberAxis).toBe(true);
-        let leftAxis = axes.find(axis => axis.position === ChartAxisPosition.Left);
-        expect(axes.find(axis => axis.position === ChartAxisPosition.Bottom)).toBeDefined();
+        let leftAxis = axes.find((axis) => axis.position === ChartAxisPosition.Left);
+        expect(axes.find((axis) => axis.position === ChartAxisPosition.Bottom)).toBeDefined();
         expect(leftAxis).toBeDefined();
         expect(leftAxis!.title!.text).toBe('Hello');
 
-        expect(leftAxis!.gridStyle).toEqual([{
-            stroke: 'rgb(219, 219, 219)',
-            lineDash: [4, 2]
-        }]);
+        expect(leftAxis!.gridStyle).toEqual([
+            {
+                stroke: 'rgb(219, 219, 219)',
+                lineDash: [4, 2],
+            },
+        ]);
         AgChartV2.update(chart, {
             data: revenueProfitData,
-            series: [{
-                xKey: 'blah',
-                yKey: 'revenue'
-            }],
-            axes: [{
-                type: 'number',
-                position: 'left',
-                title: {
-                    text: 'Hello'
+            series: [
+                {
+                    xKey: 'blah',
+                    yKey: 'revenue',
                 },
-                gridStyle: [{
-                    stroke: 'red',
-                    lineDash: [5, 5]
-                }, {
-                    stroke: 'blue',
-                    lineDash: [2, 6, 2]
-                }]
-            }, {
-                type: 'number',
-                position: 'bottom'
-            }]
+            ],
+            axes: [
+                {
+                    type: 'number',
+                    position: 'left',
+                    title: {
+                        text: 'Hello',
+                    },
+                    gridStyle: [
+                        {
+                            stroke: 'red',
+                            lineDash: [5, 5],
+                        },
+                        {
+                            stroke: 'blue',
+                            lineDash: [2, 6, 2],
+                        },
+                    ],
+                },
+                {
+                    type: 'number',
+                    position: 'bottom',
+                },
+            ],
         });
-        
-        leftAxis = chart.axes.find(axis => axis.position === ChartAxisPosition.Left);
-        expect(leftAxis!.gridStyle).toEqual([{
-            stroke: 'red',
-            lineDash: [5, 5]
-        }, {
-            stroke: 'blue',
-            lineDash: [2, 6, 2]
-        }]);
+
+        leftAxis = chart.axes.find((axis) => axis.position === ChartAxisPosition.Left);
+        expect(leftAxis!.gridStyle).toEqual([
+            {
+                stroke: 'red',
+                lineDash: [5, 5],
+            },
+            {
+                stroke: 'blue',
+                lineDash: [2, 6, 2],
+            },
+        ]);
     });
 });

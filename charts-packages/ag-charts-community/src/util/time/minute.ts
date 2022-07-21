@@ -1,5 +1,5 @@
-import { CountableTimeInterval } from "./interval";
-import { durationMinute, durationSecond } from "./duration";
+import { CountableTimeInterval } from './interval';
+import { durationMinute, durationSecond } from './duration';
 
 function floor(date: Date) {
     date.setTime(date.getTime() - date.getMilliseconds() - date.getSeconds() * durationSecond);

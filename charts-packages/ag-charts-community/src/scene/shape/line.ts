@@ -1,15 +1,14 @@
-import { Shape } from "./shape";
-import { chainObjects } from "../../util/object";
-import { BBox } from "../bbox";
-import { RedrawType, SceneChangeDetection, RenderContext } from "../node";
+import { Shape } from './shape';
+import { chainObjects } from '../../util/object';
+import { BBox } from '../bbox';
+import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
 
 export class Line extends Shape {
-
     static className = 'Line';
 
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
         fill: undefined,
-        strokeWidth: 1
+        strokeWidth: 1,
     });
 
     constructor() {
@@ -30,12 +29,7 @@ export class Line extends Shape {
     y2: number = 0;
 
     computeBBox(): BBox {
-        return new BBox(
-            this.x1,
-            this.y1,
-            this.x2 - this.x1,
-            this.y2 - this.y1
-        );
+        return new BBox(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);
     }
 
     isPointInPath(_x: number, _y: number): boolean {
@@ -49,7 +43,7 @@ export class Line extends Shape {
             if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
-    
+
         this.computeTransformMatrix();
         this.matrix.toContext(ctx);
 
@@ -61,11 +55,11 @@ export class Line extends Shape {
         // Align to the pixel grid if the line is strictly vertical
         // or horizontal (but not both, i.e. a dot).
         if (x1 === x2) {
-            const x = Math.round(x1) + Math.floor(this.strokeWidth) % 2 / 2;
+            const x = Math.round(x1) + (Math.floor(this.strokeWidth) % 2) / 2;
             x1 = x;
             x2 = x;
         } else if (y1 === y2) {
-            const y = Math.round(y1) + Math.floor(this.strokeWidth) % 2 / 2;
+            const y = Math.round(y1) + (Math.floor(this.strokeWidth) % 2) / 2;
             y1 = y;
             y2 = y;
         }

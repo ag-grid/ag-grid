@@ -1,6 +1,6 @@
-import { expect, test } from "@jest/globals";
-import { Color } from "../util/color";
-import color from "./color";
+import { expect, test } from '@jest/globals';
+import { Color } from '../util/color';
+import color from './color';
 
 test('string colors', () => {
     {
@@ -12,8 +12,8 @@ test('string colors', () => {
         expect(i(1)).toBe('rgb(255, 255, 255)');
     }
     {
-        const a =  '#00000000';
-        const b =  '#ffffffff';
+        const a = '#00000000';
+        const b = '#ffffffff';
         const i = color(a, b);
         expect(i(0.5)).toBe('rgba(128, 128, 128, 0.5)');
         expect(i(0)).toBe('rgba(0, 0, 0, 0)');

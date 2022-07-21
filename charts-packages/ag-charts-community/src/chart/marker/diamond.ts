@@ -1,4 +1,4 @@
-import { Marker } from "./marker";
+import { Marker } from './marker';
 
 export class Diamond extends Marker {
     static className = 'Diamond';
@@ -9,11 +9,11 @@ export class Diamond extends Marker {
         const s = size / 2;
 
         path.clear();
-        path.moveTo(x, y -= s);
-        path.lineTo(x += s, y += s);
-        path.lineTo(x -= s, y += s);
-        path.lineTo(x -= s, y -= s);
-        path.lineTo(x += s, y -= s);
+        path.moveTo(x, (y -= s));
+        path.lineTo((x += s), (y += s));
+        path.lineTo((x -= s), (y += s));
+        path.lineTo((x -= s), (y -= s));
+        path.lineTo((x += s), (y -= s));
         path.closePath();
     }
 }

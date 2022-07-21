@@ -35,9 +35,9 @@ export function normalizeAngle180(radians: number): number {
 }
 
 export function toRadians(degrees: number): number {
-    return degrees / 180 * Math.PI;
+    return (degrees / 180) * Math.PI;
 }
 
 export function toDegrees(radians: number): number {
-    return radians / Math.PI * 180;
+    return (radians / Math.PI) * 180;
 }

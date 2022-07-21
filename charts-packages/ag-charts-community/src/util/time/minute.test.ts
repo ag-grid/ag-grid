@@ -1,5 +1,5 @@
-import { expect, test } from "@jest/globals";
-import minute from "./minute";
+import { expect, test } from '@jest/globals';
+import minute from './minute';
 
 test('minute.every', () => {
     const interval = minute.every(5);

@@ -1,5 +1,5 @@
-import { expect, test } from "@jest/globals";
-import { BandScale } from "./bandScale";
+import { expect, test } from '@jest/globals';
+import { BandScale } from './bandScale';
 
 test('initial state', () => {
     const scale = new BandScale();

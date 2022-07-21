@@ -1,4 +1,4 @@
-import { CountableTimeInterval } from "./interval";
+import { CountableTimeInterval } from './interval';
 
 function floor(date: Date) {
     date.setUTCMonth(0, 1);

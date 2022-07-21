@@ -1,10 +1,10 @@
-import { Marker } from "./marker";
+import { Marker } from './marker';
 
 export class Heart extends Marker {
     static className = 'Heart';
 
     rad(degree: number) {
-        return degree / 180 * Math.PI;
+        return (degree / 180) * Math.PI;
     }
 
     updatePath() {

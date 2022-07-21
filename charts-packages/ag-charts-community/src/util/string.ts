@@ -1,4 +1,4 @@
-import { locale } from "./time/format/defaultLocale";
+import { locale } from './time/format/defaultLocale';
 
 const interpolatePattern = /(#\{(.*?)\})/g;
 
@@ -11,8 +11,11 @@ type DateFormat = string;
 
 type ValueFormat = NumberFormat | DateFormat;
 
-export function interpolate(input: string, values: { [key in string]: any },
-                            formats?: { [key in string]: ValueFormat }): string {
+export function interpolate(
+    input: string,
+    values: { [key in string]: any },
+    formats?: { [key in string]: ValueFormat }
+): string {
     return input.replace(interpolatePattern, function () {
         const name = arguments[2];
         const [valueName, formatName] = name.split(':');

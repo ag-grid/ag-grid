@@ -1,13 +1,15 @@
 // @ts-ignore Suppress tsc error: Property 'sign' does not exist on type 'Math'
-const sign: (x: number) => number = Math.sign ? Math.sign : x => {
-    x = +x;
+const sign: (x: number) => number = Math.sign
+    ? Math.sign
+    : (x) => {
+          x = +x;
 
-    if (x === 0 || isNaN(x)) {
-        return x;
-    }
+          if (x === 0 || isNaN(x)) {
+              return x;
+          }
 
-    return x > 0 ? 1 : -1;
-};
+          return x > 0 ? 1 : -1;
+      };
 
 /**
  * Finds the roots of a parametric linear equation in `t`,
@@ -15,7 +17,7 @@ const sign: (x: number) => number = Math.sign ? Math.sign : x => {
  */
 export function linearRoot(a: number, b: number): number[] {
     const t = -b / a;
-    return (a !== 0 && t >= 0 && t <= 1) ? [t] : [];
+    return a !== 0 && t >= 0 && t <= 1 ? [t] : [];
 }
 
 /**
@@ -31,12 +33,14 @@ export function quadraticRoots(a: number, b: number, c: number): number[] {
 
     const roots: number[] = [];
 
-    if (D === 0) { // A single real root.
+    if (D === 0) {
+        // A single real root.
         const t = -b / (2 * a);
         if (t >= 0 && t <= 1) {
             roots.push(t);
         }
-    } else if (D > 0) { // A pair of distinct real roots.
+    } else if (D > 0) {
+        // A pair of distinct real roots.
         const rD = Math.sqrt(D);
         const t1 = (-b - rD) / (2 * a);
         const t2 = (-b + rD) / (2 * a);
@@ -76,11 +80,12 @@ export function cubicRoots(a: number, b: number, c: number, d: number): number[]
     const third = 1 / 3;
     const roots: number[] = [];
 
-    if (D >= 0) { // Complex or duplicate roots.
+    if (D >= 0) {
+        // Complex or duplicate roots.
         const rD = Math.sqrt(D);
         const S = sign(R + rD) * Math.pow(Math.abs(R + rD), third);
         const T = sign(R - rD) * Math.pow(Math.abs(R - rD), third);
-        const Im = Math.abs(Math.sqrt(3) * (S - T) / 2); // Complex part of the root pair.
+        const Im = Math.abs((Math.sqrt(3) * (S - T)) / 2); // Complex part of the root pair.
 
         const t = -third * A + (S + T); // A real root.
         if (t >= 0 && t <= 1) {
@@ -93,7 +98,8 @@ export function cubicRoots(a: number, b: number, c: number, d: number): number[]
                 roots.push(t);
             }
         }
-    } else { // Distinct real roots.
+    } else {
+        // Distinct real roots.
         const theta = Math.acos(R / Math.sqrt(-Q * Q * Q));
 
         const thirdA = third * A;

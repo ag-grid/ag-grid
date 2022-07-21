@@ -23,10 +23,17 @@ export class Observable {
     // listeners and for type inference, so that the users wouldn't have to specify the type of parameters
     // of their inline lambdas.
     private allPropertyListeners = new Map(); // property name => property change listener => scopes
-    private allEventListeners = new Map();    // event type => event listener => scopes
+    private allEventListeners = new Map(); // event type => event listener => scopes
 
-    addPropertyListener<K extends string & keyof this>(name: K, listener: PropertyChangeEventListener<this, this[K]>, scope: Object = this): void {
-        const allPropertyListeners = this.allPropertyListeners as Map<K, Map<PropertyChangeEventListener<this, this[K]>, Set<Object>>>;
+    addPropertyListener<K extends string & keyof this>(
+        name: K,
+        listener: PropertyChangeEventListener<this, this[K]>,
+        scope: Object = this
+    ): void {
+        const allPropertyListeners = this.allPropertyListeners as Map<
+            K,
+            Map<PropertyChangeEventListener<this, this[K]>, Set<Object>>
+        >;
         let propertyListeners = allPropertyListeners.get(name);
 
         if (!propertyListeners) {
@@ -44,8 +51,15 @@ export class Observable {
         }
     }
 
-    removePropertyListener<K extends string & keyof this>(name: K, listener?: PropertyChangeEventListener<this, this[K]>, scope: Object = this): void {
-        const allPropertyListeners = this.allPropertyListeners as Map<K, Map<PropertyChangeEventListener<this, this[K]>, Set<Object>>>;
+    removePropertyListener<K extends string & keyof this>(
+        name: K,
+        listener?: PropertyChangeEventListener<this, this[K]>,
+        scope: Object = this
+    ): void {
+        const allPropertyListeners = this.allPropertyListeners as Map<
+            K,
+            Map<PropertyChangeEventListener<this, this[K]>, Set<Object>>
+        >;
         let propertyListeners = allPropertyListeners.get(name);
 
         if (propertyListeners) {
@@ -64,12 +78,15 @@ export class Observable {
     }
 
     protected notifyPropertyListeners<K extends string & keyof this>(name: K, oldValue: this[K], value: this[K]): void {
-        const allPropertyListeners = this.allPropertyListeners as Map<K, Map<PropertyChangeEventListener<this, this[K]>, Set<Object>>>;
+        const allPropertyListeners = this.allPropertyListeners as Map<
+            K,
+            Map<PropertyChangeEventListener<this, this[K]>, Set<Object>>
+        >;
         const propertyListeners = allPropertyListeners.get(name);
 
         if (propertyListeners) {
             propertyListeners.forEach((scopes, listener) => {
-                scopes.forEach(scope => listener.call(scope, { type: name, source: this, value, oldValue }));
+                scopes.forEach((scope) => listener.call(scope, { type: name, source: this, value, oldValue }));
             });
         }
     }
@@ -119,11 +136,11 @@ export class Observable {
     protected notifyEventListeners(types: string[]): void {
         const allEventListeners = this.allEventListeners as Map<string, Map<SourceEventListener<this>, Set<Object>>>;
 
-        types.forEach(type => {
+        types.forEach((type) => {
             const listeners = allEventListeners.get(type);
             if (listeners) {
                 listeners.forEach((scopes, listener) => {
-                    scopes.forEach(scope => listener.call(scope, { type, source: this }));
+                    scopes.forEach((scope) => listener.call(scope, { type, source: this }));
                 });
             }
         });
@@ -131,11 +148,13 @@ export class Observable {
 
     // 'source' is added automatically and is always the object this method belongs to.
     fireEvent<E extends TypedEvent>(event: Omit<E, 'source'>): void {
-        const listeners = (this.allEventListeners as Map<string, Map<SourceEventListener<this>, Set<Object>>>).get(event.type);
+        const listeners = (this.allEventListeners as Map<string, Map<SourceEventListener<this>, Set<Object>>>).get(
+            event.type
+        );
 
         if (listeners) {
             listeners.forEach((scopes, listener) => {
-                scopes.forEach(scope => listener.call(scope, { ...event, source: this }));
+                scopes.forEach((scope) => listener.call(scope, { ...event, source: this }));
             });
         }
     }

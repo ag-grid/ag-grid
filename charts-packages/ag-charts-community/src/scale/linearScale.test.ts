@@ -1,12 +1,12 @@
-import { expect, test } from "@jest/globals";
-import { LinearScale } from "./linearScale";
+import { expect, test } from '@jest/globals';
+import { LinearScale } from './linearScale';
 
 test('domain', () => {
-   const scale = new LinearScale();
+    const scale = new LinearScale();
 
-   expect(scale.domain).toEqual([0, 1]);
-   scale.domain = [5, 10];
-   expect(scale.domain).toEqual([5, 10]);
+    expect(scale.domain).toEqual([0, 1]);
+    scale.domain = [5, 10];
+    expect(scale.domain).toEqual([5, 10]);
 });
 
 test('range', () => {

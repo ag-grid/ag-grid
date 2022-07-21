@@ -1,4 +1,4 @@
-import { seedRandom } from "./random";
+import { seedRandom } from './random';
 
 export const DATA_MEAN_SEA_LEVEL = (() => {
     const seaLevelRandom = seedRandom(75023847123);
@@ -38,7 +38,7 @@ export const DATA_APPLE_REVENUE_BY_PRODUCT = [
         mac: 16,
         ipad: 14,
         wearables: 12,
-        services: 20
+        services: 20,
     },
     {
         quarter: "Q2'18",
@@ -46,7 +46,7 @@ export const DATA_APPLE_REVENUE_BY_PRODUCT = [
         mac: 20,
         ipad: 14,
         wearables: 12,
-        services: 30
+        services: 30,
     },
     {
         quarter: "Q3'18",
@@ -54,7 +54,7 @@ export const DATA_APPLE_REVENUE_BY_PRODUCT = [
         mac: 20,
         ipad: 18,
         wearables: 14,
-        services: 36
+        services: 36,
     },
     {
         quarter: "Q4'18",
@@ -62,7 +62,7 @@ export const DATA_APPLE_REVENUE_BY_PRODUCT = [
         mac: 24,
         ipad: 14,
         wearables: 14,
-        services: 36
+        services: 36,
     },
     {
         quarter: "Q1'19",
@@ -70,7 +70,7 @@ export const DATA_APPLE_REVENUE_BY_PRODUCT = [
         mac: 18,
         ipad: 16,
         wearables: 18,
-        services: 26
+        services: 26,
     },
     {
         quarter: "Q2'19",
@@ -78,7 +78,7 @@ export const DATA_APPLE_REVENUE_BY_PRODUCT = [
         mac: 20,
         ipad: 16,
         wearables: 18,
-        services: 40
+        services: 40,
     },
     {
         quarter: "Q3'19",
@@ -86,7 +86,7 @@ export const DATA_APPLE_REVENUE_BY_PRODUCT = [
         mac: 22,
         ipad: 18,
         wearables: 24,
-        services: 42
+        services: 42,
     },
     {
         quarter: "Q4'19",
@@ -94,8 +94,8 @@ export const DATA_APPLE_REVENUE_BY_PRODUCT = [
         mac: 22,
         ipad: 14,
         wearables: 20,
-        services: 40
-    }
+        services: 40,
+    },
 ];
 
 export const DATA_VISITORS = [

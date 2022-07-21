@@ -1,12 +1,11 @@
-import { Node, RedrawType, SceneChangeDetection, RenderContext } from "./node";
-import { BBox } from "./bbox";
-import { HdpiCanvas } from "../canvas/hdpiCanvas";
-import { Scene } from "./scene";
-import { Path2D } from "./path2D";
-import { HdpiOffscreenCanvas } from "../canvas/hdpiOffscreenCanvas";
+import { Node, RedrawType, SceneChangeDetection, RenderContext } from './node';
+import { BBox } from './bbox';
+import { HdpiCanvas } from '../canvas/hdpiCanvas';
+import { Scene } from './scene';
+import { Path2D } from './path2D';
+import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 
 export class Group extends Node {
-
     static className = 'Group';
 
     protected layer?: HdpiCanvas | HdpiOffscreenCanvas;
@@ -36,10 +35,10 @@ export class Group extends Node {
 
     public constructor(
         protected readonly opts?: {
-            readonly layer?: boolean,
-            readonly zIndex?: number,
-            readonly name?: string,
-            readonly optimiseDirtyTracking?: boolean,
+            readonly layer?: boolean;
+            readonly zIndex?: number;
+            readonly name?: string;
+            readonly optimiseDirtyTracking?: boolean;
         }
     ) {
         super();
@@ -110,7 +109,7 @@ export class Group extends Node {
         }
     }
 
-    markClean(opts?: {force?: boolean, recursive?: boolean}) {
+    markClean(opts?: { force?: boolean; recursive?: boolean }) {
         // Ensure we update visibility tracking before blowing away dirty flags.
         this.syncChildVisibility();
 
@@ -135,7 +134,7 @@ export class Group extends Node {
 
         this.computeTransformMatrix();
 
-        this.children.forEach(child => {
+        this.children.forEach((child) => {
             if (!child.visible) {
                 return;
             }
@@ -161,12 +160,7 @@ export class Group extends Node {
             }
         });
 
-        return new BBox(
-            left,
-            top,
-            right - left,
-            bottom - top
-        );
+        return new BBox(left, top, right - left, bottom - top);
     }
 
     computeTransformedBBox(): BBox | undefined {
@@ -259,12 +253,9 @@ export class Group extends Node {
         }
 
         // Reduce churn if renderCtx is identical.
-        const renderContextChanged = forceRender !== renderCtx.forceRender ||
-             clipBBox !== renderCtx.clipBBox ||
-             ctx !== renderCtx.ctx;
-        const childRenderContext =  renderContextChanged ?
-            { ...renderCtx, ctx, forceRender, clipBBox } :
-            renderCtx;
+        const renderContextChanged =
+            forceRender !== renderCtx.forceRender || clipBBox !== renderCtx.clipBBox || ctx !== renderCtx.ctx;
+        const childRenderContext = renderContextChanged ? { ...renderCtx, ctx, forceRender, clipBBox } : renderCtx;
 
         // Render visible children.
         let skipped = 0;
@@ -380,12 +371,11 @@ export class Group extends Node {
         }
 
         // Reduce churn if renderCtx is identical.
-        const renderContextChanged = renderCtx.forceRender !== true ||
-                clipBBox !== renderCtx.clipBBox ||
-                ctx !== renderCtx.ctx;
-        const childRenderContext =  renderContextChanged ?
-            { ...renderCtx, ctx, forceRender: true, clipBBox } :
-            renderCtx;
+        const renderContextChanged =
+            renderCtx.forceRender !== true || clipBBox !== renderCtx.clipBBox || ctx !== renderCtx.ctx;
+        const childRenderContext = renderContextChanged
+            ? { ...renderCtx, ctx, forceRender: true, clipBBox }
+            : renderCtx;
 
         if (consoleLog) {
             console.log({ name, visibleChildren, dirtyChildren });
@@ -441,9 +431,7 @@ export class Group extends Node {
             if (result !== 0) {
                 return result;
             }
-            return a.id < b.id ? -1 :
-                a.id > b.id ? 1 :
-                0;
+            return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
         });
     }
 }

@@ -1,7 +1,7 @@
-import { Node, RedrawType, SceneChangeDetection, RenderContext } from "./node";
-import { Path2D } from "./path2D";
-import { BBox } from "./bbox";
-import { ScenePathChangeDetection } from "./shape/path";
+import { Node, RedrawType, SceneChangeDetection, RenderContext } from './node';
+import { Path2D } from './path2D';
+import { BBox } from './bbox';
+import { ScenePathChangeDetection } from './shape/path';
 
 /**
  * Acts as `Group` node but with specified bounds that form a rectangle.
@@ -9,7 +9,6 @@ import { ScenePathChangeDetection } from "./shape/path";
  * Unlike the `Group` node, the `ClipRect` node cannot be transformed.
  */
 export class ClipRect extends Node {
-
     static className = 'ClipRect';
 
     protected path = new Path2D();
@@ -22,8 +21,9 @@ export class ClipRect extends Node {
 
     containsPoint(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
-        return point.x >= this.x && point.x <= this.x + this.width
-            && point.y >= this.y && point.y <= this.y + this.height;
+        return (
+            point.x >= this.x && point.x <= this.x + this.width && point.y >= this.y && point.y <= this.y + this.height
+        );
     }
 
     @SceneChangeDetection({ redraw: RedrawType.MAJOR })

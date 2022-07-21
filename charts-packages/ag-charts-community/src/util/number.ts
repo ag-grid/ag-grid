@@ -32,7 +32,7 @@ export function log10(x: number): number {
 export function mod(n: number, m: number) {
     // https://stackoverflow.com/a/13163436
     const remain = n % m;
-    return remain >= 0 ? remain : (remain + m);
+    return remain >= 0 ? remain : remain + m;
 }
 
 export const EPSILON = Number.EPSILON || Math.pow(2, -52);

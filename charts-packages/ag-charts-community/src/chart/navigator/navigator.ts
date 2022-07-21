@@ -1,10 +1,10 @@
-import { RangeSelector } from "../shapes/rangeSelector";
-import { CartesianChart } from "../cartesianChart";
-import { ChartAxisDirection } from "../chartAxis";
-import { BBox } from "../../scene/bbox";
-import { NavigatorMask } from "./navigatorMask";
-import { NavigatorHandle } from "./navigatorHandle";
-import { ChartUpdateType } from "../chart";
+import { RangeSelector } from '../shapes/rangeSelector';
+import { CartesianChart } from '../cartesianChart';
+import { ChartAxisDirection } from '../chartAxis';
+import { BBox } from '../../scene/bbox';
+import { NavigatorMask } from './navigatorMask';
+import { NavigatorHandle } from './navigatorHandle';
+import { ChartUpdateType } from '../chart';
 
 interface Offset {
     offsetX: number;
@@ -93,7 +93,7 @@ export class Navigator {
         const { chart } = this;
         let clipSeries = false;
         let layoutRequired = false;
-        chart.axes.forEach(axis => {
+        chart.axes.forEach((axis) => {
             if (axis.direction === ChartAxisDirection.X) {
                 if (!clipSeries && (min > 0 || max < 1)) {
                     clipSeries = true;
@@ -168,10 +168,12 @@ export class Navigator {
         } else if (!isNaN(panHandleOffset)) {
             const span = rs.max - rs.min;
             const min = Math.min(getRatio() - panHandleOffset, 1 - span);
-            if (min <= rs.min) { // pan left
+            if (min <= rs.min) {
+                // pan left
                 rs.min = min;
                 rs.max = rs.min + span;
-            } else { // pan right
+            } else {
+                // pan right
                 rs.max = min + span;
                 rs.min = rs.max - span;
             }

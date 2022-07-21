@@ -1,4 +1,4 @@
-import { Comparator, ascending } from "./compare";
+import { Comparator, ascending } from './compare';
 
 /**
  * Returns the insertion point for `x` in array to maintain sorted order.
@@ -14,10 +14,17 @@ import { Comparator, ascending } from "./compare";
  * @param lo
  * @param hi
  */
-export function bisectRight<T>(list: T[], x: T, comparator: Comparator<T>, lo: number = 0, hi: number = list.length): number {
+export function bisectRight<T>(
+    list: T[],
+    x: T,
+    comparator: Comparator<T>,
+    lo: number = 0,
+    hi: number = list.length
+): number {
     while (lo < hi) {
         const mid = (lo + hi) >>> 1;
-        if (comparator(list[mid], x) > 0) { // list[mid] > x
+        if (comparator(list[mid], x) > 0) {
+            // list[mid] > x
             hi = mid;
         } else {
             lo = mid + 1;
@@ -36,7 +43,13 @@ export function bisectRight<T>(list: T[], x: T, comparator: Comparator<T>, lo: n
  * @param lo
  * @param hi
  */
-export function complexBisectRight<T, U>(list: T[], x: U, map: (item: T) => U, lo: number = 0, hi: number = list.length): number {
+export function complexBisectRight<T, U>(
+    list: T[],
+    x: U,
+    map: (item: T) => U,
+    lo: number = 0,
+    hi: number = list.length
+): number {
     const comparator = ascendingComparator(map);
     while (lo < hi) {
         const mid = (lo + hi) >>> 1;

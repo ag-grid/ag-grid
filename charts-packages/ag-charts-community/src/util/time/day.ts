@@ -1,5 +1,5 @@
-import { CountableTimeInterval } from "./interval";
-import { durationDay, durationMinute } from "./duration";
+import { CountableTimeInterval } from './interval';
+import { durationDay, durationMinute } from './duration';
 
 function floor(date: Date) {
     date.setHours(0, 0, 0, 0);

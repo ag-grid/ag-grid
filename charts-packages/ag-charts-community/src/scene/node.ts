@@ -1,7 +1,7 @@
-import { Scene } from "./scene";
-import { Matrix } from "./matrix";
-import { BBox } from "./bbox";
-import { createId } from "../util/id";
+import { Scene } from './scene';
+import { Matrix } from './matrix';
+import { BBox } from './bbox';
+import { createId } from '../util/id';
 import { ChangeDetectable, SceneChangeDetection, RedrawType } from './changeDetectable';
 
 export { SceneChangeDetection, RedrawType };
@@ -11,7 +11,7 @@ type OffscreenCanvasRenderingContext2D = any;
 
 export enum PointerEvents {
     All,
-    None
+    None,
 }
 
 export type RenderContext = {
@@ -25,13 +25,14 @@ export type RenderContext = {
         layersRendered: number;
         layersSkipped: number;
     };
-}
+};
 
 /**
  * Abstract scene graph node.
  * Each node can have zero or one parent and belong to zero or one scene.
  */
-export abstract class Node extends ChangeDetectable { // Don't confuse with `window.Node`.
+export abstract class Node extends ChangeDetectable {
+    // Don't confuse with `window.Node`.
 
     /**
      * Unique node ID in the form `ClassName-NaturalNumber`.
@@ -197,8 +198,7 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
                 node._parent = this;
                 node._setScene(this.scene);
             } else {
-                throw new Error(`${nextNode} has ${parent} as the parent, `
-                    + `but is not in its list of children.`);
+                throw new Error(`${nextNode} has ${parent} as the parent, ` + `but is not in its list of children.`);
             }
 
             this.markDirty(node, RedrawType.MAJOR);
@@ -302,10 +302,10 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
      * @param value Rotation angle in degrees.
      */
     set rotationDeg(value: number) {
-        this.rotation = value / 180 * Math.PI;
+        this.rotation = (value / 180) * Math.PI;
     }
     get rotationDeg(): number {
-        return this.rotation / Math.PI * 180;
+        return (this.rotation / Math.PI) * 180;
     }
 
     @SceneChangeDetection({ type: 'transform' })
@@ -336,8 +336,7 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
             // for more complex shapes, so discarding items based on this will save a lot of
             // processing when the point is nowhere near the child.
             for (let i = children.length - 1; i >= 0; i--) {
-                const hit = children[i].computeBBox()?.containsPoint(x, y) ?
-                    children[i].pickNode(x, y) : undefined ;
+                const hit = children[i].computeBBox()?.containsPoint(x, y) ? children[i].pickNode(x, y) : undefined;
 
                 if (hit) {
                     return hit;
@@ -352,12 +351,15 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
                     return hit;
                 }
             }
-        } else if (!this.isContainerNode) { // a leaf node, but not a container leaf
+        } else if (!this.isContainerNode) {
+            // a leaf node, but not a container leaf
             return this;
         }
     }
 
-    computeBBox(): BBox | undefined { return; }
+    computeBBox(): BBox | undefined {
+        return;
+    }
 
     computeTransformedBBox(): BBox | undefined {
         const bbox = this.computeBBox();
@@ -382,10 +384,7 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
     computeBBoxCenter(): [number, number] {
         const bbox = this.computeBBox && this.computeBBox();
         if (bbox) {
-            return [
-                bbox.x + bbox.width * 0.5,
-                bbox.y + bbox.height * 0.5
-            ];
+            return [bbox.x + bbox.width * 0.5, bbox.y + bbox.height * 0.5];
         }
         return [0, 0];
     }
@@ -454,12 +453,16 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
 
         this._dirtyTransform = false;
 
-        this.matrix.setElements([
-            cos * sx, sin * sx,
-            -sin * sy, cos * sy,
-            cos * tx4 - sin * ty4 + rcx + tx,
-            sin * tx4 + cos * ty4 + rcy + ty
-        ]).inverseTo(this.inverseMatrix);
+        this.matrix
+            .setElements([
+                cos * sx,
+                sin * sx,
+                -sin * sy,
+                cos * sy,
+                cos * tx4 - sin * ty4 + rcx + tx,
+                sin * tx4 + cos * ty4 + rcy + ty,
+            ])
+            .inverseTo(this.inverseMatrix);
     }
 
     render(renderCtx: RenderContext): void {
@@ -472,7 +475,9 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
 
     clearBBox(ctx: CanvasRenderingContext2D) {
         const bbox = this.computeBBox();
-        if (bbox == null) { return; }
+        if (bbox == null) {
+            return;
+        }
 
         const { x, y, width, height } = bbox;
         const topLeft = this.transformPoint(x, y);
@@ -500,7 +505,7 @@ export abstract class Node extends ChangeDetectable { // Don't confuse with `win
         return this._dirty;
     }
 
-    markClean(opts?: {force?: boolean, recursive?: boolean}) {
+    markClean(opts?: { force?: boolean; recursive?: boolean }) {
         const { force = false, recursive = true } = opts || {};
 
         if (this._dirty === RedrawType.NONE && !force) {
