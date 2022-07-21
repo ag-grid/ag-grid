@@ -213,6 +213,7 @@ const AG_GRID_LOCALE_EN = {
     layoutHorizontalSpacing: 'Horizontal Spacing',
     layoutVerticalSpacing: 'Vertical Spacing',
     strokeWidth: 'Stroke Width',
+    lineDash: 'Line Dash',
     offset: 'Offset',
     offsets: 'Offsets',
     tooltips: 'Tooltips',
