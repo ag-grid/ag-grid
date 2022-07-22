@@ -212,7 +212,7 @@ const createHomePages = createPage => {
 };
 
 const docPagesDirectory = path.resolve(__dirname, 'doc-pages');
-const getFiles = (criteria, cwd = docPagesDirectory, ignore = []) => glob.sync(criteria, {cwd, ignore});
+const getFiles = (criteria, cwd = docPagesDirectory, ignore = []) => glob.sync(criteria, {cwd, ignore, nodir: true});
 
 function getJsonFileData() {
     const data = {};
