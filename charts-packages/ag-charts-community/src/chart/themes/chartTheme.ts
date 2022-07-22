@@ -97,11 +97,11 @@ export class ChartTheme {
                 },
             ],
             crossLines: {
-                enabled: true,
+                enabled: false,
                 fill: 'rgb(187,221,232)',
                 stroke: 'rgb(70,162,192)',
                 label: {
-                    enabled: true,
+                    enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,
                     fontSize: 12,
