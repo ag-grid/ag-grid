@@ -1,5 +1,5 @@
 function getGenericInterface(tData) {
-    let interfaceStr = undefined;
+    let interfaceStr = '';
     switch (tData) {
         case 'IOlympicDataWithId':
             interfaceStr = `
