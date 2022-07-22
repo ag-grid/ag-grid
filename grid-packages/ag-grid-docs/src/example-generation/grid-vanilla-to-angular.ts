@@ -41,6 +41,7 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
 function addModuleImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
     const { gridSettings, imports: bindingImports, properties } = bindings;
 
+    imports.push("// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273");
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
 
     // to account for the (rare) example that has more than one class...just default to alpine if it does
