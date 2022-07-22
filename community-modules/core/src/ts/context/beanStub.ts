@@ -51,7 +51,6 @@ export class BeanStub implements IEventEmitter {
 
     @PreDestroy
     protected destroy(): void {
-
         // let prototype: any = Object.getPrototypeOf(this);
         // const constructor: any = prototype.constructor;
         // const constructorString = constructor.toString();

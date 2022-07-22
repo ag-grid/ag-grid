@@ -126,4 +126,5 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
         this.eWrapper.classList.toggle('ag-checked', value === true);
         this.eWrapper.classList.toggle('ag-indeterminate', value == null);
     }
+
 }

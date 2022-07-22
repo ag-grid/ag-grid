@@ -147,7 +147,7 @@ export class Component extends BeanStub {
         });
     }
 
-    public createComponentFromElement(
+    private createComponentFromElement(
         element: HTMLElement,
         afterPreCreateCallback?: (comp: Component) => void,
         paramsMap?: { [key: string]: any; }
@@ -162,6 +162,8 @@ export class Component extends BeanStub {
             newComponent.setParentComponent(this);
 
             this.createBean(newComponent, null, afterPreCreateCallback);
+            this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
+
             return newComponent;
         }
         return null;
@@ -287,10 +289,11 @@ export class Component extends BeanStub {
         return this.eGui.querySelector(cssSelector) as HTMLInputElement;
     }
 
-    public appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void {
-        if (!container) {
-            container = this.eGui;
-        }
+    public appendChild(
+        newChild: HTMLElement | Component,
+        options?: { container?: HTMLElement, addDestroyFunction: boolean }
+    ): void {
+        const { container = this.eGui, addDestroyFunction = true } = options || {};
 
         if (newChild == null) { return; }
 
@@ -299,6 +302,8 @@ export class Component extends BeanStub {
         } else {
             const childComponent = newChild as Component;
             container.appendChild(childComponent.getGui());
+
+            if (addDestroyFunction === false) { return; }
             this.addDestroyFunc(this.destroyBean.bind(this, childComponent));
         }
     }
@@ -334,6 +339,7 @@ export class Component extends BeanStub {
         if (this.tooltipFeature) {
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
+
         super.destroy();
     }
 

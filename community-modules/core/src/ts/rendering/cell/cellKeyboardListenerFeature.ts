@@ -172,6 +172,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     public destroy(): void {
+        super.destroy();
     }
 
 }

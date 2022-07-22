@@ -272,4 +272,5 @@ export class AgGroupComponent extends Component {
 
         this.eContainer.classList.toggle('ag-disabled-group-container', !this.enabled);
     }
+
 }

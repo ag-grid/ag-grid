@@ -89,7 +89,9 @@ export class FiltersToolPanelListPanel extends Component {
         const len = this.filterGroupComps.length;
 
         if (len) {
-            this.filterGroupComps.forEach(comp => this.appendChild(comp));
+            // skip the destroy function because this will be managed
+            // by the `destroyFilters` function
+            this.filterGroupComps.forEach(comp => this.appendChild(comp, { addDestroyFunction: false }));
             this.setFirstAndLastVisible(0, len - 1);
         }
 
@@ -110,7 +112,9 @@ export class FiltersToolPanelListPanel extends Component {
         const len = this.filterGroupComps.length;
 
         if (len) {
-            this.filterGroupComps.forEach(comp => this.appendChild(comp));
+            // skip the destroy function because this will be managed
+            // by the `destroyFilters` function
+            this.filterGroupComps.forEach(comp => this.appendChild(comp, { addDestroyFunction: false }));
             this.setFirstAndLastVisible(0, len - 1);
         }
 
@@ -135,7 +139,8 @@ export class FiltersToolPanelListPanel extends Component {
 
             const hideFilterCompHeader = depth === 0;
             const filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
-            this.getContext().createBean(filterComp);
+            this.createBean(filterComp);
+
             filterComp.setColumn(column);
 
             if (depth > 0) { return filterComp; }
@@ -161,7 +166,7 @@ export class FiltersToolPanelListPanel extends Component {
         const filterGroupComp =
             new ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth, false);
 
-        this.getContext().createBean(filterGroupComp);
+        this.createBean(filterGroupComp);
         filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
         return [filterGroupComp];
     }

@@ -77,7 +77,10 @@ export class TabGuardComp extends Component {
         this.tabGuardCtrl.forceFocusOutOfContainer(up);
     }
 
-    public appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void {
+    public appendChild(
+        newChild: HTMLElement | Component,
+        options?: { container?: HTMLElement, addDestroyFunction: boolean }
+    ): void {
         if (!isNodeOrElement(newChild)) {
             newChild = (newChild as Component).getGui();
         }
@@ -87,7 +90,7 @@ export class TabGuardComp extends Component {
         if (bottomTabGuard) {
             bottomTabGuard.insertAdjacentElement('beforebegin', newChild as HTMLElement);
         } else {
-            super.appendChild(newChild, container);
+            super.appendChild(newChild, options);
         }
     }
 }

@@ -1,4 +1,3 @@
-
 import { FocusService } from "../focusService";
 import { Autowired, PostConstruct } from "../context/context";
 import { AgMenuItemComponent, MenuItemSelectedEvent, MenuItemActivatedEvent } from "./agMenuItemComponent";
