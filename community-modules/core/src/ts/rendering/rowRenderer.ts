@@ -1169,22 +1169,20 @@ export class RowRenderer extends BeanStub {
 
             this.eventService.dispatchEvent(event);
         }
+    }
 
-        // only dispatch firstDataRendered if we have actually rendered some data
-        if (this.paginationProxy.isRowsToRender()) {
-            const event: FirstDataRenderedEvent = {
-                type: Events.EVENT_FIRST_DATA_RENDERED,
-                firstRow: newFirst,
-                lastRow: newLast,
-                api: this.gridApi,
-                columnApi: this.columnApi
-            };
+    public dispatchFirstDataRenderedEvent() {
+        const event: FirstDataRenderedEvent = {
+            type: Events.EVENT_FIRST_DATA_RENDERED,
+            firstRow: this.firstRenderedRow,
+            lastRow: this.lastRenderedRow,
+            api: this.beans.gridApi,
+            columnApi: this.beans.columnApi,
+        };
 
-            // added a small delay here because in some scenarios this can be fired
-            // before the grid is actually rendered, causing component creation
-            // on EVENT_FIRST_DATA_RENDERED to fail.
-            window.setTimeout(() => this.eventService.dispatchEventOnce(event), 50);
-        }
+        window.requestAnimationFrame(() => {
+            this.beans.eventService.dispatchEventOnce(event);
+        });
     }
 
     private ensureAllRowsInRangeHaveHeightsCalculated(topPixel: number, bottomPixel: number): boolean {

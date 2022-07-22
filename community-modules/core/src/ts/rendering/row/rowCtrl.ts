@@ -165,6 +165,8 @@ export class RowCtrl extends BeanStub {
         if (allNormalPresent || fullWidthPresent) {
             this.initialiseRowComps();
         }
+
+        this.beans.rowRenderer.dispatchFirstDataRenderedEvent();
     }
 
     public isCacheable(): boolean {
