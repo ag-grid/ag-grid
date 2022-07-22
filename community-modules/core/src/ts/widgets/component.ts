@@ -162,7 +162,6 @@ export class Component extends BeanStub {
             newComponent.setParentComponent(this);
 
             this.createBean(newComponent, null, afterPreCreateCallback);
-            this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
 
             return newComponent;
         }
