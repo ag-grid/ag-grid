@@ -83,7 +83,7 @@
         "access": "public"
     },
     "lint-staged": {
-        "*.{ts,js,md,json}": "npx prettier --list-different",
-        "*.ts": "npx lerna run --scope @ag-grid-community/all-modules generate-doc-files -- -- --check"
+        "*.{ts,js,md,json}": "${PWD}/.lint-staged/run.sh prettier",
+        "*.ts": "${PWD}/.lint-staged/run.sh autodocs"
     }
 }
