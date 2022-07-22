@@ -22,7 +22,7 @@ import { Text } from '../../../scene/shape/text';
 import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Marker } from '../../marker/marker';
 import { MeasuredLabel } from '../../../util/labelPlacement';
-import { isContinuous } from '../../../util/value';
+import { checkDatum, isContinuous } from '../../../util/value';
 import { Deprecated } from '../../../util/validation';
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
@@ -170,9 +170,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         const isContinuousY = yScale instanceof ContinuousScale;
 
         this.validData = data.filter(
-            (d) =>
-                this.checkDatum(d[xKey], isContinuousX) !== undefined &&
-                this.checkDatum(d[yKey], isContinuousY) !== undefined
+            (d) => checkDatum(d[xKey], isContinuousX) !== undefined && checkDatum(d[yKey], isContinuousY) !== undefined
         );
         this.xData = this.validData.map((d) => d[xKey]);
         this.yData = this.validData.map((d) => d[yKey]);

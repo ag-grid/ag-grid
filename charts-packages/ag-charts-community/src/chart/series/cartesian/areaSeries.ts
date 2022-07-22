@@ -22,7 +22,7 @@ import { interpolate } from '../../../util/string';
 import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { isContinuous, isNumber } from '../../../util/value';
+import { checkDatum, isContinuous, isNumber } from '../../../util/value';
 import { clamper, ContinuousScale } from '../../../scale/continuousScale';
 import { doOnce } from '../../../util/function';
 
@@ -252,7 +252,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 continue;
             }
 
-            const xDatum = this.checkDatum(datum[xKey], isContinuousX);
+            const xDatum = checkDatum(datum[xKey], isContinuousX);
             if (isContinuousX && xDatum === undefined) {
                 continue;
             } else {
@@ -275,7 +275,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 if (!seriesItemEnabled.get(yKey)) {
                     seriesYs.push(0);
                 } else {
-                    const yDatum = this.checkDatum(value, isContinuousY);
+                    const yDatum = checkDatum(value, isContinuousY);
                     seriesYs.push(yDatum);
                 }
             });
