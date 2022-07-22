@@ -92,7 +92,7 @@ const jsxShowValue = (
     // if we didn't do this, objects would cause React error. we depend on objects for things
     // like the aggregation functions avg and count, which return objects and depend on toString()
     // getting called.
-    const valueForNoCellRenderer = (value && value.toString) ? value.toString() : value;
+    const valueForNoCellRenderer = (value?.toString) ? value.toString() : value;
 
     const bodyJsxFunc = () => (
         <>
