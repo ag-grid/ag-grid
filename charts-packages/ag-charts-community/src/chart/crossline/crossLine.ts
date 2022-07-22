@@ -16,6 +16,7 @@ import {
     POSITION_TOP_COORDINATES,
     calculateLabelTranslation,
 } from './crossLineLabelPosition';
+import { checkDatum } from '../../util/value';
 
 export class CrossLineLabel {
     enabled?: boolean = undefined;
@@ -74,7 +75,8 @@ export class CrossLine {
     private crossLineLine: Path = new Path();
     private crossLineRange: Path = new Path();
     private labelPoint?: Point = undefined;
-    private pathData?: CrossLinePathData = undefined;
+    private fillData?: CrossLinePathData = undefined;
+    private strokeData?: CrossLinePathData = undefined;
 
     constructor() {
         const { group, crossLineLine, crossLineRange, crossLineLabel } = this;
@@ -108,7 +110,13 @@ export class CrossLine {
 
         this.group.zIndex = this.getZIndex(this.type);
 
-        this.createNodeData();
+        const dataCreated = this.createNodeData();
+
+        if (!dataCreated) {
+            this.group.visible = false;
+            return;
+        }
+
         this.updatePaths();
     }
 
@@ -127,47 +135,50 @@ export class CrossLine {
         }
     }
 
-    private createNodeData() {
+    private createNodeData(): boolean {
         const {
             scale,
             gridLength,
             sideFlag,
             direction,
-            range,
-            value,
             label: { position = 'top' },
         } = this;
 
         if (!scale) {
-            return;
+            return false;
         }
 
         const continuous = scale instanceof ContinuousScale;
         const bandwidth = scale.bandwidth ?? 0;
 
-        let xStart, xEnd, yStart, yEnd;
-        this.pathData = { points: [] };
+        let xStart, xEnd, yStart, yEnd, clampedYStart, clampedYEnd;
+        this.fillData = { points: [] };
+        this.strokeData = { points: [] };
 
         [xStart, xEnd] = [0, sideFlag * gridLength];
-        [yStart, yEnd] = range ?? [value, undefined];
-        [yStart, yEnd] = [
-            scale.convert(yStart, continuous ? clamper : undefined),
-            scale.convert(yEnd, continuous ? clamper : undefined) + bandwidth,
-        ];
+        [yStart, yEnd] = this.getRange();
 
-        if (this.label.text) {
-            const yDirection = direction === ChartAxisDirection.Y;
-
-            const { c = POSITION_TOP_COORDINATES } = labeldDirectionHandling[position] ?? {};
-            const { x: labelX, y: labelY } = c({ yDirection, xStart, xEnd, yStart, yEnd });
-
-            this.labelPoint = {
-                x: labelX,
-                y: labelY,
-            };
+        let isLine = false;
+        if (yStart === undefined) {
+            return false;
+        } else if (yEnd === undefined) {
+            isLine = true;
         }
 
-        this.pathData.points.push(
+        [clampedYStart, clampedYEnd] = [
+            Number(scale.convert(yStart, continuous ? clamper : undefined)),
+            scale.convert(yEnd, continuous ? clamper : undefined) + bandwidth,
+        ];
+        [yStart, yEnd] = [Number(scale.convert(yStart)), scale.convert(yEnd) + bandwidth];
+
+        const isValidLine = yStart === clampedYStart;
+        const isValidRange = yStart === clampedYStart || yEnd === clampedYEnd || clampedYStart !== clampedYEnd;
+
+        if ((isLine && !isValidLine) || (!isLine && !isValidRange)) {
+            return false;
+        }
+
+        this.strokeData.points.push(
             {
                 x: xStart,
                 y: yStart,
@@ -185,12 +196,45 @@ export class CrossLine {
                 y: yEnd,
             }
         );
+
+        this.fillData.points.push(
+            {
+                x: xStart,
+                y: clampedYStart,
+            },
+            {
+                x: xEnd,
+                y: clampedYStart,
+            },
+            {
+                x: xEnd,
+                y: clampedYEnd,
+            },
+            {
+                x: xStart,
+                y: clampedYEnd,
+            }
+        );
+
+        if (this.label.enabled) {
+            const yDirection = direction === ChartAxisDirection.Y;
+
+            const { c = POSITION_TOP_COORDINATES } = labeldDirectionHandling[position] ?? {};
+            const { x: labelX, y: labelY } = c({ yDirection, xStart, xEnd, yStart: clampedYStart, yEnd: clampedYEnd });
+
+            this.labelPoint = {
+                x: labelX,
+                y: labelY,
+            };
+        }
+
+        return true;
     }
 
     private updateLinePath() {
-        const { crossLineLine, pathData = { points: [] } } = this;
+        const { crossLineLine, strokeData = { points: [] } } = this;
         const pathMethods: ('moveTo' | 'lineTo')[] = ['moveTo', 'lineTo', 'moveTo', 'lineTo'];
-        const points = pathData.points;
+        const points = strokeData.points;
         const { path } = crossLineLine;
 
         path.clear({ trackChanges: true });
@@ -218,8 +262,8 @@ export class CrossLine {
     }
 
     private updateRangePath() {
-        const { crossLineRange, pathData = { points: [] } } = this;
-        const points = pathData.points;
+        const { crossLineRange, fillData = { points: [] } } = this;
+        const points = fillData.points;
         const { path } = crossLineRange;
 
         path.clear({ trackChanges: true });
@@ -284,6 +328,26 @@ export class CrossLine {
 
         crossLineLabel.translationX = x + xTranslation;
         crossLineLabel.translationY = y + yTranslation;
+    }
+
+    private getRange(): [any, any] {
+        const { value, range, scale } = this;
+
+        const isContinuous = scale instanceof ContinuousScale;
+
+        let [start, end] = range ?? [value, undefined];
+        [start, end] = [checkDatum(start, isContinuous), checkDatum(end, isContinuous)];
+
+        if (start === end) {
+            end = undefined;
+        }
+
+        if (start === undefined && end !== undefined) {
+            start = end;
+            end = undefined;
+        }
+
+        return [start, end];
     }
 
     private computeLabelBBox(): BBox | undefined {

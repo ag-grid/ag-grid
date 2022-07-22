@@ -428,7 +428,7 @@ crossLines: [
     type: 'range',
     range: ['apple', 'orange'],
     label: {
-      text: 'Peak',
+      text: 'Price Peak',
       position: 'top',
       fontSize: 14,
       // other cross line label options...
