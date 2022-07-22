@@ -62,7 +62,7 @@ export const getExampleInfo = (
             boilerPlateFramework = useTypescript ? 'typescript' : 'javascript';
             break;
         case 'react':
-            boilerPlateFramework = (useTypescript && library === 'grid') ? 'react-ts' : 'react';
+            boilerPlateFramework = (useTypescript && library === 'grid' && internalFramework === 'reactFunctionalTs') ? 'react-ts' : 'react';
             break;
         default:
             boilerPlateFramework = framework;
