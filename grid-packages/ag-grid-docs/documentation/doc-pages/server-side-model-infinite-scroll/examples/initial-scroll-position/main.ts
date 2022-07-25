@@ -38,6 +38,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // register the datasource with the grid
       gridOptions.api!.setServerSideDatasource(datasource);
+
+      // scroll the grid down until row 5000 is at the top of the viewport
       gridOptions.api!.ensureIndexVisible(5000, 'top');
     })
 })
