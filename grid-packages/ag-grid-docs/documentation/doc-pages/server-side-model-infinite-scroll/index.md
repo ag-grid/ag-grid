@@ -60,13 +60,13 @@ The example below shows how debouncing block loading can be achieved. Note the f
 
 <grid-example title='Block Loading Debounce' name='block-load-debounce' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
 
-## Initial scroll position
+## Initial Scroll Position
 
-It may be a requirement to start the grid at a row part way down the grid. The example below demonstrates how this can be achieved, note the following:
+It may be a requirement to load the grid at a scroll position other than the first row. In the example below, note the following:
 
-- The response from the server sets the `serverSideInitialRowCount` property to set the initial length o the vertical scrollbars.
+- The `serverSideInitialRowCount` property has been set to provide an initial length to the vertical scrollbars.
 
-- The grid callback `onFirstDataRendered` has been implemented to call `api.ensureIndexVisible(5000, 'top')` to scroll the grid to row 5000 after rows have been successfully loaded.
+- After the datasource has been set `api.ensureIndexVisible(5000, 'top')` is called, causing the grid to scroll down to row 5000.
 
 <grid-example title='Initial scroll position' name='initial-scroll-position' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
 

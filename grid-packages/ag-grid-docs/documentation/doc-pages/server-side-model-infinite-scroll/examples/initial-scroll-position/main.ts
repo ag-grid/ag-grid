@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest, FirstDataRenderedEvent } from '@ag-grid-community/core'
+import { Grid, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -20,10 +20,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowModelType: 'serverSide',
   serverSideInfiniteScroll: true,
   serverSideInitialRowCount: 5500,
-
-  onFirstDataRendered: function(params: FirstDataRenderedEvent<IOlympicData>) {
-    params.api.ensureIndexVisible(5000, 'top');
-  },
 }
 
 // setup the grid after the page has finished loading
@@ -35,13 +31,14 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(response => response.json())
     .then(function (data) {
       // setup the fake server with entire dataset
-      var fakeServer = createFakeServer(data)
+      var fakeServer = createFakeServer(data);
 
       // create datasource with a reference to the fake server
-      var datasource = createServerSideDatasource(fakeServer)
+      var datasource = createServerSideDatasource(fakeServer);
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridOptions.api!.setServerSideDatasource(datasource);
+      gridOptions.api!.ensureIndexVisible(5000, 'top');
     })
 })
 
