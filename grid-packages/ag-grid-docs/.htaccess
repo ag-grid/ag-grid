@@ -2215,6 +2215,7 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/value-setters/ /vue-data-grid/value-setters/
     Redirect 301 /vue-grid/view-refresh/ /vue-data-grid/view-refresh/
     Redirect 301 /vue-grid/viewport/ /vue-data-grid/viewport/
+    Redirect 301 /vue3/ /vue-data-grid/getting-started/
     Redirect 301 /nodejs-server-side-operations/ /javascript-data-grid/server-side-operations-nodejs/
     Redirect 301 /oracle-server-side-operations/ /javascript-data-grid/server-side-operations-oracle/
     Redirect 301 /quote/ /ecommerce/#/ecommerce/quote-lookup
