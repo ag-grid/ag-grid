@@ -19,7 +19,7 @@ To not show the menu at all, set this property to an empty array`[]`. In additio
 
 The order of the menu tabs shown in the menu will match the order you specify in this array.
 
-If you don't specify a `menuTabs` for a `colDef` the default is: `['generalMenuTab', 'filterMenuTab','columnsMenuTab']`
+If you don't specify a `menuTabs` for a `colDef` the default is: `['generalMenuTab', 'filterMenuTab', 'columnsMenuTab']`
 
 ## Customising the General Menu Tab
 
@@ -92,7 +92,7 @@ Note that all of the properties are initially set to `false`.
 
 The following example demonstrates all of the above columns menu tab properties. Note the following:
 
-- All columns menu tabs have been configured to ignore column moves in the grid by setting `suppressSyncLayoutWithGrid = true` on the default column definition.
+- All columns menu tabs have been configured to ignore column moves in the grid by setting `suppressSyncLayoutWithGrid=true` on the default column definition.
 - The **Name** column doesn't show the top filter section as `suppressColumnFilter`, `suppressColumnSelectAll` and `suppressColumnExpandAll` are all set to `true`.
 - The **Age** column shows the group columns in a collapsed state as `contractColumnSelection` is set to `true`.
 
