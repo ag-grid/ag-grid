@@ -83,7 +83,7 @@
         "access": "public"
     },
     "lint-staged": {
-        "*.{ts,js,md,json}": "${PWD}/.lint-staged/run.sh prettier",
-        "*.ts": "${PWD}/.lint-staged/run.sh autodocs"
+        "*.{ts,js,md,json}": "charts-packages/ag-charts-community/.lint-staged/run.sh prettier",
+        "*.ts": "charts-packages/ag-charts-community/.lint-staged/run.sh autodocs"
     }
 }
