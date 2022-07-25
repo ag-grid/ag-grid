@@ -166,8 +166,4 @@ of calling `columnApi.autoSizeColumns()` is dependent on the browser's rendering
 asynchronous rendering in your framework.
 
 If you intend to call `columnApi.autoSizeColumns()` after creating the grid, in most cases it should be sufficient to wait 
-for the `firstDataRendered` event before resizing. 
-
-[[note]]
-| The [Server Side Row Model](/server-side-model/#top) inserts a dummy row with a loading spinner before the actual row
-| data is returned from the server, which means the `firstDataRendered` event cannot be relied on when resizing columns.
+for the `firstDataRendered` event before resizing.
