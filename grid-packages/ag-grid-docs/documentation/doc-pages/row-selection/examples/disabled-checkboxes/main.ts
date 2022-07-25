@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, FirstDataRenderedEvent } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -31,6 +31,9 @@ const gridOptions: GridOptions<IOlympicData> = {
   groupSelectsChildren: true,
   suppressRowClickSelection: true,
   suppressAggFuncInHeader: true,
+  onFirstDataRendered: (params: FirstDataRenderedEvent<IOlympicData>) => {
+    params.api.forEachNode(node => node.setSelected(Number(node.id) % 2 === 0));
+  }
 }
 
 // setup the grid after the page has finished loading
@@ -38,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(gridDiv, gridOptions)
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
     .then(response => response.json())
     .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })
