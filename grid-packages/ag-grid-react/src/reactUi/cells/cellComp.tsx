@@ -1,11 +1,11 @@
 import { CellCtrl, Component, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _, ICellEditorComp, CssClassManager } from 'ag-grid-community';
-import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
+import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
 import { isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 import { BeansContext } from '../beansContext';
 import { createSyncJsComp } from '../jsComp';
-import { useEffectOnce } from '../useEffectOnce';
+import { useEffectOnce, useLayoutEffectOnce } from '../useEffectOnce';
 
 export enum CellCompState { ShowValue, EditValue }
 
@@ -313,7 +313,9 @@ const CellComp = (props: {
 
     }, [showCellWrapper, includeDndSource, includeRowDrag, includeSelection, cellWrapperVersion]);
 
-    useEffectOnce(() => {
+    // we use layout effect here as we want to synchronously process setComp and it's side effects
+    // to ensure the component is fully initialised prior to the first browser paint.
+    useLayoutEffectOnce(() => {
         if (!cellCtrl) { return; }
 
         const compProxy: ICellComp = {
@@ -361,7 +363,6 @@ const CellComp = (props: {
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
 
         cellCtrl.setComp(compProxy, eGui.current!, cellWrapperOrUndefined, printLayout, editingRow);
-
     });
 
     const reactCellRendererStateless = useMemo(() => {
