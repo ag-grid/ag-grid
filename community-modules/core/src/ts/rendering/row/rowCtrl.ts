@@ -169,7 +169,7 @@ export class RowCtrl extends BeanStub {
         if (this.rowType !== 'FullWidthLoading') {
             // this is fired within setComp as we know that the component renderer is now trying to render.
             // linked with the fact the function implementation queues behind requestAnimationFrame should allow
-            // us to be certain that all rendering is done by the time the event fires. See AG-7018.
+            // us to be certain that all rendering is done by the time the event fires.
             this.beans.rowRenderer.dispatchFirstDataRenderedEvent();
         }
     }
