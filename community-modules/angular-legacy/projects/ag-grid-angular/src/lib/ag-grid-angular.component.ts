@@ -1131,7 +1131,7 @@ Allows you to set the ID for a particular row node based on the data.
     @Output() public rowDoubleClicked: EventEmitter<RowDoubleClickedEvent<TData>> = new EventEmitter<RowDoubleClickedEvent<TData>>();
     /** Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected.     */
     @Output() public rowSelected: EventEmitter<RowSelectedEvent<TData>> = new EventEmitter<RowSelectedEvent<TData>>();
-    /** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes.     */
+    /** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data.     */
     @Output() public selectionChanged: EventEmitter<SelectionChangedEvent<TData>> = new EventEmitter<SelectionChangedEvent<TData>>();
     /** Cell is right clicked.     */
     @Output() public cellContextMenu: EventEmitter<CellContextMenuEvent<TData>> = new EventEmitter<CellContextMenuEvent<TData>>();

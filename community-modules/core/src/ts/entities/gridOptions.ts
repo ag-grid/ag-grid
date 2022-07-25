@@ -1123,7 +1123,7 @@ export interface GridOptions<TData = any> {
     onRowDoubleClicked?(event: RowDoubleClickedEvent<TData>): void;
     /** Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected. */
     onRowSelected?(event: RowSelectedEvent<TData>): void;
-    /** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */
+    /** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data. */
     onSelectionChanged?(event: SelectionChangedEvent<TData>): void;
     /** Cell is right clicked. */
     onCellContextMenu?(event: CellContextMenuEvent<TData>): void;

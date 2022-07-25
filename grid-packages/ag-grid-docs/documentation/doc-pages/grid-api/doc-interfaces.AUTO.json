@@ -4949,7 +4949,7 @@
       "meta": { "isEvent": true, "name": "onRowSelected" }
     },
     "onSelectionChanged": {
-      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
+      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data. */",
       "type": {
         "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",
@@ -4958,7 +4958,7 @@
       "meta": { "isEvent": true, "name": "onSelectionChanged" }
     },
     "selectionChanged": {
-      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
+      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data. */",
       "type": {
         "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",
@@ -25548,7 +25548,7 @@
       "meta": { "isEvent": true, "name": "onRowSelected" }
     },
     "onSelectionChanged": {
-      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
+      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data. */",
       "type": {
         "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",
@@ -25557,7 +25557,7 @@
       "meta": { "isEvent": true, "name": "onSelectionChanged" }
     },
     "selectionChanged": {
-      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
+      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data. */",
       "type": {
         "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",
@@ -28320,7 +28320,7 @@
       "meta": { "isEvent": true, "name": "onRowSelected" }
     },
     "onSelectionChanged": {
-      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
+      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data. */",
       "type": {
         "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",
@@ -28329,7 +28329,7 @@
       "meta": { "isEvent": true, "name": "onSelectionChanged" }
     },
     "selectionChanged": {
-      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
+      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data. */",
       "type": {
         "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",
@@ -31102,7 +31102,7 @@
       "meta": { "isEvent": true, "name": "onRowSelected" }
     },
     "onSelectionChanged": {
-      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
+      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data. */",
       "type": {
         "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",
@@ -31111,7 +31111,7 @@
       "meta": { "isEvent": true, "name": "onSelectionChanged" }
     },
     "selectionChanged": {
-      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
+      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data. */",
       "type": {
         "arguments": { "event": "SelectionChangedEvent<TData>" },
         "returnType": "void",

@@ -256,7 +256,7 @@ The `isSelected()` method returns `true` if the node is selected, or `false` if 
 
 The grid API has the following methods for selection:
 
-<api-documentation source='grid-api/api.json' section='selection' names='["selectAll","deselectAll","selectAllFiltered","deselectAllFiltered","getSelectedNodes"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='selection' names='["selectAll","deselectAll","selectAllFiltered","deselectAllFiltered","getSelectedNodes", "getSelectedRows"]'></api-documentation>
 
 If you want to select only filtered-out row nodes, you could do this using the following:
 
