@@ -882,7 +882,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
             let bboxYDimension = rotation === 0 ? lineBBox.width : lineBBox.height;
             if (ticks?.length > 0) {
                 const tickBBox = tickGroup.computeBBox();
-                bboxYDimension += rotation === 0 ? tickBBox.width : tickBBox.height;
+                const tickWidth = rotation === 0 ? tickBBox.width : tickBBox.height;
+                if (Math.abs(tickWidth) < Infinity) {
+                    bboxYDimension += tickWidth;
+                }
             }
             if (sideFlag === -1) {
                 titleNode.y = Math.floor(titleRotationFlag * (-padding - bboxYDimension));
