@@ -430,7 +430,7 @@
   },
   "ensureColIndexVisible": { "type": { "arguments": { "index": "any" } } },
   "ensureColumnVisible": {
-    "description": "/** Ensures the column is visible by scrolling the table if needed.\n * @param key - The column to ensure visible\n * @param position - Where the column will be positioned.\n- `auto` - Scrolls the minimum amount to make sure the column is visible.\n- `start` - Scrolls the column to the start of the viewport.\n- `middle` - Scrolls the column to the middle of the viewport.\n- `end` - Scrolls the column to the end of the viewport.\n */",
+    "description": "/** Ensures the column is visible by scrolling the table if needed.\n * \n * This will have no effect before the firstDataRendered event has fired.\n * @param key - The column to ensure visible\n * @param position - Where the column will be positioned.\n- `auto` - Scrolls the minimum amount to make sure the column is visible.\n- `start` - Scrolls the column to the start of the viewport.\n- `middle` - Scrolls the column to the middle of the viewport.\n- `end` - Scrolls the column to the end of the viewport.\n */",
     "type": {
       "arguments": {
         "key": "string | Column",
@@ -439,19 +439,19 @@
     }
   },
   "ensureIndexVisible": {
-    "description": "/** Ensures the row index is visible by vertically scrolling the grid.\n * If a position of `'top'`, `'middle'` or `'bottom'` is supplied, the grid will scroll the grid to place the row at the top, middle or bottom respectively.\n * Otherwise, the grid will do the minimum scrolling possible to show the row.\n * i.e.\n * - if the grid needs to scroll up then it will scroll so that the row is at the top,\n * - if the grid needs to scroll down then it will scroll so that the row is at the bottom,\n * - if the row is already in view then the grid will do nothing. */",
+    "description": "/** Vertically scrolls the grid until the provided row index is inside the visible viewport.\n * If a position is provided, the grid will attempt to scroll until the row is at the given position within the viewport.\n * This will have no effect before the firstDataRendered event has fired. */",
     "type": {
       "arguments": {
-        "index": "any",
+        "index": "number",
         "position?": "'top' | 'bottom' | 'middle' | null"
       }
     }
   },
   "ensureNodeVisible": {
-    "description": "/** Ensures a row node is visible, scrolling the grid if needed.\n * Provide either:\n * - the node,\n * - the data object\n * - a comparator function (that takes the node as a parameter, and returns `true` for match or `false` for no match). */",
+    "description": "/** Vertically scrolls the grid until the provided row (or a row matching the provided comparator) is inside the visible viewport.\n * If a position is provided, the grid will attempt to scroll until the row is at the given position within the viewport.\n * This will have no effect before the firstDataRendered event has fired. */",
     "type": {
       "arguments": {
-        "comparator": "any",
+        "comparator": "TData | RowNode<TData> | ((row: RowNode<TData>) => boolean)",
         "position": "'top' | 'bottom' | 'middle' | null = null"
       }
     }

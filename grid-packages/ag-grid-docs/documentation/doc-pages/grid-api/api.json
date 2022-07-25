@@ -378,9 +378,24 @@
         },
         "setAlwaysShowHorizontalScroll": {},
         "setAlwaysShowVerticalScroll": {},
-        "ensureIndexVisible": {},
-        "ensureNodeVisible": {},
-        "ensureColumnVisible": {},
+        "ensureIndexVisible": {
+            "more": {
+                "name": "firstDataRendered event",
+                "url": "/grid-events/#reference-miscellaneous-firstDataRendered"
+            }
+        },
+        "ensureNodeVisible": {
+            "more": {
+                "name": "firstDataRendered event",
+                "url": "/grid-events/#reference-miscellaneous-firstDataRendered"
+            }
+        },
+        "ensureColumnVisible": {
+            "more": {
+                "name": "firstDataRendered event",
+                "url": "/grid-events/#reference-miscellaneous-firstDataRendered"
+            }
+        },
         "getHorizontalPixelRange": {},
         "getVerticalPixelRange": {}
     },
