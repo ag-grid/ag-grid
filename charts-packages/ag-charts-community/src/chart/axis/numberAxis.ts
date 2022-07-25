@@ -45,7 +45,7 @@ export class NumberAxis extends ChartAxis {
         const { scale, min, max } = this;
 
         if (domain.length > 2) {
-            domain = extent(domain, isContinuous, Number) || [0, 1];
+            domain = extent(domain, isContinuous, Number) || [];
         }
 
         domain = [isNaN(min) ? domain[0] : min, isNaN(max) ? domain[1] : max];

@@ -62,15 +62,15 @@ export function extent<T, K>(
  * finds the min and max using a process appropriate for stacked values. Ie,
  * summing up the positive and negative numbers, and returning the totals of each
  */
-export function findMinMax(values: number[]): { min: number; max: number } {
-    let min = 0;
-    let max = 0;
+export function findMinMax(values: number[]): { min?: number; max?: number } {
+    let min: number | undefined = undefined;
+    let max: number | undefined = undefined;
 
     for (const value of values) {
         if (value < 0) {
-            min += value;
+            min = (min ?? 0) - value;
         } else {
-            max += value;
+            max = (max ?? 0) + value;
         }
     }
 
