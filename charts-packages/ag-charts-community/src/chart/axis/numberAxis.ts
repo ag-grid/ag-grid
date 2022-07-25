@@ -41,7 +41,7 @@ export class NumberAxis extends ChartAxis {
         return this._nice;
     }
 
-    public setDomain(domain: number[], primaryTickCount?: number) {
+    private setDomain(domain: number[], primaryTickCount?: number) {
         const { scale, min, max } = this;
 
         if (domain.length > 2) {
