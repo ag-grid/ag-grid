@@ -5,7 +5,7 @@ import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 import { BeansContext } from '../beansContext';
 import { createSyncJsComp } from '../jsComp';
-import { useEffectOnce, useLayoutEffectOnce } from '../useEffectOnce';
+import { useLayoutEffectOnce } from '../useEffectOnce';
 
 export enum CellCompState { ShowValue, EditValue }
 
@@ -314,7 +314,7 @@ const CellComp = (props: {
     }, [showCellWrapper, includeDndSource, includeRowDrag, includeSelection, cellWrapperVersion]);
 
     // we use layout effect here as we want to synchronously process setComp and it's side effects
-    // to ensure the component is fully initialised prior to the first browser paint.
+    // to ensure the component is fully initialised prior to the first browser paint. See AG-7018.
     useLayoutEffectOnce(() => {
         if (!cellCtrl) { return; }
 

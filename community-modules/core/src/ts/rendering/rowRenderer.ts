@@ -1171,6 +1171,11 @@ export class RowRenderer extends BeanStub {
         }
     }
 
+    /**
+     * This event will only be fired once, and is queued until after the browser next renders.
+     * This allows us to fire an event during the start of the render cycle, when we first see data being rendered
+     * but not execute the event until all of the data has finished being rendered to the dom.
+     */
     public dispatchFirstDataRenderedEvent() {
         const event: FirstDataRenderedEvent = {
             type: Events.EVENT_FIRST_DATA_RENDERED,
@@ -1180,6 +1185,7 @@ export class RowRenderer extends BeanStub {
             columnApi: this.beans.columnApi,
         };
 
+        // See AG-7018
         window.requestAnimationFrame(() => {
             this.beans.eventService.dispatchEventOnce(event);
         });

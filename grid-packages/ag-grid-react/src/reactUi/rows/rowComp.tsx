@@ -101,7 +101,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
     const cssClassManager = useMemo(() => new CssClassManager(() => eGui.current!), []);
 
     // we use layout effect here as we want to synchronously process setComp and it's side effects
-    // to ensure the component is fully initialised prior to the first browser paint.
+    // to ensure the component is fully initialised prior to the first browser paint. See AG-7018.
     useLayoutEffectOnce(() => {
         // because React is asychronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
