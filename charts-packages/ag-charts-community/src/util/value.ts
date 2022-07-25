@@ -34,3 +34,15 @@ export function isDiscrete(value: any): boolean {
 export function isContinuous(value: any): boolean {
     return isNumeric(value) || isDate(value);
 }
+
+export function checkDatum<T>(value: T, isContinuousScale: boolean): T | string | undefined {
+    if (isContinuousScale && isContinuous(value)) {
+        return value;
+    } else if (!isContinuousScale) {
+        if (!isDiscrete(value)) {
+            return String(value);
+        }
+        return value;
+    }
+    return undefined;
+}

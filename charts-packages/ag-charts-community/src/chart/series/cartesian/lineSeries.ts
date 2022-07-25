@@ -15,7 +15,7 @@ import { TooltipRendererResult, toTooltipHtml } from '../../chart';
 import { interpolate } from '../../../util/string';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { isContinuous } from '../../../util/value';
+import { checkDatum, isContinuous } from '../../../util/value';
 import { Marker } from '../../marker/marker';
 
 interface LineNodeDatum extends SeriesNodeDatum {
@@ -144,7 +144,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             const x = datum[xKey];
             const y = datum[yKey];
 
-            const xDatum = this.checkDatum(x, isContinuousX);
+            const xDatum = checkDatum(x, isContinuousX);
 
             if (isContinuousX && xDatum === undefined) {
                 continue;
@@ -152,7 +152,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 xData.push(xDatum);
             }
 
-            const yDatum = this.checkDatum(y, isContinuousY);
+            const yDatum = checkDatum(y, isContinuousY);
             yData.push(yDatum);
         }
 

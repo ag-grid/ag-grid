@@ -22,7 +22,7 @@ import { equal } from '../../../util/equal';
 import { TypedEvent } from '../../../util/observable';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { isNumber } from '../../../util/value';
+import { checkDatum, isNumber } from '../../../util/value';
 import { clamper, ContinuousScale } from '../../../scale/continuousScale';
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
@@ -355,7 +355,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 console.warn(`The key '${xKey}' was not found in the data: `, datum);
             }
 
-            const x = this.checkDatum(datum[xKey], isContinuousX);
+            const x = checkDatum(datum[xKey], isContinuousX);
 
             if (isContinuousX) {
                 setSmallestXInterval(x, prevX);
@@ -374,7 +374,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         console.warn(`The key '${yKey}' was not found in the data: `, datum);
                     }
 
-                    const yDatum = this.checkDatum(datum[yKey], isContinuousY);
+                    const yDatum = checkDatum(datum[yKey], isContinuousY);
 
                     if (!seriesItemEnabled.get(yKey) || yDatum === undefined) {
                         return 0;
