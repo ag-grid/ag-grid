@@ -233,12 +233,10 @@ export class GridOptionsWrapper {
             }
         }
 
-        if (this.isEnableRangeSelection()) {
+        if (isTrue(this.gridOptions.enableRangeSelection)) {
             ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'enableRangeSelection');
-        }
-
-        if (!this.isEnableRangeSelection() && (this.isEnableRangeHandle() || this.isEnableFillHandle())) {
-            console.warn("AG Grid: 'enableRangeHandle' and 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
+        } else if (this.isEnableRangeHandle() || this.isEnableFillHandle()) {
+            console.warn("AG Grid: 'enableRangeHandle' or 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
 
         if (this.isGroupRowsSticky() && this.isGroupHideOpenParents()) {
