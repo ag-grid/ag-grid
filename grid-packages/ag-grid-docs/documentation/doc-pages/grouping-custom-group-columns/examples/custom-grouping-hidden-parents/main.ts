@@ -35,7 +35,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   groupDisplayType: 'custom',
   groupHideOpenParents: true,
-  enableRangeSelection: true,
   animateRows: true,
 }
 

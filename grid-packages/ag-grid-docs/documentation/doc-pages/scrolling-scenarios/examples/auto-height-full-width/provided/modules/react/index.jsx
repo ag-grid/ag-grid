@@ -138,7 +138,6 @@ class GridExample extends Component {
                         pagination={true}
                         paginationPageSize={this.state.paginationPageSize}
                         statusBar={this.state.statusBar}
-                        enableRangeSelection={true}
                         domLayout={this.state.domLayout}
                         isFullWidthRow={this.isFullWidthRow}
                         fullWidthCellRenderer={fullWidthCellRenderer}

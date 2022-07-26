@@ -54,7 +54,6 @@ const gridOptions: GridOptions = {
     statusBar: {
         statusPanels: [{ statusPanel: 'agAggregationComponent' }],
     },
-    enableRangeSelection: true,
     domLayout: 'autoHeight',
 }
 

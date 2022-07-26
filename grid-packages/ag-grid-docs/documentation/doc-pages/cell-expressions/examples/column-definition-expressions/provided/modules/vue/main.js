@@ -19,7 +19,6 @@ const VueExample = {
           @grid-ready="onGridReady"
           :columnDefs="columnDefs"
           :defaultColDef="defaultColDef"
-          :enableRangeSelection="true"
           :rowData="rowData"
           @cell-value-changed="onCellValueChanged"></ag-grid-vue>
       </div>

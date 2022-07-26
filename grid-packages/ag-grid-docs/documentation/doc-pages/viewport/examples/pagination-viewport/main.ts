@@ -59,7 +59,6 @@ const gridOptions: GridOptions = {
     minWidth: 140,
     resizable: true,
   },
-  enableRangeSelection: true,
   rowModelType: 'viewport',
   pagination: true,
   paginationAutoPageSize: true,

@@ -114,7 +114,6 @@ const gridOptions: GridOptions = {
   animateRows: true,
   rowSelection: 'multiple',
   groupSelectsChildren: true,
-  enableRangeSelection: true,
   context: {
     month: 0,
     months: [

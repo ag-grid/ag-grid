@@ -53,7 +53,6 @@ const gridOptions: GridOptions = {
   rowData: getData(),
   suppressAggFuncInHeader: true,
   enableCellChangeFlash: true,
-  enableRangeSelection: true,
   groupDefaultExpanded: 1,
   getRowId: (params: GetRowIdParams) => {
     return params.data.id

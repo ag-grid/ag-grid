@@ -43,7 +43,6 @@ const gridOptions: GridOptions = {
     minWidth: 100,
     resizable: true,
   },
-  enableRangeSelection: true,
   columnDefs: columnDefs,
   getRowId: (params: GetRowIdParams) => {
     return params.data.code

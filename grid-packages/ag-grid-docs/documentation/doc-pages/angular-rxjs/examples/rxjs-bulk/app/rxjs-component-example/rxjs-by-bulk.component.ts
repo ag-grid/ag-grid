@@ -25,7 +25,6 @@ export class RxJsComponentByFullSet {
         this.rowDataUpdates$ = mockServerService.allDataUpdates();
 
         this.gridOptions = {
-            enableRangeSelection: true,
             columnDefs: this.createColumnDefs(),
 
             getRowId: (params) => {

@@ -18,7 +18,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     filter: true,
   },
   columnDefs: columnDefs,
-  enableRangeSelection: true,
   animateRows: true,
   suppressAggFuncInHeader: true, // so we don't see sum() in gold, silver and bronze headers
   autoGroupColumnDef: {

@@ -153,7 +153,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   pivotPanelShow: 'always',
   animateRows: true,
   debug: true,
-  enableRangeSelection: true,
   sideBar: true,
   suppressAggFuncInHeader: true,
   // restrict to 2 server side calls concurrently
