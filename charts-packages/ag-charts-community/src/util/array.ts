@@ -68,7 +68,7 @@ export function findMinMax(values: number[]): { min?: number; max?: number } {
 
     for (const value of values) {
         if (value < 0) {
-            min = (min ?? 0) - value;
+            min = (min ?? 0) + value;
         } else {
             max = (max ?? 0) + value;
         }
