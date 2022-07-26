@@ -150,9 +150,6 @@ export class NavigationService extends BeanStub {
             this.gridBodyCon.getScrollFeature().ensureIndexVisible(focusIndex);
         }
 
-        // make sure the cell is rendered, needed if we are to focus
-        this.animationFrameService.flushAllFrames();
-
         // if we don't do this, the range will be left on the last cell, which will leave the last focused cell
         // highlighted.
         this.focusService.setFocusedCell({ rowIndex: focusIndex, column: focusColumn, rowPinned: null, forceBrowserFocus: true });
@@ -435,6 +432,10 @@ export class NavigationService extends BeanStub {
 
     private moveToNextEditingCell(previousCell: CellCtrl, backwards: boolean, event: KeyboardEvent | null = null): boolean {
         const previousPos = previousCell.getCellPosition();
+
+        // before we stop editing, we need to focus the cell element
+        // so the grid doesn't detect that focus has left the grid
+        previousCell.getGui().focus();
 
         // need to do this before getting next cell to edit, in case the next cell
         // has editable function (eg colDef.editable=func() ) and it depends on the
@@ -831,12 +832,5 @@ export class NavigationService extends BeanStub {
         if (!gridCell.column.isPinned()) {
             this.gridBodyCon.getScrollFeature().ensureColumnVisible(gridCell.column);
         }
-
-        // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
-        // floating cell, the scrolls get out of sync
-        this.gridBodyCon.getScrollFeature().horizontallyScrollHeaderCenterAndFloatingCenter();
-
-        // need to flush frames, to make sure the correct cells are rendered
-        this.animationFrameService.flushAllFrames();
     }
 }

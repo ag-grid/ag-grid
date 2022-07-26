@@ -113,6 +113,8 @@ export class CellCtrl extends BeanStub {
     // this comp used only for custom row drag handle (ie when user calls params.registerRowDragger)
     private customRowDragComp: RowDragComp;
 
+    private onCellCompAttachedFuncs: (() => void)[] = [];
+
     constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl) {
         super();
         this.column = column;
@@ -246,6 +248,11 @@ export class CellCtrl extends BeanStub {
         } else {
             this.showValue();
         }
+
+        if (this.onCellCompAttachedFuncs.length) {
+            this.onCellCompAttachedFuncs.forEach(func => func());
+            this.onCellCompAttachedFuncs = [];
+        }
     }
 
     private setupAutoHeight(): void {
@@ -349,6 +356,11 @@ export class CellCtrl extends BeanStub {
     // either called internally if single cell editing, or called by rowRenderer if row editing
     public startEditing(key: string | null = null, charPress: string | null = null, cellStartedEdit = false, event: KeyboardEvent | MouseEvent | null = null): void {
         if (!this.isCellEditable() || this.editing) { return; }
+
+        if (!this.cellComp) {
+            this.onCellCompAttachedFuncs.push(() => { this.startEditing(key, charPress, cellStartedEdit, event); });
+            return;
+        }
 
         const editorParams = this.createCellEditorParams(key, charPress, cellStartedEdit);
         const colDef = this.column.getColDef();
@@ -494,6 +506,11 @@ export class CellCtrl extends BeanStub {
     // to allow the text editor full access to the entire cell
     private setInlineEditingClass(): void {
         if (!this.isAlive()) { return; }
+
+        if (!this.cellComp) {
+            this.onCellCompAttachedFuncs.push(() => { this.setInlineEditingClass(); });
+            return;
+        }
 
         // ag-cell-inline-editing - appears when user is inline editing
         // ag-cell-not-inline-editing - appears when user is no inline editing
@@ -1110,6 +1127,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public destroy(): void {
+        this.onCellCompAttachedFuncs = [];
         super.destroy();
     }
 
