@@ -25,7 +25,7 @@ export interface IFrameworkOverrides {
     * within that context - this method provides this
     * Note: This is only really used/necessary with cellRendererSelectors
     */
-    frameworkComponent(name: string): any;
+    frameworkComponent(name: string, components?: any): any;
 
     /*
      * Allows framework to identify if a class is a component from that framework.
