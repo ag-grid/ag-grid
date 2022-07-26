@@ -91,6 +91,7 @@ export class FiltersToolPanelListPanel extends Component {
         if (len) {
             // skip the destroy function because this will be managed
             // by the `destroyFilters` function
+            // DO NOT CHANGE TO `appendManagedChild`
             this.filterGroupComps.forEach(comp => this.appendChild(comp));
             this.setFirstAndLastVisible(0, len - 1);
         }
@@ -114,6 +115,7 @@ export class FiltersToolPanelListPanel extends Component {
         if (len) {
             // skip the destroy function because this will be managed
             // by the `destroyFilters` function
+            // DO NOT CHANGE TO `appendManagedChild`
             this.filterGroupComps.forEach(comp => this.appendChild(comp));
             this.setFirstAndLastVisible(0, len - 1);
         }

@@ -305,17 +305,13 @@ export class Component extends BeanStub {
     }
 
     public appendManagedChild(
-        newChild: HTMLElement | Component,
+        newChild: Component,
         container?: HTMLElement
     ) {
         if (newChild == null) { return; }
 
         this.appendChild(newChild, container);
-
-        if (!isNodeOrElement(newChild)) {
-            const childComponent = newChild as Component;
-            this.addDestroyFunc(this.destroyBean.bind(this, childComponent));
-        }
+        this.addDestroyFunc(this.destroyBean.bind(this, newChild));
     }
 
     public isDisplayed(): boolean {

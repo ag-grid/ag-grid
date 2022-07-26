@@ -81,30 +81,40 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.params = defaultParams;
 
         if (this.isRowGroupingModuleLoaded() && !this.params.suppressPivotMode) {
-            this.pivotModePanel = this.createBean(new PivotModePanel()); // DO NOT CHANGE TO createManagedBean
-            this.appendManagedChild(this.pivotModePanel);
+            // DO NOT CHANGE TO createManagedBean or `appendManagedChild`
+            this.pivotModePanel = this.createBean(new PivotModePanel());
+            this.childDestroyFuncs.push(() => this.destroyBean(this.pivotModePanel));
+            this.appendChild(this.pivotModePanel);
         }
 
-        this.primaryColsPanel = this.createBean(new PrimaryColsPanel()); // DO NOT CHANGE TO createManagedBean
+        // DO NOT CHANGE TO createManagedBean or `appendManagedChild`
+        this.primaryColsPanel = this.createBean(new PrimaryColsPanel());
+        this.childDestroyFuncs.push(() => this.destroyBean(this.primaryColsPanel));
 
         this.primaryColsPanel.init(true, this.params, "toolPanelUi");
         this.primaryColsPanel.addCssClass('ag-column-panel-column-select');
-        this.appendManagedChild(this.primaryColsPanel);
+        this.appendChild(this.primaryColsPanel);
 
         if (this.isRowGroupingModuleLoaded()) {
             if (!this.params.suppressRowGroups) {
-                this.rowGroupDropZonePanel = this.createBean(new RowGroupDropZonePanel(false)); // DO NOT CHANGE TO createManagedBean
-                this.appendManagedChild(this.rowGroupDropZonePanel);
+                // DO NOT CHANGE TO createManagedBean or `appendManagedChild`
+                this.rowGroupDropZonePanel = this.createBean(new RowGroupDropZonePanel(false));
+                this.childDestroyFuncs.push(() => this.destroyBean(this.rowGroupDropZonePanel));
+                this.appendChild(this.rowGroupDropZonePanel);
             }
 
             if (!this.params.suppressValues) {
-                this.valuesDropZonePanel = this.createBean(new ValuesDropZonePanel(false)); // DO NOT CHANGE TO createManagedBean
-                this.appendManagedChild(this.valuesDropZonePanel);
+                // DO NOT CHANGE TO createManagedBean or `appendManagedChild`
+                this.valuesDropZonePanel = this.createBean(new ValuesDropZonePanel(false));
+                this.childDestroyFuncs.push(() => this.destroyBean(this.valuesDropZonePanel));
+                this.appendChild(this.valuesDropZonePanel);
             }
 
             if (!this.params.suppressPivots) {
-                this.pivotDropZonePanel = this.createBean(new PivotDropZonePanel(false)); // DO NOT CHANGE TO createManagedBean
-                this.appendManagedChild(this.pivotDropZonePanel);
+                // DO NOT CHANGE TO createManagedBean or `appendManagedChild`
+                this.pivotDropZonePanel = this.createBean(new PivotDropZonePanel(false));
+                this.childDestroyFuncs.push(() => this.destroyBean(this.pivotDropZonePanel));
+                this.appendChild(this.pivotDropZonePanel);
             }
 
             this.setLastVisible();
@@ -140,7 +150,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.rowGroupDropZonePanel.setDisplayed(visible);
         } else if (visible) {
             this.rowGroupDropZonePanel = this.createManagedBean(new RowGroupDropZonePanel(false));
-            this.appendManagedChild(this.rowGroupDropZonePanel);
+            this.appendChild(this.rowGroupDropZonePanel);
         }
         this.setLastVisible();
     }
@@ -152,7 +162,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.valuesDropZonePanel.setDisplayed(visible);
         } else if (visible) {
             this.valuesDropZonePanel = this.createManagedBean(new ValuesDropZonePanel(false));
-            this.appendManagedChild(this.valuesDropZonePanel);
+            this.appendChild(this.valuesDropZonePanel);
         }
         this.setLastVisible();
     }
