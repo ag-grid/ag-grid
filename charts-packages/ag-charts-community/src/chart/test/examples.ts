@@ -66,7 +66,7 @@ export const SIMPLE_PIE_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-pi
 export const SIMPLE_DOUGHNUT_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-doughnut'];
 export const SIMPLE_LINE_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-line'];
 export const LINE_GRAPH_WITH_GAPS_EXAMPLE: AgCartesianChartOptions = DOCS_EXAMPLES['line-with-gaps'];
-export const SIMPLE_SCATTER_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-scatter'];
+export const SIMPLE_SCATTER_CHART_EXAMPLE: AgCartesianChartOptions = DOCS_EXAMPLES['simple-scatter'];
 export const BUBBLE_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['bubble-with-negative-values'];
 export const BUBBLE_GRAPH_WITH_CATEGORIES_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['bubble-with-categories'];
 export const SIMPLE_AREA_GRAPH_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-area'];
@@ -1065,10 +1065,10 @@ export const TRUNCATED_LEGEND_ITEMS: AgCartesianChartOptions = {
 
 // START ADVANCED EXAMPLES =========================================================================
 
-export const ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: AgChartOptions =
+export const ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: AgCartesianChartOptions =
     DOCS_EXAMPLES['time-axis-with-irregular-intervals'];
 export const LOG_AXIS_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['log-axis'];
-export const ADV_COMBINATION_SERIES_CHART_EXAMPLE: AgChartOptions =
+export const ADV_COMBINATION_SERIES_CHART_EXAMPLE: AgCartesianChartOptions =
     DOCS_EXAMPLES['combination-of-different-series-types'];
 export const ADV_CHART_CUSTOMISATION: AgChartOptions = DOCS_EXAMPLES['chart-customisation'];
 export const ADV_CUSTOM_MARKER_SHAPES_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['custom-marker-shapes'];

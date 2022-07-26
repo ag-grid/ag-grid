@@ -3,8 +3,8 @@ import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
 import { AgChartOptions } from '../agChartOptions';
 import { AgChartV2 } from '../agChartV2';
-import { Chart } from '../chart';
-import { ChartAxis, ChartAxisPosition } from '../chartAxis';
+import { Chart, ChartUpdateType } from '../chart';
+import { ChartAxis, ChartAxisPosition, ChartAxisDirection } from '../chartAxis';
 import * as examples from '../test/examples-axes';
 import {
     waitForChartStability,
@@ -13,6 +13,8 @@ import {
     setupMockCanvas,
     extractImageData,
     toMatchImage,
+    CANVAS_HEIGHT,
+    CANVAS_WIDTH,
 } from '../test/utils';
 
 expect.extend({ toMatchImageSnapshot, toMatchImage });
@@ -73,6 +75,39 @@ const EXAMPLES = mixinDerivedCases({
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['line'] }),
     },
 });
+
+const EXAMPLES_NO_SERIES: Record<string, TestCase> = {
+    NUMBER_AXIS_NO_SERIES: {
+        options: examples.NUMBER_AXIS_NO_SERIES,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['scatter'] }),
+    },
+    NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN: {
+        options: examples.NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['scatter'] }),
+    },
+    TIME_AXIS_NO_SERIES: {
+        options: examples.TIME_AXIS_NO_SERIES,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line', 'line', 'line', 'line'] }),
+    },
+    TIME_AXIS_NO_SERIES_FIXED_DOMAIN: {
+        options: examples.TIME_AXIS_NO_SERIES_FIXED_DOMAIN,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line', 'line', 'line', 'line'] }),
+    },
+    COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES: {
+        options: examples.COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES,
+        assertions: cartesianChartAssertions({
+            axisTypes: ['category', 'number', 'number'],
+            seriesTypes: ['bar', 'line'],
+        }),
+    },
+    COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN: {
+        options: examples.COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN,
+        assertions: cartesianChartAssertions({
+            axisTypes: ['category', 'number', 'number'],
+            seriesTypes: ['bar', 'line'],
+        }),
+    },
+};
 
 function mixinDerivedCases(baseCases: Record<string, TestCase>): Record<string, TestCase> {
     const result = { ...baseCases };
@@ -135,8 +170,8 @@ describe('Axis Examples', () => {
 
             const options: AgChartOptions = { ...example.options };
             options.autoSize = false;
-            options.width = 800;
-            options.height = 600;
+            options.width = CANVAS_WIDTH;
+            options.height = CANVAS_HEIGHT;
 
             const chart = AgChartV2.create<any>(options) as Chart;
             await compare();
@@ -145,6 +180,68 @@ describe('Axis Examples', () => {
                 await example.extraScreenshotActions(chart);
                 await compare();
             }
+        });
+    }
+
+    for (const [exampleName, example] of Object.entries(EXAMPLES_NO_SERIES)) {
+        it(`for ${exampleName} it should create chart instance as expected`, async () => {
+            const options: AgChartOptions = example.options;
+            const chart = AgChartV2.create<any>(options);
+            await example.assertions(chart);
+        });
+
+        it(`for ${exampleName} it should render to canvas as expected`, async () => {
+            const compare = async () => {
+                await waitForChartStability(chart);
+
+                const newImageData = extractImageData({ ...ctx });
+                (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+            };
+
+            const options: AgChartOptions = { ...example.options };
+            options.autoSize = false;
+            options.width = CANVAS_WIDTH;
+            options.height = CANVAS_HEIGHT;
+
+            const chart = AgChartV2.create<any>(options) as Chart;
+            await compare();
+
+            if (example.extraScreenshotActions) {
+                await example.extraScreenshotActions(chart);
+                await compare();
+            }
+        });
+
+        it(`for ${exampleName} it should render identically after legend toggle`, async () => {
+            const snapshot = async () => {
+                await waitForChartStability(chart);
+
+                return ctx.nodeCanvas?.toBuffer('raw');
+            };
+
+            const options: AgChartOptions = { ...example.options };
+            options.autoSize = false;
+            options.width = CANVAS_WIDTH;
+            options.height = CANVAS_HEIGHT;
+
+            const chart = AgChartV2.create<any>(options) as Chart;
+            const reference = await snapshot();
+
+            chart.series.forEach((s) => {
+                s.toggleSeriesItem(s.getKeys(ChartAxisDirection.Y)[0], true);
+            });
+            chart.update(ChartUpdateType.FULL);
+
+            const afterUpdate = await snapshot();
+            (expect(afterUpdate) as any).not.toMatchImage(reference);
+
+            chart.series.forEach((s) => {
+                s.toggleSeriesItem(s.getKeys(ChartAxisDirection.Y)[0], false);
+            });
+            chart.update(ChartUpdateType.FULL);
+
+            const afterFinalUpdate = await snapshot();
+            (expect(afterFinalUpdate) as any).toMatchImage(reference);
         });
     }
 });
