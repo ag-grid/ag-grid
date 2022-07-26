@@ -81,13 +81,13 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.params = defaultParams;
 
         if (this.isRowGroupingModuleLoaded() && !this.params.suppressPivotMode) {
-            // DO NOT CHANGE TO createManagedBean or `appendManagedChild`
+            // DO NOT CHANGE TO createManagedBean
             this.pivotModePanel = this.createBean(new PivotModePanel());
             this.childDestroyFuncs.push(() => this.destroyBean(this.pivotModePanel));
             this.appendChild(this.pivotModePanel);
         }
 
-        // DO NOT CHANGE TO createManagedBean or `appendManagedChild`
+        // DO NOT CHANGE TO createManagedBean
         this.primaryColsPanel = this.createBean(new PrimaryColsPanel());
         this.childDestroyFuncs.push(() => this.destroyBean(this.primaryColsPanel));
 
@@ -97,21 +97,21 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         if (this.isRowGroupingModuleLoaded()) {
             if (!this.params.suppressRowGroups) {
-                // DO NOT CHANGE TO createManagedBean or `appendManagedChild`
+                // DO NOT CHANGE TO createManagedBean
                 this.rowGroupDropZonePanel = this.createBean(new RowGroupDropZonePanel(false));
                 this.childDestroyFuncs.push(() => this.destroyBean(this.rowGroupDropZonePanel));
                 this.appendChild(this.rowGroupDropZonePanel);
             }
 
             if (!this.params.suppressValues) {
-                // DO NOT CHANGE TO createManagedBean or `appendManagedChild`
+                // DO NOT CHANGE TO createManagedBean
                 this.valuesDropZonePanel = this.createBean(new ValuesDropZonePanel(false));
                 this.childDestroyFuncs.push(() => this.destroyBean(this.valuesDropZonePanel));
                 this.appendChild(this.valuesDropZonePanel);
             }
 
             if (!this.params.suppressPivots) {
-                // DO NOT CHANGE TO createManagedBean or `appendManagedChild`
+                // DO NOT CHANGE TO createManagedBean
                 this.pivotDropZonePanel = this.createBean(new PivotDropZonePanel(false));
                 this.childDestroyFuncs.push(() => this.destroyBean(this.pivotDropZonePanel));
                 this.appendChild(this.pivotDropZonePanel);
@@ -174,7 +174,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.pivotDropZonePanel.setDisplayed(visible);
         } else if (visible) {
             this.pivotDropZonePanel = this.createManagedBean(new PivotDropZonePanel(false));
-            this.appendManagedChild(this.pivotDropZonePanel);
+            this.appendChild(this.pivotDropZonePanel);
             this.pivotDropZonePanel.setDisplayed(visible);
         }
         this.setLastVisible();

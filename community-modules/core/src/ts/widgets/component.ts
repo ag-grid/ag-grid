@@ -304,16 +304,6 @@ export class Component extends BeanStub {
         }
     }
 
-    public appendManagedChild(
-        newChild: Component,
-        container?: HTMLElement
-    ) {
-        if (newChild == null) { return; }
-
-        this.appendChild(newChild, container);
-        this.addDestroyFunc(this.destroyBean.bind(this, newChild));
-    }
-
     public isDisplayed(): boolean {
         return this.displayed;
     }

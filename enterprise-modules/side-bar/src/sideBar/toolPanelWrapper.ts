@@ -30,11 +30,9 @@ export class ToolPanelWrapper extends Component {
     @PostConstruct
     private setupResize(): void {
         const eGui = this.getGui();
-        const resizeBar = this.resizeBar = new HorizontalResizeComp();
-
-        this.getContext().createBean(resizeBar);
+        const resizeBar = this.resizeBar = this.createManagedBean(new HorizontalResizeComp());
         resizeBar.setElementToResize(eGui);
-        this.appendManagedChild(resizeBar);
+        this.appendChild(resizeBar);
     }
 
     public getToolPanelId(): string {

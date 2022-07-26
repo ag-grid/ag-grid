@@ -223,12 +223,12 @@ class ContextMenu extends Component {
 
     @PostConstruct
     private addMenuItems(): void {
-        const menuList = this.createBean(new AgMenuList());
+        const menuList = this.createManagedBean(new AgMenuList());
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
 
         menuList.addMenuItems(menuItemsMapped);
 
-        this.appendManagedChild(menuList);
+        this.appendChild(menuList);
         this.menuList = menuList;
 
         menuList.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, (e: AgEvent) => this.dispatchEvent(e));
