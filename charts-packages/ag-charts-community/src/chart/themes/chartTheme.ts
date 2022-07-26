@@ -380,7 +380,6 @@ export class ChartTheme {
                 lineDash: [0],
                 lineDashOffset: 0,
                 areaPlot: false,
-                binCount: 10,
                 bins: undefined,
                 aggregation: 'sum',
                 label: {
