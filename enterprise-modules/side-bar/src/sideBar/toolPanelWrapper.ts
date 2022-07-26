@@ -34,7 +34,7 @@ export class ToolPanelWrapper extends Component {
 
         this.getContext().createBean(resizeBar);
         resizeBar.setElementToResize(eGui);
-        this.appendChild(resizeBar);
+        this.appendManagedChild(resizeBar);
     }
 
     public getToolPanelId(): string {

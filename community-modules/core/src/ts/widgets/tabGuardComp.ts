@@ -78,8 +78,8 @@ export class TabGuardComp extends Component {
     }
 
     public appendChild(
-        newChild: HTMLElement | Component,
-        options?: { container?: HTMLElement, addDestroyFunction: boolean }
+        newChild: Component | HTMLElement,
+        container?: HTMLElement | undefined
     ): void {
         if (!isNodeOrElement(newChild)) {
             newChild = (newChild as Component).getGui();
@@ -90,7 +90,7 @@ export class TabGuardComp extends Component {
         if (bottomTabGuard) {
             bottomTabGuard.insertAdjacentElement('beforebegin', newChild as HTMLElement);
         } else {
-            super.appendChild(newChild, options);
+            super.appendChild(newChild, container);
         }
     }
 }

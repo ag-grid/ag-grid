@@ -58,7 +58,7 @@ export class SideBarButtonsComp extends Component {
     private addButtonComp(def: ToolPanelDef): void {
         const buttonComp = this.createBean(new SideBarButtonComp(def));
         this.buttonComps.push(buttonComp);
-        this.appendChild(buttonComp);
+        this.appendManagedChild(buttonComp);
 
         buttonComp.addEventListener(SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED, () => {
             this.dispatchEvent({

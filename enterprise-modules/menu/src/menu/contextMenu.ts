@@ -228,7 +228,7 @@ class ContextMenu extends Component {
 
         menuList.addMenuItems(menuItemsMapped);
 
-        this.appendChild(menuList);
+        this.appendManagedChild(menuList);
         this.menuList = menuList;
 
         menuList.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, (e: AgEvent) => this.dispatchEvent(e));

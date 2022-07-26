@@ -290,19 +290,30 @@ export class Component extends BeanStub {
 
     public appendChild(
         newChild: HTMLElement | Component,
-        options?: { container?: HTMLElement, addDestroyFunction: boolean }
+        container?: HTMLElement
     ): void {
-        const { container = this.eGui, addDestroyFunction = true } = options || {};
-
         if (newChild == null) { return; }
+
+        if (!container) { container = this.eGui; }
 
         if (isNodeOrElement(newChild)) {
             container.appendChild(newChild as HTMLElement);
         } else {
             const childComponent = newChild as Component;
             container.appendChild(childComponent.getGui());
+        }
+    }
 
-            if (addDestroyFunction === false) { return; }
+    public appendManagedChild(
+        newChild: HTMLElement | Component,
+        container?: HTMLElement
+    ) {
+        if (newChild == null) { return; }
+
+        this.appendChild(newChild, container);
+
+        if (!isNodeOrElement(newChild)) {
+            const childComponent = newChild as Component;
             this.addDestroyFunc(this.destroyBean.bind(this, childComponent));
         }
     }
