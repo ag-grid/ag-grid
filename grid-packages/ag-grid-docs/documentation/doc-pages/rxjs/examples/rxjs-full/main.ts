@@ -44,7 +44,6 @@ const gridOptions: GridOptions = {
     minWidth: 100,
     resizable: true,
   },
-  enableRangeSelection: true,
   // implement this so that we can do selection and have immutable data
   getRowId: (params: GetRowIdParams) => {
     return params.data.code

@@ -28,7 +28,6 @@ export class RxJsComponentByRow {
         this.rowDataUpdates$ = mockServerService.byRowUpdates();
 
         this.gridOptions = {
-            enableRangeSelection: true,
             columnDefs: this.createColumnDefs(),
             getRowId: (params) => {
                 // the code is unique, so perfect for the id

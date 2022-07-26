@@ -8,6 +8,8 @@ export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
 
     constructor() {
         super(new BandScale<string>());
+
+        this.includeInvisibleDomains = true;
     }
 
     set paddingInner(value: number) {

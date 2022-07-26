@@ -242,13 +242,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return this._yKeys;
     }
 
-    protected _visibles: boolean[][];
+    protected _visibles: boolean[];
     set visibles(visibles: boolean[] | boolean[][]) {
-        if (is2dArray(visibles)) {
-            this._visibles = visibles;
-        } else {
-            this._visibles = this.grouped ? visibles.map((k) => [k]) : [visibles];
-        }
+        const flattenFn = (r: boolean[], n: boolean | boolean[]) => r.concat(...(Array.isArray(n) ? n : [n]));
+        this._visibles = (visibles as any).reduce(flattenFn, []);
 
         this.processSeriesItemEnabled();
     }
@@ -259,9 +256,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     private processSeriesItemEnabled() {
         const { seriesItemEnabled, _visibles: visibles = [] } = this;
         seriesItemEnabled.clear();
-        this._yKeys.forEach((stack, stackIdx) => {
-            const stackVisibles = visibles[stackIdx];
-            stack.forEach((yKey, idx) => seriesItemEnabled.set(yKey, stackVisibles?.[idx] ?? true));
+        let visiblesIdx = 0;
+        this._yKeys.forEach((stack) => {
+            stack.forEach((yKey) => seriesItemEnabled.set(yKey, visibles?.[visiblesIdx++] ?? true));
         });
     }
 
@@ -377,7 +374,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     const yDatum = checkDatum(datum[yKey], isContinuousY);
 
                     if (!seriesItemEnabled.get(yKey) || yDatum === undefined) {
-                        return 0;
+                        return NaN;
                     }
 
                     return yDatum;
@@ -401,13 +398,16 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             )
         );
 
-        const yLargestMinMax = this.findLargestMinMax(yMinMax);
+        let { min: yMin, max: yMax } = this.findLargestMinMax(yMinMax);
+        if (yMin === Infinity && yMax === -Infinity) {
+            // There's no data in the domain.
+            this.yDomain = [];
+            return true;
+        }
 
-        let yMin: number;
-        let yMax: number;
         if (normalizedTo && isFinite(normalizedTo)) {
-            yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
-            yMax = yLargestMinMax.max > 0 ? normalizedTo : 0;
+            yMin = yMin < 0 ? -normalizedTo : 0;
+            yMax = yMax > 0 ? normalizedTo : 0;
             yData.forEach((group, i) => {
                 group.forEach((stack, j) => {
                     stack.forEach((y, k) => {
@@ -415,9 +415,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     });
                 });
             });
-        } else {
-            yMin = yLargestMinMax.min;
-            yMax = yLargestMinMax.max;
         }
 
         this.yDomain = this.fixNumericExtent([yMin, yMax], this.yAxis);
@@ -425,17 +422,18 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return true;
     }
 
-    findLargestMinMax(groups: { min: number; max: number }[][]): { min: number; max: number } {
-        let tallestStackMin = 0;
-        let tallestStackMax = 0;
+    findLargestMinMax(groups: { min?: number; max?: number }[][]): { min: number; max: number } {
+        let tallestStackMin = Infinity;
+        let tallestStackMax = -Infinity;
 
         for (const group of groups) {
             for (const stack of group) {
-                if (stack.min < tallestStackMin) {
-                    tallestStackMin = stack.min;
+                let { min = Infinity, max = -Infinity } = stack;
+                if (min < tallestStackMin) {
+                    tallestStackMin = min;
                 }
-                if (stack.max > tallestStackMax) {
-                    tallestStackMax = stack.max;
+                if (max > tallestStackMax) {
+                    tallestStackMax = max;
                 }
             }
         }

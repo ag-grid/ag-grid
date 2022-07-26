@@ -40,7 +40,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     suppressKeyboardEvent: suppressNavigation,
     suppressHeaderKeyboardEvent: suppressUpDownNavigation,
   },
-  enableRangeSelection: true,
   rowSelection: 'multiple',
   suppressRowClickSelection: true,
 }

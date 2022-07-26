@@ -125,7 +125,6 @@ const GridExample = () => {
                     pagination={true}
                     paginationPageSize={10}
                     statusBar={statusBar}
-                    enableRangeSelection={true}
                     domLayout={'autoHeight'}
                     isFullWidthRow={isFullWidthRow}
                     fullWidthCellRenderer={fullWidthCellRenderer}

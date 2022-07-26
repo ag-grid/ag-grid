@@ -23,7 +23,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 250,
   },
   sideBar: true,
-  enableRangeSelection: true,
   getGroupRowAgg: getGroupRowAgg,
 }
 

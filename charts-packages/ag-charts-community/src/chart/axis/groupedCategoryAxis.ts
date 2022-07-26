@@ -31,6 +31,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
 
     constructor() {
         super(new BandScale<string | number>());
+        this.includeInvisibleDomains = true;
 
         const { axisGroup, gridlineGroup, tickScale, scale } = this;
 

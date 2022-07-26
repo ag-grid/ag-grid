@@ -63,7 +63,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowSelection: 'multiple',
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
-  enableRangeSelection: true,
   columnDefs: columnDefs,
   paginationAutoPageSize: true,
   pagination: true,

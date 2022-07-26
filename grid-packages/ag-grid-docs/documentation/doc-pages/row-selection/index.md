@@ -16,7 +16,7 @@ Configure row selection with the following properties:
 
 - `suppressRowDeselection`: Set to `true` to prevent rows from being deselected if you hold down <kbd>Ctrl</kbd> and click the row (i.e. once a row is selected, it remains selected until another row is selected in its place). By default the grid allows deselection of rows.
 
-- `suppressRowClickSelection`: If `true`, rows won't be selected when clicked. Use, for example, when you want checkbox selection, and don't want to also select the row when the row is clicked.
+- `suppressRowClickSelection`: If `true`, rows won't be selected when clicked. Use, for example, when you want checkbox selection or your managing selection from a custom component and don't want to select the row when the row is clicked.
 
 When you pass data to the grid, it wraps each data item in a node object. This is explained in the section [Client-Side Row Model](/client-side-model/). When you query for the selected rows, there are two method types: ones that return nodes, and ones that return data items. To get the selected nodes / rows from the grid, use the following API methods:
 

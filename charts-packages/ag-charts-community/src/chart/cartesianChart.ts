@@ -197,6 +197,9 @@ export class CartesianChart extends Chart {
         };
         const ceilValues = <T extends Record<string, number | undefined>>(records: T) => {
             return Object.entries(records).reduce((out, [key, value]) => {
+                if (value && Math.abs(value) === Infinity) {
+                    value = 0;
+                }
                 out[key] = value != null ? Math.ceil(value) : value;
                 return out;
             }, {} as any);
@@ -237,7 +240,7 @@ export class CartesianChart extends Chart {
         const newAxisWidths: Partial<Record<ChartAxisPosition, number>> = {};
 
         let clipSeries = false;
-        let primaryTickCount: number | undefined;
+        let primaryTickCounts: Partial<Record<ChartAxisDirection, number>> = {};
 
         const crossLinePadding: Partial<Record<ChartAxisPosition, number>> = {};
 
@@ -330,7 +333,10 @@ export class CartesianChart extends Chart {
                 clipSeries = true;
             }
 
-            primaryTickCount = axis.calculateDomain({ primaryTickCount }).primaryTickCount;
+            let primaryTickCount = primaryTickCounts[axis.direction];
+            ({ primaryTickCount } = axis.calculateDomain({ primaryTickCount }));
+            primaryTickCounts[axis.direction] = primaryTickCount;
+
             axis.update();
 
             let axisThickness = 0;

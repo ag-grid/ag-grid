@@ -25,7 +25,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     resizable: true,
   },
   groupDisplayType: 'custom',
-  enableRangeSelection: true,
   animateRows: true,
 }
 

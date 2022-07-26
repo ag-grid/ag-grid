@@ -36,6 +36,7 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
     direction: ChartAxisDirection = ChartAxisDirection.Y;
     boundSeries: Series[] = [];
     linkedTo?: ChartAxis;
+    includeInvisibleDomains: boolean = false;
 
     get type(): string {
         return (this.constructor as any).type || '';
@@ -149,7 +150,7 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
     }
 
     calculateDomain({ primaryTickCount }: { primaryTickCount?: number }) {
-        const { direction, boundSeries } = this;
+        const { direction, boundSeries, includeInvisibleDomains } = this;
 
         if (boundSeries.length === 0) {
             console.warn('AG Charts - chart series not initialised; check series and axes configuration.');
@@ -160,7 +161,7 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
         } else {
             const domains: any[][] = [];
             boundSeries
-                .filter((s) => s.visible)
+                .filter((s) => includeInvisibleDomains || s.visible)
                 .forEach((series) => {
                     domains.push(series.getDomain(direction));
                 });

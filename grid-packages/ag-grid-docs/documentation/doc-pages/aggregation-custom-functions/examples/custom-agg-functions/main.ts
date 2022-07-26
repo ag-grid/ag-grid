@@ -58,7 +58,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     field: 'athlete',
     minWidth: 250,
   },
-  enableRangeSelection: true,
   suppressAggFuncInHeader: true,
   aggFuncs: {
     // this overrides the grids built in sum function
