@@ -41,11 +41,11 @@ export class NumberAxis extends ChartAxis {
         return this._nice;
     }
 
-    public setDomain(domain: number[], primaryTickCount?: number) {
+    private setDomain(domain: number[], primaryTickCount?: number) {
         const { scale, min, max } = this;
 
         if (domain.length > 2) {
-            domain = extent(domain, isContinuous, Number) || [0, 1];
+            domain = extent(domain, isContinuous, Number) || [];
         }
 
         domain = [isNaN(min) ? domain[0] : min, isNaN(max) ? domain[1] : max];

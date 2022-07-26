@@ -449,6 +449,17 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             return [0, 1];
         }
 
+        if (min === Infinity && max === -Infinity) {
+            // There's no data in the domain.
+            return [];
+        }
+        if (min === Infinity) {
+            min = 0;
+        }
+        if (max === -Infinity) {
+            max = 0;
+        }
+
         if (min === max) {
             // domain has zero length, there is only a single valid value in data
 
@@ -465,7 +476,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         }
 
         if (!(isNumber(min) && isNumber(max))) {
-            return [0, 1];
+            return [];
         }
 
         return [min, max];
