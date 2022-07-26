@@ -209,7 +209,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     private readonly lineGroup = this.axisGroup.appendChild(new Group({ name: `${this.id}-Line` }));
     private readonly tickGroup = this.axisGroup.appendChild(new Group({ name: `${this.id}-Tick` }));
     private readonly titleGroup = this.axisGroup.appendChild(new Group({ name: `${this.id}-Title` }));
-    private tickLineGroupSelection = Selection.select(this.tickGroup).selectAll<Group>();
+    private tickGroupSelection = Selection.select(this.tickGroup).selectAll<Group>();
     private lineNode = this.lineGroup.appendChild(new Line());
 
     readonly gridlineGroup = new Group({ name: `${this.id}-gridline`, layer: true, zIndex: 0 });
@@ -512,12 +512,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const halfBandwidth = (scale.bandwidth || 0) / 2;
 
         const ticks = this.ticks || scale.ticks!(this.calculatedTickCount);
-        const tickLineGroupSelection = this.updateTicks({ ticks });
+        const tickGroupSelection = this.updateTicks({ ticks });
         const labelBboxes = this.updateLabels({
             parallelFlipRotation,
             regularFlipRotation,
             sideFlag,
-            tickLineGroupSelection,
+            tickLineGroupSelection: tickGroupSelection,
             ticks,
         });
         const gridlineGroupSelection = this.updateGridLines({
@@ -528,7 +528,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             sideFlag,
         });
 
-        this.tickLineGroupSelection = tickLineGroupSelection;
+        this.tickGroupSelection = tickGroupSelection;
         this.gridlineGroupSelection = gridlineGroupSelection;
 
         let anyTickVisible = false;
@@ -541,7 +541,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             return visible;
         };
 
-        tickLineGroupSelection.attrFn('translationY', translationYFn).attrFn('visible', visibleFn);
+        tickGroupSelection.attrFn('translationY', translationYFn).attrFn('visible', visibleFn);
         gridlineGroupSelection.attrFn('translationY', translationYFn).attrFn('visible', visibleFn);
 
         this.tickGroup.visible = anyTickVisible;
@@ -555,7 +555,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             return;
         }
 
-        tickLineGroupSelection
+        tickGroupSelection
             .selectByTag<Line>(Tags.Tick)
             .each((line, _, index) => {
                 line.strokeWidth = tick.width;
@@ -581,7 +581,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     private updateTicks({ ticks }: { ticks: any[] }) {
-        const updateAxis = this.tickLineGroupSelection.setData(ticks);
+        const updateAxis = this.tickGroupSelection.setData(ticks);
         updateAxis.exit.remove();
 
         const enterAxis = updateAxis.enter.append(Group);
