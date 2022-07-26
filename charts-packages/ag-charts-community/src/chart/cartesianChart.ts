@@ -240,7 +240,7 @@ export class CartesianChart extends Chart {
         const newAxisWidths: Partial<Record<ChartAxisPosition, number>> = {};
 
         let clipSeries = false;
-        let primaryTickCount: number | undefined;
+        let primaryTickCounts: Partial<Record<ChartAxisDirection, number>> = {};
 
         const crossLinePadding: Partial<Record<ChartAxisPosition, number>> = {};
 
@@ -333,7 +333,10 @@ export class CartesianChart extends Chart {
                 clipSeries = true;
             }
 
-            primaryTickCount = axis.calculateDomain({ primaryTickCount }).primaryTickCount;
+            let primaryTickCount = primaryTickCounts[axis.direction];
+            ({ primaryTickCount } = axis.calculateDomain({ primaryTickCount }));
+            primaryTickCounts[axis.direction] = primaryTickCount;
+
             axis.update();
 
             let axisThickness = 0;

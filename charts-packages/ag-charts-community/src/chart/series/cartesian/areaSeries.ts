@@ -351,22 +351,6 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         return true;
     }
 
-    findLargestMinMax(totals: { min: number; max: number }[]): { min: number; max: number } {
-        let min = 0;
-        let max = 0;
-
-        for (const total of totals) {
-            if (total.min < min) {
-                min = total.min;
-            }
-            if (total.max > max) {
-                max = total.max;
-            }
-        }
-
-        return { min, max };
-    }
-
     getDomain(direction: ChartAxisDirection): any[] {
         if (direction === ChartAxisDirection.X) {
             return this.xDomain;
