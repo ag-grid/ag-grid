@@ -206,13 +206,55 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         const xData = this.data.map((datum) => datum[this.xKey]);
         const xDomain = this.fixNumericExtent(extent(xData, isContinuous));
 
-        const binStarts = ticks(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
-        const binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
-        const firstBinEnd = binStarts[0];
+        if (this.binCount === undefined) {
+            const binStarts = ticks(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
+            const binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
+            const expandStartToBin: (n: number, i: number) => [number, number] = (n) => [n, n + binSize];
 
-        const expandStartToBin: (n: number) => [number, number] = (n) => [n, n + binSize];
+            return [...binStarts.map(expandStartToBin)];
+        } else {
+            return this.calculateNiceBins(xDomain, this.binCount);
+        }
+    }
 
-        return [[firstBinEnd - binSize, firstBinEnd], ...binStarts.map(expandStartToBin)];
+    private calculateNiceBins(domain: number[], binCount: number): [number, number][] {
+        let start = Math.floor(domain[0]);
+        let stop = domain[1];
+        let binSize;
+
+        const segments = binCount || 1;
+        ({ start, binSize } = this.calculateNiceStart(start, stop, segments));
+
+        return this.getBins(start, stop, binSize, segments);
+    }
+
+    private getBins(start: number, stop: number, step: number, count: number): [number, number][] {
+        const bins: [number, number][] = [];
+
+        for (let i = 0; i < count; i++) {
+            let a = Math.round((start + i * step) * 10) / 10;
+            let b = Math.round((start + (i + 1) * step) * 10) / 10;
+            if (i === count - 1) {
+                b = Math.max(b, stop);
+            }
+
+            bins[i] = [a, b];
+        }
+
+        return bins;
+    }
+
+    private calculateNiceStart(a: number, b: number, segments: number): { start: number; binSize: number } {
+        const binSize = Math.abs(b - a) / segments;
+        const order = Math.floor(Math.log10(binSize));
+        const magnitude = Math.pow(10, order);
+
+        const start = Math.floor(a / magnitude) * magnitude;
+
+        return {
+            start,
+            binSize,
+        };
     }
 
     private placeDataInBins(data: any[]): HistogramBin[] {
