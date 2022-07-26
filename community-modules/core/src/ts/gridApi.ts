@@ -906,9 +906,9 @@ export class GridApi<TData = any> {
 
     /**
      *  Ensures the column is visible by scrolling the table if needed.
-     * 
+     *
      * This will have no effect before the firstDataRendered event has fired.
-     * 
+     *
      * @param key - The column to ensure visible
      * @param position - Where the column will be positioned.
      * - `auto` - Scrolls the minimum amount to make sure the column is visible.

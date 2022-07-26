@@ -352,7 +352,7 @@ export class GridBodyScrollFeature extends BeanStub {
         for (let i = 0; i < rowCount; i++) {
             const node = this.rowModel.getRow(i);
             if (typeof comparator === 'function') {
-                // Have to assert type here, as type could be TData & Function 
+                // Have to assert type here, as type could be TData & Function
                 const predicate = comparator as ((row: RowNode<TData>) => boolean);
                 if (node && predicate(node)) {
                     indexToSelect = i;
