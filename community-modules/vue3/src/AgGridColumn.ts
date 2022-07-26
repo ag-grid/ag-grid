@@ -2,11 +2,11 @@ import { ColDef, ColDefUtil } from '@ag-grid-community/core';
 
 export class AgGridColumn {
     public static hasChildColumns(slots: any) {
-        return slots && slots.default && slots.default.length > 0;
+        return slots && slots.default && slots.default().length > 0;
     }
 
     public static mapChildColumnDefs(slots: any) {
-        return slots.default.map((column: any) => {
+        return slots.default().map((column: any) => {
             return AgGridColumn.toColDef(column);
         });
     }
@@ -27,7 +27,7 @@ export class AgGridColumn {
 
     private static createColDefFromGridColumn(column: any): ColDef {
         const colDef: ColDef = {};
-        Object.assign(colDef, column.data.attrs);
+        Object.assign(colDef, column.props);
         delete (colDef as any).children;
 
         // booleans passed down just as is are here as property=""
