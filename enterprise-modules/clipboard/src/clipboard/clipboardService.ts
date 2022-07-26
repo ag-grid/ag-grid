@@ -425,6 +425,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const lastLineIsBlank = lastLine && lastLine.length === 1 && lastLine[0] === '';
 
         if (lastLineIsBlank) {
+            // do not remove the last empty line when that is the only line pasted
+            if (parsedData.length === 1) { return; }
             _.removeFromArray(parsedData, lastLine);
         }
     }
