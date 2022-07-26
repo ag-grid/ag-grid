@@ -322,15 +322,12 @@ export abstract class BaseDropZonePanel extends Component {
         }
 
         if (this.isPotentialDndColumns()) {
-            const hideColumnOnExit = this.isRowGroupPanel() && !this.gridOptionsWrapper.isSuppressMakeColumnVisibleAfterUnGroup() && !draggingEvent.fromNudge;
+            const showColumnOnExit = this.isRowGroupPanel() && !this.gridOptionsWrapper.isSuppressMakeColumnVisibleAfterUnGroup() && !draggingEvent.fromNudge;
 
-            if (hideColumnOnExit) {
+            if (showColumnOnExit) {
                 const dragItem = draggingEvent.dragSource.getDragItem();
-                const hiddenCols = this.potentialDndColumns.filter(col => dragItem.visibleState?.[col.getId()!] ?? false);
-                const visibleCols = this.potentialDndColumns.filter(col => !(dragItem.visibleState?.[col.getId()!] ?? false));
-                
-                this.setColumnsVisible(hiddenCols, false, "uiColumnDragged");
-                this.setColumnsVisible(visibleCols, true, "uiColumnDragged");
+
+                this.setColumnsVisible(dragItem.columns, true, "uiColumnDragged");
             }
 
             this.potentialDndColumns = [];
