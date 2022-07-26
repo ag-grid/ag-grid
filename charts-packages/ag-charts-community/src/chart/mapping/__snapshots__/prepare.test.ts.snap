@@ -4841,7 +4841,6 @@ Object {
     Object {
       "aggregation": "sum",
       "areaPlot": true,
-      "binCount": 10,
       "bins": Array [
         Array [
           0,
@@ -8305,7 +8304,6 @@ Object {
     Object {
       "aggregation": "sum",
       "areaPlot": false,
-      "binCount": 10,
       "bins": undefined,
       "cursor": "default",
       "fill": "#f3622d",
@@ -10112,7 +10110,6 @@ Object {
     Object {
       "aggregation": "sum",
       "areaPlot": true,
-      "binCount": 10,
       "bins": Array [
         Array [
           0,
