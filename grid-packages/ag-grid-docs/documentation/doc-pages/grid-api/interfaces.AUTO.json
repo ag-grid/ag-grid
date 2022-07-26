@@ -9552,7 +9552,7 @@
       "setInterval(action: any, interval?: any)": "AgPromise<number>",
       "addEventListener(element: HTMLElement, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions)": "void",
       "dispatchEvent(eventType: string, listener: () => {}, global: boolean)": "void",
-      "frameworkComponent(name: string)": "any",
+      "frameworkComponent(name: string, components?: any)": "any",
       "isFrameworkComponent(comp: any)": "boolean"
     },
     "docs": {

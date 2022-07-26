@@ -87,11 +87,17 @@ const EXAMPLES_NO_SERIES: Record<string, TestCase> = {
     },
     TIME_AXIS_NO_SERIES: {
         options: examples.TIME_AXIS_NO_SERIES,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line', 'line', 'line', 'line'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['time', 'number'],
+            seriesTypes: ['line', 'line', 'line', 'line'],
+        }),
     },
     TIME_AXIS_NO_SERIES_FIXED_DOMAIN: {
         options: examples.TIME_AXIS_NO_SERIES_FIXED_DOMAIN,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line', 'line', 'line', 'line'] }),
+        assertions: cartesianChartAssertions({
+            axisTypes: ['time', 'number'],
+            seriesTypes: ['line', 'line', 'line', 'line'],
+        }),
     },
     COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES: {
         options: examples.COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES,

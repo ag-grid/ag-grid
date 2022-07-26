@@ -16422,7 +16422,7 @@
     },
     "frameworkComponent": {
       "type": {
-        "arguments": { "name": "string" },
+        "arguments": { "name": "string", "components?": "any" },
         "returnType": "any",
         "optional": false
       }

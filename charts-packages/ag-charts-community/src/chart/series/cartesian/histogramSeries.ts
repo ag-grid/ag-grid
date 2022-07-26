@@ -209,9 +209,11 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         if (this.binCount === undefined) {
             const binStarts = ticks(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
             const binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
-            const expandStartToBin: (n: number, i: number) => [number, number] = (n) => [n, n + binSize];
+            const firstBinEnd = binStarts[0];
 
-            return [...binStarts.map(expandStartToBin)];
+            const expandStartToBin: (n: number) => [number, number] = (n) => [n, n + binSize];
+
+            return [[firstBinEnd - binSize, firstBinEnd], ...binStarts.map(expandStartToBin)];
         } else {
             return this.calculateNiceBins(xDomain, this.binCount);
         }

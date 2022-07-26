@@ -451,7 +451,7 @@
     "description": "/** Vertically scrolls the grid until the provided row (or a row matching the provided comparator) is inside the visible viewport.\n * If a position is provided, the grid will attempt to scroll until the row is at the given position within the viewport.\n * This will have no effect before the firstDataRendered event has fired. */",
     "type": {
       "arguments": {
-        "comparator": "TData | RowNode<TData> | ((row: RowNode<TData>) => boolean)",
+        "nodeSelector": "TData | RowNode<TData> | ((row: RowNode<TData>) => boolean)",
         "position": "'top' | 'bottom' | 'middle' | null = null"
       }
     }
