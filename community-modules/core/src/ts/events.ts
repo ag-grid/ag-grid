@@ -1,5 +1,5 @@
 import { RowNode, RowPinnedType } from './entities/rowNode';
-import { Column } from './entities/column';
+import { Column, ColumnPinnedType } from './entities/column';
 import { ColDef } from './entities/colDef';
 import { GridApi } from './gridApi';
 import { ColumnApi } from './columns/columnApi';
@@ -11,7 +11,6 @@ import { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import { ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
-import { ColumnPinnedType } from './columns/columnModel';
 export { Events } from './eventKeys';
 
 export interface ModelUpdatedEvent<TData = any> extends AgGridEvent<TData> {

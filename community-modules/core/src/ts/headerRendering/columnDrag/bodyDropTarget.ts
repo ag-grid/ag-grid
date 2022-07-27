@@ -2,10 +2,11 @@ import { DragAndDropService, DraggingEvent, DragSourceType, DropTarget } from ".
 import { Autowired, PostConstruct } from "../../context/context";
 import { MoveColumnFeature } from "./moveColumnFeature";
 import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
-import { ColumnModel, ColumnPinnedType } from "../../columns/columnModel";
+import { ColumnModel } from "../../columns/columnModel";
 import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { CtrlsService } from "../../ctrlsService";
+import { ColumnPinnedType } from "../../entities/column";
 
 export interface DropListener {
     getIconName(): string | null;

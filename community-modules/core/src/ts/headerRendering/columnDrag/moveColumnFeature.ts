@@ -1,11 +1,10 @@
 import { Autowired, PostConstruct } from "../../context/context";
 import { Constants } from "../../constants/constants";
-import { ColumnModel, ColumnPinnedType } from "../../columns/columnModel";
-import { Column } from "../../entities/column";
+import { ColumnModel } from "../../columns/columnModel";
+import { Column, ColumnPinnedType } from "../../entities/column";
 import { DragAndDropService, DraggingEvent, DragSourceType, HorizontalDirection } from "../../dragAndDrop/dragAndDropService";
 import { DropListener } from "./bodyDropTarget";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { Logger, LoggerFactory } from "../../logger";
 import { ColumnEventType } from "../../events";
 import { missing, exists } from "../../utils/generic";
 import { sortNumerically, last, includes } from "../../utils/array";

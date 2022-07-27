@@ -1,9 +1,9 @@
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { IHeaderColumn } from "../entities/iHeaderColumn";
-import { ColumnModel, ColumnState, ApplyColumnStateParams, ColumnPinnedType } from "./columnModel";
+import { ColumnModel, ColumnState, ApplyColumnStateParams } from "./columnModel";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { ColumnGroup } from "../entities/columnGroup";
-import { Column } from "../entities/column";
+import { Column, ColumnPinnedType } from "../entities/column";
 import { Autowired, Bean, PreDestroy } from "../context/context";
 import { _ } from "../utils";
 import { ColumnEventType } from "../events";

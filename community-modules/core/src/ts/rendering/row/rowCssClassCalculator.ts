@@ -7,7 +7,7 @@ import { StylingService } from "../../styling/stylingService";
 import { RowClassParams } from "../../entities/gridOptions";
 import { Constants } from "../../constants/constants";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
-import { ColumnPinnedType } from "../../columns/columnModel";
+import { ColumnPinnedType } from "../../entities/column";
 
 export interface RowCssClassCalculatorParams {
     rowNode: RowNode;

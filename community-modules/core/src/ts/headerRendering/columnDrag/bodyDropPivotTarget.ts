@@ -1,6 +1,6 @@
 import { DraggingEvent, DragAndDropService } from "../../dragAndDrop/dragAndDropService";
-import { Column } from "../../entities/column";
-import { ColumnModel, ColumnPinnedType } from "../../columns/columnModel";
+import { Column, ColumnPinnedType } from "../../entities/column";
+import { ColumnModel } from "../../columns/columnModel";
 import { Autowired } from "../../context/context";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { DropListener } from "./bodyDropTarget";

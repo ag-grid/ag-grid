@@ -26,7 +26,8 @@ import { ModuleRegistry } from "../modules/moduleRegistry";
 import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
 import { doOnce } from "../utils/function";
 import { mergeDeep } from "../utils/object";
-import { ColumnPinnedType } from "../columns/columnModel";
+
+export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 
 let instanceIdSequence = 0;
 

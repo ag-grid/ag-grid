@@ -1,5 +1,5 @@
 import { RowModelType } from "../interfaces/iRowModel";
-import { ColumnPinnedType } from "../columns/columnModel";
+import { ColumnPinnedType } from "../entities/column";
 
 export class Constants {
 

@@ -1,8 +1,8 @@
-import { ColumnModel, ColumnPinnedType } from "../../../columns/columnModel";
+import { ColumnModel } from "../../../columns/columnModel";
 import { Constants } from "../../../constants/constants";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
-import { Column } from "../../../entities/column";
+import { Column, ColumnPinnedType } from "../../../entities/column";
 import { setDisplayed } from "../../../utils/dom";
 import { TouchListener } from "../../../widgets/touchListener";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";

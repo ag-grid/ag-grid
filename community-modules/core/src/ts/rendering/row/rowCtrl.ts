@@ -4,7 +4,7 @@ import { UserCompDetails } from "../../components/framework/userComponentFactory
 import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { CellPosition } from "../../entities/cellPosition";
-import { Column } from "../../entities/column";
+import { Column, ColumnPinnedType } from "../../entities/column";
 import { RowClassParams } from "../../entities/gridOptions";
 import { DataChangedEvent, RowHighlightPosition, RowNode } from "../../entities/rowNode";
 import { RowPosition } from "../../entities/rowPosition";
@@ -24,7 +24,6 @@ import { CellCtrl } from "../cell/cellCtrl";
 import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRenderer";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { RowDragComp } from "./rowDragComp";
-import { ColumnPinnedType } from "../../columns/columnModel";
 
 export enum RowType {
     Normal = 'Normal',

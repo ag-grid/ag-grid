@@ -1,6 +1,6 @@
 import { IHeaderColumn } from "./iHeaderColumn";
 import { ColGroupDef } from "./colDef";
-import { Column } from "./column";
+import { Column, ColumnPinnedType } from "./column";
 import { AbstractColDef } from "./colDef";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { EventService } from "../eventService";
@@ -8,7 +8,6 @@ import { Autowired } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
 import { last } from "../utils/array";
-import { ColumnPinnedType } from "../columns/columnModel";
 
 export class ColumnGroup implements IHeaderColumn {
 

@@ -7,7 +7,7 @@ import { BeanStub } from "./context/beanStub";
 import { GridHeaderCtrl } from "./headerRendering/gridHeaderCtrl";
 import { Constants } from "./constants/constants";
 import { HeaderRowContainerCtrl } from "./headerRendering/rowContainer/headerRowContainerCtrl";
-import { ColumnPinnedType } from "./columns/columnModel";
+import { ColumnPinnedType } from "./entities/column";
 
 // for all controllers that are singletons, they can register here so other parts
 // of the application can access them.

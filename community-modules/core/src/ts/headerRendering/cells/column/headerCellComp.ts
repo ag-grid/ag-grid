@@ -1,7 +1,6 @@
-import { ColumnPinnedType } from "src/ts/main";
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { PostConstruct, PreDestroy } from "../../../context/context";
-import { Column } from "../../../entities/column";
+import { Column, ColumnPinnedType } from "../../../entities/column";
 import { removeAriaSort, setAriaDescription, setAriaSort } from "../../../utils/aria";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";

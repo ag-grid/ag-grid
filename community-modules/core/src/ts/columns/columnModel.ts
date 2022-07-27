@@ -1,5 +1,5 @@
 import { ColumnGroup } from '../entities/columnGroup';
-import { Column } from '../entities/column';
+import { Column, ColumnPinnedType } from '../entities/column';
 import { AbstractColDef, ColDef, ColGroupDef, IAggFunc, HeaderValueGetterParams } from '../entities/colDef';
 import { IHeaderColumn } from '../entities/iHeaderColumn';
 import { ExpressionService } from '../valueService/expressionService';
@@ -52,8 +52,6 @@ import { convertToMap } from '../utils/map';
 import { doOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
-
-export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 
 export interface ColumnResizeSet {
     columns: Column[];

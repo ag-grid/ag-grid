@@ -1,4 +1,4 @@
-import { ColumnPinnedType } from '../../columns/columnModel';
+import { ColumnPinnedType } from '../../entities/column';
 import { Constants } from '../../constants/constants';
 import { PostConstruct, PreDestroy } from '../../context/context';
 import { ensureDomOrder } from '../../utils/dom';

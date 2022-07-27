@@ -1,4 +1,4 @@
-import { Column } from "../entities/column";
+import { Column, ColumnPinnedType } from "../entities/column";
 import { IProvidedColumn } from "../entities/iProvidedColumn";
 import { GroupInstanceIdCreator } from "./groupInstanceIdCreator";
 import { IHeaderColumn } from "../entities/iHeaderColumn";
@@ -8,7 +8,6 @@ import { Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { last } from "../utils/array";
 import { exists } from "../utils/generic";
-import { ColumnPinnedType } from "../columns/columnModel";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('displayedGroupCreator')

@@ -1,9 +1,9 @@
-import { ColumnModel, ColumnPinnedType } from "../../columns/columnModel";
+import { ColumnModel } from "../../columns/columnModel";
 import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { CtrlsService } from "../../ctrlsService";
-import { Column } from "../../entities/column";
+import { Column, ColumnPinnedType } from "../../entities/column";
 import { IHeaderColumn } from "../../entities/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { CenterWidthFeature } from "../../gridBodyComp/centerWidthFeature";

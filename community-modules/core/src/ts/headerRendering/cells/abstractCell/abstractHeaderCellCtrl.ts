@@ -7,7 +7,7 @@ import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { KeyCode } from "../.././../constants/keyCode";
 import { Beans } from "../../../rendering/beans";
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import { ColumnPinnedType } from "../../../columns/columnModel";
+import { ColumnPinnedType } from "../../../entities/column";
 
 let instanceIdSequence = 0;
 

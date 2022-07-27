@@ -6,7 +6,7 @@ import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
 import { DragService } from "../../dragAndDrop/dragService";
 import { CtrlsService } from "../../ctrlsService";
 import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isVisible, setScrollLeft } from "../../utils/dom";
-import { ColumnModel, ColumnPinnedType } from "../../columns/columnModel";
+import { ColumnModel } from "../../columns/columnModel";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
 import { ViewportSizeFeature } from "../viewportSizeFeature";
 import { convertToMap } from "../../utils/map";
@@ -19,6 +19,7 @@ import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { Constants } from "../../constants/constants";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { ColumnPinnedType } from "../../entities/column";
 
 export enum RowContainerName {
     LEFT = 'left',
