@@ -201,9 +201,7 @@
   },
   "setPinned": {
     "type": {
-      "arguments": {
-        "pinned": "'left' | 'right' | boolean | null | undefined"
-      },
+      "arguments": { "pinned": "ColumnPinnedType" },
       "returnType": "void"
     }
   },
@@ -233,10 +231,7 @@
   "isPinnedLeft": { "type": { "arguments": {}, "returnType": "boolean" } },
   "isPinnedRight": { "type": { "arguments": {}, "returnType": "boolean" } },
   "getPinned": {
-    "type": {
-      "arguments": {},
-      "returnType": "'left' | 'right' | null | undefined"
-    }
+    "type": { "arguments": {}, "returnType": "ColumnPinnedType" }
   },
   "setVisible": {
     "type": {

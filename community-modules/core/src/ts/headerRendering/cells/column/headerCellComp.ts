@@ -1,6 +1,6 @@
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { PostConstruct, PreDestroy } from "../../../context/context";
-import { Column } from "../../../entities/column";
+import { Column, ColumnPinnedType } from "../../../entities/column";
 import { removeAriaSort, setAriaDescription, setAriaSort } from "../../../utils/aria";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
@@ -19,7 +19,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     @RefSelector('eHeaderCompWrapper') private eHeaderCompWrapper: HTMLElement;
 
     protected readonly column: Column;
-    protected readonly pinned: string | null;
+    protected readonly pinned: ColumnPinnedType;
 
     private headerComp: IHeaderComp | undefined;
     private headerCompGui: HTMLElement | undefined;

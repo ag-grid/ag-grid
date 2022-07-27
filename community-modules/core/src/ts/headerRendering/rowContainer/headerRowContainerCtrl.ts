@@ -3,7 +3,7 @@ import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { CtrlsService } from "../../ctrlsService";
-import { Column } from "../../entities/column";
+import { Column, ColumnPinnedType } from "../../entities/column";
 import { IHeaderColumn } from "../../entities/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { CenterWidthFeature } from "../../gridBodyComp/centerWidthFeature";
@@ -35,7 +35,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('focusService') public focusService: FocusService;
 
-    private pinned: string | null;
+    private pinned: ColumnPinnedType;
     private comp: IHeaderRowContainerComp;
 
     private filtersRowCtrl: HeaderRowCtrl | undefined;
@@ -43,7 +43,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     private groupsRowCtrls: HeaderRowCtrl[] = [];
     private eViewport: HTMLElement;
 
-    constructor(pinned: string | null) {
+    constructor(pinned: ColumnPinnedType) {
         super();
         this.pinned = pinned;
     }

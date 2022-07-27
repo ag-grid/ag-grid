@@ -92,10 +92,10 @@ export { DragService } from "./dragAndDrop/dragService";
 export { IRowDragItem } from "./rendering/row/rowDragComp";
 
 // entities
-export { Column } from "./entities/column";
+export { Column, ColumnPinnedType } from "./entities/column";
 export { ColumnGroup } from "./entities/columnGroup";
 export { ProvidedColumnGroup } from "./entities/providedColumnGroup";
-export { RowNode, RowHighlightPosition } from "./entities/rowNode";
+export { RowNode, RowHighlightPosition, RowPinnedType } from "./entities/rowNode";
 export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 
 // filter
@@ -304,7 +304,7 @@ export { ValueCache } from "./valueService/valueCache";
 export { ExpressionService } from "./valueService/expressionService";
 
 // uncatalogued
-export { IRowModel, RowBounds } from "./interfaces/iRowModel";
+export { IRowModel, RowBounds, RowModelType } from "./interfaces/iRowModel";
 export { IAggFuncService } from "./interfaces/iAggFuncService";
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from "./interfaces/iClipboardService";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
@@ -427,11 +427,10 @@ export {
     PostSortRowsParams,
     GetLocaleTextParams,
     GetGroupAggFilteringParams,
-} from "./entities/iCallbackParams"
+} from "./entities/iCallbackParams";
 export {
     WithoutGridCommon
 } from "./interfaces/iCommon";
-
 
 export * from "./propertyKeys";
 export { IProvidedColumn } from "./entities/iProvidedColumn";

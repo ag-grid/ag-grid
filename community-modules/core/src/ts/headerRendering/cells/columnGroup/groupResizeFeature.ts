@@ -2,7 +2,7 @@ import { ColumnModel, ColumnResizeSet } from "../../../columns/columnModel";
 import { Constants } from "../../../constants/constants";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
-import { Column } from "../../../entities/column";
+import { Column, ColumnPinnedType } from "../../../entities/column";
 import { ColumnGroup } from "../../../entities/columnGroup";
 import { AutoWidthCalculator } from "../../../rendering/autoWidthCalculator";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";
@@ -13,7 +13,7 @@ export class GroupResizeFeature extends BeanStub {
     private eResize: HTMLElement;
     private columnGroup: ColumnGroup;
     private comp: IHeaderGroupCellComp;
-    private pinned: string | null;
+    private pinned: ColumnPinnedType;
 
     private resizeCols: Column[];
     private resizeStartWidth: number;
@@ -27,7 +27,7 @@ export class GroupResizeFeature extends BeanStub {
     @Autowired('autoWidthCalculator') private readonly autoWidthCalculator: AutoWidthCalculator;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
-    constructor(comp: IHeaderGroupCellComp, eResize: HTMLElement,  pinned: string | null, columnGroup: ColumnGroup) {
+    constructor(comp: IHeaderGroupCellComp, eResize: HTMLElement,  pinned: ColumnPinnedType, columnGroup: ColumnGroup) {
         super();
 
         this.eResize = eResize;

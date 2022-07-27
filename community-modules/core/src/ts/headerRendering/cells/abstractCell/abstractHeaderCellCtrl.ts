@@ -7,6 +7,7 @@ import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { KeyCode } from "../.././../constants/keyCode";
 import { Beans } from "../../../rendering/beans";
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
+import { ColumnPinnedType } from "../../../entities/column";
 
 let instanceIdSequence = 0;
 
@@ -104,7 +105,7 @@ export class AbstractHeaderCellCtrl extends BeanStub {
         return this.parentRowCtrl;
     }
 
-    public getPinned(): string | null {
+    public getPinned(): ColumnPinnedType {
         return this.parentRowCtrl.getPinned();
     }
 

@@ -119,14 +119,17 @@
   "setColumnPinned": {
     "description": "/** Sets the column pinned / unpinned. Key can be the column ID, field, `ColDef` object or `Column` object. */",
     "type": {
-      "arguments": { "key": "string | Column", "pinned": "string" },
+      "arguments": { "key": "string | Column", "pinned": "ColumnPinnedType" },
       "returnType": "void"
     }
   },
   "setColumnsPinned": {
     "description": "/** Same as `setColumnPinned`, but provide a list of column keys. */",
     "type": {
-      "arguments": { "keys": "(string | Column)[]", "pinned": "string" },
+      "arguments": {
+        "keys": "(string | Column)[]",
+        "pinned": "ColumnPinnedType"
+      },
       "returnType": "void"
     }
   },

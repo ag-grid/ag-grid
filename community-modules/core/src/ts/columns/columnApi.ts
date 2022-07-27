@@ -3,7 +3,7 @@ import { IHeaderColumn } from "../entities/iHeaderColumn";
 import { ColumnModel, ColumnState, ApplyColumnStateParams } from "./columnModel";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { ColumnGroup } from "../entities/columnGroup";
-import { Column } from "../entities/column";
+import { Column, ColumnPinnedType } from "../entities/column";
 import { Autowired, Bean, PreDestroy } from "../context/context";
 import { _ } from "../utils";
 import { ColumnEventType } from "../events";
@@ -66,9 +66,9 @@ export class ColumnApi {
     /** Same as `setColumnVisible`, but provide a list of column keys. */
     public setColumnsVisible(keys: (string | Column)[], visible: boolean): void { this.columnModel.setColumnsVisible(keys, visible, 'api'); }
     /** Sets the column pinned / unpinned. Key can be the column ID, field, `ColDef` object or `Column` object. */
-    public setColumnPinned(key: string | Column, pinned: string): void { this.columnModel.setColumnPinned(key, pinned, 'api'); }
+    public setColumnPinned(key: string | Column, pinned: ColumnPinnedType): void { this.columnModel.setColumnPinned(key, pinned, 'api'); }
     /** Same as `setColumnPinned`, but provide a list of column keys. */
-    public setColumnsPinned(keys: (string | Column)[], pinned: string): void { this.columnModel.setColumnsPinned(keys, pinned, 'api'); }
+    public setColumnsPinned(keys: (string | Column)[], pinned: ColumnPinnedType): void { this.columnModel.setColumnsPinned(keys, pinned, 'api'); }
 
     /**
      * Returns all the grid columns, same as `getColumns()`, except

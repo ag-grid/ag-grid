@@ -7,6 +7,7 @@ import { StylingService } from "../../styling/stylingService";
 import { RowClassParams } from "../../entities/gridOptions";
 import { Constants } from "../../constants/constants";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
+import { ColumnPinnedType } from "../../entities/column";
 
 export interface RowCssClassCalculatorParams {
     rowNode: RowNode;
@@ -18,7 +19,7 @@ export interface RowCssClassCalculatorParams {
     printLayout: boolean;
     expandable: boolean;
 
-    pinned?: string | null;
+    pinned: ColumnPinnedType;
     extraCssClass?: string;
     rowFocused?: boolean;
     fadeRowIn?: boolean;

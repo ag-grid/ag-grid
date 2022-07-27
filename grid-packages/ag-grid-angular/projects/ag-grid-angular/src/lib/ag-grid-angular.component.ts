@@ -153,6 +153,7 @@ import {
     IsFullWidthRowParams,
     GetLocaleTextParams,
     IsRowFilterable,
+    RowModelType
 } from "ag-grid-community";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
@@ -693,7 +694,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Data to be displayed as pinned bottom rows in the grid.     */
     @Input() public pinnedBottomRowData: TData[] | undefined = undefined;
     /** Sets the row model type. Default: `clientSide`     */
-    @Input() public rowModelType: 'clientSide' | 'infinite' | 'viewport' | 'serverSide' | undefined = undefined;
+    @Input() public rowModelType: RowModelType | undefined = undefined;
     /** Set the data to be displayed as rows in the grid.     */
     @Input() public rowData: TData[] | null | undefined = undefined;
     /** @deprecated Immutable Data is on by default when grid callback getRowId() is implemented

@@ -19,6 +19,7 @@ import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { Constants } from "../../constants/constants";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { ColumnPinnedType } from "../../entities/column";
 
 export enum RowContainerName {
     LEFT = 'left',
@@ -125,7 +126,7 @@ export class RowContainerCtrl extends BeanStub {
         return {container: containerClass, viewport: viewportClass, wrapper: wrapperClass};
     }
 
-    public static getPinned(name: RowContainerName): string | null {
+    public static getPinned(name: RowContainerName): ColumnPinnedType {
         switch (name) {
             case RowContainerName.BOTTOM_LEFT:
             case RowContainerName.TOP_LEFT:
