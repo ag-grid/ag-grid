@@ -64,21 +64,8 @@ export class ModelItemUtils {
     }
 
     private setAllVisible(columns: Column[], visible: boolean, eventType: ColumnEventType): void {
-        const colStateItems: ColumnState[] = [];
-
-        columns.forEach(col => {
-            if (col.getColDef().lockVisible) { return; }
-            if (col.isVisible() != visible) {
-                colStateItems.push({
-                    colId: col.getId(),
-                    hide: !visible
-                });
-            }
-        });
-
-        if (colStateItems.length > 0) {
-            this.columnModel.applyColumnState({state: colStateItems}, eventType);
-        }
+        const colsToToggle = columns.filter(col => !col.getColDef().lockVisible);
+        this.columnModel.setColumnsVisible(colsToToggle, visible, eventType);
     }
 
     private setAllPivot(columns: Column[], value: boolean, eventType: ColumnEventType): void {
