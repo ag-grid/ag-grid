@@ -3,14 +3,13 @@ import { Grid, GridOptions, EditableCallbackParams, CellClassParams } from '@ag-
 let editableYear = 2012;
 
 function isCellEditable(params: EditableCallbackParams | CellClassParams) {
-  const editableCols = ['athlete', 'age', 'country'];
-  return params.data.year === editableYear && editableCols.includes(params.colDef.field!);
+  return params.data.year === editableYear;
 }
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
-    { field: 'athlete' },
-    { field: 'age' },
+    { field: 'athlete', type: 'editableColumn' },
+    { field: 'age', type: 'editableColumn' },
     { field: 'country' },
     { field: 'year' },
     { field: 'date' },
@@ -20,13 +19,15 @@ const gridOptions: GridOptions<IOlympicData> = {
     { field: 'bronze' },
     { field: 'total' },
   ],
-  defaultColDef: {
-    editable: (params: EditableCallbackParams<IOlympicData>) => {
-      return isCellEditable(params);
-    },
-    cellStyle: (params) => {
-      if (isCellEditable(params)) {
-        return { backgroundColor: 'lightBlue' };
+  columnTypes: {
+    editableColumn: {
+      editable: (params: EditableCallbackParams<IOlympicData>) => {
+        return isCellEditable(params);
+      },
+      cellStyle: (params: CellClassParams<IOlympicData>) => {
+        if (isCellEditable(params)) {
+          return { backgroundColor: 'lightBlue' };
+        }
       }
     }
   }

@@ -12,7 +12,7 @@ To enable Cell Editing for a Column use the `editable` property on the Column De
 const gridOptions = {
     columnDefs: [
         {
-            field: 'name',
+            field: 'athlete',
             // enables editing
             editable: true
         }
@@ -26,23 +26,27 @@ By default the grid provides simple string editing and stores the result as a st
 
 ## Conditional Editing
 
-The grid supports enabling editing conditionally on a per cell bases via the `editable` callback. Implement your custom logic to decided whether a cell can be edited in the callback and this will be called when the user attempts to edit the given cell.
+To dynamically determine which cells are editable, a callback function can be supplied to the `editable` property on the Column Definition:
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
-    defaultColDef:
+    columnDefs: [
         {
+            field: 'athlete',
             // conditionally enables editing for data for 2012
             editable: (params) => params.data.year == 2012
         }
+    ],
 }
 </snippet>
 
-In the following example note the following:
+In the snippet above, **Athlete** cells will be editable on rows where the **Year** is `2012`.     
 
- - Use the buttons to dynamically update which cells can be edited.
- - Conditional on the `year` and `column`
- - Cell style is applied with the same logic to highlight editable cells blue.
+This is demonstrated in the following example, note that:
+
+- An `editable` callback is added to the **Athlete** and **Age** columns to control which cells are editable based on the selected **Year**.
+- Buttons are provided to change the **Year** used by the `editable` callback function to control which cells are editable.    
+- A blue [Cell Style](/cell-styles/) has been added to highlight editable cells using the same logic as the `editable` callback.
 
 <grid-example title='Conditional Cell Editing' name='conditional-editing' type='generated'></grid-example>
 
