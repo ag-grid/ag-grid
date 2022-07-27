@@ -100,7 +100,11 @@
     },
     "header": {
         "meta": {
-            "displayName": "Columns: Header"
+            "displayName": "Columns: Header",
+            "page": {
+                "name": "Column Headers",
+                "url": "/column-headers/"
+            }
         },
         "headerName": {},
         "headerValueGetter": {
@@ -167,7 +171,11 @@
     },
     "width": {
         "meta": {
-            "displayName": "Columns: Width"
+            "displayName": "Columns: Width",
+            "page": {
+                "name": "Column Sizing",
+                "url": "/column-sizing/"
+            }
         },
         "width": {},
         "initialWidth": {},
@@ -186,7 +194,11 @@
     },
     "pinned": {
         "meta": {
-            "displayName": "Columns: Pinned"
+            "displayName": "Columns: Pinned",
+            "page": {
+                "name": "Column Pinning",
+                "url": "/column-pinning/"
+            }
         },
         "pinned": {
             "options": [
@@ -253,7 +265,11 @@
     },
     "sort": {
         "meta": {
-            "displayName": "Columns: Sort"
+            "displayName": "Columns: Sort",
+            "page": {
+                "name": "Row Sorting",
+                "url": "/row-sorting/"
+            }
         },
         "sortable": {},
         "sort": {
@@ -278,7 +294,11 @@
     },
     "filtering": {
         "meta": {
-            "displayName": "Columns: Filter"
+            "displayName": "Columns: Filter",
+            "page": {
+                "name": "Filtering",
+                "url": "/filtering-overview/"
+            }
         },
         "filter": {
             "description": "Filter component to use for this column. <br/>Set to `true` to use the default filter. <br/>Set to the name of a [provided filter](/filtering/#provided-filters) or set to a `IFilterComp`.",
@@ -324,14 +344,26 @@
     },
     "editing": {
         "meta": {
-            "displayName": "Columns: Editing"
+            "displayName": "Columns: Editing",
+            "page": {
+                "name": "Cell Editing",
+                "url": "/cell-editing/"
+            }
         },
         "editable": {},
         "valueSetter": {
-            "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Sets the value into your data for saving. Return `true` if the data changed."
+            "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Custom function to modify your data based off the new value for saving. Return `true` if the data changed.",
+            "more": {
+                "name": "Saving Values",
+                "url": "/value-setters/"
+            }
         },
         "valueParser": {
-            "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Parses the value for saving."
+            "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Parses the value for saving.",
+            "more": {
+                "name": "Parsing Values",
+                "url": "/value-parsers/"
+            }
         },
         "cellEditor": {
             "description": "Provide your own cell editor component for this column's cells.",
@@ -398,7 +430,10 @@
     "row dragging": {
         "meta": {
             "displayName": "Columns: Row Dragging",
-            "description": "See [Row Dragging](/row-dragging/)"
+            "page": {
+                "name": "Row Dragging",
+                "url": "/row-dragging/"
+            }
         },
         "rowDrag": {},
         "rowDragText": {},
@@ -418,7 +453,11 @@
     "columnGroups": {
         "meta": {
             "displayName": "Groups",
-            "description": "For column groups, the property `children` is mandatory. When the grid sees `children` it knows it's a column group."
+            "description": "For column groups, the property `children` is mandatory. When the grid sees `children` it knows it's a column group.",
+            "page": {
+                "name": "Column Groups",
+                "url": "/column-groups/"
+            }
         },
         "children": {
             "isRequired": true
@@ -441,7 +480,11 @@
     },
     "groupsHeader": {
         "meta": {
-            "displayName": "Groups:  Header"
+            "displayName": "Groups:  Header",
+            "page": {
+                "name": "Column Headers",
+                "url": "/column-headers/"
+            }
         },
         "headerName": {},
         "headerClass": {},
