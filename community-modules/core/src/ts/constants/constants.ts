@@ -1,4 +1,5 @@
 import { RowModelType } from "../interfaces/iRowModel";
+import { ColumnPinnedType } from "../columns/columnModel";
 
 export class Constants {
 
@@ -30,8 +31,8 @@ export class Constants {
 
     static SOURCE_PASTE: 'paste' = 'paste';
 
-    static PINNED_RIGHT: 'right' = 'right';
-    static PINNED_LEFT: 'left' = 'left';
+    static PINNED_RIGHT: ColumnPinnedType = 'right';
+    static PINNED_LEFT: ColumnPinnedType = 'left';
 
     static SORT_ASC: 'asc' = 'asc';
     static SORT_DESC: 'desc' = 'desc';

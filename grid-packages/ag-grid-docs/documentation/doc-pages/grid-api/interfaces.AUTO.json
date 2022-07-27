@@ -3002,7 +3002,7 @@
       "setParent(parent: ColumnGroup | null)": "void",
       "isEmptyGroup()": "boolean",
       "isMoving()": "boolean",
-      "getPinned()": "string | null | undefined",
+      "getPinned()": "ColumnPinnedType",
       "addEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void",
       "removeEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void"
     }

@@ -6,7 +6,7 @@ import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
 import { DragService } from "../../dragAndDrop/dragService";
 import { CtrlsService } from "../../ctrlsService";
 import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isVisible, setScrollLeft } from "../../utils/dom";
-import { ColumnModel } from "../../columns/columnModel";
+import { ColumnModel, ColumnPinnedType } from "../../columns/columnModel";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
 import { ViewportSizeFeature } from "../viewportSizeFeature";
 import { convertToMap } from "../../utils/map";
@@ -125,7 +125,7 @@ export class RowContainerCtrl extends BeanStub {
         return {container: containerClass, viewport: viewportClass, wrapper: wrapperClass};
     }
 
-    public static getPinned(name: RowContainerName): string | null {
+    public static getPinned(name: RowContainerName): ColumnPinnedType {
         switch (name) {
             case RowContainerName.BOTTOM_LEFT:
             case RowContainerName.TOP_LEFT:

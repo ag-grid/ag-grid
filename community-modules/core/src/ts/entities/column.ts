@@ -26,6 +26,7 @@ import { ModuleRegistry } from "../modules/moduleRegistry";
 import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
 import { doOnce } from "../utils/function";
 import { mergeDeep } from "../utils/object";
+import { ColumnPinnedType } from "../columns/columnModel";
 
 let instanceIdSequence = 0;
 
@@ -88,7 +89,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     private autoHeaderHeight: number | null = null;
 
     private visible: any;
-    private pinned: 'left' | 'right' | null;
+    private pinned: ColumnPinnedType;
     private left: number | null;
     private oldLeft: number | null;
     private aggFunc: string | IAggFunc | null | undefined;
@@ -561,7 +562,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         this.eventService.dispatchEvent(filterChangedEvent);
     }
 
-    public setPinned(pinned: 'left' | 'right' | boolean | null | undefined): void {
+    public setPinned(pinned: ColumnPinnedType): void {
         if (pinned === true || pinned === Constants.PINNED_LEFT) {
             this.pinned = Constants.PINNED_LEFT;
         } else if (pinned === Constants.PINNED_RIGHT) {
@@ -605,7 +606,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return this.pinned === Constants.PINNED_RIGHT;
     }
 
-    public getPinned(): 'left' | 'right' | null | undefined {
+    public getPinned(): ColumnPinnedType {
         return this.pinned;
     }
 

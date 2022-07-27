@@ -8,6 +8,7 @@ import { Autowired } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
 import { last } from "../utils/array";
+import { ColumnPinnedType } from "../columns/columnModel";
 
 export class ColumnGroup implements IHeaderColumn {
 
@@ -32,7 +33,7 @@ export class ColumnGroup implements IHeaderColumn {
     private readonly groupId: string;
     private readonly instanceId: number;
     private readonly providedColumnGroup: ProvidedColumnGroup;
-    private readonly pinned: 'left' | 'right' | null;
+    private readonly pinned: ColumnPinnedType;
 
     // private moving = false
     private left: number | null;
@@ -41,7 +42,7 @@ export class ColumnGroup implements IHeaderColumn {
 
     private parent: ColumnGroup | null;
 
-    constructor(providedColumnGroup: ProvidedColumnGroup, groupId: string, instanceId: number, pinned: 'left' | 'right' | null) {
+    constructor(providedColumnGroup: ProvidedColumnGroup, groupId: string, instanceId: number, pinned: ColumnPinnedType) {
         this.groupId = groupId;
         this.instanceId = instanceId;
         this.providedColumnGroup = providedColumnGroup;
@@ -120,7 +121,7 @@ export class ColumnGroup implements IHeaderColumn {
         }
     }
 
-    public getPinned(): 'left' | 'right' | null {
+    public getPinned(): ColumnPinnedType {
         return this.pinned;
     }
 

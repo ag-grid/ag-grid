@@ -6060,7 +6060,7 @@
     "getPinned": {
       "type": {
         "arguments": {},
-        "returnType": "string | null | undefined",
+        "returnType": "ColumnPinnedType",
         "optional": false
       }
     },
