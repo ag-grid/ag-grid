@@ -189,65 +189,72 @@ describe('Axis Examples', () => {
         });
     }
 
-    for (const [exampleName, example] of Object.entries(EXAMPLES_NO_SERIES)) {
-        it(`for ${exampleName} it should create chart instance as expected`, async () => {
-            const options: AgChartOptions = example.options;
-            const chart = AgChartV2.create<any>(options);
-            await example.assertions(chart);
+    describe('no series cases', () => {
+        beforeEach(() => {
+            // Increase timeout for legend toggle case.
+            jest.setTimeout(10_000);
         });
+        
+        for (const [exampleName, example] of Object.entries(EXAMPLES_NO_SERIES)) {
+            it(`for ${exampleName} it should create chart instance as expected`, async () => {
+                const options: AgChartOptions = example.options;
+                const chart = AgChartV2.create<any>(options);
+                await example.assertions(chart);
+            });
 
-        it(`for ${exampleName} it should render to canvas as expected`, async () => {
-            const compare = async () => {
-                await waitForChartStability(chart);
+            it(`for ${exampleName} it should render to canvas as expected`, async () => {
+                const compare = async () => {
+                    await waitForChartStability(chart);
 
-                const newImageData = extractImageData({ ...ctx });
-                (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-            };
+                    const newImageData = extractImageData({ ...ctx });
+                    (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+                };
 
-            const options: AgChartOptions = { ...example.options };
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+                const options: AgChartOptions = { ...example.options };
+                options.autoSize = false;
+                options.width = CANVAS_WIDTH;
+                options.height = CANVAS_HEIGHT;
 
-            const chart = AgChartV2.create<any>(options) as Chart;
-            await compare();
-
-            if (example.extraScreenshotActions) {
-                await example.extraScreenshotActions(chart);
+                const chart = AgChartV2.create<any>(options) as Chart;
                 await compare();
-            }
-        });
 
-        it(`for ${exampleName} it should render identically after legend toggle`, async () => {
-            const snapshot = async () => {
-                await waitForChartStability(chart);
-
-                return ctx.nodeCanvas?.toBuffer('raw');
-            };
-
-            const options: AgChartOptions = { ...example.options };
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
-
-            const chart = AgChartV2.create<any>(options) as Chart;
-            const reference = await snapshot();
-
-            chart.series.forEach((s) => {
-                s.toggleSeriesItem(s.getKeys(ChartAxisDirection.Y)[0], true);
+                if (example.extraScreenshotActions) {
+                    await example.extraScreenshotActions(chart);
+                    await compare();
+                }
             });
-            chart.update(ChartUpdateType.FULL);
 
-            const afterUpdate = await snapshot();
-            (expect(afterUpdate) as any).not.toMatchImage(reference);
+            it(`for ${exampleName} it should render identically after legend toggle`, async () => {
+                const snapshot = async () => {
+                    await waitForChartStability(chart);
 
-            chart.series.forEach((s) => {
-                s.toggleSeriesItem(s.getKeys(ChartAxisDirection.Y)[0], false);
+                    return ctx.nodeCanvas?.toBuffer('raw');
+                };
+
+                const options: AgChartOptions = { ...example.options };
+                options.autoSize = false;
+                options.width = CANVAS_WIDTH;
+                options.height = CANVAS_HEIGHT;
+
+                const chart = AgChartV2.create<any>(options) as Chart;
+                const reference = await snapshot();
+
+                chart.series.forEach((s) => {
+                    s.toggleSeriesItem(s.getKeys(ChartAxisDirection.Y)[0], true);
+                });
+                chart.update(ChartUpdateType.FULL);
+
+                const afterUpdate = await snapshot();
+                (expect(afterUpdate) as any).not.toMatchImage(reference);
+
+                chart.series.forEach((s) => {
+                    s.toggleSeriesItem(s.getKeys(ChartAxisDirection.Y)[0], false);
+                });
+                chart.update(ChartUpdateType.FULL);
+
+                const afterFinalUpdate = await snapshot();
+                (expect(afterFinalUpdate) as any).toMatchImage(reference);
             });
-            chart.update(ChartUpdateType.FULL);
-
-            const afterFinalUpdate = await snapshot();
-            (expect(afterFinalUpdate) as any).toMatchImage(reference);
-        });
-    }
+        }
+    });
 });
