@@ -108,13 +108,17 @@ export class Rect extends Path {
         path.rect(x, y, w, h);
 
         if (strokeWidth) {
-            // Ensure that the strokeWidth isn't > width or height.
-            strokeWidth = Math.min(w, h, strokeWidth);
-            const halfStokeWidth = strokeWidth / 2;
-            x += halfStokeWidth;
-            y += halfStokeWidth;
-            w -= strokeWidth;
-            h -= strokeWidth;
+            // If strokeWidth > w or h, special handling is needed.
+            const xStrokeWidth = Math.min(w, strokeWidth);
+            const yStrokeWidth = Math.min(h, strokeWidth);
+            strokeWidth = Math.min(xStrokeWidth, yStrokeWidth);
+
+            const xOffset = xStrokeWidth - strokeWidth;
+            const yOffset = yStrokeWidth - strokeWidth;
+            x += (strokeWidth - xOffset) / 2;
+            y += (strokeWidth - yOffset) / 2;
+            w -= strokeWidth - xOffset;
+            h -= strokeWidth - yOffset;
 
             borderPath.rect(x, y, w, h);
         }
