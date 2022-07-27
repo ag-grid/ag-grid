@@ -9836,18 +9836,18 @@
     "meta": {},
     "type": {
       "rowStartIndex": "number | null",
-      "rowStartPinned": "RowPinnedType",
+      "rowStartPinned?": "RowPinnedType",
       "rowEndIndex": "number | null",
-      "rowEndPinned": "RowPinnedType",
+      "rowEndPinned?": "RowPinnedType",
       "columnStart?": "string | Column",
       "columnEnd?": "string | Column",
       "columns?": "(string | Column)[]"
     },
     "docs": {
       "rowStartIndex": "/** Start row index */",
-      "rowStartPinned": "/** Pinned state of start row. Either 'top', 'bottom' or null */",
+      "rowStartPinned?": "/** Pinned state of start row. Either 'top', 'bottom' or null */",
       "rowEndIndex": "/** End row index */",
-      "rowEndPinned": "/** Pinned state of end row. Either 'top', 'bottom' or null */",
+      "rowEndPinned?": "/** Pinned state of end row. Either 'top', 'bottom' or null */",
       "columnStart?": "/** Starting column for range */",
       "columnEnd?": "/** End column for range */",
       "columns?": "/** Specify Columns to include instead of using `columnStart` and `columnEnd` */"

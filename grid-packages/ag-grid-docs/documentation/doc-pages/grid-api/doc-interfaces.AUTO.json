@@ -17082,7 +17082,7 @@
     },
     "rowStartPinned": {
       "description": "/** Pinned state of start row. Either 'top', 'bottom' or null */",
-      "type": { "returnType": "RowPinnedType", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": true }
     },
     "rowEndIndex": {
       "description": "/** End row index */",
@@ -17090,7 +17090,7 @@
     },
     "rowEndPinned": {
       "description": "/** Pinned state of end row. Either 'top', 'bottom' or null */",
-      "type": { "returnType": "RowPinnedType", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": true }
     },
     "columnStart": {
       "description": "/** Starting column for range */",

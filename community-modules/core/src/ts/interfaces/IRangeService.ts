@@ -62,11 +62,11 @@ export interface CellRangeParams {
     /** Start row index */
     rowStartIndex: number | null;
     /** Pinned state of start row. Either 'top', 'bottom' or null */
-    rowStartPinned: RowPinnedType;
+    rowStartPinned?: RowPinnedType;
     /** End row index */
     rowEndIndex: number | null;
     /** Pinned state of end row. Either 'top', 'bottom' or null */
-    rowEndPinned: RowPinnedType;
+    rowEndPinned?: RowPinnedType;
 
     /** Starting column for range */
     columnStart?: string | Column;
