@@ -58,7 +58,7 @@ Rows fetched from the server are supplied to the grid via `params.success(data)`
 
 ## Registering the Datasource
 
-The datasource is registered with the grid via either a) the grid property `serverSideDatasoruce` or b) the grid API.
+The datasource is registered with the grid via either a) the grid property `serverSideDatasource` or b) the grid API.
 
 Registering the datasource with via grid options is done as follows:
 
