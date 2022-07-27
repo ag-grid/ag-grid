@@ -727,9 +727,7 @@
   },
   "rowModelType": {
     "description": "/** Sets the row model type. Default: `clientSide` */",
-    "type": {
-      "returnType": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'"
-    }
+    "type": { "returnType": "RowModelType" }
   },
   "rowData": {
     "description": "/** Set the data to be displayed as rows in the grid. */",

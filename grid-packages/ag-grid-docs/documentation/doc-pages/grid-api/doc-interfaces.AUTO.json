@@ -1,4 +1,5 @@
 {
+  "ColumnPinnedType": {},
   "ColumnResizeSet": {
     "columns": { "type": { "returnType": "Column[]", "optional": false } },
     "ratios": { "type": { "returnType": "number[]", "optional": false } },
@@ -39,10 +40,7 @@
     },
     "pinned": {
       "description": "/** Set if column is pinned */",
-      "type": {
-        "returnType": "boolean | 'left' | 'right' | null",
-        "optional": true
-      }
+      "type": { "returnType": "ColumnPinnedType", "optional": true }
     },
     "rowGroup": {
       "description": "/** True if row group active */",
@@ -92,10 +90,7 @@
     },
     "pinned": {
       "description": "/** Set if column is pinned */",
-      "type": {
-        "returnType": "boolean | 'left' | 'right' | null",
-        "optional": true
-      }
+      "type": { "returnType": "ColumnPinnedType", "optional": true }
     },
     "rowGroup": {
       "description": "/** True if row group active */",
@@ -533,8 +528,8 @@
       "type": { "returnType": "number", "optional": false }
     },
     "rowPinned": {
-      "description": "/** Either 'top', 'bottom' or null (for not pinned) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "description": "/** Either 'top', 'bottom' or null/undefined (for not pinned) */",
+      "type": { "returnType": "RowPinnedType", "optional": false }
     }
   },
   "AbstractColDef": {
@@ -3104,10 +3099,7 @@
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",
-      "type": {
-        "returnType": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
-        "optional": true
-      }
+      "type": { "returnType": "RowModelType", "optional": true }
     },
     "rowData": {
       "description": "/** Set the data to be displayed as rows in the grid. */",
@@ -6169,14 +6161,15 @@
     }
   },
   "RowHighlightPosition": {},
+  "RowPinnedType": {},
   "RowPosition": {
     "rowIndex": {
       "description": "/** A positive number from 0 to n, where n is the last row the grid is rendering\n * or -1 if you want to navigate to the grid header */",
       "type": { "returnType": "number", "optional": false }
     },
     "rowPinned": {
-      "description": "/** Either 'top', 'bottom' or null (for not pinned) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "description": "/** Either 'top', 'bottom' or null/undefined (for not pinned) */",
+      "type": { "returnType": "RowPinnedType", "optional": false }
     }
   },
   "ToolPanelDef": {
@@ -7045,7 +7038,7 @@
     },
     "rowPinned": {
       "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
-      "type": { "returnType": "string | null", "optional": true }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "isFullWidthCell": {
       "description": "/** Whether the cell a full width cell or a regular cell */",
@@ -7079,7 +7072,7 @@
     },
     "rowPinned": {
       "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
-      "type": { "returnType": "string | null", "optional": true }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "isFullWidthCell": {
       "description": "/** Whether the cell a full width cell or a regular cell */",
@@ -7114,7 +7107,7 @@
     },
     "rowPinned": {
       "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
-      "type": { "returnType": "string | null", "optional": true }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "isFullWidthCell": {
       "description": "/** Whether the cell a full width cell or a regular cell */",
@@ -7307,7 +7300,7 @@
   "ColumnPinnedEvent": {
     "pinned": {
       "description": "/** Either 'left', 'right', or null (it not pinned) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "ColumnPinnedType", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
     "column": {
@@ -7340,7 +7333,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7374,7 +7367,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7407,7 +7400,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7444,7 +7437,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7477,7 +7470,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7510,7 +7503,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7543,7 +7536,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7576,7 +7569,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7609,7 +7602,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7642,7 +7635,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7675,7 +7668,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7708,7 +7701,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7741,7 +7734,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7780,7 +7773,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7819,7 +7812,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7858,7 +7851,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7897,7 +7890,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7936,7 +7929,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -7975,7 +7968,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -8014,7 +8007,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -8053,7 +8046,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -8092,7 +8085,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -8131,7 +8124,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -8170,7 +8163,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -8217,7 +8210,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -8261,7 +8254,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -8305,7 +8298,7 @@
     },
     "rowPinned": {
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
@@ -9502,7 +9495,7 @@
     },
     "rowPinned": {
       "description": "/** Set to `'top'` or `'bottom'` to start editing a pinned row */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "RowPinnedType", "optional": true }
     },
     "key": {
       "description": "/** The key to pass to the cell editor */",
@@ -17089,7 +17082,7 @@
     },
     "rowStartPinned": {
       "description": "/** Pinned state of start row. Either 'top', 'bottom' or null */",
-      "type": { "returnType": "string | null", "optional": true }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "rowEndIndex": {
       "description": "/** End row index */",
@@ -17097,7 +17090,7 @@
     },
     "rowEndPinned": {
       "description": "/** Pinned state of end row. Either 'top', 'bottom' or null */",
-      "type": { "returnType": "string | null", "optional": true }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "columnStart": {
       "description": "/** Starting column for range */",
@@ -17239,6 +17232,7 @@
     "rowHeight": { "type": { "returnType": "number", "optional": false } },
     "rowIndex": { "type": { "returnType": "number", "optional": true } }
   },
+  "RowModelType": {},
   "IRowModel": {
     "getRow": {
       "description": "/** Returns the rowNode at the given index. */",
@@ -20848,7 +20842,9 @@
     "lastRowOnPage": { "type": { "returnType": "boolean", "optional": false } },
     "printLayout": { "type": { "returnType": "boolean", "optional": false } },
     "expandable": { "type": { "returnType": "boolean", "optional": false } },
-    "pinned": { "type": { "returnType": "string | null", "optional": true } },
+    "pinned": {
+      "type": { "returnType": "ColumnPinnedType", "optional": false }
+    },
     "extraCssClass": { "type": { "returnType": "string", "optional": true } },
     "rowFocused": { "type": { "returnType": "boolean", "optional": true } },
     "fadeRowIn": { "type": { "returnType": "boolean", "optional": true } }
@@ -21138,7 +21134,7 @@
   "PartiallyMockedInterfaceOf": { "meta": { "typeParams": ["T"] } },
   "CellValueChange": {
     "rowPinned": {
-      "type": { "returnType": "string | null", "optional": false }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "rowIndex": { "type": { "returnType": "number", "optional": false } },
     "columnId": { "type": { "returnType": "string", "optional": false } },
@@ -21147,7 +21143,7 @@
   },
   "LastFocusedCell": {
     "rowPinned": {
-      "type": { "returnType": "string | null", "optional": true }
+      "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "rowIndex": { "type": { "returnType": "number", "optional": false } },
     "columnId": { "type": { "returnType": "string", "optional": false } }
@@ -23703,10 +23699,7 @@
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",
-      "type": {
-        "returnType": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
-        "optional": true
-      }
+      "type": { "returnType": "RowModelType", "optional": true }
     },
     "rowData": {
       "description": "/** Set the data to be displayed as rows in the grid. */",
@@ -26475,10 +26468,7 @@
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",
-      "type": {
-        "returnType": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
-        "optional": true
-      }
+      "type": { "returnType": "RowModelType", "optional": true }
     },
     "rowData": {
       "description": "/** Set the data to be displayed as rows in the grid. */",
@@ -29257,10 +29247,7 @@
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",
-      "type": {
-        "returnType": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
-        "optional": true
-      }
+      "type": { "returnType": "RowModelType", "optional": true }
     },
     "rowData": {
       "description": "/** Set the data to be displayed as rows in the grid. */",

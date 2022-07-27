@@ -1,4 +1,8 @@
 {
+  "ColumnPinnedType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'left' | 'right' | boolean | null | undefined"
+  },
   "ColumnResizeSet": {
     "meta": {},
     "type": { "columns": "Column[]", "ratios": "number[]", "width": "number" }
@@ -14,7 +18,7 @@
       "aggFunc?": "string | IAggFunc | null",
       "pivot?": "boolean | null",
       "pivotIndex?": "number | null",
-      "pinned?": "boolean | 'left' | 'right' | null",
+      "pinned?": "ColumnPinnedType",
       "rowGroup?": "boolean | null",
       "rowGroupIndex?": "number | null"
     },
@@ -44,7 +48,7 @@
       "aggFunc?": "string | IAggFunc | null",
       "pivot?": "boolean | null",
       "pivotIndex?": "number | null",
-      "pinned?": "boolean | 'left' | 'right' | null",
+      "pinned?": "ColumnPinnedType",
       "rowGroup?": "boolean | null",
       "rowGroupIndex?": "number | null"
     },
@@ -312,12 +316,12 @@
     "type": {
       "column": "Column",
       "rowIndex": "number",
-      "rowPinned": "string | null"
+      "rowPinned": "RowPinnedType"
     },
     "docs": {
       "column": "/** The grid column */",
       "rowIndex": "/** A positive number from 0 to n, where n is the last row the grid is rendering\n * or -1 if you want to navigate to the grid header */",
-      "rowPinned": "/** Either 'top', 'bottom' or null (for not pinned) */"
+      "rowPinned": "/** Either 'top', 'bottom' or null/undefined (for not pinned) */"
     }
   },
   "AbstractColDef": {
@@ -1661,7 +1665,7 @@
       "rememberGroupStateWhenNewData?": "boolean",
       "pinnedTopRowData?": "TData[]",
       "pinnedBottomRowData?": "TData[]",
-      "rowModelType?": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
+      "rowModelType?": "RowModelType",
       "rowData?": "TData[] | null",
       "immutableData?": "boolean",
       "asyncTransactionWaitMillis?": "number",
@@ -3054,12 +3058,16 @@
     "type": ["Above", "Below"],
     "docs": [null, null]
   },
+  "RowPinnedType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'top' | 'bottom' | null | undefined"
+  },
   "RowPosition": {
     "meta": {},
-    "type": { "rowIndex": "number", "rowPinned": "string | null" },
+    "type": { "rowIndex": "number", "rowPinned": "RowPinnedType" },
     "docs": {
       "rowIndex": "/** A positive number from 0 to n, where n is the last row the grid is rendering\n * or -1 if you want to navigate to the grid header */",
-      "rowPinned": "/** Either 'top', 'bottom' or null (for not pinned) */"
+      "rowPinned": "/** Either 'top', 'bottom' or null/undefined (for not pinned) */"
     }
   },
   "ToolPanelDef": {
@@ -3791,7 +3799,7 @@
     "type": {
       "rowIndex": "number | null",
       "column": "Column | string | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "RowPinnedType",
       "isFullWidthCell?": "boolean",
       "forceBrowserFocus?": "boolean",
       "preventScrollOnBrowserFocus?": "boolean",
@@ -3800,7 +3808,7 @@
     "docs": {
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
-      "rowPinned?": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
       "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */",
       "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
       "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */"
@@ -3814,7 +3822,7 @@
       "type": "string",
       "rowIndex": "number | null",
       "column": "Column | string | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "RowPinnedType",
       "isFullWidthCell?": "boolean",
       "forceBrowserFocus?": "boolean",
       "preventScrollOnBrowserFocus?": "boolean",
@@ -3824,7 +3832,7 @@
       "type": "/** Event identifier */",
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
-      "rowPinned?": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
       "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */",
       "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
       "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */"
@@ -3839,7 +3847,7 @@
       "type": "string",
       "rowIndex": "number | null",
       "column": "Column | string | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "RowPinnedType",
       "isFullWidthCell?": "boolean",
       "forceBrowserFocus?": "boolean",
       "preventScrollOnBrowserFocus?": "boolean",
@@ -3849,7 +3857,7 @@
       "type": "/** Event identifier */",
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
-      "rowPinned?": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
       "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */",
       "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
       "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */"
@@ -3999,7 +4007,7 @@
   "ColumnPinnedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "pinned": "string | null",
+      "pinned": "ColumnPinnedType",
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
@@ -4023,7 +4031,7 @@
     "type": {
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4045,7 +4053,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4071,7 +4079,7 @@
       "data": "TData",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4095,7 +4103,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4119,7 +4127,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4142,7 +4150,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4165,7 +4173,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4188,7 +4196,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4211,7 +4219,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4234,7 +4242,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4257,7 +4265,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4280,7 +4288,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4303,7 +4311,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4332,7 +4340,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4362,7 +4370,7 @@
       "data": "TData",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4389,7 +4397,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4416,7 +4424,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4443,7 +4451,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4470,7 +4478,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4497,7 +4505,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4524,7 +4532,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4551,7 +4559,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4578,7 +4586,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4605,7 +4613,7 @@
       "data": "TData",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4634,7 +4642,7 @@
       "data": "TData",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4666,7 +4674,7 @@
       "data": "TData",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4696,7 +4704,7 @@
       "data": "TData",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -5458,7 +5466,7 @@
     "type": {
       "rowIndex": "number",
       "colKey": "string | Column",
-      "rowPinned?": "string",
+      "rowPinned?": "RowPinnedType",
       "key?": "string",
       "charPress?": "string"
     },
@@ -9828,18 +9836,18 @@
     "meta": {},
     "type": {
       "rowStartIndex": "number | null",
-      "rowStartPinned?": "string | null",
+      "rowStartPinned": "RowPinnedType",
       "rowEndIndex": "number | null",
-      "rowEndPinned?": "string | null",
+      "rowEndPinned": "RowPinnedType",
       "columnStart?": "string | Column",
       "columnEnd?": "string | Column",
       "columns?": "(string | Column)[]"
     },
     "docs": {
       "rowStartIndex": "/** Start row index */",
-      "rowStartPinned?": "/** Pinned state of start row. Either 'top', 'bottom' or null */",
+      "rowStartPinned": "/** Pinned state of start row. Either 'top', 'bottom' or null */",
       "rowEndIndex": "/** End row index */",
-      "rowEndPinned?": "/** Pinned state of end row. Either 'top', 'bottom' or null */",
+      "rowEndPinned": "/** Pinned state of end row. Either 'top', 'bottom' or null */",
       "columnStart?": "/** Starting column for range */",
       "columnEnd?": "/** End column for range */",
       "columns?": "/** Specify Columns to include instead of using `columnStart` and `columnEnd` */"
@@ -9918,6 +9926,10 @@
   "RowBounds": {
     "meta": {},
     "type": { "rowTop": "number", "rowHeight": "number", "rowIndex?": "number" }
+  },
+  "RowModelType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'infinite' | 'viewport' | 'clientSide' | 'serverSide'"
   },
   "IRowModel": {
     "meta": {},
@@ -11912,7 +11924,7 @@
       "lastRowOnPage": "boolean",
       "printLayout": "boolean",
       "expandable": "boolean",
-      "pinned?": "string | null",
+      "pinned": "ColumnPinnedType",
       "extraCssClass?": "string",
       "rowFocused?": "boolean",
       "fadeRowIn?": "boolean"
@@ -12121,7 +12133,7 @@
   "CellValueChange": {
     "meta": {},
     "type": {
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "rowIndex": "number",
       "columnId": "string",
       "oldValue": "any",
@@ -12131,7 +12143,7 @@
   "LastFocusedCell": {
     "meta": {},
     "type": {
-      "rowPinned?": "string | null",
+      "rowPinned": "RowPinnedType",
       "rowIndex": "number",
       "columnId": "string"
     }
@@ -13283,7 +13295,7 @@
       "rememberGroupStateWhenNewData?": "boolean",
       "pinnedTopRowData?": "TData[]",
       "pinnedBottomRowData?": "TData[]",
-      "rowModelType?": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
+      "rowModelType?": "RowModelType",
       "rowData?": "TData[] | null",
       "immutableData?": "boolean",
       "asyncTransactionWaitMillis?": "number",
@@ -14055,7 +14067,7 @@
       "rememberGroupStateWhenNewData?": "boolean",
       "pinnedTopRowData?": "TData[]",
       "pinnedBottomRowData?": "TData[]",
-      "rowModelType?": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
+      "rowModelType?": "RowModelType",
       "rowData?": "TData[] | null",
       "immutableData?": "boolean",
       "asyncTransactionWaitMillis?": "number",
@@ -14831,7 +14843,7 @@
       "rememberGroupStateWhenNewData?": "boolean",
       "pinnedTopRowData?": "TData[]",
       "pinnedBottomRowData?": "TData[]",
-      "rowModelType?": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
+      "rowModelType?": "RowModelType",
       "rowData?": "TData[] | null",
       "immutableData?": "boolean",
       "asyncTransactionWaitMillis?": "number",

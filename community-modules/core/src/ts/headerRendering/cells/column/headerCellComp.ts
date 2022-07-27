@@ -1,3 +1,4 @@
+import { ColumnPinnedType } from "src/ts/main";
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { PostConstruct, PreDestroy } from "../../../context/context";
 import { Column } from "../../../entities/column";
@@ -19,7 +20,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     @RefSelector('eHeaderCompWrapper') private eHeaderCompWrapper: HTMLElement;
 
     protected readonly column: Column;
-    protected readonly pinned: string | null;
+    protected readonly pinned: ColumnPinnedType;
 
     private headerComp: IHeaderComp | undefined;
     private headerCompGui: HTMLElement | undefined;

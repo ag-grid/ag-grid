@@ -1,4 +1,4 @@
-import { ColumnModel } from "../../columns/columnModel";
+import { ColumnModel, ColumnPinnedType } from "../../columns/columnModel";
 import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, PreDestroy } from "../../context/context";
@@ -35,14 +35,14 @@ export class HeaderRowCtrl extends BeanStub {
 
     private comp: IHeaderRowComp;
     private rowIndex: number;
-    private pinned: string | null;
+    private pinned: ColumnPinnedType;
     private type: HeaderRowType;
 
     private instanceId = instanceIdSequence++;
 
     private headerCellCtrls: { [key: string]: AbstractHeaderCellCtrl } = {};
 
-    constructor(rowIndex: number, pinned: string | null, type: HeaderRowType) {
+    constructor(rowIndex: number, pinned: ColumnPinnedType, type: HeaderRowType) {
         super();
         this.rowIndex = rowIndex;
         this.pinned = pinned;
@@ -163,7 +163,7 @@ export class HeaderRowCtrl extends BeanStub {
         this.comp.setHeight(thisRowHeight);
     }
 
-    public getPinned(): string | null {
+    public getPinned(): ColumnPinnedType {
         return this.pinned;
     }
 

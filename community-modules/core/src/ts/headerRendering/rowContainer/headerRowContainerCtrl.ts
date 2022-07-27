@@ -1,4 +1,4 @@
-import { ColumnModel } from "../../columns/columnModel";
+import { ColumnModel, ColumnPinnedType } from "../../columns/columnModel";
 import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
@@ -35,7 +35,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('focusService') public focusService: FocusService;
 
-    private pinned: string | null;
+    private pinned: ColumnPinnedType;
     private comp: IHeaderRowContainerComp;
 
     private filtersRowCtrl: HeaderRowCtrl | undefined;
@@ -43,7 +43,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     private groupsRowCtrls: HeaderRowCtrl[] = [];
     private eViewport: HTMLElement;
 
-    constructor(pinned: string | null) {
+    constructor(pinned: ColumnPinnedType) {
         super();
         this.pinned = pinned;
     }

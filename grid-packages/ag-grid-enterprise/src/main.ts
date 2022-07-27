@@ -42,7 +42,7 @@ export { getMultipleSheetsAsExcel, exportMultipleSheetsAsExcel } from '@ag-grid-
 
 /* COMMUNITY_EXPORTS_START_DO_NOT_DELETE */
 export { ColumnFactory } from "ag-grid-community";
-export { ColumnModel, ColumnState, ColumnStateParams, ApplyColumnStateParams } from "ag-grid-community";
+export { ColumnModel, ColumnState, ColumnStateParams, ApplyColumnStateParams, ColumnPinnedType } from "ag-grid-community";
 export { ColumnKeyCreator } from "ag-grid-community";
 export { ColumnUtils } from "ag-grid-community";
 export { DisplayedGroupCreator } from "ag-grid-community";
@@ -64,7 +64,7 @@ export { IRowDragItem } from "ag-grid-community";
 export { Column } from "ag-grid-community";
 export { ColumnGroup } from "ag-grid-community";
 export { ProvidedColumnGroup } from "ag-grid-community";
-export { RowNode, RowHighlightPosition } from "ag-grid-community";
+export { RowNode, RowHighlightPosition, RowPinnedType } from "ag-grid-community";
 export { SideBarDef, ToolPanelDef } from "ag-grid-community";
 export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "ag-grid-community";
 export { ISetFilter, SetFilterModel, ISetFilterParams, SetFilterValues, SetFilterModelValue, SetFilterValuesFunc, SetFilterValuesFuncParams } from "ag-grid-community";
@@ -217,7 +217,7 @@ export { ColumnSortState } from "ag-grid-community";
 export { ValueService } from "ag-grid-community";
 export { ValueCache } from "ag-grid-community";
 export { ExpressionService } from "ag-grid-community";
-export { IRowModel, RowBounds } from "ag-grid-community";
+export { IRowModel, RowBounds, RowModelType } from "ag-grid-community";
 export { IAggFuncService } from "ag-grid-community";
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from "ag-grid-community";
 export { IMenuFactory } from "ag-grid-community";

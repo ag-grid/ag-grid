@@ -1,4 +1,4 @@
-import { CellEditingStartedEvent, CellEditingStoppedEvent, Grid, GridOptions, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core';
+import { CellEditingStartedEvent, CellEditingStoppedEvent, Grid, GridOptions, RowEditingStartedEvent, RowEditingStoppedEvent, ColumnPinnedType } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -64,7 +64,7 @@ function onBtStopEditing() {
   gridOptions.api!.stopEditing()
 }
 
-function onBtStartEditing(key?: string, char?: string, pinned?: string) {
+function onBtStartEditing(key?: string, char?: string, pinned?: ColumnPinnedType) {
   gridOptions.api!.setFocusedCell(0, 'lastName', pinned)
 
   gridOptions.api!.startEditingCell({

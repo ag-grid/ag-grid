@@ -1,4 +1,4 @@
-import { RowNode } from './entities/rowNode';
+import { RowNode, RowPinnedType } from './entities/rowNode';
 import { Column } from './entities/column';
 import { ColDef } from './entities/colDef';
 import { GridApi } from './gridApi';
@@ -11,6 +11,7 @@ import { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import { ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
+import { ColumnPinnedType } from './columns/columnModel';
 export { Events } from './eventKeys';
 
 export interface ModelUpdatedEvent<TData = any> extends AgGridEvent<TData> {
@@ -295,7 +296,7 @@ export interface CellFocusedParams {
     /** Column of the focused cell */
     column: Column | string | null;
     /** either 'top', 'bottom' or null / undefined (if not pinned) */
-    rowPinned?: string | null;
+    rowPinned: RowPinnedType;
     /** Whether the cell a full width cell or a regular cell */
     isFullWidthCell?: boolean;
     /** Whether browser focus is also set (false when editing) */
@@ -383,7 +384,7 @@ export interface ColumnVisibleEvent<TData = any> extends ColumnEvent<TData> {
 
 export interface ColumnPinnedEvent<TData = any> extends ColumnEvent<TData> {
     /** Either 'left', 'right', or null (it not pinned) */
-    pinned: string | null;
+    pinned: ColumnPinnedType;
 }
 
 /**------------*/
@@ -396,7 +397,7 @@ interface BaseRowEvent<TData> extends AgGridEvent<TData> {
     /** The visible row index for the row */
     rowIndex: number | null;
     /** Either 'top', 'bottom' or null / undefined (if not set) */
-    rowPinned: string | null;
+    rowPinned: RowPinnedType;
     /** The context as provided on `gridOptions.context` */
     context: any;
     /** If event was due to browser event (eg click), this is the browser event */

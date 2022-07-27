@@ -40,7 +40,7 @@ import {
     TabToNextCellParams,
     TabToNextHeaderParams
 } from "./entities/iCallbackParams";
-import { RowNode } from "./entities/rowNode";
+import { RowNode, RowPinnedType } from "./entities/rowNode";
 import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
 import { AgEvent, ColumnEventType } from "./events";
 import { EventService } from "./eventService";
@@ -52,7 +52,7 @@ import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeat
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
-import { AgChartThemeOverrides, AgChartThemePalette } from "./interfaces/iAgChartOptions";
+import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { ICellEditor } from "./interfaces/iCellEditor";
 import { ChartType, CrossFilterChartType, SeriesChartType } from "./interfaces/iChartOptions";
@@ -116,7 +116,7 @@ export interface StartEditingCellParams {
     /** The column key of the row to start editing */
     colKey: string | Column;
     /** Set to `'top'` or `'bottom'` to start editing a pinned row */
-    rowPinned?: string;
+    rowPinned?: RowPinnedType;
     /** The key to pass to the cell editor */
     key?: string;
     /** The charPress to pass to the cell editor */
@@ -1071,7 +1071,7 @@ export class GridApi<TData = any> {
     }
 
     /** Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned). */
-    public setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: string) {
+    public setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: RowPinnedType) {
         this.focusService.setFocusedCell({ rowIndex, column: colKey, rowPinned, forceBrowserFocus: true });
     }
 

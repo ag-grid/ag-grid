@@ -548,7 +548,7 @@
       "arguments": {
         "rowIndex": "number",
         "colKey": "string | Column",
-        "rowPinned?": "string"
+        "rowPinned?": "RowPinnedType"
       }
     }
   },

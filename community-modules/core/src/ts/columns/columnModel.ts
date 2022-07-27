@@ -53,6 +53,8 @@ import { doOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 
+export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
+
 export interface ColumnResizeSet {
     columns: Column[];
     ratios: number[];
@@ -77,7 +79,7 @@ export interface ColumnStateParams {
     /** The order of the pivot, if pivoting by many columns */
     pivotIndex?: number | null;
     /** Set if column is pinned */
-    pinned?: boolean | 'left' | 'right' | null;
+    pinned?: ColumnPinnedType;
     /** True if row group active */
     rowGroup?: boolean | null;
     /** The order of the row group, if grouping by many columns */
@@ -1508,7 +1510,7 @@ export class ColumnModel extends BeanStub {
         return this.bodyWidth;
     }
 
-    public getContainerWidth(pinned: string | null): number {
+    public getContainerWidth(pinned: ColumnPinnedType): number {
         switch (pinned) {
             case Constants.PINNED_LEFT:
                 return this.leftWidth;
@@ -1580,7 +1582,7 @@ export class ColumnModel extends BeanStub {
         return this.displayedColumnsRight;
     }
 
-    public getDisplayedColumns(type: string | null): Column[] {
+    public getDisplayedColumns(type: ColumnPinnedType): Column[] {
         switch (type) {
             case Constants.PINNED_LEFT:
                 return this.getDisplayedLeftColumns();
@@ -1647,20 +1649,20 @@ export class ColumnModel extends BeanStub {
         this.columnAnimationService.finish();
     }
 
-    public setColumnPinned(key: string | Column | null, pinned: string | boolean | null, source: ColumnEventType = "api"): void {
+    public setColumnPinned(key: string | Column | null, pinned: ColumnPinnedType, source: ColumnEventType = "api"): void {
         if (key) {
             this.setColumnsPinned([key], pinned, source);
         }
     }
 
-    public setColumnsPinned(keys: (string | Column)[], pinned: string | boolean | null, source: ColumnEventType = "api"): void {
+    public setColumnsPinned(keys: (string | Column)[], pinned: ColumnPinnedType, source: ColumnEventType = "api"): void {
         if (this.gridOptionsWrapper.getDomLayout() === 'print') {
             console.warn(`Changing the column pinning status is not allowed with domLayout='print'`);
             return;
         }
         this.columnAnimationService.start();
 
-        let actualPinned: 'left' | 'right' | null;
+        let actualPinned: ColumnPinnedType;
         if (pinned === true || pinned === Constants.PINNED_LEFT) {
             actualPinned = Constants.PINNED_LEFT;
         } else if (pinned === Constants.PINNED_RIGHT) {
@@ -3540,7 +3542,7 @@ export class ColumnModel extends BeanStub {
             .concat(this.displayedColumnsRight);
     }
 
-    public getVirtualHeaderGroupRow(type: string | null, dept: number): IHeaderColumn[] {
+    public getVirtualHeaderGroupRow(type: ColumnPinnedType, dept: number): IHeaderColumn[] {
         let result: IHeaderColumn[];
 
         switch (type) {

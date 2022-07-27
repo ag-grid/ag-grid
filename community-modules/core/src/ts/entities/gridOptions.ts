@@ -73,6 +73,7 @@ import { ChartMenuOptions } from "../interfaces/iChartOptions";
 import { AgGridCommon } from "../interfaces/iCommon";
 import { IDatasource } from "../interfaces/iDatasource";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
+import { RowModelType } from "../interfaces/iRowModel";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
@@ -608,7 +609,7 @@ export interface GridOptions<TData = any> {
 
     // *** Row Model *** //
     /** Sets the row model type. Default: `clientSide` */
-    rowModelType?: 'clientSide' | 'infinite' | 'viewport' | 'serverSide';
+    rowModelType?: RowModelType;
 
     // *** Row Model: Client-side *** //
     // changeable with impact
@@ -1194,7 +1195,6 @@ export interface RowClassParams<TData = any> extends AgGridCommon<TData> {
     /** The index of the row */
     rowIndex: number;
 }
-
 
 export interface GetContextMenuItems<TData = any> {
     (params: GetContextMenuItemsParams<TData>): (string | MenuItemDef)[];

@@ -24,6 +24,7 @@ import { CellCtrl } from "../cell/cellCtrl";
 import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRenderer";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { RowDragComp } from "./rowDragComp";
+import { ColumnPinnedType } from "../../columns/columnModel";
 
 export enum RowType {
     Normal = 'Normal',
@@ -400,7 +401,7 @@ export class RowCtrl extends BeanStub {
         this.updateColumnListsPending = true;
     }
 
-    private createCellCtrls(prev: CellCtrlListAndMap, cols: Column[], pinned: string | null = null): CellCtrlListAndMap {
+    private createCellCtrls(prev: CellCtrlListAndMap, cols: Column[], pinned: ColumnPinnedType = null): CellCtrlListAndMap {
         const res: CellCtrlListAndMap = {
             list: [],
             map: {}
@@ -464,7 +465,7 @@ export class RowCtrl extends BeanStub {
         });
     }
 
-    private isCellEligibleToBeRemoved(cellCtrl: CellCtrl, nextContainerPinned: string | null): boolean {
+    private isCellEligibleToBeRemoved(cellCtrl: CellCtrl, nextContainerPinned: ColumnPinnedType): boolean {
         const REMOVE_CELL = true;
         const KEEP_CELL = false;
 
@@ -1079,8 +1080,11 @@ export class RowCtrl extends BeanStub {
     }
 
     private getPinnedForContainer(rowContainerType: RowContainerType): 'left' | 'right' | null {
-        const pinned = rowContainerType === RowContainerType.LEFT ? Constants.PINNED_LEFT :
-            rowContainerType === RowContainerType.RIGHT ? Constants.PINNED_RIGHT : null;
+        const pinned = rowContainerType === RowContainerType.LEFT
+            ? Constants.PINNED_LEFT
+            : rowContainerType === RowContainerType.RIGHT
+                ? Constants.PINNED_RIGHT
+                : null;
         return pinned;
     }
 

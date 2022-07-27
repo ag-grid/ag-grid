@@ -1,14 +1,14 @@
-import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import {
-    IHeaderRowContainerComp, HeaderRowCtrl, HeaderRowContainerCtrl, Constants
+    IHeaderRowContainerComp, HeaderRowCtrl, HeaderRowContainerCtrl, Constants, ColumnPinnedType
 } from 'ag-grid-community';
 import { CssClasses } from '../utils';
 import HeaderRowComp from './headerRowComp';
 import { useEffectOnce } from '../useEffectOnce';
 
 
-const HeaderRowContainerComp = (props: {pinned: string | null}) => {
+const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [centerContainerWidth, setCenterContainerWidth] = useState<string>();

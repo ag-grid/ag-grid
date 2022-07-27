@@ -1,6 +1,6 @@
 import { DraggingEvent, DragAndDropService } from "../../dragAndDrop/dragAndDropService";
 import { Column } from "../../entities/column";
-import { ColumnModel } from "../../columns/columnModel";
+import { ColumnModel, ColumnPinnedType } from "../../columns/columnModel";
 import { Autowired } from "../../context/context";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { DropListener } from "./bodyDropTarget";
@@ -14,9 +14,9 @@ export class BodyDropPivotTarget implements DropListener {
     private columnsToGroup: Column[] = [];
     private columnsToPivot: Column[] = [];
 
-    private pinned: string | null;
+    private pinned: ColumnPinnedType;
 
-    constructor(pinned: string | null) {
+    constructor(pinned: ColumnPinnedType) {
         this.pinned = pinned;
     }
 

@@ -43,6 +43,8 @@ export interface CellChangedEvent<TData = any> extends RowNodeEvent<TData> {
 
 export enum RowHighlightPosition { Above, Below }
 
+export type RowPinnedType = 'top' | 'bottom' | null | undefined;
+
 export class RowNode<TData = any> implements IEventEmitter {
 
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
@@ -137,7 +139,7 @@ export class RowNode<TData = any> implements IEventEmitter {
     public rowIndex: number | null = null;
 
     /** Either 'top' or 'bottom' if row pinned, otherwise `undefined` or `null`. */
-    public rowPinned: string;
+    public rowPinned: RowPinnedType;
 
     /** When true, this row will appear in the top */
     public sticky: boolean;
