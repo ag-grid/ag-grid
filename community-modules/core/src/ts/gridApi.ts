@@ -874,14 +874,14 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Returns a list of selected nodes.
+     * Returns an unsorted list of selected nodes.
      * Getting the underlying node (rather than the data) is useful when working with tree / aggregated data,
      * as the node can be traversed.
      */
     public getSelectedNodes(): RowNode<TData>[] {
         return this.selectionService.getSelectedNodes();
     }
-    /** Returns a list of selected rows (i.e. row data that you provided). */
+    /** Returns an unsorted list of selected rows (i.e. row data that you provided). */
     public getSelectedRows(): TData[] {
         return this.selectionService.getSelectedRows();
     }

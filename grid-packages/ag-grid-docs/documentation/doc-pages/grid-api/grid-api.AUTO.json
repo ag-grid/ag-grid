@@ -413,11 +413,11 @@
     }
   },
   "getSelectedNodes": {
-    "description": "/** Returns a list of selected nodes.\n * Getting the underlying node (rather than the data) is useful when working with tree / aggregated data,\n * as the node can be traversed. */",
+    "description": "/** Returns an unsorted list of selected nodes.\n * Getting the underlying node (rather than the data) is useful when working with tree / aggregated data,\n * as the node can be traversed. */",
     "type": { "arguments": {}, "returnType": "RowNode<TData>[]" }
   },
   "getSelectedRows": {
-    "description": "/** Returns a list of selected rows (i.e. row data that you provided). */",
+    "description": "/** Returns an unsorted list of selected rows (i.e. row data that you provided). */",
     "type": { "arguments": {}, "returnType": "TData[]" }
   },
   "getBestCostNodeSelection": {
