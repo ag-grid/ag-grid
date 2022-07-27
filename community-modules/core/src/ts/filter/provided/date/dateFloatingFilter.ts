@@ -46,11 +46,11 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         const dateTo = parseDateTimeFromString(condition.dateTo);
 
         if (isRange) {
-            return `${serialiseDate(dateFrom, false)}-${serialiseDate(dateTo, false)}`;
+            return `${dateFrom?.toLocaleDateString() || null}-${dateTo?.toLocaleDateString() || null}`;
         }
 
         if (dateFrom != null) {
-            return `${serialiseDate(dateFrom, false)}`;
+            return dateFrom.toLocaleDateString();
         }
 
         // cater for when the type doesn't need a value
