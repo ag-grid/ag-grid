@@ -1,8 +1,4 @@
 {
-  "ColumnPinnedType": {
-    "meta": { "isTypeAlias": true },
-    "type": "'left' | 'right' | boolean | null | undefined"
-  },
   "ColumnResizeSet": {
     "meta": {},
     "type": { "columns": "Column[]", "ratios": "number[]", "width": "number" }
@@ -1480,6 +1476,10 @@
       "popup?": "/** Equivalent of setting `colDef.cellEditorPopup` */",
       "popupPosition?": "/** Equivalent of setting `colDef.cellEditorPopupPosition` */"
     }
+  },
+  "ColumnPinnedType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'left' | 'right' | boolean | null | undefined"
   },
   "GridOptions": {
     "meta": { "typeParams": ["TData = any"] },

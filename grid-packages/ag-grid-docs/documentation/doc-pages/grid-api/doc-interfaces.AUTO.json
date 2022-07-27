@@ -1,5 +1,4 @@
 {
-  "ColumnPinnedType": {},
   "ColumnResizeSet": {
     "columns": { "type": { "returnType": "Column[]", "optional": false } },
     "ratios": { "type": { "returnType": "number[]", "optional": false } },
@@ -2336,6 +2335,7 @@
       "type": { "returnType": "string", "optional": true }
     }
   },
+  "ColumnPinnedType": {},
   "GridOptions": {
     "statusBar": {
       "description": "/** Specifies the status bar components to use in the status bar. */",
