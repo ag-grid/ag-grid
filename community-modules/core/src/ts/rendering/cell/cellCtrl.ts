@@ -357,6 +357,8 @@ export class CellCtrl extends BeanStub {
     public startEditing(key: string | null = null, charPress: string | null = null, cellStartedEdit = false, event: KeyboardEvent | MouseEvent | null = null): void {
         if (!this.isCellEditable() || this.editing) { return; }
 
+        // because of async in React, the cellComp may not be set yet, if no cellComp then we are
+        // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         if (!this.cellComp) {
             this.onCellCompAttachedFuncs.push(() => { this.startEditing(key, charPress, cellStartedEdit, event); });
             return;
@@ -507,6 +509,8 @@ export class CellCtrl extends BeanStub {
     private setInlineEditingClass(): void {
         if (!this.isAlive()) { return; }
 
+        // because of async in React, the cellComp may not be set yet, if no cellComp then we are
+        // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         if (!this.cellComp) {
             this.onCellCompAttachedFuncs.push(() => { this.setInlineEditingClass(); });
             return;
