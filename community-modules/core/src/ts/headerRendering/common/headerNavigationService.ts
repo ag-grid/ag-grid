@@ -117,7 +117,7 @@ export class HeaderNavigationService extends BeanStub {
             nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection)!;
         }
 
-        if (nextHeader) {
+        if (nextHeader || !fromTab) {
             return this.focusService.focusHeaderPosition({
                 headerPosition: nextHeader,
                 direction: normalisedDirection,
@@ -126,8 +126,6 @@ export class HeaderNavigationService extends BeanStub {
                 event
             });
         }
-
-        if (!fromTab) { return true; }
 
         return this.focusNextHeaderRow(focusedHeader, normalisedDirection, event);
     }
