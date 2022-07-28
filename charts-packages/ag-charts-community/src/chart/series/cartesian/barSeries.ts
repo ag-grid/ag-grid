@@ -903,31 +903,43 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             strokes,
             fillOpacity,
             strokeOpacity,
+            flipXY,
         } = this;
 
-        if (data && data.length && xKey && yKeys.length) {
-            this.yKeys.forEach((stack, stackIndex) => {
-                stack.forEach((yKey, levelIndex) => {
-                    if (hideInLegend.indexOf(yKey) < 0) {
-                        const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
-                        legendData.push({
-                            id,
-                            itemId: yKey,
-                            enabled: seriesItemEnabled.get(yKey) || false,
-                            label: {
-                                text: yNames[yKey] || yKey,
-                            },
-                            marker: {
-                                fill: fills[colorIndex % fills.length],
-                                stroke: strokes[colorIndex % strokes.length],
-                                fillOpacity: fillOpacity,
-                                strokeOpacity: strokeOpacity,
-                            },
-                        });
-                    }
-                });
-            });
+        if (!data || !data.length || !xKey || !yKeys.length) {
+            return;
         }
+
+        this.yKeys.forEach((stack, stackIndex) => {
+            // Column stacks should be listed in the legend in reverse order, for symmetry with the
+            // vertical stack display order. Bar stacks are already consistent left-to-right with
+            // the legend.
+            const startLevel = flipXY ? 0 : stack.length - 1;
+            const endLevel = flipXY ? stack.length : -1;
+            const direction = flipXY ? 1 : -1;
+
+            for (let levelIndex = startLevel; levelIndex !== endLevel; levelIndex += direction) {
+                const yKey = stack[levelIndex];
+                if (hideInLegend.indexOf(yKey) >= 0) {
+                    return;
+                }
+                const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                legendData.push({
+                    id,
+                    itemId: yKey,
+                    enabled: seriesItemEnabled.get(yKey) || false,
+                    label: {
+                        text: yNames[yKey] || yKey,
+                    },
+                    marker: {
+                        fill: fills[colorIndex % fills.length],
+                        stroke: strokes[colorIndex % strokes.length],
+                        fillOpacity: fillOpacity,
+                        strokeOpacity: strokeOpacity,
+                    },
+                });
+            }
+        });
     }
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {

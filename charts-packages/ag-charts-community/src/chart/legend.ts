@@ -168,6 +168,9 @@ export class Legend {
         return this._position;
     }
 
+    /** Reverse the display order of legend items if `true`. */
+    reverseOrder = false;
+
     constructor() {
         this.item.marker.parent = this;
     }
@@ -222,7 +225,11 @@ export class Legend {
             marker: { size: markerSize, padding: markerPadding, shape: markerShape },
             label: { maxLength = Infinity, fontStyle, fontWeight, fontSize, fontFamily },
         } = this.item;
-        const updateSelection = this.itemSelection.setData(this.data, (_, datum) => {
+        const data = [...this.data];
+        if (this.reverseOrder) {
+            data.reverse();
+        }
+        const updateSelection = this.itemSelection.setData(data, (_, datum) => {
             const Marker = getMarker(markerShape || datum.marker.shape);
             return datum.id + '-' + datum.itemId + '-' + Marker.name;
         });

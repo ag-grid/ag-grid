@@ -128,7 +128,7 @@ export interface AgHierarchyThemeOptions<S = AgHierarchySeriesTheme> extends AgB
     series?: S;
 }
 
-export interface AgCrossLineThemeOptions extends Omit<AgCrossLineOptions, 'type'> { }
+export interface AgCrossLineThemeOptions extends Omit<AgCrossLineOptions, 'type'> {}
 
 export interface AgCartesianAxesCrossLineThemeOptions {
     crossLines?: AgCrossLineThemeOptions;
@@ -136,19 +136,24 @@ export interface AgCartesianAxesCrossLineThemeOptions {
 
 export interface AgNumberAxisThemeOptions
     extends Omit<AgNumberAxisOptions, 'type' | 'crossLines'>,
-    AgCartesianAxisThemeOptions<AgNumberAxisOptions>, AgCartesianAxesCrossLineThemeOptions { }
+        AgCartesianAxisThemeOptions<AgNumberAxisOptions>,
+        AgCartesianAxesCrossLineThemeOptions {}
 export interface AgLogAxisThemeOptions
     extends Omit<AgLogAxisOptions, 'type' | 'crossLines'>,
-    AgCartesianAxisThemeOptions<AgLogAxisOptions>, AgCartesianAxesCrossLineThemeOptions { }
+        AgCartesianAxisThemeOptions<AgLogAxisOptions>,
+        AgCartesianAxesCrossLineThemeOptions {}
 export interface AgCategoryAxisThemeOptions
     extends Omit<AgCategoryAxisOptions, 'type' | 'crossLines'>,
-    AgCartesianAxisThemeOptions<AgCategoryAxisOptions>, AgCartesianAxesCrossLineThemeOptions { }
+        AgCartesianAxisThemeOptions<AgCategoryAxisOptions>,
+        AgCartesianAxesCrossLineThemeOptions {}
 export interface AgGroupedCategoryAxisThemeOptions
     extends Omit<AgGroupedCategoryAxisOptions, 'type' | 'crossLines'>,
-    AgCartesianAxisThemeOptions<AgGroupedCategoryAxisOptions>, AgCartesianAxesCrossLineThemeOptions { }
+        AgCartesianAxisThemeOptions<AgGroupedCategoryAxisOptions>,
+        AgCartesianAxesCrossLineThemeOptions {}
 export interface AgTimeAxisThemeOptions
     extends Omit<AgTimeAxisOptions, 'type' | 'crossLines'>,
-    AgCartesianAxisThemeOptions<AgTimeAxisOptions>, AgCartesianAxesCrossLineThemeOptions { }
+        AgCartesianAxisThemeOptions<AgTimeAxisOptions>,
+        AgCartesianAxesCrossLineThemeOptions {}
 
 export interface AgCartesianAxesTheme {
     /** This extends the common axis configuration with options specific to number axes. */
@@ -347,6 +352,8 @@ export interface AgChartLegendOptions {
     spacing?: PixelSize;
     /** Configuration for the legend items that consist of a marker and a label. */
     item?: AgChartLegendItemOptions;
+    /** Reverse the display order of legend items if `true`. */
+    reverseOrder?: boolean;
     /** Optional callbacks for specific legend-related events. */
     listeners?: AgChartLegendListeners;
 }
@@ -371,13 +378,7 @@ export interface AgChartBackground {
 
 export interface AgBaseChartListeners {
     /** The listener to call when a node (marker, column, bar, tile or a pie slice) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */
-    seriesNodeClick: (event: {
-        type: 'seriesNodeClick',
-        series: any,
-        datum: any,
-        xKey: string,
-        yKey: string,
-    }) => any;
+    seriesNodeClick: (event: { type: 'seriesNodeClick'; series: any; datum: any; xKey: string; yKey: string }) => any;
     /** Generic listeners. */
     [key: string]: Function;
 }
@@ -559,7 +560,7 @@ export interface AgCrossLineLabelOptions {
 }
 
 export type AgCrossLineLabelPosition =
-    'top'
+    | 'top'
     | 'left'
     | 'right'
     | 'bottom'
@@ -639,7 +640,7 @@ export interface AgSeriesHighlightMarkerStyle {
     stroke?: CssColor;
     /** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */
     strokeWidth?: PixelSize;
-};
+}
 
 export interface AgSeriesHighlightSeriesStyle {
     enabled?: boolean;
@@ -647,7 +648,7 @@ export interface AgSeriesHighlightSeriesStyle {
     dimOpacity?: Opacity;
     /** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */
     strokeWidth?: PixelSize;
-};
+}
 
 export interface AgSeriesHighlightStyle {
     /**
@@ -672,19 +673,11 @@ export interface AgSeriesHighlightStyle {
     item?: AgSeriesHighlightMarkerStyle;
     /** Highlight style used for whole series when one of its markers is tapped or hovered over. */
     series?: AgSeriesHighlightSeriesStyle;
-};
+}
 
 export interface AgBaseSeriesListeners {
     /** The listener to call when a node (marker, column, bar, tile or a pie slice) in the series is clicked. */
-    nodeClick: (
-        params: {
-            type: 'nodeClick',
-            series: any,
-            datum: any,
-            xKey: string,
-            yKey: string,
-        },
-    ) => any;
+    nodeClick: (params: { type: 'nodeClick'; series: any; datum: any; xKey: string; yKey: string }) => any;
 }
 
 export interface AgBaseSeriesOptions {
@@ -792,7 +785,7 @@ export interface AgCartesianSeriesMarker extends AgSeriesMarker {
     formatter?: AgCartesianSeriesMarkerFormatter;
 }
 
-export interface AgAreaSeriesMarker extends AgCartesianSeriesMarker { }
+export interface AgAreaSeriesMarker extends AgCartesianSeriesMarker {}
 
 export interface AgSeriesTooltip {
     /** Whether or not to show tooltips when the series are hovered over. */
@@ -845,7 +838,7 @@ export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
-export interface AgScatterSeriesLabelOptions extends AgChartLabelOptions { }
+export interface AgScatterSeriesLabelOptions extends AgChartLabelOptions {}
 
 export interface AgScatterSeriesMarker extends AgCartesianSeriesMarker {
     /** If sizeKey is used, explicitly specifies the extent of the domain of it's values. */

@@ -6964,6 +6964,7 @@
       "position?": "AgChartLegendPosition",
       "spacing?": "PixelSize",
       "item?": "AgChartLegendItemOptions",
+      "reverseOrder?": "boolean",
       "listeners?": "AgChartLegendListeners"
     },
     "docs": {
@@ -6971,6 +6972,7 @@
       "position?": "/** Where the legend should show in relation to the chart. */",
       "spacing?": "/** The spacing in pixels to use outside the legend. */",
       "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "reverseOrder?": "/** Reverse the display order of legend items if `true`. */",
       "listeners?": "/** Optional callbacks for specific legend-related events. */"
     }
   },
