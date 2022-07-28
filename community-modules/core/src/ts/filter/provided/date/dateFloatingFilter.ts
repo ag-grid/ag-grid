@@ -45,12 +45,14 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         const dateFrom = parseDateTimeFromString(condition.dateFrom);
         const dateTo = parseDateTimeFromString(condition.dateTo);
 
+        // we use the OS locale as we cannot adjust the locale for the input elements, which are based on the OS locale
+        const operatingSystemLocale = Intl.DateTimeFormat()?.resolvedOptions()?.locale;
         if (isRange) {
-            return `${dateFrom?.toLocaleDateString() || null}-${dateTo?.toLocaleDateString() || null}`;
+            return `${dateFrom?.toLocaleDateString(operatingSystemLocale) || null}-${dateTo?.toLocaleDateString(operatingSystemLocale) || null}`;
         }
 
         if (dateFrom != null) {
-            return dateFrom.toLocaleDateString();
+            return dateFrom.toLocaleDateString(operatingSystemLocale);
         }
 
         // cater for when the type doesn't need a value
