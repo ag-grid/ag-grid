@@ -392,12 +392,12 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 | </a>
 
 [[only-angular]]
-| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-angular-hello-world-cxth9c" target="_blank">
+| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-angular-hello-world-cajv3p" target="_blank">
 |     Open in <img src="stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
 | </a>
 
 [[only-react]]
-| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-react-hello-world-daq5bw" target="_blank">
+| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-react-hello-world-v6zyws target="_blank">
 |     Open in <img src="stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
 | </a>
 
