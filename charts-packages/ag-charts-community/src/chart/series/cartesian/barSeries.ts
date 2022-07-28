@@ -392,7 +392,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const yAbsTotal = this.yData.map((group) =>
             group.map((stack) =>
                 stack.reduce((acc, stack) => {
-                    acc += Math.abs(stack);
+                    acc += isNaN(stack) ? 0 : Math.abs(stack);
                     return acc;
                 }, 0)
             )
@@ -579,6 +579,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     // Bars outside of visible range are not rendered, so we create node data
                     // only for the visible subset of user data.
                     if (!xAxis.inRange(barX, barWidth)) {
+                        continue;
+                    }
+                    if (isNaN(currY)) {
                         continue;
                     }
 
