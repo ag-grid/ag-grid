@@ -9,6 +9,7 @@ import { getMarker } from './marker/util';
 import { createId } from '../util/id';
 import { RedrawType } from '../scene/node';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
+import { OPT_BOOLEAN, Validate } from '../util/validation';
 
 export interface LegendDatum {
     id: string; // component ID
@@ -169,7 +170,8 @@ export class Legend {
     }
 
     /** Reverse the display order of legend items if `true`. */
-    reverseOrder = false;
+    @Validate(OPT_BOOLEAN)
+    reverseOrder?: boolean = undefined;
 
     constructor() {
         this.item.marker.parent = this;

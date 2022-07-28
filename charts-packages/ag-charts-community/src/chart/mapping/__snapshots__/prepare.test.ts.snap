@@ -132,6 +132,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 10,
   },
   "navigator": Object {
@@ -546,6 +547,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -881,6 +883,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -1472,6 +1475,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -1765,6 +1769,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -1999,6 +2004,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -2421,6 +2427,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -2981,6 +2988,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -3234,6 +3242,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -3475,6 +3484,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -3715,6 +3725,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -3949,6 +3960,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -4226,6 +4238,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -4506,6 +4519,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -4801,6 +4815,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -5051,6 +5066,7 @@ Object {
       "paddingY": 15,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -6141,6 +6157,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -6288,6 +6305,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "padding": Object {
@@ -6529,6 +6547,7 @@ Object {
       "paddingY": 8,
     },
     "position": "top",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -6827,6 +6846,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -7112,6 +7132,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -7415,6 +7436,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -7868,6 +7890,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -8024,6 +8047,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "padding": Object {
@@ -8264,6 +8288,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -8502,6 +8527,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -8717,6 +8743,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "padding": Object {
@@ -8957,6 +8984,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -9192,6 +9220,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -9495,6 +9524,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -9772,6 +9802,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 40,
   },
   "navigator": Object {
@@ -10070,6 +10101,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
