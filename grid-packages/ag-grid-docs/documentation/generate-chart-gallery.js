@@ -116,6 +116,7 @@ async function generateThumbnails(galleryConfig) {
     const changedDirectories = getChangedDirectories();
     const names = getExampleNames(galleryConfig);
     const outputDirectory = shouldGenerateAllScreenshots ? tempDirectory : thumbnailDirectory;
+    const minThumbnailFileSize = 15 * 1024; //any smaller than 15k and it's probably blank
 
     const namesToGenerate = names
         .sort()
@@ -130,10 +131,32 @@ async function generateThumbnails(galleryConfig) {
 
             const url = `https://localhost:8000/example-runner/?library=charts&pageName=${options.rootPageName}&name=${name}&importType=packages&framework=javascript`;
 
-            await page.goto(url, { waitUntil: 'networkidle2' });
-            // Wait for JS on page to stop running.
-            await page.waitForFunction(() => window.chart == null || window.chart.updatePending !== 0);
-            await page.screenshot({ path: Path.join(outputDirectory, `${name}.png`) });
+            const path = Path.join(outputDirectory, `${name}.png`);
+            const saveThumbnail = async () => {
+                await page.goto(url, { waitUntil: 'networkidle2' });
+                // Wait for JS on page to stop running.
+                await page.waitForFunction(() => window.chart == null || window.chart.updatePending !== 0);
+                await page.screenshot({ path });
+            }
+
+            const saveThumbnailWithRetry = async (retryCount) => {
+                for (let i = 0; i < retryCount; i++) {
+                    await saveThumbnail();
+
+                    if(fs.statSync(path).size > minThumbnailFileSize) {
+                        break;
+                    }
+                    console.log("retrying...");
+                }
+            }
+
+            await saveThumbnailWithRetry(3);
+
+            if(fs.statSync(path).size < minThumbnailFileSize) {
+                console.log(`Could not generate valid thumbnail for ${name}`);
+                console.log(url);
+                process.exit(1);
+            }
 
             browser.close();
             console.log(`Generated thumbnail for ${name}`);
