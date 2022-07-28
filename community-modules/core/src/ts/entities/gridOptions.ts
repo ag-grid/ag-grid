@@ -1004,7 +1004,10 @@ export interface GridOptions<TData = any> {
     onComponentStateChanged?(event: ComponentStateChangedEvent<TData>): void;
 
     // *** Editing *** //
-    /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */
+    /**
+     * Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or 
+     *  if cell value has changed as a result of paste operation.
+    */
     onCellValueChanged?(event: CellValueChangedEvent<TData>): void;
     /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */
     onCellEditRequest?(event: CellEditRequestEvent<TData>): void;
