@@ -68,7 +68,7 @@ It may be a requirement to load the grid at a scroll position other than the fir
 
 - After the datasource has been set `api.ensureIndexVisible(5000, 'top')` is called, causing the grid to scroll down to row 5000.
 
-<grid-example title='Initial scroll position' name='initial-scroll-position' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Initial Scroll Position' name='initial-scroll-position' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
 
 ## Debugging Infinite Scroll
 

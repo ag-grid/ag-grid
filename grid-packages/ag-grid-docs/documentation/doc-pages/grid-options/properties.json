@@ -1031,7 +1031,12 @@
         "serverSideFilterAllLevels": {},
         "serverSideSortOnServer": {},
         "serverSideFilterOnServer": {},
-        "serverSideInitialRowCount": {},
+        "serverSideInitialRowCount": {
+            "more": {
+                "name": "Initial Scroll Position",
+                "url": "/server-side-model-infinite-scroll/#initial-scroll-position"
+            }
+        },
         "getChildCount": {},
         "getServerSideGroupLevelParams": {},
         "isServerSideGroupOpenByDefault": {},
