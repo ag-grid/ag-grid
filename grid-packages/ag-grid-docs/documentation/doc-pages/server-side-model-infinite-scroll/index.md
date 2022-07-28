@@ -66,7 +66,7 @@ It may be a requirement to load the grid at a scroll position other than the fir
 
 - The `serverSideInitialRowCount` property has been set to provide an initial length to the vertical scrollbars.
 
-- After the datasource has been set `api.ensureIndexVisible(5000, 'top')` is called, causing the grid to scroll down to row 5000.
+- After the datasource has been set `api.ensureIndexVisible(5000, 'top')` is called, causing the grid to scroll down to row `5000`.
 
 <grid-example title='Initial Scroll Position' name='initial-scroll-position' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
 
