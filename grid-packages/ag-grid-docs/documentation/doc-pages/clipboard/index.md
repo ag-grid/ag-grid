@@ -152,9 +152,8 @@ The grid's selection and copy features replace the built-in browser behaviour fo
 
 The following events are relevant to clipboard operations:
 
-- `pasteStart`: A Paste operation has started.
-- `pasteEnd`: A Paste operation has ended.
-- `cellValueChanged`: A cells value has changed. Typically happens after editing but also if cell value is changed as a result of paste operation.
+<api-documentation source='grid-events/events.json' section='clipboard' names='["pasteStart","pasteEnd"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
+<api-documentation source='grid-events/events.json' section='editing' names='["cellValueChanged"]' config='{ "hideMore":false}'></api-documentation>
 
 For a paste operation the events will be fired as:
 
