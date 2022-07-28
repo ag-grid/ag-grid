@@ -45,6 +45,7 @@ In the snippet above, **Athlete** cells will be editable on rows where the **Yea
 This is demonstrated in the following example, note that:
 
 - An `editable` callback is added to the **Athlete** and **Age** columns to control which cells are editable based on the selected **Year**.
+- A custom `editableColumn` [Column Type](/column-definitions/#custom-column-types) is used to avoid duplication of the callback for **Athlete** and **Age**.
 - Buttons are provided to change the **Year** used by the `editable` callback function to control which cells are editable.    
 - A blue [Cell Style](/cell-styles/) has been added to highlight editable cells using the same logic as the `editable` callback.
 
