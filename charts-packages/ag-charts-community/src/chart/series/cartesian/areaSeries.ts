@@ -893,23 +893,28 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const { data, id, xKey, yKeys, yNames, seriesItemEnabled, marker, fills, strokes, fillOpacity, strokeOpacity } =
             this;
 
-        if (data && data.length && xKey && yKeys.length) {
-            yKeys.forEach((yKey, index) => {
-                legendData.push({
-                    id,
-                    itemId: yKey,
-                    enabled: seriesItemEnabled.get(yKey) || false,
-                    label: {
-                        text: yNames[index] || yKeys[index],
-                    },
-                    marker: {
-                        shape: marker.shape,
-                        fill: marker.fill || fills[index % fills.length],
-                        stroke: marker.stroke || strokes[index % strokes.length],
-                        fillOpacity: marker.fillOpacity ?? fillOpacity,
-                        strokeOpacity: marker.strokeOpacity ?? strokeOpacity,
-                    },
-                });
+        if (!data || !data.length || !xKey || !yKeys.length) {
+            return;
+        }
+
+        // Area stacks should be listed in the legend in reverse order, for symmetry with the
+        // vertical stack display order.
+        for (let index = yKeys.length - 1; index >= 0; index--) {
+            const yKey = yKeys[index];
+            legendData.push({
+                id,
+                itemId: yKey,
+                enabled: seriesItemEnabled.get(yKey) || false,
+                label: {
+                    text: yNames[index] || yKeys[index],
+                },
+                marker: {
+                    shape: marker.shape,
+                    fill: marker.fill || fills[index % fills.length],
+                    stroke: marker.stroke || strokes[index % strokes.length],
+                    fillOpacity: marker.fillOpacity ?? fillOpacity,
+                    strokeOpacity: marker.strokeOpacity ?? strokeOpacity,
+                },
             });
         }
     }

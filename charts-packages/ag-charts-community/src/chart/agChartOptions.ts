@@ -352,6 +352,8 @@ export interface AgChartLegendOptions {
     spacing?: PixelSize;
     /** Configuration for the legend items that consist of a marker and a label. */
     item?: AgChartLegendItemOptions;
+    /** Reverse the display order of legend items if `true`. */
+    reverseOrder?: boolean;
     /** Optional callbacks for specific legend-related events. */
     listeners?: AgChartLegendListeners;
 }

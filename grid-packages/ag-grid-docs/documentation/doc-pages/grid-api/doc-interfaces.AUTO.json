@@ -12168,6 +12168,10 @@
       "description": "/** Configuration for the legend items that consist of a marker and a label. */",
       "type": { "returnType": "AgChartLegendItemOptions", "optional": true }
     },
+    "reverseOrder": {
+      "description": "/** Reverse the display order of legend items if `true`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "listeners": {
       "description": "/** Optional callbacks for specific legend-related events. */",
       "type": { "returnType": "AgChartLegendListeners", "optional": true }

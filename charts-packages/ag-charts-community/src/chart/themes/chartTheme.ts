@@ -240,6 +240,7 @@ export class ChartTheme {
                         formatter: undefined,
                     },
                 },
+                reverseOrder: false,
             },
             tooltip: {
                 enabled: true,
