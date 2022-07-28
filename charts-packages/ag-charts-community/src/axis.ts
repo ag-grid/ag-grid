@@ -201,7 +201,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._scale;
     }
 
-    ticks: any[];
+    private _ticks: any[];
+    set ticks(value: any[]) {
+        this._ticks = value;
+        this.onLabelFormatChange(this.label.format);
+    }
+    get ticks(): any[] {
+        return this._ticks;
+    }
 
     readonly axisGroup = new Group({ name: `${this.id}-axis`, layer: true, zIndex: 50 });
     readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
@@ -365,7 +372,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
     protected onLabelFormatChange(format?: string) {
         if (format && this.scale && this.scale.tickFormat) {
             try {
-                this.labelFormatter = this.scale.tickFormat(this.calculatedTickCount, format);
+                this.labelFormatter = this.scale.tickFormat({
+                    ticks: this.ticks,
+                    count: this.calculatedTickCount,
+                    specifier: format,
+                });
             } catch (e) {
                 this.labelFormatter = undefined;
                 doOnce(
@@ -511,7 +522,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
         const halfBandwidth = (scale.bandwidth || 0) / 2;
 
-        const ticks = this.ticks || scale.ticks!(this.calculatedTickCount);
+        this.ticks = this.ticks ?? scale.ticks!(this.calculatedTickCount);
+
+        const { ticks } = this;
+
         const tickGroupSelection = this.updateTicks({ ticks });
         const labelBboxes = this.updateLabels({
             parallelFlipRotation,

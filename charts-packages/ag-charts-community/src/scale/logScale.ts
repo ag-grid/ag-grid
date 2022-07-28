@@ -199,7 +199,14 @@ export class LogScale extends ContinuousScale {
         return isReversed ? z.reverse() : z;
     }
 
-    tickFormat(count: any, specifier?: string | ((x: number) => string)): (x: number) => string {
+    tickFormat({
+        count,
+        specifier,
+    }: {
+        count?: any;
+        ticks?: any[];
+        specifier?: string | ((x: number) => string);
+    }): (x: number) => string {
         const { base } = this;
 
         if (specifier == null) {

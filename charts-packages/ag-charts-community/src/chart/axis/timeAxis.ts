@@ -16,7 +16,11 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         const { scale } = this;
         scale.clamp = true;
         this.scale = scale;
-        this.datumFormatter = scale.tickFormat(this.calculatedTickCount, this.datumFormat);
+        this.datumFormatter = scale.tickFormat({
+            ticks: this.ticks,
+            count: this.calculatedTickCount,
+            specifier: this.datumFormat,
+        });
     }
 
     private _nice: boolean = true;
@@ -65,7 +69,7 @@ export class TimeAxis extends ChartAxis<TimeScale> {
             super.onLabelFormatChange(format);
         } else {
             // For time axis labels to look nice, even if date format wasn't set.
-            this.labelFormatter = this.scale.tickFormat(this.calculatedTickCount);
+            this.labelFormatter = this.scale.tickFormat({ ticks: this.ticks, count: this.calculatedTickCount });
         }
     }
 
