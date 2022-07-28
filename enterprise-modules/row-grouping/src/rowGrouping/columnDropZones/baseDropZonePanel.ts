@@ -192,7 +192,7 @@ export abstract class BaseDropZonePanel extends Component {
     }
 
     private checkInsertIndex(draggingEvent: DraggingEvent): boolean {
-        const newIndex = this.horizontal ? this.getNewHorizontalInsertIndex(draggingEvent) : this.getNewVerticalInsertIndex(draggingEvent);
+        const newIndex = this.getNewInsertIndex(draggingEvent);
 
         // <0 happens when drag is no a direction we are interested in, eg drag is up/down but in horizontal panel
         if (newIndex < 0) {
@@ -208,49 +208,56 @@ export abstract class BaseDropZonePanel extends Component {
         return changed;
     }
 
-    private getNewHorizontalInsertIndex(draggingEvent: DraggingEvent): number {
-        if (_.missing(draggingEvent.hDirection)) {
-            return -1;
+    private getNewInsertIndex(draggingEvent: DraggingEvent): number {
+        const mouseEvent = draggingEvent.event;
+        const mouseLocation = this.horizontal ? mouseEvent.clientX : mouseEvent.clientY;
+
+        const boundsList = this.childColumnComponents.map(col => (
+            col.getGui().getBoundingClientRect()
+        ));
+        // find the non-ghost component we're hovering
+        const hoveredIndex = boundsList.findIndex(rect => (
+            this.horizontal ? (
+                rect.right > mouseLocation && rect.left < mouseLocation
+            ) : (
+                rect.top < mouseLocation && rect.bottom > mouseLocation
+            )
+        ));
+
+        // not hovering a non-ghost component
+        if (hoveredIndex === -1) {
+            const enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
+
+            // if mouse is below or right of all components then new index should be placed last
+            const isLast = boundsList.every(rect => (
+                mouseLocation > (this.horizontal ? rect.right : rect.bottom)
+            ));
+
+            if (isLast) {
+                return enableRtl && this.horizontal ? 0 : this.childColumnComponents.length;
+            }
+
+            // if mouse is above or left of all components, new index is first
+            const isFirst = boundsList.every(rect => (
+                mouseLocation < (this.horizontal ? rect.left : rect.top)
+            ));
+
+            if (isFirst) {
+                return enableRtl && this.horizontal ? this.childColumnComponents.length : 0;
+            }
+            
+            // must be hovering a ghost, don't change the index
+            return this.insertIndex;
         }
 
-        let newIndex = 0;
-        const mouseEvent = draggingEvent.event;
-        const enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
-        const goingLeft = draggingEvent.hDirection === HorizontalDirection.Left;
-        const mouseX = mouseEvent.clientX;
-
-        this.childColumnComponents.forEach(childColumn => {
-            const rect = childColumn.getGui().getBoundingClientRect();
-            const rectX = goingLeft ? rect.right : rect.left;
-            const horizontalFit = enableRtl ? mouseX <= rectX : mouseX >= rectX;
-
-            if (horizontalFit) {
-                newIndex++;
-            }
-        });
-
-        return newIndex;
-    }
-
-    private getNewVerticalInsertIndex(draggingEvent: DraggingEvent): number {
-        if (_.missing(draggingEvent.vDirection)) {
-            return -1;
+        // if the old index is equal to or less than the index of our new target
+        // we need to shift right, to insert after rather than before
+        if (this.insertIndex <= hoveredIndex) {
+            return hoveredIndex + 1;
         }
-
-        let newIndex = 0;
-        const mouseEvent = draggingEvent.event;
-
-        this.childColumnComponents.forEach(childColumn => {
-            const rect = childColumn.getGui().getBoundingClientRect();
-            const verticalFit = mouseEvent.clientY >= (draggingEvent.vDirection === VerticalDirection.Down ? rect.top : rect.bottom);
-
-            if (verticalFit) {
-                newIndex++;
-            }
-        });
-
-        return newIndex;
+        return hoveredIndex;
     }
+
 
     private checkDragStartedBySelf(draggingEvent: DraggingEvent): void {
         if (this.state !== BaseDropZonePanel.STATE_NOT_DRAGGING) {
@@ -461,34 +468,19 @@ export abstract class BaseDropZonePanel extends Component {
 
     private addColumnsToGui(): void {
         const nonGhostColumns = this.getNonGhostColumns();
-        const addingGhosts = this.isPotentialDndColumns();
-        const itemsToAddToGui: DropZoneColumnComp[] = [];
-
-        nonGhostColumns.forEach((column, index) => {
-            if (addingGhosts && index >= this.insertIndex) {
-                return;
-            }
-
-            const columnComponent = this.createColumnComponent(column, false);
-
-            itemsToAddToGui.push(columnComponent);
-        });
+        const itemsToAddToGui: DropZoneColumnComp[] = nonGhostColumns.map(column => (
+            this.createColumnComponent(column, false)
+        ));
 
         if (this.isPotentialDndColumns()) {
-            this.potentialDndColumns.forEach(column => {
-                const columnComponent = this.createColumnComponent(column, true);
-                itemsToAddToGui.push(columnComponent);
-            });
-
-            nonGhostColumns.forEach((column, index) => {
-                if (index < this.insertIndex) {
-                    return;
-                }
-
-                const columnComponent = this.createColumnComponent(column, false);
-
-                itemsToAddToGui.push(columnComponent);
-            });
+            const dndColumns = this.potentialDndColumns.map(column => (
+                this.createColumnComponent(column, true)
+            ));
+            if (this.insertIndex >= itemsToAddToGui.length) {
+                itemsToAddToGui.push(...dndColumns);
+            } else {
+                itemsToAddToGui.splice(this.insertIndex, 0, ...dndColumns);
+            }
         }
 
         this.appendChild(this.eColumnDropList);
