@@ -1624,27 +1624,14 @@ export class ColumnModel extends BeanStub {
     }
 
     public setColumnsVisible(keys: (string | Column)[], visible = false, source: ColumnEventType = "api"): void {
-        this.columnAnimationService.start();
-
-        this.actionOnGridColumns(keys, (column: Column): boolean => {
-            if (column.isVisible() !== visible) {
-                column.setVisible(visible, source);
-                return true;
-            }
-            return false;
-        }, source, () => {
-            const event: ColumnVisibleEvent = {
-                type: Events.EVENT_COLUMN_VISIBLE,
-                visible: visible,
-                column: null,
-                columns: null,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                source: source
-            };
-            return event;
+        this.applyColumnState({
+            state: keys.map<ColumnState>(
+                key => ({
+                    colId: typeof key === 'string' ? key : key.getColId(), 
+                    hide: !visible,
+                })
+            ),
         });
-        this.columnAnimationService.finish();
     }
 
     public setColumnPinned(key: string | Column | null, pinned: ColumnPinnedType, source: ColumnEventType = "api"): void {
@@ -3206,6 +3193,7 @@ export class ColumnModel extends BeanStub {
 
     // called from: setColumnState, setColumnDefs, setSecondaryColumns
     private updateGridColumns(): void {
+        const prevGridCols = this.gridColumns;
         if (this.gridColsArePrimary) {
             this.lastPrimaryOrder = this.gridColumns;
         } else {
@@ -3251,13 +3239,14 @@ export class ColumnModel extends BeanStub {
 
         this.setAutoHeightActive();
 
-        const event: GridColumnsChangedEvent = {
-            type: Events.EVENT_GRID_COLUMNS_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-
-        this.eventService.dispatchEvent(event);
+        if (!areEqual(prevGridCols, this.gridColumns)) {
+            const event: GridColumnsChangedEvent = {
+                type: Events.EVENT_GRID_COLUMNS_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event);
+        }
     }
 
     private setAutoHeightActive(): void {
