@@ -33,6 +33,8 @@ md-include:register-javascript.md
 md-include:register-angular.md
 md-include:register-react.md 
 md-include:register-vue.md
+ 
+<grid-example title='Registering Components' name='register' type='mixed' options='{ "exampleHeight": 580 }'></grid-example>
 
 md-include:declare-angular.md
 
