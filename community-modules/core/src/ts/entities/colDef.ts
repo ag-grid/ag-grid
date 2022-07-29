@@ -150,9 +150,9 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
      * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.
      */
     tooltipValueGetter?: (params: ITooltipParams<TData>) => string | any;
-    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */
+    /** Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */
     checkboxSelection?: boolean | CheckboxSelectionCallback<TData>;
-    /** `boolean`. Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */
+    /** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */
     showDisabledCheckboxes?: boolean;
     /** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults. */
     icons?: { [key: string]: Function | string; };

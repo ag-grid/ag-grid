@@ -828,14 +828,14 @@
       }
     },
     "checkboxSelection": {
-      "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
+      "description": "/** Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
       "type": {
         "returnType": "boolean | CheckboxSelectionCallback<TData>",
         "optional": true
       }
     },
     "showDisabledCheckboxes": {
-      "description": "/** `boolean`. Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
+      "description": "/** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "icons": {
@@ -22211,14 +22211,14 @@
       }
     },
     "checkboxSelection": {
-      "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
+      "description": "/** Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
       "type": {
         "returnType": "boolean | CheckboxSelectionCallback<TData>",
         "optional": true
       }
     },
     "showDisabledCheckboxes": {
-      "description": "/** `boolean`. Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
+      "description": "/** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "icons": {
