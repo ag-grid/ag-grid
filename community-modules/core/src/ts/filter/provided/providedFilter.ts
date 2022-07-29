@@ -47,12 +47,6 @@ export interface IProvidedFilterParams extends IFilterParams {
      * Default: `false`
      */
     readOnly?: boolean;
-    /**
-     * Defines the date format for the floating filter text when an in range filter has been applied.
-     * 
-     * Default: 'YYYY-MM-DD'
-     */
-     inRangeFloatingFilterDateFormat?: string;
 }
 
 /** Interface contract for the public aspects of the ProvidedFilter implementation(s). */

@@ -42,7 +42,7 @@ export interface IDateFilterParams extends IScalarFilterParams {
     /**
      * Defines the date format for the floating filter text when an in range filter has been applied.
      * 
-     * Default: 'YYYY-MM-DD'
+     * Default: `YYYY-MM-DD`
      */
      inRangeFloatingFilterDateFormat?: string;
 }
