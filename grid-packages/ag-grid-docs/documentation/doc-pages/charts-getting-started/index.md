@@ -392,18 +392,18 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 | </a>
 
 [[only-angular]]
-| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-angular-hello-world-cajv3p" target="_blank">
+| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-angular-hello-world-gjjfpt" target="_blank">
 |     Open in <img src="stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
 | </a>
 
 [[only-react]]
-| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-react-hello-world-v6zyws target="_blank">
+| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-react-hello-world-yduhy" target="_blank">
 |     Open in <img src="stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
 | </a>
 
 
 [[only-vue]]
-| <a class="btn btn-dark mb-2 mr-3" href="https://codesandbox.io/s/ag-charts-vue-hello-world-2dftvp" target="_blank">
+| <a class="btn btn-dark mb-2 mr-3" href="https://codesandbox.io/s/ag-charts-vue-hello-world-cfoehv" target="_blank">
 |     Open in <img src="codesandbox_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> CodeSandbox
 | </a>
 
