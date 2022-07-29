@@ -155,7 +155,8 @@ export class HdpiCanvas {
             return this._textMeasuringContext;
         }
         const canvas = document.createElement('canvas');
-        return this._textMeasuringContext = canvas.getContext('2d')!;
+        this._textMeasuringContext = canvas.getContext('2d')!;
+        return this._textMeasuringContext;
     }
 
     // Offscreen SVGTextElement for measuring text. This fallback method
@@ -208,7 +209,7 @@ export class HdpiCanvas {
         const isChrome = navigator.userAgent.indexOf('Chrome') > -1;
         const isFirefox = navigator.userAgent.indexOf('Firefox') > -1;
         const isSafari = !isChrome && navigator.userAgent.indexOf('Safari') > -1;
-        return this._has = Object.freeze({
+        this._has = Object.freeze({
             textMetrics: this.textMeasuringContext.measureText('test').actualBoundingBoxDescent !== undefined
                 // Firefox implemented advanced TextMetrics object in v74:
                 // https://bugzilla.mozilla.org/show_bug.cgi?id=1102584
@@ -216,6 +217,7 @@ export class HdpiCanvas {
                 && !isFirefox && !isSafari,
             getTransform: this.textMeasuringContext.getTransform !== undefined
         });
+        return this._has;
     }
 
     static measureText(text: string, font: string,
