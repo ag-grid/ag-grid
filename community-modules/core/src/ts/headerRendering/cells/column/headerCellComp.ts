@@ -91,6 +91,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         this.headerComp = headerComp;
         this.headerCompGui = headerComp.getGui();
         this.eHeaderCompWrapper.appendChild(this.headerCompGui);
-        this.ctrl.setDragSource(this.headerCompGui);
+        this.ctrl.setDragSource(this.getGui()!);
     }
 }
