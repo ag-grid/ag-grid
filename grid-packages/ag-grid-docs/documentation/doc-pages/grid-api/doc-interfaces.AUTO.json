@@ -8631,6 +8631,10 @@
       "description": "/** This is the maximum year that may be entered in a date field for the value to be considered valid. Default is no restriction. */",
       "type": { "returnType": "number", "optional": true }
     },
+    "inRangeFloatingFilterDateFormat": {
+      "description": "/** Defines the date format for the floating filter text when an in range filter has been applied.\n * \n * Default: 'YYYY-MM-DD' */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "inRangeInclusive": {
       "description": "/** If `true`, the `'inRange'` filter option will include values equal to the start and end of the range. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -8689,10 +8693,6 @@
     "readOnly": {
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "inRangeFloatingFilterDateFormat": {
-      "description": "/** Defines the date format for the floating filter text when an in range filter has been applied.\n * \n * Default: 'YYYY-MM-DD' */",
-      "type": { "returnType": "string", "optional": true }
     },
     "column": {
       "description": "/** The column this filter is for. */",
