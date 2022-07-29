@@ -242,7 +242,6 @@ export class CrossLine {
             const { x, y } = points[i];
             path[method](x, y);
         });
-        path.closePath();
         crossLineLine.checkPathDirty();
     }
 
@@ -255,10 +254,9 @@ export class CrossLine {
     }
 
     private updateRangeNode() {
-        const { crossLineRange, fill, lineDash, fillOpacity } = this;
+        const { crossLineRange, fill, fillOpacity } = this;
         crossLineRange.fill = fill;
         crossLineRange.opacity = fillOpacity ?? 1;
-        crossLineRange.lineDash = lineDash;
     }
 
     private updateRangePath() {
