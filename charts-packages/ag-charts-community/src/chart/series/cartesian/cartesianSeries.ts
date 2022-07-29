@@ -270,8 +270,10 @@ export abstract class CartesianSeries<
 
         let labelItem: C['labelData'][number] | undefined;
         if (this.label.enabled && item != null) {
+            const { itemId = undefined } = item;
+
             for (const { labelData } of contextNodeData) {
-                labelItem = labelData.find((ld) => ld.datum === item.datum);
+                labelItem = labelData.find((ld) => ld.datum === item.datum && ld.itemId === itemId);
 
                 if (labelItem != null) {
                     break;
