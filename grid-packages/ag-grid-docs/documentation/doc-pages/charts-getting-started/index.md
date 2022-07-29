@@ -248,20 +248,18 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 [[only-vue]]
 | ```html
 | <template>
-|     <div id="app">
-|         <ag-charts-vue :options="options"></ag-charts-vue>
-|     </div>
+|    <ag-charts-vue :options="options"></ag-charts-vue>
 | </template>
 |
 | <script>
-|     import {AgChartsVue} from 'ag-charts-vue';
+|     import { AgChartsVue } from "ag-charts-vue3";
 |
 |     export default {
 |         name: 'App',
 |         components: {
 |             AgChartsVue,
 |         },
-|         data() {
+|         data: function () {
 |             return {
 |                 options: null,
 |                 data: [
@@ -298,12 +296,19 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |                 subtitle: {
 |                     text: 'per quarter',
 |                 },
+|                 padding: {
+|                     top: 40,
+|                     right: 40,
+|                     bottom: 40,
+|                     left: 40,
+|                 },
 |                 series: [
 |                     { type: 'column', xKey: 'beverage', yKey: 'Q1', label: {}, stacked: true },
 |                     { type: 'column', xKey: 'beverage', yKey: 'Q2', label: {}, stacked: true },
 |                     { type: 'column', xKey: 'beverage', yKey: 'Q3', label: {}, stacked: true },
 |                     { type: 'column', xKey: 'beverage', yKey: 'Q4', label: {}, stacked: true },
 |                 ],
+|                 legend: { spacing: 40 },
 |             };
 |         }
 |     };
@@ -370,14 +375,10 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 
 [[only-vue]]
 | ```jsx
-| import Vue from 'vue'
+| import { createApp } from 'vue'
 | import App from './App.vue'
 |
-| Vue.config.productionTip = false
-|
-| new Vue({
-|   render: h => h(App),
-| }).$mount('#app')
+| createApp(App).mount('#app')
 | ```
 
 </div>
@@ -391,19 +392,19 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 | </a>
 
 [[only-angular]]
-| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-angular-hello-world-cxth9c" target="_blank">
+| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-angular-hello-world-gjjfpt" target="_blank">
 |     Open in <img src="stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
 | </a>
 
 [[only-react]]
-| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-react-hello-world-daq5bw" target="_blank">
+| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-react-hello-world-yduhy" target="_blank">
 |     Open in <img src="stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
 | </a>
 
 
 [[only-vue]]
-| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-vue-hello-world-uqr6hk" target="_blank">
-|     Open in <img src="stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
+| <a class="btn btn-dark mb-2 mr-3" href="https://codesandbox.io/s/ag-charts-vue-hello-world-cfoehv" target="_blank">
+|     Open in <img src="codesandbox_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> CodeSandbox
 | </a>
 
 </div>
@@ -1333,10 +1334,10 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |## Compatible Versions
 |
 |The table below gives the ranges of compatible versions of AG Charts with Angular versions.
-| 
+|
 | [[note]]
 | | AG Charts Legacy is only required for apps on Angular v8-11 that wish to use AG Charts v6+. See [AG Grid Legacy](/angular-compatibility/#ag-grid-legacy) for more details about our legacy packages.
-| 
+|
 | | Angular | AG Charts | AG Charts Package   |
 | | --------| --------- | --------------------|
 | | 8 - 11  | 2 - 5     | ag-charts-angular   |
