@@ -35,8 +35,10 @@ export const InterfaceDocumentation: React.FC<any> = ({ jsonData,interfacename, 
     const { lookupRoot = 'grid-api' } = config;
     const interfaceLookup = getJsonFromFile(jsonData, nodes, undefined, `${lookupRoot}/interfaces.AUTO.json`);
     const codeLookup = getJsonFromFile(jsonData, nodes, undefined, `${lookupRoot}/doc-interfaces.AUTO.json`);
+    const htmlLookup = getJsonFromFile(jsonData, nodes, undefined, `${lookupRoot}/doc-interfaces.HTML.json`);
 
-    const lookups = { codeLookup: codeLookup[interfacename], interfaces: interfaceLookup };
+
+    const lookups = { codeLookup: codeLookup[interfacename], interfaces: interfaceLookup, htmlLookup: htmlLookup[interfacename] };
     let hideHeader = true;
     if (config.hideHeader !== undefined) {
         hideHeader = config.hideHeader;
@@ -378,6 +380,10 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
             type = inferType(definition.default);
         }
     }
+    if (config.lookups.htmlLookup) {
+        // Force open if we have custom html content to display for the property
+        showAdditionalDetails = !!config.lookups.htmlLookup[name]
+    }
 
     let propertyType = getPropertyType(type, config);
     const typeUrl = isObject ? `#reference-${id}.${name}` : getTypeUrl(type, framework);
@@ -629,7 +635,15 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
     lines.push(...writeAllInterfaces(interfacesToWrite, framework));
 
     const escapedLines = escapeGenericCode(lines);
-    return <Code code={escapedLines} className={styles['reference__code-sample']} keepMarkup={true} />;
+    let customHTML = undefined;
+    if (config.lookups.htmlLookup && config.lookups.htmlLookup[name]) {
+        customHTML = <p dangerouslySetInnerHTML={{ __html: config.lookups.htmlLookup[name] }}></p>
+    }
+
+    return <>
+        <Code code={escapedLines} className={styles['reference__code-sample']} keepMarkup={true} />
+        {customHTML ?? customHTML}
+    </>;
 };
 
 function applyInterfaceInclusions({ gridOpProp, interfaceHierarchyOverrides }) {
