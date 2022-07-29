@@ -8,10 +8,10 @@ import { RefSelector } from '../../../widgets/componentAnnotations';
 import { SimpleFilter, ISimpleFilterModel } from '../simpleFilter';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import { FilterChangedEvent } from '../../../events';
-import { ProvidedFilter } from '../providedFilter';
+import { IProvidedFilterParams, ProvidedFilter } from '../providedFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { setDisplayed } from '../../../utils/dom';
-import { parseDateTimeFromString, serialiseDate } from '../../../utils/date';
+import { dateToFormattedString, parseDateTimeFromString, serialiseDate } from '../../../utils/date';
 import { debounce } from '../../../utils/function';
 import { IFilterOptionDef } from '../../../interfaces/iFilter';
 import { WithoutGridCommon } from '../../../interfaces/iCommon';
@@ -24,6 +24,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     private dateComp: DateCompWrapper;
     private params: IFloatingFilterParams;
+    private filterParams: IProvidedFilterParams;
 
     constructor() {
         super(/* html */`
@@ -45,14 +46,15 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         const dateFrom = parseDateTimeFromString(condition.dateFrom);
         const dateTo = parseDateTimeFromString(condition.dateTo);
 
-        // we use the OS locale as we cannot adjust the locale for the input elements, which are based on the OS locale
-        const operatingSystemLocale = Intl.DateTimeFormat()?.resolvedOptions()?.locale;
+        const format = this.filterParams.inRangeFloatingFilterDateFormat;
         if (isRange) {
-            return `${dateFrom?.toLocaleDateString(operatingSystemLocale) || null}-${dateTo?.toLocaleDateString(operatingSystemLocale) || null}`;
+            const formattedFrom = dateFrom !== null ? dateToFormattedString(dateFrom, format) : 'null';
+            const formattedTo = dateTo !== null ? dateToFormattedString(dateTo, format) : 'null';
+            return `${formattedFrom}-${formattedTo}`;
         }
 
         if (dateFrom != null) {
-            return dateFrom.toLocaleDateString(operatingSystemLocale);
+            return dateToFormattedString(dateFrom, format);
         }
 
         // cater for when the type doesn't need a value
@@ -62,6 +64,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     public init(params: IFloatingFilterParams): void {
         super.init(params);
         this.params = params;
+        this.filterParams = params.filterParams;
         this.createDateComponent();
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eReadOnlyText
