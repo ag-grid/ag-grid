@@ -285,7 +285,7 @@ LicenseManager.setLicenseKey(...your key...);
 
 ## CSS/SCSS Paths
 
-CSS & SCSS will be available in the `@ag-grid-community/core` module,  which will always be available (if any Community or Enterprise module is specified):
+CSS & SCSS is available in the `@ag-grid-community/styles` module.
 
 ```css
 /* CSS Community */
@@ -293,11 +293,19 @@ import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 ```
 
+If using SCSS the theme defaults to `alpine` so you don't have to explicitly include it.
+
 ```scss
 // SCSS Community
-@import "@ag-grid-community/styles/ag-grid.scss";
-@import "@ag-grid-community/styles/ag-theme-alpine/sass/ag-theme-alpine.scss";
+@use "@ag-grid-community/styles" as ag;
+
+// Choose balham over default alpine
+@include ag.grid-styles(
+    theme: balham
+);
 ```
+
+See [Choosing a Theme](/global-style-customisation-sass/#choosing-a-theme) for full details of how to select a theme.
 
 ## Module Examples
 

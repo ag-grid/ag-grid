@@ -11,6 +11,8 @@ The Legacy CSS files are deprecated and will be removed from the Grid in a futur
 
 There are many ways to import CSS, but however you are doing this in your app you need to delete the `/dist` part from the path. For example if you're using the unpkg CDN:
 
+### Packages
+
 ```html
 <!-- old path -->
 <link
@@ -21,6 +23,22 @@ There are many ways to import CSS, but however you are doing this in your app yo
 <link
   rel="stylesheet"
   href="https://unpkg.com/ag-grid-community@@AG_GRID_VERSION@/styles/ag-grid.css" />
+```
+
+### Modules
+
+If you are using [Grid Modules](/modules/) then you will need to use the new `@ag-grid-community/styles` module.
+
+```html
+<!-- old path -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@ag-grid-community/core@@AG_GRID_VERSION@/dist/styles/ag-grid.css" />
+
+<!-- new path -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@ag-grid-community/styles@@AG_GRID_VERSION@/ag-grid.css" />
 ```
 
 ## Dark themes
