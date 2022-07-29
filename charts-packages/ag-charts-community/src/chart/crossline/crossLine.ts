@@ -148,7 +148,7 @@ export class CrossLine {
             return false;
         }
 
-        const continuous = scale instanceof ContinuousScale;
+        const isContinuous = scale instanceof ContinuousScale;
         const bandwidth = scale.bandwidth ?? 0;
 
         let xStart, xEnd, yStart, yEnd, clampedYStart, clampedYEnd;
@@ -166,8 +166,8 @@ export class CrossLine {
         }
 
         [clampedYStart, clampedYEnd] = [
-            Number(scale.convert(yStart, continuous ? clamper : undefined)),
-            scale.convert(yEnd, continuous ? clamper : undefined) + bandwidth,
+            Number(scale.convert(yStart, isContinuous ? clamper : undefined)),
+            scale.convert(yEnd, isContinuous ? clamper : undefined) + bandwidth,
         ];
         [yStart, yEnd] = [Number(scale.convert(yStart)), scale.convert(yEnd) + bandwidth];
 
@@ -336,9 +336,14 @@ export class CrossLine {
         const isContinuous = scale instanceof ContinuousScale;
 
         let [start, end] = range ?? [value, undefined];
+
+        if (!isContinuous && end === undefined) {
+            end = start;
+        }
+
         [start, end] = [checkDatum(start, isContinuous), checkDatum(end, isContinuous)];
 
-        if (start === end) {
+        if (isContinuous && start === end) {
             end = undefined;
         }
 
