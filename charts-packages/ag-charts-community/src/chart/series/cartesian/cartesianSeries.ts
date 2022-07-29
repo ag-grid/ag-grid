@@ -48,9 +48,9 @@ export abstract class CartesianSeries<
 > extends Series<C> {
     private contextNodeData: C[];
 
-    private highlightSelection: NodeDataSelection<N, C> = Selection.select(this.highlightNodes).selectAll<N>();
+    private highlightSelection: NodeDataSelection<N, C> = Selection.select(this.highlightNode).selectAll<N>();
     private highlightLabelSelection: LabelDataSelection<Text, C> = Selection.select(
-        this.highlightLabels
+        this.highlightLabel
     ).selectAll<Text>();
 
     private subGroups: SubGroup<C, any>[] = [];
