@@ -48,7 +48,10 @@ export abstract class CartesianSeries<
 > extends Series<C> {
     private contextNodeData: C[];
 
-    private highlightSelection: NodeDataSelection<N, C> = Selection.select(this.highlightGroup).selectAll<N>();
+    private highlightSelection: NodeDataSelection<N, C> = Selection.select(this.highlightNodes).selectAll<N>();
+    private highlightLabelSelection: LabelDataSelection<Text, C> = Selection.select(
+        this.highlightLabels
+    ).selectAll<Text>();
 
     private subGroups: SubGroup<C, any>[] = [];
     private subGroupId: number = 0;
@@ -208,6 +211,7 @@ export abstract class CartesianSeries<
     protected updateNodes(seriesHighlighted: boolean | undefined, anySeriesItemEnabled: boolean) {
         const {
             highlightSelection,
+            highlightLabelSelection,
             contextNodeData,
             seriesItemEnabled,
             opts: { features },
@@ -225,6 +229,7 @@ export abstract class CartesianSeries<
         } else {
             this.updateDatumNodes({ datumSelection: highlightSelection, isHighlight: true, seriesIdx: -1 });
         }
+        this.updateLabelNodes({ labelSelection: highlightLabelSelection, seriesIdx: -1 });
 
         this.subGroups.forEach((subGroup, seriesIdx) => {
             const { group, markerGroup, datumSelection, labelSelection, markerSelection, paths } = subGroup;
@@ -255,11 +260,26 @@ export abstract class CartesianSeries<
         const {
             chart: { highlightedDatum: { datum = undefined } = {}, highlightedDatum = undefined } = {},
             highlightSelection,
+            highlightLabelSelection,
+            contextNodeData,
         } = this;
 
         const item =
             seriesHighlighted && highlightedDatum && datum ? (highlightedDatum as C['nodeData'][number]) : undefined;
         this.highlightSelection = this.updateHighlightSelectionItem({ item, highlightSelection });
+
+        let labelItem: C['labelData'][number] | undefined;
+        if (this.label.enabled && item != null) {
+            for (const { labelData } of contextNodeData) {
+                labelItem = labelData.find((ld) => ld.datum === item.datum);
+
+                if (labelItem != null) {
+                    break;
+                }
+            }
+        }
+
+        this.highlightLabelSelection = this.updateHighlightSelectionLabel({ item: labelItem, highlightLabelSelection });
     }
 
     protected pickNodeExactShape(x: number, y: number): SeriesNodePickMatch | undefined {
@@ -429,6 +449,16 @@ export abstract class CartesianSeries<
         } else {
             return this.updateDatumSelection({ nodeData, datumSelection: highlightSelection, seriesIdx: -1 });
         }
+    }
+
+    protected updateHighlightSelectionLabel(opts: {
+        item?: C['labelData'][number];
+        highlightLabelSelection: LabelDataSelection<Text, C>;
+    }): LabelDataSelection<Text, C> {
+        const { item, highlightLabelSelection } = opts;
+        const labelData = item ? [item] : [];
+
+        return this.updateLabelSelection({ labelData, labelSelection: highlightLabelSelection, seriesIdx: -1 });
     }
 
     protected updateDatumSelection(opts: {

@@ -136,6 +136,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     // for large-scale data-sets, where the only thing that routinely varies is the currently
     // highlighted node.
     readonly highlightGroup: Group;
+    readonly highlightNodes: Group;
+    readonly highlightLabels: Group;
 
     // The group node that contains all the nodes that can be "picked" (react to hover, tap, click).
     readonly pickGroup: Group;
@@ -190,6 +192,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             })
         );
         this.pickGroup = this.seriesGroup.appendChild(new Group());
+
         this.highlightGroup = group.appendChild(
             new Group({
                 name: `${this.id}-highlight`,
@@ -198,6 +201,11 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 optimiseDirtyTracking: true,
             })
         );
+        this.highlightNodes = this.highlightGroup.appendChild(new Group());
+        this.highlightLabels = this.highlightGroup.appendChild(new Group());
+        this.highlightNodes.zIndex = 0;
+        this.highlightLabels.zIndex = 10;
+
         this.pickModes = pickModes;
     }
 
