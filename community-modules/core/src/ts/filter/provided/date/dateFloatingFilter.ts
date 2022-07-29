@@ -1,4 +1,4 @@
-import { DateFilter, DateFilterModel } from './dateFilter';
+import { DateFilter, DateFilterModel, IDateFilterParams } from './dateFilter';
 import { Autowired } from '../../../context/context';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { IDateParams } from '../../../rendering/dateComponent';
@@ -8,7 +8,7 @@ import { RefSelector } from '../../../widgets/componentAnnotations';
 import { SimpleFilter, ISimpleFilterModel } from '../simpleFilter';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import { FilterChangedEvent } from '../../../events';
-import { IProvidedFilterParams, ProvidedFilter } from '../providedFilter';
+import { ProvidedFilter } from '../providedFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { setDisplayed } from '../../../utils/dom';
 import { dateToFormattedString, parseDateTimeFromString, serialiseDate } from '../../../utils/date';
@@ -24,7 +24,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     private dateComp: DateCompWrapper;
     private params: IFloatingFilterParams;
-    private filterParams: IProvidedFilterParams;
+    private filterParams: IDateFilterParams;
 
     constructor() {
         super(/* html */`
