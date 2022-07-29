@@ -62,7 +62,13 @@ The example below shows how debouncing block loading can be achieved. Note the f
 
 ## Initial Scroll Position
 
-It may be a requirement to load the grid at a scroll position other than the first row. In the example below, note the following:
+When using the server-side row model the initial scroll position of the grid can be set. This is achieved by calling 
+`api.ensureIndexVisible()` after setting the data source to the grid. 
+
+[[note]]
+| It is important that the `serverSideInitialRowCount` property is set to a value that is greater than the sum of the row index provided to `api.ensureIndexVisible()` and the number of rows displayed in the grid's viewport.
+
+This is demonstrated in the example below, note the following:
 
 - The `serverSideInitialRowCount` property has been set to provide an initial length to the vertical scrollbars.
 
