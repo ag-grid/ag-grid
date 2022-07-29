@@ -325,7 +325,7 @@ export class RowNode<TData = any> implements IEventEmitter {
             return 'b-' + this.rowIndex;
         }
 
-        return this.rowIndex!.toString();
+        return String(this.rowIndex);
     }
 
     private createDaemonNode(): RowNode {
