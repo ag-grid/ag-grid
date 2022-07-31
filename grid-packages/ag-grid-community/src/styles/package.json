@@ -1,0 +1,16 @@
+{
+  "name": "ag-grid-base-icons",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "node generate-web-fonts.js",
+    "build-prod": "npm run build"
+  },
+  "author": "AG Grid",
+  "license": "ISC",
+  "devDependencies": {
+    "@vusion/webfonts-generator": "^0.6.0",
+    "glob": "^7.1.6"
+  }
+}
