@@ -10,11 +10,11 @@
 }
 
 .column-group-g {
-    background-color: #1b6d85;
+    background-color: #1b6d85 !important;
 }
 
 .column-group-c {
-    background-color: #67b168;
+    background-color: #67b168 !important;
 }
 
 .button-bar {
