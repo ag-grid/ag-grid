@@ -134,3 +134,8 @@ export const COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN: AgChartOptions =
         return a;
     }),
 };
+
+export const AREA_CHART_NO_SERIES: AgChartOptions = {
+    ...examples.STACKED_AREA_GRAPH_EXAMPLE,
+    series: examples.STACKED_AREA_GRAPH_EXAMPLE.series?.map((s) => ({ ...s, visible: false })),
+};
