@@ -51895,7 +51895,7 @@ var GridChartComp = /** @class */ (function (_super) {
 
 // the line below is automatically modified during releases - do not modify
 // (see scripts/release/updateChartModel.js)
-var CURRENT_VERSION = "28.0.1";
+var CURRENT_VERSION = "28.1.0";
 function upgradeChartModel(model) {
     if (model.version == null) {
         // First release with version field.
