@@ -24,6 +24,7 @@ import {SEO} from 'components/SEO';
 import {getHeaderTitle} from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import styles from './doc-page.module.scss';
+import LearningVideos from "../components/LearningVideos";
 const lzString = require('lz-string');
 
 
@@ -90,6 +91,7 @@ const DocPageTemplate = ({data, pageContext: {framework, jsonDataAsString, examp
             'image-caption': props => ImageCaption({...props, pageName}),
             'matrix-table': props => MatrixTable({...props, framework, jsonData, exampleIndexData}),
             'tabs': props => Tabs({...props}),
+            'learning-videos': props => LearningVideos({framework}),
             'video-section': VideoSection,
             'video-link': VideoLink,
             'chart-gallery': ChartGallery,
