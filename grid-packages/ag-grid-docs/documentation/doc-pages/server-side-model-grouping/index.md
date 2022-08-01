@@ -50,8 +50,8 @@ e.g. `['Argentina', '2012']`.
 
 The example below demonstrates server-side Row Grouping. Note the following:
 
-- [Infinite Scrolling](/server-side-model-row-stores/) is active via grid property `serverSideInfiniteScroll=true`.
-- The infinite block size is set to 5 by setting the grid property `cacheBlockSize = 5`. It can then be observed that rows are loaded in blocks at all levels. For example if you expand United States row, the children rows are loaded in blocks using [Infinite Scrolling](/server-side-model-row-stores/).
+- [Infinite Scrolling](/server-side-model-infinite-scroll/) is active via grid property `serverSideInfiniteScroll=true`.
+- The infinite block size is set to 5 by setting the grid property `cacheBlockSize = 5`. It can then be observed that rows are loaded in blocks at all levels. For example if you expand United States row, the children rows are loaded in blocks using [Infinite Scrolling](/server-side-model-infinite-scroll/).
 - Country and Sport columns have `rowGroup=true` defined on their column definitions. This tells the grid there is two levels of grouping, one for Country and one for Sport.
 - The `rowGroupCols` and `groupKeys` properties in the request are used by the server to perform grouping.
 - Open the browser's dev console to view the request supplied to the datasource.
@@ -234,7 +234,7 @@ The `groupLevelInfo` object is merged into the Group Level Info (which is initia
 
 If rows are loaded multiple times, then the `groupLevelInfo` values will over write existing values
 as they are merged on top of the existing values. Rows can be loaded multiple times if a) the level
-is [Refreshed](/server-side-model-refresh/) or b) [Infinite Scrolling](/server-side-model-row-stores/) is used (as each block load will get the opportunity to add info data).
+is [Refreshed](/server-side-model-refresh/) or b) [Infinite Scrolling](/server-side-model-infinite-scroll/) is used (as each block load will get the opportunity to add info data).
 
 The example below shows Group Level Info in action.
 

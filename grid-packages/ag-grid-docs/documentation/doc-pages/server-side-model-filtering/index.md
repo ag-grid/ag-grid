@@ -88,10 +88,10 @@ The example below demonstrates filtering using [Simple Column Filters](/filter-p
 
 As previously mentioned, when not using Infinite Scroll, the grid will filter on the client. To force Server-side Filtering, regardless of Infinite Scroll, set `serverSideFilterOnServer=true`. This is demonstrated below, note the following:
 
-- The grid is not using [Infinite Scroll](/server-side-model-row-stores/), the property  `serverSideInfiniteScroll` is not set.
+- The grid is not using [Infinite Scroll](/server-side-model-infinite-scroll/), the property  `serverSideInfiniteScroll` is not set.
 - Grid property `serverSideFilterOnServer=true` to force Server-side Filtering.
 - Rows are loaded every time the filter changes.
-
+  
 <grid-example title='No Infinite Scroll Server Side' name='full-server-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "menu"] }'></grid-example>
 
 ## Set Filtering
@@ -169,7 +169,7 @@ Filtering groups Client-side (Infinite Scroll is off) happens inside the grid ou
 
 The example below shows Client-side row group filtering. Note the following:
  
- - The grid is not using [Infinite Scroll](/server-side-model-row-stores/), the property  `serverSideInfiniteScroll` is not set.
+ - The grid is not using [Infinite Scroll](/server-side-model-infinite-scroll/), the property  `serverSideInfiniteScroll` is not set.
  - All columns have Text or Number filters configured. Setting filters on these columns will filter leaf values within the dataset.
 
 <grid-example title='Client-side Group Filtering' name='group-filter-client-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>

@@ -25,7 +25,7 @@ The example below demonstrates Infinite Scroll in the SSRM. Note the following:
 ## Configuring Infinite Scroll
 
 It is useful to understand how the grid organises data into caches for Infinite Scrolling as many of the 
-[Configurations](/server-side-model-configuration/) are expressed in terms of the Server-Side Cache such as
+[Configurations](/server-side-model/) are expressed in terms of the Server-Side Cache such as
 `cacheBlockSize` and `maxBlocksInCache`.
 
 The grid arranges rows into blocks which are in turn stored in a cache. There is a cache containing the top-level rows
@@ -78,7 +78,7 @@ This is demonstrated in the example below, note the following:
 
 ## Debugging Infinite Scroll
 
-When experimenting with different Infinite Scroll [Configurations](/server-side-model-configuration/) it can useful to 
+When experimenting with different Infinite Scroll [Configurations](/server-side-model/) it can useful to 
 enable debug mode as follows:
 
 <snippet>
