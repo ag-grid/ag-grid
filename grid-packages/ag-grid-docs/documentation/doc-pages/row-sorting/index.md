@@ -2,8 +2,7 @@
 title: "Row Sorting"
 ---
 
-This page describes how to get your grid data sorting. Row sorting works with all frameworks as well as plain JavaScript.
-
+This page describes how to sort row data in the grid and how you can customise that sorting to match your requirements. 
 
 ## Enable Sorting
 
