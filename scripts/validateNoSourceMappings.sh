@@ -14,7 +14,8 @@ function forEachDirectory {
       if [[ -d "$RELATIVE_PATH" ]]; then
         echo "Checking $RELATIVE_PATH..."
 
-        COUNT=`grep -R sourceMappingURL "$RELATIVE_PATH" | wc -l`
+        # exclude bundles (umd, umd etc)
+        COUNT=`grep -R sourceMappingURL "$RELATIVE_PATH" | grep -Ev 'ag-grid-community|ag-grid-enterprise' | wc -l`
         if [ "$COUNT" -ne "0" ]; then
           echo "**************************************************************"
           echo "$RELATIVE_PATH has references to sourceMappingURL";
