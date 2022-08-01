@@ -41,6 +41,34 @@ If you are using [Grid Modules](/modules/) then you will need to use the new `@a
   href="https://unpkg.com/@ag-grid-community/styles@@AG_GRID_VERSION@/ag-grid.css" />
 ```
 
+[[only-javascript]]
+| ### Bundled Files
+|
+| If you are using an [AG Grid Bundle](/download/#download-ag-grid-bundle) where the themes are included in the `.js` file, all **CSS Variables** need to be set after the bundle has been imported, as follows: 
+|
+| ```html
+| <!DOCTYPE html>
+| <html lang="en">
+|     <head>
+|         <title>AG Grid</title>
+|         <meta charset="UTF-8" />
+|         <meta name="viewport" content="width=device-width, initial-scale=1" />
+|     </head>
+|     <body>
+|     <div id="myGrid" class="ag-theme-alpine"></div>
+|     <script src="//https://unpkg.com/browse/ag-grid-community@@AG_GRID_VERSION@/dist/ag-grid-community.min.js"></script>
+|     <!-- Style added after AG Grid bundle -->
+|     <style>
+|         .ag-theme-alpine {
+|             --ag-foreground-color: deeppink;
+|             --ag-header-column-separator-color: orange;
+|          }
+|     </style>
+|     <script src="main.js"></script>
+|     </body>
+| </html>
+|```
+
 ## Dark themes
 
 In v27 there were separate CSS files for the light and dark versions of provided themes, e.g. `ag-theme-alpine.css` and `ag-theme-alpine-dark.css`.
