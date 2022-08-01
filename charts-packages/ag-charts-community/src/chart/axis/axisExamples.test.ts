@@ -113,6 +113,13 @@ const EXAMPLES_NO_SERIES: Record<string, TestCase> = {
             seriesTypes: ['bar', 'line'],
         }),
     },
+    AREA_CHART_NO_SERIES: {
+        options: examples.AREA_CHART_NO_SERIES,
+        assertions: cartesianChartAssertions({
+            axisTypes: ['time', 'number'],
+            seriesTypes: ['area'],
+        }),
+    },
 };
 
 function mixinDerivedCases(baseCases: Record<string, TestCase>): Record<string, TestCase> {

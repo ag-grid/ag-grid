@@ -273,7 +273,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 const seriesYs = yData[i] || (yData[i] = []);
 
                 if (!seriesItemEnabled.get(yKey)) {
-                    seriesYs.push(0);
+                    seriesYs.push(NaN);
                 } else {
                     const yDatum = checkDatum(value, isContinuousY);
                     seriesYs.push(yDatum);
@@ -294,8 +294,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         //   [-9, 20] <- series 3 (yKey3)
         // ]
 
-        let yMin = 0;
-        let yMax = 0;
+        let yMin: number | undefined = undefined;
+        let yMax: number | undefined = undefined;
 
         for (let i = 0; i < xData.length; i++) {
             const total = { sum: 0, absSum: 0 };
@@ -309,9 +309,9 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 total.absSum += Math.abs(y);
                 total.sum += y;
 
-                if (total.sum > yMax) {
+                if (total.sum >= (yMax ?? 0)) {
                     yMax = total.sum;
-                } else if (total.sum < yMin) {
+                } else if (total.sum <= (yMin ?? 0)) {
                     yMin = total.sum;
                 }
             }
@@ -329,9 +329,9 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 // sum normalized values to get updated yMin and yMax of normalized area
                 normalizedTotal += normalizedY;
 
-                if (normalizedTotal > yMax) {
+                if (normalizedTotal >= (yMax ?? 0)) {
                     yMax = normalizedTotal;
-                } else if (normalizedTotal < yMin) {
+                } else if (normalizedTotal <= (yMin ?? 0)) {
                     yMin = normalizedTotal;
                 }
             }
@@ -342,11 +342,14 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const domainWhitespaceAdjustment = 0.5;
 
             // set the yMin and yMax based on cumulative sum of normalized values
-            yMin = yMin < -normalizedTo * domainWhitespaceAdjustment ? -normalizedTo : yMin;
-            yMax = yMax > normalizedTo * domainWhitespaceAdjustment ? normalizedTo : yMax;
+            yMin = (yMin ?? 0) < -normalizedTo * domainWhitespaceAdjustment ? -normalizedTo : yMin;
+            yMax = (yMax ?? 0) > normalizedTo * domainWhitespaceAdjustment ? normalizedTo : yMax;
         }
 
-        this.yDomain = this.fixNumericExtent([yMin, yMax], yAxis);
+        this.yDomain = this.fixNumericExtent(
+            yMin === undefined && yMax === undefined ? undefined : [yMin ?? 0, yMax ?? 0],
+            yAxis
+        );
 
         return true;
     }
