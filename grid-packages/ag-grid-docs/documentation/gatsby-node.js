@@ -231,7 +231,7 @@ function getExampleIndexFilesForPage(prefix) {
             const absolutePath = `${docPagesDirectory}/${relativePath}`;
 
             const base = path.basename(absolutePath);
-            const publicURL = `/examples/${relativePath.replace('/examples', '/').replace('/_gen', '')}`;
+            const publicURL = `${process.env.GATSBY_ROOT_DIRECTORY || ''}/examples/${relativePath.replace('/examples', '/').replace('/_gen', '')}`;
             const html = relativePath.endsWith(".html") ? fs.readFileSync(absolutePath, 'UTF8') : null;
 
             data.push({
