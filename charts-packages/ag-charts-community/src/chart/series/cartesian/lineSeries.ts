@@ -90,7 +90,11 @@ export class LineSeries extends CartesianSeries<LineContext> {
         super({
             pickGroupIncludes: ['markers'],
             features: ['markers'],
-            pickModes: [SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST, SeriesNodePickMode.NEAREST_NODE],
+            pickModes: [
+                SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                SeriesNodePickMode.NEAREST_NODE,
+                SeriesNodePickMode.EXACT_SHAPE_MATCH,
+            ],
         });
 
         const { marker, label } = this;

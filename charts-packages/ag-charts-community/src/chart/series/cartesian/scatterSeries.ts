@@ -141,7 +141,11 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     constructor() {
         super({
             pickGroupIncludes: ['markers'],
-            pickModes: [SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST, SeriesNodePickMode.NEAREST_NODE],
+            pickModes: [
+                SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                SeriesNodePickMode.NEAREST_NODE,
+                SeriesNodePickMode.EXACT_SHAPE_MATCH,
+            ],
             pathsPerSeries: 0,
             features: ['markers'],
         });
