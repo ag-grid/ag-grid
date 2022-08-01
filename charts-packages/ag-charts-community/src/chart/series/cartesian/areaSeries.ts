@@ -273,7 +273,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 const seriesYs = yData[i] || (yData[i] = []);
 
                 if (!seriesItemEnabled.get(yKey)) {
-                    seriesYs.push(0);
+                    seriesYs.push(NaN);
                 } else {
                     const yDatum = checkDatum(value, isContinuousY);
                     seriesYs.push(yDatum);
