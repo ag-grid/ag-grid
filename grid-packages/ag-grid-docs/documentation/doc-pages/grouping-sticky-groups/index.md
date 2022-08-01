@@ -40,7 +40,7 @@ The example below demonstrates the default row grouping behaviour with sticky gr
 Sticky groups supports row grouping using Multiple Group Columns.
 
 [[note]]
-| The property `groupRowsSticky` does not work with `groupHideOpenParents` or `masterDetail`, turning them on at the same time will cause unexpected behaviour.
+| At the moment `groupRowsSticky` does not work with the following features: `groupHideOpenParents`, `masterDetail` and `pagination`. Turning them on at the same time will cause unexpected behaviour.
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {

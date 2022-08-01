@@ -251,6 +251,12 @@ export class GridOptionsWrapper {
                     "AG Grid: groupRowsSticky and masterDetail do not work with each other, you need to pick one."
                 );
             }
+
+            if (this.isPagination()) {
+                console.warn(
+                    "AG Grid: groupRowsSticky and pagination do not work with each other, you need to pick one."
+                );
+            }
         }
 
         const warnOfDeprecaredIcon = (name: string) => {
