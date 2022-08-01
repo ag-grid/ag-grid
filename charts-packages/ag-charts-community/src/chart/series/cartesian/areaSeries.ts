@@ -309,9 +309,9 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 total.absSum += Math.abs(y);
                 total.sum += y;
 
-                if (total.sum > (yMax ?? 0)) {
+                if (total.sum >= (yMax ?? 0)) {
                     yMax = total.sum;
-                } else if (total.sum < (yMin ?? 0)) {
+                } else if (total.sum <= (yMin ?? 0)) {
                     yMin = total.sum;
                 }
             }
@@ -329,9 +329,9 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 // sum normalized values to get updated yMin and yMax of normalized area
                 normalizedTotal += normalizedY;
 
-                if (normalizedTotal > (yMax ?? 0)) {
+                if (normalizedTotal >= (yMax ?? 0)) {
                     yMax = normalizedTotal;
-                } else if (normalizedTotal < (yMin ?? 0)) {
+                } else if (normalizedTotal <= (yMin ?? 0)) {
                     yMin = normalizedTotal;
                 }
             }
@@ -346,7 +346,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             yMax = (yMax ?? 0) > normalizedTo * domainWhitespaceAdjustment ? normalizedTo : yMax;
         }
 
-        this.yDomain = this.fixNumericExtent([yMin ?? Infinity, yMax ?? -Infinity], yAxis);
+        this.yDomain = this.fixNumericExtent(
+            yMin === undefined && yMax === undefined ? undefined : [yMin ?? 0, yMax ?? 0],
+            yAxis
+        );
 
         return true;
     }
