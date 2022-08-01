@@ -43,6 +43,10 @@ Custom sorting is provided at a column level by configuring a comparator on the 
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
+    // enable sorting on all columns by default
+    defaultColDef: {
+        sortable: true
+    },
     columnDefs: [
         {
             field: 'age',
