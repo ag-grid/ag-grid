@@ -12,8 +12,8 @@ export default class MedalRenderer extends Component {
 
     render() {
         return (
-            <span>
-                <span>{this.state.country}</span>&nbsp;
+            <span class="total-value-renderer">
+                <span>{this.state.country}</span>
                 <button onClick={() => alert(`${this.state.total} medals won!`)}>Push For Total</button>
             </span>
         );

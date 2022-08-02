@@ -8,3 +8,9 @@
     flex: 1 1 0px;
     width: 100%;
 }
+
+.total-value-renderer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
