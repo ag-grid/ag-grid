@@ -37,7 +37,7 @@ export default forwardRef((props, ref) => {
 
     useEffect(() => {
         if (!editing) {
-            props.api.stopEditing();
+            props.stopEditing();
         }
     }, [editing]);
 
