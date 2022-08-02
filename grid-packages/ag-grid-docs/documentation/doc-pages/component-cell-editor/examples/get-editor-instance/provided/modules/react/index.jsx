@@ -52,7 +52,7 @@ class GridExample extends Component {
                 },
                 {
                     field: "address",
-                    width: 502,
+                    minWidth: 502,
                     cellEditor: MySimpleEditor
                 }
             ],
