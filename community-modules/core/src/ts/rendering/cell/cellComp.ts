@@ -117,18 +117,15 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private getParentOfValue(): HTMLElement {
         if (this.eCellValue) {
-            console.log('value')
             // if not editing, and using wrapper, then value goes in eCellValue
             return this.eCellValue;
         }
         if (this.eCellWrapper) {
             // if editing, and using wrapper, value (cell editor) goes in eCellWrapper
-            console.log('wrapper')
             return this.eCellWrapper;
         }
 
-            console.log('other')
-            // if editing or rendering, and not using wrapper, value (or comp) is directly inside cell
+        // if editing or rendering, and not using wrapper, value (or comp) is directly inside cell
         return this.getGui();
     }
 

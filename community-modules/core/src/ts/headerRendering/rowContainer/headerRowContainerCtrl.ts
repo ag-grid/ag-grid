@@ -137,7 +137,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
     private restoreFocusOnHeader(position: HeaderPosition | null): void {
         if (position == null || position.column.getPinned() != this.pinned) { return; }
 
-        debugger;
         this.focusService.focusHeaderPosition({ headerPosition: position });
     }
 
@@ -233,7 +232,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     public focusHeader(rowIndex: number, column: IHeaderColumn, event?: KeyboardEvent): boolean {
         const allCtrls = this.getAllCtrls();
-        debugger;
         const ctrl = allCtrls[rowIndex];
         if (!ctrl) { return false; }
 
