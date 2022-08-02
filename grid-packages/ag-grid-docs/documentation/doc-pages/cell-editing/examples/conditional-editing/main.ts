@@ -10,8 +10,8 @@ const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'athlete', type: 'editableColumn' },
     { field: 'age', type: 'editableColumn' },
-    { field: 'country' },
     { field: 'year' },
+    { field: 'country' },
     { field: 'date' },
     { field: 'sport' },
     { field: 'gold' },

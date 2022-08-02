@@ -6,17 +6,19 @@ import {ICellRendererParams} from "@ag-grid-community/core";
     selector: 'total-value-component',
     template: `
         <span>
-             <span>{{cellValue}}</span>&nbsp;
+             <span>{{country}}</span>&nbsp;
              <button (click)="buttonClicked()">Push For Total</button>
         </span>
     `
 })
 export class MedalRenderer implements ICellRendererAngularComp {
-    public cellValue: string = '';
+    public country: string = '';
+    public total: string = '';
 
     // gets called once before the renderer is used
     agInit(params: ICellRendererParams): void {
-        this.cellValue = params.valueFormatted ? params.valueFormatted : params.value;
+        this.country = params.valueFormatted ? params.valueFormatted : params.value;
+        this.total = params.data.total;
     }
 
     refresh(params: ICellRendererParams) {
@@ -24,6 +26,6 @@ export class MedalRenderer implements ICellRendererAngularComp {
     }
 
     buttonClicked() {
-        alert(`${this.cellValue} medals won!`)
+        alert(`${this.total} medals won!`)
     }
 }
