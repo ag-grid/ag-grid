@@ -48,7 +48,7 @@ export class ComboChartProxy extends CartesianChartProxy {
                 position: ChartAxisPosition.Left,
                 title: {
                     ...deepMerge(leftOptions.title, {
-                        enabled: true,
+                        enabled: leftOptions.title?.enabled,
                         text: primaryYKeys.map(key => {
                             const field = fieldsMap.get(key);
                             return field ? field.displayName : key;
@@ -73,7 +73,7 @@ export class ComboChartProxy extends CartesianChartProxy {
                     position: ChartAxisPosition.Right,
                     title: {
                         ...deepMerge(rightOptions.title, {
-                            enabled: true,
+                            enabled: rightOptions.title?.enabled,
                             text: field ? field.displayName : secondaryYKey,
                         })
                     },
