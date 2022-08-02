@@ -1,6 +1,6 @@
 import { Scene } from '../scene/scene';
 import { Group } from '../scene/group';
-import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from './series/series';
+import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
 import { Node } from '../scene/node';
 import { Rect } from '../scene/shape/rect';
@@ -12,7 +12,7 @@ import { Caption } from '../caption';
 import { Observable, SourceEvent } from '../util/observable';
 import { ChartAxis, ChartAxisDirection } from './chartAxis';
 import { createId } from '../util/id';
-import { PlacedLabel, placeLabels, PointLabelDatum, isPointLabelDatum } from '../util/labelPlacement';
+import { isPointLabelDatum, PlacedLabel, placeLabels, PointLabelDatum } from '../util/labelPlacement';
 import { AgChartOptions } from './agChartOptions';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
@@ -827,41 +827,31 @@ export abstract class Chart extends Observable {
         this.updateLegend();
     }
 
-    private nodeData: Map<Series<any>, SeriesNodeDataContext<any>[]> = new Map();
-    createNodeData(): void {
-        this.nodeData.clear();
-        this.series.forEach((s) => {
-            const data = s.visible ? s.createNodeData() : [];
-            this.nodeData.set(s, data);
-        });
-    }
-
     placeLabels(): Map<Series<any>, PlacedLabel[]> {
-        const seriesIndex: Series[] = [];
+        const visibleSeries: Series[] = [];
         const data: (readonly PointLabelDatum[])[] = [];
-        this.nodeData.forEach((contexts, series) => {
+        for (const series of this.series) {
             if (!series.visible || !series.label.enabled) {
-                return;
+                continue;
             }
 
-            let seriesData: PointLabelDatum[] = [];
-            contexts.forEach((context) => {
-                const contextData = context.labelData;
-                if (!isPointLabelDatum(contextData[0])) {
-                    return;
-                }
+            let labelData: PointLabelDatum[] = series.getLabelData();
 
-                seriesData.push(...contextData);
-            });
+            if (!(labelData && isPointLabelDatum(labelData[0]))) {
+                continue;
+            }
 
-            data.push(seriesData);
-            seriesIndex.push(series);
-        });
+            data.push(labelData);
+
+            visibleSeries.push(series);
+        }
+
         const { seriesRect } = this;
-        const labels: PlacedLabel[][] = seriesRect
-            ? placeLabels(data, { x: 0, y: 0, width: seriesRect.width, height: seriesRect.height })
-            : [];
-        return new Map(labels.map((l, i) => [seriesIndex[i], l]));
+        const labels: PlacedLabel[][] =
+            seriesRect && data.length > 0
+                ? placeLabels(data, { x: 0, y: 0, width: seriesRect.width, height: seriesRect.height })
+                : [];
+        return new Map(labels.map((l, i) => [visibleSeries[i], l]));
     }
 
     private updateLegend() {
