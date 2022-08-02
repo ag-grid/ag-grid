@@ -6,7 +6,7 @@ export default (props: ICellRendererParams) => {
     const total = props.data.total;
 
     return (
-        <span class="total-value-renderer">
+        <span className="total-value-renderer">
             <span>{country}</span>
             <button onClick={() => alert(`${total} medals won!`)}>Push For Total</button>
         </span>
