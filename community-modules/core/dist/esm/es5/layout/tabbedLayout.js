@@ -60,8 +60,10 @@ var TabbedLayout = /** @class */ (function (_super) {
                 if (!this.eHeader.contains(eDocument.activeElement)) {
                     return;
                 }
+                var isRightKey = e.key === KeyCode.RIGHT;
+                var isRtl = this.gridOptionsWrapper.isEnableRtl();
                 var currentPosition = this.items.indexOf(this.activeItem);
-                var nextPosition = e.key === KeyCode.RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
+                var nextPosition = isRightKey !== isRtl ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
                 if (currentPosition === nextPosition) {
                     return;
                 }

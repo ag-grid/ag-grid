@@ -808,8 +808,8 @@ class RowCtrl extends beanStub_1.BeanStub {
         if (fireRowEditEvent) {
             const event = this.createRowEvent(events_1.Events.EVENT_ROW_VALUE_CHANGED);
             this.beans.eventService.dispatchEvent(event);
+            this.setEditingRow(false);
         }
-        this.setEditingRow(false);
         this.stoppingRowEdit = false;
     }
     setInlineEditingCss(editing) {

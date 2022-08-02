@@ -3334,8 +3334,8 @@ var RowCtrl = /** @class */ (function (_super) {
         if (fireRowEditEvent) {
             var event_1 = this.createRowEvent(_events__WEBPACK_IMPORTED_MODULE_3__[/* Events */ "a"].EVENT_ROW_VALUE_CHANGED);
             this.beans.eventService.dispatchEvent(event_1);
+            this.setEditingRow(false);
         }
-        this.setEditingRow(false);
         this.stoppingRowEdit = false;
     };
     RowCtrl.prototype.setInlineEditingCss = function (editing) {
@@ -38042,8 +38042,10 @@ var TabbedLayout = /** @class */ (function (_super) {
                 if (!this.eHeader.contains(eDocument.activeElement)) {
                     return;
                 }
+                var isRightKey = e.key === _constants_keyCode__WEBPACK_IMPORTED_MODULE_5__[/* KeyCode */ "a"].RIGHT;
+                var isRtl = this.gridOptionsWrapper.isEnableRtl();
                 var currentPosition = this.items.indexOf(this.activeItem);
-                var nextPosition = e.key === _constants_keyCode__WEBPACK_IMPORTED_MODULE_5__[/* KeyCode */ "a"].RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
+                var nextPosition = isRightKey !== isRtl ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
                 if (currentPosition === nextPosition) {
                     return;
                 }

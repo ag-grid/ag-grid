@@ -495,9 +495,9 @@ export interface GridOptions<TData = any> {
     /** @deprecated - no longer needed, transaction updates keep group state */
     rememberGroupStateWhenNewData?: boolean;
     /** Data to be displayed as pinned top rows in the grid. */
-    pinnedTopRowData?: TData[];
+    pinnedTopRowData?: any[];
     /** Data to be displayed as pinned bottom rows in the grid. */
-    pinnedBottomRowData?: TData[];
+    pinnedBottomRowData?: any[];
     /** Sets the row model type. Default: `clientSide` */
     rowModelType?: RowModelType;
     /** Set the data to be displayed as rows in the grid. */

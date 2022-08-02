@@ -440,9 +440,9 @@ export declare class AgGridAngular<TData = any> implements AfterViewInit {
     /** @deprecated - no longer needed, transaction updates keep group state     */
     rememberGroupStateWhenNewData: boolean | undefined;
     /** Data to be displayed as pinned top rows in the grid.     */
-    pinnedTopRowData: TData[] | undefined;
+    pinnedTopRowData: any[] | undefined;
     /** Data to be displayed as pinned bottom rows in the grid.     */
-    pinnedBottomRowData: TData[] | undefined;
+    pinnedBottomRowData: any[] | undefined;
     /** Sets the row model type. Default: `clientSide`     */
     rowModelType: RowModelType | undefined;
     /** Set the data to be displayed as rows in the grid.     */

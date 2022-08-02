@@ -880,6 +880,7 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
         var eGui = this.getGui();
         var menuList = this.createBean(new agGridCommunity.AgMenuList());
         var menuItemsMapped = this.getMappedMenuItems();
+        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var hideFunc = function () { };
         eGui.appendChild(menuList.getGui());
         menuList.addMenuItems(menuItemsMapped);
@@ -892,7 +893,7 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
             eChild: eGui,
             closeOnEsc: true,
             afterGuiAttached: function () { return _this.focusService.focusInto(menuList.getGui()); },
-            ariaLabel: 'Foo',
+            ariaLabel: localeTextFunc('ariaLabelContextMenu', 'Context Menu'),
             closedCallback: function (e) {
                 if (e instanceof KeyboardEvent) {
                     _this.parentEl.focus();

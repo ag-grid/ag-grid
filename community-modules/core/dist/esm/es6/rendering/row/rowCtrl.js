@@ -806,8 +806,8 @@ export class RowCtrl extends BeanStub {
         if (fireRowEditEvent) {
             const event = this.createRowEvent(Events.EVENT_ROW_VALUE_CHANGED);
             this.beans.eventService.dispatchEvent(event);
+            this.setEditingRow(false);
         }
-        this.setEditingRow(false);
         this.stoppingRowEdit = false;
     }
     setInlineEditingCss(editing) {

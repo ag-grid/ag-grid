@@ -879,8 +879,8 @@ var RowCtrl = /** @class */ (function (_super) {
         if (fireRowEditEvent) {
             var event_2 = this.createRowEvent(events_1.Events.EVENT_ROW_VALUE_CHANGED);
             this.beans.eventService.dispatchEvent(event_2);
+            this.setEditingRow(false);
         }
-        this.setEditingRow(false);
         this.stoppingRowEdit = false;
     };
     RowCtrl.prototype.setInlineEditingCss = function (editing) {

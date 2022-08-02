@@ -25746,8 +25746,8 @@ var RowCtrl = /** @class */ (function (_super) {
         if (fireRowEditEvent) {
             var event_1 = this.createRowEvent(Events.EVENT_ROW_VALUE_CHANGED);
             this.beans.eventService.dispatchEvent(event_1);
+            this.setEditingRow(false);
         }
-        this.setEditingRow(false);
         this.stoppingRowEdit = false;
     };
     RowCtrl.prototype.setInlineEditingCss = function (editing) {
@@ -35442,8 +35442,10 @@ var __decorate$1s = (undefined && undefined.__decorate) || function (decorators,
                 if (!this.eHeader.contains(eDocument.activeElement)) {
                     return;
                 }
+                var isRightKey = e.key === KeyCode.RIGHT;
+                var isRtl = this.gridOptionsWrapper.isEnableRtl();
                 var currentPosition = this.items.indexOf(this.activeItem);
-                var nextPosition = e.key === KeyCode.RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
+                var nextPosition = isRightKey !== isRtl ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
                 if (currentPosition === nextPosition) {
                     return;
                 }
@@ -49467,6 +49469,7 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
         var eGui = this.getGui();
         var menuList = this.createBean(new AgMenuList());
         var menuItemsMapped = this.getMappedMenuItems();
+        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var hideFunc = function () { };
         eGui.appendChild(menuList.getGui());
         menuList.addMenuItems(menuItemsMapped);
@@ -49479,7 +49482,7 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
             eChild: eGui,
             closeOnEsc: true,
             afterGuiAttached: function () { return _this.focusService.focusInto(menuList.getGui()); },
-            ariaLabel: 'Foo',
+            ariaLabel: localeTextFunc('ariaLabelContextMenu', 'Context Menu'),
             closedCallback: function (e) {
                 if (e instanceof KeyboardEvent) {
                     _this.parentEl.focus();

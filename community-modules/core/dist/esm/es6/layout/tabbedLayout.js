@@ -48,8 +48,10 @@ export class TabbedLayout extends Component {
                 if (!this.eHeader.contains(eDocument.activeElement)) {
                     return;
                 }
+                const isRightKey = e.key === KeyCode.RIGHT;
+                const isRtl = this.gridOptionsWrapper.isEnableRtl();
                 const currentPosition = this.items.indexOf(this.activeItem);
-                const nextPosition = e.key === KeyCode.RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
+                const nextPosition = isRightKey !== isRtl ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
                 if (currentPosition === nextPosition) {
                     return;
                 }
