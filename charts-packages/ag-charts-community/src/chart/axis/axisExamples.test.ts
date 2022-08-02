@@ -201,7 +201,7 @@ describe('Axis Examples', () => {
             // Increase timeout for legend toggle case.
             jest.setTimeout(10_000);
         });
-        
+
         for (const [exampleName, example] of Object.entries(EXAMPLES_NO_SERIES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;

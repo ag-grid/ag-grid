@@ -300,7 +300,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         for (let i = 0; i < xData.length; i++) {
             const total = { sum: 0, absSum: 0 };
             for (let seriesYs of yData) {
-                if (seriesYs[i] === undefined) {
+                if (seriesYs[i] === undefined || isNaN(seriesYs[i])) {
                     continue;
                 }
 
@@ -326,8 +326,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 const normalizedY = (+seriesYs[i] / total.absSum) * normalizedTo;
                 seriesYs[i] = normalizedY;
 
-                // sum normalized values to get updated yMin and yMax of normalized area
-                normalizedTotal += normalizedY;
+                if (!isNaN(normalizedY)) {
+                    // sum normalized values to get updated yMin and yMax of normalized area
+                    normalizedTotal += normalizedY;
+                }
 
                 if (normalizedTotal >= (yMax ?? 0)) {
                     yMax = normalizedTotal;
@@ -414,7 +416,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const normalized = this.normalizedTo && isFinite(this.normalizedTo);
             const normalizedAndValid = normalized && continuousY && isContinuous(rawYDatum);
 
-            const valid = (!normalized && !isNaN(yDatum)) || normalizedAndValid;
+            const valid = (!normalized && !isNaN(rawYDatum)) || normalizedAndValid;
 
             if (valid) {
                 currY = cumulativeMarkerValues[idx] += yDatum;
@@ -441,19 +443,26 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 strokeSelectionData,
             };
 
+            if (!this.seriesItemEnabled.get(yKey)) {
+                return;
+            }
+
             const fillPoints = fillSelectionData.points;
             const fillPhantomPoints: Coordinate[] = [];
 
             const strokePoints = strokeSelectionData.points;
             const yValues = strokeSelectionData.yValues;
 
-            seriesYs.forEach((yDatum, datumIdx) => {
+            seriesYs.forEach((rawYDatum, datumIdx) => {
+                const yDatum = isNaN(rawYDatum) ? undefined : rawYDatum;
+
                 const { xDatum, seriesDatum } = xData[datumIdx];
                 const nextXDatum = xData[datumIdx + 1]?.xDatum;
-                const nextYDatum = seriesYs[datumIdx + 1];
+                const rawNextYDatum = seriesYs[datumIdx + 1];
+                const nextYDatum = isNaN(rawNextYDatum) ? undefined : rawNextYDatum;
 
                 // marker data
-                const point = createMarkerCoordinate(xDatum, +yDatum, datumIdx, seriesDatum[yKey]);
+                const point = createMarkerCoordinate(xDatum, +yDatum!, datumIdx, seriesDatum[yKey]);
 
                 if (marker) {
                     markerSelectionData.push({
@@ -461,7 +470,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                         series: this,
                         itemId: yKey,
                         datum: seriesDatum,
-                        yValue: yDatum,
+                        yValue: yDatum!,
                         yKey,
                         point,
                         fill: fills[seriesIdx % fills.length],
@@ -512,11 +521,11 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     windowY[1] = 0;
                 }
 
-                const currCoordinates = createPathCoordinates(windowX[0], +windowY[0], datumIdx, 'right');
+                const currCoordinates = createPathCoordinates(windowX[0], +windowY[0]!, datumIdx, 'right');
                 fillPoints.push(currCoordinates[0]);
                 fillPhantomPoints.push(currCoordinates[1]);
 
-                const nextCoordinates = createPathCoordinates(windowX[1], +windowY[1], datumIdx, 'left');
+                const nextCoordinates = createPathCoordinates(windowX[1], +windowY[1]!, datumIdx, 'left');
                 fillPoints.push(nextCoordinates[0]);
                 fillPhantomPoints.push(nextCoordinates[1]);
 
