@@ -1285,12 +1285,15 @@ export abstract class Chart extends Observable {
                         datum: undefined,
                     };
                 }
+            } else {
+                this.highlightedDatum = undefined;
             }
         }
 
         // Careful to only schedule updates when necessary.
         if (
             (this.highlightedDatum && !oldHighlightedDatum) ||
+            (!this.highlightedDatum && oldHighlightedDatum) ||
             (this.highlightedDatum &&
                 oldHighlightedDatum &&
                 (this.highlightedDatum.series !== oldHighlightedDatum.series ||
