@@ -3091,11 +3091,11 @@
     },
     "pinnedTopRowData": {
       "description": "/** Data to be displayed as pinned top rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "pinnedBottomRowData": {
       "description": "/** Data to be displayed as pinned bottom rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",
@@ -23699,11 +23699,11 @@
     },
     "pinnedTopRowData": {
       "description": "/** Data to be displayed as pinned top rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "pinnedBottomRowData": {
       "description": "/** Data to be displayed as pinned bottom rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",
@@ -26468,11 +26468,11 @@
     },
     "pinnedTopRowData": {
       "description": "/** Data to be displayed as pinned top rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "pinnedBottomRowData": {
       "description": "/** Data to be displayed as pinned bottom rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",
@@ -29247,11 +29247,11 @@
     },
     "pinnedTopRowData": {
       "description": "/** Data to be displayed as pinned top rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "pinnedBottomRowData": {
       "description": "/** Data to be displayed as pinned bottom rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",

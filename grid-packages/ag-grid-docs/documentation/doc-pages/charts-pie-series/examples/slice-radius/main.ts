@@ -17,6 +17,7 @@ const options: AgChartOptions = {
       labelKey: 'os',
       angleKey: 'share',
       radiusKey: 'satisfaction',
+      radiusMin: 5
     },
   ],
 }

@@ -39,7 +39,7 @@ export default forwardRef((props: ICellEditorParams, ref) => {
 
     useEffect(() => {
         if (!editing) {
-            props.api.stopEditing();
+            props.stopEditing();
         }
     }, [editing]);
 
