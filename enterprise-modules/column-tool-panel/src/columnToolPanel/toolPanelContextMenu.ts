@@ -144,6 +144,8 @@ export class ToolPanelContextMenu extends Component {
         const eGui = this.getGui();
         const menuList = this.createBean(new AgMenuList());
         const menuItemsMapped: MenuItemDef[] = this.getMappedMenuItems();
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+
         let hideFunc = () => {};
 
         eGui.appendChild(menuList.getGui());
@@ -158,7 +160,7 @@ export class ToolPanelContextMenu extends Component {
             eChild: eGui,
             closeOnEsc: true,
             afterGuiAttached: () => this.focusService.focusInto(menuList.getGui()),
-            ariaLabel: 'Foo',
+            ariaLabel: localeTextFunc('ariaLabelContextMenu', 'Context Menu'),
             closedCallback: (e: KeyboardEvent) => {
                 if (e instanceof KeyboardEvent) {
                     this.parentEl.focus();
