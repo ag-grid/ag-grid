@@ -53,7 +53,7 @@ export class AppComponent implements OnDestroy {
         },
         {
             field: "address",
-            width: 502,
+            minWidth: 502,
             cellEditor: MySimpleEditor
         }
     ];

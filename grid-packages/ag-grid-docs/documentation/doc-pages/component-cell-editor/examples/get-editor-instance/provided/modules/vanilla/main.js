@@ -60,7 +60,7 @@ const columnDefs = [
     },
     {
         field: "address",
-        width: 502,
+        minWidth: 502,
         cellEditor: MySimpleEditor
     }
 ];
