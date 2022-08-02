@@ -135,8 +135,6 @@ export declare abstract class Chart extends Observable {
     private findMatchingAxis;
     private resize;
     processData(): void;
-    private nodeData;
-    createNodeData(): void;
     placeLabels(): Map<Series<any>, PlacedLabel[]>;
     private updateLegend;
     abstract performLayout(): void;
@@ -160,6 +158,7 @@ export declare abstract class Chart extends Observable {
         event?: MouseEvent;
     };
     protected onMouseMove(event: MouseEvent): void;
+    private disableTooltip;
     private lastTooltipMeta?;
     private handleTooltipTrigger;
     protected handleTooltip(meta: TooltipMeta): void;
@@ -179,5 +178,7 @@ export declare abstract class Chart extends Observable {
     changeHighlightDatum(newPick?: {
         datum: SeriesNodeDatum;
         event?: MouseEvent;
+    }, opts?: {
+        updateProcessing: boolean;
     }): void;
 }

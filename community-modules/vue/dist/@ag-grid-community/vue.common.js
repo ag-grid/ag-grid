@@ -16433,7 +16433,7 @@ var ColumnModel = /** @class */ (function (_super) {
     // called from: setColumnState, setColumnDefs, setSecondaryColumns
     ColumnModel.prototype.updateGridColumns = function () {
         var _this = this;
-        var prevGridCols = this.gridColumns;
+        var prevGridCols = this.gridBalancedTree;
         if (this.gridColsArePrimary) {
             this.lastPrimaryOrder = this.gridColumns;
         }
@@ -16473,7 +16473,7 @@ var ColumnModel = /** @class */ (function (_super) {
         this.gridColumnsMap = {};
         this.gridColumns.forEach(function (col) { return _this.gridColumnsMap[col.getId()] = col; });
         this.setAutoHeightActive();
-        if (!Object(_utils_array__WEBPACK_IMPORTED_MODULE_8__["areEqual"])(prevGridCols, this.gridColumns)) {
+        if (!Object(_utils_array__WEBPACK_IMPORTED_MODULE_8__["areEqual"])(prevGridCols, this.gridBalancedTree)) {
             var event_5 = {
                 type: _events__WEBPACK_IMPORTED_MODULE_2__[/* Events */ "a"].EVENT_GRID_COLUMNS_CHANGED,
                 api: this.gridApi,
@@ -26840,8 +26840,16 @@ var GridOptionsWrapper = /** @class */ (function () {
         else if (this.isEnableRangeHandle() || this.isEnableFillHandle()) {
             console.warn("AG Grid: 'enableRangeHandle' or 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
-        if (this.isGroupRowsSticky() && this.isGroupHideOpenParents()) {
-            console.warn("AG Grid: groupRowsSticky and groupHideOpenParents do not work with each other, you need to pick one.");
+        if (this.isGroupRowsSticky()) {
+            if (this.isGroupHideOpenParents()) {
+                console.warn("AG Grid: groupRowsSticky and groupHideOpenParents do not work with each other, you need to pick one.");
+            }
+            if (this.isMasterDetail()) {
+                console.warn("AG Grid: groupRowsSticky and masterDetail do not work with each other, you need to pick one.");
+            }
+            if (this.isPagination()) {
+                console.warn("AG Grid: groupRowsSticky and pagination do not work with each other, you need to pick one.");
+            }
         }
         var warnOfDeprecaredIcon = function (name) {
             if (_this.gridOptions.icons && _this.gridOptions.icons[name]) {
@@ -50462,7 +50470,6 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doOnce", function() { return doOnce; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getFunctionName", function() { return getFunctionName; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getFunctionParameters", function() { return getFunctionParameters; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isFunction", function() { return isFunction; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "executeInAWhile", function() { return executeInAWhile; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "executeNextVMTurn", function() { return executeNextVMTurn; });
@@ -50479,8 +50486,6 @@ __webpack_require__.r(__webpack_exports__);
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 var doOnceFlags = {};
 /**
  * If the key was passed before, then doesn't execute the func
@@ -50502,11 +50507,6 @@ function getFunctionName(funcConstructor) {
     // for the pestilence that is ie11
     var matches = /function\s+([^\(]+)/.exec(funcConstructor.toString());
     return matches && matches.length === 2 ? matches[1].trim() : null;
-}
-/** @deprecated */
-function getFunctionParameters(func) {
-    var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
-    return fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES) || [];
 }
 function isFunction(val) {
     return !!(val && val.constructor && val.call && val.apply);

@@ -611,9 +611,12 @@ var BarSeries = /** @class */ (function (_super) {
     };
     BarSeries.prototype.updateDatumNodes = function (opts) {
         var _this = this;
+        var _a, _b;
         var datumSelection = opts.datumSelection, isDatumHighlighted = opts.isHighlight;
-        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, formatter = _a.formatter, xKey = _a.xKey, flipXY = _a.flipXY, _b = _a.highlightStyle, deprecatedFill = _b.fill, deprecatedStroke = _b.stroke, deprecatedStrokeWidth = _b.strokeWidth, _c = _b.item, _d = _c.fill, highlightedFill = _d === void 0 ? deprecatedFill : _d, _e = _c.stroke, highlightedStroke = _e === void 0 ? deprecatedStroke : _e, _f = _c.strokeWidth, highlightedDatumStrokeWidth = _f === void 0 ? deprecatedStrokeWidth : _f;
-        var crisp = !datumSelection.data.some(function (d) { return d.width <= 0.5 || d.height <= 0.5; });
+        var _c = this, fills = _c.fills, strokes = _c.strokes, fillOpacity = _c.fillOpacity, strokeOpacity = _c.strokeOpacity, shadow = _c.shadow, formatter = _c.formatter, xKey = _c.xKey, flipXY = _c.flipXY, _d = _c.highlightStyle, deprecatedFill = _d.fill, deprecatedStroke = _d.stroke, deprecatedStrokeWidth = _d.strokeWidth, _e = _d.item, _f = _e.fill, highlightedFill = _f === void 0 ? deprecatedFill : _f, _g = _e.stroke, highlightedStroke = _g === void 0 ? deprecatedStroke : _g, _h = _e.strokeWidth, highlightedDatumStrokeWidth = _h === void 0 ? deprecatedStrokeWidth : _h;
+        var _j = __read((_b = (_a = this.xAxis) === null || _a === void 0 ? void 0 : _a.visibleRange, (_b !== null && _b !== void 0 ? _b : [])), 2), visibleMin = _j[0], visibleMax = _j[1];
+        var isZoomed = visibleMin !== 0 || visibleMax !== 1;
+        var crisp = !isZoomed && !datumSelection.data.some(function (d) { return d.width <= 0.5 || d.height <= 0.5; });
         datumSelection.each(function (rect, datum) {
             rect.visible = !isDatumHighlighted || isDatumHighlighted;
             if (!rect.visible) {

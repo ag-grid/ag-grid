@@ -4,8 +4,6 @@
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 var doOnceFlags = {};
 /**
  * If the key was passed before, then doesn't execute the func
@@ -27,11 +25,6 @@ export function getFunctionName(funcConstructor) {
     // for the pestilence that is ie11
     var matches = /function\s+([^\(]+)/.exec(funcConstructor.toString());
     return matches && matches.length === 2 ? matches[1].trim() : null;
-}
-/** @deprecated */
-export function getFunctionParameters(func) {
-    var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
-    return fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES) || [];
 }
 export function isFunction(val) {
     return !!(val && val.constructor && val.call && val.apply);

@@ -1,5 +1,6 @@
 import { Series, SeriesNodeDatum, SeriesNodeDataContext } from '../series';
 import { SeriesMarker, SeriesMarkerFormatterParams } from '../seriesMarker';
+import { PointLabelDatum } from '../../../util/labelPlacement';
 export declare abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
     directionKeys: {
         x: string[];
@@ -20,6 +21,7 @@ export declare abstract class PolarSeries<S extends SeriesNodeDatum> extends Ser
      */
     radius: number;
     constructor();
+    getLabelData(): PointLabelDatum[];
 }
 export declare class PolarSeriesMarker extends SeriesMarker {
     formatter?: (params: PolarSeriesMarkerFormatterParams) => {

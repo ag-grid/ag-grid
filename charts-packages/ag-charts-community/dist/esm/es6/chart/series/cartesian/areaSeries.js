@@ -154,7 +154,7 @@ export class AreaSeries extends CartesianSeries {
                 const value = datum[yKey];
                 const seriesYs = yData[i] || (yData[i] = []);
                 if (!seriesItemEnabled.get(yKey)) {
-                    seriesYs.push(0);
+                    seriesYs.push(NaN);
                 }
                 else {
                     const yDatum = checkDatum(value, isContinuousY);
@@ -172,8 +172,8 @@ export class AreaSeries extends CartesianSeries {
         //   [7, -15], <- series 2 (yKey2)
         //   [-9, 20] <- series 3 (yKey3)
         // ]
-        let yMin = 0;
-        let yMax = 0;
+        let yMin = undefined;
+        let yMax = undefined;
         for (let i = 0; i < xData.length; i++) {
             const total = { sum: 0, absSum: 0 };
             for (let seriesYs of yData) {
@@ -183,10 +183,10 @@ export class AreaSeries extends CartesianSeries {
                 const y = +seriesYs[i]; // convert to number as the value could be a Date object
                 total.absSum += Math.abs(y);
                 total.sum += y;
-                if (total.sum > yMax) {
+                if (total.sum >= ((yMax !== null && yMax !== void 0 ? yMax : 0))) {
                     yMax = total.sum;
                 }
-                else if (total.sum < yMin) {
+                else if (total.sum <= ((yMin !== null && yMin !== void 0 ? yMin : 0))) {
                     yMin = total.sum;
                 }
             }
@@ -200,10 +200,10 @@ export class AreaSeries extends CartesianSeries {
                 seriesYs[i] = normalizedY;
                 // sum normalized values to get updated yMin and yMax of normalized area
                 normalizedTotal += normalizedY;
-                if (normalizedTotal > yMax) {
+                if (normalizedTotal >= ((yMax !== null && yMax !== void 0 ? yMax : 0))) {
                     yMax = normalizedTotal;
                 }
-                else if (normalizedTotal < yMin) {
+                else if (normalizedTotal <= ((yMin !== null && yMin !== void 0 ? yMin : 0))) {
                     yMin = normalizedTotal;
                 }
             }
@@ -212,10 +212,10 @@ export class AreaSeries extends CartesianSeries {
             // multiplier to control the unused whitespace in the y domain, value selected by subjective visual 'niceness'.
             const domainWhitespaceAdjustment = 0.5;
             // set the yMin and yMax based on cumulative sum of normalized values
-            yMin = yMin < -normalizedTo * domainWhitespaceAdjustment ? -normalizedTo : yMin;
-            yMax = yMax > normalizedTo * domainWhitespaceAdjustment ? normalizedTo : yMax;
+            yMin = ((yMin !== null && yMin !== void 0 ? yMin : 0)) < -normalizedTo * domainWhitespaceAdjustment ? -normalizedTo : yMin;
+            yMax = ((yMax !== null && yMax !== void 0 ? yMax : 0)) > normalizedTo * domainWhitespaceAdjustment ? normalizedTo : yMax;
         }
-        this.yDomain = this.fixNumericExtent([yMin, yMax], yAxis);
+        this.yDomain = this.fixNumericExtent(yMin === undefined && yMax === undefined ? undefined : [(yMin !== null && yMin !== void 0 ? yMin : 0), (yMax !== null && yMax !== void 0 ? yMax : 0)], yAxis);
         return true;
     }
     getDomain(direction) {

@@ -9,7 +9,7 @@ import { TooltipRendererResult } from '../../chart';
 import { Label } from '../../label';
 import { Text } from '../../../scene/shape/text';
 import { Marker } from '../../marker/marker';
-import { MeasuredLabel } from '../../../util/labelPlacement';
+import { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
 interface ScatterNodeDatum extends SeriesNodeDatum {
     readonly point: {
         readonly x: number;
@@ -95,6 +95,7 @@ export declare class ScatterSeries extends CartesianSeries<SeriesNodeDataContext
         labelData: ScatterNodeDatum[];
     }[];
     protected isPathOrSelectionDirty(): boolean;
+    getLabelData(): PointLabelDatum[];
     protected updateMarkerSelection(opts: {
         nodeData: ScatterNodeDatum[];
         markerSelection: Selection<Marker, Group, ScatterNodeDatum, any>;

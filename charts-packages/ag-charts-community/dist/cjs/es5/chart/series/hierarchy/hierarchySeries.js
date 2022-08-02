@@ -19,6 +19,9 @@ var HierarchySeries = /** @class */ (function (_super) {
     function HierarchySeries() {
         return _super.call(this, { pickModes: [series_1.SeriesNodePickMode.EXACT_SHAPE_MATCH] }) || this;
     }
+    HierarchySeries.prototype.getLabelData = function () {
+        return [];
+    };
     return HierarchySeries;
 }(series_1.Series));
 exports.HierarchySeries = HierarchySeries;

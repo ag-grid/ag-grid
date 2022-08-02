@@ -33,26 +33,6 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 import { Scene } from '../scene/scene';
 import { Group } from '../scene/group';
 import { SeriesNodePickMode } from './series/series';
@@ -65,7 +45,7 @@ import { SizeMonitor } from '../util/sizeMonitor';
 import { Observable } from '../util/observable';
 import { ChartAxisDirection } from './chartAxis';
 import { createId } from '../util/id';
-import { placeLabels, isPointLabelDatum } from '../util/labelPlacement';
+import { isPointLabelDatum, placeLabels } from '../util/labelPlacement';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
 var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: table;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-hidden {\n    top: -10000px !important;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n    overflow: hidden;\n}\n\n.ag-chart-tooltip-content:empty {\n    padding: 0;\n    height: 7px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
@@ -257,7 +237,6 @@ var Chart = /** @class */ (function (_super) {
         });
         _this._axes = [];
         _this._series = [];
-        _this.nodeData = new Map();
         _this.legendBBox = new BBox(0, 0, 0, 0);
         _this._onMouseDown = _this.onMouseDown.bind(_this);
         _this._onMouseMove = _this.onMouseMove.bind(_this);
@@ -501,6 +480,8 @@ var Chart = /** @class */ (function (_super) {
             case ChartUpdateType.PROCESS_DATA:
                 this.processData();
                 splits.push(performance.now());
+                // Disable tooltip/highlight if the data fundamentally shifted.
+                this.disableTooltip({ updateProcessing: false });
             // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (!firstRenderComplete && !firstResizeReceived) {
@@ -750,37 +731,36 @@ var Chart = /** @class */ (function (_super) {
         this.series.forEach(function (s) { return s.processData(); });
         this.updateLegend();
     };
-    Chart.prototype.createNodeData = function () {
-        var _this = this;
-        this.nodeData.clear();
-        this.series.forEach(function (s) {
-            var data = s.visible ? s.createNodeData() : [];
-            _this.nodeData.set(s, data);
-        });
-    };
     Chart.prototype.placeLabels = function () {
-        var seriesIndex = [];
+        var e_5, _a;
+        var visibleSeries = [];
         var data = [];
-        this.nodeData.forEach(function (contexts, series) {
-            if (!series.visible || !series.label.enabled) {
-                return;
-            }
-            var seriesData = [];
-            contexts.forEach(function (context) {
-                var contextData = context.labelData;
-                if (!isPointLabelDatum(contextData[0])) {
-                    return;
+        try {
+            for (var _b = __values(this.series), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var series = _c.value;
+                if (!series.visible || !series.label.enabled) {
+                    continue;
                 }
-                seriesData.push.apply(seriesData, __spread(contextData));
-            });
-            data.push(seriesData);
-            seriesIndex.push(series);
-        });
+                var labelData = series.getLabelData();
+                if (!(labelData && isPointLabelDatum(labelData[0]))) {
+                    continue;
+                }
+                data.push(labelData);
+                visibleSeries.push(series);
+            }
+        }
+        catch (e_5_1) { e_5 = { error: e_5_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_5) throw e_5.error; }
+        }
         var seriesRect = this.seriesRect;
-        var labels = seriesRect
+        var labels = seriesRect && data.length > 0
             ? placeLabels(data, { x: 0, y: 0, width: seriesRect.width, height: seriesRect.height })
             : [];
-        return new Map(labels.map(function (l, i) { return [seriesIndex[i], l]; }));
+        return new Map(labels.map(function (l, i) { return [visibleSeries[i], l]; }));
     };
     Chart.prototype.updateLegend = function () {
         var legendData = [];
@@ -919,7 +899,7 @@ var Chart = /** @class */ (function (_super) {
     };
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
     Chart.prototype.pickSeriesNode = function (x, y) {
-        var e_5, _a;
+        var e_6, _a;
         var _b, _c;
         var tracking = this.tooltip.tracking;
         var start = performance.now();
@@ -944,12 +924,12 @@ var Chart = /** @class */ (function (_super) {
                 }
             }
         }
-        catch (e_5_1) { e_5 = { error: e_5_1 }; }
+        catch (e_6_1) { e_6 = { error: e_6_1 }; }
         finally {
             try {
                 if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
             }
-            finally { if (e_5) throw e_5.error; }
+            finally { if (e_6) throw e_6.error; }
         }
         this.extraDebugStats['pickSeriesNode'] = Math.round((_c = this.extraDebugStats['pickSeriesNode'], (_c !== null && _c !== void 0 ? _c : 0)) + (performance.now() - start));
         return result;
@@ -970,6 +950,11 @@ var Chart = /** @class */ (function (_super) {
             this.handleTooltipTrigger.schedule();
         }
     };
+    Chart.prototype.disableTooltip = function (_a) {
+        var _b = (_a === void 0 ? {} : _a).updateProcessing, updateProcessing = _b === void 0 ? true : _b;
+        this.changeHighlightDatum(undefined, { updateProcessing: updateProcessing });
+        this.tooltip.toggle(false);
+    };
     Chart.prototype.handleTooltip = function (meta) {
         var _this = this;
         var lastPick = this.lastPick;
@@ -977,8 +962,7 @@ var Chart = /** @class */ (function (_super) {
         var disableTooltip = function () {
             if (lastPick) {
                 // Cursor moved from a non-marker node to empty space.
-                _this.changeHighlightDatum();
-                _this.tooltip.toggle(false);
+                _this.disableTooltip();
             }
         };
         if (!(this.seriesRect && this.seriesRect.containsPoint(offsetX, offsetY))) {
@@ -1105,9 +1089,13 @@ var Chart = /** @class */ (function (_super) {
                     };
                 }
             }
+            else {
+                this.highlightedDatum = undefined;
+            }
         }
         // Careful to only schedule updates when necessary.
         if ((this.highlightedDatum && !oldHighlightedDatum) ||
+            (!this.highlightedDatum && oldHighlightedDatum) ||
             (this.highlightedDatum &&
                 oldHighlightedDatum &&
                 (this.highlightedDatum.series !== oldHighlightedDatum.series ||
@@ -1144,10 +1132,11 @@ var Chart = /** @class */ (function (_super) {
         }
         return meta;
     };
-    Chart.prototype.changeHighlightDatum = function (newPick) {
+    Chart.prototype.changeHighlightDatum = function (newPick, opts) {
+        var _a = (opts !== null && opts !== void 0 ? opts : {}).updateProcessing, updateProcessing = _a === void 0 ? true : _a;
         var seriesToUpdate = new Set();
-        var _a = newPick || {}, _b = _a.datum, _c = (_b === void 0 ? {} : _b).series, newSeries = _c === void 0 ? undefined : _c, _d = _a.datum, datum = _d === void 0 ? undefined : _d;
-        var _e = this.lastPick, _f = (_e === void 0 ? {} : _e).datum, _g = (_f === void 0 ? {} : _f).series, lastSeries = _g === void 0 ? undefined : _g;
+        var _b = newPick || {}, _c = _b.datum, _d = (_c === void 0 ? {} : _c).series, newSeries = _d === void 0 ? undefined : _d, _e = _b.datum, datum = _e === void 0 ? undefined : _e;
+        var _f = this.lastPick, _g = (_f === void 0 ? {} : _f).datum, _h = (_g === void 0 ? {} : _g).series, lastSeries = _h === void 0 ? undefined : _h;
         if (lastSeries) {
             seriesToUpdate.add(lastSeries);
         }
@@ -1157,6 +1146,9 @@ var Chart = /** @class */ (function (_super) {
         }
         this.lastPick = newPick;
         this.highlightedDatum = datum;
+        if (!updateProcessing) {
+            return;
+        }
         var updateAll = newSeries == null || lastSeries == null;
         if (updateAll) {
             this.update(ChartUpdateType.SERIES_UPDATE);

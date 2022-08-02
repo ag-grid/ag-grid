@@ -39,7 +39,7 @@ var __read = (this && this.__read) || function (o, n) {
     return ar;
 };
 import { ContinuousScale } from '../../../scale/continuousScale';
-import { SeriesTooltip } from '../series';
+import { SeriesTooltip, SeriesNodePickMode, } from '../series';
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
 import { Text } from '../../../scene/shape/text';
@@ -74,7 +74,15 @@ export { LineSeriesTooltip };
 var LineSeries = /** @class */ (function (_super) {
     __extends(LineSeries, _super);
     function LineSeries() {
-        var _this = _super.call(this, { pickGroupIncludes: ['markers'], features: ['markers'] }) || this;
+        var _this = _super.call(this, {
+            pickGroupIncludes: ['markers'],
+            features: ['markers'],
+            pickModes: [
+                SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                SeriesNodePickMode.NEAREST_NODE,
+                SeriesNodePickMode.EXACT_SHAPE_MATCH,
+            ],
+        }) || this;
         _this.xDomain = [];
         _this.yDomain = [];
         _this.xData = [];

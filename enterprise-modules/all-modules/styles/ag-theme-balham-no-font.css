@@ -16,7 +16,6 @@
   --ag-input-focus-border-color: #719ECE;
   --ag-input-focus-box-shadow: 0 0 2px 1px var(--ag-input-focus-border-color);
   --ag-range-selection-border-color: var(--ag-balham-active-color);
-  --ag-header-cell-moving-background-color: var(--ag-background-color);
   --ag-checkbox-checked-color: var(--ag-balham-active-color);
   --ag-checkbox-background-color: var(--ag-background-color);
   --ag-secondary-foreground-color: rgba(0, 0, 0, 0.54);

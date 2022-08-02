@@ -2617,7 +2617,7 @@ var ColumnModel = /** @class */ (function (_super) {
     // called from: setColumnState, setColumnDefs, setSecondaryColumns
     ColumnModel.prototype.updateGridColumns = function () {
         var _this = this;
-        var prevGridCols = this.gridColumns;
+        var prevGridCols = this.gridBalancedTree;
         if (this.gridColsArePrimary) {
             this.lastPrimaryOrder = this.gridColumns;
         }
@@ -2657,7 +2657,7 @@ var ColumnModel = /** @class */ (function (_super) {
         this.gridColumnsMap = {};
         this.gridColumns.forEach(function (col) { return _this.gridColumnsMap[col.getId()] = col; });
         this.setAutoHeightActive();
-        if (!array_1.areEqual(prevGridCols, this.gridColumns)) {
+        if (!array_1.areEqual(prevGridCols, this.gridBalancedTree)) {
             var event_5 = {
                 type: events_1.Events.EVENT_GRID_COLUMNS_CHANGED,
                 api: this.gridApi,

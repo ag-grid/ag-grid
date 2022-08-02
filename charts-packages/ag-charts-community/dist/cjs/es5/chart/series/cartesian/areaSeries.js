@@ -222,7 +222,7 @@ var AreaSeries = /** @class */ (function (_super) {
                 var value = datum[yKey];
                 var seriesYs = yData[i] || (yData[i] = []);
                 if (!seriesItemEnabled.get(yKey)) {
-                    seriesYs.push(0);
+                    seriesYs.push(NaN);
                 }
                 else {
                     var yDatum = value_1.checkDatum(value, isContinuousY);
@@ -253,8 +253,8 @@ var AreaSeries = /** @class */ (function (_super) {
         //   [7, -15], <- series 2 (yKey2)
         //   [-9, 20] <- series 3 (yKey3)
         // ]
-        var yMin = 0;
-        var yMax = 0;
+        var yMin = undefined;
+        var yMax = undefined;
         for (var i = 0; i < xData.length; i++) {
             var total = { sum: 0, absSum: 0 };
             try {
@@ -266,10 +266,10 @@ var AreaSeries = /** @class */ (function (_super) {
                     var y = +seriesYs[i]; // convert to number as the value could be a Date object
                     total.absSum += Math.abs(y);
                     total.sum += y;
-                    if (total.sum > yMax) {
+                    if (total.sum >= ((yMax !== null && yMax !== void 0 ? yMax : 0))) {
                         yMax = total.sum;
                     }
-                    else if (total.sum < yMin) {
+                    else if (total.sum <= ((yMin !== null && yMin !== void 0 ? yMin : 0))) {
                         yMin = total.sum;
                     }
                 }
@@ -293,10 +293,10 @@ var AreaSeries = /** @class */ (function (_super) {
                     seriesYs[i] = normalizedY;
                     // sum normalized values to get updated yMin and yMax of normalized area
                     normalizedTotal += normalizedY;
-                    if (normalizedTotal > yMax) {
+                    if (normalizedTotal >= ((yMax !== null && yMax !== void 0 ? yMax : 0))) {
                         yMax = normalizedTotal;
                     }
-                    else if (normalizedTotal < yMin) {
+                    else if (normalizedTotal <= ((yMin !== null && yMin !== void 0 ? yMin : 0))) {
                         yMin = normalizedTotal;
                     }
                 }
@@ -313,10 +313,10 @@ var AreaSeries = /** @class */ (function (_super) {
             // multiplier to control the unused whitespace in the y domain, value selected by subjective visual 'niceness'.
             var domainWhitespaceAdjustment = 0.5;
             // set the yMin and yMax based on cumulative sum of normalized values
-            yMin = yMin < -normalizedTo * domainWhitespaceAdjustment ? -normalizedTo : yMin;
-            yMax = yMax > normalizedTo * domainWhitespaceAdjustment ? normalizedTo : yMax;
+            yMin = ((yMin !== null && yMin !== void 0 ? yMin : 0)) < -normalizedTo * domainWhitespaceAdjustment ? -normalizedTo : yMin;
+            yMax = ((yMax !== null && yMax !== void 0 ? yMax : 0)) > normalizedTo * domainWhitespaceAdjustment ? normalizedTo : yMax;
         }
-        this.yDomain = this.fixNumericExtent([yMin, yMax], yAxis);
+        this.yDomain = this.fixNumericExtent(yMin === undefined && yMax === undefined ? undefined : [(yMin !== null && yMin !== void 0 ? yMin : 0), (yMax !== null && yMax !== void 0 ? yMax : 0)], yAxis);
         return true;
     };
     AreaSeries.prototype.getDomain = function (direction) {

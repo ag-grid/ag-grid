@@ -79,7 +79,6 @@ export declare const _: {
     string_weighted_distances(str1: string, str2: string): number;
     doOnce(func: () => void, key: string): void;
     getFunctionName(funcConstructor: any): any;
-    getFunctionParameters(func: any): any;
     isFunction(val: any): boolean;
     executeInAWhile(funcs: Function[]): void;
     executeNextVMTurn(func: () => void): void;

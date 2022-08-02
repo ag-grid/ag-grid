@@ -2468,7 +2468,7 @@ let ColumnModel = class ColumnModel extends beanStub_1.BeanStub {
     }
     // called from: setColumnState, setColumnDefs, setSecondaryColumns
     updateGridColumns() {
-        const prevGridCols = this.gridColumns;
+        const prevGridCols = this.gridBalancedTree;
         if (this.gridColsArePrimary) {
             this.lastPrimaryOrder = this.gridColumns;
         }
@@ -2508,7 +2508,7 @@ let ColumnModel = class ColumnModel extends beanStub_1.BeanStub {
         this.gridColumnsMap = {};
         this.gridColumns.forEach(col => this.gridColumnsMap[col.getId()] = col);
         this.setAutoHeightActive();
-        if (!array_1.areEqual(prevGridCols, this.gridColumns)) {
+        if (!array_1.areEqual(prevGridCols, this.gridBalancedTree)) {
             const event = {
                 type: events_1.Events.EVENT_GRID_COLUMNS_CHANGED,
                 api: this.gridApi,

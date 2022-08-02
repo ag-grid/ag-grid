@@ -31,7 +31,11 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
     constructor() {
         super({
             pickGroupIncludes: ['markers'],
-            pickModes: [series_1.SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST, series_1.SeriesNodePickMode.NEAREST_NODE],
+            pickModes: [
+                series_1.SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                series_1.SeriesNodePickMode.NEAREST_NODE,
+                series_1.SeriesNodePickMode.EXACT_SHAPE_MATCH,
+            ],
             pathsPerSeries: 0,
             features: ['markers'],
         });
@@ -191,6 +195,10 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
     }
     isPathOrSelectionDirty() {
         return this.marker.isDirty();
+    }
+    getLabelData() {
+        var _a;
+        return (_a = this.contextNodeData) === null || _a === void 0 ? void 0 : _a.reduce((r, n) => r.concat(n.labelData), []);
     }
     updateMarkerSelection(opts) {
         let { nodeData, markerSelection } = opts;

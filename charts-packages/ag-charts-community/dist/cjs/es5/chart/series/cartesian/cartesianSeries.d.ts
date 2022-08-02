@@ -7,6 +7,7 @@ import { Marker } from '../../marker/marker';
 import { Group } from '../../../scene/group';
 import { Text } from '../../../scene/shape/text';
 import { Node } from '../../../scene/node';
+import { PointLabelDatum } from '../../../util/labelPlacement';
 declare type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<N, Group, ContextType['nodeData'][number], any>;
 declare type LabelDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<N, Group, ContextType['labelData'][number], any>;
 declare type PickGroupInclude = 'mainPath' | 'datumNodes' | 'markers';
@@ -17,7 +18,8 @@ interface SeriesOpts {
     features: SeriesFeature[];
 }
 export declare abstract class CartesianSeries<C extends SeriesNodeDataContext<any, any>, N extends Node = Marker> extends Series<C> {
-    private contextNodeData;
+    private _contextNodeData;
+    get contextNodeData(): C[];
     private highlightSelection;
     private highlightLabelSelection;
     private subGroups;
@@ -68,6 +70,7 @@ export declare abstract class CartesianSeries<C extends SeriesNodeDataContext<an
     } | undefined;
     toggleSeriesItem(itemId: string, enabled: boolean): void;
     protected isPathOrSelectionDirty(): boolean;
+    getLabelData(): PointLabelDatum[];
     protected updatePaths(opts: {
         seriesHighlighted?: boolean;
         itemId?: string;

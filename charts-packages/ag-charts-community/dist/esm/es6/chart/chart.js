@@ -10,7 +10,7 @@ import { SizeMonitor } from '../util/sizeMonitor';
 import { Observable } from '../util/observable';
 import { ChartAxisDirection } from './chartAxis';
 import { createId } from '../util/id';
-import { placeLabels, isPointLabelDatum } from '../util/labelPlacement';
+import { isPointLabelDatum, placeLabels } from '../util/labelPlacement';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
 const defaultTooltipCss = `
@@ -272,7 +272,6 @@ export class Chart extends Observable {
         });
         this._axes = [];
         this._series = [];
-        this.nodeData = new Map();
         this.legendBBox = new BBox(0, 0, 0, 0);
         this._onMouseDown = this.onMouseDown.bind(this);
         this._onMouseMove = this.onMouseMove.bind(this);
@@ -459,6 +458,8 @@ export class Chart extends Observable {
             case ChartUpdateType.PROCESS_DATA:
                 this.processData();
                 splits.push(performance.now());
+                // Disable tooltip/highlight if the data fundamentally shifted.
+                this.disableTooltip({ updateProcessing: false });
             // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (!firstRenderComplete && !firstResizeReceived) {
@@ -673,36 +674,25 @@ export class Chart extends Observable {
         this.series.forEach((s) => s.processData());
         this.updateLegend();
     }
-    createNodeData() {
-        this.nodeData.clear();
-        this.series.forEach((s) => {
-            const data = s.visible ? s.createNodeData() : [];
-            this.nodeData.set(s, data);
-        });
-    }
     placeLabels() {
-        const seriesIndex = [];
+        const visibleSeries = [];
         const data = [];
-        this.nodeData.forEach((contexts, series) => {
+        for (const series of this.series) {
             if (!series.visible || !series.label.enabled) {
-                return;
+                continue;
             }
-            let seriesData = [];
-            contexts.forEach((context) => {
-                const contextData = context.labelData;
-                if (!isPointLabelDatum(contextData[0])) {
-                    return;
-                }
-                seriesData.push(...contextData);
-            });
-            data.push(seriesData);
-            seriesIndex.push(series);
-        });
+            let labelData = series.getLabelData();
+            if (!(labelData && isPointLabelDatum(labelData[0]))) {
+                continue;
+            }
+            data.push(labelData);
+            visibleSeries.push(series);
+        }
         const { seriesRect } = this;
-        const labels = seriesRect
+        const labels = seriesRect && data.length > 0
             ? placeLabels(data, { x: 0, y: 0, width: seriesRect.width, height: seriesRect.height })
             : [];
-        return new Map(labels.map((l, i) => [seriesIndex[i], l]));
+        return new Map(labels.map((l, i) => [visibleSeries[i], l]));
     }
     updateLegend() {
         const legendData = [];
@@ -879,14 +869,17 @@ export class Chart extends Observable {
             this.handleTooltipTrigger.schedule();
         }
     }
+    disableTooltip({ updateProcessing = true } = {}) {
+        this.changeHighlightDatum(undefined, { updateProcessing });
+        this.tooltip.toggle(false);
+    }
     handleTooltip(meta) {
         const { lastPick } = this;
         const { offsetX, offsetY } = meta;
         const disableTooltip = () => {
             if (lastPick) {
                 // Cursor moved from a non-marker node to empty space.
-                this.changeHighlightDatum();
-                this.tooltip.toggle(false);
+                this.disableTooltip();
             }
         };
         if (!(this.seriesRect && this.seriesRect.containsPoint(offsetX, offsetY))) {
@@ -1013,9 +1006,13 @@ export class Chart extends Observable {
                     };
                 }
             }
+            else {
+                this.highlightedDatum = undefined;
+            }
         }
         // Careful to only schedule updates when necessary.
         if ((this.highlightedDatum && !oldHighlightedDatum) ||
+            (!this.highlightedDatum && oldHighlightedDatum) ||
             (this.highlightedDatum &&
                 oldHighlightedDatum &&
                 (this.highlightedDatum.series !== oldHighlightedDatum.series ||
@@ -1052,7 +1049,8 @@ export class Chart extends Observable {
         }
         return meta;
     }
-    changeHighlightDatum(newPick) {
+    changeHighlightDatum(newPick, opts) {
+        const { updateProcessing = true } = (opts !== null && opts !== void 0 ? opts : {});
         const seriesToUpdate = new Set();
         const { datum: { series: newSeries = undefined } = {}, datum = undefined } = newPick || {};
         const { lastPick: { datum: { series: lastSeries = undefined } = {} } = {} } = this;
@@ -1065,6 +1063,9 @@ export class Chart extends Observable {
         }
         this.lastPick = newPick;
         this.highlightedDatum = datum;
+        if (!updateProcessing) {
+            return;
+        }
         let updateAll = newSeries == null || lastSeries == null;
         if (updateAll) {
             this.update(ChartUpdateType.SERIES_UPDATE);

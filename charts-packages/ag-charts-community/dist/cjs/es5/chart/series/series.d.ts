@@ -4,6 +4,7 @@ import { Observable } from '../../util/observable';
 import { ChartAxis, ChartAxisDirection } from '../chartAxis';
 import { Chart } from '../chart';
 import { Label } from '../label';
+import { PointLabelDatum } from '../../util/labelPlacement';
 /**
  * Processed series datum used in node selections,
  * contains information used to render pie sectors, bars, markers, etc.
@@ -153,6 +154,7 @@ export declare abstract class Series<C extends SeriesNodeDataContext = SeriesNod
     protected pickNodeExactShape(x: number, y: number): SeriesNodePickMatch | undefined;
     protected pickNodeClosestDatum(_x: number, _y: number): SeriesNodePickMatch | undefined;
     protected pickNodeMainAxisFirst(_x: number, _y: number, _requireCategoryAxis: boolean): SeriesNodePickMatch | undefined;
+    abstract getLabelData(): PointLabelDatum[];
     fireNodeClickEvent(_event: MouseEvent, _datum: C['nodeData'][number]): void;
     /**
      * @private

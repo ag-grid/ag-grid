@@ -59,7 +59,11 @@ var ScatterSeries = /** @class */ (function (_super) {
     function ScatterSeries() {
         var _this = _super.call(this, {
             pickGroupIncludes: ['markers'],
-            pickModes: [series_1.SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST, series_1.SeriesNodePickMode.NEAREST_NODE],
+            pickModes: [
+                series_1.SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                series_1.SeriesNodePickMode.NEAREST_NODE,
+                series_1.SeriesNodePickMode.EXACT_SHAPE_MATCH,
+            ],
             pathsPerSeries: 0,
             features: ['markers'],
         }) || this;
@@ -232,6 +236,10 @@ var ScatterSeries = /** @class */ (function (_super) {
     };
     ScatterSeries.prototype.isPathOrSelectionDirty = function () {
         return this.marker.isDirty();
+    };
+    ScatterSeries.prototype.getLabelData = function () {
+        var _a;
+        return (_a = this.contextNodeData) === null || _a === void 0 ? void 0 : _a.reduce(function (r, n) { return r.concat(n.labelData); }, []);
     };
     ScatterSeries.prototype.updateMarkerSelection = function (opts) {
         var nodeData = opts.nodeData, markerSelection = opts.markerSelection;

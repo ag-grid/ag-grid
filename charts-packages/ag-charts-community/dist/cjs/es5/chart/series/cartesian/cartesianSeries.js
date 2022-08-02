@@ -82,6 +82,14 @@ var CartesianSeries = /** @class */ (function (_super) {
         _this.opts = { pickGroupIncludes: pickGroupIncludes, pathsPerSeries: pathsPerSeries, features: features };
         return _this;
     }
+    Object.defineProperty(CartesianSeries.prototype, "contextNodeData", {
+        get: function () {
+            var _a;
+            return (_a = this._contextNodeData) === null || _a === void 0 ? void 0 : _a.slice();
+        },
+        enumerable: true,
+        configurable: true
+    });
     /**
      * Note: we are passing `isContinuousX` and `isContinuousY` into this method because it will
      *       typically be called inside a loop and this check only needs to happen once.
@@ -127,12 +135,12 @@ var CartesianSeries = /** @class */ (function (_super) {
         }
         if (this.nodeDataRefresh) {
             this.nodeDataRefresh = false;
-            this.contextNodeData = this.createNodeData();
+            this._contextNodeData = this.createNodeData();
             this.updateSeriesGroups();
         }
         this.subGroups.forEach(function (subGroup, seriesIdx) {
             var datumSelection = subGroup.datumSelection, labelSelection = subGroup.labelSelection, markerSelection = subGroup.markerSelection, paths = subGroup.paths;
-            var contextData = _this.contextNodeData[seriesIdx];
+            var contextData = _this._contextNodeData[seriesIdx];
             var nodeData = contextData.nodeData, labelData = contextData.labelData, itemId = contextData.itemId;
             _this.updatePaths({ seriesHighlighted: seriesHighlighted, itemId: itemId, contextData: contextData, paths: paths, seriesIdx: seriesIdx });
             subGroup.datumSelection = _this.updateDatumSelection({ nodeData: nodeData, datumSelection: datumSelection, seriesIdx: seriesIdx });
@@ -144,7 +152,7 @@ var CartesianSeries = /** @class */ (function (_super) {
     };
     CartesianSeries.prototype.updateSeriesGroups = function () {
         var _this = this;
-        var _a = this, contextNodeData = _a.contextNodeData, subGroups = _a.subGroups, _b = _a.opts, pickGroupIncludes = _b.pickGroupIncludes, pathsPerSeries = _b.pathsPerSeries, features = _b.features;
+        var _a = this, contextNodeData = _a._contextNodeData, subGroups = _a.subGroups, _b = _a.opts, pickGroupIncludes = _b.pickGroupIncludes, pathsPerSeries = _b.pathsPerSeries, features = _b.features;
         if (contextNodeData.length === subGroups.length) {
             return;
         }
@@ -197,9 +205,9 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.updateNodes = function (seriesHighlighted, anySeriesItemEnabled) {
         var _this = this;
         var _a;
-        var _b = this, highlightSelection = _b.highlightSelection, highlightLabelSelection = _b.highlightLabelSelection, contextNodeData = _b.contextNodeData, seriesItemEnabled = _b.seriesItemEnabled, features = _b.opts.features;
+        var _b = this, highlightSelection = _b.highlightSelection, highlightLabelSelection = _b.highlightLabelSelection, contextNodeData = _b._contextNodeData, seriesItemEnabled = _b.seriesItemEnabled, features = _b.opts.features;
         var markersEnabled = features.includes('markers');
-        var visible = this.visible && ((_a = this.contextNodeData) === null || _a === void 0 ? void 0 : _a.length) > 0 && anySeriesItemEnabled;
+        var visible = this.visible && ((_a = this._contextNodeData) === null || _a === void 0 ? void 0 : _a.length) > 0 && anySeriesItemEnabled;
         this.group.visible = visible;
         this.seriesGroup.visible = visible;
         this.highlightGroup.visible = visible && !!seriesHighlighted;
@@ -236,7 +244,7 @@ var CartesianSeries = /** @class */ (function (_super) {
     };
     CartesianSeries.prototype.updateHighlightSelection = function (seriesHighlighted) {
         var e_1, _a;
-        var _b = this, _c = _b.chart, _d = _c === void 0 ? {} : _c, _e = _d.highlightedDatum, _f = (_e === void 0 ? {} : _e).datum, datum = _f === void 0 ? undefined : _f, _g = _d.highlightedDatum, highlightedDatum = _g === void 0 ? undefined : _g, highlightSelection = _b.highlightSelection, highlightLabelSelection = _b.highlightLabelSelection, contextNodeData = _b.contextNodeData;
+        var _b = this, _c = _b.chart, _d = _c === void 0 ? {} : _c, _e = _d.highlightedDatum, _f = (_e === void 0 ? {} : _e).datum, datum = _f === void 0 ? undefined : _f, _g = _d.highlightedDatum, highlightedDatum = _g === void 0 ? undefined : _g, highlightSelection = _b.highlightSelection, highlightLabelSelection = _b.highlightLabelSelection, contextNodeData = _b._contextNodeData;
         var item = seriesHighlighted && highlightedDatum && datum ? highlightedDatum : undefined;
         this.highlightSelection = this.updateHighlightSelectionItem({ item: item, highlightSelection: highlightSelection });
         var labelItem;
@@ -293,7 +301,7 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.pickNodeClosestDatum = function (x, y) {
         var e_3, _a, e_4, _b;
         var _c, _d;
-        var _e = this, xAxis = _e.xAxis, yAxis = _e.yAxis, group = _e.group, contextNodeData = _e.contextNodeData;
+        var _e = this, xAxis = _e.xAxis, yAxis = _e.yAxis, group = _e.group, contextNodeData = _e._contextNodeData;
         var hitPoint = group.transformPoint(x, y);
         var minDistance = Infinity;
         var closestDatum;
@@ -340,7 +348,7 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.pickNodeMainAxisFirst = function (x, y, requireCategoryAxis) {
         var e_5, _a, e_6, _b;
         var _c, _d;
-        var _e = this, xAxis = _e.xAxis, yAxis = _e.yAxis, group = _e.group, contextNodeData = _e.contextNodeData;
+        var _e = this, xAxis = _e.xAxis, yAxis = _e.yAxis, group = _e.group, contextNodeData = _e._contextNodeData;
         // Prefer to start search with any available category axis.
         var directions = [xAxis, yAxis]
             .filter(function (a) { return a instanceof categoryAxis_1.CategoryAxis; })
@@ -416,6 +424,9 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.isPathOrSelectionDirty = function () {
         // Override point to allow more sophisticated dirty selection detection.
         return false;
+    };
+    CartesianSeries.prototype.getLabelData = function () {
+        return [];
     };
     CartesianSeries.prototype.updatePaths = function (opts) {
         // Override point for sub-classes.

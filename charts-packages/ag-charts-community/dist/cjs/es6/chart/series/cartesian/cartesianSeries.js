@@ -34,6 +34,10 @@ class CartesianSeries extends series_1.Series {
         const { pickGroupIncludes = ['datumNodes'], pathsPerSeries = 1, features = [] } = opts;
         this.opts = { pickGroupIncludes, pathsPerSeries, features };
     }
+    get contextNodeData() {
+        var _a;
+        return (_a = this._contextNodeData) === null || _a === void 0 ? void 0 : _a.slice();
+    }
     /**
      * Note: we are passing `isContinuousX` and `isContinuousY` into this method because it will
      *       typically be called inside a loop and this check only needs to happen once.
@@ -78,12 +82,12 @@ class CartesianSeries extends series_1.Series {
         }
         if (this.nodeDataRefresh) {
             this.nodeDataRefresh = false;
-            this.contextNodeData = this.createNodeData();
+            this._contextNodeData = this.createNodeData();
             this.updateSeriesGroups();
         }
         this.subGroups.forEach((subGroup, seriesIdx) => {
             const { datumSelection, labelSelection, markerSelection, paths } = subGroup;
-            const contextData = this.contextNodeData[seriesIdx];
+            const contextData = this._contextNodeData[seriesIdx];
             const { nodeData, labelData, itemId } = contextData;
             this.updatePaths({ seriesHighlighted, itemId, contextData, paths, seriesIdx });
             subGroup.datumSelection = this.updateDatumSelection({ nodeData, datumSelection, seriesIdx });
@@ -94,7 +98,7 @@ class CartesianSeries extends series_1.Series {
         });
     }
     updateSeriesGroups() {
-        const { contextNodeData, subGroups, opts: { pickGroupIncludes, pathsPerSeries, features }, } = this;
+        const { _contextNodeData: contextNodeData, subGroups, opts: { pickGroupIncludes, pathsPerSeries, features }, } = this;
         if (contextNodeData.length === subGroups.length) {
             return;
         }
@@ -145,9 +149,9 @@ class CartesianSeries extends series_1.Series {
     }
     updateNodes(seriesHighlighted, anySeriesItemEnabled) {
         var _a;
-        const { highlightSelection, highlightLabelSelection, contextNodeData, seriesItemEnabled, opts: { features }, } = this;
+        const { highlightSelection, highlightLabelSelection, _contextNodeData: contextNodeData, seriesItemEnabled, opts: { features }, } = this;
         const markersEnabled = features.includes('markers');
-        const visible = this.visible && ((_a = this.contextNodeData) === null || _a === void 0 ? void 0 : _a.length) > 0 && anySeriesItemEnabled;
+        const visible = this.visible && ((_a = this._contextNodeData) === null || _a === void 0 ? void 0 : _a.length) > 0 && anySeriesItemEnabled;
         this.group.visible = visible;
         this.seriesGroup.visible = visible;
         this.highlightGroup.visible = visible && !!seriesHighlighted;
@@ -183,7 +187,7 @@ class CartesianSeries extends series_1.Series {
         });
     }
     updateHighlightSelection(seriesHighlighted) {
-        const { chart: { highlightedDatum: { datum = undefined } = {}, highlightedDatum = undefined } = {}, highlightSelection, highlightLabelSelection, contextNodeData, } = this;
+        const { chart: { highlightedDatum: { datum = undefined } = {}, highlightedDatum = undefined } = {}, highlightSelection, highlightLabelSelection, _contextNodeData: contextNodeData, } = this;
         const item = seriesHighlighted && highlightedDatum && datum ? highlightedDatum : undefined;
         this.highlightSelection = this.updateHighlightSelectionItem({ item, highlightSelection });
         let labelItem;
@@ -218,7 +222,7 @@ class CartesianSeries extends series_1.Series {
     }
     pickNodeClosestDatum(x, y) {
         var _a, _b;
-        const { xAxis, yAxis, group, contextNodeData } = this;
+        const { xAxis, yAxis, group, _contextNodeData: contextNodeData } = this;
         const hitPoint = group.transformPoint(x, y);
         let minDistance = Infinity;
         let closestDatum;
@@ -244,7 +248,7 @@ class CartesianSeries extends series_1.Series {
     }
     pickNodeMainAxisFirst(x, y, requireCategoryAxis) {
         var _a, _b;
-        const { xAxis, yAxis, group, contextNodeData } = this;
+        const { xAxis, yAxis, group, _contextNodeData: contextNodeData } = this;
         // Prefer to start search with any available category axis.
         const directions = [xAxis, yAxis]
             .filter((a) => a instanceof categoryAxis_1.CategoryAxis)
@@ -300,6 +304,9 @@ class CartesianSeries extends series_1.Series {
     isPathOrSelectionDirty() {
         // Override point to allow more sophisticated dirty selection detection.
         return false;
+    }
+    getLabelData() {
+        return [];
     }
     updatePaths(opts) {
         // Override point for sub-classes.

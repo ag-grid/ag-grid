@@ -160,8 +160,16 @@ var GridOptionsWrapper = /** @class */ (function () {
         else if (this.isEnableRangeHandle() || this.isEnableFillHandle()) {
             console.warn("AG Grid: 'enableRangeHandle' or 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
-        if (this.isGroupRowsSticky() && this.isGroupHideOpenParents()) {
-            console.warn("AG Grid: groupRowsSticky and groupHideOpenParents do not work with each other, you need to pick one.");
+        if (this.isGroupRowsSticky()) {
+            if (this.isGroupHideOpenParents()) {
+                console.warn("AG Grid: groupRowsSticky and groupHideOpenParents do not work with each other, you need to pick one.");
+            }
+            if (this.isMasterDetail()) {
+                console.warn("AG Grid: groupRowsSticky and masterDetail do not work with each other, you need to pick one.");
+            }
+            if (this.isPagination()) {
+                console.warn("AG Grid: groupRowsSticky and pagination do not work with each other, you need to pick one.");
+            }
         }
         var warnOfDeprecaredIcon = function (name) {
             if (_this.gridOptions.icons && _this.gridOptions.icons[name]) {

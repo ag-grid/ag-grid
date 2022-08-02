@@ -29,7 +29,15 @@ class LineSeriesTooltip extends series_1.SeriesTooltip {
 exports.LineSeriesTooltip = LineSeriesTooltip;
 class LineSeries extends cartesianSeries_1.CartesianSeries {
     constructor() {
-        super({ pickGroupIncludes: ['markers'], features: ['markers'] });
+        super({
+            pickGroupIncludes: ['markers'],
+            features: ['markers'],
+            pickModes: [
+                series_1.SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                series_1.SeriesNodePickMode.NEAREST_NODE,
+                series_1.SeriesNodePickMode.EXACT_SHAPE_MATCH,
+            ],
+        });
         this.xDomain = [];
         this.yDomain = [];
         this.xData = [];

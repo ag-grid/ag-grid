@@ -299,7 +299,7 @@ var Series = /** @class */ (function (_super) {
         try {
             for (var pickModes_1 = __values(pickModes), pickModes_1_1 = pickModes_1.next(); !pickModes_1_1.done; pickModes_1_1 = pickModes_1.next()) {
                 var pickMode = pickModes_1_1.value;
-                if (limitPickModes && limitPickModes.includes(pickMode)) {
+                if (limitPickModes && !limitPickModes.includes(pickMode)) {
                     continue;
                 }
                 var match = undefined;

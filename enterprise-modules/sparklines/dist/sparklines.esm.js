@@ -465,8 +465,6 @@ var ObjectUtils = /*#__PURE__*/Object.freeze({
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 var doOnceFlags$1 = {};
 /**
  * If the key was passed before, then doesn't execute the func
@@ -488,11 +486,6 @@ function getFunctionName(funcConstructor) {
     // for the pestilence that is ie11
     var matches = /function\s+([^\(]+)/.exec(funcConstructor.toString());
     return matches && matches.length === 2 ? matches[1].trim() : null;
-}
-/** @deprecated */
-function getFunctionParameters(func) {
-    var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
-    return fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES) || [];
 }
 function isFunction(val) {
     return !!(val && val.constructor && val.call && val.apply);
@@ -632,7 +625,6 @@ var FunctionUtils = /*#__PURE__*/Object.freeze({
     __proto__: null,
     doOnce: doOnce$1,
     getFunctionName: getFunctionName,
-    getFunctionParameters: getFunctionParameters,
     isFunction: isFunction,
     executeInAWhile: executeInAWhile,
     executeNextVMTurn: executeNextVMTurn,
@@ -6049,7 +6041,7 @@ var __spread$h = (undefined && undefined.__spread) || function () {
     // called from: setColumnState, setColumnDefs, setSecondaryColumns
     ColumnModel.prototype.updateGridColumns = function () {
         var _this = this;
-        var prevGridCols = this.gridColumns;
+        var prevGridCols = this.gridBalancedTree;
         if (this.gridColsArePrimary) {
             this.lastPrimaryOrder = this.gridColumns;
         }
@@ -6089,7 +6081,7 @@ var __spread$h = (undefined && undefined.__spread) || function () {
         this.gridColumnsMap = {};
         this.gridColumns.forEach(function (col) { return _this.gridColumnsMap[col.getId()] = col; });
         this.setAutoHeightActive();
-        if (!areEqual(prevGridCols, this.gridColumns)) {
+        if (!areEqual(prevGridCols, this.gridBalancedTree)) {
             var event_5 = {
                 type: Events.EVENT_GRID_COLUMNS_CHANGED,
                 api: this.gridApi,
@@ -19746,8 +19738,16 @@ var GridOptionsWrapper = /** @class */ (function () {
         else if (this.isEnableRangeHandle() || this.isEnableFillHandle()) {
             console.warn("AG Grid: 'enableRangeHandle' or 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
-        if (this.isGroupRowsSticky() && this.isGroupHideOpenParents()) {
-            console.warn("AG Grid: groupRowsSticky and groupHideOpenParents do not work with each other, you need to pick one.");
+        if (this.isGroupRowsSticky()) {
+            if (this.isGroupHideOpenParents()) {
+                console.warn("AG Grid: groupRowsSticky and groupHideOpenParents do not work with each other, you need to pick one.");
+            }
+            if (this.isMasterDetail()) {
+                console.warn("AG Grid: groupRowsSticky and masterDetail do not work with each other, you need to pick one.");
+            }
+            if (this.isPagination()) {
+                console.warn("AG Grid: groupRowsSticky and pagination do not work with each other, you need to pick one.");
+            }
         }
         var warnOfDeprecaredIcon = function (name) {
             if (_this.gridOptions.icons && _this.gridOptions.icons[name]) {

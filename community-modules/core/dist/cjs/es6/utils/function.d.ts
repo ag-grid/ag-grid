@@ -8,8 +8,6 @@
  */
 export declare function doOnce(func: () => void, key: string): void;
 export declare function getFunctionName(funcConstructor: any): any;
-/** @deprecated */
-export declare function getFunctionParameters(func: any): any;
 export declare function isFunction(val: any): boolean;
 export declare function executeInAWhile(funcs: Function[]): void;
 export declare function executeNextVMTurn(func: () => void): void;

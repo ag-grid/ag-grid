@@ -76,7 +76,15 @@ exports.LineSeriesTooltip = LineSeriesTooltip;
 var LineSeries = /** @class */ (function (_super) {
     __extends(LineSeries, _super);
     function LineSeries() {
-        var _this = _super.call(this, { pickGroupIncludes: ['markers'], features: ['markers'] }) || this;
+        var _this = _super.call(this, {
+            pickGroupIncludes: ['markers'],
+            features: ['markers'],
+            pickModes: [
+                series_1.SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                series_1.SeriesNodePickMode.NEAREST_NODE,
+                series_1.SeriesNodePickMode.EXACT_SHAPE_MATCH,
+            ],
+        }) || this;
         _this.xDomain = [];
         _this.yDomain = [];
         _this.xData = [];

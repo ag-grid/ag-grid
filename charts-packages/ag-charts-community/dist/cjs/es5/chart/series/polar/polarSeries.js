@@ -48,6 +48,9 @@ var PolarSeries = /** @class */ (function (_super) {
         _this.radius = 0;
         return _this;
     }
+    PolarSeries.prototype.getLabelData = function () {
+        return [];
+    };
     return PolarSeries;
 }(series_1.Series));
 exports.PolarSeries = PolarSeries;

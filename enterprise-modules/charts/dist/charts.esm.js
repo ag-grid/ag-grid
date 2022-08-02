@@ -465,8 +465,6 @@ var ObjectUtils = /*#__PURE__*/Object.freeze({
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 var doOnceFlags$1 = {};
 /**
  * If the key was passed before, then doesn't execute the func
@@ -488,11 +486,6 @@ function getFunctionName(funcConstructor) {
     // for the pestilence that is ie11
     var matches = /function\s+([^\(]+)/.exec(funcConstructor.toString());
     return matches && matches.length === 2 ? matches[1].trim() : null;
-}
-/** @deprecated */
-function getFunctionParameters(func) {
-    var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
-    return fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES) || [];
 }
 function isFunction(val) {
     return !!(val && val.constructor && val.call && val.apply);
@@ -632,7 +625,6 @@ var FunctionUtils = /*#__PURE__*/Object.freeze({
     __proto__: null,
     doOnce: doOnce$1,
     getFunctionName: getFunctionName,
-    getFunctionParameters: getFunctionParameters,
     isFunction: isFunction,
     executeInAWhile: executeInAWhile,
     executeNextVMTurn: executeNextVMTurn,
@@ -3485,7 +3477,7 @@ var __values$t = (undefined && undefined.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read$10 = (undefined && undefined.__read) || function (o, n) {
+var __read$$ = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -3501,8 +3493,8 @@ var __read$10 = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$B = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$10(arguments[i]));
+var __spread$A = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$$(arguments[i]));
     return ar;
 };
 /** @class */ ((function (_super) {
@@ -4886,7 +4878,7 @@ var __spread$B = (undefined && undefined.__spread) || function () {
     };
     ColumnModel.prototype.getPrimaryAndSecondaryAndAutoColumns = function () {
         var _a;
-        return (_a = []).concat.apply(_a, __spread$B([
+        return (_a = []).concat.apply(_a, __spread$A([
             this.primaryColumns || [],
             this.groupAutoColumns || [],
             this.secondaryColumns || [],
@@ -4894,14 +4886,14 @@ var __spread$B = (undefined && undefined.__spread) || function () {
     };
     ColumnModel.prototype.getPrimaryAndAutoGroupCols = function () {
         var _a;
-        return (_a = []).concat.apply(_a, __spread$B([
+        return (_a = []).concat.apply(_a, __spread$A([
             this.primaryColumns || [],
             this.groupAutoColumns || [],
         ]));
     };
     ColumnModel.prototype.getPrimaryAndSecondaryColumns = function () {
         var _a;
-        return (_a = []).concat.apply(_a, __spread$B([
+        return (_a = []).concat.apply(_a, __spread$A([
             this.primaryColumns || [],
             this.secondaryColumns || [],
         ]));
@@ -6049,7 +6041,7 @@ var __spread$B = (undefined && undefined.__spread) || function () {
     // called from: setColumnState, setColumnDefs, setSecondaryColumns
     ColumnModel.prototype.updateGridColumns = function () {
         var _this = this;
-        var prevGridCols = this.gridColumns;
+        var prevGridCols = this.gridBalancedTree;
         if (this.gridColsArePrimary) {
             this.lastPrimaryOrder = this.gridColumns;
         }
@@ -6089,7 +6081,7 @@ var __spread$B = (undefined && undefined.__spread) || function () {
         this.gridColumnsMap = {};
         this.gridColumns.forEach(function (col) { return _this.gridColumnsMap[col.getId()] = col; });
         this.setAutoHeightActive();
-        if (!areEqual(prevGridCols, this.gridColumns)) {
+        if (!areEqual(prevGridCols, this.gridBalancedTree)) {
             var event_5 = {
                 type: Events.EVENT_GRID_COLUMNS_CHANGED,
                 api: this.gridApi,
@@ -6162,7 +6154,7 @@ var __spread$B = (undefined && undefined.__spread) || function () {
             }
             // find index of last column in the group
             var indexes = siblings.map(function (col) { return newGridColumns.indexOf(col); });
-            var lastIndex = Math.max.apply(Math, __spread$B(indexes));
+            var lastIndex = Math.max.apply(Math, __spread$A(indexes));
             insertIntoArray(newGridColumns, newCol, lastIndex + 1);
         });
         this.gridColumns = newGridColumns;
@@ -6199,7 +6191,7 @@ var __spread$B = (undefined && undefined.__spread) || function () {
                 normal.push(col);
             }
         });
-        return __spread$B(left, normal, right);
+        return __spread$A(left, normal, right);
     };
     ColumnModel.prototype.addAutoGroupToGridColumns = function () {
         // add in auto-group here
@@ -6733,7 +6725,7 @@ var __spread$B = (undefined && undefined.__spread) || function () {
         var displayedHeights = this.getAllDisplayedColumns()
             .filter(function (col) { return col.isAutoHeaderHeight(); })
             .map(function (col) { return col.getAutoHeaderHeight() || 0; });
-        return Math.max.apply(Math, __spread$B([defaultHeight], displayedHeights));
+        return Math.max.apply(Math, __spread$A([defaultHeight], displayedHeights));
     };
     __decorate$3b([
         Autowired('expressionService')
@@ -7092,7 +7084,7 @@ var __decorate$39 = (undefined && undefined.__decorate) || function (decorators,
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __read$$ = (undefined && undefined.__read) || function (o, n) {
+var __read$_ = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -7108,8 +7100,8 @@ var __read$$ = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$A = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$$(arguments[i]));
+var __spread$z = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$_(arguments[i]));
     return ar;
 };
 /**
@@ -7196,7 +7188,7 @@ var PropertyKeys = /** @class */ (function () {
         'isServerSideGroupOpenByDefault', 'isGroupOpenByDefault', 'defaultGroupSortComparator', 'defaultGroupOrderComparator', 'initialGroupOrderComparator',
         'loadingCellRendererSelector', 'getRowId', 'groupAggFiltering'
     ];
-    PropertyKeys.ALL_PROPERTIES = __spread$A(PropertyKeys.ARRAY_PROPERTIES, PropertyKeys.OBJECT_PROPERTIES, PropertyKeys.STRING_PROPERTIES, PropertyKeys.NUMBER_PROPERTIES, PropertyKeys.FUNCTION_PROPERTIES, PropertyKeys.BOOLEAN_PROPERTIES);
+    PropertyKeys.ALL_PROPERTIES = __spread$z(PropertyKeys.ARRAY_PROPERTIES, PropertyKeys.OBJECT_PROPERTIES, PropertyKeys.STRING_PROPERTIES, PropertyKeys.NUMBER_PROPERTIES, PropertyKeys.FUNCTION_PROPERTIES, PropertyKeys.BOOLEAN_PROPERTIES);
     /**
      * Used when performing property checks. This avoids noise caused when using frameworks, which can add their own
      * framework-specific properties to colDefs, gridOptions etc.
@@ -7224,7 +7216,7 @@ var __assign$J = (undefined && undefined.__assign) || function () {
     };
     return __assign$J.apply(this, arguments);
 };
-var __read$_ = (undefined && undefined.__read) || function (o, n) {
+var __read$Z = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -7240,8 +7232,8 @@ var __read$_ = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$z = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$_(arguments[i]));
+var __spread$y = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$Z(arguments[i]));
     return ar;
 };
 var ComponentUtil = /** @class */ (function () {
@@ -7267,7 +7259,7 @@ var ComponentUtil = /** @class */ (function () {
             delete component.groupAggFiltering;
         }
         // add in all the simple properties
-        __spread$z(ComponentUtil.ARRAY_PROPERTIES, ComponentUtil.STRING_PROPERTIES, ComponentUtil.OBJECT_PROPERTIES, ComponentUtil.FUNCTION_PROPERTIES, ComponentUtil.getEventCallbacks()).filter(keyExists)
+        __spread$y(ComponentUtil.ARRAY_PROPERTIES, ComponentUtil.STRING_PROPERTIES, ComponentUtil.OBJECT_PROPERTIES, ComponentUtil.FUNCTION_PROPERTIES, ComponentUtil.getEventCallbacks()).filter(keyExists)
             .forEach(function (key) { return pGridOptions[key] = component[key]; });
         ComponentUtil.BOOLEAN_PROPERTIES
             .filter(keyExists)
@@ -7310,7 +7302,7 @@ var ComponentUtil = /** @class */ (function () {
             delete changesToApply.rowClass;
         }
         // check if any change for the simple types, and if so, then just copy in the new value
-        __spread$z(ComponentUtil.ARRAY_PROPERTIES, ComponentUtil.OBJECT_PROPERTIES, ComponentUtil.STRING_PROPERTIES, ComponentUtil.getEventCallbacks()).filter(keyExists)
+        __spread$y(ComponentUtil.ARRAY_PROPERTIES, ComponentUtil.OBJECT_PROPERTIES, ComponentUtil.STRING_PROPERTIES, ComponentUtil.getEventCallbacks()).filter(keyExists)
             .forEach(function (key) { return pGridOptions[key] = changesToApply[key].currentValue; });
         ComponentUtil.BOOLEAN_PROPERTIES
             .filter(keyExists)
@@ -7520,7 +7512,7 @@ var __decorate$38 = (undefined && undefined.__decorate) || function (decorators,
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __read$Z = (undefined && undefined.__read) || function (o, n) {
+var __read$Y = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -7536,8 +7528,8 @@ var __read$Z = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$y = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$Z(arguments[i]));
+var __spread$x = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$Y(arguments[i]));
     return ar;
 };
 var ColDefUtil = /** @class */ (function () {
@@ -7697,7 +7689,7 @@ var ColDefUtil = /** @class */ (function () {
         'cellRendererSelector',
         'cellEditorSelector'
     ];
-    ColDefUtil.ALL_PROPERTIES = __spread$y(ColDefUtil.ARRAY_PROPERTIES, ColDefUtil.OBJECT_PROPERTIES, ColDefUtil.STRING_PROPERTIES, ColDefUtil.NUMBER_PROPERTIES, ColDefUtil.FUNCTION_PROPERTIES, ColDefUtil.BOOLEAN_PROPERTIES);
+    ColDefUtil.ALL_PROPERTIES = __spread$x(ColDefUtil.ARRAY_PROPERTIES, ColDefUtil.OBJECT_PROPERTIES, ColDefUtil.STRING_PROPERTIES, ColDefUtil.NUMBER_PROPERTIES, ColDefUtil.FUNCTION_PROPERTIES, ColDefUtil.BOOLEAN_PROPERTIES);
     // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
     // properties to colDefs, gridOptions etc
     ColDefUtil.FRAMEWORK_PROPERTIES = [
@@ -7718,7 +7710,7 @@ var ColDefUtil = /** @class */ (function () {
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __read$Y = (undefined && undefined.__read) || function (o, n) {
+var __read$X = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -7809,14 +7801,14 @@ var Color$1 = /** @class */ (function () {
     Color.fromHexString = function (str) {
         var values = Color.parseHex(str);
         if (values) {
-            var _a = __read$Y(values, 4), r = _a[0], g = _a[1], b = _a[2], a = _a[3];
+            var _a = __read$X(values, 4), r = _a[0], g = _a[1], b = _a[2], a = _a[3];
             return new Color(r / 255, g / 255, b / 255, a / 255);
         }
         throw new Error("Malformed hexadecimal color string: '" + str + "'");
     };
     Color.stringToRgba = function (str) {
         // Find positions of opening and closing parentheses.
-        var _a = __read$Y([NaN, NaN], 2), po = _a[0], pc = _a[1];
+        var _a = __read$X([NaN, NaN], 2), po = _a[0], pc = _a[1];
         for (var i = 0; i < str.length; i++) {
             var c = str[i];
             if (!po && c === '(') {
@@ -9373,7 +9365,7 @@ var NumberUtils = /*#__PURE__*/Object.freeze({
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __read$X = (undefined && undefined.__read) || function (o, n) {
+var __read$W = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -9468,7 +9460,7 @@ function parseDateTimeFromString(value) {
     if (!value) {
         return null;
     }
-    var _a = __read$X(value.split(' '), 2), dateStr = _a[0], timeStr = _a[1];
+    var _a = __read$W(value.split(' '), 2), dateStr = _a[0], timeStr = _a[1];
     if (!dateStr) {
         return null;
     }
@@ -9476,7 +9468,7 @@ function parseDateTimeFromString(value) {
     if (fields.filter(function (f) { return !isNaN(f); }).length !== 3) {
         return null;
     }
-    var _b = __read$X(fields, 3), year = _b[0], month = _b[1], day = _b[2];
+    var _b = __read$W(fields, 3), year = _b[0], month = _b[1], day = _b[2];
     var date = new Date(year, month - 1, day);
     if (date.getFullYear() !== year ||
         date.getMonth() !== month - 1 ||
@@ -9487,7 +9479,7 @@ function parseDateTimeFromString(value) {
     if (!timeStr || timeStr === '00:00:00') {
         return date;
     }
-    var _c = __read$X(timeStr.split(':').map(function (part) { return parseInt(part, 10); }), 3), hours = _c[0], minutes = _c[1], seconds = _c[2];
+    var _c = __read$W(timeStr.split(':').map(function (part) { return parseInt(part, 10); }), 3), hours = _c[0], minutes = _c[1], seconds = _c[2];
     if (hours >= 0 && hours < 24) {
         date.setHours(hours);
     }
@@ -19629,7 +19621,7 @@ var __decorate$2z = (undefined && undefined.__decorate) || function (decorators,
 var __param$6 = (undefined && undefined.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __read$W = (undefined && undefined.__read) || function (o, n) {
+var __read$V = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -19645,8 +19637,8 @@ var __read$W = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$x = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$W(arguments[i]));
+var __spread$w = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$V(arguments[i]));
     return ar;
 };
 var DEFAULT_ROW_HEIGHT = 25;
@@ -19746,8 +19738,16 @@ var GridOptionsWrapper = /** @class */ (function () {
         else if (this.isEnableRangeHandle() || this.isEnableFillHandle()) {
             console.warn("AG Grid: 'enableRangeHandle' or 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
-        if (this.isGroupRowsSticky() && this.isGroupHideOpenParents()) {
-            console.warn("AG Grid: groupRowsSticky and groupHideOpenParents do not work with each other, you need to pick one.");
+        if (this.isGroupRowsSticky()) {
+            if (this.isGroupHideOpenParents()) {
+                console.warn("AG Grid: groupRowsSticky and groupHideOpenParents do not work with each other, you need to pick one.");
+            }
+            if (this.isMasterDetail()) {
+                console.warn("AG Grid: groupRowsSticky and masterDetail do not work with each other, you need to pick one.");
+            }
+            if (this.isPagination()) {
+                console.warn("AG Grid: groupRowsSticky and pagination do not work with each other, you need to pick one.");
+            }
         }
         var warnOfDeprecaredIcon = function (name) {
             if (_this.gridOptions.icons && _this.gridOptions.icons[name]) {
@@ -19769,14 +19769,14 @@ var GridOptionsWrapper = /** @class */ (function () {
         }
         this.gridOptions.columnDefs.forEach(function (colDef) {
             var userProperties = Object.getOwnPropertyNames(colDef);
-            var validProperties = __spread$x(ColDefUtil.ALL_PROPERTIES, ColDefUtil.FRAMEWORK_PROPERTIES);
+            var validProperties = __spread$w(ColDefUtil.ALL_PROPERTIES, ColDefUtil.FRAMEWORK_PROPERTIES);
             _this.checkProperties(userProperties, validProperties, validProperties, 'colDef', 'https://www.ag-grid.com/javascript-grid-column-properties/');
         });
     };
     GridOptionsWrapper.prototype.checkGridOptionsProperties = function () {
         var userProperties = Object.getOwnPropertyNames(this.gridOptions);
-        var validProperties = __spread$x(PropertyKeys.ALL_PROPERTIES, PropertyKeys.FRAMEWORK_PROPERTIES, values(Events).map(function (event) { return ComponentUtil.getCallbackForEvent(event); }));
-        var validPropertiesAndExceptions = __spread$x(validProperties, ['api', 'columnApi']);
+        var validProperties = __spread$w(PropertyKeys.ALL_PROPERTIES, PropertyKeys.FRAMEWORK_PROPERTIES, values(Events).map(function (event) { return ComponentUtil.getCallbackForEvent(event); }));
+        var validPropertiesAndExceptions = __spread$w(validProperties, ['api', 'columnApi']);
         this.checkProperties(userProperties, validPropertiesAndExceptions, validProperties, 'gridOptions', 'https://www.ag-grid.com/javascript-data-grid/grid-options/');
     };
     GridOptionsWrapper.prototype.checkProperties = function (userProperties, validPropertiesAndExceptions, validProperties, containerName, docsUrl) {
@@ -21970,7 +21970,7 @@ var __decorate$2w = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$V = (undefined && undefined.__read) || function (o, n) {
+var __read$U = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -21986,8 +21986,8 @@ var __read$V = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$w = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$V(arguments[i]));
+var __spread$v = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$U(arguments[i]));
     return ar;
 };
 var RowDragFeature = /** @class */ (function (_super) {
@@ -22061,7 +22061,7 @@ var RowDragFeature = /** @class */ (function (_super) {
             return draggingEvent.dragItem.rowNodes || [];
         }
         var isRowDragMultiRow = this.gridOptionsWrapper.isRowDragMultiRow();
-        var selectedNodes = __spread$w(this.selectionService.getSelectedNodes()).sort(function (a, b) {
+        var selectedNodes = __spread$v(this.selectionService.getSelectedNodes()).sort(function (a, b) {
             if (a.rowIndex == null || b.rowIndex == null) {
                 return 0;
             }
@@ -24912,7 +24912,7 @@ var __values$q = (undefined && undefined.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read$U = (undefined && undefined.__read) || function (o, n) {
+var __read$T = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -24928,8 +24928,8 @@ var __read$U = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$v = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$U(arguments[i]));
+var __spread$u = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$T(arguments[i]));
     return ar;
 };
 var RowType;
@@ -25785,7 +25785,7 @@ var RowCtrl = /** @class */ (function (_super) {
         this.setEditingRow(true);
     };
     RowCtrl.prototype.getAllCellCtrls = function () {
-        var res = __spread$v(this.centerCellCtrls.list, this.leftCellCtrls.list, this.rightCellCtrls.list);
+        var res = __spread$u(this.centerCellCtrls.list, this.leftCellCtrls.list, this.rightCellCtrls.list);
         return res;
     };
     RowCtrl.prototype.postProcessClassesFromGridOptions = function () {
@@ -26204,7 +26204,7 @@ var __decorate$2s = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$T = (undefined && undefined.__read) || function (o, n) {
+var __read$S = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -26421,7 +26421,7 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
         var _a = this, pinnedRowModel = _a.pinnedRowModel, paginationProxy = _a.paginationProxy, rangeService = _a.rangeService;
         var PINNED_BOTTOM = Constants.PINNED_BOTTOM, PINNED_TOP = Constants.PINNED_TOP;
         if (rangeService && paginationProxy.isRowsToRender()) {
-            var _b = __read$T([
+            var _b = __read$S([
                 pinnedRowModel.isEmpty(PINNED_TOP),
                 pinnedRowModel.isEmpty(PINNED_BOTTOM)
             ], 2), isEmptyPinnedTop = _b[0], isEmptyPinnedBottom = _b[1];
@@ -26956,7 +26956,7 @@ var __decorate$2l = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$S = (undefined && undefined.__read) || function (o, n) {
+var __read$R = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -26972,8 +26972,8 @@ var __read$S = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$u = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$S(arguments[i]));
+var __spread$t = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$R(arguments[i]));
     return ar;
 };
 var RowContainerName;
@@ -27155,7 +27155,7 @@ var RowContainerCtrl = /** @class */ (function (_super) {
         var allStickyTopNoFW = [RowContainerName.STICKY_TOP_CENTER, RowContainerName.STICKY_TOP_LEFT, RowContainerName.STICKY_TOP_RIGHT];
         var allBottomNoFW = [RowContainerName.BOTTOM_CENTER, RowContainerName.BOTTOM_LEFT, RowContainerName.BOTTOM_RIGHT];
         var allMiddleNoFW = [RowContainerName.CENTER, RowContainerName.LEFT, RowContainerName.RIGHT];
-        var allNoFW = __spread$u(allTopNoFW, allBottomNoFW, allMiddleNoFW, allStickyTopNoFW);
+        var allNoFW = __spread$t(allTopNoFW, allBottomNoFW, allMiddleNoFW, allStickyTopNoFW);
         var allMiddle = [RowContainerName.CENTER, RowContainerName.LEFT, RowContainerName.RIGHT, RowContainerName.FULL_WIDTH];
         var allCenter = [RowContainerName.CENTER, RowContainerName.TOP_CENTER, RowContainerName.STICKY_TOP_CENTER, RowContainerName.BOTTOM_CENTER];
         var allLeft = [RowContainerName.LEFT, RowContainerName.BOTTOM_LEFT, RowContainerName.TOP_LEFT, RowContainerName.STICKY_TOP_LEFT];
@@ -29339,7 +29339,7 @@ var __decorate$2d = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$R = (undefined && undefined.__read) || function (o, n) {
+var __read$Q = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -29611,7 +29611,7 @@ var MoveColumnFeature = /** @class */ (function () {
             var a = parents(columns[i]);
             var b = parents(columns[i + 1]);
             // iterate over the longest one
-            _a = __read$R(a.length > b.length ? [a, b] : [b, a], 2), a = _a[0], b = _a[1];
+            _a = __read$Q(a.length > b.length ? [a, b] : [b, a], 2), a = _a[0], b = _a[1];
             a.forEach(function (parent) {
                 if (b.indexOf(parent) === -1) {
                     count++; // More fragmented if other column doesn't share the parent
@@ -29933,7 +29933,7 @@ var BodyDropTarget = /** @class */ (function (_super) {
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __read$Q = (undefined && undefined.__read) || function (o, n) {
+var __read$P = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -29949,8 +29949,8 @@ var __read$Q = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$t = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$Q(arguments[i]));
+var __spread$s = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$P(arguments[i]));
     return ar;
 };
 var CssClassApplier = /** @class */ (function () {
@@ -29997,7 +29997,7 @@ var CssClassApplier = /** @class */ (function () {
             return [classToUse];
         }
         if (Array.isArray(classToUse)) {
-            return __spread$t(classToUse);
+            return __spread$s(classToUse);
         }
         return [];
     };
@@ -34447,7 +34447,7 @@ var __decorate$1Y = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$P = (undefined && undefined.__read) || function (o, n) {
+var __read$O = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -34463,8 +34463,8 @@ var __read$P = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$s = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$P(arguments[i]));
+var __spread$r = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$O(arguments[i]));
     return ar;
 };
 var HeaderRowContainerCtrl = /** @class */ (function (_super) {
@@ -34546,7 +34546,7 @@ var HeaderRowContainerCtrl = /** @class */ (function (_super) {
         this.focusService.focusHeaderPosition({ headerPosition: position });
     };
     HeaderRowContainerCtrl.prototype.getAllCtrls = function () {
-        var res = __spread$s(this.groupsRowCtrls, [this.columnsRowCtrl]);
+        var res = __spread$r(this.groupsRowCtrls, [this.columnsRowCtrl]);
         if (this.filtersRowCtrl) {
             res.push(this.filtersRowCtrl);
         }
@@ -36734,7 +36734,7 @@ var __values$p = (undefined && undefined.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read$O = (undefined && undefined.__read) || function (o, n) {
+var __read$N = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -36750,8 +36750,8 @@ var __read$O = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$r = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$O(arguments[i]));
+var __spread$q = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$N(arguments[i]));
     return ar;
 };
 var StickyRowFeature = /** @class */ (function (_super) {
@@ -36863,7 +36863,7 @@ var StickyRowFeature = /** @class */ (function (_super) {
             rowNode.sticky = true;
             return _this.createRowCon(rowNode, false, false);
         });
-        (_b = this.stickyRowCtrls).push.apply(_b, __spread$r(newCtrls));
+        (_b = this.stickyRowCtrls).push.apply(_b, __spread$q(newCtrls));
         this.stickyRowCtrls.forEach(function (ctrl) { return ctrl.setRowTop(ctrl.getRowNode().stickyRowTop); });
         this.stickyRowCtrls.sort(function (a, b) { return b.getRowNode().rowIndex - a.getRowNode().rowIndex; });
         if (this.containerHeight !== height) {
@@ -36911,7 +36911,7 @@ var __decorate$1L = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$N = (undefined && undefined.__read) || function (o, n) {
+var __read$M = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -36927,8 +36927,8 @@ var __read$N = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$q = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$N(arguments[i]));
+var __spread$p = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$M(arguments[i]));
     return ar;
 };
 /** @class */ ((function (_super) {
@@ -37006,7 +37006,7 @@ var __spread$q = (undefined && undefined.__spread) || function () {
         }
         var zombieList = getAllValuesInObject(this.zombieRowCtrls);
         var cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
-        this.allRowCtrls = __spread$q(liveList, zombieList, cachedList);
+        this.allRowCtrls = __spread$p(liveList, zombieList, cachedList);
     };
     // in a clean design, each cell would register for each of these events. however when scrolling, all the cells
     // registering and de-registering for events is a performance bottleneck. so we register here once and inform
@@ -37355,7 +37355,7 @@ var __spread$q = (undefined && undefined.__spread) || function () {
     RowRenderer.prototype.getAllRowCtrls = function () {
         var _this = this;
         var stickyRowCtrls = (this.stickyRowFeature && this.stickyRowFeature.getStickyRowCtrls()) || [];
-        var res = __spread$q(this.topRowCtrls, this.bottomRowCtrls, stickyRowCtrls);
+        var res = __spread$p(this.topRowCtrls, this.bottomRowCtrls, stickyRowCtrls);
         Object.keys(this.rowCtrlsByRowIndex).forEach(function (key) { return res.push(_this.rowCtrlsByRowIndex[key]); });
         return res;
     };
@@ -39862,7 +39862,7 @@ var __decorate$1D = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$M = (undefined && undefined.__read) || function (o, n) {
+var __read$L = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -40033,7 +40033,7 @@ var AgColorPanel = /** @class */ (function (_super) {
     };
     AgColorPanel.prototype.setValue = function (val) {
         var color = Color$1.fromString(val);
-        var _a = __read$M(color.toHSB(), 3), h = _a[0], s = _a[1], b = _a[2];
+        var _a = __read$L(color.toHSB(), 3), h = _a[0], s = _a[1], b = _a[2];
         this.H = (isNaN(h) ? 0 : h) / 360;
         this.A = color.a;
         var spectrumHueRect = this.spectrumHueRect || this.refreshHueRect();
@@ -40965,7 +40965,7 @@ var __extends$2D = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __read$L = (undefined && undefined.__read) || function (o, n) {
+var __read$K = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -40981,8 +40981,8 @@ var __read$L = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$p = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$L(arguments[i]));
+var __spread$o = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$K(arguments[i]));
     return ar;
 };
 var TabGuardComp = /** @class */ (function (_super) {
@@ -41027,7 +41027,7 @@ var TabGuardComp = /** @class */ (function (_super) {
     TabGuardComp.prototype.removeAllChildrenExceptTabGuards = function () {
         var tabGuards = [this.eTopGuard, this.eBottomGuard];
         clearElement(this.getFocusableElement());
-        this.addTabGuards.apply(this, __spread$p(tabGuards));
+        this.addTabGuards.apply(this, __spread$o(tabGuards));
     };
     TabGuardComp.prototype.forceFocusOutOfContainer = function (up) {
         if (up === void 0) { up = false; }
@@ -41670,7 +41670,7 @@ var __decorate$1v = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$K = (undefined && undefined.__read) || function (o, n) {
+var __read$J = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -41686,8 +41686,8 @@ var __read$K = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$o = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$K(arguments[i]));
+var __spread$n = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$J(arguments[i]));
     return ar;
 };
 var FocusService = /** @class */ (function (_super) {
@@ -41727,7 +41727,7 @@ var FocusService = /** @class */ (function (_super) {
         var docControllers = FocusService_1.instancesMonitored.get(doc);
         var newControllers = [];
         if (docControllers && docControllers.length) {
-            newControllers = __spread$o(docControllers).filter(function (currentGridCore) { return currentGridCore !== controller; });
+            newControllers = __spread$n(docControllers).filter(function (currentGridCore) { return currentGridCore !== controller; });
             FocusService_1.instancesMonitored.set(doc, newControllers);
         }
         if (newControllers.length === 0) {
@@ -42180,7 +42180,7 @@ var __decorate$1u = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$J = (undefined && undefined.__read) || function (o, n) {
+var __read$I = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -42196,8 +42196,8 @@ var __read$J = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$n = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$J(arguments[i]));
+var __spread$m = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$I(arguments[i]));
     return ar;
 };
 var DIRECTION;
@@ -42472,7 +42472,7 @@ var instanceIdSeq = 0;
         var eWrapper = document.createElement('div');
         var allThemes = this.environment.getTheme().allThemes;
         if (allThemes.length) {
-            (_a = eWrapper.classList).add.apply(_a, __spread$n(allThemes));
+            (_a = eWrapper.classList).add.apply(_a, __spread$m(allThemes));
         }
         eWrapper.classList.add('ag-popup');
         eChild.classList.add(this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr', 'ag-popup-child');
@@ -43031,7 +43031,7 @@ var __decorate$1s = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$I = (undefined && undefined.__read) || function (o, n) {
+var __read$H = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -43047,8 +43047,8 @@ var __read$I = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$m = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$I(arguments[i]));
+var __spread$l = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$H(arguments[i]));
     return ar;
 };
 /** @class */ ((function (_super) {
@@ -43219,7 +43219,7 @@ var __spread$m = (undefined && undefined.__spread) || function () {
         if (!this.gridOptionsWrapper.isGroupRowsSticky() || !rowNode || !rowNode.sticky) {
             return;
         }
-        var stickyRowCtrls = __spread$m(this.rowRenderer.getStickyTopRowCtrls()).sort(function (a, b) { return a.getRowNode().rowIndex - b.getRowNode().rowIndex; });
+        var stickyRowCtrls = __spread$l(this.rowRenderer.getStickyTopRowCtrls()).sort(function (a, b) { return a.getRowNode().rowIndex - b.getRowNode().rowIndex; });
         var diff = up ? -1 : 1;
         var idx = stickyRowCtrls.findIndex(function (ctrl) { return ctrl.getRowNode().rowIndex === rowNode.rowIndex; });
         var nextCtrl = stickyRowCtrls[idx + diff];
@@ -45170,7 +45170,7 @@ var __decorate$1i = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$H = (undefined && undefined.__read) || function (o, n) {
+var __read$G = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -45186,8 +45186,8 @@ var __read$H = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$l = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$H(arguments[i]));
+var __spread$k = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$G(arguments[i]));
     return ar;
 };
 /** @class */ ((function (_super) {
@@ -45213,7 +45213,7 @@ var __spread$l = (undefined && undefined.__spread) || function () {
                 var rowGroupColumns = this.columnModel.getSourceColumnsForGroupColumn(column);
                 var sortableRowGroupColumns = (_a = rowGroupColumns) === null || _a === void 0 ? void 0 : _a.filter(function (col) { return col.getColDef().sortable; });
                 if (sortableRowGroupColumns) {
-                    columnsToUpdate = __spread$l([column], sortableRowGroupColumns);
+                    columnsToUpdate = __spread$k([column], sortableRowGroupColumns);
                 }
             }
         }
@@ -45235,7 +45235,7 @@ var __spread$l = (undefined && undefined.__spread) || function () {
         // reset sort index on everything
         this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach(function (col) { return col.setSortIndex(null); });
         var allSortedColsWithoutChanges = allSortedCols.filter(function (col) { return col !== lastSortIndexCol; });
-        var sortedColsWithIndices = !!lastSortIndexCol.getSort() ? __spread$l(allSortedColsWithoutChanges, [lastSortIndexCol]) : allSortedColsWithoutChanges;
+        var sortedColsWithIndices = !!lastSortIndexCol.getSort() ? __spread$k(allSortedColsWithoutChanges, [lastSortIndexCol]) : allSortedColsWithoutChanges;
         sortedColsWithIndices.forEach(function (col, idx) { return (col.setSortIndex(idx)); });
     };
     // gets called by API, so if data changes, use can call this, which will end up
@@ -45379,7 +45379,7 @@ var __spread$l = (undefined && undefined.__spread) || function () {
         }
         // if column has unique data, its sorting is independent - but can still be mixed
         var columnHasUniqueData = !!column.getColDef().field;
-        var sortableColumns = columnHasUniqueData ? __spread$l([column], linkedColumns) : linkedColumns;
+        var sortableColumns = columnHasUniqueData ? __spread$k([column], linkedColumns) : linkedColumns;
         var firstSort = sortableColumns[0].getSort();
         // the == is intentional, as null and undefined both represent no sort, which means they are equivalent
         var allMatch = sortableColumns.every(function (col) { return col.getSort() == firstSort; });
@@ -48548,7 +48548,7 @@ var __decorate$U = (undefined && undefined.__decorate) || function (decorators, 
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __read$G = (undefined && undefined.__read) || function (o, n) {
+var __read$F = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -48565,7 +48565,7 @@ var __read$G = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$G(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$F(arguments[i]));
     return ar;
 };
 
@@ -48616,7 +48616,7 @@ var __decorate$T = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$F = (undefined && undefined.__read) || function (o, n) {
+var __read$E = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -48675,7 +48675,7 @@ var LicenseManager = /** @class */ (function (_super) {
         var hashStart = cleanedLicenseKey.length - 32;
         var md5 = cleanedLicenseKey.substring(hashStart);
         var license = cleanedLicenseKey.substring(0, hashStart);
-        var _a = __read$F(LicenseManager_1.extractBracketedInformation(cleanedLicenseKey), 2), version = _a[0], isTrial = _a[1];
+        var _a = __read$E(LicenseManager_1.extractBracketedInformation(cleanedLicenseKey), 2), version = _a[0], isTrial = _a[1];
         return { md5: md5, license: license, version: version, isTrial: isTrial };
     };
     LicenseManager.prototype.getLicenseDetails = function (licenseKey) {
@@ -49481,7 +49481,7 @@ var __decorate$P = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$E = (undefined && undefined.__read) || function (o, n) {
+var __read$D = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -49497,8 +49497,8 @@ var __read$E = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$k = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$E(arguments[i]));
+var __spread$j = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$D(arguments[i]));
     return ar;
 };
 var ChartDataModel = /** @class */ (function (_super) {
@@ -49696,10 +49696,10 @@ var ChartDataModel = /** @class */ (function (_super) {
         }
         var columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
         if (this.dimensionCellRange) {
-            columns.push.apply(columns, __spread$k(this.dimensionCellRange.columns));
+            columns.push.apply(columns, __spread$j(this.dimensionCellRange.columns));
         }
         if (this.valueCellRange) {
-            columns.push.apply(columns, __spread$k(this.valueCellRange.columns));
+            columns.push.apply(columns, __spread$j(this.valueCellRange.columns));
         }
         return _.convertToSet(columns);
     };
@@ -49849,7 +49849,7 @@ var ChartDataModel = /** @class */ (function (_super) {
             // just update the selected value on the supplied value column
             valueColState.filter(idsMatch).forEach(function (cs) { return cs.selected = updatedCol.selected; });
         }
-        var allColumns = __spread$k(dimensionColState, valueColState);
+        var allColumns = __spread$j(dimensionColState, valueColState);
         var orderedColIds = [];
         // calculate new order
         allColumns.forEach(function (col, i) {
@@ -49919,7 +49919,7 @@ var ChartDataModel = /** @class */ (function (_super) {
                 colsInRange.forEach(function (c) { return orderedColIds_1.push(c.getColId()); });
             }
             selectedValueCols.sort(function (a, b) { return orderedColIds_1.indexOf(a.getColId()) - orderedColIds_1.indexOf(b.getColId()); });
-            this.valueCellRange = this.createCellRange.apply(this, __spread$k([CellRangeType.VALUE], selectedValueCols));
+            this.valueCellRange = this.createCellRange.apply(this, __spread$j([CellRangeType.VALUE], selectedValueCols));
         }
     };
     ChartDataModel.prototype.syncDimensionCellRange = function () {
@@ -50005,7 +50005,7 @@ var BBox = /** @class */ (function () {
     return BBox;
 }());
 
-var __read$D = (undefined && undefined.__read) || function (o, n) {
+var __read$C = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -50180,7 +50180,7 @@ var Matrix = /** @class */ (function () {
      * Returns the inverse of this matrix as a new matrix.
      */
     Matrix.prototype.inverse = function () {
-        var _a = __read$D(this.elements, 6), a = _a[0], b = _a[1], c = _a[2], d = _a[3], e = _a[4], f = _a[5];
+        var _a = __read$C(this.elements, 6), a = _a[0], b = _a[1], c = _a[2], d = _a[3], e = _a[4], f = _a[5];
         var rD = 1 / (a * d - b * c); // reciprocal of determinant
         a *= rD;
         b *= rD;
@@ -50192,7 +50192,7 @@ var Matrix = /** @class */ (function () {
      * Save the inverse of this matrix to the given matrix.
      */
     Matrix.prototype.inverseTo = function (other) {
-        var _a = __read$D(this.elements, 6), a = _a[0], b = _a[1], c = _a[2], d = _a[3], e = _a[4], f = _a[5];
+        var _a = __read$C(this.elements, 6), a = _a[0], b = _a[1], c = _a[2], d = _a[3], e = _a[4], f = _a[5];
         var rD = 1 / (a * d - b * c); // reciprocal of determinant
         a *= rD;
         b *= rD;
@@ -50462,7 +50462,7 @@ var __values$o = (undefined && undefined.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read$C = (undefined && undefined.__read) || function (o, n) {
+var __read$B = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -50831,7 +50831,7 @@ var Node$1 = /** @class */ (function (_super) {
         //       can be done using D3-like scales already by inverting the output range.
         //       So for now, just assume that centers of scaling and rotation are at the origin.
         // const [bbcx, bbcy] = this.computeBBoxCenter();
-        var _a = __read$C([0, 0], 2), bbcx = _a[0], bbcy = _a[1];
+        var _a = __read$B([0, 0], 2), bbcx = _a[0], bbcy = _a[1];
         var sx = this.scalingX;
         var sy = this.scalingY;
         var scx;
@@ -52352,7 +52352,7 @@ function object (a, b) {
     };
 }
 
-var __read$B = (undefined && undefined.__read) || function (o, n) {
+var __read$A = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -52447,14 +52447,14 @@ var Color = /** @class */ (function () {
     Color.fromHexString = function (str) {
         var values = Color.parseHex(str);
         if (values) {
-            var _a = __read$B(values, 4), r = _a[0], g = _a[1], b = _a[2], a = _a[3];
+            var _a = __read$A(values, 4), r = _a[0], g = _a[1], b = _a[2], a = _a[3];
             return new Color(r / 255, g / 255, b / 255, a / 255);
         }
         throw new Error("Malformed hexadecimal color string: '" + str + "'");
     };
     Color.stringToRgba = function (str) {
         // Find positions of opening and closing parentheses.
-        var _a = __read$B([NaN, NaN], 2), po = _a[0], pc = _a[1];
+        var _a = __read$A([NaN, NaN], 2), po = _a[0], pc = _a[1];
         for (var i = 0; i < str.length; i++) {
             var c = str[i];
             if (!po && c === '(') {
@@ -52945,7 +52945,7 @@ function ascendingComparator(map) {
     };
 }
 
-var __read$A = (undefined && undefined.__read) || function (o, n) {
+var __read$z = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -52968,7 +52968,7 @@ function clamper$1(domain) {
     var a = domain[0];
     var b = domain[domain.length - 1];
     if (a > b) {
-        _a = __read$A([b, a], 2), a = _a[0], b = _a[1];
+        _a = __read$z([b, a], 2), a = _a[0], b = _a[1];
     }
     return function (x) { return Math.max(a, Math.min(b, x)); };
 }
@@ -56211,7 +56211,7 @@ var __decorate$H = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$z = (undefined && undefined.__read) || function (o, n) {
+var __read$y = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -56227,8 +56227,8 @@ var __read$z = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$j = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$z(arguments[i]));
+var __spread$i = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$y(arguments[i]));
     return ar;
 };
 var __values$j = (undefined && undefined.__values) || function(o) {
@@ -56586,7 +56586,7 @@ var Axis = /** @class */ (function () {
         },
         set: function (value) {
             if (value && value.length === 2) {
-                var _a = __read$z(value, 2), min = _a[0], max = _a[1];
+                var _a = __read$y(value, 2), min = _a[0], max = _a[1];
                 min = Math.max(0, min);
                 max = Math.min(1, max);
                 min = Math.min(min, max);
@@ -56685,8 +56685,8 @@ var Axis = /** @class */ (function () {
     Axis.prototype.update = function () {
         var _a, _b;
         var _c = this, axisGroup = _c.axisGroup, gridlineGroup = _c.gridlineGroup, crossLineGroup = _c.crossLineGroup, scale = _c.scale, gridLength = _c.gridLength, tick = _c.tick, label = _c.label, requestedRange = _c.requestedRange, translation = _c.translation;
-        var requestedRangeMin = Math.min.apply(Math, __spread$j(requestedRange));
-        var requestedRangeMax = Math.max.apply(Math, __spread$j(requestedRange));
+        var requestedRangeMin = Math.min.apply(Math, __spread$i(requestedRange));
+        var requestedRangeMax = Math.max.apply(Math, __spread$i(requestedRange));
         var rotation = toRadians(this.rotation);
         var parallelLabels = label.parallel;
         var translationX = Math.floor(translation.x);
@@ -56842,8 +56842,8 @@ var Axis = /** @class */ (function () {
         var _this = this;
         var ticks = _a.ticks, tickLineGroupSelection = _a.tickLineGroupSelection, sideFlag = _a.sideFlag, parallelFlipRotation = _a.parallelFlipRotation, regularFlipRotation = _a.regularFlipRotation;
         var _b = this, label = _b.label, parallelLabels = _b.label.parallel, scale = _b.scale, tick = _b.tick, requestedRange = _b.requestedRange;
-        var requestedRangeMin = Math.min.apply(Math, __spread$j(requestedRange));
-        var requestedRangeMax = Math.max.apply(Math, __spread$j(requestedRange));
+        var requestedRangeMin = Math.min.apply(Math, __spread$i(requestedRange));
+        var requestedRangeMax = Math.max.apply(Math, __spread$i(requestedRange));
         var labelAutoRotation = 0;
         var labelRotation = label.rotation ? normalizeAngle360(toRadians(label.rotation)) : 0;
         var parallelFlipFlag = !labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI ? -1 : 1;
@@ -56891,7 +56891,7 @@ var Axis = /** @class */ (function () {
             var padding = 12;
             try {
                 for (var _b = __values$j(bboxes.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var _d = __read$z(_c.value, 2), i = _d[0], bbox = _d[1];
+                    var _d = __read$y(_c.value, 2), i = _d[0], bbox = _d[1];
                     if (bbox == null) {
                         continue;
                     }
@@ -57077,7 +57077,7 @@ var __extends$1L = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __read$y = (undefined && undefined.__read) || function (o, n) {
+var __read$x = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -57093,8 +57093,8 @@ var __read$y = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$i = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$y(arguments[i]));
+var __spread$h = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$x(arguments[i]));
     return ar;
 };
 var ChartAxisDirection;
@@ -57157,7 +57157,7 @@ var ChartAxis = /** @class */ (function (_super) {
         if (!this.useCalculatedTickCount()) {
             return;
         }
-        var _a = this, count = _a.tick.count, _b = __read$y(_a.range, 2), min = _b[0], max = _b[1];
+        var _a = this, count = _a.tick.count, _b = __read$x(_a.range, 2), min = _b[0], max = _b[1];
         if (count !== undefined) {
             this._calculatedTickCount = undefined;
             return;
@@ -57180,7 +57180,7 @@ var ChartAxis = /** @class */ (function (_super) {
         }
         var ticks = ((_b = (_a = this.scale).ticks) === null || _b === void 0 ? void 0 : _b.call(_a, 10)) || [domain[0], domain[domain.length - 1]];
         // Dynamic optimal tick interval based upon label scale.
-        var approxMaxLabelCharacters = Math.max.apply(Math, __spread$i(ticks.map(function (v) {
+        var approxMaxLabelCharacters = Math.max.apply(Math, __spread$h(ticks.map(function (v) {
             return String(v).length;
         })));
         return approxMaxLabelCharacters * fontSize + padding;
@@ -57240,7 +57240,7 @@ var ChartAxis = /** @class */ (function (_super) {
                 .forEach(function (series) {
                 domains_1.push(series.getDomain(direction));
             });
-            var domain = (_b = new Array()).concat.apply(_b, __spread$i(domains_1));
+            var domain = (_b = new Array()).concat.apply(_b, __spread$h(domains_1));
             var isYAxis = this.direction === 'y';
             primaryTickCount = this.updateDomain(domain, isYAxis, primaryTickCount);
         }
@@ -57266,7 +57266,7 @@ var __extends$1K = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __read$x = (undefined && undefined.__read) || function (o, n) {
+var __read$w = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -57289,7 +57289,7 @@ function clamper(domain) {
     var a = domain[0];
     var b = domain[domain.length - 1];
     if (a > b) {
-        _a = __read$x([b, a], 2), a = _a[0], b = _a[1];
+        _a = __read$w([b, a], 2), a = _a[0], b = _a[1];
     }
     return function (x) { return (x >= a && x <= b ? x : NaN); };
 }
@@ -57327,7 +57327,7 @@ var NumberAxis = /** @class */ (function (_super) {
         if (primaryTickCount) {
             // when `primaryTickCount` is supplied the current axis is a secondary axis which needs to be aligned to
             // the primary by constraining the tick count to the primary axis tick count
-            var _b = __read$x(calculateNiceSecondaryAxis(domain, primaryTickCount), 2), d = _b[0], ticks = _b[1];
+            var _b = __read$w(calculateNiceSecondaryAxis(domain, primaryTickCount), 2), d = _b[0], ticks = _b[1];
             scale.domain = d;
             this.ticks = ticks;
             return;
@@ -57405,7 +57405,7 @@ var NumberAxis = /** @class */ (function (_super) {
     return NumberAxis;
 }(ChartAxis));
 
-var __read$w = (undefined && undefined.__read) || function (o, n) {
+var __read$v = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -57589,10 +57589,10 @@ var BandScale = /** @class */ (function () {
         if (!n) {
             return;
         }
-        var _b = __read$w(this._range, 2), a = _b[0], b = _b[1];
+        var _b = __read$v(this._range, 2), a = _b[0], b = _b[1];
         var reversed = b < a;
         if (reversed) {
-            _a = __read$w([b, a], 2), a = _a[0], b = _a[1];
+            _a = __read$v([b, a], 2), a = _a[0], b = _a[1];
         }
         var rawStep = (b - a) / Math.max(1, n - this._paddingInner + this._paddingOuter * 2);
         var step = rawStep;
@@ -57631,7 +57631,7 @@ var __extends$1J = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __read$v = (undefined && undefined.__read) || function (o, n) {
+var __read$u = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -57647,8 +57647,8 @@ var __read$v = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$h = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$v(arguments[i]));
+var __spread$g = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$u(arguments[i]));
     return ar;
 };
 var CategoryAxis = /** @class */ (function (_super) {
@@ -57688,7 +57688,7 @@ var CategoryAxis = /** @class */ (function (_super) {
         set: function (values) {
             // Prevent duplicate categories.
             var valuesSet = new Set(values);
-            this.scale.domain = new (Array.bind.apply(Array, __spread$h([void 0], valuesSet.values())))();
+            this.scale.domain = new (Array.bind.apply(Array, __spread$g([void 0], valuesSet.values())))();
         },
         enumerable: true,
         configurable: true
@@ -58040,7 +58040,7 @@ var __extends$1I = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __read$u = (undefined && undefined.__read) || function (o, n) {
+var __read$t = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -58056,8 +58056,8 @@ var __read$u = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$g = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$u(arguments[i]));
+var __spread$f = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$t(arguments[i]));
     return ar;
 };
 var GroupedCategoryAxisLabel = /** @class */ (function (_super) {
@@ -58201,7 +58201,7 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
                 domains.push(series.getDomain(direction));
             }
         });
-        var domain = (_b = new Array()).concat.apply(_b, __spread$g(domains));
+        var domain = (_b = new Array()).concat.apply(_b, __spread$f(domains));
         this.domain = extent(domain, isContinuous) || domain;
         return { primaryTickCount: primaryTickCount };
     };
@@ -59453,7 +59453,7 @@ var __extends$1G = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __read$t = (undefined && undefined.__read) || function (o, n) {
+var __read$s = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -59562,7 +59562,7 @@ var TimeScale = /** @class */ (function (_super) {
                 interval = this.year;
             }
             else if (i) {
-                _a = __read$t(tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i], 2), interval = _a[0], step = _a[1];
+                _a = __read$s(tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i], 2), interval = _a[0], step = _a[1];
             }
             else {
                 step = Math.max(tickStep(start, stop, interval), 1);
@@ -59634,8 +59634,8 @@ var TimeScale = /** @class */ (function (_super) {
         var x0 = domain[i0];
         var x1 = domain[i1];
         if (x1 < x0) {
-            _a = __read$t([i1, i0], 2), i0 = _a[0], i1 = _a[1];
-            _b = __read$t([x1, x0], 2), x0 = _b[0], x1 = _b[1];
+            _a = __read$s([i1, i0], 2), i0 = _a[0], i1 = _a[1];
+            _b = __read$s([x1, x0], 2), x0 = _b[0], x1 = _b[1];
         }
         domain[i0] = interval.floor(x0);
         domain[i1] = interval.ceil(x1);
@@ -59657,7 +59657,7 @@ var __extends$1F = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __read$s = (undefined && undefined.__read) || function (o, n) {
+var __read$r = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -59713,7 +59713,7 @@ var TimeAxis = /** @class */ (function (_super) {
         configurable: true
     });
     TimeAxis.prototype.setDomain = function (domain, _primaryTickCount) {
-        var _a = this, scale = _a.scale, nice = _a.nice, _b = __read$s(_a._domain, 2), min = _b[0], max = _b[1], calculatedTickCount = _a.calculatedTickCount;
+        var _a = this, scale = _a.scale, nice = _a.nice, _b = __read$r(_a._domain, 2), min = _b[0], max = _b[1], calculatedTickCount = _a.calculatedTickCount;
         if (domain.length > 2) {
             domain = (extent(domain, isContinuous, Number) || [0, 1000]).map(function (x) { return new Date(x); });
         }
@@ -59843,7 +59843,7 @@ var __assign$q = (undefined && undefined.__assign) || function () {
     };
     return __assign$q.apply(this, arguments);
 };
-var __read$r = (undefined && undefined.__read) || function (o, n) {
+var __read$q = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -59859,8 +59859,8 @@ var __read$r = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$f = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$r(arguments[i]));
+var __spread$e = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$q(arguments[i]));
     return ar;
 };
 var __values$i = (undefined && undefined.__values) || function(o) {
@@ -60057,10 +60057,10 @@ var Scene = /** @class */ (function () {
         var _c = opts || {}, _d = _c.debugSplitTimes, debugSplitTimes = _d === void 0 ? [performance.now()] : _d, _e = _c.extraDebugStats, extraDebugStats = _e === void 0 ? {} : _e;
         var _f = this, canvas = _f.canvas, ctx = _f.ctx, root = _f.root, layers = _f.layers, pendingSize = _f.pendingSize, mode = _f.opts.mode;
         if (pendingSize) {
-            (_a = this.canvas).resize.apply(_a, __spread$f(pendingSize));
+            (_a = this.canvas).resize.apply(_a, __spread$e(pendingSize));
             this.layers.forEach(function (layer) {
                 var _a;
-                return (_a = layer.canvas).resize.apply(_a, __spread$f(pendingSize));
+                return (_a = layer.canvas).resize.apply(_a, __spread$e(pendingSize));
             });
             this.pendingSize = undefined;
         }
@@ -60135,7 +60135,7 @@ var Scene = /** @class */ (function () {
                 .join(' + ');
             var extras = Object.entries(extraDebugStats)
                 .map(function (_a) {
-                var _b = __read$r(_a, 2), k = _b[0], v = _b[1];
+                var _b = __read$q(_a, 2), k = _b[0], v = _b[1];
                 return k + ": " + v;
             })
                 .join(' ; ');
@@ -60250,7 +60250,7 @@ var __decorate$G = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$q = (undefined && undefined.__read) || function (o, n) {
+var __read$p = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -60266,8 +60266,8 @@ var __read$q = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$e = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$q(arguments[i]));
+var __spread$d = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$p(arguments[i]));
     return ar;
 };
 var __values$h = (undefined && undefined.__values) || function(o) {
@@ -60433,7 +60433,7 @@ var Series = /** @class */ (function (_super) {
                 var value = _this[key];
                 if (value) {
                     if (Array.isArray(value)) {
-                        values.push.apply(values, __spread$e(value));
+                        values.push.apply(values, __spread$d(value));
                     }
                     else {
                         values.push(value);
@@ -60518,7 +60518,7 @@ var Series = /** @class */ (function (_super) {
         try {
             for (var pickModes_1 = __values$h(pickModes), pickModes_1_1 = pickModes_1.next(); !pickModes_1_1.done; pickModes_1_1 = pickModes_1.next()) {
                 var pickMode = pickModes_1_1.value;
-                if (limitPickModes && limitPickModes.includes(pickMode)) {
+                if (limitPickModes && !limitPickModes.includes(pickMode)) {
                     continue;
                 }
                 var match = undefined;
@@ -60578,7 +60578,7 @@ var Series = /** @class */ (function (_super) {
             // Don't return a range, there is no range.
             return [];
         }
-        var _a = __read$q(extent, 2), min = _a[0], max = _a[1];
+        var _a = __read$p(extent, 2), min = _a[0], max = _a[1];
         min = +min;
         max = +max;
         if (min === 0 && max === 0) {
@@ -61427,7 +61427,7 @@ var __decorate$D = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$p = (undefined && undefined.__read) || function (o, n) {
+var __read$o = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -61443,8 +61443,8 @@ var __read$p = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$d = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$p(arguments[i]));
+var __spread$c = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$o(arguments[i]));
     return ar;
 };
 var __values$g = (undefined && undefined.__values) || function(o) {
@@ -61639,7 +61639,7 @@ var Legend = /** @class */ (function () {
     Legend.prototype.performLayout = function (width, height) {
         var _this = this;
         var _a = this.item, paddingX = _a.paddingX, paddingY = _a.paddingY, label = _a.label, maxWidth = _a.maxWidth, _b = _a.marker, markerSize = _b.size, markerPadding = _b.padding, markerShape = _b.shape, _c = _a.label, _d = _c.maxLength, maxLength = _d === void 0 ? Infinity : _d, fontStyle = _c.fontStyle, fontWeight = _c.fontWeight, fontSize = _c.fontSize, fontFamily = _c.fontFamily;
-        var data = __spread$d(this.data);
+        var data = __spread$c(this.data);
         if (this.reverseOrder) {
             data.reverse();
         }
@@ -62138,7 +62138,7 @@ var __decorate$B = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$o = (undefined && undefined.__read) || function (o, n) {
+var __read$n = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -62154,8 +62154,8 @@ var __read$o = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$c = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$o(arguments[i]));
+var __spread$b = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$n(arguments[i]));
     return ar;
 };
 var __values$e = (undefined && undefined.__values) || function(o) {
@@ -62192,6 +62192,14 @@ var CartesianSeries = /** @class */ (function (_super) {
         _this.opts = { pickGroupIncludes: pickGroupIncludes, pathsPerSeries: pathsPerSeries, features: features };
         return _this;
     }
+    Object.defineProperty(CartesianSeries.prototype, "contextNodeData", {
+        get: function () {
+            var _a;
+            return (_a = this._contextNodeData) === null || _a === void 0 ? void 0 : _a.slice();
+        },
+        enumerable: true,
+        configurable: true
+    });
     /**
      * Note: we are passing `isContinuousX` and `isContinuousY` into this method because it will
      *       typically be called inside a loop and this check only needs to happen once.
@@ -62222,7 +62230,7 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.update = function () {
         var _a = this, seriesItemEnabled = _a.seriesItemEnabled, visible = _a.visible, _b = _a.chart, _c = (_b === void 0 ? {} : _b).highlightedDatum, _d = (_c === void 0 ? {} : _c).series, series = _d === void 0 ? undefined : _d;
         var seriesHighlighted = series ? series === this : undefined;
-        var anySeriesItemEnabled = (visible && seriesItemEnabled.size === 0) || __spread$c(seriesItemEnabled.values()).some(function (v) { return v === true; });
+        var anySeriesItemEnabled = (visible && seriesItemEnabled.size === 0) || __spread$b(seriesItemEnabled.values()).some(function (v) { return v === true; });
         this.updateSelections(seriesHighlighted, anySeriesItemEnabled);
         this.updateNodes(seriesHighlighted, anySeriesItemEnabled);
     };
@@ -62237,12 +62245,12 @@ var CartesianSeries = /** @class */ (function (_super) {
         }
         if (this.nodeDataRefresh) {
             this.nodeDataRefresh = false;
-            this.contextNodeData = this.createNodeData();
+            this._contextNodeData = this.createNodeData();
             this.updateSeriesGroups();
         }
         this.subGroups.forEach(function (subGroup, seriesIdx) {
             var datumSelection = subGroup.datumSelection, labelSelection = subGroup.labelSelection, markerSelection = subGroup.markerSelection, paths = subGroup.paths;
-            var contextData = _this.contextNodeData[seriesIdx];
+            var contextData = _this._contextNodeData[seriesIdx];
             var nodeData = contextData.nodeData, labelData = contextData.labelData, itemId = contextData.itemId;
             _this.updatePaths({ seriesHighlighted: seriesHighlighted, itemId: itemId, contextData: contextData, paths: paths, seriesIdx: seriesIdx });
             subGroup.datumSelection = _this.updateDatumSelection({ nodeData: nodeData, datumSelection: datumSelection, seriesIdx: seriesIdx });
@@ -62254,7 +62262,7 @@ var CartesianSeries = /** @class */ (function (_super) {
     };
     CartesianSeries.prototype.updateSeriesGroups = function () {
         var _this = this;
-        var _a = this, contextNodeData = _a.contextNodeData, subGroups = _a.subGroups, _b = _a.opts, pickGroupIncludes = _b.pickGroupIncludes, pathsPerSeries = _b.pathsPerSeries, features = _b.features;
+        var _a = this, contextNodeData = _a._contextNodeData, subGroups = _a.subGroups, _b = _a.opts, pickGroupIncludes = _b.pickGroupIncludes, pathsPerSeries = _b.pathsPerSeries, features = _b.features;
         if (contextNodeData.length === subGroups.length) {
             return;
         }
@@ -62307,9 +62315,9 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.updateNodes = function (seriesHighlighted, anySeriesItemEnabled) {
         var _this = this;
         var _a;
-        var _b = this, highlightSelection = _b.highlightSelection, highlightLabelSelection = _b.highlightLabelSelection, contextNodeData = _b.contextNodeData, seriesItemEnabled = _b.seriesItemEnabled, features = _b.opts.features;
+        var _b = this, highlightSelection = _b.highlightSelection, highlightLabelSelection = _b.highlightLabelSelection, contextNodeData = _b._contextNodeData, seriesItemEnabled = _b.seriesItemEnabled, features = _b.opts.features;
         var markersEnabled = features.includes('markers');
-        var visible = this.visible && ((_a = this.contextNodeData) === null || _a === void 0 ? void 0 : _a.length) > 0 && anySeriesItemEnabled;
+        var visible = this.visible && ((_a = this._contextNodeData) === null || _a === void 0 ? void 0 : _a.length) > 0 && anySeriesItemEnabled;
         this.group.visible = visible;
         this.seriesGroup.visible = visible;
         this.highlightGroup.visible = visible && !!seriesHighlighted;
@@ -62346,7 +62354,7 @@ var CartesianSeries = /** @class */ (function (_super) {
     };
     CartesianSeries.prototype.updateHighlightSelection = function (seriesHighlighted) {
         var e_1, _a;
-        var _b = this, _c = _b.chart, _d = _c === void 0 ? {} : _c, _e = _d.highlightedDatum, _f = (_e === void 0 ? {} : _e).datum, datum = _f === void 0 ? undefined : _f, _g = _d.highlightedDatum, highlightedDatum = _g === void 0 ? undefined : _g, highlightSelection = _b.highlightSelection, highlightLabelSelection = _b.highlightLabelSelection, contextNodeData = _b.contextNodeData;
+        var _b = this, _c = _b.chart, _d = _c === void 0 ? {} : _c, _e = _d.highlightedDatum, _f = (_e === void 0 ? {} : _e).datum, datum = _f === void 0 ? undefined : _f, _g = _d.highlightedDatum, highlightedDatum = _g === void 0 ? undefined : _g, highlightSelection = _b.highlightSelection, highlightLabelSelection = _b.highlightLabelSelection, contextNodeData = _b._contextNodeData;
         var item = seriesHighlighted && highlightedDatum && datum ? highlightedDatum : undefined;
         this.highlightSelection = this.updateHighlightSelectionItem({ item: item, highlightSelection: highlightSelection });
         var labelItem;
@@ -62403,7 +62411,7 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.pickNodeClosestDatum = function (x, y) {
         var e_3, _a, e_4, _b;
         var _c, _d;
-        var _e = this, xAxis = _e.xAxis, yAxis = _e.yAxis, group = _e.group, contextNodeData = _e.contextNodeData;
+        var _e = this, xAxis = _e.xAxis, yAxis = _e.yAxis, group = _e.group, contextNodeData = _e._contextNodeData;
         var hitPoint = group.transformPoint(x, y);
         var minDistance = Infinity;
         var closestDatum;
@@ -62450,7 +62458,7 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.pickNodeMainAxisFirst = function (x, y, requireCategoryAxis) {
         var e_5, _a, e_6, _b;
         var _c, _d;
-        var _e = this, xAxis = _e.xAxis, yAxis = _e.yAxis, group = _e.group, contextNodeData = _e.contextNodeData;
+        var _e = this, xAxis = _e.xAxis, yAxis = _e.yAxis, group = _e.group, contextNodeData = _e._contextNodeData;
         // Prefer to start search with any available category axis.
         var directions = [xAxis, yAxis]
             .filter(function (a) { return a instanceof CategoryAxis; })
@@ -62459,7 +62467,7 @@ var CartesianSeries = /** @class */ (function (_super) {
             return;
         }
         // Default to X-axis unless we found a suitable category axis.
-        var _f = __read$o(directions, 1), _g = _f[0], primaryDirection = _g === void 0 ? ChartAxisDirection.X : _g;
+        var _f = __read$n(directions, 1), _g = _f[0], primaryDirection = _g === void 0 ? ChartAxisDirection.X : _g;
         var hitPoint = group.transformPoint(x, y);
         var hitPointCoords = primaryDirection === ChartAxisDirection.X ? [hitPoint.x, hitPoint.y] : [hitPoint.y, hitPoint.x];
         var minDistance = [Infinity, Infinity];
@@ -62526,6 +62534,9 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.isPathOrSelectionDirty = function () {
         // Override point to allow more sophisticated dirty selection detection.
         return false;
+    };
+    CartesianSeries.prototype.getLabelData = function () {
+        return [];
     };
     CartesianSeries.prototype.updatePaths = function (opts) {
         // Override point for sub-classes.
@@ -62615,26 +62626,6 @@ var __values$d = (undefined && undefined.__values) || function(o) {
         }
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
-var __read$n = (undefined && undefined.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread$b = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$n(arguments[i]));
-    return ar;
 };
 var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: table;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-hidden {\n    top: -10000px !important;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n    overflow: hidden;\n}\n\n.ag-chart-tooltip-content:empty {\n    padding: 0;\n    height: 7px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
 function toTooltipHtml(input, defaults) {
@@ -62824,7 +62815,6 @@ var Chart = /** @class */ (function (_super) {
         });
         _this._axes = [];
         _this._series = [];
-        _this.nodeData = new Map();
         _this.legendBBox = new BBox(0, 0, 0, 0);
         _this._onMouseDown = _this.onMouseDown.bind(_this);
         _this._onMouseMove = _this.onMouseMove.bind(_this);
@@ -63068,6 +63058,8 @@ var Chart = /** @class */ (function (_super) {
             case ChartUpdateType.PROCESS_DATA:
                 this.processData();
                 splits.push(performance.now());
+                // Disable tooltip/highlight if the data fundamentally shifted.
+                this.disableTooltip({ updateProcessing: false });
             // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (!firstRenderComplete && !firstResizeReceived) {
@@ -63317,37 +63309,36 @@ var Chart = /** @class */ (function (_super) {
         this.series.forEach(function (s) { return s.processData(); });
         this.updateLegend();
     };
-    Chart.prototype.createNodeData = function () {
-        var _this = this;
-        this.nodeData.clear();
-        this.series.forEach(function (s) {
-            var data = s.visible ? s.createNodeData() : [];
-            _this.nodeData.set(s, data);
-        });
-    };
     Chart.prototype.placeLabels = function () {
-        var seriesIndex = [];
+        var e_5, _a;
+        var visibleSeries = [];
         var data = [];
-        this.nodeData.forEach(function (contexts, series) {
-            if (!series.visible || !series.label.enabled) {
-                return;
-            }
-            var seriesData = [];
-            contexts.forEach(function (context) {
-                var contextData = context.labelData;
-                if (!isPointLabelDatum(contextData[0])) {
-                    return;
+        try {
+            for (var _b = __values$d(this.series), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var series = _c.value;
+                if (!series.visible || !series.label.enabled) {
+                    continue;
                 }
-                seriesData.push.apply(seriesData, __spread$b(contextData));
-            });
-            data.push(seriesData);
-            seriesIndex.push(series);
-        });
+                var labelData = series.getLabelData();
+                if (!(labelData && isPointLabelDatum(labelData[0]))) {
+                    continue;
+                }
+                data.push(labelData);
+                visibleSeries.push(series);
+            }
+        }
+        catch (e_5_1) { e_5 = { error: e_5_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_5) throw e_5.error; }
+        }
         var seriesRect = this.seriesRect;
-        var labels = seriesRect
+        var labels = seriesRect && data.length > 0
             ? placeLabels(data, { x: 0, y: 0, width: seriesRect.width, height: seriesRect.height })
             : [];
-        return new Map(labels.map(function (l, i) { return [seriesIndex[i], l]; }));
+        return new Map(labels.map(function (l, i) { return [visibleSeries[i], l]; }));
     };
     Chart.prototype.updateLegend = function () {
         var legendData = [];
@@ -63486,7 +63477,7 @@ var Chart = /** @class */ (function (_super) {
     };
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
     Chart.prototype.pickSeriesNode = function (x, y) {
-        var e_5, _a;
+        var e_6, _a;
         var _b, _c;
         var tracking = this.tooltip.tracking;
         var start = performance.now();
@@ -63511,12 +63502,12 @@ var Chart = /** @class */ (function (_super) {
                 }
             }
         }
-        catch (e_5_1) { e_5 = { error: e_5_1 }; }
+        catch (e_6_1) { e_6 = { error: e_6_1 }; }
         finally {
             try {
                 if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
             }
-            finally { if (e_5) throw e_5.error; }
+            finally { if (e_6) throw e_6.error; }
         }
         this.extraDebugStats['pickSeriesNode'] = Math.round((_c = this.extraDebugStats['pickSeriesNode'], (_c !== null && _c !== void 0 ? _c : 0)) + (performance.now() - start));
         return result;
@@ -63537,6 +63528,11 @@ var Chart = /** @class */ (function (_super) {
             this.handleTooltipTrigger.schedule();
         }
     };
+    Chart.prototype.disableTooltip = function (_a) {
+        var _b = (_a === void 0 ? {} : _a).updateProcessing, updateProcessing = _b === void 0 ? true : _b;
+        this.changeHighlightDatum(undefined, { updateProcessing: updateProcessing });
+        this.tooltip.toggle(false);
+    };
     Chart.prototype.handleTooltip = function (meta) {
         var _this = this;
         var lastPick = this.lastPick;
@@ -63544,8 +63540,7 @@ var Chart = /** @class */ (function (_super) {
         var disableTooltip = function () {
             if (lastPick) {
                 // Cursor moved from a non-marker node to empty space.
-                _this.changeHighlightDatum();
-                _this.tooltip.toggle(false);
+                _this.disableTooltip();
             }
         };
         if (!(this.seriesRect && this.seriesRect.containsPoint(offsetX, offsetY))) {
@@ -63672,9 +63667,13 @@ var Chart = /** @class */ (function (_super) {
                     };
                 }
             }
+            else {
+                this.highlightedDatum = undefined;
+            }
         }
         // Careful to only schedule updates when necessary.
         if ((this.highlightedDatum && !oldHighlightedDatum) ||
+            (!this.highlightedDatum && oldHighlightedDatum) ||
             (this.highlightedDatum &&
                 oldHighlightedDatum &&
                 (this.highlightedDatum.series !== oldHighlightedDatum.series ||
@@ -63711,10 +63710,11 @@ var Chart = /** @class */ (function (_super) {
         }
         return meta;
     };
-    Chart.prototype.changeHighlightDatum = function (newPick) {
+    Chart.prototype.changeHighlightDatum = function (newPick, opts) {
+        var _a = (opts !== null && opts !== void 0 ? opts : {}).updateProcessing, updateProcessing = _a === void 0 ? true : _a;
         var seriesToUpdate = new Set();
-        var _a = newPick || {}, _b = _a.datum, _c = (_b === void 0 ? {} : _b).series, newSeries = _c === void 0 ? undefined : _c, _d = _a.datum, datum = _d === void 0 ? undefined : _d;
-        var _e = this.lastPick, _f = (_e === void 0 ? {} : _e).datum, _g = (_f === void 0 ? {} : _f).series, lastSeries = _g === void 0 ? undefined : _g;
+        var _b = newPick || {}, _c = _b.datum, _d = (_c === void 0 ? {} : _c).series, newSeries = _d === void 0 ? undefined : _d, _e = _b.datum, datum = _e === void 0 ? undefined : _e;
+        var _f = this.lastPick, _g = (_f === void 0 ? {} : _f).datum, _h = (_g === void 0 ? {} : _g).series, lastSeries = _h === void 0 ? undefined : _h;
         if (lastSeries) {
             seriesToUpdate.add(lastSeries);
         }
@@ -63724,6 +63724,9 @@ var Chart = /** @class */ (function (_super) {
         }
         this.lastPick = newPick;
         this.highlightedDatum = datum;
+        if (!updateProcessing) {
+            return;
+        }
         var updateAll = newSeries == null || lastSeries == null;
         if (updateAll) {
             this.update(ChartUpdateType.SERIES_UPDATE);
@@ -65154,6 +65157,9 @@ var PolarSeries = /** @class */ (function (_super) {
         _this.radius = 0;
         return _this;
     }
+    PolarSeries.prototype.getLabelData = function () {
+        return [];
+    };
     return PolarSeries;
 }(Series));
 /** @class */ ((function (_super) {
@@ -65549,7 +65555,7 @@ var AreaSeries = /** @class */ (function (_super) {
                 var value = datum[yKey];
                 var seriesYs = yData[i] || (yData[i] = []);
                 if (!seriesItemEnabled.get(yKey)) {
-                    seriesYs.push(0);
+                    seriesYs.push(NaN);
                 }
                 else {
                     var yDatum = checkDatum(value, isContinuousY);
@@ -65580,8 +65586,8 @@ var AreaSeries = /** @class */ (function (_super) {
         //   [7, -15], <- series 2 (yKey2)
         //   [-9, 20] <- series 3 (yKey3)
         // ]
-        var yMin = 0;
-        var yMax = 0;
+        var yMin = undefined;
+        var yMax = undefined;
         for (var i = 0; i < xData.length; i++) {
             var total = { sum: 0, absSum: 0 };
             try {
@@ -65593,10 +65599,10 @@ var AreaSeries = /** @class */ (function (_super) {
                     var y = +seriesYs[i]; // convert to number as the value could be a Date object
                     total.absSum += Math.abs(y);
                     total.sum += y;
-                    if (total.sum > yMax) {
+                    if (total.sum >= ((yMax !== null && yMax !== void 0 ? yMax : 0))) {
                         yMax = total.sum;
                     }
-                    else if (total.sum < yMin) {
+                    else if (total.sum <= ((yMin !== null && yMin !== void 0 ? yMin : 0))) {
                         yMin = total.sum;
                     }
                 }
@@ -65620,10 +65626,10 @@ var AreaSeries = /** @class */ (function (_super) {
                     seriesYs[i] = normalizedY;
                     // sum normalized values to get updated yMin and yMax of normalized area
                     normalizedTotal += normalizedY;
-                    if (normalizedTotal > yMax) {
+                    if (normalizedTotal >= ((yMax !== null && yMax !== void 0 ? yMax : 0))) {
                         yMax = normalizedTotal;
                     }
-                    else if (normalizedTotal < yMin) {
+                    else if (normalizedTotal <= ((yMin !== null && yMin !== void 0 ? yMin : 0))) {
                         yMin = normalizedTotal;
                     }
                 }
@@ -65640,10 +65646,10 @@ var AreaSeries = /** @class */ (function (_super) {
             // multiplier to control the unused whitespace in the y domain, value selected by subjective visual 'niceness'.
             var domainWhitespaceAdjustment = 0.5;
             // set the yMin and yMax based on cumulative sum of normalized values
-            yMin = yMin < -normalizedTo * domainWhitespaceAdjustment ? -normalizedTo : yMin;
-            yMax = yMax > normalizedTo * domainWhitespaceAdjustment ? normalizedTo : yMax;
+            yMin = ((yMin !== null && yMin !== void 0 ? yMin : 0)) < -normalizedTo * domainWhitespaceAdjustment ? -normalizedTo : yMin;
+            yMax = ((yMax !== null && yMax !== void 0 ? yMax : 0)) > normalizedTo * domainWhitespaceAdjustment ? normalizedTo : yMax;
         }
-        this.yDomain = this.fixNumericExtent([yMin, yMax], yAxis);
+        this.yDomain = this.fixNumericExtent(yMin === undefined && yMax === undefined ? undefined : [(yMin !== null && yMin !== void 0 ? yMin : 0), (yMax !== null && yMax !== void 0 ? yMax : 0)], yAxis);
         return true;
     };
     AreaSeries.prototype.getDomain = function (direction) {
@@ -66690,9 +66696,12 @@ var BarSeries = /** @class */ (function (_super) {
     };
     BarSeries.prototype.updateDatumNodes = function (opts) {
         var _this = this;
+        var _a, _b;
         var datumSelection = opts.datumSelection, isDatumHighlighted = opts.isHighlight;
-        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, formatter = _a.formatter, xKey = _a.xKey, flipXY = _a.flipXY, _b = _a.highlightStyle, deprecatedFill = _b.fill, deprecatedStroke = _b.stroke, deprecatedStrokeWidth = _b.strokeWidth, _c = _b.item, _d = _c.fill, highlightedFill = _d === void 0 ? deprecatedFill : _d, _e = _c.stroke, highlightedStroke = _e === void 0 ? deprecatedStroke : _e, _f = _c.strokeWidth, highlightedDatumStrokeWidth = _f === void 0 ? deprecatedStrokeWidth : _f;
-        var crisp = !datumSelection.data.some(function (d) { return d.width <= 0.5 || d.height <= 0.5; });
+        var _c = this, fills = _c.fills, strokes = _c.strokes, fillOpacity = _c.fillOpacity, strokeOpacity = _c.strokeOpacity, shadow = _c.shadow, formatter = _c.formatter, xKey = _c.xKey, flipXY = _c.flipXY, _d = _c.highlightStyle, deprecatedFill = _d.fill, deprecatedStroke = _d.stroke, deprecatedStrokeWidth = _d.strokeWidth, _e = _d.item, _f = _e.fill, highlightedFill = _f === void 0 ? deprecatedFill : _f, _g = _e.stroke, highlightedStroke = _g === void 0 ? deprecatedStroke : _g, _h = _e.strokeWidth, highlightedDatumStrokeWidth = _h === void 0 ? deprecatedStrokeWidth : _h;
+        var _j = __read$j((_b = (_a = this.xAxis) === null || _a === void 0 ? void 0 : _a.visibleRange, (_b !== null && _b !== void 0 ? _b : [])), 2), visibleMin = _j[0], visibleMax = _j[1];
+        var isZoomed = visibleMin !== 0 || visibleMax !== 1;
+        var crisp = !isZoomed && !datumSelection.data.some(function (d) { return d.width <= 0.5 || d.height <= 0.5; });
         datumSelection.each(function (rect, datum) {
             rect.visible = !isDatumHighlighted || isDatumHighlighted;
             if (!rect.visible) {
@@ -66964,7 +66973,15 @@ var LineSeriesTooltip = /** @class */ (function (_super) {
 var LineSeries = /** @class */ (function (_super) {
     __extends$1d(LineSeries, _super);
     function LineSeries() {
-        var _this = _super.call(this, { pickGroupIncludes: ['markers'], features: ['markers'] }) || this;
+        var _this = _super.call(this, {
+            pickGroupIncludes: ['markers'],
+            features: ['markers'],
+            pickModes: [
+                SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                SeriesNodePickMode.NEAREST_NODE,
+                SeriesNodePickMode.EXACT_SHAPE_MATCH,
+            ],
+        }) || this;
         _this.xDomain = [];
         _this.yDomain = [];
         _this.xData = [];
@@ -67401,7 +67418,11 @@ var ScatterSeries = /** @class */ (function (_super) {
     function ScatterSeries() {
         var _this = _super.call(this, {
             pickGroupIncludes: ['markers'],
-            pickModes: [SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST, SeriesNodePickMode.NEAREST_NODE],
+            pickModes: [
+                SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                SeriesNodePickMode.NEAREST_NODE,
+                SeriesNodePickMode.EXACT_SHAPE_MATCH,
+            ],
             pathsPerSeries: 0,
             features: ['markers'],
         }) || this;
@@ -67574,6 +67595,10 @@ var ScatterSeries = /** @class */ (function (_super) {
     };
     ScatterSeries.prototype.isPathOrSelectionDirty = function () {
         return this.marker.isDirty();
+    };
+    ScatterSeries.prototype.getLabelData = function () {
+        var _a;
+        return (_a = this.contextNodeData) === null || _a === void 0 ? void 0 : _a.reduce(function (r, n) { return r.concat(n.labelData); }, []);
     };
     ScatterSeries.prototype.updateMarkerSelection = function (opts) {
         var nodeData = opts.nodeData, markerSelection = opts.markerSelection;
@@ -68237,6 +68262,9 @@ var HierarchySeries = /** @class */ (function (_super) {
     function HierarchySeries() {
         return _super.call(this, { pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH] }) || this;
     }
+    HierarchySeries.prototype.getLabelData = function () {
+        return [];
+    };
     return HierarchySeries;
 }(Series));
 

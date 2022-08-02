@@ -32,6 +32,9 @@ class PolarSeries extends series_1.Series {
          */
         this.radius = 0;
     }
+    getLabelData() {
+        return [];
+    }
 }
 exports.PolarSeries = PolarSeries;
 class PolarSeriesMarker extends seriesMarker_1.SeriesMarker {

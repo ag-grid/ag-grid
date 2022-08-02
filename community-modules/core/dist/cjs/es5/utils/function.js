@@ -6,8 +6,6 @@
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 var doOnceFlags = {};
 /**
  * If the key was passed before, then doesn't execute the func
@@ -32,12 +30,6 @@ function getFunctionName(funcConstructor) {
     return matches && matches.length === 2 ? matches[1].trim() : null;
 }
 exports.getFunctionName = getFunctionName;
-/** @deprecated */
-function getFunctionParameters(func) {
-    var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
-    return fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES) || [];
-}
-exports.getFunctionParameters = getFunctionParameters;
 function isFunction(val) {
     return !!(val && val.constructor && val.call && val.apply);
 }

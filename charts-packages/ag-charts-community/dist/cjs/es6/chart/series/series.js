@@ -228,7 +228,7 @@ class Series extends observable_1.Observable {
             return;
         }
         for (const pickMode of pickModes) {
-            if (limitPickModes && limitPickModes.includes(pickMode)) {
+            if (limitPickModes && !limitPickModes.includes(pickMode)) {
                 continue;
             }
             let match = undefined;

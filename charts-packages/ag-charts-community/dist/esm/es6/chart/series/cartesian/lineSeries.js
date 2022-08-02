@@ -1,5 +1,5 @@
 import { ContinuousScale } from '../../../scale/continuousScale';
-import { SeriesTooltip } from '../series';
+import { SeriesTooltip, SeriesNodePickMode, } from '../series';
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
 import { Text } from '../../../scene/shape/text';
@@ -26,7 +26,15 @@ export class LineSeriesTooltip extends SeriesTooltip {
 }
 export class LineSeries extends CartesianSeries {
     constructor() {
-        super({ pickGroupIncludes: ['markers'], features: ['markers'] });
+        super({
+            pickGroupIncludes: ['markers'],
+            features: ['markers'],
+            pickModes: [
+                SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                SeriesNodePickMode.NEAREST_NODE,
+                SeriesNodePickMode.EXACT_SHAPE_MATCH,
+            ],
+        });
         this.xDomain = [];
         this.yDomain = [];
         this.xData = [];

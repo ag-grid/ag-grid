@@ -5,5 +5,8 @@ class HierarchySeries extends series_1.Series {
     constructor() {
         super({ pickModes: [series_1.SeriesNodePickMode.EXACT_SHAPE_MATCH] });
     }
+    getLabelData() {
+        return [];
+    }
 }
 exports.HierarchySeries = HierarchySeries;

@@ -497,9 +497,12 @@ export class BarSeries extends CartesianSeries {
         return updateRects.merge(enterRects);
     }
     updateDatumNodes(opts) {
+        var _a, _b;
         const { datumSelection, isHighlight: isDatumHighlighted } = opts;
         const { fills, strokes, fillOpacity, strokeOpacity, shadow, formatter, xKey, flipXY, highlightStyle: { fill: deprecatedFill, stroke: deprecatedStroke, strokeWidth: deprecatedStrokeWidth, item: { fill: highlightedFill = deprecatedFill, stroke: highlightedStroke = deprecatedStroke, strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth, }, }, } = this;
-        const crisp = !datumSelection.data.some((d) => d.width <= 0.5 || d.height <= 0.5);
+        const [visibleMin, visibleMax] = (_b = (_a = this.xAxis) === null || _a === void 0 ? void 0 : _a.visibleRange, (_b !== null && _b !== void 0 ? _b : []));
+        const isZoomed = visibleMin !== 0 || visibleMax !== 1;
+        const crisp = !isZoomed && !datumSelection.data.some((d) => d.width <= 0.5 || d.height <= 0.5);
         datumSelection.each((rect, datum) => {
             rect.visible = !isDatumHighlighted || isDatumHighlighted;
             if (!rect.visible) {
