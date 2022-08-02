@@ -114,7 +114,7 @@ const OPTIONS: AgCartesianChartOptions = {
             xKey: 'year',
             yKeys: ['adults', 'children'],
             yNames: ['Adults', 'Children'],
-            strokeWidth: 3,
+            strokeWidth: 10,
             normalizedTo: 32,
             marker: { enabled: true },
         },
@@ -147,6 +147,10 @@ const OPTIONS: AgCartesianChartOptions = {
             position: 'left',
             keys: ['women', 'men', 'children', 'adults'],
             title: { text: 'Adults Who Eat 5 A Day (%)' },
+            crossLines: [
+                { type: 'range', strokeWidth: 10, stroke: 'red', range: [20, 30] },
+                { type: 'line', strokeWidth: 5, stroke: 'red', lineDash: [8, 3], value: 15 },
+            ],
         },
         {
             // secondary y axis
