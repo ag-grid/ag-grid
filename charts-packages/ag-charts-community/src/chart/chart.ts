@@ -564,6 +564,9 @@ export abstract class Chart extends Observable {
             case ChartUpdateType.PROCESS_DATA:
                 this.processData();
                 splits.push(performance.now());
+
+                // Disable tooltip/highlight if the data fundamentally shifted.
+                this.disableTooltip({ updateProcessing: false });
             // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (!firstRenderComplete && !firstResizeReceived) {
@@ -1106,6 +1109,11 @@ export abstract class Chart extends Observable {
         }
     }
 
+    private disableTooltip({ updateProcessing = true } = {}) {
+        this.changeHighlightDatum(undefined, { updateProcessing });
+        this.tooltip.toggle(false);
+    }
+
     private lastTooltipMeta?: TooltipMeta = undefined;
     private handleTooltipTrigger = debouncedAnimationFrame(() => {
         this.handleTooltip(this.lastTooltipMeta!);
@@ -1117,8 +1125,7 @@ export abstract class Chart extends Observable {
         const disableTooltip = () => {
             if (lastPick) {
                 // Cursor moved from a non-marker node to empty space.
-                this.changeHighlightDatum();
-                this.tooltip.toggle(false);
+                this.disableTooltip();
             }
         };
 
@@ -1336,7 +1343,11 @@ export abstract class Chart extends Observable {
 
     highlightedDatum?: SeriesNodeDatum;
 
-    changeHighlightDatum(newPick?: { datum: SeriesNodeDatum; event?: MouseEvent }) {
+    changeHighlightDatum(
+        newPick?: { datum: SeriesNodeDatum; event?: MouseEvent },
+        opts?: { updateProcessing: boolean }
+    ) {
+        const { updateProcessing = true } = opts ?? {};
         const seriesToUpdate: Set<Series> = new Set<Series>();
         const { datum: { series: newSeries = undefined } = {}, datum = undefined } = newPick || {};
         const { lastPick: { datum: { series: lastSeries = undefined } = {} } = {} } = this;
@@ -1352,6 +1363,10 @@ export abstract class Chart extends Observable {
 
         this.lastPick = newPick;
         this.highlightedDatum = datum;
+
+        if (!updateProcessing) {
+            return;
+        }
 
         let updateAll = newSeries == null || lastSeries == null;
         if (updateAll) {
