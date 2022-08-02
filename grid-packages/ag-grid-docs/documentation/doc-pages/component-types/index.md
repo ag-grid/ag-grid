@@ -2,6 +2,22 @@
 title: "Component Types"
 ---
 
+[[only-javascript]]
+|You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
+
+[[only-vue]]
+|You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
+
+[[only-react]]
+|<video-section id="eglfpHRpcu0" title="React Custom Components" header="true">
+|You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
+|</video-section>
+
+[[only-angular]]
+|<video-section id="A5-Li_9oPSE" title="Angular Custom Components" header="true">
+|You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
+|</video-section>
+
 The full list of component types you can provide in AG Grid are as follows:
 
 - [Cell Renderer](/component-cell-renderer/): To customise the contents of a cell.
