@@ -5,8 +5,8 @@ import {ICellRendererParams} from "@ag-grid-community/core";
 @Component({
     selector: 'total-value-component',
     template: `
-        <span>
-             <span>{{country}}</span>&nbsp;
+        <span class="total-value-renderer">
+             <span>{{country}}</span>
              <button (click)="buttonClicked()">Push For Total</button>
         </span>
     `

@@ -9,8 +9,11 @@
     width: 100%;
 }
 
-.total-value-renderer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.example-header {
+    padding-bottom: 1rem;
+}
+
+.example-header span {
+    background-color: lightpink;
+    padding: 5px;
 }

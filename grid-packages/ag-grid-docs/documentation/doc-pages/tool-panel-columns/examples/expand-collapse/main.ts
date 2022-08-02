@@ -50,6 +50,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     sortable: true,
     resizable: true,
   },
+  autoGroupColumnDef: {
+    minWidth: 200,
+  },
   sideBar: 'columns',
   onGridReady: (params) => {
     var columnToolPanel = (gridOptions.api!.getToolPanelInstance(

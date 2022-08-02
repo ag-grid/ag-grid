@@ -2,6 +2,7 @@ import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } fr
 import { ChartAxisDirection } from '../../chartAxis';
 import { SeriesMarker, SeriesMarkerFormatterParams } from '../seriesMarker';
 import { RedrawType, SceneChangeDetection } from '../../../scene/changeDetectable';
+import { PointLabelDatum } from '../../../util/labelPlacement';
 export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
     directionKeys = {
         [ChartAxisDirection.X]: ['angleKey'],
@@ -26,6 +27,10 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
 
     constructor() {
         super({ pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH] });
+    }
+
+    getLabelData(): PointLabelDatum[] {
+        return [];
     }
 }
 

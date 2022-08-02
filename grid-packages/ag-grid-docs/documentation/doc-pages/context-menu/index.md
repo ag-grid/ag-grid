@@ -3,16 +3,7 @@ title: "Context Menu"
 enterprise: true
 ---
 
-The user can bring up the context menu by right clicking on a cell. By default, the context menu provides 'copy', 'paste' and 'export'. Copy will copy the selected cells or rows to the clipboard. Paste will always, forever, be disabled.
-
-[[note]]
-| The 'paste' operation in the context menu is not possible and hence always disabled.
-| It is not possible because of a browser security restriction that JavaScript cannot
-| take data from the clipboard without the user explicitly doing a paste command from the browser
-| (e.g. <kbd>Ctrl</kbd>+<kbd>V</kbd> or from the browser menu). If JavaScript could do this, then websites could steal
-| data from the client by accessing the clipboard maliciously. The reason why the grid keeps
-| the disabled paste option in the menu is to indicate to the user that paste is possible and it provides
-| the keyboard shortcut as a hint to the user.
+The user can bring up the context menu by right clicking on a cell. By default, the context menu provides 'copy', 'paste' and 'export'. Copy will copy the selected cells or rows to the clipboard. Paste will always, forever, be disabled - see [Paste Disabled](#paste-disabled) for details.
 
 ## Configuring the Context Menu
 
@@ -92,3 +83,10 @@ Most of the time, you will simply set the popup parent to the document body.
 The example below is identical to the previous example except it sets the popup parent to the document body.
 
 <grid-example title='Small Grid Solution' name='popup-parent-solution' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "clipboard"], "exampleHeight": 400 }'></grid-example>
+
+## Paste Disabled
+
+[[note]]
+| The 'paste' operation in the context menu is not possible and hence always disabled.
+
+It is not possible to have the paste operation because of a browser security restriction that JavaScript cannot take data from the clipboard without the user explicitly doing a paste command from the browser (e.g. <kbd>Ctrl</kbd>+<kbd>V</kbd> or from the browser menu). If JavaScript could do this, then websites could steal data from the client by accessing the clipboard maliciously. The reason why the grid keeps the disabled paste option in the menu is to indicate to the user that paste is possible and it provides the keyboard shortcut as a hint to the user.

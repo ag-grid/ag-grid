@@ -9,7 +9,8 @@ export class MedalRenderer implements ICellRendererComp {
     init(params: ICellRendererParams) {
         this.total = params.data.total
 
-        this.eGui = document.createElement('span')
+        this.eGui = document.createElement('span');
+        this.eGui.classList.add('total-value-renderer')
 
         const label = document.createElement('span');
         label.innerText = params.valueFormatted ? params.valueFormatted : params.value;

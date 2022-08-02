@@ -84,11 +84,9 @@ The example below shows the `getMainMenuItems()` in action. To demonstrate diffe
 
 ## Customising the Columns Menu Tab
 
-The behaviour and appearance of the Columns Menu tab can be customised by supplying `ColumnsMenuParams` to the column definition: `colDef.columnsMenuParams`.
+The behaviour and appearance of the Columns Menu tab can be customised by supplying `ColumnsMenuParams` to the column definition: `colDef.columnsMenuParams`. Note that all of the properties are initially set to `false`.
 
-Note that all of the properties are initially set to `false`.
-
-<api-documentation source='column-properties/properties.json' section='header' names='["columnsMenuParams"]' ></api-documentation>
+<interface-documentation interfaceName='ColumnsMenuParams' ></interface-documentation>
 
 The following example demonstrates all of the above columns menu tab properties. Note the following:
 

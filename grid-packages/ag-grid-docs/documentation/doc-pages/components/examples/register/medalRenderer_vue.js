@@ -1,7 +1,7 @@
 export default {
     template: `
-            <span>
-             <span>{{country}}</span>&nbsp;
+            <span class="total-value-renderer">
+             <span>{{country}}</span>
              <button @click="buttonClicked($event)">Push For Total</button>
         </span>
 `,

@@ -8,6 +8,7 @@ import { Label } from '../label';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
 import { Deprecated } from '../../util/validation';
+import { PointLabelDatum } from '../../util/labelPlacement';
 
 /**
  * Processed series datum used in node selections,
@@ -420,6 +421,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         // to use this feature.
         throw new Error('AG Charts - Series.pickNodeMainAxisFirst() not implemented');
     }
+
+    abstract getLabelData(): PointLabelDatum[];
 
     fireNodeClickEvent(_event: MouseEvent, _datum: C['nodeData'][number]): void {
         // Override point for subclasses.
