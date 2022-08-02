@@ -781,12 +781,13 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     protected getZIndex(datum?: { itemId?: any }): number {
         const defaultZIndex = super.getZIndex(datum);
 
-        if (this._yKeys.length > 1) {
-            // Stacked case - need special handling so that markers don't end-up overlapped.
-            return defaultZIndex - 10;
+        if (this._yKeys.length <= 1) {
+            return defaultZIndex;
         }
 
-        return defaultZIndex;
+        // Stacked case - need special handling so that markers don't end-up overlapped.
+        const stackIndex = this._yKeys.indexOf(datum?.itemId ?? '');
+        return defaultZIndex - 10 - stackIndex;
     }
 
     fireNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): void {

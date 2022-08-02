@@ -116,10 +116,13 @@ export type SeriesNodeDataContext<S = SeriesNodeDatum, L = S> = {
 };
 
 export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataContext> extends Observable {
+    static readonly SERIES_CROSSLINE_RANGE_ZINDEX = 0;
     static readonly SERIES_LAYER_ZINDEX = 100;
+    protected static readonly SERIES_MARKER_LAYER_ZINDEX = 1000;
+    static readonly SERIES_HIGHLIGHT_LAYER_ZINDEX = 2000;
+    static readonly SERIES_CROSSLINE_LINE_ZINDEX = 2500;
+
     protected static readonly highlightedZIndex = 1000000000000;
-    protected static readonly SERIES_MARKER_LAYER_ZINDEX = 110;
-    static readonly SERIES_HIGHLIGHT_LAYER_ZINDEX = 150;
 
     readonly id = createId(this);
 

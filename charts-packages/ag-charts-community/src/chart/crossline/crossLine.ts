@@ -45,8 +45,8 @@ interface CrossLinePathData {
 type CrossLineType = 'line' | 'range';
 
 export class CrossLine {
-    protected static readonly LINE_LAYER_ZINDEX = Series.SERIES_HIGHLIGHT_LAYER_ZINDEX + 10;
-    protected static readonly RANGE_LAYER_ZINDEX = Series.SERIES_LAYER_ZINDEX - 10;
+    protected static readonly LINE_LAYER_ZINDEX = Series.SERIES_CROSSLINE_LINE_ZINDEX;
+    protected static readonly RANGE_LAYER_ZINDEX = Series.SERIES_CROSSLINE_RANGE_ZINDEX;
 
     static className = 'CrossLine';
     readonly id = createId(this);
