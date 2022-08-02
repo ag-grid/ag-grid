@@ -719,11 +719,11 @@
   },
   "pinnedTopRowData": {
     "description": "/** Data to be displayed as pinned top rows in the grid. */",
-    "type": { "returnType": "TData[]" }
+    "type": { "returnType": "any[]" }
   },
   "pinnedBottomRowData": {
     "description": "/** Data to be displayed as pinned bottom rows in the grid. */",
-    "type": { "returnType": "TData[]" }
+    "type": { "returnType": "any[]" }
   },
   "rowModelType": {
     "description": "/** Sets the row model type. Default: `clientSide` */",

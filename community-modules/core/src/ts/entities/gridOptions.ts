@@ -603,9 +603,9 @@ export interface GridOptions<TData = any> {
 
     // *** Row Pinning *** //
     /** Data to be displayed as pinned top rows in the grid. */
-    pinnedTopRowData?: TData[];
+    pinnedTopRowData?: any[];
     /** Data to be displayed as pinned bottom rows in the grid. */
-    pinnedBottomRowData?: TData[];
+    pinnedBottomRowData?: any[];
 
     // *** Row Model *** //
     /** Sets the row model type. Default: `clientSide` */
