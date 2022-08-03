@@ -120,6 +120,13 @@ const EXAMPLES_NO_SERIES: Record<string, TestCase> = {
             seriesTypes: ['area'],
         }),
     },
+    AREA_CHART_STACKED_NORMALISED_NO_SERIES: {
+        options: examples.AREA_CHART_STACKED_NORMALISED_NO_SERIES,
+        assertions: cartesianChartAssertions({
+            axisTypes: ['category', 'number'],
+            seriesTypes: ['area'],
+        }),
+    },
 };
 
 function mixinDerivedCases(baseCases: Record<string, TestCase>): Record<string, TestCase> {
