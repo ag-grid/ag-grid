@@ -38348,7 +38348,7 @@ var AreaSeries = /** @class */ (function (_super) {
             try {
                 for (var yData_1 = (e_2 = void 0, __values$h(yData)), yData_1_1 = yData_1.next(); !yData_1_1.done; yData_1_1 = yData_1.next()) {
                     var seriesYs = yData_1_1.value;
-                    if (seriesYs[i] === undefined) {
+                    if (seriesYs[i] === undefined || isNaN(seriesYs[i])) {
                         continue;
                     }
                     var y = +seriesYs[i]; // convert to number as the value could be a Date object
@@ -38379,8 +38379,10 @@ var AreaSeries = /** @class */ (function (_super) {
                     var seriesYs = yData_2_1.value;
                     var normalizedY = (+seriesYs[i] / total.absSum) * normalizedTo;
                     seriesYs[i] = normalizedY;
-                    // sum normalized values to get updated yMin and yMax of normalized area
-                    normalizedTotal += normalizedY;
+                    if (!isNaN(normalizedY)) {
+                        // sum normalized values to get updated yMin and yMax of normalized area
+                        normalizedTotal += normalizedY;
+                    }
                     if (normalizedTotal >= ((yMax !== null && yMax !== void 0 ? yMax : 0))) {
                         yMax = normalizedTotal;
                     }
@@ -38450,7 +38452,7 @@ var AreaSeries = /** @class */ (function (_super) {
             // check if unprocessed datum is valid as we only want to show markers for valid points
             var normalized = _this.normalizedTo && isFinite(_this.normalizedTo);
             var normalizedAndValid = normalized && continuousY && isContinuous$1(rawYDatum);
-            var valid = (!normalized && !isNaN(yDatum)) || normalizedAndValid;
+            var valid = (!normalized && !isNaN(rawYDatum)) || normalizedAndValid;
             if (valid) {
                 currY = cumulativeMarkerValues[idx] += yDatum;
             }
@@ -38471,15 +38473,20 @@ var AreaSeries = /** @class */ (function (_super) {
                 nodeData: markerSelectionData,
                 strokeSelectionData: strokeSelectionData,
             };
+            if (!_this.seriesItemEnabled.get(yKey)) {
+                return;
+            }
             var fillPoints = fillSelectionData.points;
             var fillPhantomPoints = [];
             var strokePoints = strokeSelectionData.points;
             var yValues = strokeSelectionData.yValues;
-            seriesYs.forEach(function (yDatum, datumIdx) {
+            seriesYs.forEach(function (rawYDatum, datumIdx) {
                 var _a;
+                var yDatum = isNaN(rawYDatum) ? undefined : rawYDatum;
                 var _b = xData[datumIdx], xDatum = _b.xDatum, seriesDatum = _b.seriesDatum;
                 var nextXDatum = (_a = xData[datumIdx + 1]) === null || _a === void 0 ? void 0 : _a.xDatum;
-                var nextYDatum = seriesYs[datumIdx + 1];
+                var rawNextYDatum = seriesYs[datumIdx + 1];
+                var nextYDatum = isNaN(rawNextYDatum) ? undefined : rawNextYDatum;
                 // marker data
                 var point = createMarkerCoordinate(xDatum, +yDatum, datumIdx, seriesDatum[yKey]);
                 if (marker) {
@@ -51473,11 +51480,12 @@ var ComboChartProxy = /** @class */ (function (_super) {
     };
     ComboChartProxy.prototype.getAxes = function (params) {
         var _this = this;
+        var _a;
         this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         var fields = params ? params.fields : [];
         var fieldsMap = new Map(fields.map(function (f) { return [f.colId, f]; }));
-        var _a = this.getYKeys(fields, params.seriesChartTypes), primaryYKeys = _a.primaryYKeys, secondaryYKeys = _a.secondaryYKeys;
-        var _b = this.getAxisOptions(), bottomOptions = _b.bottomOptions, leftOptions = _b.leftOptions, rightOptions = _b.rightOptions;
+        var _b = this.getYKeys(fields, params.seriesChartTypes), primaryYKeys = _b.primaryYKeys, secondaryYKeys = _b.secondaryYKeys;
+        var _c = this.getAxisOptions(), bottomOptions = _c.bottomOptions, leftOptions = _c.leftOptions, rightOptions = _c.rightOptions;
         var axes = [
             __assign$u(__assign$u({}, bottomOptions), { type: this.xAxisType, position: ChartAxisPosition.Bottom, gridStyle: [
                     { strokeWidth: 0 },
@@ -51485,7 +51493,7 @@ var ComboChartProxy = /** @class */ (function (_super) {
         ];
         if (primaryYKeys.length > 0) {
             axes.push(__assign$u(__assign$u({}, leftOptions), { type: this.yAxisType, keys: primaryYKeys, position: ChartAxisPosition.Left, title: __assign$u({}, deepMerge$1(leftOptions.title, {
-                    enabled: true,
+                    enabled: (_a = leftOptions.title) === null || _a === void 0 ? void 0 : _a.enabled,
                     text: primaryYKeys.map(function (key) {
                         var field = fieldsMap.get(key);
                         return field ? field.displayName : key;
@@ -51494,13 +51502,14 @@ var ComboChartProxy = /** @class */ (function (_super) {
         }
         if (secondaryYKeys.length > 0) {
             secondaryYKeys.forEach(function (secondaryYKey, i) {
+                var _a;
                 var field = fieldsMap.get(secondaryYKey);
                 var secondaryAxisIsVisible = field && field.colId === secondaryYKey;
                 if (!secondaryAxisIsVisible) {
                     return;
                 }
                 var secondaryAxisOptions = __assign$u(__assign$u({}, rightOptions), { type: _this.yAxisType, keys: [secondaryYKey], position: ChartAxisPosition.Right, title: __assign$u({}, deepMerge$1(rightOptions.title, {
-                        enabled: true,
+                        enabled: (_a = rightOptions.title) === null || _a === void 0 ? void 0 : _a.enabled,
                         text: field ? field.displayName : secondaryYKey,
                     })) });
                 var primaryYAxis = primaryYKeys.some(function (primaryYKey) { return !!fieldsMap.get(primaryYKey); });

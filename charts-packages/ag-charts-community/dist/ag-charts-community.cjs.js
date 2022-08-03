@@ -15669,7 +15669,7 @@ var AreaSeries = /** @class */ (function (_super) {
             try {
                 for (var yData_1 = (e_2 = void 0, __values$8(yData)), yData_1_1 = yData_1.next(); !yData_1_1.done; yData_1_1 = yData_1.next()) {
                     var seriesYs = yData_1_1.value;
-                    if (seriesYs[i] === undefined) {
+                    if (seriesYs[i] === undefined || isNaN(seriesYs[i])) {
                         continue;
                     }
                     var y = +seriesYs[i]; // convert to number as the value could be a Date object
@@ -15700,8 +15700,10 @@ var AreaSeries = /** @class */ (function (_super) {
                     var seriesYs = yData_2_1.value;
                     var normalizedY = (+seriesYs[i] / total.absSum) * normalizedTo;
                     seriesYs[i] = normalizedY;
-                    // sum normalized values to get updated yMin and yMax of normalized area
-                    normalizedTotal += normalizedY;
+                    if (!isNaN(normalizedY)) {
+                        // sum normalized values to get updated yMin and yMax of normalized area
+                        normalizedTotal += normalizedY;
+                    }
                     if (normalizedTotal >= ((yMax !== null && yMax !== void 0 ? yMax : 0))) {
                         yMax = normalizedTotal;
                     }
@@ -15771,7 +15773,7 @@ var AreaSeries = /** @class */ (function (_super) {
             // check if unprocessed datum is valid as we only want to show markers for valid points
             var normalized = _this.normalizedTo && isFinite(_this.normalizedTo);
             var normalizedAndValid = normalized && continuousY && isContinuous(rawYDatum);
-            var valid = (!normalized && !isNaN(yDatum)) || normalizedAndValid;
+            var valid = (!normalized && !isNaN(rawYDatum)) || normalizedAndValid;
             if (valid) {
                 currY = cumulativeMarkerValues[idx] += yDatum;
             }
@@ -15792,15 +15794,20 @@ var AreaSeries = /** @class */ (function (_super) {
                 nodeData: markerSelectionData,
                 strokeSelectionData: strokeSelectionData,
             };
+            if (!_this.seriesItemEnabled.get(yKey)) {
+                return;
+            }
             var fillPoints = fillSelectionData.points;
             var fillPhantomPoints = [];
             var strokePoints = strokeSelectionData.points;
             var yValues = strokeSelectionData.yValues;
-            seriesYs.forEach(function (yDatum, datumIdx) {
+            seriesYs.forEach(function (rawYDatum, datumIdx) {
                 var _a;
+                var yDatum = isNaN(rawYDatum) ? undefined : rawYDatum;
                 var _b = xData[datumIdx], xDatum = _b.xDatum, seriesDatum = _b.seriesDatum;
                 var nextXDatum = (_a = xData[datumIdx + 1]) === null || _a === void 0 ? void 0 : _a.xDatum;
-                var nextYDatum = seriesYs[datumIdx + 1];
+                var rawNextYDatum = seriesYs[datumIdx + 1];
+                var nextYDatum = isNaN(rawNextYDatum) ? undefined : rawNextYDatum;
                 // marker data
                 var point = createMarkerCoordinate(xDatum, +yDatum, datumIdx, seriesDatum[yKey]);
                 if (marker) {

@@ -177,7 +177,7 @@ export class AreaSeries extends CartesianSeries {
         for (let i = 0; i < xData.length; i++) {
             const total = { sum: 0, absSum: 0 };
             for (let seriesYs of yData) {
-                if (seriesYs[i] === undefined) {
+                if (seriesYs[i] === undefined || isNaN(seriesYs[i])) {
                     continue;
                 }
                 const y = +seriesYs[i]; // convert to number as the value could be a Date object
@@ -198,8 +198,10 @@ export class AreaSeries extends CartesianSeries {
             for (let seriesYs of yData) {
                 const normalizedY = (+seriesYs[i] / total.absSum) * normalizedTo;
                 seriesYs[i] = normalizedY;
-                // sum normalized values to get updated yMin and yMax of normalized area
-                normalizedTotal += normalizedY;
+                if (!isNaN(normalizedY)) {
+                    // sum normalized values to get updated yMin and yMax of normalized area
+                    normalizedTotal += normalizedY;
+                }
                 if (normalizedTotal >= ((yMax !== null && yMax !== void 0 ? yMax : 0))) {
                     yMax = normalizedTotal;
                 }
@@ -260,7 +262,7 @@ export class AreaSeries extends CartesianSeries {
             // check if unprocessed datum is valid as we only want to show markers for valid points
             const normalized = this.normalizedTo && isFinite(this.normalizedTo);
             const normalizedAndValid = normalized && continuousY && isContinuous(rawYDatum);
-            const valid = (!normalized && !isNaN(yDatum)) || normalizedAndValid;
+            const valid = (!normalized && !isNaN(rawYDatum)) || normalizedAndValid;
             if (valid) {
                 currY = cumulativeMarkerValues[idx] += yDatum;
             }
@@ -281,15 +283,20 @@ export class AreaSeries extends CartesianSeries {
                 nodeData: markerSelectionData,
                 strokeSelectionData,
             };
+            if (!this.seriesItemEnabled.get(yKey)) {
+                return;
+            }
             const fillPoints = fillSelectionData.points;
             const fillPhantomPoints = [];
             const strokePoints = strokeSelectionData.points;
             const yValues = strokeSelectionData.yValues;
-            seriesYs.forEach((yDatum, datumIdx) => {
+            seriesYs.forEach((rawYDatum, datumIdx) => {
                 var _a;
+                const yDatum = isNaN(rawYDatum) ? undefined : rawYDatum;
                 const { xDatum, seriesDatum } = xData[datumIdx];
                 const nextXDatum = (_a = xData[datumIdx + 1]) === null || _a === void 0 ? void 0 : _a.xDatum;
-                const nextYDatum = seriesYs[datumIdx + 1];
+                const rawNextYDatum = seriesYs[datumIdx + 1];
+                const nextYDatum = isNaN(rawNextYDatum) ? undefined : rawNextYDatum;
                 // marker data
                 const point = createMarkerCoordinate(xDatum, +yDatum, datumIdx, seriesDatum[yKey]);
                 if (marker) {

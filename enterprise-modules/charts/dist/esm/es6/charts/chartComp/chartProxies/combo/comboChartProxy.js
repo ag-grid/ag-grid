@@ -13,6 +13,7 @@ export class ComboChartProxy extends CartesianChartProxy {
         return this.getDataTransformedData(params);
     }
     getAxes(params) {
+        var _a;
         this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         const fields = params ? params.fields : [];
         const fieldsMap = new Map(fields.map(f => [f.colId, f]));
@@ -25,7 +26,7 @@ export class ComboChartProxy extends CartesianChartProxy {
         ];
         if (primaryYKeys.length > 0) {
             axes.push(Object.assign(Object.assign({}, leftOptions), { type: this.yAxisType, keys: primaryYKeys, position: ChartAxisPosition.Left, title: Object.assign({}, deepMerge(leftOptions.title, {
-                    enabled: true,
+                    enabled: (_a = leftOptions.title) === null || _a === void 0 ? void 0 : _a.enabled,
                     text: primaryYKeys.map(key => {
                         const field = fieldsMap.get(key);
                         return field ? field.displayName : key;
@@ -34,13 +35,14 @@ export class ComboChartProxy extends CartesianChartProxy {
         }
         if (secondaryYKeys.length > 0) {
             secondaryYKeys.forEach((secondaryYKey, i) => {
+                var _a;
                 const field = fieldsMap.get(secondaryYKey);
                 const secondaryAxisIsVisible = field && field.colId === secondaryYKey;
                 if (!secondaryAxisIsVisible) {
                     return;
                 }
                 const secondaryAxisOptions = Object.assign(Object.assign({}, rightOptions), { type: this.yAxisType, keys: [secondaryYKey], position: ChartAxisPosition.Right, title: Object.assign({}, deepMerge(rightOptions.title, {
-                        enabled: true,
+                        enabled: (_a = rightOptions.title) === null || _a === void 0 ? void 0 : _a.enabled,
                         text: field ? field.displayName : secondaryYKey,
                     })) });
                 const primaryYAxis = primaryYKeys.some(primaryYKey => !!fieldsMap.get(primaryYKey));

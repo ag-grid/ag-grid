@@ -40,11 +40,12 @@ var ComboChartProxy = /** @class */ (function (_super) {
     };
     ComboChartProxy.prototype.getAxes = function (params) {
         var _this = this;
+        var _a;
         this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         var fields = params ? params.fields : [];
         var fieldsMap = new Map(fields.map(function (f) { return [f.colId, f]; }));
-        var _a = this.getYKeys(fields, params.seriesChartTypes), primaryYKeys = _a.primaryYKeys, secondaryYKeys = _a.secondaryYKeys;
-        var _b = this.getAxisOptions(), bottomOptions = _b.bottomOptions, leftOptions = _b.leftOptions, rightOptions = _b.rightOptions;
+        var _b = this.getYKeys(fields, params.seriesChartTypes), primaryYKeys = _b.primaryYKeys, secondaryYKeys = _b.secondaryYKeys;
+        var _c = this.getAxisOptions(), bottomOptions = _c.bottomOptions, leftOptions = _c.leftOptions, rightOptions = _c.rightOptions;
         var axes = [
             __assign(__assign({}, bottomOptions), { type: this.xAxisType, position: ChartAxisPosition.Bottom, gridStyle: [
                     { strokeWidth: 0 },
@@ -52,7 +53,7 @@ var ComboChartProxy = /** @class */ (function (_super) {
         ];
         if (primaryYKeys.length > 0) {
             axes.push(__assign(__assign({}, leftOptions), { type: this.yAxisType, keys: primaryYKeys, position: ChartAxisPosition.Left, title: __assign({}, deepMerge(leftOptions.title, {
-                    enabled: true,
+                    enabled: (_a = leftOptions.title) === null || _a === void 0 ? void 0 : _a.enabled,
                     text: primaryYKeys.map(function (key) {
                         var field = fieldsMap.get(key);
                         return field ? field.displayName : key;
@@ -61,13 +62,14 @@ var ComboChartProxy = /** @class */ (function (_super) {
         }
         if (secondaryYKeys.length > 0) {
             secondaryYKeys.forEach(function (secondaryYKey, i) {
+                var _a;
                 var field = fieldsMap.get(secondaryYKey);
                 var secondaryAxisIsVisible = field && field.colId === secondaryYKey;
                 if (!secondaryAxisIsVisible) {
                     return;
                 }
                 var secondaryAxisOptions = __assign(__assign({}, rightOptions), { type: _this.yAxisType, keys: [secondaryYKey], position: ChartAxisPosition.Right, title: __assign({}, deepMerge(rightOptions.title, {
-                        enabled: true,
+                        enabled: (_a = rightOptions.title) === null || _a === void 0 ? void 0 : _a.enabled,
                         text: field ? field.displayName : secondaryYKey,
                     })) });
                 var primaryYAxis = primaryYKeys.some(function (primaryYKey) { return !!fieldsMap.get(primaryYKey); });

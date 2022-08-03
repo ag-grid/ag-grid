@@ -241,6 +241,8 @@ function ensureDomOrder(eContainer, eChild, eChildBefore) {
     if (eChildBefore && eChildBefore.nextSibling === eChild) {
         return;
     }
+    var focusedEl = document.activeElement;
+    var eChildHasFocus = eChild.contains(focusedEl);
     if (eChildBefore) {
         if (eChildBefore.nextSibling) {
             // insert between the eRowBefore and the row after it
@@ -257,6 +259,9 @@ function ensureDomOrder(eContainer, eChild, eChildBefore) {
             // insert it at the first location
             eContainer.insertAdjacentElement('afterbegin', eChild);
         }
+    }
+    if (eChildHasFocus && focusedEl) {
+        focusedEl.focus();
     }
 }
 exports.ensureDomOrder = ensureDomOrder;

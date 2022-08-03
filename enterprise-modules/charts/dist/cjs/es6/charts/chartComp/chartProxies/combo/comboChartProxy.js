@@ -15,6 +15,7 @@ class ComboChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
         return this.getDataTransformedData(params);
     }
     getAxes(params) {
+        var _a;
         this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         const fields = params ? params.fields : [];
         const fieldsMap = new Map(fields.map(f => [f.colId, f]));
@@ -27,7 +28,7 @@ class ComboChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
         ];
         if (primaryYKeys.length > 0) {
             axes.push(Object.assign(Object.assign({}, leftOptions), { type: this.yAxisType, keys: primaryYKeys, position: ag_charts_community_1.ChartAxisPosition.Left, title: Object.assign({}, object_1.deepMerge(leftOptions.title, {
-                    enabled: true,
+                    enabled: (_a = leftOptions.title) === null || _a === void 0 ? void 0 : _a.enabled,
                     text: primaryYKeys.map(key => {
                         const field = fieldsMap.get(key);
                         return field ? field.displayName : key;
@@ -36,13 +37,14 @@ class ComboChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
         }
         if (secondaryYKeys.length > 0) {
             secondaryYKeys.forEach((secondaryYKey, i) => {
+                var _a;
                 const field = fieldsMap.get(secondaryYKey);
                 const secondaryAxisIsVisible = field && field.colId === secondaryYKey;
                 if (!secondaryAxisIsVisible) {
                     return;
                 }
                 const secondaryAxisOptions = Object.assign(Object.assign({}, rightOptions), { type: this.yAxisType, keys: [secondaryYKey], position: ag_charts_community_1.ChartAxisPosition.Right, title: Object.assign({}, object_1.deepMerge(rightOptions.title, {
-                        enabled: true,
+                        enabled: (_a = rightOptions.title) === null || _a === void 0 ? void 0 : _a.enabled,
                         text: field ? field.displayName : secondaryYKey,
                     })) });
                 const primaryYAxis = primaryYKeys.some(primaryYKey => !!fieldsMap.get(primaryYKey));
