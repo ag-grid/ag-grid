@@ -320,7 +320,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 continue;
             }
 
-            let normalizedTotal = 0;
+            let normalizedTotal = undefined;
             // normalize y values using the absolute sum of y values in the stack
             for (let seriesYs of yData) {
                 const normalizedY = (+seriesYs[i] / total.absSum) * normalizedTo;
@@ -328,7 +328,9 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
                 if (!isNaN(normalizedY)) {
                     // sum normalized values to get updated yMin and yMax of normalized area
-                    normalizedTotal += normalizedY;
+                    normalizedTotal = (normalizedTotal ?? 0) + normalizedY;
+                } else {
+                    continue;
                 }
 
                 if (normalizedTotal >= (yMax ?? 0)) {
