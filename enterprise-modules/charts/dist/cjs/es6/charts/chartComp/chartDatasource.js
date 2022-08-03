@@ -123,7 +123,11 @@ class ChartDatasource extends core_1.BeanStub {
                 }
                 else {
                     // add data value to value column
-                    const value = this.valueService.getValue(col, rowNode);
+                    let value = this.valueService.getValue(col, rowNode);
+                    // aggregated value
+                    if (value && value.hasOwnProperty('toString')) {
+                        value = parseFloat(value.toString());
+                    }
                     data[colId] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
                 }
             });

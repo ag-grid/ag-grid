@@ -12069,6 +12069,10 @@ var ChartDatasource = /** @class */ (function (_super) {
                 else {
                     // add data value to value column
                     var value = _this.valueService.getValue(col, rowNode);
+                    // aggregated value
+                    if (value && value.hasOwnProperty('toString')) {
+                        value = parseFloat(value.toString());
+                    }
                     data[colId] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
                 }
             });
