@@ -62,15 +62,15 @@ const EXAMPLES: Record<string, TestCase> = {
     STACKED_AREA_STROKE_MARKER_LABEL_RENDERING: {
         options: {
             ...examples.STACKED_AREA_MISSING_Y_DATA_EXAMPLE,
-            series: (examples.STACKED_AREA_MISSING_Y_DATA_EXAMPLE.series ?? []).map(s => ({
+            series: (examples.STACKED_AREA_MISSING_Y_DATA_EXAMPLE.series ?? []).map((s) => ({
                 ...s,
                 strokeWidth: 20,
                 marker: { size: 15 },
                 label: {},
-            }))
+            })),
         },
         assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['area'] }),
-    }
+    },
 };
 
 describe('AreaSeries', () => {
