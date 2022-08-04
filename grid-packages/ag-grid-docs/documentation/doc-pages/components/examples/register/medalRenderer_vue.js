@@ -1,21 +1,23 @@
 export default {
     template: `
-            <span>
-             <span>{{cellValue}}</span>&nbsp;
+            <span class="total-value-renderer">
+             <span>{{country}}</span>
              <button @click="buttonClicked($event)">Push For Total</button>
         </span>
 `,
     data: function () {
         return {
-            cellValue: ''
+            country: '',
+            total: ''
         };
     },
     beforeMount() {
-        this.cellValue = this.params.valueFormatted ? this.params.valueFormatted : this.params.value;
+        this.country = this.params.valueFormatted ? this.params.valueFormatted : this.params.value;
+        this.total = this.params.data.total;
     },
     methods: {
         buttonClicked() {
-            alert(`${this.cellValue} medals won!`)
+            alert(`${this.total} medals won!`)
         }
     }
 };

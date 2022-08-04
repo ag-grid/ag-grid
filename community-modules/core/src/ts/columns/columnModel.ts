@@ -1627,7 +1627,7 @@ export class ColumnModel extends BeanStub {
         this.applyColumnState({
             state: keys.map<ColumnState>(
                 key => ({
-                    colId: typeof key === 'string' ? key : key.getColId(), 
+                    colId: typeof key === 'string' ? key : key.getColId(),
                     hide: !visible,
                 })
             ),
@@ -3193,7 +3193,7 @@ export class ColumnModel extends BeanStub {
 
     // called from: setColumnState, setColumnDefs, setSecondaryColumns
     private updateGridColumns(): void {
-        const prevGridCols = this.gridColumns;
+        const prevGridCols = this.gridBalancedTree;
         if (this.gridColsArePrimary) {
             this.lastPrimaryOrder = this.gridColumns;
         } else {
@@ -3239,7 +3239,7 @@ export class ColumnModel extends BeanStub {
 
         this.setAutoHeightActive();
 
-        if (!areEqual(prevGridCols, this.gridColumns)) {
+        if (!areEqual(prevGridCols, this.gridBalancedTree)) {
             const event: GridColumnsChangedEvent = {
                 type: Events.EVENT_GRID_COLUMNS_CHANGED,
                 api: this.gridApi,

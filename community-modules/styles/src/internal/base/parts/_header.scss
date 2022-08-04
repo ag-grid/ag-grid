@@ -58,10 +58,10 @@
     // This logic with :not(.ag-column-resizing) is to prevent a mouseover effect
     // being applied to the adjacent cell as the user resizes a cell, because
     // during a resize, the mouse will momentarily move over the neighbouring cell
-    .ag-header-group-cell:not(.ag-column-resizing) + .ag-header-group-cell,
-    .ag-header-cell:not(.ag-column-resizing) + .ag-header-cell,
+    .ag-header-group-cell:not(.ag-column-resizing) + .ag-header-group-cell:not(.ag-column-hover),
+    .ag-header-cell:not(.ag-column-resizing) + .ag-header-cell:not(.ag-column-hover),
     .ag-header-group-cell:first-of-type,
-    .ag-header-cell:first-of-type {
+    .ag-header-cell:not(.ag-column-hover):first-of-type {
         &:not(.ag-header-cell-moving):hover,
         &.ag-column-resizing {
             background-color: var(--ag-header-cell-hover-background-color);

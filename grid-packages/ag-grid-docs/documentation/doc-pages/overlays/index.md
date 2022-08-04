@@ -28,16 +28,21 @@ At any point, you can show or hide any of the overlays using the methods below. 
 
 The overlays are mutually exclusive, you cannot show more than one overlay at any given time.
 
-## Custom Templates
+## Custom Overlays
 
-If you're not happy with the provided overlay templates, you can provide your own. This is done with the grid properties `overlayLoadingTemplate` and `overlayNoRowsTemplate`. These templates should be plain HTML.
+If you're not happy with the provided overlay templates, you can provide your own in the following two ways.
+
+1. Provide a **plain HTML string** to the grid properties `overlayLoadingTemplate` and `overlayNoRowsTemplate`. 
+1. Provide a custom component for the overlay - see [Overlay Component](/component-overlay/) for details.
+
 
 ## Example
 
-The example below demonstrates how the loading overlay is shown automatically while the data is loading. You can also use the buttons to show / hide the different overlays at your will.
+The example below demonstrates how the loading overlay is shown automatically while the data is loading. You can also use the buttons to show / hide the different overlays at your will. 
+
+The overlays are customised by providing custom HTML templates to `overlayLoadingTemplate` and `overlayNoRowsTemplate`.
 
 <grid-example title='Overlays' name='overlays' type='mixed' options='{ "exampleHeight": 580 }'></grid-example>
 
-[[note]]
-| It is also possible to provide your own custom Overlay Components - please see [Overlay Component](/component-overlay/) for more information
+
 

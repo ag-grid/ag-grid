@@ -828,14 +828,14 @@
       }
     },
     "checkboxSelection": {
-      "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
+      "description": "/** Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
       "type": {
         "returnType": "boolean | CheckboxSelectionCallback<TData>",
         "optional": true
       }
     },
     "showDisabledCheckboxes": {
-      "description": "/** `boolean`. Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
+      "description": "/** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "icons": {
@@ -3091,11 +3091,11 @@
     },
     "pinnedTopRowData": {
       "description": "/** Data to be displayed as pinned top rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "pinnedBottomRowData": {
       "description": "/** Data to be displayed as pinned bottom rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",
@@ -8631,6 +8631,10 @@
       "description": "/** This is the maximum year that may be entered in a date field for the value to be considered valid. Default is no restriction. */",
       "type": { "returnType": "number", "optional": true }
     },
+    "inRangeFloatingFilterDateFormat": {
+      "description": "/** Defines the date format for the floating filter text when an in range filter has been applied.\n * \n * Default: `YYYY-MM-DD` */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "inRangeInclusive": {
       "description": "/** If `true`, the `'inRange'` filter option will include values equal to the start and end of the range. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -8689,10 +8693,6 @@
     "readOnly": {
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "inRangeFloatingFilterDateFormat": {
-      "description": "/** Defines the date format for the floating filter text when an in range filter has been applied.\n * \n * Default: 'YYYY-MM-DD' */",
-      "type": { "returnType": "string", "optional": true }
     },
     "column": {
       "description": "/** The column this filter is for. */",
@@ -8838,10 +8838,6 @@
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "inRangeFloatingFilterDateFormat": {
-      "description": "/** Defines the date format for the floating filter text when an in range filter has been applied.\n * \n * Default: 'YYYY-MM-DD' */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "column": {
       "description": "/** The column this filter is for. */",
       "type": { "returnType": "Column", "optional": false }
@@ -8909,10 +8905,6 @@
     "readOnly": {
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "inRangeFloatingFilterDateFormat": {
-      "description": "/** Defines the date format for the floating filter text when an in range filter has been applied.\n * \n * Default: 'YYYY-MM-DD' */",
-      "type": { "returnType": "string", "optional": true }
     },
     "column": {
       "description": "/** The column this filter is for. */",
@@ -9082,10 +9074,6 @@
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "inRangeFloatingFilterDateFormat": {
-      "description": "/** Defines the date format for the floating filter text when an in range filter has been applied.\n * \n * Default: 'YYYY-MM-DD' */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "column": {
       "description": "/** The column this filter is for. */",
       "type": { "returnType": "Column", "optional": false }
@@ -9243,10 +9231,6 @@
     "readOnly": {
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "inRangeFloatingFilterDateFormat": {
-      "description": "/** Defines the date format for the floating filter text when an in range filter has been applied.\n * \n * Default: 'YYYY-MM-DD' */",
-      "type": { "returnType": "string", "optional": true }
     },
     "column": {
       "description": "/** The column this filter is for. */",
@@ -9441,10 +9425,6 @@
     "readOnly": {
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "inRangeFloatingFilterDateFormat": {
-      "description": "/** Defines the date format for the floating filter text when an in range filter has been applied.\n * \n * Default: 'YYYY-MM-DD' */",
-      "type": { "returnType": "string", "optional": true }
     },
     "column": {
       "description": "/** The column this filter is for. */",
@@ -18215,10 +18195,6 @@
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "inRangeFloatingFilterDateFormat": {
-      "description": "/** Defines the date format for the floating filter text when an in range filter has been applied.\n * \n * Default: 'YYYY-MM-DD' */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "column": {
       "description": "/** The column this filter is for. */",
       "type": { "returnType": "Column", "optional": false }
@@ -22235,14 +22211,14 @@
       }
     },
     "checkboxSelection": {
-      "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
+      "description": "/** Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
       "type": {
         "returnType": "boolean | CheckboxSelectionCallback<TData>",
         "optional": true
       }
     },
     "showDisabledCheckboxes": {
-      "description": "/** `boolean`. Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
+      "description": "/** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "icons": {
@@ -23723,11 +23699,11 @@
     },
     "pinnedTopRowData": {
       "description": "/** Data to be displayed as pinned top rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "pinnedBottomRowData": {
       "description": "/** Data to be displayed as pinned bottom rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",
@@ -26492,11 +26468,11 @@
     },
     "pinnedTopRowData": {
       "description": "/** Data to be displayed as pinned top rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "pinnedBottomRowData": {
       "description": "/** Data to be displayed as pinned bottom rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",
@@ -29271,11 +29247,11 @@
     },
     "pinnedTopRowData": {
       "description": "/** Data to be displayed as pinned top rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "pinnedBottomRowData": {
       "description": "/** Data to be displayed as pinned bottom rows in the grid. */",
-      "type": { "returnType": "TData[]", "optional": true }
+      "type": { "returnType": "any[]", "optional": true }
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",

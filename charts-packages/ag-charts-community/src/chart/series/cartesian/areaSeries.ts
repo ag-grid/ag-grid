@@ -273,7 +273,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 const seriesYs = yData[i] || (yData[i] = []);
 
                 if (!seriesItemEnabled.get(yKey)) {
-                    seriesYs.push(0);
+                    seriesYs.push(NaN);
                 } else {
                     const yDatum = checkDatum(value, isContinuousY);
                     seriesYs.push(yDatum);
@@ -294,13 +294,13 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         //   [-9, 20] <- series 3 (yKey3)
         // ]
 
-        let yMin = 0;
-        let yMax = 0;
+        let yMin: number | undefined = undefined;
+        let yMax: number | undefined = undefined;
 
         for (let i = 0; i < xData.length; i++) {
             const total = { sum: 0, absSum: 0 };
             for (let seriesYs of yData) {
-                if (seriesYs[i] === undefined) {
+                if (seriesYs[i] === undefined || isNaN(seriesYs[i])) {
                     continue;
                 }
 
@@ -309,9 +309,9 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 total.absSum += Math.abs(y);
                 total.sum += y;
 
-                if (total.sum > yMax) {
+                if (total.sum >= (yMax ?? 0)) {
                     yMax = total.sum;
-                } else if (total.sum < yMin) {
+                } else if (total.sum <= (yMin ?? 0)) {
                     yMin = total.sum;
                 }
             }
@@ -320,18 +320,22 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 continue;
             }
 
-            let normalizedTotal = 0;
+            let normalizedTotal = undefined;
             // normalize y values using the absolute sum of y values in the stack
             for (let seriesYs of yData) {
                 const normalizedY = (+seriesYs[i] / total.absSum) * normalizedTo;
                 seriesYs[i] = normalizedY;
 
-                // sum normalized values to get updated yMin and yMax of normalized area
-                normalizedTotal += normalizedY;
+                if (!isNaN(normalizedY)) {
+                    // sum normalized values to get updated yMin and yMax of normalized area
+                    normalizedTotal = (normalizedTotal ?? 0) + normalizedY;
+                } else {
+                    continue;
+                }
 
-                if (normalizedTotal > yMax) {
+                if (normalizedTotal >= (yMax ?? 0)) {
                     yMax = normalizedTotal;
-                } else if (normalizedTotal < yMin) {
+                } else if (normalizedTotal <= (yMin ?? 0)) {
                     yMin = normalizedTotal;
                 }
             }
@@ -342,11 +346,14 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const domainWhitespaceAdjustment = 0.5;
 
             // set the yMin and yMax based on cumulative sum of normalized values
-            yMin = yMin < -normalizedTo * domainWhitespaceAdjustment ? -normalizedTo : yMin;
-            yMax = yMax > normalizedTo * domainWhitespaceAdjustment ? normalizedTo : yMax;
+            yMin = (yMin ?? 0) < -normalizedTo * domainWhitespaceAdjustment ? -normalizedTo : yMin;
+            yMax = (yMax ?? 0) > normalizedTo * domainWhitespaceAdjustment ? normalizedTo : yMax;
         }
 
-        this.yDomain = this.fixNumericExtent([yMin, yMax], yAxis);
+        this.yDomain = this.fixNumericExtent(
+            yMin === undefined && yMax === undefined ? undefined : [yMin ?? 0, yMax ?? 0],
+            yAxis
+        );
 
         return true;
     }
@@ -411,7 +418,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const normalized = this.normalizedTo && isFinite(this.normalizedTo);
             const normalizedAndValid = normalized && continuousY && isContinuous(rawYDatum);
 
-            const valid = (!normalized && !isNaN(yDatum)) || normalizedAndValid;
+            const valid = (!normalized && !isNaN(rawYDatum)) || normalizedAndValid;
 
             if (valid) {
                 currY = cumulativeMarkerValues[idx] += yDatum;
@@ -438,19 +445,26 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 strokeSelectionData,
             };
 
+            if (!this.seriesItemEnabled.get(yKey)) {
+                return;
+            }
+
             const fillPoints = fillSelectionData.points;
             const fillPhantomPoints: Coordinate[] = [];
 
             const strokePoints = strokeSelectionData.points;
             const yValues = strokeSelectionData.yValues;
 
-            seriesYs.forEach((yDatum, datumIdx) => {
+            seriesYs.forEach((rawYDatum, datumIdx) => {
+                const yDatum = isNaN(rawYDatum) ? undefined : rawYDatum;
+
                 const { xDatum, seriesDatum } = xData[datumIdx];
                 const nextXDatum = xData[datumIdx + 1]?.xDatum;
-                const nextYDatum = seriesYs[datumIdx + 1];
+                const rawNextYDatum = seriesYs[datumIdx + 1];
+                const nextYDatum = isNaN(rawNextYDatum) ? undefined : rawNextYDatum;
 
                 // marker data
-                const point = createMarkerCoordinate(xDatum, +yDatum, datumIdx, seriesDatum[yKey]);
+                const point = createMarkerCoordinate(xDatum, +yDatum!, datumIdx, seriesDatum[yKey]);
 
                 if (marker) {
                     markerSelectionData.push({
@@ -458,7 +472,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                         series: this,
                         itemId: yKey,
                         datum: seriesDatum,
-                        yValue: yDatum,
+                        yValue: yDatum!,
                         yKey,
                         point,
                         fill: fills[seriesIdx % fills.length],
@@ -509,11 +523,11 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     windowY[1] = 0;
                 }
 
-                const currCoordinates = createPathCoordinates(windowX[0], +windowY[0], datumIdx, 'right');
+                const currCoordinates = createPathCoordinates(windowX[0], +windowY[0]!, datumIdx, 'right');
                 fillPoints.push(currCoordinates[0]);
                 fillPhantomPoints.push(currCoordinates[1]);
 
-                const nextCoordinates = createPathCoordinates(windowX[1], +windowY[1], datumIdx, 'left');
+                const nextCoordinates = createPathCoordinates(windowX[1], +windowY[1]!, datumIdx, 'left');
                 fillPoints.push(nextCoordinates[0]);
                 fillPhantomPoints.push(nextCoordinates[1]);
 

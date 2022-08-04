@@ -5,15 +5,16 @@ export default class MedalRenderer extends Component {
         super(props);
 
         this.state = {
-            cellValue: props.valueFormatted ? props.valueFormatted : props.value
+            country: props.valueFormatted ? props.valueFormatted : props.value,
+            total: props.data.total
         }
     }
 
     render() {
         return (
-            <span>
-                <span>{this.state.cellValue}</span>&nbsp;
-                <button onClick={() => alert(`${this.state.cellValue} medals won!`)}>Push For Total</button>
+            <span className="total-value-renderer">
+                <span>{this.state.country}</span>
+                <button onClick={() => alert(`${this.state.total} medals won!`)}>Push For Total</button>
             </span>
         );
     }

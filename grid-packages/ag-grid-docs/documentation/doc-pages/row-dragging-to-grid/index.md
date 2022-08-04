@@ -12,20 +12,16 @@ To allow adding a grid as DropZone, the `getRowDropZoneParams` API method should
 
 
 ```js
-// example usage:
-new agGrid.Grid(gridElement, gridOptions);
-new agGrid.Grid(gridElement, gridOptions2);
-
-var dropZoneParams = GridApi2.getRowDropZoneParams({
+var dropZoneParams = targetGridApi.getRowDropZoneParams({
     onDragStop: function() {
         alert('Record Dropped!');
     }
 });
 
-gridApi.addRowDropZone(dropZoneParams);
+sourceGridApi.addRowDropZone(dropZoneParams);
 
 // when the DropZone above is no longer needed
-gridApi.removeRowDropZone(dropZoneParams);
+sourceGridApi.removeRowDropZone(dropZoneParams);
 ```
 
 In the example below, note the following:

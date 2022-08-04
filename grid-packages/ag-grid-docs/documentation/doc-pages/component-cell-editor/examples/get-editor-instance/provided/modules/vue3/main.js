@@ -63,7 +63,7 @@ const VueExample = {
                 },
                 {
                     field: "address",
-                    width: 502,
+                    minWidth: 502,
                     cellEditor: "mySimpleEditor"
                 }
             ],

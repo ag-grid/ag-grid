@@ -106,7 +106,7 @@ const GridExample = () => {
         },
         {
             field: "address",
-            width: 502,
+            minWidth: 502,
             cellEditor: MySimpleEditor,
             cellEditorPopup: true
         }

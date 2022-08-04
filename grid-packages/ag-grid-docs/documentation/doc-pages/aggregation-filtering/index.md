@@ -79,7 +79,7 @@ Note the following:
 [[note]]
 | Take note of the following while using `groupAggFiltering`:
 | - [Set Filters](/filter-set/) are not fully supported in conjunction with this feature.
-| - When `groupAggFiltering` is enabled, [Suppressing Filtered Aggregation](/aggregation-filtering/#suppressing-aggregation) is enabled by default.
+| - When `groupAggFiltering` is enabled, [Suppressing Filtered Aggregation](/aggregation-filtering/#suppressing-aggregation-updates-when-filtering) is enabled by default.
 
 ### Custom Group Aggregation Filtering
 

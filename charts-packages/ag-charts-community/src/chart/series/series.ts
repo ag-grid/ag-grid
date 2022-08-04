@@ -8,6 +8,7 @@ import { Label } from '../label';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
 import { Deprecated } from '../../util/validation';
+import { PointLabelDatum } from '../../util/labelPlacement';
 
 /**
  * Processed series datum used in node selections,
@@ -136,6 +137,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     // for large-scale data-sets, where the only thing that routinely varies is the currently
     // highlighted node.
     readonly highlightGroup: Group;
+    readonly highlightNode: Group;
+    readonly highlightLabel: Group;
 
     // The group node that contains all the nodes that can be "picked" (react to hover, tap, click).
     readonly pickGroup: Group;
@@ -190,6 +193,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             })
         );
         this.pickGroup = this.seriesGroup.appendChild(new Group());
+
         this.highlightGroup = group.appendChild(
             new Group({
                 name: `${this.id}-highlight`,
@@ -198,6 +202,11 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 optimiseDirtyTracking: true,
             })
         );
+        this.highlightNode = this.highlightGroup.appendChild(new Group());
+        this.highlightLabel = this.highlightGroup.appendChild(new Group());
+        this.highlightNode.zIndex = 0;
+        this.highlightLabel.zIndex = 10;
+
         this.pickModes = pickModes;
     }
 
@@ -355,7 +364,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         }
 
         for (const pickMode of pickModes) {
-            if (limitPickModes && limitPickModes.includes(pickMode)) {
+            if (limitPickModes && !limitPickModes.includes(pickMode)) {
                 continue;
             }
 
@@ -412,6 +421,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         // to use this feature.
         throw new Error('AG Charts - Series.pickNodeMainAxisFirst() not implemented');
     }
+
+    abstract getLabelData(): PointLabelDatum[];
 
     fireNodeClickEvent(_event: MouseEvent, _datum: C['nodeData'][number]): void {
         // Override point for subclasses.

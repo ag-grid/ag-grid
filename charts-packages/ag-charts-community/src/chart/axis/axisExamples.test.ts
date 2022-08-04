@@ -113,6 +113,20 @@ const EXAMPLES_NO_SERIES: Record<string, TestCase> = {
             seriesTypes: ['bar', 'line'],
         }),
     },
+    AREA_CHART_NO_SERIES: {
+        options: examples.AREA_CHART_NO_SERIES,
+        assertions: cartesianChartAssertions({
+            axisTypes: ['time', 'number'],
+            seriesTypes: ['area'],
+        }),
+    },
+    AREA_CHART_STACKED_NORMALISED_NO_SERIES: {
+        options: examples.AREA_CHART_STACKED_NORMALISED_NO_SERIES,
+        assertions: cartesianChartAssertions({
+            axisTypes: ['category', 'number'],
+            seriesTypes: ['area'],
+        }),
+    },
 };
 
 function mixinDerivedCases(baseCases: Record<string, TestCase>): Record<string, TestCase> {
@@ -194,7 +208,7 @@ describe('Axis Examples', () => {
             // Increase timeout for legend toggle case.
             jest.setTimeout(10_000);
         });
-        
+
         for (const [exampleName, example] of Object.entries(EXAMPLES_NO_SERIES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;

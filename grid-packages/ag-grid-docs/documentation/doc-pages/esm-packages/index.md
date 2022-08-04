@@ -1,5 +1,6 @@
 ---
 title: "Using ES Modules"
+frameworks: ["javascript"]
 ---
 
 ES Modules are modern and allow for better tree-shaking - this section documents how you can use ES modules directly in your browser.

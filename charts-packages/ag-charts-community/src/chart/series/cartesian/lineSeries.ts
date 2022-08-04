@@ -2,7 +2,13 @@ import { Path } from '../../../scene/shape/path';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Selection } from '../../../scene/selection';
 import { Group } from '../../../scene/group';
-import { SeriesNodeDatum, CartesianTooltipRendererParams, SeriesTooltip, SeriesNodeDataContext } from '../series';
+import {
+    SeriesNodeDatum,
+    CartesianTooltipRendererParams,
+    SeriesTooltip,
+    SeriesNodeDataContext,
+    SeriesNodePickMode,
+} from '../series';
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
 import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
@@ -81,7 +87,15 @@ export class LineSeries extends CartesianSeries<LineContext> {
     tooltip: LineSeriesTooltip = new LineSeriesTooltip();
 
     constructor() {
-        super({ pickGroupIncludes: ['markers'], features: ['markers'] });
+        super({
+            pickGroupIncludes: ['markers'],
+            features: ['markers'],
+            pickModes: [
+                SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                SeriesNodePickMode.NEAREST_NODE,
+                SeriesNodePickMode.EXACT_SHAPE_MATCH,
+            ],
+        });
 
         const { marker, label } = this;
 

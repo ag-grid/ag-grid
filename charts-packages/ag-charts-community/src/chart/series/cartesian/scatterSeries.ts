@@ -21,7 +21,7 @@ import { Label } from '../../label';
 import { Text } from '../../../scene/shape/text';
 import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Marker } from '../../marker/marker';
-import { MeasuredLabel } from '../../../util/labelPlacement';
+import { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
 import { checkDatum, isContinuous } from '../../../util/value';
 import { Deprecated } from '../../../util/validation';
 
@@ -141,7 +141,11 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     constructor() {
         super({
             pickGroupIncludes: ['markers'],
-            pickModes: [SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST, SeriesNodePickMode.NEAREST_NODE],
+            pickModes: [
+                SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                SeriesNodePickMode.NEAREST_NODE,
+                SeriesNodePickMode.EXACT_SHAPE_MATCH,
+            ],
             pathsPerSeries: 0,
             features: ['markers'],
         });
@@ -268,6 +272,10 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
     protected isPathOrSelectionDirty(): boolean {
         return this.marker.isDirty();
+    }
+
+    getLabelData(): PointLabelDatum[] {
+        return this.contextNodeData?.reduce((r, n) => r.concat(n.labelData), [] as PointLabelDatum[]);
     }
 
     protected updateMarkerSelection(opts: {

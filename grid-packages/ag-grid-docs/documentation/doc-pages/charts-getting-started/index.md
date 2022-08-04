@@ -669,7 +669,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 | Let's add the AG Charts NPM packages. Run the following command in `my-project` (you may need a new instance of the terminal):
 |
 | ```bash
-| npm install --save ag-charts-community ag-charts-vue vue-property-decorator
+| npm install --save ag-charts-community ag-charts-vue3 vue-property-decorator
 | ```
 |
 | After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the AG Charts module. As this will be a simple example we can delete the `src/components` directory. Our example application will live in `src/App.vue`.
@@ -688,7 +688,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |
 | ```html
 | <script>
-|   import { AgChartsVue } from 'ag-charts-vue';
+|   import { AgChartsVue } from 'ag-charts-vue3';
 |
 |   export default {
 |     name: 'App',
@@ -697,36 +697,32 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |     },
 |     data() {
 |       return {
-|         options: null,
-|         data: [
-|           {
-|             quarter: 'Q1',
-|             spending: 450,
-|           },
-|           {
-|             quarter: 'Q2',
-|             spending: 560,
-|           },
-|           {
-|             quarter: 'Q3',
-|             spending: 600,
-|           },
-|           {
-|             quarter: 'Q4',
-|             spending: 700,
-|           },
-|         ]
+|         options: {
+|           data: [
+|             {
+|                   quarter: 'Q1',
+|                   spending: 450,
+|             },
+|             {
+|                   quarter: 'Q2',
+|                   spending: 560,
+|             },
+|             {
+|                   quarter: 'Q3',
+|                   spending: 600,
+|             },
+|             {
+|                   quarter: 'Q4',
+|                   spending: 700,
+|             },
+|           ],
+|           series: [{
+|             xKey: 'quarter',
+|             yKey: 'spending',
+|           }],
+|         },
 |       };
 |     },
-|     beforeMount() {
-|       this.options = {
-|         data: this.data,
-|         series: [{
-|           xKey: 'quarter',
-|           yKey: 'spending',
-|         }]
-|       };
-|     }
 |   };
 | </script>
 | ```
@@ -806,18 +802,37 @@ This name is more descriptive but also longer, so let's position the legend on t
 
 [[only-vue]]
 | ```diff
-| beforeMount() {
-|     this.options = {
-|         data: this.data,
-|         series: [{
-|             xKey: 'quarter',
-|             yKey: 'spending',
-| +           yName: 'Coffee Spending',
-|         }],
-| +       legend: {
-| +           position: 'bottom',
-| +       },
-|     };
+| data() {
+|   return {
+|     options: {
+|       data: [
+|         {
+|           quarter: 'Q1',
+|           spending: 450,
+|         },
+|         {
+|           quarter: 'Q2',
+|           spending: 560,
+|         },
+|         {
+|           quarter: 'Q3',
+|           spending: 600,
+|         },
+|         {
+|           quarter: 'Q4',
+|           spending: 700,
+|         },
+|       ],
+|       series: [{
+|         xKey: 'quarter',
+|         yKey: 'spending',
+| +       yName: 'Coffee Spending',
+|       }],
+| +     legend: {
+| +       position: 'bottom',
+| +     },
+|     },
+|   };
 | }
 | ```
 
@@ -936,16 +951,40 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 
 [[only-vue]]
 | ```js
-| beforeMount() {
-|     this.options = {
-|         data: this.data,
-|         series: [
-|             { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
-|             { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
-|             { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
-|             { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
-|         ],
-|     };
+| data() {
+|   return {
+|     options: {
+|       data: [
+|         {
+|           beverage: 'Coffee',
+|           Q1: 450,
+|           Q2: 560,
+|           Q3: 600,
+|           Q4: 700,
+|         },
+|         {
+|           beverage: 'Tea',
+|           Q1: 270,
+|           Q2: 380,
+|           Q3: 450,
+|           Q4: 520,
+|         },
+|         {
+|           beverage: 'Milk',
+|           Q1: 180,
+|           Q2: 170,
+|           Q3: 190,
+|           Q4: 200,
+|         },
+|       ],
+|       series: [
+|           { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|           { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|           { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|           { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|       ],
+|     },
+|   };
 | }
 | ```
 
@@ -1079,40 +1118,64 @@ We can enhance our chart by providing a label for each block segment. We can set
 
 [[only-vue]]
 | ```diff
-| beforeMount() {
-|     this.options = {
-|         data: this.data,
-|         series: [
-|             {
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKey: 'Q1',
-|                 stacked: true,
-| +               label: {},
-|             },
-|             {
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKey: 'Q2',
-|                 stacked: true,
-| +               label: {},
-|             },
-|             {
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKey: 'Q3',
-|                 stacked: true,
-| +               label: {},
-|             },
-|             {
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKey: 'Q4',
-|                 stacked: true,
-| +               label: {},
-|             },
-|         ],
-|     };
+| data() {
+|   return {
+|     options: {
+|       data: [
+|         {
+|           beverage: 'Coffee',
+|           Q1: 450,
+|           Q2: 560,
+|           Q3: 600,
+|           Q4: 700,
+|         },
+|         {
+|           beverage: 'Tea',
+|           Q1: 270,
+|           Q2: 380,
+|           Q3: 450,
+|           Q4: 520,
+|         },
+|         {
+|           beverage: 'Milk',
+|           Q1: 180,
+|           Q2: 170,
+|           Q3: 190,
+|           Q4: 200,
+|         },
+|       ],
+|       series: [
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q1',
+|           stacked: true,
+| +         label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q2',
+|           stacked: true,
+| +         label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q3',
+|           stacked: true,
+| +         label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q4',
+|           stacked: true,
+| +         label: {},
+|         },
+|       ],
+|     },
+|   };
 | }
 | ```
 
@@ -1260,46 +1323,70 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 
 [[only-vue]]
 | ```diff
-| beforeMount() {
-|     this.options = {
-|         data: this.data,
-| +       title: {
-| +           text: 'Beverage Expenses',
-| +       },
-| +       subtitle: {
-| +           text: 'per quarter',
-| +       },
-|         series: [
-|             {
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKey: 'Q1',
-|                 stacked: true,
-|                 label: {},
-|             },
-|             {
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKey: 'Q2',
-|                 stacked: true,
-|                 label: {},
-|             },
-|             {
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKey: 'Q3',
-|                 stacked: true,
-|                 label: {},
-|             },
-|             {
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKey: 'Q4',
-|                 stacked: true,
-|                 label: {},
-|             },
-|         ],
-|     };
+| data() {
+|   return {
+|     options: {
+|       data: [
+|         {
+|           beverage: 'Coffee',
+|           Q1: 450,
+|           Q2: 560,
+|           Q3: 600,
+|           Q4: 700,
+|         },
+|         {
+|           beverage: 'Tea',
+|           Q1: 270,
+|           Q2: 380,
+|           Q3: 450,
+|           Q4: 520,
+|         },
+|         {
+|           beverage: 'Milk',
+|           Q1: 180,
+|           Q2: 170,
+|           Q3: 190,
+|           Q4: 200,
+|         },
+|       ],
+| +     title: {
+| +       text: 'Beverage Expenses',
+| +     },
+| +     subtitle: {
+| +       text: 'per quarter',
+| +     },
+|       series: [
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q1',
+|           stacked: true,
+|           label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q2',
+|           stacked: true,
+|           label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q3',
+|           stacked: true,
+|           label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q4',
+|           stacked: true,
+|           label: {},
+|         },
+|       ],
+|     },
+|   };
 | }
 | ```
 

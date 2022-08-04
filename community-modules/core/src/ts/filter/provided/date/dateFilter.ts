@@ -39,6 +39,12 @@ export interface IDateFilterParams extends IScalarFilterParams {
     minValidYear?: number;
     /** This is the maximum year that may be entered in a date field for the value to be considered valid. Default is no restriction. */
     maxValidYear?: number;
+    /**
+     * Defines the date format for the floating filter text when an in range filter has been applied.
+     * 
+     * Default: `YYYY-MM-DD`
+     */
+     inRangeFloatingFilterDateFormat?: string;
 }
 
 export interface IDateComparatorFunc {

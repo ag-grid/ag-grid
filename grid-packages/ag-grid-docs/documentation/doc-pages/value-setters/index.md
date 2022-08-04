@@ -110,9 +110,9 @@ Read Only Edit is a mode in the grid whereby Cell Editing will not update the da
 |};
 |```
 
-The example has Cell Editing enabled, however the editing does nothing because `readOnlyEdit=true` is set. The application listens for `cellEditRequest` event and prints to the console. Because the application does not try to update the data, the cell keeps its old value, giving the impression that editing is not working.
+The example below has Cell Editing enabled, however the editing does nothing because `readOnlyEdit=true` is set. The application listens for `cellEditRequest` event and prints to the console. As the application does not try to update the data, the cell keeps its old value, giving the impression that editing is not working.
 
-<grid-example title='Read Only Edit' name='read-only' type='generated'></grid-example>
+<grid-example title='Read Only Edit - Not Implemented' name='read-only' type='generated' options='{"exampleHeight": 350}'></grid-example>
 
 This next example extends the above by getting the application to update the data.
 

@@ -4,14 +4,16 @@ export class MedalRenderer implements ICellRendererComp {
     eGui!: HTMLSpanElement;
     eButton!: HTMLButtonElement;
     buttonListener: any;
-    value: any;
+    total: any;
 
     init(params: ICellRendererParams) {
-        this.value = params.valueFormatted ? params.valueFormatted : params.value;
-        this.eGui = document.createElement('span')
+        this.total = params.data.total
+
+        this.eGui = document.createElement('span');
+        this.eGui.classList.add('total-value-renderer')
 
         const label = document.createElement('span');
-        label.innerText = params.value;
+        label.innerText = params.valueFormatted ? params.valueFormatted : params.value;
         this.eGui.appendChild(label);
 
         this.eButton = document.createElement('button');
@@ -24,7 +26,7 @@ export class MedalRenderer implements ICellRendererComp {
     }
 
     buttonClicked() {
-        alert(`${this.value} medals won!`)
+        alert(`${this.total} medals won!`)
     }
 
     getGui() {

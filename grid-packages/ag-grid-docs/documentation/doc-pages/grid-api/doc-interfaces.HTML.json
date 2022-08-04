@@ -1,0 +1,7 @@
+{
+    "comment": "This file can be used to provide custom HTML to expandable interface components. It will get appended to the current content.",
+    "usefulTool": "https://tableconvert.com/html-to-html",
+    "IDateFilterParams": {
+        "inRangeFloatingFilterDateFormat": "<table><tr><td><b>Part</b></td><td><b>Token</b></td><td><b>Output</b></td></tr><tr><td><b>Month</b></td><td>M</td><td>1 2 ... 11 12</td></tr><tr><td></td><td>Mo</td><td>1st 2nd ... 11th 12th</td></tr><tr><td></td><td>MM</td><td>01 02 ... 11 12</td></tr><tr><td></td><td>MMM</td><td>Jan Feb ... Nov Dec</td></tr><tr><td></td><td>MMMM</td><td>January February ... November December</td></tr><tr><td><b>Day of Month</b></td><td>D</td><td>1 2 ... 30 31</td></tr><tr><td></td><td>Do</td><td>1st 2nd ... 30th 31st</td></tr><tr><td></td><td>DD</td><td>01 02 ... 30 31</td></tr><tr><td><b>Day of Week</b></td><td>d</td><td>0 1 ... 5 6</td></tr><tr><td></td><td>do</td><td>0th 1st ... 5th 6th</td></tr><tr><td></td><td>dd</td><td>Su Mo ... Fr Sa</td></tr><tr><td></td><td>ddd</td><td>Sun Mon ... Fri Sat</td></tr><tr><td></td><td>dddd</td><td>Sunday Monday ... Friday Saturday</td></tr><tr><td><b>Year</b></td><td>YY</td><td>70 71 ... 29 30</td></tr><tr><td></td><td>YYYY</td><td>1970 1971 ... 2029 2030</td></tr><tr><td></td><td>Y</td><td>1970 1971 ... 9999 +10000 +10001</td></tr></table>"
+    }
+}

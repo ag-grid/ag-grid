@@ -75,6 +75,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     sortable: true,
     filter: true,
   },
+  autoGroupColumnDef: {
+    minWidth: 200,
+  },
   sideBar: 'columns',
   rowGroupPanelShow: 'always',
 }
