@@ -3136,11 +3136,11 @@
   },
   "ShapeLineCap": {
     "meta": { "isTypeAlias": true },
-    "type": "undefined | 'round' | 'square'"
+    "type": "'butt' | 'round' | 'square'"
   },
   "ShapeLineJoin": {
     "meta": { "isTypeAlias": true },
-    "type": "undefined | 'round' | 'bevel'"
+    "type": "'round' | 'bevel' | 'miter'"
   },
   "Comparator": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
