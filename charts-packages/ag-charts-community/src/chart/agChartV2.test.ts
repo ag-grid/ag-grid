@@ -5,7 +5,6 @@ import { AgChartV2 } from './agChartV2';
 import { Chart } from './chart';
 import * as examples from './test/examples';
 import {
-    repeat,
     waitForChartStability,
     cartesianChartAssertions,
     combineAssertions,
@@ -57,124 +56,12 @@ function consoleWarnAssertions(options: AgCartesianChartOptions) {
 }
 
 const EXAMPLES: Record<string, TestCase> = {
-    AREA_MISSING_Y_DATA_EXAMPLE: {
-        options: examples.AREA_MISSING_Y_DATA_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['area'] }),
-    },
-    STACKED_AREA_MISSING_Y_DATA_EXAMPLE: {
-        options: examples.STACKED_AREA_MISSING_Y_DATA_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['area'] }),
-    },
-    AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: {
-        options: examples.AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['area'] }),
-    },
-    AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE: {
-        options: examples.AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['area'] }),
-    },
-    STACKED_AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: {
-        options: examples.STACKED_AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['area'] }),
-    },
-    STACKED_AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE: {
-        options: examples.STACKED_AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['area'] }),
-    },
-    LINE_TIME_X_AXIS_NUMBER_Y_AXIS: {
-        options: examples.LINE_TIME_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
-    },
-    LINE_NUMBER_X_AXIS_TIME_Y_AXIS: {
-        options: examples.LINE_NUMBER_X_AXIS_TIME_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'time'], seriesTypes: repeat('line', 2) }),
-    },
-    LINE_MISSING_Y_DATA_EXAMPLE: {
-        options: examples.LINE_MISSING_Y_DATA_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['line'] }),
-    },
-    LINE_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: {
-        options: examples.LINE_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['line'] }),
-    },
-    LINE_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE: {
-        options: examples.LINE_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
-    },
-    LINE_NUMBER_AXES_0_X_DOMAIN: {
-        options: examples.LINE_NUMBER_AXES_0_X_DOMAIN,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: repeat('line', 2) }),
-    },
-    LINE_NUMBER_AXES_0_Y_DOMAIN: {
-        options: examples.LINE_NUMBER_AXES_0_Y_DOMAIN,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: repeat('line', 2) }),
-    },
-    AREA__TIME_X_AXIS_NUMBER_Y_AXIS: {
-        options: examples.AREA_TIME_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('area', 2) }),
-    },
-    AREA_NUMBER_X_AXIS_TIME_Y_AXIS: {
-        options: examples.AREA_NUMBER_X_AXIS_TIME_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'time'], seriesTypes: repeat('area', 2) }),
-    },
-    AREA_NUMBER_AXES_0_X_DOMAIN: {
-        options: examples.AREA_NUMBER_AXES_0_X_DOMAIN,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: repeat('area', 2) }),
-    },
-    AREA_NUMBER_AXES_0_Y_DOMAIN: {
-        options: examples.AREA_NUMBER_AXES_0_Y_DOMAIN,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: repeat('area', 2) }),
-    },
     INVALID_AXIS_LABEL_FORMAT: {
         options: examples.INVALID_AXIS_LABEL_FORMAT,
         assertions: combineAssertions(
             cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['line'] }),
             consoleWarnAssertions(examples.INVALID_AXIS_LABEL_FORMAT)
         ),
-    },
-    LINE_TIME_X_AXIS_NUMBER_Y_AXIS_LABELS: {
-        options: examples.LINE_TIME_X_AXIS_NUMBER_Y_AXIS_LABELS,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
-    },
-    LINE_TIME_X_AXIS_POSITION_TOP_NUMBER_Y_AXIS_LABELS: {
-        options: examples.LINE_TIME_X_AXIS_POSITION_TOP_NUMBER_Y_AXIS_LABELS,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
-    },
-    LINE_TIME_X_AXIS_NUMBER_Y_AXIS_POSITION_RIGHT_LABELS: {
-        options: examples.LINE_TIME_X_AXIS_NUMBER_Y_AXIS_POSITION_RIGHT_LABELS,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
-    },
-    COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
-        options: examples.COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['bar'] }),
-    },
-    COLUMN_TIME_X_AXIS_NUMBER_Y_AXIS: {
-        options: examples.COLUMN_TIME_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['bar'] }),
-    },
-    STACKED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
-        options: examples.STACKED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['bar'] }),
-    },
-    GROUPED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
-        options: examples.GROUPED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['bar'] }),
-    },
-    BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
-        options: examples.BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['bar'] }),
-    },
-    BAR_TIME_X_AXIS_NUMBER_Y_AXIS: {
-        options: examples.BAR_TIME_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['bar'] }),
-    },
-    STACKED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
-        options: examples.STACKED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['bar'] }),
-    },
-    GROUPED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
-        options: examples.GROUPED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['bar'] }),
     },
     TRUNCATED_LEGEND_ITEMS: {
         options: examples.TRUNCATED_LEGEND_ITEMS,
