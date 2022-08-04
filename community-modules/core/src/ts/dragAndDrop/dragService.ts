@@ -106,7 +106,7 @@ export class DragService extends BeanStub {
         const touchMoveEvent = (e: TouchEvent) => this.onTouchMove(e, params.eElement);
         const touchEndEvent = (e: TouchEvent) => this.onTouchUp(e, params.eElement);
         const documentTouchMove = (e: TouchEvent) => { if (e.cancelable) { e.preventDefault(); } };
-        const target = params.eElement;
+        const target = touchEvent.target as HTMLElement;
 
         const events = [
             // Prevents the page document from moving while we are dragging items around.

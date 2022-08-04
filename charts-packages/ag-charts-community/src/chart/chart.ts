@@ -260,15 +260,18 @@ export class ChartTooltip extends Observable {
             const maxLeft = window.innerWidth - tooltipRect.width - 1;
             if (left < minLeft) {
                 left = minLeft;
-                this.updateClass(true, (this.constrained = true));
+                this.constrained = true;
+                this.updateClass(true, this.constrained);
             } else if (left > maxLeft) {
                 left = maxLeft;
-                this.updateClass(true, (this.constrained = true));
+                this.constrained = true;
+                this.updateClass(true, this.constrained);
             }
 
             if (top < window.pageYOffset) {
                 top = meta.pageY + 20;
-                this.updateClass(true, (this.constrained = true));
+                this.constrained = true;
+                this.updateClass(true, this.constrained);
             }
         }
 

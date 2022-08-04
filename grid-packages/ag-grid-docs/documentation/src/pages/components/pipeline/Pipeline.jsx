@@ -90,6 +90,7 @@ const COLUMN_DEFS = [
 ];
 
 const defaultColDef = {
+    flex: 1,
     resizable: true,
     filter: true,
     sortable: true,

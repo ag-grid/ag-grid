@@ -139,3 +139,8 @@ export const AREA_CHART_NO_SERIES: AgChartOptions = {
     ...examples.STACKED_AREA_GRAPH_EXAMPLE,
     series: examples.STACKED_AREA_GRAPH_EXAMPLE.series?.map((s) => ({ ...s, visible: false })),
 };
+
+export const AREA_CHART_STACKED_NORMALISED_NO_SERIES: AgChartOptions = {
+    ...examples.ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE,
+    series: examples.ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE.series?.map((s) => ({ ...s, visible: false })),
+};
