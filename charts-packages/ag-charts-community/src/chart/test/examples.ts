@@ -128,7 +128,7 @@ export const GROUPED_CATEGORY_AXIS_EXAMPLE: AgChartOptions = {};
     });
 }
 
-export const AREA_MISSING_Y_DATA_EXAMPLE: AgChartOptions = {
+export const AREA_MISSING_Y_DATA_EXAMPLE: AgCartesianChartOptions = {
     data: DATA_INTERNET_EXPLORER_MARKET_SHARE,
     axes: [
         { type: 'category', position: 'bottom' },
@@ -153,7 +153,7 @@ export const AREA_MISSING_Y_DATA_EXAMPLE: AgChartOptions = {
     },
 };
 
-export const STACKED_AREA_MISSING_Y_DATA_EXAMPLE: AgChartOptions = {
+export const STACKED_AREA_MISSING_Y_DATA_EXAMPLE: AgCartesianChartOptions = {
     data: DATA_BROWSER_MARKET_SHARE,
     axes: [
         { type: 'category', position: 'bottom' },
