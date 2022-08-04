@@ -3447,6 +3447,7 @@
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
   "GroupedCategoryChartAxis": {},
+  "Layers": {},
   "LegendDatum": {
     "id": { "type": { "returnType": "string", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },

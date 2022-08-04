@@ -11,6 +11,7 @@ import { Node } from '../../../scene/node';
 import { RedrawType, SceneChangeDetection } from '../../../scene/changeDetectable';
 import { CategoryAxis } from '../../axis/categoryAxis';
 import { PointLabelDatum } from '../../../util/labelPlacement';
+import { Layers } from '../../layers';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
@@ -174,13 +175,13 @@ export abstract class CartesianSeries<
             const group = new Group({
                 name: `${this.id}-series-sub${this.subGroupId++}`,
                 layer: true,
-                zIndex: Series.SERIES_LAYER_ZINDEX,
+                zIndex: Layers.SERIES_LAYER_ZINDEX,
             });
             const markerGroup = features.includes('markers')
                 ? new Group({
                       name: `${this.id}-series-sub${this.subGroupId++}-markers`,
                       layer: true,
-                      zIndex: Series.SERIES_LAYER_ZINDEX,
+                      zIndex: Layers.SERIES_LAYER_ZINDEX,
                   })
                 : undefined;
             const pickGroup = new Group();
@@ -243,7 +244,7 @@ export abstract class CartesianSeries<
             group.visible = visible && (seriesItemEnabled.get(itemId) ?? true);
             if (markerGroup) {
                 markerGroup.opacity = group.opacity;
-                markerGroup.zIndex = group.zIndex >= Series.SERIES_LAYER_ZINDEX ? group.zIndex : group.zIndex + 1;
+                markerGroup.zIndex = group.zIndex >= Layers.SERIES_LAYER_ZINDEX ? group.zIndex : group.zIndex + 1;
                 markerGroup.visible = group.visible;
             }
 

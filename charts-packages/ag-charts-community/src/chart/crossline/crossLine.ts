@@ -6,7 +6,6 @@ import { BBox } from '../../scene/bbox';
 import { Scale } from '../../scale/scale';
 import { clamper, ContinuousScale } from '../../scale/continuousScale';
 import { createId } from '../../util/id';
-import { Series } from '../series/series';
 import { normalizeAngle360, toRadians } from '../../util/angle';
 import { ChartAxisDirection, ChartAxisPosition } from '../chartAxis';
 import {
@@ -17,6 +16,7 @@ import {
     calculateLabelTranslation,
 } from './crossLineLabelPosition';
 import { checkDatum } from '../../util/value';
+import { Layers } from '../layers';
 
 export class CrossLineLabel {
     enabled?: boolean = undefined;
@@ -45,8 +45,8 @@ interface CrossLinePathData {
 type CrossLineType = 'line' | 'range';
 
 export class CrossLine {
-    protected static readonly LINE_LAYER_ZINDEX = Series.SERIES_CROSSLINE_LINE_ZINDEX;
-    protected static readonly RANGE_LAYER_ZINDEX = Series.SERIES_CROSSLINE_RANGE_ZINDEX;
+    protected static readonly LINE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_LINE_ZINDEX;
+    protected static readonly RANGE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_RANGE_ZINDEX;
 
     static className = 'CrossLine';
     readonly id = createId(this);

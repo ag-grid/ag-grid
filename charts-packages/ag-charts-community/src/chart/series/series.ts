@@ -9,6 +9,7 @@ import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
 import { Deprecated } from '../../util/validation';
 import { PointLabelDatum } from '../../util/labelPlacement';
+import { Layers } from '../layers';
 
 /**
  * Processed series datum used in node selections,
@@ -116,15 +117,6 @@ export type SeriesNodeDataContext<S = SeriesNodeDatum, L = S> = {
 };
 
 export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataContext> extends Observable {
-    static readonly SERIES_GRIDLINES_ZINDEX = 0;
-    static readonly SERIES_CROSSLINE_RANGE_ZINDEX = 10;
-    static readonly SERIES_AXIS_ZINDEX = 20;
-    static readonly SERIES_LAYER_ZINDEX = 500;
-    static readonly SERIES_MARKER_LAYER_ZINDEX = 1000;
-    static readonly SERIES_HIGHLIGHT_LAYER_ZINDEX = 2000;
-    static readonly SERIES_CROSSLINE_LINE_ZINDEX = 2500;
-    static readonly LEGEND_ZINDEX = 3000;
-
     protected static readonly highlightedZIndex = 1000000000000;
 
     readonly id = createId(this);
@@ -195,7 +187,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             new Group({
                 name: `${this.id}-series`,
                 layer: seriesGroupUsesLayer,
-                zIndex: Series.SERIES_LAYER_ZINDEX,
+                zIndex: Layers.SERIES_LAYER_ZINDEX,
             })
         );
         this.pickGroup = this.seriesGroup.appendChild(new Group());
@@ -204,7 +196,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             new Group({
                 name: `${this.id}-highlight`,
                 layer: true,
-                zIndex: Series.SERIES_HIGHLIGHT_LAYER_ZINDEX,
+                zIndex: Layers.SERIES_HIGHLIGHT_LAYER_ZINDEX,
                 optimiseDirtyTracking: true,
             })
         );
@@ -314,19 +306,21 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     }
 
     protected getZIndex(datum?: { itemId?: any }): number {
-        const defaultZIndex = Series.SERIES_LAYER_ZINDEX;
+        const defaultZIndex = Layers.SERIES_LAYER_ZINDEX;
 
         switch (this.isItemIdHighlighted(datum)) {
             case 'highlighted':
             case 'peer-highlighted':
-                return Series.SERIES_HIGHLIGHT_LAYER_ZINDEX - 2;
+                return Layers.SERIES_HIGHLIGHT_LAYER_ZINDEX - 2;
             case 'no-highlight':
             case 'other-highlighted':
                 return defaultZIndex;
         }
     }
 
-    protected isItemIdHighlighted(datum?: { itemId?: any }): 'highlighted' | 'other-highlighted' | 'peer-highlighted' | 'no-highlight' {
+    protected isItemIdHighlighted(datum?: {
+        itemId?: any;
+    }): 'highlighted' | 'other-highlighted' | 'peer-highlighted' | 'no-highlight' {
         const {
             chart: {
                 highlightedDatum: { series = undefined, itemId = undefined } = {},
