@@ -110,6 +110,13 @@ const EXAMPLES: Record<string, TestCase> = {
             seriesTypes: ['area', 'bar'],
         }),
     },
+    HISTOGRAM_SCATTER_COMBO_SERIES_LABELS: {
+        options: examples.HISTOGRAM_SCATTER_COMBO_SERIES_LABELS,
+        assertions: cartesianChartAssertions({
+            axisTypes: ['number', 'number', 'number'],
+            seriesTypes: ['histogram', 'scatter'],
+        }),
+    },
 };
 
 describe('series labels', () => {

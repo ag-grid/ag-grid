@@ -647,7 +647,6 @@ export const LINE_COLUMN_COMBO_SERIES_LABELS: AgCartesianChartOptions = {
             gridStyle: [{}],
         },
         {
-            // primary y axis
             type: 'number',
             position: 'left',
             keys: ['women', 'men', 'children', 'adults'],
@@ -656,7 +655,6 @@ export const LINE_COLUMN_COMBO_SERIES_LABELS: AgCartesianChartOptions = {
             },
         },
         {
-            // secondary y axis
             type: 'number',
             position: 'right',
             keys: ['portions'],
@@ -723,7 +721,6 @@ export const AREA_COLUMN_COMBO_SERIES_LABELS: AgCartesianChartOptions = {
             gridStyle: [{}],
         },
         {
-            // primary y axis
             type: 'number',
             position: 'left',
             keys: ['women', 'men', 'children', 'adults'],
@@ -732,7 +729,6 @@ export const AREA_COLUMN_COMBO_SERIES_LABELS: AgCartesianChartOptions = {
             },
         },
         {
-            // secondary y axis
             type: 'number',
             position: 'right',
             keys: ['portions'],
@@ -741,4 +737,83 @@ export const AREA_COLUMN_COMBO_SERIES_LABELS: AgCartesianChartOptions = {
             },
         },
     ],
+};
+
+export const HISTOGRAM_SCATTER_COMBO_SERIES_LABELS: AgCartesianChartOptions = {
+    data: DATA_MALE_HEIGHT_WEIGHT.concat(DATA_FEMALE_HEIGHT_WEIGHT),
+    title: {
+        text: 'Vehicle fuel efficiency by engine size (USA 1987)',
+        fontSize: 18,
+    },
+    subtitle: {
+        text: 'Source: UCI',
+    },
+    series: [
+        {
+            type: 'histogram',
+            xKey: 'weight',
+            xName: 'Weight',
+            yKey: 'height',
+            yName: 'Height',
+            fill: '#41874b',
+            stroke: '#41874b',
+            fillOpacity: 0.5,
+            aggregation: 'mean',
+            label: {
+                color: '#dcdbe5',
+                fontWeight: 'bold',
+                fontSize: 20,
+                formatter: (params) => params.value.toFixed(0),
+            },
+        },
+        {
+            type: 'scatter',
+            xKey: 'weight',
+            xName: 'Weight',
+            yKey: 'age',
+            yName: 'Age',
+            labelKey: 'age',
+            marker: {
+                fill: '#ccb9c9',
+                stroke: '#9b7595',
+                strokeWidth: 0,
+                size: 7,
+            },
+            label: {},
+        },
+    ],
+    axes: [
+        {
+            position: 'bottom',
+            type: 'number',
+            title: {
+                enabled: true,
+                text: 'Weight (kg)',
+            },
+            gridStyle: [{}],
+        },
+        {
+            position: 'left',
+            type: 'number',
+            keys: ['height'],
+            title: {
+                enabled: true,
+                text: 'Height',
+            },
+            line: {
+                color: undefined,
+            },
+        },
+        {
+            position: 'right',
+            type: 'number',
+            keys: ['age'],
+            line: {
+                color: undefined,
+            },
+        },
+    ],
+    legend: {
+        position: 'bottom',
+    },
 };
