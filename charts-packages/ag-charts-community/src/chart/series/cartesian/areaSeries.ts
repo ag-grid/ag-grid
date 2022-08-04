@@ -627,10 +627,14 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             let moveTo = true;
 
             stroke.stroke = strokes[seriesIdx % strokes.length];
-            stroke.strokeWidth = this.getStrokeWidth(this.strokeWidth, { itemId });
+            stroke.strokeWidth = this.getStrokeWidth(this.strokeWidth, { itemId }) * 2;
             stroke.strokeOpacity = strokeOpacity;
             stroke.lineDash = this.lineDash;
             stroke.lineDashOffset = this.lineDashOffset;
+            stroke.lineCap = 'round';
+            stroke.lineJoin = 'round';
+            stroke.clipPath = strokeWidth ? fill.path : undefined;
+            stroke.clipMode = strokeWidth ? 'normal' : undefined;
 
             const path = stroke.path;
             path.clear({ trackChanges: true });
