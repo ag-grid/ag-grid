@@ -1002,6 +1002,9 @@ export class RowCtrl extends BeanStub {
         if (fireRowEditEvent) {
             const event: RowValueChangedEvent = this.createRowEvent(Events.EVENT_ROW_VALUE_CHANGED);
             this.beans.eventService.dispatchEvent(event);
+        }
+
+        if (isRowEdit) {
             this.setEditingRow(false);
         }
 
