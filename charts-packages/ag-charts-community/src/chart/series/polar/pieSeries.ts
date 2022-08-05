@@ -504,7 +504,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const { colors: calloutColors, length: calloutLength, strokeWidth: calloutStrokeWidth } = callout;
 
         this.groupSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
-            const radius = radiusScale.convert(datum.radius);
+            const radius = radiusScale.convert(datum.radius, clamper);
             const outerRadius = Math.max(0, radius);
 
             if (datum.label && outerRadius !== 0) {
@@ -524,7 +524,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
             this.groupSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum, index) => {
                 const label = datum.label;
-                const radius = radiusScale.convert(datum.radius);
+                const radius = radiusScale.convert(datum.radius, clamper);
                 const outerRadius = Math.max(0, radius);
 
                 if (label && outerRadius !== 0) {
