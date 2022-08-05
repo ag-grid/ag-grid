@@ -4,6 +4,7 @@ import { HdpiCanvas } from '../canvas/hdpiCanvas';
 import { Scene } from './scene';
 import { Path2D } from './path2D';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
+import { compoundAscending, ascendingStringNumberUndefined } from '../util/compare';
 
 export class Group extends Node {
     static className = 'Group';
@@ -29,7 +30,7 @@ export class Group extends Node {
 
     protected zIndexChanged() {
         if (this.layer) {
-            this._scene?.moveLayer(this.layer, this.zIndex);
+            this._scene?.moveLayer(this.layer, this.zIndex, this.zIndexSubOrder);
         }
     }
 
@@ -37,15 +38,21 @@ export class Group extends Node {
         protected readonly opts?: {
             readonly layer?: boolean;
             readonly zIndex?: number;
+            readonly zIndexSubOrder?: [string, number];
             readonly name?: string;
             readonly optimiseDirtyTracking?: boolean;
         }
     ) {
         super();
 
+        const { zIndex, zIndexSubOrder } = opts || {};
+
         this.isContainerNode = true;
-        if (this.opts?.zIndex !== undefined) {
-            this.zIndex = this.opts.zIndex;
+        if (zIndex !== undefined) {
+            this.zIndex = zIndex;
+        }
+        if (zIndexSubOrder !== undefined) {
+            this.zIndexSubOrder = zIndexSubOrder;
         }
         if (this.opts?.optimiseDirtyTracking) {
             this.visibleChildren = {};
@@ -78,8 +85,8 @@ export class Group extends Node {
         super._setScene(scene);
 
         if (scene && this.opts?.layer) {
-            const { zIndex, name } = this.opts || {};
-            this.layer = scene.addLayer({ zIndex, name });
+            const { zIndex, zIndexSubOrder, name } = this.opts || {};
+            this.layer = scene.addLayer({ zIndex, zIndexSubOrder, name });
         }
     }
 
@@ -427,11 +434,11 @@ export class Group extends Node {
     private sortChildren() {
         this.dirtyZIndex = false;
         this.children.sort((a, b) => {
-            const result = a.zIndex - b.zIndex;
-            if (result !== 0) {
-                return result;
-            }
-            return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+            return compoundAscending(
+                [a.zIndex, ...(a.zIndexSubOrder ?? [undefined, undefined]), a.id],
+                [b.zIndex, ...(b.zIndexSubOrder ?? [undefined, undefined]), b.id],
+                ascendingStringNumberUndefined
+            );
         });
     }
 }

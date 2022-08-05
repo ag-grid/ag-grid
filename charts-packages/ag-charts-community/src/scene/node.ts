@@ -540,6 +540,18 @@ export abstract class Node extends ChangeDetectable {
     })
     zIndex: number = 0;
 
+    @SceneChangeDetection({
+        redraw: RedrawType.TRIVIAL,
+        changeCb: (o) => {
+            if (o.parent) {
+                o.parent.dirtyZIndex = true;
+            }
+            o.zIndexChanged();
+        },
+    })
+    /** Discriminators for render order within a zIndex. */
+    zIndexSubOrder?: [string, number] = undefined;
+
     pointerEvents: PointerEvents = PointerEvents.All;
 
     get nodeCount() {

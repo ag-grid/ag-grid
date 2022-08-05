@@ -4105,6 +4105,9 @@
     "id": { "type": { "returnType": "number", "optional": false } },
     "name": { "type": { "returnType": "string", "optional": true } },
     "zIndex": { "type": { "returnType": "number", "optional": false } },
+    "zIndexSubOrder": {
+      "type": { "returnType": "[string, number]", "optional": true }
+    },
     "canvas": {
       "type": {
         "returnType": "HdpiOffscreenCanvas | HdpiCanvas",

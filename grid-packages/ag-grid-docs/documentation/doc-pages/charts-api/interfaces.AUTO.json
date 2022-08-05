@@ -3127,6 +3127,7 @@
       "id": "number",
       "name?": "string",
       "zIndex": "number",
+      "zIndexSubOrder?": "[string, number]",
       "canvas": "HdpiOffscreenCanvas | HdpiCanvas"
     }
   },

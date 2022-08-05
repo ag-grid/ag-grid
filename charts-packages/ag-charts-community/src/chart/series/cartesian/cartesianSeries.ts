@@ -172,16 +172,19 @@ export abstract class CartesianSeries<
         }
 
         while (contextNodeData.length > subGroups.length) {
+            const subGroupId = this.subGroupId++;
             const group = new Group({
-                name: `${this.id}-series-sub${this.subGroupId++}`,
+                name: `${this.id}-series-sub${subGroupId}`,
                 layer: true,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
+                zIndexSubOrder: [this.id, -subGroupId],
             });
             const markerGroup = features.includes('markers')
                 ? new Group({
                       name: `${this.id}-series-sub${this.subGroupId++}-markers`,
                       layer: true,
                       zIndex: Layers.SERIES_LAYER_ZINDEX,
+                      zIndexSubOrder: [this.id, 1000 - subGroupId],
                   })
                 : undefined;
             const pickGroup = new Group();
