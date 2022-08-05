@@ -2662,6 +2662,7 @@
       "paths": "Path[]",
       "group": "Group",
       "pickGroup": "Group",
+      "labelGroup": "Group",
       "markerGroup?": "Group",
       "datumSelection": "NodeDataSelection<SceneNodeType, C>",
       "labelSelection": "LabelDataSelection<Text, C>",
@@ -2678,6 +2679,7 @@
     "type": {
       "pickGroupIncludes": "PickGroupInclude[]",
       "pathsPerSeries": "number",
+      "pathsZIndexSubOrderOffset": "number[]",
       "features": "SeriesFeature[]"
     }
   },

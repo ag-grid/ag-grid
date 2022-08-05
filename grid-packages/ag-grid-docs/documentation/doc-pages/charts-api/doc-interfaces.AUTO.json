@@ -3659,6 +3659,7 @@
     "paths": { "type": { "returnType": "Path[]", "optional": false } },
     "group": { "type": { "returnType": "Group", "optional": false } },
     "pickGroup": { "type": { "returnType": "Group", "optional": false } },
+    "labelGroup": { "type": { "returnType": "Group", "optional": false } },
     "markerGroup": { "type": { "returnType": "Group", "optional": true } },
     "datumSelection": {
       "type": {
@@ -3686,6 +3687,9 @@
       "type": { "returnType": "PickGroupInclude[]", "optional": false }
     },
     "pathsPerSeries": { "type": { "returnType": "number", "optional": false } },
+    "pathsZIndexSubOrderOffset": {
+      "type": { "returnType": "number[]", "optional": false }
+    },
     "features": {
       "type": { "returnType": "SeriesFeature[]", "optional": false }
     }

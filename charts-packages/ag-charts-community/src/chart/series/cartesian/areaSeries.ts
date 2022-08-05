@@ -136,7 +136,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     lineDashOffset: number = 0;
 
     constructor() {
-        super({ pathsPerSeries: 2, pickGroupIncludes: ['markers'], features: ['markers'] });
+        super({
+            pathsPerSeries: 2,
+            pathsZIndexSubOrderOffset: [0, 1000],
+            pickGroupIncludes: ['markers'],
+            features: ['markers'],
+        });
 
         const { marker, label } = this;
 
