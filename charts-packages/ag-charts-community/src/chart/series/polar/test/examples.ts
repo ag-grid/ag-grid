@@ -1,6 +1,4 @@
-import {
-    DATA_MARKET_SHARE,
-} from './data';
+import { DATA_MARKET_SHARE } from './data';
 import { AgPolarChartOptions } from '../../../agChartOptions';
 
 export const PIE_SERIES: AgPolarChartOptions = {
@@ -32,8 +30,8 @@ export const PIE_SLICES_DIFFERENT_RADII: AgPolarChartOptions = {
     ],
 };
 
-const minRadius = Math.min(...DATA_MARKET_SHARE.map(d => d.satisfaction));
-const maxRadius = Math.max(...DATA_MARKET_SHARE.map(d => d.satisfaction))
+const minRadius = Math.min(...DATA_MARKET_SHARE.map((d) => d.satisfaction));
+const maxRadius = Math.max(...DATA_MARKET_SHARE.map((d) => d.satisfaction));
 
 export const PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MIN: AgPolarChartOptions = {
     title: {
@@ -46,7 +44,7 @@ export const PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MIN: AgPolarChartOptions = 
             labelKey: 'os',
             angleKey: 'share',
             radiusKey: 'satisfaction',
-            radiusMin: minRadius - 2
+            radiusMin: minRadius - 2,
         },
     ],
 };
@@ -78,7 +76,7 @@ export const PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MAX: AgPolarChartOptions = 
             labelKey: 'os',
             angleKey: 'share',
             radiusKey: 'satisfaction',
-            radiusMax: minRadius - 2
+            radiusMax: minRadius - 2,
         },
     ],
 };
@@ -94,7 +92,7 @@ export const PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MAX: AgPolarChartOptions = 
             labelKey: 'os',
             angleKey: 'share',
             radiusKey: 'satisfaction',
-            radiusMax: maxRadius + 2
+            radiusMax: maxRadius + 2,
         },
     ],
 };

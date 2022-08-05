@@ -3041,6 +3041,14 @@
       "extraScreenshotActions?": "(chart: Chart) => Promise<void>"
     }
   },
+  "PolarTestCase": {
+    "meta": {},
+    "type": {
+      "options": "AgPolarChartOptions",
+      "assertions": "(chart: Chart) => Promise<void>",
+      "extraScreenshotActions?": "(chart: Chart) => Promise<void>"
+    }
+  },
   "ChartThemeDefaults": {
     "meta": { "isTypeAlias": true },
     "type": "{ cartesian: AgCartesianThemeOptions; groupedCategory: AgCartesianThemeOptions; polar: AgPolarThemeOptions; hierarchy: AgHierarchyThemeOptions; } & { [key in keyof AgCartesianSeriesTheme]?: AgCartesianThemeOptions; } & { [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions; } & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions; }"

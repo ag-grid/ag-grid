@@ -4017,6 +4017,25 @@
       }
     }
   },
+  "PolarTestCase": {
+    "options": {
+      "type": { "returnType": "AgPolarChartOptions", "optional": false }
+    },
+    "assertions": {
+      "type": {
+        "arguments": { "chart": "Chart" },
+        "returnType": "Promise<void>",
+        "optional": false
+      }
+    },
+    "extraScreenshotActions": {
+      "type": {
+        "arguments": { "chart": "Chart" },
+        "returnType": "Promise<void>",
+        "optional": true
+      }
+    }
+  },
   "ChartThemeDefaults": {},
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }

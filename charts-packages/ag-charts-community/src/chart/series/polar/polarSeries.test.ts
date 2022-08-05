@@ -28,19 +28,19 @@ const EXAMPLES: Record<string, PolarTestCase> = {
         options: examples.PIE_SLICES_DIFFERENT_RADII,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
     },
-    PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MIN : {
+    PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MIN: {
         options: examples.PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MIN,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
     },
-    PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MIN : {
+    PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MIN: {
         options: examples.PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MIN,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
     },
-    PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MAX : {
+    PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MAX: {
         options: examples.PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MAX,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
     },
-    PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MAX : {
+    PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MAX: {
         options: examples.PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MAX,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
     },
@@ -59,7 +59,7 @@ const EXAMPLES: Record<string, PolarTestCase> = {
     GROUPED_DOUGHNUT_SERIES_DIFFERENT_RADII: {
         options: examples.GROUPED_DOUGHNUT_SERIES_DIFFERENT_RADII,
         assertions: polarChartAssertions({ seriesTypes: repeat('pie', 2) }),
-    }
+    },
 };
 
 describe('PolarSeries', () => {
