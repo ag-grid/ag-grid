@@ -102,20 +102,20 @@ const OPTIONS: AgCartesianChartOptions = {
     },
     series: [
         {
-            type: 'line',
-            xKey: 'year',
-            yKey: 'portions',
-            yName: 'Portions',
-            strokeWidth: 3,
-            marker: { enabled: true },
-        },
-        {
             type: 'area',
             xKey: 'year',
             yKeys: ['adults', 'children'],
             yNames: ['Adults', 'Children'],
             strokeWidth: 10,
             normalizedTo: 32,
+            marker: { enabled: true },
+        },
+        {
+            type: 'line',
+            xKey: 'year',
+            yKey: 'portions',
+            yName: 'Portions',
+            strokeWidth: 3,
             marker: { enabled: true },
         },
         {
