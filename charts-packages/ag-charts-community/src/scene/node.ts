@@ -148,6 +148,7 @@ export abstract class Node extends ChangeDetectable {
             node._setScene(this.scene);
         }
 
+        this.dirtyZIndex = true;
         this.markDirty(this, RedrawType.MAJOR);
     }
 
@@ -166,6 +167,8 @@ export abstract class Node extends ChangeDetectable {
                 delete this.childSet[node.id];
                 node._parent = undefined;
                 node._setScene();
+
+                this.dirtyZIndex = true;
                 this.markDirty(node, RedrawType.MAJOR);
 
                 return node;
@@ -201,6 +204,7 @@ export abstract class Node extends ChangeDetectable {
                 throw new Error(`${nextNode} has ${parent} as the parent, ` + `but is not in its list of children.`);
             }
 
+            this.dirtyZIndex = true;
             this.markDirty(node, RedrawType.MAJOR);
         } else {
             this.append(node);
@@ -539,6 +543,18 @@ export abstract class Node extends ChangeDetectable {
         },
     })
     zIndex: number = 0;
+
+    @SceneChangeDetection({
+        redraw: RedrawType.TRIVIAL,
+        changeCb: (o) => {
+            if (o.parent) {
+                o.parent.dirtyZIndex = true;
+            }
+            o.zIndexChanged();
+        },
+    })
+    /** Discriminators for render order within a zIndex. */
+    zIndexSubOrder?: [string, number] = undefined;
 
     pointerEvents: PointerEvents = PointerEvents.All;
 

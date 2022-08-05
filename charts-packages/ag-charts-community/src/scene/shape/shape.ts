@@ -2,8 +2,8 @@ import { Node, RedrawType, SceneChangeDetection } from '../node';
 import { chainObjects } from '../../util/object';
 import { DropShadow } from '../dropShadow';
 
-export type ShapeLineCap = undefined | 'round' | 'square'; // null is for 'butt'
-export type ShapeLineJoin = undefined | 'round' | 'bevel'; // null is for 'miter'
+export type ShapeLineCap = 'butt' | 'round' | 'square';
+export type ShapeLineJoin = 'round' | 'bevel' | 'miter';
 
 export abstract class Shape extends Node {
     /**
@@ -46,8 +46,8 @@ export abstract class Shape extends Node {
             strokeWidth: 0,
             lineDash: undefined,
             lineDashOffset: 0,
-            lineCap: undefined as ShapeLineCap,
-            lineJoin: undefined as ShapeLineJoin,
+            lineCap: undefined,
+            lineJoin: undefined,
             opacity: 1,
             fillShadow: undefined,
         }
@@ -143,10 +143,10 @@ export abstract class Shape extends Node {
     lineDashOffset: number = Shape.defaultStyles.lineDashOffset;
 
     @SceneChangeDetection({ redraw: RedrawType.MINOR })
-    lineCap: ShapeLineCap = Shape.defaultStyles.lineCap;
+    lineCap?: ShapeLineCap = Shape.defaultStyles.lineCap;
 
     @SceneChangeDetection({ redraw: RedrawType.MINOR })
-    lineJoin: ShapeLineJoin = Shape.defaultStyles.lineJoin;
+    lineJoin?: ShapeLineJoin = Shape.defaultStyles.lineJoin;
 
     @SceneChangeDetection({
         redraw: RedrawType.MINOR,

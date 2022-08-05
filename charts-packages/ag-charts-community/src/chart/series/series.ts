@@ -9,6 +9,7 @@ import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
 import { Deprecated } from '../../util/validation';
 import { PointLabelDatum } from '../../util/labelPlacement';
+import { Layers } from '../layers';
 
 /**
  * Processed series datum used in node selections,
@@ -116,10 +117,7 @@ export type SeriesNodeDataContext<S = SeriesNodeDatum, L = S> = {
 };
 
 export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataContext> extends Observable {
-    static readonly SERIES_LAYER_ZINDEX = 100;
     protected static readonly highlightedZIndex = 1000000000000;
-    protected static readonly SERIES_MARKER_LAYER_ZINDEX = 110;
-    static readonly SERIES_HIGHLIGHT_LAYER_ZINDEX = 150;
 
     readonly id = createId(this);
 
@@ -189,7 +187,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             new Group({
                 name: `${this.id}-series`,
                 layer: seriesGroupUsesLayer,
-                zIndex: Series.SERIES_LAYER_ZINDEX,
+                zIndex: Layers.SERIES_LAYER_ZINDEX,
             })
         );
         this.pickGroup = this.seriesGroup.appendChild(new Group());
@@ -198,7 +196,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             new Group({
                 name: `${this.id}-highlight`,
                 layer: true,
-                zIndex: Series.SERIES_HIGHLIGHT_LAYER_ZINDEX,
+                zIndex: Layers.SERIES_HIGHLIGHT_LAYER_ZINDEX,
                 optimiseDirtyTracking: true,
             })
         );
@@ -279,6 +277,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             case 'no-highlight':
             case 'highlighted':
                 return defaultOpacity;
+            case 'peer-highlighted':
             case 'other-highlighted':
                 return dimOpacity;
         }
@@ -301,23 +300,27 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 return strokeWidth;
             case 'no-highlight':
             case 'other-highlighted':
+            case 'peer-highlighted':
                 return defaultStrokeWidth;
         }
     }
 
     protected getZIndex(datum?: { itemId?: any }): number {
-        const defaultZIndex = Series.SERIES_LAYER_ZINDEX;
+        const defaultZIndex = Layers.SERIES_LAYER_ZINDEX;
 
         switch (this.isItemIdHighlighted(datum)) {
             case 'highlighted':
-                return Series.SERIES_HIGHLIGHT_LAYER_ZINDEX - 2;
+            case 'peer-highlighted':
+                return Layers.SERIES_HIGHLIGHT_LAYER_ZINDEX - 2;
             case 'no-highlight':
             case 'other-highlighted':
                 return defaultZIndex;
         }
     }
 
-    protected isItemIdHighlighted(datum?: { itemId?: any }): 'highlighted' | 'other-highlighted' | 'no-highlight' {
+    protected isItemIdHighlighted(datum?: {
+        itemId?: any;
+    }): 'highlighted' | 'other-highlighted' | 'peer-highlighted' | 'no-highlight' {
         const {
             chart: {
                 highlightedDatum: { series = undefined, itemId = undefined } = {},
@@ -343,8 +346,9 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         }
 
         if (datum && highlightedDatum !== datum && itemId !== datum.itemId) {
-            // Highlighting active, this series item not highlighted.
-            return 'other-highlighted';
+            // A peer (in same Series instance) sub-series has highlight active, but this sub-series
+            // does not.
+            return 'peer-highlighted';
         }
 
         return 'highlighted';

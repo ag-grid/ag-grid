@@ -136,7 +136,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     lineDashOffset: number = 0;
 
     constructor() {
-        super({ pathsPerSeries: 2, pickGroupIncludes: ['markers'], features: ['markers'] });
+        super({
+            pathsPerSeries: 2,
+            pathsZIndexSubOrderOffset: [0, 1000],
+            pickGroupIncludes: ['markers'],
+            features: ['markers'],
+        });
 
         const { marker, label } = this;
 
@@ -787,17 +792,6 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 text.visible = false;
             }
         });
-    }
-
-    protected getZIndex(datum?: { itemId?: any }): number {
-        const defaultZIndex = super.getZIndex(datum);
-
-        if (this._yKeys.length > 1) {
-            // Stacked case - need special handling so that markers don't end-up overlapped.
-            return defaultZIndex - 10;
-        }
-
-        return defaultZIndex;
     }
 
     fireNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): void {

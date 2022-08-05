@@ -10,6 +10,7 @@ import { createId } from '../util/id';
 import { RedrawType } from '../scene/node';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
 import { OPT_BOOLEAN, Validate } from '../util/validation';
+import { Layers } from './layers';
 
 export interface LegendDatum {
     id: string; // component ID
@@ -116,7 +117,7 @@ export class Legend {
 
     onLayoutChange?: () => void;
 
-    readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: 300 });
+    readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: Layers.LEGEND_ZINDEX });
 
     private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(
         this.group
