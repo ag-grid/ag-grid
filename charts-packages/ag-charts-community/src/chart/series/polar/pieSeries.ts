@@ -4,6 +4,7 @@ import { Text } from '../../../scene/shape/text';
 import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
+import { clamper } from '../../../scale/continuousScale';
 import { Sector } from '../../../scene/shape/sector';
 import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle, SeriesTooltip } from './../series';
 import { Label } from '../../label';
@@ -436,7 +437,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const innerRadius = radiusScale.convert(0);
 
         const updateSectorFn = (sector: Sector, datum: PieNodeDatum, index: number, isDatumHighlighted: boolean) => {
-            const radius = radiusScale.convert(datum.radius);
+            const radius = radiusScale.convert(datum.radius, clamper);
             const fill =
                 isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : fills[index % fills.length];
             const stroke =
