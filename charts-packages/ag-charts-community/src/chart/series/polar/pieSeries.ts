@@ -260,8 +260,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         if (radiusKey) {
             const { radiusMin, radiusMax } = this;
             const radii = data.map((datum) => Math.abs(datum[radiusKey]));
-            const min = radiusMin !== undefined ? radiusMin : Math.min(...radii);
-            const max = radiusMax !== undefined ? radiusMax : Math.max(...radii);
+            const min = radiusMin ?? 0;
+            const max = radiusMax ? radiusMax : Math.max(...radii);
             const delta = max - min;
 
             radiusData = radii.map((value) => (delta ? (value - min) / delta : 1));
