@@ -346,7 +346,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         }
 
         if (datum && highlightedDatum !== datum && itemId !== datum.itemId) {
-            // Highlighting active, this series item not highlighted.
+            // A peer (in same Series instance) sub-series has highlight active, but this sub-series
+            // does not.
             return 'peer-highlighted';
         }
 

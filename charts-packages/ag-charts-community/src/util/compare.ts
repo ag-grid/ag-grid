@@ -8,30 +8,30 @@ export function ascendingStringNumberUndefined(
     a: number | string | undefined | null,
     b: number | string | undefined | null
 ): number {
-    let zDiff = 0;
+    let diff = 0;
     if (typeof a === 'number' && typeof b === 'number') {
-        zDiff = a - b;
+        diff = a - b;
     } else if (typeof a === 'string' && typeof b === 'string') {
-        zDiff = a.localeCompare(b);
+        diff = a.localeCompare(b);
     } else if (a == null && b == null) {
         // Equal.
     } else if (a == null) {
-        zDiff = -1;
+        diff = -1;
     } else if (b == null) {
-        zDiff = 1;
+        diff = 1;
     } else {
-        zDiff = String(a).localeCompare(String(b));
+        diff = String(a).localeCompare(String(b));
     }
 
-    return zDiff;
+    return diff;
 }
 
 export function compoundAscending<E, A extends Array<E>>(a: A, b: A, comparator: Comparator<E>): number {
     for (const idx in a) {
-        const zDiff = comparator(a[idx], b[idx]);
+        const diff = comparator(a[idx], b[idx]);
 
-        if (zDiff !== 0) {
-            return zDiff;
+        if (diff !== 0) {
+            return diff;
         }
     }
 
