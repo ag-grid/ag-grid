@@ -162,7 +162,7 @@ const processIndexForFramework = async framework => {
     const records = [];
     const indexName = `${indexNamePrefix}_${framework}`;
 
-    const exclusions = ["charts-api-themes", "charts-api"];
+    const exclusions = ["charts-api-themes", "charts-api", "charts-api-explorer"];
 
     console.log(`Generating records for ${indexName}...`);
 
