@@ -34,6 +34,10 @@ export class Group extends Node {
         }
     }
 
+    isLayer() {
+        return this.layer != null;
+    }
+
     public constructor(
         protected readonly opts?: {
             readonly layer?: boolean;

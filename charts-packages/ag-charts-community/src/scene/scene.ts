@@ -383,11 +383,24 @@ export class Scene {
             ...node.children
                 .map((c) => this.buildTree(c))
                 .reduce((result, childTree) => {
-                    let { name, node } = childTree;
-                    if (!node.visible || node.opacity <= 0) {
+                    let {
+                        name,
+                        node: { visible, opacity, zIndex, zIndexSubOrder },
+                    } = childTree;
+                    if (!visible || opacity <= 0) {
                         name = `* ${name}`;
                     }
-                    result[name ?? '<unknown>'] = childTree;
+                    if (node instanceof Group && node.isLayer()) {
+                        name = `[ ${name} ]`;
+                    }
+                    const key = [
+                        `${name ?? '<unknown>'}`,
+                        `z: ${zIndex}`,
+                        zIndexSubOrder && `zo: ${zIndexSubOrder.join(' / ')}`,
+                    ]
+                        .filter((v) => !!v)
+                        .join(' ');
+                    result[key] = childTree;
                     return result;
                 }, {} as Record<string, {}>),
         };
