@@ -27,6 +27,13 @@ export type RenderContext = {
     };
 };
 
+const zIndexChangedCallback = (o: any) => {
+    if (o.parent) {
+        o.parent.dirtyZIndex = true;
+    }
+    o.zIndexChanged();
+};
+
 /**
  * Abstract scene graph node.
  * Each node can have zero or one parent and belong to zero or one scene.
@@ -535,23 +542,13 @@ export abstract class Node extends ChangeDetectable {
 
     @SceneChangeDetection({
         redraw: RedrawType.TRIVIAL,
-        changeCb: (o) => {
-            if (o.parent) {
-                o.parent.dirtyZIndex = true;
-            }
-            o.zIndexChanged();
-        },
+        changeCb: zIndexChangedCallback,
     })
     zIndex: number = 0;
 
     @SceneChangeDetection({
         redraw: RedrawType.TRIVIAL,
-        changeCb: (o) => {
-            if (o.parent) {
-                o.parent.dirtyZIndex = true;
-            }
-            o.zIndexChanged();
-        },
+        changeCb: zIndexChangedCallback,
     })
     /** Discriminators for render order within a zIndex. */
     zIndexSubOrder?: [string, number] = undefined;
