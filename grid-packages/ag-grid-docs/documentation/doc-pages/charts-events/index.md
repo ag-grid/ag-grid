@@ -7,17 +7,13 @@ This section explains how to listen and respond to various chart and series even
 
 ## Series Event - nodeClick
 
-Fired when this series' node is clicked. Depending on the type of series, a node can mean a bar or a pie slice, or a marker, such as a line or an area series marker.
+Fired when this series' node is clicked. Depending on the type of series, a node can mean a bar or a pie slice, or a marker, such as a line or an area series marker. A node is typically associated with a single element from the `data` or `series[].data` array, unless the node represents an aggregation of values (e.g. histogram series bins).
 
-A node is typically associated with a single element from the `chart.data` or `series.data` array, unless the node represents an aggregation of values, as is the case with histogram series bins.
-
-Each series fires its own version of the `nodeClick` event, as described below. But generally speaking every `nodeClick` event contains:
+Every `nodeClick` event contains:
 
 - the `series` the node belongs to
 - the piece of chart data or `datum`
 - the specific keys in that `datum` that were used to fetch the values represented by the clicked node
-
-Note that the `datum` object is untyped and can contain keys that are not plotted by the chart, and that you can access in the event listener when a node is clicked.
 
 ### Example: nodeClick Event
 
@@ -30,47 +26,49 @@ This example shows how the `nodeClick` event listener can be used to listen to c
 
 ### Example: Toggling node's selected state
 
-This example shows how the `nodeClick` event listener can be used to toggle each node's selected state.
-Notice how we also provide:
+This example shows how the `nodeClick` event listener can be used to toggle each node's selected
+state in combination with a `series[].marker.formatter`:
 
-- a marker formatter to make selected nodes stand out
-- set the series' `cursor` property to `pointer` to indicate that a node is clickable when hovered
+- Clicking a series marker toggles its rendering.
 
 <chart-example title='Node Click Event' name='node-click-select' type='generated'></chart-example>
 
 ### Interfaces
 
-All series event options have the same interface contract, with some caveats for Histogram series:
+All series event options have the same interface contract.
 
-<interface-documentation interfaceName='AgBaseSeriesListeners' config='{ "showSnippets": false }'></interface-documentation>
+<interface-documentation interfaceName='AgBaseSeriesListeners' names='["nodeClick"]'></interface-documentation>
 
 #### Histogram series
 
-Note that the `datum` in this case is not an element from the `chart.data` or `series.data` array provided by the user. It's a histogram bin, which represents an aggregated value of one or more `datum`s, where the datums themselves can be accessed via the `datum.data` property.
+Unlike other series, the `nodeClick` event `datum` parameter for Histogram series contains a model for the computed histogram bin:
 
-For example, to get all x values used by the bin, one could do the following:
-
-```js
-for (var element of event.datum.data) {
-    console.log(element[event.xKey]);
-}
-```
+<interface-documentation interfaceName='AgHistogramBinDatum'></interface-documentation>
 
 ## Chart Event - seriesNodeClick
 
-In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once.
+The `seriesNodeClick` event can be used to listen to `nodeClick` events of all series at once.
 
-The `seriesNodeClick` event is fired when a node of any series in the chart is clicked, so a single listener can be provided for all node clicks across the multiple series.
-
-In this case the contents of the event object passed to the listener will depend on the type of series the clicked node belongs to.
+The contents of the event object passed to the listener will depend on the type of series the clicked node belongs to.
 
 ### Example: seriesNodeClick Event
 
-This example shows how to listen to `nodeClick` events of all series at once by subscribing to the chart's `seriesNodeClick` event.
-
-In this case, instead of adding the `nodeClick` event to both line and column series individually, we listen to the `seriesNodeClick` event on the chart. Notice the following:
+This example demonstrates:
 
 - Whenever a column or line marker is clicked, an alert message is shown with information about that series node.
 - The ID of the series that contains the clicked node is also logged.
 
 <chart-example title='Node Click Event' name='series-node-click-event' type='generated'></chart-example>
+
+## Legend Event - legendItemClick
+
+The `legendItemClick` event can be used to listen to legend item clicks.
+
+### Example: legendItemClick Event
+
+This example demonstrates:
+
+- when a legend item is clicked, an alert message is shown with the `legendItemClick` event contents.
+- switching between different series types to see different event variations.
+
+<chart-example title='Legend Item Click Event' name='legend-item-click-event' type='generated'></chart-example>
