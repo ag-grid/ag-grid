@@ -411,7 +411,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const {
             fills,
             strokes,
-            fillOpacity,
+            fillOpacity: seriesFillOpacity,
             strokeOpacity,
             radiusScale,
             callout,
@@ -423,6 +423,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 strokeWidth: deprecatedStrokeWidth,
                 item: {
                     fill: highlightedFill = deprecatedFill,
+                    fillOpacity: highlightFillOpacity = seriesFillOpacity,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
@@ -439,6 +440,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const radius = radiusScale.convert(datum.radius);
             const fill =
                 isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : fills[index % fills.length];
+            const fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
             const stroke =
                 isDatumHighlighted && highlightedStroke !== undefined
                     ? highlightedStroke

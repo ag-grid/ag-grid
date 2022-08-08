@@ -310,7 +310,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             xKey,
             yKey,
             strokeWidth,
-            fillOpacity,
+            fillOpacity: seriesFillOpacity,
             strokeOpacity,
             fill: seriesFill,
             stroke: seriesStroke,
@@ -321,6 +321,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 strokeWidth: deprecatedStrokeWidth,
                 item: {
                     fill: highlightedFill = deprecatedFill,
+                    fillOpacity: highlightFillOpacity = seriesFillOpacity,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
@@ -334,6 +335,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         markerSelection.each((node, datum) => {
             const fill =
                 isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill || seriesFill;
+            const fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
             const stroke =
                 isDatumHighlighted && highlightedStroke !== undefined
                     ? highlightedStroke

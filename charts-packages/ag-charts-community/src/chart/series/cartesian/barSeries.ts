@@ -697,7 +697,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const {
             fills,
             strokes,
-            fillOpacity,
+            fillOpacity: seriesFillOpacity,
             strokeOpacity,
             shadow,
             formatter,
@@ -709,6 +709,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 strokeWidth: deprecatedStrokeWidth,
                 item: {
                     fill: highlightedFill = deprecatedFill,
+                    fillOpacity: highlightFillOpacity = seriesFillOpacity,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
@@ -720,11 +721,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const crisp = !isZoomed && !datumSelection.data.some((d) => d.width <= 0.5 || d.height <= 0.5);
 
         datumSelection.each((rect, datum) => {
-            rect.visible = !isDatumHighlighted || isDatumHighlighted;
-            if (!rect.visible) {
-                return;
-            }
-
             const { colorIndex } = datum;
             const fill =
                 isDatumHighlighted && highlightedFill !== undefined
@@ -738,6 +734,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                     ? highlightedDatumStrokeWidth
                     : this.getStrokeWidth(this.strokeWidth, datum);
+            const fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
 
             let format: BarSeriesFormat | undefined = undefined;
             if (formatter) {

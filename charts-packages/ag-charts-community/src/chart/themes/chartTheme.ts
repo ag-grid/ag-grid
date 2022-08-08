@@ -126,6 +126,7 @@ export class ChartTheme {
             highlightStyle: {
                 item: {
                     fill: 'yellow',
+                    fillOpacity: 1,
                 },
                 series: {
                     dimOpacity: 1,
