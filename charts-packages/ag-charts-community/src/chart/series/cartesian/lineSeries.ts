@@ -334,6 +334,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const { markerSelection, isHighlight: isDatumHighlighted } = opts;
         const {
             marker,
+            marker: { fillOpacity: markerFillOpacity },
             xKey,
             yKey,
             stroke: lineStroke,
@@ -344,6 +345,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 strokeWidth: deprecatedStrokeWidth,
                 item: {
                     fill: highlightedFill = deprecatedFill,
+                    fillOpacity: highlightFillOpacity = markerFillOpacity,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
@@ -354,6 +356,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
         markerSelection.each((node, datum) => {
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill;
+            const fillOpacity = isDatumHighlighted ? highlightFillOpacity : markerFillOpacity;
             const stroke =
                 isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || lineStroke;
             const strokeWidth =
@@ -378,7 +381,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             node.fill = (format && format.fill) || fill;
             node.stroke = (format && format.stroke) || stroke;
             node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
-            node.fillOpacity = marker.fillOpacity ?? 1;
+            node.fillOpacity = fillOpacity ?? 1;
             node.strokeOpacity = marker.strokeOpacity ?? strokeOpacity ?? 1;
             node.size = format && format.size !== undefined ? format.size : size;
 
