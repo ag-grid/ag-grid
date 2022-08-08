@@ -511,7 +511,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         if (data && data.length && xKey && yKey) {
             legendData.push({
                 id,
-                itemId: undefined,
+                itemId: yKey,
                 enabled: visible,
                 label: {
                     text: title || yName || yKey,

@@ -1222,7 +1222,7 @@ export abstract class Chart extends Observable {
             };
         }
 
-        legendItemClick({ enabled: !enabled, itemId });
+        legendItemClick({ enabled: !enabled, itemId, seriesId: series.id });
 
         return true;
     }

@@ -564,15 +564,15 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {
-        const { id, data, yKey, yName, visible, fill, stroke, fillOpacity, strokeOpacity } = this;
+        const { id, data, xKey, yName, visible, fill, stroke, fillOpacity, strokeOpacity } = this;
 
         if (data && data.length) {
             legendData.push({
                 id,
-                itemId: yKey,
+                itemId: xKey,
                 enabled: visible,
                 label: {
-                    text: yName || yKey || 'Frequency',
+                    text: yName || xKey || 'Frequency',
                 },
                 marker: {
                     fill: fill || 'rgba(0, 0, 0, 0)',

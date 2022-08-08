@@ -332,7 +332,9 @@ export interface AgChartLegendItemOptions {
 }
 
 export interface AgChartLegendClickEvent {
-    /** Legend item id - based on series id. */
+    /** Series id */
+    seriesId: string;
+    /** Legend item id - usually yKey value for cartesian series. */
     itemId: string;
     /** Whether the legend item is currently enabled or not. */
     enabled: boolean;
