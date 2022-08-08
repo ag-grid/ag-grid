@@ -311,7 +311,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         // engine to re-render (listens on ModelUpdated event)
         this.pauseStoreUpdateListening = true;
         this.forEachNode(node => {
-            if (node.group) {
+            if (node.group && !node.stub) {
                 node.setExpanded(value);
             }
         });
