@@ -29,6 +29,8 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     private aggregationColumnsHashLastTime: string | null;
     private aggregationFuncsHashLastTime: string;
 
+    private groupColumnsHashLastTime: string | null;
+
     public execute(params: StageExecuteParams): void {
         const rootNode = params.rowNode;
         const changedPath = params.changedPath;
@@ -64,7 +66,11 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         this.aggregationColumnsHashLastTime = aggregationColumnsHash;
         this.aggregationFuncsHashLastTime = aggregationFuncsHash;
 
-        if (uniqueValuesChanged || aggregationColumnsChanged || aggregationFuncsChanged) {
+        const groupColumnsHash = this.columnModel.getRowGroupColumns().map((column) => column.getId()).join('#');
+        const groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
+        this.groupColumnsHashLastTime = groupColumnsHash;
+
+        if (uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged) {
             const {pivotColumnGroupDefs, pivotColumnDefs} = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
             this.pivotColumnDefs = pivotColumnDefs;
             this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
