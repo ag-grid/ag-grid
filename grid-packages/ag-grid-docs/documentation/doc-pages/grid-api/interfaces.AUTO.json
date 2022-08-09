@@ -6906,6 +6906,10 @@
       "strokeWidth?": "/** The width in pixels of the stroke for markers in the legend. */"
     }
   },
+  "AgChartLegendLabelFormatterParams": {
+    "meta": {},
+    "type": { "id": "string", "itemId": "any", "value": "string" }
+  },
   "AgChartLegendLabelOptions": {
     "meta": {},
     "type": {
@@ -6915,7 +6919,7 @@
       "fontWeight?": "FontWeight",
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
-      "formatter?": "(params: { id: string; itemId: any; value: string; }) => string"
+      "formatter?": "(params: AgChartLegendLabelFormatterParams) => string"
     },
     "docs": {
       "maxLength?": "/** If the label text exceeds the maximum length, it will be truncated and an ellipsis will be appended to indicate this. */",
