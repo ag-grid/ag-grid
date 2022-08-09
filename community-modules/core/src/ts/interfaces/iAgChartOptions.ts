@@ -301,6 +301,12 @@ export interface AgChartLegendMarkerOptions {
     strokeWidth?: PixelSize;
 }
 
+export interface AgChartLegendLabelFormatterParams {
+    id: string;
+    itemId: any;
+    value: string;
+}
+
 export interface AgChartLegendLabelOptions {
     /** If the label text exceeds the maximum length, it will be truncated and an ellipsis will be appended to indicate this. */
     maxLength?: number;
@@ -315,7 +321,7 @@ export interface AgChartLegendLabelOptions {
     /** The font family to use for the legend. */
     fontFamily?: FontFamily;
     /** Function used to render legend labels. Where `id` is a series ID, `itemId` is component ID within a series, such as a field name or an item index. */
-    formatter?: (id: string, itemId: any, value: string) => string;
+    formatter?: (params: AgChartLegendLabelFormatterParams) => string;
 }
 
 export interface AgChartLegendItemOptions {

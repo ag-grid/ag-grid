@@ -256,7 +256,7 @@ export class Legend {
 
         itemSelection.each((markerLabel, datum) => {
             // TODO: measure only when one of these properties or data change (in a separate routine)
-            let text = datum.label.text;
+            let text = datum.label.text ?? '<unknown>';
             markerLabel.markerSize = markerSize;
             markerLabel.spacing = markerPadding;
             markerLabel.fontStyle = fontStyle;
