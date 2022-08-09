@@ -8,7 +8,7 @@ import { Chart } from '../chart';
 import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
-import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
+import { AgCartesianChartOptions, AgChartOptions, AgPolarChartOptions } from '../agChartOptions';
 
 export interface TestCase {
     options: AgChartOptions;
@@ -18,6 +18,10 @@ export interface TestCase {
 
 export interface CartesianTestCase extends TestCase {
     options: AgCartesianChartOptions;
+}
+
+export interface PolarTestCase extends TestCase {
+    options: AgPolarChartOptions;
 }
 
 const FAILURE_THRESHOLD = Number(process.env.SNAPSHOT_FAILURE_THRESHOLD ?? 0.05);
