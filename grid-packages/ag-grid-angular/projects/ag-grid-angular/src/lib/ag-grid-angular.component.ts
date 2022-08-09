@@ -410,7 +410,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid.     */
     @Input() public readOnlyEdit: boolean | undefined = undefined;
     /** Set this to `true` to stop cell editing when grid loses focus.
-     * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.
+     * The default is that the grid stays editing until focus goes onto another cell.
      * Default: `false`     */
     @Input() public stopEditingWhenCellsLoseFocus: boolean | undefined = undefined;
     /** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.

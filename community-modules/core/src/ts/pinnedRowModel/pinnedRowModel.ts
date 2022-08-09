@@ -1,4 +1,4 @@
-import { RowNode } from "../entities/rowNode";
+import { RowNode, RowPinnedType } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events, PinnedRowDataChangedEvent } from "../events";
 import { Constants } from "../constants/constants";
@@ -25,16 +25,16 @@ export class PinnedRowModel extends BeanStub {
         this.setPinnedBottomRowData(this.gridOptionsWrapper.getPinnedBottomRowData());
     }
 
-    public isEmpty(floating: string): boolean {
+    public isEmpty(floating: RowPinnedType): boolean {
         const rows = floating === Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
         return missingOrEmpty(rows);
     }
 
-    public isRowsToRender(floating: string): boolean {
+    public isRowsToRender(floating: RowPinnedType): boolean {
         return !this.isEmpty(floating);
     }
 
-    public getRowAtPixel(pixel: number, floating: string): number {
+    public getRowAtPixel(pixel: number, floating: RowPinnedType): number {
         const rows = floating === Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
         if (missingOrEmpty(rows)) {
             return 0; // this should never happen, just in case, 0 is graceful failure
