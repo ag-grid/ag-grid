@@ -2577,7 +2577,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
-      "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.\n * Default: `false` */",
+      "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enterMovesDown": {
@@ -23257,7 +23257,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
-      "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.\n * Default: `false` */",
+      "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enterMovesDown": {
@@ -26026,7 +26026,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
-      "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.\n * Default: `false` */",
+      "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enterMovesDown": {
@@ -28805,7 +28805,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
-      "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.\n * Default: `false` */",
+      "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enterMovesDown": {
