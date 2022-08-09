@@ -692,7 +692,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             yKeys,
             fills,
             strokes,
-            fillOpacity,
+            fillOpacity: seriesFillOpacity,
+            marker: { fillOpacity: markerFillOpacity = seriesFillOpacity },
             strokeOpacity,
             highlightStyle: {
                 fill: deprecatedFill,
@@ -700,6 +701,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 strokeWidth: deprecatedStrokeWidth,
                 item: {
                     fill: highlightedFill = deprecatedFill,
+                    fillOpacity: highlightFillOpacity = markerFillOpacity,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
@@ -715,6 +717,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 isDatumHighlighted && highlightedFill !== undefined
                     ? highlightedFill
                     : marker.fill || fills[yKeyIndex % fills.length];
+            const fillOpacity = isDatumHighlighted ? highlightFillOpacity : markerFillOpacity;
             const stroke =
                 isDatumHighlighted && highlightedStroke !== undefined
                     ? highlightedStroke
@@ -741,7 +744,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             node.fill = (format && format.fill) || fill;
             node.stroke = (format && format.stroke) || stroke;
             node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
-            node.fillOpacity = marker.fillOpacity ?? fillOpacity ?? 1;
+            node.fillOpacity = fillOpacity ?? 1;
             node.strokeOpacity = marker.strokeOpacity ?? strokeOpacity ?? 1;
             node.size = format && format.size !== undefined ? format.size : size;
 

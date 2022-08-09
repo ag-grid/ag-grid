@@ -12758,6 +12758,10 @@
       "description": "/** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
+    "fillOpacity": {
+      "description": "/** The opacity of the fill for the highlighted item. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    },
     "stroke": {
       "description": "/** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */",
       "type": { "returnType": "CssColor", "optional": true }

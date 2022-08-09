@@ -299,6 +299,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 strokeWidth: deprecatedStrokeWidth,
                 item: {
                     fill: highlightedFill = deprecatedFill,
+                    fillOpacity: highlightedFillOpacity,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
@@ -308,6 +309,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         const labelMeta = this.buildLabelMeta(this.groupSelection.data);
         const updateRectFn = (rect: Rect, datum: TreemapNodeDatum, isDatumHighlighted: boolean) => {
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
+            const fillOpacity = (isDatumHighlighted ? highlightedFillOpacity : 1) ?? 1;
             const stroke =
                 isDatumHighlighted && highlightedStroke !== undefined
                     ? highlightedStroke
@@ -318,6 +320,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 isDatumHighlighted && highlightedDatumStrokeWidth !== undefined ? highlightedDatumStrokeWidth : 1;
 
             rect.fill = fill;
+            rect.fillOpacity = fillOpacity;
             rect.stroke = stroke;
             rect.strokeWidth = strokeWidth;
             rect.crisp = true;

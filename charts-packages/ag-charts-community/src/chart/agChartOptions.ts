@@ -636,6 +636,8 @@ export type AgCartesianAxisOptions =
 export interface AgSeriesHighlightMarkerStyle {
     /** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */
     fill?: CssColor;
+    /** The opacity of the fill for the highlighted item. */
+    fillOpacity?: Opacity;
     /** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */
     stroke?: CssColor;
     /** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */

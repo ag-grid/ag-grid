@@ -76,6 +76,7 @@ export interface PolarTooltipRendererParams extends TooltipRendererParams {
 
 export class SeriesItemHighlightStyle {
     fill?: string = 'yellow';
+    fillOpacity?: number = undefined;
     stroke?: string = undefined;
     strokeWidth?: number = undefined;
 }
