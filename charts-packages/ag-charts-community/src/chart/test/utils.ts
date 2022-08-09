@@ -9,6 +9,7 @@ import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
 import { AgCartesianChartOptions, AgChartOptions, AgPolarChartOptions } from '../agChartOptions';
+import { resetIds } from '../../util/id';
 
 export interface TestCase {
     options: AgChartOptions;
@@ -230,6 +231,7 @@ export function setupMockCanvas(): { nodeCanvas?: Canvas } {
     let canvases: Canvas[] = [];
 
     beforeEach(() => {
+        resetIds();
         ctx.nodeCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
         canvasStack = [ctx.nodeCanvas];
         window['agChartsSceneRenderModel'] = 'composite';
