@@ -4,22 +4,6 @@ import {
   AgChartLegendClickEvent,
 } from "ag-charts-community"
 
-const mixin = {
-  legend: {
-    listeners: {
-      legendItemClick: ({
-        seriesId,
-        itemId,
-        enabled,
-      }: AgChartLegendClickEvent) => {
-        window.alert(
-          `seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
-        );
-      },
-    },
-  },
-}
-
 let options: AgCartesianChartOptions = {
   container: document.getElementById("myChart"),
   autoSize: true,
@@ -59,7 +43,19 @@ let options: AgCartesianChartOptions = {
     { type: "category", position: "bottom" },
     { type: "number", position: "left" },
   ],
-  ...mixin,
+  legend: {
+    listeners: {
+      legendItemClick: ({
+        seriesId,
+        itemId,
+        enabled,
+      }: AgChartLegendClickEvent) => {
+        window.alert(
+          `seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
+        )
+      },
+    },
+  },
 };
 
 agCharts.AgChart.create(options);
