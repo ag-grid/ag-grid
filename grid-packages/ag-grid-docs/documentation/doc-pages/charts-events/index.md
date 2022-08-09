@@ -69,6 +69,5 @@ The `legendItemClick` event can be used to listen to legend item clicks.
 This example demonstrates:
 
 - when a legend item is clicked, an alert message is shown with the `legendItemClick` event contents.
-- switching between different series types to see different event variations.
 
 <chart-example title='Legend Item Click Event' name='legend-item-click-event' type='generated'></chart-example>
