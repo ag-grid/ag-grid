@@ -315,13 +315,17 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             fill: seriesFill,
             stroke: seriesStroke,
             sizeScale,
+            marker: {
+                fillOpacity: markerFillOpacity = seriesFillOpacity,
+                strokeOpacity: markerStrokeOpacity = strokeOpacity,
+            },
             highlightStyle: {
                 fill: deprecatedFill,
                 stroke: deprecatedStroke,
                 strokeWidth: deprecatedStrokeWidth,
                 item: {
                     fill: highlightedFill = deprecatedFill,
-                    fillOpacity: highlightFillOpacity = seriesFillOpacity,
+                    fillOpacity: highlightFillOpacity = markerFillOpacity,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
@@ -335,11 +339,12 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         markerSelection.each((node, datum) => {
             const fill =
                 isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill || seriesFill;
-            const fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
+            const fillOpacity = isDatumHighlighted ? highlightFillOpacity : markerFillOpacity;
             const stroke =
                 isDatumHighlighted && highlightedStroke !== undefined
                     ? highlightedStroke
                     : marker.stroke || seriesStroke;
+            const strokeOpacity = markerStrokeOpacity;
             const strokeWidth =
                 isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                     ? highlightedDatumStrokeWidth
@@ -364,8 +369,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             node.stroke = (format && format.stroke) || stroke;
             node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
             node.size = format && format.size !== undefined ? format.size : size;
-            node.fillOpacity = marker.fillOpacity !== undefined ? marker.fillOpacity : fillOpacity;
-            node.strokeOpacity = marker.strokeOpacity !== undefined ? marker.strokeOpacity : strokeOpacity;
+            node.fillOpacity = fillOpacity ?? 1;
+            node.strokeOpacity = strokeOpacity;
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
             node.visible = node.size > 0;
