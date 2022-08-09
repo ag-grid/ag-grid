@@ -245,7 +245,7 @@ export interface GridOptions<TData = any> {
 
     /**
      * Set this to `true` to stop cell editing when grid loses focus.
-     * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.
+     * The default is that the grid stays editing until focus goes onto another cell.
      * Default: `false`
      */
     stopEditingWhenCellsLoseFocus?: boolean;
