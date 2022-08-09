@@ -6915,7 +6915,7 @@
       "fontWeight?": "FontWeight",
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
-      "formatter?": "(id: string, itemId: any, value: string) => string"
+      "formatter?": "(params: { id: string; itemId: any; value: string; }) => string"
     },
     "docs": {
       "maxLength?": "/** If the label text exceeds the maximum length, it will be truncated and an ellipsis will be appended to indicate this. */",
