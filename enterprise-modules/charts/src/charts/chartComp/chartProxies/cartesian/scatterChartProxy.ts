@@ -100,7 +100,7 @@ export class ScatterChartProxy extends CartesianChartProxy {
             const stroke = palette.strokes[idx];
 
             let markerDomain = calcMarkerDomain(data, sizeKey);
-            const marker: AgScatterSeriesMarker = {
+            const marker: AgScatterSeriesMarker<any> = {
                 ...series.marker,
                 fill,
                 stroke,

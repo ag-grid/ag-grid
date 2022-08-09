@@ -37,7 +37,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
 
     abstract getData(params: UpdateChartParams): any[];
     abstract getAxes(params: UpdateChartParams): AgCartesianAxisOptions[];
-    abstract getSeries(params: UpdateChartParams): AgBaseSeriesOptions[];
+    abstract getSeries(params: UpdateChartParams): AgBaseSeriesOptions<any>[];
 
     protected createChart(): CartesianChart {
         return AgChart.create({

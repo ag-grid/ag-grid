@@ -26,7 +26,7 @@ const options: AgChartOptions = {
   },
 }
 
-function tooltipRenderer(params: AgTreemapSeriesTooltipRendererParams) {
+function tooltipRenderer(params: AgTreemapSeriesTooltipRendererParams<any>) {
   const { datum } = params
   const customRootText = 'Custom Root Text'
   const title = datum.parent
@@ -40,7 +40,7 @@ function tooltipRenderer(params: AgTreemapSeriesTooltipRendererParams) {
   if (datum.parent) {
     const maxCount = 5
     ellipsis = datum.parent.children!.length > maxCount
-    datum.parent.children!.slice(0, maxCount).forEach(child => {
+    datum.parent.children!.slice(0, maxCount).forEach((child: any) => {
       content += `<div style="font-weight: bold; color: white; background-color: ${child.fill
         }; padding: 5px;"><strong>${child.datum.name || child.label
         }</strong>: ${String(

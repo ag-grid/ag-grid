@@ -12136,8 +12136,12 @@
     }
   },
   "AgChartLegendClickEvent": {
+    "seriesId": {
+      "description": "/** Series id */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "itemId": {
-      "description": "/** Legend item id - based on series id. */",
+      "description": "/** Legend item id - usually yKey value for cartesian series. */",
       "type": { "returnType": "string", "optional": false }
     },
     "enabled": {
@@ -12809,17 +12813,18 @@
       "description": "/** The listener to call when a node (marker, column, bar, tile or a pie slice) in the series is clicked. */",
       "type": {
         "arguments": {
-          "params": "{ type: 'nodeClick'; series: any; datum: any; xKey: string; yKey: string; }"
+          "params": "{ type: 'nodeClick'; series: any; datum: DatumType; xKey: string; yKey: string; }"
         },
         "returnType": "any",
         "optional": false
       }
-    }
+    },
+    "meta": { "typeParams": ["DatumType"] }
   },
   "AgBaseSeriesOptions": {
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
-      "type": { "returnType": "any[]", "optional": true }
+      "type": { "returnType": "DatumType[]", "optional": true }
     },
     "visible": {
       "description": "/** Whether or not to display the series. */",
@@ -12836,14 +12841,15 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
+        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
         "optional": true
       }
     },
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
-    }
+    },
+    "meta": { "typeParams": ["DatumType", "ListenerDatumType = DatumType"] }
   },
   "AgTooltipRendererResult": {
     "title": { "type": { "returnType": "string", "optional": true } },
@@ -12930,17 +12936,19 @@
     }
   },
   "AgSeriesMarkerFormatterParams": {
-    "datum": { "type": { "returnType": "any", "optional": false } },
+    "datum": { "type": { "returnType": "DatumType", "optional": false } },
     "fill": { "type": { "returnType": "CssColor", "optional": true } },
     "stroke": { "type": { "returnType": "CssColor", "optional": true } },
     "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
     "size": { "type": { "returnType": "number", "optional": false } },
-    "highlighted": { "type": { "returnType": "boolean", "optional": false } }
+    "highlighted": { "type": { "returnType": "boolean", "optional": false } },
+    "meta": { "typeParams": ["DatumType"] }
   },
   "AgCartesianSeriesMarkerFormatterParams": {
     "xKey": { "type": { "returnType": "string", "optional": false } },
     "yKey": { "type": { "returnType": "string", "optional": false } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
+    "meta": { "typeParams": ["DatumType"] },
+    "datum": { "type": { "returnType": "DatumType", "optional": false } },
     "fill": { "type": { "returnType": "CssColor", "optional": true } },
     "stroke": { "type": { "returnType": "CssColor", "optional": true } },
     "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
@@ -12953,15 +12961,18 @@
     "strokeWidth": { "type": { "returnType": "PixelSize", "optional": true } },
     "size": { "type": { "returnType": "PixelSize", "optional": true } }
   },
-  "AgCartesianSeriesMarkerFormatter": {},
+  "AgCartesianSeriesMarkerFormatter": {
+    "meta": { "typeParams": ["DatumType"] }
+  },
   "AgCartesianSeriesMarker": {
     "formatter": {
       "description": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
       "type": {
-        "returnType": "AgCartesianSeriesMarkerFormatter",
+        "returnType": "AgCartesianSeriesMarkerFormatter<DatumType>",
         "optional": true
       }
     },
+    "meta": { "typeParams": ["DatumType"] },
     "enabled": {
       "description": "/** Whether or not to show markers. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -13000,10 +13011,11 @@
     }
   },
   "AgAreaSeriesMarker": {
+    "meta": { "typeParams": ["DatumType"] },
     "formatter": {
       "description": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
       "type": {
-        "returnType": "AgCartesianSeriesMarkerFormatter",
+        "returnType": "AgCartesianSeriesMarkerFormatter<DatumType>",
         "optional": true
       }
     },
@@ -13054,11 +13066,12 @@
     "formatter": {
       "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "type": {
-        "arguments": { "params": "{ value: any; }" },
+        "arguments": { "params": "{ value: DatumType; }" },
         "returnType": "string",
         "optional": true
       }
     },
+    "meta": { "typeParams": ["DatumType"] },
     "enabled": {
       "description": "/** Whether or not the labels should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -13102,7 +13115,10 @@
   "AgLineSeriesOptions": {
     "type": { "type": { "returnType": "'line'", "optional": true } },
     "marker": {
-      "type": { "returnType": "AgCartesianSeriesMarker", "optional": true }
+      "type": {
+        "returnType": "AgCartesianSeriesMarker<DatumType>",
+        "optional": true
+      }
     },
     "xKey": {
       "description": "/** The key to use to retrieve x-values from the data. */",
@@ -13146,15 +13162,19 @@
     },
     "label": {
       "description": "/** Configuration for the labels shown on top of data points. */",
-      "type": { "returnType": "AgLineSeriesLabelOptions", "optional": true }
+      "type": {
+        "returnType": "AgLineSeriesLabelOptions<DatumType>",
+        "optional": true
+      }
     },
     "tooltip": {
       "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgLineSeriesTooltip", "optional": true }
     },
+    "meta": { "typeParams": ["DatumType = any"] },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
-      "type": { "returnType": "any[]", "optional": true }
+      "type": { "returnType": "DatumType[]", "optional": true }
     },
     "visible": {
       "description": "/** Whether or not to display the series. */",
@@ -13171,7 +13191,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
+        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
         "optional": true
       }
     },
@@ -13225,10 +13245,11 @@
       "description": "/** If sizeKey is used, explicitly specifies the extent of the domain of it's values. */",
       "type": { "returnType": "[number, number]", "optional": true }
     },
+    "meta": { "typeParams": ["DatumType"] },
     "formatter": {
       "description": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
       "type": {
-        "returnType": "AgCartesianSeriesMarkerFormatter",
+        "returnType": "AgCartesianSeriesMarkerFormatter<DatumType>",
         "optional": true
       }
     },
@@ -13276,7 +13297,10 @@
     },
     "marker": {
       "description": "/** Configuration for the markers used in the series. */",
-      "type": { "returnType": "AgScatterSeriesMarker", "optional": true }
+      "type": {
+        "returnType": "AgScatterSeriesMarker<DatumType>",
+        "optional": true
+      }
     },
     "label": {
       "description": "/** Configuration for the labels shown on top of data points. */",
@@ -13342,9 +13366,10 @@
       "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgScatterSeriesTooltip", "optional": true }
     },
+    "meta": { "typeParams": ["DatumType = any"] },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
-      "type": { "returnType": "any[]", "optional": true }
+      "type": { "returnType": "DatumType[]", "optional": true }
     },
     "visible": {
       "description": "/** Whether or not to display the series. */",
@@ -13361,7 +13386,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
+        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
         "optional": true
       }
     },
@@ -13388,11 +13413,12 @@
     "formatter": {
       "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "type": {
-        "arguments": { "params": "{ value: any; }" },
+        "arguments": { "params": "{ value: DatumType; }" },
         "returnType": "string",
         "optional": true
       }
     },
+    "meta": { "typeParams": ["DatumType"] },
     "enabled": {
       "description": "/** Whether or not the labels should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -13422,7 +13448,10 @@
     "type": { "type": { "returnType": "'area'", "optional": true } },
     "marker": {
       "description": "/** Configuration for the markers used in the series. */",
-      "type": { "returnType": "AgAreaSeriesMarker", "optional": true }
+      "type": {
+        "returnType": "AgAreaSeriesMarker<DatumType>",
+        "optional": true
+      }
     },
     "normalizedTo": {
       "description": "/** The number to normalise the area stacks to. For example, if `normalizedTo` is set to `100`, the stacks will all be scaled proportionally so that their total height is always 100. */",
@@ -13491,16 +13520,20 @@
     },
     "label": {
       "description": "/** Configuration for the labels shown on top of data points. */",
-      "type": { "returnType": "AgAreaSeriesLabelOptions", "optional": true }
+      "type": {
+        "returnType": "AgAreaSeriesLabelOptions<DatumType>",
+        "optional": true
+      }
     },
     "tooltip": {
       "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgAreaSeriesTooltip", "optional": true }
     },
     "stacked": { "type": { "returnType": "boolean", "optional": true } },
+    "meta": { "typeParams": ["DatumType = any"] },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
-      "type": { "returnType": "any[]", "optional": true }
+      "type": { "returnType": "DatumType[]", "optional": true }
     },
     "visible": {
       "description": "/** Whether or not to display the series. */",
@@ -13517,7 +13550,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
+        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
         "optional": true
       }
     },
@@ -13565,13 +13598,14 @@
     }
   },
   "AgBarSeriesFormatterParams": {
-    "datum": { "type": { "returnType": "any", "optional": false } },
+    "datum": { "type": { "returnType": "DatumType", "optional": false } },
     "fill": { "type": { "returnType": "CssColor", "optional": true } },
     "stroke": { "type": { "returnType": "CssColor", "optional": true } },
     "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } },
     "xKey": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } }
+    "yKey": { "type": { "returnType": "string", "optional": false } },
+    "meta": { "typeParams": ["DatumType"] }
   },
   "AgBarSeriesFormat": {
     "fill": { "type": { "returnType": "CssColor", "optional": true } },
@@ -13682,14 +13716,15 @@
     "formatter": {
       "description": "/** Function used to return formatting for individual bars/columns, based on the given parameters. If the current bar/column is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
       "type": {
-        "arguments": { "params": "AgBarSeriesFormatterParams" },
+        "arguments": { "params": "AgBarSeriesFormatterParams<DatumType>" },
         "returnType": "AgBarSeriesFormat",
         "optional": true
       }
     },
+    "meta": { "typeParams": ["DatumType = any"] },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
-      "type": { "returnType": "any[]", "optional": true }
+      "type": { "returnType": "DatumType[]", "optional": true }
     },
     "visible": {
       "description": "/** Whether or not to display the series. */",
@@ -13706,7 +13741,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
+        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
         "optional": true
       }
     },
@@ -13719,11 +13754,12 @@
     "formatter": {
       "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "type": {
-        "arguments": { "params": "{ value: number; }" },
+        "arguments": { "params": "{ value: DatumType; }" },
         "returnType": "string",
         "optional": true
       }
     },
+    "meta": { "typeParams": ["DatumType"] },
     "enabled": {
       "description": "/** Whether or not the labels should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -13762,6 +13798,17 @@
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
     }
+  },
+  "AgHistogramBinDatum": {
+    "data": { "type": { "returnType": "DatumType[]", "optional": false } },
+    "aggregatedValue": {
+      "type": { "returnType": "number", "optional": false }
+    },
+    "frequency": { "type": { "returnType": "number", "optional": false } },
+    "domain": {
+      "type": { "returnType": "[number, number]", "optional": false }
+    },
+    "meta": { "typeParams": ["DatumType"] }
   },
   "AgHistogramSeriesOptions": {
     "type": { "type": { "returnType": "'histogram'", "optional": true } },
@@ -13832,7 +13879,7 @@
     "label": {
       "description": "/** Configuration for the labels shown on bars. */",
       "type": {
-        "returnType": "AgHistogramSeriesLabelOptions",
+        "returnType": "AgHistogramSeriesLabelOptions<DatumType>",
         "optional": true
       }
     },
@@ -13840,9 +13887,10 @@
       "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgHistogramSeriesTooltip", "optional": true }
     },
+    "meta": { "typeParams": ["DatumType = any"] },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
-      "type": { "returnType": "any[]", "optional": true }
+      "type": { "returnType": "DatumType[]", "optional": true }
     },
     "visible": {
       "description": "/** Whether or not to display the series. */",
@@ -13859,7 +13907,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
+        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
         "optional": true
       }
     },
@@ -13903,13 +13951,14 @@
     }
   },
   "AgPieSeriesFormatterParams": {
-    "datum": { "type": { "returnType": "any", "optional": false } },
+    "datum": { "type": { "returnType": "DatumType", "optional": false } },
     "fill": { "type": { "returnType": "CssColor", "optional": true } },
     "stroke": { "type": { "returnType": "CssColor", "optional": true } },
     "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } },
     "angleKey": { "type": { "returnType": "string", "optional": false } },
-    "radiusKey": { "type": { "returnType": "string", "optional": true } }
+    "radiusKey": { "type": { "returnType": "string", "optional": true } },
+    "meta": { "typeParams": ["DatumType"] }
   },
   "AgPieSeriesFormat": {
     "fill": { "type": { "returnType": "CssColor", "optional": true } },
@@ -14071,14 +14120,15 @@
     },
     "formatter": {
       "type": {
-        "arguments": { "params": "AgPieSeriesFormatterParams" },
+        "arguments": { "params": "AgPieSeriesFormatterParams<DatumType>" },
         "returnType": "AgPieSeriesFormat",
         "optional": true
       }
     },
+    "meta": { "typeParams": ["DatumType = any"] },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
-      "type": { "returnType": "any[]", "optional": true }
+      "type": { "returnType": "DatumType[]", "optional": true }
     },
     "visible": {
       "description": "/** Whether or not to display the series. */",
@@ -14095,7 +14145,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
+        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
         "optional": true
       }
     },
@@ -14148,37 +14198,51 @@
     }
   },
   "AgTreemapNodeDatum": {
-    "datum": { "type": { "returnType": "any", "optional": false } },
+    "datum": { "type": { "returnType": "DatumType", "optional": false } },
     "parent": {
-      "type": { "returnType": "AgTreemapNodeDatum", "optional": true }
+      "type": {
+        "returnType": "AgTreemapNodeDatum<DatumType>",
+        "optional": true
+      }
     },
     "children": {
-      "type": { "returnType": "AgTreemapNodeDatum[]", "optional": true }
+      "type": {
+        "returnType": "AgTreemapNodeDatum<DatumType>[]",
+        "optional": true
+      }
     },
     "depth": { "type": { "returnType": "number", "optional": false } },
     "colorValue": { "type": { "returnType": "number", "optional": false } },
     "fill": { "type": { "returnType": "CssColor", "optional": false } },
     "label": { "type": { "returnType": "string", "optional": false } },
-    "hasTitle": { "type": { "returnType": "boolean", "optional": false } }
+    "hasTitle": { "type": { "returnType": "boolean", "optional": false } },
+    "meta": { "typeParams": ["DatumType"] }
   },
   "AgTreemapSeriesTooltipRendererParams": {
     "datum": {
-      "type": { "returnType": "AgTreemapNodeDatum", "optional": false }
+      "type": {
+        "returnType": "AgTreemapNodeDatum<DatumType>",
+        "optional": false
+      }
     },
     "sizeKey": { "type": { "returnType": "string", "optional": false } },
     "labelKey": { "type": { "returnType": "string", "optional": false } },
     "valueKey": { "type": { "returnType": "string", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } }
+    "color": { "type": { "returnType": "string", "optional": false } },
+    "meta": { "typeParams": ["DatumType"] }
   },
   "AgTreemapSeriesTooltip": {
     "renderer": {
       "description": "/** Function used to create the content for tooltips. */",
       "type": {
-        "arguments": { "params": "AgTreemapSeriesTooltipRendererParams" },
+        "arguments": {
+          "params": "AgTreemapSeriesTooltipRendererParams<DatumType>"
+        },
         "returnType": "string | AgTooltipRendererResult",
         "optional": true
       }
     },
+    "meta": { "typeParams": ["DatumType"] },
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -14242,7 +14306,10 @@
     },
     "tooltip": {
       "description": "/** Series-specific tooltip configuration. */",
-      "type": { "returnType": "AgTreemapSeriesTooltip", "optional": true }
+      "type": {
+        "returnType": "AgTreemapSeriesTooltip<DatumType>",
+        "optional": true
+      }
     },
     "nodePadding": {
       "description": "/** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */",
@@ -14252,9 +14319,10 @@
       "description": "/** Whether or not to use gradients for treemap tiles. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "meta": { "typeParams": ["DatumType = any"] },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
-      "type": { "returnType": "any[]", "optional": true }
+      "type": { "returnType": "DatumType[]", "optional": true }
     },
     "visible": {
       "description": "/** Whether or not to display the series. */",
@@ -14271,7 +14339,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners | { [key: string]: Function }",
+        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
         "optional": true
       }
     },

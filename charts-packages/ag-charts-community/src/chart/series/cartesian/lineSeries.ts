@@ -523,7 +523,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         if (data && data.length && xKey && yKey) {
             legendData.push({
                 id: id,
-                itemId: undefined,
+                itemId: yKey,
                 enabled: visible,
                 label: {
                     text: title || yName || yKey,
