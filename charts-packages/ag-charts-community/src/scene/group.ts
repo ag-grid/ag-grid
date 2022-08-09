@@ -439,8 +439,8 @@ export class Group extends Node {
         this.dirtyZIndex = false;
         this.children.sort((a, b) => {
             return compoundAscending(
-                [a.zIndex, ...(a.zIndexSubOrder ?? [undefined, undefined]), a.id],
-                [b.zIndex, ...(b.zIndexSubOrder ?? [undefined, undefined]), b.id],
+                [a.zIndex, ...(a.zIndexSubOrder ?? [undefined, undefined]), a.serialNumber],
+                [b.zIndex, ...(b.zIndexSubOrder ?? [undefined, undefined]), b.serialNumber],
                 ascendingStringNumberUndefined
             );
         });
