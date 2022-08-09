@@ -10,7 +10,8 @@ import {
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
     ValueCache,
-    AsyncTransactionsFlushed
+    AsyncTransactionsFlushed,
+    RowRenderer
 } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "./serverSideRowModel";
 
@@ -25,6 +26,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private asyncTransactionsTimeout: number | undefined;
     private asyncTransactions: AsyncTransactionWrapper[] = [];
@@ -130,6 +132,9 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
 
         if (res) {
             this.valueCache.onDataChanged();
+
+            // refresh all the full width rows
+            this.rowRenderer.refreshFullWidthRows(res!.update);
             this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
             return res;
         } else {
