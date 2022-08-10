@@ -201,6 +201,18 @@ export interface DetailGridInfo {
     columnApi?: ColumnApi;
 }
 
+export interface ISizeColumnsToFitParams {
+	defaultMinWidth?: number,
+  	defaultMaxWidth?: number,
+	columnLimits?: IColumnLimit[]
+}
+
+export interface IColumnLimit {
+	key: Column | string,
+  	minWidth?: number,
+  	maxWidth?: number	
+}
+
 export function unwrapUserComp<T>(comp: T): T {
     const compAsAny = comp as any;
     const isProxy = compAsAny != null && compAsAny.getFrameworkComponentInstance != null;
@@ -844,9 +856,12 @@ export class GridApi<TData = any> {
         this.clientSideRowModel.refreshModel({ step: ClientSideRowModelSteps.AGGREGATE });
     }
 
-    /** Sets columns to adjust in size to fit the grid horizontally. */
-    public sizeColumnsToFit() {
-        this.gridBodyCtrl.sizeColumnsToFit();
+    /**
+     * Sets columns to adjust in size to fit the grid horizontally.
+     * @limits optionally define min and max widths for the purpose of this function (the column min/max are still respected.)
+     **/
+    public sizeColumnsToFit(params?: ISizeColumnsToFitParams) {
+        this.gridBodyCtrl.sizeColumnsToFit(params);
     }
 
     /** Show the 'loading' overlay. */

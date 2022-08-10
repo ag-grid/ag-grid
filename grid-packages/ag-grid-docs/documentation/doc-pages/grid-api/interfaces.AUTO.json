@@ -6106,6 +6106,22 @@
       "columnApi?": "/** Column api of the detail grid. */"
     }
   },
+  "ISizeColumnsToFitParams": {
+    "meta": {},
+    "type": {
+      "defaultMinWidth?": "number",
+      "defaultMaxWidth?": "number",
+      "columnLimits?": "IColumnLimit[]"
+    }
+  },
+  "IColumnLimit": {
+    "meta": {},
+    "type": {
+      "key": "Column | string",
+      "minWidth?": "number",
+      "maxWidth?": "number"
+    }
+  },
   "IFakeHScrollComp": {
     "meta": {},
     "type": {

@@ -390,8 +390,8 @@
   },
   "recomputeAggregates": { "type": { "arguments": {}, "returnType": "void" } },
   "sizeColumnsToFit": {
-    "description": "/** Sets columns to adjust in size to fit the grid horizontally. */",
-    "type": { "arguments": {} }
+    "description": "/** Sets columns to adjust in size to fit the grid horizontally.\n * @limits optionally define min and max widths for the purpose of this function (the column min/max are still respected.)\n */",
+    "type": { "arguments": { "params?": "ISizeColumnsToFitParams" } }
   },
   "showLoadingOverlay": {
     "description": "/** Show the 'loading' overlay. */",

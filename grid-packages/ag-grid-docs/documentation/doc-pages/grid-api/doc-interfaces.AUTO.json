@@ -10640,6 +10640,18 @@
       "type": { "returnType": "ColumnApi", "optional": true }
     }
   },
+  "ISizeColumnsToFitParams": {
+    "defaultMinWidth": { "type": { "returnType": "number", "optional": true } },
+    "defaultMaxWidth": { "type": { "returnType": "number", "optional": true } },
+    "columnLimits": {
+      "type": { "returnType": "IColumnLimit[]", "optional": true }
+    }
+  },
+  "IColumnLimit": {
+    "key": { "type": { "returnType": "Column | string", "optional": false } },
+    "minWidth": { "type": { "returnType": "number", "optional": true } },
+    "maxWidth": { "type": { "returnType": "number", "optional": true } }
+  },
   "IFakeHScrollComp": {
     "setHeight": {
       "type": {

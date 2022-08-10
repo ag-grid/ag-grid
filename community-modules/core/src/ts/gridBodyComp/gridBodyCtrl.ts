@@ -19,6 +19,7 @@ import { PopupService } from "../widgets/popupService";
 import { MouseEventService } from "./mouseEventService";
 import { IRowModel } from "../interfaces/iRowModel";
 import { Constants } from "../constants/constants";
+import { ISizeColumnsToFitParams } from "../gridApi";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -392,28 +393,31 @@ export class GridBodyCtrl extends BeanStub {
 
     // method will call itself if no available width. this covers if the grid
     // isn't visible, but is just about to be visible.
-    public sizeColumnsToFit(nextTimeout?: number) {
+    public sizeColumnsToFit(
+        params?: ISizeColumnsToFitParams,
+        nextTimeout?: number,
+    ) {
         const removeScrollWidth = this.isVerticalScrollShowing();
         const scrollWidthToRemove = removeScrollWidth ? this.gridOptionsWrapper.getScrollbarWidth() : 0;
         const bodyViewportWidth = getInnerWidth(this.eBodyViewport);
         const availableWidth = bodyViewportWidth - scrollWidthToRemove;
 
         if (availableWidth > 0) {
-            this.columnModel.sizeColumnsToFit(availableWidth, "sizeColumnsToFit");
+            this.columnModel.sizeColumnsToFit(availableWidth, "sizeColumnsToFit", false, params);
             return;
         }
 
         if (nextTimeout === undefined) {
             window.setTimeout(() => {
-                this.sizeColumnsToFit(100);
+                this.sizeColumnsToFit(params, 100);
             }, 0);
         } else if (nextTimeout === 100) {
             window.setTimeout(() => {
-                this.sizeColumnsToFit(500);
+                this.sizeColumnsToFit(params, 500);
             }, 100);
         } else if (nextTimeout === 500) {
             window.setTimeout(() => {
-                this.sizeColumnsToFit(-1);
+                this.sizeColumnsToFit(params, -1);
             }, 500);
         } else {
             console.warn('AG Grid: tried to call sizeColumnsToFit() but the grid is coming back with ' +

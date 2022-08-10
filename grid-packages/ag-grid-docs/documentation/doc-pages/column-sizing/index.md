@@ -37,7 +37,7 @@ const gridOptions = {
 
 ## Size Columns to Fit
 
-Call the Grid Api `api.sizeColumnsToFit()` to make the currently visible columns fit the screen. The columns will scale (growing or shrinking) to fit the available width.
+Call the Grid Api `api.sizeColumnsToFit(params)` to make the currently visible columns fit the screen. The columns will scale (growing or shrinking) to fit the available width.
 
 <api-documentation source='grid-api/api.json' section='columns' names='["sizeColumnsToFit"]' ></api-documentation>
 
@@ -50,6 +50,8 @@ will still be twice the size of Column B, assuming no Column min-width or max-wi
 
 Column default widths, rather than current widths, are used while calculating the new widths. This insures
 the result is deterministic and not depend on any Column resizing the user may have manually done.
+
+The function can receive a parameters object with minimum and maximum widths, either for all columns or for specific columns, to further restrain the columns resulting width from that function call. These widths will not exceed the column's defined minimum and maximum widths.
 
 [[note]]
 | For example assuming a grid with three Columns, the algorithm will be as follows:<br/>
@@ -67,6 +69,13 @@ the result is deterministic and not depend on any Column resizing the user may h
 | col 1 = 50 * 2.54 = 127.44 -> rounded = 127<br/>
 | col 2 = 120 * 2.54 = 305.87 -> rounded = 306<br/>
 | col 3 = 1198 - (127 + 306) = 765 // last col gets the space that's left, which ensures all space is used, no rounding issues<br/>
+
+In the following example, after clicking `Size To Fit`, note the following:
+1. The `athlete` column has `suppressSizeToFit` and is not resized.
+2. The `age` column has `maxWidth: 50`, which takes precedence over the functions `defaultMinWidth: 100`
+3. The `country` column has `maxWidth: 300`, which takes precedence over the functions `minWidth: 900` defined for the `country` column.
+
+<grid-example title='Sizing Columns To Fit' name='column-sizing-to-fit' type='generated'></grid-example>
 
 ## Auto-Size Columns
 
