@@ -188,7 +188,7 @@ function mergeAncestorProps(isDocStyle, parent, child, getProps) {
             });
         }
         else {
-            if (parent.extends !== 'Omit') {
+            if (parent.extends !== 'Omit' && parent.extends !== 'Required') {
                 throw new Error(`Parent interface ${parent.extends} takes generic params: [${parent.params.join()}] but child does not have typeParams.`);
             }
         }
@@ -236,12 +236,15 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
                         omitFields.push(typeName);
                     });
                 });
+            } else if (extended === 'Required') {
+                // Required: https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype
+                extended = a.params[0];
             }
             extInt = interfaces[extended];
 
             if (!extInt) {
                 //Check for type params
-                throw new Error('Missing interface' + a);
+                throw new Error('Missing interface: ' + JSON.stringify(a));
             }
 
             if (isDocStyle) {
