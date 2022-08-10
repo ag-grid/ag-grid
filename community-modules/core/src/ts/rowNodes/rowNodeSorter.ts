@@ -101,6 +101,24 @@ export class RowNodeSorter {
 
         const isNodeGroupedAtLevel = node.rowGroupColumn === column;
         if (isNodeGroupedAtLevel) {
+            const isGroupRows = this.gridOptionsWrapper.isGroupUseEntireRow(this.columnModel.isPivotActive());
+            if (isGroupRows) {
+                // if the column has a provided a keyCreator, we have to use the key, as the group could be
+                // irrelevant to the column value
+                const keyCreator = column.getColDef().keyCreator;
+                if (keyCreator) {
+                    return node.key;
+                }
+
+                // if the group was generated from the column data, all the leaf children should return the same
+                // value
+                const leafChild = node.allLeafChildren?.[0];
+                if (leafChild) {
+                    return this.valueService.getValue(column, leafChild, false, false);
+                }
+                return undefined;
+            }
+
             const displayCol = this.columnModel.getGroupDisplayColumnForGroup(column.getId());
             if (!displayCol) {
                 return undefined;
