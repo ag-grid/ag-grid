@@ -186,6 +186,10 @@
         cursor: default;
         height: ag-param(list-item-height);
 
+        .ag-keyboard-focus &:focus::after {
+            content: none
+        }
+
         &:hover {
             @include ag-color-property(background-color, row-hover-color);
         }
