@@ -311,13 +311,13 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             yKey,
             strokeWidth,
             fillOpacity: seriesFillOpacity,
-            strokeOpacity,
+            strokeOpacity: seriesStrokeOpacity,
             fill: seriesFill,
             stroke: seriesStroke,
             sizeScale,
             marker: {
                 fillOpacity: markerFillOpacity = seriesFillOpacity,
-                strokeOpacity: markerStrokeOpacity = strokeOpacity,
+                strokeOpacity: markerStrokeOpacity = seriesStrokeOpacity,
             },
             highlightStyle: {
                 fill: deprecatedFill,
@@ -370,7 +370,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
             node.size = format && format.size !== undefined ? format.size : size;
             node.fillOpacity = fillOpacity ?? 1;
-            node.strokeOpacity = strokeOpacity;
+            node.strokeOpacity = strokeOpacity ?? 1;
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
             node.visible = node.size > 0;
