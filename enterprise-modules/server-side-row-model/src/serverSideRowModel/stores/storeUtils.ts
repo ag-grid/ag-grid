@@ -11,7 +11,8 @@ import {
     StoreRefreshAfterParams,
     RowNode,
     ColumnVO,
-    RowNodeBlock
+    RowNodeBlock,
+    ColumnModel
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 
@@ -19,6 +20,7 @@ import { SSRMParams } from "../serverSideRowModel";
 export class StoreUtils extends BeanStub {
 
     @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('gridApi') private gridApi: GridApi;
 
     public loadFromDatasource(p: {
@@ -102,7 +104,15 @@ export class StoreUtils extends BeanStub {
 
         if (actionOnThisGroup) { return true; }
 
-        return false;
+        const allCols = this.columnModel.getAllGridColumns();
+        const affectedGroupCols = allCols
+            // find all impacted cols which also a group display column
+            .filter(col => col.getColDef().showRowGroup && params.changedColumns.includes(col.getId()))
+            .map(col => col.getColDef().showRowGroup)
+            // if displaying all groups, or displaying the effected col for this group, refresh
+            .some(group => group === true || group === colIdThisGroup);
+
+        return affectedGroupCols;
     }
 
 }
