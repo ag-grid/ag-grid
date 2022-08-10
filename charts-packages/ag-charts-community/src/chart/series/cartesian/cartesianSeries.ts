@@ -367,7 +367,7 @@ export abstract class CartesianSeries<
 
                 // No need to use Math.sqrt() since x < y implies Math.sqrt(x) < Math.sqrt(y) for
                 // values > 1
-                const distance = (hitPoint.x - datumX) ** 2 + (hitPoint.y - datumY) ** 2;
+                const distance = Math.max((hitPoint.x - datumX) ** 2 + (hitPoint.y - datumY) ** 2, 0);
                 if (distance < minDistance) {
                     minDistance = distance;
                     closestDatum = datum;
@@ -376,7 +376,8 @@ export abstract class CartesianSeries<
         }
 
         if (closestDatum) {
-            return { datum: closestDatum, distance: Math.sqrt(minDistance) };
+            const distance = Math.max(Math.sqrt(minDistance) - (closestDatum.point?.size ?? 0), 0);
+            return { datum: closestDatum, distance };
         }
     }
 
@@ -436,7 +437,11 @@ export abstract class CartesianSeries<
         }
 
         if (closestDatum) {
-            return { datum: closestDatum, distance: Math.sqrt(minDistance[0] ** 2 + minDistance[1] ** 2) };
+            const distance = Math.max(
+                Math.sqrt(minDistance[0] ** 2 + minDistance[1] ** 2) - (closestDatum.point?.size ?? 0),
+                0
+            );
+            return { datum: closestDatum, distance };
         }
     }
 

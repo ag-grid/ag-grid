@@ -1055,8 +1055,12 @@ export abstract class Chart extends Observable {
         // Disable 'nearest match' options if tooltip.tracking is enabled.
         const pickModes = tracking ? undefined : [SeriesNodePickMode.EXACT_SHAPE_MATCH];
 
+        // Iterate through series in reverse, as later declared series appears on top of earlier
+        // declared series.
+        const reverseSeries = [...this.series].reverse();
+
         let result: { series: Series<any>; datum: SeriesNodeDatum; distance: number } | undefined = undefined;
-        for (const series of this.series) {
+        for (const series of reverseSeries) {
             if (!series.visible || !series.group.visible) {
                 continue;
             }

@@ -15,8 +15,8 @@ export interface PointLabelDatum {
     readonly point: {
         readonly x: number;
         readonly y: number;
+        readonly size: number;
     };
-    readonly size: number;
     readonly label: MeasuredLabel;
 }
 
@@ -82,7 +82,7 @@ export function placeLabels(
 ): PlacedLabel[][] {
     const result: PlacedLabel[][] = [];
 
-    data = data.map((d) => d.slice().sort((a, b) => b.size - a.size));
+    data = data.map((d) => d.slice().sort((a, b) => b.point.size - a.point.size));
     for (let j = 0; j < data.length; j++) {
         const labels: PlacedLabel[] = (result[j] = []);
         const datum = data[j];
@@ -92,7 +92,7 @@ export function placeLabels(
         for (let i = 0, ln = datum.length; i < ln; i++) {
             const d = datum[i];
             const l = d.label;
-            const r = d.size * 0.5;
+            const r = d.point.size * 0.5;
             const x = d.point.x - l.width * 0.5;
             const y = d.point.y - r - l.height - padding;
             const { width, height } = l;
@@ -104,7 +104,7 @@ export function placeLabels(
             }
 
             const overlapPoints = data.some((datum) =>
-                datum.some((d) => circleRectOverlap(d.point.x, d.point.y, d.size * 0.5, x, y, width, height))
+                datum.some((d) => circleRectOverlap(d.point.x, d.point.y, d.point.size * 0.5, x, y, width, height))
             );
             if (overlapPoints) {
                 continue;

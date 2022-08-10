@@ -2554,7 +2554,6 @@
     "meta": {},
     "type": {
       "index": "number",
-      "point": "{ readonly x: number; readonly y: number; }",
       "fill?": "string",
       "stroke?": "string",
       "yKey": "string",
@@ -2562,7 +2561,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "{ readonly x: number; readonly y: number; readonly size: number; }"
     }
   },
   "LabelSelectionDatum": {
@@ -2576,7 +2575,7 @@
   },
   "Coordinate": {
     "meta": { "isTypeAlias": true },
-    "type": "{ x: number; y: number; }"
+    "type": "{ x: number; y: number; size: number; }"
   },
   "CumulativeValue": {
     "meta": { "isTypeAlias": true },
@@ -2639,7 +2638,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "{ readonly x: number; readonly y: number; readonly size: number; }"
     }
   },
   "BarSeriesNodeTag": {
@@ -2761,7 +2760,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "{ readonly x: number; readonly y: number; readonly size: number; }"
     }
   },
   "HistogramSeriesNodeClickEvent": {
@@ -2785,12 +2784,12 @@
   "LineNodeDatum": {
     "meta": {},
     "type": {
-      "point": "{ readonly moveTo: boolean; readonly x: number; readonly y: number; }",
+      "point": "SeriesNodeDatum['point'] & { readonly moveTo: boolean; }",
       "label?": "{ readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "{ readonly x: number; readonly y: number; readonly size: number; }"
     }
   },
   "LineSeriesNodeClickEvent": {
@@ -2815,13 +2814,11 @@
   "ScatterNodeDatum": {
     "meta": {},
     "type": {
-      "point": "{ readonly x: number; readonly y: number; }",
-      "size": "number",
       "label": "MeasuredLabel",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "{ readonly x: number; readonly y: number; readonly size: number; }"
     }
   },
   "ScatterSeriesNodeClickEvent": {
@@ -2872,7 +2869,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "{ readonly x: number; readonly y: number; readonly size: number; }"
     }
   },
   "TreemapTooltipRendererParams": {
@@ -2929,7 +2926,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "{ readonly x: number; readonly y: number; readonly size: number; }"
     }
   },
   "PieTooltipRendererParams": {
@@ -2990,7 +2987,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "{ readonly x: number; readonly y: number; readonly size: number; }"
     }
   },
   "SeriesNodePickMode": {
@@ -3251,8 +3248,7 @@
   "PointLabelDatum": {
     "meta": {},
     "type": {
-      "point": "{ readonly x: number; readonly y: number; }",
-      "size": "number",
+      "point": "{ readonly x: number; readonly y: number; readonly size: number; }",
       "label": "MeasuredLabel"
     }
   },

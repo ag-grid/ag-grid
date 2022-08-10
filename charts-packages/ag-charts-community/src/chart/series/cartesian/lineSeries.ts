@@ -25,10 +25,8 @@ import { checkDatum, isContinuous } from '../../../util/value';
 import { Marker } from '../../marker/marker';
 
 interface LineNodeDatum extends SeriesNodeDatum {
-    readonly point: {
+    readonly point: SeriesNodeDatum['point'] & {
         readonly moveTo: boolean;
-        readonly x: number;
-        readonly y: number;
     };
     readonly label?: {
         readonly text: string;
@@ -177,7 +175,12 @@ export class LineSeries extends CartesianSeries<LineContext> {
     }
 
     public createNodeData() {
-        const { data, xAxis, yAxis } = this;
+        const {
+            data,
+            xAxis,
+            yAxis,
+            marker: { enabled: markerEnabled, size: markerSize, strokeWidth },
+        } = this;
 
         if (!data || !xAxis || !yAxis) {
             return [];
@@ -189,6 +192,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
         const nodeData: LineNodeDatum[] = new Array(data.length);
+        const size = markerEnabled ? markerSize : 0;
 
         let moveTo = true;
         let prevXInRange: undefined | -1 | 0 | 1 = undefined;
@@ -208,7 +212,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     moveTo = true;
                     continue;
                 }
-                const tolerance = (xScale.bandwidth || this.marker.size * 0.5 + (this.marker.strokeWidth || 0)) + 1;
+                const tolerance = (xScale.bandwidth || markerSize * 0.5 + (strokeWidth || 0)) + 1;
 
                 nextXYDatums = yData[i + 1] === undefined ? undefined : [xData[i + 1], yData[i + 1]];
                 const xInRange = xAxis.inRangeEx(x, 0, tolerance);
@@ -244,7 +248,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 nodeData[actualLength++] = {
                     series: this,
                     datum: seriesDatum,
-                    point: { x, y, moveTo },
+                    point: { x, y, moveTo, size },
                     label: labelText
                         ? {
                               text: labelText,

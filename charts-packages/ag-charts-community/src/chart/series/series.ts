@@ -28,6 +28,7 @@ export interface SeriesNodeDatum {
         // in local (series) coordinates
         readonly x: number;
         readonly y: number;
+        readonly size: number;
     };
 }
 

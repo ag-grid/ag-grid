@@ -25,12 +25,7 @@ import { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
 import { checkDatum, isContinuous } from '../../../util/value';
 import { Deprecated } from '../../../util/validation';
 
-interface ScatterNodeDatum extends SeriesNodeDatum {
-    readonly point: {
-        readonly x: number;
-        readonly y: number;
-    };
-    readonly size: number;
+interface ScatterNodeDatum extends Required<SeriesNodeDatum> {
     readonly label: MeasuredLabel;
 }
 
@@ -217,7 +212,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     createNodeData() {
-        const { chart, data, visible, xAxis, yAxis, label, labelKey } = this;
+        const { chart, data, visible, xAxis, yAxis, yKey, label, labelKey } = this;
 
         if (!(chart && data && visible && xAxis && yAxis)) {
             return [];
@@ -252,12 +247,13 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
             const text = labelKey ? String(validData[i][labelKey]) : '';
             const size = HdpiCanvas.getTextSize(text, font);
+            const markerSize = sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size;
 
             nodeData[actualLength++] = {
                 series: this,
+                itemId: yKey,
                 datum: validData[i],
-                point: { x, y },
-                size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size,
+                point: { x, y, size: markerSize },
                 label: {
                     text,
                     ...size,
@@ -349,7 +345,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                     ? highlightedDatumStrokeWidth
                     : markerStrokeWidth;
-            const size = datum.size;
+            const size = datum.point?.size ?? 0;
 
             let format: CartesianSeriesMarkerFormat | undefined = undefined;
             if (formatter) {
@@ -371,8 +367,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             node.size = format && format.size !== undefined ? format.size : size;
             node.fillOpacity = fillOpacity ?? 1;
             node.strokeOpacity = strokeOpacity ?? 1;
-            node.translationX = datum.point.x;
-            node.translationY = datum.point.y;
+            node.translationX = datum.point?.x ?? 0;
+            node.translationY = datum.point?.y ?? 0;
             node.visible = node.size > 0;
         });
 
@@ -389,13 +385,16 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
         const placedLabels = this.chart?.placeLabels().get(this) ?? [];
 
-        const placedNodeDatum = placedLabels.map((v) => ({
-            ...(v.datum as ScatterNodeDatum),
-            point: {
-                x: v.x,
-                y: v.y,
-            },
-        }));
+        const placedNodeDatum = placedLabels.map(
+            (v): ScatterNodeDatum => ({
+                ...(v.datum as ScatterNodeDatum),
+                point: {
+                    x: v.x,
+                    y: v.y,
+                    size: v.datum.point.size,
+                },
+            })
+        );
         const updateLabels = labelSelection.setData(placedNodeDatum);
         updateLabels.exit.remove();
         const enterLabels = updateLabels.enter.append(Text);
@@ -409,8 +408,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         labelSelection.each((text, datum) => {
             text.text = datum.label.text;
             text.fill = label.color;
-            text.x = datum.point.x;
-            text.y = datum.point.y;
+            text.x = datum.point?.x ?? 0;
+            text.y = datum.point?.y ?? 0;
             text.fontStyle = label.fontStyle;
             text.fontWeight = label.fontWeight;
             text.fontSize = label.fontSize;
@@ -455,7 +454,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 fill,
                 stroke,
                 strokeWidth,
-                size: nodeDatum.size,
+                size: nodeDatum.point?.size ?? 0,
                 highlighted: false,
             });
         }
