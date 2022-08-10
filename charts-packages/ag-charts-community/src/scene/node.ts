@@ -39,7 +39,10 @@ const zIndexChangedCallback = (o: any) => {
  * Each node can have zero or one parent and belong to zero or one scene.
  */
 export abstract class Node extends ChangeDetectable {
-    // Don't confuse with `window.Node`.
+    static _nextSerialNumber = 0;
+
+    /** Unique number to allow creation order to be easily determined. */
+    readonly serialNumber = Node._nextSerialNumber++;
 
     /**
      * Unique node ID in the form `ClassName-NaturalNumber`.

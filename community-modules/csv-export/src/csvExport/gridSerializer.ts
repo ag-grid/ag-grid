@@ -179,7 +179,17 @@ export class GridSerializer extends BeanStub {
     private processPinnedTopRows<T>(params: ExportParams<T>, columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
-            this.pinnedRowModel.forEachPinnedTopRow(processRow);
+
+            if (params.rowPositions) {
+                params.rowPositions
+                    // only pinnedTop rows, other models are processed by `processRows` and `processPinnedBottomsRows`
+                    .filter(position => position.rowPinned === 'top')
+                    .sort((a, b) => a.rowIndex - b.rowIndex)
+                    .map(position => this.pinnedRowModel.getPinnedTopRow(position.rowIndex))
+                    .forEach(processRow);
+            } else {
+                this.pinnedRowModel.forEachPinnedTopRow(processRow);
+            }
             return gridSerializingSession;
         };
     }
@@ -237,7 +247,16 @@ export class GridSerializer extends BeanStub {
     private processPinnedBottomRows<T>(params: ExportParams<T>, columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
-            this.pinnedRowModel.forEachPinnedBottomRow(processRow);
+            if (params.rowPositions) {
+                params.rowPositions
+                    // only pinnedBottom rows, other models are processed by `processRows` and `processPinnedTopRows`
+                    .filter(position => position.rowPinned === 'bottom')
+                    .sort((a, b) => a.rowIndex - b.rowIndex)
+                    .map(position => this.pinnedRowModel.getPinnedBottomRow(position.rowIndex))
+                    .forEach(processRow);
+            } else {
+                this.pinnedRowModel.forEachPinnedBottomRow(processRow);
+            }
             return gridSerializingSession;
         };
     }

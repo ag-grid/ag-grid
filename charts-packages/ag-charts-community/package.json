@@ -10,6 +10,7 @@
         "test:ci": "export FONTCONFIG_PATH=$PWD/src/chart/test ; export FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf ; export PANGOCAIRO_BACKEND=fontconfig ; npx jest --runInBand",
         "test:dev": "export FONTCONFIG_PATH=$PWD/src/chart/test ; export FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf ; export PANGOCAIRO_BACKEND=fontconfig ; npx jest",
         "test": "if test \"$CI\" = \"true\" ; then exec npm run test:ci ; else exec npm run test:dev ; fi",
+        "test-watch": "npm run test:dev -- --watch",
         "test-update": "export SNAPSHOT_FAILURE_THRESHOLD=0.005 ; npm run test:dev -- -u",
         "build-cjs": "npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
         "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
