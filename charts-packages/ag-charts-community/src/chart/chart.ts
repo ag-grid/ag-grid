@@ -516,7 +516,7 @@ export abstract class Chart extends Observable {
         return this._performUpdateType;
     }
     get updatePending(): boolean {
-        return this._performUpdateType !== ChartUpdateType.NONE;
+        return this._performUpdateType !== ChartUpdateType.NONE || this.lastTooltipMeta != null;
     }
     private _lastPerformUpdateError?: Error;
     get lastPerformUpdateError() {
@@ -1114,6 +1114,7 @@ export abstract class Chart extends Observable {
     private lastTooltipMeta?: TooltipMeta = undefined;
     private handleTooltipTrigger = debouncedAnimationFrame(() => {
         this.handleTooltip(this.lastTooltipMeta!);
+        this.lastTooltipMeta = undefined;
     });
     protected handleTooltip(meta: TooltipMeta) {
         const { lastPick } = this;
