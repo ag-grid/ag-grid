@@ -10,13 +10,13 @@ import { RowDragComp } from "./../row/rowDragComp";
 import { PopupEditorWrapper } from "./../cellEditors/popupEditorWrapper";
 import { DndSourceComp } from "./../dndSourceComp";
 import { TooltipParentComp } from "../../widgets/customTooltipFeature";
-import { setAriaColIndex, setAriaDescribedBy, setAriaRole } from "../../utils/aria";
+import { setAriaDescribedBy, setAriaRole } from "../../utils/aria";
 import { escapeString } from "../../utils/string";
 import { missing } from "../../utils/generic";
 import { addStylesToElement, clearElement, loadTemplate, removeFromParent } from "../../utils/dom";
 import { CellCtrl, ICellComp } from "./cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
-import { _ } from "../../utils";
+import { browserSupportsPreventScroll } from "../../utils/browser";
 
 export class CellComp extends Component implements TooltipParentComp {
 
@@ -136,7 +136,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // this means firstRender will be true for one pass only, as it's initialised to undefined
         this.firstRender = this.firstRender == null;
-
 
         // if display template has changed, means any previous Cell Renderer is in the wrong location
         const controlWrapperChanged = this.refreshWrapper(false);
@@ -530,10 +529,8 @@ export class CellComp extends Component implements TooltipParentComp {
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
         const eDocument = this.beans.gridOptionsWrapper.getDocument();
-        if (eGui.contains(eDocument.activeElement)) {
-            eGui.focus({
-                preventScroll: true
-            });
+        if (eGui.contains(eDocument.activeElement) && browserSupportsPreventScroll()) {
+            eGui.focus({ preventScroll: true });
         }
 
         clearElement(this.getParentOfValue());
