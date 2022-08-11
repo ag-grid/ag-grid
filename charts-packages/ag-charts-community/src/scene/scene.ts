@@ -4,6 +4,7 @@ import { createId } from '../util/id';
 import { Group } from './group';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { windowValue } from '../util/window';
+import { ascendingStringNumberUndefined, compoundAscending } from '../util/compare';
 
 interface DebugOptions {
     stats: false | 'basic' | 'detailed';
@@ -21,6 +22,7 @@ interface SceneLayer {
     id: number;
     name?: string;
     zIndex: number;
+    zIndexSubOrder?: [string, number];
     canvas: HdpiOffscreenCanvas | HdpiCanvas;
 }
 
@@ -99,14 +101,18 @@ export class Scene {
 
     private _nextZIndex = 0;
     private _nextLayerId = 0;
-    addLayer(opts?: { zIndex?: number; name?: string }): HdpiCanvas | HdpiOffscreenCanvas | undefined {
+    addLayer(opts?: {
+        zIndex?: number;
+        zIndexSubOrder?: [string, number];
+        name?: string;
+    }): HdpiCanvas | HdpiOffscreenCanvas | undefined {
         const { mode } = this.opts;
         const layeredModes = ['composite', 'dom-composite', 'adv-composite'];
         if (!layeredModes.includes(mode)) {
             return undefined;
         }
 
-        const { zIndex = this._nextZIndex++, name } = opts || {};
+        const { zIndex = this._nextZIndex++, name, zIndexSubOrder } = opts || {};
         const { width, height } = this;
         const domLayer = mode === 'dom-composite';
         const advLayer = mode === 'adv-composite';
@@ -128,6 +134,7 @@ export class Scene {
             id: this._nextLayerId++,
             name,
             zIndex,
+            zIndexSubOrder,
             canvas,
         };
 
@@ -168,11 +175,12 @@ export class Scene {
         }
     }
 
-    moveLayer(canvas: HdpiCanvas | HdpiOffscreenCanvas, newZIndex: number) {
+    moveLayer(canvas: HdpiCanvas | HdpiOffscreenCanvas, newZIndex: number, newZIndexSubOrder?: [string, number]) {
         const layer = this.layers.find((l) => l.canvas === canvas);
 
         if (layer) {
             layer.zIndex = newZIndex;
+            layer.zIndexSubOrder = newZIndexSubOrder;
             this.sortLayers();
             this.markDirty();
 
@@ -184,11 +192,11 @@ export class Scene {
 
     private sortLayers() {
         this.layers.sort((a, b) => {
-            const zDiff = a.zIndex - b.zIndex;
-            if (zDiff !== 0) {
-                return zDiff;
-            }
-            return a.id - b.id;
+            return compoundAscending(
+                [a.zIndex, ...(a.zIndexSubOrder ?? [undefined, undefined]), a.id],
+                [b.zIndex, ...(b.zIndexSubOrder ?? [undefined, undefined]), b.id],
+                ascendingStringNumberUndefined
+            );
         });
     }
 
@@ -375,11 +383,24 @@ export class Scene {
             ...node.children
                 .map((c) => this.buildTree(c))
                 .reduce((result, childTree) => {
-                    let { name, node } = childTree;
-                    if (!node.visible || node.opacity <= 0) {
-                        name = `* ${name}`;
+                    let {
+                        name: treeNodeName,
+                        node: { visible, opacity, zIndex, zIndexSubOrder },
+                    } = childTree;
+                    if (!visible || opacity <= 0) {
+                        treeNodeName = `* ${treeNodeName}`;
                     }
-                    result[name ?? '<unknown>'] = childTree;
+                    if (node instanceof Group && node.isLayer()) {
+                        treeNodeName = `[ ${treeNodeName} ]`;
+                    }
+                    const key = [
+                        `${treeNodeName ?? '<unknown>'}`,
+                        `z: ${zIndex}`,
+                        zIndexSubOrder && `zo: ${zIndexSubOrder.join(' / ')}`,
+                    ]
+                        .filter((v) => !!v)
+                        .join(' ');
+                    result[key] = childTree;
                     return result;
                 }, {} as Record<string, {}>),
         };

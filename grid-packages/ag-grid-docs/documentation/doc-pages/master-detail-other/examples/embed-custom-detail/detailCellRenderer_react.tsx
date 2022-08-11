@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { ICellRendererParams, ColumnPinnedType } from '@ag-grid-community/core';
 
-export default class DetailCellRenderer extends Component<ICellRendererParams, { pinned: string | null | undefined }> {
+export default class DetailCellRenderer extends Component<ICellRendererParams, { pinned: ColumnPinnedType }> {
 
     constructor(props: ICellRendererParams) {
         super(props);

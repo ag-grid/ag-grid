@@ -40,7 +40,7 @@ import {
     TabToNextCellParams,
     TabToNextHeaderParams
 } from "./entities/iCallbackParams";
-import { RowNode } from "./entities/rowNode";
+import { RowNode, RowPinnedType } from "./entities/rowNode";
 import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
 import { AgEvent, ColumnEventType } from "./events";
 import { EventService } from "./eventService";
@@ -52,7 +52,7 @@ import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeat
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
-import { AgChartThemeOverrides, AgChartThemePalette } from "./interfaces/iAgChartOptions";
+import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { ICellEditor } from "./interfaces/iCellEditor";
 import { ChartType, CrossFilterChartType, SeriesChartType } from "./interfaces/iChartOptions";
@@ -116,7 +116,7 @@ export interface StartEditingCellParams {
     /** The column key of the row to start editing */
     colKey: string | Column;
     /** Set to `'top'` or `'bottom'` to start editing a pinned row */
-    rowPinned?: string;
+    rowPinned?: RowPinnedType;
     /** The key to pass to the cell editor */
     key?: string;
     /** The charPress to pass to the cell editor */
@@ -874,14 +874,14 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Returns a list of selected nodes.
+     * Returns an unsorted list of selected nodes.
      * Getting the underlying node (rather than the data) is useful when working with tree / aggregated data,
      * as the node can be traversed.
      */
     public getSelectedNodes(): RowNode<TData>[] {
         return this.selectionService.getSelectedNodes();
     }
-    /** Returns a list of selected rows (i.e. row data that you provided). */
+    /** Returns an unsorted list of selected rows (i.e. row data that you provided). */
     public getSelectedRows(): TData[] {
         return this.selectionService.getSelectedRows();
     }
@@ -1071,7 +1071,7 @@ export class GridApi<TData = any> {
     }
 
     /** Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned). */
-    public setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: string) {
+    public setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: RowPinnedType) {
         this.focusService.setFocusedCell({ rowIndex, column: colKey, rowPinned, forceBrowserFocus: true });
     }
 
@@ -2048,22 +2048,6 @@ export class GridApi<TData = any> {
     public getFirstRenderedRow(): number {
         console.warn('in AG Grid v12, getFirstRenderedRow() was renamed to getFirstDisplayedRow()');
         return this.getFirstDisplayedRow();
-    }
-
-    /** Get the index of the first visible row in the viewport. */
-    public getFirstVisibleRowIndex(): number {
-        const pageOffset = this.paginationProxy.getPixelOffset();
-        const firstVisiblePx = this.gridBodyCtrl.getScrollFeature().getVScrollPosition().top;
-        const firstRowPx = pageOffset + firstVisiblePx;
-        return this.rowModel.getRowIndexAtPixel(firstRowPx);
-    }
-
-    /** Get the index of the last visible row in the viewport. */
-    public getLastVisibleRowIndex(): number {
-        const pageOffset = this.paginationProxy.getPixelOffset();
-        const lastVisiblePx = this.gridBodyCtrl.getScrollFeature().getVScrollPosition().bottom;
-        const lastRowPx = pageOffset + lastVisiblePx;
-        return this.rowModel.getRowIndexAtPixel(lastRowPx);
     }
 
     /** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */

@@ -9,6 +9,8 @@ import { getMarker } from './marker/util';
 import { createId } from '../util/id';
 import { RedrawType } from '../scene/node';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
+import { OPT_BOOLEAN, Validate } from '../util/validation';
+import { Layers } from './layers';
 
 export interface LegendDatum {
     id: string; // component ID
@@ -115,7 +117,7 @@ export class Legend {
 
     onLayoutChange?: () => void;
 
-    readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: 300 });
+    readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: Layers.LEGEND_ZINDEX });
 
     private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(
         this.group
@@ -167,6 +169,10 @@ export class Legend {
     get position() {
         return this._position;
     }
+
+    /** Reverse the display order of legend items if `true`. */
+    @Validate(OPT_BOOLEAN)
+    reverseOrder?: boolean = undefined;
 
     constructor() {
         this.item.marker.parent = this;
@@ -222,7 +228,11 @@ export class Legend {
             marker: { size: markerSize, padding: markerPadding, shape: markerShape },
             label: { maxLength = Infinity, fontStyle, fontWeight, fontSize, fontFamily },
         } = this.item;
-        const updateSelection = this.itemSelection.setData(this.data, (_, datum) => {
+        const data = [...this.data];
+        if (this.reverseOrder) {
+            data.reverse();
+        }
+        const updateSelection = this.itemSelection.setData(data, (_, datum) => {
             const Marker = getMarker(markerShape || datum.marker.shape);
             return datum.id + '-' + datum.itemId + '-' + Marker.name;
         });
@@ -246,7 +256,7 @@ export class Legend {
 
         itemSelection.each((markerLabel, datum) => {
             // TODO: measure only when one of these properties or data change (in a separate routine)
-            let text = datum.label.text;
+            let text = datum.label.text ?? '<unknown>';
             markerLabel.markerSize = markerSize;
             markerLabel.spacing = markerPadding;
             markerLabel.fontStyle = fontStyle;

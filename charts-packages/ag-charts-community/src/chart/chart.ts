@@ -1,6 +1,6 @@
 import { Scene } from '../scene/scene';
 import { Group } from '../scene/group';
-import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from './series/series';
+import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
 import { Node } from '../scene/node';
 import { Rect } from '../scene/shape/rect';
@@ -12,10 +12,11 @@ import { Caption } from '../caption';
 import { Observable, SourceEvent } from '../util/observable';
 import { ChartAxis, ChartAxisDirection } from './chartAxis';
 import { createId } from '../util/id';
-import { PlacedLabel, placeLabels, PointLabelDatum, isPointLabelDatum } from '../util/labelPlacement';
+import { isPointLabelDatum, PlacedLabel, placeLabels, PointLabelDatum } from '../util/labelPlacement';
 import { AgChartOptions } from './agChartOptions';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
+import { Point } from '../scene/point';
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
@@ -260,15 +261,18 @@ export class ChartTooltip extends Observable {
             const maxLeft = window.innerWidth - tooltipRect.width - 1;
             if (left < minLeft) {
                 left = minLeft;
-                this.updateClass(true, (this.constrained = true));
+                this.constrained = true;
+                this.updateClass(true, this.constrained);
             } else if (left > maxLeft) {
                 left = maxLeft;
-                this.updateClass(true, (this.constrained = true));
+                this.constrained = true;
+                this.updateClass(true, this.constrained);
             }
 
             if (top < window.pageYOffset) {
                 top = meta.pageY + 20;
-                this.updateClass(true, (this.constrained = true));
+                this.constrained = true;
+                this.updateClass(true, this.constrained);
             }
         }
 
@@ -513,7 +517,7 @@ export abstract class Chart extends Observable {
         return this._performUpdateType;
     }
     get updatePending(): boolean {
-        return this._performUpdateType !== ChartUpdateType.NONE;
+        return this._performUpdateType !== ChartUpdateType.NONE || this.lastTooltipMeta != null;
     }
     private _lastPerformUpdateError?: Error;
     get lastPerformUpdateError() {
@@ -564,6 +568,9 @@ export abstract class Chart extends Observable {
             case ChartUpdateType.PROCESS_DATA:
                 this.processData();
                 splits.push(performance.now());
+
+                // Disable tooltip/highlight if the data fundamentally shifted.
+                this.disableTooltip({ updateProcessing: false });
             // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (!firstRenderComplete && !firstResizeReceived) {
@@ -824,41 +831,31 @@ export abstract class Chart extends Observable {
         this.updateLegend();
     }
 
-    private nodeData: Map<Series<any>, SeriesNodeDataContext<any>[]> = new Map();
-    createNodeData(): void {
-        this.nodeData.clear();
-        this.series.forEach((s) => {
-            const data = s.visible ? s.createNodeData() : [];
-            this.nodeData.set(s, data);
-        });
-    }
-
     placeLabels(): Map<Series<any>, PlacedLabel[]> {
-        const seriesIndex: Series[] = [];
+        const visibleSeries: Series[] = [];
         const data: (readonly PointLabelDatum[])[] = [];
-        this.nodeData.forEach((contexts, series) => {
+        for (const series of this.series) {
             if (!series.visible || !series.label.enabled) {
-                return;
+                continue;
             }
 
-            let seriesData: PointLabelDatum[] = [];
-            contexts.forEach((context) => {
-                const contextData = context.labelData;
-                if (!isPointLabelDatum(contextData[0])) {
-                    return;
-                }
+            let labelData: PointLabelDatum[] = series.getLabelData();
 
-                seriesData.push(...contextData);
-            });
+            if (!(labelData && isPointLabelDatum(labelData[0]))) {
+                continue;
+            }
 
-            data.push(seriesData);
-            seriesIndex.push(series);
-        });
+            data.push(labelData);
+
+            visibleSeries.push(series);
+        }
+
         const { seriesRect } = this;
-        const labels: PlacedLabel[][] = seriesRect
-            ? placeLabels(data, { x: 0, y: 0, width: seriesRect.width, height: seriesRect.height })
-            : [];
-        return new Map(labels.map((l, i) => [seriesIndex[i], l]));
+        const labels: PlacedLabel[][] =
+            seriesRect && data.length > 0
+                ? placeLabels(data, { x: 0, y: 0, width: seriesRect.width, height: seriesRect.height })
+                : [];
+        return new Map(labels.map((l, i) => [visibleSeries[i], l]));
     }
 
     private updateLegend() {
@@ -1041,10 +1038,7 @@ export abstract class Chart extends Observable {
     }
 
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
-    private pickSeriesNode(
-        x: number,
-        y: number
-    ):
+    private pickSeriesNode(point: Point):
         | {
               series: Series<any>;
               datum: SeriesNodeDatum;
@@ -1059,12 +1053,16 @@ export abstract class Chart extends Observable {
         // Disable 'nearest match' options if tooltip.tracking is enabled.
         const pickModes = tracking ? undefined : [SeriesNodePickMode.EXACT_SHAPE_MATCH];
 
+        // Iterate through series in reverse, as later declared series appears on top of earlier
+        // declared series.
+        const reverseSeries = [...this.series].reverse();
+
         let result: { series: Series<any>; datum: SeriesNodeDatum; distance: number } | undefined = undefined;
-        for (const series of this.series) {
+        for (const series of reverseSeries) {
             if (!series.visible || !series.group.visible) {
                 continue;
             }
-            let { match, distance } = series.pickNode(x, y, pickModes) ?? {};
+            let { match, distance } = series.pickNode(point, pickModes) ?? {};
             if (!match || distance == null) {
                 continue;
             }
@@ -1106,9 +1104,15 @@ export abstract class Chart extends Observable {
         }
     }
 
+    private disableTooltip({ updateProcessing = true } = {}) {
+        this.changeHighlightDatum(undefined, { updateProcessing });
+        this.tooltip.toggle(false);
+    }
+
     private lastTooltipMeta?: TooltipMeta = undefined;
     private handleTooltipTrigger = debouncedAnimationFrame(() => {
         this.handleTooltip(this.lastTooltipMeta!);
+        this.lastTooltipMeta = undefined;
     });
     protected handleTooltip(meta: TooltipMeta) {
         const { lastPick } = this;
@@ -1117,8 +1121,7 @@ export abstract class Chart extends Observable {
         const disableTooltip = () => {
             if (lastPick) {
                 // Cursor moved from a non-marker node to empty space.
-                this.changeHighlightDatum();
-                this.tooltip.toggle(false);
+                this.disableTooltip();
             }
         };
 
@@ -1127,7 +1130,7 @@ export abstract class Chart extends Observable {
             return;
         }
 
-        const pick = this.pickSeriesNode(offsetX, offsetY);
+        const pick = this.pickSeriesNode({ x: offsetX, y: offsetY });
 
         if (!pick) {
             disableTooltip();
@@ -1222,7 +1225,7 @@ export abstract class Chart extends Observable {
             };
         }
 
-        legendItemClick({ enabled: !enabled, itemId });
+        legendItemClick({ enabled: !enabled, itemId, seriesId: series.id });
 
         return true;
     }
@@ -1278,12 +1281,15 @@ export abstract class Chart extends Observable {
                         datum: undefined,
                     };
                 }
+            } else {
+                this.highlightedDatum = undefined;
             }
         }
 
         // Careful to only schedule updates when necessary.
         if (
             (this.highlightedDatum && !oldHighlightedDatum) ||
+            (!this.highlightedDatum && oldHighlightedDatum) ||
             (this.highlightedDatum &&
                 oldHighlightedDatum &&
                 (this.highlightedDatum.series !== oldHighlightedDatum.series ||
@@ -1336,7 +1342,11 @@ export abstract class Chart extends Observable {
 
     highlightedDatum?: SeriesNodeDatum;
 
-    changeHighlightDatum(newPick?: { datum: SeriesNodeDatum; event?: MouseEvent }) {
+    changeHighlightDatum(
+        newPick?: { datum: SeriesNodeDatum; event?: MouseEvent },
+        opts?: { updateProcessing: boolean }
+    ) {
+        const { updateProcessing = true } = opts ?? {};
         const seriesToUpdate: Set<Series> = new Set<Series>();
         const { datum: { series: newSeries = undefined } = {}, datum = undefined } = newPick || {};
         const { lastPick: { datum: { series: lastSeries = undefined } = {} } = {} } = this;
@@ -1352,6 +1362,10 @@ export abstract class Chart extends Observable {
 
         this.lastPick = newPick;
         this.highlightedDatum = datum;
+
+        if (!updateProcessing) {
+            return;
+        }
 
         let updateAll = newSeries == null || lastSeries == null;
         if (updateAll) {

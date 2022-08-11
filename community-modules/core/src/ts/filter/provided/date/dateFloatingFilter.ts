@@ -1,4 +1,4 @@
-import { DateFilter, DateFilterModel } from './dateFilter';
+import { DateFilter, DateFilterModel, IDateFilterParams } from './dateFilter';
 import { Autowired } from '../../../context/context';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { IDateParams } from '../../../rendering/dateComponent';
@@ -11,7 +11,7 @@ import { FilterChangedEvent } from '../../../events';
 import { ProvidedFilter } from '../providedFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { setDisplayed } from '../../../utils/dom';
-import { parseDateTimeFromString, serialiseDate } from '../../../utils/date';
+import { dateToFormattedString, parseDateTimeFromString, serialiseDate } from '../../../utils/date';
 import { debounce } from '../../../utils/function';
 import { IFilterOptionDef } from '../../../interfaces/iFilter';
 import { WithoutGridCommon } from '../../../interfaces/iCommon';
@@ -24,6 +24,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     private dateComp: DateCompWrapper;
     private params: IFloatingFilterParams;
+    private filterParams: IDateFilterParams;
 
     constructor() {
         super(/* html */`
@@ -45,12 +46,15 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         const dateFrom = parseDateTimeFromString(condition.dateFrom);
         const dateTo = parseDateTimeFromString(condition.dateTo);
 
+        const format = this.filterParams.inRangeFloatingFilterDateFormat;
         if (isRange) {
-            return `${serialiseDate(dateFrom, false)}-${serialiseDate(dateTo, false)}`;
+            const formattedFrom = dateFrom !== null ? dateToFormattedString(dateFrom, format) : 'null';
+            const formattedTo = dateTo !== null ? dateToFormattedString(dateTo, format) : 'null';
+            return `${formattedFrom}-${formattedTo}`;
         }
 
         if (dateFrom != null) {
-            return `${serialiseDate(dateFrom, false)}`;
+            return dateToFormattedString(dateFrom, format);
         }
 
         // cater for when the type doesn't need a value
@@ -60,6 +64,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     public init(params: IFloatingFilterParams): void {
         super.init(params);
         this.params = params;
+        this.filterParams = params.filterParams;
         this.createDateComponent();
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eReadOnlyText

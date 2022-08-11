@@ -2,7 +2,7 @@ import { ColumnModel } from "../../../columns/columnModel";
 import { Constants } from "../../../constants/constants";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
-import { Column } from "../../../entities/column";
+import { Column, ColumnPinnedType } from "../../../entities/column";
 import { setDisplayed } from "../../../utils/dom";
 import { TouchListener } from "../../../widgets/touchListener";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";
@@ -13,7 +13,7 @@ export class ResizeFeature extends BeanStub {
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
-    private pinned: string | null;
+    private pinned: ColumnPinnedType;
     private column: Column;
     private eResize: HTMLElement;
     private comp: IHeaderCellComp;
@@ -24,7 +24,7 @@ export class ResizeFeature extends BeanStub {
     private ctrl: HeaderCellCtrl;
 
     constructor(
-        pinned: string | null,
+        pinned: ColumnPinnedType,
         column: Column,
         eResize: HTMLElement,
         comp: IHeaderCellComp,

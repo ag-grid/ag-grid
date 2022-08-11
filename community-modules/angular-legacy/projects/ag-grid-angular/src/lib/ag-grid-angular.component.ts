@@ -153,6 +153,7 @@ import {
     IsFullWidthRowParams,
     GetLocaleTextParams,
     IsRowFilterable,
+    RowModelType
 } from "@ag-grid-community/core";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
@@ -413,7 +414,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid.     */
     @Input() public readOnlyEdit: boolean | undefined = undefined;
     /** Set this to `true` to stop cell editing when grid loses focus.
-     * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.
+     * The default is that the grid stays editing until focus goes onto another cell.
      * Default: `false`     */
     @Input() public stopEditingWhenCellsLoseFocus: boolean | undefined = undefined;
     /** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.
@@ -707,11 +708,11 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
      */
     @Input() public rememberGroupStateWhenNewData: boolean | undefined = undefined;
     /** Data to be displayed as pinned top rows in the grid.     */
-    @Input() public pinnedTopRowData: TData[] | undefined = undefined;
+    @Input() public pinnedTopRowData: any[] | undefined = undefined;
     /** Data to be displayed as pinned bottom rows in the grid.     */
-    @Input() public pinnedBottomRowData: TData[] | undefined = undefined;
+    @Input() public pinnedBottomRowData: any[] | undefined = undefined;
     /** Sets the row model type. Default: `clientSide`     */
-    @Input() public rowModelType: 'clientSide' | 'infinite' | 'viewport' | 'serverSide' | undefined = undefined;
+    @Input() public rowModelType: RowModelType | undefined = undefined;
     /** Set the data to be displayed as rows in the grid.     */
     @Input() public rowData: TData[] | null | undefined = undefined;
     /** @deprecated Immutable Data is on by default when grid callback getRowId() is implemented
@@ -1032,7 +1033,8 @@ Allows you to set the ID for a particular row node based on the data.
     /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
      * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.     */
     @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent<TData>> = new EventEmitter<ComponentStateChangedEvent<TData>>();
-    /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed).     */
+    /** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or 
+     *   if cell value has changed as a result of paste operation.     */
     @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent<TData>> = new EventEmitter<CellValueChangedEvent<TData>>();
     /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`.     */
     @Output() public cellEditRequest: EventEmitter<CellEditRequestEvent<TData>> = new EventEmitter<CellEditRequestEvent<TData>>();

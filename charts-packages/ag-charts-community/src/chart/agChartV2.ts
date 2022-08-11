@@ -455,7 +455,7 @@ function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>
 
     const listeners = options?.listeners;
     if (listeners != null) {
-        registerListeners(target, listeners as { [key: string]: Function });
+        registerListeners(target, listeners as unknown as { [key: string]: Function });
     }
 
     return result;

@@ -27,6 +27,7 @@ import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { ModuleNames } from "../../modules/moduleNames";
 import { IClipboardService } from "../../interfaces/iClipboardService";
 import { CellCtrl } from "../../rendering/cell/cellCtrl";
+import { RowPinnedType } from "src/ts/main";
 
 export class RowContainerEventsFeature extends BeanStub {
 
@@ -269,8 +270,8 @@ export class RowContainerEventsFeature extends BeanStub {
                 pinnedRowModel.isEmpty(PINNED_BOTTOM)
             ];
 
-            const floatingStart = isEmptyPinnedTop ? null : PINNED_TOP;
-            let floatingEnd: string | null;
+            const floatingStart: RowPinnedType = isEmptyPinnedTop ? null : PINNED_TOP;
+            let floatingEnd: RowPinnedType;
             let rowEnd: number;
 
             if (isEmptyPinnedBottom) {

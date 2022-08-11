@@ -1,38 +1,29 @@
-import { Grid, GridOptions, FirstDataRenderedEvent } from '@ag-grid-community/core'
+import { Grid, GridOptions, FirstDataRenderedEvent, RowNode } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
-    { field: 'country', rowGroup: true, hide: true },
-    { field: 'sport', rowGroup: true, hide: true },
-    { field: 'gold', aggFunc: 'sum' },
-    { field: 'silver', aggFunc: 'sum' },
-    { field: 'bronze', aggFunc: 'sum' },
-    { field: 'age', minWidth: 120, showDisabledCheckboxes: true, aggFunc: 'sum' },
+    {
+      field: 'athlete',
+      headerCheckboxSelection: true,      
+      checkboxSelection: true,
+      showDisabledCheckboxes: true,
+    },
+    { field: 'sport' },
     { field: 'year', maxWidth: 120 },
-    { field: 'date', minWidth: 150 },
   ],
   defaultColDef: {
     flex: 1,
     minWidth: 100,
   },
-  autoGroupColumnDef: {
-    headerName: 'Athlete',
-    field: 'athlete',
-    minWidth: 250,
-    cellRenderer: 'agGroupCellRenderer',
-    cellRendererParams: {
-      checkbox: (params: any) => (
-        params.value.toLowerCase().charCodeAt(0) < 97 + 13
-      ),
-    },
-    showDisabledCheckboxes: true,
-  },
   rowSelection: 'multiple',
-  groupSelectsChildren: true,
   suppressRowClickSelection: true,
-  suppressAggFuncInHeader: true,
+  isRowSelectable: (params: RowNode<IOlympicData>) => {   
+    return !!params.data && params.data.year === 2012;
+  },  
   onFirstDataRendered: (params: FirstDataRenderedEvent<IOlympicData>) => {
-    params.api.forEachNode(node => node.setSelected(Number(node.id) % 2 === 0));
+    params.api.forEachNode((node) =>      
+      node.setSelected(!!node.data && node.data.year === 2012)
+    );
   }
 }
 

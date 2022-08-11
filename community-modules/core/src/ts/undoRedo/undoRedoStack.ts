@@ -1,7 +1,8 @@
+import { RowPinnedType } from "../entities/rowNode";
 import { CellRange } from "../interfaces/IRangeService";
 
 export interface CellValueChange {
-    rowPinned: string | null;
+    rowPinned: RowPinnedType;
     rowIndex: number;
     columnId: string;
     oldValue: any;
@@ -9,7 +10,7 @@ export interface CellValueChange {
 }
 
 export interface LastFocusedCell {
-    rowPinned?: string | null;
+    rowPinned: RowPinnedType;
     rowIndex: number;
     columnId: string;
 }

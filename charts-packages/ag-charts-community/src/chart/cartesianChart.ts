@@ -81,13 +81,10 @@ export class CartesianChart extends Chart {
 
         const { seriesRect } = this.updateAxes(shrinkRect);
 
-        this.createNodeData();
-
         this.seriesRect = seriesRect;
         this.series.forEach((series) => {
             series.group.translationX = Math.floor(seriesRect.x);
             series.group.translationY = Math.floor(seriesRect.y);
-            series.update(); // this has to happen after the `updateAxes` call
         });
 
         const { seriesRoot } = this;

@@ -2,7 +2,7 @@ import { Autowired, Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { Constants } from "../constants/constants";
 import { IRowModel } from "../interfaces/iRowModel";
-import { RowNode } from "./rowNode";
+import { RowNode, RowPinnedType } from "./rowNode";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists } from "../utils/generic";
 import { PaginationProxy } from "../pagination/paginationProxy";
@@ -12,8 +12,8 @@ export interface RowPosition {
     * or -1 if you want to navigate to the grid header */
     rowIndex: number;
 
-    /** Either 'top', 'bottom' or null (for not pinned) */
-    rowPinned: string | null;
+    /** Either 'top', 'bottom' or null/undefined (for not pinned) */
+    rowPinned: RowPinnedType;
 }
 
 @Bean('rowPositionUtils')
@@ -25,7 +25,7 @@ export class RowPositionUtils extends BeanStub {
 
     public getFirstRow(): RowPosition | null {
         let rowIndex = 0;
-        let rowPinned;
+        let rowPinned: RowPinnedType;
 
         if (this.pinnedRowModel.getPinnedTopRowCount()) {
             rowPinned = Constants.PINNED_TOP;
@@ -41,7 +41,7 @@ export class RowPositionUtils extends BeanStub {
 
     public getLastRow(): RowPosition | null {
         let rowIndex;
-        let rowPinned: string | null = null;
+        let rowPinned: RowPinnedType = null;
 
         const pinnedBottomCount = this.pinnedRowModel.getPinnedBottomRowCount();
         const pinnedTopCount = this.pinnedRowModel.getPinnedTopRowCount();

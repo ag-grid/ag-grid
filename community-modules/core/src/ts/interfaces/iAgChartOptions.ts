@@ -128,7 +128,7 @@ export interface AgHierarchyThemeOptions<S = AgHierarchySeriesTheme> extends AgB
     series?: S;
 }
 
-export interface AgCrossLineThemeOptions extends Omit<AgCrossLineOptions, 'type'> { }
+export interface AgCrossLineThemeOptions extends Omit<AgCrossLineOptions, 'type'> {}
 
 export interface AgCartesianAxesCrossLineThemeOptions {
     crossLines?: AgCrossLineThemeOptions;
@@ -136,19 +136,24 @@ export interface AgCartesianAxesCrossLineThemeOptions {
 
 export interface AgNumberAxisThemeOptions
     extends Omit<AgNumberAxisOptions, 'type' | 'crossLines'>,
-    AgCartesianAxisThemeOptions<AgNumberAxisOptions>, AgCartesianAxesCrossLineThemeOptions { }
+        AgCartesianAxisThemeOptions<AgNumberAxisOptions>,
+        AgCartesianAxesCrossLineThemeOptions {}
 export interface AgLogAxisThemeOptions
     extends Omit<AgLogAxisOptions, 'type' | 'crossLines'>,
-    AgCartesianAxisThemeOptions<AgLogAxisOptions>, AgCartesianAxesCrossLineThemeOptions { }
+        AgCartesianAxisThemeOptions<AgLogAxisOptions>,
+        AgCartesianAxesCrossLineThemeOptions {}
 export interface AgCategoryAxisThemeOptions
     extends Omit<AgCategoryAxisOptions, 'type' | 'crossLines'>,
-    AgCartesianAxisThemeOptions<AgCategoryAxisOptions>, AgCartesianAxesCrossLineThemeOptions { }
+        AgCartesianAxisThemeOptions<AgCategoryAxisOptions>,
+        AgCartesianAxesCrossLineThemeOptions {}
 export interface AgGroupedCategoryAxisThemeOptions
     extends Omit<AgGroupedCategoryAxisOptions, 'type' | 'crossLines'>,
-    AgCartesianAxisThemeOptions<AgGroupedCategoryAxisOptions>, AgCartesianAxesCrossLineThemeOptions { }
+        AgCartesianAxisThemeOptions<AgGroupedCategoryAxisOptions>,
+        AgCartesianAxesCrossLineThemeOptions {}
 export interface AgTimeAxisThemeOptions
     extends Omit<AgTimeAxisOptions, 'type' | 'crossLines'>,
-    AgCartesianAxisThemeOptions<AgTimeAxisOptions>, AgCartesianAxesCrossLineThemeOptions { }
+        AgCartesianAxisThemeOptions<AgTimeAxisOptions>,
+        AgCartesianAxesCrossLineThemeOptions {}
 
 export interface AgCartesianAxesTheme {
     /** This extends the common axis configuration with options specific to number axes. */
@@ -296,6 +301,12 @@ export interface AgChartLegendMarkerOptions {
     strokeWidth?: PixelSize;
 }
 
+export interface AgChartLegendLabelFormatterParams {
+    id: string;
+    itemId: any;
+    value: string;
+}
+
 export interface AgChartLegendLabelOptions {
     /** If the label text exceeds the maximum length, it will be truncated and an ellipsis will be appended to indicate this. */
     maxLength?: number;
@@ -310,7 +321,7 @@ export interface AgChartLegendLabelOptions {
     /** The font family to use for the legend. */
     fontFamily?: FontFamily;
     /** Function used to render legend labels. Where `id` is a series ID, `itemId` is component ID within a series, such as a field name or an item index. */
-    formatter?: (id: string, itemId: any, value: string) => string;
+    formatter?: (params: AgChartLegendLabelFormatterParams) => string;
 }
 
 export interface AgChartLegendItemOptions {
@@ -327,7 +338,9 @@ export interface AgChartLegendItemOptions {
 }
 
 export interface AgChartLegendClickEvent {
-    /** Legend item id - based on series id. */
+    /** Series id */
+    seriesId: string;
+    /** Legend item id - usually yKey value for cartesian series. */
     itemId: string;
     /** Whether the legend item is currently enabled or not. */
     enabled: boolean;
@@ -347,6 +360,8 @@ export interface AgChartLegendOptions {
     spacing?: PixelSize;
     /** Configuration for the legend items that consist of a marker and a label. */
     item?: AgChartLegendItemOptions;
+    /** Reverse the display order of legend items if `true`. */
+    reverseOrder?: boolean;
     /** Optional callbacks for specific legend-related events. */
     listeners?: AgChartLegendListeners;
 }
@@ -371,13 +386,7 @@ export interface AgChartBackground {
 
 export interface AgBaseChartListeners {
     /** The listener to call when a node (marker, column, bar, tile or a pie slice) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */
-    seriesNodeClick: (event: {
-        type: 'seriesNodeClick',
-        series: any,
-        datum: any,
-        xKey: string,
-        yKey: string,
-    }) => any;
+    seriesNodeClick: (event: { type: 'seriesNodeClick'; series: any; datum: any; xKey: string; yKey: string }) => any;
     /** Generic listeners. */
     [key: string]: Function;
 }
@@ -559,7 +568,7 @@ export interface AgCrossLineLabelOptions {
 }
 
 export type AgCrossLineLabelPosition =
-    'top'
+    | 'top'
     | 'left'
     | 'right'
     | 'bottom'
@@ -635,11 +644,13 @@ export type AgCartesianAxisOptions =
 export interface AgSeriesHighlightMarkerStyle {
     /** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */
     fill?: CssColor;
+    /** The opacity of the fill for the highlighted item. */
+    fillOpacity?: Opacity;
     /** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */
     stroke?: CssColor;
     /** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */
     strokeWidth?: PixelSize;
-};
+}
 
 export interface AgSeriesHighlightSeriesStyle {
     enabled?: boolean;
@@ -647,7 +658,7 @@ export interface AgSeriesHighlightSeriesStyle {
     dimOpacity?: Opacity;
     /** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */
     strokeWidth?: PixelSize;
-};
+}
 
 export interface AgSeriesHighlightStyle {
     /**
@@ -672,24 +683,16 @@ export interface AgSeriesHighlightStyle {
     item?: AgSeriesHighlightMarkerStyle;
     /** Highlight style used for whole series when one of its markers is tapped or hovered over. */
     series?: AgSeriesHighlightSeriesStyle;
-};
-
-export interface AgBaseSeriesListeners {
-    /** The listener to call when a node (marker, column, bar, tile or a pie slice) in the series is clicked. */
-    nodeClick: (
-        params: {
-            type: 'nodeClick',
-            series: any,
-            datum: any,
-            xKey: string,
-            yKey: string,
-        },
-    ) => any;
 }
 
-export interface AgBaseSeriesOptions {
+export interface AgBaseSeriesListeners<DatumType> {
+    /** The listener to call when a node (marker, column, bar, tile or a pie slice) in the series is clicked. */
+    nodeClick: (params: { type: 'nodeClick'; series: any; datum: DatumType; xKey: string; yKey: string }) => any;
+}
+
+export interface AgBaseSeriesOptions<DatumType, ListenerDatumType = DatumType> {
     /** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */
-    data?: any[];
+    data?: DatumType[];
     /** Whether or not to display the series. */
     visible?: boolean;
     /** Whether or not to include the series in the legend. */
@@ -697,7 +700,7 @@ export interface AgBaseSeriesOptions {
     /** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */
     cursor?: string;
     /** A map of event names to event listeners. */
-    listeners?: AgBaseSeriesListeners | { [key: string]: Function };
+    listeners?: AgBaseSeriesListeners<ListenerDatumType>;
     /** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */
     highlightStyle?: AgSeriesHighlightStyle;
 }
@@ -762,8 +765,8 @@ export interface AgSeriesMarker {
     strokeOpacity?: Opacity;
 }
 
-export interface AgSeriesMarkerFormatterParams {
-    datum: any;
+export interface AgSeriesMarkerFormatterParams<DatumType> {
+    datum: DatumType;
     fill?: CssColor;
     stroke?: CssColor;
     strokeWidth: PixelSize;
@@ -771,7 +774,7 @@ export interface AgSeriesMarkerFormatterParams {
     highlighted: boolean;
 }
 
-export interface AgCartesianSeriesMarkerFormatterParams extends AgSeriesMarkerFormatterParams {
+export interface AgCartesianSeriesMarkerFormatterParams<DatumType> extends AgSeriesMarkerFormatterParams<DatumType> {
     xKey: string;
     yKey: string;
 }
@@ -783,25 +786,25 @@ export interface AgCartesianSeriesMarkerFormat {
     size?: PixelSize;
 }
 
-export type AgCartesianSeriesMarkerFormatter = (
-    params: AgCartesianSeriesMarkerFormatterParams
+export type AgCartesianSeriesMarkerFormatter<DatumType> = (
+    params: AgCartesianSeriesMarkerFormatterParams<DatumType>
 ) => AgCartesianSeriesMarkerFormat | undefined;
 
-export interface AgCartesianSeriesMarker extends AgSeriesMarker {
+export interface AgCartesianSeriesMarker<DatumType> extends AgSeriesMarker {
     /** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
-    formatter?: AgCartesianSeriesMarkerFormatter;
+    formatter?: AgCartesianSeriesMarkerFormatter<DatumType>;
 }
 
-export interface AgAreaSeriesMarker extends AgCartesianSeriesMarker { }
+export interface AgAreaSeriesMarker<DatumType> extends AgCartesianSeriesMarker<DatumType> {}
 
 export interface AgSeriesTooltip {
     /** Whether or not to show tooltips when the series are hovered over. */
     enabled?: boolean;
 }
 
-export interface AgLineSeriesLabelOptions extends AgChartLabelOptions {
+export interface AgLineSeriesLabelOptions<DatumType> extends AgChartLabelOptions {
     /** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */
-    formatter?: (params: { value: any }) => string;
+    formatter?: (params: { value: DatumType }) => string;
 }
 
 export interface AgLineSeriesTooltip extends AgSeriesTooltip {
@@ -811,9 +814,9 @@ export interface AgLineSeriesTooltip extends AgSeriesTooltip {
 }
 
 /** Configuration for line series. */
-export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
+export interface AgLineSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'line';
-    marker?: AgCartesianSeriesMarker;
+    marker?: AgCartesianSeriesMarker<DatumType>;
     /** The key to use to retrieve x-values from the data. */
     xKey?: string;
     /** The key to use to retrieve y-values from the data. */
@@ -835,7 +838,7 @@ export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
     /** The initial offset of the dashed line in pixels. */
     lineDashOffset?: PixelSize;
     /** Configuration for the labels shown on top of data points. */
-    label?: AgLineSeriesLabelOptions;
+    label?: AgLineSeriesLabelOptions<DatumType>;
     /** Series-specific tooltip configuration. */
     tooltip?: AgLineSeriesTooltip;
 }
@@ -845,18 +848,18 @@ export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
-export interface AgScatterSeriesLabelOptions extends AgChartLabelOptions { }
+export interface AgScatterSeriesLabelOptions extends AgChartLabelOptions {}
 
-export interface AgScatterSeriesMarker extends AgCartesianSeriesMarker {
+export interface AgScatterSeriesMarker<DatumType> extends AgCartesianSeriesMarker<DatumType> {
     /** If sizeKey is used, explicitly specifies the extent of the domain of it's values. */
     domain?: [number, number];
 }
 /** Configuration for scatter/bubble series. */
-export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
+export interface AgScatterSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     /** Configuration for the treemap series.  */
     type?: 'scatter';
     /** Configuration for the markers used in the series.  */
-    marker?: AgScatterSeriesMarker;
+    marker?: AgScatterSeriesMarker<DatumType>;
     /** Configuration for the labels shown on top of data points.  */
     label?: AgScatterSeriesLabelOptions;
     /** The key to use to retrieve x-values from the data.  */
@@ -896,16 +899,16 @@ export interface AgAreaSeriesTooltip extends AgSeriesTooltip {
     format?: string;
 }
 
-export interface AgAreaSeriesLabelOptions extends AgChartLabelOptions {
+export interface AgAreaSeriesLabelOptions<DatumType> extends AgChartLabelOptions {
     /** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */
-    formatter?: (params: { value: any }) => string;
+    formatter?: (params: { value: DatumType }) => string;
 }
 
 /** Configuration for area series. */
-export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
+export interface AgAreaSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'area';
     /** Configuration for the markers used in the series. */
-    marker?: AgAreaSeriesMarker;
+    marker?: AgAreaSeriesMarker<DatumType>;
     /** The number to normalise the area stacks to. For example, if `normalizedTo` is set to `100`, the stacks will all be scaled proportionally so that their total height is always 100. */
     normalizedTo?: number;
     /** The key to use to retrieve x-values from the data. */
@@ -956,7 +959,7 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     /** Configuration for the shadow used behind the chart series. */
     shadow?: AgDropShadowOptions;
     /** Configuration for the labels shown on top of data points. */
-    label?: AgAreaSeriesLabelOptions;
+    label?: AgAreaSeriesLabelOptions<DatumType>;
     /** Series-specific tooltip configuration. */
     tooltip?: AgAreaSeriesTooltip;
     stacked?: boolean;
@@ -969,8 +972,8 @@ export interface AgBarSeriesLabelOptions extends AgChartLabelOptions {
     placement?: 'inside' | 'outside';
 }
 
-export interface AgBarSeriesFormatterParams {
-    readonly datum: any;
+export interface AgBarSeriesFormatterParams<DatumType> {
+    readonly datum: DatumType;
     readonly fill?: CssColor;
     readonly stroke?: CssColor;
     readonly strokeWidth: PixelSize;
@@ -991,7 +994,7 @@ export interface AgBarSeriesTooltip extends AgSeriesTooltip {
 }
 
 /** Configuration for bar/column series. */
-export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
+export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'bar' | 'column';
     /** Whether to show different y-values as separate bars (grouped) or not (stacked). */
     grouped?: boolean;
@@ -1052,12 +1055,12 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     /** Series-specific tooltip configuration. */
     tooltip?: AgBarSeriesTooltip;
     /** Function used to return formatting for individual bars/columns, based on the given parameters. If the current bar/column is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
-    formatter?: (params: AgBarSeriesFormatterParams) => AgBarSeriesFormat;
+    formatter?: (params: AgBarSeriesFormatterParams<DatumType>) => AgBarSeriesFormat;
 }
 
-export interface AgHistogramSeriesLabelOptions extends AgChartLabelOptions {
+export interface AgHistogramSeriesLabelOptions<DatumType> extends AgChartLabelOptions {
     /** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */
-    formatter?: (params: { value: number }) => string;
+    formatter?: (params: { value: DatumType }) => string;
 }
 
 export interface AgHistogramSeriesTooltip extends AgSeriesTooltip {
@@ -1065,8 +1068,15 @@ export interface AgHistogramSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
+export interface AgHistogramBinDatum<DatumType> {
+    data: DatumType[];
+    aggregatedValue: number;
+    frequency: number;
+    domain: [number, number];
+}
+
 /** Configuration for histogram series. */
-export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
+export interface AgHistogramSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType, AgHistogramBinDatum<DatumType>> {
     type?: 'histogram';
     /** The colour of the fill for the histogram bars. */
     fill?: CssColor;
@@ -1101,7 +1111,7 @@ export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
     /** Configuration for the shadow used behind the chart series. */
     shadow?: AgDropShadowOptions;
     /** Configuration for the labels shown on bars. */
-    label?: AgHistogramSeriesLabelOptions;
+    label?: AgHistogramSeriesLabelOptions<DatumType>;
     /** Series-specific tooltip configuration. */
     tooltip?: AgHistogramSeriesTooltip;
 }
@@ -1113,8 +1123,8 @@ export interface AgPieSeriesLabelOptions extends AgChartLabelOptions {
     minAngle?: number;
 }
 
-export interface AgPieSeriesFormatterParams {
-    readonly datum: any;
+export interface AgPieSeriesFormatterParams<DatumType> {
+    readonly datum: DatumType;
     readonly fill?: CssColor;
     readonly stroke?: CssColor;
     readonly strokeWidth: PixelSize;
@@ -1148,7 +1158,7 @@ export interface AgPieSeriesCalloutOptions {
 }
 
 /** Configuration for pie/doughnut series. */
-export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
+export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'pie';
     /** Configuration for the series title. */
     title?: AgPieTitleOptions;
@@ -1196,7 +1206,7 @@ export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     shadow?: AgDropShadowOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgPieSeriesTooltip;
-    formatter?: (params: AgPieSeriesFormatterParams) => AgPieSeriesFormat;
+    formatter?: (params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat;
 }
 
 export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRendererParams {
@@ -1209,10 +1219,10 @@ export interface AgTreemapSeriesLabelOptions extends AgChartLabelOptions {
     padding?: number;
 }
 
-export interface AgTreemapNodeDatum {
-    datum: any;
-    parent?: AgTreemapNodeDatum;
-    children?: AgTreemapNodeDatum[];
+export interface AgTreemapNodeDatum<DatumType> {
+    datum: DatumType;
+    parent?: AgTreemapNodeDatum<DatumType>;
+    children?: AgTreemapNodeDatum<DatumType>[];
     depth: number;
     colorValue: number;
     fill: CssColor;
@@ -1220,17 +1230,17 @@ export interface AgTreemapNodeDatum {
     hasTitle: boolean;
 }
 
-export interface AgTreemapSeriesTooltipRendererParams {
-    datum: AgTreemapNodeDatum;
+export interface AgTreemapSeriesTooltipRendererParams<DatumType> {
+    datum: AgTreemapNodeDatum<DatumType>;
     sizeKey: string;
     labelKey: string;
     valueKey: string;
     color: string;
 }
 
-export interface AgTreemapSeriesTooltip extends AgSeriesTooltip {
+export interface AgTreemapSeriesTooltip<DatumType> extends AgSeriesTooltip {
     /** Function used to create the content for tooltips. */
-    renderer?: (params: AgTreemapSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
+    renderer?: (params: AgTreemapSeriesTooltipRendererParams<DatumType>) => string | AgTooltipRendererResult;
 }
 
 export interface AgTreemapSeriesLabelsOptions {
@@ -1245,7 +1255,7 @@ export interface AgTreemapSeriesLabelsOptions {
 }
 
 /** Configuration for the treemap series. */
-export interface AgTreemapSeriesOptions extends AgBaseSeriesOptions {
+export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'treemap';
     /** The label configuration for the top-level tiles. */
     title?: AgTreemapSeriesLabelOptions;
@@ -1266,7 +1276,7 @@ export interface AgTreemapSeriesOptions extends AgBaseSeriesOptions {
     /** Whether or not to assign colors to non-leaf nodes based on 'colorKey'. */
     colorParents?: boolean;
     /** Series-specific tooltip configuration. */
-    tooltip?: AgTreemapSeriesTooltip;
+    tooltip?: AgTreemapSeriesTooltip<DatumType>;
     /** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */
     nodePadding?: PixelSize;
     /** Whether or not to use gradients for treemap tiles. */

@@ -193,7 +193,8 @@ export class AlignedGridsService extends BeanStub {
                     const srcColState = colEvent.columnApi.getColumnState();
                     const destColState = srcColState.map(s => ({ colId: s.colId }));
                     this.columnModel.applyColumnState(
-                        {state: destColState, applyOrder: true}, "alignedGridChanged");
+                        { state: destColState, applyOrder: true }, "alignedGridChanged"
+                    );
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} toIndex = ${movedEvent.toIndex}`);
                 }
                 break;
@@ -205,7 +206,7 @@ export class AlignedGridsService extends BeanStub {
                     const visibleEvent = colEvent as ColumnVisibleEvent;
                     const srcColState = colEvent.columnApi.getColumnState();
                     const destColState = srcColState.map(s => ({ colId: s.colId, hide: s.hide }));
-                    this.columnModel.applyColumnState({state: destColState}, "alignedGridChanged");
+                    this.columnModel.applyColumnState({ state: destColState }, "alignedGridChanged");
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} visible = ${visibleEvent.visible}`);
                 }
                 break;
@@ -220,7 +221,7 @@ export class AlignedGridsService extends BeanStub {
                 break;
             case Events.EVENT_COLUMN_RESIZED:
                 const resizedEvent = colEvent as ColumnResizedEvent;
-                
+
                 const columnWidths: {
                     [key: string]: {
                         key: string | Column;

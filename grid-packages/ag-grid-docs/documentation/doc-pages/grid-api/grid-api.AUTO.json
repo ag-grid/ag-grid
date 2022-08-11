@@ -413,11 +413,11 @@
     }
   },
   "getSelectedNodes": {
-    "description": "/** Returns a list of selected nodes.\n * Getting the underlying node (rather than the data) is useful when working with tree / aggregated data,\n * as the node can be traversed. */",
+    "description": "/** Returns an unsorted list of selected nodes.\n * Getting the underlying node (rather than the data) is useful when working with tree / aggregated data,\n * as the node can be traversed. */",
     "type": { "arguments": {}, "returnType": "RowNode<TData>[]" }
   },
   "getSelectedRows": {
-    "description": "/** Returns a list of selected rows (i.e. row data that you provided). */",
+    "description": "/** Returns an unsorted list of selected rows (i.e. row data that you provided). */",
     "type": { "arguments": {}, "returnType": "TData[]" }
   },
   "getBestCostNodeSelection": {
@@ -548,7 +548,7 @@
       "arguments": {
         "rowIndex": "number",
         "colKey": "string | Column",
-        "rowPinned?": "string"
+        "rowPinned?": "RowPinnedType"
       }
     }
   },
@@ -1421,14 +1421,6 @@
   },
   "checkGridSize": { "type": { "arguments": {}, "returnType": "void" } },
   "getFirstRenderedRow": {
-    "type": { "arguments": {}, "returnType": "number" }
-  },
-  "getFirstVisibleRowIndex": {
-    "description": "/** Get the index of the first visible row in the viewport. */",
-    "type": { "arguments": {}, "returnType": "number" }
-  },
-  "getLastVisibleRowIndex": {
-    "description": "/** Get the index of the last visible row in the viewport. */",
     "type": { "arguments": {}, "returnType": "number" }
   },
   "getFirstDisplayedRow": {

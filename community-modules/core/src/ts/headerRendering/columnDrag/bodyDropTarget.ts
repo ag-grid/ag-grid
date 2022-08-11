@@ -6,6 +6,7 @@ import { ColumnModel } from "../../columns/columnModel";
 import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { CtrlsService } from "../../ctrlsService";
+import { ColumnPinnedType } from "../../entities/column";
 
 export interface DropListener {
     getIconName(): string | null;
@@ -21,7 +22,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
-    private pinned: string | null;
+    private pinned: ColumnPinnedType;
     // public because it's part of the DropTarget interface
     private eContainer: HTMLElement;
     // public because it's part of the DropTarget interface
@@ -31,7 +32,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     private moveColumnFeature: MoveColumnFeature;
     private bodyDropPivotTarget: BodyDropPivotTarget;
 
-    constructor(pinned: string | null, eContainer: HTMLElement) {
+    constructor(pinned: ColumnPinnedType, eContainer: HTMLElement) {
         super();
         this.pinned = pinned;
         this.eContainer = eContainer;

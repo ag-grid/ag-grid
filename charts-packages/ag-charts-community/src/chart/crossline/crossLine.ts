@@ -6,17 +6,17 @@ import { BBox } from '../../scene/bbox';
 import { Scale } from '../../scale/scale';
 import { clamper, ContinuousScale } from '../../scale/continuousScale';
 import { createId } from '../../util/id';
-import { Series } from '../series/series';
 import { normalizeAngle360, toRadians } from '../../util/angle';
 import { ChartAxisDirection, ChartAxisPosition } from '../chartAxis';
 import {
     CrossLineLabelPosition,
-    Point,
     labeldDirectionHandling,
     POSITION_TOP_COORDINATES,
     calculateLabelTranslation,
 } from './crossLineLabelPosition';
 import { checkDatum } from '../../util/value';
+import { Layers } from '../layers';
+import { Point } from '../../scene/point';
 
 export class CrossLineLabel {
     enabled?: boolean = undefined;
@@ -45,8 +45,8 @@ interface CrossLinePathData {
 type CrossLineType = 'line' | 'range';
 
 export class CrossLine {
-    protected static readonly LINE_LAYER_ZINDEX = Series.SERIES_LAYER_ZINDEX + 10;
-    protected static readonly RANGE_LAYER_ZINDEX = Series.SERIES_LAYER_ZINDEX - 10;
+    protected static readonly LINE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_LINE_ZINDEX;
+    protected static readonly RANGE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_RANGE_ZINDEX;
 
     static className = 'CrossLine';
     readonly id = createId(this);
@@ -148,7 +148,7 @@ export class CrossLine {
             return false;
         }
 
-        const continuous = scale instanceof ContinuousScale;
+        const isContinuous = scale instanceof ContinuousScale;
         const bandwidth = scale.bandwidth ?? 0;
 
         let xStart, xEnd, yStart, yEnd, clampedYStart, clampedYEnd;
@@ -166,8 +166,8 @@ export class CrossLine {
         }
 
         [clampedYStart, clampedYEnd] = [
-            Number(scale.convert(yStart, continuous ? clamper : undefined)),
-            scale.convert(yEnd, continuous ? clamper : undefined) + bandwidth,
+            Number(scale.convert(yStart, isContinuous ? clamper : undefined)),
+            scale.convert(yEnd, isContinuous ? clamper : undefined) + bandwidth,
         ];
         [yStart, yEnd] = [Number(scale.convert(yStart)), scale.convert(yEnd) + bandwidth];
 
@@ -242,7 +242,6 @@ export class CrossLine {
             const { x, y } = points[i];
             path[method](x, y);
         });
-        path.closePath();
         crossLineLine.checkPathDirty();
     }
 
@@ -255,10 +254,9 @@ export class CrossLine {
     }
 
     private updateRangeNode() {
-        const { crossLineRange, fill, lineDash, fillOpacity } = this;
+        const { crossLineRange, fill, fillOpacity } = this;
         crossLineRange.fill = fill;
         crossLineRange.opacity = fillOpacity ?? 1;
-        crossLineRange.lineDash = lineDash;
     }
 
     private updateRangePath() {
@@ -336,9 +334,14 @@ export class CrossLine {
         const isContinuous = scale instanceof ContinuousScale;
 
         let [start, end] = range ?? [value, undefined];
+
+        if (!isContinuous && end === undefined) {
+            end = start;
+        }
+
         [start, end] = [checkDatum(start, isContinuous), checkDatum(end, isContinuous)];
 
-        if (start === end) {
+        if (isContinuous && start === end) {
             end = undefined;
         }
 

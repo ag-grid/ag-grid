@@ -2,7 +2,7 @@ import { Grid, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } f
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
-    { valueGetter: 'node.rowIndex', minWidth: 100},
+    { headerName: 'Index', valueGetter: 'node.rowIndex', minWidth: 100},
     { field: 'athlete', minWidth: 150 },
     { field: 'country', minWidth: 150 },
     { field: 'year' },

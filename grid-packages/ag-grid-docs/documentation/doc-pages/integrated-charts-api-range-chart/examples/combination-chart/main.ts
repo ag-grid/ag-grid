@@ -37,6 +37,13 @@ const gridOptions: GridOptions = {
       legend: {
         position: 'bottom',
       },
+      axes: {
+        number: {
+          title: {
+            enabled: true
+          }
+        }
+      }
     },
     column: {
       series: {

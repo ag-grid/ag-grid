@@ -72,6 +72,7 @@
 |</div>
 |</div>
 |<div class="text-right" style="margin-top: -1.5rem;">
+|
 | <a class="btn btn-dark mb-2 mr-3" href="https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview" target="_blank">
 |     Open in <img src="resources/plunker_icon.svg" alt="Open in Plunker" style="width: 2.5rem" /> Plunker
 | </a>

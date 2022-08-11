@@ -132,6 +132,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 10,
   },
   "navigator": Object {
@@ -174,6 +175,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -226,6 +228,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -278,6 +281,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -546,6 +550,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -596,6 +601,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -658,6 +664,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -881,6 +888,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -923,6 +931,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -976,6 +985,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -1029,6 +1039,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -1082,6 +1093,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -1135,6 +1147,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -1188,6 +1201,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -1241,6 +1255,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -1472,6 +1487,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -1527,6 +1543,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -1765,6 +1782,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -1808,6 +1826,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -1999,6 +2018,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -2041,6 +2061,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -2093,6 +2114,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -2145,6 +2167,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -2197,6 +2220,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -2421,6 +2445,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -2467,6 +2492,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.1,
@@ -2536,6 +2562,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.1,
@@ -2605,6 +2632,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.1,
@@ -2674,6 +2702,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.1,
@@ -2743,6 +2772,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.1,
@@ -2981,6 +3011,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -3030,6 +3061,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -3234,6 +3266,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -3283,6 +3316,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "#0ab9ff",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -3475,6 +3509,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -3518,6 +3553,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -3715,6 +3751,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -3758,6 +3795,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -3949,6 +3987,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -3999,6 +4038,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.3,
@@ -4226,6 +4266,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -4276,6 +4317,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -4506,6 +4548,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -4561,6 +4604,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
           "strokeWidth": 1,
         },
         "series": Object {
@@ -4801,6 +4845,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -4861,6 +4906,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -5051,6 +5097,7 @@ Object {
       "paddingY": 15,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -5093,6 +5140,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -5146,6 +5194,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -5199,6 +5248,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -5252,6 +5302,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -5305,6 +5356,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -5358,6 +5410,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -5411,6 +5464,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -5464,6 +5518,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -5517,6 +5572,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -5570,6 +5626,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -5623,6 +5680,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -5676,6 +5734,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -5729,6 +5788,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -5782,6 +5842,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -5835,6 +5896,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -5888,6 +5950,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -6141,6 +6204,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -6183,6 +6247,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -6288,6 +6353,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "padding": Object {
@@ -6313,6 +6379,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -6529,6 +6596,7 @@ Object {
       "paddingY": 8,
     },
     "position": "top",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -6581,6 +6649,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.3,
@@ -6827,6 +6896,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -6877,6 +6947,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -7112,6 +7183,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -7165,6 +7237,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.3,
@@ -7415,6 +7488,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -7461,6 +7535,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -7526,6 +7601,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -7591,6 +7667,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -7656,6 +7733,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -7868,6 +7946,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -7917,6 +7996,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -8024,6 +8104,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "padding": Object {
@@ -8055,6 +8136,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -8264,6 +8346,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -8311,6 +8394,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -8502,6 +8586,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -8544,6 +8629,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -8597,6 +8683,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -8717,6 +8804,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "padding": Object {
@@ -8748,6 +8836,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -8957,6 +9046,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -9000,6 +9090,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,
@@ -9192,6 +9283,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -9243,6 +9335,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.2,
@@ -9495,6 +9588,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -9546,6 +9640,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.3,
@@ -9772,6 +9867,7 @@ Object {
       "paddingY": 8,
     },
     "position": "bottom",
+    "reverseOrder": false,
     "spacing": 40,
   },
   "navigator": Object {
@@ -9824,6 +9920,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 0.3,
@@ -10070,6 +10167,7 @@ Object {
       "paddingY": 8,
     },
     "position": "right",
+    "reverseOrder": false,
     "spacing": 20,
   },
   "navigator": Object {
@@ -10130,6 +10228,7 @@ Object {
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
+          "fillOpacity": 1,
         },
         "series": Object {
           "dimOpacity": 1,

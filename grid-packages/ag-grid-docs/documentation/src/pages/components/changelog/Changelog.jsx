@@ -87,6 +87,7 @@ const COLUMN_DEFS = [
 ]
 
 const defaultColDef = {
+    flex: 1,
     filter: true,
     sortable: true,
     resizable: true,

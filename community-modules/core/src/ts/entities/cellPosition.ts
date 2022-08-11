@@ -2,6 +2,7 @@ import { Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { Column } from "./column";
 import { RowPosition } from "./rowPosition";
+import { RowPinnedType } from "./rowNode";
 
 // this is what gets pass into and out of the api, as JavaScript users
 export interface CellPosition extends RowPosition {
@@ -17,7 +18,7 @@ export class CellPositionUtils extends BeanStub {
         return this.createIdFromValues(rowIndex, column, rowPinned);
     }
 
-    public createIdFromValues(rowIndex: number, column: Column, rowPinned: string | undefined | null): string {
+    public createIdFromValues(rowIndex: number, column: Column, rowPinned: RowPinnedType): string {
         return `${rowIndex}.${rowPinned == null ? 'null' : rowPinned}.${column.getId()}`;
     }
 

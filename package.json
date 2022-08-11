@@ -37,6 +37,7 @@
     "buildEnterpriseModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").buildEnterpriseModules()'",
     "buildModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").buildModules()'",
     "packageModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").packageModules()'",
+    "packageCharts": "node -e 'require(\"./scripts/modules/lernaModules.js\").packageCharts()'",
     "buildLegacy": "npx lerna run build --scope '{ag-grid-community,ag-grid-enterprise,ag-grid-vue,ag-grid-react,ag-grid-vue3,ag-grid-angular,ag-grid-angular-legacy}'",
     "packageLegacy": "npx lerna run package --scope '{ag-grid-community,ag-grid-enterprise,ag-grid-vue,ag-grid-react,ag-grid-vue3,ag-grid-angular,ag-grid-angular-legacy}'",
     "buildChartsModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").buildChartsModules()'",

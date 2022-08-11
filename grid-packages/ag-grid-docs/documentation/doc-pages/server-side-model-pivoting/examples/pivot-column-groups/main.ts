@@ -5,6 +5,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     { field: 'country', rowGroup: true },
     { field: 'sport', rowGroup: true },
     { field: 'year', pivot: true }, // pivot on 'year'
+    { field: 'total', aggFunc: 'sum' },
     { field: 'gold', aggFunc: 'sum' },
     { field: 'silver', aggFunc: 'sum' },
     { field: 'bronze', aggFunc: 'sum' },
@@ -111,6 +112,9 @@ function createPivotColDefs(request: IServerSideGetRowsRequest, pivotFields: str
         colDef['colId'] = colId
         colDef['headerName'] = valueCol.displayName
         colDef['field'] = colId
+
+        // comment out this line to remove expandable groups
+        colDef['columnGroupShow'] = (valueCol.id === 'total') ? 'closed' : 'open';
       }
 
       var children = addColDef(colId, parts, [])

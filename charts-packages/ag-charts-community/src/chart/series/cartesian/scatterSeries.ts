@@ -21,16 +21,11 @@ import { Label } from '../../label';
 import { Text } from '../../../scene/shape/text';
 import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Marker } from '../../marker/marker';
-import { MeasuredLabel } from '../../../util/labelPlacement';
+import { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
 import { checkDatum, isContinuous } from '../../../util/value';
 import { Deprecated } from '../../../util/validation';
 
-interface ScatterNodeDatum extends SeriesNodeDatum {
-    readonly point: {
-        readonly x: number;
-        readonly y: number;
-    };
-    readonly size: number;
+interface ScatterNodeDatum extends Required<SeriesNodeDatum> {
     readonly label: MeasuredLabel;
 }
 
@@ -141,7 +136,11 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     constructor() {
         super({
             pickGroupIncludes: ['markers'],
-            pickModes: [SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST, SeriesNodePickMode.NEAREST_NODE],
+            pickModes: [
+                SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                SeriesNodePickMode.NEAREST_NODE,
+                SeriesNodePickMode.EXACT_SHAPE_MATCH,
+            ],
             pathsPerSeries: 0,
             features: ['markers'],
         });
@@ -213,7 +212,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     createNodeData() {
-        const { chart, data, visible, xAxis, yAxis, label, labelKey } = this;
+        const { chart, data, visible, xAxis, yAxis, yKey, label, labelKey } = this;
 
         if (!(chart && data && visible && xAxis && yAxis)) {
             return [];
@@ -248,12 +247,13 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
             const text = labelKey ? String(validData[i][labelKey]) : '';
             const size = HdpiCanvas.getTextSize(text, font);
+            const markerSize = sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size;
 
             nodeData[actualLength++] = {
                 series: this,
+                itemId: yKey,
                 datum: validData[i],
-                point: { x, y },
-                size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size,
+                point: { x, y, size: markerSize },
                 label: {
                     text,
                     ...size,
@@ -268,6 +268,10 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
     protected isPathOrSelectionDirty(): boolean {
         return this.marker.isDirty();
+    }
+
+    getLabelData(): PointLabelDatum[] {
+        return this.contextNodeData?.reduce((r, n) => r.concat(n.labelData), [] as PointLabelDatum[]);
     }
 
     protected updateMarkerSelection(opts: {
@@ -302,17 +306,22 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             xKey,
             yKey,
             strokeWidth,
-            fillOpacity,
-            strokeOpacity,
+            fillOpacity: seriesFillOpacity,
+            strokeOpacity: seriesStrokeOpacity,
             fill: seriesFill,
             stroke: seriesStroke,
             sizeScale,
+            marker: {
+                fillOpacity: markerFillOpacity = seriesFillOpacity,
+                strokeOpacity: markerStrokeOpacity = seriesStrokeOpacity,
+            },
             highlightStyle: {
                 fill: deprecatedFill,
                 stroke: deprecatedStroke,
                 strokeWidth: deprecatedStrokeWidth,
                 item: {
                     fill: highlightedFill = deprecatedFill,
+                    fillOpacity: highlightFillOpacity = markerFillOpacity,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
@@ -326,15 +335,17 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         markerSelection.each((node, datum) => {
             const fill =
                 isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill || seriesFill;
+            const fillOpacity = isDatumHighlighted ? highlightFillOpacity : markerFillOpacity;
             const stroke =
                 isDatumHighlighted && highlightedStroke !== undefined
                     ? highlightedStroke
                     : marker.stroke || seriesStroke;
+            const strokeOpacity = markerStrokeOpacity;
             const strokeWidth =
                 isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                     ? highlightedDatumStrokeWidth
                     : markerStrokeWidth;
-            const size = datum.size;
+            const size = datum.point?.size ?? 0;
 
             let format: CartesianSeriesMarkerFormat | undefined = undefined;
             if (formatter) {
@@ -354,10 +365,10 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             node.stroke = (format && format.stroke) || stroke;
             node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
             node.size = format && format.size !== undefined ? format.size : size;
-            node.fillOpacity = marker.fillOpacity !== undefined ? marker.fillOpacity : fillOpacity;
-            node.strokeOpacity = marker.strokeOpacity !== undefined ? marker.strokeOpacity : strokeOpacity;
-            node.translationX = datum.point.x;
-            node.translationY = datum.point.y;
+            node.fillOpacity = fillOpacity ?? 1;
+            node.strokeOpacity = strokeOpacity ?? 1;
+            node.translationX = datum.point?.x ?? 0;
+            node.translationY = datum.point?.y ?? 0;
             node.visible = node.size > 0;
         });
 
@@ -374,13 +385,16 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
         const placedLabels = this.chart?.placeLabels().get(this) ?? [];
 
-        const placedNodeDatum = placedLabels.map((v) => ({
-            ...(v.datum as ScatterNodeDatum),
-            point: {
-                x: v.x,
-                y: v.y,
-            },
-        }));
+        const placedNodeDatum = placedLabels.map(
+            (v): ScatterNodeDatum => ({
+                ...(v.datum as ScatterNodeDatum),
+                point: {
+                    x: v.x,
+                    y: v.y,
+                    size: v.datum.point.size,
+                },
+            })
+        );
         const updateLabels = labelSelection.setData(placedNodeDatum);
         updateLabels.exit.remove();
         const enterLabels = updateLabels.enter.append(Text);
@@ -394,8 +408,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         labelSelection.each((text, datum) => {
             text.text = datum.label.text;
             text.fill = label.color;
-            text.x = datum.point.x;
-            text.y = datum.point.y;
+            text.x = datum.point?.x ?? 0;
+            text.y = datum.point?.y ?? 0;
             text.fontStyle = label.fontStyle;
             text.fontWeight = label.fontWeight;
             text.fontSize = label.fontSize;
@@ -440,7 +454,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 fill,
                 stroke,
                 strokeWidth,
-                size: nodeDatum.size,
+                size: nodeDatum.point?.size ?? 0,
                 highlighted: false,
             });
         }
@@ -503,7 +517,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         if (data && data.length && xKey && yKey) {
             legendData.push({
                 id,
-                itemId: undefined,
+                itemId: yKey,
                 enabled: visible,
                 label: {
                     text: title || yName || yKey,

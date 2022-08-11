@@ -116,9 +116,9 @@ export class AgGridColumn<TData = any> {
     /** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.
      * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.     */
     @Input() public tooltipValueGetter: ((params: ITooltipParams<TData>) => string | any) | undefined;
-    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false`     */
+    /** Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false`     */
     @Input() public checkboxSelection: boolean | CheckboxSelectionCallback<TData> | undefined;
-    /** `boolean`. Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false`     */
+    /** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false`     */
     @Input() public showDisabledCheckboxes: boolean | undefined;
     /** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults.     */
     @Input() public icons: { [key: string]: Function | string; } | undefined;

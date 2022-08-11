@@ -1,4 +1,5 @@
 import { BBox } from '../../scene/bbox';
+import { Point } from '../../scene/point';
 
 export type CrossLineLabelPosition =
     | 'top'
@@ -18,11 +19,6 @@ export type CrossLineLabelPosition =
     | 'insideBottomLeft'
     | 'insideTopRight'
     | 'insideBottomRight';
-
-export interface Point {
-    readonly x: number;
-    readonly y: number;
-}
 
 type CoordinatesFnOpts = { yDirection: boolean; xStart: number; xEnd: number; yStart: number; yEnd: number };
 

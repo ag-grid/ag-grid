@@ -357,6 +357,8 @@ export class CellCtrl extends BeanStub {
     public startEditing(key: string | null = null, charPress: string | null = null, cellStartedEdit = false, event: KeyboardEvent | MouseEvent | null = null): void {
         if (!this.isCellEditable() || this.editing) { return; }
 
+        // because of async in React, the cellComp may not be set yet, if no cellComp then we are
+        // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         if (!this.cellComp) {
             this.onCellCompAttachedFuncs.push(() => { this.startEditing(key, charPress, cellStartedEdit, event); });
             return;
@@ -507,6 +509,8 @@ export class CellCtrl extends BeanStub {
     private setInlineEditingClass(): void {
         if (!this.isAlive()) { return; }
 
+        // because of async in React, the cellComp may not be set yet, if no cellComp then we are
+        // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         if (!this.cellComp) {
             this.onCellCompAttachedFuncs.push(() => { this.setInlineEditingClass(); });
             return;
@@ -805,7 +809,7 @@ export class CellCtrl extends BeanStub {
         return this.beans.valueFormatterService.formatValue(this.column, this.rowNode, value);
     }
 
-    public updateAndFormatValue(force = false): boolean {
+    private updateAndFormatValue(force = false): boolean {
         const oldValue = this.value;
         const oldValueFormatted = this.valueFormatted;
 
@@ -821,7 +825,7 @@ export class CellCtrl extends BeanStub {
     private valuesAreEqual(val1: any, val2: any): boolean {
         // if the user provided an equals method, use that, otherwise do simple comparison
         const colDef = this.column.getColDef();
-        return colDef.equals ? colDef.equals(val1, val2) : val1 === val2;
+        return colDef.equals ? colDef.equals(val1, val2) : typeof val1 === typeof val2 && val1?.toString() === val2?.toString();
     }
 
     public getComp(): ICellComp {

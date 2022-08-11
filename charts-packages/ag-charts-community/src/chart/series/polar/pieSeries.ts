@@ -4,6 +4,7 @@ import { Text } from '../../../scene/shape/text';
 import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
+import { clamper } from '../../../scale/continuousScale';
 import { Sector } from '../../../scene/shape/sector';
 import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle, SeriesTooltip } from './../series';
 import { Label } from '../../label';
@@ -259,8 +260,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         if (radiusKey) {
             const { radiusMin, radiusMax } = this;
             const radii = data.map((datum) => Math.abs(datum[radiusKey]));
-            const min = radiusMin !== undefined ? radiusMin : Math.min(...radii);
-            const max = radiusMax !== undefined ? radiusMax : Math.max(...radii);
+            const min = radiusMin ?? 0;
+            const max = radiusMax ? radiusMax : Math.max(...radii);
             const delta = max - min;
 
             radiusData = radii.map((value) => (delta ? (value - min) / delta : 1));
@@ -411,7 +412,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const {
             fills,
             strokes,
-            fillOpacity,
+            fillOpacity: seriesFillOpacity,
             strokeOpacity,
             radiusScale,
             callout,
@@ -423,6 +424,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 strokeWidth: deprecatedStrokeWidth,
                 item: {
                     fill: highlightedFill = deprecatedFill,
+                    fillOpacity: highlightFillOpacity = seriesFillOpacity,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
@@ -436,9 +438,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const innerRadius = radiusScale.convert(0);
 
         const updateSectorFn = (sector: Sector, datum: PieNodeDatum, index: number, isDatumHighlighted: boolean) => {
-            const radius = radiusScale.convert(datum.radius);
+            const radius = radiusScale.convert(datum.radius, clamper);
             const fill =
                 isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : fills[index % fills.length];
+            const fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
             const stroke =
                 isDatumHighlighted && highlightedStroke !== undefined
                     ? highlightedStroke
@@ -503,7 +506,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const { colors: calloutColors, length: calloutLength, strokeWidth: calloutStrokeWidth } = callout;
 
         this.groupSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
-            const radius = radiusScale.convert(datum.radius);
+            const radius = radiusScale.convert(datum.radius, clamper);
             const outerRadius = Math.max(0, radius);
 
             if (datum.label && outerRadius !== 0) {
@@ -523,7 +526,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
             this.groupSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum, index) => {
                 const label = datum.label;
-                const radius = radiusScale.convert(datum.radius);
+                const radius = radiusScale.convert(datum.radius, clamper);
                 const outerRadius = Math.max(0, radius);
 
                 if (label && outerRadius !== 0) {

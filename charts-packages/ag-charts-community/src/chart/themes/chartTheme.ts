@@ -126,6 +126,7 @@ export class ChartTheme {
             highlightStyle: {
                 item: {
                     fill: 'yellow',
+                    fillOpacity: 1,
                 },
                 series: {
                     dimOpacity: 1,
@@ -240,6 +241,7 @@ export class ChartTheme {
                         formatter: undefined,
                     },
                 },
+                reverseOrder: false,
             },
             tooltip: {
                 enabled: true,

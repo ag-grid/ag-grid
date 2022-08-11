@@ -23,7 +23,8 @@ import {
     BeanStub,
     CtrlsService,
     AutoScrollService,
-    _
+    _,
+    RowPinnedType
 } from "@ag-grid-community/core";
 
 @Bean('rangeService')
@@ -537,7 +538,7 @@ export class RangeService extends BeanStub implements IRangeService {
         return this.cellRanges.filter(cellRange => this.isCellInSpecificRange(cell, cellRange)).length;
     }
 
-    private isRowInRange(rowIndex: number, floating: string | null | undefined, cellRange: CellRange): boolean {
+    private isRowInRange(rowIndex: number, floating: RowPinnedType, cellRange: CellRange): boolean {
         const firstRow = this.getRangeStartRow(cellRange);
         const lastRow = this.getRangeEndRow(cellRange);
         const thisRow: RowPosition = { rowIndex, rowPinned: floating || null };

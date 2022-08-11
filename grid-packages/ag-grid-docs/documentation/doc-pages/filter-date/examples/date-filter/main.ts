@@ -26,6 +26,7 @@ var filterParams = {
   browserDatePicker: true,
   minValidYear: 2000,
   maxValidYear: 2021,
+  inRangeFloatingFilterDateFormat: 'Do MMM YYYY',
 }
 
 const columnDefs: ColDef[] = [
@@ -44,6 +45,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 150,
     filter: true,
+    floatingFilter: true,
   },
 }
 

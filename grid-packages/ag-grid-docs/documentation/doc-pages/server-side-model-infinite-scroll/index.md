@@ -25,7 +25,7 @@ The example below demonstrates Infinite Scroll in the SSRM. Note the following:
 ## Configuring Infinite Scroll
 
 It is useful to understand how the grid organises data into caches for Infinite Scrolling as many of the 
-[Configurations](/server-side-model-configuration/) are expressed in terms of the Server-Side Cache such as
+[Configurations](/server-side-model/) are expressed in terms of the Server-Side Cache such as
 `cacheBlockSize` and `maxBlocksInCache`.
 
 The grid arranges rows into blocks which are in turn stored in a cache. There is a cache containing the top-level rows
@@ -62,17 +62,23 @@ The example below shows how debouncing block loading can be achieved. Note the f
 
 ## Initial Scroll Position
 
-It may be a requirement to load the grid at a scroll position other than the first row. In the example below, note the following:
+When using the server-side row model the initial scroll position of the grid can be set. This is achieved by calling 
+`api.ensureIndexVisible()` after setting the data source to the grid. 
+
+[[note]]
+| It is important that the `serverSideInitialRowCount` property is set to a value that is greater than the sum of the row index provided to `api.ensureIndexVisible()` and the number of rows displayed in the grid's viewport.
+
+This is demonstrated in the example below, note the following:
 
 - The `serverSideInitialRowCount` property has been set to provide an initial length to the vertical scrollbars.
 
-- After the datasource has been set `api.ensureIndexVisible(5000, 'top')` is called, causing the grid to scroll down to row 5000.
+- After the datasource has been set `api.ensureIndexVisible(5000, 'top')` is called, causing the grid to scroll down to row `5000`.
 
-<grid-example title='Initial scroll position' name='initial-scroll-position' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Initial Scroll Position' name='initial-scroll-position' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
 
 ## Debugging Infinite Scroll
 
-When experimenting with different Infinite Scroll [Configurations](/server-side-model-configuration/) it can useful to 
+When experimenting with different Infinite Scroll [Configurations](/server-side-model/) it can useful to 
 enable debug mode as follows:
 
 <snippet>

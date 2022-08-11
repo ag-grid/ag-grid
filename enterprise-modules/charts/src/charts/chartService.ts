@@ -119,7 +119,13 @@ export class ChartService extends BeanStub implements IChartService {
 
             // pivot chart range contains all visible column without a row range to include all rows
             const columns = this.columnModel.getAllDisplayedColumns().map(col => col.getColId());
-            const chartAllRangeParams: CellRangeParams = { rowStartIndex: null, rowEndIndex: null, columns };
+            const chartAllRangeParams: CellRangeParams = { 
+                rowStartIndex: null,
+                rowStartPinned: undefined,
+                rowEndIndex: null,
+                rowEndPinned: undefined,
+                columns 
+            };
 
             const cellRange = getCellRange(chartAllRangeParams);
             if (!cellRange) {
@@ -198,7 +204,9 @@ export class ChartService extends BeanStub implements IChartService {
         // pivot chart range contains all visible column without a row range to include all rows
         const chartAllRangeParams: CellRangeParams = {
             rowStartIndex: null,
+            rowStartPinned: undefined,
             rowEndIndex: null,
+            rowEndPinned: undefined,
             columns: this.columnModel.getAllDisplayedColumns().map(col => col.getColId())
         };
 

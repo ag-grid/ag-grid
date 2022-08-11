@@ -73,8 +73,8 @@ function onPinnedRowBottomCount() {
   gridOptions.api!.setPinnedBottomRowData(rows)
 }
 
-function createData(count: number, prefix: string): IOlympicData[] {
-  var result: IOlympicData[] = []
+function createData(count: number, prefix: string): any[] {
+  var result: any[] = []
   for (var i = 0; i < count; i++) {
     result.push({
       athlete: prefix + ' Athlete ' + i,
@@ -83,7 +83,7 @@ function createData(count: number, prefix: string): IOlympicData[] {
       year: prefix + ' Year ' + i,
       date: prefix + ' Date ' + i,
       sport: prefix + ' Sport ' + i,
-    } as any)
+    })
   }
   return result
 }

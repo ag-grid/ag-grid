@@ -43,7 +43,7 @@ In Cell editing means the contents of the cell will be cleared and the editor wi
 
 ### Popup
 
-If you want your editor to appear in a popup (such as a dropdown list), then you can have it appear in a popup. The popup will behave like a menu in that any mouse interaction outside of the popup will close the popup. The popup will appear over the cell, however it will not change the contents of the cell. Behind the popup the cell will remain intact until after editing is finished which will result in the cell being refreshed.
+If you want your editor to appear in a popup (such as a dropdown list), then you can have it appear in a popup. The popup will appear over the cell, however it will not change the contents of the cell. Behind the popup the cell will remain intact until after editing is finished which will result in the cell being refreshed.
 
 From a lifecycle and behaviour point of view, 'in cell' and 'popup' have no impact on the editor. You can create a cell editor and change this property and observe how your editor behaves in each way.
 

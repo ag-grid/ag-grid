@@ -16,7 +16,7 @@ The following page provides information that is relevant when using older versio
  | 8       | 18 - 27   | 28+                 |
  | 9       | 23 - 27   | 28+                 |
  | 10 - 11 | 24 - 27   | 28+                 |
- | 12+     | 24 - 28+  | 28+ (not recommend) |
+ | 12+     | 25 - 28+  | 28+ (not recommend) |
 
 ## AG Grid Legacy
 

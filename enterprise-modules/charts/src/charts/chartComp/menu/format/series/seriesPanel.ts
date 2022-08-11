@@ -256,6 +256,7 @@ export class SeriesPanel extends Component {
     }
 
     private getChartSeriesType(): ChartSeriesType {
+        if(this.chartController.getSeriesChartTypes().length === 0) { return 'column'; }
         const ct = this.chartController.getSeriesChartTypes()[0].chartType;
         return (ct === 'columnLineCombo') ? 'column' : (ct === 'areaColumnCombo') ? 'area' : getSeriesType(ct);
     }

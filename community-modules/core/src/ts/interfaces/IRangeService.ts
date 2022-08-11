@@ -2,6 +2,7 @@ import { Column } from "../entities/column";
 import { CellPosition } from "../entities/cellPosition";
 import { RowPosition } from "../entities/rowPosition";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
+import { RowPinnedType } from "../entities/rowNode";
 
 export interface IRangeService {
     isEmpty(): boolean;
@@ -61,11 +62,11 @@ export interface CellRangeParams {
     /** Start row index */
     rowStartIndex: number | null;
     /** Pinned state of start row. Either 'top', 'bottom' or null */
-    rowStartPinned?: string | null;
+    rowStartPinned?: RowPinnedType;
     /** End row index */
     rowEndIndex: number | null;
     /** Pinned state of end row. Either 'top', 'bottom' or null */
-    rowEndPinned?: string | null;
+    rowEndPinned?: RowPinnedType;
 
     /** Starting column for range */
     columnStart?: string | Column;

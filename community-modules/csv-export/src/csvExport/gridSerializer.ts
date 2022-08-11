@@ -77,11 +77,9 @@ export class GridSerializer extends BeanStub {
             _.doOnce(() => console.warn('AG Grid: Since v25.2 `skipGroups` has been renamed to `skipRowGroups`.'), 'gridSerializer-skipGroups');
         }
 
-        const rowPosition = { rowIndex: node.rowIndex!, rowPinned: node.rowPinned };
         if (
             (!isLeafNode && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||
             (params.onlySelected && !node.isSelected()) ||
-            (params.rowPositions && !params.rowPositions.some(position => this.rowPositionUtils.sameRow(position, rowPosition))) ||
             (params.skipPinnedTop && node.rowPinned === 'top') ||
             (params.skipPinnedBottom && node.rowPinned === 'bottom')
         ) {
@@ -181,7 +179,17 @@ export class GridSerializer extends BeanStub {
     private processPinnedTopRows<T>(params: ExportParams<T>, columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
-            this.pinnedRowModel.forEachPinnedTopRow(processRow);
+
+            if (params.rowPositions) {
+                params.rowPositions
+                    // only pinnedTop rows, other models are processed by `processRows` and `processPinnedBottomsRows`
+                    .filter(position => position.rowPinned === 'top')
+                    .sort((a, b) => a.rowIndex - b.rowIndex)
+                    .map(position => this.pinnedRowModel.getPinnedTopRow(position.rowIndex))
+                    .forEach(processRow);
+            } else {
+                this.pinnedRowModel.forEachPinnedTopRow(processRow);
+            }
             return gridSerializingSession;
         };
     }
@@ -196,7 +204,14 @@ export class GridSerializer extends BeanStub {
             const onlySelectedNonStandardModel = !usingCsrm && params.onlySelected;
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
 
-            if (this.columnModel.isPivotMode()) {
+            if (params.rowPositions) {
+                params.rowPositions
+                    // pinnedRows are processed by `processPinnedTopRows` and `processPinnedBottomsRows`
+                    .filter(position => position.rowPinned == null)
+                    .sort((a, b) => a.rowIndex - b.rowIndex)
+                    .map(position => rowModel.getRow(position.rowIndex))
+                    .forEach(processRow);
+            } else if (this.columnModel.isPivotMode()) {
                 if (usingCsrm) {
                     (rowModel as IClientSideRowModel).forEachPivotNode(processRow);
                 } else {
@@ -216,14 +231,7 @@ export class GridSerializer extends BeanStub {
                     // here is everything else - including standard row model and selected. we don't use
                     // the selection model even when just using selected, so that the result is the order
                     // of the rows appearing on the screen.
-                    if (params.rowPositions) {
-                        params.rowPositions
-                            // pinnedRows are processed by `processPinnedTopRows` and `processPinnedBottomsRows`
-                            .filter(position => position.rowPinned == null)
-                            .sort((a, b) => a.rowIndex - b.rowIndex)
-                            .map(position => rowModel.getRow(position.rowIndex))
-                            .forEach(processRow);
-                    } else if (usingCsrm) {
+                    if (usingCsrm) {
                         (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(processRow);
                     } else if (usingSsrm) {
                         (rowModel as IServerSideRowModel).forEachNodeAfterFilterAndSort(processRow);
@@ -239,7 +247,16 @@ export class GridSerializer extends BeanStub {
     private processPinnedBottomRows<T>(params: ExportParams<T>, columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
-            this.pinnedRowModel.forEachPinnedBottomRow(processRow);
+            if (params.rowPositions) {
+                params.rowPositions
+                    // only pinnedBottom rows, other models are processed by `processRows` and `processPinnedTopRows`
+                    .filter(position => position.rowPinned === 'bottom')
+                    .sort((a, b) => a.rowIndex - b.rowIndex)
+                    .map(position => this.pinnedRowModel.getPinnedBottomRow(position.rowIndex))
+                    .forEach(processRow);
+            } else {
+                this.pinnedRowModel.forEachPinnedBottomRow(processRow);
+            }
             return gridSerializingSession;
         };
     }

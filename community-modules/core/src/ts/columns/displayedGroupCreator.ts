@@ -1,4 +1,4 @@
-import { Column } from "../entities/column";
+import { Column, ColumnPinnedType } from "../entities/column";
 import { IProvidedColumn } from "../entities/iProvidedColumn";
 import { GroupInstanceIdCreator } from "./groupInstanceIdCreator";
 import { IHeaderColumn } from "../entities/iHeaderColumn";
@@ -21,7 +21,7 @@ export class DisplayedGroupCreator extends BeanStub {
         // creates unique id's for the group
         groupInstanceIdCreator: GroupInstanceIdCreator,
         // whether it's left, right or center col
-        pinned: 'left' | 'right' | null,
+        pinned: ColumnPinnedType,
         // we try to reuse old groups if we can, to allow gui to do animation
         oldDisplayedGroups?: IHeaderColumn[]): IHeaderColumn[] {
 
@@ -85,7 +85,7 @@ export class DisplayedGroupCreator extends BeanStub {
             providedGroup: ProvidedColumnGroup,
             groupInstanceIdCreator: GroupInstanceIdCreator,
             oldColumnsMapped: {[key: string]: ColumnGroup},
-            pinned: 'left' | 'right' | null
+            pinned: ColumnPinnedType
         ): ColumnGroup {
 
         const groupId = providedGroup.getGroupId();

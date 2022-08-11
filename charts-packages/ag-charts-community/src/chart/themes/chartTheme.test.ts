@@ -41,7 +41,7 @@ describe('ChartTheme', () => {
 
     describe('cartesian overrides', () => {
         const tooltipRenderer = () => 'testing';
-        const markerFormatter: AgCartesianSeriesMarkerFormatter = () => {
+        const markerFormatter: AgCartesianSeriesMarkerFormatter<any> = () => {
             return {};
         };
 

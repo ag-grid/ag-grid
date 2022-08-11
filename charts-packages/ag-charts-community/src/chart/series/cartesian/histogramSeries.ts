@@ -437,7 +437,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }) {
         const { datumSelection, isHighlight: isDatumHighlighted } = opts;
         const {
-            fillOpacity,
+            fillOpacity: seriesFillOpacity,
             strokeOpacity,
             shadow,
             highlightStyle: {
@@ -446,6 +446,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                 strokeWidth: deprecatedStrokeWidth,
                 item: {
                     fill: highlightedFill = deprecatedFill,
+                    fillOpacity: highlightFillOpacity = seriesFillOpacity,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
@@ -457,6 +458,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                 isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                     ? highlightedDatumStrokeWidth
                     : datum.strokeWidth;
+            const fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
 
             rect.x = datum.x;
             rect.y = datum.y;
@@ -564,15 +566,15 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {
-        const { id, data, yKey, yName, visible, fill, stroke, fillOpacity, strokeOpacity } = this;
+        const { id, data, xKey, yName, visible, fill, stroke, fillOpacity, strokeOpacity } = this;
 
         if (data && data.length) {
             legendData.push({
                 id,
-                itemId: yKey,
+                itemId: xKey,
                 enabled: visible,
                 label: {
-                    text: yName || yKey || 'Frequency',
+                    text: yName || xKey || 'Frequency',
                 },
                 marker: {
                     fill: fill || 'rgba(0, 0, 0, 0)',

@@ -25,6 +25,7 @@ import {
     OPT_STRING,
 } from './util/validation';
 import { ChartAxisDirection } from './chart/chartAxis';
+import { Layers } from './chart/layers';
 
 enum Tags {
     Tick,
@@ -210,7 +211,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._ticks;
     }
 
-    readonly axisGroup = new Group({ name: `${this.id}-axis`, layer: true, zIndex: 50 });
+    readonly axisGroup = new Group({ name: `${this.id}-axis`, layer: true, zIndex: Layers.AXIS_ZINDEX });
     readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
 
     private readonly lineGroup = this.axisGroup.appendChild(new Group({ name: `${this.id}-Line` }));
@@ -219,7 +220,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
     private tickGroupSelection = Selection.select(this.tickGroup).selectAll<Group>();
     private lineNode = this.lineGroup.appendChild(new Line());
 
-    readonly gridlineGroup = new Group({ name: `${this.id}-gridline`, layer: true, zIndex: 0 });
+    readonly gridlineGroup = new Group({
+        name: `${this.id}-gridline`,
+        layer: true,
+        zIndex: Layers.AXIS_GRIDLINES_ZINDEX,
+    });
     private gridlineGroupSelection = Selection.select(this.gridlineGroup).selectAll<Group>();
 
     private _crossLines?: CrossLine[] = [];

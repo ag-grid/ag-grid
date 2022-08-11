@@ -317,6 +317,8 @@ export class PopupService extends BeanStub {
 
         if (popupParent === eDocument.body) {
             popupParent = eDocument.documentElement;
+        } else if (getComputedStyle(popupParent).position === 'static') {
+            popupParent = popupParent.offsetParent as HTMLElement;
         }
 
         const style = getComputedStyle(popupParent);

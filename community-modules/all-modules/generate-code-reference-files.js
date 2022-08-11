@@ -149,6 +149,10 @@ function getAncestors(extensions, child) {
     return ancestors;
 }
 
+function isBuiltinUtilityType(type) {
+    return type === 'Required' || type === 'Omit' || type === 'Pick' || type === 'Readonly' || type === 'Optional';
+}
+
 function mergeAncestorProps(isDocStyle, parent, child, getProps) {
     const props = { ...getProps(child) };
     let mergedProps = props;
@@ -186,11 +190,8 @@ function mergeAncestorProps(isDocStyle, parent, child, getProps) {
                     mergedProps[newKey] = newValue;
                 });
             });
-        }
-        else {
-            if (parent.extends !== 'Omit') {
-                throw new Error(`Parent interface ${parent.extends} takes generic params: [${parent.params.join()}] but child does not have typeParams.`);
-            }
+        } else if (!isBuiltinUtilityType(parent.extends)) {
+            throw new Error(`Parent interface ${parent.extends} takes generic params: [${parent.params.join()}] but child does not have typeParams.`);
         }
     }
     return mergedProps;
@@ -236,12 +237,15 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
                         omitFields.push(typeName);
                     });
                 });
+            } else if (isBuiltinUtilityType(extended)) {
+                // Required: https://www.typescriptlang.org/docs/handbook/utility-types.html
+                extended = a.params[0];
             }
             extInt = interfaces[extended];
 
             if (!extInt) {
                 //Check for type params
-                throw new Error('Missing interface' + a);
+                throw new Error('Missing interface: ' + JSON.stringify(a));
             }
 
             if (isDocStyle) {

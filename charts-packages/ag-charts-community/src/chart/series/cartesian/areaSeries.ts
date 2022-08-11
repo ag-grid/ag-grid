@@ -25,6 +25,7 @@ import { sanitizeHtml } from '../../../util/sanitize';
 import { checkDatum, isContinuous, isNumber } from '../../../util/value';
 import { clamper, ContinuousScale } from '../../../scale/continuousScale';
 import { doOnce } from '../../../util/function';
+import { Point, SizedPoint } from '../../../scene/point';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -44,12 +45,8 @@ export interface AreaSeriesNodeClickEvent extends TypedEvent {
     readonly yKey: string;
 }
 
-interface MarkerSelectionDatum extends SeriesNodeDatum {
+interface MarkerSelectionDatum extends Required<SeriesNodeDatum> {
     readonly index: number;
-    readonly point: {
-        readonly x: number;
-        readonly y: number;
-    };
     readonly fill?: string;
     readonly stroke?: string;
     readonly yKey: string;
@@ -59,10 +56,7 @@ interface MarkerSelectionDatum extends SeriesNodeDatum {
 interface LabelSelectionDatum {
     readonly index: number;
     readonly itemId: any;
-    readonly point: {
-        readonly x: number;
-        readonly y: number;
-    };
+    readonly point: Readonly<Point>;
     readonly label?: {
         readonly text: string;
         readonly fontStyle?: FontStyle;
@@ -77,7 +71,6 @@ interface LabelSelectionDatum {
 
 export { AreaTooltipRendererParams };
 
-type Coordinate = { x: number; y: number };
 type CumulativeValue = { left: number; right: number };
 type ProcessedXDatum = {
     xDatum: any;
@@ -136,7 +129,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     lineDashOffset: number = 0;
 
     constructor() {
-        super({ pathsPerSeries: 2, pickGroupIncludes: ['markers'], features: ['markers'] });
+        super({
+            pathsPerSeries: 2,
+            pathsZIndexSubOrderOffset: [0, 1000],
+            pickGroupIncludes: ['markers'],
+            features: ['markers'],
+        });
 
         const { marker, label } = this;
 
@@ -273,7 +271,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 const seriesYs = yData[i] || (yData[i] = []);
 
                 if (!seriesItemEnabled.get(yKey)) {
-                    seriesYs.push(0);
+                    seriesYs.push(NaN);
                 } else {
                     const yDatum = checkDatum(value, isContinuousY);
                     seriesYs.push(yDatum);
@@ -294,13 +292,13 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         //   [-9, 20] <- series 3 (yKey3)
         // ]
 
-        let yMin = 0;
-        let yMax = 0;
+        let yMin: number | undefined = undefined;
+        let yMax: number | undefined = undefined;
 
         for (let i = 0; i < xData.length; i++) {
             const total = { sum: 0, absSum: 0 };
             for (let seriesYs of yData) {
-                if (seriesYs[i] === undefined) {
+                if (seriesYs[i] === undefined || isNaN(seriesYs[i])) {
                     continue;
                 }
 
@@ -309,9 +307,9 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 total.absSum += Math.abs(y);
                 total.sum += y;
 
-                if (total.sum > yMax) {
+                if (total.sum >= (yMax ?? 0)) {
                     yMax = total.sum;
-                } else if (total.sum < yMin) {
+                } else if (total.sum <= (yMin ?? 0)) {
                     yMin = total.sum;
                 }
             }
@@ -320,18 +318,22 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 continue;
             }
 
-            let normalizedTotal = 0;
+            let normalizedTotal = undefined;
             // normalize y values using the absolute sum of y values in the stack
             for (let seriesYs of yData) {
                 const normalizedY = (+seriesYs[i] / total.absSum) * normalizedTo;
                 seriesYs[i] = normalizedY;
 
-                // sum normalized values to get updated yMin and yMax of normalized area
-                normalizedTotal += normalizedY;
+                if (!isNaN(normalizedY)) {
+                    // sum normalized values to get updated yMin and yMax of normalized area
+                    normalizedTotal = (normalizedTotal ?? 0) + normalizedY;
+                } else {
+                    continue;
+                }
 
-                if (normalizedTotal > yMax) {
+                if (normalizedTotal >= (yMax ?? 0)) {
                     yMax = normalizedTotal;
-                } else if (normalizedTotal < yMin) {
+                } else if (normalizedTotal <= (yMin ?? 0)) {
                     yMin = normalizedTotal;
                 }
             }
@@ -342,11 +344,14 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const domainWhitespaceAdjustment = 0.5;
 
             // set the yMin and yMax based on cumulative sum of normalized values
-            yMin = yMin < -normalizedTo * domainWhitespaceAdjustment ? -normalizedTo : yMin;
-            yMax = yMax > normalizedTo * domainWhitespaceAdjustment ? normalizedTo : yMax;
+            yMin = (yMin ?? 0) < -normalizedTo * domainWhitespaceAdjustment ? -normalizedTo : yMin;
+            yMax = (yMax ?? 0) > normalizedTo * domainWhitespaceAdjustment ? normalizedTo : yMax;
         }
 
-        this.yDomain = this.fixNumericExtent([yMin, yMax], yAxis);
+        this.yDomain = this.fixNumericExtent(
+            yMin === undefined && yMax === undefined ? undefined : [yMin ?? 0, yMax ?? 0],
+            yAxis
+        );
 
         return true;
     }
@@ -385,7 +390,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             yDatum: number,
             idx: number,
             side: keyof CumulativeValue
-        ): [Coordinate, Coordinate] => {
+        ): [SizedPoint, SizedPoint] => {
             const x = xScale.convert(xDatum) + xOffset;
 
             const prevY = cumulativePathValues[idx][side];
@@ -397,12 +402,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             cumulativePathValues[idx][side] = currY;
 
             return [
-                { x, y: currYCoordinate },
-                { x, y: prevYCoordinate },
+                { x, y: currYCoordinate, size: marker.size },
+                { x, y: prevYCoordinate, size: marker.size },
             ];
         };
 
-        const createMarkerCoordinate = (xDatum: any, yDatum: number, idx: number, rawYDatum: any): Coordinate => {
+        const createMarkerCoordinate = (xDatum: any, yDatum: number, idx: number, rawYDatum: any): SizedPoint => {
             let currY;
 
             // if not normalized, the invalid data points will be processed as `undefined` in processData()
@@ -411,7 +416,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const normalized = this.normalizedTo && isFinite(this.normalizedTo);
             const normalizedAndValid = normalized && continuousY && isContinuous(rawYDatum);
 
-            const valid = (!normalized && !isNaN(yDatum)) || normalizedAndValid;
+            const valid = (!normalized && !isNaN(rawYDatum)) || normalizedAndValid;
 
             if (valid) {
                 currY = cumulativeMarkerValues[idx] += yDatum;
@@ -420,7 +425,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const x = xScale.convert(xDatum) + xOffset;
             const y = yScale.convert(currY, continuousY ? clamper : undefined);
 
-            return { x, y };
+            return { x, y, size: marker.size };
         };
 
         yData.forEach((seriesYs, seriesIdx) => {
@@ -438,19 +443,26 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 strokeSelectionData,
             };
 
+            if (!this.seriesItemEnabled.get(yKey)) {
+                return;
+            }
+
             const fillPoints = fillSelectionData.points;
-            const fillPhantomPoints: Coordinate[] = [];
+            const fillPhantomPoints: SizedPoint[] = [];
 
             const strokePoints = strokeSelectionData.points;
             const yValues = strokeSelectionData.yValues;
 
-            seriesYs.forEach((yDatum, datumIdx) => {
+            seriesYs.forEach((rawYDatum, datumIdx) => {
+                const yDatum = isNaN(rawYDatum) ? undefined : rawYDatum;
+
                 const { xDatum, seriesDatum } = xData[datumIdx];
                 const nextXDatum = xData[datumIdx + 1]?.xDatum;
-                const nextYDatum = seriesYs[datumIdx + 1];
+                const rawNextYDatum = seriesYs[datumIdx + 1];
+                const nextYDatum = isNaN(rawNextYDatum) ? undefined : rawNextYDatum;
 
                 // marker data
-                const point = createMarkerCoordinate(xDatum, +yDatum, datumIdx, seriesDatum[yKey]);
+                const point = createMarkerCoordinate(xDatum, +yDatum!, datumIdx, seriesDatum[yKey]);
 
                 if (marker) {
                     markerSelectionData.push({
@@ -458,7 +470,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                         series: this,
                         itemId: yKey,
                         datum: seriesDatum,
-                        yValue: yDatum,
+                        yValue: yDatum!,
                         yKey,
                         point,
                         fill: fills[seriesIdx % fills.length],
@@ -509,11 +521,11 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     windowY[1] = 0;
                 }
 
-                const currCoordinates = createPathCoordinates(windowX[0], +windowY[0], datumIdx, 'right');
+                const currCoordinates = createPathCoordinates(windowX[0], +windowY[0]!, datumIdx, 'right');
                 fillPoints.push(currCoordinates[0]);
                 fillPhantomPoints.push(currCoordinates[1]);
 
-                const nextCoordinates = createPathCoordinates(windowX[1], +windowY[1], datumIdx, 'left');
+                const nextCoordinates = createPathCoordinates(windowX[1], +windowY[1]!, datumIdx, 'left');
                 fillPoints.push(nextCoordinates[0]);
                 fillPhantomPoints.push(nextCoordinates[1]);
 
@@ -673,7 +685,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             yKeys,
             fills,
             strokes,
-            fillOpacity,
+            fillOpacity: seriesFillOpacity,
+            marker: { fillOpacity: markerFillOpacity = seriesFillOpacity },
             strokeOpacity,
             highlightStyle: {
                 fill: deprecatedFill,
@@ -681,6 +694,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 strokeWidth: deprecatedStrokeWidth,
                 item: {
                     fill: highlightedFill = deprecatedFill,
+                    fillOpacity: highlightFillOpacity = markerFillOpacity,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
@@ -696,6 +710,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 isDatumHighlighted && highlightedFill !== undefined
                     ? highlightedFill
                     : marker.fill || fills[yKeyIndex % fills.length];
+            const fillOpacity = isDatumHighlighted ? highlightFillOpacity : markerFillOpacity;
             const stroke =
                 isDatumHighlighted && highlightedStroke !== undefined
                     ? highlightedStroke
@@ -722,14 +737,17 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             node.fill = (format && format.fill) || fill;
             node.stroke = (format && format.stroke) || stroke;
             node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
-            node.fillOpacity = marker.fillOpacity ?? fillOpacity ?? 1;
+            node.fillOpacity = fillOpacity ?? 1;
             node.strokeOpacity = marker.strokeOpacity ?? strokeOpacity ?? 1;
             node.size = format && format.size !== undefined ? format.size : size;
 
-            node.translationX = datum.point.x;
-            node.translationY = datum.point.y;
+            node.translationX = datum.point?.x ?? 0;
+            node.translationY = datum.point?.y ?? 0;
             node.visible =
-                node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x) && !isNaN(datum.point.y);
+                node.size > 0 &&
+                !!seriesItemEnabled.get(datum.yKey) &&
+                !isNaN(datum.point?.x || 0) &&
+                !isNaN(datum.point?.y || 0);
         });
 
         if (!isDatumHighlighted) {
@@ -773,17 +791,6 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 text.visible = false;
             }
         });
-    }
-
-    protected getZIndex(datum?: { itemId?: any }): number {
-        const defaultZIndex = super.getZIndex(datum);
-
-        if (this._yKeys.length > 1) {
-            // Stacked case - need special handling so that markers don't end-up overlapped.
-            return defaultZIndex - 10;
-        }
-
-        return defaultZIndex;
     }
 
     fireNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): void {
@@ -893,23 +900,28 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const { data, id, xKey, yKeys, yNames, seriesItemEnabled, marker, fills, strokes, fillOpacity, strokeOpacity } =
             this;
 
-        if (data && data.length && xKey && yKeys.length) {
-            yKeys.forEach((yKey, index) => {
-                legendData.push({
-                    id,
-                    itemId: yKey,
-                    enabled: seriesItemEnabled.get(yKey) || false,
-                    label: {
-                        text: yNames[index] || yKeys[index],
-                    },
-                    marker: {
-                        shape: marker.shape,
-                        fill: marker.fill || fills[index % fills.length],
-                        stroke: marker.stroke || strokes[index % strokes.length],
-                        fillOpacity: marker.fillOpacity ?? fillOpacity,
-                        strokeOpacity: marker.strokeOpacity ?? strokeOpacity,
-                    },
-                });
+        if (!data || !data.length || !xKey || !yKeys.length) {
+            return;
+        }
+
+        // Area stacks should be listed in the legend in reverse order, for symmetry with the
+        // vertical stack display order.
+        for (let index = yKeys.length - 1; index >= 0; index--) {
+            const yKey = yKeys[index];
+            legendData.push({
+                id,
+                itemId: yKey,
+                enabled: seriesItemEnabled.get(yKey) || false,
+                label: {
+                    text: yNames[index] || yKeys[index],
+                },
+                marker: {
+                    shape: marker.shape,
+                    fill: marker.fill || fills[index % fills.length],
+                    stroke: marker.stroke || strokes[index % strokes.length],
+                    fillOpacity: marker.fillOpacity ?? fillOpacity,
+                    strokeOpacity: marker.strokeOpacity ?? strokeOpacity,
+                },
             });
         }
     }

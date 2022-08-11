@@ -7,6 +7,7 @@ import { BeanStub } from "./context/beanStub";
 import { GridHeaderCtrl } from "./headerRendering/gridHeaderCtrl";
 import { Constants } from "./constants/constants";
 import { HeaderRowContainerCtrl } from "./headerRendering/rowContainer/headerRowContainerCtrl";
+import { ColumnPinnedType } from "./entities/column";
 
 // for all controllers that are singletons, they can register here so other parts
 // of the application can access them.
@@ -216,7 +217,7 @@ export class CtrlsService extends BeanStub {
         this.checkReady();
     }
 
-    public registerHeaderContainer(ctrl: HeaderRowContainerCtrl, pinned: string | null): void {
+    public registerHeaderContainer(ctrl: HeaderRowContainerCtrl, pinned: ColumnPinnedType): void {
         switch (pinned) {
             case Constants.PINNED_LEFT:
                 this.leftHeaderRowContainerCtrl = ctrl;
@@ -276,7 +277,7 @@ export class CtrlsService extends BeanStub {
         return [this.leftHeaderRowContainerCtrl, this.rightHeaderRowContainerCtrl, this.centerHeaderRowContainerCtrl];
     }
 
-    public getHeaderRowContainerCtrl(pinned?: string | null): HeaderRowContainerCtrl {
+    public getHeaderRowContainerCtrl(pinned?: ColumnPinnedType): HeaderRowContainerCtrl {
         switch (pinned) {
             case Constants.PINNED_LEFT: return this.leftHeaderRowContainerCtrl;
             case Constants.PINNED_RIGHT: return this.rightHeaderRowContainerCtrl;

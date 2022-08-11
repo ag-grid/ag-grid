@@ -140,6 +140,9 @@ export interface Config {
         interfaces: {
             [key: string]: InterfaceEntry;
         };
+        htmlLookup: {
+            [key: string]: Record<string, string>;
+        };
     };
     codeSrcProvided: string[];
     gridOpProp?: InterfaceEntry;

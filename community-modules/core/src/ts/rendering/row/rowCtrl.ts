@@ -4,7 +4,7 @@ import { UserCompDetails } from "../../components/framework/userComponentFactory
 import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { CellPosition } from "../../entities/cellPosition";
-import { Column } from "../../entities/column";
+import { Column, ColumnPinnedType } from "../../entities/column";
 import { RowClassParams } from "../../entities/gridOptions";
 import { DataChangedEvent, RowHighlightPosition, RowNode } from "../../entities/rowNode";
 import { RowPosition } from "../../entities/rowPosition";
@@ -400,7 +400,7 @@ export class RowCtrl extends BeanStub {
         this.updateColumnListsPending = true;
     }
 
-    private createCellCtrls(prev: CellCtrlListAndMap, cols: Column[], pinned: string | null = null): CellCtrlListAndMap {
+    private createCellCtrls(prev: CellCtrlListAndMap, cols: Column[], pinned: ColumnPinnedType = null): CellCtrlListAndMap {
         const res: CellCtrlListAndMap = {
             list: [],
             map: {}
@@ -464,7 +464,7 @@ export class RowCtrl extends BeanStub {
         });
     }
 
-    private isCellEligibleToBeRemoved(cellCtrl: CellCtrl, nextContainerPinned: string | null): boolean {
+    private isCellEligibleToBeRemoved(cellCtrl: CellCtrl, nextContainerPinned: ColumnPinnedType): boolean {
         const REMOVE_CELL = true;
         const KEEP_CELL = false;
 
@@ -519,7 +519,7 @@ export class RowCtrl extends BeanStub {
 
     public refreshFullWidth(): boolean {
         // returns 'true' if refresh succeeded
-        const tryRefresh = (gui: RowGui, pinned: 'left' | 'right' | null): boolean => {
+        const tryRefresh = (gui: RowGui, pinned: ColumnPinnedType): boolean => {
             if (!gui) { return true; } // no refresh needed
 
             const cellRenderer = gui.rowComp.getFullWidthCellRenderer();
@@ -908,7 +908,7 @@ export class RowCtrl extends BeanStub {
         checkRowSizeFunc();
     }
 
-    public createFullWidthParams(eRow: HTMLElement, pinned: 'left' | 'right' | null): ICellRendererParams {
+    public createFullWidthParams(eRow: HTMLElement, pinned: ColumnPinnedType): ICellRendererParams {
         const params = {
             fullWidth: true,
             data: this.rowNode.data,
@@ -1003,7 +1003,10 @@ export class RowCtrl extends BeanStub {
             const event: RowValueChangedEvent = this.createRowEvent(Events.EVENT_ROW_VALUE_CHANGED);
             this.beans.eventService.dispatchEvent(event);
         }
-        this.setEditingRow(false);
+
+        if (isRowEdit) {
+            this.setEditingRow(false);
+        }
 
         this.stoppingRowEdit = false;
     }
@@ -1078,9 +1081,12 @@ export class RowCtrl extends BeanStub {
         return businessKeyForNodeFunc(this.rowNode);
     }
 
-    private getPinnedForContainer(rowContainerType: RowContainerType): 'left' | 'right' | null {
-        const pinned = rowContainerType === RowContainerType.LEFT ? Constants.PINNED_LEFT :
-            rowContainerType === RowContainerType.RIGHT ? Constants.PINNED_RIGHT : null;
+    private getPinnedForContainer(rowContainerType: RowContainerType): ColumnPinnedType {
+        const pinned = rowContainerType === RowContainerType.LEFT
+            ? Constants.PINNED_LEFT
+            : rowContainerType === RowContainerType.RIGHT
+                ? Constants.PINNED_RIGHT
+                : null;
         return pinned;
     }
 

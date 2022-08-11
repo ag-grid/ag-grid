@@ -239,10 +239,24 @@ export class GridOptionsWrapper {
             console.warn("AG Grid: 'enableRangeHandle' or 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
 
-        if (this.isGroupRowsSticky() && this.isGroupHideOpenParents()) {
-            console.warn(
-                "AG Grid: groupRowsSticky and groupHideOpenParents do not work with each other, you need to pick one."
-            );
+        if (this.isGroupRowsSticky()) {
+            if (this.isGroupHideOpenParents()) {
+                console.warn(
+                    "AG Grid: groupRowsSticky and groupHideOpenParents do not work with each other, you need to pick one."
+                );
+            }
+
+            if (this.isMasterDetail()) {
+                console.warn(
+                    "AG Grid: groupRowsSticky and masterDetail do not work with each other, you need to pick one."
+                );
+            }
+
+            if (this.isPagination()) {
+                console.warn(
+                    "AG Grid: groupRowsSticky and pagination do not work with each other, you need to pick one."
+                );
+            }
         }
 
         const warnOfDeprecaredIcon = (name: string) => {

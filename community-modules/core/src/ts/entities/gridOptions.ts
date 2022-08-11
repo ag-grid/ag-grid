@@ -73,6 +73,7 @@ import { ChartMenuOptions } from "../interfaces/iChartOptions";
 import { AgGridCommon } from "../interfaces/iCommon";
 import { IDatasource } from "../interfaces/iDatasource";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
+import { RowModelType } from "../interfaces/iRowModel";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
@@ -244,7 +245,7 @@ export interface GridOptions<TData = any> {
 
     /**
      * Set this to `true` to stop cell editing when grid loses focus.
-     * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.
+     * The default is that the grid stays editing until focus goes onto another cell.
      * Default: `false`
      */
     stopEditingWhenCellsLoseFocus?: boolean;
@@ -602,13 +603,13 @@ export interface GridOptions<TData = any> {
 
     // *** Row Pinning *** //
     /** Data to be displayed as pinned top rows in the grid. */
-    pinnedTopRowData?: TData[];
+    pinnedTopRowData?: any[];
     /** Data to be displayed as pinned bottom rows in the grid. */
-    pinnedBottomRowData?: TData[];
+    pinnedBottomRowData?: any[];
 
     // *** Row Model *** //
     /** Sets the row model type. Default: `clientSide` */
-    rowModelType?: 'clientSide' | 'infinite' | 'viewport' | 'serverSide';
+    rowModelType?: RowModelType;
 
     // *** Row Model: Client-side *** //
     // changeable with impact
@@ -1003,7 +1004,10 @@ export interface GridOptions<TData = any> {
     onComponentStateChanged?(event: ComponentStateChangedEvent<TData>): void;
 
     // *** Editing *** //
-    /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */
+    /**
+     * Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or 
+     *  if cell value has changed as a result of paste operation.
+    */
     onCellValueChanged?(event: CellValueChangedEvent<TData>): void;
     /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */
     onCellEditRequest?(event: CellEditRequestEvent<TData>): void;
@@ -1194,7 +1198,6 @@ export interface RowClassParams<TData = any> extends AgGridCommon<TData> {
     /** The index of the row */
     rowIndex: number;
 }
-
 
 export interface GetContextMenuItems<TData = any> {
     (params: GetContextMenuItemsParams<TData>): (string | MenuItemDef)[];

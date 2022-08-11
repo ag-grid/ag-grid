@@ -70,8 +70,9 @@ export const SIMPLE_SCATTER_CHART_EXAMPLE: AgCartesianChartOptions = DOCS_EXAMPL
 export const BUBBLE_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['bubble-with-negative-values'];
 export const BUBBLE_GRAPH_WITH_CATEGORIES_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['bubble-with-categories'];
 export const SIMPLE_AREA_GRAPH_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-area'];
-export const STACKED_AREA_GRAPH_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['stacked-area'];
-export const ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['100--stacked-area'];
+export const STACKED_AREA_GRAPH_EXAMPLE: AgCartesianChartOptions = DOCS_EXAMPLES['stacked-area'];
+export const ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE: AgCartesianChartOptions =
+    DOCS_EXAMPLES['100--stacked-area'];
 export const AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['area-with-negative-values'];
 export const MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['market-index-treemap'];
 export const SIMPLE_HISTOGRAM_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-histogram'];
@@ -127,7 +128,7 @@ export const GROUPED_CATEGORY_AXIS_EXAMPLE: AgChartOptions = {};
     });
 }
 
-export const AREA_MISSING_Y_DATA_EXAMPLE: AgChartOptions = {
+export const AREA_MISSING_Y_DATA_EXAMPLE: AgCartesianChartOptions = {
     data: DATA_INTERNET_EXPLORER_MARKET_SHARE,
     axes: [
         { type: 'category', position: 'bottom' },
@@ -152,7 +153,7 @@ export const AREA_MISSING_Y_DATA_EXAMPLE: AgChartOptions = {
     },
 };
 
-export const STACKED_AREA_MISSING_Y_DATA_EXAMPLE: AgChartOptions = {
+export const STACKED_AREA_MISSING_Y_DATA_EXAMPLE: AgCartesianChartOptions = {
     data: DATA_BROWSER_MARKET_SHARE,
     axes: [
         { type: 'category', position: 'bottom' },

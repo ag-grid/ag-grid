@@ -1,11 +1,10 @@
 import { Autowired, PostConstruct } from "../../context/context";
 import { Constants } from "../../constants/constants";
 import { ColumnModel } from "../../columns/columnModel";
-import { Column } from "../../entities/column";
+import { Column, ColumnPinnedType } from "../../entities/column";
 import { DragAndDropService, DraggingEvent, DragSourceType, HorizontalDirection } from "../../dragAndDrop/dragAndDropService";
 import { DropListener } from "./bodyDropTarget";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { Logger, LoggerFactory } from "../../logger";
 import { ColumnEventType } from "../../events";
 import { missing, exists } from "../../utils/generic";
 import { sortNumerically, last, includes } from "../../utils/array";
@@ -29,7 +28,7 @@ export class MoveColumnFeature implements DropListener {
     private movingIntervalId: number | null;
     private intervalCount: number;
 
-    private pinned: string | null;
+    private pinned: ColumnPinnedType;
     private centerContainer: boolean;
 
     private lastDraggingEvent: DraggingEvent;
@@ -41,7 +40,7 @@ export class MoveColumnFeature implements DropListener {
 
     private eContainer: HTMLElement;
 
-    constructor(pinned: string | null, eContainer: HTMLElement) {
+    constructor(pinned: ColumnPinnedType, eContainer: HTMLElement) {
         this.pinned = pinned;
         this.eContainer = eContainer;
         this.centerContainer = !exists(pinned);
@@ -92,7 +91,7 @@ export class MoveColumnFeature implements DropListener {
         }
     }
 
-    public setColumnsPinned(columns: Column[] | null | undefined, pinned: string | null, source: ColumnEventType = "api") {
+    public setColumnsPinned(columns: Column[] | null | undefined, pinned: ColumnPinnedType, source: ColumnEventType = "api") {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockPinned);
             this.columnModel.setColumnsPinned(allowedCols, pinned, source);

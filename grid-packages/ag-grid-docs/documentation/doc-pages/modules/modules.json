@@ -5,6 +5,11 @@
     "exported": "Core Grid Components: GridOptions, ColDef etc"
   },
   {
+    "title": "Grid Styles",
+    "module": "@ag-grid-community/styles",
+    "exported": "Core Grid Styles and Themes"
+  },
+  {
     "title": "Client Side Row Model",
     "shortname": "clientside",
     "module": "@ag-grid-community/client-side-row-model",

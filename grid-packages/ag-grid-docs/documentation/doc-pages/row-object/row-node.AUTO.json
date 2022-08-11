@@ -101,7 +101,7 @@
   },
   "rowPinned": {
     "description": "/** Either 'top' or 'bottom' if row pinned, otherwise `undefined` or `null`. */",
-    "type": { "returnType": "string" }
+    "type": { "returnType": "RowPinnedType" }
   },
   "sticky": {
     "description": "/** When true, this row will appear in the top */",

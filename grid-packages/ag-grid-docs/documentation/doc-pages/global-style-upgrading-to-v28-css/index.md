@@ -11,6 +11,8 @@ The Legacy CSS files are deprecated and will be removed from the Grid in a futur
 
 There are many ways to import CSS, but however you are doing this in your app you need to delete the `/dist` part from the path. For example if you're using the unpkg CDN:
 
+### Packages
+
 ```html
 <!-- old path -->
 <link
@@ -22,6 +24,50 @@ There are many ways to import CSS, but however you are doing this in your app yo
   rel="stylesheet"
   href="https://unpkg.com/ag-grid-community@@AG_GRID_VERSION@/styles/ag-grid.css" />
 ```
+
+### Modules
+
+If you are using [Grid Modules](/modules/) then you will need to use the new `@ag-grid-community/styles` module.
+
+```html
+<!-- old path -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@ag-grid-community/core@@AG_GRID_VERSION@/dist/styles/ag-grid.css" />
+
+<!-- new path -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@ag-grid-community/styles@@AG_GRID_VERSION@/ag-grid.css" />
+```
+
+[[only-javascript]]
+| ### Bundled Files
+|
+| If you are using an [AG Grid Bundle](/download/#download-ag-grid-bundle) where the themes are included in the `.js` file, all **CSS Variables** need to be set after the bundle has been imported, as follows: 
+|
+| ```html
+| <!DOCTYPE html>
+| <html lang="en">
+|     <head>
+|         <title>AG Grid</title>
+|         <meta charset="UTF-8" />
+|         <meta name="viewport" content="width=device-width, initial-scale=1" />
+|     </head>
+|     <body>
+|     <div id="myGrid" class="ag-theme-alpine"></div>
+|     <script src="//https://unpkg.com/browse/ag-grid-community@@AG_GRID_VERSION@/dist/ag-grid-community.min.js"></script>
+|     <!-- Style added after AG Grid bundle -->
+|     <style>
+|         .ag-theme-alpine {
+|             --ag-foreground-color: deeppink;
+|             --ag-header-column-separator-color: orange;
+|          }
+|     </style>
+|     <script src="main.js"></script>
+|     </body>
+| </html>
+|```
 
 ## Dark themes
 

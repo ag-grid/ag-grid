@@ -27,12 +27,22 @@ export type RenderContext = {
     };
 };
 
+const zIndexChangedCallback = (o: any) => {
+    if (o.parent) {
+        o.parent.dirtyZIndex = true;
+    }
+    o.zIndexChanged();
+};
+
 /**
  * Abstract scene graph node.
  * Each node can have zero or one parent and belong to zero or one scene.
  */
 export abstract class Node extends ChangeDetectable {
-    // Don't confuse with `window.Node`.
+    static _nextSerialNumber = 0;
+
+    /** Unique number to allow creation order to be easily determined. */
+    readonly serialNumber = Node._nextSerialNumber++;
 
     /**
      * Unique node ID in the form `ClassName-NaturalNumber`.
@@ -148,6 +158,7 @@ export abstract class Node extends ChangeDetectable {
             node._setScene(this.scene);
         }
 
+        this.dirtyZIndex = true;
         this.markDirty(this, RedrawType.MAJOR);
     }
 
@@ -166,6 +177,8 @@ export abstract class Node extends ChangeDetectable {
                 delete this.childSet[node.id];
                 node._parent = undefined;
                 node._setScene();
+
+                this.dirtyZIndex = true;
                 this.markDirty(node, RedrawType.MAJOR);
 
                 return node;
@@ -201,6 +214,7 @@ export abstract class Node extends ChangeDetectable {
                 throw new Error(`${nextNode} has ${parent} as the parent, ` + `but is not in its list of children.`);
             }
 
+            this.dirtyZIndex = true;
             this.markDirty(node, RedrawType.MAJOR);
         } else {
             this.append(node);
@@ -531,14 +545,16 @@ export abstract class Node extends ChangeDetectable {
 
     @SceneChangeDetection({
         redraw: RedrawType.TRIVIAL,
-        changeCb: (o) => {
-            if (o.parent) {
-                o.parent.dirtyZIndex = true;
-            }
-            o.zIndexChanged();
-        },
+        changeCb: zIndexChangedCallback,
     })
     zIndex: number = 0;
+
+    @SceneChangeDetection({
+        redraw: RedrawType.TRIVIAL,
+        changeCb: zIndexChangedCallback,
+    })
+    /** Discriminators for render order within a zIndex. */
+    zIndexSubOrder?: [string, number] = undefined;
 
     pointerEvents: PointerEvents = PointerEvents.All;
 

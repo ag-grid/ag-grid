@@ -644,6 +644,10 @@
       "strokeWidth?": "/** The width in pixels of the stroke for markers in the legend. */"
     }
   },
+  "AgChartLegendLabelFormatterParams": {
+    "meta": {},
+    "type": { "id": "string", "itemId": "any", "value": "string" }
+  },
   "AgChartLegendLabelOptions": {
     "meta": {},
     "type": {
@@ -653,7 +657,7 @@
       "fontWeight?": "FontWeight",
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
-      "formatter?": "(id: string, itemId: any, value: string) => string"
+      "formatter?": "(params: AgChartLegendLabelFormatterParams) => string"
     },
     "docs": {
       "maxLength?": "/** If the label text exceeds the maximum length, it will be truncated and an ellipsis will be appended to indicate this. */",
@@ -684,9 +688,10 @@
   },
   "AgChartLegendClickEvent": {
     "meta": {},
-    "type": { "itemId": "string", "enabled": "boolean" },
+    "type": { "seriesId": "string", "itemId": "string", "enabled": "boolean" },
     "docs": {
-      "itemId": "/** Legend item id - based on series id. */",
+      "seriesId": "/** Series id */",
+      "itemId": "/** Legend item id - usually yKey value for cartesian series. */",
       "enabled": "/** Whether the legend item is currently enabled or not. */"
     }
   },
@@ -704,6 +709,7 @@
       "position?": "AgChartLegendPosition",
       "spacing?": "PixelSize",
       "item?": "AgChartLegendItemOptions",
+      "reverseOrder?": "boolean",
       "listeners?": "AgChartLegendListeners"
     },
     "docs": {
@@ -711,6 +717,7 @@
       "position?": "/** Where the legend should show in relation to the chart. */",
       "spacing?": "/** The spacing in pixels to use outside the legend. */",
       "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "reverseOrder?": "/** Reverse the display order of legend items if `true`. */",
       "listeners?": "/** Optional callbacks for specific legend-related events. */"
     }
   },
@@ -1126,11 +1133,13 @@
     "meta": {},
     "type": {
       "fill?": "CssColor",
+      "fillOpacity?": "Opacity",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize"
     },
     "docs": {
       "fill?": "/** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */",
+      "fillOpacity?": "/** The opacity of the fill for the highlighted item. */",
       "stroke?": "/** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */",
       "strokeWidth?": "/** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */"
     }
@@ -1165,22 +1174,22 @@
     }
   },
   "AgBaseSeriesListeners": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "nodeClick": "(params: { type: 'nodeClick'; series: any; datum: any; xKey: string; yKey: string; }) => any"
+      "nodeClick": "(params: { type: 'nodeClick'; series: any; datum: DatumType; xKey: string; yKey: string; }) => any"
     },
     "docs": {
       "nodeClick": "/** The listener to call when a node (marker, column, bar, tile or a pie slice) in the series is clicked. */"
     }
   },
   "AgBaseSeriesOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType", "ListenerDatumType = DatumType"] },
     "type": {
-      "data?": "any[]",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -1272,9 +1281,9 @@
     }
   },
   "AgSeriesMarkerFormatterParams": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "datum": "any",
+      "datum": "DatumType",
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth": "PixelSize",
@@ -1283,11 +1292,11 @@
     }
   },
   "AgCartesianSeriesMarkerFormatterParams": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "xKey": "string",
       "yKey": "string",
-      "datum": "any",
+      "datum": "DatumType",
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth": "PixelSize",
@@ -1305,13 +1314,13 @@
     }
   },
   "AgCartesianSeriesMarkerFormatter": {
-    "meta": { "isTypeAlias": true },
-    "type": "(params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat | undefined"
+    "meta": { "isTypeAlias": true, "typeParams": ["DatumType"] },
+    "type": "(params: AgCartesianSeriesMarkerFormatterParams<DatumType>) => AgCartesianSeriesMarkerFormat | undefined"
   },
   "AgCartesianSeriesMarker": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "formatter?": "AgCartesianSeriesMarkerFormatter",
+      "formatter?": "AgCartesianSeriesMarkerFormatter<DatumType>",
       "enabled?": "boolean",
       "shape?": "MarkerShape",
       "size?": "PixelSize",
@@ -1336,9 +1345,9 @@
     }
   },
   "AgAreaSeriesMarker": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "formatter?": "AgCartesianSeriesMarkerFormatter",
+      "formatter?": "AgCartesianSeriesMarkerFormatter<DatumType>",
       "enabled?": "boolean",
       "shape?": "MarkerShape",
       "size?": "PixelSize",
@@ -1370,9 +1379,9 @@
     }
   },
   "AgLineSeriesLabelOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "formatter?": "(params: { value: any; }) => string",
+      "formatter?": "(params: { value: DatumType; }) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -1403,10 +1412,13 @@
     }
   },
   "AgLineSeriesOptions": {
-    "meta": { "doc": "/** Configuration for line series. */" },
+    "meta": {
+      "typeParams": ["DatumType = any"],
+      "doc": "/** Configuration for line series. */"
+    },
     "type": {
       "type?": "'line'",
-      "marker?": "AgCartesianSeriesMarker",
+      "marker?": "AgCartesianSeriesMarker<DatumType>",
       "xKey?": "string",
       "yKey?": "string",
       "xName?": "string",
@@ -1417,13 +1429,13 @@
       "strokeOpacity?": "Opacity",
       "lineDash?": "PixelSize[]",
       "lineDashOffset?": "PixelSize",
-      "label?": "AgLineSeriesLabelOptions",
+      "label?": "AgLineSeriesLabelOptions<DatumType>",
       "tooltip?": "AgLineSeriesTooltip",
-      "data?": "any[]",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -1478,10 +1490,10 @@
     }
   },
   "AgScatterSeriesMarker": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "domain?": "[number, number]",
-      "formatter?": "AgCartesianSeriesMarkerFormatter",
+      "formatter?": "AgCartesianSeriesMarkerFormatter<DatumType>",
       "enabled?": "boolean",
       "shape?": "MarkerShape",
       "size?": "PixelSize",
@@ -1507,10 +1519,13 @@
     }
   },
   "AgScatterSeriesOptions": {
-    "meta": { "doc": "/** Configuration for scatter/bubble series. */" },
+    "meta": {
+      "typeParams": ["DatumType = any"],
+      "doc": "/** Configuration for scatter/bubble series. */"
+    },
     "type": {
       "type?": "'scatter'",
-      "marker?": "AgScatterSeriesMarker",
+      "marker?": "AgScatterSeriesMarker<DatumType>",
       "label?": "AgScatterSeriesLabelOptions",
       "xKey?": "string",
       "yKey?": "string",
@@ -1527,11 +1542,11 @@
       "fillOpacity?": "Opacity",
       "strokeOpacity?": "Opacity",
       "tooltip?": "AgScatterSeriesTooltip",
-      "data?": "any[]",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -1573,9 +1588,9 @@
     }
   },
   "AgAreaSeriesLabelOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "formatter?": "(params: { value: any; }) => string",
+      "formatter?": "(params: { value: DatumType; }) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -1594,10 +1609,13 @@
     }
   },
   "AgAreaSeriesOptions": {
-    "meta": { "doc": "/** Configuration for area series. */" },
+    "meta": {
+      "typeParams": ["DatumType = any"],
+      "doc": "/** Configuration for area series. */"
+    },
     "type": {
       "type?": "'area'",
-      "marker?": "AgAreaSeriesMarker",
+      "marker?": "AgAreaSeriesMarker<DatumType>",
       "normalizedTo?": "number",
       "xKey?": "string",
       "yKeys?": "string[]",
@@ -1615,14 +1633,14 @@
       "lineDash?": "PixelSize[]",
       "lineDashOffset?": "PixelSize",
       "shadow?": "AgDropShadowOptions",
-      "label?": "AgAreaSeriesLabelOptions",
+      "label?": "AgAreaSeriesLabelOptions<DatumType>",
       "tooltip?": "AgAreaSeriesTooltip",
       "stacked?": "boolean",
-      "data?": "any[]",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -1677,9 +1695,9 @@
     }
   },
   "AgBarSeriesFormatterParams": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "datum": "any",
+      "datum": "DatumType",
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth": "PixelSize",
@@ -1708,7 +1726,10 @@
     }
   },
   "AgBarSeriesOptions": {
-    "meta": { "doc": "/** Configuration for bar/column series. */" },
+    "meta": {
+      "typeParams": ["DatumType = any"],
+      "doc": "/** Configuration for bar/column series. */"
+    },
     "type": {
       "type?": "'bar' | 'column'",
       "grouped?": "boolean",
@@ -1733,12 +1754,12 @@
       "shadow?": "AgDropShadowOptions",
       "label?": "AgBarSeriesLabelOptions",
       "tooltip?": "AgBarSeriesTooltip",
-      "formatter?": "(params: AgBarSeriesFormatterParams) => AgBarSeriesFormat",
-      "data?": "any[]",
+      "formatter?": "(params: AgBarSeriesFormatterParams<DatumType>) => AgBarSeriesFormat",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -1772,9 +1793,9 @@
     }
   },
   "AgHistogramSeriesLabelOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "formatter?": "(params: { value: number; }) => string",
+      "formatter?": "(params: { value: DatumType; }) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -1803,8 +1824,20 @@
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
+  "AgHistogramBinDatum": {
+    "meta": { "typeParams": ["DatumType"] },
+    "type": {
+      "data": "DatumType[]",
+      "aggregatedValue": "number",
+      "frequency": "number",
+      "domain": "[number, number]"
+    }
+  },
   "AgHistogramSeriesOptions": {
-    "meta": { "doc": "/** Configuration for histogram series. */" },
+    "meta": {
+      "typeParams": ["DatumType = any"],
+      "doc": "/** Configuration for histogram series. */"
+    },
     "type": {
       "type?": "'histogram'",
       "fill?": "CssColor",
@@ -1823,13 +1856,13 @@
       "binCount?": "number",
       "aggregation?": "'count' | 'sum' | 'mean'",
       "shadow?": "AgDropShadowOptions",
-      "label?": "AgHistogramSeriesLabelOptions",
+      "label?": "AgHistogramSeriesLabelOptions<DatumType>",
       "tooltip?": "AgHistogramSeriesTooltip",
-      "data?": "any[]",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -1883,9 +1916,9 @@
     }
   },
   "AgPieSeriesFormatterParams": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "datum": "any",
+      "datum": "DatumType",
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth": "PixelSize",
@@ -1949,7 +1982,10 @@
     }
   },
   "AgPieSeriesOptions": {
-    "meta": { "doc": "/** Configuration for pie/doughnut series. */" },
+    "meta": {
+      "typeParams": ["DatumType = any"],
+      "doc": "/** Configuration for pie/doughnut series. */"
+    },
     "type": {
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
@@ -1975,12 +2011,12 @@
       "radiusMax?": "number",
       "shadow?": "AgDropShadowOptions",
       "tooltip?": "AgPieSeriesTooltip",
-      "formatter?": "(params: AgPieSeriesFormatterParams) => AgPieSeriesFormat",
-      "data?": "any[]",
+      "formatter?": "(params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -2053,11 +2089,11 @@
     }
   },
   "AgTreemapNodeDatum": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "datum": "any",
-      "parent?": "AgTreemapNodeDatum",
-      "children?": "AgTreemapNodeDatum[]",
+      "datum": "DatumType",
+      "parent?": "AgTreemapNodeDatum<DatumType>",
+      "children?": "AgTreemapNodeDatum<DatumType>[]",
       "depth": "number",
       "colorValue": "number",
       "fill": "CssColor",
@@ -2066,9 +2102,9 @@
     }
   },
   "AgTreemapSeriesTooltipRendererParams": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "datum": "AgTreemapNodeDatum",
+      "datum": "AgTreemapNodeDatum<DatumType>",
       "sizeKey": "string",
       "labelKey": "string",
       "valueKey": "string",
@@ -2076,9 +2112,9 @@
     }
   },
   "AgTreemapSeriesTooltip": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "renderer?": "(params: AgTreemapSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "renderer?": "(params: AgTreemapSeriesTooltipRendererParams<DatumType>) => string | AgTooltipRendererResult",
       "enabled?": "boolean"
     },
     "docs": {
@@ -2102,7 +2138,10 @@
     }
   },
   "AgTreemapSeriesOptions": {
-    "meta": { "doc": "/** Configuration for the treemap series. */" },
+    "meta": {
+      "typeParams": ["DatumType = any"],
+      "doc": "/** Configuration for the treemap series. */"
+    },
     "type": {
       "type?": "'treemap'",
       "title?": "AgTreemapSeriesLabelOptions",
@@ -2114,14 +2153,14 @@
       "colorDomain?": "number[]",
       "colorRange?": "string[]",
       "colorParents?": "boolean",
-      "tooltip?": "AgTreemapSeriesTooltip",
+      "tooltip?": "AgTreemapSeriesTooltip<DatumType>",
       "nodePadding?": "PixelSize",
       "gradient?": "boolean",
-      "data?": "any[]",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -2365,7 +2404,6 @@
     "meta": { "isTypeAlias": true },
     "type": "'top' | 'left' | 'right' | 'bottom' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'inside' | 'insideLeft' | 'insideRight' | 'insideTop' | 'insideBottom' | 'insideTopLeft' | 'insideBottomLeft' | 'insideTopRight' | 'insideBottomRight'"
   },
-  "Point": { "meta": {}, "type": { "x": "number", "y": "number" } },
   "CoordinatesFnOpts": {
     "meta": { "isTypeAlias": true },
     "type": "{ yDirection: boolean; xStart: number; xEnd: number; yStart: number; yEnd: number; }"
@@ -2389,6 +2427,20 @@
   "GroupedCategoryChartAxis": {
     "meta": { "isTypeAlias": true },
     "type": "GroupedCategoryAxis | ChartAxis"
+  },
+  "Layers": {
+    "meta": { "isEnum": true },
+    "type": [
+      "AXIS_GRIDLINES_ZINDEX = 0",
+      "SERIES_CROSSLINE_RANGE_ZINDEX = 10",
+      "AXIS_ZINDEX = 20",
+      "SERIES_LAYER_ZINDEX = 500",
+      "SERIES_MARKER_LAYER_ZINDEX = 1000",
+      "SERIES_HIGHLIGHT_LAYER_ZINDEX = 2000",
+      "SERIES_CROSSLINE_LINE_ZINDEX = 2500",
+      "LEGEND_ZINDEX = 3000"
+    ],
+    "docs": [null, null, null, null, null, null, null, null]
   },
   "LegendDatum": {
     "meta": {},
@@ -2501,7 +2553,6 @@
     "meta": {},
     "type": {
       "index": "number",
-      "point": "{ readonly x: number; readonly y: number; }",
       "fill?": "string",
       "stroke?": "string",
       "yKey": "string",
@@ -2509,7 +2560,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>"
     }
   },
   "LabelSelectionDatum": {
@@ -2517,13 +2568,9 @@
     "type": {
       "index": "number",
       "itemId": "any",
-      "point": "{ readonly x: number; readonly y: number; }",
+      "point": "Readonly<Point>",
       "label?": "{ readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }"
     }
-  },
-  "Coordinate": {
-    "meta": { "isTypeAlias": true },
-    "type": "{ x: number; y: number; }"
   },
   "CumulativeValue": {
     "meta": { "isTypeAlias": true },
@@ -2574,19 +2621,19 @@
       "index": "number",
       "yKey": "string",
       "yValue": "number",
-      "x": "number",
-      "y": "number",
       "width": "number",
       "height": "number",
       "fill?": "string",
       "stroke?": "string",
       "colorIndex": "number",
       "strokeWidth": "number",
-      "label?": "{ readonly x: number; readonly y: number; readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }",
+      "label?": "Readonly<Point> & { readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>",
+      "x": "number",
+      "y": "number"
     }
   },
   "BarSeriesNodeTag": {
@@ -2646,6 +2693,7 @@
       "paths": "Path[]",
       "group": "Group",
       "pickGroup": "Group",
+      "labelGroup": "Group",
       "markerGroup?": "Group",
       "datumSelection": "NodeDataSelection<SceneNodeType, C>",
       "labelSelection": "LabelDataSelection<Text, C>",
@@ -2662,6 +2710,7 @@
     "type": {
       "pickGroupIncludes": "PickGroupInclude[]",
       "pathsPerSeries": "number",
+      "pathsZIndexSubOrderOffset": "number[]",
       "features": "SeriesFeature[]"
     }
   },
@@ -2706,7 +2755,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>"
     }
   },
   "HistogramSeriesNodeClickEvent": {
@@ -2730,12 +2779,12 @@
   "LineNodeDatum": {
     "meta": {},
     "type": {
-      "point": "{ readonly moveTo: boolean; readonly x: number; readonly y: number; }",
+      "point": "SeriesNodeDatum['point'] & { readonly moveTo: boolean; }",
       "label?": "{ readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>"
     }
   },
   "LineSeriesNodeClickEvent": {
@@ -2760,13 +2809,11 @@
   "ScatterNodeDatum": {
     "meta": {},
     "type": {
-      "point": "{ readonly x: number; readonly y: number; }",
-      "size": "number",
       "label": "MeasuredLabel",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>"
     }
   },
   "ScatterSeriesNodeClickEvent": {
@@ -2817,7 +2864,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>"
     }
   },
   "TreemapTooltipRendererParams": {
@@ -2874,7 +2921,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>"
     }
   },
   "PieTooltipRendererParams": {
@@ -2935,7 +2982,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>"
     }
   },
   "SeriesNodePickMode": {
@@ -3023,6 +3070,14 @@
       "extraScreenshotActions?": "(chart: Chart) => Promise<void>"
     }
   },
+  "PolarTestCase": {
+    "meta": {},
+    "type": {
+      "options": "AgPolarChartOptions",
+      "assertions": "(chart: Chart) => Promise<void>",
+      "extraScreenshotActions?": "(chart: Chart) => Promise<void>"
+    }
+  },
   "ChartThemeDefaults": {
     "meta": { "isTypeAlias": true },
     "type": "{ cartesian: AgCartesianThemeOptions; groupedCategory: AgCartesianThemeOptions; polar: AgPolarThemeOptions; hierarchy: AgHierarchyThemeOptions; } & { [key in keyof AgCartesianSeriesTheme]?: AgCartesianThemeOptions; } & { [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions; } & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions; }"
@@ -3106,6 +3161,11 @@
     "meta": { "isTypeAlias": true },
     "type": "{ ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D; forceRender: boolean; resized: boolean; clipBBox?: BBox; stats?: { nodesRendered: number; nodesSkipped: number; layersRendered: number; layersSkipped: number; }; }"
   },
+  "Point": { "meta": {}, "type": { "x": "number", "y": "number" } },
+  "SizedPoint": {
+    "meta": {},
+    "type": { "size": "number", "x": "number", "y": "number" }
+  },
   "DebugOptions": {
     "meta": {},
     "type": {
@@ -3128,6 +3188,7 @@
       "id": "number",
       "name?": "string",
       "zIndex": "number",
+      "zIndexSubOrder?": "[string, number]",
       "canvas": "HdpiOffscreenCanvas | HdpiCanvas"
     }
   },
@@ -3151,11 +3212,11 @@
   },
   "ShapeLineCap": {
     "meta": { "isTypeAlias": true },
-    "type": "undefined | 'round' | 'square'"
+    "type": "'butt' | 'round' | 'square'"
   },
   "ShapeLineJoin": {
     "meta": { "isTypeAlias": true },
-    "type": "undefined | 'round' | 'bevel'"
+    "type": "'round' | 'bevel' | 'miter'"
   },
   "Comparator": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
@@ -3193,29 +3254,25 @@
     "meta": { "typeParams": ["PLD = PointLabelDatum"] },
     "type": {
       "index": "number",
-      "x": "number",
-      "y": "number",
       "datum": "PLD",
       "text": "string",
       "width": "number",
-      "height": "number"
+      "height": "number",
+      "x": "number",
+      "y": "number"
     }
   },
   "PointLabelDatum": {
     "meta": {},
-    "type": {
-      "point": "{ readonly x: number; readonly y: number; }",
-      "size": "number",
-      "label": "MeasuredLabel"
-    }
+    "type": { "point": "Readonly<SizedPoint>", "label": "MeasuredLabel" }
   },
   "Bounds": {
     "meta": {},
     "type": {
-      "x": "number",
-      "y": "number",
       "width": "number",
-      "height": "number"
+      "height": "number",
+      "x": "number",
+      "y": "number"
     }
   },
   "FormatType": {

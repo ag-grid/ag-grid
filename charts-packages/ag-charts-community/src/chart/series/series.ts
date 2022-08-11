@@ -8,6 +8,9 @@ import { Label } from '../label';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
 import { Deprecated } from '../../util/validation';
+import { PointLabelDatum } from '../../util/labelPlacement';
+import { Layers } from '../layers';
+import { SizedPoint, Point } from '../../scene/point';
 
 /**
  * Processed series datum used in node selections,
@@ -22,11 +25,7 @@ export interface SeriesNodeDatum {
     readonly series: Series<any>;
     readonly itemId?: any;
     readonly datum: any;
-    readonly point?: {
-        // in local (series) coordinates
-        readonly x: number;
-        readonly y: number;
-    };
+    readonly point?: Readonly<SizedPoint>;
 }
 
 /** Modes of matching user interactions to rendered nodes (e.g. hover or click) */
@@ -74,6 +73,7 @@ export interface PolarTooltipRendererParams extends TooltipRendererParams {
 
 export class SeriesItemHighlightStyle {
     fill?: string = 'yellow';
+    fillOpacity?: number = undefined;
     stroke?: string = undefined;
     strokeWidth?: number = undefined;
 }
@@ -115,10 +115,7 @@ export type SeriesNodeDataContext<S = SeriesNodeDatum, L = S> = {
 };
 
 export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataContext> extends Observable {
-    static readonly SERIES_LAYER_ZINDEX = 100;
     protected static readonly highlightedZIndex = 1000000000000;
-    protected static readonly SERIES_MARKER_LAYER_ZINDEX = 110;
-    protected static readonly SERIES_HIGHLIGHT_LAYER_ZINDEX = 150;
 
     readonly id = createId(this);
 
@@ -136,6 +133,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     // for large-scale data-sets, where the only thing that routinely varies is the currently
     // highlighted node.
     readonly highlightGroup: Group;
+    readonly highlightNode: Group;
+    readonly highlightLabel: Group;
 
     // The group node that contains all the nodes that can be "picked" (react to hover, tap, click).
     readonly pickGroup: Group;
@@ -186,18 +185,24 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             new Group({
                 name: `${this.id}-series`,
                 layer: seriesGroupUsesLayer,
-                zIndex: Series.SERIES_LAYER_ZINDEX,
+                zIndex: Layers.SERIES_LAYER_ZINDEX,
             })
         );
         this.pickGroup = this.seriesGroup.appendChild(new Group());
+
         this.highlightGroup = group.appendChild(
             new Group({
                 name: `${this.id}-highlight`,
                 layer: true,
-                zIndex: Series.SERIES_HIGHLIGHT_LAYER_ZINDEX,
+                zIndex: Layers.SERIES_HIGHLIGHT_LAYER_ZINDEX,
                 optimiseDirtyTracking: true,
             })
         );
+        this.highlightNode = this.highlightGroup.appendChild(new Group());
+        this.highlightLabel = this.highlightGroup.appendChild(new Group());
+        this.highlightNode.zIndex = 0;
+        this.highlightLabel.zIndex = 10;
+
         this.pickModes = pickModes;
     }
 
@@ -270,6 +275,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             case 'no-highlight':
             case 'highlighted':
                 return defaultOpacity;
+            case 'peer-highlighted':
             case 'other-highlighted':
                 return dimOpacity;
         }
@@ -292,23 +298,27 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 return strokeWidth;
             case 'no-highlight':
             case 'other-highlighted':
+            case 'peer-highlighted':
                 return defaultStrokeWidth;
         }
     }
 
     protected getZIndex(datum?: { itemId?: any }): number {
-        const defaultZIndex = Series.SERIES_LAYER_ZINDEX;
+        const defaultZIndex = Layers.SERIES_LAYER_ZINDEX;
 
         switch (this.isItemIdHighlighted(datum)) {
             case 'highlighted':
-                return Series.SERIES_HIGHLIGHT_LAYER_ZINDEX - 2;
+            case 'peer-highlighted':
+                return Layers.SERIES_HIGHLIGHT_LAYER_ZINDEX - 2;
             case 'no-highlight':
             case 'other-highlighted':
                 return defaultZIndex;
         }
     }
 
-    protected isItemIdHighlighted(datum?: { itemId?: any }): 'highlighted' | 'other-highlighted' | 'no-highlight' {
+    protected isItemIdHighlighted(datum?: {
+        itemId?: any;
+    }): 'highlighted' | 'other-highlighted' | 'peer-highlighted' | 'no-highlight' {
         const {
             chart: {
                 highlightedDatum: { series = undefined, itemId = undefined } = {},
@@ -334,8 +344,9 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         }
 
         if (datum && highlightedDatum !== datum && itemId !== datum.itemId) {
-            // Highlighting active, this series item not highlighted.
-            return 'other-highlighted';
+            // A peer (in same Series instance) sub-series has highlight active, but this sub-series
+            // does not.
+            return 'peer-highlighted';
         }
 
         return 'highlighted';
@@ -344,8 +355,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     abstract getTooltipHtml(seriesDatum: any): string;
 
     pickNode(
-        x: number,
-        y: number,
+        point: Point,
         limitPickModes?: SeriesNodePickMode[]
     ): { pickMode: SeriesNodePickMode; match: SeriesNodeDatum; distance: number } | undefined {
         const { pickModes, visible, group } = this;
@@ -355,7 +365,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         }
 
         for (const pickMode of pickModes) {
-            if (limitPickModes && limitPickModes.includes(pickMode)) {
+            if (limitPickModes && !limitPickModes.includes(pickMode)) {
                 continue;
             }
 
@@ -363,20 +373,19 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
             switch (pickMode) {
                 case SeriesNodePickMode.EXACT_SHAPE_MATCH:
-                    match = this.pickNodeExactShape(x, y);
+                    match = this.pickNodeExactShape(point);
                     break;
 
                 case SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST:
                 case SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST:
                     match = this.pickNodeMainAxisFirst(
-                        x,
-                        y,
+                        point,
                         pickMode === SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST
                     );
                     break;
 
                 case SeriesNodePickMode.NEAREST_NODE:
-                    match = this.pickNodeClosestDatum(x, y);
+                    match = this.pickNodeClosestDatum(point);
                     break;
             }
 
@@ -386,8 +395,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         }
     }
 
-    protected pickNodeExactShape(x: number, y: number): SeriesNodePickMatch | undefined {
-        const match = this.pickGroup.pickNode(x, y);
+    protected pickNodeExactShape(point: Point): SeriesNodePickMatch | undefined {
+        const match = this.pickGroup.pickNode(point.x, point.y);
 
         if (match) {
             return {
@@ -397,21 +406,19 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         }
     }
 
-    protected pickNodeClosestDatum(_x: number, _y: number): SeriesNodePickMatch | undefined {
+    protected pickNodeClosestDatum(_point: Point): SeriesNodePickMatch | undefined {
         // Override point for sub-classes - but if this is invoked, the sub-class specified it wants
         // to use this feature.
         throw new Error('AG Charts - Series.pickNodeClosestDatum() not implemented');
     }
 
-    protected pickNodeMainAxisFirst(
-        _x: number,
-        _y: number,
-        _requireCategoryAxis: boolean
-    ): SeriesNodePickMatch | undefined {
+    protected pickNodeMainAxisFirst(_point: Point, _requireCategoryAxis: boolean): SeriesNodePickMatch | undefined {
         // Override point for sub-classes - but if this is invoked, the sub-class specified it wants
         // to use this feature.
         throw new Error('AG Charts - Series.pickNodeMainAxisFirst() not implemented');
     }
+
+    abstract getLabelData(): PointLabelDatum[];
 
     fireNodeClickEvent(_event: MouseEvent, _datum: C['nodeData'][number]): void {
         // Override point for subclasses.

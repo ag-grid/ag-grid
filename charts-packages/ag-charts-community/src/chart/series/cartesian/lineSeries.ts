@@ -2,7 +2,13 @@ import { Path } from '../../../scene/shape/path';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Selection } from '../../../scene/selection';
 import { Group } from '../../../scene/group';
-import { SeriesNodeDatum, CartesianTooltipRendererParams, SeriesTooltip, SeriesNodeDataContext } from '../series';
+import {
+    SeriesNodeDatum,
+    CartesianTooltipRendererParams,
+    SeriesTooltip,
+    SeriesNodeDataContext,
+    SeriesNodePickMode,
+} from '../series';
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
 import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
@@ -19,10 +25,8 @@ import { checkDatum, isContinuous } from '../../../util/value';
 import { Marker } from '../../marker/marker';
 
 interface LineNodeDatum extends SeriesNodeDatum {
-    readonly point: {
+    readonly point: SeriesNodeDatum['point'] & {
         readonly moveTo: boolean;
-        readonly x: number;
-        readonly y: number;
     };
     readonly label?: {
         readonly text: string;
@@ -81,7 +85,15 @@ export class LineSeries extends CartesianSeries<LineContext> {
     tooltip: LineSeriesTooltip = new LineSeriesTooltip();
 
     constructor() {
-        super({ pickGroupIncludes: ['markers'], features: ['markers'] });
+        super({
+            pickGroupIncludes: ['markers'],
+            features: ['markers'],
+            pickModes: [
+                SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
+                SeriesNodePickMode.NEAREST_NODE,
+                SeriesNodePickMode.EXACT_SHAPE_MATCH,
+            ],
+        });
 
         const { marker, label } = this;
 
@@ -163,7 +175,12 @@ export class LineSeries extends CartesianSeries<LineContext> {
     }
 
     public createNodeData() {
-        const { data, xAxis, yAxis } = this;
+        const {
+            data,
+            xAxis,
+            yAxis,
+            marker: { enabled: markerEnabled, size: markerSize, strokeWidth },
+        } = this;
 
         if (!data || !xAxis || !yAxis) {
             return [];
@@ -175,6 +192,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
         const nodeData: LineNodeDatum[] = new Array(data.length);
+        const size = markerEnabled ? markerSize : 0;
 
         let moveTo = true;
         let prevXInRange: undefined | -1 | 0 | 1 = undefined;
@@ -194,7 +212,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     moveTo = true;
                     continue;
                 }
-                const tolerance = (xScale.bandwidth || this.marker.size * 0.5 + (this.marker.strokeWidth || 0)) + 1;
+                const tolerance = (xScale.bandwidth || markerSize * 0.5 + (strokeWidth || 0)) + 1;
 
                 nextXYDatums = yData[i + 1] === undefined ? undefined : [xData[i + 1], yData[i + 1]];
                 const xInRange = xAxis.inRangeEx(x, 0, tolerance);
@@ -230,7 +248,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 nodeData[actualLength++] = {
                     series: this,
                     datum: seriesDatum,
-                    point: { x, y, moveTo },
+                    point: { x, y, moveTo, size },
                     label: labelText
                         ? {
                               text: labelText,
@@ -320,6 +338,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const { markerSelection, isHighlight: isDatumHighlighted } = opts;
         const {
             marker,
+            marker: { fillOpacity: markerFillOpacity },
             xKey,
             yKey,
             stroke: lineStroke,
@@ -330,6 +349,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 strokeWidth: deprecatedStrokeWidth,
                 item: {
                     fill: highlightedFill = deprecatedFill,
+                    fillOpacity: highlightFillOpacity = markerFillOpacity,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
@@ -340,6 +360,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
         markerSelection.each((node, datum) => {
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill;
+            const fillOpacity = isDatumHighlighted ? highlightFillOpacity : markerFillOpacity;
             const stroke =
                 isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || lineStroke;
             const strokeWidth =
@@ -364,7 +385,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             node.fill = (format && format.fill) || fill;
             node.stroke = (format && format.stroke) || stroke;
             node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
-            node.fillOpacity = marker.fillOpacity ?? 1;
+            node.fillOpacity = fillOpacity ?? 1;
             node.strokeOpacity = marker.strokeOpacity ?? strokeOpacity ?? 1;
             node.size = format && format.size !== undefined ? format.size : size;
 
@@ -506,7 +527,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         if (data && data.length && xKey && yKey) {
             legendData.push({
                 id: id,
-                itemId: undefined,
+                itemId: yKey,
                 enabled: visible,
                 label: {
                     text: title || yName || yKey,

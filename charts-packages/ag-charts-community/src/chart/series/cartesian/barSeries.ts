@@ -24,6 +24,7 @@ import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { checkDatum, isNumber } from '../../../util/value';
 import { clamper, ContinuousScale } from '../../../scale/continuousScale';
+import { Point } from '../../../scene/point';
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
@@ -38,21 +39,17 @@ export interface BarTooltipRendererParams extends CartesianTooltipRendererParams
     readonly processedYValue: any;
 }
 
-interface BarNodeDatum extends SeriesNodeDatum {
+interface BarNodeDatum extends SeriesNodeDatum, Readonly<Point> {
     readonly index: number;
     readonly yKey: string;
     readonly yValue: number;
-    readonly x: number;
-    readonly y: number;
     readonly width: number;
     readonly height: number;
     readonly fill?: string;
     readonly stroke?: string;
     readonly colorIndex: number;
     readonly strokeWidth: number;
-    readonly label?: {
-        readonly x: number;
-        readonly y: number;
+    readonly label?: Readonly<Point> & {
         readonly text: string;
         readonly fontStyle?: FontStyle;
         readonly fontWeight?: FontWeight;
@@ -392,7 +389,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const yAbsTotal = this.yData.map((group) =>
             group.map((stack) =>
                 stack.reduce((acc, stack) => {
-                    acc += Math.abs(stack);
+                    acc += isNaN(stack) ? 0 : Math.abs(stack);
                     return acc;
                 }, 0)
             )
@@ -581,6 +578,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     if (!xAxis.inRange(barX, barWidth)) {
                         continue;
                     }
+                    if (isNaN(currY)) {
+                        continue;
+                    }
 
                     const prevY = currY < 0 ? prevMinY : prevMaxY;
                     const continuousY = yScale instanceof ContinuousScale;
@@ -694,7 +694,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const {
             fills,
             strokes,
-            fillOpacity,
+            fillOpacity: seriesFillOpacity,
             strokeOpacity,
             shadow,
             formatter,
@@ -706,19 +706,18 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 strokeWidth: deprecatedStrokeWidth,
                 item: {
                     fill: highlightedFill = deprecatedFill,
+                    fillOpacity: highlightFillOpacity = seriesFillOpacity,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
             },
         } = this;
 
-        const crisp = !datumSelection.data.some((d) => d.width <= 0.5 || d.height <= 0.5);
-        datumSelection.each((rect, datum) => {
-            rect.visible = !isDatumHighlighted || isDatumHighlighted;
-            if (!rect.visible) {
-                return;
-            }
+        const [visibleMin, visibleMax] = this.xAxis?.visibleRange ?? [];
+        const isZoomed = visibleMin !== 0 || visibleMax !== 1;
+        const crisp = !isZoomed && !datumSelection.data.some((d) => d.width <= 0.5 || d.height <= 0.5);
 
+        datumSelection.each((rect, datum) => {
             const { colorIndex } = datum;
             const fill =
                 isDatumHighlighted && highlightedFill !== undefined
@@ -732,6 +731,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                     ? highlightedDatumStrokeWidth
                     : this.getStrokeWidth(this.strokeWidth, datum);
+            const fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
 
             let format: BarSeriesFormat | undefined = undefined;
             if (formatter) {
@@ -903,31 +903,43 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             strokes,
             fillOpacity,
             strokeOpacity,
+            flipXY,
         } = this;
 
-        if (data && data.length && xKey && yKeys.length) {
-            this.yKeys.forEach((stack, stackIndex) => {
-                stack.forEach((yKey, levelIndex) => {
-                    if (hideInLegend.indexOf(yKey) < 0) {
-                        const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
-                        legendData.push({
-                            id,
-                            itemId: yKey,
-                            enabled: seriesItemEnabled.get(yKey) || false,
-                            label: {
-                                text: yNames[yKey] || yKey,
-                            },
-                            marker: {
-                                fill: fills[colorIndex % fills.length],
-                                stroke: strokes[colorIndex % strokes.length],
-                                fillOpacity: fillOpacity,
-                                strokeOpacity: strokeOpacity,
-                            },
-                        });
-                    }
-                });
-            });
+        if (!data || !data.length || !xKey || !yKeys.length) {
+            return;
         }
+
+        this.yKeys.forEach((stack, stackIndex) => {
+            // Column stacks should be listed in the legend in reverse order, for symmetry with the
+            // vertical stack display order. Bar stacks are already consistent left-to-right with
+            // the legend.
+            const startLevel = flipXY ? 0 : stack.length - 1;
+            const endLevel = flipXY ? stack.length : -1;
+            const direction = flipXY ? 1 : -1;
+
+            for (let levelIndex = startLevel; levelIndex !== endLevel; levelIndex += direction) {
+                const yKey = stack[levelIndex];
+                if (hideInLegend.indexOf(yKey) >= 0) {
+                    return;
+                }
+                const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                legendData.push({
+                    id,
+                    itemId: yKey,
+                    enabled: seriesItemEnabled.get(yKey) || false,
+                    label: {
+                        text: yNames[yKey] || yKey,
+                    },
+                    marker: {
+                        fill: fills[colorIndex % fills.length],
+                        stroke: strokes[colorIndex % strokes.length],
+                        fillOpacity: fillOpacity,
+                        strokeOpacity: strokeOpacity,
+                    },
+                });
+            }
+        });
     }
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {

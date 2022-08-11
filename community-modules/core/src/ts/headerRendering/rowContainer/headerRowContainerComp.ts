@@ -1,3 +1,4 @@
+import { ColumnPinnedType } from '../../entities/column';
 import { Constants } from '../../constants/constants';
 import { PostConstruct, PreDestroy } from '../../context/context';
 import { ensureDomOrder } from '../../utils/dom';
@@ -23,12 +24,12 @@ export class HeaderRowContainerComp extends Component {
 
     private eRowContainer: HTMLElement;
 
-    private pinned: string | null;
+    private pinned: ColumnPinnedType;
 
     private headerRowComps: {[ctrlId: string]: HeaderRowComp} = {};
     private rowCompsList: HeaderRowComp[] = [];
 
-    constructor(pinned: string | null) {
+    constructor(pinned: ColumnPinnedType) {
         super();
         this.pinned = pinned;
     }

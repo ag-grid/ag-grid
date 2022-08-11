@@ -14,7 +14,7 @@
       "aggFunc?": "string | IAggFunc | null",
       "pivot?": "boolean | null",
       "pivotIndex?": "number | null",
-      "pinned?": "boolean | 'left' | 'right' | null",
+      "pinned?": "ColumnPinnedType",
       "rowGroup?": "boolean | null",
       "rowGroupIndex?": "number | null"
     },
@@ -44,7 +44,7 @@
       "aggFunc?": "string | IAggFunc | null",
       "pivot?": "boolean | null",
       "pivotIndex?": "number | null",
-      "pinned?": "boolean | 'left' | 'right' | null",
+      "pinned?": "ColumnPinnedType",
       "rowGroup?": "boolean | null",
       "rowGroupIndex?": "number | null"
     },
@@ -312,12 +312,12 @@
     "type": {
       "column": "Column",
       "rowIndex": "number",
-      "rowPinned": "string | null"
+      "rowPinned": "RowPinnedType"
     },
     "docs": {
       "column": "/** The grid column */",
       "rowIndex": "/** A positive number from 0 to n, where n is the last row the grid is rendering\n * or -1 if you want to navigate to the grid header */",
-      "rowPinned": "/** Either 'top', 'bottom' or null (for not pinned) */"
+      "rowPinned": "/** Either 'top', 'bottom' or null/undefined (for not pinned) */"
     }
   },
   "AbstractColDef": {
@@ -628,8 +628,8 @@
       "equals?": "/** Custom comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed.\n * By default the grid uses `===` is used which should work for most use cases. */",
       "tooltipField?": "/** The field of the tooltip to apply to the cell. */",
       "tooltipValueGetter?": "/** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.\n * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component. */",
-      "checkboxSelection?": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
-      "showDisabledCheckboxes?": "/** `boolean`. Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
+      "checkboxSelection?": "/** Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
+      "showDisabledCheckboxes?": "/** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
       "icons?": "/** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults. */",
       "suppressNavigable?": "/** Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.\n * Can also be a callback function to have different rows navigable.\n * Default: `false` */",
       "suppressKeyboardEvent?": "/** Allows the user to suppress certain keyboard events in the grid cell. Default: `false` */",
@@ -1477,6 +1477,10 @@
       "popupPosition?": "/** Equivalent of setting `colDef.cellEditorPopupPosition` */"
     }
   },
+  "ColumnPinnedType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'left' | 'right' | boolean | null | undefined"
+  },
   "GridOptions": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
@@ -1659,9 +1663,9 @@
       "groupUseEntireRow?": "boolean",
       "groupSuppressAutoColumn?": "boolean",
       "rememberGroupStateWhenNewData?": "boolean",
-      "pinnedTopRowData?": "TData[]",
-      "pinnedBottomRowData?": "TData[]",
-      "rowModelType?": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
+      "pinnedTopRowData?": "any[]",
+      "pinnedBottomRowData?": "any[]",
+      "rowModelType?": "RowModelType",
       "rowData?": "TData[] | null",
       "immutableData?": "boolean",
       "asyncTransactionWaitMillis?": "number",
@@ -1922,7 +1926,7 @@
       "singleClickEdit?": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */",
       "suppressClickEdit?": "/** Set to `true` so that neither single nor double click starts editing. Default: `false` */",
       "readOnlyEdit?": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
-      "stopEditingWhenCellsLoseFocus?": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.\n * Default: `false` */",
+      "stopEditingWhenCellsLoseFocus?": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell.\n * Default: `false` */",
       "enterMovesDown?": "/** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.\n * i.e. pressing the `Enter` key will move down to the cell beneath.\n * Default: `false` */",
       "enterMovesDownAfterEdit?": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath.\n * Default: `false` */",
       "undoRedoCellEditing?": "/** Set to `true` to enable Undo / Redo while editing. */",
@@ -2187,7 +2191,7 @@
       "onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>)": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "onComponentStateChanged?(event: ComponentStateChangedEvent<TData>)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
-      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
+      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or \n *   if cell value has changed as a result of paste operation. */",
       "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
       "onRowValueChanged?(event: RowValueChangedEvent<TData>)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent<TData>)": "/** Editing a cell has started. */",
@@ -2998,7 +3002,7 @@
       "setParent(parent: ColumnGroup | null)": "void",
       "isEmptyGroup()": "boolean",
       "isMoving()": "boolean",
-      "getPinned()": "string | null | undefined",
+      "getPinned()": "ColumnPinnedType",
       "addEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void",
       "removeEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void"
     }
@@ -3054,12 +3058,16 @@
     "type": ["Above", "Below"],
     "docs": [null, null]
   },
+  "RowPinnedType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'top' | 'bottom' | null | undefined"
+  },
   "RowPosition": {
     "meta": {},
-    "type": { "rowIndex": "number", "rowPinned": "string | null" },
+    "type": { "rowIndex": "number", "rowPinned": "RowPinnedType" },
     "docs": {
       "rowIndex": "/** A positive number from 0 to n, where n is the last row the grid is rendering\n * or -1 if you want to navigate to the grid header */",
-      "rowPinned": "/** Either 'top', 'bottom' or null (for not pinned) */"
+      "rowPinned": "/** Either 'top', 'bottom' or null/undefined (for not pinned) */"
     }
   },
   "ToolPanelDef": {
@@ -3791,7 +3799,7 @@
     "type": {
       "rowIndex": "number | null",
       "column": "Column | string | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "RowPinnedType",
       "isFullWidthCell?": "boolean",
       "forceBrowserFocus?": "boolean",
       "preventScrollOnBrowserFocus?": "boolean",
@@ -3800,7 +3808,7 @@
     "docs": {
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
-      "rowPinned?": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
       "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */",
       "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
       "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */"
@@ -3814,7 +3822,7 @@
       "type": "string",
       "rowIndex": "number | null",
       "column": "Column | string | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "RowPinnedType",
       "isFullWidthCell?": "boolean",
       "forceBrowserFocus?": "boolean",
       "preventScrollOnBrowserFocus?": "boolean",
@@ -3824,7 +3832,7 @@
       "type": "/** Event identifier */",
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
-      "rowPinned?": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
       "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */",
       "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
       "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */"
@@ -3839,7 +3847,7 @@
       "type": "string",
       "rowIndex": "number | null",
       "column": "Column | string | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "RowPinnedType",
       "isFullWidthCell?": "boolean",
       "forceBrowserFocus?": "boolean",
       "preventScrollOnBrowserFocus?": "boolean",
@@ -3849,7 +3857,7 @@
       "type": "/** Event identifier */",
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
-      "rowPinned?": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
       "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */",
       "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
       "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */"
@@ -3999,7 +4007,7 @@
   "ColumnPinnedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "pinned": "string | null",
+      "pinned": "ColumnPinnedType",
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
@@ -4023,7 +4031,7 @@
     "type": {
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4045,7 +4053,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4071,7 +4079,7 @@
       "data": "TData",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4095,7 +4103,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4119,7 +4127,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4142,7 +4150,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4165,7 +4173,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4188,7 +4196,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4211,7 +4219,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4234,7 +4242,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4257,7 +4265,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4280,7 +4288,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4303,7 +4311,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4332,7 +4340,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4362,7 +4370,7 @@
       "data": "TData",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4389,7 +4397,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4416,7 +4424,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4443,7 +4451,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4470,7 +4478,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4497,7 +4505,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4524,7 +4532,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4551,7 +4559,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4578,7 +4586,7 @@
       "data": "TData | undefined",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4605,7 +4613,7 @@
       "data": "TData",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4634,7 +4642,7 @@
       "data": "TData",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4666,7 +4674,7 @@
       "data": "TData",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4696,7 +4704,7 @@
       "data": "TData",
       "node": "RowNode<TData>",
       "rowIndex": "number | null",
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "context": "any",
       "event?": "Event | null",
       "api": "GridApi<TData>",
@@ -4963,6 +4971,7 @@
       "browserDatePicker?": "boolean",
       "minValidYear?": "number",
       "maxValidYear?": "number",
+      "inRangeFloatingFilterDateFormat?": "string",
       "inRangeInclusive?": "boolean",
       "includeBlanksInEquals?": "boolean",
       "includeBlanksInLessThan?": "boolean",
@@ -4993,6 +5002,7 @@
       "browserDatePicker?": "/** This is only used if a date component is not provided.\n * By default the grid will use the browser date picker in Chrome and Firefox and a plain text box for all other browsers\n * (This is because Chrome and Firefox are the only current browsers providing a decent out-of-the-box date picker).\n * If this property is set to `true`, the browser date picker will be used regardless of the browser type.\n * If set to `false`, a plain text box will be used for all browsers. */",
       "minValidYear?": "/** This is the minimum year that may be entered in a date field for the value to be considered valid. Default: `1000` */",
       "maxValidYear?": "/** This is the maximum year that may be entered in a date field for the value to be considered valid. Default is no restriction. */",
+      "inRangeFloatingFilterDateFormat?": "/** Defines the date format for the floating filter text when an in range filter has been applied.\n * \n * Default: `YYYY-MM-DD` */",
       "inRangeInclusive?": "/** If `true`, the `'inRange'` filter option will include values equal to the start and end of the range. */",
       "includeBlanksInEquals?": "/** If `true`, blank (`null` or `undefined`) values will pass the `'equals'` filter option. */",
       "includeBlanksInLessThan?": "/** If `true`, blank (`null` or `undefined`) values will pass the `'lessThan'` and `'lessThanOrEqual'` filter options. */",
@@ -5458,7 +5468,7 @@
     "type": {
       "rowIndex": "number",
       "colKey": "string | Column",
-      "rowPinned?": "string",
+      "rowPinned?": "RowPinnedType",
       "key?": "string",
       "charPress?": "string"
     },
@@ -6896,6 +6906,10 @@
       "strokeWidth?": "/** The width in pixels of the stroke for markers in the legend. */"
     }
   },
+  "AgChartLegendLabelFormatterParams": {
+    "meta": {},
+    "type": { "id": "string", "itemId": "any", "value": "string" }
+  },
   "AgChartLegendLabelOptions": {
     "meta": {},
     "type": {
@@ -6905,7 +6919,7 @@
       "fontWeight?": "FontWeight",
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
-      "formatter?": "(id: string, itemId: any, value: string) => string"
+      "formatter?": "(params: AgChartLegendLabelFormatterParams) => string"
     },
     "docs": {
       "maxLength?": "/** If the label text exceeds the maximum length, it will be truncated and an ellipsis will be appended to indicate this. */",
@@ -6936,9 +6950,10 @@
   },
   "AgChartLegendClickEvent": {
     "meta": {},
-    "type": { "itemId": "string", "enabled": "boolean" },
+    "type": { "seriesId": "string", "itemId": "string", "enabled": "boolean" },
     "docs": {
-      "itemId": "/** Legend item id - based on series id. */",
+      "seriesId": "/** Series id */",
+      "itemId": "/** Legend item id - usually yKey value for cartesian series. */",
       "enabled": "/** Whether the legend item is currently enabled or not. */"
     }
   },
@@ -6956,6 +6971,7 @@
       "position?": "AgChartLegendPosition",
       "spacing?": "PixelSize",
       "item?": "AgChartLegendItemOptions",
+      "reverseOrder?": "boolean",
       "listeners?": "AgChartLegendListeners"
     },
     "docs": {
@@ -6963,6 +6979,7 @@
       "position?": "/** Where the legend should show in relation to the chart. */",
       "spacing?": "/** The spacing in pixels to use outside the legend. */",
       "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "reverseOrder?": "/** Reverse the display order of legend items if `true`. */",
       "listeners?": "/** Optional callbacks for specific legend-related events. */"
     }
   },
@@ -7378,11 +7395,13 @@
     "meta": {},
     "type": {
       "fill?": "CssColor",
+      "fillOpacity?": "Opacity",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize"
     },
     "docs": {
       "fill?": "/** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */",
+      "fillOpacity?": "/** The opacity of the fill for the highlighted item. */",
       "stroke?": "/** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */",
       "strokeWidth?": "/** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */"
     }
@@ -7417,22 +7436,22 @@
     }
   },
   "AgBaseSeriesListeners": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "nodeClick": "(params: { type: 'nodeClick'; series: any; datum: any; xKey: string; yKey: string; }) => any"
+      "nodeClick": "(params: { type: 'nodeClick'; series: any; datum: DatumType; xKey: string; yKey: string; }) => any"
     },
     "docs": {
       "nodeClick": "/** The listener to call when a node (marker, column, bar, tile or a pie slice) in the series is clicked. */"
     }
   },
   "AgBaseSeriesOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType", "ListenerDatumType = DatumType"] },
     "type": {
-      "data?": "any[]",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -7524,9 +7543,9 @@
     }
   },
   "AgSeriesMarkerFormatterParams": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "datum": "any",
+      "datum": "DatumType",
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth": "PixelSize",
@@ -7535,11 +7554,11 @@
     }
   },
   "AgCartesianSeriesMarkerFormatterParams": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "xKey": "string",
       "yKey": "string",
-      "datum": "any",
+      "datum": "DatumType",
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth": "PixelSize",
@@ -7557,13 +7576,13 @@
     }
   },
   "AgCartesianSeriesMarkerFormatter": {
-    "meta": { "isTypeAlias": true },
-    "type": "(params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat | undefined"
+    "meta": { "isTypeAlias": true, "typeParams": ["DatumType"] },
+    "type": "(params: AgCartesianSeriesMarkerFormatterParams<DatumType>) => AgCartesianSeriesMarkerFormat | undefined"
   },
   "AgCartesianSeriesMarker": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "formatter?": "AgCartesianSeriesMarkerFormatter",
+      "formatter?": "AgCartesianSeriesMarkerFormatter<DatumType>",
       "enabled?": "boolean",
       "shape?": "MarkerShape",
       "size?": "PixelSize",
@@ -7588,9 +7607,9 @@
     }
   },
   "AgAreaSeriesMarker": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "formatter?": "AgCartesianSeriesMarkerFormatter",
+      "formatter?": "AgCartesianSeriesMarkerFormatter<DatumType>",
       "enabled?": "boolean",
       "shape?": "MarkerShape",
       "size?": "PixelSize",
@@ -7622,9 +7641,9 @@
     }
   },
   "AgLineSeriesLabelOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "formatter?": "(params: { value: any; }) => string",
+      "formatter?": "(params: { value: DatumType; }) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -7655,10 +7674,13 @@
     }
   },
   "AgLineSeriesOptions": {
-    "meta": { "doc": "/** Configuration for line series. */" },
+    "meta": {
+      "typeParams": ["DatumType = any"],
+      "doc": "/** Configuration for line series. */"
+    },
     "type": {
       "type?": "'line'",
-      "marker?": "AgCartesianSeriesMarker",
+      "marker?": "AgCartesianSeriesMarker<DatumType>",
       "xKey?": "string",
       "yKey?": "string",
       "xName?": "string",
@@ -7669,13 +7691,13 @@
       "strokeOpacity?": "Opacity",
       "lineDash?": "PixelSize[]",
       "lineDashOffset?": "PixelSize",
-      "label?": "AgLineSeriesLabelOptions",
+      "label?": "AgLineSeriesLabelOptions<DatumType>",
       "tooltip?": "AgLineSeriesTooltip",
-      "data?": "any[]",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -7730,10 +7752,10 @@
     }
   },
   "AgScatterSeriesMarker": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "domain?": "[number, number]",
-      "formatter?": "AgCartesianSeriesMarkerFormatter",
+      "formatter?": "AgCartesianSeriesMarkerFormatter<DatumType>",
       "enabled?": "boolean",
       "shape?": "MarkerShape",
       "size?": "PixelSize",
@@ -7759,10 +7781,13 @@
     }
   },
   "AgScatterSeriesOptions": {
-    "meta": { "doc": "/** Configuration for scatter/bubble series. */" },
+    "meta": {
+      "typeParams": ["DatumType = any"],
+      "doc": "/** Configuration for scatter/bubble series. */"
+    },
     "type": {
       "type?": "'scatter'",
-      "marker?": "AgScatterSeriesMarker",
+      "marker?": "AgScatterSeriesMarker<DatumType>",
       "label?": "AgScatterSeriesLabelOptions",
       "xKey?": "string",
       "yKey?": "string",
@@ -7779,11 +7804,11 @@
       "fillOpacity?": "Opacity",
       "strokeOpacity?": "Opacity",
       "tooltip?": "AgScatterSeriesTooltip",
-      "data?": "any[]",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -7825,9 +7850,9 @@
     }
   },
   "AgAreaSeriesLabelOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "formatter?": "(params: { value: any; }) => string",
+      "formatter?": "(params: { value: DatumType; }) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -7846,10 +7871,13 @@
     }
   },
   "AgAreaSeriesOptions": {
-    "meta": { "doc": "/** Configuration for area series. */" },
+    "meta": {
+      "typeParams": ["DatumType = any"],
+      "doc": "/** Configuration for area series. */"
+    },
     "type": {
       "type?": "'area'",
-      "marker?": "AgAreaSeriesMarker",
+      "marker?": "AgAreaSeriesMarker<DatumType>",
       "normalizedTo?": "number",
       "xKey?": "string",
       "yKeys?": "string[]",
@@ -7867,14 +7895,14 @@
       "lineDash?": "PixelSize[]",
       "lineDashOffset?": "PixelSize",
       "shadow?": "AgDropShadowOptions",
-      "label?": "AgAreaSeriesLabelOptions",
+      "label?": "AgAreaSeriesLabelOptions<DatumType>",
       "tooltip?": "AgAreaSeriesTooltip",
       "stacked?": "boolean",
-      "data?": "any[]",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -7929,9 +7957,9 @@
     }
   },
   "AgBarSeriesFormatterParams": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "datum": "any",
+      "datum": "DatumType",
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth": "PixelSize",
@@ -7960,7 +7988,10 @@
     }
   },
   "AgBarSeriesOptions": {
-    "meta": { "doc": "/** Configuration for bar/column series. */" },
+    "meta": {
+      "typeParams": ["DatumType = any"],
+      "doc": "/** Configuration for bar/column series. */"
+    },
     "type": {
       "type?": "'bar' | 'column'",
       "grouped?": "boolean",
@@ -7985,12 +8016,12 @@
       "shadow?": "AgDropShadowOptions",
       "label?": "AgBarSeriesLabelOptions",
       "tooltip?": "AgBarSeriesTooltip",
-      "formatter?": "(params: AgBarSeriesFormatterParams) => AgBarSeriesFormat",
-      "data?": "any[]",
+      "formatter?": "(params: AgBarSeriesFormatterParams<DatumType>) => AgBarSeriesFormat",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -8024,9 +8055,9 @@
     }
   },
   "AgHistogramSeriesLabelOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "formatter?": "(params: { value: number; }) => string",
+      "formatter?": "(params: { value: DatumType; }) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -8055,8 +8086,20 @@
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
+  "AgHistogramBinDatum": {
+    "meta": { "typeParams": ["DatumType"] },
+    "type": {
+      "data": "DatumType[]",
+      "aggregatedValue": "number",
+      "frequency": "number",
+      "domain": "[number, number]"
+    }
+  },
   "AgHistogramSeriesOptions": {
-    "meta": { "doc": "/** Configuration for histogram series. */" },
+    "meta": {
+      "typeParams": ["DatumType = any"],
+      "doc": "/** Configuration for histogram series. */"
+    },
     "type": {
       "type?": "'histogram'",
       "fill?": "CssColor",
@@ -8075,13 +8118,13 @@
       "binCount?": "number",
       "aggregation?": "'count' | 'sum' | 'mean'",
       "shadow?": "AgDropShadowOptions",
-      "label?": "AgHistogramSeriesLabelOptions",
+      "label?": "AgHistogramSeriesLabelOptions<DatumType>",
       "tooltip?": "AgHistogramSeriesTooltip",
-      "data?": "any[]",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -8135,9 +8178,9 @@
     }
   },
   "AgPieSeriesFormatterParams": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "datum": "any",
+      "datum": "DatumType",
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth": "PixelSize",
@@ -8201,7 +8244,10 @@
     }
   },
   "AgPieSeriesOptions": {
-    "meta": { "doc": "/** Configuration for pie/doughnut series. */" },
+    "meta": {
+      "typeParams": ["DatumType = any"],
+      "doc": "/** Configuration for pie/doughnut series. */"
+    },
     "type": {
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
@@ -8227,12 +8273,12 @@
       "radiusMax?": "number",
       "shadow?": "AgDropShadowOptions",
       "tooltip?": "AgPieSeriesTooltip",
-      "formatter?": "(params: AgPieSeriesFormatterParams) => AgPieSeriesFormat",
-      "data?": "any[]",
+      "formatter?": "(params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -8305,11 +8351,11 @@
     }
   },
   "AgTreemapNodeDatum": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "datum": "any",
-      "parent?": "AgTreemapNodeDatum",
-      "children?": "AgTreemapNodeDatum[]",
+      "datum": "DatumType",
+      "parent?": "AgTreemapNodeDatum<DatumType>",
+      "children?": "AgTreemapNodeDatum<DatumType>[]",
       "depth": "number",
       "colorValue": "number",
       "fill": "CssColor",
@@ -8318,9 +8364,9 @@
     }
   },
   "AgTreemapSeriesTooltipRendererParams": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "datum": "AgTreemapNodeDatum",
+      "datum": "AgTreemapNodeDatum<DatumType>",
       "sizeKey": "string",
       "labelKey": "string",
       "valueKey": "string",
@@ -8328,9 +8374,9 @@
     }
   },
   "AgTreemapSeriesTooltip": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "renderer?": "(params: AgTreemapSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "renderer?": "(params: AgTreemapSeriesTooltipRendererParams<DatumType>) => string | AgTooltipRendererResult",
       "enabled?": "boolean"
     },
     "docs": {
@@ -8354,7 +8400,10 @@
     }
   },
   "AgTreemapSeriesOptions": {
-    "meta": { "doc": "/** Configuration for the treemap series. */" },
+    "meta": {
+      "typeParams": ["DatumType = any"],
+      "doc": "/** Configuration for the treemap series. */"
+    },
     "type": {
       "type?": "'treemap'",
       "title?": "AgTreemapSeriesLabelOptions",
@@ -8366,14 +8415,14 @@
       "colorDomain?": "number[]",
       "colorRange?": "string[]",
       "colorParents?": "boolean",
-      "tooltip?": "AgTreemapSeriesTooltip",
+      "tooltip?": "AgTreemapSeriesTooltip<DatumType>",
       "nodePadding?": "PixelSize",
       "gradient?": "boolean",
-      "data?": "any[]",
+      "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -9828,9 +9877,9 @@
     "meta": {},
     "type": {
       "rowStartIndex": "number | null",
-      "rowStartPinned?": "string | null",
+      "rowStartPinned?": "RowPinnedType",
       "rowEndIndex": "number | null",
-      "rowEndPinned?": "string | null",
+      "rowEndPinned?": "RowPinnedType",
       "columnStart?": "string | Column",
       "columnEnd?": "string | Column",
       "columns?": "(string | Column)[]"
@@ -9918,6 +9967,10 @@
   "RowBounds": {
     "meta": {},
     "type": { "rowTop": "number", "rowHeight": "number", "rowIndex?": "number" }
+  },
+  "RowModelType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'infinite' | 'viewport' | 'clientSide' | 'serverSide'"
   },
   "IRowModel": {
     "meta": {},
@@ -11912,7 +11965,7 @@
       "lastRowOnPage": "boolean",
       "printLayout": "boolean",
       "expandable": "boolean",
-      "pinned?": "string | null",
+      "pinned": "ColumnPinnedType",
       "extraCssClass?": "string",
       "rowFocused?": "boolean",
       "fadeRowIn?": "boolean"
@@ -12121,7 +12174,7 @@
   "CellValueChange": {
     "meta": {},
     "type": {
-      "rowPinned": "string | null",
+      "rowPinned": "RowPinnedType",
       "rowIndex": "number",
       "columnId": "string",
       "oldValue": "any",
@@ -12131,7 +12184,7 @@
   "LastFocusedCell": {
     "meta": {},
     "type": {
-      "rowPinned?": "string | null",
+      "rowPinned": "RowPinnedType",
       "rowIndex": "number",
       "columnId": "string"
     }
@@ -12909,8 +12962,8 @@
       "equals?": "/** Custom comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed.\n * By default the grid uses `===` is used which should work for most use cases. */",
       "tooltipField?": "/** The field of the tooltip to apply to the cell. */",
       "tooltipValueGetter?": "/** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.\n * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component. */",
-      "checkboxSelection?": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
-      "showDisabledCheckboxes?": "/** `boolean`. Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
+      "checkboxSelection?": "/** Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
+      "showDisabledCheckboxes?": "/** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
       "icons?": "/** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults. */",
       "suppressNavigable?": "/** Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.\n * Can also be a callback function to have different rows navigable.\n * Default: `false` */",
       "suppressKeyboardEvent?": "/** Allows the user to suppress certain keyboard events in the grid cell. Default: `false` */",
@@ -13281,9 +13334,9 @@
       "groupUseEntireRow?": "boolean",
       "groupSuppressAutoColumn?": "boolean",
       "rememberGroupStateWhenNewData?": "boolean",
-      "pinnedTopRowData?": "TData[]",
-      "pinnedBottomRowData?": "TData[]",
-      "rowModelType?": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
+      "pinnedTopRowData?": "any[]",
+      "pinnedBottomRowData?": "any[]",
+      "rowModelType?": "RowModelType",
       "rowData?": "TData[] | null",
       "immutableData?": "boolean",
       "asyncTransactionWaitMillis?": "number",
@@ -13544,7 +13597,7 @@
       "singleClickEdit?": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */",
       "suppressClickEdit?": "/** Set to `true` so that neither single nor double click starts editing. Default: `false` */",
       "readOnlyEdit?": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
-      "stopEditingWhenCellsLoseFocus?": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.\n * Default: `false` */",
+      "stopEditingWhenCellsLoseFocus?": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell.\n * Default: `false` */",
       "enterMovesDown?": "/** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.\n * i.e. pressing the `Enter` key will move down to the cell beneath.\n * Default: `false` */",
       "enterMovesDownAfterEdit?": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath.\n * Default: `false` */",
       "undoRedoCellEditing?": "/** Set to `true` to enable Undo / Redo while editing. */",
@@ -13809,7 +13862,7 @@
       "onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>)": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "onComponentStateChanged?(event: ComponentStateChangedEvent<TData>)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
-      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
+      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or \n *   if cell value has changed as a result of paste operation. */",
       "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
       "onRowValueChanged?(event: RowValueChangedEvent<TData>)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent<TData>)": "/** Editing a cell has started. */",
@@ -14053,9 +14106,9 @@
       "groupUseEntireRow?": "boolean",
       "groupSuppressAutoColumn?": "boolean",
       "rememberGroupStateWhenNewData?": "boolean",
-      "pinnedTopRowData?": "TData[]",
-      "pinnedBottomRowData?": "TData[]",
-      "rowModelType?": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
+      "pinnedTopRowData?": "any[]",
+      "pinnedBottomRowData?": "any[]",
+      "rowModelType?": "RowModelType",
       "rowData?": "TData[] | null",
       "immutableData?": "boolean",
       "asyncTransactionWaitMillis?": "number",
@@ -14316,7 +14369,7 @@
       "singleClickEdit?": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */",
       "suppressClickEdit?": "/** Set to `true` so that neither single nor double click starts editing. Default: `false` */",
       "readOnlyEdit?": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
-      "stopEditingWhenCellsLoseFocus?": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.\n * Default: `false` */",
+      "stopEditingWhenCellsLoseFocus?": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell.\n * Default: `false` */",
       "enterMovesDown?": "/** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.\n * i.e. pressing the `Enter` key will move down to the cell beneath.\n * Default: `false` */",
       "enterMovesDownAfterEdit?": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath.\n * Default: `false` */",
       "undoRedoCellEditing?": "/** Set to `true` to enable Undo / Redo while editing. */",
@@ -14581,7 +14634,7 @@
       "onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>)": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "onComponentStateChanged?(event: ComponentStateChangedEvent<TData>)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
-      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
+      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or \n *   if cell value has changed as a result of paste operation. */",
       "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
       "onRowValueChanged?(event: RowValueChangedEvent<TData>)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent<TData>)": "/** Editing a cell has started. */",
@@ -14829,9 +14882,9 @@
       "groupUseEntireRow?": "boolean",
       "groupSuppressAutoColumn?": "boolean",
       "rememberGroupStateWhenNewData?": "boolean",
-      "pinnedTopRowData?": "TData[]",
-      "pinnedBottomRowData?": "TData[]",
-      "rowModelType?": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
+      "pinnedTopRowData?": "any[]",
+      "pinnedBottomRowData?": "any[]",
+      "rowModelType?": "RowModelType",
       "rowData?": "TData[] | null",
       "immutableData?": "boolean",
       "asyncTransactionWaitMillis?": "number",
@@ -15092,7 +15145,7 @@
       "singleClickEdit?": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */",
       "suppressClickEdit?": "/** Set to `true` so that neither single nor double click starts editing. Default: `false` */",
       "readOnlyEdit?": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
-      "stopEditingWhenCellsLoseFocus?": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.\n * Default: `false` */",
+      "stopEditingWhenCellsLoseFocus?": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell.\n * Default: `false` */",
       "enterMovesDown?": "/** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.\n * i.e. pressing the `Enter` key will move down to the cell beneath.\n * Default: `false` */",
       "enterMovesDownAfterEdit?": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath.\n * Default: `false` */",
       "undoRedoCellEditing?": "/** Set to `true` to enable Undo / Redo while editing. */",
@@ -15357,7 +15410,7 @@
       "onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>)": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "onComponentStateChanged?(event: ComponentStateChangedEvent<TData>)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
-      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
+      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or \n *   if cell value has changed as a result of paste operation. */",
       "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
       "onRowValueChanged?(event: RowValueChangedEvent<TData>)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent<TData>)": "/** Editing a cell has started. */",

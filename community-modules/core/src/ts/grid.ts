@@ -40,7 +40,7 @@ import { ColumnAnimationService } from "./rendering/columnAnimationService";
 import { AutoGroupColService } from "./columns/autoGroupColService";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { PaginationAutoPageSizeService } from "./pagination/paginationAutoPageSizeService";
-import { IRowModel } from "./interfaces/iRowModel";
+import { IRowModel, RowModelType } from "./interfaces/iRowModel";
 import { Constants } from "./constants/constants";
 import { ValueCache } from "./valueService/valueCache";
 import { ChangeDetectionService } from "./valueService/changeDetectionService";
@@ -290,7 +290,7 @@ export class GridCoreCreator {
         return components;
     }
 
-    private createBeansList(rowModelType: string | undefined, registeredModules: Module[]): any[] | undefined {
+    private createBeansList(rowModelType: RowModelType | undefined, registeredModules: Module[]): any[] | undefined {
         const rowModelClass = this.getRowModelClass(rowModelType, registeredModules);
 
         if (!rowModelClass) { return; }
@@ -349,7 +349,7 @@ export class GridCoreCreator {
         beans.eventService.dispatchEvent(readyEvent);
     }
 
-    private getRowModelClass(rowModelType: string | undefined, registeredModules: Module[]): any {
+    private getRowModelClass(rowModelType: RowModelType | undefined, registeredModules: Module[]): any {
 
         // default to client side
         if (!rowModelType) {

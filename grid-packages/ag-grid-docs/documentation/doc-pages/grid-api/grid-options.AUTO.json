@@ -224,7 +224,7 @@
     "type": { "returnType": "boolean" }
   },
   "stopEditingWhenCellsLoseFocus": {
-    "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.\n * Default: `false` */",
+    "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell.\n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "enterMovesDown": {
@@ -719,17 +719,15 @@
   },
   "pinnedTopRowData": {
     "description": "/** Data to be displayed as pinned top rows in the grid. */",
-    "type": { "returnType": "TData[]" }
+    "type": { "returnType": "any[]" }
   },
   "pinnedBottomRowData": {
     "description": "/** Data to be displayed as pinned bottom rows in the grid. */",
-    "type": { "returnType": "TData[]" }
+    "type": { "returnType": "any[]" }
   },
   "rowModelType": {
     "description": "/** Sets the row model type. Default: `clientSide` */",
-    "type": {
-      "returnType": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'"
-    }
+    "type": { "returnType": "RowModelType" }
   },
   "rowData": {
     "description": "/** Set the data to be displayed as rows in the grid. */",
@@ -1616,7 +1614,7 @@
     "meta": { "isEvent": true, "name": "onComponentStateChanged" }
   },
   "onCellValueChanged": {
-    "description": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
+    "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or \n *   if cell value has changed as a result of paste operation. */",
     "type": {
       "arguments": { "event": "CellValueChangedEvent<TData>" },
       "returnType": "void"
@@ -1624,7 +1622,7 @@
     "meta": { "isEvent": true, "name": "onCellValueChanged" }
   },
   "cellValueChanged": {
-    "description": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
+    "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or \n *   if cell value has changed as a result of paste operation. */",
     "type": {
       "arguments": { "event": "CellValueChangedEvent<TData>" },
       "returnType": "void"

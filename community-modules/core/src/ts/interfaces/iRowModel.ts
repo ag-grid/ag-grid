@@ -6,6 +6,8 @@ export interface RowBounds {
     rowIndex?: number;
 }
 
+export type RowModelType = 'infinite' | 'viewport' | 'clientSide' | 'serverSide';
+
 export interface IRowModel {
 
     /** Returns the rowNode at the given index. */

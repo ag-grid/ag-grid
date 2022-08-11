@@ -82,7 +82,19 @@ const gridOptions: GridOptions<IOlympicData> = {
             case 'decimalSeparator':
                 return ','
             default:
-                return params.defaultValue ? params.defaultValue.toUpperCase() : ''
+                if (params.defaultValue) {
+                    // the &lrm; marker should not be made uppercase
+                    const val = params.defaultValue.split('&lrm;');
+                    const newVal = val[0].toUpperCase();
+
+                    if (val.length > 1) {
+                        return `${newVal}&lrm;`;
+                    }
+
+                    return newVal;
+                }
+
+                return '';
         }
     },
 }

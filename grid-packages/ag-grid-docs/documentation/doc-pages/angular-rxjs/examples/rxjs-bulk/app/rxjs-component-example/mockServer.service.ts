@@ -22,7 +22,7 @@ export class MockServerService {
     // provides randomised data updates to some of the rows
     // only all the row data (with some rows changed)
     allDataUpdates(): any {
-        return interval(1000).pipe(map(() => {
+        return interval(500).pipe(map(() => {
             let changes: any[] = [];
 
             // make some mock changes to the data
