@@ -21,7 +21,7 @@ First, set up your project to compile Sass (.scss) files. We provide examples fo
 Next, import the Sass API in your .scss file:
 
 ```scss
-@use "ag-grid-community/styles" as ag;
+@use "~ag-grid-community/styles" as ag;
 ```
 
 The above import path assumes that `node_modules` is added to the Sass load path. Depending on how your project is configured, you may need to add one or more prefixes to the import path:
@@ -35,7 +35,7 @@ The above import path assumes that `node_modules` is added to the Sass load path
 To emit all the styles you need for an AG Grid application, include the `grid-styles` mixin:
 
 ```scss
-@use "ag-grid-community/styles" as ag;
+@use "~ag-grid-community/styles" as ag;
 @include ag.grid-styles();
 ```
 
@@ -54,7 +54,7 @@ To customise the Alpine theme, you can add more parameters to the `grid-styles` 
 Use the `theme` parameter to set the name of the outputted theme.
 
 ```scss
-@use "ag-grid-community/styles" as ag;
+@use "~ag-grid-community/styles" as ag;
 @include ag.grid-styles((
     theme: balham
 ));
@@ -70,7 +70,7 @@ This can be either:
 The Sass Styling API is a wrapper around the CSS variable API for design customisation, you can pass any supported CSS variable as a parameter to the Sass API:
 
 ```scss
-@use "ag-grid-community/styles" as ag;
+@use "~ag-grid-community/styles" as ag;
 @include ag.grid-styles((
     theme: balham,
     --ag-balham-active-color: deeppink
@@ -91,7 +91,7 @@ The Sass API provides a little bit of sugar to make it easier to read and rememb
 When you cannot achieve the effect you want with variables, add custom CSS rules below the `grid-styles` mixin:
 
 ```scss
-@use "ag-grid-community/styles" as ag;
+@use "~ag-grid-community/styles" as ag;
 @include ag.grid-styles((
     theme: alpine
 ));
@@ -121,7 +121,7 @@ The most important parameters for colour blending are:
 As an example of color blending in action, the following Sass file:
 
 ```scss
-@use "ag-grid-community/styles" as ag;
+@use "~ag-grid-community/styles" as ag;
 @include ag.grid-styles((
     theme: alpine,
     alpine-active-color: red
@@ -152,7 +152,7 @@ will compile to this CSS:
 You can use multiple themes. This is useful for projects that allow the end user to select a theme. In simple use cases where each theme has the same configuration you can pass an array of theme names to the `themes` parameter.
 
 ```scss
-@use "ag-grid-community/styles" as ag;
+@use "~ag-grid-community/styles" as ag;
 @include ag.grid-styles((
     themes: (alpine, alpine-dark),
     alpine-active-color: red
@@ -162,7 +162,7 @@ You can use multiple themes. This is useful for projects that allow the end user
 If each theme needs a different configuration, `themes` can be a map of theme name to additional configuration:
 
 ```scss
-@use "ag-grid-community/styles" as ag;
+@use "~ag-grid-community/styles" as ag;
 @include ag.grid-styles((
     themes: (
         alpine: (
@@ -189,7 +189,7 @@ If you want to use a provided theme (say alpine), apply some customisations, and
 To do this, set the `theme` parameter to your custom theme and the `extend-theme` parameter to one of the provided themes:
 
 ```scss
-@use "ag-grid-community/styles" as ag;
+@use "~ag-grid-community/styles" as ag;
 @include ag.grid-styles((
     theme: acmecorp,
     extend-theme: alpine,
@@ -204,7 +204,7 @@ Theme extension is only available in the Sass API. The alternative method of cre
 Theme extension works with multiple themes too, set the `extend-theme` parameter at the theme level:
 
 ```scss
-@use "ag-grid-community/styles" as ag;
+@use "~ag-grid-community/styles" as ag;
 @include ag.grid-styles((
     themes: (
         acmecorp: (extend-theme: alpine),

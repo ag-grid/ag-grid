@@ -297,7 +297,7 @@ If using SCSS the theme defaults to `alpine` so you don't have to explicitly inc
 
 ```scss
 // SCSS Community
-@use "@ag-grid-community/styles" as ag;
+@use "~@ag-grid-community/styles" as ag;
 
 // Choose balham over default alpine
 @include ag.grid-styles((
