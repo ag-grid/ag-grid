@@ -1076,7 +1076,8 @@ export interface AgHistogramBinDatum<DatumType> {
 }
 
 /** Configuration for histogram series. */
-export interface AgHistogramSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType, AgHistogramBinDatum<DatumType>> {
+export interface AgHistogramSeriesOptions<DatumType = any>
+    extends AgBaseSeriesOptions<DatumType, AgHistogramBinDatum<DatumType>> {
     type?: 'histogram';
     /** The colour of the fill for the histogram bars. */
     fill?: CssColor;
@@ -1116,11 +1117,12 @@ export interface AgHistogramSeriesOptions<DatumType = any> extends AgBaseSeriesO
     tooltip?: AgHistogramSeriesTooltip;
 }
 
-export interface AgPieSeriesLabelOptions extends AgChartLabelOptions {
+export interface AgPieSeriesLabelOptions<DatumType> extends AgChartLabelOptions {
     /** Distance in pixels between the callout line and the label text. */
     offset?: PixelSize;
     /** Minimum angle in degrees required for a segment to show a label. */
     minAngle?: number;
+    formatter?: (params: { value: DatumType }) => string;
 }
 
 export interface AgPieSeriesFormatterParams<DatumType> {
@@ -1163,7 +1165,7 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     /** Configuration for the series title. */
     title?: AgPieTitleOptions;
     /** Configuration for the labels used for the segments. */
-    label?: AgPieSeriesLabelOptions;
+    label?: AgPieSeriesLabelOptions<DatumType>;
     /** Configuration for the callouts used with the labels for the segments. */
     callout?: AgPieSeriesCalloutOptions;
     /** The key to use to retrieve angle values from the data. */
