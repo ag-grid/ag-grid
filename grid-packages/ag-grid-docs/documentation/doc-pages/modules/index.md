@@ -300,9 +300,9 @@ If using SCSS the theme defaults to `alpine` so you don't have to explicitly inc
 @use "@ag-grid-community/styles" as ag;
 
 // Choose balham over default alpine
-@include ag.grid-styles(
+@include ag.grid-styles((
     theme: balham
-);
+));
 ```
 
 See [Choosing a Theme](/global-style-customisation-sass/#choosing-a-theme) for full details of how to select a theme.

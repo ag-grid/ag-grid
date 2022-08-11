@@ -55,9 +55,9 @@ Use the `theme` parameter to set the name of the outputted theme.
 
 ```scss
 @use "ag-grid-community/styles" as ag;
-@include ag.grid-styles(
+@include ag.grid-styles((
     theme: balham
-);
+));
 ```
 
 This can be either:
@@ -71,10 +71,10 @@ The Sass Styling API is a wrapper around the CSS variable API for design customi
 
 ```scss
 @use "ag-grid-community/styles" as ag;
-@include ag.grid-styles(
+@include ag.grid-styles((
     theme: balham,
     --ag-balham-active-color: deeppink
-);
+));
 ```
 
 For information about what CSS variables and rules to use to control grid features, see the [full list of CSS variables](/global-style-customisation-variables/)
@@ -92,9 +92,9 @@ When you cannot achieve the effect you want with variables, add custom CSS rules
 
 ```scss
 @use "ag-grid-community/styles" as ag;
-@include ag.grid-styles(
+@include ag.grid-styles((
     theme: alpine
-);
+));
 .ag-theme-alpine {
     // Nest rules in .ag-theme-alpine so that the selectors include the theme name.
     // Without the theme name, your styles will not override the theme's built-in
