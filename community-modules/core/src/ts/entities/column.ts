@@ -24,7 +24,6 @@ import { ModuleRegistry } from "../modules/moduleRegistry";
 import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
 import { doOnce } from "../utils/function";
 import { mergeDeep } from "../utils/object";
-import { WithoutGridCommon } from "../interfaces/iCommon";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 
