@@ -2,18 +2,15 @@ import { RowNode, RowPinnedType } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events, PinnedRowDataChangedEvent } from "../events";
 import { Constants } from "../constants/constants";
-import { ColumnApi } from "../columns/columnApi";
-import { GridApi } from "../gridApi";
 import { BeanStub } from "../context/beanStub";
 import { missingOrEmpty } from "../utils/generic";
 import { last } from "../utils/array";
 import { Beans } from "../rendering/beans";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 @Bean('pinnedRowModel')
 export class PinnedRowModel extends BeanStub {
 
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('beans') private beans: Beans;
 
     private pinnedTopRows: RowNode[];
@@ -53,20 +50,16 @@ export class PinnedRowModel extends BeanStub {
 
     public setPinnedTopRowData(rowData: any[] | undefined): void {
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
-        const event: PinnedRowDataChangedEvent = {
-            type: Events.EVENT_PINNED_ROW_DATA_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi
+        const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
+            type: Events.EVENT_PINNED_ROW_DATA_CHANGED
         };
         this.eventService.dispatchEvent(event);
     }
 
     public setPinnedBottomRowData(rowData: any[] | undefined): void {
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
-        const event: PinnedRowDataChangedEvent = {
-            type: Events.EVENT_PINNED_ROW_DATA_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi
+        const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
+            type: Events.EVENT_PINNED_ROW_DATA_CHANGED
         };
         this.eventService.dispatchEvent(event);
     }

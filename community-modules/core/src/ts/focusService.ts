@@ -2,11 +2,9 @@ import { Autowired, Bean, Optional, PostConstruct } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
 import { CellFocusedParams, CellFocusedEvent, Events } from "./events";
-import { ColumnApi } from "./columns/columnApi";
 import { ColumnModel } from "./columns/columnModel";
 import { CellPosition } from "./entities/cellPosition";
 import { RowNode } from "./entities/rowNode";
-import { GridApi } from "./gridApi";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { RowPositionUtils } from "./entities/rowPosition";
 import { IRangeService } from "./interfaces/IRangeService";
@@ -33,8 +31,6 @@ export class FocusService extends BeanStub {
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
-    @Autowired('columnApi') private readonly columnApi: ColumnApi;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Optional('rangeService') private readonly rangeService: IRangeService;
@@ -470,15 +466,13 @@ export class FocusService extends BeanStub {
     }
 
     private onCellFocused(forceBrowserFocus: boolean, preventScrollOnBrowserFocus: boolean): void {
-        const event: CellFocusedEvent = {
+        const event: WithoutGridCommon<CellFocusedEvent> = {
             type: Events.EVENT_CELL_FOCUSED,
             forceBrowserFocus: forceBrowserFocus,
             preventScrollOnBrowserFocus: preventScrollOnBrowserFocus,
             rowIndex: null,
             column: null,
             floating: null,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             rowPinned: null,
             isFullWidthCell: false
         };

@@ -12,14 +12,12 @@ import {
     IClipboardCopyParams,
     IClipboardCopyRowsParams,
     Column,
-    ColumnApi,
     ColumnModel,
     Constants,
     CsvExportParams,
     Events,
     FlashCellsEvent,
     FocusService,
-    GridApi,
     GridCtrl,
     IClipboardService,
     IRowModel,
@@ -69,8 +67,6 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
 
@@ -246,13 +242,11 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
         // navigation stops.
         this.refocusLastFocusedCell();
-
-        this.eventService.dispatchEvent({
+        const event: WithoutGridCommon<PasteEndEvent> = {
             type: Events.EVENT_PASTE_END,
-            api,
-            columnApi,
             source
-        } as PasteEndEvent);
+        }
+        this.eventService.dispatchEvent(event);
     }
 
     private pasteIntoActiveRange(
@@ -435,15 +429,12 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         if (!this.gridOptionsWrapper.isFullRowEdit()) { return; }
 
         rowNodes.forEach(rowNode => {
-            const event: RowValueChangedEvent = {
+            const event: WithoutGridCommon<RowValueChangedEvent> = {
                 type: Events.EVENT_ROW_VALUE_CHANGED,
                 node: rowNode,
                 data: rowNode.data,
                 rowIndex: rowNode.rowIndex!,
-                rowPinned: rowNode.rowPinned,
-                context: this.gridOptionsWrapper.getContext(),
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!
+                rowPinned: rowNode.rowPinned
             };
 
             this.eventService.dispatchEvent(event);
@@ -739,11 +730,9 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     private dispatchFlashCells(cellsToFlash: {}): void {
         window.setTimeout(() => {
-            const event: FlashCellsEvent = {
+            const event: WithoutGridCommon<FlashCellsEvent> = {
                 type: Events.EVENT_FLASH_CELLS,
-                cells: cellsToFlash,
-                api: this.gridApi,
-                columnApi: this.columnApi
+                cells: cellsToFlash
             };
 
             this.eventService.dispatchEvent(event);

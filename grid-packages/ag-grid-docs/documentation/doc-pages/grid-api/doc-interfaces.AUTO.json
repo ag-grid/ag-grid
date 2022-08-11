@@ -6252,8 +6252,18 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6277,8 +6287,18 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6291,9 +6311,19 @@
     }
   },
   "AgGridEvent": {
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "meta": { "typeParams": ["TData"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6304,8 +6334,18 @@
       "type": { "returnType": "string | undefined", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6313,8 +6353,18 @@
   },
   "ColumnPivotModeChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6322,8 +6372,18 @@
   },
   "VirtualColumnsChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6332,8 +6392,18 @@
   "ColumnEverythingChangedEvent": {
     "source": { "type": { "returnType": "string", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6341,8 +6411,18 @@
   },
   "NewColumnsLoadedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6350,8 +6430,18 @@
   },
   "GridColumnsChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6359,8 +6449,18 @@
   },
   "DisplayedColumnsChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6368,8 +6468,18 @@
   },
   "RowDataChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6377,8 +6487,18 @@
   },
   "RowDataUpdatedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6386,8 +6506,18 @@
   },
   "PinnedRowDataChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6395,8 +6525,18 @@
   },
   "SelectionChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6416,8 +6556,18 @@
       "type": { "returnType": "Column[]", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6429,8 +6579,18 @@
     },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6453,8 +6613,18 @@
       "type": { "returnType": "HTMLElement", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6466,8 +6636,18 @@
       "type": { "returnType": "string", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6475,8 +6655,18 @@
   },
   "GridReadyEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6484,8 +6674,18 @@
   },
   "DisplayedColumnsWidthChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6493,8 +6693,18 @@
   },
   "ColumnHoverChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6502,8 +6712,18 @@
   },
   "BodyHeightChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6511,8 +6731,18 @@
   },
   "ComponentStateChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6525,12 +6755,38 @@
         "optional": false
       }
     },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
     }
   },
   "ColumnPanelItemDragEndEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6546,8 +6802,18 @@
       "type": { "returnType": "HTMLElement", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "DragStartedEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -6559,8 +6825,18 @@
       "description": "/** The DOM element that started the event. */",
       "type": { "returnType": "HTMLElement", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "DragStoppedEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -6572,8 +6848,18 @@
       "description": "/** The DOM element that started the event. */",
       "type": { "returnType": "HTMLElement", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "CheckboxChangedEvent": {
     "id": { "type": { "returnType": "string", "optional": false } },
@@ -6597,8 +6883,18 @@
       "type": { "returnType": "number", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6638,8 +6934,18 @@
       "type": { "returnType": "number", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "RowDragEnterEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -6675,8 +6981,18 @@
       "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
       "type": { "returnType": "number", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "RowDragEndEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -6712,8 +7028,18 @@
       "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
       "type": { "returnType": "number", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "RowDragMoveEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -6749,8 +7075,18 @@
       "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
       "type": { "returnType": "number", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "RowDragLeaveEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -6786,14 +7122,34 @@
       "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
       "type": { "returnType": "number", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "PasteStartEvent": {
     "source": { "type": { "returnType": "string", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6802,8 +7158,18 @@
   "PasteEndEvent": {
     "source": { "type": { "returnType": "string", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6811,8 +7177,18 @@
   },
   "FillStartEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6824,8 +7200,18 @@
     },
     "finalRange": { "type": { "returnType": "CellRange", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6841,8 +7227,18 @@
       "type": { "returnType": "number", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6858,8 +7254,18 @@
       "type": { "returnType": "number", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6876,8 +7282,18 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6893,8 +7309,18 @@
       "type": { "returnType": "string", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "ChartRangeSelectionChanged": {
     "type": {
@@ -6914,8 +7340,18 @@
       "type": { "returnType": "CellRangeParams", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "ChartOptionsChanged": {
     "type": {
@@ -6939,8 +7375,18 @@
       "type": { "returnType": "AgChartThemeOverrides", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "ChartDestroyed": {
     "type": {
@@ -6952,16 +7398,36 @@
       "type": { "returnType": "string", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "ColumnGroupOpenedEvent": {
     "columnGroup": {
       "type": { "returnType": "ProvidedColumnGroup", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6972,8 +7438,18 @@
       "type": { "returnType": "RowNode<TData>[]", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -6987,8 +7463,18 @@
     "left": { "type": { "returnType": "number", "optional": false } },
     "top": { "type": { "returnType": "number", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7001,8 +7487,18 @@
     },
     "left": { "type": { "returnType": "number", "optional": false } },
     "top": { "type": { "returnType": "number", "optional": false } },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7011,8 +7507,18 @@
   "FlashCellsEvent": {
     "cells": { "type": { "returnType": "any", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7020,8 +7526,18 @@
   },
   "PaginationPixelOffsetChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7056,8 +7572,18 @@
   },
   "CellFocusedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7091,8 +7617,18 @@
   "FullWidthRowFocusedEvent": {
     "fromBelow": { "type": { "returnType": "boolean", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7126,8 +7662,18 @@
   "ExpandCollapseAllEvent": {
     "source": { "type": { "returnType": "string", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7148,8 +7694,18 @@
       "type": { "returnType": "ColumnEventType", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7177,8 +7733,18 @@
       "description": "/** String describing where the event is coming from */",
       "type": { "returnType": "ColumnEventType", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7198,8 +7764,18 @@
       "description": "/** String describing where the event is coming from */",
       "type": { "returnType": "ColumnEventType", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7219,8 +7795,18 @@
       "description": "/** String describing where the event is coming from */",
       "type": { "returnType": "ColumnEventType", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7240,8 +7826,18 @@
       "description": "/** String describing where the event is coming from */",
       "type": { "returnType": "ColumnEventType", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7265,8 +7861,18 @@
       "description": "/** String describing where the event is coming from */",
       "type": { "returnType": "ColumnEventType", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7290,8 +7896,18 @@
       "description": "/** String describing where the event is coming from */",
       "type": { "returnType": "ColumnEventType", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7315,8 +7931,18 @@
       "description": "/** String describing where the event is coming from */",
       "type": { "returnType": "ColumnEventType", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7344,8 +7970,14 @@
       "type": { "returnType": "Event | null", "optional": true }
     },
     "meta": { "typeParams": ["TData"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7377,8 +8009,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7410,8 +8048,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7447,8 +8091,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7480,8 +8130,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7513,8 +8169,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7546,8 +8208,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7579,8 +8247,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7612,8 +8286,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7645,8 +8325,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7678,8 +8364,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7711,8 +8403,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7744,8 +8442,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7783,8 +8487,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7822,8 +8532,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7861,8 +8577,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7900,8 +8622,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7939,8 +8667,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -7978,8 +8712,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -8017,8 +8757,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -8056,8 +8802,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -8095,8 +8847,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -8134,8 +8892,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -8173,8 +8937,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -8220,8 +8990,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -8264,8 +9040,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -8308,8 +9090,14 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -8324,8 +9112,18 @@
       }
     },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -8334,8 +9132,18 @@
   "ColumnRequestEvent": {
     "columns": { "type": { "returnType": "Column[]", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -8344,8 +9152,18 @@
   "ColumnRowGroupChangeRequestEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "columns": { "type": { "returnType": "Column[]", "optional": false } },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -8354,8 +9172,18 @@
   "ColumnPivotChangeRequestEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "columns": { "type": { "returnType": "Column[]", "optional": false } },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -8364,8 +9192,18 @@
   "ColumnValueChangeRequestEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "columns": { "type": { "returnType": "Column[]", "optional": false } },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -8375,8 +9213,18 @@
     "aggFunc": { "type": { "returnType": "any", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
     "columns": { "type": { "returnType": "Column[]", "optional": false } },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -8384,38 +9232,113 @@
   },
   "ScrollVisibilityChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
-    "api": { "type": { "returnType": "GridApi<TData>", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
     }
   },
   "StoreUpdatedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
     }
   },
   "LeftPinnedWidthChangedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
     }
   },
   "RightPinnedWidthChangedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
     }
   },
   "RowContainerHeightChanged": {
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
     }
   },
   "DisplayedRowsChangedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }

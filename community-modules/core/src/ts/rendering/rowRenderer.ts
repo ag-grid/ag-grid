@@ -12,13 +12,12 @@ import {
 } from "../events";
 import { Constants } from "../constants/constants";
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { ColumnApi } from "../columns/columnApi";
 import { ColumnModel } from "../columns/columnModel";
 import { FocusService } from "../focusService";
 import { CellPosition } from "../entities/cellPosition";
 import { BeanStub } from "../context/beanStub";
 import { PaginationProxy } from "../pagination/paginationProxy";
-import { FlashCellsParams, GetCellRendererInstancesParams, GridApi, RefreshCellsParams } from "../gridApi";
+import { FlashCellsParams, GetCellRendererInstancesParams, RefreshCellsParams } from "../gridApi";
 import { Beans } from "./beans";
 import { RowContainerHeightService } from "./rowContainerHeightService";
 import { ICellRenderer } from "./cellRenderers/iCellRenderer";
@@ -37,6 +36,7 @@ import { removeFromArray } from "../utils/array";
 import { StickyRowFeature } from "./features/stickyRowFeature";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { browserSupportsPreventScroll } from "../utils/browser";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 export interface RowCtrlMap {
     [key: string]: RowCtrl;
@@ -55,8 +55,6 @@ export class RowRenderer extends BeanStub {
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired("rowModel") private rowModel: IRowModel;
     @Autowired("focusService") private focusService: FocusService;
-    @Autowired("columnApi") private columnApi: ColumnApi;
-    @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("beans") private beans: Beans;
     @Autowired("rowContainerHeightService") private rowContainerHeightService: RowContainerHeightService;
     @Autowired("ctrlsService") private ctrlsService: CtrlsService;
@@ -913,7 +911,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private dispatchDisplayedRowsChanged(): void {
-        const event: DisplayedRowsChangedEvent = {type: Events.EVENT_DISPLAYED_ROWS_CHANGED};
+        const event: WithoutGridCommon<DisplayedRowsChangedEvent> = { type: Events.EVENT_DISPLAYED_ROWS_CHANGED };
         this.eventService.dispatchEvent(event);
     }
 
@@ -1159,12 +1157,10 @@ export class RowRenderer extends BeanStub {
             this.firstRenderedRow = newFirst;
             this.lastRenderedRow = newLast;
 
-            const event: ViewportChangedEvent = {
+            const event: WithoutGridCommon<ViewportChangedEvent> = {
                 type: Events.EVENT_VIEWPORT_CHANGED,
                 firstRow: newFirst,
-                lastRow: newLast,
-                api: this.gridApi,
-                columnApi: this.columnApi
+                lastRow: newLast
             };
 
             this.eventService.dispatchEvent(event);
@@ -1177,12 +1173,10 @@ export class RowRenderer extends BeanStub {
      * but not execute the event until all of the data has finished being rendered to the dom.
      */
     public dispatchFirstDataRenderedEvent() {
-        const event: FirstDataRenderedEvent = {
+        const event: WithoutGridCommon<FirstDataRenderedEvent> = {
             type: Events.EVENT_FIRST_DATA_RENDERED,
             firstRow: this.firstRenderedRow,
             lastRow: this.lastRenderedRow,
-            api: this.beans.gridApi,
-            columnApi: this.beans.columnApi,
         };
 
         // See AG-7018

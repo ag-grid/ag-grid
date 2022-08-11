@@ -26,9 +26,6 @@ import { PaginationProxy } from "../pagination/paginationProxy";
 import { CtrlsService } from "../ctrlsService";
 import { AutoScrollService } from "../autoScrollService";
 
-import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columns/columnApi";
-
 export interface RowDropZoneEvents {
     /** Callback function that will be executed when the rowDrag enters the target. */
     onDragEnter?: (params: RowDragEnterEvent) => void;
@@ -62,8 +59,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Optional('rangeService') private rangeService: IRangeService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     private clientSideRowModel: IClientSideRowModel;
     private eContainer: HTMLElement;
@@ -416,6 +411,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             type: type,
             api: this.gridOptionsWrapper.getApi()!,
             columnApi: this.gridOptionsWrapper.getColumnApi()!,
+            context: this.gridOptionsWrapper.getContext(),
             event: draggingEvent.event,
             node: draggingEvent.dragItem.rowNode!,
             nodes: draggingEvent.dragItem.rowNodes!,

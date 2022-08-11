@@ -2,12 +2,10 @@ import { Autowired, Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
 import { Constants } from "./constants/constants";
-import { ColumnApi } from "./columns/columnApi";
 import { ColumnModel } from "./columns/columnModel";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
-import { GridApi } from "./gridApi";
 import { SortOption } from "./rowNodes/rowNodeSorter";
-import { last } from "./utils/array";
+import { WithoutGridCommon } from "./interfaces/iCommon";
 
 export interface SortModelItem {
     /** Column Id to apply the sort to. */
@@ -22,8 +20,6 @@ export class SortController extends BeanStub {
     private static DEFAULT_SORTING_ORDER = [Constants.SORT_ASC, Constants.SORT_DESC, null];
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     public progressSort(column: Column, multiSort: boolean, source: ColumnEventType): void {
         const nextDirection = this.getNextSortDirection(column);
@@ -94,10 +90,8 @@ export class SortController extends BeanStub {
     }
 
     public dispatchSortChangedEvents(source: string): void {
-        const event: SortChangedEvent = {
+        const event: WithoutGridCommon<SortChangedEvent> = {
             type: Events.EVENT_SORT_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             source
         };
         this.eventService.dispatchEvent(event);

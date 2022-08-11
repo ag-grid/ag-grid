@@ -94,6 +94,7 @@ import { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
 import { RowNodeEventThrottle } from "./entities/rowNodeEventThrottle";
 import { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu";
 import { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorComp";
+import { WithoutGridCommon } from "./interfaces/iCommon";
 
 export interface GridParams {
     // used by Web Components
@@ -173,7 +174,7 @@ export class GridCoreCreator {
         // we wait until the UI has finished initialising before setting in columns and rows
         beans.ctrlsService.whenReady(() => {
             this.setColumnsAndData(beans);
-            this.dispatchGridReadyEvent(beans, gridOptions);
+            this.dispatchGridReadyEvent(beans);
             const isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
             logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
         });
@@ -340,11 +341,9 @@ export class GridCoreCreator {
         beans.rowModel.start();
     }
 
-    private dispatchGridReadyEvent(beans: Beans, gridOptions: GridOptions): void {
-        const readyEvent: GridReadyEvent = {
+    private dispatchGridReadyEvent(beans: Beans): void {
+        const readyEvent: WithoutGridCommon<GridReadyEvent> = {
             type: Events.EVENT_GRID_READY,
-            api: gridOptions.api!,
-            columnApi: gridOptions.columnApi!
         };
         beans.eventService.dispatchEvent(readyEvent);
     }

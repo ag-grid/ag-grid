@@ -4,11 +4,10 @@ import { ColumnModel } from "../columns/columnModel";
 import { ScrollVisibleService, SetScrollsVisibleParams } from "../gridBodyComp/scrollVisibleService";
 import { GridBodyCtrl } from "./gridBodyCtrl";
 import { BodyHeightChangedEvent, Events } from "../events";
-import { ColumnApi } from "../columns/columnApi";
-import { GridApi } from "../gridApi";
 import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
 import { getInnerHeight } from "../utils/dom";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 // listens to changes in the center viewport size, for column and row virtualisation,
 // and adjusts grid as necessary. there are two viewports, one for horizontal and one for
@@ -18,8 +17,6 @@ export class ViewportSizeFeature extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     private centerContainerCtrl: RowContainerCtrl;
     private gridBodyCtrl: GridBodyCtrl;
@@ -97,10 +94,8 @@ export class ViewportSizeFeature extends BeanStub {
 
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;
-            const event: BodyHeightChangedEvent = {
-                type: Events.EVENT_BODY_HEIGHT_CHANGED,
-                api: this.gridApi,
-                columnApi: this.columnApi
+            const event: WithoutGridCommon<BodyHeightChangedEvent> = {
+                type: Events.EVENT_BODY_HEIGHT_CHANGED
             };
             this.eventService.dispatchEvent(event);
         }

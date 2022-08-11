@@ -3,11 +3,9 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    ColumnApi,
     Constants,
     Events,
     FilterManager,
-    GridApi,
     IDatasource,
     ModelUpdatedEvent,
     NumberSequence,
@@ -19,7 +17,8 @@ import {
     RowRenderer,
     SelectionService,
     SortController,
-    IInfiniteRowModel
+    IInfiniteRowModel,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 
@@ -29,8 +28,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('selectionService') private readonly selectionService: SelectionService;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('rowNodeBlockLoader') private readonly rowNodeBlockLoader: RowNodeBlockLoader;
 
@@ -166,15 +163,13 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
         this.resetCache();
 
-        const event: ModelUpdatedEvent = this.createModelUpdatedEvent();
+        const event = this.createModelUpdatedEvent();
         this.eventService.dispatchEvent(event);
     }
 
-    private createModelUpdatedEvent(): ModelUpdatedEvent {
+    private createModelUpdatedEvent(): WithoutGridCommon<ModelUpdatedEvent> {
         return {
             type: Events.EVENT_MODEL_UPDATED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             // not sure if these should all be false - noticed if after implementing,
             // maybe they should be true?
             newPage: false,
@@ -232,7 +227,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     private onCacheUpdated(): void {
-        const event: ModelUpdatedEvent = this.createModelUpdatedEvent();
+        const event = this.createModelUpdatedEvent();
         this.eventService.dispatchEvent(event);
     }
 

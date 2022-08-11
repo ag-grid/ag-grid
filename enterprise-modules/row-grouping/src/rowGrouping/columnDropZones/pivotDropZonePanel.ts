@@ -2,12 +2,10 @@ import {
     _,
     Autowired,
     Column,
-    ColumnApi,
     ColumnModel,
     ColumnPivotChangeRequestEvent,
     DragAndDropService,
     Events,
-    GridApi,
     ITooltipParams,
     LoggerFactory,
     PostConstruct,
@@ -21,8 +19,6 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     constructor(horizontal: boolean) {
         super(horizontal, 'pivot');
@@ -108,11 +104,9 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
 
     protected updateColumns(columns: Column[]): void {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            const event: ColumnPivotChangeRequestEvent = {
+            const event: WithoutGridCommon<ColumnPivotChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
-                columns: columns,
-                api: this.gridApi,
-                columnApi: this.columnApi
+                columns: columns
             };
 
             this.eventService.dispatchEvent(event);

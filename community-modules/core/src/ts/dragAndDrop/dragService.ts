@@ -1,14 +1,13 @@
 import { Bean, PreDestroy, Autowired, PostConstruct } from "../context/context";
 import { LoggerFactory, Logger } from "../logger";
 import { DragStartedEvent, DragStoppedEvent, Events } from "../events";
-import { ColumnApi } from "../columns/columnApi";
-import { GridApi } from "../gridApi";
 import { BeanStub } from "../context/beanStub";
 import { exists } from "../utils/generic";
 import { removeFromArray } from "../utils/array";
 import { areEventsNear } from "../utils/mouse";
 import { MouseEventService } from "../gridBodyComp/mouseEventService";
 import { isBrowserSafari } from "../utils/browser";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 /** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
@@ -16,8 +15,6 @@ import { isBrowserSafari } from "../utils/browser";
 export class DragService extends BeanStub {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
 
     private currentDragParams: DragListenerParams | null;
@@ -214,10 +211,8 @@ export class DragService extends BeanStub {
             if (!this.dragging && this.isEventNearStartEvent(currentEvent, startEvent)) { return; }
 
             this.dragging = true;
-            const event: DragStartedEvent = {
+            const event: WithoutGridCommon<DragStartedEvent> = {
                 type: Events.EVENT_DRAG_STARTED,
-                api: this.gridApi,
-                columnApi: this.columnApi,
                 target: el
             };
             this.eventService.dispatchEvent(event);
@@ -307,10 +302,8 @@ export class DragService extends BeanStub {
         if (this.dragging) {
             this.dragging = false;
             this.currentDragParams!.onDragStop(eventOrTouch);
-            const event: DragStoppedEvent = {
+            const event: WithoutGridCommon<DragStoppedEvent> = {
                 type: Events.EVENT_DRAG_STOPPED,
-                api: this.gridApi,
-                columnApi: this.columnApi,
                 target: el
             };
             this.eventService.dispatchEvent(event);
