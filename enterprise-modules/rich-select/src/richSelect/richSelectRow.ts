@@ -14,7 +14,7 @@ export class RichSelectRow extends Component {
     private readonly params: IRichCellEditorParams;
 
     constructor(params: IRichCellEditorParams) {
-        super(/* html */`<div class="ag-rich-select-row"></div>`);
+        super(/* html */`<div class="ag-rich-select-row" role="presentation"></div>`);
         this.params = params;
     }
 

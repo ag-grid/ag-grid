@@ -243,6 +243,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.virtualList.forEachRenderedRow((cmp: RichSelectRow, idx: number) => {
             cmp.updateSelected(index === idx);
         });
+        this.virtualList.focusRow(index);
     }
 
     private createRowComponent(value: any): Component {
@@ -290,7 +291,12 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.virtualList.refresh();
 
         if (this.focusAfterAttached) {
-            this.getGui().focus();
+            const indexToSelect = selectedIndex !== -1 ? selectedIndex : 0;
+            if (this.params.values.length) {
+                this.virtualList.focusRow(indexToSelect);
+            } else {
+                this.getGui().focus();
+            }
         }
     }
 

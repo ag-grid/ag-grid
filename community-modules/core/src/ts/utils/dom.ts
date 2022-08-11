@@ -1,4 +1,4 @@
-import { isBrowserChrome, isBrowserSafari } from './browser';
+import { browserSupportsPreventScroll, isBrowserChrome, isBrowserSafari } from './browser';
 import { exists } from './generic';
 import { isNonNullObject } from './object';
 import { hyphenToCamelCase } from './string';
@@ -305,8 +305,8 @@ export function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eCh
         }
     }
 
-    if (eChildHasFocus && focusedEl) {
-        focusedEl.focus();
+    if (eChildHasFocus && focusedEl && browserSupportsPreventScroll()) {
+        focusedEl.focus({ preventScroll: true });
     }
 }
 
