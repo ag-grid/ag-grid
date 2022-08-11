@@ -246,6 +246,7 @@ export class ColumnModel extends BeanStub {
 
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
 
+        this.addManagedListener(this.gridOptionsWrapper, 'groupDisplayType', () => this.onAutoGroupColumnDefChanged());
         this.addManagedListener(this.gridOptionsWrapper, 'autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
         this.addManagedListener(this.gridOptionsWrapper, 'defaultColDef', () => this.onDefaultColDefChanged());
     }
