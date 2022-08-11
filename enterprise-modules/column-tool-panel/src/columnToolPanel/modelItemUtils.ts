@@ -2,8 +2,6 @@ import { ColumnModelItem } from "./columnModelItem";
 import {
     ColumnModel,
     Events,
-    GridApi,
-    ColumnApi,
     ColumnPivotChangeRequestEvent,
     GridOptionsWrapper,
     ColumnEventType,
@@ -13,7 +11,8 @@ import {
     Column,
     EventService,
     ColumnState,
-    _
+    _,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 
 @Bean('modelItemUtils')
@@ -22,8 +21,6 @@ export class ModelItemUtils {
     @Autowired('aggFuncService') aggFuncService: IAggFuncService;
     @Autowired('columnModel') columnModel: ColumnModel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('eventService') private eventService: EventService;
 
     public selectAllChildren(colTree: ColumnModelItem[], selectAllChecked: boolean, eventType: ColumnEventType): void {
@@ -137,31 +134,25 @@ export class ModelItemUtils {
         columns.forEach(action);
 
         if (pivotChanged) {
-            const event: ColumnPivotChangeRequestEvent = {
+            const event: WithoutGridCommon<ColumnPivotChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
-                columns: copyOfPivotColumns,
-                api: this.gridApi,
-                columnApi: this.columnApi
+                columns: copyOfPivotColumns
             };
             this.eventService.dispatchEvent(event);
         }
 
         if (rowGroupChanged) {
-            const event: ColumnPivotChangeRequestEvent = {
+            const event: WithoutGridCommon<ColumnPivotChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
-                columns: copyOfRowGroupColumns,
-                api: this.gridApi,
-                columnApi: this.columnApi
+                columns: copyOfRowGroupColumns
             };
             this.eventService.dispatchEvent(event);
         }
 
         if (valueChanged) {
-            const event: ColumnPivotChangeRequestEvent = {
+            const event: WithoutGridCommon<ColumnPivotChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
-                columns: copyOfRowGroupColumns,
-                api: this.gridApi,
-                columnApi: this.columnApi
+                columns: copyOfRowGroupColumns
             };
             this.eventService.dispatchEvent(event);
         }

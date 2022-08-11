@@ -133,19 +133,15 @@ export class FillHandle extends AbstractSelectionHandle {
     }
 
     private raiseFillStartEvent() {
-        const fillStartEvent: FillStartEvent = {
-            type: Events.EVENT_FILL_START,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            api: this.gridOptionsWrapper.getApi()!
+        const fillStartEvent: WithoutGridCommon<FillStartEvent> = {
+            type: Events.EVENT_FILL_START
         };
         this.eventService.dispatchEvent(fillStartEvent);
     }
 
     private raiseFillEndEvent(initialRange: CellRange, finalRange: CellRange) {
-        const fillEndEvent: FillEndEvent = {
+        const fillEndEvent: WithoutGridCommon<FillEndEvent> = {
             type: Events.EVENT_FILL_END,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            api: this.gridOptionsWrapper.getApi()!,
             initialRange: initialRange,
             finalRange: finalRange
         };

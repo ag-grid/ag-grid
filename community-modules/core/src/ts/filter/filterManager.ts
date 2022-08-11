@@ -1,7 +1,6 @@
 import { AgPromise, _ } from '../utils';
 import { ValueService } from '../valueService/valueService';
 import { ColumnModel } from '../columns/columnModel';
-import { ColumnApi } from '../columns/columnApi';
 import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
 import { Autowired, Bean, PostConstruct, PreDestroy } from '../context/context';
@@ -9,7 +8,6 @@ import { IRowModel } from '../interfaces/iRowModel';
 import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent } from '../events';
 import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
 import { ColDef, GetQuickFilterTextParams } from '../entities/colDef';
-import { GridApi } from '../gridApi';
 import { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
@@ -19,6 +17,7 @@ import { exists } from '../utils/generic';
 import { mergeDeep, cloneObject } from '../utils/object';
 import { loadTemplate } from '../utils/dom';
 import { RowRenderer } from '../rendering/rowRenderer';
+import { WithoutGridCommon } from '../interfaces/iCommon';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -28,8 +27,6 @@ export class FilterManager extends BeanStub {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
@@ -340,10 +337,8 @@ export class FilterManager extends BeanStub {
             });
         });
 
-        const filterChangedEvent: FilterChangedEvent = {
+        const filterChangedEvent: WithoutGridCommon<FilterChangedEvent> = {
             type: Events.EVENT_FILTER_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             columns: columns || [],
         };
 
@@ -542,10 +537,8 @@ export class FilterManager extends BeanStub {
         const params: IFilterParams = {
             ...this.createFilterParams(column, colDef),
             filterModifiedCallback: () => {
-                const event: FilterModifiedEvent = {
+                const event: WithoutGridCommon<FilterModifiedEvent> = {
                     type: Events.EVENT_FILTER_MODIFIED,
-                    api: this.gridApi,
-                    columnApi: this.columnApi,
                     column,
                     filterInstance
                 };
@@ -627,15 +620,14 @@ export class FilterManager extends BeanStub {
 
                 eFilterGui.appendChild(guiFromFilter);
                 resolve(eFilterGui);
-
-                this.eventService.dispatchEvent({
+                const event: WithoutGridCommon<FilterOpenedEvent> = {
                     type: Events.EVENT_FILTER_OPENED,
                     column: filterWrapper.column,
                     source,
-                    eGui: eFilterGui,
-                    api: this.gridApi,
-                    columnApi: this.columnApi
-                } as FilterOpenedEvent);
+                    eGui: eFilterGui
+                };
+
+                this.eventService.dispatchEvent(event);
             });
         });
     }

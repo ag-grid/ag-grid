@@ -11,6 +11,7 @@ import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { debounce } from "../utils/function";
 import { Beans } from "../rendering/beans";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -971,10 +972,8 @@ export class RowNode<TData = any> implements IEventEmitter {
 
                 // this is the very end of the 'action node', so we are finished all the updates,
                 // include any parent / child changes that this method caused
-                const event: SelectionChangedEvent = {
-                    type: Events.EVENT_SELECTION_CHANGED,
-                    api: this.beans.gridApi,
-                    columnApi: this.beans.columnApi
+                const event: WithoutGridCommon<SelectionChangedEvent> = {
+                    type: Events.EVENT_SELECTION_CHANGED
                 };
                 this.beans.eventService.dispatchEvent(event);
             }
@@ -1009,10 +1008,8 @@ export class RowNode<TData = any> implements IEventEmitter {
 
         this.beans.selectionService.updateGroupsFromChildrenSelections();
 
-        const event: SelectionChangedEvent = {
-            type: Events.EVENT_SELECTION_CHANGED,
-            api: this.beans.gridApi,
-            columnApi: this.beans.columnApi
+        const event: WithoutGridCommon<SelectionChangedEvent> = {
+            type: Events.EVENT_SELECTION_CHANGED
         };
 
         this.beans.eventService.dispatchEvent(event);

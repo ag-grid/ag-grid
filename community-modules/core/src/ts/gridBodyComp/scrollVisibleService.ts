@@ -1,9 +1,8 @@
 import { Bean, Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { Events, ScrollVisibilityChangedEvent } from "../events";
-import { ColumnApi } from "../columns/columnApi";
-import { GridApi } from "../gridApi";
 import { CtrlsService } from "../ctrlsService";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;
@@ -13,8 +12,6 @@ export interface SetScrollsVisibleParams {
 @Bean('scrollVisibleService')
 export class ScrollVisibleService extends BeanStub {
 
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
     private horizontalScrollShowing: boolean;
@@ -68,10 +65,8 @@ export class ScrollVisibleService extends BeanStub {
             this.horizontalScrollShowing = params.horizontalScrollShowing;
             this.verticalScrollShowing = params.verticalScrollShowing;
 
-            const event: ScrollVisibilityChangedEvent = {
-                type: Events.EVENT_SCROLL_VISIBILITY_CHANGED,
-                api: this.gridApi,
-                columnApi: this.columnApi
+            const event: WithoutGridCommon<ScrollVisibilityChangedEvent> = {
+                type: Events.EVENT_SCROLL_VISIBILITY_CHANGED
             };
             this.eventService.dispatchEvent(event);
         }

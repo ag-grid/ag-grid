@@ -11,12 +11,11 @@ import {
     ChartOptionsChanged,
     ChartRangeSelectionChanged,
     ChartType,
-    ColumnApi,
     Events,
-    GridApi,
     IRangeService,
     PostConstruct,
-    SeriesChartType
+    SeriesChartType,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
 import { ChartProxy, UpdateChartParams } from "./chartProxies/chartProxy";
@@ -33,8 +32,6 @@ export class ChartController extends BeanStub {
     public static EVENT_CHART_SERIES_CHART_TYPE_CHANGED = 'chartSeriesChartTypeChanged';
 
     @Autowired('rangeService') private readonly rangeService: IRangeService;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('columnApi') private readonly columnApi: ColumnApi;
 
     private chartProxy: ChartProxy;
 
@@ -355,27 +352,23 @@ export class ChartController extends BeanStub {
 
     private raiseChartOptionsChangedEvent(): void {
         const {chartId, chartType} = this.getChartModel();
-        const event: ChartOptionsChanged = Object.freeze({
+        const event: WithoutGridCommon<ChartOptionsChanged> = Object.freeze({
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartId,
             chartType,
             chartThemeName: this.model.chartThemeName,
-            chartOptions: this.chartProxy.getChartOptions(),
-            api: this.gridApi,
-            columnApi: this.columnApi,
+            chartOptions: this.chartProxy.getChartOptions()
         });
 
         this.eventService.dispatchEvent(event);
     }
 
     private raiseChartRangeSelectionChangedEvent(): void {
-        const event: ChartRangeSelectionChanged = Object.freeze({
+        const event: WithoutGridCommon<ChartRangeSelectionChanged> = Object.freeze({
             type: Events.EVENT_CHART_RANGE_SELECTION_CHANGED,
             id: this.model.chartId,
             chartId: this.model.chartId,
-            cellRange: this.getCellRangeParams(),
-            api: this.gridApi,
-            columnApi: this.columnApi,
+            cellRange: this.getCellRangeParams()
         });
 
         this.eventService.dispatchEvent(event);

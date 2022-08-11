@@ -8,7 +8,8 @@ import {
     RowGroupOpenedEvent,
     RowNode,
     Bean,
-    Beans
+    Beans,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "../serverSideRowModel";
 import { StoreFactory } from "../stores/storeFactory";
@@ -42,7 +43,7 @@ export class ExpandListener extends BeanStub {
             rowNode.childStore = this.destroyBean(rowNode.childStore)!;
         }
 
-        const storeUpdatedEvent: StoreUpdatedEvent = { type: Events.EVENT_STORE_UPDATED };
+        const storeUpdatedEvent: WithoutGridCommon<StoreUpdatedEvent> = { type: Events.EVENT_STORE_UPDATED };
         this.eventService.dispatchEvent(storeUpdatedEvent);
     }
 

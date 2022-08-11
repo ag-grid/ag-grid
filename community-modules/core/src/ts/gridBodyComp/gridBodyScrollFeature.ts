@@ -7,8 +7,6 @@ import { debounce } from "../utils/function";
 import { BodyScrollEvent, BodyScrollEndEvent } from "../events";
 import { isIOSUserAgent } from "../utils/browser";
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { ColumnApi } from "../columns/columnApi";
-import { GridApi } from "../gridApi";
 import { Constants } from "../constants/constants";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { IRowModel } from "../interfaces/iRowModel";
@@ -18,6 +16,7 @@ import { ColumnModel } from "../columns/columnModel";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 type ScrollDirection = 'horizontal' | 'vertical';
 
@@ -25,8 +24,6 @@ export class GridBodyScrollFeature extends BeanStub {
 
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowContainerHeightService') private heightScaler: RowContainerHeightService;
@@ -194,10 +191,8 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private fireScrollEvent(direction: 'horizontal' | 'vertical'): void {
-        const bodyScrollEvent: BodyScrollEvent = {
-            type: Events.EVENT_BODY_SCROLL,
-            api: this.gridApi,
-            columnApi: this.columnApi,
+        const bodyScrollEvent: WithoutGridCommon<BodyScrollEvent> = {
+            type: Events.EVENT_BODY_SCROLL,            
             direction,
             left: this.scrollLeft,
             top: this.scrollTop
@@ -209,7 +204,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.scrollTimer = undefined;
 
         this.scrollTimer = window.setTimeout(() => {
-            const bodyScrollEndEvent: BodyScrollEndEvent = Object.assign({}, bodyScrollEvent, {
+            const bodyScrollEndEvent: WithoutGridCommon<BodyScrollEndEvent> = Object.assign({}, bodyScrollEvent, {
                 type: Events.EVENT_BODY_SCROLL_END
             });
             this.eventService.dispatchEvent(bodyScrollEndEvent);

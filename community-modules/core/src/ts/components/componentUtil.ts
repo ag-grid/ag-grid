@@ -6,6 +6,7 @@ import { ColumnApi } from '../columns/columnApi';
 import { iterateObject } from '../utils/object';
 import { includes } from '../utils/array';
 import { values } from '../utils/generic';
+import { WithoutGridCommon } from '../interfaces/iCommon';
 
 export class ComponentUtil {
 
@@ -210,10 +211,8 @@ export class ComponentUtil {
             });
 
         // copy changes into an event for dispatch
-        const event: ComponentStateChangedEvent = {
-            type: Events.EVENT_COMPONENT_STATE_CHANGED,
-            api: gridOptions.api!,
-            columnApi: gridOptions.columnApi!
+        const event: WithoutGridCommon<ComponentStateChangedEvent> = {
+            type: Events.EVENT_COMPONENT_STATE_CHANGED
         };
 
         iterateObject(changes, (key: string, value: any) => {

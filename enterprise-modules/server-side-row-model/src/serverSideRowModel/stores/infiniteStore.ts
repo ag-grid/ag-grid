@@ -23,7 +23,8 @@ import {
     StoreRefreshAfterParams,
     StoreUpdatedEvent,
     FocusService,
-    ColumnModel
+    ColumnModel,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
@@ -257,7 +258,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     private fireCacheUpdatedEvent(): void {
         // this results in row model firing ModelUpdated.
         // server side row model also updates the row indexes first
-        const event: StoreUpdatedEvent = {
+        const event: WithoutGridCommon<StoreUpdatedEvent> = {
             type: Events.EVENT_STORE_UPDATED
         };
         this.eventService.dispatchEvent(event);

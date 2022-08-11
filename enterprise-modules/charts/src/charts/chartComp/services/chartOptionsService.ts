@@ -7,7 +7,8 @@ import {
     ChartType,
     ColumnApi,
     Events,
-    GridApi
+    GridApi,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { ChartController } from "../chartController";
 import {
@@ -168,14 +169,12 @@ export class ChartOptionsService extends BeanStub {
     private raiseChartOptionsChangedEvent(): void {
         const chartModel = this.chartController.getChartModel();
 
-        const event: ChartOptionsChanged = Object.freeze({
+        const event: WithoutGridCommon<ChartOptionsChanged> = Object.freeze({
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartId: chartModel.chartId,
             chartType: chartModel.chartType,
             chartThemeName: chartModel.chartThemeName!,
-            chartOptions: chartModel.chartOptions,
-            api: this.gridApi,
-            columnApi: this.columnApi,
+            chartOptions: chartModel.chartOptions            
         });
 
         this.eventService.dispatchEvent(event);

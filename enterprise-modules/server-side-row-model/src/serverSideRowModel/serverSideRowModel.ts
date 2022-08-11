@@ -4,13 +4,11 @@ import {
     Bean,
     BeanStub,
     Column,
-    ColumnApi,
     ColumnModel,
     ColumnVO,
     Constants,
     Events,
     FilterManager,
-    GridApi,
     IServerSideDatasource,
     IServerSideRowModel,
     IServerSideStore,
@@ -27,7 +25,8 @@ import {
     RefreshServerSideParams,
     ServerSideGroupLevelState,
     Beans,
-    SortModelItem
+    SortModelItem,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
@@ -52,8 +51,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('ssrmSortService') private sortListener: SortListener;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
@@ -205,10 +202,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
 
         // this event shows/hides 'no rows' overlay
-        const rowDataChangedEvent: RowDataChangedEvent = {
-            type: Events.EVENT_ROW_DATA_UPDATED,
-            api: this.gridApi,
-            columnApi: this.columnApi
+        const rowDataChangedEvent: WithoutGridCommon<RowDataChangedEvent> = {
+            type: Events.EVENT_ROW_DATA_UPDATED
         };
         this.eventService.dispatchEvent(rowDataChangedEvent);
 
@@ -260,10 +255,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private dispatchModelUpdated(reset = false): void {
-        const modelUpdatedEvent: ModelUpdatedEvent = {
+        const modelUpdatedEvent: WithoutGridCommon<ModelUpdatedEvent> = {
             type: Events.EVENT_MODEL_UPDATED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             animate: !reset,
             keepRenderedRows: !reset,
             newPage: false,

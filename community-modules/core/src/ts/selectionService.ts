@@ -9,19 +9,16 @@ import { Autowired } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
 import { PostConstruct } from "./context/context";
 import { Constants } from "./constants/constants";
-import { ColumnApi } from "./columns/columnApi";
-import { GridApi } from "./gridApi";
 import { ChangedPath } from "./utils/changedPath";
 import { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 import { iterateObject } from "./utils/object";
 import { exists } from "./utils/generic";
+import { WithoutGridCommon } from "./interfaces/iCommon";
 
 @Bean('selectionService')
 export class SelectionService extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     private selectedNodes: { [key: string]: RowNode | undefined; };
     private logger: Logger;
@@ -282,10 +279,8 @@ export class SelectionService extends BeanStub {
             this.updateGroupsFromChildrenSelections();
         }
 
-        const event: SelectionChangedEvent = {
+        const event: WithoutGridCommon<SelectionChangedEvent> = {
             type: Events.EVENT_SELECTION_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi
         };
 
         this.eventService.dispatchEvent(event);
@@ -310,10 +305,8 @@ export class SelectionService extends BeanStub {
             this.updateGroupsFromChildrenSelections();
         }
 
-        const event: SelectionChangedEvent = {
+        const event: WithoutGridCommon<SelectionChangedEvent> = {
             type: Events.EVENT_SELECTION_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event);
     }

@@ -195,14 +195,14 @@ export class ToolPanelColumnComp extends Component {
             defaultIconName: hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
-                const event: ColumnPanelItemDragStartEvent = {
+                const event: WithoutGridCommon<ColumnPanelItemDragStartEvent> = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: this.column
                 };
                 this.eventService.dispatchEvent(event);
             },
             onDragStopped: () => {
-                const event: ColumnPanelItemDragEndEvent = {
+                const event: WithoutGridCommon<ColumnPanelItemDragEndEvent> = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END
                 };
                 this.eventService.dispatchEvent(event);
