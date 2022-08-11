@@ -244,6 +244,7 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
                     onClick={() => setShowCode(false)}
                     onKeyDown={e => doOnEnter(e, () => setShowCode(false))}
                     role="button"
+                    title='Run example'
                     tabIndex="0">
                     <FontAwesomeIcon icon={faPlay} fixedWidth />
                 </div>
@@ -252,10 +253,11 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
                     onClick={() => setShowCode(true)}
                     onKeyDown={e => doOnEnter(e, () => setShowCode(true))}
                     role="button"
+                    title='View Example Source Code'
                     tabIndex="0">
                     <FontAwesomeIcon icon={faCode} fixedWidth />
                 </div>
-                <div className={styles['example-runner__menu-item']}>
+                <div className={styles['example-runner__menu-item']} title='Open example in new tab'>
                     <a href={getIndexHtmlUrl(exampleInfo)} target="_blank" rel="noreferrer">
                         <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
                     </a>
@@ -266,6 +268,7 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
                         onClick={() => openPlunker(exampleInfo)}
                         onKeyDown={e => doOnEnter(e, () => openPlunker(exampleInfo))}
                         role="button"
+                    title='Open example in Plunker'
                         tabIndex="0">
                         <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />
                     </div>}
