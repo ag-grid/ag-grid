@@ -1640,11 +1640,11 @@ export class ColumnModel extends BeanStub {
             }
             return false;
         }, source, () => {
-                const event: WithoutGridCommon<ColumnPinnedEvent> = {
+            const event: WithoutGridCommon<ColumnPinnedEvent> = {
                 type: Events.EVENT_COLUMN_PINNED,
                 pinned: actualPinned,
                 column: null,
-                    columns: null,
+                columns: null,
                 source: source
             };
             return event;
