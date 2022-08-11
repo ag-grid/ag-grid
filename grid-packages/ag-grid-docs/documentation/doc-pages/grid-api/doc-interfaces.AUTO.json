@@ -13930,6 +13930,14 @@
       "description": "/** Minimum angle in degrees required for a segment to show a label. */",
       "type": { "returnType": "number", "optional": true }
     },
+    "formatter": {
+      "type": {
+        "arguments": { "params": "{ value: DatumType; }" },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["DatumType"] },
     "enabled": {
       "description": "/** Whether or not the labels should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -14037,7 +14045,10 @@
     },
     "label": {
       "description": "/** Configuration for the labels used for the segments. */",
-      "type": { "returnType": "AgPieSeriesLabelOptions", "optional": true }
+      "type": {
+        "returnType": "AgPieSeriesLabelOptions<DatumType>",
+        "optional": true
+      }
     },
     "callout": {
       "description": "/** Configuration for the callouts used with the labels for the segments. */",

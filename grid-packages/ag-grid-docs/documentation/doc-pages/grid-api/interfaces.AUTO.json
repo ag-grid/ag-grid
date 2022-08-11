@@ -8155,10 +8155,11 @@
     }
   },
   "AgPieSeriesLabelOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "offset?": "PixelSize",
       "minAngle?": "number",
+      "formatter?": "(params: { value: DatumType; }) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -8251,7 +8252,7 @@
     "type": {
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
-      "label?": "AgPieSeriesLabelOptions",
+      "label?": "AgPieSeriesLabelOptions<DatumType>",
       "callout?": "AgPieSeriesCalloutOptions",
       "angleKey?": "string",
       "angleName?": "string",
