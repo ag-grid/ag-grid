@@ -25,6 +25,7 @@ import { sanitizeHtml } from '../../../util/sanitize';
 import { checkDatum, isContinuous, isNumber } from '../../../util/value';
 import { clamper, ContinuousScale } from '../../../scale/continuousScale';
 import { doOnce } from '../../../util/function';
+import { Point, SizedPoint } from '../../../scene/point';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -44,12 +45,8 @@ export interface AreaSeriesNodeClickEvent extends TypedEvent {
     readonly yKey: string;
 }
 
-interface MarkerSelectionDatum extends SeriesNodeDatum {
+interface MarkerSelectionDatum extends Required<SeriesNodeDatum> {
     readonly index: number;
-    readonly point: {
-        readonly x: number;
-        readonly y: number;
-    };
     readonly fill?: string;
     readonly stroke?: string;
     readonly yKey: string;
@@ -59,10 +56,7 @@ interface MarkerSelectionDatum extends SeriesNodeDatum {
 interface LabelSelectionDatum {
     readonly index: number;
     readonly itemId: any;
-    readonly point: {
-        readonly x: number;
-        readonly y: number;
-    };
+    readonly point: Readonly<Point>;
     readonly label?: {
         readonly text: string;
         readonly fontStyle?: FontStyle;
@@ -77,7 +71,6 @@ interface LabelSelectionDatum {
 
 export { AreaTooltipRendererParams };
 
-type Coordinate = { x: number; y: number };
 type CumulativeValue = { left: number; right: number };
 type ProcessedXDatum = {
     xDatum: any;
@@ -397,7 +390,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             yDatum: number,
             idx: number,
             side: keyof CumulativeValue
-        ): [Coordinate, Coordinate] => {
+        ): [SizedPoint, SizedPoint] => {
             const x = xScale.convert(xDatum) + xOffset;
 
             const prevY = cumulativePathValues[idx][side];
@@ -409,12 +402,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             cumulativePathValues[idx][side] = currY;
 
             return [
-                { x, y: currYCoordinate },
-                { x, y: prevYCoordinate },
+                { x, y: currYCoordinate, size: marker.size },
+                { x, y: prevYCoordinate, size: marker.size },
             ];
         };
 
-        const createMarkerCoordinate = (xDatum: any, yDatum: number, idx: number, rawYDatum: any): Coordinate => {
+        const createMarkerCoordinate = (xDatum: any, yDatum: number, idx: number, rawYDatum: any): SizedPoint => {
             let currY;
 
             // if not normalized, the invalid data points will be processed as `undefined` in processData()
@@ -432,7 +425,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const x = xScale.convert(xDatum) + xOffset;
             const y = yScale.convert(currY, continuousY ? clamper : undefined);
 
-            return { x, y };
+            return { x, y, size: marker.size };
         };
 
         yData.forEach((seriesYs, seriesIdx) => {
@@ -455,7 +448,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             }
 
             const fillPoints = fillSelectionData.points;
-            const fillPhantomPoints: Coordinate[] = [];
+            const fillPhantomPoints: SizedPoint[] = [];
 
             const strokePoints = strokeSelectionData.points;
             const yValues = strokeSelectionData.yValues;
@@ -748,10 +741,13 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             node.strokeOpacity = marker.strokeOpacity ?? strokeOpacity ?? 1;
             node.size = format && format.size !== undefined ? format.size : size;
 
-            node.translationX = datum.point.x;
-            node.translationY = datum.point.y;
+            node.translationX = datum.point?.x ?? 0;
+            node.translationY = datum.point?.y ?? 0;
             node.visible =
-                node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x) && !isNaN(datum.point.y);
+                node.size > 0 &&
+                !!seriesItemEnabled.get(datum.yKey) &&
+                !isNaN(datum.point?.x || 0) &&
+                !isNaN(datum.point?.y || 0);
         });
 
         if (!isDatumHighlighted) {

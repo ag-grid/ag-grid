@@ -12,7 +12,9 @@ import {
     extractImageData,
     CANVAS_WIDTH,
     CANVAS_HEIGHT,
+    hoverAction,
 } from './test/utils';
+import * as examples from './test/examples';
 
 expect.extend({ toMatchImageSnapshot });
 
@@ -215,6 +217,50 @@ describe('CartesianChart', () => {
 
             chart.changeHighlightDatum({ datum: nodeData?.nodeData[3] });
             chart.update(ChartUpdateType.SERIES_UPDATE);
+            await compare(chart);
+        });
+    });
+
+    describe('Histogram & Scatter Series Highlighting', () => {
+        beforeEach(() => {
+            console.warn = jest.fn();
+        });
+
+        afterEach(() => {
+            expect(console.warn).not.toBeCalled();
+        });
+
+        it('should highlight scatter datum when overlapping histogram', async () => {
+            const options = {
+                ...examples.XY_HISTOGRAM_WITH_MEAN_EXAMPLE,
+                series: examples.XY_HISTOGRAM_WITH_MEAN_EXAMPLE.series!.map((s) => {
+                    if (s.type === 'scatter') {
+                        // Tweak marker size so it's large enough to trigger test failures if the
+                        // fake mouse hover doesn't work below.
+                        return { ...s, marker: { size: 20 } };
+                    }
+
+                    return s;
+                }),
+            };
+
+            options.autoSize = false;
+            options.width = CANVAS_WIDTH;
+            options.height = CANVAS_HEIGHT;
+
+            const chart: CartesianChart = AgChartV2.create<any>(options);
+            await waitForChartStability(chart);
+
+            const series = chart.series.find((v: any) => v.type === 'scatter');
+            const nodeDataArray: SeriesNodeDataContext<any, any>[] = series!['contextNodeData'];
+            const context = nodeDataArray[0];
+            const item = context.nodeData.find((n) => n.datum['engine-size'] === 108 && n.datum['highway-mpg'] === 23);
+
+            const { x, y } = series!.group.inverseTransformPoint(item.point.x, item.point.y);
+
+            await hoverAction(x, y)(chart);
+            await waitForChartStability(chart);
+
             await compare(chart);
         });
     });

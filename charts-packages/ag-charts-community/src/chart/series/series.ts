@@ -10,6 +10,7 @@ import { TimeAxis } from '../axis/timeAxis';
 import { Deprecated } from '../../util/validation';
 import { PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
+import { SizedPoint, Point } from '../../scene/point';
 
 /**
  * Processed series datum used in node selections,
@@ -24,11 +25,7 @@ export interface SeriesNodeDatum {
     readonly series: Series<any>;
     readonly itemId?: any;
     readonly datum: any;
-    readonly point?: {
-        // in local (series) coordinates
-        readonly x: number;
-        readonly y: number;
-    };
+    readonly point?: Readonly<SizedPoint>;
 }
 
 /** Modes of matching user interactions to rendered nodes (e.g. hover or click) */
@@ -358,8 +355,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     abstract getTooltipHtml(seriesDatum: any): string;
 
     pickNode(
-        x: number,
-        y: number,
+        point: Point,
         limitPickModes?: SeriesNodePickMode[]
     ): { pickMode: SeriesNodePickMode; match: SeriesNodeDatum; distance: number } | undefined {
         const { pickModes, visible, group } = this;
@@ -377,20 +373,19 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
             switch (pickMode) {
                 case SeriesNodePickMode.EXACT_SHAPE_MATCH:
-                    match = this.pickNodeExactShape(x, y);
+                    match = this.pickNodeExactShape(point);
                     break;
 
                 case SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST:
                 case SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST:
                     match = this.pickNodeMainAxisFirst(
-                        x,
-                        y,
+                        point,
                         pickMode === SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST
                     );
                     break;
 
                 case SeriesNodePickMode.NEAREST_NODE:
-                    match = this.pickNodeClosestDatum(x, y);
+                    match = this.pickNodeClosestDatum(point);
                     break;
             }
 
@@ -400,8 +395,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         }
     }
 
-    protected pickNodeExactShape(x: number, y: number): SeriesNodePickMatch | undefined {
-        const match = this.pickGroup.pickNode(x, y);
+    protected pickNodeExactShape(point: Point): SeriesNodePickMatch | undefined {
+        const match = this.pickGroup.pickNode(point.x, point.y);
 
         if (match) {
             return {
@@ -411,17 +406,13 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         }
     }
 
-    protected pickNodeClosestDatum(_x: number, _y: number): SeriesNodePickMatch | undefined {
+    protected pickNodeClosestDatum(_point: Point): SeriesNodePickMatch | undefined {
         // Override point for sub-classes - but if this is invoked, the sub-class specified it wants
         // to use this feature.
         throw new Error('AG Charts - Series.pickNodeClosestDatum() not implemented');
     }
 
-    protected pickNodeMainAxisFirst(
-        _x: number,
-        _y: number,
-        _requireCategoryAxis: boolean
-    ): SeriesNodePickMatch | undefined {
+    protected pickNodeMainAxisFirst(_point: Point, _requireCategoryAxis: boolean): SeriesNodePickMatch | undefined {
         // Override point for sub-classes - but if this is invoked, the sub-class specified it wants
         // to use this feature.
         throw new Error('AG Charts - Series.pickNodeMainAxisFirst() not implemented');

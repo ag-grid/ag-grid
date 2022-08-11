@@ -12,6 +12,7 @@ import { RedrawType, SceneChangeDetection } from '../../../scene/changeDetectabl
 import { CategoryAxis } from '../../axis/categoryAxis';
 import { PointLabelDatum } from '../../../util/labelPlacement';
 import { Layers } from '../../layers';
+import { Point } from '../../../scene/point';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
@@ -325,13 +326,14 @@ export abstract class CartesianSeries<
         this.highlightLabelSelection = this.updateHighlightSelectionLabel({ item: labelItem, highlightLabelSelection });
     }
 
-    protected pickNodeExactShape(x: number, y: number): SeriesNodePickMatch | undefined {
-        let result = super.pickNodeExactShape(x, y);
+    protected pickNodeExactShape(point: Point): SeriesNodePickMatch | undefined {
+        let result = super.pickNodeExactShape(point);
 
         if (result) {
             return result;
         }
 
+        const { x, y } = point;
         const {
             opts: { pickGroupIncludes },
         } = this;
@@ -350,7 +352,8 @@ export abstract class CartesianSeries<
         }
     }
 
-    protected pickNodeClosestDatum(x: number, y: number): SeriesNodePickMatch | undefined {
+    protected pickNodeClosestDatum(point: Point): SeriesNodePickMatch | undefined {
+        const { x, y } = point;
         const { xAxis, yAxis, group, _contextNodeData: contextNodeData } = this;
         const hitPoint = group.transformPoint(x, y);
 
@@ -367,7 +370,7 @@ export abstract class CartesianSeries<
 
                 // No need to use Math.sqrt() since x < y implies Math.sqrt(x) < Math.sqrt(y) for
                 // values > 1
-                const distance = (hitPoint.x - datumX) ** 2 + (hitPoint.y - datumY) ** 2;
+                const distance = Math.max((hitPoint.x - datumX) ** 2 + (hitPoint.y - datumY) ** 2, 0);
                 if (distance < minDistance) {
                     minDistance = distance;
                     closestDatum = datum;
@@ -376,15 +379,16 @@ export abstract class CartesianSeries<
         }
 
         if (closestDatum) {
-            return { datum: closestDatum, distance: Math.sqrt(minDistance) };
+            const distance = Math.max(Math.sqrt(minDistance) - (closestDatum.point?.size ?? 0), 0);
+            return { datum: closestDatum, distance };
         }
     }
 
     protected pickNodeMainAxisFirst(
-        x: number,
-        y: number,
+        point: Point,
         requireCategoryAxis: boolean
     ): { datum: SeriesNodeDatum; distance: number } | undefined {
+        const { x, y } = point;
         const { xAxis, yAxis, group, _contextNodeData: contextNodeData } = this;
 
         // Prefer to start search with any available category axis.
@@ -436,7 +440,11 @@ export abstract class CartesianSeries<
         }
 
         if (closestDatum) {
-            return { datum: closestDatum, distance: Math.sqrt(minDistance[0] ** 2 + minDistance[1] ** 2) };
+            const distance = Math.max(
+                Math.sqrt(minDistance[0] ** 2 + minDistance[1] ** 2) - (closestDatum.point?.size ?? 0),
+                0
+            );
+            return { datum: closestDatum, distance };
         }
     }
 

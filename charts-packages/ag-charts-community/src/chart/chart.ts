@@ -16,6 +16,7 @@ import { isPointLabelDatum, PlacedLabel, placeLabels, PointLabelDatum } from '..
 import { AgChartOptions } from './agChartOptions';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
+import { Point } from '../scene/point';
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
@@ -516,7 +517,7 @@ export abstract class Chart extends Observable {
         return this._performUpdateType;
     }
     get updatePending(): boolean {
-        return this._performUpdateType !== ChartUpdateType.NONE;
+        return this._performUpdateType !== ChartUpdateType.NONE || this.lastTooltipMeta != null;
     }
     private _lastPerformUpdateError?: Error;
     get lastPerformUpdateError() {
@@ -1037,10 +1038,7 @@ export abstract class Chart extends Observable {
     }
 
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
-    private pickSeriesNode(
-        x: number,
-        y: number
-    ):
+    private pickSeriesNode(point: Point):
         | {
               series: Series<any>;
               datum: SeriesNodeDatum;
@@ -1055,12 +1053,16 @@ export abstract class Chart extends Observable {
         // Disable 'nearest match' options if tooltip.tracking is enabled.
         const pickModes = tracking ? undefined : [SeriesNodePickMode.EXACT_SHAPE_MATCH];
 
+        // Iterate through series in reverse, as later declared series appears on top of earlier
+        // declared series.
+        const reverseSeries = [...this.series].reverse();
+
         let result: { series: Series<any>; datum: SeriesNodeDatum; distance: number } | undefined = undefined;
-        for (const series of this.series) {
+        for (const series of reverseSeries) {
             if (!series.visible || !series.group.visible) {
                 continue;
             }
-            let { match, distance } = series.pickNode(x, y, pickModes) ?? {};
+            let { match, distance } = series.pickNode(point, pickModes) ?? {};
             if (!match || distance == null) {
                 continue;
             }
@@ -1110,6 +1112,7 @@ export abstract class Chart extends Observable {
     private lastTooltipMeta?: TooltipMeta = undefined;
     private handleTooltipTrigger = debouncedAnimationFrame(() => {
         this.handleTooltip(this.lastTooltipMeta!);
+        this.lastTooltipMeta = undefined;
     });
     protected handleTooltip(meta: TooltipMeta) {
         const { lastPick } = this;
@@ -1127,7 +1130,7 @@ export abstract class Chart extends Observable {
             return;
         }
 
-        const pick = this.pickSeriesNode(offsetX, offsetY);
+        const pick = this.pickSeriesNode({ x: offsetX, y: offsetY });
 
         if (!pick) {
             disableTooltip();

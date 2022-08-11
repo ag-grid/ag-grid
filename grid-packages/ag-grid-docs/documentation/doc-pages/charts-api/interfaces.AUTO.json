@@ -2404,7 +2404,6 @@
     "meta": { "isTypeAlias": true },
     "type": "'top' | 'left' | 'right' | 'bottom' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'inside' | 'insideLeft' | 'insideRight' | 'insideTop' | 'insideBottom' | 'insideTopLeft' | 'insideBottomLeft' | 'insideTopRight' | 'insideBottomRight'"
   },
-  "Point": { "meta": {}, "type": { "x": "number", "y": "number" } },
   "CoordinatesFnOpts": {
     "meta": { "isTypeAlias": true },
     "type": "{ yDirection: boolean; xStart: number; xEnd: number; yStart: number; yEnd: number; }"
@@ -2554,7 +2553,6 @@
     "meta": {},
     "type": {
       "index": "number",
-      "point": "{ readonly x: number; readonly y: number; }",
       "fill?": "string",
       "stroke?": "string",
       "yKey": "string",
@@ -2562,7 +2560,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>"
     }
   },
   "LabelSelectionDatum": {
@@ -2570,13 +2568,9 @@
     "type": {
       "index": "number",
       "itemId": "any",
-      "point": "{ readonly x: number; readonly y: number; }",
+      "point": "Readonly<Point>",
       "label?": "{ readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }"
     }
-  },
-  "Coordinate": {
-    "meta": { "isTypeAlias": true },
-    "type": "{ x: number; y: number; }"
   },
   "CumulativeValue": {
     "meta": { "isTypeAlias": true },
@@ -2627,19 +2621,19 @@
       "index": "number",
       "yKey": "string",
       "yValue": "number",
-      "x": "number",
-      "y": "number",
       "width": "number",
       "height": "number",
       "fill?": "string",
       "stroke?": "string",
       "colorIndex": "number",
       "strokeWidth": "number",
-      "label?": "{ readonly x: number; readonly y: number; readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }",
+      "label?": "Readonly<Point> & { readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>",
+      "x": "number",
+      "y": "number"
     }
   },
   "BarSeriesNodeTag": {
@@ -2761,7 +2755,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>"
     }
   },
   "HistogramSeriesNodeClickEvent": {
@@ -2785,12 +2779,12 @@
   "LineNodeDatum": {
     "meta": {},
     "type": {
-      "point": "{ readonly moveTo: boolean; readonly x: number; readonly y: number; }",
+      "point": "SeriesNodeDatum['point'] & { readonly moveTo: boolean; }",
       "label?": "{ readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>"
     }
   },
   "LineSeriesNodeClickEvent": {
@@ -2815,13 +2809,11 @@
   "ScatterNodeDatum": {
     "meta": {},
     "type": {
-      "point": "{ readonly x: number; readonly y: number; }",
-      "size": "number",
       "label": "MeasuredLabel",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>"
     }
   },
   "ScatterSeriesNodeClickEvent": {
@@ -2872,7 +2864,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>"
     }
   },
   "TreemapTooltipRendererParams": {
@@ -2929,7 +2921,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>"
     }
   },
   "PieTooltipRendererParams": {
@@ -2990,7 +2982,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "{ readonly x: number; readonly y: number; }"
+      "point?": "Readonly<SizedPoint>"
     }
   },
   "SeriesNodePickMode": {
@@ -3152,6 +3144,11 @@
     "meta": { "isTypeAlias": true },
     "type": "{ ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D; forceRender: boolean; resized: boolean; clipBBox?: BBox; stats?: { nodesRendered: number; nodesSkipped: number; layersRendered: number; layersSkipped: number; }; }"
   },
+  "Point": { "meta": {}, "type": { "x": "number", "y": "number" } },
+  "SizedPoint": {
+    "meta": {},
+    "type": { "size": "number", "x": "number", "y": "number" }
+  },
   "DebugOptions": {
     "meta": {},
     "type": {
@@ -3240,29 +3237,25 @@
     "meta": { "typeParams": ["PLD = PointLabelDatum"] },
     "type": {
       "index": "number",
-      "x": "number",
-      "y": "number",
       "datum": "PLD",
       "text": "string",
       "width": "number",
-      "height": "number"
+      "height": "number",
+      "x": "number",
+      "y": "number"
     }
   },
   "PointLabelDatum": {
     "meta": {},
-    "type": {
-      "point": "{ readonly x: number; readonly y: number; }",
-      "size": "number",
-      "label": "MeasuredLabel"
-    }
+    "type": { "point": "Readonly<SizedPoint>", "label": "MeasuredLabel" }
   },
   "Bounds": {
     "meta": {},
     "type": {
-      "x": "number",
-      "y": "number",
       "width": "number",
-      "height": "number"
+      "height": "number",
+      "x": "number",
+      "y": "number"
     }
   },
   "FormatType": {
