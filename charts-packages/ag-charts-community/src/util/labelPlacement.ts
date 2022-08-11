@@ -1,28 +1,22 @@
+import { SizedPoint, Point } from '../scene/point';
+
 export interface MeasuredLabel {
     readonly text: string;
     readonly width: number;
     readonly height: number;
 }
 
-export interface PlacedLabel<PLD = PointLabelDatum> extends MeasuredLabel {
+export interface PlacedLabel<PLD = PointLabelDatum> extends MeasuredLabel, Readonly<Point> {
     readonly index: number;
-    readonly x: number;
-    readonly y: number;
     readonly datum: PLD;
 }
 
 export interface PointLabelDatum {
-    readonly point: {
-        readonly x: number;
-        readonly y: number;
-        readonly size: number;
-    };
+    readonly point: Readonly<SizedPoint>;
     readonly label: MeasuredLabel;
 }
 
-interface Bounds {
-    readonly x: number;
-    readonly y: number;
+interface Bounds extends Readonly<Point> {
     readonly width: number;
     readonly height: number;
 }

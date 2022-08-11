@@ -10,6 +10,7 @@ import { AxisLabel } from '../../axis';
 import { ChartAxis, ChartAxisDirection } from '../chartAxis';
 import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
+import { Point } from '../../scene/point';
 
 class GroupedCategoryAxisLabel extends AxisLabel {
     grid: boolean = false;
@@ -102,16 +103,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         }
     }
 
-    readonly translation: {
-        /**
-         * The horizontal translation of the axis group.
-         */
-        x: number;
-        /**
-         * The vertical translation of the axis group.
-         */
-        y: number;
-    } = {
+    readonly translation: Point = {
         x: 0,
         y: 0,
     };

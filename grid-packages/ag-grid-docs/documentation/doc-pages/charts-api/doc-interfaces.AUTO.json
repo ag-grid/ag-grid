@@ -3514,10 +3514,6 @@
   },
   "CrossLineType": {},
   "CrossLineLabelPosition": {},
-  "Point": {
-    "x": { "type": { "returnType": "number", "optional": false } },
-    "y": { "type": { "returnType": "number", "optional": false } }
-  },
   "CoordinatesFnOpts": {},
   "CoordinatesFn": {},
   "PositionCalcFns": {},
@@ -3625,21 +3621,13 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
-      "type": {
-        "returnType": "{\n        // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n        readonly size: number;\n    }",
-        "optional": true
-      }
+      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
   },
   "LabelSelectionDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },
-    "point": {
-      "type": {
-        "returnType": "{\n        readonly x: number;\n        readonly y: number;\n    }",
-        "optional": false
-      }
-    },
+    "point": { "type": { "returnType": "Readonly<Point>", "optional": false } },
     "label": {
       "type": {
         "returnType": "{\n        readonly text: string;\n        readonly fontStyle?: FontStyle;\n        readonly fontWeight?: FontWeight;\n        readonly fontSize: number;\n        readonly fontFamily: string;\n        readonly textAlign: CanvasTextAlign;\n        readonly textBaseline: CanvasTextBaseline;\n        readonly fill: string;\n    }",
@@ -3647,7 +3635,6 @@
       }
     }
   },
-  "Coordinate": {},
   "CumulativeValue": {},
   "ProcessedXDatum": {},
   "AreaSeriesTag": {},
@@ -3676,8 +3663,6 @@
     "index": { "type": { "returnType": "number", "optional": false } },
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "number", "optional": false } },
-    "x": { "type": { "returnType": "number", "optional": false } },
-    "y": { "type": { "returnType": "number", "optional": false } },
     "width": { "type": { "returnType": "number", "optional": false } },
     "height": { "type": { "returnType": "number", "optional": false } },
     "fill": { "type": { "returnType": "string", "optional": true } },
@@ -3686,7 +3671,7 @@
     "strokeWidth": { "type": { "returnType": "number", "optional": false } },
     "label": {
       "type": {
-        "returnType": "{\n        readonly x: number;\n        readonly y: number;\n        readonly text: string;\n        readonly fontStyle?: FontStyle;\n        readonly fontWeight?: FontWeight;\n        readonly fontSize: number;\n        readonly fontFamily: string;\n        readonly textAlign: CanvasTextAlign;\n        readonly textBaseline: CanvasTextBaseline;\n        readonly fill: string;\n    }",
+        "returnType": "Readonly<Point> & {\n        readonly text: string;\n        readonly fontStyle?: FontStyle;\n        readonly fontWeight?: FontWeight;\n        readonly fontSize: number;\n        readonly fontFamily: string;\n        readonly textAlign: CanvasTextAlign;\n        readonly textBaseline: CanvasTextBaseline;\n        readonly fill: string;\n    }",
         "optional": true
       }
     },
@@ -3694,11 +3679,10 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
-      "type": {
-        "returnType": "{\n        // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n        readonly size: number;\n    }",
-        "optional": true
-      }
-    }
+      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "x": { "type": { "returnType": "number", "optional": false } },
+    "y": { "type": { "returnType": "number", "optional": false } }
   },
   "BarSeriesNodeTag": {},
   "BarLabelPlacement": {},
@@ -3806,10 +3790,7 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
-      "type": {
-        "returnType": "{\n        // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n        readonly size: number;\n    }",
-        "optional": true
-      }
+      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
   },
   "HistogramSeriesNodeClickEvent": {
@@ -3856,10 +3837,7 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
-      "type": {
-        "returnType": "{\n        // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n        readonly size: number;\n    }",
-        "optional": true
-      }
+      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
   },
   "ScatterSeriesNodeClickEvent": {
@@ -3907,10 +3885,7 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
-      "type": {
-        "returnType": "{\n        // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n        readonly size: number;\n    }",
-        "optional": true
-      }
+      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
   },
   "TreemapTooltipRendererParams": {
@@ -3960,10 +3935,7 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
-      "type": {
-        "returnType": "{\n        // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n        readonly size: number;\n    }",
-        "optional": true
-      }
+      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
   },
   "PieTooltipRendererParams": {
@@ -4009,10 +3981,7 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
-      "type": {
-        "returnType": "{\n        // in local (series) coordinates\n        readonly x: number;\n        readonly y: number;\n        readonly size: number;\n    }",
-        "optional": true
-      }
+      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
   },
   "SeriesNodePickMode": {},
@@ -4178,6 +4147,15 @@
   },
   "PointerEvents": {},
   "RenderContext": {},
+  "Point": {
+    "x": { "type": { "returnType": "number", "optional": false } },
+    "y": { "type": { "returnType": "number", "optional": false } }
+  },
+  "SizedPoint": {
+    "size": { "type": { "returnType": "number", "optional": false } },
+    "x": { "type": { "returnType": "number", "optional": false } },
+    "y": { "type": { "returnType": "number", "optional": false } }
+  },
   "DebugOptions": {
     "stats": {
       "type": {
@@ -4236,28 +4214,25 @@
   },
   "PlacedLabel": {
     "index": { "type": { "returnType": "number", "optional": false } },
-    "x": { "type": { "returnType": "number", "optional": false } },
-    "y": { "type": { "returnType": "number", "optional": false } },
     "datum": { "type": { "returnType": "PLD", "optional": false } },
     "meta": { "typeParams": ["PLD = PointLabelDatum"] },
     "text": { "type": { "returnType": "string", "optional": false } },
     "width": { "type": { "returnType": "number", "optional": false } },
-    "height": { "type": { "returnType": "number", "optional": false } }
+    "height": { "type": { "returnType": "number", "optional": false } },
+    "x": { "type": { "returnType": "number", "optional": false } },
+    "y": { "type": { "returnType": "number", "optional": false } }
   },
   "PointLabelDatum": {
     "point": {
-      "type": {
-        "returnType": "{\n        readonly x: number;\n        readonly y: number;\n        readonly size: number;\n    }",
-        "optional": false
-      }
+      "type": { "returnType": "Readonly<SizedPoint>", "optional": false }
     },
     "label": { "type": { "returnType": "MeasuredLabel", "optional": false } }
   },
   "Bounds": {
-    "x": { "type": { "returnType": "number", "optional": false } },
-    "y": { "type": { "returnType": "number", "optional": false } },
     "width": { "type": { "returnType": "number", "optional": false } },
-    "height": { "type": { "returnType": "number", "optional": false } }
+    "height": { "type": { "returnType": "number", "optional": false } },
+    "x": { "type": { "returnType": "number", "optional": false } },
+    "y": { "type": { "returnType": "number", "optional": false } }
   },
   "FormatType": {},
   "FormatSpecifierOptions": {

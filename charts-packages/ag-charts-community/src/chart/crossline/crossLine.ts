@@ -10,13 +10,13 @@ import { normalizeAngle360, toRadians } from '../../util/angle';
 import { ChartAxisDirection, ChartAxisPosition } from '../chartAxis';
 import {
     CrossLineLabelPosition,
-    Point,
     labeldDirectionHandling,
     POSITION_TOP_COORDINATES,
     calculateLabelTranslation,
 } from './crossLineLabelPosition';
 import { checkDatum } from '../../util/value';
 import { Layers } from '../layers';
+import { Point } from '../../scene/point';
 
 export class CrossLineLabel {
     enabled?: boolean = undefined;

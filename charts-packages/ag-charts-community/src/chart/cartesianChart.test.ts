@@ -256,7 +256,7 @@ describe('CartesianChart', () => {
             const context = nodeDataArray[0];
             const item = context.nodeData.find((n) => n.datum['engine-size'] === 108 && n.datum['highway-mpg'] === 23);
 
-            const {x, y} = series!.group.inverseTransformPoint(item.point.x, item.point.y);
+            const { x, y } = series!.group.inverseTransformPoint(item.point.x, item.point.y);
 
             await hoverAction(x, y)(chart);
             await waitForChartStability(chart);

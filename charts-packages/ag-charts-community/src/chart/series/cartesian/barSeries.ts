@@ -24,6 +24,7 @@ import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { checkDatum, isNumber } from '../../../util/value';
 import { clamper, ContinuousScale } from '../../../scale/continuousScale';
+import { Point } from '../../../scene/point';
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
@@ -38,21 +39,17 @@ export interface BarTooltipRendererParams extends CartesianTooltipRendererParams
     readonly processedYValue: any;
 }
 
-interface BarNodeDatum extends SeriesNodeDatum {
+interface BarNodeDatum extends SeriesNodeDatum, Readonly<Point> {
     readonly index: number;
     readonly yKey: string;
     readonly yValue: number;
-    readonly x: number;
-    readonly y: number;
     readonly width: number;
     readonly height: number;
     readonly fill?: string;
     readonly stroke?: string;
     readonly colorIndex: number;
     readonly strokeWidth: number;
-    readonly label?: {
-        readonly x: number;
-        readonly y: number;
+    readonly label?: Readonly<Point> & {
         readonly text: string;
         readonly fontStyle?: FontStyle;
         readonly fontWeight?: FontWeight;

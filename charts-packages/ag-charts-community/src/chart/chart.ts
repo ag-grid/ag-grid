@@ -16,6 +16,7 @@ import { isPointLabelDatum, PlacedLabel, placeLabels, PointLabelDatum } from '..
 import { AgChartOptions } from './agChartOptions';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
+import { Point } from '../scene/point';
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
@@ -1037,10 +1038,7 @@ export abstract class Chart extends Observable {
     }
 
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
-    private pickSeriesNode(
-        x: number,
-        y: number
-    ):
+    private pickSeriesNode(point: Point):
         | {
               series: Series<any>;
               datum: SeriesNodeDatum;
@@ -1064,7 +1062,7 @@ export abstract class Chart extends Observable {
             if (!series.visible || !series.group.visible) {
                 continue;
             }
-            let { match, distance } = series.pickNode(x, y, pickModes) ?? {};
+            let { match, distance } = series.pickNode(point, pickModes) ?? {};
             if (!match || distance == null) {
                 continue;
             }
@@ -1132,7 +1130,7 @@ export abstract class Chart extends Observable {
             return;
         }
 
-        const pick = this.pickSeriesNode(offsetX, offsetY);
+        const pick = this.pickSeriesNode({ x: offsetX, y: offsetY });
 
         if (!pick) {
             disableTooltip();
