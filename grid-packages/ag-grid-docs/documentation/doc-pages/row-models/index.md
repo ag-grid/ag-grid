@@ -73,6 +73,8 @@ Below is a quick feature comparison of all the grid's features across all four r
 
 <matrix-table src='row-models/resources/row-models.json' rootnode='features' columns='{ "feature": "Feature", "clientSide": "Client-Side", "infinite": "Infinite", "serverSide": "Server-Side", "viewport": "Viewport" }'></matrix-table>
 
+**\* SSRM Transactions are not supported when Infinite Scroll is enabled (i.e. `serverSideInfiniteScroll=true`)** 
+
 ## Deeper Understanding of Row Models
 
 The grid follows an MVC pattern. Each data item is wrapped in a **Row Node** and then
