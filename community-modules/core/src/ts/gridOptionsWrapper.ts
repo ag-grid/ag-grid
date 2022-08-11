@@ -81,6 +81,7 @@ export class GridOptionsWrapper {
     public static PROP_HEADER_HEIGHT: 'headerHeight' = 'headerHeight';
     public static PROP_GROUP_REMOVE_SINGLE_CHILDREN: 'groupRemoveSingleChildren' = 'groupRemoveSingleChildren';
     public static PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN: 'groupRemoveLowestSingleChildren' = 'groupRemoveLowestSingleChildren';
+    public static PROP_GROUP_DISPLAY_TYPE: 'groupDisplayType' = 'groupDisplayType';
     public static PROP_PIVOT_HEADER_HEIGHT: 'pivotHeaderHeight' = 'pivotHeaderHeight';
     public static PROP_SUPPRESS_CLIPBOARD_PASTE: 'suppressClipboardPaste' = 'suppressClipboardPaste';
 
