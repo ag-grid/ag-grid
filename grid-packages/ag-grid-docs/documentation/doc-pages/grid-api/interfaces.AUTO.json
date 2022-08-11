@@ -3129,6 +3129,7 @@
       "newPage": "boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
@@ -3136,6 +3137,9 @@
       "keepRenderedRows": "/** If true, the grid has new data loaded, eg user called setRowData(), otherwise\n * it's the same data but sorted or filtered, in which case this is true, and rows\n * can animate around (eg rowNode id 24 is the same row node as last time). */",
       "newData": "/** If true, then this update was a result of setRowData() getting called. This\n * gets the grid to scroll to the top again. */",
       "newPage": "/** True when pagination and a new page is navigated to. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -3148,6 +3152,7 @@
       "newPage": "boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
@@ -3155,6 +3160,9 @@
       "keepRenderedRows?": "/** True if rows were kept (otherwise complete redraw) */",
       "newData?": "/** True if data was new (i.e user set new data) */",
       "newPage": "/** True if user went to a new page */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -3168,9 +3176,15 @@
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ToolPanelVisibleChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -3178,27 +3192,45 @@
       "source": "string | undefined",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnPivotModeChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "VirtualColumnsChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnEverythingChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -3206,36 +3238,60 @@
       "source": "string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "NewColumnsLoadedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "GridColumnsChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "DisplayedColumnsChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "RowDataChangedEvent": {
     "meta": {
@@ -3245,36 +3301,60 @@
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "RowDataUpdatedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "PinnedRowDataChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "SelectionChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "FilterChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -3284,12 +3364,16 @@
       "columns": "Column[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
       "afterDataChange?": "/** True if the filter was changed as a result of data changing */",
       "afterFloatingFilter?": "/** True if filter was changed via floating filter */",
       "columns": "/** Columns affected by the filter change. Array contents depend on the source of the event.\n * \n * - Expect 1 element for UI-driven column filter changes.\n * - Expect 0-N elements (all affected columns) for calls to `gridOptions.api.setFilterModel()`.\n * - Expect 0-N elements (removed columns) for calls to `gridOptions.api.setColumnDefs()`.\n * - Expect 0 elements for quick-filters and calls to `gridOptions.api.onFilterChanged()`. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -3300,9 +3384,15 @@
       "column": "Column",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "FilterOpenedEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -3312,12 +3402,16 @@
       "eGui": "HTMLElement",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
       "column": "/** Column / OriginalColumnGroup that contains the filter */",
       "source": "/** Source of the open request */",
       "eGui": "/** Parent element of the filter */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -3327,10 +3421,14 @@
       "source": "string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
       "source": "/** Source of the sort change. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -3339,55 +3437,106 @@
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "DisplayedColumnsWidthChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnHoverChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "BodyHeightChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ComponentStateChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnPanelItemDragStartEvent": {
-    "meta": {},
-    "type": { "column": "Column | ProvidedColumnGroup", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "column": "Column | ProvidedColumnGroup",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any",
+      "type": "string"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnPanelItemDragEndEvent": {
-    "meta": {},
-    "type": { "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any",
+      "type": "string"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "DragEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -3395,11 +3544,15 @@
       "type": "string",
       "target": "HTMLElement",
       "api": "GridApi<TData>",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "type": "/** One of {'cell','row','headerCell','toolPanel'} */",
-      "target": "/** The DOM element that started the event. */"
+      "target": "/** The DOM element that started the event. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "DragStartedEvent": {
@@ -3408,11 +3561,15 @@
       "type": "string",
       "target": "HTMLElement",
       "api": "GridApi<TData>",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "type": "/** One of {'cell','row','headerCell','toolPanel'} */",
-      "target": "/** The DOM element that started the event. */"
+      "target": "/** The DOM element that started the event. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "DragStoppedEvent": {
@@ -3421,11 +3578,15 @@
       "type": "string",
       "target": "HTMLElement",
       "api": "GridApi<TData>",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "type": "/** One of {'cell','row','headerCell','toolPanel'} */",
-      "target": "/** The DOM element that started the event. */"
+      "target": "/** The DOM element that started the event. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "CheckboxChangedEvent": {
@@ -3446,11 +3607,15 @@
       "clientHeight": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
       "clientWidth": "/** The grid's DIV's clientWidth */",
       "clientHeight": "/** The grid's DIV's clientHeight */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -3466,7 +3631,8 @@
       "overNode?": "RowNode<TData>",
       "y": "number",
       "api": "GridApi<TData>",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "type": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
@@ -3476,7 +3642,10 @@
       "vDirection": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "overIndex": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "overNode?": "/** The row node the mouse is dragging over or undefined if over no row. */",
-      "y": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */"
+      "y": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "RowDragEnterEvent": {
@@ -3491,7 +3660,8 @@
       "overNode?": "RowNode<TData>",
       "y": "number",
       "api": "GridApi<TData>",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "type": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
@@ -3501,7 +3671,10 @@
       "vDirection": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "overIndex": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "overNode?": "/** The row node the mouse is dragging over or undefined if over no row. */",
-      "y": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */"
+      "y": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "RowDragEndEvent": {
@@ -3516,7 +3689,8 @@
       "overNode?": "RowNode<TData>",
       "y": "number",
       "api": "GridApi<TData>",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "type": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
@@ -3526,7 +3700,10 @@
       "vDirection": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "overIndex": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "overNode?": "/** The row node the mouse is dragging over or undefined if over no row. */",
-      "y": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */"
+      "y": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "RowDragMoveEvent": {
@@ -3541,7 +3718,8 @@
       "overNode?": "RowNode<TData>",
       "y": "number",
       "api": "GridApi<TData>",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "type": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
@@ -3551,7 +3729,10 @@
       "vDirection": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "overIndex": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "overNode?": "/** The row node the mouse is dragging over or undefined if over no row. */",
-      "y": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */"
+      "y": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "RowDragLeaveEvent": {
@@ -3566,7 +3747,8 @@
       "overNode?": "RowNode<TData>",
       "y": "number",
       "api": "GridApi<TData>",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "type": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
@@ -3576,7 +3758,10 @@
       "vDirection": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "overIndex": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "overNode?": "/** The row node the mouse is dragging over or undefined if over no row. */",
-      "y": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */"
+      "y": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "PasteStartEvent": {
@@ -3585,9 +3770,15 @@
       "source": "string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "PasteEndEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -3595,18 +3786,30 @@
       "source": "string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "FillStartEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "FillEndEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -3615,9 +3818,15 @@
       "finalRange": "CellRange",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ViewportChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -3626,11 +3835,15 @@
       "lastRow": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
       "firstRow": "/** Index of the first rendered row */",
       "lastRow": "/** Index of the last rendered row */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -3641,11 +3854,15 @@
       "lastRow": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
       "firstRow": "/** Index of the first rendered row */",
       "lastRow": "/** Index of the last rendered row */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -3657,11 +3874,15 @@
       "finished": "boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
       "started": "/** True for the first change event, otherwise false */",
       "finished": "/** True for the last change event, otherwise false */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -3671,11 +3892,15 @@
       "type": "string",
       "chartId": "string",
       "api": "GridApi<TData>",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "type": "/** Will always be `chartCreated`. */",
-      "chartId": "/** Id of the created chart. This can later be used to reference the chart via api methods. */"
+      "chartId": "/** Id of the created chart. This can later be used to reference the chart via api methods. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ChartRangeSelectionChanged": {
@@ -3686,13 +3911,17 @@
       "id": "string",
       "cellRange": "CellRangeParams",
       "api": "GridApi<TData>",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "type": "/** Will always be `chartRangeSelectionChanged`. */",
       "chartId": "/** Id of the effected chart. */",
       "id": "/** Same as `chartId`. */",
-      "cellRange": "/** New cellRange selected. */"
+      "cellRange": "/** New cellRange selected. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ChartOptionsChanged": {
@@ -3704,14 +3933,18 @@
       "chartThemeName": "string",
       "chartOptions": "AgChartThemeOverrides",
       "api": "GridApi<TData>",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "type": "/** Will always be `chartOptionsChanged`. */",
       "chartId": "/** Id of the effected chart. */",
       "chartType": "/** ChartType */",
       "chartThemeName": "/** Chart theme name of currently selected theme. */",
-      "chartOptions": "/** Chart options. */"
+      "chartOptions": "/** Chart options. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ChartDestroyed": {
@@ -3720,11 +3953,15 @@
       "type": "string",
       "chartId": "string",
       "api": "GridApi<TData>",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "type": "/** Will always be `chartDestroyed`. */",
-      "chartId": "/** Id of the effected chart. */"
+      "chartId": "/** Id of the effected chart. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ColumnGroupOpenedEvent": {
@@ -3733,9 +3970,15 @@
       "columnGroup": "ProvidedColumnGroup",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ItemsAddedEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -3743,9 +3986,15 @@
       "items": "RowNode<TData>[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ScrollDirection": {
     "meta": { "isTypeAlias": true },
@@ -3759,9 +4008,15 @@
       "top": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "BodyScrollEndEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -3771,9 +4026,15 @@
       "top": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "FlashCellsEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -3781,18 +4042,30 @@
       "cells": "any",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "PaginationPixelOffsetChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "CellFocusedParams": {
     "meta": {},
@@ -3819,6 +4092,7 @@
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string",
       "rowIndex": "number | null",
       "column": "Column | string | null",
@@ -3829,6 +4103,9 @@
       "floating?": "string | null"
     },
     "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */",
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
@@ -3844,6 +4121,7 @@
       "fromBelow": "boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string",
       "rowIndex": "number | null",
       "column": "Column | string | null",
@@ -3854,6 +4132,9 @@
       "floating?": "string | null"
     },
     "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */",
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
@@ -3869,9 +4150,15 @@
       "source": "string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnEventType": {
     "meta": { "isTypeAlias": true },
@@ -3885,12 +4172,16 @@
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
       "source": "/** String describing where the event is coming from */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -3904,6 +4195,7 @@
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
@@ -3912,6 +4204,9 @@
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
       "source": "/** String describing where the event is coming from */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -3923,12 +4218,16 @@
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
       "source": "/** String describing where the event is coming from */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -3940,12 +4239,16 @@
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
       "source": "/** String describing where the event is coming from */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -3957,12 +4260,16 @@
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
       "source": "/** String describing where the event is coming from */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -3975,6 +4282,7 @@
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
@@ -3982,6 +4290,9 @@
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
       "source": "/** String describing where the event is coming from */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -3994,6 +4305,7 @@
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
@@ -4001,6 +4313,9 @@
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
       "source": "/** String describing where the event is coming from */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4013,6 +4328,7 @@
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
@@ -4020,6 +4336,9 @@
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
       "source": "/** String describing where the event is coming from */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4044,6 +4363,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4067,6 +4388,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4093,6 +4416,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4118,6 +4443,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4141,6 +4468,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4164,6 +4493,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4187,6 +4518,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4210,6 +4543,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4233,6 +4568,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4256,6 +4593,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4279,6 +4618,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4302,6 +4643,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4325,6 +4668,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4355,6 +4700,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4385,6 +4732,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4412,6 +4761,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4439,6 +4790,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4466,6 +4819,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4493,6 +4848,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4520,6 +4877,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4547,6 +4906,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4574,6 +4935,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4601,6 +4964,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4628,6 +4993,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4659,6 +5026,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4689,6 +5058,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4719,6 +5090,8 @@
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4728,10 +5101,14 @@
       "results": "(RowNodeTransaction<TData> | ServerSideTransactionResult)[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
     "docs": {
       "results": "/** Array of result objects. for SSRM it's always list of `ServerSideTransactionResult`.\n * For Client-Side Row Model it's a list of `RowNodeTransaction`. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */"
     }
   },
@@ -4741,9 +5118,15 @@
       "columns": "Column[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnRowGroupChangeRequestEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -4751,9 +5134,15 @@
       "columns": "Column[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnPivotChangeRequestEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -4761,9 +5150,15 @@
       "columns": "Column[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnValueChangeRequestEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -4771,9 +5166,15 @@
       "columns": "Column[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnAggFuncChangeRequestEvent": {
     "meta": { "typeParams": ["TData = any"] },
@@ -4782,43 +5183,105 @@
       "columns": "Column[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ScrollVisibilityChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
+      "context": "any",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "StoreUpdatedEvent": {
-    "meta": {},
-    "type": { "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any",
+      "type": "string"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "LeftPinnedWidthChangedEvent": {
-    "meta": {},
-    "type": { "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any",
+      "type": "string"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "RightPinnedWidthChangedEvent": {
-    "meta": {},
-    "type": { "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any",
+      "type": "string"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "RowContainerHeightChanged": {
-    "meta": {},
-    "type": { "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any",
+      "type": "string"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "DisplayedRowsChangedEvent": {
-    "meta": {},
-    "type": { "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any",
+      "type": "string"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "IFilterLocaleText": {
     "meta": {},
