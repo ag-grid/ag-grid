@@ -37,8 +37,6 @@ import { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { AutoGroupColService } from './autoGroupColService';
 import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
-import { GridApi } from '../gridApi';
-import { ColumnApi } from './columnApi';
 import { Constants } from '../constants/constants';
 import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
@@ -52,6 +50,7 @@ import { convertToMap } from '../utils/map';
 import { doOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
+import { WithoutGridCommon } from '../interfaces/iCommon';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -114,8 +113,6 @@ export class ColumnModel extends BeanStub {
     @Optional('animationFrameService') private animationFrameService: AnimationFrameService;
 
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
 
@@ -246,6 +243,7 @@ export class ColumnModel extends BeanStub {
 
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
 
+        this.addManagedListener(this.gridOptionsWrapper, 'groupDisplayType', () => this.onAutoGroupColumnDefChanged());
         this.addManagedListener(this.gridOptionsWrapper, 'autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
         this.addManagedListener(this.gridOptionsWrapper, 'defaultColDef', () => this.onDefaultColDefChanged());
     }
@@ -336,10 +334,8 @@ export class ColumnModel extends BeanStub {
     }
 
     private dispatchNewColumnsLoaded(): void {
-        const newColumnsLoadedEvent: NewColumnsLoadedEvent = {
-            type: Events.EVENT_NEW_COLUMNS_LOADED,
-            api: this.gridApi,
-            columnApi: this.columnApi
+        const newColumnsLoadedEvent: WithoutGridCommon<NewColumnsLoadedEvent> = {
+            type: Events.EVENT_NEW_COLUMNS_LOADED
         };
 
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
@@ -347,10 +343,8 @@ export class ColumnModel extends BeanStub {
 
     // this event is legacy, no grid code listens to it. instead the grid listens to New Columns Loaded
     private dispatchEverythingChanged(source: ColumnEventType = 'api'): void {
-        const eventEverythingChanged: ColumnEverythingChangedEvent = {
+        const eventEverythingChanged: WithoutGridCommon<ColumnEverythingChangedEvent> = {
             type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             source
         };
         this.eventService.dispatchEvent(eventEverythingChanged);
@@ -433,10 +427,8 @@ export class ColumnModel extends BeanStub {
         const hashAfter = this.viewportColumns.map(column => column.getId()).join('#');
 
         if (hashBefore !== hashAfter) {
-            const event: VirtualColumnsChangedEvent = {
-                type: Events.EVENT_VIRTUAL_COLUMNS_CHANGED,
-                api: this.gridApi,
-                columnApi: this.columnApi
+            const event: WithoutGridCommon<VirtualColumnsChangedEvent> = {
+                type: Events.EVENT_VIRTUAL_COLUMNS_CHANGED
             };
 
             this.eventService.dispatchEvent(event);
@@ -484,10 +476,8 @@ export class ColumnModel extends BeanStub {
         this.updateGridColumns();
         this.updateDisplayedColumns(source);
 
-        const event: ColumnPivotModeChangedEvent = {
-            type: Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi
+        const event: WithoutGridCommon<ColumnPivotModeChangedEvent> = {
+            type: Events.EVENT_COLUMN_PIVOT_MODE_CHANGED
         };
 
         this.eventService.dispatchEvent(event);
@@ -595,14 +585,12 @@ export class ColumnModel extends BeanStub {
 
     public fireColumnResizedEvent(columns: Column[] | null, finished: boolean, source: ColumnEventType, flexColumns: Column[] | null = null): void {
         if (columns && columns.length) {
-            const event: ColumnResizedEvent = {
+            const event: WithoutGridCommon<ColumnResizedEvent> = {
                 type: Events.EVENT_COLUMN_RESIZED,
                 columns: columns,
                 column: columns.length === 1 ? columns[0] : null,
                 flexColumns: flexColumns,
                 finished: finished,
-                api: this.gridApi,
-                columnApi: this.columnApi,
                 source: source
             };
             this.eventService.dispatchEvent(event);
@@ -894,12 +882,10 @@ export class ColumnModel extends BeanStub {
 
         this.updateDisplayedColumns(source);
 
-        const event: ColumnEvent = {
+        const event: WithoutGridCommon<ColumnEvent> = {
             type: eventType,
             columns: masterList,
             column: masterList.length === 1 ? masterList[0] : null,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             source: source
         };
 
@@ -1317,12 +1303,10 @@ export class ColumnModel extends BeanStub {
     }
 
     private fireColumnEvent(type: string, columns: Column[], source: ColumnEventType): void {
-        const event: ColumnValueChangedEvent = {
+        const event: WithoutGridCommon<ColumnValueChangedEvent> = {
             type: type,
             columns: columns,
             column: (columns && columns.length == 1) ? columns[0] : null,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             source: source
         };
         this.eventService.dispatchEvent(event);
@@ -1334,12 +1318,10 @@ export class ColumnModel extends BeanStub {
         this.rowGroupColumns.splice(fromIndex, 1);
         this.rowGroupColumns.splice(toIndex, 0, column);
 
-        const event: ColumnRowGroupChangedEvent = {
+        const event: WithoutGridCommon<ColumnRowGroupChangedEvent> = {
             type: Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
             columns: this.rowGroupColumns,
             column: this.rowGroupColumns.length === 1 ? this.rowGroupColumns[0] : null,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             source: source
         };
 
@@ -1364,13 +1346,11 @@ export class ColumnModel extends BeanStub {
         moveInArray(this.gridColumns, columnsToMove, toIndex);
         this.updateDisplayedColumns(source);
 
-        const event: ColumnMovedEvent = {
+        const event: WithoutGridCommon<ColumnMovedEvent> = {
             type: Events.EVENT_COLUMN_MOVED,
             columns: columnsToMove,
             column: columnsToMove.length === 1 ? columnsToMove[0] : null,
             toIndex: toIndex,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             source: source
         };
 
@@ -1537,10 +1517,8 @@ export class ColumnModel extends BeanStub {
             this.rightWidth = newRightWidth;
             // when this fires, it is picked up by the gridPanel, which ends up in
             // gridPanel calling setWidthAndScrollPosition(), which in turn calls setViewportPosition()
-            const event: DisplayedColumnsWidthChangedEvent = {
+            const event: WithoutGridCommon<DisplayedColumnsWidthChangedEvent> = {
                 type: Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
-                api: this.gridApi,
-                columnApi: this.columnApi
             };
             this.eventService.dispatchEvent(event);
         }
@@ -1663,13 +1641,11 @@ export class ColumnModel extends BeanStub {
             }
             return false;
         }, source, () => {
-            const event: ColumnPinnedEvent = {
+            const event: WithoutGridCommon<ColumnPinnedEvent> = {
                 type: Events.EVENT_COLUMN_PINNED,
                 pinned: actualPinned,
                 column: null,
                 columns: null,
-                api: this.gridApi,
-                columnApi: this.columnApi,
                 source: source
             };
             return event;
@@ -1689,7 +1665,7 @@ export class ColumnModel extends BeanStub {
         action: (column: Column) => boolean,
         // should return back a column event of the right type
         source: ColumnEventType,
-        createEvent?: () => ColumnEvent): void {
+        createEvent?: () => WithoutGridCommon<ColumnEvent>): void {
 
         if (missingOrEmpty(keys)) { return; }
 
@@ -2179,12 +2155,10 @@ export class ColumnModel extends BeanStub {
                 if (unchanged) { return; }
 
                 // returning all columns rather than what has changed!
-                const event: ColumnEvent = {
+                const event: WithoutGridCommon<ColumnEvent> = {
                     type: eventType,
                     columns: colsAfter,
                     column: colsAfter.length === 1 ? colsAfter[0] : null,
-                    api: this.gridApi,
-                    columnApi: this.columnApi,
                     source: source
                 };
 
@@ -2266,14 +2240,12 @@ export class ColumnModel extends BeanStub {
         // only include visible if it's common in all columns
         const pinned = this.getCommonValue(changedColumns, col => col.getPinned());
 
-        const event: ColumnPinnedEvent = {
+        const event: WithoutGridCommon<ColumnPinnedEvent> = {
             type: Events.EVENT_COLUMN_PINNED,
             // mistake in typing, 'undefined' should be allowed, as 'null' means 'not pinned'
             pinned: pinned != null ? pinned : null,
             columns: changedColumns,
             column,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             source: source
         };
 
@@ -2304,13 +2276,11 @@ export class ColumnModel extends BeanStub {
         // only include visible if it's common in all columns
         const visible = this.getCommonValue(changedColumns, col => col.isVisible());
 
-        const event: ColumnVisibleEvent = {
+        const event: WithoutGridCommon<ColumnVisibleEvent> = {
             type: Events.EVENT_COLUMN_VISIBLE,
             visible,
             columns: changedColumns,
             column,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             source: source
         };
 
@@ -2353,12 +2323,10 @@ export class ColumnModel extends BeanStub {
 
         if (!movedColumns.length) { return; }
 
-        const event: ColumnMovedEvent = {
+        const event: WithoutGridCommon<ColumnMovedEvent> = {
             type: Events.EVENT_COLUMN_MOVED,
             columns: movedColumns,
             column: null,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             source: source
         };
 
@@ -2995,11 +2963,9 @@ export class ColumnModel extends BeanStub {
         this.setFirstRightAndLastLeftPinned(source);
 
         impactedGroups.forEach(providedColumnGroup => {
-            const event: ColumnGroupOpenedEvent = {
+            const event: WithoutGridCommon<ColumnGroupOpenedEvent> = {
                 type: Events.EVENT_COLUMN_GROUP_OPENED,
-                columnGroup: providedColumnGroup,
-                api: this.gridApi,
-                columnApi: this.columnApi
+                columnGroup: providedColumnGroup
             };
             this.eventService.dispatchEvent(event);
         });
@@ -3240,10 +3206,8 @@ export class ColumnModel extends BeanStub {
         this.setAutoHeightActive();
 
         if (!areEqual(prevGridCols, this.gridBalancedTree)) {
-            const event: GridColumnsChangedEvent = {
-                type: Events.EVENT_GRID_COLUMNS_CHANGED,
-                api: this.gridApi,
-                columnApi: this.columnApi
+            const event: WithoutGridCommon<GridColumnsChangedEvent> = {
+                type: Events.EVENT_GRID_COLUMNS_CHANGED
             };
             this.eventService.dispatchEvent(event);
         }
@@ -3407,10 +3371,8 @@ export class ColumnModel extends BeanStub {
         this.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
 
-        const event: DisplayedColumnsChangedEvent = {
-            type: Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi
+        const event: WithoutGridCommon<DisplayedColumnsChangedEvent> = {
+            type: Events.EVENT_DISPLAYED_COLUMNS_CHANGED
         };
         this.eventService.dispatchEvent(event);
     }
@@ -3947,12 +3909,10 @@ export class ColumnModel extends BeanStub {
         const changed = col.setAutoHeaderHeight(height);
 
         if (changed) {
-            const event: ColumnEvent = {
+            const event: WithoutGridCommon<ColumnEvent> = {
                 type: Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED,
                 column: col,
                 columns: [col],
-                api: this.gridApi,
-                columnApi: this.columnApi,
                 source: 'autosizeColumnHeaderHeight',
             };
             this.eventService.dispatchEvent(event);

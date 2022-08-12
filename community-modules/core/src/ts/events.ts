@@ -1,8 +1,6 @@
 import { RowNode, RowPinnedType } from './entities/rowNode';
 import { Column, ColumnPinnedType } from './entities/column';
 import { ColDef } from './entities/colDef';
-import { GridApi } from './gridApi';
-import { ColumnApi } from './columns/columnApi';
 import { ProvidedColumnGroup } from './entities/providedColumnGroup';
 import { FilterRequestSource } from './filter/filterManager';
 import { ChartType } from './interfaces/iChartOptions';
@@ -11,6 +9,7 @@ import { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import { ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
+import { AgGridCommon } from './interfaces/iCommon';
 export { Events } from './eventKeys';
 
 export interface ModelUpdatedEvent<TData = any> extends AgGridEvent<TData> {
@@ -43,10 +42,7 @@ export interface AgEvent {
     type: string;
 }
 
-export interface AgGridEvent<TData> extends AgEvent {
-    api: GridApi<TData>;
-    columnApi: ColumnApi;
-}
+export interface AgGridEvent<TData> extends AgGridCommon<TData>, AgEvent { }
 
 export interface ToolPanelVisibleChangedEvent<TData = any> extends AgGridEvent<TData> {
     source: string | undefined;
@@ -122,11 +118,11 @@ export interface BodyHeightChangedEvent<TData = any> extends AgGridEvent<TData> 
 // data changes via the framework bound property, this event has that attribute set.
 export interface ComponentStateChangedEvent<TData = any> extends AgGridEvent<TData> { }
 
-export interface ColumnPanelItemDragStartEvent extends AgEvent {
+export interface ColumnPanelItemDragStartEvent<TData = any> extends AgGridEvent<TData> {
     column: Column | ProvidedColumnGroup;
 }
 
-export interface ColumnPanelItemDragEndEvent extends AgEvent { }
+export interface ColumnPanelItemDragEndEvent<TData = any> extends AgGridEvent<TData> { }
 
 export interface DragEvent<TData = any> extends AgGridEvent<TData> {
     /** One of {'cell','row','headerCell','toolPanel'} */
@@ -397,8 +393,6 @@ interface BaseRowEvent<TData> extends AgGridEvent<TData> {
     rowIndex: number | null;
     /** Either 'top', 'bottom' or null / undefined (if not set) */
     rowPinned: RowPinnedType;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
     /** If event was due to browser event (eg click), this is the browser event */
     event?: Event | null;
 }
@@ -519,11 +513,11 @@ export interface ColumnAggFuncChangeRequestEvent<TData = any> extends ColumnRequ
 
 export interface ScrollVisibilityChangedEvent<TData = any> extends AgGridEvent<TData> { } // not documented
 
-export interface StoreUpdatedEvent extends AgEvent { } // not documented
+export interface StoreUpdatedEvent<TData = any> extends AgGridEvent<TData> { } // not documented
 
-export interface LeftPinnedWidthChangedEvent extends AgEvent { } // not documented
-export interface RightPinnedWidthChangedEvent extends AgEvent { } // not documented
+export interface LeftPinnedWidthChangedEvent<TData = any> extends AgGridEvent<TData> { } // not documented
+export interface RightPinnedWidthChangedEvent<TData = any> extends AgGridEvent<TData> { } // not documented
 
-export interface RowContainerHeightChanged extends AgEvent { } // not documented
+export interface RowContainerHeightChanged<TData = any> extends AgGridEvent<TData> { } // not documented
 
-export interface DisplayedRowsChangedEvent extends AgEvent { } // not documented
+export interface DisplayedRowsChangedEvent<TData = any> extends AgGridEvent<TData> { } // not documented

@@ -4,7 +4,6 @@ import { MouseEventService } from "./mouseEventService";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { Column } from "../entities/column";
 import { FocusService } from "../focusService";
-import { AnimationFrameService } from "../misc/animationFrameService";
 import { IRangeService } from "../interfaces/IRangeService";
 import { ColumnModel } from "../columns/columnModel";
 import { BeanStub } from "../context/beanStub";
@@ -26,8 +25,6 @@ import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/iCall
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { Events } from "../eventKeys";
 import { FullWidthRowFocusedEvent } from "../events";
-import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columns/columnApi";
 import { IRowModel } from "../interfaces/iRowModel";
 
 interface NavigateParams {
@@ -46,12 +43,9 @@ interface NavigateParams {
 @Bean('navigationService')
 export class NavigationService extends BeanStub {
 
-    @Autowired('columnApi') private readonly columnApi: ColumnApi;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusService') private focusService: FocusService;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -765,10 +759,8 @@ export class NavigationService extends BeanStub {
 
         const fromBelow = currentCellFocused != null ? this.rowPositionUtils.before(cellPosition, currentCellFocused) : false;
 
-        const focusEvent: FullWidthRowFocusedEvent = {
+        const focusEvent: WithoutGridCommon<FullWidthRowFocusedEvent> = {
             type: Events.EVENT_FULL_WIDTH_ROW_FOCUSED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             rowIndex: cellPosition.rowIndex,
             rowPinned: cellPosition.rowPinned,
             column: cellPosition.column,

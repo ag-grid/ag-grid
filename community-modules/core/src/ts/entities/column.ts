@@ -10,14 +10,12 @@ import {
     RowSpanParams
 } from "./colDef";
 import { EventService } from "../eventService";
-import { Autowired, Context, PostConstruct } from "../context/context";
+import { Autowired, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnUtils } from "../columns/columnUtils";
 import { RowNode } from "./rowNode";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ColumnEvent, ColumnEventType } from "../events";
-import { ColumnApi } from "../columns/columnApi";
-import { GridApi } from "../gridApi";
 import { ColumnGroup } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { Constants } from "../constants/constants";
@@ -68,9 +66,6 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('context') private context: Context;
 
     private readonly colId: any;
     private colDef: ColDef;
@@ -455,13 +450,14 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     private createColumnEvent(type: string, source: ColumnEventType): ColumnEvent {
-        return {
-            api: this.gridApi,
-            columnApi: this.columnApi,
+        return {            
             type: type,
             column: this,
             columns: [this],
-            source: source
+            source: source,
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
+            context: this.gridOptionsWrapper.getContext()
         };
     }
 

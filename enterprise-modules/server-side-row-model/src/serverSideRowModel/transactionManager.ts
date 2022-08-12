@@ -11,7 +11,8 @@ import {
     ServerSideTransactionResultStatus,
     ValueCache,
     AsyncTransactionsFlushed,
-    RowRenderer
+    RowRenderer,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "./serverSideRowModel";
 
@@ -105,9 +106,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
         }
 
         if (resultsForEvent.length > 0) {
-            const event: AsyncTransactionsFlushed = {
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
+            const event: WithoutGridCommon<AsyncTransactionsFlushed> = {                
                 type: Events.EVENT_ASYNC_TRANSACTIONS_FLUSHED,
                 results: resultsForEvent
             };

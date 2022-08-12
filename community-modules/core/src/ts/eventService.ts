@@ -1,9 +1,9 @@
-import { Logger, LoggerFactory } from "./logger";
 import { Bean, Qualifier } from "./context/context";
-import { IEventEmitter } from "./interfaces/iEventEmitter";
+import { AgEvent, AgGridEvent } from "./events";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { AgEvent } from "./events";
+import { IEventEmitter } from "./interfaces/iEventEmitter";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
+import { LoggerFactory } from "./logger";
 
 @Bean('eventService')
 export class EventService implements IEventEmitter {
@@ -15,6 +15,7 @@ export class EventService implements IEventEmitter {
     private globalAsyncListeners = new Set<Function>();
 
     private frameworkOverrides: IFrameworkOverrides;
+    private gridOptionsWrapper?: GridOptionsWrapper;
 
     private asyncFunctionsQueue: Function[] = [];
     private scheduled = false;
@@ -37,6 +38,7 @@ export class EventService implements IEventEmitter {
         @Qualifier('frameworkOverrides') frameworkOverrides: IFrameworkOverrides,
         @Qualifier('globalEventListener') globalEventListener: Function | null = null) {
         this.frameworkOverrides = frameworkOverrides;
+        this.gridOptionsWrapper = gridOptionsWrapper;
 
         if (globalEventListener) {
             const async = gridOptionsWrapper.useAsyncEvents();
@@ -90,10 +92,22 @@ export class EventService implements IEventEmitter {
     }
 
     public dispatchEvent(event: AgEvent): void {
-        this.dispatchToListeners(event, true);
-        this.dispatchToListeners(event, false);
+        let agEvent = event;
+        if (this.gridOptionsWrapper) {
+            // Apply common properties to all dispatched events if this event service has had its beans set with gridOptionsWrapper.
+            // Note there are multiple instances of EventService that are used local to components which do not set gridOptionsWrapper. 
+            agEvent = {
+                ...event,
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
+                context: this.gridOptionsWrapper.getContext(),
+            } as AgGridEvent<any>;
+        }
 
-        this.firedEvents[event.type] = true;
+        this.dispatchToListeners(agEvent, true);
+        this.dispatchToListeners(agEvent, false);
+
+        this.firedEvents[agEvent.type] = true;
     }
 
     public dispatchEventOnce(event: AgEvent): void {

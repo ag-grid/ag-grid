@@ -5,11 +5,9 @@ import {
     CellPosition,
     CellPositionUtils,
     Column,
-    ColumnApi,
     ColumnModel,
     Constants,
     Events,
-    GridApi,
     IRangeService,
     IRowModel,
     CellRangeParams,
@@ -24,7 +22,8 @@ import {
     CtrlsService,
     AutoScrollService,
     _,
-    RowPinnedType
+    RowPinnedType,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 
 @Bean('rangeService')
@@ -33,8 +32,6 @@ export class RangeService extends BeanStub implements IRangeService {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
@@ -769,10 +766,8 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
-        const event: RangeSelectionChangedEvent = Object.freeze({
+        const event: WithoutGridCommon<RangeSelectionChangedEvent> = Object.freeze({
             type: Events.EVENT_RANGE_SELECTION_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             started,
             finished,
             id,

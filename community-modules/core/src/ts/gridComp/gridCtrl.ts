@@ -1,5 +1,4 @@
 import { Autowired } from "../context/context";
-import { GridApi } from "../gridApi";
 import { FocusService } from "../focusService";
 import { BeanStub } from "../context/beanStub";
 import { ModuleRegistry } from "../modules/moduleRegistry";
@@ -8,12 +7,12 @@ import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Events } from "../eventKeys";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { GridSizeChangedEvent } from "../events";
-import { ColumnApi } from "../columns/columnApi";
 import { ColumnModel } from "../columns/columnModel";
 import { CtrlsService } from "../ctrlsService";
 import { MouseEventService } from "../gridBodyComp/mouseEventService";
 import { last } from "../utils/array";
 import { DragAndDropService, DragSourceType } from "../dragAndDrop/dragAndDropService";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
@@ -27,8 +26,6 @@ export interface IGridComp extends LayoutView {
 
 export class GridCtrl extends BeanStub {
 
-    @Autowired('columnApi') private readonly columnApi: ColumnApi;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('focusService') protected readonly focusService: FocusService;
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
@@ -98,10 +95,8 @@ export class GridCtrl extends BeanStub {
     }
 
     private onGridSizeChanged(): void {
-        const event: GridSizeChangedEvent = {
+        const event: WithoutGridCommon<GridSizeChangedEvent> = {
             type: Events.EVENT_GRID_SIZE_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             clientWidth: this.eGridHostDiv.clientWidth,
             clientHeight: this.eGridHostDiv.clientHeight
         };

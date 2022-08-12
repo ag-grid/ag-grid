@@ -1,23 +1,20 @@
 import {
-    Beans, ColumnApi,
-    ColumnModel, Events,
+    Beans, ColumnModel, Events,
     EventService,
-    GridApi,
     GridOptionsWrapper,
     IsRowMaster,
     RowDataTransaction,
     RowNode,
     RowNodeTransaction,
     SelectionChangedEvent,
-    SelectionService, _
+    SelectionService, _,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
 
     private static TOP_LEVEL = 0;
 
-    private readonly columnApi: ColumnApi;
-    private readonly gridApi: GridApi;
     private readonly rootNode: RowNode;
 
     private gridOptionsWrapper: GridOptionsWrapper;
@@ -40,14 +37,11 @@ export class ClientSideNodeManager {
     private allNodesMap: { [id: string]: RowNode } = {};
 
     constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, eventService: EventService,
-        columnModel: ColumnModel, gridApi: GridApi, columnApi: ColumnApi,
-        selectionService: SelectionService, beans: Beans) {
+        columnModel: ColumnModel, selectionService: SelectionService, beans: Beans) {
         this.rootNode = rootNode;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.eventService = eventService;
         this.columnModel = columnModel;
-        this.gridApi = gridApi;
-        this.columnApi = columnApi;
         this.beans = beans;
         this.selectionService = selectionService;
 
@@ -157,10 +151,8 @@ export class ClientSideNodeManager {
         this.selectionService.updateGroupsFromChildrenSelections();
 
         if (selectionChanged) {
-            const event: SelectionChangedEvent = {
-                type: Events.EVENT_SELECTION_CHANGED,
-                api: this.gridApi,
-                columnApi: this.columnApi
+            const event: WithoutGridCommon<SelectionChangedEvent> = {
+                type: Events.EVENT_SELECTION_CHANGED
             };
             this.eventService.dispatchEvent(event);
         }

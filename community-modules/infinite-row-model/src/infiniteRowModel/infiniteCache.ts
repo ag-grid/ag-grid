@@ -14,7 +14,8 @@ import {
     RowRenderer,
     _,
     FocusService,
-    SortModelItem
+    SortModelItem,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { InfiniteBlock } from "./infiniteBlock";
 
@@ -270,7 +271,7 @@ export class InfiniteCache extends BeanStub {
 
             // this results in both row models (infinite and server side) firing ModelUpdated,
             // however server side row model also updates the row indexes first
-            const event: StoreUpdatedEvent = {
+            const event: WithoutGridCommon<StoreUpdatedEvent> = {
                 type: Events.EVENT_STORE_UPDATED
             };
             this.eventService.dispatchEvent(event);

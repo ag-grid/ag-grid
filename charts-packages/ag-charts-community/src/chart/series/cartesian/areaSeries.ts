@@ -879,6 +879,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 processedYValue,
                 yName,
                 color,
+                title,
             };
             if (tooltipFormat) {
                 return toTooltipHtml(

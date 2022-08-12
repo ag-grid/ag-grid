@@ -3,18 +3,15 @@ import { BeanStub } from "../context/beanStub";
 import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { ColumnApi } from "../columns/columnApi";
-import { GridApi } from "../gridApi";
 import { missing, exists } from "../utils/generic";
 import { isNumeric } from "../utils/number";
 import { RowPosition } from "../entities/rowPosition";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 @Bean('paginationProxy')
 export class PaginationProxy extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     private active: boolean;
     private paginateChildRows: boolean;
@@ -51,32 +48,28 @@ export class PaginationProxy extends BeanStub {
         return res;
     }
 
-    private onModelUpdated(modelUpdatedEvent?: ModelUpdatedEvent): void {
+    private onModelUpdated(modelUpdatedEvent?: WithoutGridCommon<ModelUpdatedEvent>): void {
         this.calculatePages();
-        const paginationChangedEvent: PaginationChangedEvent = {
+        const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
             type: Events.EVENT_PAGINATION_CHANGED,
             animate: modelUpdatedEvent ? modelUpdatedEvent.animate : false,
             newData: modelUpdatedEvent ? modelUpdatedEvent.newData : false,
             newPage: modelUpdatedEvent ? modelUpdatedEvent.newPage : false,
-            keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false,
-            api: this.gridApi,
-            columnApi: this.columnApi
+            keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false
         };
         this.eventService.dispatchEvent(paginationChangedEvent);
     }
 
     private onPaginationPageSizeChanged(): void {
         this.calculatePages();
-        const paginationChangedEvent: PaginationChangedEvent = {
+        const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
             type: Events.EVENT_PAGINATION_CHANGED,
             animate: false,
             newData: false,
             newPage: false,
             // important to keep rendered rows, otherwise every time grid is resized,
             // we would destroy all the rows.
-            keepRenderedRows: true,
-            api: this.gridApi,
-            columnApi: this.columnApi
+            keepRenderedRows: true
         };
         this.eventService.dispatchEvent(paginationChangedEvent);
     }
@@ -85,14 +78,12 @@ export class PaginationProxy extends BeanStub {
         if (!this.active || this.currentPage === page) { return; }
 
         this.currentPage = page;
-        const event: ModelUpdatedEvent = {
+        const event: WithoutGridCommon<ModelUpdatedEvent> = {
             type: Events.EVENT_MODEL_UPDATED,
             animate: false,
             keepRenderedRows: false,
             newData: false,
-            newPage: true,
-            api: this.gridApi,
-            columnApi: this.columnApi
+            newPage: true
         };
         this.onModelUpdated(event);
     }

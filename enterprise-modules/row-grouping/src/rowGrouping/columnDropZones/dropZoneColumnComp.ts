@@ -12,8 +12,6 @@ import {
     Column,
     DragSource,
     ColumnAggFuncChangeRequestEvent,
-    ColumnApi,
-    GridApi,
     AgEvent,
     RefSelector,
     Optional,
@@ -23,6 +21,7 @@ import {
     _,
     SortController,
     SortIndicatorComp,
+    WithoutGridCommon,
 } from "@ag-grid-community/core";
 import { TDropZone } from "./baseDropZonePanel";
 
@@ -44,8 +43,6 @@ export class DropZoneColumnComp extends Component {
     @Autowired('columnModel')  private readonly  columnModel: ColumnModel;
     @Autowired('popupService')  private readonly popupService: PopupService;
     @Optional('aggFuncService') private readonly aggFuncService: IAggFuncService;
-    @Autowired('columnApi') private readonly columnApi: ColumnApi;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('sortController') private readonly sortController: SortController;
     
     @RefSelector('eText') private eText: HTMLElement;
@@ -342,12 +339,10 @@ export class DropZoneColumnComp extends Component {
         const itemSelected = () => {
             hidePopup();
             if (this.gridOptionsWrapper.isFunctionsPassive()) {
-                const event: ColumnAggFuncChangeRequestEvent = {
+                const event: WithoutGridCommon<ColumnAggFuncChangeRequestEvent> = {
                     type: Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
                     columns: [this.column],
-                    aggFunc: value,
-                    api: this.gridApi,
-                    columnApi: this.columnApi
+                    aggFunc: value
                 };
                 this.eventService.dispatchEvent(event);
             } else {

@@ -6,6 +6,7 @@ import { ColumnApi } from '../columns/columnApi';
 import { iterateObject } from '../utils/object';
 import { includes } from '../utils/array';
 import { values } from '../utils/generic';
+import { WithoutGridCommon } from '../interfaces/iCommon';
 
 export class ComponentUtil {
 
@@ -103,6 +104,13 @@ export class ComponentUtil {
                 pGridOptions.groupAggFiltering = ComponentUtil.toBoolean(changesToApply.groupAggFiltering);
             }
             delete changesToApply.groupAggFiltering;
+        }
+
+        if (keyExists('groupDisplayType')) {
+            if (typeof changesToApply.groupDisplayType.currentValue === 'string') {
+                api.setGroupDisplayType(changesToApply.groupDisplayType.currentValue);
+                delete changesToApply.groupDisplayType;
+            }
         }
 
         // we need to do this before the generic handling, otherwise value gets set before we
@@ -210,10 +218,8 @@ export class ComponentUtil {
             });
 
         // copy changes into an event for dispatch
-        const event: ComponentStateChangedEvent = {
-            type: Events.EVENT_COMPONENT_STATE_CHANGED,
-            api: gridOptions.api!,
-            columnApi: gridOptions.columnApi!
+        const event: WithoutGridCommon<ComponentStateChangedEvent> = {
+            type: Events.EVENT_COMPONENT_STATE_CHANGED
         };
 
         iterateObject(changes, (key: string, value: any) => {

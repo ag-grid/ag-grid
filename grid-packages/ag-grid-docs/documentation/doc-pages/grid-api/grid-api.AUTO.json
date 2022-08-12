@@ -983,6 +983,9 @@
   "setGroupRemoveLowestSingleChildren": {
     "type": { "arguments": { "value": "boolean" } }
   },
+  "setGroupDisplayType": {
+    "type": { "arguments": { "value": "RowGroupingDisplayType" } }
+  },
   "onRowHeightChanged": {
     "description": "/** Tells the grid a row height has changed. To be used after calling `rowNode.setRowHeight(newHeight)`. */",
     "type": { "arguments": {} }

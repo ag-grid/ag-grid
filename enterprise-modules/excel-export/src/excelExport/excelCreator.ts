@@ -262,6 +262,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
                 data: node.data,
                 node: node,
                 colDef: column.getColDef(),
+                column: column,
                 rowIndex: rowIndex,
                 api: this.gridOptionsWrapper.getApi()!,
                 columnApi: this.gridOptionsWrapper.getColumnApi()!,

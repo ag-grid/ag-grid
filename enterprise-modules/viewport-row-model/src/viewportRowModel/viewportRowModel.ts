@@ -3,10 +3,8 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    ColumnApi,
     Constants,
     Events,
-    GridApi,
     IRowModel,
     IViewportDatasource,
     ModelUpdatedEvent,
@@ -15,14 +13,13 @@ import {
     RowBounds,
     RowNode,
     RowRenderer,
-    Beans
+    Beans,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 
 @Bean('rowModel')
 export class ViewportRowModel extends BeanStub implements IRowModel {
 
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('beans') private beans: Beans;
 
@@ -258,10 +255,8 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
         this.rowCount = rowCount;
 
-        const event: ModelUpdatedEvent = {
+        const event: WithoutGridCommon<ModelUpdatedEvent> = {
             type: Events.EVENT_MODEL_UPDATED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
             newData: false,
             newPage: false,
             keepRenderedRows: keepRenderedRows,

@@ -881,6 +881,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     processedYValue,
                     yName,
                     color,
+                    title,
                 }),
                 defaults
             );

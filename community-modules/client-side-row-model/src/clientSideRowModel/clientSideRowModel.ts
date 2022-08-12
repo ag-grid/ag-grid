@@ -4,13 +4,11 @@ import {
     Bean,
     BeanStub,
     ChangedPath,
-    ColumnApi,
     ColumnModel,
     Constants,
     Events,
     ExpandCollapseAllEvent,
     FilterChangedEvent,
-    GridApi,
     GridOptionsWrapper,
     IClientSideRowModel,
     IRowNodeStage,
@@ -28,9 +26,9 @@ import {
     SelectionService,
     ValueCache,
     AsyncTransactionsFlushed,
-    AnimationFrameService,
     Beans,
-    FilterManager
+    FilterManager,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -52,9 +50,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     @Autowired('selectionService') private selectionService: SelectionService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('beans') private beans: Beans;
 
     // standard stages
@@ -106,7 +101,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         this.rootNode = new RowNode(this.beans);
         this.nodeManager = new ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper,
-            this.eventService, this.columnModel, this.gridApi, this.columnApi,
+            this.eventService, this.columnModel,
             this.selectionService, this.beans);
     }
 
@@ -461,10 +456,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const displayedNodesMapped = this.setRowTopAndRowIndex();
         this.clearRowTopAndRowIndex(changedPath, displayedNodesMapped);
 
-        const event: ModelUpdatedEvent = {
-            type: Events.EVENT_MODEL_UPDATED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
+        const event: WithoutGridCommon<ModelUpdatedEvent> = {
+            type: Events.EVENT_MODEL_UPDATED,            
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
             newData: params.newData,
@@ -723,9 +716,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.refreshModel({ step: ClientSideRowModelSteps.MAP });
 
         const eventSource = expand ? 'expandAll' : 'collapseAll';
-        const event: ExpandCollapseAllEvent = {
-            api: this.gridApi,
-            columnApi: this.columnApi,
+        const event: WithoutGridCommon<ExpandCollapseAllEvent> = {            
             type: Events.EVENT_EXPAND_COLLAPSE_ALL,
             source: eventSource
         };
@@ -852,10 +843,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         // this event kicks off:
         // - shows 'no rows' overlay if needed
-        const rowDataUpdatedEvent: RowDataUpdatedEvent = {
-            type: Events.EVENT_ROW_DATA_UPDATED,
-            api: this.gridApi,
-            columnApi: this.columnApi
+        const rowDataUpdatedEvent: WithoutGridCommon<RowDataUpdatedEvent> = {
+            type: Events.EVENT_ROW_DATA_UPDATED
         };
         this.eventService.dispatchEvent(rowDataUpdatedEvent);
 
@@ -917,9 +906,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
 
         if (rowNodeTrans.length > 0) {
-            const event: AsyncTransactionsFlushed = {
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
+            const event: WithoutGridCommon<AsyncTransactionsFlushed> = {                
                 type: Events.EVENT_ASYNC_TRANSACTIONS_FLUSHED,
                 results: rowNodeTrans
             };
@@ -986,10 +973,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         // - updates filters
         this.filterManager.onNewRowsLoaded('rowDataUpdated');
 
-        const event: RowDataUpdatedEvent = {
-            type: Events.EVENT_ROW_DATA_UPDATED,
-            api: this.gridApi,
-            columnApi: this.columnApi
+        const event: WithoutGridCommon<RowDataUpdatedEvent> = {
+            type: Events.EVENT_ROW_DATA_UPDATED            
         };
         this.eventService.dispatchEvent(event);
     }

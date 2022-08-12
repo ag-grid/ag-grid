@@ -546,10 +546,8 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
                 rowNode.setSelected(false, false, true);
             });
 
-            const event: SelectionChangedEvent = {
-                type: Events.EVENT_SELECTION_CHANGED,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!
+            const event: WithoutGridCommon<SelectionChangedEvent> = {
+                type: Events.EVENT_SELECTION_CHANGED
             };
             this.eventService.dispatchEvent(event);
         }
@@ -694,7 +692,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private fireStoreUpdatedEvent(): void {
         // this results in row model firing ModelUpdated.
         // server side row model also updates the row indexes first
-        const event: StoreUpdatedEvent = {
+        const event: WithoutGridCommon<StoreUpdatedEvent> = {
             type: Events.EVENT_STORE_UPDATED
         };
         this.eventService.dispatchEvent(event);

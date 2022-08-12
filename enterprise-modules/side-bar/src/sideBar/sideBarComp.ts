@@ -16,7 +16,8 @@ import {
     Autowired,
     ManagedFocusFeature,
     FocusService,
-    KeyCode
+    KeyCode,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { SideBarButtonClickedEvent, SideBarButtonsComp } from "./sideBarButtonsComp";
 import { ToolPanelWrapper } from "./toolPanelWrapper";
@@ -243,11 +244,9 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     private raiseToolPanelVisibleEvent(key: string | undefined): void {
-        const event: ToolPanelVisibleChangedEvent = {
+        const event: WithoutGridCommon<ToolPanelVisibleChangedEvent> = {
             type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
-            source: key,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!
+            source: key
         };
         this.eventService.dispatchEvent(event);
     }

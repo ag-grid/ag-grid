@@ -2,12 +2,10 @@ import {
     _,
     Autowired,
     Column,
-    ColumnApi,
     ColumnModel,
     ColumnRowGroupChangeRequestEvent,
     DragAndDropService,
     Events,
-    GridApi,
     ITooltipParams,
     LoggerFactory,
     PostConstruct,
@@ -20,8 +18,6 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     constructor(horizontal: boolean) {
         super(horizontal, 'rowGroup');
@@ -74,11 +70,9 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
     protected updateColumns(columns: Column[]) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            const event: ColumnRowGroupChangeRequestEvent = {
+            const event: WithoutGridCommon<ColumnRowGroupChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
-                columns: columns,
-                api: this.gridApi,
-                columnApi: this.columnApi
+                columns: columns
             };
 
             this.eventService.dispatchEvent(event);

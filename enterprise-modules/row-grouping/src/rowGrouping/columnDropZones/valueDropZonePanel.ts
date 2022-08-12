@@ -2,12 +2,10 @@ import {
     _,
     Autowired,
     Column,
-    ColumnApi,
     ColumnModel,
     ColumnValueChangeRequestEvent,
     DragAndDropService,
     Events,
-    GridApi,
     ITooltipParams,
     LoggerFactory,
     PostConstruct,
@@ -21,8 +19,6 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     constructor(horizontal: boolean) {
         super(horizontal, 'aggregation');
@@ -78,11 +74,9 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
 
     protected updateColumns(columns: Column[]): void {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            const event: ColumnValueChangeRequestEvent = {
+            const event: WithoutGridCommon<ColumnValueChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
-                columns: columns,
-                api: this.gridApi,
-                columnApi: this.columnApi
+                columns: columns
             };
             this.eventService.dispatchEvent(event);
         } else {

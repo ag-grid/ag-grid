@@ -41,6 +41,7 @@ export class CellCustomStyleFeature extends BeanStub {
             data: this.rowNode.data,
             node: this.rowNode,
             colDef: colDef,
+            column: this.column,
             rowIndex: this.rowNode.rowIndex!,
             api: this.beans.gridOptionsWrapper.getApi()!,
             columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
@@ -63,7 +64,7 @@ export class CellCustomStyleFeature extends BeanStub {
         let styles: CellStyle | null | undefined;
 
         if (typeof colDef.cellStyle === 'function') {
-            const cellStyleParams = {
+            const cellStyleParams: CellClassParams = {
                 column: this.column,
                 value: this.cellCtrl.getValue(),
                 colDef: colDef,
@@ -73,7 +74,7 @@ export class CellCustomStyleFeature extends BeanStub {
                 api: this.beans.gridOptionsWrapper.getApi()!,
                 columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
                 context: this.beans.gridOptionsWrapper.getContext(),
-            } as CellClassParams;
+            };
             const cellStyleFunc = colDef.cellStyle as CellStyleFunc;
             styles = cellStyleFunc(cellStyleParams);
         } else {
@@ -89,6 +90,7 @@ export class CellCustomStyleFeature extends BeanStub {
             value: this.cellCtrl.getValue(),
             data: this.rowNode.data,
             node: this.rowNode,
+            column: this.column,
             colDef: colDef,
             rowIndex: this.rowNode.rowIndex!,
             api: this.beans.gridOptionsWrapper.getApi()!,

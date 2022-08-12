@@ -22,6 +22,7 @@ import {
     IsRowSelectable,
     IsServerSideGroup,
     RowClassParams,
+    RowGroupingDisplayType,
     ServerSideGroupLevelParams,
 } from "./entities/gridOptions";
 import {
@@ -1415,6 +1416,10 @@ export class GridApi<TData = any> {
 
     public setGroupRemoveLowestSingleChildren(value: boolean) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, value);
+    }
+
+    public setGroupDisplayType(value: RowGroupingDisplayType) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_DISPLAY_TYPE, value);
     }
 
     /** Tells the grid a row height has changed. To be used after calling `rowNode.setRowHeight(newHeight)`. */

@@ -706,41 +706,62 @@ export interface AgBaseSeriesOptions<DatumType, ListenerDatumType = DatumType> {
 }
 
 export interface AgTooltipRendererResult {
+    /** Title text for the tooltip header. */
     title?: string;
+    /** Content text for the tooltip body. */
     content?: string;
 }
 
 export interface AgSeriesTooltipRendererParams {
+    /** Datum from the series data array that the tooltip is being rendered for. */
     readonly datum: any;
+    /** Series title or yName depending on series configuration. */
     readonly title?: string;
+    /** Series primary colour, as selected from the active theme, series options or formatter. */
     readonly color?: CssColor;
 }
 
 export interface AgCartesianSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
+    /** xKey as specified on series options. */
     readonly xKey: string;
+    /** xValue as read from series data via the xKey property. */
     readonly xValue?: any;
+    /** xName as specified on series options. */
     readonly xName?: string;
 
+    /** yKey as specified on series options. */
     readonly yKey: string;
+    /** yValue as read from series data via the yKey property. */
     readonly yValue?: any;
+    /** yName as specified on series options. */
     readonly yName?: string;
 }
 
 export interface AgPolarSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
+    /** angleKey as specified on series options. */
     readonly angleKey: string;
+    /** angleValue as read from series data via the angleValue property. */
     readonly angleValue?: any;
+    /** angleName as specified on series options. */
     readonly angleName?: string;
 
+    /** radiusKey as specified on series options. */
     readonly radiusKey?: string;
+    /** radiusValue as read from series data via the radiusKey property. */
     readonly radiusValue?: any;
+    /** radiusName as specified on series options. */
     readonly radiusName?: string;
 }
 
 export interface AgScatterSeriesTooltipRendererParams extends AgCartesianSeriesTooltipRendererParams {
+    /** sizeKey as specified on series options. */
     readonly sizeKey?: string;
+    /** sizeName as specified on series options. */
     readonly sizeName?: string;
 
+    /** labelKey as specified on series options. */
     readonly labelKey?: string;
+    /** labelName as specified on series options. */
     readonly labelName?: string;
 }
 
@@ -1117,11 +1138,12 @@ export interface AgHistogramSeriesOptions<DatumType = any>
     tooltip?: AgHistogramSeriesTooltip;
 }
 
-export interface AgPieSeriesLabelOptions extends AgChartLabelOptions {
+export interface AgPieSeriesLabelOptions<DatumType> extends AgChartLabelOptions {
     /** Distance in pixels between the callout line and the label text. */
     offset?: PixelSize;
     /** Minimum angle in degrees required for a segment to show a label. */
     minAngle?: number;
+    formatter?: (params: { value: DatumType }) => string;
 }
 
 export interface AgPieSeriesFormatterParams<DatumType> {
@@ -1164,7 +1186,7 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     /** Configuration for the series title. */
     title?: AgPieTitleOptions;
     /** Configuration for the labels used for the segments. */
-    label?: AgPieSeriesLabelOptions;
+    label?: AgPieSeriesLabelOptions<DatumType>;
     /** Configuration for the callouts used with the labels for the segments. */
     callout?: AgPieSeriesCalloutOptions;
     /** The key to use to retrieve angle values from the data. */

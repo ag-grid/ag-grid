@@ -9,21 +9,19 @@ import {
     ChartDestroyed,
     ChartModel,
     ChartType,
-    ColumnApi,
-    ColumnModel,
     Component,
-    Environment,
     Events,
     GridApi,
     IAggFunc,
     PopupService,
     PostConstruct,
     RefSelector,
-    SeriesChartType
+    SeriesChartType,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./chartTitle/titleEdit";
-import { ChartController, ChartModelUpdatedEvent } from "./chartController";
+import { ChartController } from "./chartController";
 import { ChartDataModel, ChartModelParams } from "./chartDataModel";
 import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
 import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
@@ -74,13 +72,10 @@ export class GridChartComp extends Component {
     @RefSelector('eEmpty') private readonly eEmpty: HTMLElement;
     @RefSelector('eTitleEditContainer') private readonly eTitleEditContainer: HTMLDivElement;
 
-    @Autowired('environment') private readonly environment: Environment;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('chartCrossFilterService') private readonly crossFilterService: ChartCrossFilterService;
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('popupService') private readonly popupService: PopupService;
 
     private chartMenu: ChartMenu;
@@ -430,22 +425,18 @@ export class GridChartComp extends Component {
     }
 
     private raiseChartCreatedEvent(): void {
-        const event: ChartCreated = Object.freeze({
+        const event: WithoutGridCommon<ChartCreated> = Object.freeze({
             type: Events.EVENT_CHART_CREATED,
-            chartId: this.chartController.getChartId(),
-            api: this.gridApi,
-            columnApi: this.columnApi,
+            chartId: this.chartController.getChartId()
         });
 
         this.eventService.dispatchEvent(event);
     }
 
     private raiseChartDestroyedEvent(): void {
-        const event: ChartDestroyed = Object.freeze({
+        const event: WithoutGridCommon<ChartDestroyed> = Object.freeze({
             type: Events.EVENT_CHART_DESTROYED,
             chartId: this.chartController.getChartId(),
-            api: this.gridApi,
-            columnApi: this.columnApi,
         });
 
         this.eventService.dispatchEvent(event);
