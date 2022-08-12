@@ -557,6 +557,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                     yValue: bin.aggregatedValue,
                     yName,
                     color,
+                    title,
                 }),
                 defaults
             );

@@ -7930,11 +7930,20 @@
   },
   "AgTooltipRendererResult": {
     "meta": {},
-    "type": { "title?": "string", "content?": "string" }
+    "type": { "title?": "string", "content?": "string" },
+    "docs": {
+      "title?": "/** Title text for the tooltip header. */",
+      "content?": "/** Content text for the tooltip body. */"
+    }
   },
   "AgSeriesTooltipRendererParams": {
     "meta": {},
-    "type": { "datum": "any", "title?": "string", "color?": "CssColor" }
+    "type": { "datum": "any", "title?": "string", "color?": "CssColor" },
+    "docs": {
+      "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "title?": "/** Series title or yName depending on series configuration. */",
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+    }
   },
   "AgCartesianSeriesTooltipRendererParams": {
     "meta": {},
@@ -7948,6 +7957,17 @@
       "datum": "any",
       "title?": "string",
       "color?": "CssColor"
+    },
+    "docs": {
+      "xKey": "/** xKey as specified on series options. */",
+      "xValue?": "/** xValue as read from series data via the xKey property. */",
+      "xName?": "/** xName as specified on series options. */",
+      "yKey": "/** yKey as specified on series options. */",
+      "yValue?": "/** yValue as read from series data via the yKey property. */",
+      "yName?": "/** yName as specified on series options. */",
+      "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "title?": "/** Series title or yName depending on series configuration. */",
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
     }
   },
   "AgPolarSeriesTooltipRendererParams": {
@@ -7962,6 +7982,17 @@
       "datum": "any",
       "title?": "string",
       "color?": "CssColor"
+    },
+    "docs": {
+      "angleKey": "/** angleKey as specified on series options. */",
+      "angleValue?": "/** angleValue as read from series data via the angleValue property. */",
+      "angleName?": "/** angleName as specified on series options. */",
+      "radiusKey?": "/** radiusKey as specified on series options. */",
+      "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
+      "radiusName?": "/** radiusName as specified on series options. */",
+      "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "title?": "/** Series title or yName depending on series configuration. */",
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
     }
   },
   "AgScatterSeriesTooltipRendererParams": {
@@ -7980,6 +8011,21 @@
       "datum": "any",
       "title?": "string",
       "color?": "CssColor"
+    },
+    "docs": {
+      "sizeKey?": "/** sizeKey as specified on series options. */",
+      "sizeName?": "/** sizeName as specified on series options. */",
+      "labelKey?": "/** labelKey as specified on series options. */",
+      "labelName?": "/** labelName as specified on series options. */",
+      "xKey": "/** xKey as specified on series options. */",
+      "xValue?": "/** xValue as read from series data via the xKey property. */",
+      "xName?": "/** xName as specified on series options. */",
+      "yKey": "/** yKey as specified on series options. */",
+      "yValue?": "/** yValue as read from series data via the yKey property. */",
+      "yName?": "/** yName as specified on series options. */",
+      "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "title?": "/** Series title or yName depending on series configuration. */",
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
     }
   },
   "AgSeriesMarker": {
@@ -8793,6 +8839,17 @@
       "datum": "any",
       "title?": "string",
       "color?": "CssColor"
+    },
+    "docs": {
+      "angleKey": "/** angleKey as specified on series options. */",
+      "angleValue?": "/** angleValue as read from series data via the angleValue property. */",
+      "angleName?": "/** angleName as specified on series options. */",
+      "radiusKey?": "/** radiusKey as specified on series options. */",
+      "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
+      "radiusName?": "/** radiusName as specified on series options. */",
+      "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "title?": "/** Series title or yName depending on series configuration. */",
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
     }
   },
   "AgTreemapSeriesLabelOptions": {
