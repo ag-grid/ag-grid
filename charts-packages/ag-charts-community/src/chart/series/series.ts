@@ -186,7 +186,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 name: `${this.id}-series`,
                 layer: seriesGroupUsesLayer,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [this.id, 0],
             })
         );
         this.pickGroup = this.seriesGroup.appendChild(new Group());
@@ -196,7 +195,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 name: `${this.id}-highlight`,
                 layer: true,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [this.id, 1],
                 optimiseDirtyTracking: true,
             })
         );
