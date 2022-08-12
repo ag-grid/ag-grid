@@ -655,6 +655,8 @@ export interface SuppressHeaderKeyboardEventParams<TData = any> extends AgGridCo
 }
 
 export interface CellClassParams<TData = any, TValue = any> extends RowClassParams<TData> {
+    /** Column for this callback */
+    column: Column;
     /** The colDef associated with the column for this cell */
     colDef: ColDef<TData>;
     /** The value to be rendered */
