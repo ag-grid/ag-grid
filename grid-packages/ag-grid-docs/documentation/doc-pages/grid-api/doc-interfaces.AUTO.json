@@ -2259,6 +2259,10 @@
     }
   },
   "CellClassParams": {
+    "column": {
+      "description": "/** Column for this callback */",
+      "type": { "returnType": "Column", "optional": false }
+    },
     "colDef": {
       "description": "/** The colDef associated with the column for this cell */",
       "type": { "returnType": "ColDef<TData>", "optional": false }
@@ -7961,10 +7965,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -7977,6 +7977,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8001,10 +8005,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8016,6 +8016,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8040,10 +8044,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8055,6 +8055,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8083,10 +8087,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8098,6 +8098,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8122,10 +8126,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8137,6 +8137,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8161,10 +8165,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8176,6 +8176,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8200,10 +8204,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8215,6 +8215,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8239,10 +8243,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8254,6 +8254,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8278,10 +8282,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8293,6 +8293,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8317,10 +8321,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8332,6 +8332,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8356,10 +8360,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8371,6 +8371,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8395,10 +8399,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8410,6 +8410,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8434,10 +8438,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8449,6 +8449,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8479,10 +8483,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8494,6 +8494,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8524,10 +8528,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8539,6 +8539,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8569,10 +8573,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8584,6 +8584,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8614,10 +8618,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8629,6 +8629,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8659,10 +8663,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8674,6 +8674,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8704,10 +8708,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8719,6 +8719,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8749,10 +8753,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8764,6 +8764,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8794,10 +8798,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8809,6 +8809,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8839,10 +8843,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8854,6 +8854,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8884,10 +8888,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8899,6 +8899,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8929,10 +8933,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8944,6 +8944,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -8982,10 +8986,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -8997,6 +8997,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -9032,10 +9036,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -9047,6 +9047,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
@@ -9082,10 +9086,6 @@
       "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
@@ -9097,6 +9097,10 @@
     "columnApi": {
       "description": "/** The column api. */",
       "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "type": {
       "description": "/** Event identifier */",
