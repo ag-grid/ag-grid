@@ -30,10 +30,18 @@ enum DefaultTimeFormats {
     WEEK,
     MONTH,
     YEAR,
-    DAY_WEEK,
-    DAY_WEEK_MONTH,
-    DAY_WEEK_MONTH_YEAR,
 }
+
+const formatStrings: Record<DefaultTimeFormats, string> = {
+    [DefaultTimeFormats.MILLISECOND]: '.%L',
+    [DefaultTimeFormats.SECOND]: ':%S',
+    [DefaultTimeFormats.MINUTE]: '%I:%M',
+    [DefaultTimeFormats.HOUR]: '%I %p',
+    [DefaultTimeFormats.DAY]: '%a',
+    [DefaultTimeFormats.WEEK]: '%b %d',
+    [DefaultTimeFormats.MONTH]: '%B',
+    [DefaultTimeFormats.YEAR]: '%Y',
+};
 
 export class TimeScale extends ContinuousScale {
     readonly type = 'time';
@@ -78,40 +86,14 @@ export class TimeScale extends ContinuousScale {
         [this.year, 1, durationYear],
     ];
 
-    private formatMillisecond = this.format('.%L');
-    private formatSecond = this.format(':%S');
-    private formatMinute = this.format('%I:%M');
-    private formatHour = this.format('%I %p');
-    private formatDay = this.format('%a %d');
-    private formatWeek = this.format('%b %d');
-    private formatMonth = this.format('%B');
-    private formatYear = this.format('%Y');
-    private formatDayWeekMonth = this.format('%a %b %d');
-    private formatDayWeekMonthYear = this.format('%a %b %d %y');
-
-    private _defaultTimeFormat: DefaultTimeFormats = DefaultTimeFormats.YEAR;
     defaultTickFormat(ticks?: any[]) {
-        let { _defaultTimeFormat: defaultTimeFormat } = this;
-        const formats: Set<DefaultTimeFormats> = new Set();
+        let defaultTimeFormat = DefaultTimeFormats.YEAR as DefaultTimeFormats;
 
-        function updateFormat(format: DefaultTimeFormats) {
-            if (!formats.has(format)) {
-                formats.add(format);
-            }
-            if (
-                formats.has(DefaultTimeFormats.DAY) &&
-                formats.has(DefaultTimeFormats.MONTH) &&
-                formats.has(DefaultTimeFormats.YEAR)
-            ) {
-                defaultTimeFormat = DefaultTimeFormats.DAY_WEEK_MONTH_YEAR;
-            } else if (formats.has(DefaultTimeFormats.DAY) && formats.has(DefaultTimeFormats.MONTH)) {
-                defaultTimeFormat = DefaultTimeFormats.DAY_WEEK_MONTH;
-            } else if (formats.has(DefaultTimeFormats.DAY) && formats.has(DefaultTimeFormats.WEEK)) {
-                defaultTimeFormat = DefaultTimeFormats.DAY_WEEK;
-            } else {
+        const updateFormat = (format: DefaultTimeFormats) => {
+            if (format < defaultTimeFormat) {
                 defaultTimeFormat = format;
             }
-        }
+        };
 
         for (let value of ticks ?? []) {
             this.second.floor(value) < value
@@ -131,30 +113,46 @@ export class TimeScale extends ContinuousScale {
                 : updateFormat(DefaultTimeFormats.YEAR);
         }
 
+        const domain = super.getDomain();
+        let start = Math.min(...domain);
+        let stop = Math.max(...domain);
+        const extent = stop - start;
+
+        let formatStringArray: string[] = [formatStrings[defaultTimeFormat]];
+
         switch (defaultTimeFormat) {
-            case DefaultTimeFormats.MILLISECOND:
-                return (date: Date) => this.formatMillisecond(date);
             case DefaultTimeFormats.SECOND:
-                return (date: Date) => this.formatSecond(date);
+                if (extent / durationMinute > 1) {
+                    formatStringArray.push(formatStrings[DefaultTimeFormats.MINUTE]);
+                }
+            // fall through deliberately
             case DefaultTimeFormats.MINUTE:
-                return (date: Date) => this.formatMinute(date);
+                if (extent / durationHour > 1) {
+                    formatStringArray.push(formatStrings[DefaultTimeFormats.HOUR]);
+                }
+            // fall through deliberately
             case DefaultTimeFormats.HOUR:
-                return (date: Date) => this.formatHour(date);
+                if (extent / durationDay > 1) {
+                    formatStringArray.push(formatStrings[DefaultTimeFormats.DAY]);
+                }
+            // fall through deliberately
             case DefaultTimeFormats.DAY:
-                return (date: Date) => this.formatDay(date);
-            case DefaultTimeFormats.WEEK:
-                return (date: Date) => this.formatWeek(date);
+                if (extent / durationWeek > 1) {
+                    formatStringArray.push(formatStrings[DefaultTimeFormats.WEEK]);
+                }
+            // fall through deliberately
             case DefaultTimeFormats.MONTH:
-                return (date: Date) => this.formatMonth(date);
-            case DefaultTimeFormats.DAY_WEEK:
-                return (date: Date) => this.formatDay(date);
-            case DefaultTimeFormats.DAY_WEEK_MONTH:
-                return (date: Date) => this.formatDayWeekMonth(date);
-            case DefaultTimeFormats.DAY_WEEK_MONTH_YEAR:
-                return (date: Date) => this.formatDayWeekMonthYear(date);
+                if (extent / durationYear > 1) {
+                    formatStringArray.push(formatStrings[DefaultTimeFormats.YEAR]);
+                }
+            // fall through deliberately
             default:
-                return (date: Date) => this.formatYear(date);
+                break;
         }
+
+        const formatString = formatStringArray.join(' ');
+
+        return (date: Date) => this.format(formatString)(date);
     }
 
     /**
@@ -234,7 +232,7 @@ export class TimeScale extends ContinuousScale {
      * If no specifier is provided, this method returns the default time format function.
      */
     tickFormat({ ticks, specifier }: { count?: any; ticks?: any[]; specifier?: string }): (date: Date) => string {
-        return specifier == undefined ? this.defaultTickFormat.bind(this)(ticks) : this.format(specifier);
+        return specifier == undefined ? this.defaultTickFormat(ticks) : this.format(specifier);
     }
 
     /**

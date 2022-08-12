@@ -3136,12 +3136,9 @@
       "DAY",
       "WEEK",
       "MONTH",
-      "YEAR",
-      "DAY_WEEK",
-      "DAY_WEEK_MONTH",
-      "DAY_WEEK_MONTH_YEAR"
+      "YEAR"
     ],
-    "docs": [null, null, null, null, null, null, null, null, null, null, null]
+    "docs": [null, null, null, null, null, null, null, null]
   },
   "RedrawType": {
     "meta": { "isEnum": true },
