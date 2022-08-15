@@ -61,7 +61,7 @@ function rectContainsRect(
 }
 
 export function isPointLabelDatum(x: any): x is PointLabelDatum {
-    return x != null && typeof x.point === 'object' && typeof x.size === 'number' && typeof x.label === 'object';
+    return x != null && typeof x.point === 'object' && typeof x.label === 'object';
 }
 
 /**

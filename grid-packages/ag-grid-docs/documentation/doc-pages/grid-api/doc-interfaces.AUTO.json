@@ -13851,7 +13851,7 @@
       "type": { "returnType": "string", "optional": false }
     },
     "angleValue": {
-      "description": "/** angleValue as read from series data via the angleValue property. */",
+      "description": "/** angleValue as read from series data via the angleKey property. */",
       "type": { "returnType": "any", "optional": true }
     },
     "angleName": {
@@ -15206,14 +15206,20 @@
     }
   },
   "AgPieSeriesTooltipRendererParams": {
-    "labelKey": { "type": { "returnType": "string", "optional": true } },
-    "labelName": { "type": { "returnType": "string", "optional": true } },
+    "labelKey": {
+      "description": "/** labelKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelName": {
+      "description": "/** labelName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "angleKey": {
       "description": "/** angleKey as specified on series options. */",
       "type": { "returnType": "string", "optional": false }
     },
     "angleValue": {
-      "description": "/** angleValue as read from series data via the angleValue property. */",
+      "description": "/** angleValue as read from series data via the angleKey property. */",
       "type": { "returnType": "any", "optional": true }
     },
     "angleName": {

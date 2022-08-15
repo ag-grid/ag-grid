@@ -740,7 +740,7 @@ export interface AgCartesianSeriesTooltipRendererParams extends AgSeriesTooltipR
 export interface AgPolarSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
     /** angleKey as specified on series options. */
     readonly angleKey: string;
-    /** angleValue as read from series data via the angleValue property. */
+    /** angleValue as read from series data via the angleKey property. */
     readonly angleValue?: any;
     /** angleName as specified on series options. */
     readonly angleName?: string;
@@ -1233,7 +1233,9 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
 }
 
 export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRendererParams {
+    /** labelKey as specified on series options. */
     labelKey?: string;
+    /** labelName as specified on series options. */
     labelName?: string;
 }
 

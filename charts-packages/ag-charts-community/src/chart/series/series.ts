@@ -194,7 +194,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             new Group({
                 name: `${this.id}-highlight`,
                 layer: true,
-                zIndex: Layers.SERIES_HIGHLIGHT_LAYER_ZINDEX,
+                zIndex: Layers.SERIES_LAYER_ZINDEX,
                 optimiseDirtyTracking: true,
             })
         );
@@ -300,19 +300,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             case 'other-highlighted':
             case 'peer-highlighted':
                 return defaultStrokeWidth;
-        }
-    }
-
-    protected getZIndex(datum?: { itemId?: any }): number {
-        const defaultZIndex = Layers.SERIES_LAYER_ZINDEX;
-
-        switch (this.isItemIdHighlighted(datum)) {
-            case 'highlighted':
-            case 'peer-highlighted':
-                return Layers.SERIES_HIGHLIGHT_LAYER_ZINDEX - 2;
-            case 'no-highlight':
-            case 'other-highlighted':
-                return defaultZIndex;
         }
     }
 

@@ -1258,7 +1258,7 @@
     },
     "docs": {
       "angleKey": "/** angleKey as specified on series options. */",
-      "angleValue?": "/** angleValue as read from series data via the angleValue property. */",
+      "angleValue?": "/** angleValue as read from series data via the angleKey property. */",
       "angleName?": "/** angleName as specified on series options. */",
       "radiusKey?": "/** radiusKey as specified on series options. */",
       "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
@@ -2114,8 +2114,10 @@
       "color?": "CssColor"
     },
     "docs": {
+      "labelKey?": "/** labelKey as specified on series options. */",
+      "labelName?": "/** labelName as specified on series options. */",
       "angleKey": "/** angleKey as specified on series options. */",
-      "angleValue?": "/** angleValue as read from series data via the angleValue property. */",
+      "angleValue?": "/** angleValue as read from series data via the angleKey property. */",
       "angleName?": "/** angleName as specified on series options. */",
       "radiusKey?": "/** radiusKey as specified on series options. */",
       "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
@@ -2493,12 +2495,10 @@
       "SERIES_CROSSLINE_RANGE_ZINDEX = 10",
       "AXIS_ZINDEX = 20",
       "SERIES_LAYER_ZINDEX = 500",
-      "SERIES_MARKER_LAYER_ZINDEX = 1000",
-      "SERIES_HIGHLIGHT_LAYER_ZINDEX = 2000",
       "SERIES_CROSSLINE_LINE_ZINDEX = 2500",
       "LEGEND_ZINDEX = 3000"
     ],
-    "docs": [null, null, null, null, null, null, null, null]
+    "docs": [null, null, null, null, null, null]
   },
   "LegendDatum": {
     "meta": {},

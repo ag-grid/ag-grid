@@ -82,7 +82,7 @@ export class TitleEdit extends Component {
 
     private startEditing(titleBBox: BBox): void {
         if (this.chartMenu && this.chartMenu.isVisible()) {
-            // currently we ignore requests to edit the chart title while the chart menu is showing
+            // currently, we ignore requests to edit the chart title while the chart menu is showing
             // because the click to edit the chart will also close the chart menu, making the position
             // of the title change.
             return;
@@ -106,8 +106,8 @@ export class TitleEdit extends Component {
 
         // populate the input with the title, unless the title is the placeholder:
         const oldTitle = this.chartOptionsService.getChartOption('title.text');
-        const inputValue = oldTitle === this.chartTranslationService.translate('titlePlaceholder') ? '' : oldTitle;
-        inputElement.value = inputValue;
+        const isTitlePlaceholder = oldTitle === this.chartTranslationService.translate('titlePlaceholder');
+        inputElement.value = isTitlePlaceholder ? '' : oldTitle;
 
         const inputRect = inputElement.getBoundingClientRect();
 
@@ -120,10 +120,8 @@ export class TitleEdit extends Component {
 
     private endEditing(): void {
         const value = (this.getGui() as HTMLInputElement).value;
-
         this.chartOptionsService.setChartOption('title.text', value);
-
         this.eventService.dispatchEvent({type: 'chartTitleEdit'});
-        this.removeCssClass('currently-editing')
+        this.getGui().classList.remove('currently-editing');
     }
 }

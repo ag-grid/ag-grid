@@ -260,7 +260,6 @@ export abstract class CartesianSeries<
         this.seriesGroup.visible = visible;
         this.highlightGroup.visible = visible && !!seriesHighlighted;
         this.seriesGroup.opacity = this.getOpacity();
-        this.seriesGroup.zIndex = this.getZIndex();
 
         if (markersEnabled) {
             this.updateMarkerNodes({ markerSelection: highlightSelection as any, isHighlight: true, seriesIdx: -1 });
@@ -273,7 +272,6 @@ export abstract class CartesianSeries<
             const { group, markerGroup, datumSelection, labelSelection, markerSelection, paths } = subGroup;
             const { itemId } = contextNodeData[seriesIdx];
             group.opacity = this.getOpacity({ itemId });
-            group.zIndex = this.getZIndex({ itemId });
             group.visible = visible && (seriesItemEnabled.get(itemId) ?? true);
             if (markerGroup) {
                 markerGroup.opacity = group.opacity;

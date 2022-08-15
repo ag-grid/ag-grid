@@ -7985,7 +7985,7 @@
     },
     "docs": {
       "angleKey": "/** angleKey as specified on series options. */",
-      "angleValue?": "/** angleValue as read from series data via the angleValue property. */",
+      "angleValue?": "/** angleValue as read from series data via the angleKey property. */",
       "angleName?": "/** angleName as specified on series options. */",
       "radiusKey?": "/** radiusKey as specified on series options. */",
       "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
@@ -8841,8 +8841,10 @@
       "color?": "CssColor"
     },
     "docs": {
+      "labelKey?": "/** labelKey as specified on series options. */",
+      "labelName?": "/** labelName as specified on series options. */",
       "angleKey": "/** angleKey as specified on series options. */",
-      "angleValue?": "/** angleValue as read from series data via the angleValue property. */",
+      "angleValue?": "/** angleValue as read from series data via the angleKey property. */",
       "angleName?": "/** angleName as specified on series options. */",
       "radiusKey?": "/** radiusKey as specified on series options. */",
       "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
