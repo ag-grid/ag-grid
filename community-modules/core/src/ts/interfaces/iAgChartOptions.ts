@@ -1233,7 +1233,9 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
 }
 
 export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRendererParams {
+    /** labelKey as specified on series options. */
     labelKey?: string;
+    /** labelName as specified on series options. */
     labelName?: string;
 }
 

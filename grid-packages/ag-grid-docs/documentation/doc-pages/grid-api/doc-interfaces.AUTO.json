@@ -15206,8 +15206,14 @@
     }
   },
   "AgPieSeriesTooltipRendererParams": {
-    "labelKey": { "type": { "returnType": "string", "optional": true } },
-    "labelName": { "type": { "returnType": "string", "optional": true } },
+    "labelKey": {
+      "description": "/** labelKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelName": {
+      "description": "/** labelName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "angleKey": {
       "description": "/** angleKey as specified on series options. */",
       "type": { "returnType": "string", "optional": false }

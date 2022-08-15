@@ -2114,6 +2114,8 @@
       "color?": "CssColor"
     },
     "docs": {
+      "labelKey?": "/** labelKey as specified on series options. */",
+      "labelName?": "/** labelName as specified on series options. */",
       "angleKey": "/** angleKey as specified on series options. */",
       "angleValue?": "/** angleValue as read from series data via the angleKey property. */",
       "angleName?": "/** angleName as specified on series options. */",
