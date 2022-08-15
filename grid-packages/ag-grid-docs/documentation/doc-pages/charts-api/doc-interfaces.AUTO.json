@@ -4275,7 +4275,9 @@
     },
     "tickFormat": {
       "type": {
-        "arguments": { "count": "any", "specifier?": "any" },
+        "arguments": {
+          "undefined": "{ count?: any; ticks?: any[]; specifier?: any; }"
+        },
         "returnType": "(x: any) => string",
         "optional": true
       }
@@ -4292,6 +4294,7 @@
   },
   "Reinterpolator": { "meta": { "typeParams": ["T"] } },
   "Deinterpolator": { "meta": { "typeParams": ["T"] } },
+  "DefaultTimeFormats": {},
   "RedrawType": {},
   "GradientColorStop": {
     "offset": { "type": { "returnType": "number", "optional": false } },

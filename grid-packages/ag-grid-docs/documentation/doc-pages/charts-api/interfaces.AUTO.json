@@ -3171,7 +3171,7 @@
       "convert(value: D, clamper?: (values: D[]) => (x: D) => D)": "R",
       "invert?(value: R)": "D",
       "ticks?(count: any)": "D[]",
-      "tickFormat?(count: any, specifier?: any)": "(x: any) => string",
+      "tickFormat?({ count, ticks, specifier }: { count?: any; ticks?: any[]; specifier?: any; })": "(x: any) => string",
       "nice?(count?: number)": "void",
       "bandwidth?": "number"
     }
@@ -3183,6 +3183,20 @@
   "Deinterpolator": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(v: T) => number"
+  },
+  "DefaultTimeFormats": {
+    "meta": { "isEnum": true },
+    "type": [
+      "MILLISECOND",
+      "SECOND",
+      "MINUTE",
+      "HOUR",
+      "DAY",
+      "WEEK",
+      "MONTH",
+      "YEAR"
+    ],
+    "docs": [null, null, null, null, null, null, null, null]
   },
   "RedrawType": {
     "meta": { "isEnum": true },
