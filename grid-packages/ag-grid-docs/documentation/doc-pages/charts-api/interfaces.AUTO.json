@@ -3171,7 +3171,7 @@
       "convert(value: D, clamper?: (values: D[]) => (x: D) => D)": "R",
       "invert?(value: R)": "D",
       "ticks?(count: any)": "D[]",
-      "tickFormat?({ count, ticks, specifier }: { count: any; ticks: any[]; specifier?: any; })": "(x: any) => string",
+      "tickFormat?({ count, ticks, specifier }: { count?: any; ticks?: any[]; specifier?: any; })": "(x: any) => string",
       "nice?(count?: number)": "void",
       "bandwidth?": "number"
     }

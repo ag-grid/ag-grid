@@ -202,13 +202,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._scale;
     }
 
-    private _ticks: any[];
-    set ticks(value: any[]) {
-        this._ticks = value;
-        this.onLabelFormatChange(this.label.format);
-    }
-    get ticks(): any[] {
-        return this._ticks;
+    ticks: any[];
+    protected getTicks() {
+        return this.ticks ?? this.scale.ticks!(this.calculatedTickCount);
     }
 
     readonly axisGroup = new Group({ name: `${this.id}-axis`, layer: true, zIndex: Layers.AXIS_ZINDEX });
@@ -375,10 +371,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     protected labelFormatter?: (datum: any) => string;
     protected onLabelFormatChange(format?: string) {
-        if (format && this.scale && this.scale.tickFormat) {
+        const { scale } = this;
+        if (format && scale && scale.tickFormat) {
             try {
-                this.labelFormatter = this.scale.tickFormat({
-                    ticks: this.ticks,
+                this.labelFormatter = scale.tickFormat({
+                    ticks: this.getTicks(),
                     count: this.calculatedTickCount,
                     specifier: format,
                 });
@@ -527,9 +524,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
         const halfBandwidth = (scale.bandwidth || 0) / 2;
 
-        this.ticks = this.ticks ?? scale.ticks!(this.calculatedTickCount);
-
-        const { ticks } = this;
+        const ticks = this.getTicks();
 
         const tickGroupSelection = this.updateTicks({ ticks });
         const labelBboxes = this.updateLabels({

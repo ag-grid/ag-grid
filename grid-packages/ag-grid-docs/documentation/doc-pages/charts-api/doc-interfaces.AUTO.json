@@ -4270,7 +4270,7 @@
     "tickFormat": {
       "type": {
         "arguments": {
-          "undefined": "{ count: any; ticks: any[]; specifier?: any; }"
+          "undefined": "{ count?: any; ticks?: any[]; specifier?: any; }"
         },
         "returnType": "(x: any) => string",
         "optional": true
