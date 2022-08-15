@@ -80,25 +80,25 @@ describe('format', () => {
     test('scale.tickFormat', () => {
         {
             const scale = new LinearScale();
-            const f = scale.tickFormat(undefined, '~s');
+            const f = scale.tickFormat({ count: undefined, specifier: '~s' });
             expect(f(43000000)).toBe('43000000');
         }
         {
             const scale = new LinearScale();
             scale.domain = [-50000000, 50000000];
-            const f = scale.tickFormat(undefined, '~s');
+            const f = scale.tickFormat({ count: undefined, specifier: '~s' });
             expect(f(43000000)).toBe('43M');
         }
         {
             const scale = new LinearScale();
             scale.domain = [-50000000, 50000000];
-            const f = scale.tickFormat(undefined, '~s');
+            const f = scale.tickFormat({ count: undefined, specifier: '~s' });
             expect(f(43500000)).toBe('44M');
         }
         {
             const scale = new LinearScale();
             scale.domain = [35000000, 44000000];
-            const f = scale.tickFormat(undefined, '~s');
+            const f = scale.tickFormat({ count: undefined, specifier: '~s' });
             const expectedTicks = ['35M', '36M', '37M', '38M', '39M', '40M', '41M', '42M', '43M', '44M'];
             scale.ticks().forEach((t, i) => expect(f(t)).toBe(expectedTicks[i]));
         }
