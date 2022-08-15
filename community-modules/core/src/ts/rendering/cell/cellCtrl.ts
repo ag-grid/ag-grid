@@ -385,6 +385,7 @@ export class CellCtrl extends BeanStub {
         this.editing = editing;
         this.editingInPopup = inPopup;
         this.setInlineEditingClass();
+        this.refreshHandle();
     }
 
     // pass in 'true' to cancel the editing.
@@ -958,7 +959,6 @@ export class CellCtrl extends BeanStub {
     }
 
     public refreshHandle(): void {
-        if (this.editing) { return; }
         if (this.cellRangeFeature) {
             this.cellRangeFeature.refreshHandle();
         }
