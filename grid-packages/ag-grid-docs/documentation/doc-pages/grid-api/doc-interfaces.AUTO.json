@@ -13851,7 +13851,7 @@
       "type": { "returnType": "string", "optional": false }
     },
     "angleValue": {
-      "description": "/** angleValue as read from series data via the angleValue property. */",
+      "description": "/** angleValue as read from series data via the angleKey property. */",
       "type": { "returnType": "any", "optional": true }
     },
     "angleName": {
@@ -15213,7 +15213,7 @@
       "type": { "returnType": "string", "optional": false }
     },
     "angleValue": {
-      "description": "/** angleValue as read from series data via the angleValue property. */",
+      "description": "/** angleValue as read from series data via the angleKey property. */",
       "type": { "returnType": "any", "optional": true }
     },
     "angleName": {
