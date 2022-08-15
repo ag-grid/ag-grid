@@ -340,6 +340,7 @@ export class FillHandle extends AbstractSelectionHandle {
 
     private clearMarkedPath() {
         this.markedCells.forEach(cell => {
+            if (!cell.isAlive()) { return; }
             const comp = cell.getComp();
             comp.addOrRemoveCssClass('ag-selection-fill-top', false);
             comp.addOrRemoveCssClass('ag-selection-fill-right', false);
