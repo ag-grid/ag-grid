@@ -905,6 +905,9 @@ export class ColumnModel extends BeanStub {
 
         column.setRowGroupActive(active, source);
 
+        if (active && !this.gridOptionsWrapper.isSuppressRowGroupHidesColumns()) {
+            this.setColumnVisible(column, false, source);
+        }
         if (!active && !this.gridOptionsWrapper.isSuppressMakeColumnVisibleAfterUnGroup()) {
             this.setColumnVisible(column, true, source);
         }
