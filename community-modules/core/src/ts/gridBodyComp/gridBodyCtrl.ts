@@ -18,6 +18,7 @@ import { RowRenderer } from "../rendering/rowRenderer";
 import { PopupService } from "../widgets/popupService";
 import { MouseEventService } from "./mouseEventService";
 import { IRowModel } from "../interfaces/iRowModel";
+import { Constants } from "../constants/constants";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -243,8 +244,9 @@ export class GridBodyCtrl extends BeanStub {
     public isVerticalScrollShowing(): boolean {
         const show = this.gridOptionsWrapper.isAlwaysShowVerticalScroll();
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
+        const allowVerticalScroll = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
         this.comp.setAlwaysVerticalScrollClass(cssClass, show);
-        return show || isVerticalScrollShowing(this.eBodyViewport);
+        return show || (allowVerticalScroll && isVerticalScrollShowing(this.eBodyViewport));
     }
 
     private setupRowAnimationCssClass(): void {

@@ -192,7 +192,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private fireScrollEvent(direction: 'horizontal' | 'vertical'): void {
         const bodyScrollEvent: WithoutGridCommon<BodyScrollEvent> = {
-            type: Events.EVENT_BODY_SCROLL,            
+            type: Events.EVENT_BODY_SCROLL,
             direction,
             left: this.scrollLeft,
             top: this.scrollTop
