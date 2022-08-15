@@ -105,8 +105,6 @@ export class Rect extends Path {
             y = this.align(y);
         }
 
-        path.rect(x, y, w, h);
-
         if (strokeWidth) {
             if (strokeWidth < w && strokeWidth < h) {
                 const halfStrokeWidth = strokeWidth / 2;
@@ -118,6 +116,7 @@ export class Rect extends Path {
                 borderPath.rect(x, y, w, h);
             }
         }
+        path.rect(x, y, w, h);
 
         this.effectiveStrokeWidth = strokeWidth;
         this.lastUpdatePathStrokeWidth = strokeWidth;
