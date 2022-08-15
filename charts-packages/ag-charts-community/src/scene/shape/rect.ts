@@ -81,7 +81,7 @@ export class Rect extends Path {
             return true;
         }
 
-        if (this.path.isDirty() || this.borderPath.isDirty()) {
+        if (this.path.isDirty() || this.borderPath.isDirty() || this.clipPath?.isDirty()) {
             return true;
         }
 
@@ -107,16 +107,26 @@ export class Rect extends Path {
 
         if (strokeWidth) {
             if (strokeWidth < w && strokeWidth < h) {
-                const halfStrokeWidth = strokeWidth / 2;
-                x += halfStrokeWidth;
-                y += halfStrokeWidth;
-                w -= strokeWidth;
-                h -= strokeWidth;
-
-                borderPath.rect(x, y, w, h);
+                const xAdjustment = Math.max(Math.min(strokeWidth, w), 0);
+                const yAdjustment = Math.max(Math.min(strokeWidth, h), 0);
+                x += xAdjustment / 2;
+                y += yAdjustment / 2;
+                w -= xAdjustment;
+                h -= yAdjustment;
+    
+                this.clipPath = undefined;
+                path.rect(x, y, w, h);
+            } else {
+                this.clipPath = this.clipPath ?? new Path2D();
+                this.clipPath.clear({ trackChanges: true });
+                this.clipPath.rect(x, y, w, h);
             }
+
+            borderPath.rect(x, y, w, h);
+        } else {
+            this.clipPath = undefined;
+            path.rect(x, y, w, h);
         }
-        path.rect(x, y, w, h);
 
         this.effectiveStrokeWidth = strokeWidth;
         this.lastUpdatePathStrokeWidth = strokeWidth;
@@ -135,7 +145,7 @@ export class Rect extends Path {
     }
 
     private renderRect(ctx: CanvasRenderingContext2D) {
-        const { stroke, effectiveStrokeWidth, fill, path, borderPath, opacity } = this;
+        const { stroke, effectiveStrokeWidth, fill, path, borderPath, clipPath, opacity } = this;
 
         const borderActive = !!stroke && !!effectiveStrokeWidth;
 
@@ -171,15 +181,15 @@ export class Rect extends Path {
 
         if (borderActive) {
             const { strokeOpacity, lineDash, lineDashOffset, lineCap, lineJoin } = this;
-            if (borderPath.commands.length > 0) {
-                borderPath.draw(ctx);
-            } else {
+            if (clipPath) {
                 // strokeWidth is larger than width or height, so use clipping to render correctly.
-                // This is the simplest way to achieve the correct rendering due to naunces with ~0
+                // This is the simplest way to achieve the correct rendering due to nuances with ~0
                 // width/height lines in Canvas operations.
-                path.draw(ctx);
+                clipPath.draw(ctx);
                 ctx.clip();
             }
+
+            borderPath.draw(ctx);
 
             ctx.strokeStyle = stroke!;
             ctx.globalAlpha = opacity * strokeOpacity;
