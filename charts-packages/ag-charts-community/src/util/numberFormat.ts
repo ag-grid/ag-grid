@@ -487,11 +487,11 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
     const group =
         locale.grouping === undefined || locale.thousands === undefined
             ? identity
-            : formatGroup(locale.grouping.map(Number) as number[], String(locale.thousands));
+            : formatGroup(locale.grouping.map(Number), String(locale.thousands));
     const currencyPrefix = locale.currency === undefined ? '' : String(locale.currency[0]);
     const currencySuffix = locale.currency === undefined ? '' : String(locale.currency[1]);
     const decimal = locale.decimal === undefined ? '.' : String(locale.decimal);
-    const numerals = locale.numerals === undefined ? identity : formatNumerals(locale.numerals.map(String) as string[]);
+    const numerals = locale.numerals === undefined ? identity : formatNumerals(locale.numerals.map(String));
     const percent = locale.percent === undefined ? '%' : String(locale.percent);
     const minus = locale.minus === undefined ? '\u2212' : String(locale.minus);
     const nan = locale.nan === undefined ? 'NaN' : String(locale.nan);

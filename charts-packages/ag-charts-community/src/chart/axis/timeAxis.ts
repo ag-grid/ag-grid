@@ -82,6 +82,6 @@ export class TimeAxis extends ChartAxis<TimeScale> {
     protected updateDomain(domain: any[], _isYAxis: boolean, primaryTickCount?: number) {
         // the `primaryTickCount` is used to align the secondary axis tick count with the primary
         this.setDomain(domain, primaryTickCount);
-        return primaryTickCount ?? this.scale.ticks!(this.calculatedTickCount).length;
+        return primaryTickCount ?? this.scale.ticks(this.calculatedTickCount).length;
     }
 }
