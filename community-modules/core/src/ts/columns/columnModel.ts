@@ -37,6 +37,7 @@ import { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { AutoGroupColService } from './autoGroupColService';
 import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
+import { IColumnLimit, ISizeColumnsToFitParams } from '../gridApi';
 import { Constants } from '../constants/constants';
 import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
@@ -3684,7 +3685,20 @@ export class ColumnModel extends BeanStub {
     }
 
     // called from api
-    public sizeColumnsToFit(gridWidth: any, source: ColumnEventType = "sizeColumnsToFit", silent?: boolean): void {
+    public sizeColumnsToFit(
+        gridWidth: any,
+        source: ColumnEventType = "sizeColumnsToFit",
+        silent?: boolean,
+        params?: ISizeColumnsToFitParams,
+    ): void {
+
+        const limitsMap: { [colId: string]: Omit<IColumnLimit, 'key'>} = {};
+        if (params) {
+            params?.columnLimits?.forEach(({ key, ...dimensions }) => {
+                limitsMap[typeof key === 'string' ? key : key.getColId()] = dimensions;
+            });
+        }
+
         // avoid divide by zero
         const allDisplayedColumns = this.getAllDisplayedColumns();
 
@@ -3727,6 +3741,11 @@ export class ColumnModel extends BeanStub {
             if (availablePixels <= 0) {
                 // no width, set everything to minimum
                 colsToSpread.forEach((column: Column) => {
+                    const widthOverride = limitsMap?.[column.getId()]?.minWidth ?? params?.defaultMinWidth; 
+                    if (typeof widthOverride === 'number') {
+                        column.setActualWidth(widthOverride);
+                        return;
+                    }
                     column.setMinimum(source);
                 });
             } else {
@@ -3737,15 +3756,21 @@ export class ColumnModel extends BeanStub {
                 // backwards through loop, as we are removing items as we go
                 for (let i = colsToSpread.length - 1; i >= 0; i--) {
                     const column = colsToSpread[i];
-                    const minWidth = column.getMinWidth();
-                    const maxWidth = column.getMaxWidth();
+
+                    const widthOverride = limitsMap?.[column.getId()];
+                    const minOverride = (widthOverride?.minWidth ?? params?.defaultMinWidth);
+                    const maxOverride = (widthOverride?.maxWidth ?? params?.defaultMaxWidth);
+                    const colMinWidth = column.getMinWidth() ?? 0;
+                    const colMaxWidth = column.getMaxWidth() ?? Number.MAX_VALUE;
+                    const minWidth = typeof minOverride === 'number' && minOverride > colMinWidth ? minOverride : column.getMinWidth();
+                    const maxWidth = typeof maxOverride === 'number' && maxOverride < colMaxWidth ? maxOverride : column.getMaxWidth();
                     let newWidth = Math.round(column.getActualWidth() * scale);
 
                     if (exists(minWidth) && newWidth < minWidth) {
                         newWidth = minWidth;
                         moveToNotSpread(column);
                         finishedResizing = false;
-                    } else if (exists(maxWidth) && column.isGreaterThanMax(newWidth)) {
+                    } else if (exists(maxWidth) && newWidth > maxWidth) {
                         newWidth = maxWidth;
                         moveToNotSpread(column);
                         finishedResizing = false;
