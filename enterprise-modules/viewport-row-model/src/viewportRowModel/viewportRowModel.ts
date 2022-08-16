@@ -14,13 +14,15 @@ import {
     RowNode,
     RowRenderer,
     Beans,
-    WithoutGridCommon
+    WithoutGridCommon,
+    FocusService
 } from "@ag-grid-community/core";
 
 @Bean('rowModel')
 export class ViewportRowModel extends BeanStub implements IRowModel {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('focusService') private focusService: FocusService;
     @Autowired('beans') private beans: Beans;
 
     // rowRenderer tells us these
@@ -105,9 +107,22 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         Object.keys(this.rowNodesByIndex).forEach(indexStr => {
             const index = parseInt(indexStr, 10);
             if (index < this.firstRow || index > this.lastRow) {
+                if (this.isRowFocused(index)) {
+                    return;
+                }
+
                 delete this.rowNodesByIndex[index];
             }
         });
+    }
+
+    private isRowFocused(rowIndex: number): boolean {
+        const focusedCell = this.focusService.getFocusCellToUseAfterRefresh();
+        if (!focusedCell) { return false; }
+        if (focusedCell.rowPinned != null) { return false; }
+
+        const hasFocus = focusedCell.rowIndex === rowIndex;
+        return hasFocus;
     }
 
     public setViewportDatasource(viewportDatasource: IViewportDatasource): void {
@@ -267,7 +282,8 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
-        return false;
+        const foundRowNode = this.getRowNode(rowNode.id!);
+        return !!foundRowNode;
     }
 
 }
