@@ -16,7 +16,7 @@ function count(start: Date, end: Date): number {
     return (end.getTime() - start.getTime()) / durationHour;
 }
 function field(date: Date): number {
-    return date.getHours();
+    return Math.floor(date.getTime() / durationHour);
 }
 
 export const hour = new CountableTimeInterval(floor, offset, count, field);
