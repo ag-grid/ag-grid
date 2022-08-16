@@ -125,7 +125,7 @@ export class Rect extends Path {
 
             borderPath.rect(x, y, w, h);
         } else {
-            // No borderPath needed, and this no clipPath needed either. Fill to full extent of
+            // No borderPath needed, and thus no clipPath needed either. Fill to full extent of
             // Rect.
             this.clipPath = undefined;
             path.rect(x, y, w, h);
