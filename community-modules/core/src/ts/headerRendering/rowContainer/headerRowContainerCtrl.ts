@@ -58,6 +58,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.setupDragAndDrop(this.eViewport);
 
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.addManagedListener(this.eViewport, 'scroll', this.resetScrollLeft.bind(this));
 
         this.ctrlsService.registerHeaderContainer(this, this.pinned);
 
@@ -162,6 +163,9 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     public setHorizontalScroll(offset: number): void {
         this.comp.setContainerTransform(`translateX(${offset}px)`);
+    }
+
+    private resetScrollLeft(): void {
         this.eViewport.scrollLeft = 0;
     }
 
