@@ -12,6 +12,7 @@ export interface IServerSideRowModel extends IRowModel {
     expandAll(value: boolean): void;
     setDatasource(datasource: IServerSideDatasource): void;
     forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void): void;
+    resetRootStore(): void;
 }
 
 export interface IServerSideTransactionManager {
