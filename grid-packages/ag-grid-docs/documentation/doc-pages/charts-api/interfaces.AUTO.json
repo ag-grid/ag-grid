@@ -3191,12 +3191,11 @@
       "SECOND",
       "MINUTE",
       "HOUR",
-      "DAY",
-      "WEEK",
+      "SHORT_MONTH",
       "MONTH",
       "YEAR"
     ],
-    "docs": [null, null, null, null, null, null, null, null]
+    "docs": [null, null, null, null, null, null, null]
   },
   "RedrawType": {
     "meta": { "isEnum": true },
