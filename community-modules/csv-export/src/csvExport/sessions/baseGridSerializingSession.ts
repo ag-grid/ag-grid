@@ -57,16 +57,28 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     public extractRowCellValue(column: Column, index: number, accumulatedRowIndex: number, type: string, node: RowNode) {
         // we render the group summary text e.g. "-> Parent -> Child"...
-        const groupIndex = this.gridOptionsWrapper.isGroupMultiAutoColumn() ? node.rowGroupIndex : 0;
-        const renderGroupSummaryCell =
-            // on group rows
-            node && node.group
-            && (
+        const isGroupNode = node && node.group;
+        let renderGroupSummaryCell = false;
+
+        // on group rows
+        if (isGroupNode) {
+            const currentColumnIsGroup = this.groupColumns.indexOf(column) !== -1;
+            if (currentColumnIsGroup) {
+                const isGroupMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
                 // in the group column if groups appear in regular grid cells
-                index === groupIndex && this.groupColumns!.indexOf(column) !== -1
+                if (isGroupMultiAutoColumn) {
+                    renderGroupSummaryCell = index === node.rowGroupIndex;
+                } else {
+                    renderGroupSummaryCell = true;
+                }
+            }
+
+            if (!renderGroupSummaryCell) {
+                const isGroupUseEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow(this.columnModel.isPivotMode());
                 // or the first cell in the row, if we're doing full width rows
-                || (index === 0 && this.gridOptionsWrapper.isGroupUseEntireRow(this.columnModel.isPivotMode()))
-            );
+                renderGroupSummaryCell = index === 0 && isGroupUseEntireRow;
+            }
+        }
 
         let valueForCell: string;
         if (renderGroupSummaryCell) {
