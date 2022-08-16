@@ -704,6 +704,7 @@
             }
         },
         "setServerSideDatasource": {},
+        "setCacheBlockSize": {},
         "refreshServerSide": {
             "more": {
                 "name": "Purging Groups",

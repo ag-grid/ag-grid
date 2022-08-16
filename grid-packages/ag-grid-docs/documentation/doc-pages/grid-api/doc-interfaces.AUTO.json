@@ -18755,6 +18755,9 @@
         "optional": false
       }
     },
+    "resetRootStore": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
     "getRow": {
       "description": "/** Returns the rowNode at the given index. */",
       "type": {

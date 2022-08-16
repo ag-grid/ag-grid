@@ -106,6 +106,10 @@
     "description": "/** Set new datasource for Server-Side Row Model. */",
     "type": { "arguments": { "datasource": "IServerSideDatasource" } }
   },
+  "setCacheBlockSize": {
+    "description": "/** Updates the `cacheBlockSize` used by `serverSideInfiniteScroll` when requesting data from the server.\n * \n * Note that this also has the effect of purge resetting the data. */",
+    "type": { "arguments": { "blockSize": "number" } }
+  },
   "setDatasource": {
     "description": "/** Set new datasource for Infinite Row Model. */",
     "type": { "arguments": { "datasource": "IDatasource" } }
