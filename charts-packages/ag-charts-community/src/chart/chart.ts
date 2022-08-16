@@ -1175,8 +1175,6 @@ export abstract class Chart extends Observable {
     private checkSeriesNodeClick(): boolean {
         const { lastPick } = this;
 
-        // TODO: verify if it's safe to remove `lastPick.node` check
-        // if (lastPick && lastPick.event && lastPick.node) {
         if (lastPick && lastPick.event) {
             const { event, datum } = lastPick;
             datum.series.fireNodeClickEvent(event, datum);

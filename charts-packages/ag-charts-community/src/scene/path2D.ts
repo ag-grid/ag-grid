@@ -219,7 +219,6 @@ export class Path2D {
         let xy = -cosPhi * sinTheta1 * rx - sinPhi * cosTheta1 * ry;
         let yy = -sinPhi * sinTheta1 * rx + cosPhi * cosTheta1 * ry;
 
-        // TODO: what if delta between θ1 and θ2 is greater than 2π?
         // Always draw clockwise from θ1 to θ2.
         theta2 -= theta1;
         if (theta2 < 0) {
@@ -231,9 +230,6 @@ export class Path2D {
         // |yx yy cy| |y|
         // | 0  0  1| |1|
 
-        // TODO: This move command may be redundant, if we are already at this point.
-        // The coordinates of the point calculated here may differ ever so slightly
-        // because of precision error.
         commands.push('M');
         params.push(xx + cx, yx + cy);
         while (theta2 >= rightAngle) {
