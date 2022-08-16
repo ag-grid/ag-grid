@@ -107,16 +107,17 @@ export class Rect extends Path {
 
         if (strokeWidth) {
             if (strokeWidth < w && strokeWidth < h) {
-                const xAdjustment = Math.max(Math.min(strokeWidth, w), 0);
-                const yAdjustment = Math.max(Math.min(strokeWidth, h), 0);
-                x += xAdjustment / 2;
-                y += yAdjustment / 2;
-                w -= xAdjustment;
-                h -= yAdjustment;
-    
+                const halfStrokeWidth = strokeWidth / 2;
+                x += halfStrokeWidth;
+                y += halfStrokeWidth;
+                w -= strokeWidth;
+                h -= strokeWidth;
+
+                // Clipping not needed in this case; fill to center of stroke.
                 this.clipPath = undefined;
                 path.rect(x, y, w, h);
             } else {
+                // Skip the fill and just render the stroke.
                 this.clipPath = this.clipPath ?? new Path2D();
                 this.clipPath.clear({ trackChanges: true });
                 this.clipPath.rect(x, y, w, h);
@@ -124,6 +125,8 @@ export class Rect extends Path {
 
             borderPath.rect(x, y, w, h);
         } else {
+            // No borderPath needed, and this no clipPath needed either. Fill to full extent of
+            // Rect.
             this.clipPath = undefined;
             path.rect(x, y, w, h);
         }

@@ -16,37 +16,34 @@ describe('Rect', () => {
         const GAP = 20;
         const DEFAULTS: Partial<Rect> = { width: 20, height: 20 };
         const STROKE_WIDTH_CASES = [0, 3, 8, 10, 20, 25, 36, 44];
+        const STROKE_TC_PARAMS = {
+            crisp: true,
+            stroke: 'red',
+            fill: 'yellow',
+        };
         const TEST_CASES: (Partial<Rect> | undefined)[][] = [
             // Stroke-width cases.
             STROKE_WIDTH_CASES.map((strokeWidth) => ({
                 height: 40,
-                crisp: true,
                 strokeWidth,
-                stroke: 'red',
-                fill: 'yellow',
+                ...STROKE_TC_PARAMS,
             })),
             STROKE_WIDTH_CASES.map((strokeWidth) => ({
                 width: 40,
-                crisp: true,
                 strokeWidth,
-                stroke: 'red',
-                fill: 'yellow',
+                ...STROKE_TC_PARAMS,
             })),
             STROKE_WIDTH_CASES.map((strokeWidth) => ({
                 height: 40,
-                crisp: true,
                 strokeWidth,
                 lineDash: [5, 10],
-                stroke: 'red',
-                fill: 'yellow',
+                ...STROKE_TC_PARAMS,
             })),
             STROKE_WIDTH_CASES.map((strokeWidth) => ({
                 width: 40,
-                crisp: true,
                 strokeWidth,
                 lineDash: [5, 10],
-                stroke: 'red',
-                fill: 'yellow',
+                ...STROKE_TC_PARAMS,
             })),
             [
                 // Shadow cases.
