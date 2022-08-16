@@ -468,9 +468,10 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
                     if (i0 >= i1) {
                         i1 = i0 + 1;
                     }
-                    let next;
-                    while (!(next = updateGroup[i1]) && i1 < dataSize) {
+                    let next = updateGroup[i1];
+                    while (!next && i1 < dataSize) {
                         i1++;
+                        next = updateGroup[i1];
                     }
                     previous.next = next || null;
                 }

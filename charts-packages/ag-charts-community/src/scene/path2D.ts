@@ -464,13 +464,17 @@ export class Path2D {
                             intersectionCount++;
                         }
                     }
-                    sx = px = params[pi++];
-                    sy = py = params[pi++];
+                    px = params[pi++];
+                    sx = px;
+                    py = params[pi++];
+                    sy = py;
                     break;
                 case 'L':
-                    if (segmentIntersection(px, py, (px = params[pi++]), (py = params[pi++]), ox, oy, x, y)) {
+                    if (segmentIntersection(px, py, params[pi++], params[pi++], ox, oy, x, y)) {
                         intersectionCount++;
                     }
+                    px = params[pi - 2];
+                    py = params[pi - 1];
                     break;
                 case 'C':
                     intersectionCount += cubicSegmentIntersections(
@@ -480,13 +484,15 @@ export class Path2D {
                         params[pi++],
                         params[pi++],
                         params[pi++],
-                        (px = params[pi++]),
-                        (py = params[pi++]),
+                        params[pi++],
+                        params[pi++],
                         ox,
                         oy,
                         x,
                         y
                     ).length;
+                    px = params[pi - 2];
+                    py = params[pi - 1];
                     break;
                 case 'Z':
                     if (!isNaN(sx)) {
@@ -524,42 +530,30 @@ export class Path2D {
         this.commands.forEach((command) => {
             switch (command) {
                 case 'M':
-                    path = [(sx = px = params[i++]), (sy = py = params[i++])];
-                    paths.push(path);
+                    px = params[i++];
+                    py = params[i++];
+                    sx = px;
+                    sy = py;
+                    paths.push([sx, sy]);
                     break;
                 case 'L':
                     const x = params[i++];
                     const y = params[i++];
                     // Place control points along the line `a + (b - a) * t`
                     // at t = 1/3 and 2/3:
-                    path.push(
-                        (px + px + x) / 3,
-                        (py + py + y) / 3,
-                        (px + x + x) / 3,
-                        (py + y + y) / 3,
-                        (px = x),
-                        (py = y)
-                    );
+                    path.push((px + px + x) / 3, (py + py + y) / 3, (px + x + x) / 3, (py + y + y) / 3, x, y);
+                    px = x;
+                    py = y;
                     break;
                 case 'C':
-                    path.push(
-                        params[i++],
-                        params[i++],
-                        params[i++],
-                        params[i++],
-                        (px = params[i++]),
-                        (py = params[i++])
-                    );
+                    path.push(params[i++], params[i++], params[i++], params[i++], params[i++], params[i++]);
+                    px = params[i - 2];
+                    py = params[i - 1];
                     break;
                 case 'Z':
-                    path.push(
-                        (px + px + sx) / 3,
-                        (py + py + sy) / 3,
-                        (px + sx + sx) / 3,
-                        (py + sy + sy) / 3,
-                        (px = sx),
-                        (py = sy)
-                    );
+                    path.push((px + px + sx) / 3, (py + py + sy) / 3, (px + sx + sx) / 3, (py + sy + sy) / 3, sx, sy);
+                    px = sx;
+                    py = sy;
                     break;
             }
         });
