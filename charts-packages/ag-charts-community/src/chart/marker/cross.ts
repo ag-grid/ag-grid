@@ -1,26 +1,25 @@
-import { Marker } from './marker';
+import { Marker, MarkerPathMove } from './marker';
 
 export class Cross extends Marker {
     static className = 'Cross';
+    static moves: MarkerPathMove[] = [
+        { x: -1, y: 0, t: 'move' },
+        { x: -1, y: -1 },
+        { x: +1, y: -1 },
+        { x: +1, y: +1 },
+        { x: +1, y: -1 },
+        { x: +1, y: +1 },
+        { x: -1, y: +1 },
+        { x: +1, y: +1 },
+        { x: -1, y: +1 },
+        { x: -1, y: -1 },
+        { x: -1, y: +1 },
+        { x: -1, y: -1 },
+    ];
 
     updatePath() {
-        let { x, y } = this;
-        const { path, size } = this;
-        const s = size / 4.2;
+        const s = this.size / 4.2;
 
-        path.clear();
-        path.moveTo((x -= s), y);
-        path.lineTo((x -= s), (y -= s));
-        path.lineTo((x += s), (y -= s));
-        path.lineTo((x += s), (y += s));
-        path.lineTo((x += s), (y -= s));
-        path.lineTo((x += s), (y += s));
-        path.lineTo((x -= s), (y += s));
-        path.lineTo((x += s), (y += s));
-        path.lineTo((x -= s), (y += s));
-        path.lineTo((x -= s), (y -= s));
-        path.lineTo((x -= s), (y += s));
-        path.lineTo(x - s, y - s);
-        path.closePath();
+        super.applyPath(s, Cross.moves);
     }
 }

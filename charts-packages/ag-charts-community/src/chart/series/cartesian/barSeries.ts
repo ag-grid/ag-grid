@@ -531,7 +531,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         let xBandWidth = xScale.bandwidth;
 
         if (xScale instanceof ContinuousScale) {
-            const availableRange = Math.max(xAxis!.range[0], xAxis!.range[1]);
+            const availableRange = Math.max(xAxis.range[0], xAxis.range[1]);
             const step = this.calculateStep(availableRange);
 
             xBandWidth = step;

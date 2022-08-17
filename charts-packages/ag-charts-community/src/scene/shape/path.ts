@@ -59,22 +59,6 @@ export class Path extends Shape {
         this.dirtyPath = this.path.isDirty() || (this.fillShadow?.isDirty() ?? false);
     }
 
-    /**
-     * Path definition in SVG path syntax:
-     * https://www.w3.org/TR/SVG11/paths.html#DAttribute
-     */
-    private _svgPath: string = '';
-    set svgPath(value: string) {
-        if (this._svgPath !== value) {
-            this._svgPath = value;
-            this.path.setFromString(value);
-            this.markDirty(this, RedrawType.MAJOR);
-        }
-    }
-    get svgPath(): string {
-        return this._svgPath;
-    }
-
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
         return this.path.closedPath && this.path.isPointInPath(point.x, point.y);
