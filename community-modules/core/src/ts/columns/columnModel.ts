@@ -175,8 +175,13 @@ export class ColumnModel extends BeanStub {
 
     // all columns to be rendered
     private viewportColumns: Column[] = [];
+    // same as viewportColumns, except we always include columns with headerAutoHeight
+    private headerViewportColumns: Column[] = [];
+
     // all columns to be rendered in the centre
     private viewportColumnsCenter: Column[] = [];
+    // same as viewportColumnsCenter, except we always include columns with headerAutoHeight
+    private headerViewportColumnsCenter: Column[] = [];
 
     // all columns & groups to be rendered, index by row. used by header rows to get all items
     // to render for that row.
@@ -421,19 +426,15 @@ export class ColumnModel extends BeanStub {
         // check displayCenterColumnTree exists first, as it won't exist when grid is initialising
         if (this.displayedColumnsCenter == null) { return; }
 
-        const hashBefore = this.viewportColumns.map(column => column.getId()).join('#');
+        const viewportColumnsChanged = this.extractViewport();
 
-        this.extractViewport();
+        if (!viewportColumnsChanged) { return; }
 
-        const hashAfter = this.viewportColumns.map(column => column.getId()).join('#');
+        const event: WithoutGridCommon<VirtualColumnsChangedEvent> = {
+            type: Events.EVENT_VIRTUAL_COLUMNS_CHANGED
+        };
 
-        if (hashBefore !== hashAfter) {
-            const event: WithoutGridCommon<VirtualColumnsChangedEvent> = {
-                type: Events.EVENT_VIRTUAL_COLUMNS_CHANGED
-            };
-
-            this.eventService.dispatchEvent(event);
-        }
+        this.eventService.dispatchEvent(event);
     }
 
     public setViewportPosition(scrollWidth: number, scrollPosition: number): void {
@@ -798,7 +799,7 @@ export class ColumnModel extends BeanStub {
         };
 
         // if doing column virtualisation, then we filter based on the viewport.
-        const filterCallback = this.suppressColumnVirtualisation ? null : this.isColumnInViewport.bind(this);
+        const filterCallback = this.suppressColumnVirtualisation ? null : this.isColumnInRowViewport.bind(this);
 
         return this.getDisplayedColumnsForRow(
             rowNode,
@@ -812,11 +813,16 @@ export class ColumnModel extends BeanStub {
         return this.getAllGridColumns().indexOf(col) + 1;
     }
 
-    private isColumnInViewport(col: Column): boolean {
+    private isColumnInHeaderViewport(col: Column): boolean {
+        // for headers, we never filter out autoHeaderHeight columns, if calculating 
+        if (col.isAutoHeaderHeight()) { return true; }
+
+        return this.isColumnInRowViewport(col);
+    }
+
+    private isColumnInRowViewport(col: Column): boolean {
         // we never filter out autoHeight columns, as we need them in the DOM for calculating Auto Height
         if (col.isAutoHeight()) { return true; }
-        // likewise we never filter out autoHeaderHeight columns
-        if (col.isAutoHeaderHeight()) { return true; }
 
         const columnLeft = col.getLeft() || 0;
         const columnRight = columnLeft + col.getActualWidth();
@@ -3364,6 +3370,7 @@ export class ColumnModel extends BeanStub {
         this.displayedColumnsCenter = [];
         this.displayedColumns = [];
         this.viewportColumns = [];
+        this.headerViewportColumns = [];
     }
 
     private updateGroupsAndDisplayedColumns(source: ColumnEventType) {
@@ -3485,12 +3492,18 @@ export class ColumnModel extends BeanStub {
         if (this.suppressColumnVirtualisation) {
             // no virtualisation, so don't filter
             this.viewportColumnsCenter = this.displayedColumnsCenter;
+            this.headerViewportColumnsCenter = this.displayedColumnsCenter;
         } else {
             // filter out what should be visible
-            this.viewportColumnsCenter = this.filterOutColumnsWithinViewport();
+            this.viewportColumnsCenter = this.displayedColumnsCenter.filter(this.isColumnInRowViewport.bind(this));
+            this.headerViewportColumnsCenter = this.displayedColumnsCenter.filter(this.isColumnInHeaderViewport.bind(this));
         }
 
         this.viewportColumns = this.viewportColumnsCenter
+            .concat(this.displayedColumnsLeft)
+            .concat(this.displayedColumnsRight);
+
+        this.headerViewportColumns = this.headerViewportColumnsCenter
             .concat(this.displayedColumnsLeft)
             .concat(this.displayedColumnsRight);
     }
@@ -3517,7 +3530,7 @@ export class ColumnModel extends BeanStub {
         return result;
     }
 
-    private extractViewportRows(): void {
+    private calculateHeaderRows(): void {
 
         // go through each group, see if any of it's cols are displayed, and if yes,
         // then this group is included
@@ -3527,7 +3540,7 @@ export class ColumnModel extends BeanStub {
 
         // for easy lookup when building the groups.
         const virtualColIds: { [key: string]: boolean; } = {};
-        this.viewportColumns.forEach(col => virtualColIds[col.getId()] = true);
+        this.headerViewportColumns.forEach(col => virtualColIds[col.getId()] = true);
 
         const testGroup = (
             children: IHeaderColumn[],
@@ -3570,13 +3583,18 @@ export class ColumnModel extends BeanStub {
         testGroup(this.displayedTreeCentre, this.viewportRowCenter, 0);
     }
 
-    private extractViewport(): void {
+    private extractViewport(): boolean {
+        const hashBefore = this.viewportColumns.map(column => column.getId()).join('#');
         this.extractViewportColumns();
-        this.extractViewportRows();
-    }
+        const hashAfter = this.viewportColumns.map(column => column.getId()).join('#');
 
-    private filterOutColumnsWithinViewport(): Column[] {
-        return this.displayedColumnsCenter.filter(this.isColumnInViewport.bind(this));
+        const changed = hashBefore !== hashAfter;
+
+        if (changed) {
+            this.calculateHeaderRows();
+        }
+
+        return changed;
     }
 
     public refreshFlexedColumns(params: { resizingCols?: Column[], skipSetLeft?: boolean, viewportWidth?: number, source?: ColumnEventType, fireResizedEvent?: boolean, updateBodyWidths?: boolean; } = {}): Column[] {
