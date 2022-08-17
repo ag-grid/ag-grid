@@ -212,22 +212,21 @@ export function hierarchy(data: any[], children?: (d: any) => any[]) {
 
     const root = new HierarchyNode(data);
     const nodes = [root];
-    let node: HierarchyNode | undefined;
 
-    while ((node = nodes.pop())) {
-        let childs = children(node.datum);
-        childs = childs && Array.from(childs);
-        let n = childs && childs.length;
-        if (!childs || !n) {
+    while (nodes.length > 0) {
+        const node = nodes.pop()!;
+        const datumChildren = children(node.datum);
+        if (!datumChildren) {
             continue;
         }
-        node.children = childs;
-        for (let i = n - 1; i >= 0; --i) {
-            childs[i] = new HierarchyNode(childs[i]);
-            nodes.push(childs[i]);
-            childs[i].parent = node;
-            childs[i].depth = node.depth + 1;
-        }
+
+        const newNodes = Array.from(datumChildren).map((dc) => new HierarchyNode(dc));
+        newNodes.forEach((child) => {
+            child.parent = node;
+            child.depth = node.depth + 1;
+        });
+        node.children = newNodes;
+        nodes.push(...newNodes);
     }
 
     return root.eachBefore(computeHeight);
