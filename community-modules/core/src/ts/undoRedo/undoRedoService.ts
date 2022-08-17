@@ -55,7 +55,11 @@ export class UndoRedoService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged);
         // undo / redo is restricted to actual editing so we clear the stacks when other operations are
         // performed that change the order of the row / cols.
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, e => {
+            if (!e.keepUndoRedoStack) {
+                this.clearStacks();
+            }
+        });
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.clearStacks);
