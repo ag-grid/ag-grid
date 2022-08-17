@@ -151,6 +151,9 @@ export class GridOptionsWrapper {
     public static PROP_IS_SERVER_SIDE_GROUP: 'isServerSideGroup' = 'isServerSideGroup';
     public static PROP_GET_SERVER_SIDE_GROUP_KEY: 'getServerSideGroupKey' = 'getServerSideGroupKey';
 
+    public static PROP_AUTO_GROUP_COLUMN_DEF: 'autoGroupColumnDef' = 'autoGroupColumnDef';
+    public static PROP_DEFAULT_COL_DEF: 'defaultColDef' = 'defaultColDef';
+
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('eventService') private readonly eventService: EventService;
     @Autowired('environment') private readonly environment: Environment;

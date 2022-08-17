@@ -7,6 +7,7 @@ import { Constants } from "../constants/constants";
 import { BeanStub } from "../context/beanStub";
 import { mergeDeep } from "../utils/object";
 import { missing } from "../utils/generic";
+import { RowRenderer } from '../rendering/rowRenderer';
 
 @Bean('autoGroupColService')
 export class AutoGroupColService extends BeanStub {
@@ -15,6 +16,7 @@ export class AutoGroupColService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     public createAutoGroupColumns(existingCols: Column[], rowGroupColumns: Column[]): Column[] {
         const groupAutoColumns: Column[] = [];

@@ -564,12 +564,12 @@ export class GridApi<TData = any> {
 
     /** Call to set new auto group column definition. The grid will recreate any auto-group columns if present. */
     public setAutoGroupColumnDef(colDef: ColDef, source: ColumnEventType = "api") {
-        this.gridOptionsWrapper.setProperty('autoGroupColumnDef', colDef, true);
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_AUTO_GROUP_COLUMN_DEF, colDef, true);
     }
 
     /** Call to set new Default Column Definition. */
     public setDefaultColDef(colDef: ColDef, source: ColumnEventType = "api") {
-        this.gridOptionsWrapper.setProperty('defaultColDef', colDef, true);
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DEFAULT_COL_DEF, colDef, true);
     }
 
     public expireValueCache(): void {
