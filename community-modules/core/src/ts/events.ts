@@ -24,6 +24,8 @@ export interface ModelUpdatedEvent<TData = any> extends AgGridEvent<TData> {
     newData: boolean | undefined;
     /** True when pagination and a new page is navigated to. */
     newPage: boolean;
+    /** true if all we did is changed row height, data still the same, no need to clear the undo/redo stacks */
+    keepUndoRedoStack?: boolean;
 }
 
 export interface PaginationChangedEvent<TData = any> extends AgGridEvent<TData> {

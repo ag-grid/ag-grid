@@ -60,4 +60,6 @@ export interface RefreshModelParams<TData = any> {
     newData?: boolean;
     // true if this update is due to columns changing, ie no rows were changed
     afterColumnsChanged?: boolean;
+    // true if all we did is changed row height, data still the same, no need to clear the undo/redo stacks
+    keepUndoRedoStack?: boolean;
 }
