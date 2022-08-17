@@ -202,14 +202,20 @@ export interface DetailGridInfo {
 }
 
 export interface ISizeColumnsToFitParams {
+    /** Defines a default minimum width for every column (does not override the column minimum width) */
 	defaultMinWidth?: number,
+    /** Defines a default maximum width for every column (does not override the column maximum width) */
   	defaultMaxWidth?: number,
+    /** Provides a minimum and/or maximum width to specific columns */
 	columnLimits?: IColumnLimit[]
 }
 
 export interface IColumnLimit {
+    /** Selector for the column to which these dimension limits will apply */
 	key: Column | string,
+    /** Defines a minimum width for this column (does not override the column minimum width) */
   	minWidth?: number,
+    /** Defines a maximum width for this column (does not override the column maximum width) */
   	maxWidth?: number	
 }
 
@@ -872,7 +878,6 @@ export class GridApi<TData = any> {
 
     /**
      * Sets columns to adjust in size to fit the grid horizontally.
-     * @limits optionally define min and max widths for the purpose of this function (the column min/max are still respected.)
      **/
     public sizeColumnsToFit(params?: ISizeColumnsToFitParams) {
         this.gridBodyCtrl.sizeColumnsToFit(params);
