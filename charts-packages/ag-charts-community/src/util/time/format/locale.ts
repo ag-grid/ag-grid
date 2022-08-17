@@ -397,7 +397,8 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
     function newParse(specifier: string, newDate: (d: ParsedDate) => Date): (str: string) => Date | undefined {
         return function (str: string) {
             const d = newYear(1900);
-            const i = parseSpecifier(d, specifier, (str += ''), 0);
+            str += '';
+            const i = parseSpecifier(d, specifier, str, 0);
 
             if (i != str.length) {
                 return undefined;

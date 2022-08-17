@@ -1,17 +1,17 @@
-import { Marker } from './marker';
+import { Marker, MarkerPathMove } from './marker';
 
 export class Triangle extends Marker {
     static className = 'Triangle';
 
-    updatePath() {
-        let { x, y } = this;
-        const { path, size } = this;
-        const s = size * 1.1;
+    static moves: MarkerPathMove[] = [
+        { x: 0, y: -0.48, t: 'move' },
+        { x: 0.5, y: 0.87 },
+        { x: -1, y: 0 },
+    ];
 
-        path.clear();
-        path.moveTo(x, (y -= s * 0.48));
-        path.lineTo((x += s * 0.5), (y += s * 0.87));
-        path.lineTo(x - s, y);
-        path.closePath();
+    updatePath() {
+        const s = this.size * 1.1;
+
+        super.applyPath(s, Triangle.moves);
     }
 }

@@ -350,6 +350,7 @@ export class CartesianChart extends Chart {
             if (visitCount > 1) {
                 axisThickness += axisPadding;
             }
+            axisThickness = Math.ceil(axisThickness);
 
             switch (position) {
                 case ChartAxisPosition.Top:

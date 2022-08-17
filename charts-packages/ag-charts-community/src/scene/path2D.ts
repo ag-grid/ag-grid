@@ -12,13 +12,6 @@ export class Path2D {
     commands: string[] = [];
     params: number[] = [];
 
-    private static splitCommandsRe = /(?=[AaCcHhLlMmQqSsTtVvZz])/g;
-    private static matchParamsRe = /-?[0-9]*\.?\d+/g;
-    private static quadraticCommandRe = /[QqTt]/;
-    private static cubicCommandRe = /[CcSs]/;
-    private static xmlDeclaration = '<?xml version="1.0" encoding="UTF-8"?>';
-    private static xmlns = 'http://www.w3.org/2000/svg';
-
     isDirty() {
         if (this._closedPath !== this.previousClosedPath) {
             return true;
@@ -226,7 +219,6 @@ export class Path2D {
         let xy = -cosPhi * sinTheta1 * rx - sinPhi * cosTheta1 * ry;
         let yy = -sinPhi * sinTheta1 * rx + cosPhi * cosTheta1 * ry;
 
-        // TODO: what if delta between θ1 and θ2 is greater than 2π?
         // Always draw clockwise from θ1 to θ2.
         theta2 -= theta1;
         if (theta2 < 0) {
@@ -238,9 +230,6 @@ export class Path2D {
         // |yx yy cy| |y|
         // | 0  0  1| |1|
 
-        // TODO: This move command may be redundant, if we are already at this point.
-        // The coordinates of the point calculated here may differ ever so slightly
-        // because of precision error.
         commands.push('M');
         params.push(xx + cx, yx + cy);
         while (theta2 >= rightAngle) {
@@ -471,13 +460,17 @@ export class Path2D {
                             intersectionCount++;
                         }
                     }
-                    sx = px = params[pi++];
-                    sy = py = params[pi++];
+                    px = params[pi++];
+                    sx = px;
+                    py = params[pi++];
+                    sy = py;
                     break;
                 case 'L':
-                    if (segmentIntersection(px, py, (px = params[pi++]), (py = params[pi++]), ox, oy, x, y)) {
+                    if (segmentIntersection(px, py, params[pi++], params[pi++], ox, oy, x, y)) {
                         intersectionCount++;
                     }
+                    px = params[pi - 2];
+                    py = params[pi - 1];
                     break;
                 case 'C':
                     intersectionCount += cubicSegmentIntersections(
@@ -487,13 +480,15 @@ export class Path2D {
                         params[pi++],
                         params[pi++],
                         params[pi++],
-                        (px = params[pi++]),
-                        (py = params[pi++]),
+                        params[pi++],
+                        params[pi++],
                         ox,
                         oy,
                         x,
                         y
                     ).length;
+                    px = params[pi - 2];
+                    py = params[pi - 1];
                     break;
                 case 'Z':
                     if (!isNaN(sx)) {
@@ -506,266 +501,6 @@ export class Path2D {
         }
 
         return intersectionCount % 2 === 1;
-    }
-
-    static fromString(value: string): Path2D {
-        const path = new Path2D();
-        path.setFromString(value);
-        return path;
-    }
-
-    /**
-     * Split the SVG path at command letters,
-     * then extract the command letter and parameters from each substring.
-     * @param value
-     */
-    static parseSvgPath(value: string): { command: string; params: number[] }[] {
-        return value
-            .trim()
-            .split(Path2D.splitCommandsRe)
-            .map((part) => {
-                const strParams = part.match(Path2D.matchParamsRe);
-                return {
-                    command: part.substr(0, 1),
-                    params: strParams ? strParams.map(parseFloat) : [],
-                };
-            });
-    }
-
-    static prettifySvgPath(value: string): string {
-        return Path2D.parseSvgPath(value)
-            .map((d) => d.command + d.params.join(','))
-            .join('\n');
-    }
-
-    /**
-     * See https://www.w3.org/TR/SVG11/paths.html
-     * @param value
-     */
-    setFromString(value: string) {
-        this.clear();
-
-        const parts = Path2D.parseSvgPath(value);
-
-        // Current point.
-        let x: number;
-        let y: number;
-        // Last control point. Used to calculate the reflection point
-        // for `S`, `s`, `T`, `t` commands.
-        let cpx: number;
-        let cpy: number;
-
-        let lastCommand: string;
-
-        function checkQuadraticCP() {
-            if (!lastCommand.match(Path2D.quadraticCommandRe)) {
-                cpx = x;
-                cpy = y;
-            }
-        }
-
-        function checkCubicCP() {
-            if (!lastCommand.match(Path2D.cubicCommandRe)) {
-                cpx = x;
-                cpy = y;
-            }
-        }
-
-        // But that will make compiler complain about x/y, cpx/cpy
-        // being used without being set first.
-        parts.forEach((part) => {
-            const p = part.params;
-            const n = p.length;
-            let i = 0;
-
-            switch (part.command) {
-                case 'M':
-                    this.moveTo((x = p[i++]), (y = p[i++]));
-                    while (i < n) {
-                        this.lineTo((x = p[i++]), (y = p[i++]));
-                    }
-                    break;
-                case 'm':
-                    this.moveTo((x += p[i++]), (y += p[i++]));
-                    while (i < n) {
-                        this.lineTo((x += p[i++]), (y += p[i++]));
-                    }
-                    break;
-                case 'L':
-                    while (i < n) {
-                        this.lineTo((x = p[i++]), (y = p[i++]));
-                    }
-                    break;
-                case 'l':
-                    while (i < n) {
-                        this.lineTo((x += p[i++]), (y += p[i++]));
-                    }
-                    break;
-                case 'C':
-                    while (i < n) {
-                        this.cubicCurveTo(p[i++], p[i++], (cpx = p[i++]), (cpy = p[i++]), (x = p[i++]), (y = p[i++]));
-                    }
-                    break;
-                case 'c':
-                    while (i < n) {
-                        this.cubicCurveTo(
-                            x + p[i++],
-                            y + p[i++],
-                            (cpx = x + p[i++]),
-                            (cpy = y + p[i++]),
-                            (x += p[i++]),
-                            (y += p[i++])
-                        );
-                    }
-                    break;
-                case 'S':
-                    checkCubicCP();
-                    while (i < n) {
-                        this.cubicCurveTo(
-                            x + x - cpx,
-                            y + y - cpy,
-                            (cpx = p[i++]),
-                            (cpy = p[i++]),
-                            (x = p[i++]),
-                            (y = p[i++])
-                        );
-                    }
-                    break;
-                case 's':
-                    checkCubicCP();
-                    while (i < n) {
-                        this.cubicCurveTo(
-                            x + x - cpx,
-                            y + y - cpy,
-                            (cpx = x + p[i++]),
-                            (cpy = y + p[i++]),
-                            (x += p[i++]),
-                            (y += p[i++])
-                        );
-                    }
-                    break;
-                case 'Q':
-                    while (i < n) {
-                        this.quadraticCurveTo((cpx = p[i++]), (cpy = p[i++]), (x = p[i++]), (y = p[i++]));
-                    }
-                    break;
-                case 'q':
-                    while (i < n) {
-                        this.quadraticCurveTo((cpx = x + p[i++]), (cpy = y + p[i++]), (x += p[i++]), (y += p[i++]));
-                    }
-                    break;
-                case 'T':
-                    checkQuadraticCP();
-                    while (i < n) {
-                        this.quadraticCurveTo((cpx = x + x - cpx), (cpy = y + y - cpy), (x = p[i++]), (y = p[i++]));
-                    }
-                    break;
-                case 't':
-                    checkQuadraticCP();
-                    while (i < n) {
-                        this.quadraticCurveTo((cpx = x + x - cpx), (cpy = y + y - cpy), (x += p[i++]), (y += p[i++]));
-                    }
-                    break;
-                case 'A':
-                    while (i < n) {
-                        this.arcTo(
-                            p[i++],
-                            p[i++],
-                            (p[i++] * Math.PI) / 180,
-                            p[i++],
-                            p[i++],
-                            (x = p[i++]),
-                            (y = p[i++])
-                        );
-                    }
-                    break;
-                case 'a':
-                    while (i < n) {
-                        this.arcTo(
-                            p[i++],
-                            p[i++],
-                            (p[i++] * Math.PI) / 180,
-                            p[i++],
-                            p[i++],
-                            (x += p[i++]),
-                            (y += p[i++])
-                        );
-                    }
-                    break;
-                case 'Z':
-                case 'z':
-                    this.closePath();
-                    break;
-                case 'H':
-                    while (i < n) {
-                        this.lineTo((x = p[i++]), y);
-                    }
-                    break;
-                case 'h':
-                    while (i < n) {
-                        this.lineTo((x += p[i++]), y);
-                    }
-                    break;
-                case 'V':
-                    while (i < n) {
-                        this.lineTo(x, (y = p[i++]));
-                    }
-                    break;
-                case 'v':
-                    while (i < n) {
-                        this.lineTo(x, (y += p[i++]));
-                    }
-                    break;
-            }
-
-            lastCommand = part.command;
-        });
-    }
-
-    toString(): string {
-        const c = this.commands;
-        const p = this.params;
-        const cn = c.length;
-        const out: string[] = [];
-
-        for (let ci = 0, pi = 0; ci < cn; ci++) {
-            switch (c[ci]) {
-                case 'M':
-                    out.push('M' + p[pi++] + ',' + p[pi++]);
-                    break;
-                case 'L':
-                    out.push('L' + p[pi++] + ',' + p[pi++]);
-                    break;
-                case 'C':
-                    out.push(
-                        'C' + p[pi++] + ',' + p[pi++] + ' ' + p[pi++] + ',' + p[pi++] + ' ' + p[pi++] + ',' + p[pi++]
-                    );
-                    break;
-                case 'Z':
-                    out.push('Z');
-                    break;
-            }
-        }
-        return out.join('');
-    }
-
-    toPrettyString(): string {
-        return Path2D.prettifySvgPath(this.toString());
-    }
-
-    toSvg(): string {
-        return `${Path2D.xmlDeclaration}
-<svg width="100%" height="100%" viewBox="0 0 50 50" version="1.1" xmlns="${Path2D.xmlns}">
-    <path d="${this.toString()}" style="fill:none;stroke:#000;stroke-width:0.5;"/>
-</svg>`;
-    }
-
-    toDebugSvg(): string {
-        const d = Path2D.prettifySvgPath(this.toString());
-        return `${Path2D.xmlDeclaration}
-<svg width="100%" height="100%" viewBox="0 0 100 100" version="1.1" xmlns="${Path2D.xmlns}">
-    <path d="${d}" style="fill:none;stroke:#000;stroke-width:0.5;"/>
-</svg>`;
     }
 
     /**
@@ -791,42 +526,30 @@ export class Path2D {
         this.commands.forEach((command) => {
             switch (command) {
                 case 'M':
-                    path = [(sx = px = params[i++]), (sy = py = params[i++])];
-                    paths.push(path);
+                    px = params[i++];
+                    py = params[i++];
+                    sx = px;
+                    sy = py;
+                    paths.push([sx, sy]);
                     break;
                 case 'L':
                     const x = params[i++];
                     const y = params[i++];
                     // Place control points along the line `a + (b - a) * t`
                     // at t = 1/3 and 2/3:
-                    path.push(
-                        (px + px + x) / 3,
-                        (py + py + y) / 3,
-                        (px + x + x) / 3,
-                        (py + y + y) / 3,
-                        (px = x),
-                        (py = y)
-                    );
+                    path.push((px + px + x) / 3, (py + py + y) / 3, (px + x + x) / 3, (py + y + y) / 3, x, y);
+                    px = x;
+                    py = y;
                     break;
                 case 'C':
-                    path.push(
-                        params[i++],
-                        params[i++],
-                        params[i++],
-                        params[i++],
-                        (px = params[i++]),
-                        (py = params[i++])
-                    );
+                    path.push(params[i++], params[i++], params[i++], params[i++], params[i++], params[i++]);
+                    px = params[i - 2];
+                    py = params[i - 1];
                     break;
                 case 'Z':
-                    path.push(
-                        (px + px + sx) / 3,
-                        (py + py + sy) / 3,
-                        (px + sx + sx) / 3,
-                        (py + sy + sy) / 3,
-                        (px = sx),
-                        (py = sy)
-                    );
+                    path.push((px + px + sx) / 3, (py + py + sy) / 3, (px + sx + sx) / 3, (py + sy + sy) / 3, sx, sy);
+                    px = sx;
+                    py = sy;
                     break;
             }
         });

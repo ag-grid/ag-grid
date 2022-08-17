@@ -96,9 +96,21 @@ export function squarifyRatio(ratio: number, parent: any, x0: number, y0: number
         };
         rows.push(row);
         if (row.dice) {
-            dice(row, x0, y0, x1, value ? (y0 += (dy * sumValue) / value) : y1);
+            let oldy0 = y0;
+            let newy1 = y1;
+            if (value) {
+                y0 += (dy * sumValue) / value;
+                newy1 = y0;
+            }
+            dice(row, x0, oldy0, x1, newy1);
         } else {
-            slice(row, x0, y0, value ? (x0 += (dx * sumValue) / value) : x1, y1);
+            let oldx0 = x0;
+            let newx1 = x1;
+            if (value) {
+                x0 += (dx * sumValue) / value;
+                newx1 = x0;
+            }
+            slice(row, oldx0, y0, newx1, y1);
         }
         value -= sumValue;
         i0 = i1;

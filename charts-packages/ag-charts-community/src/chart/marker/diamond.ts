@@ -1,19 +1,19 @@
-import { Marker } from './marker';
+import { Marker, MarkerPathMove } from './marker';
 
 export class Diamond extends Marker {
     static className = 'Diamond';
 
-    updatePath() {
-        let { x, y } = this;
-        const { path, size } = this;
-        const s = size / 2;
+    static moves: MarkerPathMove[] = [
+        { x: 0, y: -1, t: 'move' },
+        { x: +1, y: +1 },
+        { x: -1, y: +1 },
+        { x: -1, y: -1 },
+        { x: +1, y: -1 },
+    ];
 
-        path.clear();
-        path.moveTo(x, (y -= s));
-        path.lineTo((x += s), (y += s));
-        path.lineTo((x -= s), (y += s));
-        path.lineTo((x -= s), (y -= s));
-        path.lineTo((x += s), (y -= s));
-        path.closePath();
+    updatePath() {
+        const s = this.size / 2;
+
+        super.applyPath(s, Diamond.moves);
     }
 }

@@ -216,8 +216,11 @@ export function tickFormat(
     switch (formatSpecifier.type) {
         case 's': {
             const value = Math.max(Math.abs(start), Math.abs(stop));
-            if (formatSpecifier.precision == null && !isNaN((precision = precisionPrefix(step, value)))) {
-                formatSpecifier.precision = precision;
+            if (formatSpecifier.precision == null) {
+                precision = precisionPrefix(step, value);
+                if (!isNaN(precision)) {
+                    formatSpecifier.precision = precision;
+                }
             }
             return formatPrefix(formatSpecifier, value);
         }
@@ -226,18 +229,21 @@ export function tickFormat(
         case 'g':
         case 'p':
         case 'r': {
-            if (
-                formatSpecifier.precision == null &&
-                !isNaN((precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop)))))
-            ) {
-                formatSpecifier.precision = precision - +(formatSpecifier.type === 'e');
+            if (formatSpecifier.precision == null) {
+                precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop)));
+                if (!isNaN(precision)) {
+                    formatSpecifier.precision = precision - +(formatSpecifier.type === 'e');
+                }
             }
             break;
         }
         case 'f':
         case '%': {
-            if (formatSpecifier.precision == null && !isNaN((precision = precisionFixed(step)))) {
-                formatSpecifier.precision = precision - +(formatSpecifier.type === '%') * 2;
+            if (formatSpecifier.precision == null) {
+                precision = precisionFixed(step);
+                if (!isNaN(precision)) {
+                    formatSpecifier.precision = precision - +(formatSpecifier.type === '%') * 2;
+                }
             }
             break;
         }
@@ -271,7 +277,8 @@ function formatPrefixAuto(x: number, p: number = 0) {
 }
 
 function formatDecimal(x: number): string {
-    return Math.abs((x = Math.round(x))) >= 1e21 ? x.toLocaleString('en').replace(/,/g, '') : x.toString(10);
+    x = Math.round(x);
+    return Math.abs(x) >= 1e21 ? x.toLocaleString('en').replace(/,/g, '') : x.toString(10);
 }
 
 function formatGroup(grouping: number[], thousands: string): (value: string, width: number) => string {
@@ -287,11 +294,13 @@ function formatGroup(grouping: number[], thousands: string): (value: string, wid
             if (length + g + 1 > width) {
                 g = Math.max(1, width - length);
             }
-            t.push(value.substring((i -= g), i + g));
+            i -= g;
+            t.push(value.substring(i, i + g));
             if ((length += g + 1) > width) {
                 break;
             }
-            g = grouping[(j = (j + 1) % grouping.length)];
+            j = (j + 1) % grouping.length;
+            g = grouping[j];
         }
 
         t.reverse();
@@ -478,11 +487,11 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
     const group =
         locale.grouping === undefined || locale.thousands === undefined
             ? identity
-            : formatGroup(locale.grouping.map(Number) as number[], String(locale.thousands));
+            : formatGroup(locale.grouping.map(Number), String(locale.thousands));
     const currencyPrefix = locale.currency === undefined ? '' : String(locale.currency[0]);
     const currencySuffix = locale.currency === undefined ? '' : String(locale.currency[1]);
     const decimal = locale.decimal === undefined ? '.' : String(locale.decimal);
-    const numerals = locale.numerals === undefined ? identity : formatNumerals(locale.numerals.map(String) as string[]);
+    const numerals = locale.numerals === undefined ? identity : formatNumerals(locale.numerals.map(String));
     const percent = locale.percent === undefined ? '%' : String(locale.percent);
     const minus = locale.minus === undefined ? '\u2212' : String(locale.minus);
     const nan = locale.nan === undefined ? 'NaN' : String(locale.nan);

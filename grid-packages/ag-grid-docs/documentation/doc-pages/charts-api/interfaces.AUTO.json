@@ -2580,6 +2580,10 @@
     },
     "type": "T extends 'area' ? AgAreaSeriesOptions : T extends 'bar' ? AgBarSeriesOptions : T extends 'column' ? AgBarSeriesOptions : T extends 'histogram' ? AgHistogramSeriesOptions : T extends 'line' ? AgLineSeriesOptions : T extends 'pie' ? AgPieSeriesOptions : T extends 'scatter' ? AgScatterSeriesOptions : T extends 'treemap' ? AgTreemapSeriesOptions : never"
   },
+  "MarkerPathMove": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ x: number; y: number; t?: 'move'; }"
+  },
   "Offset": {
     "meta": {},
     "type": { "offsetX": "number", "offsetY": "number" }
