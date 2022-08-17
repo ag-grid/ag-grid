@@ -81,14 +81,6 @@ Note that we memoise the Cell Renderer using `const RenderCounterCellRenderer = 
 
 <grid-example title='React UI Render Cycles' name='no-wasted-render' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
 
-The example below demonstrates how the Cell Renderer gets re-rendered when we do not memoise the Cell Renderer.
-
-Both examples are identical with the exception of above uses memo, below does not use memo.
-
-Note below how moving columns and range selection does get the cell to needlessly re-render.
-
-<grid-example title='React UI Render Cycles' name='wasted-render' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
-
 ## Advanced Grid Features
 
 The rendering of AG Grid is 100% React regardless of what grid features are used.

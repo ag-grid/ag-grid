@@ -195,7 +195,7 @@ the default Header Component) provided by the grid.
 
 We prefer Direct Reference as it results in nice looking Column Definitions.
 
-We also recommend the use of `memo` around Components, to avoid [Wasted Component Renders](/reactui/#no-wasted-renders) on your Component.
+We also recommend the use of `memo` around Components, to avoid wasted component renders on your Component.
 
 Almost all of our examples, where Custom Components are used, are referenced directly. However the examples do not use
 `memo` to avoid clutter in the example.
