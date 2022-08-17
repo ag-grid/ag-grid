@@ -169,15 +169,15 @@ There are no events triggered by copy to clipboard as this does not change the g
 
 ## Known Issues
 
-The Grid uses the browser's [Clipboard Api](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API) to send and get data from the Operating System's clipboard, because of that, there are a number of known restrictions that block access to the data, such as: 
+The Grid uses the browser's [Clipboard Api](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API) to send and get data from the Operating System's clipboard. This is why, there are a few requirements to avoid restrictions blocking access to the data, such as:
 
 1. The application has to be hosted in a `https` environment, even during development work in `localhost`.
-1. If the grid is inside an IFrame, access to the clipboard needs to be explicitly allow as follows:
+1. If the grid is inside an IFrame, access to the clipboard needs to be explicitly allowed as follows:
 
     ```html
     <iframe src="index.html" allow="clipboard-read; clipboard-write"></iframe>
     ```
-1. When the conditions above are met, clipboard access must be granted to the browser, see below:
+1. When the conditions above are met, accessing the clipboard will display a browser message to allow the user to grant clipboard access, as shown below:
     <image-caption src="clipboard/resources/permission.png" alt="Clipboard Access" width="18rem" constrained="true"></image-caption>
 
 The grid tries to evaluate if access to the Clipboard is possible or not, and when the access is blocked it will default to the legacy clipboard access mode automatically. In some machines, when this process happens the first time, it leads empty data being pasted into the grid. To workaround theses problems, the `suppressClipboardApi` option was introduced and should be used as follows: 
