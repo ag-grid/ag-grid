@@ -10641,16 +10641,32 @@
     }
   },
   "ISizeColumnsToFitParams": {
-    "defaultMinWidth": { "type": { "returnType": "number", "optional": true } },
-    "defaultMaxWidth": { "type": { "returnType": "number", "optional": true } },
+    "defaultMinWidth": {
+      "description": "/** Defines a default minimum width for every column (does not override the column minimum width) */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "defaultMaxWidth": {
+      "description": "/** Defines a default maximum width for every column (does not override the column maximum width) */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "columnLimits": {
+      "description": "/** Provides a minimum and/or maximum width to specific columns */",
       "type": { "returnType": "IColumnLimit[]", "optional": true }
     }
   },
   "IColumnLimit": {
-    "key": { "type": { "returnType": "Column | string", "optional": false } },
-    "minWidth": { "type": { "returnType": "number", "optional": true } },
-    "maxWidth": { "type": { "returnType": "number", "optional": true } }
+    "key": {
+      "description": "/** Selector for the column to which these dimension limits will apply */",
+      "type": { "returnType": "Column | string", "optional": false }
+    },
+    "minWidth": {
+      "description": "/** Defines a minimum width for this column (does not override the column minimum width) */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Defines a maximum width for this column (does not override the column maximum width) */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "IFakeHScrollComp": {
     "setHeight": {
