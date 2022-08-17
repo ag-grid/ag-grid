@@ -26,8 +26,7 @@ enum DefaultTimeFormats {
     SECOND,
     MINUTE,
     HOUR,
-    DAY,
-    WEEK,
+    SHORT_MONTH,
     MONTH,
     YEAR,
 }
@@ -37,8 +36,7 @@ const formatStrings: Record<DefaultTimeFormats, string> = {
     [DefaultTimeFormats.SECOND]: ':%S',
     [DefaultTimeFormats.MINUTE]: '%I:%M',
     [DefaultTimeFormats.HOUR]: '%I %p',
-    [DefaultTimeFormats.DAY]: '%a',
-    [DefaultTimeFormats.WEEK]: '%b %d',
+    [DefaultTimeFormats.SHORT_MONTH]: '%b %d',
     [DefaultTimeFormats.MONTH]: '%B',
     [DefaultTimeFormats.YEAR]: '%Y',
 };
@@ -105,9 +103,7 @@ export class TimeScale extends ContinuousScale {
                 : this.day.floor(value) < value
                 ? updateFormat(DefaultTimeFormats.HOUR)
                 : this.month.floor(value) < value
-                ? this.week.floor(value) < value
-                    ? updateFormat(DefaultTimeFormats.DAY)
-                    : updateFormat(DefaultTimeFormats.WEEK)
+                ? updateFormat(DefaultTimeFormats.SHORT_MONTH)
                 : this.year.floor(value) < value
                 ? updateFormat(DefaultTimeFormats.MONTH)
                 : updateFormat(DefaultTimeFormats.YEAR);
@@ -133,13 +129,10 @@ export class TimeScale extends ContinuousScale {
             // fall through deliberately
             case DefaultTimeFormats.HOUR:
                 if (extent / durationDay > 1) {
-                    formatStringArray.push(formatStrings[DefaultTimeFormats.DAY]);
+                    formatStringArray.push(formatStrings[DefaultTimeFormats.SHORT_MONTH]);
                 }
             // fall through deliberately
-            case DefaultTimeFormats.DAY:
-                if (extent / durationWeek > 1) {
-                    formatStringArray.push(formatStrings[DefaultTimeFormats.WEEK]);
-                }
+            case DefaultTimeFormats.SHORT_MONTH:
             // fall through deliberately
             case DefaultTimeFormats.MONTH:
                 if (extent / durationYear > 1) {

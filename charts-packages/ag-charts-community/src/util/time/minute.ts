@@ -11,7 +11,7 @@ function count(start: Date, end: Date): number {
     return (end.getTime() - start.getTime()) / durationMinute;
 }
 function field(date: Date): number {
-    return date.getMinutes();
+    return Math.floor(date.getTime() / durationMinute);
 }
 
 export const minute = new CountableTimeInterval(floor, offset, count, field);
