@@ -89,6 +89,12 @@ It is possible to change the default behaviour for when a checkbox is not displa
 
 <grid-example title='Displaying Disabled Checkboxes' name='disabled-checkboxes' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
+### Example: Forcing Checkboxes As Selected
+
+It is possible to force a row to be selected, and ensure that users are unable to deselect them. This is done by providing a predicate to the `checkboxSelection` and using the api to select the rows with disabled checkboxes.
+
+<grid-example title='Forcing Checkboxes As Selected' name='force-enable-checkboxes' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+
 ## Group Selection
 
 When doing grouping, you control what selecting a group means. This is controlled with the two grid properties `groupSelectsChildren` and `groupSelectsFiltered`.

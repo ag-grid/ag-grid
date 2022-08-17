@@ -12,7 +12,7 @@ function count(start: Date, end: Date): number {
     return (end.getTime() - start.getTime() - tzMinuteDelta * durationMinute) / durationDay;
 }
 function field(date: Date): number {
-    return date.getDate() - 1;
+    return Math.floor(date.getTime() / durationDay);
 }
 
 export const day = new CountableTimeInterval(floor, offset, count, field);
