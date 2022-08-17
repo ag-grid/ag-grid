@@ -180,7 +180,9 @@ The Grid uses the browser's [Clipboard Api](https://developer.mozilla.org/en-US/
 1. When the conditions above are met, accessing the clipboard will display a browser message to allow the user to grant clipboard access, as shown below:
     <image-caption src="clipboard/resources/permission.png" alt="Clipboard Access" width="18rem" constrained="true"></image-caption>
 
-The grid tries to evaluate if access to the Clipboard is possible or not, and when the access is blocked it will default to the legacy clipboard access mode automatically. In some machines, when this process happens the first time, it leads empty data being pasted into the grid. To workaround theses problems, the `suppressClipboardApi` option was introduced and should be used as follows: 
+When you access the clipboard the first time through the grid (copying a grid cell, or pasting into one), if access to the **Clipboard** via [Clipboard Api](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API) is not available, the grid will automatically switch to legacy clipboard access mode (which doesn’t use [Clipboard Api](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API)) . In this case, the grid will display a console warning to announce the switch to legacy clipboard access. On some machines, when the grid switches to legacy clipboard access, the first paste operation will enter an empty value into the cell you’re pasting in. In this case, you’ll need to paste again to enter the copied value into the cell. 
+
+This only happens the very first time you paste in a grid instance. If you’d like to avoid the initial empty value paste due to the switch to legacy clipboard mode, please set the `suppressClipboardApi` grid option to true as shown below:
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
