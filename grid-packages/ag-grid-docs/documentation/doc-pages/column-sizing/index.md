@@ -70,10 +70,10 @@ The function can receive a parameters object with minimum and maximum widths, ei
 | col 2 = 120 * 2.54 = 305.87 -> rounded = 306<br/>
 | col 3 = 1198 - (127 + 306) = 765 // last col gets the space that's left, which ensures all space is used, no rounding issues<br/>
 
-In the following example, after clicking `Size To Fit`, note the following:
-1. The `athlete` column has `suppressSizeToFit` and is not resized.
-2. The `age` column has `maxWidth: 50`, which takes precedence over the functions `defaultMinWidth: 100`
-3. The `country` column has `maxWidth: 300`, which takes precedence over the functions `minWidth: 900` defined for the `country` column.
+In the following example, after clicking the button, note the following:
+- The `athlete` column has `suppressSizeToFit` and is not resized.
+- The `age` column has `maxWidth: 50`, which takes precedence over the functions `defaultMinWidth: 100`
+- The `country` column has `maxWidth: 300`, which takes precedence over the functions `minWidth: 900` defined for the `country` column.
 
 <grid-example title='Sizing Columns To Fit' name='column-sizing-to-fit' type='generated'></grid-example>
 
