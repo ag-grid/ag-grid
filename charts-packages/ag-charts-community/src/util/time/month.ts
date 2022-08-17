@@ -12,7 +12,7 @@ function count(start: Date, end: Date): number {
     return end.getMonth() - start.getMonth() + (end.getFullYear() - start.getFullYear()) * 12;
 }
 function field(date: Date): number {
-    return Math.floor(date.getTime() - durationMonth);
+    return Math.floor(date.getTime() / durationMonth);
 }
 
 export const month = new CountableTimeInterval(floor, offset, count, field);

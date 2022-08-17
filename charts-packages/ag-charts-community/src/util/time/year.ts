@@ -12,7 +12,7 @@ function count(start: Date, end: Date): number {
     return end.getFullYear() - start.getFullYear();
 }
 function field(date: Date): number {
-    return Math.floor(date.getTime() - durationYear);
+    return Math.floor(date.getTime() / durationYear);
 }
 
 export const year = new CountableTimeInterval(floor, offset, count, field);
