@@ -52,13 +52,7 @@ export class MiniCustomCombo extends MiniChart {
         bottomAxis.y2 = size - padding;
         bottomAxis.stroke = axisStroke;
 
-        const penIcon = new Path();
-        penIcon.svgPath = 'M25.76,43.46l5.51,5.07M49.86,22a3.26,3.26,0,0,0-3-.59,6.78,6.78,0,0,0-3.35,2.14l-18,20.25-.08.09-2.42,8-.18.57,8.19-3.6,18-20.34a6.83,6.83,0,0,0,1.73-3.59A3.29,3.29,0,0,0,49.86,22Zm-8.1,3.5,5.58,5m-6.6-3.85,5.51,5.06';
-        penIcon.fill = 'whitesmoke';
-        penIcon.stroke = 'darkslategrey';
-        penIcon.strokeWidth = 1;
-
-        root.append([bottomAxis, leftAxis, penIcon]);
+        root.append([bottomAxis, leftAxis]);
 
         this.updateColors(fills, strokes);
     }

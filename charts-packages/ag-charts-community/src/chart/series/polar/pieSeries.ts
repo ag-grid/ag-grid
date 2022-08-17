@@ -467,8 +467,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             // Bring highlighted slice's parent group to front.
             const parent = sector.parent && sector.parent.parent;
             if (isDatumHighlighted && parent) {
-                parent.removeChild(sector.parent);
-                parent.appendChild(sector.parent);
+                parent.removeChild(sector.parent!);
+                parent.appendChild(sector.parent!);
             }
 
             sector.innerRadius = Math.max(0, innerRadius);
