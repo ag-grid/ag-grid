@@ -408,14 +408,7 @@ export abstract class Node extends ChangeDetectable {
             return;
         }
 
-        // TODO: transforms without center of scaling and rotation correspond directly
-        //       to `setAttribute('transform', 'translate(tx, ty) rotate(rDeg) scale(sx, sy)')`
-        //       in SVG. Our use cases will mostly require positioning elements (rects, circles)
-        //       within a group, rotating groups at right angles (e.g. for axis) and translating
-        //       groups. We shouldn't even need `scale(1, -1)` (invert vertically), since this
-        //       can be done using D3-like scales already by inverting the output range.
-        //       So for now, just assume that centers of scaling and rotation are at the origin.
-        // const [bbcx, bbcy] = this.computeBBoxCenter();
+        // Assume that centers of scaling and rotation are at the origin.
         const [bbcx, bbcy] = [0, 0];
 
         const sx = this.scalingX;

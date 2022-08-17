@@ -117,7 +117,9 @@ export abstract class ContinuousScale implements Scale<any, any> {
      * @param b
      */
     private normalize(a: any, b: any): (x: any) => number {
-        return (b -= a = +a) ? (x: any) => (x - a) / b : constant(isNaN(b) ? NaN : 0.5);
+        a = +a;
+        b -= a;
+        return b ? (x: any) => (x - a) / b : constant(isNaN(b) ? NaN : 0.5);
     }
 
     private bimap(domain: any[], range: any[], interpolate: (a: any, b: any) => (t: number) => any): (x: any) => any {

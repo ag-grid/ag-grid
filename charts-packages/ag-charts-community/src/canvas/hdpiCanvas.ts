@@ -374,12 +374,12 @@ export class HdpiCanvas {
             if (overrides.hasOwnProperty(name)) {
                 // Save native methods under prefixed names,
                 // if this hasn't been done by the previous overrides already.
-                if (!(ctx as any)['$' + name]) {
-                    (ctx as any)['$' + name] = (ctx as any)[name];
+                if (!ctx['$' + name]) {
+                    ctx['$' + name] = ctx[name];
                 }
                 // Replace native methods with overrides,
                 // or previous overrides with the new ones.
-                (ctx as any)[name] = overrides[name];
+                ctx[name] = overrides[name];
             }
         }
     }

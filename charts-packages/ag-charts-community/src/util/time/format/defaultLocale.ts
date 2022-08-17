@@ -27,5 +27,6 @@ setDefaultLocale({
 });
 
 export default function setDefaultLocale(definition: TimeLocaleDefinition): TimeLocaleObject {
-    return (locale = formatLocale(definition));
+    locale = formatLocale(definition);
+    return locale;
 }
