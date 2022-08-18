@@ -91,6 +91,8 @@ export class RowRenderer extends BeanStub {
     private embedFullWidthRows: boolean;
     private stickyRowFeature: StickyRowFeature;
 
+    private dataFirstRenderedFired = false;
+
     @PostConstruct
     private postConstruct(): void {
         this.ctrlsService.whenReady(() => {
@@ -1169,6 +1171,9 @@ export class RowRenderer extends BeanStub {
      * but not execute the event until all of the data has finished being rendered to the dom.
      */
     public dispatchFirstDataRenderedEvent() {
+        if (this.dataFirstRenderedFired) { return; }
+        this.dataFirstRenderedFired = true;
+
         const event: WithoutGridCommon<FirstDataRenderedEvent> = {
             type: Events.EVENT_FIRST_DATA_RENDERED,
             firstRow: this.firstRenderedRow,
@@ -1177,7 +1182,7 @@ export class RowRenderer extends BeanStub {
 
         // See AG-7018
         window.requestAnimationFrame(() => {
-            this.beans.eventService.dispatchEventOnce(event);
+            this.beans.eventService.dispatchEvent(event);
         });
     }
 
