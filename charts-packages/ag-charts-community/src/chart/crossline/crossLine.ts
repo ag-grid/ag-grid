@@ -69,8 +69,8 @@ export class CrossLine {
     direction: ChartAxisDirection = ChartAxisDirection.X;
 
     readonly group = new Group({ name: `${this.id}`, layer: true, zIndex: CrossLine.LINE_LAYER_ZINDEX });
-    private crossLineLabel = new Text();
     private crossLineRange: Range = new Range();
+    private crossLineLabel = new Text();
     private labelPoint?: Point = undefined;
 
     private data: NodeData = [];
