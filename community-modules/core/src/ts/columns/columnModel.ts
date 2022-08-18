@@ -52,6 +52,7 @@ import { doOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import { WithoutGridCommon } from '../interfaces/iCommon';
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -233,8 +234,6 @@ export class ColumnModel extends BeanStub {
 
     private columnDefs: (ColDef | ColGroupDef)[];
 
-    private colDefVersion = 0;
-
     private flexColsCalculatedAtLestOnce = false;
 
     @PostConstruct
@@ -249,9 +248,9 @@ export class ColumnModel extends BeanStub {
 
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
 
-        this.addManagedListener(this.gridOptionsWrapper, 'groupDisplayType', () => this.onAutoGroupColumnDefChanged());
-        this.addManagedListener(this.gridOptionsWrapper, 'autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
-        this.addManagedListener(this.gridOptionsWrapper, 'defaultColDef', () => this.onDefaultColDefChanged());
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_DISPLAY_TYPE, () => this.onAutoGroupColumnDefChanged());
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_AUTO_GROUP_COLUMN_DEF, () => this.onAutoGroupColumnDefChanged());
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DEFAULT_COL_DEF, () => this.onDefaultColDefChanged());
     }
 
     public onAutoGroupColumnDefChanged() {
@@ -262,21 +261,13 @@ export class ColumnModel extends BeanStub {
     }
 
     public onDefaultColDefChanged(): void {
-        // col def's should get revisited, even if specific column hasn't changed,
-        // as the defaultColDef impacts all columns, so each column should assume it's Col Def has changed.
-        this.colDefVersion++;
         // likewise for autoGroupCol, the default col def impacts this
         this.forceRecreateAutoGroups = true;
         this.createColumnsFromColumnDefs(true);
     }
 
-    public getColDefVersion(): number {
-        return this.colDefVersion;
-    }
-
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = 'api') {
         const colsPreviouslyExisted = !!this.columnDefs;
-        this.colDefVersion++;
         this.columnDefs = columnDefs;
         this.createColumnsFromColumnDefs(colsPreviouslyExisted, source);
     }

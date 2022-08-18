@@ -54,6 +54,8 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     public static EVENT_FILTER_ACTIVE_CHANGED = 'filterActiveChanged';
     // + renderedHeaderCell - marks the header with sort icon
     public static EVENT_SORT_CHANGED = 'sortChanged';
+    // + renderedHeaderCell - marks the header with sort icon
+    public static EVENT_COL_DEF_CHANGED = 'colDefChanged';
 
     public static EVENT_MENU_VISIBLE_CHANGED = 'menuVisibleChanged';
 
@@ -188,7 +190,8 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         this.userProvidedColDef = userProvidedColDef;
         this.initMinAndMaxWidths();
         this.initDotNotation();
-    }
+        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_COL_DEF_CHANGED, "api"));
+    }    
 
     /**
      * Returns the column definition provided by the application.

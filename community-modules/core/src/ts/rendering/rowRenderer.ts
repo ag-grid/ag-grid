@@ -91,6 +91,8 @@ export class RowRenderer extends BeanStub {
     private embedFullWidthRows: boolean;
     private stickyRowFeature: StickyRowFeature;
 
+    private dataFirstRenderedFired = false;
+
     @PostConstruct
     private postConstruct(): void {
         this.ctrlsService.whenReady(() => {
@@ -107,7 +109,6 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_ROW_CLASS, this.redrawRows.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
         if (this.gridOptionsWrapper.isGroupRowsSticky()) {
             if (this.rowModel.getType() != Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
@@ -257,20 +258,24 @@ export class RowRenderer extends BeanStub {
             const lastLeftPinnedChangedListener = () => {
                 forEachCellWithThisCol(cellCtrl => cellCtrl.onLastLeftPinnedChanged());
             };
+            const colDefChangedListener = () => {
+                forEachCellWithThisCol(cellCtrl => cellCtrl.onColDefChanged());
+            };
 
             col.addEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
             col.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
             col.addEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstRightPinnedChangedListener);
             col.addEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, lastLeftPinnedChangedListener);
+            col.addEventListener(Column.EVENT_COL_DEF_CHANGED, colDefChangedListener);
 
             this.destroyFuncsForColumnListeners.push(() => {
                 col.removeEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
                 col.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
                 col.removeEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstRightPinnedChangedListener);
                 col.removeEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, lastLeftPinnedChangedListener);
+                col.removeEventListener(Column.EVENT_COL_DEF_CHANGED, colDefChangedListener);
             });
         });
-
     }
 
     private onDomLayoutChanged(): void {
@@ -563,13 +568,6 @@ export class RowRenderer extends BeanStub {
         this.getAllRowCtrls().forEach(rowCtrl => {
             rowCtrl.stopEditing(cancel);
         });
-    }
-
-    private onNewColumnsLoaded(): void {
-        // we don't want each cellComp to register for events, as would increase rendering time.
-        // so for newColumnsLoaded, we register once here (in rowRenderer) and then inform
-        // each cell if / when event was fired.
-        this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onNewColumnsLoaded());
     }
 
     public getAllCellCtrls(): CellCtrl[] {
@@ -1173,6 +1171,9 @@ export class RowRenderer extends BeanStub {
      * but not execute the event until all of the data has finished being rendered to the dom.
      */
     public dispatchFirstDataRenderedEvent() {
+        if (this.dataFirstRenderedFired) { return; }
+        this.dataFirstRenderedFired = true;
+
         const event: WithoutGridCommon<FirstDataRenderedEvent> = {
             type: Events.EVENT_FIRST_DATA_RENDERED,
             firstRow: this.firstRenderedRow,
@@ -1181,7 +1182,7 @@ export class RowRenderer extends BeanStub {
 
         // See AG-7018
         window.requestAnimationFrame(() => {
-            this.beans.eventService.dispatchEventOnce(event);
+            this.beans.eventService.dispatchEvent(event);
         });
     }
 

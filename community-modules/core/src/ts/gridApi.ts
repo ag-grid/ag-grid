@@ -202,14 +202,20 @@ export interface DetailGridInfo {
 }
 
 export interface ISizeColumnsToFitParams {
+    /** Defines a default minimum width for every column (does not override the column minimum width) */
 	defaultMinWidth?: number,
+    /** Defines a default maximum width for every column (does not override the column maximum width) */
   	defaultMaxWidth?: number,
+    /** Provides a minimum and/or maximum width to specific columns */
 	columnLimits?: IColumnLimit[]
 }
 
 export interface IColumnLimit {
+    /** Selector for the column to which these dimension limits will apply */
 	key: Column | string,
+    /** Defines a minimum width for this column (does not override the column minimum width) */
   	minWidth?: number,
+    /** Defines a maximum width for this column (does not override the column maximum width) */
   	maxWidth?: number	
 }
 
@@ -564,12 +570,12 @@ export class GridApi<TData = any> {
 
     /** Call to set new auto group column definition. The grid will recreate any auto-group columns if present. */
     public setAutoGroupColumnDef(colDef: ColDef, source: ColumnEventType = "api") {
-        this.gridOptionsWrapper.setProperty('autoGroupColumnDef', colDef, true);
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_AUTO_GROUP_COLUMN_DEF, colDef, true);
     }
 
     /** Call to set new Default Column Definition. */
     public setDefaultColDef(colDef: ColDef, source: ColumnEventType = "api") {
-        this.gridOptionsWrapper.setProperty('defaultColDef', colDef, true);
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DEFAULT_COL_DEF, colDef, true);
     }
 
     public expireValueCache(): void {
@@ -872,7 +878,6 @@ export class GridApi<TData = any> {
 
     /**
      * Sets columns to adjust in size to fit the grid horizontally.
-     * @limits optionally define min and max widths for the purpose of this function (the column min/max are still respected.)
      **/
     public sizeColumnsToFit(params?: ISizeColumnsToFitParams) {
         this.gridBodyCtrl.sizeColumnsToFit(params);

@@ -1094,7 +1094,7 @@ export class CellCtrl extends BeanStub {
         this.cellComp.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);
     }
 
-    public onNewColumnsLoaded(): void {
+    public onColDefChanged(): void {
         if (!this.cellComp) { return; }
 
         this.setWrapText();

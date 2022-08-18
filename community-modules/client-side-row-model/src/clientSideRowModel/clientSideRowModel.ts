@@ -461,7 +461,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
             newData: params.newData,
-            newPage: false
+            newPage: false,
+            keepUndoRedoStack: params.keepUndoRedoStack
         };
         this.eventService.dispatchEvent(event);
     }
@@ -984,7 +985,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public onRowHeightChanged(): void {
-        this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, keepEditingRows: true });
+        this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, keepEditingRows: true, keepUndoRedoStack: true });
     }
 
     public resetRowHeights(): void {

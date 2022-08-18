@@ -57,37 +57,36 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     public extractRowCellValue(column: Column, index: number, accumulatedRowIndex: number, type: string, node: RowNode) {
         // we render the group summary text e.g. "-> Parent -> Child"...
+        const value = this.shouldRenderGroupSummaryCell(node, column, index)
+            ? this.createValueForGroupNode(node)
+            : this.valueService.getValue(column, node);
+
+        const processedValue = this.processCell({
+            accumulatedRowIndex,
+            rowNode: node,
+            column,
+            value,
+            processCellCallback: this.processCellCallback,
+            type
+        });
+
+        return processedValue != null ? processedValue : '';
+    }
+
+    private shouldRenderGroupSummaryCell(node: RowNode, column: Column, currentColumnIndex: number): boolean {
         const isGroupNode = node && node.group;
-        let renderGroupSummaryCell = false;
+        // only on group rows
+        if (!isGroupNode) { return false; }
 
-        // on group rows
-        if (isGroupNode) {
-            const currentColumnIsGroup = this.groupColumns.indexOf(column) !== -1;
-            if (currentColumnIsGroup) {
-                const isGroupMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
-                // in the group column if groups appear in regular grid cells
-                if (isGroupMultiAutoColumn) {
-                    renderGroupSummaryCell = index === node.rowGroupIndex;
-                } else {
-                    renderGroupSummaryCell = true;
-                }
-            }
+        const currentColumnGroupIndex = this.groupColumns.indexOf(column);
 
-            if (!renderGroupSummaryCell) {
-                const isGroupUseEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow(this.columnModel.isPivotMode());
-                // or the first cell in the row, if we're doing full width rows
-                renderGroupSummaryCell = index === 0 && isGroupUseEntireRow;
-            }
+        if (currentColumnGroupIndex !== -1 && node.groupData?.[column.getId()]) {
+            return true;
         }
 
-        let valueForCell: string;
-        if (renderGroupSummaryCell) {
-            valueForCell = this.createValueForGroupNode(node);
-        } else {
-            valueForCell = this.valueService.getValue(column, node);
-        }
-        const value = this.processCell(accumulatedRowIndex, node, column, valueForCell, this.processCellCallback, type);
-        return value != null ? value : '';
+        const isGroupUseEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow(this.columnModel.isPivotMode());
+
+        return currentColumnIndex === 0 && isGroupUseEntireRow;
     }
 
     private getHeaderName(callback: ((params: ProcessHeaderForExportParams) => string) | undefined, column: Column): string | null {
@@ -123,7 +122,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return keys.reverse().join(' -> ');
     }
 
-    private processCell(accumulatedRowIndex: number, rowNode: RowNode, column: Column, value: any, processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined, type: string): any {
+    private processCell(params: { accumulatedRowIndex: number, rowNode: RowNode, column: Column, value: any, processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined, type: string }): any {
+        const { accumulatedRowIndex, rowNode, column, value, processCellCallback, type } = params;
+
         if (processCellCallback) {
             return processCellCallback({
                 accumulatedRowIndex,

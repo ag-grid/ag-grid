@@ -6112,6 +6112,11 @@
       "defaultMinWidth?": "number",
       "defaultMaxWidth?": "number",
       "columnLimits?": "IColumnLimit[]"
+    },
+    "docs": {
+      "defaultMinWidth?": "/** Defines a default minimum width for every column (does not override the column minimum width) */",
+      "defaultMaxWidth?": "/** Defines a default maximum width for every column (does not override the column maximum width) */",
+      "columnLimits?": "/** Provides a minimum and/or maximum width to specific columns */"
     }
   },
   "IColumnLimit": {
@@ -6120,6 +6125,11 @@
       "key": "Column | string",
       "minWidth?": "number",
       "maxWidth?": "number"
+    },
+    "docs": {
+      "key": "/** Selector for the column to which these dimension limits will apply */",
+      "minWidth?": "/** Defines a minimum width for this column (does not override the column minimum width) */",
+      "maxWidth?": "/** Defines a maximum width for this column (does not override the column maximum width) */"
     }
   },
   "IFakeHScrollComp": {

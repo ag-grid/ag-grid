@@ -45,8 +45,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
 
-    private colDefVersion: number;
-
     private comp: IHeaderCellComp;
 
     private column: Column;
@@ -76,8 +74,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     public setComp(comp: IHeaderCellComp, eGui: HTMLElement, eResize: HTMLElement, eHeaderCompWrapper: HTMLElement): void {
         super.setGui(eGui);
         this.comp = comp;
-
-        this.colDefVersion = this.columnModel.getColDefVersion();
 
         this.updateState();
         this.setupWidth();
@@ -110,7 +106,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             }
         ));
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
@@ -315,12 +311,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         }
     }
 
-    private onNewColumnsLoaded(): void {
-        const colDefVersionNow = this.columnModel.getColDefVersion();
-        if (colDefVersionNow != this.colDefVersion) {
-            this.colDefVersion = colDefVersionNow;
-            this.refresh();
-        }
+    private onColDefChanged(): void {
+        this.refresh();
     }
 
     private updateState(): void {

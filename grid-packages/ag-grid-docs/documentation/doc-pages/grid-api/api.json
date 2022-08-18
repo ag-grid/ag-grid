@@ -16,8 +16,8 @@
         "setDefaultColDef": {},
         "sizeColumnsToFit": {
             "more": {
-                "name": "Column Sizing",
-                "url": "/column-sizing/"
+                "name": "Size Columns to Fit",
+                "url": "/column-sizing/#size-columns-to-fit"
             }
         }
     },
