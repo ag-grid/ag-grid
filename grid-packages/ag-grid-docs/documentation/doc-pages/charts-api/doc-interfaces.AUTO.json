@@ -3661,9 +3661,7 @@
     },
     "boundSeries": { "type": { "returnType": "Series[]", "optional": false } }
   },
-  "CrossLinePathData": {
-    "points": { "type": { "returnType": "Point[]", "optional": false } }
-  },
+  "NodeData": {},
   "CrossLineType": {},
   "CrossLineLabelPosition": {},
   "CoordinatesFnOpts": {},

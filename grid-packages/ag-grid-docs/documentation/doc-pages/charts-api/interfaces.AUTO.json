@@ -2455,7 +2455,7 @@
       "boundSeries": "Series[]"
     }
   },
-  "CrossLinePathData": { "meta": {}, "type": { "points": "Point[]" } },
+  "NodeData": { "meta": { "isTypeAlias": true }, "type": "number[]" },
   "CrossLineType": {
     "meta": { "isTypeAlias": true },
     "type": "'line' | 'range'"
