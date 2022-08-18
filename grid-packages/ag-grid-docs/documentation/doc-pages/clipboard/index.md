@@ -166,33 +166,3 @@ If the application is doing work each time it receives a `cellValueChanged`, you
 There are no events triggered by copy to clipboard as this does not change the grids data.
 
 <grid-example title='Clipboard Events' name='clipboard-events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
-
-## Known Issues
-
-The Grid uses the browser's [Clipboard Api](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API) to send and get data from the Operating System's clipboard. This is why, there are a few requirements to avoid restrictions blocking access to the data, such as:
-
-1. The application has to be hosted in a `https` environment, even during development work in `localhost`.
-1. If the grid is inside an IFrame, access to the clipboard needs to be explicitly allowed as follows:
-
-    ```html
-    <iframe src="index.html" allow="clipboard-read; clipboard-write"></iframe>
-    ```
-1. When the conditions above are met, accessing the clipboard will display a browser message to allow the user to grant clipboard access, as shown below:
-    <image-caption src="clipboard/resources/permission.png" alt="Clipboard Access" width="18rem" constrained="true"></image-caption>
-
-When you access the clipboard the first time through the grid (copying a grid cell, or pasting into one), if access to the **Clipboard** via [Clipboard Api](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API) is not available, the grid will automatically switch to legacy clipboard access mode (which doesn’t use [Clipboard Api](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API)) . In this case, the grid will display a console warning to announce the switch to legacy clipboard access. On some machines, when the grid switches to legacy clipboard access, the first paste operation will enter an empty value into the cell you’re pasting in. In this case, you’ll need to paste again to enter the copied value into the cell. 
-
-This only happens the very first time you paste in a grid instance. If you’d like to avoid the initial empty value paste due to the switch to legacy clipboard mode, please set the `suppressClipboardApi` grid option to true as shown below:
-
-<snippet spaceBetweenProperties="true">
-const gridOptions = {
-    columnDefs: [
-        { field: 'country' },
-        { field: 'year' },
-        { field: 'athlete' },
-        { field: 'sport' },
-        { field: 'total' }
-    ],
-    suppressClipboardApi: true,
-}
-</snippet>
