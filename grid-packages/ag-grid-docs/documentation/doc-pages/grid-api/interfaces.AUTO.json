@@ -3129,6 +3129,7 @@
       "keepRenderedRows": "boolean | undefined",
       "newData": "boolean | undefined",
       "newPage": "boolean",
+      "keepUndoRedoStack?": "boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any",
@@ -3139,6 +3140,7 @@
       "keepRenderedRows": "/** If true, the grid has new data loaded, eg user called setRowData(), otherwise\n * it's the same data but sorted or filtered, in which case this is true, and rows\n * can animate around (eg rowNode id 24 is the same row node as last time). */",
       "newData": "/** If true, then this update was a result of setRowData() getting called. This\n * gets the grid to scroll to the top again. */",
       "newPage": "/** True when pagination and a new page is navigated to. */",
+      "keepUndoRedoStack?": "/** true if all we did is changed row height, data still the same, no need to clear the undo/redo stacks */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -9384,7 +9386,8 @@
       "rowNodeTransactions?": "RowNodeTransaction<TData>[]",
       "rowNodeOrder?": "{ [id: string]: number; }",
       "newData?": "boolean",
-      "afterColumnsChanged?": "boolean"
+      "afterColumnsChanged?": "boolean",
+      "keepUndoRedoStack?": "boolean"
     }
   },
   "IClipboardCopyParams": {
