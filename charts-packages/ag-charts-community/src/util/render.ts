@@ -38,18 +38,15 @@ function buildScheduler(scheduleFn: (cb: () => void) => void, cb: Callback) {
     const scheduleCb = () => {
         const count = scheduleCount;
 
-        const maybePromise = cb({ count });
         scheduleCount = 0;
+        promiseRunning = true;
+        const maybePromise = cb({ count });
 
         if (!maybePromise) {
-            awaitingDone?.();
-            awaitingDone = undefined;
-            awaitingPromise = undefined;
-
+            done();
             return;
         }
 
-        promiseRunning = true;
         maybePromise.then(done).catch(done);
     };
 
