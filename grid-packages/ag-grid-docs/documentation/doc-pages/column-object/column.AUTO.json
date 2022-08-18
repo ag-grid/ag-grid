@@ -8,6 +8,7 @@
   "EVENT_FILTER_CHANGED": { "type": {} },
   "EVENT_FILTER_ACTIVE_CHANGED": { "type": {} },
   "EVENT_SORT_CHANGED": { "type": {} },
+  "EVENT_COL_DEF_CHANGED": { "type": {} },
   "EVENT_MENU_VISIBLE_CHANGED": { "type": {} },
   "EVENT_ROW_GROUP_CHANGED": { "type": {} },
   "EVENT_PIVOT_CHANGED": { "type": {} },
