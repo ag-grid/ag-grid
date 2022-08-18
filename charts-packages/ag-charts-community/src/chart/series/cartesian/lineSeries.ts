@@ -138,12 +138,12 @@ export class LineSeries extends CartesianSeries<LineContext> {
         return this.yDomain;
     }
 
-    processData(): boolean {
+    async processData() {
         const { xAxis, yAxis, xKey, yKey, xData, yData } = this;
         const data = xKey && yKey && this.data ? this.data : [];
 
         if (!xAxis || !yAxis) {
-            return false;
+            return;
         }
 
         const isContinuousX = xAxis.scale instanceof ContinuousScale;
@@ -170,11 +170,9 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
         this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData, isContinuous), xAxis) : xData;
         this.yDomain = isContinuousY ? this.fixNumericExtent(extent(yData, isContinuous), yAxis) : yData;
-
-        return true;
     }
 
-    public createNodeData() {
+    async createNodeData() {
         const {
             data,
             xAxis,
@@ -274,7 +272,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         return this.marker.isDirty();
     }
 
-    protected updatePaths(opts: { seriesHighlighted?: boolean; contextData: LineContext; paths: Path[] }): void {
+    protected async updatePaths(opts: { seriesHighlighted?: boolean; contextData: LineContext; paths: Path[] }) {
         const {
             contextData: { nodeData },
             paths: [lineNode],
@@ -296,7 +294,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         lineNode.checkPathDirty();
     }
 
-    protected updatePathNodes(opts: { seriesHighlighted?: boolean; paths: Path[] }): void {
+    protected async updatePathNodes(opts: { seriesHighlighted?: boolean; paths: Path[] }) {
         const {
             paths: [lineNode],
         } = opts;
@@ -309,10 +307,10 @@ export class LineSeries extends CartesianSeries<LineContext> {
         lineNode.lineDashOffset = this.lineDashOffset;
     }
 
-    protected updateMarkerSelection(opts: {
+    protected async updateMarkerSelection(opts: {
         nodeData: LineNodeDatum[];
         markerSelection: Selection<Marker, Group, LineNodeDatum, any>;
-    }): Selection<Marker, Group, LineNodeDatum, any> {
+    }) {
         let { nodeData, markerSelection } = opts;
         const {
             marker: { shape, enabled },
@@ -331,7 +329,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         return updateMarkerSelection.merge(enterDatumSelection);
     }
 
-    protected updateMarkerNodes(opts: {
+    protected async updateMarkerNodes(opts: {
         markerSelection: Selection<Marker, Group, LineNodeDatum, any>;
         isHighlight: boolean;
     }) {
@@ -399,10 +397,10 @@ export class LineSeries extends CartesianSeries<LineContext> {
         }
     }
 
-    protected updateLabelSelection(opts: {
+    protected async updateLabelSelection(opts: {
         labelData: LineNodeDatum[];
         labelSelection: Selection<Text, Group, LineNodeDatum, any>;
-    }): Selection<Text, Group, LineNodeDatum, any> {
+    }) {
         let { labelData, labelSelection } = opts;
         const {
             marker: { shape, enabled },
@@ -415,7 +413,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         return updateTextSelection.merge(enterTextSelection);
     }
 
-    protected updateLabelNodes(opts: { labelSelection: Selection<Text, Group, LineNodeDatum, any> }) {
+    protected async updateLabelNodes(opts: { labelSelection: Selection<Text, Group, LineNodeDatum, any> }) {
         const { labelSelection } = opts;
         const { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
 

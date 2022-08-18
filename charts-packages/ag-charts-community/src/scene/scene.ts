@@ -241,7 +241,7 @@ export class Scene {
         consoleLog: false,
     };
 
-    render(opts?: { debugSplitTimes: number[]; extraDebugStats: Record<string, number> }) {
+    async render(opts?: { debugSplitTimes: number[]; extraDebugStats: Record<string, number> }) {
         const { debugSplitTimes = [performance.now()], extraDebugStats = {} } = opts || {};
         const {
             canvas,

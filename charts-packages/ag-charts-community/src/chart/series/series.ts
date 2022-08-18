@@ -243,10 +243,10 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     abstract getDomain(direction: ChartAxisDirection): any[];
 
     // Fetch required values from the `chart.data` or `series.data` objects and process them.
-    abstract processData(): void;
+    abstract processData(): Promise<void>;
 
     // Using processed data, create data that backs visible nodes.
-    abstract createNodeData(): C[];
+    abstract createNodeData(): Promise<C[]>;
 
     // Indicate that something external changed and we should recalculate nodeData.
     markNodeDataDirty() {
@@ -258,7 +258,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     }
 
     // Produce data joins and update selection's nodes using node data.
-    abstract update(): void;
+    abstract update(): Promise<void>;
 
     protected getOpacity(datum?: { itemId?: any }): number {
         const {
