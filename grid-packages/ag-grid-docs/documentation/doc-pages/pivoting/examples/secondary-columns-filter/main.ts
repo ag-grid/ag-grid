@@ -6,8 +6,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     { field: 'athlete', rowGroup: true },
     { field: 'year', pivot: true },
     { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
-    { field: 'silver', aggFunc: 'sum' },
-    { field: 'bronze', aggFunc: 'sum' },
+    { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+    { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
   ],
   defaultColDef: {
     flex: 1,

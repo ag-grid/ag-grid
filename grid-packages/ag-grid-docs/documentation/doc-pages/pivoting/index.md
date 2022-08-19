@@ -202,9 +202,9 @@ As shown in the snippet above, filters are enabled on pivot result columns by in
 | be used for filtering pivot result columns.
 
 Filtering on a pivot result column:
-- Using the filters tool panel, select the filter **Not Blank** using the **2000, gold** column filter
+- Using the floating filters, apply the filter **Not Blank** to the **2000, gold** column
 - Observe how in this case, all rows which did not have a value for the **2000, gold** column have been hidden.
-- Using the filters tool panel, add the filter **2** to the **2000, gold** column filter
+- Using the floating filters, apply the filter **Equals 2** to the **2000, gold** column
 - Observe how the group values do not reaggregate after this filter has been applied
 
 <grid-example title='Filtering Pivot Result Columns' name='secondary-columns-filter' type='generated' options='{ "enterprise": true, "exampleHeight": 610, "modules": ["clientside", "rowgrouping", "filterpanel", "menu", "setfilter"] }'></grid-example>
