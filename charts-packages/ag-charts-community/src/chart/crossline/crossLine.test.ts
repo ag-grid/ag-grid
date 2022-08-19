@@ -11,84 +11,156 @@ import {
     setupMockCanvas,
     waitForChartStability,
 } from '../test/utils';
-import { AgCartesianChartOptions } from '../agChartOptions';
+import {
+    AgCartesianChartOptions,
+    AgCrossLineLabelPosition,
+    AgCrossLineOptions,
+    AgCrossLineLabelPosition,
+} from '../agChartOptions';
 import { AgChartV2 } from '../agChartV2';
 import { CartesianChart } from '../cartesianChart';
 import * as examples from './test/examples';
 
 expect.extend({ toMatchImageSnapshot });
 
-const CROSSLINES_RANGE_EXAMPLES: Record<string, CartesianTestCase> = {
-    VERTICAL_VALID_RANGE_CROSSLINES: {
-        options: examples.VERTICAL_VALID_RANGE_CROSSLINES,
+const labelPositions: AgCrossLineLabelPosition[] = [
+    'top',
+    'left',
+    'right',
+    'bottom',
+    'topLeft',
+    'topRight',
+    'bottomLeft',
+    'bottomRight',
+    'inside',
+    'insideLeft',
+    'insideRight',
+    'insideTop',
+    'insideBottom',
+    'insideTopLeft',
+    'insideBottomLeft',
+    'insideTopRight',
+    'insideBottomRight',
+];
+
+const flipCrossLinesRange = (crossLineOptions: AgCrossLineOptions): AgCrossLineOptions => {
+    const flippedRange: [any, any] = [crossLineOptions.range[1], crossLineOptions.range[0]];
+    return {
+        ...crossLineOptions,
+        range: flippedRange,
+    };
+};
+
+const applyCrossLinesLabelPosition = (
+    crossLineOptions: AgCrossLineOptions,
+    position: AgCrossLineLabelPosition
+): AgCrossLineOptions => {
+    return {
+        ...crossLineOptions,
+        label: {
+            ...crossLineOptions.label,
+            position,
+        },
+    };
+};
+
+const mixinFlippedRangeCases = (
+    baseRangeCases: Record<string, CartesianTestCase>
+): Record<string, CartesianTestCase> => {
+    const result: Record<string, CartesianTestCase> = { ...baseRangeCases };
+
+    Object.entries(baseRangeCases).forEach(([name, example]) => {
+        const prefix = name.substring(0, name.indexOf('_'));
+        const suffix = name.substring(name.indexOf('_'));
+        result[`${prefix}_FLIPPED${suffix}`] = {
+            ...example,
+            options: {
+                ...example.options,
+                axes: example.options.axes.map((axis) =>
+                    axis.crossLines ? { ...axis, crossLines: axis.crossLines.map((c) => flipCrossLinesRange(c)) } : axis
+                ),
+            },
+        };
+    });
+
+    return result;
+};
+
+const mixinLabelPositionCases = (
+    baseLabelPositionCases: Record<string, CartesianTestCase>
+): Record<string, CartesianTestCase> => {
+    const result: Record<string, CartesianTestCase> = { ...baseLabelPositionCases };
+
+    Object.entries(baseLabelPositionCases).forEach(([name, example]) => {
+        const prefix = name.substring(0, name.indexOf('_'));
+
+        for (const position of labelPositions) {
+            result[`${prefix}_${position}_LABEL_POSITION_CROSSLINES`] = {
+                ...example,
+                options: {
+                    ...example.options,
+                    axes: example.options.axes.map((axis) =>
+                        axis.crossLines
+                            ? {
+                                  ...axis,
+                                  crossLines: axis.crossLines.map((c) => applyCrossLinesLabelPosition(c, position)),
+                              }
+                            : axis
+                    ),
+                },
+            };
+        }
+    });
+
+    return result;
+};
+
+const CROSSLINES_LABEL_POSITON_EXAMPLES: Record<string, CartesianTestCase> = mixinLabelPositionCases({
+    VERTICAL_DEFAULT_LABEL_POSITION_CROSSLINES: {
+        options: examples.VERTICAL_DEFAULT_LABEL_POSITION_CROSSLINES,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
     },
-    VERTICAL_FLIPPED_VALID_RANGE_CROSSLINES: {
-        options: examples.VERTICAL_FLIPPED_VALID_RANGE_CROSSLINES,
+    HORIZONTAL_DEFAULT_LABEL_POSITION_CROSSLINES: {
+        options: examples.HORIZONTAL_DEFAULT_LABEL_POSITION_CROSSLINES,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+});
+
+const CROSSLINES_RANGE_EXAMPLES: Record<string, CartesianTestCase> = mixinFlippedRangeCases({
+    VERTICAL_VALID_RANGE_CROSSLINES: {
+        options: examples.VERTICAL_VALID_RANGE_CROSSLINES,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
     },
     VERTICAL_RANGE_OUTSIDE_DOMAIN_MAX_CROSSLINES: {
         options: examples.VERTICAL_RANGE_OUTSIDE_DOMAIN_MAX_CROSSLINES,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
     },
-    VERTICAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MAX_CROSSLINES: {
-        options: examples.VERTICAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MAX_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
-    },
     VERTICAL_RANGE_OUTSIDE_DOMAIN_MIN_CROSSLINES: {
         options: examples.VERTICAL_RANGE_OUTSIDE_DOMAIN_MIN_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
-    },
-    VERTICAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_CROSSLINES: {
-        options: examples.VERTICAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_CROSSLINES,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
     },
     VERTICAL_RANGE_OUTSIDE_DOMAIN_MIN_MAX_CROSSLINES: {
         options: examples.VERTICAL_RANGE_OUTSIDE_DOMAIN_MIN_MAX_CROSSLINES,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
     },
-    VERTICAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_MAX_CROSSLINES: {
-        options: examples.VERTICAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_MAX_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
-    },
     VERTICAL_RANGE_OUTSIDE_DOMAIN_CROSSLINES: {
         options: examples.VERTICAL_RANGE_OUTSIDE_DOMAIN_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
-    },
-    VERTICAL_FLIPPED_INVALID_RANGE_CROSSLINES: {
-        options: examples.VERTICAL_FLIPPED_INVALID_RANGE_CROSSLINES,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
     },
     HORIZONTAL_VALID_RANGE_CROSSLINES: {
         options: examples.HORIZONTAL_VALID_RANGE_CROSSLINES,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
     },
-    HORIZONTAL_FLIPPED_VALID_RANGE_CROSSLINES: {
-        options: examples.HORIZONTAL_FLIPPED_VALID_RANGE_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
-    },
     HORIZONTAL_RANGE_OUTSIDE_DOMAIN_MAX_CROSSLINES: {
         options: examples.HORIZONTAL_RANGE_OUTSIDE_DOMAIN_MAX_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
-    },
-    HORIZONTAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MAX_CROSSLINES: {
-        options: examples.HORIZONTAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MAX_CROSSLINES,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
     },
     HORIZONTAL_RANGE_OUTSIDE_DOMAIN_MIN_CROSSLINES: {
         options: examples.HORIZONTAL_RANGE_OUTSIDE_DOMAIN_MIN_CROSSLINES,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
     },
-    HORIZONTAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_CROSSLINES: {
-        options: examples.HORIZONTAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
-    },
     HORIZONTAL_RANGE_OUTSIDE_DOMAIN_MIN_MAX_CROSSLINES: {
         options: examples.HORIZONTAL_RANGE_OUTSIDE_DOMAIN_MIN_MAX_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
-    },
-    HORIZONTAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_MAX_CROSSLINES: {
-        options: examples.HORIZONTAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_MAX_CROSSLINES,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
     },
     HORIZONTAL_RANGE_OUTSIDE_DOMAIN_CROSSLINES: {
@@ -99,14 +171,11 @@ const CROSSLINES_RANGE_EXAMPLES: Record<string, CartesianTestCase> = {
         options: examples.HORIZONTAL_INVALID_RANGE_CROSSLINES,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
     },
-    HORIZONTAL_FLIPPED_INVALID_RANGE_CROSSLINES: {
-        options: examples.HORIZONTAL_FLIPPED_INVALID_RANGE_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
-    },
-};
+});
 
 const EXAMPLES: Record<string, CartesianTestCase> = {
     ...CROSSLINES_RANGE_EXAMPLES,
+    ...CROSSLINES_LABEL_POSITON_EXAMPLES,
     SCATTER_CROSSLINES: {
         options: examples.SCATTER_CROSSLINES,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['scatter'] }),

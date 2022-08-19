@@ -84,7 +84,6 @@ const baseCrossLineOptions: AgCrossLineOptions = {
     label: {
         text: 'Price Peak',
         color: 'black',
-        position: 'top',
         fontSize: 14,
     },
 };
@@ -115,141 +114,102 @@ const createChartOptions = (
 
 const verticalCrossLinesOptions: Record<string, AgCrossLineOptions> = {
     V_VALID_RANGE: {
+        ...baseCrossLineOptions,
         range: [new Date(2019, 4, 1), new Date(2019, 8, 1)],
-        ...baseCrossLineOptions,
-    },
-    V_FLIPPED_VALID_RANGE: {
-        range: [new Date(2019, 8, 1), new Date(2019, 4, 1)],
-        ...baseCrossLineOptions,
     },
     V_RANGE_OUTSIDE_DOMAIN_MAX: {
+        ...baseCrossLineOptions,
         range: [new Date(2019, 4, 1), new Date(2022, 8, 1)],
-        ...baseCrossLineOptions,
-    },
-    V_FLIPPED_RANGE_OUTSIDE_DOMAIN_MAX: {
-        range: [new Date(2022, 8, 1), new Date(2019, 4, 1)],
-        ...baseCrossLineOptions,
     },
     V_RANGE_OUTSIDE_DOMAIN_MIN: {
+        ...baseCrossLineOptions,
         range: [new Date(2017, 8, 1), new Date(2019, 4, 1)],
-        ...baseCrossLineOptions,
-    },
-    V_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN: {
-        range: [new Date(2019, 4, 1), new Date(2017, 8, 1)],
-        ...baseCrossLineOptions,
     },
     V_RANGE_OUTSIDE_DOMAIN_MIN_MAX: {
+        ...baseCrossLineOptions,
         range: [new Date(2017, 8, 1), new Date(2022, 4, 1)],
-        ...baseCrossLineOptions,
-    },
-    V_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_MAX: {
-        range: [new Date(2022, 4, 1), new Date(2017, 8, 1)],
-        ...baseCrossLineOptions,
     },
     V_RANGE_OUTSIDE_DOMAIN: {
-        range: [new Date(2022, 4, 1), new Date(2022, 8, 1)],
         ...baseCrossLineOptions,
+        range: [new Date(2022, 4, 1), new Date(2022, 8, 1)],
     },
     V_INVALID_RANGE: {
+        ...baseCrossLineOptions,
         range: [new Date(2019, 4, 1), undefined],
-        ...baseCrossLineOptions,
-    },
-    V_FLIPPED_INVALID_RANGE: {
-        range: [undefined, new Date(2019, 4, 1)],
-        ...baseCrossLineOptions,
     },
 };
 
 const horizontalCrossLinesOptions: Record<string, AgCrossLineOptions> = {
     H_VALID_RANGE: {
+        ...baseCrossLineOptions,
         range: [128, 134],
-        ...baseCrossLineOptions,
-    },
-    H_FLIPPED_VALID_RANGE: {
-        range: [134, 128],
-        ...baseCrossLineOptions,
     },
     H_RANGE_OUTSIDE_DOMAIN_MAX: {
+        ...baseCrossLineOptions,
         range: [134, 160],
-        ...baseCrossLineOptions,
-    },
-    H_FLIPPED_RANGE_OUTSIDE_DOMAIN_MAX: {
-        range: [160, 134],
-        ...baseCrossLineOptions,
     },
     H_RANGE_OUTSIDE_DOMAIN_MIN: {
+        ...baseCrossLineOptions,
         range: [100, 134],
-        ...baseCrossLineOptions,
-    },
-    H_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN: {
-        range: [134, 100],
-        ...baseCrossLineOptions,
     },
     H_RANGE_OUTSIDE_DOMAIN_MIN_MAX: {
+        ...baseCrossLineOptions,
         range: [100, 160],
-        ...baseCrossLineOptions,
-    },
-    H_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_MAX: {
-        range: [160, 100],
-        ...baseCrossLineOptions,
     },
     H_RANGE_OUTSIDE_DOMAIN: {
-        range: [90, 110],
         ...baseCrossLineOptions,
+        range: [90, 110],
     },
     H_INVALID_RANGE: {
+        ...baseCrossLineOptions,
         range: [128, undefined],
-        ...baseCrossLineOptions,
     },
-    H_FLIPPED_INVALID_RANGE: {
-        range: [undefined, 128],
+};
+
+const verticalCrossLineLabelPositionOptions: Record<string, AgCrossLineOptions> = {
+    V_DEFAULT_LABEL: {
         ...baseCrossLineOptions,
+        range: [new Date(2019, 4, 1), new Date(2019, 8, 1)],
+    },
+};
+
+const horizontalCrossLineLabelPositionOptions: Record<string, AgCrossLineOptions> = {
+    H_DEFAULT_LABEL: {
+        ...baseCrossLineOptions,
+        range: [128, 134],
     },
 };
 
 const chartOptions: Record<string, AgCartesianChartOptions> = createChartOptions({
     ...verticalCrossLinesOptions,
     ...horizontalCrossLinesOptions,
+    ...verticalCrossLineLabelPositionOptions,
+    ...horizontalCrossLineLabelPositionOptions,
 });
 
 export const VERTICAL_VALID_RANGE_CROSSLINES: AgCartesianChartOptions = chartOptions['V_VALID_RANGE'];
-export const VERTICAL_FLIPPED_VALID_RANGE_CROSSLINES: AgCartesianChartOptions = chartOptions['V_FLIPPED_VALID_RANGE'];
 export const VERTICAL_RANGE_OUTSIDE_DOMAIN_MAX_CROSSLINES: AgCartesianChartOptions =
     chartOptions['V_RANGE_OUTSIDE_DOMAIN_MAX'];
-export const VERTICAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MAX_CROSSLINES: AgCartesianChartOptions =
-    chartOptions['V_FLIPPED_RANGE_OUTSIDE_DOMAIN_MAX'];
 export const VERTICAL_RANGE_OUTSIDE_DOMAIN_MIN_CROSSLINES: AgCartesianChartOptions =
     chartOptions['V_RANGE_OUTSIDE_DOMAIN_MIN'];
-export const VERTICAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_CROSSLINES: AgCartesianChartOptions =
-    chartOptions['V_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN'];
 export const VERTICAL_RANGE_OUTSIDE_DOMAIN_MIN_MAX_CROSSLINES: AgCartesianChartOptions =
     chartOptions['V_RANGE_OUTSIDE_DOMAIN_MIN_MAX'];
-export const VERTICAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_MAX_CROSSLINES: AgCartesianChartOptions =
-    chartOptions['V_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_MAX'];
 export const VERTICAL_RANGE_OUTSIDE_DOMAIN_CROSSLINES: AgCartesianChartOptions = chartOptions['V_RANGE_OUTSIDE_DOMAIN'];
 export const VERTICAL_INVALID_RANGE_CROSSLINES: AgCartesianChartOptions = chartOptions['V_INVALID_RANGE'];
-export const VERTICAL_FLIPPED_INVALID_RANGE_CROSSLINES: AgCartesianChartOptions =
-    chartOptions['V_FLIPPED_INVALID_RANGE'];
 
 export const HORIZONTAL_VALID_RANGE_CROSSLINES: AgCartesianChartOptions = chartOptions['H_VALID_RANGE'];
-export const HORIZONTAL_FLIPPED_VALID_RANGE_CROSSLINES: AgCartesianChartOptions = chartOptions['H_FLIPPED_VALID_RANGE'];
 export const HORIZONTAL_RANGE_OUTSIDE_DOMAIN_MAX_CROSSLINES: AgCartesianChartOptions =
     chartOptions['H_RANGE_OUTSIDE_DOMAIN_MAX'];
-export const HORIZONTAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MAX_CROSSLINES: AgCartesianChartOptions =
-    chartOptions['H_FLIPPED_RANGE_OUTSIDE_DOMAIN_MAX'];
 export const HORIZONTAL_RANGE_OUTSIDE_DOMAIN_MIN_CROSSLINES: AgCartesianChartOptions =
     chartOptions['H_RANGE_OUTSIDE_DOMAIN_MIN'];
-export const HORIZONTAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_CROSSLINES: AgCartesianChartOptions =
-    chartOptions['H_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN'];
 export const HORIZONTAL_RANGE_OUTSIDE_DOMAIN_MIN_MAX_CROSSLINES: AgCartesianChartOptions =
     chartOptions['H_RANGE_OUTSIDE_DOMAIN_MIN_MAX'];
-export const HORIZONTAL_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_MAX_CROSSLINES: AgCartesianChartOptions =
-    chartOptions['H_FLIPPED_RANGE_OUTSIDE_DOMAIN_MIN_MAX'];
 export const HORIZONTAL_RANGE_OUTSIDE_DOMAIN_CROSSLINES: AgCartesianChartOptions =
     chartOptions['H_RANGE_OUTSIDE_DOMAIN'];
 export const HORIZONTAL_INVALID_RANGE_CROSSLINES: AgCartesianChartOptions = chartOptions['H_INVALID_RANGE'];
-export const HORIZONTAL_FLIPPED_INVALID_RANGE_CROSSLINES: AgCartesianChartOptions =
-    chartOptions['H_FLIPPED_INVALID_RANGE'];
+
+export const VERTICAL_DEFAULT_LABEL_POSITION_CROSSLINES: AgCartesianChartOptions = chartOptions['V_DEFAULT_LABEL'];
+export const HORIZONTAL_DEFAULT_LABEL_POSITION_CROSSLINES: AgCartesianChartOptions = chartOptions['H_DEFAULT_LABEL'];
 
 const xAxisCrossLineStyle = {
     fill: 'rgba(0,118,0,0.5)',
