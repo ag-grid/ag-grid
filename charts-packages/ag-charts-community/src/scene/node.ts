@@ -472,7 +472,12 @@ export abstract class Node extends ChangeDetectable {
             .inverseTo(this.inverseMatrix);
     }
 
-    render(renderCtx: RenderContext): void {
+    protected _scheduledRendering = true;
+    get scheduledRendering() {
+        return this._scheduledRendering;
+    }
+
+    async render(renderCtx: RenderContext) {
         const { stats } = renderCtx;
 
         this._dirty = RedrawType.NONE;

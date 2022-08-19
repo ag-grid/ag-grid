@@ -1,6 +1,10 @@
 type SchedulerJob<Context, Result> = {
     ctx: Context;
-    run(ctx: Context, rescheduleJob: (j: RescheduledJob<Context, Result>) => void): Result | undefined;
+    run(
+        ctx: Context,
+        rescheduleJob: (j: RescheduledJob<Context, Result>) => void,
+        deadline: number
+    ): Promise<Result> | Result | undefined;
 
     added: number;
     done: {
@@ -23,12 +27,22 @@ class Scheduler {
     private start(): void {
         this.running = true;
 
-        const cb = () => {
-            this.run();
+        let cbInProgress = false;
 
-            if (this.queue.length <= 0) {
-                clearInterval(this.timer);
-                this.running = false;
+        const cb = async () => {
+            if (cbInProgress) {
+                return;
+            }
+
+            try {
+                cbInProgress = true;
+                await this.run();
+            } finally {
+                cbInProgress = false;
+                if (this.queue.length <= 0) {
+                    clearInterval(this.timer);
+                    this.running = false;
+                }
             }
         };
 
@@ -39,7 +53,7 @@ class Scheduler {
     //   this.queue = [];
     // }
 
-    private run(deadline = this.period * this.executionRatio): void {
+    private async run(deadline = this.period * this.executionRatio) {
         const start = performance.now();
 
         while (performance.now() - start < deadline) {
@@ -55,7 +69,10 @@ class Scheduler {
                     this.queue.push({ ...chainedJob, run: job.run, added: performance.now(), done: job.done });
                 };
 
-                const result = job.run(job.ctx, scheduleJob);
+                let result = job.run(job.ctx, scheduleJob, start + deadline);
+                if (result instanceof Promise) {
+                    result = await result;
+                }
 
                 job.done.count--;
 
@@ -88,10 +105,10 @@ export const SCHEDULER = new Scheduler();
 export function batchedFilter<D>(input: D[], predicate: (d: D) => boolean, maxBatchSize = 1000): Promise<D[]> {
     return SCHEDULER.scheduleJob({
         ctx: { idx: 0, resultIdx: 0, result: new Array<D>(input.length) },
-        run: ({ idx, resultIdx, result }, rescheduleJob) => {
+        run: ({ idx, resultIdx, result }, rescheduleJob, deadline) => {
             let batchSize = 0;
 
-            while (batchSize < maxBatchSize && idx < input.length) {
+            while (deadline > performance.now() && batchSize < maxBatchSize && idx < input.length) {
                 const d = input[idx];
                 if (predicate(d)) {
                     result[resultIdx++] = d;
@@ -113,10 +130,10 @@ export function batchedFilter<D>(input: D[], predicate: (d: D) => boolean, maxBa
 export function batchedMap<D, R>(input: D[], mapper: (d: D) => R, maxBatchSize = 1000): Promise<R[]> {
     return SCHEDULER.scheduleJob({
         ctx: { idx: 0, result: new Array<R>(input.length) },
-        run: ({ idx, result }, rescheduleJob) => {
+        run: ({ idx, result }, rescheduleJob, deadline) => {
             let batchSize = 0;
 
-            while (batchSize < maxBatchSize && idx < input.length) {
+            while (deadline > performance.now() && batchSize < maxBatchSize && idx < input.length) {
                 result[idx] = mapper(input[idx]);
                 batchSize++;
                 idx++;
@@ -134,10 +151,10 @@ export function batchedMap<D, R>(input: D[], mapper: (d: D) => R, maxBatchSize =
 export function batchedReduce<D, R>(input: D[], reducer: (d: D, r: R) => R, start: R, maxBatchSize = 1000): Promise<R> {
     return SCHEDULER.scheduleJob({
         ctx: { idx: 0, result: start },
-        run: ({ idx, result }, rescheduleJob) => {
+        run: ({ idx, result }, rescheduleJob, deadline) => {
             let batchSize = 0;
 
-            while (batchSize < maxBatchSize && idx < input.length) {
+            while (deadline > performance.now() && batchSize < maxBatchSize && idx < input.length) {
                 result = reducer(input[idx], result);
                 batchSize++;
                 idx++;
@@ -154,7 +171,11 @@ export function batchedReduce<D, R>(input: D[], reducer: (d: D, r: R) => R, star
 
 type MapProcessingStep<INPUT, OUTPUT> = { map: (d: INPUT, idx: number) => OUTPUT };
 type FilterProcessingStep<INPUT> = { filter: (d: INPUT, idx: number) => boolean };
-type ProcessingStep<INPUT, OUTPUT> = MapProcessingStep<INPUT, OUTPUT> | FilterProcessingStep<INPUT>;
+type ForEachProcessingStep<INPUT> = { forEach: (d: INPUT, idx: number) => void | Promise<void> };
+type ProcessingStep<INPUT, OUTPUT> =
+    | MapProcessingStep<INPUT, OUTPUT>
+    | FilterProcessingStep<INPUT>
+    | ForEachProcessingStep<INPUT>;
 
 function isMap<I, O>(s: ProcessingStep<I, O>): s is MapProcessingStep<I, O> {
     return typeof (s as any)['map'] === 'function';
@@ -164,6 +185,10 @@ function isFilter<I, O>(s: ProcessingStep<I, O>): s is FilterProcessingStep<I> {
     return typeof (s as any)['filter'] === 'function';
 }
 
+function isForEach<I, O>(s: ProcessingStep<I, O>): s is ForEachProcessingStep<I> {
+    return typeof (s as any)['forEach'] === 'function';
+}
+
 const FILTERED = Symbol();
 
 /**
@@ -171,7 +196,7 @@ const FILTERED = Symbol();
  * pipeline makes use of job scheduling and batching to try and avoid blocking the main thread.
  */
 export class BatchedChain<D, R = D> {
-    chain: { step: ProcessingStep<any, any>; executions: number }[] = [];
+    private chain: { step: ProcessingStep<any, any>; executions: number }[] = [];
 
     /** Add a map operation to the chain. */
     map<R1>(fn: (d: R, idx: number) => R1) {
@@ -185,6 +210,11 @@ export class BatchedChain<D, R = D> {
         return this;
     }
 
+    forEach(fn: (d: R, idx: number) => Promise<void> | void) {
+        this.chain.push({ step: { forEach: fn }, executions: 0 });
+        return this;
+    }
+
     /** Execute the chain in batches & asynchronously using the scheduler. */
     execute(input: D[], maxBatchSize = 100): Promise<R[]> {
         return SCHEDULER.scheduleJob({
@@ -193,12 +223,12 @@ export class BatchedChain<D, R = D> {
                 resultIdx: 0, // Current output index - filter operations can offset this from idx.
                 result: new Array<R>(input.length), // Pre-allocated output array.
             },
-            run: ({ idx, resultIdx, result }, rescheduleJob) => {
+            run: async ({ idx, resultIdx, result }, rescheduleJob, deadline) => {
                 let batchSize = 0;
 
                 // Perform depth-first execution of the chain to minimise memory overhead (no need
                 // to store intermediate results in new arrays).
-                while (batchSize < maxBatchSize && idx < input.length) {
+                while (deadline > performance.now() && batchSize < maxBatchSize && idx < input.length) {
                     // Current value for input to the next step.
                     let chainValue: any = input[idx];
 
@@ -211,6 +241,11 @@ export class BatchedChain<D, R = D> {
                         } else if (isFilter(step) && !step.filter(chainValue, idx)) {
                             chainValue = FILTERED;
                             break;
+                        } else if (isForEach(step)) {
+                            const promise = step.forEach(chainValue, idx);
+                            if (promise != null && promise instanceof Promise) {
+                                await promise;
+                            }
                         }
                     }
 

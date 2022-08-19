@@ -7,7 +7,7 @@ import {
     SeriesNodeDataContext,
     SeriesNodePickMode,
 } from '../series';
-import { extent } from '../../../util/array';
+import { extentReducer } from '../../../util/array';
 import { LegendDatum } from '../../legend';
 import { LinearScale } from '../../../scale/linearScale';
 import { TypedEvent } from '../../../util/observable';
@@ -24,6 +24,7 @@ import { Marker } from '../../marker/marker';
 import { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
 import { checkDatum, isContinuous } from '../../../util/value';
 import { Deprecated, OPT_FUNCTION, OPT_STRING, STRING, Validate } from '../../../util/validation';
+import { batchedMap, batchedReduce, BatchedChain } from '../../../util/scheduler';
 
 interface ScatterNodeDatum extends Required<SeriesNodeDatum> {
     readonly label: MeasuredLabel;
@@ -56,12 +57,9 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     static className = 'ScatterSeries';
     static type = 'scatter' as const;
 
+    private processedData: { datum: any; x: any; y: any; label?: string; size?: number }[];
     private xDomain: number[] = [];
     private yDomain: number[] = [];
-    private xData: any[] = [];
-    private yData: any[] = [];
-    private validData: any[] = [];
-    private sizeData: number[] = [];
     private sizeScale = new LinearScale();
 
     readonly marker = new CartesianSeriesMarker();
@@ -119,7 +117,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     protected _xKey: string = '';
     set xKey(value: string) {
         this._xKey = value;
-        this.xData = [];
+        this.processedData = [];
     }
     get xKey(): string {
         return this._xKey;
@@ -129,7 +127,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     protected _yKey: string = '';
     set yKey(value: string) {
         this._yKey = value;
-        this.yData = [];
+        this.processedData = [];
     }
     get yKey(): string {
         return this._yKey;
@@ -139,7 +137,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     protected _sizeKey?: string = undefined;
     set sizeKey(value: string | undefined) {
         this._sizeKey = value;
-        this.sizeData = [];
+        this.processedData = [];
     }
     get sizeKey(): string | undefined {
         return this._sizeKey;
@@ -170,7 +168,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     async processData() {
-        const { xKey, yKey, sizeKey, xAxis, yAxis, marker } = this;
+        const { xKey, yKey, sizeKey, xAxis, yAxis, marker, labelKey } = this;
 
         if (!xAxis || !yAxis) {
             return;
@@ -182,27 +180,45 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         const isContinuousX = xScale instanceof ContinuousScale;
         const isContinuousY = yScale instanceof ContinuousScale;
 
-        this.validData = data.filter(
-            (d) => checkDatum(d[xKey], isContinuousX) !== undefined && checkDatum(d[yKey], isContinuousY) !== undefined
-        );
-        this.xData = this.validData.map((d) => d[xKey]);
-        this.yData = this.validData.map((d) => d[yKey]);
+        const processingChain = new BatchedChain<any>()
+            .filter(
+                (d) =>
+                    checkDatum(d[xKey], isContinuousX) !== undefined && checkDatum(d[yKey], isContinuousY) !== undefined
+            )
+            .map((d) => ({
+                datum: d,
+                x: d[xKey],
+                y: d[yKey],
+                size: sizeKey ? d[sizeKey] : undefined,
+                label: labelKey ? d[labelKey] : undefined,
+            }));
+        const processedData = await processingChain.execute(data);
 
-        this.sizeData = sizeKey ? this.validData.map((d) => d[sizeKey]) : [];
+        if (marker.domain) {
+            this.sizeScale.domain = marker.domain;
+        } else {
+            this.sizeScale.domain = (await batchedReduce(
+                processedData,
+                extentReducer('size', isContinuous),
+                undefined
+            )) || [1, 1];
+        }
 
-        this.sizeScale.domain = marker.domain ? marker.domain : extent(this.sizeData, isContinuous) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
-            this.xDomain = this.fixNumericExtent(extent(this.xData, isContinuous), xAxis);
+            const xExtent = await batchedReduce(processedData, extentReducer('x', isContinuous), undefined);
+            this.xDomain = this.fixNumericExtent(xExtent, xAxis);
         } else {
-            this.xDomain = this.xData;
-        }
-        if (yAxis.scale instanceof ContinuousScale) {
-            this.yDomain = this.fixNumericExtent(extent(this.yData, isContinuous), yAxis);
-        } else {
-            this.yDomain = this.yData;
+            this.xDomain = await batchedMap(processedData, (d) => d.x);
         }
 
-        return;
+        if (yAxis.scale instanceof ContinuousScale) {
+            const yExtent = await batchedReduce(processedData, extentReducer('y', isContinuous), undefined);
+            this.yDomain = this.fixNumericExtent(yExtent, yAxis);
+        } else {
+            this.yDomain = await batchedMap(processedData, (d) => d.y);
+        }
+
+        this.processedData = processedData;
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -226,7 +242,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     async createNodeData() {
-        const { chart, data, visible, xAxis, yAxis, yKey, label, labelKey } = this;
+        const { chart, data, visible, xAxis, yAxis, yKey, label, labelKey, sizeKey, processedData } = this;
 
         if (!(chart && data && visible && xAxis && yAxis)) {
             return [];
@@ -238,44 +254,39 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         const isContinuousY = yScale instanceof ContinuousScale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
-        const { xData, yData, validData, sizeData, sizeScale, marker } = this;
-        const nodeData: ScatterNodeDatum[] = new Array(xData.length);
+        const { sizeScale, marker } = this;
 
         sizeScale.range = [marker.size, marker.maxSize];
 
         const font = label.getFont();
-        let actualLength = 0;
-        for (let i = 0; i < xData.length; i++) {
-            const xy = this.checkDomainXY(xData[i], yData[i], isContinuousX, isContinuousY);
 
-            if (!xy) {
-                continue;
-            }
-
-            const x = xScale.convert(xy[0]) + xOffset;
-            const y = yScale.convert(xy[1]) + yOffset;
-
-            if (!this.checkRangeXY(x, y, xAxis, yAxis)) {
-                continue;
-            }
-
-            const text = labelKey ? String(validData[i][labelKey]) : '';
-            const size = HdpiCanvas.getTextSize(text, font);
-            const markerSize = sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size;
-
-            nodeData[actualLength++] = {
-                series: this,
-                itemId: yKey,
-                datum: validData[i],
-                point: { x, y, size: markerSize },
-                label: {
-                    text,
-                    ...size,
-                },
-            };
-        }
-
-        nodeData.length = actualLength;
+        const processingChain = new BatchedChain<typeof processedData[number]>()
+            .map((pd) => ({
+                pd,
+                xy: this.checkDomainXY(pd.x, pd.y, isContinuousX, isContinuousY),
+            }))
+            .filter(({ xy }) => xy != null)
+            .map((d) => ({
+                ...d,
+                x: xScale.convert(d.xy![0]) + xOffset,
+                y: yScale.convert(d.xy![1]) + yOffset,
+            }))
+            .filter(({ x, y }) => this.checkRangeXY(x, y, xAxis, yAxis))
+            .map(({ pd, x, y }): ScatterNodeDatum => {
+                const size = labelKey && pd.label ? HdpiCanvas.getTextSize(pd.label, font) : { width: 0, height: 0 };
+                const markerSize = sizeKey ? sizeScale.convert(pd.size) : marker.size;
+                return {
+                    series: this,
+                    itemId: yKey,
+                    datum: pd.datum,
+                    point: { x, y, size: markerSize },
+                    label: {
+                        text: pd.label || '',
+                        ...size,
+                    },
+                };
+            });
+        const nodeData = await processingChain.execute(processedData);
 
         return [{ itemId: this.yKey, nodeData, labelData: nodeData }];
     }

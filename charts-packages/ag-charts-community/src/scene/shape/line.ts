@@ -36,7 +36,7 @@ export class Line extends Shape {
         return false;
     }
 
-    render(renderCtx: RenderContext) {
+    async render(renderCtx: RenderContext) {
         let { ctx, forceRender, stats } = renderCtx;
 
         if (this.dirty === RedrawType.NONE && !forceRender) {
@@ -71,6 +71,6 @@ export class Line extends Shape {
         this.fillStroke(ctx);
 
         this.fillShadow?.markClean();
-        super.render(renderCtx);
+        await super.render(renderCtx);
     }
 }

@@ -178,16 +178,16 @@ export class Group extends Node {
         return this.computeBBox();
     }
 
-    render(renderCtx: RenderContext) {
+    async render(renderCtx: RenderContext) {
         if (this.layer && this.opts?.optimiseDirtyTracking) {
-            this.optimisedRender(renderCtx);
+            await this.optimisedRender(renderCtx);
             return;
         }
 
-        this.basicRender(renderCtx);
+        await this.basicRender(renderCtx);
     }
 
-    private basicRender(renderCtx: RenderContext) {
+    private async basicRender(renderCtx: RenderContext) {
         const { opts: { name = undefined } = {} } = this;
         const { _debug: { consoleLog = false } = {} } = this;
         const { dirty, dirtyZIndex, clipPath, layer, children } = this;
@@ -286,13 +286,14 @@ export class Group extends Node {
 
             // Render marks this node (and children) as clean - no need to explicitly markClean().
             ctx.save();
-            child.render(childRenderContext);
+            await child.render(childRenderContext);
             ctx.restore();
         }
+
         if (stats) stats.nodesSkipped += skipped;
 
         // Render marks this node as clean - no need to explicitly markClean().
-        super.render(renderCtx);
+        await super.render(renderCtx);
 
         if (layer) {
             if (stats) stats.layersRendered++;
@@ -306,7 +307,7 @@ export class Group extends Node {
         }
     }
 
-    private optimisedRender(renderCtx: RenderContext) {
+    private async optimisedRender(renderCtx: RenderContext) {
         const { _debug: { consoleLog = false } = {} } = this;
         const {
             name,
@@ -396,7 +397,7 @@ export class Group extends Node {
         if (groupVisible) {
             for (const child of Object.values(visibleChildren)) {
                 ctx.save();
-                child.render(childRenderContext);
+                await child.render(childRenderContext);
                 ctx.restore();
             }
         }

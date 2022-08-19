@@ -119,7 +119,7 @@ export class RangeSelector extends Group {
         return this.mask.computeVisibleRangeBBox();
     }
 
-    render(renderCtx: RenderContext) {
+    async render(renderCtx: RenderContext) {
         let { ctx, forceRender, stats } = renderCtx;
 
         if (this.dirty === RedrawType.NONE && !forceRender) {
@@ -130,13 +130,15 @@ export class RangeSelector extends Group {
         this.matrix.toContext(ctx);
 
         const { mask, minHandle, maxHandle } = this;
-        [mask, minHandle, maxHandle].forEach((child) => {
-            if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
-                ctx.save();
-                child.render({ ...renderCtx, ctx, forceRender });
-                ctx.restore();
-            }
-        });
+        await Promise.all(
+            [mask, minHandle, maxHandle].map(async (child) => {
+                if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
+                    ctx.save();
+                    await child.render({ ...renderCtx, ctx, forceRender });
+                    ctx.restore();
+                }
+            })
+        );
 
         this.markClean({ force: true });
         if (stats) stats.nodesRendered++;

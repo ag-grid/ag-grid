@@ -147,7 +147,7 @@ export class Text extends Shape {
         return bbox ? bbox.containsPoint(point.x, point.y) : false;
     }
 
-    render(renderCtx: RenderContext): void {
+    async render(renderCtx: RenderContext) {
         let { ctx, forceRender, stats } = renderCtx;
 
         if (this.dirty === RedrawType.NONE && !forceRender) {
@@ -214,7 +214,7 @@ export class Text extends Shape {
             ctx.strokeText(text, x, y);
         }
 
-        super.render(renderCtx);
+        await super.render(renderCtx);
     }
 }
 

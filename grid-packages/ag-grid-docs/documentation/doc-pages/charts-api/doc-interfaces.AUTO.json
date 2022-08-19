@@ -4876,6 +4876,7 @@
   "RescheduledJob": { "meta": { "typeParams": ["Context", "Result"] } },
   "MapProcessingStep": { "meta": { "typeParams": ["INPUT", "OUTPUT"] } },
   "FilterProcessingStep": { "meta": { "typeParams": ["INPUT"] } },
+  "ForEachProcessingStep": { "meta": { "typeParams": ["INPUT"] } },
   "ProcessingStep": { "meta": { "typeParams": ["INPUT", "OUTPUT"] } },
   "OnSizeChange": {},
   "Entry": {},

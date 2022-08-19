@@ -57,7 +57,7 @@ export class ClipRect extends Node {
         return new BBox(x, y, width, height);
     }
 
-    render(renderCtx: RenderContext) {
+    async render(renderCtx: RenderContext) {
         const { enabled, dirty, _dirtyPath, children } = this;
         let { ctx, forceRender, stats } = renderCtx;
 
@@ -81,12 +81,12 @@ export class ClipRect extends Node {
         for (const child of children) {
             if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
                 ctx.save();
-                child.render(childRenderContext);
+                await child.render(childRenderContext);
                 ctx.restore();
             }
         }
 
-        super.render(renderCtx);
+        await super.render(renderCtx);
 
         if (enabled) {
             ctx.restore();

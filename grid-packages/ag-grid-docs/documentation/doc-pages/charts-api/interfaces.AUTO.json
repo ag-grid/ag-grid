@@ -3670,7 +3670,7 @@
   },
   "SchedulerJob": {
     "meta": { "isTypeAlias": true, "typeParams": ["Context", "Result"] },
-    "type": "{ ctx: Context; run(ctx: Context, rescheduleJob: (j: RescheduledJob<Context, Result>) => void): Result | undefined; added: number; done: { count: number; resolve: (r: Result) => void; reject: (e: any) => void; }; }"
+    "type": "{ ctx: Context; run(ctx: Context, rescheduleJob: (j: RescheduledJob<Context, Result>) => void, deadline: number): Promise<Result> | Result | undefined; added: number; done: { count: number; resolve: (r: Result) => void; reject: (e: any) => void; }; }"
   },
   "UserSchedulerJob": {
     "meta": { "isTypeAlias": true, "typeParams": ["Context", "Result"] },
@@ -3688,9 +3688,13 @@
     "meta": { "isTypeAlias": true, "typeParams": ["INPUT"] },
     "type": "{ filter: (d: INPUT, idx: number) => boolean; }"
   },
+  "ForEachProcessingStep": {
+    "meta": { "isTypeAlias": true, "typeParams": ["INPUT"] },
+    "type": "{ forEach: (d: INPUT, idx: number) => void | Promise<void>; }"
+  },
   "ProcessingStep": {
     "meta": { "isTypeAlias": true, "typeParams": ["INPUT", "OUTPUT"] },
-    "type": "MapProcessingStep<INPUT, OUTPUT> | FilterProcessingStep<INPUT>"
+    "type": "MapProcessingStep<INPUT, OUTPUT> | FilterProcessingStep<INPUT> | ForEachProcessingStep<INPUT>"
   },
   "OnSizeChange": {
     "meta": { "isTypeAlias": true },
