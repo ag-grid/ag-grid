@@ -158,26 +158,26 @@ values and rows, but also the columns generated from the pivot.
 
 The snippet above has been used to construct the example below, demonstrating the effects of applying filters to the columns in the grid options while pivot mode is enabled.
 
-__Filtering on a grouped column:__
-1. Using the filters tool panel, deselect **United States** using the **Country** column filters
-2. Observe how the row has disappeared from the pivot grid
-3. Make note of the column group for the year **2002**
-4. Now, using the filters tool panel, deselect **Norway**, again using the **Country** column filters
-5. Observe now, how not only the row has disappeared, but so has the **2002** year column group
+Filtering on a grouped column:
+- Using the filters tool panel, deselect **United States** using the **Country** column filters
+- Observe how the row has disappeared from the pivot grid
+- Make note of the column group for the year **2002**
+- Now, using the filters tool panel, deselect **Norway**, again using the **Country** column filters
+- Observe now, how not only the row has disappeared, but so has the **2002** year column group
 
-__Filtering on a pivoted column:__
-1. Using the filters tool panel, deselect **2002** using the **Year** column filters
-2. Observe how, rather than reducing the number of rows, the **2002** column group and the columns belonging to it are now gone.
+Filtering on a pivoted column:
+- Using the filters tool panel, deselect **2002** using the **Year** column filters
+- Observe how, rather than reducing the number of rows, the **2002** column group and the columns belonging to it are now gone.
 
-__Filtering on any other column:__
-1. Using the filters tool panel, deselect **Swimming** using the **Sport** column filters
-2. Observe how in this case, some rows are hidden, and some pivot values change.
+Filtering on any other column:
+- Using the filters tool panel, deselect **Swimming** using the **Sport** column filters
+- Observe how in this case, some rows are hidden, and some pivot values change.
 
 <grid-example title='Filtering With Pivot' name='filter' type='generated' options='{ "enterprise": true, "exampleHeight": 610, "modules": ["clientside", "rowgrouping", "filterpanel", "menu", "setfilter"] }'></grid-example>
 
 ### Filtering on Pivot Result Columns
 
-When pivot mode is enabled, you may also [Filter](/filtering-overview/) on the generated pivot result columns using the column menu, or [Floating Filters](/floating-filters/).
+When pivot mode is enabled, you may also [Filter](/filtering-overview/) on the generated pivot result columns using the column menu, or [Floating Filters](/floating-filters/). As pivot values are all aggregates, filtering pivot columns shares the same behaviour as [Filtering Group Aggregations](/aggregation-filtering/#filtering-group-aggregations), this means that filtering child rows has no affect on the parent rows value.
 
 <snippet>
 |const gridOptions = {
@@ -201,9 +201,11 @@ As shown in the snippet above, filters are enabled on pivot result columns by in
 | You can use [Text Filter](/filter-text/) or [Date Filter](/filter-date/). However, [Set Filter](/filter-set/) cannot
 | be used for filtering pivot result columns.
 
-__Filtering on a pivot result column:__
-1. Using the filters tool panel, select the filter **Not Blank** using the **2000, gold** column filter
-2. Observe how in this case, all rows which did not have a value for the **2000, gold** column have been hidden.
+Filtering on a pivot result column:
+- Using the filters tool panel, select the filter **Not Blank** using the **2000, gold** column filter
+- Observe how in this case, all rows which did not have a value for the **2000, gold** column have been hidden.
+- Using the filters tool panel, add the filter **2** to the **2000, gold** column filter
+- Observe how the group values do not reaggregate after this filter has been applied
 
 <grid-example title='Filtering Pivot Result Columns' name='secondary-columns-filter' type='generated' options='{ "enterprise": true, "exampleHeight": 610, "modules": ["clientside", "rowgrouping", "filterpanel", "menu", "setfilter"] }'></grid-example>
 

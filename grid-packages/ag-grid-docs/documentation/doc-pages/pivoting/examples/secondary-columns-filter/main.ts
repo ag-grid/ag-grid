@@ -3,6 +3,7 @@ import { Grid, GridOptions } from '@ag-grid-community/core'
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true },
+    { field: 'athlete', rowGroup: true },
     { field: 'year', pivot: true },
     { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
     { field: 'silver', aggFunc: 'sum' },
