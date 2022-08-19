@@ -15,8 +15,6 @@ export class Range extends Shape {
         this.restoreOwnStyles();
     }
 
-    private effectiveStrokeWidth: number = Range.defaultStyles.strokeWidth;
-
     @SceneChangeDetection({ redraw: RedrawType.MINOR })
     x1: number = 0;
 
@@ -54,10 +52,7 @@ export class Range extends Shape {
             return;
         }
 
-        let x1 = this.x1;
-        let y1 = this.y1;
-        let x2 = this.x2;
-        let y2 = this.y2;
+        let { x1, y1, x2, y2 } = this;
 
         x1 = this.align(x1);
         y1 = this.align(y1);
@@ -84,16 +79,15 @@ export class Range extends Shape {
         }
 
         const { stroke, strokeWidth, startLine, endLine } = this;
-        this.effectiveStrokeWidth = strokeWidth;
-        const strokeActive = !!((startLine || endLine) && stroke && this.effectiveStrokeWidth);
+        const strokeActive = !!((startLine || endLine) && stroke && strokeWidth);
 
         if (strokeActive) {
-            const { strokeOpacity, lineDash, lineDashOffset, lineCap, lineJoin, effectiveStrokeWidth } = this;
+            const { strokeOpacity, lineDash, lineDashOffset, lineCap, lineJoin } = this;
 
             ctx.strokeStyle = stroke;
             ctx.globalAlpha = opacity * strokeOpacity;
 
-            ctx.lineWidth = effectiveStrokeWidth;
+            ctx.lineWidth = strokeWidth;
             if (lineDash) {
                 ctx.setLineDash(lineDash);
             }
