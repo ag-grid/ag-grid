@@ -31,31 +31,56 @@ export function extent<T, K>(
     const transform = map || identity;
     const n = values.length;
     let i = -1;
-    let value;
-    let min;
-    let max;
+    let min: any;
+    let max: any;
 
     while (++i < n) {
         // Find the first value.
-        value = values[i];
+        let value = values[i];
         if (predicate(value)) {
             min = max = value;
-            while (++i < n) {
-                // Compare the remaining values.
-                value = values[i];
-                if (predicate(value)) {
-                    if (min > value) {
-                        min = value;
-                    }
-                    if (max < value) {
-                        max = value;
-                    }
-                }
+            break;
+        }
+    }
+    while (++i < n) {
+        // Compare the remaining values.
+        let value = values[i];
+        if (predicate(value)) {
+            if (min! > value) {
+                min = value;
+            }
+            if (max! < value) {
+                max = value;
             }
         }
     }
 
     return min === undefined || max === undefined ? undefined : [transform(min), transform(max)];
+}
+
+export function extentReducer<T>(
+    key: string,
+    predicate: (value: T) => boolean
+): (d: T, r?: [T, T]) => [T, T] | undefined {
+    return (d: T, r: [T, T] | undefined) => {
+        const value = (d as any)[key];
+        if (value == null || !predicate(value)) {
+            return r;
+        }
+
+        if (r === undefined) {
+            return [value, value] as [T, T];
+        }
+
+        if (r[0] > value) {
+            r[0] = value;
+        }
+        if (r[1] < value) {
+            r[1] = value;
+        }
+
+        return r;
+    };
 }
 
 /**

@@ -3668,6 +3668,30 @@
     "meta": { "isTypeAlias": true },
     "type": "(params: { count: number; }) => Promise<void> | void"
   },
+  "SchedulerJob": {
+    "meta": { "isTypeAlias": true, "typeParams": ["Context", "Result"] },
+    "type": "{ ctx: Context; run(ctx: Context, rescheduleJob: (j: RescheduledJob<Context, Result>) => void): Result | undefined; added: number; done: { count: number; resolve: (r: Result) => void; reject: (e: any) => void; }; }"
+  },
+  "UserSchedulerJob": {
+    "meta": { "isTypeAlias": true, "typeParams": ["Context", "Result"] },
+    "type": "Pick<SchedulerJob<Context, Result>, 'run' | 'ctx'>"
+  },
+  "RescheduledJob": {
+    "meta": { "isTypeAlias": true, "typeParams": ["Context", "Result"] },
+    "type": "Pick<SchedulerJob<Context, Result>, 'ctx'>"
+  },
+  "MapProcessingStep": {
+    "meta": { "isTypeAlias": true, "typeParams": ["INPUT", "OUTPUT"] },
+    "type": "{ map: (d: INPUT, idx: number) => OUTPUT; }"
+  },
+  "FilterProcessingStep": {
+    "meta": { "isTypeAlias": true, "typeParams": ["INPUT"] },
+    "type": "{ filter: (d: INPUT, idx: number) => boolean; }"
+  },
+  "ProcessingStep": {
+    "meta": { "isTypeAlias": true, "typeParams": ["INPUT", "OUTPUT"] },
+    "type": "MapProcessingStep<INPUT, OUTPUT> | FilterProcessingStep<INPUT>"
+  },
   "OnSizeChange": {
     "meta": { "isTypeAlias": true },
     "type": "(size: Size, element: HTMLElement) => void"
