@@ -2,7 +2,6 @@ import { Group } from '../../scene/group';
 import { RangeHandle } from './rangeHandle';
 import { RangeMask } from './rangeMask';
 import { BBox } from '../../scene/bbox';
-import { RedrawType, RenderContext } from '../../scene/node';
 
 export class RangeSelector extends Group {
     static className = 'Range';
@@ -117,30 +116,5 @@ export class RangeSelector extends Group {
 
     computeVisibleRangeBBox(): BBox {
         return this.mask.computeVisibleRangeBBox();
-    }
-
-    async render(renderCtx: RenderContext) {
-        let { ctx, forceRender, stats } = renderCtx;
-
-        if (this.dirty === RedrawType.NONE && !forceRender) {
-            if (stats) stats.nodesSkipped++;
-            return;
-        }
-        this.computeTransformMatrix();
-        this.matrix.toContext(ctx);
-
-        const { mask, minHandle, maxHandle } = this;
-        await Promise.all(
-            [mask, minHandle, maxHandle].map(async (child) => {
-                if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
-                    ctx.save();
-                    await child.render({ ...renderCtx, ctx, forceRender });
-                    ctx.restore();
-                }
-            })
-        );
-
-        this.markClean({ force: true });
-        if (stats) stats.nodesRendered++;
     }
 }

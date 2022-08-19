@@ -14,7 +14,7 @@ type SchedulerJob<Context, Result> = {
     };
 };
 
-type UserSchedulerJob<Context, Result> = Pick<SchedulerJob<Context, Result>, 'run' | 'ctx'>;
+export type UserSchedulerJob<Context, Result> = Pick<SchedulerJob<Context, Result>, 'run' | 'ctx'>;
 type RescheduledJob<Context, Result> = Pick<SchedulerJob<Context, Result>, 'ctx'>;
 
 class Scheduler {

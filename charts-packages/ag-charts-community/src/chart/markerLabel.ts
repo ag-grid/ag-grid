@@ -146,12 +146,12 @@ export class MarkerLabel extends Group {
         this.label.x = markerSize / 2 + this.spacing;
     }
 
-    async render(renderCtx: RenderContext) {
+    render(renderCtx: RenderContext) {
         // Cannot override field Group.opacity with get/set pair, so
         // propagate opacity changes here.
         this.marker.opacity = this.opacity;
         this.label.opacity = this.opacity;
 
-        await super.render(renderCtx);
+        super.render(renderCtx);
     }
 }

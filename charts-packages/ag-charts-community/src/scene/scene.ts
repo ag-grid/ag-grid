@@ -5,6 +5,7 @@ import { Group } from './group';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { windowValue } from '../util/window';
 import { ascendingStringNumberUndefined, compoundAscending } from '../util/compare';
+import { SCHEDULER } from '../util/scheduler';
 
 interface DebugOptions {
     stats: false | 'basic' | 'detailed';
@@ -285,10 +286,6 @@ export class Scene {
             forceRender: true,
             resized: !!pendingSize,
         };
-        if (this.debug.stats === 'detailed') {
-            renderCtx.stats = { layersRendered: 0, layersSkipped: 0, nodesRendered: 0, nodesSkipped: 0 };
-        }
-
         let canvasCleared = false;
         if (!root || root.dirty >= RedrawType.TRIVIAL) {
             // start with a blank canvas, clear previous drawing
@@ -312,7 +309,7 @@ export class Scene {
 
             if (root.visible) {
                 ctx.save();
-                await root.render(renderCtx);
+                this.renderSceneGraph(renderCtx);
                 ctx.restore();
             }
         }
@@ -352,19 +349,9 @@ export class Scene {
             const start = debugSplitTimes[0];
             debugSplitTimes.push(end);
 
-            const pct = (rendered: number, skipped: number) => {
-                const total = rendered + skipped;
-                return `${rendered} / ${total} (${Math.round((100 * rendered) / total)}%)`;
-            };
             const time = (start: number, end: number) => {
                 return `${Math.round((end - start) * 100) / 100}ms`;
             };
-            const {
-                layersRendered = 0,
-                layersSkipped = 0,
-                nodesRendered = 0,
-                nodesSkipped = 0,
-            } = renderCtxStats ?? {};
 
             const splits = debugSplitTimes
                 .map((t, i) => (i > 0 ? time(debugSplitTimes[i - 1], t) : null))
@@ -374,12 +361,7 @@ export class Scene {
                 .map(([k, v]) => `${k}: ${v}`)
                 .join(' ; ');
 
-            const stats = [
-                `${time(start, end)} (${splits})`,
-                `${extras}`,
-                this.debug.stats === 'detailed' ? `Layers: ${pct(layersRendered, layersSkipped)}` : null,
-                this.debug.stats === 'detailed' ? `Nodes: ${pct(nodesRendered, nodesSkipped)}` : null,
-            ].filter((v): v is string => v != null);
+            const stats = [`${time(start, end)} (${splits})`, `${extras}`].filter((v): v is string => v != null);
             const lineHeight = 15;
 
             ctx.save();
@@ -392,6 +374,84 @@ export class Scene {
             }
             ctx.restore();
         }
+    }
+
+    async renderSceneGraph(initRenderCtx: RenderContext) {
+        const { root } = this;
+        const RENDER_NODE_BATCH_SIZE = 100;
+
+        if (!root) {
+            return;
+        }
+
+        const initStack: { node: Node; idx: number; renderCtx: RenderContext }[] = [
+            { node: root, idx: 0, renderCtx: initRenderCtx },
+        ];
+
+        await SCHEDULER.scheduleJob({
+            ctx: { stack: initStack },
+            run: ({ stack }, rescheduleJob, deadline) => {
+                let batchCount = 0;
+                while (deadline < performance.now() && batchCount < RENDER_NODE_BATCH_SIZE && stack.length > 0) {
+                    const stackEl = stack[stack.length - 1];
+                    let { node, renderCtx, idx } = stackEl;
+                    let childAddedToStack = false;
+
+                    if (stackEl.idx === 0) {
+                        renderCtx = node.preChildRender?.(renderCtx) ?? renderCtx;
+                    }
+
+                    const { forceRender, resized, ctx } = renderCtx;
+                    while (
+                        deadline < performance.now() &&
+                        batchCount < RENDER_NODE_BATCH_SIZE &&
+                        !childAddedToStack &&
+                        node.children.length > idx
+                    ) {
+                        const child = node.children[idx];
+                        if (!child.visible) {
+                            // Nothing to do.
+                            child.markClean({ recursive: false });
+                        } else if (!forceRender && !resized && child.dirty < RedrawType.TRIVIAL) {
+                            // Nothing to do.
+                            child.markClean({ recursive: false });
+                        } else if (child.children.length > 0) {
+                            stack.push({ node: child, idx: 0, renderCtx });
+
+                            // Break here as we want to go depth first.
+                            childAddedToStack = true;
+                        } else {
+                            // Render marks this node (and children) as clean - no need to explicitly markClean().
+                            ctx.save();
+                            child.render(renderCtx);
+                            ctx.restore();
+                        }
+
+                        batchCount++;
+                        idx++;
+                    }
+
+                    if (childAddedToStack || node.children.length > idx) {
+                        // Need to save state in stack for when we come back to this node.
+                        stackEl.renderCtx = renderCtx;
+                        stackEl.idx = idx;
+                    } else {
+                        // We're done with this node in the stack.
+                        ctx.save();
+                        node.render(renderCtx);
+                        ctx.restore();
+                        node.postChildRender?.(renderCtx);
+                        stack.pop();
+
+                        batchCount++;
+                    }
+                }
+
+                if (stack.length > 0) {
+                    rescheduleJob({ ctx: { stack } });
+                }
+            },
+        });
     }
 
     buildTree(node: Node): { name?: string; node?: any; dirty?: string } {

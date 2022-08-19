@@ -147,16 +147,14 @@ export class Text extends Shape {
         return bbox ? bbox.containsPoint(point.x, point.y) : false;
     }
 
-    async render(renderCtx: RenderContext) {
-        let { ctx, forceRender, stats } = renderCtx;
+    render(renderCtx: RenderContext) {
+        let { ctx, forceRender } = renderCtx;
 
         if (this.dirty === RedrawType.NONE && !forceRender) {
-            if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 
         if (!this.lines.length || !this.scene) {
-            if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 
@@ -214,7 +212,7 @@ export class Text extends Shape {
             ctx.strokeText(text, x, y);
         }
 
-        await super.render(renderCtx);
+        super.render(renderCtx);
     }
 }
 

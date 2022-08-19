@@ -3477,7 +3477,7 @@
   },
   "RenderContext": {
     "meta": { "isTypeAlias": true },
-    "type": "{ ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D; forceRender: boolean; resized: boolean; clipBBox?: BBox; stats?: { nodesRendered: number; nodesSkipped: number; layersRendered: number; layersSkipped: number; }; }"
+    "type": "{ ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D; parent?: RenderContext; forceRender: boolean; resized: boolean; clipBBox?: BBox; }"
   },
   "Point": { "meta": {}, "type": { "x": "number", "y": "number" } },
   "SizedPoint": {

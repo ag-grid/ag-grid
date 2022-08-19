@@ -16,15 +16,10 @@ export enum PointerEvents {
 
 export type RenderContext = {
     ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
+    parent?: RenderContext;
     forceRender: boolean;
     resized: boolean;
     clipBBox?: BBox;
-    stats?: {
-        nodesRendered: number;
-        nodesSkipped: number;
-        layersRendered: number;
-        layersSkipped: number;
-    };
 };
 
 const zIndexChangedCallback = (o: any) => {
@@ -477,13 +472,12 @@ export abstract class Node extends ChangeDetectable {
         return this._scheduledRendering;
     }
 
-    async render(renderCtx: RenderContext) {
-        const { stats } = renderCtx;
-
+    render(_renderCtx: RenderContext) {
         this._dirty = RedrawType.NONE;
-
-        if (stats) stats.nodesRendered++;
     }
+
+    preChildRender?(renderCtx: RenderContext): RenderContext;
+    postChildRender?(childCtx: RenderContext): void;
 
     clearBBox(ctx: CanvasRenderingContext2D) {
         const bbox = this.computeBBox();

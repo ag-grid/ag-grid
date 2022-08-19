@@ -71,11 +71,10 @@ export class Path extends Shape {
         // Override point for subclasses.
     }
 
-    async render(renderCtx: RenderContext) {
-        let { ctx, forceRender, stats } = renderCtx;
+    render(renderCtx: RenderContext) {
+        let { ctx, forceRender } = renderCtx;
 
         if (this.dirty === RedrawType.NONE && !forceRender) {
-            if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 
@@ -121,6 +120,6 @@ export class Path extends Shape {
         }
 
         this.fillShadow?.markClean();
-        await super.render(renderCtx);
+        super.render(renderCtx);
     }
 }
