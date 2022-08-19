@@ -150,16 +150,21 @@ export class CrossLine {
             !isNaN(clampedYEnd) &&
             (yStart === clampedYStart || yEnd === clampedYEnd || clampedYStart !== clampedYEnd);
 
+        if (validRange) {
+            const reverse = clampedYStart !== Math.min(clampedYStart, clampedYEnd);
+
+            if (reverse) {
+                [clampedYStart, clampedYEnd] = [Math.min(clampedYStart, clampedYEnd), Math.max(clampedYStart, clampedYEnd)];
+                [yStart, yEnd] = [yEnd, yStart];
+            }
+        }
+
+        this.isRange = validRange;
         this.startLine = !isNaN(yStart);
         this.endLine = !isNaN(yEnd);
-        this.isRange = validRange;
 
         if (!validRange && !this.startLine && !this.endLine) {
             return false;
-        }
-
-        if (validRange) {
-            [clampedYStart, clampedYEnd] = [Math.min(clampedYStart, clampedYEnd), Math.max(clampedYStart, clampedYEnd)];
         }
 
         this.data = [clampedYStart, clampedYEnd];
