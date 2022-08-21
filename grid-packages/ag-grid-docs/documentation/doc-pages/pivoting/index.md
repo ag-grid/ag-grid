@@ -177,7 +177,7 @@ Filtering on any other column:
 
 ### Filtering on Pivot Result Columns
 
-When pivot mode is enabled, you may also [Filter](/filtering-overview/) on the generated pivot result columns using the column menu, or [Floating Filters](/floating-filters/). As pivot values are all aggregates, filtering pivot columns shares the same behaviour as [Filtering Group Aggregations](/aggregation-filtering/#filtering-group-aggregations), this means that filtering child rows has no affect on the parent rows value.
+When pivot mode is enabled, you may also [Filter](/filtering-overview/) on the generated pivot result columns using the column menu, or [Floating Filters](/floating-filters/). As pivot values are all aggregates, filtering pivot result columns shares the same behaviour as [Filtering Group Aggregations](/aggregation-filtering/#filtering-group-aggregations). This means that when filtering pivoting result columns, the aggregated values on any level will not change because of child rows being filtered out.
 
 <snippet>
 |const gridOptions = {
