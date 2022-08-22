@@ -221,6 +221,46 @@ describe('CartesianChart', () => {
         });
     });
 
+    describe('Line Series Highlighting', () => {
+        beforeEach(() => {
+            console.warn = jest.fn();
+        });
+
+        afterEach(() => {
+            expect(console.warn).not.toBeCalled();
+        });
+
+        it('should render a complex chart', async () => {
+            const options: AgChartOptions = { ...examples.SIMPLE_LINE_CHART_EXAMPLE };
+            options.autoSize = false;
+            options.width = CANVAS_WIDTH;
+            options.height = CANVAS_HEIGHT;
+
+            const chart = AgChartV2.create<any>(options);
+            await compare(chart);
+        });
+
+        const YKEYS = examples.SIMPLE_LINE_CHART_EXAMPLE.series?.map((s) => s.yKey) ?? [];
+        it.each(YKEYS)(`should render series with yKey [%s] appropriately`, async (yKey) => {
+            const options: AgChartOptions = { ...examples.SIMPLE_LINE_CHART_EXAMPLE };
+            options.autoSize = false;
+            options.width = CANVAS_WIDTH;
+            options.height = CANVAS_HEIGHT;
+
+            const chart: CartesianChart = AgChartV2.create<any>(options);
+            await waitForChartStability(chart);
+
+            const seriesImpl = chart.series.find((v: any) => v.yKey === yKey || v.yKeys?.some((s) => s.includes(yKey)));
+
+            const nodeDataArray: SeriesNodeDataContext<any, any>[] = seriesImpl!['contextNodeData'];
+            const nodeData = nodeDataArray.find((n) => n.itemId === yKey);
+
+            chart.changeHighlightDatum({ datum: nodeData?.nodeData[3] });
+            chart.update(ChartUpdateType.SERIES_UPDATE);
+            await compare(chart);
+        });
+    });
+
     describe('Histogram & Scatter Series Highlighting', () => {
         beforeEach(() => {
             console.warn = jest.fn();
