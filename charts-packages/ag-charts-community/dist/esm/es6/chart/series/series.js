@@ -1,0 +1,309 @@
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+import { Group } from '../../scene/group';
+import { Observable } from '../../util/observable';
+import { ChartAxisDirection } from '../chartAxis';
+import { createId } from '../../util/id';
+import { Label } from '../label';
+import { isNumber } from '../../util/value';
+import { TimeAxis } from '../axis/timeAxis';
+import { Deprecated } from '../../util/validation';
+import { Layers } from '../layers';
+/** Modes of matching user interactions to rendered nodes (e.g. hover or click) */
+export var SeriesNodePickMode;
+(function (SeriesNodePickMode) {
+    /** Pick matches based upon pick coordinates being inside a matching shape/marker. */
+    SeriesNodePickMode[SeriesNodePickMode["EXACT_SHAPE_MATCH"] = 0] = "EXACT_SHAPE_MATCH";
+    /** Pick matches by nearest category/X-axis value, then distance within that category/X-value. */
+    SeriesNodePickMode[SeriesNodePickMode["NEAREST_BY_MAIN_AXIS_FIRST"] = 1] = "NEAREST_BY_MAIN_AXIS_FIRST";
+    /** Pick matches by nearest category value, then distance within that category. */
+    SeriesNodePickMode[SeriesNodePickMode["NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST"] = 2] = "NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST";
+    /** Pick matches based upon distance to ideal position */
+    SeriesNodePickMode[SeriesNodePickMode["NEAREST_NODE"] = 3] = "NEAREST_NODE";
+})(SeriesNodePickMode || (SeriesNodePickMode = {}));
+export class SeriesItemHighlightStyle {
+    constructor() {
+        this.fill = 'yellow';
+        this.fillOpacity = undefined;
+        this.stroke = undefined;
+        this.strokeWidth = undefined;
+    }
+}
+export class SeriesHighlightStyle {
+    constructor() {
+        this.strokeWidth = undefined;
+        this.dimOpacity = undefined;
+        this.enabled = undefined;
+    }
+}
+export class HighlightStyle {
+    constructor() {
+        /**
+         * @deprecated Use item.fill instead.
+         */
+        this.fill = undefined;
+        /**
+         * @deprecated Use item.stroke instead.
+         */
+        this.stroke = undefined;
+        /**
+         * @deprecated Use item.strokeWidth instead.
+         */
+        this.strokeWidth = undefined;
+        this.item = new SeriesItemHighlightStyle();
+        this.series = new SeriesHighlightStyle();
+    }
+}
+__decorate([
+    Deprecated('Use item.fill instead.')
+], HighlightStyle.prototype, "fill", void 0);
+__decorate([
+    Deprecated('Use item.stroke instead.')
+], HighlightStyle.prototype, "stroke", void 0);
+__decorate([
+    Deprecated('Use item.strokeWidth instead.')
+], HighlightStyle.prototype, "strokeWidth", void 0);
+export class SeriesTooltip {
+    constructor() {
+        this.enabled = true;
+    }
+}
+export class Series extends Observable {
+    constructor({ seriesGroupUsesLayer = true, pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST] } = {}) {
+        super();
+        this.id = createId(this);
+        // The group node that contains all the nodes used to render this series.
+        this.group = new Group();
+        this.directions = [ChartAxisDirection.X, ChartAxisDirection.Y];
+        this.directionKeys = {};
+        // Flag to determine if we should recalculate node data.
+        this.nodeDataRefresh = true;
+        this.label = new Label();
+        this._data = undefined;
+        this._visible = true;
+        this.showInLegend = true;
+        this.cursor = 'default';
+        this.highlightStyle = new HighlightStyle();
+        const { group } = this;
+        this.seriesGroup = group.appendChild(new Group({
+            name: `${this.id}-series`,
+            layer: seriesGroupUsesLayer,
+            zIndex: Layers.SERIES_LAYER_ZINDEX,
+        }));
+        this.pickGroup = this.seriesGroup.appendChild(new Group());
+        this.highlightGroup = group.appendChild(new Group({
+            name: `${this.id}-highlight`,
+            layer: true,
+            zIndex: Layers.SERIES_LAYER_ZINDEX,
+            optimiseDirtyTracking: true,
+        }));
+        this.highlightNode = this.highlightGroup.appendChild(new Group());
+        this.highlightLabel = this.highlightGroup.appendChild(new Group());
+        this.highlightNode.zIndex = 0;
+        this.highlightLabel.zIndex = 10;
+        this.pickModes = pickModes;
+    }
+    get type() {
+        return this.constructor.type || '';
+    }
+    set data(input) {
+        this._data = input;
+        this.nodeDataRefresh = true;
+    }
+    get data() {
+        return this._data;
+    }
+    set visible(value) {
+        this._visible = value;
+        this.visibleChanged();
+    }
+    get visible() {
+        return this._visible;
+    }
+    set grouped(g) {
+        if (g === true) {
+            throw new Error(`AG Charts - grouped: true is unsupported for series of type: ${this.type}`);
+        }
+    }
+    setColors(_fills, _strokes) {
+        // Override point for subclasses.
+    }
+    // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
+    getKeys(direction) {
+        const { directionKeys } = this;
+        const keys = directionKeys && directionKeys[direction];
+        const values = [];
+        if (keys) {
+            keys.forEach((key) => {
+                const value = this[key];
+                if (value) {
+                    if (Array.isArray(value)) {
+                        values.push(...value);
+                    }
+                    else {
+                        values.push(value);
+                    }
+                }
+            });
+        }
+        return values;
+    }
+    // Indicate that something external changed and we should recalculate nodeData.
+    markNodeDataDirty() {
+        this.nodeDataRefresh = true;
+    }
+    visibleChanged() {
+        // Override point for this.visible change post-processing.
+    }
+    getOpacity(datum) {
+        const { highlightStyle: { series: { dimOpacity = 1, enabled = true }, }, } = this;
+        const defaultOpacity = 1;
+        if (enabled === false || dimOpacity === defaultOpacity) {
+            return defaultOpacity;
+        }
+        switch (this.isItemIdHighlighted(datum)) {
+            case 'no-highlight':
+            case 'highlighted':
+                return defaultOpacity;
+            case 'peer-highlighted':
+            case 'other-highlighted':
+                return dimOpacity;
+        }
+    }
+    getStrokeWidth(defaultStrokeWidth, datum) {
+        const { highlightStyle: { series: { strokeWidth, enabled = true }, }, } = this;
+        if (enabled === false || strokeWidth === undefined) {
+            // No change in styling for highlight cases.
+            return defaultStrokeWidth;
+        }
+        switch (this.isItemIdHighlighted(datum)) {
+            case 'highlighted':
+                return strokeWidth;
+            case 'no-highlight':
+            case 'other-highlighted':
+            case 'peer-highlighted':
+                return defaultStrokeWidth;
+        }
+    }
+    isItemIdHighlighted(datum) {
+        const { chart: { highlightedDatum: { series = undefined, itemId = undefined } = {}, highlightedDatum = undefined, } = {}, } = this;
+        const highlighting = series != null;
+        if (!highlighting) {
+            // Highlighting not active.
+            return 'no-highlight';
+        }
+        if (series !== this) {
+            // Highlighting active, this series not highlighted.
+            return 'other-highlighted';
+        }
+        if (itemId === undefined) {
+            // Series doesn't use itemIds - so no further refinement needed, series is highlighted.
+            return 'highlighted';
+        }
+        if (datum && highlightedDatum !== datum && itemId !== datum.itemId) {
+            // A peer (in same Series instance) sub-series has highlight active, but this sub-series
+            // does not.
+            return 'peer-highlighted';
+        }
+        return 'highlighted';
+    }
+    pickNode(point, limitPickModes) {
+        const { pickModes, visible, group } = this;
+        if (!visible || !group.visible) {
+            return;
+        }
+        for (const pickMode of pickModes) {
+            if (limitPickModes && !limitPickModes.includes(pickMode)) {
+                continue;
+            }
+            let match = undefined;
+            switch (pickMode) {
+                case SeriesNodePickMode.EXACT_SHAPE_MATCH:
+                    match = this.pickNodeExactShape(point);
+                    break;
+                case SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST:
+                case SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST:
+                    match = this.pickNodeMainAxisFirst(point, pickMode === SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST);
+                    break;
+                case SeriesNodePickMode.NEAREST_NODE:
+                    match = this.pickNodeClosestDatum(point);
+                    break;
+            }
+            if (match) {
+                return { pickMode, match: match.datum, distance: match.distance };
+            }
+        }
+    }
+    pickNodeExactShape(point) {
+        const match = this.pickGroup.pickNode(point.x, point.y);
+        if (match) {
+            return {
+                datum: match.datum,
+                distance: 0,
+            };
+        }
+    }
+    pickNodeClosestDatum(_point) {
+        // Override point for sub-classes - but if this is invoked, the sub-class specified it wants
+        // to use this feature.
+        throw new Error('AG Charts - Series.pickNodeClosestDatum() not implemented');
+    }
+    pickNodeMainAxisFirst(_point, _requireCategoryAxis) {
+        // Override point for sub-classes - but if this is invoked, the sub-class specified it wants
+        // to use this feature.
+        throw new Error('AG Charts - Series.pickNodeMainAxisFirst() not implemented');
+    }
+    fireNodeClickEvent(_event, _datum) {
+        // Override point for subclasses.
+    }
+    toggleSeriesItem(_itemId, enabled) {
+        this.visible = enabled;
+        this.nodeDataRefresh = true;
+    }
+    fixNumericExtent(extent, axis) {
+        if (extent === undefined) {
+            // Don't return a range, there is no range.
+            return [];
+        }
+        let [min, max] = extent;
+        min = +min;
+        max = +max;
+        if (min === 0 && max === 0) {
+            // domain has zero length and the single valid value is 0. Use the default of [0, 1].
+            return [0, 1];
+        }
+        if (min === Infinity && max === -Infinity) {
+            // There's no data in the domain.
+            return [];
+        }
+        if (min === Infinity) {
+            min = 0;
+        }
+        if (max === -Infinity) {
+            max = 0;
+        }
+        if (min === max) {
+            // domain has zero length, there is only a single valid value in data
+            if (axis instanceof TimeAxis) {
+                // numbers in domain correspond to Unix timestamps
+                // automatically expand domain by 1 in each direction
+                min -= 1;
+                max += 1;
+            }
+            else {
+                const padding = Math.abs(min * 0.01);
+                min -= padding;
+                max += padding;
+            }
+        }
+        if (!(isNumber(min) && isNumber(max))) {
+            return [];
+        }
+        return [min, max];
+    }
+}
+Series.highlightedZIndex = 1000000000000;

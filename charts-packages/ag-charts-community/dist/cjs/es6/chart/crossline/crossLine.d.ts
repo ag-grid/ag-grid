@@ -1,0 +1,72 @@
+import { Group } from '../../scene/group';
+import { FontStyle, FontWeight } from '../../scene/shape/text';
+import { BBox } from '../../scene/bbox';
+import { Scale } from '../../scale/scale';
+import { ChartAxisDirection, ChartAxisPosition } from '../chartAxis';
+import { CrossLineLabelPosition } from './crossLineLabelPosition';
+import { Layers } from '../layers';
+export declare class CrossLineLabel {
+    enabled?: boolean;
+    text?: string;
+    fontStyle?: FontStyle;
+    fontWeight?: FontWeight;
+    fontSize: number;
+    fontFamily: string;
+    /**
+     * The padding between the label and the line.
+     */
+    padding: number;
+    /**
+     * The color of the labels.
+     */
+    color?: string;
+    position?: CrossLineLabelPosition;
+    rotation?: number;
+    parallel?: boolean;
+}
+declare type CrossLineType = 'line' | 'range';
+export declare class CrossLine {
+    protected static readonly LINE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_LINE_ZINDEX;
+    protected static readonly RANGE_LAYER_ZINDEX = Layers.SERIES_CROSSLINE_RANGE_ZINDEX;
+    static className: string;
+    readonly id: string;
+    enabled?: boolean;
+    type?: CrossLineType;
+    range?: [any, any];
+    value?: any;
+    fill?: string;
+    fillOpacity?: number;
+    stroke?: string;
+    strokeWidth?: number;
+    strokeOpacity?: number;
+    lineDash?: [];
+    label: CrossLineLabel;
+    scale?: Scale<any, number>;
+    gridLength: number;
+    sideFlag: 1 | -1;
+    parallelFlipRotation: number;
+    regularFlipRotation: number;
+    direction: ChartAxisDirection;
+    readonly group: Group;
+    private crossLineLabel;
+    private crossLineLine;
+    private crossLineRange;
+    private labelPoint?;
+    private fillData?;
+    private strokeData?;
+    constructor();
+    protected getZIndex(type?: CrossLineType): number;
+    update(visible: boolean): void;
+    private updatePaths;
+    private createNodeData;
+    private updateLinePath;
+    private updateLineNode;
+    private updateRangeNode;
+    private updateRangePath;
+    private updateLabel;
+    private positionLabel;
+    private getRange;
+    private computeLabelBBox;
+    calculatePadding(padding: Partial<Record<ChartAxisPosition, number>>, seriesRect: BBox): void;
+}
+export {};

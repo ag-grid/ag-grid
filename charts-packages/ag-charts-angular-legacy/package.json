@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-angular-legacy",
-  "version": "6.1.0",
+  "version": "6.1.1",
   "scripts": {
     "clean": "rimraf dist .hash",
     "ng": "ng",

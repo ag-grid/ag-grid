@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/angular-legacy",
-  "version": "28.1.0",
+  "version": "28.1.1",
   "scripts": {
     "clean": "rimraf dist .hash",
     "ng": "./node_modules/.bin/ng",

@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/infinite-row-model",
-  "version": "28.1.0",
+  "version": "28.1.1",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/cjs/es5/main.js",
   "module": "./dist/esm/es5/main.js",

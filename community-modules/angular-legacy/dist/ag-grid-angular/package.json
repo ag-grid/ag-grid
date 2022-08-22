@@ -1,0 +1,27 @@
+{
+  "name": "@ag-grid-community/angular-legacy",
+  "version": "28.1.1",
+  "license": "MIT",
+  "peerDependencies": {
+    "@ag-grid-community/core": "~28.1.0",
+    "@angular/common": ">= 8.0.0",
+    "@angular/core": ">= 8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "main": "bundles/ag-grid-community-angular-legacy.umd.js",
+  "module": "fesm5/ag-grid-community-angular-legacy.js",
+  "es2015": "fesm2015/ag-grid-community-angular-legacy.js",
+  "esm5": "esm5/ag-grid-community-angular-legacy.js",
+  "esm2015": "esm2015/ag-grid-community-angular-legacy.js",
+  "fesm5": "fesm5/ag-grid-community-angular-legacy.js",
+  "fesm2015": "fesm2015/ag-grid-community-angular-legacy.js",
+  "typings": "ag-grid-community-angular-legacy.d.ts",
+  "metadata": "ag-grid-community-angular-legacy.metadata.json",
+  "sideEffects": false,
+  "dependencies": {
+    "tslib": "^1.10.0"
+  }
+}

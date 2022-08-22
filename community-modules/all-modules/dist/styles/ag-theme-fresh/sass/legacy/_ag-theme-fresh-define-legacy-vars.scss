@@ -1,0 +1,90 @@
+@import "../../../ag-theme-base/sass/legacy/ag-theme-base-rename-legacy-vars";
+
+// In v23 we moved from using global variables to maps of parameters to configure Grid themes.
+// This file is part of a backwards-compatibility layer designed to emulate the pre-v23 behaviour
+// and so should not be modified.
+
+// DO NOT EDIT (see note above)
+$ag-foreground-opacity: 1 !default;
+// DO NOT EDIT (see note above)
+$ag-secondary-foreground-color-opacity: 1 !default;
+// DO NOT EDIT (see note above)
+$ag-disabled-foreground-color-opacity: 0.5 !default;
+// DO NOT EDIT (see note above)
+$ag-icon-color: #333 !default;
+// DO NOT EDIT (see note above)
+$ag-alt-icon-color: #fff !default;
+// DO NOT EDIT (see note above)
+$ag-foreground-color: rgba(black, $ag-foreground-opacity) !default;
+// DO NOT EDIT (see note above)
+$secondary-foreground-color: rgba(#333, $ag-secondary-foreground-color-opacity) !default;
+// DO NOT EDIT (see note above)
+$disabled-foreground-color: rgba(black, $ag-disabled-foreground-color-opacity) !default;
+// DO NOT EDIT (see note above)
+$menu-option-active-color: #bde2e5 !default;
+// DO NOT EDIT (see note above)
+$card-background-color: #f6f6f6 !default;
+// DO NOT EDIT (see note above)
+$ag-border-color: darkgrey !default;
+// DO NOT EDIT (see note above)
+$primary-color: black !default;
+// DO NOT EDIT (see note above)
+$ag-accent-color: black !default;
+// DO NOT EDIT (see note above)
+$ag-background-color: white !default;
+// DO NOT EDIT (see note above)
+$odd-row-background-color: #f6f6f6 !default;
+// DO NOT EDIT (see note above)
+$editor-background-color: #f6f6f6 !default;
+// DO NOT EDIT (see note above)
+$ag-header-foreground-color: $secondary-foreground-color !default;
+// DO NOT EDIT (see note above)
+$ag-header-background-color: transparent !default;
+// DO NOT EDIT (see note above)
+$header-cell-hover-background-color: $ag-header-background-color !default;
+// DO NOT EDIT (see note above)
+$header-background-image: linear-gradient(white, lightgrey) !default;
+// DO NOT EDIT (see note above)
+$panel-background-color: #f6f6f6 !default;
+// DO NOT EDIT (see note above)
+$ag-tool-panel-background-color: #f6f6f6 !default;
+// DO NOT EDIT (see note above)
+$chip-background-color: #ecf0f1 !default;
+// DO NOT EDIT (see note above)
+$ag-range-selection-background-color: rgba(120, 120, 120, 0.4) !default;
+// DO NOT EDIT (see note above)
+$range-selection-highlight-color: transparent !default;
+// DO NOT EDIT (see note above)
+$hover-color: "" !default;
+// DO NOT EDIT (see note above)
+$selected-color: $menu-option-active-color !default;
+// DO NOT EDIT (see note above)
+$cell-data-changed-color: white !default;
+// DO NOT EDIT (see note above)
+$focused-cell-border-color: darkgrey !default;
+// DO NOT EDIT (see note above)
+$tab-background-color: #e6e6e6 !default;
+// DO NOT EDIT (see note above)
+$cell-highlight-border: 2px solid darkgreen !default;
+// DO NOT EDIT (see note above)
+$ag-cell-horizontal-border: 1px dotted silver !default;
+// DO NOT EDIT (see note above)
+$ag-range-selected-color-1: rgba(120, 120, 120, 0.4) !default;
+// DO NOT EDIT (see note above)
+$ag-range-selected-color-2: rgba(80, 80, 80, 0.4) !default;
+// DO NOT EDIT (see note above)
+$ag-range-selected-color-3: rgba(40, 40, 40, 0.4) !default;
+// DO NOT EDIT (see note above)
+$ag-range-selected-color-4: rgba(0, 0, 0, 0.4) !default;
+// DO NOT EDIT (see note above)
+$row-floating-background-color: #f0f0f0 !default;
+// DO NOT EDIT (see note above)
+$row-stub-background-color: #f0f0f0 !default;
+// DO NOT EDIT (see note above)
+$value-change-delta-up-color: darkgreen !default;
+// DO NOT EDIT (see note above)
+$value-change-delta-down-color: darkred !default;
+// DO NOT EDIT (see note above)
+$value-change-value-highlight-background-color: #cec !default;
+
+@import "../../../ag-theme-base/sass/legacy/ag-theme-base-define-legacy-vars";

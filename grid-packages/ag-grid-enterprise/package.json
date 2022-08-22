@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-enterprise",
-  "version": "28.1.0",
+  "version": "28.1.1",
   "description": "AG Grid Enterprise Features",
   "main": "./dist/ag-grid-enterprise.cjs.js",
   "module": "./dist/ag-grid-enterprise.auto.esm.js",

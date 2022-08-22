@@ -1,0 +1,200 @@
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
+ * @version v28.1.1
+ * @link https://www.ag-grid.com/
+ * @license MIT
+ */
+"use strict";
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var ColDefUtil = /** @class */ (function () {
+    function ColDefUtil() {
+    }
+    ColDefUtil.STRING_PROPERTIES = [
+        'headerName',
+        'columnGroupShow',
+        'headerClass',
+        'toolPanelClass',
+        'headerValueGetter',
+        'pivotKeys',
+        'groupId',
+        'colId',
+        'sort',
+        'initialSort',
+        'field',
+        'type',
+        'tooltipComponent',
+        'tooltipField',
+        'headerTooltip',
+        'cellClass',
+        'showRowGroup',
+        'filter',
+        'initialAggFunc',
+        'defaultAggFunc',
+        'aggFunc',
+        'pinned',
+        'initialPinned',
+        'chartDataType',
+        'cellEditorPopupPosition'
+    ];
+    ColDefUtil.OBJECT_PROPERTIES = [
+        'headerGroupComponent',
+        'headerGroupComponentFramework',
+        'headerGroupComponentParams',
+        'cellStyle',
+        'cellRenderer',
+        'cellRendererParams',
+        'cellRendererFramework',
+        'cellEditor',
+        'cellEditorFramework',
+        'cellEditorParams',
+        'pinnedRowCellRendererFramework',
+        'pinnedRowCellRendererParams',
+        'filterFramework',
+        'filterParams',
+        'pivotValueColumn',
+        'headerComponent',
+        'headerComponentFramework',
+        'headerComponentParams',
+        'floatingFilterComponent',
+        'floatingFilterComponentParams',
+        'floatingFilterComponentFramework',
+        'floatingFilterFramework',
+        'tooltipComponent',
+        'tooltipComponentParams',
+        'tooltipComponentFramework',
+        'refData',
+        'columnsMenuParams'
+    ];
+    ColDefUtil.ARRAY_PROPERTIES = [
+        'children',
+        'sortingOrder',
+        'allowedAggFuncs',
+        'menuTabs',
+        'pivotTotalColumnIds',
+        'cellClassRules',
+        'icons'
+    ];
+    ColDefUtil.NUMBER_PROPERTIES = [
+        'sortedAt',
+        'sortIndex',
+        'initialSortIndex',
+        'flex',
+        'initialFlex',
+        'width',
+        'initialWidth',
+        'minWidth',
+        'maxWidth',
+        'rowGroupIndex',
+        'initialRowGroupIndex',
+        'pivotIndex',
+        'initialPivotIndex'
+    ];
+    ColDefUtil.BOOLEAN_PROPERTIES = [
+        'suppressCellFlash',
+        'suppressColumnsToolPanel',
+        'suppressFiltersToolPanel',
+        'openByDefault',
+        'marryChildren',
+        'hide',
+        'initialHide',
+        'rowGroup',
+        'initialRowGroup',
+        'pivot',
+        'initialPivot',
+        'checkboxSelection',
+        'showDisabledCheckboxes',
+        'headerCheckboxSelection',
+        'headerCheckboxSelectionFilteredOnly',
+        'suppressMenu',
+        'suppressMovable',
+        'lockPosition',
+        'lockVisible',
+        'lockPinned',
+        'unSortIcon',
+        'suppressSizeToFit',
+        'suppressAutoSize',
+        'enableRowGroup',
+        'enablePivot',
+        'enableValue',
+        'editable',
+        'suppressPaste',
+        'suppressNavigable',
+        'enableCellChangeFlash',
+        'rowDrag',
+        'dndSource',
+        'autoHeight',
+        'wrapText',
+        'sortable',
+        'resizable',
+        'singleClickEdit',
+        'floatingFilter',
+        'cellEditorPopup',
+        'suppressFillHandle',
+        'wrapHeaderText',
+        'autoHeaderHeight'
+    ];
+    ColDefUtil.FUNCTION_PROPERTIES = [
+        'dndSourceOnRowDrag',
+        'valueGetter',
+        'valueSetter',
+        'filterValueGetter',
+        'keyCreator',
+        'pinnedRowCellRenderer',
+        'valueFormatter',
+        'pinnedRowValueFormatter',
+        'valueParser',
+        'comparator',
+        'equals',
+        'pivotComparator',
+        'suppressKeyboardEvent',
+        'suppressHeaderKeyboardEvent',
+        'colSpan',
+        'rowSpan',
+        'getQuickFilterText',
+        'newValueHandler',
+        'onCellValueChanged',
+        'onCellClicked',
+        'onCellDoubleClicked',
+        'onCellContextMenu',
+        'rowDragText',
+        'tooltipValueGetter',
+        'tooltipComponent',
+        'tooltipComponentFramework',
+        'cellRendererSelector',
+        'cellEditorSelector'
+    ];
+    ColDefUtil.ALL_PROPERTIES = __spread(ColDefUtil.ARRAY_PROPERTIES, ColDefUtil.OBJECT_PROPERTIES, ColDefUtil.STRING_PROPERTIES, ColDefUtil.NUMBER_PROPERTIES, ColDefUtil.FUNCTION_PROPERTIES, ColDefUtil.BOOLEAN_PROPERTIES);
+    // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
+    // properties to colDefs, gridOptions etc
+    ColDefUtil.FRAMEWORK_PROPERTIES = [
+        '__ob__',
+        '__v_skip',
+        '__metadata__',
+        'mappedColumnProperties',
+        'hasChildColumns',
+        'toColDef',
+        'createColDefFromGridColumn'
+    ];
+    return ColDefUtil;
+}());
+exports.ColDefUtil = ColDefUtil;
