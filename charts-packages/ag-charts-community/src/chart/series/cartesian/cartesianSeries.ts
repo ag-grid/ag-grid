@@ -214,7 +214,7 @@ export abstract class CartesianSeries<
                 zIndexSubOrder: [this.id, 10000 + subGroupId],
             });
 
-            const pathParentGroup = pickGroupIncludes.includes('mainPath') ? pickGroup : seriesGroup;
+            const pathParentGroup = pickGroupIncludes.includes('mainPath') ? pickGroup : group;
             const datumParentGroup = pickGroupIncludes.includes('datumNodes') ? pickGroup : group;
 
             seriesGroup.appendChild(group);
@@ -279,8 +279,10 @@ export abstract class CartesianSeries<
                 markerGroup.visible = group.visible;
             }
             for (const path of paths) {
-                path.opacity = group.opacity;
-                path.visible = group.visible;
+                if (path.parent !== group) {
+                    path.opacity = group.opacity;
+                    path.visible = group.visible;
+                }
             }
 
             if (!group.visible) {
