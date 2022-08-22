@@ -88,9 +88,9 @@ export class CartesianChart extends Chart {
         });
 
         const { seriesRoot } = this;
-        seriesRoot.x = seriesRect.x;
+        seriesRoot.x = seriesRect.x + 1;
         seriesRoot.y = seriesRect.y;
-        seriesRoot.width = seriesRect.width;
+        seriesRoot.width = seriesRect.width - 1;
         seriesRoot.height = seriesRect.height;
     }
 
@@ -206,7 +206,6 @@ export class CartesianChart extends Chart {
         // and vice-versa, we need to iteratively try and find a fit for the axes and their
         // ticks/labels.
         let lastPass: typeof axisWidths = {};
-        let clipSeries = false;
         let seriesRect: BBox | undefined = undefined;
         let count = 0;
         do {
@@ -214,7 +213,6 @@ export class CartesianChart extends Chart {
 
             const result = this.updateAxesPass(axisWidths, inputShrinkRect.clone(), seriesRect);
             lastPass = ceilValues(result.axisWidths);
-            clipSeries = result.clipSeries;
             seriesRect = result.seriesRect;
 
             if (count++ > 10) {
@@ -222,7 +220,7 @@ export class CartesianChart extends Chart {
             }
         } while (!stableWidths(lastPass));
 
-        this.seriesRoot.enabled = clipSeries;
+        this.seriesRoot.enabled = true;
 
         return { seriesRect };
     }
