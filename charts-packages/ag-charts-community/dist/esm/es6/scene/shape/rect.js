@@ -89,21 +89,21 @@ export class Rect extends Path {
                 w -= strokeWidth;
                 h -= strokeWidth;
                 // Clipping not needed in this case; fill to center of stroke.
-                this.clipPath = undefined;
+                this.borderClipPath = undefined;
                 path.rect(x, y, w, h);
             }
             else {
                 // Skip the fill and just render the stroke.
-                this.clipPath = (_a = this.clipPath, (_a !== null && _a !== void 0 ? _a : new Path2D()));
-                this.clipPath.clear({ trackChanges: true });
-                this.clipPath.rect(x, y, w, h);
+                this.borderClipPath = (_a = this.borderClipPath, (_a !== null && _a !== void 0 ? _a : new Path2D()));
+                this.borderClipPath.clear({ trackChanges: true });
+                this.borderClipPath.rect(x, y, w, h);
             }
             borderPath.rect(x, y, w, h);
         }
         else {
             // No borderPath needed, and thus no clipPath needed either. Fill to full extent of
             // Rect.
-            this.clipPath = undefined;
+            this.borderClipPath = undefined;
             path.rect(x, y, w, h);
         }
         this.effectiveStrokeWidth = strokeWidth;
@@ -120,7 +120,7 @@ export class Rect extends Path {
     }
     renderRect(ctx) {
         var _a, _b;
-        const { stroke, effectiveStrokeWidth, fill, path, borderPath, clipPath, opacity } = this;
+        const { stroke, effectiveStrokeWidth, fill, path, borderPath, borderClipPath, opacity } = this;
         const borderActive = !!stroke && !!effectiveStrokeWidth;
         if (fill) {
             const { gradientFill, fillOpacity, fillShadow } = this;
@@ -151,11 +151,11 @@ export class Rect extends Path {
         }
         if (borderActive) {
             const { strokeOpacity, lineDash, lineDashOffset, lineCap, lineJoin } = this;
-            if (clipPath) {
+            if (borderClipPath) {
                 // strokeWidth is larger than width or height, so use clipping to render correctly.
                 // This is the simplest way to achieve the correct rendering due to nuances with ~0
                 // width/height lines in Canvas operations.
-                clipPath.draw(ctx);
+                borderClipPath.draw(ctx);
                 ctx.clip();
             }
             borderPath.draw(ctx);

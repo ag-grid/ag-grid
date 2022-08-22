@@ -105,6 +105,7 @@ class Series extends observable_1.Observable {
             name: `${this.id}-highlight`,
             layer: true,
             zIndex: layers_1.Layers.SERIES_LAYER_ZINDEX,
+            zIndexSubOrder: [this.id, 15000],
             optimiseDirtyTracking: true,
         }));
         this.highlightNode = this.highlightGroup.appendChild(new group_1.Group());

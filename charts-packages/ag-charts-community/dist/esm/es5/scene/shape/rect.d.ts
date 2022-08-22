@@ -22,6 +22,7 @@ export declare class Rect extends Path {
     gradient: boolean;
     private gradientFill?;
     private gradientInstance?;
+    private borderClipPath?;
     constructor();
     private updateGradientInstance;
     private lastUpdatePathStrokeWidth;

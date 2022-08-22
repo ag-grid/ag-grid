@@ -153,6 +153,7 @@ var Series = /** @class */ (function (_super) {
             name: _this.id + "-highlight",
             layer: true,
             zIndex: Layers.SERIES_LAYER_ZINDEX,
+            zIndexSubOrder: [_this.id, 15000],
             optimiseDirtyTracking: true,
         }));
         _this.highlightNode = _this.highlightGroup.appendChild(new Group());

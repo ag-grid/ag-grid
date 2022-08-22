@@ -114,7 +114,7 @@ export declare class CellCtrl extends BeanStub {
     isSuppressFillHandle(): boolean;
     private formatValue;
     private callValueFormatter;
-    private updateAndFormatValue;
+    updateAndFormatValue(force?: boolean): boolean;
     private valuesAreEqual;
     getComp(): ICellComp;
     getValueFromValueService(): any;

@@ -103,15 +103,22 @@ var TransactionManager = /** @class */ (function (_super) {
         this.executeAsyncTransactions();
     };
     TransactionManager.prototype.applyTransaction = function (transaction) {
+        var _this = this;
         var res;
         this.serverSideRowModel.executeOnStore(transaction.route, function (store) {
             res = store.applyTransaction(transaction);
         });
         if (res) {
             this.valueCache.onDataChanged();
-            // refresh all the full width rows
-            this.rowRenderer.refreshFullWidthRows(res.update);
             this.eventService.dispatchEvent({ type: Events.EVENT_STORE_UPDATED });
+            if (res.update && res.update.length) {
+                // this set timeout is necessary to queue behind the listener for EVENT_STORE_UPDATED in ssrm which recalculates the rowIndexes
+                // if the rowIndex isn't calculated first the binarySearchForDisplayIndex will not be able to find the required rows
+                setTimeout(function () {
+                    // refresh the full width rows
+                    _this.rowRenderer.refreshFullWidthRows(res.update);
+                }, 0);
+            }
             return res;
         }
         else {

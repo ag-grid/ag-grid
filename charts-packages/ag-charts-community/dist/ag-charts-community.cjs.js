@@ -10438,6 +10438,7 @@ var Series = /** @class */ (function (_super) {
             name: _this.id + "-highlight",
             layer: true,
             zIndex: Layers.SERIES_LAYER_ZINDEX,
+            zIndexSubOrder: [_this.id, 15000],
             optimiseDirtyTracking: true,
         }));
         _this.highlightNode = _this.highlightGroup.appendChild(new Group());
@@ -10859,21 +10860,21 @@ var Rect = /** @class */ (function (_super) {
                 w -= strokeWidth;
                 h -= strokeWidth;
                 // Clipping not needed in this case; fill to center of stroke.
-                this.clipPath = undefined;
+                this.borderClipPath = undefined;
                 path.rect(x, y, w, h);
             }
             else {
                 // Skip the fill and just render the stroke.
-                this.clipPath = (_a = this.clipPath, (_a !== null && _a !== void 0 ? _a : new Path2D()));
-                this.clipPath.clear({ trackChanges: true });
-                this.clipPath.rect(x, y, w, h);
+                this.borderClipPath = (_a = this.borderClipPath, (_a !== null && _a !== void 0 ? _a : new Path2D()));
+                this.borderClipPath.clear({ trackChanges: true });
+                this.borderClipPath.rect(x, y, w, h);
             }
             borderPath.rect(x, y, w, h);
         }
         else {
             // No borderPath needed, and thus no clipPath needed either. Fill to full extent of
             // Rect.
-            this.clipPath = undefined;
+            this.borderClipPath = undefined;
             path.rect(x, y, w, h);
         }
         this.effectiveStrokeWidth = strokeWidth;
@@ -10890,7 +10891,7 @@ var Rect = /** @class */ (function (_super) {
     };
     Rect.prototype.renderRect = function (ctx) {
         var _a, _b;
-        var _c = this, stroke = _c.stroke, effectiveStrokeWidth = _c.effectiveStrokeWidth, fill = _c.fill, path = _c.path, borderPath = _c.borderPath, clipPath = _c.clipPath, opacity = _c.opacity;
+        var _c = this, stroke = _c.stroke, effectiveStrokeWidth = _c.effectiveStrokeWidth, fill = _c.fill, path = _c.path, borderPath = _c.borderPath, borderClipPath = _c.borderClipPath, opacity = _c.opacity;
         var borderActive = !!stroke && !!effectiveStrokeWidth;
         if (fill) {
             var _d = this, gradientFill = _d.gradientFill, fillOpacity = _d.fillOpacity, fillShadow = _d.fillShadow;
@@ -10921,11 +10922,11 @@ var Rect = /** @class */ (function (_super) {
         }
         if (borderActive) {
             var _e = this, strokeOpacity = _e.strokeOpacity, lineDash = _e.lineDash, lineDashOffset = _e.lineDashOffset, lineCap = _e.lineCap, lineJoin = _e.lineJoin;
-            if (clipPath) {
+            if (borderClipPath) {
                 // strokeWidth is larger than width or height, so use clipping to render correctly.
                 // This is the simplest way to achieve the correct rendering due to nuances with ~0
                 // width/height lines in Canvas operations.
-                clipPath.draw(ctx);
+                borderClipPath.draw(ctx);
                 ctx.clip();
             }
             borderPath.draw(ctx);
@@ -12394,14 +12395,16 @@ var CartesianSeries = /** @class */ (function (_super) {
                 }
             });
         }
-        while (contextNodeData.length > subGroups.length) {
-            var layer = false;
+        var totalGroups = contextNodeData.length;
+        while (totalGroups > subGroups.length) {
+            var layer = true;
             var subGroupId = this.subGroupId++;
+            var subGroupZOffset = totalGroups - subGroupId;
             var group = new Group({
                 name: this.id + "-series-sub" + subGroupId,
                 layer: layer,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [this.id, subGroupId],
+                zIndexSubOrder: [this.id, subGroupZOffset],
             });
             var markerGroup = features.includes('markers')
                 ? new Group({
@@ -12422,7 +12425,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
                 zIndexSubOrder: [this.id, 10000 + subGroupId],
             });
-            var pathParentGroup = pickGroupIncludes.includes('mainPath') ? pickGroup : seriesGroup;
+            var pathParentGroup = pickGroupIncludes.includes('mainPath') ? pickGroup : group;
             var datumParentGroup = pickGroupIncludes.includes('datumNodes') ? pickGroup : group;
             seriesGroup.appendChild(group);
             seriesGroup.appendChild(labelGroup);
@@ -12433,7 +12436,7 @@ var CartesianSeries = /** @class */ (function (_super) {
             for (var index = 0; index < pathsPerSeries; index++) {
                 paths[index] = new Path();
                 paths[index].zIndex = Layers.SERIES_LAYER_ZINDEX;
-                paths[index].zIndexSubOrder = [this.id, (_a = pathsZIndexSubOrderOffset[index], (_a !== null && _a !== void 0 ? _a : 0)) + subGroupId];
+                paths[index].zIndexSubOrder = [this.id, (_a = pathsZIndexSubOrderOffset[index], (_a !== null && _a !== void 0 ? _a : 0)) + subGroupZOffset];
                 pathParentGroup.appendChild(paths[index]);
             }
             group.appendChild(pickGroup);
@@ -12481,8 +12484,10 @@ var CartesianSeries = /** @class */ (function (_super) {
             try {
                 for (var paths_2 = __values$b(paths), paths_2_1 = paths_2.next(); !paths_2_1.done; paths_2_1 = paths_2.next()) {
                     var path = paths_2_1.value;
-                    path.opacity = group.opacity;
-                    path.visible = group.visible;
+                    if (path.parent !== group) {
+                        path.opacity = group.opacity;
+                        path.visible = group.visible;
+                    }
                 }
             }
             catch (e_2_1) { e_2 = { error: e_2_1 }; }

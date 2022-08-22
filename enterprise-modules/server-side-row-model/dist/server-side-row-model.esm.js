@@ -24546,10 +24546,9 @@ var CellCtrl = /** @class */ (function (_super) {
         return valuesDifferent;
     };
     CellCtrl.prototype.valuesAreEqual = function (val1, val2) {
-        var _a, _b;
         // if the user provided an equals method, use that, otherwise do simple comparison
         var colDef = this.column.getColDef();
-        return colDef.equals ? colDef.equals(val1, val2) : typeof val1 === typeof val2 && ((_a = val1) === null || _a === void 0 ? void 0 : _a.toString()) === ((_b = val2) === null || _b === void 0 ? void 0 : _b.toString());
+        return colDef.equals ? colDef.equals(val1, val2) : val1 === val2;
     };
     CellCtrl.prototype.getComp = function () {
         return this.cellComp;
@@ -50076,15 +50075,22 @@ var TransactionManager = /** @class */ (function (_super) {
         this.executeAsyncTransactions();
     };
     TransactionManager.prototype.applyTransaction = function (transaction) {
+        var _this = this;
         var res;
         this.serverSideRowModel.executeOnStore(transaction.route, function (store) {
             res = store.applyTransaction(transaction);
         });
         if (res) {
             this.valueCache.onDataChanged();
-            // refresh all the full width rows
-            this.rowRenderer.refreshFullWidthRows(res.update);
             this.eventService.dispatchEvent({ type: Events.EVENT_STORE_UPDATED });
+            if (res.update && res.update.length) {
+                // this set timeout is necessary to queue behind the listener for EVENT_STORE_UPDATED in ssrm which recalculates the rowIndexes
+                // if the rowIndex isn't calculated first the binarySearchForDisplayIndex will not be able to find the required rows
+                setTimeout(function () {
+                    // refresh the full width rows
+                    _this.rowRenderer.refreshFullWidthRows(res.update);
+                }, 0);
+            }
             return res;
         }
         else {

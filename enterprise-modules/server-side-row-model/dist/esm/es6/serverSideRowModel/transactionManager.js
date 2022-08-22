@@ -92,9 +92,15 @@ let TransactionManager = class TransactionManager extends BeanStub {
         });
         if (res) {
             this.valueCache.onDataChanged();
-            // refresh all the full width rows
-            this.rowRenderer.refreshFullWidthRows(res.update);
             this.eventService.dispatchEvent({ type: Events.EVENT_STORE_UPDATED });
+            if (res.update && res.update.length) {
+                // this set timeout is necessary to queue behind the listener for EVENT_STORE_UPDATED in ssrm which recalculates the rowIndexes
+                // if the rowIndex isn't calculated first the binarySearchForDisplayIndex will not be able to find the required rows
+                setTimeout(() => {
+                    // refresh the full width rows
+                    this.rowRenderer.refreshFullWidthRows(res.update);
+                }, 0);
+            }
             return res;
         }
         else {

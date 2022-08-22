@@ -180,14 +180,16 @@ var CartesianSeries = /** @class */ (function (_super) {
                 }
             });
         }
-        while (contextNodeData.length > subGroups.length) {
-            var layer = false;
+        var totalGroups = contextNodeData.length;
+        while (totalGroups > subGroups.length) {
+            var layer = true;
             var subGroupId = this.subGroupId++;
+            var subGroupZOffset = totalGroups - subGroupId;
             var group = new Group({
                 name: this.id + "-series-sub" + subGroupId,
                 layer: layer,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [this.id, subGroupId],
+                zIndexSubOrder: [this.id, subGroupZOffset],
             });
             var markerGroup = features.includes('markers')
                 ? new Group({
@@ -208,7 +210,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
                 zIndexSubOrder: [this.id, 10000 + subGroupId],
             });
-            var pathParentGroup = pickGroupIncludes.includes('mainPath') ? pickGroup : seriesGroup;
+            var pathParentGroup = pickGroupIncludes.includes('mainPath') ? pickGroup : group;
             var datumParentGroup = pickGroupIncludes.includes('datumNodes') ? pickGroup : group;
             seriesGroup.appendChild(group);
             seriesGroup.appendChild(labelGroup);
@@ -219,7 +221,7 @@ var CartesianSeries = /** @class */ (function (_super) {
             for (var index = 0; index < pathsPerSeries; index++) {
                 paths[index] = new Path();
                 paths[index].zIndex = Layers.SERIES_LAYER_ZINDEX;
-                paths[index].zIndexSubOrder = [this.id, (_a = pathsZIndexSubOrderOffset[index], (_a !== null && _a !== void 0 ? _a : 0)) + subGroupId];
+                paths[index].zIndexSubOrder = [this.id, (_a = pathsZIndexSubOrderOffset[index], (_a !== null && _a !== void 0 ? _a : 0)) + subGroupZOffset];
                 pathParentGroup.appendChild(paths[index]);
             }
             group.appendChild(pickGroup);
@@ -267,8 +269,10 @@ var CartesianSeries = /** @class */ (function (_super) {
             try {
                 for (var paths_2 = __values(paths), paths_2_1 = paths_2.next(); !paths_2_1.done; paths_2_1 = paths_2.next()) {
                     var path = paths_2_1.value;
-                    path.opacity = group.opacity;
-                    path.visible = group.visible;
+                    if (path.parent !== group) {
+                        path.opacity = group.opacity;
+                        path.visible = group.visible;
+                    }
                 }
             }
             catch (e_2_1) { e_2 = { error: e_2_1 }; }

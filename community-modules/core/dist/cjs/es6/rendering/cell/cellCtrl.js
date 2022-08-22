@@ -650,10 +650,9 @@ class CellCtrl extends beanStub_1.BeanStub {
         return valuesDifferent;
     }
     valuesAreEqual(val1, val2) {
-        var _a, _b;
         // if the user provided an equals method, use that, otherwise do simple comparison
         const colDef = this.column.getColDef();
-        return colDef.equals ? colDef.equals(val1, val2) : typeof val1 === typeof val2 && ((_a = val1) === null || _a === void 0 ? void 0 : _a.toString()) === ((_b = val2) === null || _b === void 0 ? void 0 : _b.toString());
+        return colDef.equals ? colDef.equals(val1, val2) : val1 === val2;
     }
     getComp() {
         return this.cellComp;

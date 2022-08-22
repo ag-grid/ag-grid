@@ -691,10 +691,9 @@ var CellCtrl = /** @class */ (function (_super) {
         return valuesDifferent;
     };
     CellCtrl.prototype.valuesAreEqual = function (val1, val2) {
-        var _a, _b;
         // if the user provided an equals method, use that, otherwise do simple comparison
         var colDef = this.column.getColDef();
-        return colDef.equals ? colDef.equals(val1, val2) : typeof val1 === typeof val2 && ((_a = val1) === null || _a === void 0 ? void 0 : _a.toString()) === ((_b = val2) === null || _b === void 0 ? void 0 : _b.toString());
+        return colDef.equals ? colDef.equals(val1, val2) : val1 === val2;
     };
     CellCtrl.prototype.getComp = function () {
         return this.cellComp;
