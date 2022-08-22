@@ -47,19 +47,7 @@ Note that the grid needs focus for these shortcuts to have an effect.
 
 It is also possible to programmatically control undo / redo and check the number of currently available undo / redo actions. These API methods are listed below:
 
-<snippet>
-|// perform undo
-|gridOptions.api.undoCellEditing();
-|
-|// perform redo
-|gridOptions.api.redoCellEditing();
-|
-|// obtain current number of available undo
-|gridOptions.api.getCurrentUndoSize();
-|
-|// obtain current number of available redo actions
-|gridOptions.api.getCurrentRedoSize();
-</snippet>
+<api-documentation source='grid-api/api.json' section='UndoRedo'></api-documentation>
 
 ## Example: Undo / Redo
 
