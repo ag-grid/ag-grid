@@ -186,7 +186,7 @@ export abstract class CartesianSeries<
         }
 
         while (contextNodeData.length > subGroups.length) {
-            const layer = false;
+            const layer = true;
             const subGroupId = this.subGroupId++;
             const group = new Group({
                 name: `${this.id}-series-sub${subGroupId}`,

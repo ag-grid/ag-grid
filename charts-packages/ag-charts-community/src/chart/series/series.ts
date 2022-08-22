@@ -195,6 +195,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 name: `${this.id}-highlight`,
                 layer: true,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
+                zIndexSubOrder: [this.id, 15000],
                 optimiseDirtyTracking: true,
             })
         );
