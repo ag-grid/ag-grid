@@ -54,7 +54,7 @@ export const DOCS_EXAMPLES = {
 export const BAR_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-bar'];
 
 export const GROUPED_BAR_CHART_EXAMPLE: AgCartesianChartOptions = DOCS_EXAMPLES['grouped-bar'];
-export const STACKED_BAR_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['stacked-bar'];
+export const STACKED_BAR_CHART_EXAMPLE: AgCartesianChartOptions = DOCS_EXAMPLES['stacked-bar'];
 export const ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['100--stacked-bar'];
 export const BAR_CHART_WITH_LABELS_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['bar-with-labels'];
 export const SIMPLE_COLUMN_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-column'];
