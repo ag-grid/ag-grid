@@ -163,7 +163,7 @@ arranged order would be lost.
 If the desired behaviour is that Column's order should be maintained, set the grid
 property `maintainColumnOrder=true`.
 
-The example below demonstrates suppressing the Column order when Column Definitions are updated. The example has to sets of Columns A and B. The order of the Column Definitions are different, however when switching between the Column sets, the order in the grid is maintained. 
+The example below demonstrates suppressing the Column order when Column Definitions are updated. The example has two sets of Columns, A and B. The order of the Column Definitions are different, however when switching between the Column sets, the order in the grid is maintained. 
 
 If the Columns are cleared out (clicking Clear) then when columns are set again the order will match the Column Definition order.
 
