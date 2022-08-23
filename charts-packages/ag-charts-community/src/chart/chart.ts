@@ -1102,6 +1102,10 @@ export abstract class Chart extends Observable {
             };
             this.handleTooltipTrigger.schedule();
         }
+
+        this.extraDebugStats['mouseX'] = event.offsetX;
+        this.extraDebugStats['mouseY'] = event.offsetY;
+        this.update(ChartUpdateType.SCENE_RENDER);
     }
 
     private disableTooltip({ updateProcessing = true } = {}) {
