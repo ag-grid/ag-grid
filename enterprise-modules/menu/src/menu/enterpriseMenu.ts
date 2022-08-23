@@ -45,6 +45,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private lastSelectedTab: string;
     private activeMenu: EnterpriseMenu | null;
@@ -109,6 +110,8 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     ): void {
         const menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
         const eMenuGui = menu.getGui();
+        const currentHeaderPosition = this.focusService.getFocusedHeader();
+        const currentColumnIndex = this.columnModel.getAllDisplayedColumns().indexOf(column);
 
         const anchorToElement = eventSource || this.ctrlsService.getGridBodyCtrl().getGui();
 
@@ -120,10 +123,29 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
             const isKeyboardEvent = e instanceof KeyboardEvent;
 
-            if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
-                const focusableEl = this.focusService.findTabbableParent(eventSource);
+            if (isKeyboardEvent && eventSource) {
 
-                if (focusableEl) { focusableEl.focus(); }
+                if (_.isVisible(eventSource)) {
+                    const focusableEl = this.focusService.findTabbableParent(eventSource);
+                    if (focusableEl) {
+                        focusableEl.focus();
+                    }
+                }
+                // if the focusEl is no longer in the DOM, we try to focus
+                // the header that is closest to the previous header position
+                else if (currentHeaderPosition && currentColumnIndex !== -1) {
+                    const allColumns = this.columnModel.getAllDisplayedColumns();
+                    const columnToFocus = allColumns[currentColumnIndex] || _.last(allColumns);
+
+                    if (columnToFocus) {
+                        this.focusService.focusHeaderPosition({
+                            headerPosition:{
+                                headerRowIndex: currentHeaderPosition.headerRowIndex,
+                                column: columnToFocus
+                            }
+                        });
+                    }
+                }
             }
         });
 
