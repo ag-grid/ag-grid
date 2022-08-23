@@ -1,7 +1,7 @@
 import isDevelopment from 'utils/is-development';
 
 export const agGridVersion = require('../../../../../community-modules/core/package.json').version;
-export const agGridEnterpriseVersion = require('../../../../../enterprise-modules/core/package.json').version;
+export const agGridEnterpriseVersion = require('../../../../../grid-packages/ag-grid-enterprise/package.json').version;
 export const agGridReactVersion = require('../../../../../community-modules/react/package.json').version;
 export const agGridAngularVersion = require('../../../../../community-modules/angular/package.json').version;
 export const agGridVueVersion = require('../../../../../community-modules/vue/package.json').version;
