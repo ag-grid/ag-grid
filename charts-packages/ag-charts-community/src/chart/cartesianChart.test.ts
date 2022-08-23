@@ -111,6 +111,7 @@ const OPTIONS: AgCartesianChartOptions = {
             strokeWidth: 10,
             normalizedTo: 32,
             marker: { enabled: true },
+            label: { enabled: true },
         },
         {
             type: 'line',
@@ -119,6 +120,7 @@ const OPTIONS: AgCartesianChartOptions = {
             yName: 'Portions',
             strokeWidth: 3,
             marker: { enabled: true },
+            label: { enabled: true },
         },
         {
             type: 'column',
@@ -127,6 +129,7 @@ const OPTIONS: AgCartesianChartOptions = {
             yName: 'Women',
             grouped: true,
             strokeWidth: 0,
+            label: { enabled: true },
         },
         {
             type: 'column',
@@ -135,6 +138,7 @@ const OPTIONS: AgCartesianChartOptions = {
             yName: 'Men',
             grouped: true,
             strokeWidth: 0,
+            label: { enabled: true },
         },
     ],
     axes: [
