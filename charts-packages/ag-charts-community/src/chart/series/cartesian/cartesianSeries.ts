@@ -207,8 +207,8 @@ export abstract class CartesianSeries<
             const labelGroup = new Group({
                 name: `${this.id}-series-sub${this.subGroupId++}-labels`,
                 layer,
-                zIndex: Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [this.id, 20000 + subGroupId],
+                zIndex: Layers.SERIES_LABEL_ZINDEX,
+                zIndexSubOrder: [this.id, subGroupId],
             });
             const pickGroup = new Group({
                 name: `${this.id}-series-sub${this.subGroupId++}-pickGroup`,
