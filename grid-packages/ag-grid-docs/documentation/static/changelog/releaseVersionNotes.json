@@ -1,5 +1,11 @@
 [
     {
+        "release version": "<p><b>23rd Aug 2022 - Grid v28.1.1 (Charts v6.1.1)</b></p>",
+        "feature highlights": "",
+        "breaking changes": "",
+        "deprecations": ""
+    },
+    {
         "release version": "<p><b>3rd Aug 2022 - Grid v28.1.0 (Charts v6.1.0)</b></p>",
         "feature highlights": "<p><strong>Feature Highlights:</strong></p><ul><li>AG-5105 - [Chart] Allow adding crossing lines (see <a href=\"https://ag-grid.com/archive/28.1.0/javascript-charts/axes/#cross-lines\" rel=\"nofollow\">Cross Lines</a>)</li><li>AG-1063 - [SSRM] Allow setting the initial page and scroll position (see <a href=\"https://ag-grid.com/archive/28.1.0/javascript-data-grid/server-side-model-infinite-scroll/#initial-scroll-position\" rel=\"nofollow\">Initial Scroll Position</a>)</li><li>AG-6873 - [Row Selection] Allow displaying disabled (read-only) checkboxes when row is not selectable (see <a href=\"https://ag-grid.com/archive/28.1.0/javascript-data-grid/row-selection/#example-disabled-checkboxes\" rel=\"nofollow\">Disabled Checkboxes</a>)</li></ul>",
         "breaking changes": "",

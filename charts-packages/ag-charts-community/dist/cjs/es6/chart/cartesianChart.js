@@ -69,9 +69,9 @@ class CartesianChart extends chart_1.Chart {
             series.group.translationY = Math.floor(seriesRect.y);
         });
         const { seriesRoot } = this;
-        seriesRoot.x = seriesRect.x;
+        seriesRoot.x = seriesRect.x + 1;
         seriesRoot.y = seriesRect.y;
-        seriesRoot.width = seriesRect.width;
+        seriesRoot.width = seriesRect.width - 1;
         seriesRoot.height = seriesRect.height;
     }
     setupDomListeners(chartElement) {
@@ -165,20 +165,18 @@ class CartesianChart extends chart_1.Chart {
         // and vice-versa, we need to iteratively try and find a fit for the axes and their
         // ticks/labels.
         let lastPass = {};
-        let clipSeries = false;
         let seriesRect = undefined;
         let count = 0;
         do {
             Object.assign(axisWidths, lastPass);
             const result = this.updateAxesPass(axisWidths, inputShrinkRect.clone(), seriesRect);
             lastPass = ceilValues(result.axisWidths);
-            clipSeries = result.clipSeries;
             seriesRect = result.seriesRect;
             if (count++ > 10) {
                 throw new Error('AG Charts - unable to find stable axis layout.');
             }
         } while (!stableWidths(lastPass));
-        this.seriesRoot.enabled = clipSeries;
+        this.seriesRoot.enabled = true;
         return { seriesRect };
     }
     updateAxesPass(axisWidths, bounds, lastPassSeriesRect) {
