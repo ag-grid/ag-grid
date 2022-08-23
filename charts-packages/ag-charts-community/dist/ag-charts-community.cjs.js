@@ -1,5 +1,5 @@
 /**
-          * ag-charts-community - Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue * @version v6.1.1
+          * ag-charts-community - Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue * @version v6.1.2
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -14943,9 +14943,9 @@ var CartesianChart = /** @class */ (function (_super) {
             series.group.translationY = Math.floor(seriesRect.y);
         });
         var seriesRoot = this.seriesRoot;
-        seriesRoot.x = seriesRect.x + 1;
+        seriesRoot.x = seriesRect.x;
         seriesRoot.y = seriesRect.y;
-        seriesRoot.width = seriesRect.width - 1;
+        seriesRoot.width = seriesRect.width;
         seriesRoot.height = seriesRect.height;
     };
     CartesianChart.prototype.setupDomListeners = function (chartElement) {
@@ -15042,18 +15042,20 @@ var CartesianChart = /** @class */ (function (_super) {
         // and vice-versa, we need to iteratively try and find a fit for the axes and their
         // ticks/labels.
         var lastPass = {};
+        var clipSeries = false;
         var seriesRect = undefined;
         var count = 0;
         do {
             Object.assign(axisWidths, lastPass);
             var result = this.updateAxesPass(axisWidths, inputShrinkRect.clone(), seriesRect);
             lastPass = ceilValues(result.axisWidths);
+            clipSeries = result.clipSeries;
             seriesRect = result.seriesRect;
             if (count++ > 10) {
                 throw new Error('AG Charts - unable to find stable axis layout.');
             }
         } while (!stableWidths(lastPass));
-        this.seriesRoot.enabled = true;
+        this.seriesRoot.enabled = clipSeries;
         return { seriesRect: seriesRect };
     };
     CartesianChart.prototype.updateAxesPass = function (axisWidths, bounds, lastPassSeriesRect) {
