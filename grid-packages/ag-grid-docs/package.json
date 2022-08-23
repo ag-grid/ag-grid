@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-docs",
-  "version": "28.1.0",
+  "version": "28.1.1",
   "description": "Documentation for AG Grid",
   "scripts": {
     "clean": "npm run clean-examples-dir && rimraf dist _dev .cache-loader .hash",

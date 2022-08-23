@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-react",
-  "version": "6.1.0",
+  "version": "6.1.1",
   "description": "AG Charts React Component",
   "main": "main.js",
   "typings": "./main.d.ts",

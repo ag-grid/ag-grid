@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react",
-  "version": "28.1.0",
+  "version": "28.1.1",
   "description": "AG Grid React Component",
   "main": "main.js",
   "typings": "./main.d.ts",

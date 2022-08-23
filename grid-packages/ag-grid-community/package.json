@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-community",
-  "version": "28.1.0",
+  "version": "28.1.1",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/ag-grid-community.cjs.js",
   "module": "./dist/ag-grid-community.auto.esm.js",

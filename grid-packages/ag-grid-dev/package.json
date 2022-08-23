@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-dev",
-  "version": "28.1.0",
+  "version": "28.1.1",
   "description": "AG Grid Package Tests",
   "main": "index.js",
   "private": true,
