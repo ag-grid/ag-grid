@@ -1033,15 +1033,21 @@ export class RowCtrl extends BeanStub {
         // don't do it if already editing
         if (this.editingRow) { return; }
 
-        this.getAllCellCtrls().forEach(cellCtrl => {
+        const atLeastOneEditing = this.getAllCellCtrls().reduce((prev: boolean, cellCtrl: CellCtrl) => {
             const cellStartedEdit = cellCtrl === sourceRenderedCell;
             if (cellStartedEdit) {
                 cellCtrl.startEditing(key, charPress, cellStartedEdit, event);
             } else {
                 cellCtrl.startEditing(null, null, cellStartedEdit, event);
             }
-        });
-        this.setEditingRow(true);
+            if (prev) { return true; }
+
+            return cellCtrl.isEditing();
+        }, false);
+
+        if (atLeastOneEditing) {
+            this.setEditingRow(true);
+        }
     }
 
     public getAllCellCtrls(): CellCtrl[] {
