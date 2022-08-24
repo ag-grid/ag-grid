@@ -19,6 +19,14 @@ By default Excel renders every exported value in a cell using a single line. If 
 
 <grid-example title='Excel Export - Multi Line' name='excel-export-multi-line' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "csv"] }'></grid-example>
 
+## Export All Unprocessed Rows
+
+By default, all visible rows are exported, by using the `exportedRows` param, you can configure to export all rows, rather than the default which is after filtering and sorting has been applied.
+
+Note that when all rows is selected, the exported file ignores any filter or sort applied to the data.
+
+<grid-example title='Excel Export - All Rows' name='excel-export-all-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "csv"] }'></grid-example>
+
 ## Pinned Rows
 
 If you'd like to exclude pinned top/bottom rows in AG Grid from the Excel export, please set the `skipPinnedTop` and `skipPinnedBottom` properties to true.
