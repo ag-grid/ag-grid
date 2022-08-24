@@ -13,7 +13,6 @@ import {
 } from '../test/utils';
 import {
     AgCartesianChartOptions,
-    AgCrossLineLabelPosition,
     AgCrossLineOptions,
     AgCrossLineLabelPosition,
 } from '../agChartOptions';
