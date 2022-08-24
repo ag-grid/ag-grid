@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-enterprise v28.1.2
+// Type definitions for ag-grid-enterprise v28.1.3
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { LicenseManager } from "./dist/lib/main";

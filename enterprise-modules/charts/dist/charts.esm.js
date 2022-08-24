@@ -56012,6 +56012,7 @@ var Layers;
     Layers[Layers["SERIES_CROSSLINE_RANGE_ZINDEX"] = 10] = "SERIES_CROSSLINE_RANGE_ZINDEX";
     Layers[Layers["AXIS_ZINDEX"] = 20] = "AXIS_ZINDEX";
     Layers[Layers["SERIES_LAYER_ZINDEX"] = 500] = "SERIES_LAYER_ZINDEX";
+    Layers[Layers["SERIES_LABEL_ZINDEX"] = 1000] = "SERIES_LABEL_ZINDEX";
     Layers[Layers["SERIES_CROSSLINE_LINE_ZINDEX"] = 2500] = "SERIES_CROSSLINE_LINE_ZINDEX";
     Layers[Layers["LEGEND_ZINDEX"] = 3000] = "LEGEND_ZINDEX";
 })(Layers || (Layers = {}));
@@ -62271,8 +62272,8 @@ var CartesianSeries = /** @class */ (function (_super) {
             var labelGroup = new Group({
                 name: this.id + "-series-sub" + this.subGroupId++ + "-labels",
                 layer: layer,
-                zIndex: Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [this.id, 20000 + subGroupId],
+                zIndex: Layers.SERIES_LABEL_ZINDEX,
+                zIndexSubOrder: [this.id, subGroupId],
             });
             var pickGroup = new Group({
                 name: this.id + "-series-sub" + this.subGroupId++ + "-pickGroup",
@@ -62326,21 +62327,25 @@ var CartesianSeries = /** @class */ (function (_super) {
         this.subGroups.forEach(function (subGroup, seriesIdx) {
             var e_2, _a;
             var _b;
-            var group = subGroup.group, markerGroup = subGroup.markerGroup, datumSelection = subGroup.datumSelection, labelSelection = subGroup.labelSelection, markerSelection = subGroup.markerSelection, paths = subGroup.paths;
+            var group = subGroup.group, markerGroup = subGroup.markerGroup, datumSelection = subGroup.datumSelection, labelSelection = subGroup.labelSelection, markerSelection = subGroup.markerSelection, paths = subGroup.paths, labelGroup = subGroup.labelGroup, pickGroup = subGroup.pickGroup;
             var itemId = contextNodeData[seriesIdx].itemId;
-            group.opacity = _this.getOpacity({ itemId: itemId });
-            group.visible = visible && (_b = seriesItemEnabled.get(itemId), (_b !== null && _b !== void 0 ? _b : true));
+            var subGroupVisible = visible && (_b = seriesItemEnabled.get(itemId), (_b !== null && _b !== void 0 ? _b : true));
+            var subGroupOpacity = _this.getOpacity({ itemId: itemId });
+            group.opacity = subGroupOpacity;
+            group.visible = subGroupVisible;
+            pickGroup.visible = subGroupVisible;
+            labelGroup.visible = subGroupVisible;
             if (markerGroup) {
-                markerGroup.opacity = group.opacity;
+                markerGroup.opacity = subGroupOpacity;
                 markerGroup.zIndex = group.zIndex >= Layers.SERIES_LAYER_ZINDEX ? group.zIndex : group.zIndex + 1;
-                markerGroup.visible = group.visible;
+                markerGroup.visible = subGroupVisible;
             }
             try {
                 for (var paths_2 = __values$e(paths), paths_2_1 = paths_2.next(); !paths_2_1.done; paths_2_1 = paths_2.next()) {
                     var path = paths_2_1.value;
                     if (path.parent !== group) {
-                        path.opacity = group.opacity;
-                        path.visible = group.visible;
+                        path.opacity = subGroupOpacity;
+                        path.visible = subGroupVisible;
                     }
                 }
             }
@@ -64797,9 +64802,9 @@ var CartesianChart = /** @class */ (function (_super) {
             series.group.translationY = Math.floor(seriesRect.y);
         });
         var seriesRoot = this.seriesRoot;
-        seriesRoot.x = seriesRect.x + 1;
+        seriesRoot.x = seriesRect.x;
         seriesRoot.y = seriesRect.y;
-        seriesRoot.width = seriesRect.width - 1;
+        seriesRoot.width = seriesRect.width;
         seriesRoot.height = seriesRect.height;
     };
     CartesianChart.prototype.setupDomListeners = function (chartElement) {
@@ -64896,18 +64901,20 @@ var CartesianChart = /** @class */ (function (_super) {
         // and vice-versa, we need to iteratively try and find a fit for the axes and their
         // ticks/labels.
         var lastPass = {};
+        var clipSeries = false;
         var seriesRect = undefined;
         var count = 0;
         do {
             Object.assign(axisWidths, lastPass);
             var result = this.updateAxesPass(axisWidths, inputShrinkRect.clone(), seriesRect);
             lastPass = ceilValues(result.axisWidths);
+            clipSeries = result.clipSeries;
             seriesRect = result.seriesRect;
             if (count++ > 10) {
                 throw new Error('AG Charts - unable to find stable axis layout.');
             }
         } while (!stableWidths(lastPass));
-        this.seriesRoot.enabled = true;
+        this.seriesRoot.enabled = clipSeries;
         return { seriesRect: seriesRect };
     };
     CartesianChart.prototype.updateAxesPass = function (axisWidths, bounds, lastPassSeriesRect) {

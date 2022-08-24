@@ -204,8 +204,8 @@ var CartesianSeries = /** @class */ (function (_super) {
             var labelGroup = new group_1.Group({
                 name: this.id + "-series-sub" + this.subGroupId++ + "-labels",
                 layer: layer,
-                zIndex: layers_1.Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [this.id, 20000 + subGroupId],
+                zIndex: layers_1.Layers.SERIES_LABEL_ZINDEX,
+                zIndexSubOrder: [this.id, subGroupId],
             });
             var pickGroup = new group_1.Group({
                 name: this.id + "-series-sub" + this.subGroupId++ + "-pickGroup",
@@ -259,21 +259,25 @@ var CartesianSeries = /** @class */ (function (_super) {
         this.subGroups.forEach(function (subGroup, seriesIdx) {
             var e_2, _a;
             var _b;
-            var group = subGroup.group, markerGroup = subGroup.markerGroup, datumSelection = subGroup.datumSelection, labelSelection = subGroup.labelSelection, markerSelection = subGroup.markerSelection, paths = subGroup.paths;
+            var group = subGroup.group, markerGroup = subGroup.markerGroup, datumSelection = subGroup.datumSelection, labelSelection = subGroup.labelSelection, markerSelection = subGroup.markerSelection, paths = subGroup.paths, labelGroup = subGroup.labelGroup, pickGroup = subGroup.pickGroup;
             var itemId = contextNodeData[seriesIdx].itemId;
-            group.opacity = _this.getOpacity({ itemId: itemId });
-            group.visible = visible && (_b = seriesItemEnabled.get(itemId), (_b !== null && _b !== void 0 ? _b : true));
+            var subGroupVisible = visible && (_b = seriesItemEnabled.get(itemId), (_b !== null && _b !== void 0 ? _b : true));
+            var subGroupOpacity = _this.getOpacity({ itemId: itemId });
+            group.opacity = subGroupOpacity;
+            group.visible = subGroupVisible;
+            pickGroup.visible = subGroupVisible;
+            labelGroup.visible = subGroupVisible;
             if (markerGroup) {
-                markerGroup.opacity = group.opacity;
+                markerGroup.opacity = subGroupOpacity;
                 markerGroup.zIndex = group.zIndex >= layers_1.Layers.SERIES_LAYER_ZINDEX ? group.zIndex : group.zIndex + 1;
-                markerGroup.visible = group.visible;
+                markerGroup.visible = subGroupVisible;
             }
             try {
                 for (var paths_2 = __values(paths), paths_2_1 = paths_2.next(); !paths_2_1.done; paths_2_1 = paths_2.next()) {
                     var path = paths_2_1.value;
                     if (path.parent !== group) {
-                        path.opacity = group.opacity;
-                        path.visible = group.visible;
+                        path.opacity = subGroupOpacity;
+                        path.visible = subGroupVisible;
                     }
                 }
             }

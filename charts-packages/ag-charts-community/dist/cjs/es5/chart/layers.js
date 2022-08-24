@@ -9,6 +9,7 @@ var Layers;
     Layers[Layers["SERIES_CROSSLINE_RANGE_ZINDEX"] = 10] = "SERIES_CROSSLINE_RANGE_ZINDEX";
     Layers[Layers["AXIS_ZINDEX"] = 20] = "AXIS_ZINDEX";
     Layers[Layers["SERIES_LAYER_ZINDEX"] = 500] = "SERIES_LAYER_ZINDEX";
+    Layers[Layers["SERIES_LABEL_ZINDEX"] = 1000] = "SERIES_LABEL_ZINDEX";
     Layers[Layers["SERIES_CROSSLINE_LINE_ZINDEX"] = 2500] = "SERIES_CROSSLINE_LINE_ZINDEX";
     Layers[Layers["LEGEND_ZINDEX"] = 3000] = "LEGEND_ZINDEX";
 })(Layers = exports.Layers || (exports.Layers = {}));

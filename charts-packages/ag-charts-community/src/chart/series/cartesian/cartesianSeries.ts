@@ -207,8 +207,8 @@ export abstract class CartesianSeries<
             const labelGroup = new Group({
                 name: `${this.id}-series-sub${this.subGroupId++}-labels`,
                 layer,
-                zIndex: Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [this.id, 20000 + subGroupId],
+                zIndex: Layers.SERIES_LABEL_ZINDEX,
+                zIndexSubOrder: [this.id, subGroupId],
             });
             const pickGroup = new Group({
                 name: `${this.id}-series-sub${this.subGroupId++}-pickGroup`,
@@ -271,19 +271,35 @@ export abstract class CartesianSeries<
         this.updateLabelNodes({ labelSelection: highlightLabelSelection, seriesIdx: -1 });
 
         this.subGroups.forEach((subGroup, seriesIdx) => {
-            const { group, markerGroup, datumSelection, labelSelection, markerSelection, paths } = subGroup;
+            const {
+                group,
+                markerGroup,
+                datumSelection,
+                labelSelection,
+                markerSelection,
+                paths,
+                labelGroup,
+                pickGroup,
+            } = subGroup;
             const { itemId } = contextNodeData[seriesIdx];
-            group.opacity = this.getOpacity({ itemId });
-            group.visible = visible && (seriesItemEnabled.get(itemId) ?? true);
+
+            const subGroupVisible = visible && (seriesItemEnabled.get(itemId) ?? true);
+            const subGroupOpacity = this.getOpacity({ itemId });
+            group.opacity = subGroupOpacity;
+            group.visible = subGroupVisible;
+            pickGroup.visible = subGroupVisible;
+            labelGroup.visible = subGroupVisible;
+
             if (markerGroup) {
-                markerGroup.opacity = group.opacity;
+                markerGroup.opacity = subGroupOpacity;
                 markerGroup.zIndex = group.zIndex >= Layers.SERIES_LAYER_ZINDEX ? group.zIndex : group.zIndex + 1;
-                markerGroup.visible = group.visible;
+                markerGroup.visible = subGroupVisible;
             }
+
             for (const path of paths) {
                 if (path.parent !== group) {
-                    path.opacity = group.opacity;
-                    path.visible = group.visible;
+                    path.opacity = subGroupOpacity;
+                    path.visible = subGroupVisible;
                 }
             }
 
