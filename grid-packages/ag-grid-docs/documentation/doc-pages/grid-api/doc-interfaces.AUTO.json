@@ -6255,6 +6255,10 @@
       "description": "/** True when pagination and a new page is navigated to. */",
       "type": { "returnType": "boolean", "optional": false }
     },
+    "keepUndoRedoStack": {
+      "description": "/** true if all we did is changed row height, data still the same, no need to clear the undo/redo stacks */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -16260,6 +16264,9 @@
     },
     "newData": { "type": { "returnType": "boolean", "optional": true } },
     "afterColumnsChanged": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "keepUndoRedoStack": {
       "type": { "returnType": "boolean", "optional": true }
     },
     "meta": { "typeParams": ["TData = any"] }

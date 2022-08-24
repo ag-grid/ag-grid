@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/angular-legacy",
-  "version": "28.1.0",
+  "version": "28.1.1",
   "license": "MIT",
   "peerDependencies": {
     "@ag-grid-community/core": "~28.1.0",

@@ -91,7 +91,11 @@ It is possible to change the default behaviour for when a checkbox is not displa
 
 ### Example: Forcing Checkboxes As Selected
 
-It is possible to force a row to be selected, and ensure that users are unable to deselect them. This is done by providing a predicate to the `checkboxSelection` and using the api to select the rows with disabled checkboxes.
+It is possible to select a row via API and disable its checkbox to prevent users from de-selecting it. This can be achieved by providing a predicate to the `checkboxSelection` property which will determine whether a row’s checkbox is selectable or disabled.
+
+In the example below please note that only rows with Year=2012 are selectable. All remaining rows have disabled checkboxes and cannot be selected by the user.
+
+Please note that clicking the header checkbox selects all rows even if their checkboxes are disabled.
 
 <grid-example title='Forcing Checkboxes As Selected' name='force-enable-checkboxes' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
