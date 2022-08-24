@@ -3906,6 +3906,9 @@
     },
     "features": {
       "type": { "returnType": "SeriesFeature[]", "optional": false }
+    },
+    "renderLayerPerSubSeries": {
+      "type": { "returnType": "boolean", "optional": false }
     }
   },
   "CartesianSeriesMarkerFormat": {

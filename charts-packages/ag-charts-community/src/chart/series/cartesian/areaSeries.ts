@@ -134,6 +134,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             pathsZIndexSubOrderOffset: [0, 1000],
             pickGroupIncludes: ['markers'],
             features: ['markers'],
+            renderLayerPerSubSeries: false,
         });
 
         const { marker, label } = this;

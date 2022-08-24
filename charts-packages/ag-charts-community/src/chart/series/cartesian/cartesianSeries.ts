@@ -45,6 +45,7 @@ interface SeriesOpts {
     pathsPerSeries: number;
     pathsZIndexSubOrderOffset: number[];
     features: SeriesFeature[];
+    renderLayerPerSubSeries: boolean;
 }
 
 export abstract class CartesianSeries<
@@ -80,8 +81,9 @@ export abstract class CartesianSeries<
             pathsPerSeries = 1,
             features = [],
             pathsZIndexSubOrderOffset = [],
+            renderLayerPerSubSeries = true,
         } = opts;
-        this.opts = { pickGroupIncludes, pathsPerSeries, features, pathsZIndexSubOrderOffset };
+        this.opts = { pickGroupIncludes, pathsPerSeries, features, pathsZIndexSubOrderOffset, renderLayerPerSubSeries };
     }
 
     directionKeys: { [key in ChartAxisDirection]?: string[] } = {
@@ -165,7 +167,7 @@ export abstract class CartesianSeries<
             _contextNodeData: contextNodeData,
             seriesGroup,
             subGroups,
-            opts: { pickGroupIncludes, pathsPerSeries, features, pathsZIndexSubOrderOffset },
+            opts: { pickGroupIncludes, pathsPerSeries, features, pathsZIndexSubOrderOffset, renderLayerPerSubSeries },
         } = this;
         if (contextNodeData.length === subGroups.length) {
             return;
@@ -187,9 +189,9 @@ export abstract class CartesianSeries<
 
         const totalGroups = contextNodeData.length;
         while (totalGroups > subGroups.length) {
-            const layer = true;
+            const layer = renderLayerPerSubSeries;
             const subGroupId = this.subGroupId++;
-            const subGroupZOffset = totalGroups - subGroupId;
+            const subGroupZOffset = subGroupId;
             const group = new Group({
                 name: `${this.id}-series-sub${subGroupId}`,
                 layer,
@@ -216,7 +218,11 @@ export abstract class CartesianSeries<
                 zIndexSubOrder: [this.id, 10000 + subGroupId],
             });
 
-            const pathParentGroup = pickGroupIncludes.includes('mainPath') ? pickGroup : group;
+            const pathParentGroup = pickGroupIncludes.includes('mainPath')
+                ? pickGroup
+                : renderLayerPerSubSeries
+                ? group
+                : seriesGroup;
             const datumParentGroup = pickGroupIncludes.includes('datumNodes') ? pickGroup : group;
 
             seriesGroup.appendChild(group);
