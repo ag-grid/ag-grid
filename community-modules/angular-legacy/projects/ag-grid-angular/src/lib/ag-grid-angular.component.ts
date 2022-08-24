@@ -627,7 +627,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     @Input() public rowDragMultiRow: boolean | undefined = undefined;
     /** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.
      * If this callback is not set, the current cell value will be used.
-     * If this callback is set in the ColDef it will take precedence     */
+     * If the `rowDragText` callback is set in the ColDef it will take precedence over this.     */
     @Input() public rowDragText: ((params: IRowDragItem, dragItemCount: number) => string) | undefined = undefined;
     /** Provide your own cell renderer component to use for full width rows.
      * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.     */

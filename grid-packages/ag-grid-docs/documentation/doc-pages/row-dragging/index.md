@@ -255,27 +255,27 @@ There are some options that can be used to customise the Row Drag experience, so
 
 ### Custom Row Drag Text
 
-When a row drag starts, a "floating" DOM element is created to indicate which row is being dragged. By default, this DOM
-element will contain the same value as the cell that started the row drag. It's possible to override that text by using
-the `colDef.rowDragText` callback.
+When a row drag starts, a "floating" DOM element is created to indicate which row is being dragged. By default, this DOM element will contain the same value as the cell that started the row drag. It's possible to override that text by using the `gridOptions.rowDragText` callback.
 
-<api-documentation source='column-properties/properties.json' section='row dragging' names='["rowDragText"]' ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='rowDragging' names='["rowDragText"]'></api-documentation>
 
 <snippet>
 const gridOptions = {
     columnDefs: [
         {
             field: 'athlete',
-            rowDrag: true,
-            rowDragText: (params, dragItemCount) => {
-                return (
-                    dragItemCount > 1
-                        ? (dragItemCount + ' items')
-                        : params.defaultTextValue + ' is'
-                ) + ' being dragged...';
-            }
+            rowDrag: true
+        }, {
+            field: 'country'
         }
-    ]
+    ],
+    rowDragText: (params, dragItemCount) => {
+        return (
+            dragItemCount > 1
+                ? (dragItemCount + ' items')
+                : params.defaultTextValue + ' is'
+        ) + ' being dragged...';
+    }
 }
 </snippet>
 
@@ -284,6 +284,44 @@ The example below shows dragging with custom text. The following can be noted:
 - When you drag row of the year 2012, the `rowDragText` callback will add **(London Olympics)** to the floating drag element.
 
 <grid-example title='Row Drag With Custom Text' name='custom-drag-text' type='generated'></grid-example>
+
+### Custom Row Drag Text with Multiple Draggers
+
+If the grid has more than one column set with `rowDrag=true`, the `rowDragText` callback can be set in the `colDef`.
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            rowDrag: true
+        }, {
+            field: 'country',
+            rowDrag: true,
+            rowDragText: (params, dragItemCount) => {
+                const suffix = dragItemCount == 1 ? 'country' : 'countries';
+                return `Dragging ${dragItemCount} ${suffix}`;
+            }
+        }
+    ],
+    rowDragText: (params, dragItemCount) => {
+        return (
+            dragItemCount > 1
+                ? (dragItemCount + ' items')
+                : params.defaultTextValue + ' is'
+        ) + ' being dragged...';
+    }
+}
+</snippet>
+
+The example below shows dragging with custom text and multiple column draggers. The following can be noted:
+
+- When you drag row of the year 2012, the `rowDragText` callback will add **(London Olympics)** to the floating drag element.
+
+- When you drag the row by the athlete row dragger, the `rowDragText` callback in the `gridOptions` will be overridden by the one in the `colDef` and will display the number of **athletes selected**.
+
+<grid-example title='Row Drag With Custom Text and Multiple Draggers' name='custom-drag-multiple-draggers' type='generated'></grid-example>
+
 
 ### Row Dragger inside Custom Cell Renderers
 
