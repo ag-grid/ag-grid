@@ -153,7 +153,8 @@ import {
     IsFullWidthRowParams,
     GetLocaleTextParams,
     IsRowFilterable,
-    RowModelType
+    RowModelType,
+    IRowDragItem
 } from "@ag-grid-community/core";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
@@ -624,6 +625,10 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     @Input() public rowDragEntireRow: boolean | undefined = undefined;
     /** Set to `true` to enable dragging multiple rows at the same time. Default: `false`     */
     @Input() public rowDragMultiRow: boolean | undefined = undefined;
+    /** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.
+     * If this callback is not set, the current cell value will be used.
+     * If this callback is set in the ColDef it will take precedence     */
+    @Input() public rowDragText: ((params: IRowDragItem, dragItemCount: number) => string) | undefined = undefined;
     /** Provide your own cell renderer component to use for full width rows.
      * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.     */
     @Input() public fullWidthCellRenderer: any = undefined;

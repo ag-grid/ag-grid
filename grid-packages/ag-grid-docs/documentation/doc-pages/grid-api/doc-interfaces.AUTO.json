@@ -1178,7 +1178,7 @@
       }
     },
     "rowDragText": {
-      "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the current cell value will be used. */",
+      "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the `rowDragText` callback in the `gridOptions` will be used and\n * if there is no callback in the `gridOptions` the current cell value will be used. */",
       "type": {
         "arguments": { "params": "IRowDragItem", "dragItemCount": "number" },
         "returnType": "string",
@@ -2965,6 +2965,14 @@
     "rowDragMultiRow": {
       "description": "/** Set to `true` to enable dragging multiple rows at the same time. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "rowDragText": {
+      "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the current cell value will be used.\n * If this callback is set in the ColDef it will take precedence */",
+      "type": {
+        "arguments": { "params": "IRowDragItem", "dragItemCount": "number" },
+        "returnType": "string",
+        "optional": true
+      }
     },
     "fullWidthCellRenderer": {
       "description": "/** Provide your own cell renderer component to use for full width rows.\n * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details. */",
@@ -23755,7 +23763,7 @@
       }
     },
     "rowDragText": {
-      "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the current cell value will be used. */",
+      "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the `rowDragText` callback in the `gridOptions` will be used and\n * if there is no callback in the `gridOptions` the current cell value will be used. */",
       "type": {
         "arguments": { "params": "IRowDragItem", "dragItemCount": "number" },
         "returnType": "string",
@@ -24763,6 +24771,14 @@
     "rowDragMultiRow": {
       "description": "/** Set to `true` to enable dragging multiple rows at the same time. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "rowDragText": {
+      "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the current cell value will be used.\n * If this callback is set in the ColDef it will take precedence */",
+      "type": {
+        "arguments": { "params": "IRowDragItem", "dragItemCount": "number" },
+        "returnType": "string",
+        "optional": true
+      }
     },
     "fullWidthCellRenderer": {
       "description": "/** Provide your own cell renderer component to use for full width rows.\n * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details. */",
@@ -27532,6 +27548,14 @@
     "rowDragMultiRow": {
       "description": "/** Set to `true` to enable dragging multiple rows at the same time. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "rowDragText": {
+      "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the current cell value will be used.\n * If this callback is set in the ColDef it will take precedence */",
+      "type": {
+        "arguments": { "params": "IRowDragItem", "dragItemCount": "number" },
+        "returnType": "string",
+        "optional": true
+      }
     },
     "fullWidthCellRenderer": {
       "description": "/** Provide your own cell renderer component to use for full width rows.\n * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details. */",
@@ -30311,6 +30335,14 @@
     "rowDragMultiRow": {
       "description": "/** Set to `true` to enable dragging multiple rows at the same time. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "rowDragText": {
+      "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the current cell value will be used.\n * If this callback is set in the ColDef it will take precedence */",
+      "type": {
+        "arguments": { "params": "IRowDragItem", "dragItemCount": "number" },
+        "returnType": "string",
+        "optional": true
+      }
     },
     "fullWidthCellRenderer": {
       "description": "/** Provide your own cell renderer component to use for full width rows.\n * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details. */",

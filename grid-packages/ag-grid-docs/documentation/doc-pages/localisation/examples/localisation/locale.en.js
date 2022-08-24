@@ -67,6 +67,7 @@ const AG_GRID_LOCALE_EN = {
     group: 'Group',
 
     // Row Drag
+    rowDragRow: 'row',
     rowDragRows:'rows',
 
     // Other

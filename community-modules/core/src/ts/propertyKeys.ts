@@ -69,21 +69,18 @@ export class PropertyKeys {
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */
     public static FUNCTION_PROPERTIES = [
-        'localeTextFunc', 'getLocaleText', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
-        'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent', 'getRowHeight', 'doesExternalFilterPass',
-        'getRowClass', 'getRowStyle', 'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
-        'groupRowAggNodes', 'getGroupRowAgg', 'getRowNodeId', 'isFullWidthCell', 'isFullWidthRow', 'fullWidthCellRenderer', 'fullWidthCellRendererFramework',
-        'processSecondaryColDef', 'processSecondaryColGroupDef', 'processPivotResultColDef', 'processPivotResultColGroupDef',
-        'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextHeader',
-        'tabToNextHeader', 'navigateToNextCell', 'tabToNextCell', 'processCellFromClipboard', 'getDocument', 'postProcessPopup',
-        'getChildCount', 'getDataPath', 'loadingCellRenderer', 'loadingCellRendererFramework', 'loadingOverlayComponent',
-        'loadingOverlayComponentFramework', 'noRowsOverlayComponent', 'noRowsOverlayComponentFramework', 'detailCellRenderer',
-        'detailCellRendererFramework', 'isRowMaster', 'isRowSelectable', 'postSort', 'postSortRows', 'processHeaderForClipboard', 'processGroupHeaderForClipboard',
-        'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup', 'suppressKeyboardEvent',
-        'createChartContainer', 'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction', 'getServerSideStoreParams',
-        'getServerSideGroupLevelParams',
+        'localeTextFunc', 'getLocaleText', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework', 'groupRowRenderer', 'groupRowRendererFramework',
+        'isExternalFilterPresent', 'getRowHeight', 'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getContextMenuItems', 'getMainMenuItems',
+        'processRowPostCreate', 'processCellForClipboard', 'groupRowAggNodes', 'getGroupRowAgg', 'getRowNodeId', 'isFullWidthCell', 'isFullWidthRow',
+        'fullWidthCellRenderer', 'fullWidthCellRendererFramework', 'processSecondaryColDef', 'processSecondaryColGroupDef', 'processPivotResultColDef',
+        'processPivotResultColGroupDef', 'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextHeader', 'tabToNextHeader', 'navigateToNextCell',
+        'tabToNextCell', 'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath', 'loadingCellRenderer',
+        'loadingCellRendererFramework', 'loadingOverlayComponent', 'loadingOverlayComponentFramework', 'noRowsOverlayComponent', 'noRowsOverlayComponentFramework',
+        'detailCellRenderer', 'detailCellRendererFramework', 'isRowMaster', 'isRowSelectable', 'postSort', 'postSortRows', 'processHeaderForClipboard',
+        'processGroupHeaderForClipboard', 'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup', 'suppressKeyboardEvent',
+        'createChartContainer', 'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction', 'getServerSideStoreParams', 'getServerSideGroupLevelParams',
         'isServerSideGroupOpenByDefault', 'isGroupOpenByDefault', 'defaultGroupSortComparator', 'defaultGroupOrderComparator', 'initialGroupOrderComparator',
-        'loadingCellRendererSelector', 'getRowId', 'groupAggFiltering'
+        'loadingCellRendererSelector', 'getRowId', 'groupAggFiltering', 'rowDragText'
     ];
 
     public static ALL_PROPERTIES = [

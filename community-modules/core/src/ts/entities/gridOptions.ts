@@ -77,6 +77,7 @@ import { RowModelType } from "../interfaces/iRowModel";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
+import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { CellPosition } from "./cellPosition";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
@@ -510,6 +511,12 @@ export interface GridOptions<TData = any> {
     rowDragEntireRow?: boolean;
     /** Set to `true` to enable dragging multiple rows at the same time. Default: `false` */
     rowDragMultiRow?: boolean;
+    /**
+     * A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.
+     * If this callback is not set, the current cell value will be used.
+     * If this callback is set in the ColDef it will take precedence
+     */
+    rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
 
     // *** Row Full Width *** //
     /**

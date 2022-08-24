@@ -94,7 +94,7 @@ export class RowDragComp extends Component {
         // if this is changing the drag element, delete the previous dragSource
         if (this.dragSource) { this.removeDragSource(); }
 
-        const rowDragText = this.column && this.column.getColDef().rowDragText;
+        const rowDragText = this.gridOptionsWrapper.getRowDragText(this.column);
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.dragSource = {

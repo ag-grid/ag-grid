@@ -275,7 +275,8 @@ export class AgGridColumn<TData = any> {
     /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging. Default: `false`     */
     @Input() public rowDrag: boolean | RowDragCallback<TData> | undefined;
     /** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.
-     * If this callback is not set, the current cell value will be used.     */
+     * If this callback is not set, the `rowDragText` callback in the `gridOptions` will be used and
+     * if there is no callback in the `gridOptions` the current cell value will be used.     */
     @Input() public rowDragText: ((params: IRowDragItem, dragItemCount: number) => string) | undefined;
     /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. Default: `false`     */
     @Input() public dndSource: boolean | DndSourceCallback<TData> | undefined;
