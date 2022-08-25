@@ -1,6 +1,5 @@
 import { PointerEvents } from '../../scene/node';
 import { Group } from '../../scene/group';
-import { Path } from '../../scene/shape/path';
 import { Text, FontStyle, FontWeight } from '../../scene/shape/text';
 import { BBox } from '../../scene/bbox';
 import { Scale } from '../../scale/scale';
@@ -17,6 +16,7 @@ import {
 import { checkDatum } from '../../util/value';
 import { Layers } from '../layers';
 import { Point } from '../../scene/point';
+import { Range } from '../../scene/shape/range';
 
 export class CrossLineLabel {
     enabled?: boolean = undefined;
@@ -38,9 +38,7 @@ export class CrossLineLabel {
     parallel?: boolean = undefined;
 }
 
-interface CrossLinePathData {
-    readonly points: Point[];
-}
+type NodeData = number[];
 
 type CrossLineType = 'line' | 'range';
 
@@ -71,34 +69,25 @@ export class CrossLine {
     direction: ChartAxisDirection = ChartAxisDirection.X;
 
     readonly group = new Group({ name: `${this.id}`, layer: true, zIndex: CrossLine.LINE_LAYER_ZINDEX });
+    private crossLineRange: Range = new Range();
     private crossLineLabel = new Text();
-    private crossLineLine: Path = new Path();
-    private crossLineRange: Path = new Path();
     private labelPoint?: Point = undefined;
-    private fillData?: CrossLinePathData = undefined;
-    private strokeData?: CrossLinePathData = undefined;
+
+    private data: NodeData = [];
+    private startLine: boolean = false;
+    private endLine: boolean = false;
+    private isRange: boolean = false;
 
     constructor() {
-        const { group, crossLineLine, crossLineRange, crossLineLabel } = this;
+        const { group, crossLineRange, crossLineLabel } = this;
 
-        group.append([crossLineRange, crossLineLine, crossLineLabel]);
-
-        crossLineLine.fill = undefined;
-        crossLineLine.pointerEvents = PointerEvents.None;
+        group.append([crossLineRange, crossLineLabel]);
 
         crossLineRange.pointerEvents = PointerEvents.None;
     }
 
-    protected getZIndex(type: CrossLineType = 'line'): number {
-        if (type === 'range') {
-            return CrossLine.RANGE_LAYER_ZINDEX;
-        }
-
-        return CrossLine.LINE_LAYER_ZINDEX;
-    }
-
     update(visible: boolean) {
-        if (!this.enabled || !this.type) {
+        if (!this.enabled) {
             return;
         }
 
@@ -108,8 +97,6 @@ export class CrossLine {
             return;
         }
 
-        this.group.zIndex = this.getZIndex(this.type);
-
         const dataCreated = this.createNodeData();
 
         if (!dataCreated) {
@@ -117,17 +104,13 @@ export class CrossLine {
             return;
         }
 
-        this.updatePaths();
+        this.updateNodes();
+
+        this.group.zIndex = this.getZIndex(this.isRange);
     }
 
-    private updatePaths() {
-        this.updateLinePath();
-        this.updateLineNode();
-
-        if (this.type === 'range') {
-            this.updateRangePath();
-            this.updateRangeNode();
-        }
+    private updateNodes() {
+        this.updateRangeNode();
 
         if (this.label.enabled) {
             this.updateLabel();
@@ -152,18 +135,9 @@ export class CrossLine {
         const bandwidth = scale.bandwidth ?? 0;
 
         let xStart, xEnd, yStart, yEnd, clampedYStart, clampedYEnd;
-        this.fillData = { points: [] };
-        this.strokeData = { points: [] };
 
         [xStart, xEnd] = [0, sideFlag * gridLength];
         [yStart, yEnd] = this.getRange();
-
-        let isLine = false;
-        if (yStart === undefined) {
-            return false;
-        } else if (yEnd === undefined) {
-            isLine = true;
-        }
 
         [clampedYStart, clampedYEnd] = [
             Number(scale.convert(yStart, isContinuous ? clamper : undefined)),
@@ -171,50 +145,32 @@ export class CrossLine {
         ];
         [yStart, yEnd] = [Number(scale.convert(yStart)), scale.convert(yEnd) + bandwidth];
 
-        const isValidLine = yStart === clampedYStart;
-        const isValidRange = yStart === clampedYStart || yEnd === clampedYEnd || clampedYStart !== clampedYEnd;
+        const validRange =
+            !isNaN(clampedYStart) &&
+            !isNaN(clampedYEnd) &&
+            (yStart === clampedYStart || yEnd === clampedYEnd || clampedYStart !== clampedYEnd);
 
-        if ((isLine && !isValidLine) || (!isLine && !isValidRange)) {
+        if (validRange) {
+            const reverse = clampedYStart !== Math.min(clampedYStart, clampedYEnd);
+
+            if (reverse) {
+                [clampedYStart, clampedYEnd] = [
+                    Math.min(clampedYStart, clampedYEnd),
+                    Math.max(clampedYStart, clampedYEnd),
+                ];
+                [yStart, yEnd] = [yEnd, yStart];
+            }
+        }
+
+        this.isRange = validRange;
+        this.startLine = !isNaN(yStart);
+        this.endLine = !isNaN(yEnd);
+
+        if (!validRange && !this.startLine && !this.endLine) {
             return false;
         }
 
-        this.strokeData.points.push(
-            {
-                x: xStart,
-                y: yStart,
-            },
-            {
-                x: xEnd,
-                y: yStart,
-            },
-            {
-                x: xEnd,
-                y: yEnd,
-            },
-            {
-                x: xStart,
-                y: yEnd,
-            }
-        );
-
-        this.fillData.points.push(
-            {
-                x: xStart,
-                y: clampedYStart,
-            },
-            {
-                x: xEnd,
-                y: clampedYStart,
-            },
-            {
-                x: xEnd,
-                y: clampedYEnd,
-            },
-            {
-                x: xStart,
-                y: clampedYEnd,
-            }
-        );
+        this.data = [clampedYStart, clampedYEnd];
 
         if (this.label.enabled) {
             const yDirection = direction === ChartAxisDirection.Y;
@@ -231,46 +187,37 @@ export class CrossLine {
         return true;
     }
 
-    private updateLinePath() {
-        const { crossLineLine, strokeData = { points: [] } } = this;
-        const pathMethods: ('moveTo' | 'lineTo')[] = ['moveTo', 'lineTo', 'moveTo', 'lineTo'];
-        const points = strokeData.points;
-        const { path } = crossLineLine;
-
-        path.clear({ trackChanges: true });
-        pathMethods.forEach((method, i) => {
-            const { x, y } = points[i];
-            path[method](x, y);
-        });
-        crossLineLine.checkPathDirty();
-    }
-
-    private updateLineNode() {
-        const { crossLineLine, stroke, strokeWidth, lineDash } = this;
-        crossLineLine.stroke = stroke;
-        crossLineLine.strokeWidth = strokeWidth ?? 1;
-        crossLineLine.opacity = this.strokeOpacity ?? 1;
-        crossLineLine.lineDash = lineDash;
-    }
-
     private updateRangeNode() {
-        const { crossLineRange, fill, fillOpacity } = this;
+        const {
+            crossLineRange,
+            sideFlag,
+            gridLength,
+            data,
+            startLine,
+            endLine,
+            isRange,
+            fill,
+            fillOpacity,
+            stroke,
+            strokeWidth,
+            lineDash,
+        } = this;
+
+        crossLineRange.x1 = 0;
+        crossLineRange.x2 = sideFlag * gridLength;
+        crossLineRange.y1 = data[0];
+        crossLineRange.y2 = data[1];
+        crossLineRange.startLine = startLine;
+        crossLineRange.endLine = endLine;
+        crossLineRange.isRange = isRange;
+
         crossLineRange.fill = fill;
-        crossLineRange.opacity = fillOpacity ?? 1;
-    }
+        crossLineRange.fillOpacity = fillOpacity ?? 1;
 
-    private updateRangePath() {
-        const { crossLineRange, fillData = { points: [] } } = this;
-        const points = fillData.points;
-        const { path } = crossLineRange;
-
-        path.clear({ trackChanges: true });
-        points.forEach((point, i) => {
-            const { x, y } = point;
-            path[i > 0 ? 'lineTo' : 'moveTo'](x, y);
-        });
-        path.closePath();
-        crossLineRange.checkPathDirty();
+        crossLineRange.stroke = stroke;
+        crossLineRange.strokeWidth = strokeWidth ?? 1;
+        crossLineRange.strokeOpacity = this.strokeOpacity ?? 1;
+        crossLineRange.lineDash = lineDash;
     }
 
     private updateLabel() {
@@ -326,6 +273,14 @@ export class CrossLine {
 
         crossLineLabel.translationX = x + xTranslation;
         crossLineLabel.translationY = y + yTranslation;
+    }
+
+    protected getZIndex(isRange: boolean = false): number {
+        if (isRange) {
+            return CrossLine.RANGE_LAYER_ZINDEX;
+        }
+
+        return CrossLine.LINE_LAYER_ZINDEX;
     }
 
     private getRange(): [any, any] {

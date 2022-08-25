@@ -2455,7 +2455,7 @@
       "boundSeries": "Series[]"
     }
   },
-  "CrossLinePathData": { "meta": {}, "type": { "points": "Point[]" } },
+  "NodeData": { "meta": { "isTypeAlias": true }, "type": "number[]" },
   "CrossLineType": {
     "meta": { "isTypeAlias": true },
     "type": "'line' | 'range'"
@@ -2483,6 +2483,10 @@
   "CrossLineTranslationDirection": {
     "meta": { "isTypeAlias": true },
     "type": "{ xTranslationDirection: LabelTranslationDirection; yTranslationDirection: LabelTranslationDirection; }"
+  },
+  "CrossLinesRangeConfig": {
+    "meta": { "isTypeAlias": true },
+    "type": "Record<string, { vertical: [Date, Date]; horizontal: [number, number]; }>"
   },
   "GroupedCategoryChartAxis": {
     "meta": { "isTypeAlias": true },
