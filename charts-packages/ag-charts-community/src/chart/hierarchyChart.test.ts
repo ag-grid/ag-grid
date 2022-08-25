@@ -36,8 +36,16 @@ describe('HierarchyChart', () => {
             expect(console.warn).not.toBeCalled();
         });
 
+        const SIMPLIFIED_EXAMPLE = {
+            ...examples.MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE,
+            data: {
+                ...examples.MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE.data,
+                children: examples.MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE.data.children.slice(0, 1),
+            },
+        };
+
         it('should render a complex chart', async () => {
-            const options: AgChartOptions = { ...examples.MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE };
+            const options: AgChartOptions = { ...SIMPLIFIED_EXAMPLE };
             options.autoSize = false;
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
@@ -46,9 +54,9 @@ describe('HierarchyChart', () => {
             await compare(chart);
         });
 
-        const childAtDepth = [7, 13, 0, 0];
+        const childAtDepth = [0, 3, 1, 0];
         it.each([0, 1, 2, 3])(`should render highlight at depth %s`, async (depth) => {
-            const options: AgChartOptions = { ...examples.MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE };
+            const options: AgChartOptions = { ...SIMPLIFIED_EXAMPLE };
             options.autoSize = false;
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;

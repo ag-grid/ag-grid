@@ -2774,7 +2774,8 @@
       "pickGroupIncludes": "PickGroupInclude[]",
       "pathsPerSeries": "number",
       "pathsZIndexSubOrderOffset": "number[]",
-      "features": "SeriesFeature[]"
+      "features": "SeriesFeature[]",
+      "renderLayerPerSubSeries": "boolean"
     }
   },
   "CartesianSeriesMarkerFormat": {

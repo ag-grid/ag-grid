@@ -8003,13 +8003,13 @@ Object {
         },
       },
       "label": Object {
-        "color": "rgb(70, 70, 70)",
-        "enabled": false,
+        "color": "#eeeeee",
+        "enabled": true,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
         "fontWeight": undefined,
-        "formatter": undefined,
+        "formatter": [Function],
         "placement": "inside",
       },
       "lineDash": Array [
@@ -8031,7 +8031,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "renderer": undefined,
+        "renderer": [Function],
       },
       "type": "column",
       "visibles": Array [

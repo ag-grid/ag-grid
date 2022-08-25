@@ -265,6 +265,7 @@ export class Scene {
         }
 
         if (!this.dirty) {
+            this.debugStats(debugSplitTimes, ctx, undefined, extraDebugStats);
             return;
         }
 
@@ -321,6 +322,19 @@ export class Scene {
 
         this._dirty = false;
 
+        this.debugStats(debugSplitTimes, ctx, renderCtx.stats, extraDebugStats);
+
+        if (root && this.debug.consoleLog) {
+            console.log('after', { redrawType: RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
+        }
+    }
+
+    debugStats(
+        debugSplitTimes: number[],
+        ctx: CanvasRenderingContext2D,
+        renderCtxStats: RenderContext['stats'],
+        extraDebugStats = {},
+    ) {
         const end = performance.now();
 
         if (this.debug.stats) {
@@ -339,7 +353,7 @@ export class Scene {
                 layersSkipped = 0,
                 nodesRendered = 0,
                 nodesSkipped = 0,
-            } = renderCtx.stats || {};
+            } = renderCtxStats ?? {};
 
             const splits = debugSplitTimes
                 .map((t, i) => (i > 0 ? time(debugSplitTimes[i - 1], t) : null))
@@ -359,17 +373,13 @@ export class Scene {
 
             ctx.save();
             ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, 120, 10 + lineHeight * stats.length);
+            ctx.fillRect(0, 0, 200, 10 + lineHeight * stats.length);
             ctx.fillStyle = 'black';
             let index = 0;
             for (const stat of stats) {
                 ctx.fillText(stat, 2, 10 + index++ * lineHeight);
             }
             ctx.restore();
-        }
-
-        if (root && this.debug.consoleLog) {
-            console.log('after', { redrawType: RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
         }
     }
 

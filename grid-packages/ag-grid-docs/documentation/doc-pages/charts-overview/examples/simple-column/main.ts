@@ -2,6 +2,11 @@ import * as agCharts from 'ag-charts-community';
 import { AgChartOptions } from 'ag-charts-community';
 import { getData } from "./data";
 
+function formatNumber(value: number) {
+  value /= 1000_000;
+  return `${Math.floor(value)}M`;
+}
+
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
   autoSize: true,
@@ -23,6 +28,16 @@ const options: AgChartOptions = {
       shadow: {
         xOffset: 3,
       },
+      label: {
+        enabled: true,
+        color: '#eeeeee',
+        formatter: ({ value }) => formatNumber(value),
+      },
+      tooltip: {
+        renderer: ({ yValue, xValue }) => {
+          return { title: xValue, content: formatNumber(yValue) };
+        },
+      },
     },
   ],
   axes: [
@@ -40,9 +55,7 @@ const options: AgChartOptions = {
         text: 'Total visitors',
       },
       label: {
-        formatter: (params) => {
-          return params.value / 1000000 + 'M'
-        },
+        formatter: ({ value }) => formatNumber(value),
       },
     },
   ],
