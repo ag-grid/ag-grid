@@ -277,7 +277,7 @@ export class Scene {
         }
 
         if (!this.dirty) {
-            this.debugStats(debugSplitTimes, ctx, undefined, extraDebugStats);
+            this.debugStats(debugSplitTimes, ctx, extraDebugStats);
             return;
         }
 
@@ -330,7 +330,7 @@ export class Scene {
 
         this._dirty = false;
 
-        this.debugStats(debugSplitTimes, ctx, renderCtx.stats, extraDebugStats);
+        this.debugStats(debugSplitTimes, ctx, extraDebugStats);
 
         if (root && this.debug.consoleLog) {
             console.log('after', { redrawType: RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
@@ -340,7 +340,6 @@ export class Scene {
     debugStats(
         debugSplitTimes: number[],
         ctx: CanvasRenderingContext2D,
-        renderCtxStats: RenderContext['stats'],
         extraDebugStats = {},
     ) {
         const end = performance.now();
