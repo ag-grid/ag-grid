@@ -12,7 +12,7 @@ export const XY_HISTOGRAM_WITH_MEAN_EXAMPLE: AgCartesianChartOptions = loadExamp
 export const AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgCartesianChartOptions =
     loadExampleOptions('area-with-negative-values');
 
-type CrossLinesRangeConfig = Record<string, { vertical: [Date, Date], horizontal: [number, number] }>
+type CrossLinesRangeConfig = Record<string, { vertical: [Date, Date]; horizontal: [number, number] }>;
 
 const baseChartOptions: AgCartesianChartOptions = {
     data: DATA_OIL_PETROLEUM,
@@ -90,9 +90,7 @@ const baseCrossLineOptions: AgCrossLineOptions = {
     },
 };
 
-const createChartOptions = (
-    rangeConfig: CrossLinesRangeConfig
-): Record<string, AgCartesianChartOptions> => {
+const createChartOptions = (rangeConfig: CrossLinesRangeConfig): Record<string, AgCartesianChartOptions> => {
     let result: Record<string, AgCartesianChartOptions> = {};
 
     for (const name in rangeConfig) {
@@ -111,48 +109,44 @@ const createChartOptions = (
 const crossLinesOptions: CrossLinesRangeConfig = {
     VALID_RANGE: {
         vertical: [new Date(2019, 4, 1), new Date(2019, 8, 1)],
-        horizontal: [128, 134]
+        horizontal: [128, 134],
     },
     INVALID_RANGE: {
         vertical: [new Date(2019, 4, 1), undefined],
-        horizontal: [128, undefined]
+        horizontal: [128, undefined],
     },
     RANGE_OUTSIDE_DOMAIN_MAX: {
         vertical: [new Date(2019, 4, 1), new Date(2022, 8, 1)],
-        horizontal: [134, 160]
+        horizontal: [134, 160],
     },
     RANGE_OUTSIDE_DOMAIN_MIN: {
         vertical: [new Date(2017, 8, 1), new Date(2019, 4, 1)],
-        horizontal: [100, 134]
-
+        horizontal: [100, 134],
     },
     RANGE_OUTSIDE_DOMAIN_MIN_MAX: {
         vertical: [new Date(2017, 8, 1), new Date(2022, 4, 1)],
-        horizontal: [100, 160]
-
+        horizontal: [100, 160],
     },
     RANGE_OUTSIDE_DOMAIN: {
         vertical: [new Date(2022, 4, 1), new Date(2022, 8, 1)],
-        horizontal: [90, 110]
+        horizontal: [90, 110],
     },
 };
 
 const crossLineLabelPositionOptions: CrossLinesRangeConfig = {
     LABEL: {
-        ...crossLinesOptions.VALID_RANGE
+        ...crossLinesOptions.VALID_RANGE,
     },
 };
 
 const chartOptions: Record<string, AgCartesianChartOptions> = createChartOptions({
     ...crossLinesOptions,
-    ...crossLineLabelPositionOptions
+    ...crossLineLabelPositionOptions,
 });
 
 export const VALID_RANGE_CROSSLINES: AgCartesianChartOptions = chartOptions['VALID_RANGE'];
-export const RANGE_OUTSIDE_DOMAIN_MAX_CROSSLINES: AgCartesianChartOptions =
-    chartOptions['RANGE_OUTSIDE_DOMAIN_MAX'];
-export const RANGE_OUTSIDE_DOMAIN_MIN_CROSSLINES: AgCartesianChartOptions =
-    chartOptions['RANGE_OUTSIDE_DOMAIN_MIN'];
+export const RANGE_OUTSIDE_DOMAIN_MAX_CROSSLINES: AgCartesianChartOptions = chartOptions['RANGE_OUTSIDE_DOMAIN_MAX'];
+export const RANGE_OUTSIDE_DOMAIN_MIN_CROSSLINES: AgCartesianChartOptions = chartOptions['RANGE_OUTSIDE_DOMAIN_MIN'];
 export const RANGE_OUTSIDE_DOMAIN_MIN_MAX_CROSSLINES: AgCartesianChartOptions =
     chartOptions['RANGE_OUTSIDE_DOMAIN_MIN_MAX'];
 export const RANGE_OUTSIDE_DOMAIN_CROSSLINES: AgCartesianChartOptions = chartOptions['RANGE_OUTSIDE_DOMAIN'];

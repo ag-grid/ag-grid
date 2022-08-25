@@ -154,7 +154,10 @@ export class CrossLine {
             const reverse = clampedYStart !== Math.min(clampedYStart, clampedYEnd);
 
             if (reverse) {
-                [clampedYStart, clampedYEnd] = [Math.min(clampedYStart, clampedYEnd), Math.max(clampedYStart, clampedYEnd)];
+                [clampedYStart, clampedYEnd] = [
+                    Math.min(clampedYStart, clampedYEnd),
+                    Math.max(clampedYStart, clampedYEnd),
+                ];
                 [yStart, yEnd] = [yEnd, yStart];
             }
         }

@@ -2484,6 +2484,10 @@
     "meta": { "isTypeAlias": true },
     "type": "{ xTranslationDirection: LabelTranslationDirection; yTranslationDirection: LabelTranslationDirection; }"
   },
+  "CrossLinesRangeConfig": {
+    "meta": { "isTypeAlias": true },
+    "type": "Record<string, { vertical: [Date, Date]; horizontal: [number, number]; }>"
+  },
   "GroupedCategoryChartAxis": {
     "meta": { "isTypeAlias": true },
     "type": "GroupedCategoryAxis | ChartAxis"

@@ -3669,6 +3669,7 @@
   "PositionCalcFns": {},
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
+  "CrossLinesRangeConfig": {},
   "GroupedCategoryChartAxis": {},
   "Layers": {},
   "LegendDatum": {

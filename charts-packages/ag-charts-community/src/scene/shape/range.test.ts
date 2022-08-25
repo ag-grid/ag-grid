@@ -45,7 +45,7 @@ describe('Range', () => {
             },
         ];
         const STROKE_WIDTH_CASES = [0, 3, 8, 10, 20];
-        const LINE_DASH_CASES = [[1], [6, 4, 3], [5, 10], [2, 4],  [10, 4]];
+        const LINE_DASH_CASES = [[1], [6, 4, 3], [5, 10], [2, 4], [10, 4]];
         const FILL_OPACITY_CASES = [0.2, 0.4, 0.6, 0.8, 1];
 
         const TEST_CASES: (Partial<Range> | undefined)[][] = [
@@ -94,7 +94,7 @@ describe('Range', () => {
 
                     // Prepare for next case.
                     currX += range.x2 - range.x1 + GAP;
-                    rowHeight = Math.max((range.y2 - range.y1), rowHeight);
+                    rowHeight = Math.max(range.y2 - range.y1, rowHeight);
                 }
             }
 
