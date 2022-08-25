@@ -286,8 +286,14 @@ export class RowCtrl extends BeanStub {
             }, 'rowDragAndRangeSelectionEnabled');
             return;
         }
-
-        const rowDragComp = new RowDragComp(() => '1 row', this.rowNode, undefined, gui.element, undefined, true);
+        const translate = gow.getLocaleTextFunc();
+        const rowDragComp = new RowDragComp(
+            () => `1 ${translate('rowDragRow', 'row')}`,
+            this.rowNode,
+            undefined,
+            gui.element,
+            undefined, true
+        );
         this.createManagedBean(rowDragComp, this.beans.context);
     }
 

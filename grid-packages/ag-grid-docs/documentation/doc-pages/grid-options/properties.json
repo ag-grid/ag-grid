@@ -787,7 +787,13 @@
             }
         },
         "suppressRowDrag": {},
-        "suppressMoveWhenRowDragging": {}
+        "suppressMoveWhenRowDragging": {},
+        "rowDragText": {
+            "more": {
+                "name": "Custom Row Drag Text",
+                "url": "row-dragging/#custom-row-drag-text"
+            }
+        }
     },
     "fullWidth": {
         "meta": {

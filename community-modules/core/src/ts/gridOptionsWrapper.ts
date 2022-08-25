@@ -20,6 +20,7 @@ import { IDatasource } from './interfaces/iDatasource';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
 import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
 import { IViewportDatasource } from './interfaces/iViewportDatasource';
+import { Column } from './entities/column';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
@@ -618,6 +619,16 @@ export class GridOptionsWrapper {
 
     public isRowDragEntireRow() {
         return isTrue(this.gridOptions.rowDragEntireRow);
+    }
+
+    public getRowDragText(column?: Column) {
+        if (column) {
+            const colDef = column.getColDef();
+            if (colDef.rowDragText) {
+                return colDef.rowDragText;
+            }
+        }
+        return this.gridOptions.rowDragText;
     }
 
     public isSuppressRowDrag() {

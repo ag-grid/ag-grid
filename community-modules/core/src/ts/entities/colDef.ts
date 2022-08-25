@@ -63,7 +63,7 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
     /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false` */
     marryChildren?: boolean;
 
-    /** 
+    /**
     * The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.
     * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details.
     */
@@ -355,11 +355,14 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
 
     /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging. Default: `false` */
     rowDrag?: boolean | RowDragCallback<TData>;
+
     /**
      * A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.
-     * If this callback is not set, the current cell value will be used.
+     * If this callback is not set, the `rowDragText` callback in the `gridOptions` will be used and
+     * if there is no callback in the `gridOptions` the current cell value will be used.
      */
     rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
+
     /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. Default: `false` */
     dndSource?: boolean | DndSourceCallback<TData>;
     /** Function to allow custom drag functionality for native drag and drop. */

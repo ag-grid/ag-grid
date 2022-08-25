@@ -1,6 +1,11 @@
 import { Grid, ColDef, GridOptions, IRowDragItem } from '@ag-grid-community/core'
 
-var rowDragText = function (params: IRowDragItem) {
+var athleteRowDragTextCallback = function (params: IRowDragItem, dragItemCount: number) {
+  // keep double equals here because data can be a string or number
+  return `${dragItemCount} athlete(s) selected`
+}
+
+var rowDragTextCallback = function (params: IRowDragItem) {
   // keep double equals here because data can be a string or number
   if (params.rowNode!.data.year == '2012') {
     return params.defaultTextValue + ' (London Olympics)'
@@ -9,8 +14,12 @@ var rowDragText = function (params: IRowDragItem) {
 }
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', rowDrag: true },
-  { field: 'country' },
+  {
+    field: 'athlete',
+    rowDrag: true,
+    rowDragText: athleteRowDragTextCallback,
+  },
+  { field: 'country', rowDrag: true },
   { field: 'year', width: 100 },
   { field: 'date' },
   { field: 'sport' },
@@ -28,7 +37,9 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowDragManaged: true,
   columnDefs: columnDefs,
   animateRows: true,
-  rowDragText: rowDragText
+  rowDragText: rowDragTextCallback,
+  rowDragMultiRow: true,
+  rowSelection: 'multiple'
 }
 
 // setup the grid after the page has finished loading

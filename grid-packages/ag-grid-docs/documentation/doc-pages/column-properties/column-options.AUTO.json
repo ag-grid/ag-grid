@@ -422,7 +422,7 @@
     "type": { "returnType": "boolean | RowDragCallback<TData>" }
   },
   "rowDragText": {
-    "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the current cell value will be used. */",
+    "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the `rowDragText` callback in the `gridOptions` will be used and\n * if there is no callback in the `gridOptions` the current cell value will be used. */",
     "type": {
       "arguments": { "params": "IRowDragItem", "dragItemCount": "number" },
       "returnType": "string"
