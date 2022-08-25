@@ -173,6 +173,7 @@ describe('Axis Examples', () => {
         it(`for ${exampleName} it should create chart instance as expected`, async () => {
             const options: AgChartOptions = example.options;
             const chart = AgChartV2.create<any>(options);
+            await waitForChartStability(chart);
             await example.assertions(chart);
         });
 
@@ -213,6 +214,7 @@ describe('Axis Examples', () => {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
                 const chart = AgChartV2.create<any>(options);
+                await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 

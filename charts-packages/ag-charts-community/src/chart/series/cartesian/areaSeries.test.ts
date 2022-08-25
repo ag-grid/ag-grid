@@ -93,6 +93,7 @@ describe('AreaSeries', () => {
                 options.height = CANVAS_HEIGHT;
 
                 const chart = AgChartV2.create<any>(options);
+                await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 

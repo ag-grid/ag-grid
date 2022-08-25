@@ -29,6 +29,7 @@ function consoleWarnAssertions(options: AgCartesianChartOptions) {
         jest.clearAllMocks();
         options.axes[0].label.format = '%X %M'; // format string for Date objects, not valid for number values
         AgChartV2.update(chart, options);
+        await waitForChartStability(chart);
 
         expect(console.warn).toBeCalledTimes(1);
         expect(console.warn).toBeCalledWith(
@@ -38,6 +39,7 @@ function consoleWarnAssertions(options: AgCartesianChartOptions) {
         jest.clearAllMocks();
         options.axes[0].label.format = '%'; // multiply by 100, and then decimal notation with a percent sign - valid format string for number values
         AgChartV2.update(chart, options);
+        await waitForChartStability(chart);
 
         expect(console.warn).not.toBeCalled();
 
@@ -89,6 +91,7 @@ describe('AgChartV2', () => {
                 options.height = CANVAS_HEIGHT;
 
                 const chart = AgChartV2.create<any>(options);
+                await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 

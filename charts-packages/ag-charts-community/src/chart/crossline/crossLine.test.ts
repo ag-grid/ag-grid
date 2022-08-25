@@ -68,6 +68,7 @@ describe('crossLines', () => {
                 options.height = CANVAS_HEIGHT;
 
                 const chart = AgChartV2.create<CartesianChart>(options);
+                await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 

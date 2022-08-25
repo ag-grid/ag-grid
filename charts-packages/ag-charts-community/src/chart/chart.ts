@@ -518,6 +518,25 @@ export abstract class Chart extends Observable {
         }
     }
 
+    private _pendingFactoryUpdates: number = 0;
+    get pendingFactoryUpdates() {
+        return this._pendingFactoryUpdates;
+    }
+    registerPendingFactoryUpdate<T>(cb: () => Promise<T>) {
+        this._pendingFactoryUpdates++;
+        return cb()
+            .then((r) => {
+                this._pendingFactoryUpdates--;
+
+                return r;
+            })
+            .catch(e => {
+                this._pendingFactoryUpdates--;
+
+                throw e;
+            });
+    }
+    
     private _performUpdateType: ChartUpdateType = ChartUpdateType.NONE;
     get performUpdateType() {
         return this._performUpdateType;
@@ -813,8 +832,9 @@ export abstract class Chart extends Observable {
     }
 
     private resize(width: number, height: number) {
+        this.updateContext.firstResizeReceived = true;
+
         if (this.scene.resize(width, height)) {
-            this.updateContext.firstResizeReceived = true;
 
             this.background.width = this.width;
             this.background.height = this.height;

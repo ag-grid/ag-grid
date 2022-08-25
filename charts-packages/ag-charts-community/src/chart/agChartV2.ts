@@ -186,19 +186,21 @@ export abstract class AgChartV2 {
         AgChartV2.updateDelta<T>(chart as T, deltaOptions, userOptions);
     }
 
-    private static async updateDelta<T extends ChartType>(
+    private static updateDelta<T extends ChartType>(
         chart: T,
         update: Partial<ChartOptionType<T>>,
         userOptions: ChartOptionType<T>
     ) {
-        if (update.type == null) {
-            update = { ...update, type: chart.options.type || optionsType(update) };
-        }
-        debug('delta update', update);
-
-        await chart.awaitUpdateCompletion();
-
-        applyChartOptions(chart, update as ChartOptionType<typeof chart>, userOptions);
+        return chart.registerPendingFactoryUpdate(async () => {
+            if (update.type == null) {
+                update = { ...update, type: chart.options.type || optionsType(update) };
+            }
+            debug('delta update', update);
+    
+            await chart.awaitUpdateCompletion();
+    
+            applyChartOptions(chart, update as ChartOptionType<typeof chart>, userOptions);
+        })
     }
 }
 
