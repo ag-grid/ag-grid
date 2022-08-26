@@ -920,11 +920,13 @@ export abstract class Chart extends Observable {
     protected legendBBox: BBox = new BBox(0, 0, 0, 0);
 
     protected positionLegend(captionAutoPadding: number) {
-        if (!this.legend.enabled || !this.legend.data.length) {
+        const { legend, legendAutoPadding } = this;
+        legendAutoPadding.clear();
+
+        if (!legend.enabled || !legend.data.length) {
             return;
         }
 
-        const { legend, legendAutoPadding } = this;
         const width = this.width;
         const height = this.height - captionAutoPadding;
         const legendGroup = legend.group;
