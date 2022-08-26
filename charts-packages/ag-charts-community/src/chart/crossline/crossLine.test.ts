@@ -15,6 +15,7 @@ import { AgCartesianChartOptions, AgCrossLineOptions, AgCrossLineLabelPosition }
 import { AgChartV2 } from '../agChartV2';
 import { CartesianChart } from '../cartesianChart';
 import * as examples from './test/examples';
+import { Chart } from '../chart';
 
 expect.extend({ toMatchImageSnapshot });
 
@@ -171,6 +172,15 @@ const EXAMPLES: Record<string, CartesianTestCase> = {
 };
 
 describe('crossLines', () => {
+    let chart: Chart;
+
+    afterEach(() => {
+        if (chart) {
+            chart.destroy();
+            (chart as unknown) = undefined;
+        }
+    });
+
     let ctx = setupMockCanvas();
 
     describe('#create', () => {
@@ -189,7 +199,7 @@ describe('crossLines', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                const chart = AgChartV2.create<CartesianChart>(options);
+                chart = AgChartV2.create<CartesianChart>(options);
                 await example.assertions(chart);
             });
 
@@ -206,7 +216,7 @@ describe('crossLines', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                const chart = AgChartV2.create<CartesianChart>(options);
+                chart = AgChartV2.create<CartesianChart>(options);
                 await compare();
             });
         }

@@ -241,6 +241,17 @@ export class Scene {
         consoleLog: false,
     };
 
+    destroy() {
+        this.container = undefined;
+
+        const { layers } = this;
+        for (const layer of layers) {
+            layer.canvas.destroy();
+            delete layer['canvas'];
+        }
+        layers.splice(0, layers.length);
+    }
+
     render(opts?: { debugSplitTimes: number[]; extraDebugStats: Record<string, number> }) {
         const { debugSplitTimes = [performance.now()], extraDebugStats = {} } = opts || {};
         const {

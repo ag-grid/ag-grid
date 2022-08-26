@@ -52,7 +52,7 @@ export abstract class CartesianSeries<
     C extends SeriesNodeDataContext<any, any>,
     N extends Node = Marker
 > extends Series<C> {
-    private _contextNodeData: C[];
+    private _contextNodeData: C[] = [];
     get contextNodeData(): C[] {
         return this._contextNodeData?.slice();
     }
@@ -84,6 +84,13 @@ export abstract class CartesianSeries<
             renderLayerPerSubSeries = true,
         } = opts;
         this.opts = { pickGroupIncludes, pathsPerSeries, features, pathsZIndexSubOrderOffset, renderLayerPerSubSeries };
+    }
+
+    destroy() {
+        super.destroy();
+
+        this._contextNodeData.splice(0, this._contextNodeData.length); 
+        this.subGroups.splice(0, this.subGroups.length);
     }
 
     directionKeys: { [key in ChartAxisDirection]?: string[] } = {

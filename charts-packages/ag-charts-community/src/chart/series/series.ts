@@ -207,6 +207,10 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         this.pickModes = pickModes;
     }
 
+    destroy(): void {
+        // Override point for sub-classes.
+    }
+
     set grouped(g: boolean) {
         if (g === true) {
             throw new Error(`AG Charts - grouped: true is unsupported for series of type: ${this.type}`);

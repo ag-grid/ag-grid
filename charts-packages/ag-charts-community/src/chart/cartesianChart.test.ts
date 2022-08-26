@@ -173,11 +173,17 @@ const OPTIONS: AgCartesianChartOptions = {
 };
 
 describe('CartesianChart', () => {
+    let chart: CartesianChart;
+
     beforeEach(() => {
         console.warn = jest.fn();
     });
 
     afterEach(() => {
+        if (chart) {
+            chart.destroy();
+            (chart as unknown) = undefined;
+        }
         expect(console.warn).not.toBeCalled();
     });
 
@@ -201,7 +207,7 @@ describe('CartesianChart', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
     
-                const chart: CartesianChart = AgChartV2.create<any>(options);
+                chart = AgChartV2.create<any>(options);
                 await waitForChartStability(chart);
     
                 const seriesImpl = chart.series.find((v: any) => v.yKey === yKey || v.yKeys?.some((s) => s.includes(yKey)));
@@ -241,7 +247,7 @@ describe('CartesianChart', () => {
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
 
-            const chart: CartesianChart = AgChartV2.create<any>(options);
+            chart = AgChartV2.create<any>(options);
             await waitForChartStability(chart);
 
             const series = chart.series.find((v: any) => v.type === 'scatter');
