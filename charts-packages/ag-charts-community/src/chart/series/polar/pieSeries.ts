@@ -415,6 +415,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.group.visible = isVisible;
         this.seriesGroup.visible = isVisible;
         this.highlightGroup.visible = isVisible && this.chart?.highlightedDatum?.series === this;
+        this.labelGroup!.visible = isVisible;
 
         this.seriesGroup.opacity = this.getOpacity();
 
