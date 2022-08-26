@@ -252,7 +252,7 @@ export class Scene {
         layers.splice(0, layers.length);
     }
 
-    render(opts?: { debugSplitTimes: number[]; extraDebugStats: Record<string, number> }) {
+    async render(opts?: { debugSplitTimes: number[]; extraDebugStats: Record<string, number> }) {
         const { debugSplitTimes = [performance.now()], extraDebugStats = {} } = opts || {};
         const {
             canvas,

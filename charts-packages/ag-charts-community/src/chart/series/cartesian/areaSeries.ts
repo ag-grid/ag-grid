@@ -210,12 +210,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
     protected highlightedDatum?: MarkerSelectionDatum;
 
-    processData(): boolean {
+    async processData() {
         const { xKey, yKeys, seriesItemEnabled, xAxis, yAxis, normalizedTo } = this;
         const data = xKey && yKeys.length && this.data ? this.data : [];
 
         if (!xAxis || !yAxis) {
-            return false;
+            return;
         }
 
         // If the data is an array of rows like so:
@@ -353,8 +353,6 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             yMin === undefined && yMax === undefined ? undefined : [yMin ?? 0, yMax ?? 0],
             yAxis
         );
-
-        return true;
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -365,7 +363,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         }
     }
 
-    createNodeData() {
+    async createNodeData() {
         const { data, xAxis, yAxis, xData, yData } = this;
 
         if (!data || !xAxis || !yAxis || !xData.length || !yData.length) {
@@ -555,11 +553,11 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         return this.marker.isDirty();
     }
 
-    protected updatePaths(opts: {
+    protected async updatePaths(opts: {
         seriesHighlighted?: boolean;
         contextData: AreaSeriesNodeDataContext;
         paths: Path[];
-    }): void {
+    }) {
         const {
             contextData: { fillSelectionData, strokeSelectionData },
             paths: [fill, stroke],
@@ -578,12 +576,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         stroke.pointerEvents = PointerEvents.None;
     }
 
-    protected updatePathNodes(opts: {
+    protected async updatePathNodes(opts: {
         seriesHighlighted?: boolean;
         itemId?: string;
         paths: Path[];
         seriesIdx: number;
-    }): void {
+    }) {
         const {
             paths: [fill, stroke],
             seriesIdx,
@@ -649,7 +647,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         }
     }
 
-    protected updateMarkerSelection(opts: {
+    protected async updateMarkerSelection(opts: {
         nodeData: MarkerSelectionDatum[];
         markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any>;
     }) {
@@ -674,7 +672,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         return updateMarkerSelection.merge(enterMarkers);
     }
 
-    protected updateMarkerNodes(opts: {
+    protected async updateMarkerNodes(opts: {
         markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any>;
         isHighlight: boolean;
     }) {
@@ -756,7 +754,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         }
     }
 
-    protected updateLabelSelection(opts: {
+    protected async updateLabelSelection(opts: {
         labelData: LabelSelectionDatum[];
         labelSelection: Selection<Text, Group, LabelSelectionDatum, any>;
     }) {
@@ -770,7 +768,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         return updateLabels.merge(enterLabels);
     }
 
-    protected updateLabelNodes(opts: { labelSelection: Selection<Text, Group, LabelSelectionDatum, any> }) {
+    protected async updateLabelNodes(opts: { labelSelection: Selection<Text, Group, LabelSelectionDatum, any> }) {
         const { labelSelection } = opts;
         const { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
         labelSelection.each((text, datum) => {

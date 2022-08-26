@@ -316,7 +316,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     shadow?: DropShadow = undefined;
 
     protected smallestDataInterval?: { x: number; y: number } = undefined;
-    processData(): boolean {
+    async processData() {
         const { xKey, yKeys, seriesItemEnabled } = this;
         const data = xKey && yKeys.length && this.data ? this.data : [];
 
@@ -324,7 +324,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const yAxis = this.getValueAxis();
 
         if (!(xAxis && yAxis)) {
-            return false;
+            return;
         }
 
         const setSmallestXInterval = (curr: number, prev: number) => {
@@ -399,7 +399,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         if (yMin === Infinity && yMax === -Infinity) {
             // There's no data in the domain.
             this.yDomain = [];
-            return true;
+            return;
         }
 
         if (normalizedTo && isFinite(normalizedTo)) {
@@ -415,8 +415,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
 
         this.yDomain = this.fixNumericExtent([yMin, yMax], this.yAxis);
-
-        return true;
     }
 
     findLargestMinMax(groups: { min?: number; max?: number }[][]): { min: number; max: number } {
@@ -492,7 +490,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return step;
     }
 
-    createNodeData() {
+    async createNodeData() {
         const { chart, data, visible } = this;
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
@@ -672,7 +670,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return contexts.reduce((r, n) => r.concat(...n), []);
     }
 
-    protected updateDatumSelection(opts: {
+    protected async updateDatumSelection(opts: {
         nodeData: BarNodeDatum[];
         datumSelection: Selection<Rect, Group, BarNodeDatum, any>;
     }) {
@@ -686,7 +684,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return updateRects.merge(enterRects);
     }
 
-    protected updateDatumNodes(opts: {
+    protected async updateDatumNodes(opts: {
         datumSelection: Selection<Rect, Group, BarNodeDatum, any>;
         isHighlight: boolean;
     }) {
@@ -763,7 +761,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         });
     }
 
-    protected updateLabelSelection(opts: {
+    protected async updateLabelSelection(opts: {
         labelData: BarNodeDatum[];
         labelSelection: Selection<Text, Group, BarNodeDatum, any>;
     }) {
@@ -781,7 +779,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return updateLabels.merge(enterLabels);
     }
 
-    protected updateLabelNodes(opts: { labelSelection: Selection<Text, Group, BarNodeDatum, any> }) {
+    protected async updateLabelNodes(opts: { labelSelection: Selection<Text, Group, BarNodeDatum, any> }) {
         const { labelSelection } = opts;
         const {
             label: { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color },
