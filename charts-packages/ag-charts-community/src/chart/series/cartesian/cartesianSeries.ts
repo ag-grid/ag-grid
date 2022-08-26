@@ -74,7 +74,7 @@ export abstract class CartesianSeries<
     protected readonly seriesItemEnabled = new Map<string, boolean>();
 
     protected constructor(opts: Partial<SeriesOpts> & { pickModes?: SeriesNodePickMode[] } = {}) {
-        super({ seriesGroupUsesLayer: true, pickModes: opts.pickModes });
+        super({ useSeriesGroupLayer: true, pickModes: opts.pickModes });
 
         const {
             pickGroupIncludes = ['datumNodes'] as PickGroupInclude[],
@@ -89,7 +89,7 @@ export abstract class CartesianSeries<
     destroy() {
         super.destroy();
 
-        this._contextNodeData.splice(0, this._contextNodeData.length); 
+        this._contextNodeData.splice(0, this._contextNodeData.length);
         this.subGroups.splice(0, this.subGroups.length);
     }
 
@@ -310,26 +310,26 @@ export abstract class CartesianSeries<
                     pickGroup,
                 } = subGroup;
                 const { itemId } = contextNodeData[seriesIdx];
-    
+
                 const subGroupVisible = visible && (seriesItemEnabled.get(itemId) ?? true);
                 const subGroupOpacity = this.getOpacity({ itemId });
                 group.opacity = subGroupOpacity;
                 group.visible = subGroupVisible;
                 pickGroup.visible = subGroupVisible;
                 labelGroup.visible = subGroupVisible;
-    
+
                 if (markerGroup) {
                     markerGroup.opacity = subGroupOpacity;
                     markerGroup.zIndex = group.zIndex >= Layers.SERIES_LAYER_ZINDEX ? group.zIndex : group.zIndex + 1;
                     markerGroup.visible = subGroupVisible;
                 }
-    
+
                 for (const path of paths) {
                     if (path.parent !== group) {
                         path.opacity = subGroupOpacity;
                         path.visible = subGroupVisible;
                     }
-                }    
+                }
 
                 if (!group.visible) {
                     return;
