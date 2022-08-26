@@ -74,6 +74,15 @@ const EXAMPLES: Record<string, TestCase> = {
 };
 
 describe('AreaSeries', () => {
+    let chart: Chart;
+
+    afterEach(() => {
+        if (chart) {
+            chart.destroy();
+            (chart as unknown) = undefined;
+        }
+    });
+
     let ctx = setupMockCanvas();
 
     describe('#create', () => {
@@ -92,7 +101,7 @@ describe('AreaSeries', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                const chart = AgChartV2.create<any>(options);
+                chart = AgChartV2.create<any>(options);
                 await example.assertions(chart);
             });
 
@@ -109,7 +118,7 @@ describe('AreaSeries', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                const chart = AgChartV2.create<any>(options) as Chart;
+                chart = AgChartV2.create<any>(options) as Chart;
                 await compare();
 
                 if (example.extraScreenshotActions) {

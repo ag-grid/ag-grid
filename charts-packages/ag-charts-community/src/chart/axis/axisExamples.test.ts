@@ -157,6 +157,15 @@ function calculateAxisBBox(axis: ChartAxis<any>): { x: number; y: number; width:
 }
 
 describe('Axis Examples', () => {
+    let chart: Chart;
+
+    afterEach(() => {
+        if (chart) {
+            chart.destroy();
+            (chart as unknown) = undefined;
+        }
+    });
+
     let ctx = setupMockCanvas();
 
     beforeEach(() => {
@@ -172,7 +181,7 @@ describe('Axis Examples', () => {
     for (const [exampleName, example] of Object.entries(EXAMPLES)) {
         it(`for ${exampleName} it should create chart instance as expected`, async () => {
             const options: AgChartOptions = example.options;
-            const chart = AgChartV2.create<any>(options);
+            chart = AgChartV2.create<any>(options);
             await example.assertions(chart);
         });
 
@@ -193,7 +202,7 @@ describe('Axis Examples', () => {
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
 
-            const chart = AgChartV2.create<any>(options) as Chart;
+            chart = AgChartV2.create<any>(options) as Chart;
             await compare();
 
             if (example.extraScreenshotActions) {
@@ -212,7 +221,7 @@ describe('Axis Examples', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES_NO_SERIES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
-                const chart = AgChartV2.create<any>(options);
+                chart = AgChartV2.create<any>(options);
                 await example.assertions(chart);
             });
 
@@ -229,7 +238,7 @@ describe('Axis Examples', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                const chart = AgChartV2.create<any>(options) as Chart;
+                chart = AgChartV2.create<any>(options) as Chart;
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -250,7 +259,7 @@ describe('Axis Examples', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                const chart = AgChartV2.create<any>(options) as Chart;
+                chart = AgChartV2.create<any>(options) as Chart;
                 const reference = await snapshot();
 
                 chart.series.forEach((s) => {

@@ -18,6 +18,15 @@ import { TreemapSeries } from './series/hierarchy/treemapSeries';
 expect.extend({ toMatchImageSnapshot });
 
 describe('HierarchyChart', () => {
+    let chart: HierarchyChart;
+
+    afterEach(() => {
+        if (chart) {
+            chart.destroy();
+            (chart as unknown) = undefined;
+        }
+    });
+
     let ctx = setupMockCanvas();
 
     const compare = async (chart: Chart) => {
@@ -50,7 +59,7 @@ describe('HierarchyChart', () => {
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
 
-            const chart = AgChartV2.create<any>(options);
+            chart = AgChartV2.create<any>(options);
             await compare(chart);
         });
 
@@ -61,7 +70,7 @@ describe('HierarchyChart', () => {
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
 
-            const chart: HierarchyChart = AgChartV2.create<any>(options);
+            chart = AgChartV2.create<any>(options);
             await waitForChartStability(chart);
 
             const seriesImpl = chart.series[0] as TreemapSeries;
