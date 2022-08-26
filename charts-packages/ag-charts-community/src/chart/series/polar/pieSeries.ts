@@ -106,6 +106,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private highlightSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(
         this.highlightGroup
     ).selectAll<Group>();
+    private labelSelection: Selection<Group, Group, PieNodeDatum, any>;
 
     /**
      * The processed data that gets visualized.
@@ -130,12 +131,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         if (oldTitle !== value) {
             if (oldTitle) {
-                this.seriesGroup.removeChild(oldTitle.node);
+                this.labelGroup?.removeChild(oldTitle.node);
             }
 
             if (value) {
                 value.node.textBaseline = 'bottom';
-                this.seriesGroup.appendChild(value.node);
+                this.labelGroup?.appendChild(value.node);
             }
 
             this._title = value;
@@ -204,6 +205,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     shadow?: DropShadow = undefined;
 
     readonly highlightStyle = new PieHighlightStyle();
+
+    constructor() {
+        super({ useLabelLayer: true });
+
+        this.labelSelection = Selection.select(this.labelGroup!).selectAll<Group>();
+    }
 
     visibleChanged() {
         this.processSeriesItemEnabled();
@@ -369,30 +376,34 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private async updateGroupSelection() {
-        const { groupSelection, highlightSelection } = this;
+        const { groupSelection, highlightSelection, labelSelection } = this;
 
-        const update = (selection: typeof groupSelection, appendLabels: boolean) => {
+        const update = (selection: typeof groupSelection) => {
             const updateGroups = selection.setData(this.groupSelectionData);
             updateGroups.exit.remove();
 
             const enterGroups = updateGroups.enter.append(Group);
             enterGroups.append(Sector).each((node) => (node.tag = PieNodeTag.Sector));
-            if (appendLabels) {
-                enterGroups.append(Line).each((node) => {
-                    node.tag = PieNodeTag.Callout;
-                    node.pointerEvents = PointerEvents.None;
-                });
-                enterGroups.append(Text).each((node) => {
-                    node.tag = PieNodeTag.Label;
-                    node.pointerEvents = PointerEvents.None;
-                });
-            }
 
             return updateGroups.merge(enterGroups);
         };
 
-        this.groupSelection = update(groupSelection, true);
-        this.highlightSelection = update(highlightSelection, false);
+        this.groupSelection = update(groupSelection);
+        this.highlightSelection = update(highlightSelection);
+
+        const updateLabels = labelSelection.setData(this.groupSelectionData);
+        updateLabels.exit.remove();
+
+        const enterLabels = updateLabels.enter.append(Group);
+        enterLabels.append(Line).each((node) => {
+            node.tag = PieNodeTag.Callout;
+            node.pointerEvents = PointerEvents.None;
+        });
+        enterLabels.append(Text).each((node) => {
+            node.tag = PieNodeTag.Label;
+            node.pointerEvents = PointerEvents.None;
+        });
+        this.labelSelection = updateLabels.merge(enterLabels);
     }
 
     private async updateNodes() {
@@ -503,7 +514,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         const { colors: calloutColors, length: calloutLength, strokeWidth: calloutStrokeWidth } = callout;
 
-        this.groupSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
+        this.labelSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
             const radius = radiusScale.convert(datum.radius, clamper);
             const outerRadius = Math.max(0, radius);
 
@@ -522,7 +533,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         {
             const { offset, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
 
-            this.groupSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum, index) => {
+            this.labelSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum, index) => {
                 const label = datum.label;
                 const radius = radiusScale.convert(datum.radius, clamper);
                 const outerRadius = Math.max(0, radius);

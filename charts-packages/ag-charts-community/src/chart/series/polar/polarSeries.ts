@@ -25,8 +25,8 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
      */
     radius: number = 0;
 
-    constructor() {
-        super({ pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH] });
+    constructor({ useLabelLayer = false }) {
+        super({ useLabelLayer, pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH] });
     }
 
     getLabelData(): PointLabelDatum[] {

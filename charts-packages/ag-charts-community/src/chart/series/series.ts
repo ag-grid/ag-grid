@@ -136,6 +136,9 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     readonly highlightNode: Group;
     readonly highlightLabel: Group;
 
+    // Lazily initialised labelGroup for label presentation.
+    readonly labelGroup?: Group;
+
     // The group node that contains all the nodes that can be "picked" (react to hover, tap, click).
     readonly pickGroup: Group;
 
@@ -177,14 +180,18 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     cursor = 'default';
 
-    constructor({ seriesGroupUsesLayer = true, pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST] } = {}) {
+    constructor({
+        useSeriesGroupLayer = true,
+        useLabelLayer = false,
+        pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST],
+    } = {}) {
         super();
 
         const { group } = this;
         this.seriesGroup = group.appendChild(
             new Group({
                 name: `${this.id}-series`,
-                layer: seriesGroupUsesLayer,
+                layer: useSeriesGroupLayer,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
             })
         );
@@ -205,6 +212,16 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         this.highlightLabel.zIndex = 10;
 
         this.pickModes = pickModes;
+
+        if (useLabelLayer) {
+            this.labelGroup = group.appendChild(
+                new Group({
+                    name: `${this.id}-series-labels`,
+                    layer: true,
+                    zIndex: Layers.SERIES_LABEL_ZINDEX,
+                })
+            );
+        }
     }
 
     destroy(): void {
