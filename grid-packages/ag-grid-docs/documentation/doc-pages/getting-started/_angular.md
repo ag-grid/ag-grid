@@ -20,6 +20,13 @@
 |
 |</a>
 |</li>
+|<li class="nav-item">
+|<a class="nav-link" id="styles-tab" data-toggle="tab" href="#styles" role="tab" aria-controls="styles" aria-selected="false">
+|
+| styles.scss
+|
+|</a>
+|</li>
 |</ul>
 |<div class="tab-content">
 |<div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
@@ -29,7 +36,7 @@
 | import { ColDef } from 'ag-grid-community';
 |
 | @Component({
-|   selector: 'my-app',
+|   selector: 'app-root',
 |   templateUrl: './app.component.html',
 |   styleUrls: [ './app.component.scss' ]
 | })
@@ -55,11 +62,20 @@
 |
 | ```html
 | <ag-grid-angular
-|     style="width: 500px; height: 150px;"
+|     style="width: 500px; height: 350px;"
 |     class="ag-theme-alpine"
 |     [rowData]="rowData"
 |     [columnDefs]="columnDefs">
 | </ag-grid-angular>
+| ```
+|
+|</div>
+|<div class="tab-pane" id="styles" role="tabpanel" aria-labelledby="styles-tab">
+|
+| ```scss
+| @import 'ag-grid-community/styles/ag-grid.css';
+| @import 'ag-grid-community/styles/ag-theme-alpine.css';
+|
 | ```
 |
 |</div>

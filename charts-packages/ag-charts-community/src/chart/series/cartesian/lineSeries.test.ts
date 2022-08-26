@@ -62,6 +62,15 @@ const EXAMPLES: Record<string, TestCase> = {
 };
 
 describe('LineSeries', () => {
+    let chart: Chart;
+
+    afterEach(() => {
+        if (chart) {
+            chart.destroy();
+            (chart as unknown) = undefined;
+        }
+    });
+
     let ctx = setupMockCanvas();
 
     describe('#create', () => {
@@ -80,7 +89,7 @@ describe('LineSeries', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                const chart = AgChartV2.create<any>(options);
+                chart = AgChartV2.create<any>(options);
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
@@ -98,7 +107,7 @@ describe('LineSeries', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                const chart = AgChartV2.create<any>(options) as Chart;
+                chart = AgChartV2.create<any>(options) as Chart;
                 await compare();
 
                 if (example.extraScreenshotActions) {

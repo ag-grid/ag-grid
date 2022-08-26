@@ -63,6 +63,15 @@ const EXAMPLES: Record<string, PolarTestCase> = {
 };
 
 describe('PolarSeries', () => {
+    let chart: Chart;
+
+    afterEach(() => {
+        if (chart) {
+            chart.destroy();
+            (chart as unknown) = undefined;
+        }
+    });
+
     let ctx = setupMockCanvas();
 
     describe('#create', () => {
@@ -81,7 +90,7 @@ describe('PolarSeries', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                const chart = AgChartV2.create<PolarChart>(options);
+                chart = AgChartV2.create<PolarChart>(options);
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
@@ -99,7 +108,7 @@ describe('PolarSeries', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                const chart = AgChartV2.create<PolarChart>(options) as Chart;
+                chart = AgChartV2.create<PolarChart>(options) as Chart;
                 await compare();
 
                 if (example.extraScreenshotActions) {

@@ -16,6 +16,7 @@ import {
 import { AgChartOptions } from '../agChartOptions';
 import { AgChartV2 } from '../agChartV2';
 import * as examples from './test/examples';
+import { Chart } from '../chart';
 
 expect.extend({ toMatchImageSnapshot });
 
@@ -120,6 +121,15 @@ const EXAMPLES: Record<string, TestCase> = {
 };
 
 describe('series labels', () => {
+    let chart: Chart;
+
+    afterEach(() => {
+        if (chart) {
+            chart.destroy();
+            (chart as unknown) = undefined;
+        }
+    });
+
     let ctx = setupMockCanvas();
 
     describe('#create', () => {
@@ -138,7 +148,7 @@ describe('series labels', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                const chart = AgChartV2.create<any>(options);
+                chart = AgChartV2.create<any>(options);
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
@@ -156,7 +166,7 @@ describe('series labels', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                const chart = AgChartV2.create<any>(options);
+                chart = AgChartV2.create<any>(options);
                 await compare();
             });
         }
