@@ -740,13 +740,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             node.strokeOpacity = marker.strokeOpacity ?? strokeOpacity ?? 1;
             node.size = format && format.size !== undefined ? format.size : size;
 
-            node.translationX = datum.point?.x ?? 0;
-            node.translationY = datum.point?.y ?? 0;
+            node.translationX = datum.point.x;
+            node.translationY = datum.point.y;
             node.visible =
-                node.size > 0 &&
-                !!seriesItemEnabled.get(datum.yKey) &&
-                !isNaN(datum.point?.x || 0) &&
-                !isNaN(datum.point?.y || 0);
+                node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x) && !isNaN(datum.point.y);
         });
 
         if (!isDatumHighlighted) {
