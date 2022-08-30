@@ -53,6 +53,12 @@ export class NumberAxis extends ChartAxis {
         if (primaryTickCount) {
             // when `primaryTickCount` is supplied the current axis is a secondary axis which needs to be aligned to
             // the primary by constraining the tick count to the primary axis tick count
+            if (isNaN(domain[0]) || isNaN(domain[1])) {
+                scale.domain = domain;
+                this.ticks = undefined;
+                return;
+            }
+
             const [d, ticks] = calculateNiceSecondaryAxis(domain, primaryTickCount);
             scale.domain = d;
             this.ticks = ticks;
@@ -122,7 +128,7 @@ export class NumberAxis extends ChartAxis {
         if (isYAxis) {
             // the `primaryTickCount` is used to align the secondary axis tick count with the primary
             this.setDomain(domain, primaryTickCount);
-            return primaryTickCount ?? this.scale.ticks!(this.calculatedTickCount).length;
+            return primaryTickCount || this.scale.ticks!(this.calculatedTickCount).length;
         }
 
         return super.updateDomain(domain, isYAxis, primaryTickCount);

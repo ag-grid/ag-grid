@@ -202,7 +202,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._scale;
     }
 
-    ticks: any[];
+    ticks?: any[];
     protected getTicks() {
         return this.ticks ?? this.scale.ticks!(this.calculatedTickCount);
     }
