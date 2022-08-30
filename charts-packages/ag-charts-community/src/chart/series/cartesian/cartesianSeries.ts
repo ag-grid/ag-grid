@@ -413,6 +413,10 @@ export abstract class CartesianSeries<
         for (const context of contextNodeData) {
             for (const datum of context.nodeData) {
                 const { point: { x: datumX = NaN, y: datumY = NaN } = {} } = datum;
+                if (isNaN(datumX) || isNaN(datumY)) {
+                    continue;
+                }
+
                 const isInRange = xAxis?.inRange(datumX) && yAxis?.inRange(datumY);
                 if (!isInRange) {
                     continue;
@@ -462,6 +466,10 @@ export abstract class CartesianSeries<
         for (const context of contextNodeData) {
             for (const datum of context.nodeData) {
                 const { point: { x: datumX = NaN, y: datumY = NaN } = {} } = datum;
+                if (isNaN(datumX) || isNaN(datumY)) {
+                    continue;
+                }
+
                 const isInRange = xAxis?.inRange(datumX) && yAxis?.inRange(datumY);
                 if (!isInRange) {
                     continue;
