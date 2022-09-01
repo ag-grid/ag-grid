@@ -1,0 +1,65 @@
+{
+  "version": "0.0.1",
+  "name": "@ag-grid-community/solid",
+  "description": "{{desc_of_lib}}",
+  "license": "MIT",
+  "author": "{{me}}",
+  "contributors": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/{{me}}/{{name_of_lib}}.git"
+  },
+  "homepage": "https://github.com/{{me}}/{{name_of_lib}}#readme",
+  "bugs": {
+    "url": "https://github.com/{{me}}/{{name_of_lib}}/issues"
+  },
+  "private": false,
+  "sideEffects": false,
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "solid": "./dist/source/index.jsx",
+      "import": "./dist/esm/index.js",
+      "browser": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "node": "./dist/cjs/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite serve dev",
+    "test": "echo \"test not setup\"",
+    "build": "rollup -c",
+    "prepublishOnly": "pnpm build",
+    "format": "prettier -w \"src/**/*.{js,ts,json,css,tsx,jsx}\" \"dev/**/*.{js,ts,json,css,tsx,jsx}\"",
+    "update-deps": "taze -w && pnpm i",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "solid-js": ">=1.0.0",
+    "@ag-grid-community/core": "~28.1.1"
+  },
+  "devDependencies": {
+    "@ag-grid-community/core": "~28.1.1",
+    "@ag-grid-community/styles": "~28.1.1",
+    "@ag-grid-community/client-side-row-model": "~28.1.1",
+    "prettier": "2.7.1",
+    "rollup": "^2.77.2",
+    "rollup-preset-solid": "^1.4.0",
+    "typescript": "^4.7.4",
+    "solid-js": "^1.4.8",
+    "taze": "^0.7.6",
+    "vite": "^3.0.4",
+    "vite-plugin-solid": "^2.3.0"
+  },
+  "keywords": [
+    "solid"
+  ],
+  "packageManager": "pnpm@7.5.0"
+}

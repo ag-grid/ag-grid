@@ -59,3 +59,6 @@
 [submodule "examples-charts/ag-charts-angular-legacy-example"]
 	path = examples-charts/ag-charts-angular-legacy-example
 	url = https://github.com/ag-grid/ag-charts-angular-legacy-example.git
+[submodule "examples-grid/ag-grid-solid-example"]
+	path = examples-grid/ag-grid-solid-example
+	url = git@github.com:ag-grid/ag-grid-solid-example.git
