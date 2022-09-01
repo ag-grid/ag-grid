@@ -4632,5 +4632,6 @@
   "FloorFn": {},
   "OffsetFn": {},
   "CountFn": {},
-  "FieldFn": {}
+  "FieldFn": {},
+  "ValidatePredicate": {}
 }

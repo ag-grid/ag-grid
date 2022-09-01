@@ -1,4 +1,6 @@
-export function Validate(predicate: (v: any) => boolean) {
+export type ValidatePredicate = (v: any) => boolean;
+
+export function Validate(predicate: ValidatePredicate) {
     return function (target: any, key: any) {
         // `target` is either a constructor (static member) or prototype (instance member)
         const privateKey = `__${key}`;
@@ -30,17 +32,19 @@ export function Validate(predicate: (v: any) => boolean) {
     };
 }
 
+export const OPTIONAL = (v: any, predicate: ValidatePredicate) => v === undefined || predicate(v);
+
 export const BOOLEAN = (v: any) => v === true || v === false;
-export const OPT_BOOLEAN = (v: any) => v === undefined || v === true || v === false;
+export const OPT_BOOLEAN = (v: any) => OPTIONAL(v, BOOLEAN);
 
 export const STRING = (v: any) => typeof v === 'string';
-export const OPT_STRING = (v: any) => v === undefined || typeof v === 'string';
+export const OPT_STRING = (v: any) => OPTIONAL(v, STRING);
 
-export function OPT_NUMBER(min?: number, max?: number) {
-    return (v: any) => v === undefined || (typeof v === 'number' && v >= (min ?? -Infinity) && v <= (max ?? Infinity));
-}
 export function NUMBER(min?: number, max?: number) {
     return (v: any) => typeof v === 'number' && v >= (min ?? -Infinity) && v <= (max ?? Infinity);
+}
+export function OPT_NUMBER(min?: number, max?: number) {
+    return (v: any) => OPTIONAL(v, NUMBER(min, max));
 }
 
 const FONT_WEIGHTS = [
@@ -58,8 +62,12 @@ const FONT_WEIGHTS = [
     '800',
     '900',
 ];
-export const OPT_FONT_STYLE = (v: any) => v === undefined || v === 'normal' || v === 'italic' || v === 'oblique';
-export const OPT_FONT_WEIGHT = (v: any) => v === undefined || FONT_WEIGHTS.includes(v);
+
+export const FONT_STYLE = (v: any) => v === 'normal' || v === 'italic' || v === 'oblique';
+export const OPT_FONT_STYLE = (v: any) => OPTIONAL(v, FONT_STYLE);
+
+export const FONT_WEIGHT = (v: any) => FONT_WEIGHTS.includes(v);
+export const OPT_FONT_WEIGHT = (v: any) => OPTIONAL(v, FONT_WEIGHT);
 
 export function Deprecated(message?: string, opts?: { default: any }) {
     let logged = false;
