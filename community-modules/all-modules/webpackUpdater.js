@@ -7,7 +7,7 @@ const frameworkModules = [
     'angular-legacy',
     'vue',
     'vue3',
-    'polymer'
+    'solid'
 ];
 
 const cssModules = [
