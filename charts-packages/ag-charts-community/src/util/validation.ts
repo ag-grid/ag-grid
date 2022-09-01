@@ -6,30 +6,36 @@ export function Validate(predicate: ValidatePredicate) {
         // `target` is either a constructor (static member) or prototype (instance member)
         const privateKey = `__${key}`;
 
-        if (!target[key]) {
-            const setter = function (v: any) {
-                if (predicate(v)) {
+        let prevSet: ((v: any) => void) | undefined;
+        const descriptor = Object.getOwnPropertyDescriptor(target, key);
+        prevSet = descriptor?.set;
+
+        const setter = function (v: any) {
+            if (predicate(v)) {
+                if (prevSet) {
+                    prevSet.call(this, v);
+                } else {
                     this[privateKey] = v;
-                    return;
                 }
+                return;
+            }
 
-                console.warn(
-                    `AG Charts - Property [${
-                        target.constructor?.name ?? target.className
-                    }.${key}] cannot be set to [${v}], ignoring.`
-                );
-            };
-            const getter = function () {
-                return this[privateKey];
-            };
+            console.warn(
+                `AG Charts - Property [${
+                    target.constructor?.name ?? target.className
+                }.${key}] cannot be set to [${v}], ignoring.`
+            );
+        };
+        const getter = function () {
+            return this[privateKey];
+        };
 
-            Object.defineProperty(target, key, {
-                set: setter,
-                get: getter,
-                enumerable: true,
-                configurable: false,
-            });
-        }
+        Object.defineProperty(target, key, {
+            set: setter,
+            get: getter,
+            enumerable: true,
+            configurable: false,
+        });
     };
 }
 
