@@ -1,3 +1,5 @@
+import { CountableTimeInterval } from './time/interval';
+
 export type ValidatePredicate = (v: any) => boolean;
 
 export function Validate(predicate: ValidatePredicate) {
@@ -47,6 +49,12 @@ export function OPT_NUMBER(min?: number, max?: number) {
     return (v: any) => OPTIONAL(v, NUMBER(min, max));
 }
 
+const TEXT_ALIGNS = ['right', 'left', 'start', 'center', 'end'];
+export const TEXT_ALIGN = (v: any) => TEXT_ALIGNS.includes(v);
+
+const TEXT_BASELINES = ['alphabetic', 'bottom', 'hanging', 'ideographic', 'middle', 'top'];
+export const TEXT_BASELINE = (v: any) => TEXT_BASELINES.includes(v);
+
 const FONT_WEIGHTS = [
     'normal',
     'bold',
@@ -68,6 +76,32 @@ export const OPT_FONT_STYLE = (v: any) => OPTIONAL(v, FONT_STYLE);
 
 export const FONT_WEIGHT = (v: any) => FONT_WEIGHTS.includes(v);
 export const OPT_FONT_WEIGHT = (v: any) => OPTIONAL(v, FONT_WEIGHT);
+
+export const TICK_COUNT = (v: any) => NUMBER(0)(v) || v instanceof CountableTimeInterval;
+export const OPT_TICK_COUNT = (v: any) => OPTIONAL(v, TICK_COUNT);
+
+export const LINE_DASH = (v: any) => Array.isArray(v) && v.every((e) => NUMBER(0)(e));
+export const OPT_LINE_DASH = (v: any) => OPTIONAL(v, LINE_DASH);
+
+const LINE_CAPS = ['butt', 'round', 'square'];
+export const LINE_CAP = (v: any) => LINE_CAPS.includes(v);
+export const OPT_LINE_CAP = (v: any) => OPTIONAL(v, LINE_CAP);
+
+const LINE_JOINS = ['round', 'bevel', 'miter'];
+export const LINE_JOIN = (v: any) => LINE_JOINS.includes(v);
+export const OPT_LINE_JOIN = (v: any) => OPTIONAL(v, LINE_JOIN);
+
+const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
+export const GRID_STYLE = (v: any) =>
+    Array.isArray(v) &&
+    v.every((o) => {
+        for (let key in o) {
+            if (!GRID_STYLE_KEYS.includes(key)) {
+                return false;
+            }
+        }
+        return true;
+    });
 
 export function Deprecated(message?: string, opts?: { default: any }) {
     let logged = false;
