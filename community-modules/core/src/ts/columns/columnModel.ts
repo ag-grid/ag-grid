@@ -176,6 +176,10 @@ export class ColumnModel extends BeanStub {
 
     // all columns to be rendered
     private viewportColumns: Column[] = [];
+
+    // A hash key to keep track of changes in viewport columns
+    private viewportColumnsHash: string = '';
+
     // same as viewportColumns, except we always include columns with headerAutoHeight
     private headerViewportColumns: Column[] = [];
 
@@ -805,7 +809,7 @@ export class ColumnModel extends BeanStub {
     }
 
     private isColumnInHeaderViewport(col: Column): boolean {
-        // for headers, we never filter out autoHeaderHeight columns, if calculating 
+        // for headers, we never filter out autoHeaderHeight columns, if calculating
         if (col.isAutoHeaderHeight()) { return true; }
 
         return this.isColumnInRowViewport(col);
@@ -3362,6 +3366,7 @@ export class ColumnModel extends BeanStub {
         this.displayedColumns = [];
         this.viewportColumns = [];
         this.headerViewportColumns = [];
+        this.viewportColumnsHash = '';
     }
 
     private updateGroupsAndDisplayedColumns(source: ColumnEventType) {
@@ -3575,13 +3580,14 @@ export class ColumnModel extends BeanStub {
     }
 
     private extractViewport(): boolean {
-        const hashBefore = this.viewportColumns.map(column => column.getId()).join('#');
-        this.extractViewportColumns();
-        const hashAfter = this.viewportColumns.map(column => column.getId()).join('#');
+        const hashColumn = (c: Column) => `${c.getId()}-${c.getPinned() || 'normal'}`;
 
-        const changed = hashBefore !== hashAfter;
+        this.extractViewportColumns();
+        const newHash = this.viewportColumns.map(hashColumn).join('#');
+        const changed = this.viewportColumnsHash !== newHash;
 
         if (changed) {
+            this.viewportColumnsHash = newHash;
             this.calculateHeaderRows();
         }
 
@@ -3750,7 +3756,7 @@ export class ColumnModel extends BeanStub {
             if (availablePixels <= 0) {
                 // no width, set everything to minimum
                 colsToSpread.forEach((column: Column) => {
-                    const widthOverride = limitsMap?.[column.getId()]?.minWidth ?? params?.defaultMinWidth; 
+                    const widthOverride = limitsMap?.[column.getId()]?.minWidth ?? params?.defaultMinWidth;
                     if (typeof widthOverride === 'number') {
                         column.setActualWidth(widthOverride);
                         return;
