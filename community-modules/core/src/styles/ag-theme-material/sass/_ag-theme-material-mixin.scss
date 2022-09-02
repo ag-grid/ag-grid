@@ -191,6 +191,12 @@
         height: ag-param(grid-size) * 7;
     }
 
+    .ag-filter-apply-panel-button {
+        @include ag-theme-rtl((
+            margin-left: var(--ag-grid-size)
+        ));
+    }
+
     .ag-layout-auto-height, .ag-layout-print {
         .ag-center-cols-clipper, .ag-center-cols-container {
             min-height: 150px;
