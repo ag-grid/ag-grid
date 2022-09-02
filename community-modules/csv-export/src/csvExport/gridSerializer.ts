@@ -203,6 +203,9 @@ export class GridSerializer extends BeanStub {
             const usingSsrm = rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE;
             const onlySelectedNonStandardModel = !usingCsrm && params.onlySelected;
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
+            const {
+                exportedRows = 'filteredAndSorted',
+            } = params;
 
             if (params.rowPositions) {
                 params.rowPositions
@@ -231,7 +234,9 @@ export class GridSerializer extends BeanStub {
                     // here is everything else - including standard row model and selected. we don't use
                     // the selection model even when just using selected, so that the result is the order
                     // of the rows appearing on the screen.
-                    if (usingCsrm) {
+                    if (exportedRows === 'all') {
+                        rowModel.forEachNode(processRow);
+                    } else if (usingCsrm) {
                         (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(processRow);
                     } else if (usingSsrm) {
                         (rowModel as IServerSideRowModel).forEachNodeAfterFilterAndSort(processRow);

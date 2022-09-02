@@ -11600,6 +11600,10 @@
       "description": "/** String to use as the file name. */",
       "type": { "returnType": "string", "optional": true }
     },
+    "exportedRows": {
+      "description": "/** Determines whether rows are exported before being filtered and sorted.\n * Default: `filteredAndSorted` */",
+      "type": { "returnType": "'all' | 'filteredAndSorted'", "optional": true }
+    },
     "onlySelected": {
       "description": "/** Export only selected rows.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
@@ -11722,6 +11726,10 @@
     "fileName": {
       "description": "/** String to use as the file name. */",
       "type": { "returnType": "string", "optional": true }
+    },
+    "exportedRows": {
+      "description": "/** Determines whether rows are exported before being filtered and sorted.\n * Default: `filteredAndSorted` */",
+      "type": { "returnType": "'all' | 'filteredAndSorted'", "optional": true }
     },
     "onlySelected": {
       "description": "/** Export only selected rows.\n * Default: `false` */",
@@ -11870,6 +11878,10 @@
     "fileName": {
       "description": "/** String to use as the file name. */",
       "type": { "returnType": "string", "optional": true }
+    },
+    "exportedRows": {
+      "description": "/** Determines whether rows are exported before being filtered and sorted.\n * Default: `filteredAndSorted` */",
+      "type": { "returnType": "'all' | 'filteredAndSorted'", "optional": true }
     },
     "onlySelected": {
       "description": "/** Export only selected rows.\n * Default: `false` */",
@@ -17059,6 +17071,10 @@
     "fileName": {
       "description": "/** String to use as the file name. */",
       "type": { "returnType": "string", "optional": true }
+    },
+    "exportedRows": {
+      "description": "/** Determines whether rows are exported before being filtered and sorted.\n * Default: `filteredAndSorted` */",
+      "type": { "returnType": "'all' | 'filteredAndSorted'", "optional": true }
     },
     "onlySelected": {
       "description": "/** Export only selected rows.\n * Default: `false` */",
