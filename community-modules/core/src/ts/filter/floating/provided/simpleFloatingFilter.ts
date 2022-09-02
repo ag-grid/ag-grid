@@ -44,13 +44,13 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
             const { condition1, condition2 } = combinedModel || {};
-            const customOption1 = this.optionsFactory.getCustomOption(condition1.type);
-            const customOption2 = this.optionsFactory.getCustomOption(condition2.type);
+            const customOption1 = this.getTextFromModel(condition1);
+            const customOption2 = this.getTextFromModel(condition2);
 
             return [
-                this.conditionToString(condition1, customOption1),
+                customOption1,
                 combinedModel.operator,
-                this.conditionToString(condition2, customOption2),
+                customOption2,
             ].join(' ');
         } else {
             const condition = model as ISimpleFilterModel;
