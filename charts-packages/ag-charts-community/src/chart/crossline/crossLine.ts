@@ -17,24 +17,59 @@ import { checkDatum } from '../../util/value';
 import { Layers } from '../layers';
 import { Point } from '../../scene/point';
 import { Range } from '../../scene/shape/range';
+import {
+    OPT_CROSSLINE_TYPE,
+    OPT_ARRAY,
+    OPT_BOOLEAN,
+    OPT_NUMBER,
+    OPT_STRING,
+    Validate,
+    OPT_LINE_DASH,
+    OPT_FONT_STYLE,
+    OPT_FONT_WEIGHT,
+    STRING,
+    NUMBER,
+    OPT_CROSSLINE_LABEL_POSITION,
+} from '../../util/validation';
 
 export class CrossLineLabel {
+    @Validate(OPT_BOOLEAN)
     enabled?: boolean = undefined;
+
+    @Validate(OPT_STRING)
     text?: string = undefined;
+
+    @Validate(OPT_FONT_STYLE)
     fontStyle?: FontStyle = undefined;
+
+    @Validate(OPT_FONT_WEIGHT)
     fontWeight?: FontWeight = undefined;
+
+    @Validate(NUMBER(0))
     fontSize: number = 14;
+
+    @Validate(STRING)
     fontFamily: string = 'Verdana, sans-serif';
+
     /**
      * The padding between the label and the line.
      */
+    @Validate(NUMBER(0))
     padding: number = 5;
+
     /**
      * The color of the labels.
      */
+    @Validate(OPT_STRING)
     color?: string = 'rgba(87, 87, 87, 1)';
+
+    @Validate(OPT_CROSSLINE_LABEL_POSITION)
     position?: CrossLineLabelPosition = undefined;
+
+    @Validate(OPT_NUMBER(-360, 360))
     rotation?: number = undefined;
+
+    @Validate(OPT_BOOLEAN)
     parallel?: boolean = undefined;
 }
 
@@ -49,16 +84,34 @@ export class CrossLine {
     static className = 'CrossLine';
     readonly id = createId(this);
 
+    @Validate(OPT_BOOLEAN)
     enabled?: boolean = undefined;
+
+    @Validate(OPT_CROSSLINE_TYPE)
     type?: CrossLineType = undefined;
+
+    @Validate(OPT_ARRAY(2))
     range?: [any, any] = undefined;
     value?: any = undefined;
+
+    @Validate(OPT_STRING)
     fill?: string = undefined;
+
+    @Validate(OPT_NUMBER(0, 1))
     fillOpacity?: number = undefined;
+
+    @Validate(OPT_STRING)
     stroke?: string = undefined;
+
+    @Validate(OPT_NUMBER())
     strokeWidth?: number = undefined;
+
+    @Validate(OPT_NUMBER(0, 1))
     strokeOpacity?: number = undefined;
+
+    @Validate(OPT_LINE_DASH)
     lineDash?: [] = undefined;
+
     label: CrossLineLabel = new CrossLineLabel();
 
     scale?: Scale<any, number> = undefined;

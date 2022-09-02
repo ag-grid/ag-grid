@@ -35,6 +35,13 @@ export function Validate(predicate: ValidatePredicate) {
 }
 
 export const OPTIONAL = (v: any, predicate: ValidatePredicate) => v === undefined || predicate(v);
+export const ARRAY = (length?: number) => {
+    return (v: any, predicate?: ValidatePredicate) =>
+        Array.isArray(v) && (length ? v.length === length : true) && (predicate ? v.every((e) => predicate(e)) : true);
+};
+export const OPT_ARRAY = (length?: number) => {
+    return (v: any) => OPTIONAL(v, ARRAY(length));
+};
 
 export const BOOLEAN = (v: any) => v === true || v === false;
 export const OPT_BOOLEAN = (v: any) => OPTIONAL(v, BOOLEAN);
@@ -48,6 +55,12 @@ export function NUMBER(min?: number, max?: number) {
 export function OPT_NUMBER(min?: number, max?: number) {
     return (v: any) => OPTIONAL(v, NUMBER(min, max));
 }
+
+export const NUMBER_ARRAY = (v: any) => ARRAY()(v, NUMBER());
+export const OPT_NUMBER_ARRAY = (v: any) => OPTIONAL(v, NUMBER_ARRAY);
+
+export const STRING_ARRAY = (v: any) => ARRAY()(v, STRING);
+export const OPT_STRING_ARRAY = (v: any) => OPTIONAL(v, STRING_ARRAY);
 
 const TEXT_ALIGNS = ['right', 'left', 'start', 'center', 'end'];
 export const TEXT_ALIGN = (v: any) => TEXT_ALIGNS.includes(v);
@@ -80,7 +93,7 @@ export const OPT_FONT_WEIGHT = (v: any) => OPTIONAL(v, FONT_WEIGHT);
 export const TICK_COUNT = (v: any) => NUMBER(0)(v) || v instanceof CountableTimeInterval;
 export const OPT_TICK_COUNT = (v: any) => OPTIONAL(v, TICK_COUNT);
 
-export const LINE_DASH = (v: any) => Array.isArray(v) && v.every((e) => NUMBER(0)(e));
+export const LINE_DASH = (v: any) => ARRAY()(v, NUMBER(0));
 export const OPT_LINE_DASH = (v: any) => OPTIONAL(v, LINE_DASH);
 
 const LINE_CAPS = ['butt', 'round', 'square'];
@@ -93,8 +106,7 @@ export const OPT_LINE_JOIN = (v: any) => OPTIONAL(v, LINE_JOIN);
 
 const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
 export const GRID_STYLE = (v: any) =>
-    Array.isArray(v) &&
-    v.every((o) => {
+    ARRAY()(v, (o) => {
         for (let key in o) {
             if (!GRID_STYLE_KEYS.includes(key)) {
                 return false;
@@ -102,6 +114,32 @@ export const GRID_STYLE = (v: any) =>
         }
         return true;
     });
+
+const AXIS_POSITIONS = ['top', 'right', 'bottom', 'left'];
+export const AXIS_POSITION = (v: any) => AXIS_POSITIONS.includes(v);
+
+export const OPT_CROSSLINE_TYPE = (v: any) => OPTIONAL(v, (v: any) => v === 'range' || v === 'line');
+
+const CROSSLINE_LABEL_POSITIONS = [
+    'top',
+    'left',
+    'right',
+    'bottom',
+    'topLeft',
+    'topRight',
+    'bottomLeft',
+    'bottomRight',
+    'inside',
+    'insideLeft',
+    'insideRight',
+    'insideTop',
+    'insideBottom',
+    'insideTopLeft',
+    'insideBottomLeft',
+    'insideTopRight',
+    'insideBottomRight',
+];
+export const OPT_CROSSLINE_LABEL_POSITION = (v: any) => OPTIONAL(v, (v: any) => CROSSLINE_LABEL_POSITIONS.includes(v));
 
 export function Deprecated(message?: string, opts?: { default: any }) {
     let logged = false;

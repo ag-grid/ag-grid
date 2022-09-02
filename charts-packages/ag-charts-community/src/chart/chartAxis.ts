@@ -2,6 +2,7 @@ import { Scale } from '../scale/scale';
 import { Axis } from '../axis';
 import { Series } from './series/series';
 import { LinearScale } from '../scale/linearScale';
+import { AXIS_POSITION, STRING_ARRAY, Validate } from '../util/validation';
 
 export enum ChartAxisDirection {
     X = 'x', // means 'angle' in polar charts
@@ -32,7 +33,9 @@ interface ChartAxisMeta {
 }
 
 export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extends Axis<S> {
+    @Validate(STRING_ARRAY)
     keys: string[] = [];
+
     direction: ChartAxisDirection = ChartAxisDirection.Y;
     boundSeries: Series[] = [];
     linkedTo?: ChartAxis;
@@ -113,6 +116,7 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
         return approxMaxLabelCharacters * fontSize + padding;
     }
 
+    @Validate(AXIS_POSITION)
     protected _position: ChartAxisPosition = ChartAxisPosition.Left;
     set position(value: ChartAxisPosition) {
         if (this._position !== value) {
