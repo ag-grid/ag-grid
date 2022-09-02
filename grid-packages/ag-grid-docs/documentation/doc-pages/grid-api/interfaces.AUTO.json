@@ -9333,6 +9333,7 @@
       "forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void)": "void",
       "resetRowHeights()": "void",
       "onRowHeightChanged()": "void",
+      "onRowHeightChangedDebounced()": "void",
       "batchUpdateRowData(rowDataTransaction: RowDataTransaction<TData>, callback?: (res: RowNodeTransaction<TData>) => void)": "void",
       "flushAsyncTransactions()": "void",
       "getRootNode()": "RowNode",
@@ -10662,6 +10663,7 @@
     "type": {
       "refreshStore(params?: RefreshServerSideParams)": "void",
       "onRowHeightChanged()": "void",
+      "onRowHeightChangedDebounced()": "void",
       "getStoreState()": "ServerSideGroupLevelState[]",
       "retryLoads()": "void",
       "expandAll(value: boolean)": "void",

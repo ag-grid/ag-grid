@@ -57,6 +57,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
     @Autowired('beans') private beans: Beans;
 
+    private onRowHeightChanged_debounced = _.debounce(this.onRowHeightChanged.bind(this), 100);
+
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
 
@@ -272,6 +274,16 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         this.updateRowIndexesAndBounds();
         this.dispatchModelUpdated();
+    }
+
+    /** This method is debounced. It is used for row auto-height. If we don't debounce,
+     * then the Row Models will end up recalculating each row position
+     * for each row height change and result in the Row Renderer laying out rows.
+     * This is particularly bad if using print layout, and showing eg 1,000 rows,
+     * each row will change it's height, causing Row Model to update 1,000 times.
+     */
+    public onRowHeightChangedDebounced(): void {
+        this.onRowHeightChanged_debounced();
     }
 
     public onRowHeightChanged(): void {

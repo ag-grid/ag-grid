@@ -63,6 +63,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     @Optional('pivotStage') private pivotStage: IRowNodeStage;
     @Optional('filterAggregatesStage') private filterAggregatesStage: IRowNodeStage;
 
+    private onRowHeightChanged_debounced = _.debounce(this.onRowHeightChanged.bind(this), 100);
+
     // top most node of the tree. the children are the user provided data.
     private rootNode: RowNode;
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
@@ -986,6 +988,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     public onRowHeightChanged(): void {
         this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, keepEditingRows: true, keepUndoRedoStack: true });
+    }
+
+    /** This method is debounced. It is used for row auto-height. If we don't debounce,
+     * then the Row Models will end up recalculating each row position
+     * for each row height change and result in the Row Renderer laying out rows.
+     * This is particularly bad if using print layout, and showing eg 1,000 rows,
+     * each row will change it's height, causing Row Model to update 1,000 times.
+     */
+    public onRowHeightChangedDebounced(): void {
+        this.onRowHeightChanged_debounced();
     }
 
     public resetRowHeights(): void {

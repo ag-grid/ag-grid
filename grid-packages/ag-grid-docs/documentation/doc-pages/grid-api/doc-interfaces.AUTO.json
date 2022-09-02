@@ -16086,6 +16086,9 @@
     "onRowHeightChanged": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
+    "onRowHeightChangedDebounced": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
     "batchUpdateRowData": {
       "type": {
         "arguments": {
@@ -18765,6 +18768,9 @@
       }
     },
     "onRowHeightChanged": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "onRowHeightChangedDebounced": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "getStoreState": {

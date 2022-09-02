@@ -7,6 +7,7 @@ import { RowNode } from "../entities/rowNode";
 export interface IServerSideRowModel extends IRowModel {
     refreshStore(params?: RefreshServerSideParams): void;
     onRowHeightChanged(): void;
+    onRowHeightChangedDebounced(): void;
     getStoreState(): ServerSideGroupLevelState[];
     retryLoads(): void;
     expandAll(value: boolean): void;

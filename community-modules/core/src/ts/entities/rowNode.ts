@@ -9,7 +9,7 @@ import { getAllKeysInObjects } from "../utils/object";
 import { IServerSideStore } from "../interfaces/IServerSideStore";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
-import { debounce } from "../utils/function";
+import { debounce} from "../utils/function";
 import { Beans } from "../rendering/beans";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
@@ -257,8 +257,6 @@ export class RowNode<TData = any> implements IEventEmitter {
     private beans: Beans;
 
     private checkAutoHeightsDebounced: () => void;
-
-    private onRowHeightChangedDebounced = debounce(this.onRowHeightChanged.bind(this), 100);
 
     constructor(beans: Beans) {
         this.beans = beans;
@@ -625,19 +623,9 @@ export class RowNode<TData = any> implements IEventEmitter {
 
         this.setRowHeight(newRowHeight);
 
-        this.onRowHeightChangedDebounced();
-    }
-
-    /** This method is debounced. It is used for row auto-height. If we don't debounce,
-     * then the Row Models will end up recalculating each row position
-     * for each row height change and result in the Row Renderer laying out rows.
-     * This is particularly bad if using print layout, and showing eg 1,000 rows,
-     * each row will change it's height, causing Row Model to update 1,000 times.
-     */
-     private onRowHeightChanged(): void {
         const rowModel = this.beans.rowModel as (IClientSideRowModel | IServerSideRowModel);
-        if (rowModel.onRowHeightChanged) {
-            rowModel.onRowHeightChanged();
+        if (rowModel.onRowHeightChangedDebounced) {
+            rowModel.onRowHeightChangedDebounced();
         }
     }
 

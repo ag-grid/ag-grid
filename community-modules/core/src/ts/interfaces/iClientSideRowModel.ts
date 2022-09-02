@@ -27,6 +27,7 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void): void;
     resetRowHeights(): void;
     onRowHeightChanged(): void;
+    onRowHeightChangedDebounced(): void;
     batchUpdateRowData(rowDataTransaction: RowDataTransaction<TData>, callback?: (res: RowNodeTransaction<TData>) => void): void;
     flushAsyncTransactions(): void;
     getRootNode(): RowNode;
