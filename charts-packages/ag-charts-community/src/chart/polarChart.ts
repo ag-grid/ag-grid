@@ -20,7 +20,7 @@ export class PolarChart extends Chart {
         return this.scene.root!;
     }
 
-    async performLayout() {
+    performLayout(): void {
         const shrinkRect = new BBox(0, 0, this.width, this.height);
 
         const { captionAutoPadding = 0 } = this.positionCaptions();

@@ -304,7 +304,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         );
     }
 
-    async processData() {
+    processData(): boolean {
         const { xKey, data } = this;
 
         this.binnedData = this.placeDataInBins(xKey && data ? data : []);
@@ -319,6 +319,8 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         const xMin = firstBin.domain[0];
         const xMax = lastBin.domain[1];
         this.xDomain = [xMin, xMax];
+
+        return true;
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -339,7 +341,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         });
     }
 
-    async createNodeData() {
+    createNodeData() {
         const { xAxis, yAxis } = this;
 
         if (!this.seriesItemEnabled || !xAxis || !yAxis) {
@@ -413,7 +415,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         return [{ itemId: this.yKey, nodeData, labelData: nodeData }];
     }
 
-    protected async updateDatumSelection(opts: {
+    protected updateDatumSelection(opts: {
         nodeData: HistogramNodeDatum[];
         datumSelection: Selection<Rect, Group, HistogramNodeDatum, any>;
     }) {
@@ -429,7 +431,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         return updateRects.merge(enterRects);
     }
 
-    protected async updateDatumNodes(opts: {
+    protected updateDatumNodes(opts: {
         datumSelection: Selection<Rect, Group, HistogramNodeDatum, any>;
         isHighlight: boolean;
     }) {
@@ -475,7 +477,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         });
     }
 
-    protected async updateLabelSelection(opts: {
+    protected updateLabelSelection(opts: {
         labelData: HistogramNodeDatum[];
         labelSelection: Selection<Text, Group, HistogramNodeDatum, any>;
     }) {
@@ -493,7 +495,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         return updateTexts.merge(enterTexts);
     }
 
-    protected async updateLabelNodes(opts: { labelSelection: Selection<Text, Group, HistogramNodeDatum, any> }) {
+    protected updateLabelNodes(opts: { labelSelection: Selection<Text, Group, HistogramNodeDatum, any> }) {
         const { labelSelection } = opts;
         const labelEnabled = this.label.enabled;
 

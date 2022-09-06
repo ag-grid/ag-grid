@@ -91,7 +91,6 @@ describe('PolarSeries', () => {
                 options.height = CANVAS_HEIGHT;
 
                 chart = AgChartV2.create<PolarChart>(options);
-                await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 

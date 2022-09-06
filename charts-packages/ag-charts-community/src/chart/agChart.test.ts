@@ -8,7 +8,6 @@ import { ChartAxisPosition } from './chartAxis';
 import { NumberAxis } from './axis/numberAxis';
 import { ChartTheme } from './themes/chartTheme';
 import { AgChartV2 } from './agChartV2';
-import { waitForChartStability } from './test/utils';
 
 const revenueProfitData = [
     {
@@ -46,7 +45,7 @@ describe('update', () => {
         expect(console.warn).not.toBeCalled();
     });
 
-    test('cartesian chart top-level properties', async () => {
+    test('cartesian chart top-level properties', () => {
         const chart = AgChartV2.create({
             // chart type is optional because it defaults to `cartesian`
             container: document.body,
@@ -74,7 +73,6 @@ describe('update', () => {
                 },
             },
         });
-        await waitForChartStability(chart);
         AgChartV2.update(chart, {
             width: 500,
             height: 500,
@@ -116,7 +114,6 @@ describe('update', () => {
                 position: LegendPosition.Bottom,
             },
         });
-        await waitForChartStability(chart);
 
         const theme = new ChartTheme();
 
@@ -162,7 +159,6 @@ describe('update', () => {
                 },
             },
         });
-        await waitForChartStability(chart);
 
         expect(chart.title!.enabled).toBe(theme.getConfig('cartesian.title.enabled'));
         expect(chart.title!.text).toBe(theme.getConfig('cartesian.title.text'));
@@ -176,7 +172,7 @@ describe('update', () => {
         expect(chart.subtitle!.fontSize).toBe(20);
     });
 
-    test('series', async () => {
+    test('series', () => {
         const chart = AgChartV2.create({
             data: revenueProfitData,
             series: [
@@ -197,7 +193,6 @@ describe('update', () => {
                 },
             ],
         });
-        await waitForChartStability(chart);
         const createdSeries = chart.series;
 
         AgChartV2.update(chart, {
@@ -233,7 +228,6 @@ describe('update', () => {
                 },
             ],
         });
-        await waitForChartStability(chart);
         const updatedSeries = chart.series;
 
         expect(updatedSeries.length).toEqual(3);
@@ -273,7 +267,6 @@ describe('update', () => {
                 },
             ],
         });
-        await waitForChartStability(chart);
         const updatedSeries2 = chart.series;
 
         expect(updatedSeries2.length).toBe(2);
@@ -308,7 +301,6 @@ describe('update', () => {
                 },
             ],
         });
-        await waitForChartStability(chart);
         const updatedSeries3 = chart.series;
 
         expect(updatedSeries3.length).toBe(2);
@@ -350,7 +342,6 @@ describe('update', () => {
                 },
             ],
         });
-        await waitForChartStability(chart);
         const updatedSeries4 = chart.series;
 
         expect(updatedSeries4.length).toEqual(2);
@@ -359,7 +350,7 @@ describe('update', () => {
         expect(updatedSeries4[1]).not.toBe(lineSeries);
     });
 
-    test('axes', async () => {
+    test('axes', () => {
         let chart = AgChartV2.create({
             data: revenueProfitData,
             series: [
@@ -369,7 +360,6 @@ describe('update', () => {
                 },
             ],
         });
-        await waitForChartStability(chart);
 
         AgChartV2.update(chart, {
             data: revenueProfitData,
@@ -393,7 +383,6 @@ describe('update', () => {
                 },
             ],
         });
-        await waitForChartStability(chart);
 
         let axes = chart.axes;
         expect(axes.length).toBe(2);
@@ -442,7 +431,6 @@ describe('update', () => {
                 },
             ],
         });
-        await waitForChartStability(chart);
 
         leftAxis = chart.axes.find((axis) => axis.position === ChartAxisPosition.Left);
         expect(leftAxis!.gridStyle).toEqual([

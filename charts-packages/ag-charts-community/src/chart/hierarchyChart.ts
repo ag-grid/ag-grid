@@ -25,7 +25,7 @@ export class HierarchyChart extends Chart {
         return this._seriesRoot;
     }
 
-    async performLayout() {
+    performLayout(): void {
         this.scene.root!!.visible = true;
 
         const { width, height, legend } = this;

@@ -511,35 +511,10 @@ export abstract class Chart extends Observable {
         this.cleanupDomListeners(this.scene.canvas.element);
 
         this.scene.destroy();
-        this.series.forEach(s => s.destroy());
+        this.series.forEach((s) => s.destroy());
         this.series = [];
     }
 
-    log(opts: any) {
-        if (this.debug) {
-            console.log(opts);
-        }
-    }
-
-    private _pendingFactoryUpdates: number = 0;
-    get pendingFactoryUpdates() {
-        return this._pendingFactoryUpdates;
-    }
-    registerPendingFactoryUpdate<T>(cb: () => Promise<T>) {
-        this._pendingFactoryUpdates++;
-        return cb()
-            .then((r) => {
-                this._pendingFactoryUpdates--;
-
-                return r;
-            })
-            .catch(e => {
-                this._pendingFactoryUpdates--;
-
-                throw e;
-            });
-    }
-    
     private _performUpdateType: ChartUpdateType = ChartUpdateType.NONE;
     get performUpdateType() {
         return this._performUpdateType;
@@ -552,19 +527,17 @@ export abstract class Chart extends Observable {
         return this._lastPerformUpdateError;
     }
 
-    private updateContext = { firstRenderComplete: false, firstResizeReceived: false };
+    private firstRenderComplete = false;
+    private firstResizeReceived = false;
     private seriesToUpdate: Set<Series> = new Set();
-    private performUpdateTrigger = debouncedCallback(async ({ count }) => {
+    private performUpdateTrigger = debouncedCallback(({ count }) => {
         try {
-            await this.performUpdate(count);
+            this.performUpdate(count);
         } catch (error) {
             this._lastPerformUpdateError = error;
             console.error(error);
         }
     });
-    public async awaitUpdateCompletion() {
-        await this.performUpdateTrigger.await();
-    }
     public update(
         type = ChartUpdateType.FULL,
         opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
@@ -584,18 +557,19 @@ export abstract class Chart extends Observable {
             this.performUpdateTrigger.schedule();
         }
     }
-    private async performUpdate(count: number) {
+    private performUpdate(count: number) {
         const {
             _performUpdateType: performUpdateType,
+            firstRenderComplete,
+            firstResizeReceived,
             extraDebugStats,
-            updateContext: { firstRenderComplete, firstResizeReceived },
         } = this;
         const splits = [performance.now()];
 
         switch (performUpdateType) {
             case ChartUpdateType.FULL:
             case ChartUpdateType.PROCESS_DATA:
-                await this.processData();
+                this.processData();
                 splits.push(performance.now());
 
                 // Disable tooltip/highlight if the data fundamentally shifted.
@@ -603,40 +577,44 @@ export abstract class Chart extends Observable {
             // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (!firstRenderComplete && !firstResizeReceived) {
-                    this.log({ firstRenderComplete, firstResizeReceived });
+                    if (this.debug) {
+                        console.log({ firstRenderComplete, firstResizeReceived });
+                    }
                     // Reschedule if canvas size hasn't been set yet to avoid a race.
                     this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
                     this.performUpdateTrigger.schedule();
                     break;
                 }
 
-                await this.performLayout();
+                this.performLayout();
                 splits.push(performance.now());
             // Fall-through to next pipeline stage.
             case ChartUpdateType.SERIES_UPDATE:
-                const seriesUpdates = [...this.seriesToUpdate].map((series) => series.update());
+                this.seriesToUpdate.forEach((series) => {
+                    series.update();
+                });
                 this.seriesToUpdate.clear();
-                await Promise.all(seriesUpdates);
-
                 splits.push(performance.now());
             // Fall-through to next pipeline stage.
             case ChartUpdateType.SCENE_RENDER:
-                await this.scene.render({ debugSplitTimes: splits, extraDebugStats });
-                this.updateContext.firstRenderComplete = true;
+                this.scene.render({ debugSplitTimes: splits, extraDebugStats });
+                this.firstRenderComplete = true;
                 this.extraDebugStats = {};
             // Fall-through to next pipeline stage.
             case ChartUpdateType.NONE:
                 // Do nothing.
                 this._performUpdateType = ChartUpdateType.NONE;
         }
-
         const end = performance.now();
-        this.log({
-            chart: this,
-            durationMs: Math.round((end - splits[0]) * 100) / 100,
-            count,
-            performUpdateType: ChartUpdateType[performUpdateType],
-        });
+
+        if (this.debug) {
+            console.log({
+                chart: this,
+                durationMs: Math.round((end - splits[0]) * 100) / 100,
+                count,
+                performUpdateType: ChartUpdateType[performUpdateType],
+            });
+        }
     }
 
     readonly element: HTMLElement;
@@ -835,9 +813,8 @@ export abstract class Chart extends Observable {
     }
 
     private resize(width: number, height: number) {
-        this.updateContext.firstResizeReceived = true;
-
         if (this.scene.resize(width, height)) {
+            this.firstResizeReceived = true;
 
             this.background.width = this.width;
             this.background.height = this.height;
@@ -846,14 +823,15 @@ export abstract class Chart extends Observable {
         }
     }
 
-    async processData() {
+    processData(): void {
         if (this.axes.length > 0 || this.series.some((s) => s instanceof CartesianSeries)) {
             this.assignAxesToSeries(true);
             this.assignSeriesToAxes();
         }
 
-        await Promise.all(this.series.map((s) => s.processData()));
-        await this.updateLegend();
+        this.series.forEach((s) => s.processData());
+
+        this.updateLegend();
     }
 
     placeLabels(): Map<Series<any>, PlacedLabel[]> {
@@ -883,7 +861,7 @@ export abstract class Chart extends Observable {
         return new Map(labels.map((l, i) => [visibleSeries[i], l]));
     }
 
-    private async updateLegend() {
+    private updateLegend() {
         const legendData: LegendDatum[] = [];
 
         this.series.filter((s) => s.showInLegend).forEach((series) => series.listSeriesItems(legendData));
@@ -903,7 +881,7 @@ export abstract class Chart extends Observable {
         this.legend.data = legendData;
     }
 
-    abstract performLayout(): Promise<void>;
+    abstract performLayout(): void;
 
     protected positionCaptions(): { captionAutoPadding?: number } {
         const { _title: title, _subtitle: subtitle } = this;

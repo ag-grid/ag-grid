@@ -252,7 +252,7 @@ export class Scene {
         layers.splice(0, layers.length);
     }
 
-    async render(opts?: { debugSplitTimes: number[]; extraDebugStats: Record<string, number> }) {
+    render(opts?: { debugSplitTimes: number[]; extraDebugStats: Record<string, number> }) {
         const { debugSplitTimes = [performance.now()], extraDebugStats = {} } = opts || {};
         const {
             canvas,
@@ -344,7 +344,7 @@ export class Scene {
         debugSplitTimes: number[],
         ctx: CanvasRenderingContext2D,
         renderCtxStats: RenderContext['stats'],
-        extraDebugStats = {},
+        extraDebugStats = {}
     ) {
         const end = performance.now();
 
@@ -359,12 +359,7 @@ export class Scene {
             const time = (start: number, end: number) => {
                 return `${Math.round((end - start) * 100) / 100}ms`;
             };
-            const {
-                layersRendered = 0,
-                layersSkipped = 0,
-                nodesRendered = 0,
-                nodesSkipped = 0,
-            } = renderCtxStats ?? {};
+            const { layersRendered = 0, layersSkipped = 0, nodesRendered = 0, nodesSkipped = 0 } = renderCtxStats ?? {};
 
             const splits = debugSplitTimes
                 .map((t, i) => (i > 0 ? time(debugSplitTimes[i - 1], t) : null))

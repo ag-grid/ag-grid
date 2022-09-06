@@ -155,11 +155,11 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         this.marker.stroke = strokes[0];
     }
 
-    async processData() {
+    processData(): boolean {
         const { xKey, yKey, sizeKey, xAxis, yAxis, marker } = this;
 
         if (!xAxis || !yAxis) {
-            return;
+            return false;
         }
 
         const data = xKey && yKey && this.data ? this.data : [];
@@ -188,7 +188,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             this.yDomain = this.yData;
         }
 
-        return;
+        return true;
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -211,7 +211,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         });
     }
 
-    async createNodeData() {
+    createNodeData() {
         const { chart, data, visible, xAxis, yAxis, yKey, label, labelKey } = this;
 
         if (!(chart && data && visible && xAxis && yAxis)) {
@@ -274,10 +274,10 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         return this.contextNodeData?.reduce((r, n) => r.concat(n.labelData), [] as PointLabelDatum[]);
     }
 
-    protected async updateMarkerSelection(opts: {
+    protected updateMarkerSelection(opts: {
         nodeData: ScatterNodeDatum[];
         markerSelection: Selection<Marker, Group, ScatterNodeDatum, any>;
-    }) {
+    }): Selection<Marker, Group, ScatterNodeDatum, any> {
         let { nodeData, markerSelection } = opts;
         const {
             marker: { enabled, shape },
@@ -296,10 +296,10 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         return updateMarkers.merge(enterMarkers);
     }
 
-    protected async updateMarkerNodes(opts: {
+    protected updateMarkerNodes(opts: {
         markerSelection: Selection<Marker, Group, ScatterNodeDatum, any>;
         isHighlight: boolean;
-    }) {
+    }): void {
         const { markerSelection, isHighlight: isDatumHighlighted } = opts;
         const {
             marker,
@@ -377,10 +377,10 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         }
     }
 
-    protected async updateLabelSelection(opts: {
+    protected updateLabelSelection(opts: {
         labelData: ScatterNodeDatum[];
         labelSelection: Selection<Text, Group, ScatterNodeDatum, any>;
-    }) {
+    }): Selection<Text, Group, ScatterNodeDatum, any> {
         const { labelSelection } = opts;
 
         const placedLabels = this.chart?.placeLabels().get(this) ?? [];
@@ -401,7 +401,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         return updateLabels.merge(enterLabels);
     }
 
-    protected async updateLabelNodes(opts: { labelSelection: Selection<Text, Group, ScatterNodeDatum, any> }) {
+    protected updateLabelNodes(opts: { labelSelection: Selection<Text, Group, ScatterNodeDatum, any> }): void {
         const { labelSelection } = opts;
         const { label } = this;
 

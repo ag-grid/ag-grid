@@ -109,21 +109,33 @@ export function dateRange(start: Date, end: Date, step = 24 * 60 * 60 * 1000): D
     return result;
 }
 
-export async function waitForChartStability(chart: Chart, timeout = 5000): Promise<void> {
-    const start = performance.now();
-    const sleep = (timeoutMs) => {
-        return new Promise((resolve) => {
-            setTimeout(() => resolve(undefined), timeoutMs);
-        });
-    };
+export async function waitForChartStability(chart: Chart, timeoutMs = 5000): Promise<void> {
+    return new Promise((resolve, reject) => {
+        let retryMs = 10;
+        let startMs = Date.now();
+        const cb = () => {
+            if (chart.lastPerformUpdateError) {
+                reject(chart.lastPerformUpdateError);
+                return;
+            }
 
-    while (chart.pendingFactoryUpdates > 0 || chart.updatePending) {
-        if ((performance.now() - start) > timeout) {
-            throw new Error('waitForChartStability() timeout reached.');
-        }
-        await sleep(5);
-    }
-    await chart.awaitUpdateCompletion();
+            if (!chart.updatePending) {
+                resolve();
+                return;
+            }
+
+            const timeMs = Date.now() - startMs;
+            if (timeMs >= timeoutMs) {
+                reject('timeout reached');
+                return;
+            }
+
+            retryMs *= 2;
+            setTimeout(cb, retryMs);
+        };
+
+        cb();
+    });
 }
 
 export function mouseMoveEvent({ offsetX, offsetY }: { offsetX: number; offsetY: number }): MouseEvent {
