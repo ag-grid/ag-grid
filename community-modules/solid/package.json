@@ -1,5 +1,5 @@
 {
-  "version": "0.0.1",
+  "version": "28.1.1",
   "name": "@ag-grid-community/solid",
   "description": "{{desc_of_lib}}",
   "license": "MIT",
@@ -33,12 +33,12 @@
   },
   "scripts": {
     "dev": "vite serve dev",
-    "test": "echo \"test not setup\"",
     "build": "rollup -c",
-    "prepublishOnly": "pnpm build",
+    "build-prod": "npm run build",
     "format": "prettier -w \"src/**/*.{js,ts,json,css,tsx,jsx}\" \"dev/**/*.{js,ts,json,css,tsx,jsx}\"",
     "update-deps": "taze -w && pnpm i",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "dependencies": {},
   "peerDependencies": {
