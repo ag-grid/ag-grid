@@ -55,7 +55,10 @@ export const OPT_STRING = (v: any) => OPTIONAL(v, STRING);
 
 export function NUMBER(min?: number, max?: number) {
     return (v: any) =>
-        typeof v === 'number' && Number.isFinite(v) && (min ? v >= min : true) && (max ? v <= max : true);
+        typeof v === 'number' &&
+        Number.isFinite(v) &&
+        (min !== undefined ? v >= min : true) &&
+        (max !== undefined ? v <= max : true);
 }
 export function OPT_NUMBER(min?: number, max?: number) {
     return (v: any) => OPTIONAL(v, NUMBER(min, max));
@@ -64,7 +67,10 @@ export function OPT_NUMBER(min?: number, max?: number) {
 export function SPECIAL_NUMBER(min?: number, max?: number) {
     // Can be NaN or finite number
     return (v: any) =>
-        typeof v === 'number' && (isNaN(v) || Number.isFinite(v)) && (min ? v >= min : true) && (max ? v <= max : true);
+        typeof v === 'number' &&
+        (isNaN(v) || Number.isFinite(v)) &&
+        (min !== undefined ? v >= min : true) &&
+        (max !== undefined ? v <= max : true);
 }
 export function OPT_SPECIAL_NUMBER(min?: number, max?: number) {
     return (v: any) => OPTIONAL(v, SPECIAL_NUMBER(min, max));
@@ -164,6 +170,9 @@ export const OPT_CROSSLINE_LABEL_POSITION = (v: any) => OPTIONAL(v, (v: any) => 
 
 const BAR_LABEL_PLACEMENTS = ['inside', 'outside'];
 export const OPT_BAR_LABEL_PLACEMENT = (v: any) => OPTIONAL(v, (v: any) => BAR_LABEL_PLACEMENTS.includes(v));
+
+const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
+export const HISTOGRAM_AGGREGATION = (v: any) => HISTOGRAM_AGGREGATIONS.includes(v);
 
 export function Deprecated(message?: string, opts?: { default: any }) {
     let logged = false;
