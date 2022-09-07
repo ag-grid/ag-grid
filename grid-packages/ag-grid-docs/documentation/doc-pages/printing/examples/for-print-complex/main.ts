@@ -44,6 +44,7 @@ function onBtPrint() {
 
 function setPrinterFriendly(api: GridApi) {
   const eGridDiv = document.querySelector<HTMLElement>('#myGrid')! as any;
+  eGridDiv.style.width = ''
   eGridDiv.style.height = ''
   api.setDomLayout('print')
 }
