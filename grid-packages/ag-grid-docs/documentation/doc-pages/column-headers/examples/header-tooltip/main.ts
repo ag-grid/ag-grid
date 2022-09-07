@@ -2,7 +2,7 @@ import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', headerTooltip: "The athlete's name" },
-  { field: 'age', headerTooltip: 'The athlete`s age' },
+  { field: 'age', headerTooltip: "The athlete's age" },
   { field: 'country' },
   { field: 'year' },
   { field: 'date', headerTooltip: 'The date of the Olympics' },
