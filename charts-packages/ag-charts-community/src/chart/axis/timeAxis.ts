@@ -1,3 +1,4 @@
+import { BOOLEAN, DATE_ARRAY, Validate } from '../../util/validation';
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
@@ -25,6 +26,7 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         });
     }
 
+    @Validate(BOOLEAN)
     private _nice: boolean = true;
     set nice(value: boolean) {
         if (this._nice !== value) {
@@ -38,6 +40,7 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         return this._nice;
     }
 
+    @Validate(DATE_ARRAY)
     private _domain: Date[] = [];
     set domain(domain: Date[]) {
         this._domain = domain;

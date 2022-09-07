@@ -54,7 +54,7 @@ export const STRING = (v: any) => typeof v === 'string';
 export const OPT_STRING = (v: any) => OPTIONAL(v, STRING);
 
 export function NUMBER(min?: number, max?: number) {
-    return (v: any) => typeof v === 'number' && v >= (min ?? -Infinity) && v <= (max ?? Infinity);
+    return (v: any) => typeof v === 'number' && (min ? v >= min : true) && (max ? v <= max : true);
 }
 export function OPT_NUMBER(min?: number, max?: number) {
     return (v: any) => OPTIONAL(v, NUMBER(min, max));
@@ -68,6 +68,10 @@ export const OPT_STRING_ARRAY = (v: any) => OPTIONAL(v, STRING_ARRAY);
 
 export const BOOLEAN_ARRAY = (v: any) => ARRAY()(v, BOOLEAN);
 export const OPT_BOOLEAN_ARRAY = (v: any) => OPTIONAL(v, BOOLEAN_ARRAY);
+
+export const DATE = (v: any) => v instanceof Date && isNaN(+v);
+export const DATE_ARRAY = (v: any) => ARRAY()(v, DATE);
+export const OPT_DATE_ARRAY = (v: any) => OPTIONAL(v, DATE_ARRAY);
 
 const TEXT_ALIGNS = ['right', 'left', 'start', 'center', 'end'];
 export const TEXT_ALIGN = (v: any) => TEXT_ALIGNS.includes(v);

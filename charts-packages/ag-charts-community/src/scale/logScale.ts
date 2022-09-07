@@ -1,6 +1,7 @@
 import { ContinuousScale } from './continuousScale';
 import ticks from '../util/ticks';
 import { format } from '../util/numberFormat';
+import { NUMBER, Validate } from '../util/validation';
 
 const identity = (x: any) => x;
 export class LogScale extends ContinuousScale {
@@ -45,6 +46,7 @@ export class LogScale extends ContinuousScale {
         return super.getDomain();
     }
 
+    @Validate(NUMBER())
     _base = 10;
     set base(value: number) {
         if (this._base !== value) {
