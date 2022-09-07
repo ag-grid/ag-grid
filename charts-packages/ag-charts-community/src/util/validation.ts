@@ -54,10 +54,20 @@ export const STRING = (v: any) => typeof v === 'string';
 export const OPT_STRING = (v: any) => OPTIONAL(v, STRING);
 
 export function NUMBER(min?: number, max?: number) {
-    return (v: any) => typeof v === 'number' && (min ? v >= min : true) && (max ? v <= max : true);
+    return (v: any) =>
+        typeof v === 'number' && Number.isFinite(v) && (min ? v >= min : true) && (max ? v <= max : true);
 }
 export function OPT_NUMBER(min?: number, max?: number) {
     return (v: any) => OPTIONAL(v, NUMBER(min, max));
+}
+
+export function SPECIAL_NUMBER(min?: number, max?: number) {
+    // Can be NaN or finite number
+    return (v: any) =>
+        typeof v === 'number' && (isNaN(v) || Number.isFinite(v)) && (min ? v >= min : true) && (max ? v <= max : true);
+}
+export function OPT_SPECIAL_NUMBER(min?: number, max?: number) {
+    return (v: any) => OPTIONAL(v, SPECIAL_NUMBER(min, max));
 }
 
 export const NUMBER_ARRAY = (v: any) => ARRAY()(v, NUMBER());
