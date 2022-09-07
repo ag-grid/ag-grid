@@ -1983,6 +1983,7 @@ export class GridApi<TData = any> {
     public refreshServerSide(params?: RefreshServerSideParams): void {
         if (!this.serverSideRowModel) {
             console.warn(`AG Grid: api.refreshServerSide is only available when rowModelType='serverSide'.`);
+            return;
         }
         this.serverSideRowModel.refreshStore(params);
     }
