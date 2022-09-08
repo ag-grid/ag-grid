@@ -108,6 +108,7 @@ export class ChartTranslationService extends BeanStub {
         chartLinkToolbarTooltip: 'Linked to Grid',
         chartUnlinkToolbarTooltip: 'Unlinked from Grid',
         chartDownloadToolbarTooltip: 'Download Chart',
+        histogramFrequency: "Frequency",
         seriesChartType: 'Series Chart Type',
         seriesType: 'Series Type',
         secondaryAxis: 'Secondary Axis',
