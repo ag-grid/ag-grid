@@ -26,6 +26,7 @@ export class HistogramChartProxy extends CartesianChartProxy {
             type: this.standaloneChartType,
             xKey: firstField.colId,
             xName: firstField.displayName,
+            yName: this.chartProxyParams.translate("histogramFrequency"),
             areaPlot: false, // only constant width is supported via integrated charts
         }];
     }

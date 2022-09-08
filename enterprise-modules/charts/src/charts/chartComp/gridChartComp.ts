@@ -198,6 +198,7 @@ export class GridChartComp extends Component {
             chartOptionsToRestore: this.params.chartOptionsToRestore,
             chartPaletteToRestore: this.params.chartPaletteToRestore,
             seriesChartTypes: this.chartController.getSeriesChartTypes(),
+            translate: (toTranslate: string, defaultText?: string) => this.chartTranslationService.translate(toTranslate, defaultText),
         };
 
         // ensure 'restoring' options are not reused when switching chart types

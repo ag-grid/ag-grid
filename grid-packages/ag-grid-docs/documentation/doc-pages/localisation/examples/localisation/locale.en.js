@@ -156,6 +156,7 @@ const AG_GRID_LOCALE_EN = {
     normalizedArea: '100% Stacked',
 
     histogramChart: 'Histogram',
+    histogramFrequency: "Frequency",
 
     combinationChart: 'Combination',
     columnLineCombo: 'Column & Line',
