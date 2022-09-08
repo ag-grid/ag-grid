@@ -171,7 +171,7 @@ import { AgGridColumn } from "./ag-grid-column.component";
     // tell angular we don't want view encapsulation, we don't want a shadow root
     encapsulation: ViewEncapsulation.None
 })
-export class AgGridAngular<TData = any> implements AfterViewInit {
+export class AgGridAngular<TColDef extends ColDef<TData>, TData> implements AfterViewInit {
     // not intended for user to interact with. so putting _ in so if user gets reference
     // to this object, they kind'a know it's not part of the agreed interface
     private _nativeElement: any;
@@ -341,13 +341,13 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround.     */
     @Input() public suppressClipboardApi: boolean | undefined = undefined;
     /** Array of Column / Column Group definitions.     */
-    @Input() public columnDefs: (ColDef<TData> | ColGroupDef<TData>)[] | null | undefined = undefined;
+    @Input() public columnDefs: (TColDef | ColGroupDef<TData>)[] | null | undefined = undefined;
     /** A default column definition. Items defined in the actual column definitions get precedence.     */
-    @Input() public defaultColDef: ColDef<TData> | undefined = undefined;
+    @Input() public defaultColDef: TColDef | undefined = undefined;
     /** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence.     */
     @Input() public defaultColGroupDef: Partial<ColGroupDef<TData>> | undefined = undefined;
     /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property.     */
-    @Input() public columnTypes: { [key: string]: ColDef<TData>; } | undefined = undefined;
+    @Input() public columnTypes: { [key: string]: TColDef; } | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false`     */
     @Input() public maintainColumnOrder: boolean | undefined = undefined;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
@@ -642,7 +642,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. Default: `0`     */
     @Input() public groupDefaultExpanded: number | undefined = undefined;
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.     */
-    @Input() public autoGroupColumnDef: ColDef<TData> | undefined = undefined;
+    @Input() public autoGroupColumnDef: TColDef | undefined = undefined;
     /** When `true`, preserves the current group order when sorting on non-group columns. Default: `false`     */
     @Input() public groupMaintainOrder: boolean | undefined = undefined;
     /** When `true`, if you select a group, the children of the group will also be selected. Default: `false`     */
@@ -912,11 +912,11 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** @deprecated - Use `initialGroupOrderComparator` instead     */
     @Input() public defaultGroupOrderComparator: ((nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number) | undefined = undefined;
     /** @deprecated - Use `processPivotResultColDef` instead     */
-    @Input() public processSecondaryColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
+    @Input() public processSecondaryColDef: ((colDef: TColDef) => void) | undefined = undefined;
     /** @deprecated - Use `processPivotResultColGroupDef` instead     */
     @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column definition.     */
-    @Input() public processPivotResultColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
+    @Input() public processPivotResultColDef: ((colDef: TColDef) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column group definition.     */
     @Input() public processPivotResultColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.     */
