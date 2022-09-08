@@ -3547,52 +3547,52 @@
   "DragEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "type": "string",
       "target": "HTMLElement",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "any",
+      "type": "string"
     },
     "docs": {
-      "type": "/** One of {'cell','row','headerCell','toolPanel'} */",
       "target": "/** The DOM element that started the event. */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
     }
   },
   "DragStartedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "type": "string",
+      "type": "'dragStarted'",
       "target": "HTMLElement",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
     "docs": {
-      "type": "/** One of {'cell','row','headerCell','toolPanel'} */",
       "target": "/** The DOM element that started the event. */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
     }
   },
   "DragStoppedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "type": "string",
+      "type": "'dragStopped'",
       "target": "HTMLElement",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
     "docs": {
-      "type": "/** One of {'cell','row','headerCell','toolPanel'} */",
       "target": "/** The DOM element that started the event. */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
     }
   },
   "CheckboxChangedEvent": {

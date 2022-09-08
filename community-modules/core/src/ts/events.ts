@@ -127,15 +127,17 @@ export interface ColumnPanelItemDragStartEvent<TData = any> extends AgGridEvent<
 export interface ColumnPanelItemDragEndEvent<TData = any> extends AgGridEvent<TData> { }
 
 export interface DragEvent<TData = any> extends AgGridEvent<TData> {
-    /** One of {'cell','row','headerCell','toolPanel'} */
-    type: string;
     /** The DOM element that started the event. */
     target: HTMLElement;
 }
 
-export interface DragStartedEvent<TData = any> extends DragEvent<TData> { }
+export interface DragStartedEvent<TData = any> extends DragEvent<TData> {
+    type: 'dragStarted';
+}
 
-export interface DragStoppedEvent<TData = any> extends DragEvent<TData> { }
+export interface DragStoppedEvent<TData = any> extends DragEvent<TData> {
+    type: 'dragStopped'
+}
 
 // For internal use only.
 // This event allows us to detect when other inputs in the same named group are changed, so for example we can ensure
