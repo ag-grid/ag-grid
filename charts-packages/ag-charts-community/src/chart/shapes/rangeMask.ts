@@ -1,15 +1,25 @@
 import { Path } from '../../scene/shape/path';
 import { BBox } from '../../scene/bbox';
 import { ShapeLineCap } from '../../scene/shape/shape';
+import { LINE_CAP, NUMBER, STRING, Validate } from '../../util/validation';
 
 export class RangeMask extends Path {
     static className = 'RangeMask';
 
+    @Validate(STRING)
     protected _stroke = '#999999';
+
+    @Validate(NUMBER(0))
     protected _strokeWidth = 1;
+
+    @Validate(STRING)
     protected _fill = '#999999';
+
+    @Validate(NUMBER(0, 1))
     protected _fillOpacity = 0.2;
-    protected _lineCap = 'square' as ShapeLineCap;
+
+    @Validate(LINE_CAP)
+    protected _lineCap: ShapeLineCap = 'square';
 
     protected _x: number = 0;
     set x(value: number) {
@@ -33,6 +43,7 @@ export class RangeMask extends Path {
         return this._y;
     }
 
+    @Validate(NUMBER(0))
     protected _width: number = 200;
     set width(value: number) {
         if (this._width !== value) {
@@ -44,6 +55,7 @@ export class RangeMask extends Path {
         return this._width;
     }
 
+    @Validate(NUMBER(0))
     protected _height: number = 30;
     set height(value: number) {
         if (this._height !== value) {
@@ -57,6 +69,7 @@ export class RangeMask extends Path {
 
     minRange = 0.05;
 
+    @Validate(NUMBER())
     protected _min: number = 0;
     set min(value: number) {
         value = Math.min(Math.max(value, 0), this.max - this.minRange);
@@ -73,6 +86,7 @@ export class RangeMask extends Path {
         return this._min;
     }
 
+    @Validate(NUMBER())
     protected _max: number = 1;
     set max(value: number) {
         value = Math.max(Math.min(value, 1), this.min + this.minRange);

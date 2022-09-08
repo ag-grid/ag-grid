@@ -1,13 +1,21 @@
 import { Path } from '../../scene/shape/path';
 import { BBox } from '../../scene/bbox';
 import { ShapeLineCap } from '../../scene/shape/shape';
+import { LINE_CAP, NUMBER, STRING, Validate } from '../../util/validation';
 
 export class RangeHandle extends Path {
     static className = 'RangeHandle';
 
+    @Validate(STRING)
     protected _fill = '#f2f2f2';
+
+    @Validate(STRING)
     protected _stroke = '#999999';
+
+    @Validate(NUMBER(0))
     protected _strokeWidth = 1;
+
+    @Validate(LINE_CAP)
     protected _lineCap = 'square' as ShapeLineCap;
 
     protected _centerX: number = 0;
@@ -33,6 +41,7 @@ export class RangeHandle extends Path {
     }
 
     // Use an even number for better looking results.
+    @Validate(NUMBER(0))
     protected _width: number = 8;
     set width(value: number) {
         if (this._width !== value) {
@@ -45,6 +54,7 @@ export class RangeHandle extends Path {
     }
 
     // Use an even number for better looking results.
+    @Validate(NUMBER(0))
     protected _gripLineGap: number = 2;
     set gripLineGap(value: number) {
         if (this._gripLineGap !== value) {
@@ -57,6 +67,7 @@ export class RangeHandle extends Path {
     }
 
     // Use an even number for better looking results.
+    @Validate(NUMBER(0))
     protected _gripLineLength: number = 8;
     set gripLineLength(value: number) {
         if (this._gripLineLength !== value) {
@@ -68,6 +79,7 @@ export class RangeHandle extends Path {
         return this._gripLineLength;
     }
 
+    @Validate(NUMBER(0))
     protected _height: number = 16;
     set height(value: number) {
         if (this._height !== value) {
