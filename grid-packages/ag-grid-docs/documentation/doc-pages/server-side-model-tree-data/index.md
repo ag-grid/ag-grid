@@ -89,10 +89,6 @@ The example below shows this in action where the following can be noted: 333
 
 <grid-example title='Tree Data' name='tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
-[[note]]
-| The examples on this page use a simple method for expanding group nodes, however a
-| better approach is covered in the section [Preserving Group State](/server-side-model-grouping/#preserving-group-state).
-
 ## Refreshing Tree Data
 
 Tree Data can be refreshed in the same way as groups are refreshed when not using Tree Data. This is
