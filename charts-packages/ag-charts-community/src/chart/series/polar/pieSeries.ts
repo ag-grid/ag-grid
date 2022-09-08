@@ -10,6 +10,7 @@ import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle, SeriesTool
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
+import { doOnce } from '../../../util/function';
 import { toFixed, mod } from '../../../util/number';
 import { LegendDatum } from '../../legend';
 import { Caption } from '../../../caption';
@@ -75,10 +76,24 @@ export interface PieSeriesFormat {
     strokeWidth?: number;
 }
 
+interface PieSeriesLabelFormatterParams {
+    readonly datum: any;
+    readonly labelKey?: string;
+    readonly labelValue?: string;
+    readonly labelName?: string;
+    readonly angleKey: string;
+    readonly angleValue?: any;
+    readonly angleName?: string;
+    readonly radiusKey?: string;
+    readonly radiusValue?: any;
+    readonly radiusName?: string;
+    readonly value?: any;
+}
+
 class PieSeriesLabel extends Label {
     offset = 3; // from the callout line
     minAngle = 20; // in degrees
-    formatter?: (params: { value: any }) => string = undefined;
+    formatter?: (params: PieSeriesLabelFormatterParams) => string = undefined;
 }
 
 class PieSeriesCallout extends Observable {
@@ -258,7 +273,37 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         if (labelKey) {
             if (labelFormatter) {
-                labelData = data.map((datum) => labelFormatter({ value: datum[labelKey] }));
+                const showValueDeprecationWarning = () => doOnce(
+                    () =>
+                        console.warn(
+                            'AG Charts - the use of { value } in the pie chart label formatter function is deprecated. Please use { datum, labelKey, ... } instead.'
+                        ),
+                    'deprecated use of "value" property in pie chart label formatter'
+                );
+                labelData = data.map((datum) => {
+                    let deprecatedValue = datum[labelKey];
+                    const formatterParams: PieSeriesLabelFormatterParams = {
+                        datum,
+                        angleKey,
+                        angleValue: datum[angleKey],
+                        angleName: this.angleName,
+                        radiusKey,
+                        radiusValue: radiusKey ? datum[radiusKey] : undefined,
+                        radiusName: this.radiusName,
+                        labelKey,
+                        labelValue: labelKey ? datum[labelKey] : undefined,
+                        labelName: this.labelName,
+                        get value() {
+                            showValueDeprecationWarning();
+                            return deprecatedValue;
+                        },
+                        set value(v) {
+                            showValueDeprecationWarning();
+                            deprecatedValue = v;
+                        },
+                    };
+                    return labelFormatter(formatterParams);
+                });
             } else {
                 labelData = data.map((datum) => String(datum[labelKey]));
             }

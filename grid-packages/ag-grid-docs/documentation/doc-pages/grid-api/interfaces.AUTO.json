@@ -8706,7 +8706,7 @@
     "type": {
       "offset?": "PixelSize",
       "minAngle?": "number",
-      "formatter?": "(params: { value: DatumType; }) => string",
+      "formatter?": "(params: AgPieSeriesLabelFormatterParams<DatumType>) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -8888,6 +8888,35 @@
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
       "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+    }
+  },
+  "AgPieSeriesLabelFormatterParams": {
+    "meta": { "typeParams": ["DatumType"] },
+    "type": {
+      "datum": "DatumType",
+      "labelKey?": "string",
+      "labelValue?": "string",
+      "labelName?": "string",
+      "angleKey": "string",
+      "angleValue?": "any",
+      "angleName?": "string",
+      "radiusKey?": "string",
+      "radiusValue?": "any",
+      "radiusName?": "string",
+      "value?": "any"
+    },
+    "docs": {
+      "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "labelKey?": "/** labelKey as specified on series options. */",
+      "labelValue?": "/** labelValue as read from series data via the labelKey property. */",
+      "labelName?": "/** labelName as specified on series options. */",
+      "angleKey": "/** angleKey as specified on series options. */",
+      "angleValue?": "/** angleValue as read from series data via the angleKey property. */",
+      "angleName?": "/** angleName as specified on series options. */",
+      "radiusKey?": "/** radiusKey as specified on series options. */",
+      "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
+      "radiusName?": "/** radiusName as specified on series options. */",
+      "value?": "/** The value of labelKey as specified on series options.\n * @deprecated Use item.datum instead.\n */"
     }
   },
   "AgTreemapSeriesLabelOptions": {
