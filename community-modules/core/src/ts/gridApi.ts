@@ -1010,18 +1010,18 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Returns the filter component instance for a column.
+     * Returns the filter component instance for a column.     
      * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).
      * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead.
      */
-    public getFilterInstance(key: string | Column, callback?: (filter: IFilter | null) => void): IFilter | null | undefined {
+    public getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined {
         const res = this.getFilterInstanceImpl(key, instance => {
             if (!callback) { return; }
-            const unwrapped = unwrapUserComp(instance);
+            const unwrapped = unwrapUserComp(instance) as any;
             callback(unwrapped);
         });
         const unwrapped = unwrapUserComp(res);
-        return unwrapped;
+        return unwrapped as any;
     }
 
     private getFilterInstanceImpl(key: string | Column, callback: (filter: IFilter) => void): IFilter | null | undefined {

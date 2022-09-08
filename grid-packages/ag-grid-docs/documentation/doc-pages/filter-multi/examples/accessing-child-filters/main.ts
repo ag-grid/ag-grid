@@ -29,16 +29,16 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function getTextModel() {
-  var textFilter = (gridOptions.api!.getFilterInstance(
+  var textFilter = gridOptions.api!.getFilterInstance<IMultiFilter>(
     'athlete'
-  ) as IMultiFilter).getChildFilterInstance(0)!;
+  )!.getChildFilterInstance(0)!;
   console.log('Current Text Filter model: ', textFilter.getModel())
 }
 
 function getSetMiniFilter() {
-  var setFilter = (gridOptions.api!.getFilterInstance(
+  var setFilter = gridOptions.api!.getFilterInstance<IMultiFilter>(
     'athlete'
-  ) as IMultiFilter).getChildFilterInstance(1) as ISetFilter;
+  )!.getChildFilterInstance(1) as ISetFilter;
   console.log('Current Set Filter search text: ', setFilter.getMiniFilter())
 }
 

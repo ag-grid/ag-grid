@@ -72,9 +72,9 @@ function getModel(type: string) {
 }
 
 function setFilterValues(type: string) {
-  const instance = gridOptions.api!.getFilterInstance(
+  const instance = gridOptions.api!.getFilterInstance<ISetFilter>(
     FILTER_TYPES[type]
-  ) as ISetFilter
+  )!;
 
   instance.setFilterValues(MANGLED_COLOURS)
   instance.applyModel()
@@ -82,17 +82,17 @@ function setFilterValues(type: string) {
 }
 
 function getValues(type: string) {
-  const instance = gridOptions.api!.getFilterInstance(
+  const instance = gridOptions.api!.getFilterInstance<ISetFilter>(
     FILTER_TYPES[type]
-  ) as ISetFilter
+  )!;
 
   alert(JSON.stringify(instance.getValues(), null, 2))
 }
 
 function reset(type: string) {
-  const instance = gridOptions.api!.getFilterInstance(
+  const instance = gridOptions.api!.getFilterInstance<ISetFilter>(
     FILTER_TYPES[type]
-  ) as ISetFilter
+  )!;
 
   instance.resetFilterValues()
   instance.setModel(null)
