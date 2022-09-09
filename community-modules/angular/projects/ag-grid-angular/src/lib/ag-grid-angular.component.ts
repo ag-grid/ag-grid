@@ -171,7 +171,7 @@ import { AgGridColumn } from "./ag-grid-column.component";
     // tell angular we don't want view encapsulation, we don't want a shadow root
     encapsulation: ViewEncapsulation.None
 })
-export class AgGridAngular<TData = any> implements AfterViewInit {
+export class AgGridAngular<TColDef extends ColDef<TData>, TData> implements AfterViewInit {
     // not intended for user to interact with. so putting _ in so if user gets reference
     // to this object, they kind'a know it's not part of the agreed interface
     private _nativeElement: any;
@@ -341,7 +341,7 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     /** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround.     */
     @Input() public suppressClipboardApi: boolean | undefined = undefined;
     /** Array of Column / Column Group definitions.     */
-    @Input() public columnDefs: (ColDef<TData> | ColGroupDef<TData>)[] | null | undefined = undefined;
+    @Input() public columnDefs: (TColDef | ColGroupDef<TData>)[] | null | undefined = undefined;
     /** A default column definition. Items defined in the actual column definitions get precedence.     */
     @Input() public defaultColDef: ColDef<TData> | undefined = undefined;
     /** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence.     */
@@ -1270,4 +1270,3 @@ export class AgGridAngular<TData = any> implements AfterViewInit {
     static ngAcceptInputType_serverSideInfiniteScroll: boolean | null | '';
     // @END@
 }
-
