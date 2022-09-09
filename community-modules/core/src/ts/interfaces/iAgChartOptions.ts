@@ -1240,7 +1240,7 @@ export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRe
 }
 
 export interface AgPieSeriesLabelFormatterParams<DatumType> {
-    /** Datum from the series data array that the tooltip is being rendered for. */
+    /** Datum from the series data array that the label is being rendered for. */
     readonly datum: DatumType;
 
     /** labelKey as specified on series options. */
