@@ -70,19 +70,21 @@ function onRowSelected(event: RowSelectedEvent<ICar>) {
 [[only-angular]]
 |### Configure via Component
 |
-|The `<ag-grid-angular>` component is defined as `AgGridComponent<TData = any>`. To activate the generic parameter, configure any valid Input property with the row data interface.
+|The `<ag-grid-angular>` component is generic with respect to `TData`. As there is no way to explicitly set generic parameters on Angular components, Angular infers the `TData` generic type from Inputs / Outputs. However, it will not always be successful, leaving `TData` inferred as `any`. 
 |
-|For example, type the `rowData` property in your component as `rowData: ICar[]`. 
+|We recommend providing the generic `TData` type to  your `columnDefs` property as in practice we see this leading to the most accurate inference.
+|
+|To provide the generic type of `ICar` to the `columnDefs` property you use the type `ColDef<ICar>` as follows:
 |
 |```ts
-|const rowData: ICar[] = [...];
+|const columnDefs: ColDef<ICar>[] = [...];
 |```
 |
-|Set this on your component template `[rowData]="rowData"`. This assigns `ICar` to `TData` for the component.
+|Then set this on your component template as `[columnDefs]="columnDefs"`. This provides Angular with the information it needs to assigns `ICar` to `TData` for the component.
 |
 |```html
 |<ag-grid-angular 
-|    [rowData]="rowData"    
+|    [columnDefs]="columnDefs"    
 |    (rowSelected)="onRowSelected($event)"
 |></ag-grid-angular>
 |```
