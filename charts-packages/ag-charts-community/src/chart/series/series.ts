@@ -7,16 +7,7 @@ import { createId } from '../../util/id';
 import { Label } from '../label';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
-import {
-    BOOLEAN,
-    Deprecated,
-    OPT_ARRAY,
-    OPT_BOOLEAN,
-    OPT_NUMBER,
-    OPT_STRING,
-    STRING,
-    Validate,
-} from '../../util/validation';
+import { BOOLEAN, Deprecated, OPT_BOOLEAN, OPT_NUMBER, OPT_STRING, STRING, Validate } from '../../util/validation';
 import { PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
 import { SizedPoint, Point } from '../../scene/point';

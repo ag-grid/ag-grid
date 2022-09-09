@@ -17,7 +17,7 @@ import { AgChartOptions } from './agChartOptions';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
-import { BOOLEAN, NUMBER, OPT_ARRAY, STRING, Validate } from '../util/validation';
+import { BOOLEAN, NUMBER, STRING, Validate } from '../util/validation';
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
