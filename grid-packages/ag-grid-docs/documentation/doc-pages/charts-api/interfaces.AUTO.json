@@ -2143,7 +2143,7 @@
       "value?": "any"
     },
     "docs": {
-      "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "datum": "/** Datum from the series data array that the label is being rendered for. */",
       "labelKey?": "/** labelKey as specified on series options. */",
       "labelValue?": "/** labelValue as read from series data via the labelKey property. */",
       "labelName?": "/** labelName as specified on series options. */",

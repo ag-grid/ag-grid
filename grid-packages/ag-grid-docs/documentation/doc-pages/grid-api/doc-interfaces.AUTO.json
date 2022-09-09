@@ -15305,7 +15305,7 @@
   },
   "AgPieSeriesLabelFormatterParams": {
     "datum": {
-      "description": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "description": "/** Datum from the series data array that the label is being rendered for. */",
       "type": { "returnType": "DatumType", "optional": false }
     },
     "labelKey": {
