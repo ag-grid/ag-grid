@@ -77,7 +77,7 @@ function destroyCountryFilter() {
 }
 
 function endingStan() {
-  var countryFilterComponent = gridOptions.api!.getFilterInstance('country') as ISetFilter;
+  var countryFilterComponent = gridOptions.api!.getFilterInstance<ISetFilter>('country')!;
   var countriesEndingWithStan = countryFilterComponent
     .getValues()
     .filter(function (value: any) {

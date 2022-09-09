@@ -68,7 +68,7 @@ function useList1() {
     valuesArray.push(value)
   })
 
-  var filter = gridOptions.api!.getFilterInstance('array') as ISetFilter;
+  var filter = gridOptions.api!.getFilterInstance<ISetFilter>('array')!;
   filter.refreshFilterValues()
 
   valuesCallbackList = list1
@@ -81,7 +81,7 @@ function useList2() {
     valuesArray.push(value)
   })
 
-  var filter = gridOptions.api!.getFilterInstance('array') as ISetFilter;
+  var filter = gridOptions.api!.getFilterInstance<ISetFilter>('array')!;
   filter.refreshFilterValues()
 
   valuesCallbackList = list2

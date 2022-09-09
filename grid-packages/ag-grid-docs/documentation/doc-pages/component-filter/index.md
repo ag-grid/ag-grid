@@ -81,7 +81,7 @@ There are two ways you can get fix this problem:
 |
 | // later in your app, if you want to execute myMethod()...
 | laterOnInYourApplicationSomewhere() {
-|     const angularFilterInstance = api.getFilterInstance('name') as PartialMatchFilterComponent; // assume filter on name column
+|     const angularFilterInstance = api.getFilterInstance<PartialMatchFilterComponent>('name'); // assume filter on name column
 |     angularFilterInstance.myMethod();
 | }
 | ```

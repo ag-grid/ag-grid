@@ -489,13 +489,13 @@
     }
   },
   "getFilterInstance": {
-    "description": "/** Returns the filter component instance for a column.\n * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).\n * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead. */",
+    "description": "/** Returns the filter component instance for a column.     \n * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).\n * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead. */",
     "type": {
       "arguments": {
         "key": "string | Column",
-        "callback?": "(filter: IFilter | null) => void"
+        "callback?": "(filter: TFilter | null) => void"
       },
-      "returnType": "IFilter | null | undefined"
+      "returnType": "TFilter | null | undefined"
     }
   },
   "destroyFilter": {

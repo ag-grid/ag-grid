@@ -1,20 +1,17 @@
 {
-  "version": "28.1.1",
   "name": "@ag-grid-community/solid",
-  "description": "{{desc_of_lib}}",
+  "version": "28.1.1",
+  "description": "AG Grid SolidJS Component",
   "license": "MIT",
-  "author": "{{me}}",
-  "contributors": [],
+  "author": "Niall Crosby <niall.crosby@ag-grid.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/{{me}}/{{name_of_lib}}.git"
+    "url": "https://github.com/ag-grid/ag-grid.git"
   },
-  "homepage": "https://github.com/{{me}}/{{name_of_lib}}#readme",
+  "homepage": "https://www.ag-grid.com/react-data-grid/solidjs/",
   "bugs": {
-    "url": "https://github.com/{{me}}/{{name_of_lib}}/issues"
+    "url": "https://github.com/ag-grid/ag-grid/issues"
   },
-  "private": false,
-  "sideEffects": false,
   "type": "module",
   "files": [
     "dist"
@@ -61,5 +58,8 @@
   "keywords": [
     "solid"
   ],
-  "packageManager": "pnpm@7.5.0"
+  "packageManager": "pnpm@7.5.0",
+  "publishConfig": {
+    "access": "public"
+  }
 }

@@ -74,6 +74,15 @@
             "pane": "left"
           },
           {
+            "title": "SolidJS",
+            "icon": "solid",
+            "url": "/solidjs",
+            "frameworks": [
+              "react"
+            ],
+            "pane": "right"
+          },
+          {
             "title": "Angular Compatibility",
             "icon": "angular",
             "url": "/angular-compatibility",

@@ -6809,10 +6809,6 @@
     }
   },
   "DragEvent": {
-    "type": {
-      "description": "/** One of {'cell','row','headerCell','toolPanel'} */",
-      "type": { "returnType": "string", "optional": false }
-    },
     "target": {
       "description": "/** The DOM element that started the event. */",
       "type": { "returnType": "HTMLElement", "optional": false }
@@ -6829,14 +6825,15 @@
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
     }
   },
   "DragStartedEvent": {
+    "type": { "type": { "returnType": "'dragStarted'", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "description": "/** One of {'cell','row','headerCell','toolPanel'} */",
-      "type": { "returnType": "string", "optional": false }
-    },
     "target": {
       "description": "/** The DOM element that started the event. */",
       "type": { "returnType": "HTMLElement", "optional": false }
@@ -6855,11 +6852,8 @@
     }
   },
   "DragStoppedEvent": {
+    "type": { "type": { "returnType": "'dragStopped'", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "description": "/** One of {'cell','row','headerCell','toolPanel'} */",
-      "type": { "returnType": "string", "optional": false }
-    },
     "target": {
       "description": "/** The DOM element that started the event. */",
       "type": { "returnType": "HTMLElement", "optional": false }

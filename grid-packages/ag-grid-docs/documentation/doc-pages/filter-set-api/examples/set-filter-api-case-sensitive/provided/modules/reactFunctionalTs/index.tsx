@@ -93,19 +93,19 @@ const GridExample = () => {
     }, [alert])
 
     const setFilterValues = useCallback((type: string) => {
-        const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type]) as ISetFilter;
+        const instance = gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type])!;
         instance.setFilterValues(MANGLED_COLOURS);
         instance.applyModel();
         gridRef.current!.api.onFilterChanged();
     }, [])
 
     const getValues = useCallback((type: string) => {
-        const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type]) as ISetFilter;
+        const instance = gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type])!;
         alert(JSON.stringify(instance.getValues(), null, 2));
     }, [alert])
 
     const reset = useCallback((type: string) => {
-        const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type]) as ISetFilter;
+        const instance = gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type])!;
         instance.resetFilterValues();
         instance.setModel(null);
         gridRef.current!.api.onFilterChanged();

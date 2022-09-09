@@ -21,22 +21,22 @@ const gridOptions: GridOptions<IOlympicData> = {
 let savedMiniFilterText: string | null = '';
 
 function getMiniFilterText() {
-  const athleteFilter = gridOptions.api!.getFilterInstance('athlete') as ISetFilter;
+  const athleteFilter = gridOptions.api!.getFilterInstance<ISetFilter>('athlete')!;
   console.log(athleteFilter.getMiniFilter());
 }
 
 function saveMiniFilterText() {
-  const athleteFilter = gridOptions.api!.getFilterInstance('athlete') as ISetFilter;
+  const athleteFilter = gridOptions.api!.getFilterInstance<ISetFilter>('athlete')!;
   savedMiniFilterText = athleteFilter.getMiniFilter();
 }
 
 function restoreMiniFilterText() {
-  const athleteFilter = gridOptions.api!.getFilterInstance('athlete') as ISetFilter;
+  const athleteFilter = gridOptions.api!.getFilterInstance<ISetFilter>('athlete')!;
   athleteFilter.setMiniFilter(savedMiniFilterText)
 }
 
 function resetFilter() {
-  const athleteFilter = gridOptions.api!.getFilterInstance('athlete') as ISetFilter;
+  const athleteFilter = gridOptions.api!.getFilterInstance<ISetFilter>('athlete')!;
   athleteFilter.setModel(null)
   gridOptions.api!.onFilterChanged()
 }

@@ -18,6 +18,7 @@ export interface ChartProxyParams {
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes: SeriesChartType[];
+    translate: (toTranslate: string, defaultText?: string) => string;
 }
 
 export interface FieldDefinition {
