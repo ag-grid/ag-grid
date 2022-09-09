@@ -51,6 +51,24 @@ series: [{
 }]
 ```
 
+The `label.formatter` function can be used to change the text value displayed in the label.
+It receives a single object as a parameter containing values associated with a pie segment.
+Please see the [API reference](#api-reference) for the full list of available properties.
+
+For example, to display the numeric values for a given pie sector in the label,
+you can use the following label formatter function:
+
+```js
+series: [{
+    ...
+    label: {
+        formatter: ({ datum, labelKey, angleKey }) => {
+            return `${datum[labelKey]}: ${datum[angleKey]}`;
+        }
+    }
+}]
+```
+
 The label's callout can be configured to have a different `length`, `color` and `strokeWidth`, for example:
 
 ```js

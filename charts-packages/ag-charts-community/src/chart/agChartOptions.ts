@@ -1143,7 +1143,7 @@ export interface AgPieSeriesLabelOptions<DatumType> extends AgChartLabelOptions 
     offset?: PixelSize;
     /** Minimum angle in degrees required for a segment to show a label. */
     minAngle?: number;
-    formatter?: (params: { value: DatumType }) => string;
+    formatter?: (params: AgPieSeriesLabelFormatterParams<DatumType>) => string;
 }
 
 export interface AgPieSeriesFormatterParams<DatumType> {
@@ -1237,6 +1237,39 @@ export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRe
     labelKey?: string;
     /** labelName as specified on series options. */
     labelName?: string;
+}
+
+export interface AgPieSeriesLabelFormatterParams<DatumType> {
+    /** Datum from the series data array that the label is being rendered for. */
+    readonly datum: DatumType;
+
+    /** labelKey as specified on series options. */
+    readonly labelKey?: string;
+    /** labelValue as read from series data via the labelKey property. */
+    readonly labelValue?: string;
+    /** labelName as specified on series options. */
+    readonly labelName?: string;
+
+    /** angleKey as specified on series options. */
+    readonly angleKey: string;
+    /** angleValue as read from series data via the angleKey property. */
+    readonly angleValue?: any;
+    /** angleName as specified on series options. */
+    readonly angleName?: string;
+
+    /** radiusKey as specified on series options. */
+    readonly radiusKey?: string;
+    /** radiusValue as read from series data via the radiusKey property. */
+    readonly radiusValue?: any;
+    /** radiusName as specified on series options. */
+    readonly radiusName?: string;
+
+    /**
+     * The value of labelKey as specified on series options.
+     *
+     * @deprecated Use item.datum instead.
+     */
+    readonly value?: any;
 }
 
 export interface AgTreemapSeriesLabelOptions extends AgChartLabelOptions {

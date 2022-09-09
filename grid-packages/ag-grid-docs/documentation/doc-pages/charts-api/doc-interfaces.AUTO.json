@@ -2965,7 +2965,7 @@
     },
     "formatter": {
       "type": {
-        "arguments": { "params": "{ value: DatumType; }" },
+        "arguments": { "params": "AgPieSeriesLabelFormatterParams<DatumType>" },
         "returnType": "string",
         "optional": true
       }
@@ -3248,6 +3248,53 @@
       "description": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
       "type": { "returnType": "CssColor", "optional": true }
     }
+  },
+  "AgPieSeriesLabelFormatterParams": {
+    "datum": {
+      "description": "/** Datum from the series data array that the label is being rendered for. */",
+      "type": { "returnType": "DatumType", "optional": false }
+    },
+    "labelKey": {
+      "description": "/** labelKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelValue": {
+      "description": "/** labelValue as read from series data via the labelKey property. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelName": {
+      "description": "/** labelName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "angleKey": {
+      "description": "/** angleKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "angleValue": {
+      "description": "/** angleValue as read from series data via the angleKey property. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "angleName": {
+      "description": "/** angleName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "radiusKey": {
+      "description": "/** radiusKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "radiusValue": {
+      "description": "/** radiusValue as read from series data via the radiusKey property. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "radiusName": {
+      "description": "/** radiusName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "value": {
+      "description": "/** The value of labelKey as specified on series options.\n * @deprecated Use item.datum instead.\n */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "meta": { "typeParams": ["DatumType"] }
   },
   "AgTreemapSeriesLabelOptions": {
     "padding": {
@@ -4120,6 +4167,19 @@
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } }
+  },
+  "PieSeriesLabelFormatterParams": {
+    "datum": { "type": { "returnType": "any", "optional": false } },
+    "labelKey": { "type": { "returnType": "string", "optional": true } },
+    "labelValue": { "type": { "returnType": "string", "optional": true } },
+    "labelName": { "type": { "returnType": "string", "optional": true } },
+    "angleKey": { "type": { "returnType": "string", "optional": false } },
+    "angleValue": { "type": { "returnType": "any", "optional": true } },
+    "angleName": { "type": { "returnType": "string", "optional": true } },
+    "radiusKey": { "type": { "returnType": "string", "optional": true } },
+    "radiusValue": { "type": { "returnType": "any", "optional": true } },
+    "radiusName": { "type": { "returnType": "string", "optional": true } },
+    "value": { "type": { "returnType": "any", "optional": true } }
   },
   "PolarSeriesMarkerFormatterParams": {
     "angleKey": { "type": { "returnType": "string", "optional": false } },
