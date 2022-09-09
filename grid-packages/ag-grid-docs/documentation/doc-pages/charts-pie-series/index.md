@@ -51,6 +51,22 @@ series: [{
 }]
 ```
 
+The labels can be customised via the `label.formatter` function.
+The `datum` property provides access to a data item associated with a segment.
+Some useful series config properties can be accessed too,
+please see the [API reference](#api-reference).
+
+```js
+series: [{
+    ...
+    label: {
+        formatter: ({ datum, labelKey, angleKey }) => {
+            return `${datum[labelKey]}: ${datum[angleKey]}`;
+        }
+    }
+}]
+```
+
 The label's callout can be configured to have a different `length`, `color` and `strokeWidth`, for example:
 
 ```js
