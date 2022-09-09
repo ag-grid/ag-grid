@@ -63,6 +63,27 @@ enum TextNodeTag {
     Value,
 }
 
+export interface TreemapSeriesFormatterParams {
+    readonly datum: any;
+    readonly labelKey: string;
+    readonly sizeKey?: string;
+    readonly colorKey?: string;
+    readonly fill?: string;
+    readonly fillOpacity?: string;
+    readonly stroke?: string;
+    readonly strokeOpacity?: number;
+    readonly strokeWidth?: number;
+    readonly highlighted: boolean;
+}
+
+export interface TreemapSeriesFormat {
+    fill?: string;
+    fillOpacity?: number;
+    stroke?: string;
+    strokeOpacity?: number;
+    strokeWidth?: number;
+}
+
 export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     static className = 'TreemapSeries';
     static type = 'treemap' as const;
@@ -143,6 +164,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     colorRange: string[] = ['#cb4b3f', '#6acb64'];
     colorParents: boolean = false;
     gradient: boolean = true;
+
+    formatter?: (params: TreemapSeriesFormatterParams) => TreemapSeriesFormat = undefined;
 
     colorName: string = 'Change';
     rootName: string = 'Root';
@@ -304,6 +327,10 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
             },
+            formatter,
+            colorKey,
+            labelKey,
+            sizeKey,
         } = this;
 
         const labelMeta = this.buildLabelMeta(this.groupSelection.data);
@@ -319,10 +346,24 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             const strokeWidth =
                 isDatumHighlighted && highlightedDatumStrokeWidth !== undefined ? highlightedDatumStrokeWidth : 1;
 
-            rect.fill = fill;
-            rect.fillOpacity = fillOpacity;
-            rect.stroke = stroke;
-            rect.strokeWidth = strokeWidth;
+            let format: TreemapSeriesFormat | undefined;
+            if (formatter) {
+                format = formatter({
+                    datum: datum.datum,
+                    colorKey,
+                    sizeKey,
+                    labelKey,
+                    fill,
+                    stroke,
+                    strokeWidth,
+                    highlighted: isDatumHighlighted,
+                });
+            }
+
+            rect.fill = format?.fill || fill;
+            rect.fillOpacity = format?.fillOpacity || fillOpacity;
+            rect.stroke = format?.stroke || stroke;
+            rect.strokeWidth = format?.strokeWidth || strokeWidth;
             rect.crisp = true;
             rect.gradient = gradient;
 
