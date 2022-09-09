@@ -61,8 +61,11 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
             const typeName = typeLookup[property];
             const inputType = getSafeType(typeName);
             let line = addDocLine(docLookup, property, '');
-            // Use the Generic hint types for improved type checking
-            const inputTypeWithGenerics = inputType.replace('ColDef<TData>', 'TColDef');
+            let inputTypeWithGenerics = inputType;
+            if (property == 'columnDefs') {
+                // Use the Generic hint types for improved type checking by updating the columnDefs property
+                inputTypeWithGenerics = inputType.replace('ColDef<TData>', 'TColDef');
+            }
             line += `    @Input() public ${property}: ${inputTypeWithGenerics} = undefined;${EOL}`;
             const order = typeKeysOrder.findIndex(p => p === property);
             propsToWrite.push({ order, line });

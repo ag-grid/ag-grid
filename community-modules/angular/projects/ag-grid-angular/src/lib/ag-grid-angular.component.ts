@@ -1269,42 +1269,4 @@ export class AgGridAngular<TColDef extends ColDef<TData>, TData> implements Afte
     static ngAcceptInputType_groupRowsSticky: boolean | null | '';
     static ngAcceptInputType_serverSideInfiniteScroll: boolean | null | '';
     // @END@
-    static typeCtor<TCol extends ColDef<TData>, TData>(inputs: Partial<Pick<AgGridAngular<TCol, TData>, 'columnDefs' | 'rowData' | 'defaultColDef' | 'gridReady'>>): AgGridAngular<TCol, TData> {
-        return null!;
-    }
 }
-
-interface Test {
-    athlete: string
-}
-interface TestDiff {
-    name: string
-}
-interface TestDiff2 {
-    name: boolean
-}
-
-// 1 AgGridAngular<TData, TColDef extends ColDef<TData>> 
-
-declare const columnDefs: ColDef[];
-declare const defaultColDef: ColDef<Test>;
-declare const rowData: Test[];
-declare const gridreasd: EventEmitter<GridReadyEvent<Test>>;
-let s = AgGridAngular.typeCtor({ columnDefs, defaultColDef, rowData, gridReady: gridreasd });
-//^?
-// let s: AgGridAngular<ColDef<any>, Test[], any>
-
-// 1: let s: AgGridAngular<any, ColDef<TestDiff>>
-
-
-//^?
-declare const columnDefs1: ColDef<Test>[];
-declare const defaultColDef1: ColDef;
-declare const rowData1: TestDiff[];
-let s1 = AgGridAngular.typeCtor({ rowData: rowData1, columnDefs: columnDefs1, defaultColDef: defaultColDef1 });
-   //^?
-// let s1: AgGridAngular<ColDef<TestDiff>, TestDiff[], TestDiff>
-
-// 1 let s1: AgGridAngular<any, ColDef<Test>>
-
-/// https://www.typescriptlang.org/play?#code/JYOwLgpgTgZghgYwgAgMoFcBGAeAKgETjDmQF5k4QBPAPmQG8AoZZAEyLgH4AuZAjxgF9GjUJFiIUAYQD2AG3wQYeQsTIVqdeshjAIc1rwDWEKjJh9VcADTIADlBl3eGHP2I1hY6PCTJZcgDijuh2isruJOSUtAwszMgIABbABlAQILwAFAHhKhx0AD7+8sEyoXmRNACUANoAugDcCSwA5iF2AJKsPMgAzmBQoK2NXuA+knwQA3FESXIQkLwDQyCtY+K+KLjTYPjAMBbaIHAAthDLg8PIwiIIcnB9fcgAgq3BwKwva+gPUHi5JTICAAD0gIFYz0BESsNFsVRYTBa9iwcmACGQjgA7lZeJEGshiiBfnJCch0BClKAIKx1BTWFSQDTmiwWHZUejEvJ0KcQOE+tlcNCyQEyhUlPkPHV6mTiXJScV6YyaXTKbomawWaz2Zg0RiGfBfmBobxoZK4EVyWrqbTyEr1cyRKz+sQwJywFQ7BApGAZP8hfJgWCMpCSgoJVV4bCsqB2WABcgAApwKBuuBybCJ9FGbBvD5fH5-AHyKMFazI5AAcgQ3N5-MrZMr2KsDeKlYNcCN0MrNBqvDzQwLrV+KeLclLHgYFdZ6TA6CgIGQcrkAEItSxhLcGfcUygayAZjW5Dy+UoE2adgN9ocaA1mtu-nuZAewGwlJ25Mb5OFTd+lPeIB3dIuRfTEZBxDg8V2O9GAWV9nnIAdPm+Yc-gAOg9L0fT9LJtCPE9+VsDsuz-GBbGbDgbmqLUAHoaIAPU4IA
