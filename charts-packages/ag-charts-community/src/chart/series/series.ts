@@ -179,7 +179,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     abstract tooltip: SeriesTooltip;
 
-    @Validate(OPT_ARRAY())
     protected _data?: any[] = undefined;
     set data(input: any[] | undefined) {
         this._data = input;
