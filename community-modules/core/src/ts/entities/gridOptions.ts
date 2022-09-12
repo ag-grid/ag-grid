@@ -125,7 +125,7 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false`  */
     tooltipMouseTrack?: boolean;
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */
-    popupParent?: HTMLElement;
+    popupParent?: HTMLElement | null;
 
     // *** Clipboard *** //
     /** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */

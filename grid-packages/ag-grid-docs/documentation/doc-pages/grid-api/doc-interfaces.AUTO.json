@@ -2389,7 +2389,7 @@
     },
     "popupParent": {
       "description": "/** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */",
-      "type": { "returnType": "HTMLElement", "optional": true }
+      "type": { "returnType": "HTMLElement | null", "optional": true }
     },
     "copyHeadersToClipboard": {
       "description": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
@@ -24258,7 +24258,7 @@
     },
     "popupParent": {
       "description": "/** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */",
-      "type": { "returnType": "HTMLElement", "optional": true }
+      "type": { "returnType": "HTMLElement | null", "optional": true }
     },
     "copyHeadersToClipboard": {
       "description": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
@@ -27035,7 +27035,7 @@
     },
     "popupParent": {
       "description": "/** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */",
-      "type": { "returnType": "HTMLElement", "optional": true }
+      "type": { "returnType": "HTMLElement | null", "optional": true }
     },
     "copyHeadersToClipboard": {
       "description": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
@@ -29822,7 +29822,7 @@
     },
     "popupParent": {
       "description": "/** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */",
-      "type": { "returnType": "HTMLElement", "optional": true }
+      "type": { "returnType": "HTMLElement | null", "optional": true }
     },
     "copyHeadersToClipboard": {
       "description": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",

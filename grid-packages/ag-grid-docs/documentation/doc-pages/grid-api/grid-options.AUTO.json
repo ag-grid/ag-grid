@@ -41,7 +41,7 @@
   },
   "popupParent": {
     "description": "/** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */",
-    "type": { "returnType": "HTMLElement" }
+    "type": { "returnType": "HTMLElement | null" }
   },
   "copyHeadersToClipboard": {
     "description": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",

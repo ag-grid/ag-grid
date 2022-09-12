@@ -14,7 +14,7 @@ const gridOptions: GridOptions = {
     { field: 'e' },
   ],
   rowData: rowData,
-  popupParent: document.querySelector('body')!,
+  popupParent: document.querySelector('body'),
 }
 
 // setup the grid after the page has finished loading
