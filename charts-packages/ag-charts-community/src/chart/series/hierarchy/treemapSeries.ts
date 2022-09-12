@@ -73,6 +73,7 @@ export interface TreemapSeriesFormatterParams {
     readonly stroke?: string;
     readonly strokeOpacity?: number;
     readonly strokeWidth?: number;
+    readonly gradient?: boolean;
     readonly highlighted: boolean;
 }
 
@@ -82,6 +83,7 @@ export interface TreemapSeriesFormat {
     stroke?: string;
     strokeOpacity?: number;
     strokeWidth?: number;
+    gradient?: boolean;
 }
 
 export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
@@ -356,16 +358,17 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                     fill,
                     stroke,
                     strokeWidth,
+                    gradient,
                     highlighted: isDatumHighlighted,
                 });
             }
 
-            rect.fill = format?.fill || fill;
-            rect.fillOpacity = format?.fillOpacity || fillOpacity;
-            rect.stroke = format?.stroke || stroke;
-            rect.strokeWidth = format?.strokeWidth || strokeWidth;
+            rect.fill = format?.fill ?? fill;
+            rect.fillOpacity = format?.fillOpacity ?? fillOpacity;
+            rect.stroke = format?.stroke ?? stroke;
+            rect.strokeWidth = format?.strokeWidth ?? strokeWidth;
+            rect.gradient = format?.gradient ?? gradient;
             rect.crisp = true;
-            rect.gradient = gradient;
 
             rect.x = datum.x0;
             rect.y = datum.y0;

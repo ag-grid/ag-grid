@@ -2257,6 +2257,7 @@
       "stroke?": "string",
       "strokeOpacity?": "number",
       "strokeWidth?": "number",
+      "gradient?": "boolean",
       "highlighted": "boolean"
     },
     "docs": {
@@ -2269,6 +2270,7 @@
       "stroke?": "/** The colour of the stroke for the treemap tile. */",
       "strokeOpacity?": "/** The opacity of the stroke for the treemap tile. */",
       "strokeWidth?": "/** The width in pixels of the stroke for the treemap tile. */",
+      "gradient?": "/** Whether or not the gradients are used for treemap tiles. */",
       "highlighted": "/** `true` if the tile is highlighted by hovering */"
     }
   },
@@ -2279,14 +2281,16 @@
       "fillOpacity?": "string",
       "stroke?": "string",
       "strokeOpacity?": "number",
-      "strokeWidth?": "number"
+      "strokeWidth?": "number",
+      "gradient?": "boolean"
     },
     "docs": {
       "fill?": "/** The colour of the fill for the treemap tile. */",
       "fillOpacity?": "/** The opacity of the fill for the treemap tile. */",
       "stroke?": "/** The colour of the stroke for the treemap tile. */",
       "strokeOpacity?": "/** The opacity of the stroke for the treemap tile. */",
-      "strokeWidth?": "/** The width in pixels of the stroke for the treemap tile. */"
+      "strokeWidth?": "/** The width in pixels of the stroke for the treemap tile. */",
+      "gradient?": "/** Whether or not the gradient is used for the treemap tile. */"
     }
   },
   "AgCartesianSeriesOptions": {
@@ -3020,6 +3024,7 @@
       "stroke?": "string",
       "strokeOpacity?": "number",
       "strokeWidth?": "number",
+      "gradient?": "boolean",
       "highlighted": "boolean"
     }
   },
@@ -3030,7 +3035,8 @@
       "fillOpacity?": "number",
       "stroke?": "string",
       "strokeOpacity?": "number",
-      "strokeWidth?": "number"
+      "strokeWidth?": "number",
+      "gradient?": "boolean"
     }
   },
   "PieSeriesNodeClickEvent": {

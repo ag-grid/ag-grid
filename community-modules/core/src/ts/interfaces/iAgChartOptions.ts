@@ -1328,6 +1328,8 @@ export interface AgTreemapSeriesFormatterParams<DataValue = any> {
     readonly strokeOpacity?: number;
     /** The width in pixels of the stroke for the treemap tile. */
     readonly strokeWidth?: number;
+    /** Whether or not the gradients are used for treemap tiles. */
+    readonly gradient?: boolean;
     /** `true` if the tile is highlighted by hovering */
     readonly highlighted: boolean;
 }
@@ -1343,6 +1345,8 @@ export interface AgTreemapSeriesFormat {
     readonly strokeOpacity?: number;
     /** The width in pixels of the stroke for the treemap tile. */
     readonly strokeWidth?: number;
+    /** Whether or not the gradient is used for the treemap tile. */
+    readonly gradient?: boolean;
 }
 
 export type AgCartesianSeriesOptions =

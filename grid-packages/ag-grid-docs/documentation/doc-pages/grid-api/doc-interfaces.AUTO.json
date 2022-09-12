@@ -15522,6 +15522,10 @@
       "description": "/** The width in pixels of the stroke for the treemap tile. */",
       "type": { "returnType": "number", "optional": true }
     },
+    "gradient": {
+      "description": "/** Whether or not the gradients are used for treemap tiles. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "highlighted": {
       "description": "/** `true` if the tile is highlighted by hovering */",
       "type": { "returnType": "boolean", "optional": false }
@@ -15548,6 +15552,10 @@
     "strokeWidth": {
       "description": "/** The width in pixels of the stroke for the treemap tile. */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "gradient": {
+      "description": "/** Whether or not the gradient is used for the treemap tile. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "AgCartesianSeriesOptions": {},
