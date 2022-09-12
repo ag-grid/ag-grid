@@ -199,14 +199,14 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             return [];
         }
 
-        if (bins) {
-            return bins;
-        }
-
         const xData = this.data.map((datum) => datum[this.xKey]);
         const xDomain = this.fixNumericExtent(extent(xData, isContinuous));
 
         if (this.binCount === undefined) {
+            if (bins) {
+                return bins;
+            }
+
             const binStarts = ticks(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
             const binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
             const firstBinEnd = binStarts[0];
@@ -262,6 +262,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     private placeDataInBins(data: any[]): HistogramBin[] {
         const { xKey } = this;
         const derivedBins = this.deriveBins();
+        this.bins = derivedBins;
 
         // creating a sorted copy allows binning in O(n) rather than O(n²)
         // but at the expense of more temporary memory
