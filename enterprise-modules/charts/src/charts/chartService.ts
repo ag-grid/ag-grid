@@ -4,6 +4,7 @@ import {
     Autowired,
     Bean,
     BeanStub,
+    ChartDownloadParams,
     CellRange,
     CellRangeParams,
     ChartModel,
@@ -77,6 +78,11 @@ export class ChartService extends BeanStub implements IChartService {
             }
         });
         return url;
+    }
+
+    public downloadChart(params: ChartDownloadParams) {
+        const chartComp = Array.from(this.activeChartComps).find(c => c.getChartId() === params.chartId);
+        chartComp?.downloadChart(params.dimensions);
     }
 
     public createChartFromCurrentRange(chartType: ChartType = 'groupedColumn'): ChartRef | undefined {

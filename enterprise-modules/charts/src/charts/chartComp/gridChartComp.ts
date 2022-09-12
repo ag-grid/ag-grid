@@ -400,8 +400,8 @@ export class GridChartComp extends Component {
         return false;
     }
 
-    private downloadChart(): void {
-        this.chartProxy.downloadChart();
+    public downloadChart(dimensions?: { width: number, height: number }): void {
+        this.chartProxy.downloadChart(dimensions);
     }
 
     public getChartId(): string {
