@@ -1381,4 +1381,33 @@ export abstract class Chart extends Observable {
             this.update(ChartUpdateType.SERIES_UPDATE, { seriesToUpdate });
         }
     }
+
+    async waitForUpdate(timeoutMs = 5000): Promise<void> {
+        return new Promise((resolve, reject) => {
+            let retryMs = 10;
+            let startMs = Date.now();
+            const cb = () => {
+                if (this.lastPerformUpdateError) {
+                    reject(this.lastPerformUpdateError);
+                    return;
+                }
+    
+                if (!this.updatePending) {
+                    resolve();
+                    return;
+                }
+    
+                const timeMs = Date.now() - startMs;
+                if (timeMs >= timeoutMs) {
+                    reject('timeout reached');
+                    return;
+                }
+    
+                retryMs *= 2;
+                setTimeout(cb, retryMs);
+            };
+    
+            cb();
+        });
+    }
 }
