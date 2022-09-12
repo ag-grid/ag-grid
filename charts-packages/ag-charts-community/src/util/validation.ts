@@ -35,6 +35,7 @@ export function Validate(predicate: ValidatePredicate) {
 }
 
 export const OPTIONAL = (v: any, predicate: ValidatePredicate) => v === undefined || predicate(v);
+
 export const ARRAY = (length?: number) => {
     return (v: any, predicate?: ValidatePredicate) =>
         Array.isArray(v) && (length ? v.length === length : true) && (predicate ? v.every((e) => predicate(e)) : true);
@@ -42,6 +43,9 @@ export const ARRAY = (length?: number) => {
 export const OPT_ARRAY = (length?: number) => {
     return (v: any) => OPTIONAL(v, ARRAY(length));
 };
+
+export const FUNCTION = (v: any) => typeof v === 'function';
+export const OPT_FUNCTION = (v: any) => OPTIONAL(v, FUNCTION);
 
 export const BOOLEAN = (v: any) => v === true || v === false;
 export const OPT_BOOLEAN = (v: any) => OPTIONAL(v, BOOLEAN);
@@ -61,6 +65,9 @@ export const OPT_NUMBER_ARRAY = (v: any) => OPTIONAL(v, NUMBER_ARRAY);
 
 export const STRING_ARRAY = (v: any) => ARRAY()(v, STRING);
 export const OPT_STRING_ARRAY = (v: any) => OPTIONAL(v, STRING_ARRAY);
+
+export const BOOLEAN_ARRAY = (v: any) => ARRAY()(v, BOOLEAN);
+export const OPT_BOOLEAN_ARRAY = (v: any) => OPTIONAL(v, BOOLEAN_ARRAY);
 
 const TEXT_ALIGNS = ['right', 'left', 'start', 'center', 'end'];
 export const TEXT_ALIGN = (v: any) => TEXT_ALIGNS.includes(v);
@@ -140,6 +147,9 @@ const CROSSLINE_LABEL_POSITIONS = [
     'insideBottomRight',
 ];
 export const OPT_CROSSLINE_LABEL_POSITION = (v: any) => OPTIONAL(v, (v: any) => CROSSLINE_LABEL_POSITIONS.includes(v));
+
+const BAR_LABEL_PLACEMENTS = ['inside', 'outside'];
+export const OPT_BAR_LABEL_PLACEMENT = (v: any) => OPTIONAL(v, (v: any) => BAR_LABEL_PLACEMENTS.includes(v));
 
 export function Deprecated(message?: string, opts?: { default: any }) {
     let logged = false;

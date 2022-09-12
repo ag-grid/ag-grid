@@ -7,7 +7,16 @@ import { createId } from '../../util/id';
 import { Label } from '../label';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
-import { Deprecated } from '../../util/validation';
+import {
+    ARRAY,
+    BOOLEAN,
+    Deprecated,
+    OPT_BOOLEAN,
+    OPT_NUMBER,
+    OPT_STRING,
+    STRING,
+    Validate,
+} from '../../util/validation';
 import { PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
 import { SizedPoint, Point } from '../../scene/point';
@@ -72,15 +81,27 @@ export interface PolarTooltipRendererParams extends TooltipRendererParams {
 }
 
 export class SeriesItemHighlightStyle {
+    @Validate(OPT_STRING)
     fill?: string = 'yellow';
+
+    @Validate(OPT_NUMBER(0, 1))
     fillOpacity?: number = undefined;
+
+    @Validate(OPT_STRING)
     stroke?: string = undefined;
+
+    @Validate(OPT_NUMBER(0))
     strokeWidth?: number = undefined;
 }
 
 export class SeriesHighlightStyle {
+    @Validate(OPT_NUMBER(0))
     strokeWidth?: number = undefined;
+
+    @Validate(OPT_NUMBER(0, 1))
     dimOpacity?: number = undefined;
+
+    @Validate(OPT_BOOLEAN)
     enabled?: boolean = undefined;
 }
 
@@ -105,6 +126,7 @@ export class HighlightStyle {
 }
 
 export class SeriesTooltip {
+    @Validate(BOOLEAN)
     enabled = true;
 }
 
@@ -157,6 +179,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     abstract tooltip: SeriesTooltip;
 
+    @Validate(ARRAY())
     protected _data?: any[] = undefined;
     set data(input: any[] | undefined) {
         this._data = input;
@@ -166,6 +189,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         return this._data;
     }
 
+    @Validate(BOOLEAN)
     protected _visible = true;
     set visible(value: boolean) {
         this._visible = value;
@@ -175,9 +199,12 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         return this._visible;
     }
 
+    @Validate(BOOLEAN)
     showInLegend = true;
+
     pickModes: SeriesNodePickMode[];
 
+    @Validate(STRING)
     cursor = 'default';
 
     constructor({
