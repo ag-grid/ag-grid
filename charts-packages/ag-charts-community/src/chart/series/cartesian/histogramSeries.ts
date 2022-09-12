@@ -32,8 +32,6 @@ class HistogramSeriesLabel extends Label {
     formatter?: (params: { value: number }) => string = undefined;
 }
 
-const defaultBinCount = 10;
-
 export { HistogramTooltipRendererParams };
 
 interface HistogramNodeDatum extends SeriesNodeDatum {
@@ -121,6 +119,8 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     static className = 'HistogramSeries';
     static type = 'histogram' as const;
 
+    readonly defaultBinCount = 10;
+
     private binnedData: HistogramBin[] = [];
     private xDomain: number[] = [];
     private yDomain: number[] = [];
@@ -207,8 +207,8 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                 return bins;
             }
 
-            const binStarts = ticks(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
-            const binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
+            const binStarts = ticks(xDomain[0], xDomain[1], this.defaultBinCount);
+            const binSize = tickStep(xDomain[0], xDomain[1], this.defaultBinCount);
             const firstBinEnd = binStarts[0];
 
             const expandStartToBin: (n: number) => [number, number] = (n) => [n, n + binSize];
@@ -262,7 +262,6 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     private placeDataInBins(data: any[]): HistogramBin[] {
         const { xKey } = this;
         const derivedBins = this.deriveBins();
-        this.bins = derivedBins;
 
         // creating a sorted copy allows binning in O(n) rather than O(n²)
         // but at the expense of more temporary memory

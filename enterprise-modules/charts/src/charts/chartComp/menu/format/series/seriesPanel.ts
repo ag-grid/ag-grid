@@ -228,7 +228,10 @@ export class SeriesPanel extends Component {
     }
 
     private initBins() {
-        const currentValue = this.getSeriesOption<any>("bins").length;
+        const currentValue =
+            this.getSeriesOption<any>('binCount') ||
+            this.getSeriesOption<any>('bins')?.length ||
+            this.getSeriesOption<any>('defaultBinCount');
 
         const seriesBinCountSlider = this.createBean(new AgSlider());
         seriesBinCountSlider
