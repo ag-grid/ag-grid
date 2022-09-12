@@ -110,32 +110,7 @@ export function dateRange(start: Date, end: Date, step = 24 * 60 * 60 * 1000): D
 }
 
 export async function waitForChartStability(chart: Chart, timeoutMs = 5000): Promise<void> {
-    return new Promise((resolve, reject) => {
-        let retryMs = 10;
-        let startMs = Date.now();
-        const cb = () => {
-            if (chart.lastPerformUpdateError) {
-                reject(chart.lastPerformUpdateError);
-                return;
-            }
-
-            if (!chart.updatePending) {
-                resolve();
-                return;
-            }
-
-            const timeMs = Date.now() - startMs;
-            if (timeMs >= timeoutMs) {
-                reject('timeout reached');
-                return;
-            }
-
-            retryMs *= 2;
-            setTimeout(cb, retryMs);
-        };
-
-        cb();
-    });
+    return chart.waitForUpdate(timeoutMs);
 }
 
 export function mouseMoveEvent({ offsetX, offsetY }: { offsetX: number; offsetY: number }): MouseEvent {
