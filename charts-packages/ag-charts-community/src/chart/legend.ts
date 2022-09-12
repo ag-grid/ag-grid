@@ -9,7 +9,19 @@ import { getMarker } from './marker/util';
 import { createId } from '../util/id';
 import { RedrawType } from '../scene/node';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
-import { OPT_BOOLEAN, Validate } from '../util/validation';
+import {
+    BOOLEAN,
+    FUNCTION,
+    NUMBER,
+    OPT_BOOLEAN,
+    OPT_FONT_STYLE,
+    OPT_FONT_WEIGHT,
+    OPT_FUNCTION,
+    OPT_NUMBER,
+    POSITION,
+    STRING,
+    Validate,
+} from '../util/validation';
 import { Layers } from './layers';
 
 export interface LegendDatum {
@@ -47,19 +59,34 @@ interface LegendLabelFormatterParams {
 }
 
 export class LegendLabel {
-    maxLength = undefined;
-    color = 'black';
+    @Validate(OPT_NUMBER(0))
+    maxLength?: number = undefined;
+
+    @Validate(STRING)
+    color: string = 'black';
+
+    @Validate(OPT_FONT_STYLE)
     fontStyle?: FontStyle = undefined;
+
+    @Validate(OPT_FONT_WEIGHT)
     fontWeight?: FontWeight = undefined;
-    fontSize = 12;
-    fontFamily = 'Verdana, sans-serif';
+
+    @Validate(NUMBER(0))
+    fontSize: number = 12;
+
+    @Validate(STRING)
+    fontFamily: string = 'Verdana, sans-serif';
+
+    @Validate(OPT_FUNCTION)
     formatter?: (params: LegendLabelFormatterParams) => string = undefined;
+
     getFont(): string {
         return getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
     }
 }
 
 export class LegendMarker {
+    @Validate(NUMBER(0))
     size = 15;
     /**
      * If the marker type is set, the legend will always use that marker type for all its items,
@@ -77,7 +104,10 @@ export class LegendMarker {
     /**
      * Padding between the marker and the label within each legend item.
      */
+    @Validate(NUMBER(0))
     padding: number = 8;
+
+    @Validate(NUMBER(0))
     strokeWidth: number = 1;
 
     parent?: { onMarkerShapeChange(): void };
@@ -87,18 +117,21 @@ export class LegendItem {
     readonly marker = new LegendMarker();
     readonly label = new LegendLabel();
     /** Used to constrain the width of legend items. */
+    @Validate(OPT_NUMBER(0))
     maxWidth?: number = undefined;
     /**
      * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
      * and as few rows as possible when positioned to top or bottom. This config specifies the amount of horizontal
      * padding between legend items.
      */
+    @Validate(NUMBER(0))
     paddingX = 16;
     /**
      * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
      * and as few rows as possible when positioned to top or bottom. This config specifies the amount of vertical
      * padding between legend items.
      */
+    @Validate(NUMBER(0))
     paddingY = 8;
 }
 
@@ -107,6 +140,7 @@ const NO_OP_LISTENER = () => {
 };
 
 export class LegendListeners implements Required<AgChartLegendListeners> {
+    @Validate(FUNCTION)
     legendItemClick: (event: AgChartLegendClickEvent) => void = NO_OP_LISTENER;
 }
 
@@ -140,6 +174,7 @@ export class Legend {
         return this._data;
     }
 
+    @Validate(BOOLEAN)
     private _enabled = true;
     set enabled(value: boolean) {
         this._enabled = value;
@@ -151,6 +186,7 @@ export class Legend {
     }
 
     orientation: LegendOrientation = LegendOrientation.Vertical;
+    @Validate(POSITION)
     private _position: LegendPosition = LegendPosition.Right;
     set position(value: LegendPosition) {
         this._position = value;
@@ -187,6 +223,7 @@ export class Legend {
     /**
      * Spacing between the legend and the edge of the chart's element.
      */
+    @Validate(NUMBER(0))
     spacing = 20;
 
     private characterWidths = new Map();

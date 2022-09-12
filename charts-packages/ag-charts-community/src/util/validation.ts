@@ -122,8 +122,8 @@ export const GRID_STYLE = (v: any) =>
         return true;
     });
 
-const AXIS_POSITIONS = ['top', 'right', 'bottom', 'left'];
-export const AXIS_POSITION = (v: any) => AXIS_POSITIONS.includes(v);
+const POSITIONS = ['top', 'right', 'bottom', 'left'];
+export const POSITION = (v: any) => POSITIONS.includes(v);
 
 export const OPT_CROSSLINE_TYPE = (v: any) => OPTIONAL(v, (v: any) => v === 'range' || v === 'line');
 

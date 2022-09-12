@@ -8,9 +8,9 @@ import { Label } from '../label';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
 import {
-    ARRAY,
     BOOLEAN,
     Deprecated,
+    OPT_ARRAY,
     OPT_BOOLEAN,
     OPT_NUMBER,
     OPT_STRING,
@@ -179,7 +179,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     abstract tooltip: SeriesTooltip;
 
-    @Validate(ARRAY())
+    @Validate(OPT_ARRAY())
     protected _data?: any[] = undefined;
     set data(input: any[] | undefined) {
         this._data = input;
