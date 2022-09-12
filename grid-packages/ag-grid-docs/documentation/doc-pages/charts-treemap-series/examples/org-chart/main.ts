@@ -17,6 +17,12 @@ const options: AgChartOptions = {
       colorKey: undefined, // if undefined, depth will be used an the value, where root has 0 depth
       colorDomain: [0, 2, 4],
       colorRange: ['#d73027', '#fee08b', '#1a9850'],
+      formatter: ({ datum, labelKey, highlighted }) => {
+        if (datum[labelKey] === 'Joel Cooper') {
+          return { fill: highlighted ? 'white' : 'orchid' };
+        }
+        return {};
+      },
     },
   ],
   title: {
