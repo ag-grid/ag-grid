@@ -144,10 +144,25 @@ export abstract class ChartProxy {
         return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
     }
 
-    public downloadChart(): void {
+    public async downloadChart(dimensions?: { width: number, height: number }): Promise<void> {
         const { chart } = this;
         const fileName = chart.title ? chart.title.text : 'chart';
-        chart.scene.download(fileName);
+
+        if (dimensions) {
+            const currentWidth = this.chart.width;
+            const currentHeight = this.chart.height;
+
+            this.chart.width = dimensions.width;
+            this.chart.height = dimensions.height;
+
+            await this.chart.waitForUpdate();
+            chart.scene.download(fileName);
+
+            this.chart.width = currentWidth;
+            this.chart.height = currentHeight;
+        } else {
+            chart.scene.download(fileName);
+        }
     }
 
     public getChartImageDataURL(type?: string) {

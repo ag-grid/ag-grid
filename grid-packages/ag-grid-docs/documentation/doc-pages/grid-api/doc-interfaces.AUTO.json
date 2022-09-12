@@ -15974,6 +15974,19 @@
       "type": { "returnType": "string", "optional": true }
     }
   },
+  "ChartDownloadParams": {
+    "chartId": {
+      "description": "/** The id of the created chart. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "dimensions": {
+      "description": "/** Dimensions of the chart.\n * If undefined, uses the browser image dimensions. */",
+      "type": {
+        "returnType": "{\n        width: number,\n        height: number\n    }",
+        "optional": true
+      }
+    }
+  },
   "ChartModelType": {},
   "ChartModel": {
     "version": { "type": { "returnType": "string", "optional": true } },
@@ -16060,6 +16073,13 @@
       "type": {
         "arguments": { "params": "GetChartImageDataUrlParams" },
         "returnType": "string | undefined",
+        "optional": false
+      }
+    },
+    "downloadChart": {
+      "type": {
+        "arguments": { "params": "ChartDownloadParams" },
+        "returnType": "void",
         "optional": false
       }
     }

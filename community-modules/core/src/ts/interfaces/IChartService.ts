@@ -16,6 +16,20 @@ export interface GetChartImageDataUrlParams {
     fileFormat?: string;
 }
 
+export interface ChartDownloadParams {
+    /** The id of the created chart. */
+    chartId: string;
+
+    /**
+     * Dimensions of the chart.
+     * If undefined, uses the browser image dimensions.
+     */
+    dimensions?: {
+        width: number,
+        height: number
+    }
+}
+
 export type ChartModelType = 'range' | 'pivot';
 
 export interface ChartModel {
@@ -42,4 +56,5 @@ export interface IChartService {
     createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
     restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;
     getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined;
+    downloadChart(params: ChartDownloadParams): void;
 }

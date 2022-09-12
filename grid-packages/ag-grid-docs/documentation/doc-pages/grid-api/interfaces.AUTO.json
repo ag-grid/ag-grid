@@ -9306,6 +9306,17 @@
       "fileFormat?": "/** A string indicating the image format.\n * The default format type is `image/png`.\n * Options: `image/png`, `image/jpeg` */"
     }
   },
+  "ChartDownloadParams": {
+    "meta": {},
+    "type": {
+      "chartId": "string",
+      "dimensions?": "{ width: number; height: number; }"
+    },
+    "docs": {
+      "chartId": "/** The id of the created chart. */",
+      "dimensions?": "/** Dimensions of the chart.\n * If undefined, uses the browser image dimensions. */"
+    }
+  },
   "ChartModelType": {
     "meta": { "isTypeAlias": true },
     "type": "'range' | 'pivot'"
@@ -9337,7 +9348,8 @@
       "createChartFromCurrentRange(chartType: ChartType)": "ChartRef | undefined",
       "createPivotChart(params: CreatePivotChartParams)": "ChartRef | undefined",
       "restoreChart(model: ChartModel, chartContainer?: HTMLElement)": "ChartRef | undefined",
-      "getChartImageDataURL(params: GetChartImageDataUrlParams)": "string | undefined"
+      "getChartImageDataURL(params: GetChartImageDataUrlParams)": "string | undefined",
+      "downloadChart(params: ChartDownloadParams)": "void"
     }
   },
   "ClientSideRowModelSteps": {

@@ -1096,6 +1096,10 @@
       "returnType": "string | undefined"
     }
   },
+  "downloadChart": {
+    "description": "/** Downloads the chart image in the browser. */",
+    "type": { "arguments": { "params": "ChartDownloadParams" } }
+  },
   "createRangeChart": {
     "description": "/** Used to programmatically create charts from a range. */",
     "type": {
