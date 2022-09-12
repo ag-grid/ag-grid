@@ -15496,6 +15496,13 @@
       "description": "/** Whether or not to use gradients for treemap tiles. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "formatter": {
+      "type": {
+        "arguments": { "params": "AgTreemapSeriesFormatterParams<DataValue>" },
+        "returnType": "AgTreemapSeriesFormat",
+        "optional": true
+      }
+    },
     "meta": { "typeParams": ["DatumType = any"] },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
@@ -15523,6 +15530,79 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    }
+  },
+  "AgTreemapSeriesFormatterParams": {
+    "datum": {
+      "description": "/** Datum from the series data array that the treemap tile is being rendered for. */",
+      "type": { "returnType": "DataValue", "optional": false }
+    },
+    "labelKey": {
+      "description": "/** labelKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "sizeKey": {
+      "description": "/** sizeKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "colorKey": {
+      "description": "/** colorKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fill": {
+      "description": "/** The colour of the fill for the treemap tile. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** The opacity of the fill for the treemap tile. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The colour of the stroke for the treemap tile. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** The opacity of the stroke for the treemap tile. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the stroke for the treemap tile. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "gradient": {
+      "description": "/** Whether or not the gradients are used for treemap tiles. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "highlighted": {
+      "description": "/** `true` if the tile is highlighted by hovering */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "meta": { "typeParams": ["DataValue = any"] }
+  },
+  "AgTreemapSeriesFormat": {
+    "fill": {
+      "description": "/** The colour of the fill for the treemap tile. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** The opacity of the fill for the treemap tile. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The colour of the stroke for the treemap tile. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** The opacity of the stroke for the treemap tile. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the stroke for the treemap tile. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "gradient": {
+      "description": "/** Whether or not the gradient is used for the treemap tile. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "AgCartesianSeriesOptions": {},
