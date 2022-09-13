@@ -84,7 +84,7 @@ glob.sync(`${directory}/*.css`, {ignore: ["**/*.min.css"]}).forEach(file => {
                 match.groups.postfix) {
                 const {prefix, value, postfix} = match.groups;
 
-                return `${prefix}${value.replaceAll(' ', '')}${postfix}`;
+                return `${prefix}${value.replace(/ /g, '')}${postfix}`;
             }
 
             return line;
