@@ -11,7 +11,7 @@ import { ChartAxis, ChartAxisDirection } from '../chartAxis';
 import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
 import { Point } from '../../scene/point';
-import { BOOLEAN, OPT_STRING, Validate } from '../../util/validation';
+import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../../util/validation';
 
 class GroupedCategoryAxisLabel extends AxisLabel {
     @Validate(BOOLEAN)
@@ -137,7 +137,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
      * The color of the labels.
      * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
      */
-    @Validate(OPT_STRING)
+    @Validate(OPT_COLOR_STRING)
     labelColor?: string = 'rgba(87, 87, 87, 1)';
 
     /**

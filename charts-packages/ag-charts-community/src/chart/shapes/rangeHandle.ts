@@ -1,15 +1,15 @@
 import { Path } from '../../scene/shape/path';
 import { BBox } from '../../scene/bbox';
 import { ShapeLineCap } from '../../scene/shape/shape';
-import { LINE_CAP, NUMBER, STRING, Validate } from '../../util/validation';
+import { LINE_CAP, NUMBER, COLOR_STRING, Validate } from '../../util/validation';
 
 export class RangeHandle extends Path {
     static className = 'RangeHandle';
 
-    @Validate(STRING)
+    @Validate(COLOR_STRING)
     protected _fill = '#f2f2f2';
 
-    @Validate(STRING)
+    @Validate(COLOR_STRING)
     protected _stroke = '#999999';
 
     @Validate(NUMBER(0))

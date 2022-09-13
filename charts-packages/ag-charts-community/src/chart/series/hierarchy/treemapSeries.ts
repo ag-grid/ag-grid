@@ -23,7 +23,7 @@ import {
     OPT_FUNCTION,
     OPT_STRING,
     STRING,
-    STRING_ARRAY,
+    COLOR_STRING_ARRAY,
     Validate,
 } from '../../../util/validation';
 
@@ -183,7 +183,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     @Validate(NUMBER_ARRAY)
     colorDomain: number[] = [-5, 5];
 
-    @Validate(STRING_ARRAY)
+    @Validate(COLOR_STRING_ARRAY)
     colorRange: string[] = ['#cb4b3f', '#6acb64'];
 
     @Validate(BOOLEAN)

@@ -22,7 +22,7 @@ import {
     OPT_FONT_STYLE,
     OPT_FONT_WEIGHT,
     STRING,
-    OPT_STRING,
+    OPT_COLOR_STRING,
 } from './util/validation';
 import { ChartAxisDirection } from './chart/chartAxis';
 import { Layers } from './chart/layers';
@@ -55,7 +55,7 @@ export class AxisTick {
      * The color of the axis ticks.
      * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
      */
-    @Validate(OPT_STRING)
+    @Validate(OPT_COLOR_STRING)
     color?: string = 'rgba(195, 195, 195, 1)';
 
     /**
@@ -101,7 +101,7 @@ export class AxisLabel {
      * The color of the labels.
      * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
      */
-    @Validate(STRING)
+    @Validate(OPT_COLOR_STRING)
     color?: string = 'rgba(87, 87, 87, 1)';
 
     /**

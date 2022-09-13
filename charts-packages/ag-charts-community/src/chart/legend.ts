@@ -19,6 +19,7 @@ import {
     OPT_FUNCTION,
     OPT_NUMBER,
     POSITION,
+    COLOR_STRING,
     STRING,
     Validate,
 } from '../util/validation';
@@ -62,7 +63,7 @@ export class LegendLabel {
     @Validate(OPT_NUMBER(0))
     maxLength?: number = undefined;
 
-    @Validate(STRING)
+    @Validate(COLOR_STRING)
     color: string = 'black';
 
     @Validate(OPT_FONT_STYLE)

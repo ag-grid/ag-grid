@@ -1,18 +1,18 @@
 import { Path } from '../../scene/shape/path';
 import { BBox } from '../../scene/bbox';
 import { ShapeLineCap } from '../../scene/shape/shape';
-import { LINE_CAP, NUMBER, STRING, Validate } from '../../util/validation';
+import { LINE_CAP, NUMBER, COLOR_STRING, Validate } from '../../util/validation';
 
 export class RangeMask extends Path {
     static className = 'RangeMask';
 
-    @Validate(STRING)
+    @Validate(COLOR_STRING)
     protected _stroke = '#999999';
 
     @Validate(NUMBER(0))
     protected _strokeWidth = 1;
 
-    @Validate(STRING)
+    @Validate(COLOR_STRING)
     protected _fill = '#999999';
 
     @Validate(NUMBER(0, 1))

@@ -23,11 +23,12 @@ import {
     OPT_BOOLEAN,
     OPT_NUMBER,
     OPT_STRING,
+    OPT_COLOR_STRING,
+    STRING,
     Validate,
     OPT_LINE_DASH,
     OPT_FONT_STYLE,
     OPT_FONT_WEIGHT,
-    STRING,
     NUMBER,
     OPT_CROSSLINE_LABEL_POSITION,
 } from '../../util/validation';
@@ -60,7 +61,7 @@ export class CrossLineLabel {
     /**
      * The color of the labels.
      */
-    @Validate(OPT_STRING)
+    @Validate(OPT_COLOR_STRING)
     color?: string = 'rgba(87, 87, 87, 1)';
 
     @Validate(OPT_CROSSLINE_LABEL_POSITION)
@@ -94,13 +95,13 @@ export class CrossLine {
     range?: [any, any] = undefined;
     value?: any = undefined;
 
-    @Validate(OPT_STRING)
+    @Validate(OPT_COLOR_STRING)
     fill?: string = undefined;
 
     @Validate(OPT_NUMBER(0, 1))
     fillOpacity?: number = undefined;
 
-    @Validate(OPT_STRING)
+    @Validate(OPT_COLOR_STRING)
     stroke?: string = undefined;
 
     @Validate(OPT_NUMBER())

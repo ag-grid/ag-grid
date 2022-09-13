@@ -1,4 +1,4 @@
-import { BOOLEAN, NUMBER, OPT_FONT_STYLE, OPT_FONT_WEIGHT, STRING, Validate } from '../util/validation';
+import { BOOLEAN, NUMBER, OPT_FONT_STYLE, OPT_FONT_WEIGHT, COLOR_STRING, STRING, Validate } from '../util/validation';
 import { FontStyle, FontWeight, getFont } from '../scene/shape/text';
 
 export class Label {
@@ -17,7 +17,7 @@ export class Label {
     @Validate(OPT_FONT_WEIGHT)
     fontWeight?: FontWeight = undefined;
 
-    @Validate(STRING)
+    @Validate(COLOR_STRING)
     color = 'rgba(70, 70, 70, 1)';
 
     getFont(): string {

@@ -30,7 +30,7 @@ import {
     OPT_FUNCTION,
     OPT_LINE_DASH,
     OPT_NUMBER,
-    OPT_STRING,
+    OPT_COLOR_STRING,
     STRING,
     Validate,
 } from '../../../util/validation';
@@ -143,10 +143,10 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
     tooltip: HistogramSeriesTooltip = new HistogramSeriesTooltip();
 
-    @Validate(OPT_STRING)
+    @Validate(OPT_COLOR_STRING)
     fill?: string = undefined;
 
-    @Validate(OPT_STRING)
+    @Validate(OPT_COLOR_STRING)
     stroke?: string = undefined;
 
     @Validate(NUMBER(0, 1))

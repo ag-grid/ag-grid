@@ -23,7 +23,15 @@ import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { checkDatum, isContinuous } from '../../../util/value';
 import { Marker } from '../../marker/marker';
-import { NUMBER, OPT_FUNCTION, OPT_LINE_DASH, OPT_STRING, STRING, Validate } from '../../../util/validation';
+import {
+    NUMBER,
+    OPT_FUNCTION,
+    OPT_LINE_DASH,
+    OPT_STRING,
+    OPT_COLOR_STRING,
+    STRING,
+    Validate,
+} from '../../../util/validation';
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {
@@ -81,7 +89,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
     @Validate(OPT_STRING)
     title?: string = undefined;
 
-    @Validate(OPT_STRING)
+    @Validate(OPT_COLOR_STRING)
     stroke?: string = '#874349';
 
     @Validate(OPT_LINE_DASH)

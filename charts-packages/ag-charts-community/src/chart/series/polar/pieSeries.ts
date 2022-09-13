@@ -26,7 +26,7 @@ import {
     OPT_NUMBER,
     OPT_STRING,
     STRING,
-    STRING_ARRAY,
+    COLOR_STRING_ARRAY,
     Validate,
 } from '../../../util/validation';
 
@@ -114,7 +114,7 @@ class PieSeriesLabel extends Label {
 }
 
 class PieSeriesCallout extends Observable {
-    @Validate(STRING_ARRAY)
+    @Validate(COLOR_STRING_ARRAY)
     colors: string[] = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
 
     @Validate(NUMBER(0))
@@ -231,10 +231,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     @Validate(OPT_STRING)
     labelName?: string = undefined;
 
-    @Validate(STRING_ARRAY)
+    @Validate(COLOR_STRING_ARRAY)
     fills: string[] = ['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
 
-    @Validate(STRING_ARRAY)
+    @Validate(COLOR_STRING_ARRAY)
     strokes: string[] = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
 
     @Validate(NUMBER(0, 1))
