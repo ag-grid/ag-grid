@@ -1,11 +1,12 @@
 import { Group } from '../../../scene/group';
 import { Line } from '../../../scene/shape/line';
-import { Text } from '../../../scene/shape/text';
+import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
 import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
 import { clamper } from '../../../scale/continuousScale';
 import { Sector } from '../../../scene/shape/sector';
+import { BBox } from '../../../scene/bbox';
 import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle, SeriesTooltip } from './../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
@@ -45,6 +46,21 @@ interface PieNodeDatum extends SeriesNodeDatum {
     };
 }
 
+interface InnerTextStyle {
+    readonly fontStyle?: FontStyle;
+    readonly fontWeight?: FontWeight;
+    readonly fontSize?: number;
+    readonly fontFamily?: string;
+    readonly textAlign?: CanvasTextAlign;
+    readonly textBaseline?: CanvasTextBaseline;
+    readonly fill?: string;
+}
+
+interface InnerTextDatum {
+    readonly text: string;
+    readonly style?: InnerTextStyle;
+}
+
 export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
     readonly labelKey?: string;
     readonly labelName?: string;
@@ -58,6 +74,7 @@ enum PieNodeTag {
     Sector,
     Callout,
     Label,
+    InnerText,
 }
 
 export interface PieSeriesFormatterParams {
@@ -110,6 +127,16 @@ export class PieTitle extends Caption {
     showInLegend = false;
 }
 
+class DoughnutTextLine {
+    text = '';
+    style = new Label()
+}
+
+class DoughnutInnerText {
+    textLines: DoughnutTextLine[] = [];
+    style = new Label();
+}
+
 export class PieSeries extends PolarSeries<PieNodeDatum> {
     static className = 'PieSeries';
     static type = 'pie' as const;
@@ -122,6 +149,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.highlightGroup
     ).selectAll<Group>();
     private labelSelection: Selection<Group, Group, PieNodeDatum, any>;
+    private innerTextSelection: Selection<Group, Group, InnerTextDatum, any>;
 
     /**
      * The processed data that gets visualized.
@@ -181,6 +209,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     angleKey = '';
     angleName = '';
 
+    readonly innerText = new DoughnutInnerText();
+
     /**
      * The key of the numeric field to use to determine the radii of pie slices.
      * The largest value will correspond to the full radius and smaller values to
@@ -224,7 +254,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     constructor() {
         super({ useLabelLayer: true });
 
-        this.labelSelection = Selection.select(this.labelGroup!).selectAll<Group>();
+        const pieLabels = new Group();
+        const innerTexts = new Group();
+        this.labelGroup!.append(pieLabels);
+        this.labelGroup!.append(innerTexts);
+        this.labelSelection = Selection.select(pieLabels).selectAll<Group>();
+        this.innerTextSelection = Selection.select(innerTexts).selectAll<Group>();
     }
 
     visibleChanged() {
@@ -423,7 +458,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private updateGroupSelection() {
-        const { groupSelection, highlightSelection, labelSelection } = this;
+        const { groupSelection, highlightSelection, labelSelection, innerTextSelection } = this;
 
         const update = (selection: typeof groupSelection) => {
             const updateGroups = selection.setData(this.groupSelectionData);
@@ -451,6 +486,16 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             node.pointerEvents = PointerEvents.None;
         });
         this.labelSelection = updateLabels.merge(enterLabels);
+
+        const updateInnerText = innerTextSelection.setData(this.innerText.textLines);
+        updateInnerText.exit.remove();
+
+        const enterFancy = updateInnerText.enter.append(Group);
+        enterFancy.append(Text).each((node) => {
+            node.tag = PieNodeTag.InnerText;
+            node.pointerEvents = PointerEvents.None;
+        });
+        this.innerTextSelection = updateInnerText.merge(enterFancy);
     }
 
     private updateNodes() {
@@ -604,6 +649,40 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 }
             });
         }
+
+        this.updateInnerTextNodes();
+    }
+
+    private updateInnerTextNodes() {
+        const textBBoxes: BBox[] = [];
+        this.innerTextSelection.selectByTag<Text>(PieNodeTag.InnerText).each((text, datum) => {
+            const { fontStyle, fontWeight, fontSize, fontFamily, color } = {
+                ...this.innerText.style,
+                ...(datum.style || {}),
+            };
+            text.fontStyle = fontStyle;
+            text.fontWeight = fontWeight;
+            text.fontSize = fontSize;
+            text.fontFamily = fontFamily;
+            text.text = datum.text;
+            text.x = 0;
+            text.y = 0;
+            text.fill = color;
+            text.textAlign = 'center';
+            text.textBaseline = 'alphabetic';
+            textBBoxes.push(text.computeBBox());
+        });
+        const totalHeight = textBBoxes.reduce((sum, bbox) => sum + bbox.height, 0);
+        const textBottoms: number[] = [];
+        for (let i = 0, prev = -totalHeight / 2; i < textBBoxes.length; i++) {
+            const bbox = textBBoxes[i];
+            const bottom = bbox.height + prev;
+            textBottoms.push(bottom);
+            prev = bottom;
+        }
+        this.innerTextSelection.selectByTag<Text>(PieNodeTag.InnerText).each((text, _datum, index) => {
+            text.y = textBottoms[index];
+        });
     }
 
     fireNodeClickEvent(event: MouseEvent, datum: PieNodeDatum): void {
