@@ -1339,6 +1339,47 @@ export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
     nodePadding?: PixelSize;
     /** Whether or not to use gradients for treemap tiles. */
     gradient?: boolean;
+    formatter?: (params: AgTreemapSeriesFormatterParams<DataValue>) => AgTreemapSeriesFormat;
+}
+
+export interface AgTreemapSeriesFormatterParams<DataValue = any> {
+    /** Datum from the series data array that the treemap tile is being rendered for. */
+    readonly datum: DataValue;
+    /** labelKey as specified on series options. */
+    readonly labelKey: string;
+    /** sizeKey as specified on series options. */
+    readonly sizeKey?: string;
+    /** colorKey as specified on series options. */
+    readonly colorKey?: string;
+    /** The colour of the fill for the treemap tile. */
+    readonly fill?: string;
+    /** The opacity of the fill for the treemap tile. */
+    readonly fillOpacity?: string;
+    /** The colour of the stroke for the treemap tile. */
+    readonly stroke?: string;
+    /** The opacity of the stroke for the treemap tile. */
+    readonly strokeOpacity?: number;
+    /** The width in pixels of the stroke for the treemap tile. */
+    readonly strokeWidth?: number;
+    /** Whether or not the gradients are used for treemap tiles. */
+    readonly gradient?: boolean;
+    /** `true` if the tile is highlighted by hovering */
+    readonly highlighted: boolean;
+}
+
+export interface AgTreemapSeriesFormat {
+    /** The colour of the fill for the treemap tile. */
+    readonly fill?: string;
+    /** The opacity of the fill for the treemap tile. */
+    readonly fillOpacity?: string;
+    /** The colour of the stroke for the treemap tile. */
+    readonly stroke?: string;
+    /** The opacity of the stroke for the treemap tile. */
+    readonly strokeOpacity?: number;
+    /** The width in pixels of the stroke for the treemap tile. */
+    readonly strokeWidth?: number;
+    /** Whether or not the gradient is used for the treemap tile. */
+    readonly gradient?: boolean;
 }
 
 export type AgCartesianSeriesOptions =

@@ -26,7 +26,7 @@ export class SeriesPanel extends Component {
 
     public static TEMPLATE = /* html */
         `<div>
-            <ag-group-component ref="seriesGroup">                
+            <ag-group-component ref="seriesGroup">
             </ag-group-component>
         </div>`;
 
@@ -228,7 +228,7 @@ export class SeriesPanel extends Component {
     }
 
     private initBins() {
-        const currentValue = this.getSeriesOption<number>("binCount");
+        const currentValue = this.getSeriesOption<any>("bins").length;
 
         const seriesBinCountSlider = this.createBean(new AgSlider());
         seriesBinCountSlider

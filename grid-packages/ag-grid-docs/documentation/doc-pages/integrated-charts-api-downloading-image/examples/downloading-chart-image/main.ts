@@ -53,6 +53,17 @@ function onChartCreated(event: ChartCreated) {
   chartId = event.chartId
 }
 
+function downloadChart(dimensions: { width: number, height: number }) {
+  if (!chartId) {
+    return
+  }
+
+  gridOptions.api!.downloadChart({
+    chartId,
+    dimensions
+  });
+}
+
 function downloadChartImage(fileFormat: string) {
   if (!chartId) {
     return

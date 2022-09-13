@@ -652,7 +652,14 @@
                 "name": "Downloading Chart Image",
                 "url": "/integrated-charts-api-downloading-image/"
             }
+        },
+        "downloadChart": {
+            "more": {
+                "name": "Downloading Chart Image",
+                "url": "/integrated-charts-api-downloading-image/"
+            }
         }
+        
     },
     "miscellaneous": {
         "meta": {
