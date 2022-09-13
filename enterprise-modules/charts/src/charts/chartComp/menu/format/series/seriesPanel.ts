@@ -233,8 +233,8 @@ export class SeriesPanel extends Component {
         const seriesBinCountSlider = this.createBean(new AgSlider());
         seriesBinCountSlider
             .setLabel(this.translate("histogramBinCount"))
-            .setMinValue(4)
-            .setMaxValue(getMaxValue(currentValue, 100))
+            .setMinValue(0)
+            .setMaxValue(getMaxValue(currentValue, 20))
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
             .onValueChange(newValue => this.setSeriesOption("binCount", newValue));
