@@ -46,7 +46,7 @@ export class LogScale extends ContinuousScale {
         return super.getDomain();
     }
 
-    @Validate(NUMBER())
+    @Validate(NUMBER(0))
     _base = 10;
     set base(value: number) {
         if (this._base !== value) {
