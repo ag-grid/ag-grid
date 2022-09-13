@@ -9,10 +9,15 @@ It is possible to retrieve a base64 encoded image rendered from the chart using 
 
 <api-documentation source='grid-api/api.json' section='charts' names='["getChartImageDataURL"]'></api-documentation>
 
+It is also possible to download the chart image using custom dimensions.
+
+<api-documentation source='grid-api/api.json' section='charts' names='["downloadChart"]'></api-documentation>
+
 The example below demonstrates how you can retrieve images rendered from the chart in multiple formats.
 
 - Click "Download chart PNG" to download a PNG format image.
 - Click "Download chart JPEG" to download a JPEG format image.
+- Click "Download 800x500 chart" to download a custom size image.
 - Click "Open PNG" to open a PNG format image of the chart in a new window.
 - Click "Open JPEG" to open a JPEG format image of the chart in a new window.
 

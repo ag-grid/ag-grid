@@ -57,7 +57,7 @@ import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { ICellEditor } from "./interfaces/iCellEditor";
 import { ChartType, CrossFilterChartType, SeriesChartType } from "./interfaces/iChartOptions";
-import { ChartModel, GetChartImageDataUrlParams, IChartService } from "./interfaces/IChartService";
+import { ChartDownloadParams, ChartModel, GetChartImageDataUrlParams, IChartService } from "./interfaces/IChartService";
 import { ClientSideRowModelSteps, IClientSideRowModel, RefreshModelParams } from "./interfaces/iClientSideRowModel";
 import { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from "./interfaces/iClipboardService";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
@@ -1624,6 +1624,14 @@ export class GridApi<TData = any> {
         if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getChartImageDataURL') &&
             ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL')) {
             return this.chartService.getChartImageDataURL(params);
+        }
+    }
+
+    /** Downloads the chart image in the browser. */
+    public downloadChart(params: ChartDownloadParams) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.downloadChart') &&
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart')) {
+            return this.chartService.downloadChart(params);
         }
     }
 

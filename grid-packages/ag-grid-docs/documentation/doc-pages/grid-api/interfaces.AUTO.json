@@ -9008,6 +9008,7 @@
       "tooltip?": "AgTreemapSeriesTooltip<DatumType>",
       "nodePadding?": "PixelSize",
       "gradient?": "boolean",
+      "formatter?": "(params: AgTreemapSeriesFormatterParams<DataValue>) => AgTreemapSeriesFormat",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
@@ -9034,6 +9035,54 @@
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
+    }
+  },
+  "AgTreemapSeriesFormatterParams": {
+    "meta": { "typeParams": ["DataValue = any"] },
+    "type": {
+      "datum": "DataValue",
+      "labelKey": "string",
+      "sizeKey?": "string",
+      "colorKey?": "string",
+      "fill?": "string",
+      "fillOpacity?": "string",
+      "stroke?": "string",
+      "strokeOpacity?": "number",
+      "strokeWidth?": "number",
+      "gradient?": "boolean",
+      "highlighted": "boolean"
+    },
+    "docs": {
+      "datum": "/** Datum from the series data array that the treemap tile is being rendered for. */",
+      "labelKey": "/** labelKey as specified on series options. */",
+      "sizeKey?": "/** sizeKey as specified on series options. */",
+      "colorKey?": "/** colorKey as specified on series options. */",
+      "fill?": "/** The colour of the fill for the treemap tile. */",
+      "fillOpacity?": "/** The opacity of the fill for the treemap tile. */",
+      "stroke?": "/** The colour of the stroke for the treemap tile. */",
+      "strokeOpacity?": "/** The opacity of the stroke for the treemap tile. */",
+      "strokeWidth?": "/** The width in pixels of the stroke for the treemap tile. */",
+      "gradient?": "/** Whether or not the gradients are used for treemap tiles. */",
+      "highlighted": "/** `true` if the tile is highlighted by hovering */"
+    }
+  },
+  "AgTreemapSeriesFormat": {
+    "meta": {},
+    "type": {
+      "fill?": "string",
+      "fillOpacity?": "string",
+      "stroke?": "string",
+      "strokeOpacity?": "number",
+      "strokeWidth?": "number",
+      "gradient?": "boolean"
+    },
+    "docs": {
+      "fill?": "/** The colour of the fill for the treemap tile. */",
+      "fillOpacity?": "/** The opacity of the fill for the treemap tile. */",
+      "stroke?": "/** The colour of the stroke for the treemap tile. */",
+      "strokeOpacity?": "/** The opacity of the stroke for the treemap tile. */",
+      "strokeWidth?": "/** The width in pixels of the stroke for the treemap tile. */",
+      "gradient?": "/** Whether or not the gradient is used for the treemap tile. */"
     }
   },
   "AgCartesianSeriesOptions": {
@@ -9306,6 +9355,17 @@
       "fileFormat?": "/** A string indicating the image format.\n * The default format type is `image/png`.\n * Options: `image/png`, `image/jpeg` */"
     }
   },
+  "ChartDownloadParams": {
+    "meta": {},
+    "type": {
+      "chartId": "string",
+      "dimensions?": "{ width: number; height: number; }"
+    },
+    "docs": {
+      "chartId": "/** The id of the created chart. */",
+      "dimensions?": "/** Dimensions of the chart.\n * If undefined, uses the browser image dimensions. */"
+    }
+  },
   "ChartModelType": {
     "meta": { "isTypeAlias": true },
     "type": "'range' | 'pivot'"
@@ -9337,7 +9397,8 @@
       "createChartFromCurrentRange(chartType: ChartType)": "ChartRef | undefined",
       "createPivotChart(params: CreatePivotChartParams)": "ChartRef | undefined",
       "restoreChart(model: ChartModel, chartContainer?: HTMLElement)": "ChartRef | undefined",
-      "getChartImageDataURL(params: GetChartImageDataUrlParams)": "string | undefined"
+      "getChartImageDataURL(params: GetChartImageDataUrlParams)": "string | undefined",
+      "downloadChart(params: ChartDownloadParams)": "void"
     }
   },
   "ClientSideRowModelSteps": {
