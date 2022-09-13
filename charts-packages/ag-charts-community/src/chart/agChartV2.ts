@@ -161,7 +161,7 @@ export abstract class AgChartV2 {
         return chart as T;
     }
 
-    static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>): void {
+    static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>) {
         debug('user options', userOptions);
         const mixinOpts: any = {};
         if (AgChartV2.DEBUG()) {
@@ -190,12 +190,17 @@ export abstract class AgChartV2 {
         chart: T,
         update: Partial<ChartOptionType<T>>,
         userOptions: ChartOptionType<T>
-    ): void {
-        if (update.type == null) {
-            update = { ...update, type: chart.options.type || optionsType(update) };
-        }
-        debug('delta update', update);
-        applyChartOptions(chart, update as ChartOptionType<typeof chart>, userOptions);
+    ) {
+        return chart.registerPendingFactoryUpdate(async () => {
+            if (update.type == null) {
+                update = { ...update, type: chart.options.type || optionsType(update) };
+            }
+            debug('delta update', update);
+    
+            await chart.awaitUpdateCompletion();
+    
+            applyChartOptions(chart, update as ChartOptionType<typeof chart>, userOptions);
+        })
     }
 }
 

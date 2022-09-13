@@ -235,9 +235,9 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         };
     }
 
-    processData(): boolean {
+    async processData() {
         if (!this.data) {
-            return false;
+            return;
         }
 
         const { data, sizeKey, labelKey, colorKey, colorDomain, colorRange, colorParents } = this;
@@ -276,7 +276,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         }
         traverse(this.dataRoot);
 
-        return true;
+        return;
     }
 
     protected getLabelCenterX(datum: any): number {
@@ -287,16 +287,16 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         return (datum.y0 + datum.y1) / 2 + 2;
     }
 
-    createNodeData() {
+    async createNodeData() {
         return [];
     }
 
-    update(): void {
-        this.updateSelections();
-        this.updateNodes();
+    async update() {
+        await this.updateSelections();
+        await this.updateNodes();
     }
 
-    updateSelections() {
+    async updateSelections() {
         if (!this.nodeDataRefresh) {
             return;
         }
@@ -336,7 +336,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         this.highlightSelection = update(highlightSelection);
     }
 
-    updateNodes() {
+    async updateNodes() {
         if (!this.chart) {
             return;
         }
