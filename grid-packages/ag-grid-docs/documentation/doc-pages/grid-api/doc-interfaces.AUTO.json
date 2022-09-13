@@ -16059,6 +16059,10 @@
       "description": "/** The id of the created chart. */",
       "type": { "returnType": "string", "optional": false }
     },
+    "fileName": {
+      "description": "/** Name of downloaded image file. The chart title will be used by default */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "fileFormat": {
       "description": "/** A string indicating the image format.\n * The default format type is `image/png`.\n * Options: `image/png`, `image/jpeg` */",
       "type": { "returnType": "string", "optional": true }
