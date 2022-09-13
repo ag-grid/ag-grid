@@ -317,7 +317,13 @@ export class PivotColDefService extends BeanStub {
         colDef.colId = PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + colDef.colId;
         pivotColumnDefs.push(colDef);
 
-        insertAfter ? parentChildren.push(colDef) : parentChildren.unshift(colDef);
+        const valueGroup: ColGroupDef = {
+            children: [colDef],
+            pivotKeys: [],
+            groupId: colDef.colId,
+        };
+
+        insertAfter ? parentChildren.push(valueGroup) : parentChildren.unshift(valueGroup);
     }
 
     private createColDef(valueColumn: Column | null, headerName: any, pivotKeys: string[] | undefined, totalColumn: boolean = false): ColDef {
