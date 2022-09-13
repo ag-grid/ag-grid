@@ -1621,16 +1621,14 @@ export class GridApi<TData = any> {
 
     /** Returns a string containing the requested data URL which contains a representation of the chart image. */
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getChartImageDataURL') &&
-            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL')) {
             return this.chartService.getChartImageDataURL(params);
         }
     }
 
     /** Downloads the chart image in the browser. */
     public downloadChart(params: ChartDownloadParams) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.downloadChart') &&
-            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart')) {
             return this.chartService.downloadChart(params);
         }
     }

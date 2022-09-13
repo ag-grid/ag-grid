@@ -82,7 +82,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     public downloadChart(params: ChartDownloadParams) {
         const chartComp = Array.from(this.activeChartComps).find(c => c.getChartId() === params.chartId);
-        chartComp?.downloadChart(params.dimensions);
+        chartComp?.downloadChart(params.dimensions, params.fileName, params.fileFormat);
     }
 
     public createChartFromCurrentRange(chartType: ChartType = 'groupedColumn'): ChartRef | undefined {

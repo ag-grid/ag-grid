@@ -16059,8 +16059,12 @@
       "description": "/** The id of the created chart. */",
       "type": { "returnType": "string", "optional": false }
     },
+    "fileFormat": {
+      "description": "/** A string indicating the image format.\n * The default format type is `image/png`.\n * Options: `image/png`, `image/jpeg` */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "dimensions": {
-      "description": "/** Dimensions of the chart.\n * If undefined, uses the browser image dimensions. */",
+      "description": "/** Dimensions of downloaded chart. The current chart dimensions will be used if not specified. */",
       "type": {
         "returnType": "{\n        width: number,\n        height: number\n    }",
         "optional": true

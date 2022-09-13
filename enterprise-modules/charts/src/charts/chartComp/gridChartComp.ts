@@ -148,7 +148,7 @@ export class GridChartComp extends Component {
 
         if (this.chartMenu) {
             // chart menu may not exist, i.e. cross filtering
-            this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
+            this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, () => this.downloadChart());
         }
 
         this.refresh();
@@ -400,8 +400,8 @@ export class GridChartComp extends Component {
         return false;
     }
 
-    public downloadChart(dimensions?: { width: number, height: number }): void {
-        this.chartProxy.downloadChart(dimensions);
+    public downloadChart(dimensions?: { width: number, height: number }, fileName?: string, fileFormat?: string): void {
+        this.chartProxy.downloadChart(dimensions, fileName, fileFormat);
     }
 
     public getChartId(): string {

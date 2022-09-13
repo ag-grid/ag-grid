@@ -3,23 +3,37 @@ title: "Downloading Chart Image"
 enterprise: true
 ---
 
-This section shows how to download the chart image though via the Grid API.
+This section shows how to download charts via the Charts Toolbar and Grid API.
 
-It is possible to retrieve a base64 encoded image rendered from the chart using the `getChartImageDataURL(params)` API. This API returns a string containing the requested data URL which is ideal for saving to a database and downloading the chart image.
+## Downloading Charts via Chart Toolbar
 
-<api-documentation source='grid-api/api.json' section='charts' names='["getChartImageDataURL"]'></api-documentation>
+Users can use the 'Download Chart' [Chart Toolbar](/integrated-charts-toolbar/) item to download the rendered 
+chart in the browser.
 
-It is also possible to download the chart image using custom dimensions.
+<div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px;">
+    <div style="flex: 1 1 0">
+        <img src="resources/chart-toolbar.png" alt="Chart Toolbar"/>
+    </div> 
+</div>
 
-<api-documentation source='grid-api/api.json' section='charts' names='["downloadChart"]'></api-documentation>
+Note that the downloaded chart image will be in a `PNG` format.
+
+## Downloading Charts via Grid API
+
+There are 2 ways to download the chart image using the Grid API as shown below:
+
+<api-documentation source='grid-api/api.json' section='charts' names='["getChartImageDataURL", "downloadChart"]'></api-documentation>
+
+The `getChartImageDataURL(params)` API returns a string (base64 encoded) containing the requested data URL which is 
+ideal for saving to a database and downloading the chart image.
+
+Alternatively you can use the `downloadChart(params)` API which will download the chart image directly in the browser.
 
 The example below demonstrates how you can retrieve images rendered from the chart in multiple formats.
 
-- Click "Download chart PNG" to download a PNG format image.
-- Click "Download chart JPEG" to download a JPEG format image.
-- Click "Download 800x500 chart" to download a custom size image.
-- Click "Open PNG" to open a PNG format image of the chart in a new window.
-- Click "Open JPEG" to open a JPEG format image of the chart in a new window.
+- Click **Download PNG** to download a PNG format image via `getChartImageDataURL()`
+- Click **Resize Chart (800x500)** to download a custom size image via `downloadChart()`
+- Click **Open JPEG** to open a JPEG format image in a new window via `getChartImageDataURL()`
 
 <grid-example title='Downloading Chart Image' name='downloading-chart-image' type='generated' options='{ "exampleHeight": 800, "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 

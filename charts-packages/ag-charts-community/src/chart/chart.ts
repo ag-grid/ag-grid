@@ -415,8 +415,8 @@ export abstract class Chart extends Observable {
 
     readonly tooltip: ChartTooltip;
 
-    download(fileName?: string) {
-        this.scene.download(fileName);
+    download(fileName?: string, fileFormat?: string) {
+        this.scene.download(fileName, fileFormat);
     }
 
     padding = new Padding(20);
