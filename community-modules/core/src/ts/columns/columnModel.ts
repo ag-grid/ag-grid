@@ -3179,6 +3179,10 @@ export class ColumnModel extends BeanStub {
             this.gridHeaderRowCount = this.secondaryHeaderRowCount;
             this.gridColumns = this.secondaryColumns.slice();
             this.gridColsArePrimary = false;
+
+            // add the auto column back before recovering the previous sort
+            this.addAutoGroupToGridColumns();
+
             // If the current columns are the same or a subset of the previous
             // we keep the previous order, otherwise we go back to the order the pivot
             // cols are generated in
@@ -3191,13 +3195,15 @@ export class ColumnModel extends BeanStub {
             this.gridColumns = this.primaryColumns.slice();
             this.gridColsArePrimary = true;
 
+            // add the auto column back before recovering the previous sort
+            this.addAutoGroupToGridColumns();
+
             // updateGridColumns gets called after user adds a row group. we want to maintain the order of the columns
             // when this happens (eg if user moved a column) rather than revert back to the original column order.
             // likewise if changing in/out of pivot mode, we want to maintain the order of the cols
             this.orderGridColsLike(this.lastPrimaryOrder);
         }
 
-        this.addAutoGroupToGridColumns();
 
         this.gridColumns = this.placeLockedColumns(this.gridColumns);
         this.setupQuickFilterColumns();
