@@ -64,7 +64,7 @@ export function OPT_NUMBER(min?: number, max?: number) {
     return (v: any) => OPTIONAL(v, NUMBER(min, max));
 }
 
-export function SPECIAL_NUMBER(min?: number, max?: number) {
+export function NUMBER_OR_NAN(min?: number, max?: number) {
     // Can be NaN or finite number
     return (v: any) =>
         typeof v === 'number' &&
@@ -72,8 +72,8 @@ export function SPECIAL_NUMBER(min?: number, max?: number) {
         (min !== undefined ? v >= min : true) &&
         (max !== undefined ? v <= max : true);
 }
-export function OPT_SPECIAL_NUMBER(min?: number, max?: number) {
-    return (v: any) => OPTIONAL(v, SPECIAL_NUMBER(min, max));
+export function OPT_NUMBER_OR_NAN(min?: number, max?: number) {
+    return (v: any) => OPTIONAL(v, NUMBER_OR_NAN(min, max));
 }
 
 export const NUMBER_ARRAY = (v: any) => ARRAY()(v, NUMBER());

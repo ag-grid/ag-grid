@@ -5,7 +5,7 @@ import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
 import { ChartAxis } from '../chartAxis';
 import { doOnce } from '../../util/function';
-import { BOOLEAN, SPECIAL_NUMBER, Validate } from '../../util/validation';
+import { BOOLEAN, NUMBER_OR_NAN, Validate } from '../../util/validation';
 
 // Instead of clamping the values outside of domain to the range,
 // return NaNs to indicate invalid input.
@@ -85,7 +85,7 @@ export class NumberAxis extends ChartAxis {
         return this.scale.domain;
     }
 
-    @Validate(SPECIAL_NUMBER())
+    @Validate(NUMBER_OR_NAN())
     protected _min: number = NaN;
     set min(value: number) {
         if (this._min !== value) {
@@ -99,7 +99,7 @@ export class NumberAxis extends ChartAxis {
         return this._min;
     }
 
-    @Validate(SPECIAL_NUMBER())
+    @Validate(NUMBER_OR_NAN())
     protected _max: number = NaN;
     set max(value: number) {
         if (this._max !== value) {
