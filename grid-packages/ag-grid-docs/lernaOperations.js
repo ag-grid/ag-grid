@@ -7,6 +7,20 @@ const chokidar = require("chokidar");
 
 const flattenArray = array => [].concat.apply([], array);
 
+const generateAutoDocFiles = async () => await buildDependencies([], 'generate-doc-files');
+    /* const generateAutoDocFiles = async () => {
+console.log("------------------------------------------------------------------------------------------");
+console.log(`Running Generate doc files`);
+console.log("------------------------------------------------------------------------------------------");
+
+const lernaArgs = `run generate-doc-files`.trim().split(" ");
+try {
+return await execa("./node_modules/.bin/lerna", lernaArgs, { stdio: "inherit", cwd: '../../' });
+} catch (e) {
+console.log(`An error occurred while running lerna: ${e}`);
+}
+}; */
+
 const buildDependencies = async (dependencies, command = 'build-css', arguments = '') => {
     console.log("------------------------------------------------------------------------------------------");
     console.log(`Running ${command} on the following packages: ${dependencies.join(' ')}`);
@@ -483,3 +497,4 @@ exports.buildPackages = buildPackages;
 exports.getFlattenedBuildChainInfo = getFlattenedBuildChainInfo;
 exports.buildCss = buildCss;
 exports.watchCss = watchCss;
+exports.generateAutoDocFiles = generateAutoDocFiles;

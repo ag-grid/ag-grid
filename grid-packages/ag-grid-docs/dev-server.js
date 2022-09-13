@@ -12,7 +12,7 @@ const tcpPortUsed = require('tcp-port-used');
 const {generateDocumentationExamples} = require('./example-generator-documentation');
 const {watchValidateExampleTypes} = require('./example-validator');
 const {updateBetweenStrings, getAllModules, processStdio} = require('./utils');
-const {getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss} = require('./lernaOperations');
+const { getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss, generateAutoDocFiles } = require('./lernaOperations');
 const {EOL} = os;
 
 const key = fs.readFileSync(process.env.AG_DOCS_KEY || './selfsigned.key', 'utf8');
@@ -461,8 +461,7 @@ const watchCoreModules = async (skipFrameworks) => {
     tsWatch.stdout.on('data', await processStdio(async (output) => {
         console.log("Core Typescript: " + output);
         if (output.includes("Found 0 errors. Watching for file changes.")) {
-            await rebuildPackagesBasedOnChangeState(false, skipFrameworks);
-
+            await Promise.all([await rebuildPackagesBasedOnChangeState(false, skipFrameworks), await generateAutoDocFiles()]);
             // because we use TSC to build the core modules (and not npm) we need to manually update the changed
             // hashes on build
             updateCoreModuleHashes();
@@ -619,6 +618,7 @@ const watchFrameworkModules = async () => {
         '**/bundles/**/*',
         '**/lib/**/*',
         '.hash',
+        '.AUTO.json',
     ];
 
     const moduleFrameworks = ['angular', 'angular-legacy', 'vue', 'vue3', 'react'];
