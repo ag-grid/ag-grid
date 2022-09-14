@@ -60,6 +60,7 @@ import { ChartType, CrossFilterChartType, SeriesChartType } from "./interfaces/i
 import { ChartDownloadParams, ChartModel, GetChartImageDataUrlParams, IChartService } from "./interfaces/IChartService";
 import { ClientSideRowModelSteps, IClientSideRowModel, RefreshModelParams } from "./interfaces/iClientSideRowModel";
 import { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from "./interfaces/iClipboardService";
+import { IColumnToolPanel } from "./interfaces/iColumnToolPanel";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 import { ICsvCreator } from "./interfaces/iCsvCreator";
 import { IDatasource } from "./interfaces/iDatasource";
@@ -70,6 +71,7 @@ import {
     IExcelCreator
 } from "./interfaces/iExcelCreator";
 import { IFilter, IFilterComp } from "./interfaces/iFilter";
+import { IFiltersToolPanel } from "./interfaces/iFiltersToolPanel";
 import { IImmutableService } from "./interfaces/iImmutableService";
 import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { IMenuFactory } from "./interfaces/iMenuFactory";
@@ -780,14 +782,18 @@ export class GridApi<TData = any> {
         }
     }
 
+    public getToolPanelInstance(id: 'columns'): IColumnToolPanel | undefined;
+    public getToolPanelInstance(id: 'filters'): IFiltersToolPanel | undefined;
+    // This override is a duplicate but is required to make the general override public.
+    public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined;
     /** Gets the tool panel instance corresponding to the supplied `id`. */
-    public getToolPanelInstance(id: string): IToolPanel | undefined {
+    public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined {
         if (!this.sideBarComp) {
             console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
             return;
         }
         const comp = this.sideBarComp.getToolPanelInstance(id);
-        return unwrapUserComp(comp);
+        return unwrapUserComp(comp) as TToolPanel | undefined;
     }
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {

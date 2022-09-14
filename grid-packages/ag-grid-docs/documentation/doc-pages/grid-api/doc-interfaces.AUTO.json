@@ -16587,6 +16587,9 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "refresh": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
   "ColumnVO": {
@@ -17793,6 +17796,9 @@
       }
     },
     "syncLayoutWithGrid": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "refresh": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },

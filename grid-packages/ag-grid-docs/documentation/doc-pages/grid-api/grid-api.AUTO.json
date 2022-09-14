@@ -322,7 +322,7 @@
     "description": "/** Gets the tool panel instance corresponding to the supplied `id`. */",
     "type": {
       "arguments": { "id": "string" },
-      "returnType": "IToolPanel | undefined"
+      "returnType": "TToolPanel | undefined"
     }
   },
   "addVirtualRowListener": {

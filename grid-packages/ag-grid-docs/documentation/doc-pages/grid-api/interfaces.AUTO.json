@@ -9548,7 +9548,8 @@
       "setPivotModeSectionVisible(visible: boolean)": "void",
       "setRowGroupsSectionVisible(visible: boolean)": "void",
       "setValuesSectionVisible(visible: boolean)": "void",
-      "setPivotSectionVisible(visible: boolean)": "void"
+      "setPivotSectionVisible(visible: boolean)": "void",
+      "refresh()": "void"
     }
   },
   "ColumnVO": {
@@ -10273,7 +10274,8 @@
       "collapseFilterGroups(groupIds?: string[])": "void",
       "expandFilters(colIds?: string[])": "void",
       "collapseFilters(colIds?: string[])": "void",
-      "syncLayoutWithGrid()": "void"
+      "syncLayoutWithGrid()": "void",
+      "refresh()": "void"
     }
   },
   "IFrameworkOverrides": {
