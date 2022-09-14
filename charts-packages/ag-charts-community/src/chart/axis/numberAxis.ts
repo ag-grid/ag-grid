@@ -5,6 +5,16 @@ import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
 import { ChartAxis } from '../chartAxis';
 import { doOnce } from '../../util/function';
+import { BOOLEAN, Validate } from '../../util/validation';
+
+function NUMBER_OR_NAN(min?: number, max?: number) {
+    // Can be NaN or finite number
+    return (v: any) =>
+        typeof v === 'number' &&
+        (isNaN(v) || Number.isFinite(v)) &&
+        (min !== undefined ? v >= min : true) &&
+        (max !== undefined ? v <= max : true);
+}
 
 // Instead of clamping the values outside of domain to the range,
 // return NaNs to indicate invalid input.
@@ -28,6 +38,7 @@ export class NumberAxis extends ChartAxis {
         (this.scale as ContinuousScale).clamper = clamper;
     }
 
+    @Validate(BOOLEAN)
     protected _nice: boolean = true;
     set nice(value: boolean) {
         if (this._nice !== value) {
@@ -83,6 +94,7 @@ export class NumberAxis extends ChartAxis {
         return this.scale.domain;
     }
 
+    @Validate(NUMBER_OR_NAN())
     protected _min: number = NaN;
     set min(value: number) {
         if (this._min !== value) {
@@ -96,6 +108,7 @@ export class NumberAxis extends ChartAxis {
         return this._min;
     }
 
+    @Validate(NUMBER_OR_NAN())
     protected _max: number = NaN;
     set max(value: number) {
         if (this._max !== value) {

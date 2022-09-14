@@ -17,24 +17,83 @@ import { checkDatum } from '../../util/value';
 import { Layers } from '../layers';
 import { Point } from '../../scene/point';
 import { Range } from '../../scene/shape/range';
+import {
+    OPT_ARRAY,
+    OPT_BOOLEAN,
+    OPT_NUMBER,
+    OPT_STRING,
+    OPT_COLOR_STRING,
+    STRING,
+    Validate,
+    OPT_LINE_DASH,
+    OPT_FONT_STYLE,
+    OPT_FONT_WEIGHT,
+    NUMBER,
+    OPTIONAL,
+} from '../../util/validation';
+
+const CROSSLINE_LABEL_POSITIONS = [
+    'top',
+    'left',
+    'right',
+    'bottom',
+    'topLeft',
+    'topRight',
+    'bottomLeft',
+    'bottomRight',
+    'inside',
+    'insideLeft',
+    'insideRight',
+    'insideTop',
+    'insideBottom',
+    'insideTopLeft',
+    'insideBottomLeft',
+    'insideTopRight',
+    'insideBottomRight',
+];
+
+const OPT_CROSSLINE_LABEL_POSITION = (v: any) => OPTIONAL(v, (v: any) => CROSSLINE_LABEL_POSITIONS.includes(v));
+
+const OPT_CROSSLINE_TYPE = (v: any) => OPTIONAL(v, (v: any) => v === 'range' || v === 'line');
 
 export class CrossLineLabel {
+    @Validate(OPT_BOOLEAN)
     enabled?: boolean = undefined;
+
+    @Validate(OPT_STRING)
     text?: string = undefined;
+
+    @Validate(OPT_FONT_STYLE)
     fontStyle?: FontStyle = undefined;
+
+    @Validate(OPT_FONT_WEIGHT)
     fontWeight?: FontWeight = undefined;
+
+    @Validate(NUMBER(0))
     fontSize: number = 14;
+
+    @Validate(STRING)
     fontFamily: string = 'Verdana, sans-serif';
+
     /**
      * The padding between the label and the line.
      */
+    @Validate(NUMBER(0))
     padding: number = 5;
+
     /**
      * The color of the labels.
      */
+    @Validate(OPT_COLOR_STRING)
     color?: string = 'rgba(87, 87, 87, 1)';
+
+    @Validate(OPT_CROSSLINE_LABEL_POSITION)
     position?: CrossLineLabelPosition = undefined;
+
+    @Validate(OPT_NUMBER(-360, 360))
     rotation?: number = undefined;
+
+    @Validate(OPT_BOOLEAN)
     parallel?: boolean = undefined;
 }
 
@@ -49,16 +108,34 @@ export class CrossLine {
     static className = 'CrossLine';
     readonly id = createId(this);
 
+    @Validate(OPT_BOOLEAN)
     enabled?: boolean = undefined;
+
+    @Validate(OPT_CROSSLINE_TYPE)
     type?: CrossLineType = undefined;
+
+    @Validate(OPT_ARRAY(2))
     range?: [any, any] = undefined;
     value?: any = undefined;
+
+    @Validate(OPT_COLOR_STRING)
     fill?: string = undefined;
+
+    @Validate(OPT_NUMBER(0, 1))
     fillOpacity?: number = undefined;
+
+    @Validate(OPT_COLOR_STRING)
     stroke?: string = undefined;
+
+    @Validate(OPT_NUMBER())
     strokeWidth?: number = undefined;
+
+    @Validate(OPT_NUMBER(0, 1))
     strokeOpacity?: number = undefined;
+
+    @Validate(OPT_LINE_DASH)
     lineDash?: [] = undefined;
+
     label: CrossLineLabel = new CrossLineLabel();
 
     scale?: Scale<any, number> = undefined;

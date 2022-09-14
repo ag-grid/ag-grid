@@ -26,6 +26,17 @@ import { checkDatum, isContinuous, isNumber } from '../../../util/value';
 import { clamper, ContinuousScale } from '../../../scale/continuousScale';
 import { doOnce } from '../../../util/function';
 import { Point, SizedPoint } from '../../../scene/point';
+import {
+    BOOLEAN_ARRAY,
+    NUMBER,
+    OPT_FUNCTION,
+    OPT_LINE_DASH,
+    OPT_STRING,
+    STRING,
+    STRING_ARRAY,
+    COLOR_STRING_ARRAY,
+    Validate,
+} from '../../../util/validation';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -78,11 +89,15 @@ type ProcessedXDatum = {
 };
 
 class AreaSeriesLabel extends Label {
+    @Validate(OPT_FUNCTION)
     formatter?: (params: { value: any }) => string = undefined;
 }
 
 export class AreaSeriesTooltip extends SeriesTooltip {
+    @Validate(OPT_FUNCTION)
     renderer?: (params: AreaTooltipRendererParams) => string | TooltipRendererResult = undefined;
+
+    @Validate(OPT_STRING)
     format?: string = undefined;
 }
 
@@ -118,14 +133,22 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
     readonly label = new AreaSeriesLabel();
 
+    @Validate(COLOR_STRING_ARRAY)
     fills: string[] = ['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
 
+    @Validate(COLOR_STRING_ARRAY)
     strokes: string[] = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
 
+    @Validate(NUMBER(0, 1))
     fillOpacity = 1;
+
+    @Validate(NUMBER(0, 1))
     strokeOpacity = 1;
 
+    @Validate(OPT_LINE_DASH)
     lineDash?: number[] = [0];
+
+    @Validate(NUMBER(0))
     lineDashOffset: number = 0;
 
     constructor() {
@@ -144,6 +167,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         label.enabled = false;
     }
 
+    @Validate(STRING)
     protected _xKey: string = '';
     set xKey(value: string) {
         this._xKey = value;
@@ -154,8 +178,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         return this._xKey;
     }
 
+    @Validate(STRING)
     xName: string = '';
 
+    @Validate(STRING_ARRAY)
     protected _yKeys: string[] = [];
     set yKeys(values: string[]) {
         if (!equal(this._yKeys, values)) {
@@ -170,6 +196,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         return this._yKeys;
     }
 
+    @Validate(BOOLEAN_ARRAY)
     protected _visibles: boolean[];
     set visibles(visibles: boolean[]) {
         this._visibles = visibles;
@@ -190,8 +217,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         this.strokes = strokes;
     }
 
+    @Validate(STRING_ARRAY)
     yNames: string[] = [];
 
+    @Validate(NUMBER())
     private _normalizedTo?: number;
     set normalizedTo(value: number | undefined) {
         const absValue = value ? Math.abs(value) : undefined;
@@ -205,7 +234,9 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         return this._normalizedTo;
     }
 
+    @Validate(NUMBER(0))
     strokeWidth = 2;
+
     shadow?: DropShadow = undefined;
 
     protected highlightedDatum?: MarkerSelectionDatum;

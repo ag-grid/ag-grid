@@ -16,6 +16,16 @@ import { Treemap } from '../../../layout/treemap';
 import { hierarchy } from '../../../layout/hierarchy';
 import { toFixed } from '../../../util/number';
 import { Path2D } from '../../../scene/path2D';
+import {
+    BOOLEAN,
+    NUMBER,
+    NUMBER_ARRAY,
+    OPT_FUNCTION,
+    OPT_STRING,
+    STRING,
+    COLOR_STRING_ARRAY,
+    Validate,
+} from '../../../util/validation';
 
 interface TreemapNodeDatum extends SeriesNodeDatum {
     parent?: TreemapNodeDatum;
@@ -41,6 +51,7 @@ export interface TreemapTooltipRendererParams extends TooltipRendererParams {
 }
 
 export class TreemapSeriesTooltip extends SeriesTooltip {
+    @Validate(OPT_FUNCTION)
     renderer?: (params: TreemapTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
@@ -55,6 +66,7 @@ export interface TreemapSeriesNodeClickEvent extends TypedEvent {
 }
 
 export class TreemapSeriesLabel extends Label {
+    @Validate(NUMBER(0))
     padding = 10;
 }
 
@@ -159,17 +171,34 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         return this._nodePadding;
     }
 
+    @Validate(STRING)
     labelKey: string = 'label';
+
+    @Validate(OPT_STRING)
     sizeKey?: string = 'size';
+
+    @Validate(OPT_STRING)
     colorKey?: string = 'color';
+
+    @Validate(NUMBER_ARRAY)
     colorDomain: number[] = [-5, 5];
+
+    @Validate(COLOR_STRING_ARRAY)
     colorRange: string[] = ['#cb4b3f', '#6acb64'];
+
+    @Validate(BOOLEAN)
     colorParents: boolean = false;
+
+    @Validate(BOOLEAN)
     gradient: boolean = true;
 
+    @Validate(OPT_FUNCTION)
     formatter?: (params: TreemapSeriesFormatterParams) => TreemapSeriesFormat = undefined;
 
+    @Validate(STRING)
     colorName: string = 'Change';
+
+    @Validate(STRING)
     rootName: string = 'Root';
 
     shadow: DropShadow = (() => {

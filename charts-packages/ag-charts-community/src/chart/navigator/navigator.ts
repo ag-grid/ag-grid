@@ -5,6 +5,7 @@ import { BBox } from '../../scene/bbox';
 import { NavigatorMask } from './navigatorMask';
 import { NavigatorHandle } from './navigatorHandle';
 import { ChartUpdateType } from '../chart';
+import { NUMBER, Validate } from '../../util/validation';
 
 interface Offset {
     offsetX: number;
@@ -60,6 +61,7 @@ export class Navigator {
         return this.rs.height;
     }
 
+    @Validate(NUMBER(0))
     private _margin = 10;
     set margin(value: number) {
         this._margin = value;

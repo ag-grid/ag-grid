@@ -18,6 +18,17 @@ import { Observable, TypedEvent } from '../../../util/observable';
 import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxis';
 import { TooltipRendererResult, toTooltipHtml } from '../../chart';
+import {
+    BOOLEAN,
+    NUMBER,
+    OPT_FUNCTION,
+    OPT_LINE_DASH,
+    OPT_NUMBER,
+    OPT_STRING,
+    STRING,
+    COLOR_STRING_ARRAY,
+    Validate,
+} from '../../../util/validation';
 
 export interface PieSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
@@ -51,6 +62,7 @@ export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
 }
 
 class PieHighlightStyle extends HighlightStyle {
+    @Validate(OPT_NUMBER(0))
     centerOffset?: number;
 }
 
@@ -91,22 +103,34 @@ interface PieSeriesLabelFormatterParams {
 }
 
 class PieSeriesLabel extends Label {
+    @Validate(NUMBER(0))
     offset = 3; // from the callout line
+
+    @Validate(NUMBER(0))
     minAngle = 20; // in degrees
+
+    @Validate(OPT_FUNCTION)
     formatter?: (params: PieSeriesLabelFormatterParams) => string = undefined;
 }
 
 class PieSeriesCallout extends Observable {
+    @Validate(COLOR_STRING_ARRAY)
     colors: string[] = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
+
+    @Validate(NUMBER(0))
     length: number = 10;
+
+    @Validate(NUMBER(0))
     strokeWidth: number = 1;
 }
 
 export class PieSeriesTooltip extends SeriesTooltip {
+    @Validate(OPT_FUNCTION)
     renderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
 export class PieTitle extends Caption {
+    @Validate(BOOLEAN)
     showInLegend = false;
 }
 
@@ -178,7 +202,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
      * The key of the numeric field to use to determine the angle (for example,
      * a pie slice angle).
      */
+    @Validate(STRING)
     angleKey = '';
+
+    @Validate(STRING)
     angleName = '';
 
     /**
@@ -186,35 +213,58 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
      * The largest value will correspond to the full radius and smaller values to
      * proportionally smaller radii.
      */
+    @Validate(OPT_STRING)
     radiusKey?: string = undefined;
+
+    @Validate(OPT_STRING)
     radiusName?: string = undefined;
+
+    @Validate(OPT_NUMBER(0))
     radiusMin?: number = undefined;
+
+    @Validate(OPT_NUMBER(0))
     radiusMax?: number = undefined;
 
+    @Validate(OPT_STRING)
     labelKey?: string = undefined;
+
+    @Validate(OPT_STRING)
     labelName?: string = undefined;
 
+    @Validate(COLOR_STRING_ARRAY)
     fills: string[] = ['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
 
+    @Validate(COLOR_STRING_ARRAY)
     strokes: string[] = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
 
+    @Validate(NUMBER(0, 1))
     fillOpacity = 1;
+
+    @Validate(NUMBER(0, 1))
     strokeOpacity = 1;
 
+    @Validate(OPT_LINE_DASH)
     lineDash?: number[] = [0];
+
+    @Validate(NUMBER(0))
     lineDashOffset: number = 0;
 
+    @Validate(OPT_FUNCTION)
     formatter?: (params: PieSeriesFormatterParams) => PieSeriesFormat = undefined;
 
     /**
      * The series rotation in degrees.
      */
+    @Validate(NUMBER(-360, 360))
     rotation = 0;
 
+    @Validate(NUMBER())
     outerRadiusOffset = 0;
 
+    @Validate(NUMBER())
     innerRadiusOffset = 0;
 
+    @Validate(NUMBER(0))
     strokeWidth = 1;
 
     shadow?: DropShadow = undefined;
