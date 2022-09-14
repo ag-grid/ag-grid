@@ -1391,22 +1391,22 @@ export abstract class Chart extends Observable {
                     reject(this.lastPerformUpdateError);
                     return;
                 }
-    
+
                 if (!this.updatePending) {
                     resolve();
                     return;
                 }
-    
+
                 const timeMs = Date.now() - startMs;
                 if (timeMs >= timeoutMs) {
                     reject('timeout reached');
                     return;
                 }
-    
+
                 retryMs *= 2;
                 setTimeout(cb, retryMs);
             };
-    
+
             cb();
         });
     }
