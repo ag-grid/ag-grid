@@ -123,7 +123,7 @@ export class HdpiCanvas {
      * @param fileFormat The file format, the default is `image/png`
      */
     download(fileName?: string, fileFormat = 'image/png') {
-        fileName = ((fileName || '').trim() || 'image');
+        fileName = (fileName || '').trim() || 'image';
 
         const dataUrl = this.getDataURL(fileFormat);
         const document = this.document;

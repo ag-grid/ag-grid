@@ -273,13 +273,14 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         if (labelKey) {
             if (labelFormatter) {
-                const showValueDeprecationWarning = () => doOnce(
-                    () =>
-                        console.warn(
-                            'AG Charts - the use of { value } in the pie chart label formatter function is deprecated. Please use { datum, labelKey, ... } instead.'
-                        ),
-                    'deprecated use of "value" property in pie chart label formatter'
-                );
+                const showValueDeprecationWarning = () =>
+                    doOnce(
+                        () =>
+                            console.warn(
+                                'AG Charts - the use of { value } in the pie chart label formatter function is deprecated. Please use { datum, labelKey, ... } instead.'
+                            ),
+                        'deprecated use of "value" property in pie chart label formatter'
+                    );
                 labelData = data.map((datum) => {
                     let deprecatedValue = datum[labelKey];
                     const formatterParams: PieSeriesLabelFormatterParams = {
