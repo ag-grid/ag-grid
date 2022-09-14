@@ -10,10 +10,18 @@ interface VueWrappableInterface extends WrappableInterface {
 export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> {
     private parent: any | null;
 
-    constructor(parent: any) {
+    private static provides : any;
+
+    constructor(parent: any, provides?: any) {
         super();
 
         this.parent = parent;
+
+        // when using master detail things provides to the master (like urlql) will not be available to the child components
+        // we capture the parent provides here (the first one will be the parent) - and re-use this when creating child components in VueComponentFactory
+        if(!VueFrameworkComponentWrapper.provides) {
+            VueFrameworkComponentWrapper.provides = provides;
+        }
     }
 
     public createWrapper(component: any): WrappableInterface {
@@ -64,7 +72,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
     }
 
     public createComponent<T>(component: any, params: any): any {
-        return VueComponentFactory.createAndMountComponent(component, params, this.parent!);
+        return VueComponentFactory.createAndMountComponent(component, params, this.parent!, VueFrameworkComponentWrapper.provides!);
     }
 
     protected createMethodProxy(wrapper: VueWrappableInterface, methodName: string, mandatory: boolean): () => any {
