@@ -461,7 +461,7 @@ const watchCoreModules = async (skipFrameworks) => {
     tsWatch.stdout.on('data', await processStdio(async (output) => {
         console.log("Core Typescript: " + output);
         if (output.includes("Found 0 errors. Watching for file changes.")) {
-            await Promise.all([await rebuildPackagesBasedOnChangeState(false, skipFrameworks), await generateAutoDocFiles()]);
+            await rebuildPackagesBasedOnChangeState(false, skipFrameworks);
             // because we use TSC to build the core modules (and not npm) we need to manually update the changed
             // hashes on build
             updateCoreModuleHashes();
@@ -641,6 +641,37 @@ const watchFrameworkModules = async () => {
     });
 };
 
+const watchAutoDocFiles = async () => {
+    const defaultIgnoreFolders = [
+        '**/node_modules/**/*',
+        '**/dist/**/*',
+        '**/bundles/**/*',
+        '**/lib/**/*',
+        '.hash',
+        '.AUTO.json',
+    ];
+
+    // Matches the paths used in community-modules/all-modules/generate-code-reference-files.js
+    const INTERFACE_GLOBS = [
+        '../../community-modules/core/src/ts/**/*.ts',
+        '../../enterprise-modules/set-filter/src/**/*.ts',
+        '../../enterprise-modules/filter-tool-panel/src/**/*.ts',
+        '../../enterprise-modules/multi-filter/src/**/*.ts',
+        '../../community-modules/angular/projects/ag-grid-angular/src/lib/**/*.ts',
+        '../../community-modules/react/src/shared/**/*.ts',
+        '../../charts-packages/ag-charts-community/src/**/*.ts',
+    ];
+
+    const ignoredFolders = [...defaultIgnoreFolders];
+
+    chokidar.watch(INTERFACE_GLOBS, {
+        ignored: ignoredFolders,
+        persistent: true
+    }).on('change', async (data) => {
+        await generateAutoDocFiles();
+    });
+};
+
 const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules) => {
     serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
 
@@ -726,6 +757,9 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
 
             console.log("Watch Core Modules & CSS");
             await watchCoreModulesAndCss(skipFrameworks);
+
+            console.log("Watching Auto Doc Files");
+            await watchAutoDocFiles();
 
             if (!skipFrameworks) {
                 console.log("Watch Framework Modules");

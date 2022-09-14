@@ -18,6 +18,7 @@ function buildGlob(basePath) {
     return glob.sync(`${basePath}/**/*.ts`, opts);
 }
 
+// Matches the paths used in grid-packages-ag-grid-docs/dev-server.js
 const INTERFACE_GLOBS = [
     ...buildGlob('../core/src/ts'),
     ...buildGlob('../../enterprise-modules/set-filter/src'),
