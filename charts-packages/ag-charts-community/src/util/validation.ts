@@ -1,3 +1,4 @@
+import { Color } from './color';
 import { CountableTimeInterval } from './time/interval';
 
 export type ValidatePredicate = (v: any) => boolean;
@@ -53,10 +54,17 @@ export const OPT_BOOLEAN = (v: any) => OPTIONAL(v, BOOLEAN);
 export const STRING = (v: any) => typeof v === 'string';
 export const OPT_STRING = (v: any) => OPTIONAL(v, STRING);
 
-export const COLOR_STRING = (v: any) => typeof v === 'string';
+export const COLOR_STRING = (v: any) => {
+    if (typeof v !== 'string') {
+        return false;
+    }
+
+    return Color.validColorString(v);
+};
+
 export const OPT_COLOR_STRING = (v: any) => OPTIONAL(v, COLOR_STRING);
 
-export const COLOR_STRING_ARRAY = (v: any) => typeof v === 'string';
+export const COLOR_STRING_ARRAY = (v: any) => ARRAY()(v, COLOR_STRING);
 export const OPT_COLOR_STRING_ARRAY = (v: any) => OPTIONAL(v, COLOR_STRING_ARRAY);
 
 export function NUMBER(min?: number, max?: number) {
