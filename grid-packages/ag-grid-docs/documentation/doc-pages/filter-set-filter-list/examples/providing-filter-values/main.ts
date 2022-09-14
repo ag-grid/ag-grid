@@ -66,9 +66,7 @@ function getRowData() {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  ((params.api.getToolPanelInstance(
-    'filters'
-  ) as any) as IFiltersToolPanel).expandFilters()
+  params.api.getToolPanelInstance('filters')!.expandFilters();
 }
 
 // setup the grid after the page has finished loading

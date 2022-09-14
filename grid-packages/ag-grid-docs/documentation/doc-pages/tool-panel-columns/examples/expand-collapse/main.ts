@@ -55,38 +55,28 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   sideBar: 'columns',
   onGridReady: (params) => {
-    var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
-      'columns'
-    ) as unknown) as IColumnToolPanel
+    var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns')!;
     columnToolPanel.collapseColumnGroups()
   },
 }
 
 function expandAllGroups() {
-  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
-    'columns'
-  ) as unknown) as IColumnToolPanel
+  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns')!;
   columnToolPanel.expandColumnGroups()
 }
 
 function collapseAllGroups() {
-  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
-    'columns'
-  ) as unknown) as IColumnToolPanel
+  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns')!;
   columnToolPanel.collapseColumnGroups()
 }
 
 function expandAthleteAndCompetitionGroups() {
-  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
-    'columns'
-  ) as unknown) as IColumnToolPanel
+  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns')!;
   columnToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId'])
 }
 
 function collapseCompetitionGroups() {
-  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
-    'columns'
-  ) as unknown) as IColumnToolPanel
+  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns')!;
   columnToolPanel.collapseColumnGroups(['competitionGroupId'])
 }
 
