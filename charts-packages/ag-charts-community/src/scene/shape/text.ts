@@ -3,6 +3,16 @@ import { chainObjects } from '../../util/object';
 import { BBox } from '../bbox';
 import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
+import {
+    Validate,
+    ValidateAndChangeDetection,
+    OPT_FONT_STYLE,
+    OPT_FONT_WEIGHT,
+    NUMBER,
+    STRING,
+    TEXT_ALIGN,
+    TEXT_BASELINE,
+} from '../../util/validation';
 
 export type FontStyle = 'normal' | 'italic' | 'oblique';
 export type FontWeight =
@@ -48,7 +58,10 @@ export class Text extends Shape {
         this.lines = typeof this.text === 'string' ? this.text.split(/\r?\n/g) : [];
     }
 
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o: Text) => o._splitText() })
+    @ValidateAndChangeDetection({
+        validatePredicate: STRING,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR, changeCb: (o: Text) => o._splitText() },
+    })
     text: string = '';
 
     private _dirtyFont: boolean = true;
@@ -62,22 +75,38 @@ export class Text extends Shape {
         return this._font!;
     }
 
+    @Validate(OPT_FONT_STYLE)
     @SceneFontChangeDetection()
     fontStyle?: FontStyle;
 
-    @SceneFontChangeDetection()
+    @ValidateAndChangeDetection({
+        validatePredicate: OPT_FONT_WEIGHT,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR, type: 'font' },
+    })
     fontWeight?: FontWeight;
 
-    @SceneFontChangeDetection()
+    @ValidateAndChangeDetection({
+        validatePredicate: NUMBER(1),
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR, type: 'font' },
+    })
     fontSize: number = 10;
 
-    @SceneFontChangeDetection()
+    @ValidateAndChangeDetection({
+        validatePredicate: STRING,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR, type: 'font' },
+    })
     fontFamily: string = 'sans-serif';
 
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: TEXT_ALIGN,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     textAlign: CanvasTextAlign = Text.defaultStyles.textAlign;
 
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: TEXT_BASELINE,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     textBaseline: CanvasTextBaseline = Text.defaultStyles.textBaseline;
 
     // Multi-line text is complicated because:
@@ -88,7 +117,10 @@ export class Text extends Shape {
     // - or make the user provide the line height manually for multi-line text
     // - computeBBox should use the lineHeight for multi-line text but ignore it otherwise
     // - textBaseline kind of loses its meaning for multi-line text
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: NUMBER(1),
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     lineHeight: number = 14;
 
     computeBBox(): BBox {

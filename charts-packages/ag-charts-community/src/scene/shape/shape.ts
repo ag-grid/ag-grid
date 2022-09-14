@@ -1,4 +1,12 @@
 import { Node, RedrawType, SceneChangeDetection } from '../node';
+import {
+    NUMBER,
+    OPT_LINE_CAP,
+    OPT_LINE_DASH,
+    OPT_LINE_JOIN,
+    OPT_STRING,
+    ValidateAndChangeDetection,
+} from '../../util/validation';
 import { chainObjects } from '../../util/object';
 import { DropShadow } from '../dropShadow';
 
@@ -92,13 +100,22 @@ export abstract class Shape extends Node {
         }
     }
 
-    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: NUMBER(0, 1),
+        sceneChangeDetectionOpts: { redraw: RedrawType.MINOR },
+    })
     fillOpacity: number = 1;
 
-    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: NUMBER(0, 1),
+        sceneChangeDetectionOpts: { redraw: RedrawType.MINOR },
+    })
     strokeOpacity: number = 1;
 
-    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: OPT_STRING,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MINOR },
+    })
     fill: string | undefined = Shape.defaultStyles.fill;
 
     /**
@@ -111,10 +128,16 @@ export abstract class Shape extends Node {
      * The preferred way of making the stroke invisible is setting the `lineWidth` to zero,
      * unless specific looks that is achieved by having an invisible stroke is desired.
      */
-    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: OPT_STRING,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MINOR },
+    })
     stroke: string | undefined = Shape.defaultStyles.stroke;
 
-    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: NUMBER(0),
+        sceneChangeDetectionOpts: { redraw: RedrawType.MINOR },
+    })
     strokeWidth: number = Shape.defaultStyles.strokeWidth;
 
     /**
@@ -136,21 +159,36 @@ export abstract class Shape extends Node {
         return Math.round((length + start) * pixelRatio) / pixelRatio - alignedStart;
     }
 
-    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: OPT_LINE_DASH,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MINOR },
+    })
     lineDash: number[] | undefined = Shape.defaultStyles.lineDash;
 
-    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: NUMBER(0),
+        sceneChangeDetectionOpts: { redraw: RedrawType.MINOR },
+    })
     lineDashOffset: number = Shape.defaultStyles.lineDashOffset;
 
-    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: OPT_LINE_CAP,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MINOR },
+    })
     lineCap?: ShapeLineCap = Shape.defaultStyles.lineCap;
 
-    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: OPT_LINE_JOIN,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MINOR },
+    })
     lineJoin?: ShapeLineJoin = Shape.defaultStyles.lineJoin;
 
-    @SceneChangeDetection({
-        redraw: RedrawType.MINOR,
-        convertor: (v: number) => Math.min(1, Math.max(0, v)),
+    @ValidateAndChangeDetection({
+        validatePredicate: NUMBER(),
+        sceneChangeDetectionOpts: {
+            redraw: RedrawType.MINOR,
+            convertor: (v: number) => Math.min(1, Math.max(0, v)),
+        },
     })
     opacity: number = Shape.defaultStyles.opacity;
 

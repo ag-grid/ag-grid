@@ -1,12 +1,14 @@
 import { Text, FontStyle, FontWeight } from './scene/shape/text';
 import { PointerEvents } from './scene/node';
 import { Observable } from './util/observable';
+import { BOOLEAN, Validate } from './util/validation';
 
 export class Caption extends Observable {
     static readonly PADDING = 10;
 
     readonly node: Text = new Text();
 
+    @Validate(BOOLEAN)
     enabled = false;
 
     set text(value: string) {
