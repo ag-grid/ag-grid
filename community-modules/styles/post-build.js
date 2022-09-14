@@ -69,8 +69,9 @@ console.log(`Built ${cssFiles.length} CSS files into ${outputFileName} (${cssFil
 * Due to issues with create-react-app (CRA) 3.x and 4.x we have to post process some of the css files so that users of CRA 3/4 can consume our CSS
 * https://ag-grid.atlassian.net/browse/AG-7222
 */
+/*
 const directory = path.resolve(__dirname);
-glob.sync(`${directory}/*.css`, {ignore: ["**/*.min.css"]}).forEach(file => {
+glob.sync(`${directory}/!*.css`, {ignore: ["**!/!*.min.css"]}).forEach(file => {
     const contents = fs.readFileSync(file, {encoding: "utf8"});
 
     const regex = /(?<prefix>.*min\(var\(.*calc\(.*)(?<value>var\(.*)(?<postfix>\);)/
@@ -96,3 +97,4 @@ glob.sync(`${directory}/*.css`, {ignore: ["**/*.min.css"]}).forEach(file => {
 
 
 
+*/
