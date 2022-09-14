@@ -91,6 +91,7 @@ export const OPT_STRING_ARRAY = (v: any) => OPTIONAL(v, STRING_ARRAY);
 
 export const BOOLEAN_ARRAY = (v: any) => ARRAY()(v, BOOLEAN);
 export const OPT_BOOLEAN_ARRAY = (v: any) => OPTIONAL(v, BOOLEAN_ARRAY);
+
 const TEXT_ALIGNS = ['right', 'left', 'start', 'center', 'end'];
 export const TEXT_ALIGN = (v: any) => TEXT_ALIGNS.includes(v);
 
@@ -132,6 +133,9 @@ export const OPT_LINE_JOIN = (v: any) => OPTIONAL(v, LINE_JOIN);
 
 const POSITIONS = ['top', 'right', 'bottom', 'left'];
 export const POSITION = (v: any) => POSITIONS.includes(v);
+
+const BAR_LABEL_PLACEMENTS = ['inside', 'outside'];
+export const OPT_BAR_LABEL_PLACEMENT = (v: any) => OPTIONAL(v, (v: any) => BAR_LABEL_PLACEMENTS.includes(v));
 
 export function Deprecated(message?: string, opts?: { default: any }) {
     let logged = false;
