@@ -13,6 +13,14 @@ export enum RedrawType {
     MAJOR, // Significant change in rendering.
 }
 
+export type SceneChangeDetectionOptions = {
+    redraw?: RedrawType;
+    type?: 'normal' | 'transform' | 'path' | 'font';
+    convertor?: (o: any) => any;
+    changeCb?: (o: any) => any;
+    checkDirtyOnAssignment?: boolean;
+};
+
 /** @returns true if eval() is disabled in the current execution context. */
 function evalAvailable() {
     try {
@@ -25,13 +33,7 @@ function evalAvailable() {
 
 const EVAL_USEABLE = evalAvailable();
 
-export function SceneChangeDetection(opts?: {
-    redraw?: RedrawType;
-    type?: 'normal' | 'transform' | 'path' | 'font';
-    convertor?: (o: any) => any;
-    changeCb?: (o: any) => any;
-    checkDirtyOnAssignment?: boolean;
-}) {
+export function SceneChangeDetection(opts?: SceneChangeDetectionOptions) {
     const {
         redraw = RedrawType.TRIVIAL,
         type = 'normal',
