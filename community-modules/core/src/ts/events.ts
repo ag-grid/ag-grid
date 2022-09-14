@@ -50,6 +50,16 @@ export interface ToolPanelVisibleChangedEvent<TData = any> extends AgGridEvent<T
     source: string | undefined;
 }
 
+export interface ToolPanelSizeChangedEvent<TData = any> extends AgGridEvent<TData> {
+    type: 'toolPanelSizeChanged';
+    /** True if this is the first change to the Tool Panel size. */
+    started: boolean;
+    /** True if this is the last change to the Tool Panel size. */
+    ended: boolean;
+    /** Current width of the ToolPanel component. */
+    width: number;
+}
+
 export interface ColumnPivotModeChangedEvent<TData = any> extends AgGridEvent<TData> { }
 
 export interface VirtualColumnsChangedEvent<TData = any> extends AgGridEvent<TData> { }

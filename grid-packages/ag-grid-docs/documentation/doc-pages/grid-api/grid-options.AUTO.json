@@ -1364,6 +1364,22 @@
     },
     "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
   },
+  "onToolPanelSizeChanged": {
+    "description": "/** The tool panel size has been changed. */",
+    "type": {
+      "arguments": { "event": "ToolPanelSizeChangedEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onToolPanelSizeChanged" }
+  },
+  "toolPanelSizeChanged": {
+    "description": "/** The tool panel size has been changed. */",
+    "type": {
+      "arguments": { "event": "ToolPanelSizeChangedEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onToolPanelSizeChanged" }
+  },
   "onPasteStart": {
     "description": "/** Paste operation has started. */",
     "type": {

@@ -154,7 +154,8 @@ import {
     GetLocaleTextParams,
     IsRowFilterable,
     RowModelType,
-    IRowDragItem
+    IRowDragItem,
+    ToolPanelSizeChangedEvent
 } from "ag-grid-community";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
@@ -1005,6 +1006,8 @@ Allows you to set the ID for a particular row node based on the data.
 
     /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status.     */
     @Output() public toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent<TData>> = new EventEmitter<ToolPanelVisibleChangedEvent<TData>>();
+    /** The tool panel size has been changed.     */
+    @Output() public toolPanelSizeChanged: EventEmitter<ToolPanelSizeChangedEvent<TData>> = new EventEmitter<ToolPanelSizeChangedEvent<TData>>();
     /** Paste operation has started.     */
     @Output() public pasteStart: EventEmitter<PasteStartEvent<TData>> = new EventEmitter<PasteStartEvent<TData>>();
     /** Paste operation has ended.     */

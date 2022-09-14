@@ -57,6 +57,7 @@ import {
     RowValueChangedEvent,
     SelectionChangedEvent,
     SortChangedEvent,
+    ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
@@ -968,6 +969,8 @@ export interface GridOptions<TData = any> {
     // *** Accessories *** //
     /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */
     onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>): void;
+    /** The tool panel size has been changed. */
+    onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>): void;
 
     // *** Clipboard *** //
     /** Paste operation has started. */

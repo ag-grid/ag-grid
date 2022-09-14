@@ -3810,6 +3810,24 @@
       },
       "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
     },
+    "onToolPanelSizeChanged": {
+      "description": "/** The tool panel size has been changed. */",
+      "type": {
+        "arguments": { "event": "ToolPanelSizeChangedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onToolPanelSizeChanged" }
+    },
+    "toolPanelSizeChanged": {
+      "description": "/** The tool panel size has been changed. */",
+      "type": {
+        "arguments": { "event": "ToolPanelSizeChangedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onToolPanelSizeChanged" }
+    },
     "onPasteStart": {
       "description": "/** Paste operation has started. */",
       "type": {
@@ -6365,6 +6383,36 @@
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "ToolPanelSizeChangedEvent": {
+    "type": {
+      "type": { "returnType": "'toolPanelSizeChanged'", "optional": false }
+    },
+    "started": {
+      "description": "/** True if this is the first change to the Tool Panel size. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "ended": {
+      "description": "/** True if this is the last change to the Tool Panel size. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "width": {
+      "description": "/** Current width of the ToolPanel component. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "ColumnPivotModeChangedEvent": {
@@ -25787,6 +25835,24 @@
       },
       "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
     },
+    "onToolPanelSizeChanged": {
+      "description": "/** The tool panel size has been changed. */",
+      "type": {
+        "arguments": { "event": "ToolPanelSizeChangedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onToolPanelSizeChanged" }
+    },
+    "toolPanelSizeChanged": {
+      "description": "/** The tool panel size has been changed. */",
+      "type": {
+        "arguments": { "event": "ToolPanelSizeChangedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onToolPanelSizeChanged" }
+    },
     "onPasteStart": {
       "description": "/** Paste operation has started. */",
       "type": {
@@ -28563,6 +28629,24 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
+    },
+    "onToolPanelSizeChanged": {
+      "description": "/** The tool panel size has been changed. */",
+      "type": {
+        "arguments": { "event": "ToolPanelSizeChangedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onToolPanelSizeChanged" }
+    },
+    "toolPanelSizeChanged": {
+      "description": "/** The tool panel size has been changed. */",
+      "type": {
+        "arguments": { "event": "ToolPanelSizeChangedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onToolPanelSizeChanged" }
     },
     "onPasteStart": {
       "description": "/** Paste operation has started. */",
@@ -31350,6 +31434,24 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
+    },
+    "onToolPanelSizeChanged": {
+      "description": "/** The tool panel size has been changed. */",
+      "type": {
+        "arguments": { "event": "ToolPanelSizeChangedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onToolPanelSizeChanged" }
+    },
+    "toolPanelSizeChanged": {
+      "description": "/** The tool panel size has been changed. */",
+      "type": {
+        "arguments": { "event": "ToolPanelSizeChangedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onToolPanelSizeChanged" }
     },
     "onPasteStart": {
       "description": "/** Paste operation has started. */",
