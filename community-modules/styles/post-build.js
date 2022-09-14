@@ -1,6 +1,14 @@
 const fs = require('fs');
 const path = require('path');
-const { minify } = require('csso');
+const {minify} = require('csso');
+const glob = require("glob")
+
+/*
+* the first half of this file is the original post processing to add sanity checks, rename minified files and add
+* generated content warning
+*
+* the second half fixes an issue where create-react-app can't consume our generated css
+*/
 
 const scriptName = path.basename(__filename);
 
@@ -55,3 +63,36 @@ const content = `
 
 fs.writeFileSync(outputFile, content, "utf8");
 console.log(`Built ${cssFiles.length} CSS files into ${outputFileName} (${cssFiles.join(", ")})`);
+
+// ----------------------------------------------------------------------------------------------------
+/*
+* Due to issues with create-react-app (CRA) 3.x and 4.x we have to post process some of the css files so that users of CRA 3/4 can consume our CSS
+* https://ag-grid.atlassian.net/browse/AG-7222
+*/
+const directory = path.resolve(__dirname);
+glob.sync(`${directory}/*.css`, {ignore: ["**/*.min.css"]}).forEach(file => {
+    const contents = fs.readFileSync(file, {encoding: "utf8"});
+
+    const regex = /(?<prefix>.*min\(var\(.*calc\(.*)(?<value>var\(.*)(?<postfix>\);)/
+    const initialMatch = contents.match(regex);
+    if (initialMatch) {
+        const newContents = contents.split("\n").map(line => {
+            const match = line.match(regex);
+            if (match &&
+                match.groups.prefix &&
+                match.groups.value &&
+                match.groups.postfix) {
+                const {prefix, value, postfix} = match.groups;
+
+                return `${prefix}${value.replace(/ /g, '')}${postfix}`;
+            }
+
+            return line;
+        })
+
+        fs.writeFileSync(`${file}`, newContents.join('\n'), {encoding: "utf8"})
+    }
+})
+
+
+
