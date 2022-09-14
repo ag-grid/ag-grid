@@ -1,5 +1,6 @@
 import { Color } from './color';
 import { SceneChangeDetection, SceneChangeDetectionOptions } from '../scene/changeDetectable';
+
 export type ValidatePredicate = (v: any) => boolean;
 
 export function Validate(predicate: ValidatePredicate) {
@@ -90,6 +91,11 @@ export const OPT_STRING_ARRAY = (v: any) => OPTIONAL(v, STRING_ARRAY);
 
 export const BOOLEAN_ARRAY = (v: any) => ARRAY()(v, BOOLEAN);
 export const OPT_BOOLEAN_ARRAY = (v: any) => OPTIONAL(v, BOOLEAN_ARRAY);
+const TEXT_ALIGNS = ['right', 'left', 'start', 'center', 'end'];
+export const TEXT_ALIGN = (v: any) => TEXT_ALIGNS.includes(v);
+
+const TEXT_BASELINES = ['alphabetic', 'bottom', 'hanging', 'ideographic', 'middle', 'top'];
+export const TEXT_BASELINE = (v: any) => TEXT_BASELINES.includes(v);
 
 const FONT_WEIGHTS = [
     'normal',
