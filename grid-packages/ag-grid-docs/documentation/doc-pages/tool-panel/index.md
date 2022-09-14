@@ -24,6 +24,18 @@ In addition to the provided Tool Panels, it is also possible to provide custom T
 
 For more details refer to the section: [Custom Tool Panel Components](/component-tool-panel/).
 
+## Api
+
+The `gridApi` has the following methods that can be used to interact with the tool panel.
+
+<api-documentation source='grid-api/api.json' section='accessories' names='["openToolPanel","closeToolPanel","getOpenedToolPanel","isToolPanelShowing","refreshToolPanel", "getToolPanelInstance"]'></api-documentation>
+
+## Events
+
+The following events are emitted from the tool panel.
+
+<api-documentation source='grid-events/events.json' section='accessories'></api-documentation>
+
 ## Next Up
 
 Before covering the Tool Panels in detail, continue to the next section to learn about the [Side Bar](/side-bar/).

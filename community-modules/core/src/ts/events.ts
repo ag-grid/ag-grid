@@ -56,7 +56,7 @@ export interface ToolPanelSizeChangedEvent<TData = any> extends AgGridEvent<TDat
     started: boolean;
     /** True if this is the last change to the Tool Panel size. */
     ended: boolean;
-    /** Current width of the ToolPanel component. */
+    /** New width of the ToolPanel component. */
     width: number;
 }
 

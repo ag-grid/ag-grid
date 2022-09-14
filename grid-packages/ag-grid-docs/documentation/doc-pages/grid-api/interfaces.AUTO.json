@@ -3224,7 +3224,7 @@
     "docs": {
       "started": "/** True if this is the first change to the Tool Panel size. */",
       "ended": "/** True if this is the last change to the Tool Panel size. */",
-      "width": "/** Current width of the ToolPanel component. */",
+      "width": "/** New width of the ToolPanel component. */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",

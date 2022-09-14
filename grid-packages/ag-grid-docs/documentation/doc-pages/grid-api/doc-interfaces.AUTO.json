@@ -6398,7 +6398,7 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "width": {
-      "description": "/** Current width of the ToolPanel component. */",
+      "description": "/** New width of the ToolPanel component. */",
       "type": { "returnType": "number", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
