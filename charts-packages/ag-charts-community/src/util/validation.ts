@@ -1,4 +1,5 @@
 import { Color } from './color';
+import { SceneChangeDetection, SceneChangeDetectionOptions } from '../scene/changeDetectable';
 export type ValidatePredicate = (v: any) => boolean;
 
 export function Validate(predicate: ValidatePredicate) {
@@ -162,3 +163,17 @@ export function Deprecated(message?: string, opts?: { default: any }) {
         }
     };
 }
+
+export const ValidateAndChangeDetection = (opts: {
+    validatePredicate: ValidatePredicate;
+    sceneChangeDetectionOpts?: SceneChangeDetectionOptions;
+}) => {
+    const { sceneChangeDetectionOpts, validatePredicate } = opts;
+    const sceneChangeDetectionFn = SceneChangeDetection(sceneChangeDetectionOpts);
+    const validateFn = Validate(validatePredicate);
+
+    return function (target: any, key: any) {
+        sceneChangeDetectionFn(target, key);
+        validateFn(target, key);
+    };
+};
