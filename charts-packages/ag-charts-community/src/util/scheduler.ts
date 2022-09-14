@@ -238,9 +238,11 @@ export class BatchedChain<D, R = D> {
 
                         if (isMap(step)) {
                             chainValue = step.map(chainValue, idx);
-                        } else if (isFilter(step) && !step.filter(chainValue, idx)) {
-                            chainValue = FILTERED;
-                            break;
+                        } else if (isFilter(step)) {
+                            if (!step.filter(chainValue, idx)) {
+                                chainValue = FILTERED;
+                                break;
+                            }
                         } else if (isForEach(step)) {
                             const promise = step.forEach(chainValue, idx);
                             if (promise != null && promise instanceof Promise) {
