@@ -6,7 +6,7 @@ import { Text } from '../../scene/shape/text';
 import { BBox } from '../../scene/bbox';
 import { BandScale } from '../../scale/bandScale';
 import { ticksToTree, TreeLayout, treeLayout } from '../../layout/tree';
-import { AxisLabel } from '../../axis';
+import { AxisLabel, AxisLine } from '../../axis';
 import { ChartAxis, ChartAxisDirection } from '../chartAxis';
 import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
@@ -110,22 +110,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         y: 0,
     };
 
-    readonly line: {
-        /**
-         * The line width to be used by the axis line.
-         */
-        width: number;
-        /**
-         * The color of the axis line.
-         * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
-         */
-        color?: string;
-    } = {
-        width: 1,
-        color: 'rgba(195, 195, 195, 1)',
-    };
-
-    // readonly tick = new AxisTick();
+    readonly line = new AxisLine();
 
     readonly label = new GroupedCategoryAxisLabel();
 

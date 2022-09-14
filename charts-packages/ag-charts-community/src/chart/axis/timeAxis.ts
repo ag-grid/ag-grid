@@ -1,9 +1,12 @@
-import { BOOLEAN, DATE_ARRAY, Validate } from '../../util/validation';
+import { ARRAY, BOOLEAN, Validate } from '../../util/validation';
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
 import { ChartAxis } from '../chartAxis';
 import { clamper } from './numberAxis';
+
+const DATE = (v: any) => v instanceof Date && isNaN(+v);
+const DATE_ARRAY = (v: any) => ARRAY()(v, DATE);
 
 export class TimeAxis extends ChartAxis<TimeScale> {
     static className = 'TimeAxis';

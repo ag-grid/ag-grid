@@ -29,7 +29,6 @@ import {
     BOOLEAN,
     BOOLEAN_ARRAY,
     NUMBER,
-    OPT_BAR_LABEL_PLACEMENT,
     OPT_FUNCTION,
     OPT_LINE_DASH,
     OPT_NUMBER,
@@ -37,7 +36,11 @@ import {
     STRING_ARRAY,
     COLOR_STRING_ARRAY,
     Validate,
+    OPTIONAL,
 } from '../../../util/validation';
+
+const BAR_LABEL_PLACEMENTS = ['inside', 'outside'];
+const OPT_BAR_LABEL_PLACEMENT = (v: any) => OPTIONAL(v, (v: any) => BAR_LABEL_PLACEMENTS.includes(v));
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';

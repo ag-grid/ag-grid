@@ -24,7 +24,6 @@ import { sanitizeHtml } from '../../../util/sanitize';
 import { isContinuous } from '../../../util/value';
 import {
     BOOLEAN,
-    HISTOGRAM_AGGREGATION,
     NUMBER,
     OPT_ARRAY,
     OPT_FUNCTION,
@@ -34,6 +33,9 @@ import {
     STRING,
     Validate,
 } from '../../../util/validation';
+
+const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
+const HISTOGRAM_AGGREGATION = (v: any) => HISTOGRAM_AGGREGATIONS.includes(v);
 
 enum HistogramSeriesNodeTag {
     Bin,

@@ -18,7 +18,6 @@ import { Layers } from '../layers';
 import { Point } from '../../scene/point';
 import { Range } from '../../scene/shape/range';
 import {
-    OPT_CROSSLINE_TYPE,
     OPT_ARRAY,
     OPT_BOOLEAN,
     OPT_NUMBER,
@@ -30,8 +29,32 @@ import {
     OPT_FONT_STYLE,
     OPT_FONT_WEIGHT,
     NUMBER,
-    OPT_CROSSLINE_LABEL_POSITION,
+    OPTIONAL,
 } from '../../util/validation';
+
+const CROSSLINE_LABEL_POSITIONS = [
+    'top',
+    'left',
+    'right',
+    'bottom',
+    'topLeft',
+    'topRight',
+    'bottomLeft',
+    'bottomRight',
+    'inside',
+    'insideLeft',
+    'insideRight',
+    'insideTop',
+    'insideBottom',
+    'insideTopLeft',
+    'insideBottomLeft',
+    'insideTopRight',
+    'insideBottomRight',
+];
+
+const OPT_CROSSLINE_LABEL_POSITION = (v: any) => OPTIONAL(v, (v: any) => CROSSLINE_LABEL_POSITIONS.includes(v));
+
+const OPT_CROSSLINE_TYPE = (v: any) => OPTIONAL(v, (v: any) => v === 'range' || v === 'line');
 
 export class CrossLineLabel {
     @Validate(OPT_BOOLEAN)

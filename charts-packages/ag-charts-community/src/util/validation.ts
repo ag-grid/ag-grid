@@ -1,6 +1,4 @@
 import { Color } from './color';
-import { CountableTimeInterval } from './time/interval';
-
 export type ValidatePredicate = (v: any) => boolean;
 
 export function Validate(predicate: ValidatePredicate) {
@@ -61,7 +59,6 @@ export const COLOR_STRING = (v: any) => {
 
     return Color.validColorString(v);
 };
-
 export const OPT_COLOR_STRING = (v: any) => OPTIONAL(v, COLOR_STRING);
 
 export const COLOR_STRING_ARRAY = (v: any) => ARRAY()(v, COLOR_STRING);
@@ -78,18 +75,6 @@ export function OPT_NUMBER(min?: number, max?: number) {
     return (v: any) => OPTIONAL(v, NUMBER(min, max));
 }
 
-export function NUMBER_OR_NAN(min?: number, max?: number) {
-    // Can be NaN or finite number
-    return (v: any) =>
-        typeof v === 'number' &&
-        (isNaN(v) || Number.isFinite(v)) &&
-        (min !== undefined ? v >= min : true) &&
-        (max !== undefined ? v <= max : true);
-}
-export function OPT_NUMBER_OR_NAN(min?: number, max?: number) {
-    return (v: any) => OPTIONAL(v, NUMBER_OR_NAN(min, max));
-}
-
 export const NUMBER_ARRAY = (v: any) => ARRAY()(v, NUMBER());
 export const OPT_NUMBER_ARRAY = (v: any) => OPTIONAL(v, NUMBER_ARRAY);
 
@@ -98,16 +83,6 @@ export const OPT_STRING_ARRAY = (v: any) => OPTIONAL(v, STRING_ARRAY);
 
 export const BOOLEAN_ARRAY = (v: any) => ARRAY()(v, BOOLEAN);
 export const OPT_BOOLEAN_ARRAY = (v: any) => OPTIONAL(v, BOOLEAN_ARRAY);
-
-export const DATE = (v: any) => v instanceof Date && isNaN(+v);
-export const DATE_ARRAY = (v: any) => ARRAY()(v, DATE);
-export const OPT_DATE_ARRAY = (v: any) => OPTIONAL(v, DATE_ARRAY);
-
-const TEXT_ALIGNS = ['right', 'left', 'start', 'center', 'end'];
-export const TEXT_ALIGN = (v: any) => TEXT_ALIGNS.includes(v);
-
-const TEXT_BASELINES = ['alphabetic', 'bottom', 'hanging', 'ideographic', 'middle', 'top'];
-export const TEXT_BASELINE = (v: any) => TEXT_BASELINES.includes(v);
 
 const FONT_WEIGHTS = [
     'normal',
@@ -131,9 +106,6 @@ export const OPT_FONT_STYLE = (v: any) => OPTIONAL(v, FONT_STYLE);
 export const FONT_WEIGHT = (v: any) => FONT_WEIGHTS.includes(v);
 export const OPT_FONT_WEIGHT = (v: any) => OPTIONAL(v, FONT_WEIGHT);
 
-export const TICK_COUNT = (v: any) => NUMBER(0)(v) || v instanceof CountableTimeInterval;
-export const OPT_TICK_COUNT = (v: any) => OPTIONAL(v, TICK_COUNT);
-
 export const LINE_DASH = (v: any) => ARRAY()(v, NUMBER(0));
 export const OPT_LINE_DASH = (v: any) => OPTIONAL(v, LINE_DASH);
 
@@ -145,48 +117,8 @@ const LINE_JOINS = ['round', 'bevel', 'miter'];
 export const LINE_JOIN = (v: any) => LINE_JOINS.includes(v);
 export const OPT_LINE_JOIN = (v: any) => OPTIONAL(v, LINE_JOIN);
 
-const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
-export const GRID_STYLE = (v: any) =>
-    ARRAY()(v, (o) => {
-        for (let key in o) {
-            if (!GRID_STYLE_KEYS.includes(key)) {
-                return false;
-            }
-        }
-        return true;
-    });
-
 const POSITIONS = ['top', 'right', 'bottom', 'left'];
 export const POSITION = (v: any) => POSITIONS.includes(v);
-
-export const OPT_CROSSLINE_TYPE = (v: any) => OPTIONAL(v, (v: any) => v === 'range' || v === 'line');
-
-const CROSSLINE_LABEL_POSITIONS = [
-    'top',
-    'left',
-    'right',
-    'bottom',
-    'topLeft',
-    'topRight',
-    'bottomLeft',
-    'bottomRight',
-    'inside',
-    'insideLeft',
-    'insideRight',
-    'insideTop',
-    'insideBottom',
-    'insideTopLeft',
-    'insideBottomLeft',
-    'insideTopRight',
-    'insideBottomRight',
-];
-export const OPT_CROSSLINE_LABEL_POSITION = (v: any) => OPTIONAL(v, (v: any) => CROSSLINE_LABEL_POSITIONS.includes(v));
-
-const BAR_LABEL_PLACEMENTS = ['inside', 'outside'];
-export const OPT_BAR_LABEL_PLACEMENT = (v: any) => OPTIONAL(v, (v: any) => BAR_LABEL_PLACEMENTS.includes(v));
-
-const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
-export const HISTOGRAM_AGGREGATION = (v: any) => HISTOGRAM_AGGREGATIONS.includes(v);
 
 export function Deprecated(message?: string, opts?: { default: any }) {
     let logged = false;
