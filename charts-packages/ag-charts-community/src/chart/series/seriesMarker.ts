@@ -1,9 +1,20 @@
 import { Marker } from '../marker/marker';
 import { Circle } from '../marker/circle';
 import { ChangeDetectable, SceneChangeDetection, RedrawType } from '../../scene/changeDetectable';
+import {
+    BOOLEAN,
+    NUMBER,
+    OPT_NUMBER,
+    OPT_NUMBER_ARRAY,
+    OPT_STRING,
+    ValidateAndChangeDetection,
+} from '../../util/validation';
 
 export class SeriesMarker extends ChangeDetectable {
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: BOOLEAN,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     enabled = true;
 
     /**
@@ -13,7 +24,10 @@ export class SeriesMarker extends ChangeDetectable {
     @SceneChangeDetection({ redraw: RedrawType.MAJOR })
     shape: string | (new () => Marker) = Circle;
 
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: NUMBER(0),
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     size = 6;
 
     /**
@@ -22,25 +36,46 @@ export class SeriesMarker extends ChangeDetectable {
      * within the `[size, maxSize]` range, where the largest values will correspond to the `maxSize`
      * and the lowest to the `size`.
      */
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: NUMBER(0),
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     maxSize = 30;
 
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: OPT_NUMBER_ARRAY,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     domain?: [number, number] = undefined;
 
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: OPT_STRING,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     fill?: string = undefined;
 
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: OPT_STRING,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     stroke?: string = undefined;
 
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: OPT_NUMBER(0),
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     strokeWidth?: number = 1;
 
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: OPT_NUMBER(0, 1),
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     fillOpacity?: number = undefined;
 
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: OPT_NUMBER(0, 1),
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     strokeOpacity?: number = undefined;
 }
 

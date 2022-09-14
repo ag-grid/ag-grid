@@ -3,6 +3,7 @@ import { Matrix } from './matrix';
 import { BBox } from './bbox';
 import { createId } from '../util/id';
 import { ChangeDetectable, SceneChangeDetection, RedrawType } from './changeDetectable';
+import { BOOLEAN, ValidateAndChangeDetection } from '../util/validation';
 
 export { SceneChangeDetection, RedrawType };
 
@@ -528,7 +529,10 @@ export abstract class Node extends ChangeDetectable {
         }
     }
 
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o) => o.visibilityChanged() })
+    @ValidateAndChangeDetection({
+        validatePredicate: BOOLEAN,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR, changeCb: (o) => o.visibilityChanged() },
+    })
     visible: boolean = true;
     protected visibilityChanged() {
         // Override point for sub-classes to react to visibility changes.
