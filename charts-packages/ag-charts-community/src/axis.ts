@@ -11,7 +11,7 @@ import { createId } from './util/id';
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from './util/angle';
 import { doOnce } from './util/function';
 import { ContinuousScale } from './scale/continuousScale';
-import { CountableTimeInterval } from './util/time/interval';
+import { CountableTimeInterval, TimeInterval } from './util/time/interval';
 import { CrossLine } from './chart/crossline/crossLine';
 import {
     Validate,
@@ -29,7 +29,7 @@ import {
 import { ChartAxisDirection } from './chart/chartAxis';
 import { Layers } from './chart/layers';
 
-const TICK_COUNT = (v: any) => NUMBER(0)(v) || v instanceof CountableTimeInterval;
+const TICK_COUNT = (v: any) => NUMBER(0)(v) || v instanceof TimeInterval;
 const OPT_TICK_COUNT = (v: any) => OPTIONAL(v, TICK_COUNT);
 
 const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
