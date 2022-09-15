@@ -1,4 +1,4 @@
-import { BOOLEAN, NUMBER, STRING, ValidateAndChangeDetection } from '../util/validation';
+import { BOOLEAN, COLOR_STRING, NUMBER, ValidateAndChangeDetection } from '../util/validation';
 import { ChangeDetectable, RedrawType } from './changeDetectable';
 
 export class DropShadow extends ChangeDetectable {
@@ -9,7 +9,7 @@ export class DropShadow extends ChangeDetectable {
     enabled = true;
 
     @ValidateAndChangeDetection({
-        validatePredicate: STRING,
+        validatePredicate: COLOR_STRING,
         sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
     })
     color = 'rgba(0, 0, 0, 0.5)';
