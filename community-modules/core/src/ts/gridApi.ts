@@ -57,7 +57,14 @@ import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { ICellEditor } from "./interfaces/iCellEditor";
 import { ChartType, CrossFilterChartType, SeriesChartType } from "./interfaces/iChartOptions";
-import { ChartDownloadParams, ChartModel, GetChartImageDataUrlParams, IChartService } from "./interfaces/IChartService";
+import {
+    ChartDownloadParams,
+    OpenChartsToolPanelParams,
+    CloseChartsToolPanelParams,
+    ChartModel,
+    GetChartImageDataUrlParams,
+    IChartService,
+} from './interfaces/IChartService';
 import { ClientSideRowModelSteps, IClientSideRowModel, RefreshModelParams } from "./interfaces/iClientSideRowModel";
 import { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from "./interfaces/iClipboardService";
 import { IColumnToolPanel } from "./interfaces/iColumnToolPanel";
@@ -1636,6 +1643,20 @@ export class GridApi<TData = any> {
     public downloadChart(params: ChartDownloadParams) {
         if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart')) {
             return this.chartService.downloadChart(params);
+        }
+    }
+
+    /** Open the Charts Tool Panel. */
+    public openChartsToolPanel(params: OpenChartsToolPanelParams) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.openChartsToolPanel')) {
+            return this.chartService.openChartsToolPanel(params);
+        }
+    }
+
+    /** Close the Charts Tool Panel. */
+    public closeChartsToolPanel(params: CloseChartsToolPanelParams) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.closeChartsToolPanel')) {
+            return this.chartService.closeChartsToolPanel(params.chartId);
         }
     }
 

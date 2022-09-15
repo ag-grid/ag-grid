@@ -9393,9 +9393,26 @@
       "dimensions?": "/** Dimensions of downloaded chart. The current chart dimensions will be used if not specified. */"
     }
   },
+  "CloseChartsToolPanelParams": {
+    "meta": {},
+    "type": { "chartId": "string" },
+    "docs": { "chartId": "/** The id of the created chart. */" }
+  },
   "ChartModelType": {
     "meta": { "isTypeAlias": true },
     "type": "'range' | 'pivot'"
+  },
+  "ChartsToolPanelTabs": {
+    "meta": { "isTypeAlias": true },
+    "type": "'settings' | 'data' | 'format'"
+  },
+  "OpenChartsToolPanelParams": {
+    "meta": {},
+    "type": { "chartId": "string", "tabName": "ChartsToolPanelTabs" },
+    "docs": {
+      "chartId": "/** The id of the created chart. */",
+      "tabName": "/** Tab name of the charts tool panel. */"
+    }
   },
   "ChartModel": {
     "meta": {},
@@ -9425,7 +9442,9 @@
       "createPivotChart(params: CreatePivotChartParams)": "ChartRef | undefined",
       "restoreChart(model: ChartModel, chartContainer?: HTMLElement)": "ChartRef | undefined",
       "getChartImageDataURL(params: GetChartImageDataUrlParams)": "string | undefined",
-      "downloadChart(params: ChartDownloadParams)": "void"
+      "downloadChart(params: ChartDownloadParams)": "void",
+      "openChartsToolPanel(params: OpenChartsToolPanelParams)": "void",
+      "closeChartsToolPanel(chartId: string)": "void"
     }
   },
   "ClientSideRowModelSteps": {

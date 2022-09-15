@@ -16123,7 +16123,24 @@
       }
     }
   },
+  "CloseChartsToolPanelParams": {
+    "chartId": {
+      "description": "/** The id of the created chart. */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
   "ChartModelType": {},
+  "ChartsToolPanelTabs": {},
+  "OpenChartsToolPanelParams": {
+    "chartId": {
+      "description": "/** The id of the created chart. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "tabName": {
+      "description": "/** Tab name of the charts tool panel. */",
+      "type": { "returnType": "ChartsToolPanelTabs", "optional": false }
+    }
+  },
   "ChartModel": {
     "version": { "type": { "returnType": "string", "optional": true } },
     "modelType": {
@@ -16215,6 +16232,20 @@
     "downloadChart": {
       "type": {
         "arguments": { "params": "ChartDownloadParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "openChartsToolPanel": {
+      "type": {
+        "arguments": { "params": "OpenChartsToolPanelParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "closeChartsToolPanel": {
+      "type": {
+        "arguments": { "chartId": "string" },
         "returnType": "void",
         "optional": false
       }
