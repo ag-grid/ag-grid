@@ -292,15 +292,17 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
             // Y datum
             yKeys.forEach((yKey, i) => {
+                const seriesYs = yData[i] || (yData[i] = []);
+
                 if (!(yKey in datum)) {
                     doOnce(
                         () => console.warn(`The key '${yKey}' was not found in the data: `, datum),
                         `${yKey} not found in data`
                     );
+                    seriesYs.push(NaN);
                     return;
                 }
                 const value = datum[yKey];
-                const seriesYs = yData[i] || (yData[i] = []);
 
                 if (!seriesItemEnabled.get(yKey)) {
                     seriesYs.push(NaN);
