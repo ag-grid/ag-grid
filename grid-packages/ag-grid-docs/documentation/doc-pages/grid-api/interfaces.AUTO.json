@@ -7149,6 +7149,7 @@
     "type": {
       "paddingInner?": "number",
       "paddingOuter?": "number",
+      "groupPaddingInner?": "number",
       "tick?": "AgAxisNumberTickOptions",
       "top?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "right?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
@@ -7838,6 +7839,7 @@
       "type": "'category'",
       "paddingInner?": "number",
       "paddingOuter?": "number",
+      "groupPaddingInner?": "number",
       "tick?": "AgAxisNumberTickOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",

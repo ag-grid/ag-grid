@@ -567,6 +567,9 @@
   "AgCategoryAxisThemeOptions": {
     "paddingInner": { "type": { "returnType": "number", "optional": true } },
     "paddingOuter": { "type": { "returnType": "number", "optional": true } },
+    "groupPaddingInner": {
+      "type": { "returnType": "number", "optional": true }
+    },
     "tick": {
       "description": "/** Configuration for the axis ticks. */",
       "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
@@ -1574,6 +1577,9 @@
     "type": { "type": { "returnType": "'category'", "optional": false } },
     "paddingInner": { "type": { "returnType": "number", "optional": true } },
     "paddingOuter": { "type": { "returnType": "number", "optional": true } },
+    "groupPaddingInner": {
+      "type": { "returnType": "number", "optional": true }
+    },
     "tick": {
       "description": "/** Configuration for the axis ticks. */",
       "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }

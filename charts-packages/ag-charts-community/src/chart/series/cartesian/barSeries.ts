@@ -38,6 +38,7 @@ import {
     Validate,
     OPTIONAL,
 } from '../../../util/validation';
+import { CategoryAxis } from '../../axis/categoryAxis';
 
 const BAR_LABEL_PLACEMENTS = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT = (v: any) => OPTIONAL(v, (v: any) => BAR_LABEL_PLACEMENTS.includes(v));
@@ -264,7 +265,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
             const { groupScale } = this;
             groupScale.domain = visibleStacks;
-            groupScale.padding = 0.1;
             groupScale.round = true;
         }
     }
@@ -579,6 +579,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
 
         groupScale.range = [0, xBandWidth!];
+
+        if (xAxis instanceof CategoryAxis) {
+            groupScale.padding = this.grouped && yKeys.length > 1 ? xAxis.groupPaddingInner : 0;
+        }
 
         const barWidth =
             groupScale.bandwidth >= 1
