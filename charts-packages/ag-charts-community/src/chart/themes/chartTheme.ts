@@ -481,6 +481,13 @@ export class ChartTheme {
                     yOffset: 3,
                     blur: 5,
                 },
+                innerTextLines: {
+                    fontStyle: undefined,
+                    fontWeight: undefined,
+                    fontSize: 12,
+                    fontFamily: ChartTheme.fontFamily,
+                    color: 'rgb(70, 70, 70)',
+                },
             },
         },
     };

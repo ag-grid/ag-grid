@@ -178,7 +178,11 @@ export interface AgCartesianSeriesTheme {
 }
 
 export interface AgPolarSeriesTheme {
-    pie?: AgPieSeriesOptions;
+    pie?: AgPieSeriesTheme;
+}
+
+export interface AgPieSeriesTheme extends Omit<AgPieSeriesOptions, 'innerTextLines'> {
+    innerTextLines: AgDoughnutInnerTextThemeOptions;
 }
 
 export interface AgHierarchySeriesTheme {
@@ -1180,6 +1184,23 @@ export interface AgPieSeriesCalloutOptions {
     strokeWidth?: PixelSize;
 }
 
+export interface AgDoughnutInnerTextLine {
+    /** The text to show in the text line. */
+    text: string;
+    /** The font style to use for the text line. */
+    fontStyle?: FontStyle;
+    /** The font weight to use for the text line. */
+    fontWeight?: FontWeight;
+    /** The font size in pixels to use for the text line. */
+    fontSize?: FontSize;
+    /** The font family to use for the text line. */
+    fontFamily?: FontFamily;
+    /** The colour to use for the text line. */
+    color?: CssColor;
+}
+
+export interface AgDoughnutInnerTextThemeOptions extends Omit<AgDoughnutInnerTextLine, 'text'> {}
+
 /** Configuration for pie/doughnut series. */
 export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'pie';
@@ -1229,6 +1250,8 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     shadow?: AgDropShadowOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgPieSeriesTooltip;
+    /** Text lines to display inside the doughnut chart */
+    innerTextLines: AgDoughnutInnerTextLine[];
     formatter?: (params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat;
 }
 

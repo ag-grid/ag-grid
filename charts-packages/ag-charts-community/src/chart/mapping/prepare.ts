@@ -162,8 +162,13 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
                 : isSeriesOptionType(userSuppliedOptionsType)
                 ? userSuppliedOptionsType
                 : defaultSeriesType;
-
-            return jsonMerge(seriesThemes[type] || {}, { ...s, type });
+            const merged = jsonMerge(seriesThemes[type] || {}, { ...s, type });
+            if (type === 'pie' && (s as any).innerTextLines) {
+                merged.innerTextLines = merged.innerTextLines.map((ln: any) => {
+                    return jsonMerge(seriesThemes.pie.innerTextLines, ln);
+                });
+            }
+            return merged;
         })
     ).map((s) => prepareSeries(context, s)) as any[];
 

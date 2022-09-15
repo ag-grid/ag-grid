@@ -1,6 +1,6 @@
 import { Group } from '../../../scene/group';
 import { Line } from '../../../scene/shape/line';
-import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
+import { Text } from '../../../scene/shape/text';
 import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
@@ -44,21 +44,6 @@ interface PieNodeDatum extends SeriesNodeDatum {
         readonly textAlign: CanvasTextAlign;
         readonly textBaseline: CanvasTextBaseline;
     };
-}
-
-interface InnerTextStyle {
-    readonly fontStyle?: FontStyle;
-    readonly fontWeight?: FontWeight;
-    readonly fontSize?: number;
-    readonly fontFamily?: string;
-    readonly textAlign?: CanvasTextAlign;
-    readonly textBaseline?: CanvasTextBaseline;
-    readonly fill?: string;
-}
-
-interface InnerTextDatum {
-    readonly text: string;
-    readonly style?: InnerTextStyle;
 }
 
 export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
@@ -127,14 +112,8 @@ export class PieTitle extends Caption {
     showInLegend = false;
 }
 
-class DoughnutTextLine {
+export class DoughnutInnerTextLine extends Label {
     text = '';
-    style = new Label()
-}
-
-class DoughnutInnerText {
-    textLines: DoughnutTextLine[] = [];
-    style = new Label();
 }
 
 export class PieSeries extends PolarSeries<PieNodeDatum> {
@@ -149,7 +128,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.highlightGroup
     ).selectAll<Group>();
     private labelSelection: Selection<Group, Group, PieNodeDatum, any>;
-    private innerTextSelection: Selection<Group, Group, InnerTextDatum, any>;
+    private innerTextSelection: Selection<Group, Group, DoughnutInnerTextLine, any>;
 
     /**
      * The processed data that gets visualized.
@@ -209,7 +188,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     angleKey = '';
     angleName = '';
 
-    readonly innerText = new DoughnutInnerText();
+    readonly innerTextLines: DoughnutInnerTextLine[] = [];
 
     /**
      * The key of the numeric field to use to determine the radii of pie slices.
@@ -308,13 +287,14 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         if (labelKey) {
             if (labelFormatter) {
-                const showValueDeprecationWarning = () => doOnce(
-                    () =>
-                        console.warn(
-                            'AG Charts - the use of { value } in the pie chart label formatter function is deprecated. Please use { datum, labelKey, ... } instead.'
-                        ),
-                    'deprecated use of "value" property in pie chart label formatter'
-                );
+                const showValueDeprecationWarning = () =>
+                    doOnce(
+                        () =>
+                            console.warn(
+                                'AG Charts - the use of { value } in the pie chart label formatter function is deprecated. Please use { datum, labelKey, ... } instead.'
+                            ),
+                        'deprecated use of "value" property in pie chart label formatter'
+                    );
                 labelData = data.map((datum) => {
                     let deprecatedValue = datum[labelKey];
                     const formatterParams: PieSeriesLabelFormatterParams = {
@@ -487,7 +467,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
         this.labelSelection = updateLabels.merge(enterLabels);
 
-        const updateInnerText = innerTextSelection.setData(this.innerText.textLines);
+        const updateInnerText = innerTextSelection.setData(this.innerTextLines);
         updateInnerText.exit.remove();
 
         const enterFancy = updateInnerText.enter.append(Group);
@@ -656,10 +636,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private updateInnerTextNodes() {
         const textBBoxes: BBox[] = [];
         this.innerTextSelection.selectByTag<Text>(PieNodeTag.InnerText).each((text, datum) => {
-            const { fontStyle, fontWeight, fontSize, fontFamily, color } = {
-                ...this.innerText.style,
-                ...(datum.style || {}),
-            };
+            const { fontStyle, fontWeight, fontSize, fontFamily, color } = datum;
             text.fontStyle = fontStyle;
             text.fontWeight = fontWeight;
             text.fontSize = fontSize;
