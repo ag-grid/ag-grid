@@ -1100,6 +1100,14 @@
     "description": "/** Downloads the chart image in the browser. */",
     "type": { "arguments": { "params": "ChartDownloadParams" } }
   },
+  "openChartsToolPanel": {
+    "description": "/** Open the Charts Tool Panel. */",
+    "type": { "arguments": { "params": "OpenChartsToolPanelParams" } }
+  },
+  "closeChartsToolPanel": {
+    "description": "/** Close the Charts Tool Panel. */",
+    "type": { "arguments": { "params": "CloseChartsToolPanelParams" } }
+  },
   "createRangeChart": {
     "description": "/** Used to programmatically create charts from a range. */",
     "type": {
