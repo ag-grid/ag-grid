@@ -71,6 +71,10 @@ const EXAMPLES: Record<string, TestCase> = {
         },
         assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['area'] }),
     },
+    STACKED_AREA_MISSING_FIRST_Y_DATA_EXAMPLE: {
+        options: examples.STACKED_AREA_MISSING_FIRST_Y_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: repeat('area', 1) }),
+    },
 };
 
 describe('AreaSeries', () => {
@@ -90,10 +94,6 @@ describe('AreaSeries', () => {
             console.warn = jest.fn();
         });
 
-        afterEach(() => {
-            expect(console.warn).not.toBeCalled();
-        });
-
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = { ...example.options };
@@ -103,6 +103,10 @@ describe('AreaSeries', () => {
 
                 chart = AgChartV2.create<any>(options);
                 await example.assertions(chart);
+
+                if (exampleName !== 'STACKED_AREA_MISSING_FIRST_Y_DATA_EXAMPLE') {
+                    expect(console.warn).not.toBeCalled();
+                }
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
@@ -124,6 +128,10 @@ describe('AreaSeries', () => {
                 if (example.extraScreenshotActions) {
                     await example.extraScreenshotActions(chart);
                     await compare();
+                }
+
+                if (exampleName !== 'STACKED_AREA_MISSING_FIRST_Y_DATA_EXAMPLE') {
+                    expect(console.warn).not.toBeCalled();
                 }
             });
         }
