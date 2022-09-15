@@ -1058,11 +1058,11 @@ export class GridApi<TData = any> {
     }
 
     /** Gets the status panel instance corresponding to the supplied `id`. */
-    public getStatusPanel(key: string): IStatusPanel | undefined {
+    public getStatusPanel<TStatusPanel = IStatusPanel>(key: string): TStatusPanel | undefined {
         if (!this.statusBarService) { return; }
 
         const comp = this.statusBarService.getStatusPanel(key);
-        return unwrapUserComp(comp);
+        return unwrapUserComp(comp) as any;
     }
 
     public getColumnDef(key: string | Column): ColDef<TData> | null {

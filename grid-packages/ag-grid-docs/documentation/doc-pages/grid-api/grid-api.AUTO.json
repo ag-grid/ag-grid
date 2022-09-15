@@ -506,7 +506,7 @@
     "description": "/** Gets the status panel instance corresponding to the supplied `id`. */",
     "type": {
       "arguments": { "key": "string" },
-      "returnType": "IStatusPanel | undefined"
+      "returnType": "TStatusPanel | undefined"
     }
   },
   "getColumnDef": {

@@ -11,7 +11,7 @@ const columnDefs: ColDef[] = [
 ]
 
 function toggleStatusBarComp() {
-  const statusBarComponent = gridOptions.api!.getStatusPanel('statusBarCompKey') as any;
+  const statusBarComponent = gridOptions.api!.getStatusPanel<ClickableStatusBarComponent>('statusBarCompKey')!;
   statusBarComponent.setVisible(!statusBarComponent.isVisible())
 }
 
