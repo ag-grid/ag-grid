@@ -13,11 +13,8 @@ export function Validate(predicate: ValidatePredicate) {
                     return;
                 }
 
-                console.warn(
-                    `AG Charts - Property [${
-                        target.constructor?.name ?? target.className
-                    }.${key}] cannot be set to [${v}], ignoring.`
-                );
+                const cleanKey = key.replace(/^_*/, '');
+                console.warn(`AG Charts - Property [${cleanKey}] cannot be set to [${JSON.stringify(v)}], ignoring.`);
             };
             const getter = function () {
                 return this[privateKey];
