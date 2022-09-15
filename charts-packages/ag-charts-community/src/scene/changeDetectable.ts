@@ -99,7 +99,7 @@ export function SceneChangeDetection(opts?: {
                 set: eval(setterJs),
                 get: eval(getterJs),
                 enumerable: true,
-                configurable: false,
+                configurable: true,
             });
         } else {
             // Unoptimised but 'safe' code-path, for environments with CSP headers and no 'unsafe-eval'.
@@ -132,7 +132,7 @@ export function SceneChangeDetection(opts?: {
                 set: setter,
                 get: getter,
                 enumerable: true,
-                configurable: false,
+                configurable: true,
             });
         }
     };
