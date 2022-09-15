@@ -91,12 +91,16 @@ export class SeriesPanel extends Component {
     private refreshWidgets(): void {
         this.destroyActivePanels();
 
-        if (this.chartController.isComboChart()) {
-            this.updateSeriesType();
-            this.initSeriesSelect();
-        }
+        const chart = this.chartController.getChartProxy().getChart();
 
-        this.seriesWidgetMappings[this.seriesType].forEach(w => this.widgetFuncs[w]());
+        chart.waitForUpdate().then(() => {
+            if (this.chartController.isComboChart()) {
+                this.updateSeriesType();
+                this.initSeriesSelect();
+            }
+
+            this.seriesWidgetMappings[this.seriesType].forEach((w) => this.widgetFuncs[w]());
+        });
     }
 
     private initSeriesSelect() {
