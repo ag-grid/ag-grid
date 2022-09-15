@@ -1,6 +1,11 @@
 import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 import { ClickableStatusBarComponent } from './clickableStatusBarComponent_typescript'
 
+export interface IClickableStatusBar {
+  setVisible(visible: boolean): void;
+  isVisible(): boolean;
+}
+
 const columnDefs: ColDef[] = [
   {
     field: 'row',
@@ -11,7 +16,7 @@ const columnDefs: ColDef[] = [
 ]
 
 function toggleStatusBarComp() {
-  const statusBarComponent = gridOptions.api!.getStatusPanel<ClickableStatusBarComponent>('statusBarCompKey')!;
+  const statusBarComponent = gridOptions.api!.getStatusPanel<IClickableStatusBar>('statusBarCompKey')!;
   statusBarComponent.setVisible(!statusBarComponent.isVisible())
 }
 
