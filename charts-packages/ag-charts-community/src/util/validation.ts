@@ -13,11 +13,8 @@ export function Validate(predicate: ValidatePredicate) {
                     return;
                 }
 
-                console.warn(
-                    `AG Charts - Property [${
-                        target.constructor?.name ?? target.className
-                    }.${key}] cannot be set to [${v}], ignoring.`
-                );
+                const cleanKey = key.replace(/^_*/, '');
+                console.warn(`AG Charts - Property [${cleanKey}] cannot be set to [${JSON.stringify(v)}], ignoring.`);
             };
             const getter = function () {
                 return this[privateKey];
@@ -131,10 +128,8 @@ export function Deprecated(message?: string, opts?: { default: any }) {
         if (!target[key]) {
             const setter = function (v: any) {
                 if (v !== def && !logged) {
-                    const msg = [
-                        `AG Charts - Property [${target.constructor?.name ?? target.className}.${key}] is deprecated.`,
-                        message,
-                    ]
+                    const cleanKey = key.replace(/^_*/, '');
+                    const msg = [`AG Charts - Property [${cleanKey}] is deprecated.`, message]
                         .filter((v) => v != null)
                         .join(' ');
                     console.warn(msg);
