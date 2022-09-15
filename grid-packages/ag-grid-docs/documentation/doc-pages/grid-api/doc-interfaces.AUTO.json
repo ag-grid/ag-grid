@@ -16137,8 +16137,8 @@
       "type": { "returnType": "string", "optional": false }
     },
     "tabName": {
-      "description": "/** Tab name of the charts tool panel. */",
-      "type": { "returnType": "ChartsToolPanelTabs", "optional": false }
+      "description": "/** Tab name of the charts tool panel. The default settings tab will be used if not specified. */",
+      "type": { "returnType": "ChartsToolPanelTabs", "optional": true }
     }
   },
   "ChartModel": {

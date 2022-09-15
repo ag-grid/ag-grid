@@ -9408,10 +9408,10 @@
   },
   "OpenChartsToolPanelParams": {
     "meta": {},
-    "type": { "chartId": "string", "tabName": "ChartsToolPanelTabs" },
+    "type": { "chartId": "string", "tabName?": "ChartsToolPanelTabs" },
     "docs": {
       "chartId": "/** The id of the created chart. */",
-      "tabName": "/** Tab name of the charts tool panel. */"
+      "tabName?": "/** Tab name of the charts tool panel. The default settings tab will be used if not specified. */"
     }
   },
   "ChartModel": {
