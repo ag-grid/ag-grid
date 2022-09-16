@@ -8886,7 +8886,8 @@
       "fontWeight?": "FontWeight",
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "margin?": "number"
     },
     "docs": {
       "text": "/** The text to show in the text line. */",
@@ -8894,7 +8895,8 @@
       "fontWeight?": "/** The font weight to use for the text line. */",
       "fontSize?": "/** The font size in pixels to use for the text line. */",
       "fontFamily?": "/** The font family to use for the text line. */",
-      "color?": "/** The colour to use for the text line. */"
+      "color?": "/** The colour to use for the text line. */",
+      "margin?": "/** The margin in pixels before and after the text line. */"
     }
   },
   "AgDoughnutInnerTextThemeOptions": {
@@ -8904,14 +8906,16 @@
       "fontWeight?": "FontWeight",
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "margin?": "number"
     },
     "docs": {
       "fontStyle?": "/** The font style to use for the text line. */",
       "fontWeight?": "/** The font weight to use for the text line. */",
       "fontSize?": "/** The font size in pixels to use for the text line. */",
       "fontFamily?": "/** The font family to use for the text line. */",
-      "color?": "/** The colour to use for the text line. */"
+      "color?": "/** The colour to use for the text line. */",
+      "margin?": "/** The margin in pixels before and after the text line. */"
     }
   },
   "AgPieSeriesOptions": {

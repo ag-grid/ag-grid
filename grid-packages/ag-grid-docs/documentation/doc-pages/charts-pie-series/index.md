@@ -126,8 +126,8 @@ The `innerTextLines` property can be used to put several text lines inside a dou
 series: [{
     ...
     innerTextLines: [
-        { text: '75%', fontSize: 48, color: 'blue' },
-        { text: 'Coverage' }
+        { text: '85%', fontSize: 48, color: 'blue' },
+        { text: 'Coverage', margin: 4 }
     ]
 }]
 ```

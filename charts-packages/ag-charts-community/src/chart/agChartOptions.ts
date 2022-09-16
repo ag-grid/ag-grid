@@ -1197,6 +1197,8 @@ export interface AgDoughnutInnerTextLine {
     fontFamily?: FontFamily;
     /** The colour to use for the text line. */
     color?: CssColor;
+    /** The margin in pixels before and after the text line. */
+    margin?: number;
 }
 
 export interface AgDoughnutInnerTextThemeOptions extends Omit<AgDoughnutInnerTextLine, 'text'> {}

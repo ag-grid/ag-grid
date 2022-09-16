@@ -3226,6 +3226,10 @@
     "color": {
       "description": "/** The colour to use for the text line. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "margin": {
+      "description": "/** The margin in pixels before and after the text line. */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "AgDoughnutInnerTextThemeOptions": {
@@ -3248,6 +3252,10 @@
     "color": {
       "description": "/** The colour to use for the text line. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "margin": {
+      "description": "/** The margin in pixels before and after the text line. */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "AgPieSeriesOptions": {

@@ -487,6 +487,7 @@ export class ChartTheme {
                     fontSize: 12,
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
+                    margin: 2,
                 },
             },
         },

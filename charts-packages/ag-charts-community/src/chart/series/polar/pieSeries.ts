@@ -138,6 +138,7 @@ export class PieTitle extends Caption {
 
 export class DoughnutInnerTextLine extends Label {
     text = '';
+    margin = 2;
 }
 
 export class PieSeries extends PolarSeries<PieNodeDatum> {
@@ -685,6 +686,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     private updateInnerTextNodes() {
         const textBBoxes: BBox[] = [];
+        const margins: number[] = [];
         this.innerTextSelection.selectByTag<Text>(PieNodeTag.InnerText).each((text, datum) => {
             const { fontStyle, fontWeight, fontSize, fontFamily, color } = datum;
             text.fontStyle = fontStyle;
@@ -698,14 +700,17 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             text.textAlign = 'center';
             text.textBaseline = 'alphabetic';
             textBBoxes.push(text.computeBBox());
+            margins.push(datum.margin);
         });
-        const totalHeight = textBBoxes.reduce((sum, bbox) => sum + bbox.height, 0);
+        const totalHeight = textBBoxes.reduce((sum, bbox, i) => {
+            return sum + bbox.height + margins[i];
+        }, 0);
         const textBottoms: number[] = [];
         for (let i = 0, prev = -totalHeight / 2; i < textBBoxes.length; i++) {
             const bbox = textBBoxes[i];
-            const bottom = bbox.height + prev;
+            const bottom = bbox.height + prev + margins[i];
             textBottoms.push(bottom);
-            prev = bottom;
+            prev = bottom + margins[i];
         }
         this.innerTextSelection.selectByTag<Text>(PieNodeTag.InnerText).each((text, _datum, index) => {
             text.y = textBottoms[index];
