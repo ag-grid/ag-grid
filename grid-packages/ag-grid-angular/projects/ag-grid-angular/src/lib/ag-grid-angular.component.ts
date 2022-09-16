@@ -483,8 +483,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public detailRowHeight: number | undefined = undefined;
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows.     */
     @Input() public detailRowAutoHeight: boolean | undefined = undefined;
-    /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.     */
-    @Input() public groupRowsSticky: boolean | undefined = undefined;
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application.     */
     @Input() public context: any = undefined;
     /** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync.     */
@@ -683,6 +681,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.     */
     @Input() public treeData: boolean | undefined = undefined;
+    /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.     */
+    @Input() public groupRowsSticky: boolean | undefined = undefined;
     /** @deprecated - this is now groupRowRendererParams.innerRenderer     */
     @Input() public groupRowInnerRenderer: any = undefined;
     /** @deprecated - this is now groupRowRendererParams.innerRenderer     */
@@ -854,7 +854,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public columnHoverHighlight: boolean | undefined = undefined;
     @Input() public deltaSort: boolean | undefined = undefined;
     @Input() public treeDataDisplayType: TreeDataDisplayType | undefined = undefined;
+    /** @deprecated      */
     @Input() public angularCompileRows: boolean | undefined = undefined;
+    /** @deprecated      */
     @Input() public angularCompileFilters: boolean | undefined = undefined;
     @Input() public functionsPassive: boolean | undefined = undefined;
     @Input() public enableGroupEdit: boolean | undefined = undefined;
