@@ -1,4 +1,5 @@
 import { Color } from './color';
+import { SceneChangeDetection, SceneChangeDetectionOptions } from '../scene/changeDetectable';
 export type ValidatePredicate = (v: any) => boolean;
 
 export function Validate(predicate: ValidatePredicate) {
@@ -6,27 +7,33 @@ export function Validate(predicate: ValidatePredicate) {
         // `target` is either a constructor (static member) or prototype (instance member)
         const privateKey = `__${key}`;
 
-        if (!target[key]) {
-            const setter = function (v: any) {
-                if (predicate(v)) {
+        let prevSet: ((v: any) => void) | undefined;
+        const descriptor = Object.getOwnPropertyDescriptor(target, key);
+        prevSet = descriptor?.set;
+
+        const setter = function (v: any) {
+            if (predicate(v)) {
+                if (prevSet) {
+                    prevSet.call(this, v);
+                } else {
                     this[privateKey] = v;
-                    return;
                 }
+                return;
+            }
 
-                const cleanKey = key.replace(/^_*/, '');
-                console.warn(`AG Charts - Property [${cleanKey}] cannot be set to [${JSON.stringify(v)}], ignoring.`);
-            };
-            const getter = function () {
-                return this[privateKey];
-            };
+            const cleanKey = key.replace(/^_*/, '');
+            console.warn(`AG Charts - Property [${cleanKey}] cannot be set to [${JSON.stringify(v)}], ignoring.`);
+        };
+        const getter = function () {
+            return this[privateKey];
+        };
 
-            Object.defineProperty(target, key, {
-                set: setter,
-                get: getter,
-                enumerable: true,
-                configurable: false,
-            });
-        }
+        Object.defineProperty(target, key, {
+            set: setter,
+            get: getter,
+            enumerable: true,
+            configurable: false,
+        });
     };
 }
 
@@ -151,3 +158,17 @@ export function Deprecated(message?: string, opts?: { default: any }) {
         }
     };
 }
+
+export const ValidateAndChangeDetection = (opts: {
+    validatePredicate: ValidatePredicate;
+    sceneChangeDetectionOpts?: SceneChangeDetectionOptions;
+}) => {
+    const { sceneChangeDetectionOpts, validatePredicate } = opts;
+    const sceneChangeDetectionFn = SceneChangeDetection(sceneChangeDetectionOpts);
+    const validateFn = Validate(validatePredicate);
+
+    return function (target: any, key: any) {
+        sceneChangeDetectionFn(target, key);
+        validateFn(target, key);
+    };
+};
