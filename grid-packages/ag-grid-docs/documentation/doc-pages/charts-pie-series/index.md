@@ -118,6 +118,22 @@ The config specifies the offset value from the maximum pie radius which all pie 
 
 <chart-example title='Doughnut Chart' name='doughnut-chart' type='generated'></chart-example>
 
+## Text Inside A Doughnut
+
+The `innerTextLines` property can be used to put several text lines inside a doughnut chart.
+
+```js
+series: [{
+    ...
+    innerTextLines: [
+        { text: '75%', fontSize: 48, color: 'blue' },
+        { text: 'Coverage' }
+    ]
+}]
+```
+
+<chart-example title='Text Inside A Doughnut Chart' name='text-inside-doughnut' type='generated'></chart-example>
+
 ## Multiple Doughnuts
 
 As well as the `innerRadiusOffset` we can also configure the `outerRadiusOffset`. This gives us the ability to render multiple pie series in a single chart without overlapping.
