@@ -71,6 +71,10 @@ const EXAMPLES: Record<string, TestCase> = {
         },
         assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['area'] }),
     },
+    STACKED_AREA_MISSING_FIRST_Y_DATA_EXAMPLE: {
+        options: examples.STACKED_AREA_MISSING_FIRST_Y_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: repeat('area', 1) }),
+    },
 };
 
 describe('AreaSeries', () => {

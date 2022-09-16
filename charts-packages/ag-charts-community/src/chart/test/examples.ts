@@ -1,7 +1,7 @@
 import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
 import {
     DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY,
-    DATA_INTERNET_EXPLORER_MARKET_SHARE,
+    DATA_INTERNET_EXPLORER_MARKET_SHARE_BAD_Y_VALUE,
     DATA_BROWSER_MARKET_SHARE,
     DATA_TIME_SENSOR,
     DATA_SINGLE_DATUM_TIME_SENSOR,
@@ -11,6 +11,7 @@ import {
     DATA_MEAN_SEA_LEVEL,
     DATA_REVENUE,
     DATA_APPLE_REVENUE_BY_PRODUCT,
+    DATA_BROWSER_MARKET_SHARE_MISSING_FIRST_Y,
 } from './data';
 import { loadExampleOptions } from './utils';
 
@@ -129,7 +130,7 @@ export const GROUPED_CATEGORY_AXIS_EXAMPLE: AgChartOptions = {};
 }
 
 export const AREA_MISSING_Y_DATA_EXAMPLE: AgCartesianChartOptions = {
-    data: DATA_INTERNET_EXPLORER_MARKET_SHARE,
+    data: DATA_INTERNET_EXPLORER_MARKET_SHARE_BAD_Y_VALUE,
     axes: [
         { type: 'category', position: 'bottom' },
         { type: 'number', position: 'left' },
@@ -176,6 +177,22 @@ export const STACKED_AREA_MISSING_Y_DATA_EXAMPLE: AgCartesianChartOptions = {
     subtitle: {
         text: '2009-2019',
     },
+};
+
+export const STACKED_AREA_MISSING_FIRST_Y_DATA_EXAMPLE: AgCartesianChartOptions = {
+    data: DATA_BROWSER_MARKET_SHARE_MISSING_FIRST_Y,
+    axes: [
+        { type: 'category', position: 'bottom' },
+        { type: 'number', position: 'left' },
+    ],
+    series: [
+        {
+            type: 'area',
+            xKey: 'year',
+            yKeys: ['safari', 'chrome'],
+            yNames: ['Safari', 'Chrome'],
+        },
+    ],
 };
 
 export const AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: AgChartOptions = {
@@ -311,7 +328,7 @@ export const LINE_NUMBER_X_AXIS_TIME_Y_AXIS: AgChartOptions = {
 };
 
 export const LINE_MISSING_Y_DATA_EXAMPLE: AgChartOptions = {
-    data: DATA_INTERNET_EXPLORER_MARKET_SHARE,
+    data: DATA_INTERNET_EXPLORER_MARKET_SHARE_BAD_Y_VALUE,
     axes: [
         { type: 'category', position: 'bottom' },
         { type: 'number', position: 'left' },
