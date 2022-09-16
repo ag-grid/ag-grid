@@ -3,7 +3,7 @@ import { Group } from '../scene/group';
 import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
 import { Node } from '../scene/node';
-import { Rect } from '../scene/shape/rect';
+import { Background } from './background';
 import { Legend, LegendDatum } from './legend';
 import { BBox } from '../scene/bbox';
 import { find } from '../util/array';
@@ -322,7 +322,7 @@ export abstract class Chart extends Observable {
     options: AgChartOptions;
     userOptions: AgChartOptions;
     readonly scene: Scene;
-    readonly background: Rect = new Rect();
+    readonly background: Background = new Background();
     readonly legend = new Legend();
 
     protected legendAutoPadding = new Padding();
@@ -466,7 +466,7 @@ export abstract class Chart extends Observable {
         const background = this.background;
 
         background.fill = 'white';
-        root.appendChild(background);
+        root.appendChild(background.node);
 
         const element = (this.element = document.createElement('div'));
         element.setAttribute('class', 'ag-chart-wrapper');
