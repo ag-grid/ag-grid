@@ -374,7 +374,7 @@ export class GridChartComp extends Component {
     }
 
     private handleEmptyChart(data: any[], fields: any[]): boolean {
-        const container = this.chartProxy.getChart().container;
+        const container = this.chartProxy.getChartContainer();
         const pivotModeDisabled = this.chartController.isPivotChart() && !this.chartController.isPivotMode();
         let minFieldsRequired = 1;
 

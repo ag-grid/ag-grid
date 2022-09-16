@@ -95,6 +95,10 @@ export abstract class ChartProxy {
         return this.chart;
     }
 
+    public getChartContainer(): HTMLElement {
+        return this.chartProxyParams.parentElement;
+    }
+
     private createChartTheme(): ChartTheme {
         const themeName = this.getSelectedTheme();
         const stockTheme = this.isStockTheme(themeName);
