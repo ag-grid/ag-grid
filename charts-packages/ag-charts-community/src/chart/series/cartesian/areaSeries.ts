@@ -271,6 +271,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const yData: number[][] = [];
         const xData = [];
         const xValues = [];
+        const missingYKeys = new Set(yKeys);
 
         for (let datum of data) {
             // X datum
@@ -298,6 +299,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     seriesYs.push(NaN);
                     return;
                 }
+                missingYKeys.delete(yKey);
                 const value = datum[yKey];
 
                 if (!seriesItemEnabled.get(yKey)) {
@@ -307,6 +309,14 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     seriesYs.push(yDatum);
                 }
             });
+        }
+
+        if (missingYKeys.size > 0) {
+            const missingYKeysString = JSON.stringify([...missingYKeys]);
+            doOnce(
+                () => console.log(`AG Charts - yKeys ${missingYKeysString} were not found in the data.`),
+                `${missingYKeysString} not found in data.`,
+            );
         }
 
         this.yData = yData;

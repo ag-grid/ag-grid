@@ -107,10 +107,6 @@ describe('AreaSeries', () => {
 
                 chart = AgChartV2.create<any>(options);
                 await example.assertions(chart);
-
-                if (exampleName !== 'STACKED_AREA_MISSING_FIRST_Y_DATA_EXAMPLE') {
-                    expect(console.warn).not.toBeCalled();
-                }
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
