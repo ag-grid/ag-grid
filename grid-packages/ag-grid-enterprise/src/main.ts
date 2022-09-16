@@ -186,7 +186,7 @@ export { PopupService, AgPopup } from "ag-grid-community";
 export { TouchListener, TapEvent, LongTapEvent } from "ag-grid-community";
 export { VirtualList, VirtualListModel } from "ag-grid-community";
 export { CellRange, CellRangeParams, CellRangeType, RangeSelection, AddRangeSelectionParams, IRangeService, ISelectionHandle, SelectionHandleType, ISelectionHandleFactory } from "ag-grid-community";
-export { IChartService, ChartModel, GetChartImageDataUrlParams, ChartModelType } from "ag-grid-community";
+export { IChartService, ChartDownloadParams, OpenChartsToolPanelParams, CloseChartsToolPanelParams, ChartsToolPanelTabs, ChartModel, GetChartImageDataUrlParams, ChartModelType, } from "ag-grid-community";
 export { IDetailCellRendererParams, GetDetailRowData, GetDetailRowDataParams, IDetailCellRenderer, IDetailCellRendererCtrl } from "ag-grid-community";
 export { CsvExportParams, CsvCell, CsvCellData, CsvCustomContent, ExportParams, PackageFileParams, ProcessCellForExportParams, ProcessHeaderForExportParams, ProcessGroupHeaderForExportParams, ProcessRowGroupForExportParams, ShouldRowBeSkippedParams, BaseExportParams } from "ag-grid-community";
 export { HeaderElement, PrefixedXmlAttributes, XmlElement } from "ag-grid-community";

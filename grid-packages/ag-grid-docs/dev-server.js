@@ -12,7 +12,7 @@ const tcpPortUsed = require('tcp-port-used');
 const {generateDocumentationExamples} = require('./example-generator-documentation');
 const {watchValidateExampleTypes} = require('./example-validator');
 const {updateBetweenStrings, getAllModules, processStdio} = require('./utils');
-const {getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss} = require('./lernaOperations');
+const { getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss, generateAutoDocFiles } = require('./lernaOperations');
 const {EOL} = os;
 
 const key = fs.readFileSync(process.env.AG_DOCS_KEY || './selfsigned.key', 'utf8');
@@ -462,7 +462,6 @@ const watchCoreModules = async (skipFrameworks) => {
         console.log("Core Typescript: " + output);
         if (output.includes("Found 0 errors. Watching for file changes.")) {
             await rebuildPackagesBasedOnChangeState(false, skipFrameworks);
-
             // because we use TSC to build the core modules (and not npm) we need to manually update the changed
             // hashes on build
             updateCoreModuleHashes();
@@ -619,6 +618,7 @@ const watchFrameworkModules = async () => {
         '**/bundles/**/*',
         '**/lib/**/*',
         '.hash',
+        '.AUTO.json',
     ];
 
     const moduleFrameworks = ['angular', 'angular-legacy', 'vue', 'vue3', 'react'];
@@ -638,6 +638,37 @@ const watchFrameworkModules = async () => {
         }).on('change', async (data) => {
             await rebuildPackagesBasedOnChangeState(false, false);
         });
+    });
+};
+
+const watchAutoDocFiles = async () => {
+    const defaultIgnoreFolders = [
+        '**/node_modules/**/*',
+        '**/dist/**/*',
+        '**/bundles/**/*',
+        '**/lib/**/*',
+        '.hash',
+        '.AUTO.json',
+    ];
+
+    // Matches the paths used in community-modules/all-modules/generate-code-reference-files.js
+    const INTERFACE_GLOBS = [
+        '../../community-modules/core/src/ts/**/*.ts',
+        '../../enterprise-modules/set-filter/src/**/*.ts',
+        '../../enterprise-modules/filter-tool-panel/src/**/*.ts',
+        '../../enterprise-modules/multi-filter/src/**/*.ts',
+        '../../community-modules/angular/projects/ag-grid-angular/src/lib/**/*.ts',
+        '../../community-modules/react/src/shared/**/*.ts',
+        '../../charts-packages/ag-charts-community/src/**/*.ts',
+    ];
+
+    const ignoredFolders = [...defaultIgnoreFolders];
+
+    chokidar.watch(INTERFACE_GLOBS, {
+        ignored: ignoredFolders,
+        persistent: true
+    }).on('change', async (data) => {
+        await generateAutoDocFiles();
     });
 };
 
@@ -726,6 +757,9 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
 
             console.log("Watch Core Modules & CSS");
             await watchCoreModulesAndCss(skipFrameworks);
+
+            console.log("Watching Auto Doc Files");
+            await watchAutoDocFiles();
 
             if (!skipFrameworks) {
                 console.log("Watch Framework Modules");

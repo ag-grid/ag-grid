@@ -65,8 +65,8 @@ export class Scene {
         return this.canvas.container;
     }
 
-    download(fileName?: string) {
-        this.canvas.download(fileName);
+    download(fileName?: string, fileFormat?: string) {
+        this.canvas.download(fileName, fileFormat);
     }
 
     getDataURL(type?: string): string {

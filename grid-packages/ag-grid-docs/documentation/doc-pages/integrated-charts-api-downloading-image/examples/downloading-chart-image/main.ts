@@ -59,6 +59,8 @@ function downloadChart(dimensions: { width: number, height: number }) {
   }
 
   gridOptions.api!.downloadChart({
+    fileName: 'resizedImage',
+    fileFormat: 'image/jpeg',
     chartId,
     dimensions
   });

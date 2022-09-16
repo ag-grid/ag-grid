@@ -23,6 +23,15 @@ import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { checkDatum, isContinuous } from '../../../util/value';
 import { Marker } from '../../marker/marker';
+import {
+    NUMBER,
+    OPT_FUNCTION,
+    OPT_LINE_DASH,
+    OPT_STRING,
+    OPT_COLOR_STRING,
+    STRING,
+    Validate,
+} from '../../../util/validation';
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {
@@ -52,11 +61,14 @@ export interface LineSeriesNodeClickEvent extends TypedEvent {
 export type LineTooltipRendererParams = CartesianTooltipRendererParams;
 
 class LineSeriesLabel extends Label {
+    @Validate(OPT_FUNCTION)
     formatter?: (params: { value: any }) => string = undefined;
 }
 
 export class LineSeriesTooltip extends SeriesTooltip {
+    @Validate(OPT_FUNCTION)
     renderer?: (params: LineTooltipRendererParams) => string | TooltipRendererResult = undefined;
+    @Validate(OPT_STRING)
     format?: string = undefined;
 }
 
@@ -74,12 +86,22 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
     readonly label = new LineSeriesLabel();
 
+    @Validate(OPT_STRING)
     title?: string = undefined;
 
+    @Validate(OPT_COLOR_STRING)
     stroke?: string = '#874349';
+
+    @Validate(OPT_LINE_DASH)
     lineDash?: number[] = [0];
+
+    @Validate(NUMBER(0))
     lineDashOffset: number = 0;
+
+    @Validate(NUMBER(0))
     strokeWidth: number = 2;
+
+    @Validate(NUMBER(0, 1))
     strokeOpacity: number = 1;
 
     tooltip: LineSeriesTooltip = new LineSeriesTooltip();
@@ -109,6 +131,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         this.marker.fill = fills[0];
     }
 
+    @Validate(STRING)
     protected _xKey: string = '';
     set xKey(value: string) {
         this._xKey = value;
@@ -118,8 +141,10 @@ export class LineSeries extends CartesianSeries<LineContext> {
         return this._xKey;
     }
 
+    @Validate(STRING)
     xName: string = '';
 
+    @Validate(STRING)
     protected _yKey: string = '';
     set yKey(value: string) {
         this._yKey = value;
@@ -129,6 +154,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         return this._yKey;
     }
 
+    @Validate(STRING)
     yName: string = '';
 
     getDomain(direction: ChartAxisDirection): any[] {

@@ -22,6 +22,20 @@ import { TypedEvent } from '../../../util/observable';
 import ticks, { tickStep } from '../../../util/ticks';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { isContinuous } from '../../../util/value';
+import {
+    BOOLEAN,
+    NUMBER,
+    OPT_ARRAY,
+    OPT_FUNCTION,
+    OPT_LINE_DASH,
+    OPT_NUMBER,
+    OPT_COLOR_STRING,
+    STRING,
+    Validate,
+} from '../../../util/validation';
+
+const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
+const HISTOGRAM_AGGREGATION = (v: any) => HISTOGRAM_AGGREGATIONS.includes(v);
 
 enum HistogramSeriesNodeTag {
     Bin,
@@ -29,6 +43,7 @@ enum HistogramSeriesNodeTag {
 }
 
 class HistogramSeriesLabel extends Label {
+    @Validate(OPT_FUNCTION)
     formatter?: (params: { value: number }) => string = undefined;
 }
 
@@ -114,6 +129,7 @@ export class HistogramBin {
 }
 
 export class HistogramSeriesTooltip extends SeriesTooltip {
+    @Validate(OPT_FUNCTION)
     renderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
@@ -129,13 +145,22 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
     tooltip: HistogramSeriesTooltip = new HistogramSeriesTooltip();
 
-    fill: string | undefined = undefined;
-    stroke: string | undefined = undefined;
+    @Validate(OPT_COLOR_STRING)
+    fill?: string = undefined;
 
+    @Validate(OPT_COLOR_STRING)
+    stroke?: string = undefined;
+
+    @Validate(NUMBER(0, 1))
     fillOpacity = 1;
+
+    @Validate(NUMBER(0, 1))
     strokeOpacity = 1;
 
+    @Validate(OPT_LINE_DASH)
     lineDash?: number[] = [0];
+
+    @Validate(NUMBER(0))
     lineDashOffset: number = 0;
 
     constructor() {
@@ -171,16 +196,33 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         return values;
     }
 
+    @Validate(STRING)
     xKey: string = '';
+
+    @Validate(BOOLEAN)
     areaPlot: boolean = false;
+
+    @Validate(OPT_ARRAY())
     bins: [number, number][] | undefined = undefined;
+
+    @Validate(HISTOGRAM_AGGREGATION)
     aggregation: HistogramAggregation = 'count';
-    binCount: number | undefined = undefined;
+
+    @Validate(OPT_NUMBER(0))
+    binCount?: number = undefined;
+
+    @Validate(STRING)
     xName: string = '';
+
+    @Validate(STRING)
     yKey: string = '';
 
+    @Validate(STRING)
     yName: string = '';
+
+    @Validate(NUMBER(0))
     strokeWidth: number = 1;
+
     shadow?: DropShadow = undefined;
 
     setColors(fills: string[], strokes: string[]) {
@@ -199,16 +241,16 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             return [];
         }
 
-        if (bins) {
-            return bins;
-        }
-
         const xData = this.data.map((datum) => datum[this.xKey]);
         const xDomain = this.fixNumericExtent(extent(xData, isContinuous));
 
         if (this.binCount === undefined) {
-            const binStarts = ticks(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
-            const binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
+            if (bins) {
+                return bins;
+            }
+
+            const binStarts = ticks(xDomain[0], xDomain[1], defaultBinCount);
+            const binSize = tickStep(xDomain[0], xDomain[1], defaultBinCount);
             const firstBinEnd = binStarts[0];
 
             const expandStartToBin: (n: number) => [number, number] = (n) => [n, n + binSize];
@@ -262,6 +304,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     private placeDataInBins(data: any[]): HistogramBin[] {
         const { xKey } = this;
         const derivedBins = this.deriveBins();
+        this.bins = derivedBins;
 
         // creating a sorted copy allows binning in O(n) rather than O(n²)
         // but at the expense of more temporary memory

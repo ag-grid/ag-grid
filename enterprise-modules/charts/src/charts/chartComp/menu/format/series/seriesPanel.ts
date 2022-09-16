@@ -26,7 +26,7 @@ export class SeriesPanel extends Component {
 
     public static TEMPLATE = /* html */
         `<div>
-            <ag-group-component ref="seriesGroup">                
+            <ag-group-component ref="seriesGroup">
             </ag-group-component>
         </div>`;
 
@@ -91,12 +91,16 @@ export class SeriesPanel extends Component {
     private refreshWidgets(): void {
         this.destroyActivePanels();
 
-        if (this.chartController.isComboChart()) {
-            this.updateSeriesType();
-            this.initSeriesSelect();
-        }
+        const chart = this.chartController.getChartProxy().getChart();
 
-        this.seriesWidgetMappings[this.seriesType].forEach(w => this.widgetFuncs[w]());
+        chart.waitForUpdate().then(() => {
+            if (this.chartController.isComboChart()) {
+                this.updateSeriesType();
+                this.initSeriesSelect();
+            }
+
+            this.seriesWidgetMappings[this.seriesType].forEach((w) => this.widgetFuncs[w]());
+        });
     }
 
     private initSeriesSelect() {
@@ -228,13 +232,13 @@ export class SeriesPanel extends Component {
     }
 
     private initBins() {
-        const currentValue = this.getSeriesOption<number>("binCount");
+        const currentValue = this.getSeriesOption<any>("bins").length;
 
         const seriesBinCountSlider = this.createBean(new AgSlider());
         seriesBinCountSlider
             .setLabel(this.translate("histogramBinCount"))
-            .setMinValue(4)
-            .setMaxValue(getMaxValue(currentValue, 100))
+            .setMinValue(0)
+            .setMaxValue(getMaxValue(currentValue, 20))
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
             .onValueChange(newValue => this.setSeriesOption("binCount", newValue));

@@ -8,11 +8,12 @@ import { Marker } from '../../marker/marker';
 import { Group } from '../../../scene/group';
 import { Text } from '../../../scene/shape/text';
 import { Node } from '../../../scene/node';
-import { RedrawType, SceneChangeDetection } from '../../../scene/changeDetectable';
+import { RedrawType } from '../../../scene/changeDetectable';
 import { CategoryAxis } from '../../axis/categoryAxis';
 import { PointLabelDatum } from '../../../util/labelPlacement';
 import { Layers } from '../../layers';
 import { Point } from '../../../scene/point';
+import { OPT_FUNCTION, ValidateAndChangeDetection } from '../../../util/validation';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
@@ -603,7 +604,10 @@ export interface CartesianSeriesMarkerFormat {
 }
 
 export class CartesianSeriesMarker extends SeriesMarker {
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: OPT_FUNCTION,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     formatter?: (params: CartesianSeriesMarkerFormatterParams) => CartesianSeriesMarkerFormat = undefined;
 }
 

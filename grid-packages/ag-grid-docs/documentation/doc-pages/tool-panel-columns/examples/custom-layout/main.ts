@@ -92,9 +92,7 @@ var sortedToolPanelColumnDefs = [
 ]
 
 function setCustomSortLayout() {
-  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
-    'columns'
-  ) as unknown) as IColumnToolPanel
+  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns');
   columnToolPanel!.setColumnLayout(sortedToolPanelColumnDefs)
 }
 
@@ -124,10 +122,8 @@ var customToolPanelColumnDefs = [
 ]
 
 function setCustomGroupLayout() {
-  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
-    'columns'
-  ) as unknown) as IColumnToolPanel
-  columnToolPanel.setColumnLayout(customToolPanelColumnDefs)
+  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns');
+  columnToolPanel!.setColumnLayout(customToolPanelColumnDefs)
 }
 
 // setup the grid after the page has finished loading

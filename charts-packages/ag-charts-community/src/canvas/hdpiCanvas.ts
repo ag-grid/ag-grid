@@ -119,15 +119,13 @@ export class HdpiCanvas {
     }
 
     /**
-     * @param fileName The name of the file upon save. The `.png` extension is going to be added automatically.
+     * @param fileName The name of the downloaded file.
+     * @param fileFormat The file format, the default is `image/png`
      */
-    download(fileName?: string) {
-        fileName = ((fileName || '').trim() || 'image') + '.png';
+    download(fileName?: string, fileFormat = 'image/png') {
+        fileName = (fileName || '').trim() || 'image';
 
-        // Chart images saved as JPEG are a few times larger at 50% quality than PNG images,
-        // so we don't support saving to JPEG.
-        const type = 'image/png';
-        const dataUrl = this.getDataURL(type);
+        const dataUrl = this.getDataURL(fileFormat);
         const document = this.document;
 
         const a = document.createElement('a');

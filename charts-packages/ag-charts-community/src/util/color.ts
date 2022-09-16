@@ -25,6 +25,26 @@ export class Color {
     }
 
     /**
+     * A color string can be in one of the following formats to be valid:
+     * - #rgb
+     * - #rrggbb
+     * - rgb(r, g, b)
+     * - rgba(r, g, b, a)
+     * - CSS color name such as 'white', 'orange', 'cyan', etc.
+     */
+    static validColorString(str: string): boolean {
+        if (str.indexOf('#') >= 0) {
+            return !!Color.parseHex(str);
+        }
+
+        if (str.indexOf('rgb') >= 0) {
+            return !!Color.stringToRgba(str);
+        }
+
+        return !!Color.nameToHex[str];
+    }
+
+    /**
      * The given string can be in one of the following formats:
      * - #rgb
      * - #rrggbb
@@ -76,7 +96,7 @@ export class Color {
                 break;
         }
 
-        if (parts.length >= 3) {
+        if (parts?.length >= 3) {
             if (parts.every((p: number) => p >= 0)) {
                 if (parts.length === 3) {
                     parts.push(255);

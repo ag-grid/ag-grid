@@ -5,6 +5,7 @@ import {
     Bean,
     BeanStub,
     ChartDownloadParams,
+    OpenChartsToolPanelParams,
     CellRange,
     CellRangeParams,
     ChartModel,
@@ -82,7 +83,17 @@ export class ChartService extends BeanStub implements IChartService {
 
     public downloadChart(params: ChartDownloadParams) {
         const chartComp = Array.from(this.activeChartComps).find(c => c.getChartId() === params.chartId);
-        chartComp?.downloadChart(params.dimensions);
+        chartComp?.downloadChart(params.dimensions, params.fileName, params.fileFormat);
+    }
+
+    public openChartsToolPanel(params: OpenChartsToolPanelParams) {
+        const chartComp = Array.from(this.activeChartComps).find(c => c.getChartId() === params.chartId);
+        chartComp?.openChartsToolPanel(params.tabName);
+    }
+
+    public closeChartsToolPanel(chartId: string) {
+        const chartComp = Array.from(this.activeChartComps).find(c => c.getChartId() === chartId);
+        chartComp?.closeChartsToolPanel();
     }
 
     public createChartFromCurrentRange(chartType: ChartType = 'groupedColumn'): ChartRef | undefined {

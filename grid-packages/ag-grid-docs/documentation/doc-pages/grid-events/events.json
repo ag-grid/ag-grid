@@ -6,7 +6,8 @@
         "meta": {
             "displayName": "Accessories"
         },
-        "toolPanelVisibleChanged": {}
+        "toolPanelVisibleChanged": {},
+        "toolPanelSizeChanged": {}
     },
     "clipboard": {
         "meta": {

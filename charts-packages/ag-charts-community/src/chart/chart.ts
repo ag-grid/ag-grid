@@ -3,7 +3,7 @@ import { Group } from '../scene/group';
 import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
 import { Node } from '../scene/node';
-import { Rect } from '../scene/shape/rect';
+import { Background } from './background';
 import { Legend, LegendDatum } from './legend';
 import { BBox } from '../scene/bbox';
 import { find } from '../util/array';
@@ -17,6 +17,7 @@ import { AgChartOptions } from './agChartOptions';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
+import { BOOLEAN, NUMBER, STRING, Validate } from '../util/validation';
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
@@ -157,16 +158,20 @@ export class ChartTooltip extends Observable {
 
     private observer?: IntersectionObserver;
 
+    @Validate(BOOLEAN)
     enabled: boolean = true;
 
+    @Validate(STRING)
     class: string = Chart.defaultTooltipClass;
 
+    @Validate(NUMBER(0))
     delay: number = 0;
 
     /**
      * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
      * Only has effect on series with markers.
      */
+    @Validate(BOOLEAN)
     tracking: boolean = true;
 
     constructor(chart: Chart, document: Document) {
@@ -317,7 +322,7 @@ export abstract class Chart extends Observable {
     options: AgChartOptions;
     userOptions: AgChartOptions;
     readonly scene: Scene;
-    readonly background: Rect = new Rect();
+    readonly background: Background = new Background();
     readonly legend = new Legend();
 
     protected legendAutoPadding = new Padding();
@@ -385,6 +390,7 @@ export abstract class Chart extends Observable {
     }
 
     private _lastAutoSize: [number, number];
+    @Validate(BOOLEAN)
     protected _autoSize = false;
     set autoSize(value: boolean) {
         if (this._autoSize === value) {
@@ -415,8 +421,8 @@ export abstract class Chart extends Observable {
 
     readonly tooltip: ChartTooltip;
 
-    download(fileName?: string) {
-        this.scene.download(fileName);
+    download(fileName?: string, fileFormat?: string) {
+        this.scene.download(fileName, fileFormat);
     }
 
     padding = new Padding(20);
@@ -460,7 +466,7 @@ export abstract class Chart extends Observable {
         const background = this.background;
 
         background.fill = 'white';
-        root.appendChild(background);
+        root.appendChild(background.node);
 
         const element = (this.element = document.createElement('div'));
         element.setAttribute('class', 'ag-chart-wrapper');
@@ -1391,22 +1397,22 @@ export abstract class Chart extends Observable {
                     reject(this.lastPerformUpdateError);
                     return;
                 }
-    
+
                 if (!this.updatePending) {
                     resolve();
                     return;
                 }
-    
+
                 const timeMs = Date.now() - startMs;
                 if (timeMs >= timeoutMs) {
                     reject('timeout reached');
                     return;
                 }
-    
+
                 retryMs *= 2;
                 setTimeout(cb, retryMs);
             };
-    
+
             cb();
         });
     }

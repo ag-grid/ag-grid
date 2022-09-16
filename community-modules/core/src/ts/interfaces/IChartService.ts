@@ -8,6 +8,7 @@ import { AgChartThemeOverrides, AgChartThemePalette } from "./iAgChartOptions";
 export interface GetChartImageDataUrlParams {
     /** The id of the created chart. */
     chartId: string;
+
     /**
      * A string indicating the image format.
      * The default format type is `image/png`.
@@ -20,9 +21,18 @@ export interface ChartDownloadParams {
     /** The id of the created chart. */
     chartId: string;
 
+    /** Name of downloaded image file. The chart title will be used by default */
+    fileName?: string;
+
     /**
-     * Dimensions of the chart.
-     * If undefined, uses the browser image dimensions.
+     * A string indicating the image format.
+     * The default format type is `image/png`.
+     * Options: `image/png`, `image/jpeg`
+     */
+    fileFormat?: string;
+
+    /**
+     * Dimensions of downloaded chart. The current chart dimensions will be used if not specified.
      */
     dimensions?: {
         width: number,
@@ -30,7 +40,22 @@ export interface ChartDownloadParams {
     }
 }
 
+export interface CloseChartsToolPanelParams {
+    /** The id of the created chart. */
+    chartId: string;
+}
+
 export type ChartModelType = 'range' | 'pivot';
+
+export type ChartsToolPanelTabs = 'settings' | 'data' | 'format'
+
+export interface OpenChartsToolPanelParams {
+    /** The id of the created chart. */
+    chartId: string;
+    
+    /** Tab name of the charts tool panel. The default settings tab will be used if not specified.*/
+    tabName?: ChartsToolPanelTabs;
+}
 
 export interface ChartModel {
     version?: string;
@@ -57,4 +82,6 @@ export interface IChartService {
     restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;
     getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined;
     downloadChart(params: ChartDownloadParams): void;
+    openChartsToolPanel(params: OpenChartsToolPanelParams): void;
+    closeChartsToolPanel(chartId: string): void;
 }
