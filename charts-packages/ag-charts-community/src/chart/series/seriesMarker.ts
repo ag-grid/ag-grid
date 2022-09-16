@@ -10,7 +10,7 @@ import {
     ValidateAndChangeDetection,
 } from '../../util/validation';
 
-const MARKER_SHAPES = ['circle', 'cross', 'diamond', 'heart', 'plus', 'triangle'];
+const MARKER_SHAPES = ['circle', 'cross', 'diamond', 'heart', 'plus', 'square', 'triangle'];
 const MARKER_SHAPE = (v: any) => MARKER_SHAPES.includes(v) || Object.getPrototypeOf(v) === Marker;
 
 export class SeriesMarker extends ChangeDetectable {
