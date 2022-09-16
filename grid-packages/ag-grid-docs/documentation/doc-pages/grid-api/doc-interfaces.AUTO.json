@@ -15453,7 +15453,7 @@
     },
     "innerTextLines": {
       "description": "/** Text lines to display inside the doughnut chart */",
-      "type": { "returnType": "AgDoughnutInnerTextLine[]", "optional": false }
+      "type": { "returnType": "AgDoughnutInnerTextLine[]", "optional": true }
     },
     "formatter": {
       "type": {

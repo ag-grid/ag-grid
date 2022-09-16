@@ -7276,6 +7276,7 @@
   "AgPieSeriesTheme": {
     "meta": {},
     "type": {
+      "innerTextLines?": "AgDoughnutInnerTextThemeOptions",
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
       "label?": "AgPieSeriesLabelOptions<DatumType>",
@@ -7332,6 +7333,7 @@
       "radiusMax?": "/** Override of the automatically determined maximum radiusKey value from the data. */",
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
+      "innerTextLines?": "/** Text lines to display inside the doughnut chart */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
@@ -8948,7 +8950,7 @@
       "radiusMax?": "number",
       "shadow?": "AgDropShadowOptions",
       "tooltip?": "AgPieSeriesTooltip",
-      "innerTextLines": "AgDoughnutInnerTextLine[]",
+      "innerTextLines?": "AgDoughnutInnerTextLine[]",
       "formatter?": "(params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat",
       "data?": "DatumType[]",
       "visible?": "boolean",
@@ -8981,7 +8983,7 @@
       "radiusMax?": "/** Override of the automatically determined maximum radiusKey value from the data. */",
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
-      "innerTextLines": "/** Text lines to display inside the doughnut chart */",
+      "innerTextLines?": "/** Text lines to display inside the doughnut chart */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",

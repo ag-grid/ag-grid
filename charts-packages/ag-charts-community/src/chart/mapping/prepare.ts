@@ -328,5 +328,7 @@ function preparePieOptions(pieSeriesTheme: any, seriesOptions: any, mergedSeries
         mergedSeries.innerTextLines = seriesOptions.innerTextLines.map((ln: any) => {
             return jsonMerge(pieSeriesTheme.innerTextLines, ln);
         });
+    } else {
+        mergedSeries.innerTextLines = DELETE;
     }
 }

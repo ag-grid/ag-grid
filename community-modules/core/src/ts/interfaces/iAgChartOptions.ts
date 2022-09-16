@@ -182,7 +182,7 @@ export interface AgPolarSeriesTheme {
 }
 
 export interface AgPieSeriesTheme extends Omit<AgPieSeriesOptions, 'innerTextLines'> {
-    innerTextLines: AgDoughnutInnerTextThemeOptions;
+    innerTextLines?: AgDoughnutInnerTextThemeOptions;
 }
 
 export interface AgHierarchySeriesTheme {
@@ -1253,7 +1253,7 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     /** Series-specific tooltip configuration. */
     tooltip?: AgPieSeriesTooltip;
     /** Text lines to display inside the doughnut chart */
-    innerTextLines: AgDoughnutInnerTextLine[];
+    innerTextLines?: AgDoughnutInnerTextLine[];
     formatter?: (params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat;
 }
 
