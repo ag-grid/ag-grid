@@ -9,14 +9,21 @@ The following page provides information that is relevant when using older versio
 
  The table below gives the ranges of compatible versions of AG Grid with Angular versions.
  
- | Angular | AG Grid   | AG Grid Legacy      |
- | --------| --------- | --------------------|
- | 6       | 18 - 22   |                     |
- | 7       | 18 - 26   |                     |
- | 8       | 18 - 27   | 28+                 |
- | 9       | 23 - 27   | 28+                 |
- | 10 - 11 | 24 - 27   | 28+                 |
- | 12+     | 25 - 28+  | 28+ (not recommend) |
+ | Angular | AG Grid   | AG Grid Legacy    |
+ | --------| --------- | ------------------|
+ | 6       | 18 - 22   |                   |
+ | 7       | 18 - 26   |                   |
+ | 8       | 18 - 27   | 28                |
+ | 9       | 23 - 27   | 28                |
+ | 10 - 11 | 24 - 27   | 28+               |
+ | 12+     | 25 - 28+  | N/A               |
+
+ ## Future Support of Angular versions
+
+AG Grid currently supports Angular v8 and above. However, over the next two major releases we will be dropping support for older versions of Angular as follows: 
+
+ - In v29 (release date TBC) the minimum Angular version will be v10.
+ - In v30 (release date TBC) the minimum Angular version will be v12.
 
 ## AG Grid Legacy
 
