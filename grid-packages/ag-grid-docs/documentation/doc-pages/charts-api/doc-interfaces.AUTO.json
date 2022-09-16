@@ -4466,6 +4466,7 @@
   "Deinterpolator": { "meta": { "typeParams": ["T"] } },
   "DefaultTimeFormats": {},
   "RedrawType": {},
+  "SceneChangeDetectionOptions": {},
   "GradientColorStop": {
     "offset": { "type": { "returnType": "number", "optional": false } },
     "color": { "type": { "returnType": "string", "optional": false } }

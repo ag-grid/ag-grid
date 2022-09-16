@@ -40,7 +40,22 @@ export interface ChartDownloadParams {
     }
 }
 
+export interface CloseChartsToolPanelParams {
+    /** The id of the created chart. */
+    chartId: string;
+}
+
 export type ChartModelType = 'range' | 'pivot';
+
+export type ChartsToolPanelTabs = 'settings' | 'data' | 'format'
+
+export interface OpenChartsToolPanelParams {
+    /** The id of the created chart. */
+    chartId: string;
+    
+    /** Tab name of the charts tool panel. The default settings tab will be used if not specified.*/
+    tabName?: ChartsToolPanelTabs;
+}
 
 export interface ChartModel {
     version?: string;
@@ -67,4 +82,6 @@ export interface IChartService {
     restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;
     getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined;
     downloadChart(params: ChartDownloadParams): void;
+    openChartsToolPanel(params: OpenChartsToolPanelParams): void;
+    closeChartsToolPanel(chartId: string): void;
 }

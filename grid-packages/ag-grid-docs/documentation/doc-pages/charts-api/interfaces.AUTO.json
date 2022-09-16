@@ -3335,6 +3335,10 @@
     "type": ["NONE", "TRIVIAL", "MINOR", "MAJOR"],
     "docs": [null, null, null, null]
   },
+  "SceneChangeDetectionOptions": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ redraw?: RedrawType; type?: 'normal' | 'transform' | 'path' | 'font'; convertor?: (o: any) => any; changeCb?: (o: any) => any; checkDirtyOnAssignment?: boolean; }"
+  },
   "GradientColorStop": {
     "meta": {},
     "type": { "offset": "number", "color": "string" }

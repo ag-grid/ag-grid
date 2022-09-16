@@ -1574,7 +1574,6 @@
       "detailCellRendererParams?": "any",
       "detailRowHeight?": "number",
       "detailRowAutoHeight?": "boolean",
-      "groupRowsSticky?": "boolean",
       "context?": "any",
       "alignedGrids?": "{ api?: GridApi | null; columnApi?: ColumnApi | null; }[]",
       "tabIndex?": "number",
@@ -1660,6 +1659,7 @@
       "groupRowRendererParams?": "any",
       "suppressMakeColumnVisibleAfterUnGroup?": "boolean",
       "treeData?": "boolean",
+      "groupRowsSticky?": "boolean",
       "groupRowInnerRenderer?": "any",
       "groupRowInnerRendererFramework?": "any",
       "groupMultiAutoColumn?": "boolean",
@@ -1962,7 +1962,6 @@
       "detailCellRendererParams?": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
       "detailRowHeight?": "/** Set fixed height in pixels for each detail row. */",
       "detailRowAutoHeight?": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
-      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "context?": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "alignedGrids?": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "tabIndex?": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -2048,6 +2047,7 @@
       "groupRowRendererParams?": "/** Customise the parameters provided to the `groupRowRenderer` component. */",
       "suppressMakeColumnVisibleAfterUnGroup?": "/** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false` */",
       "treeData?": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
+      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "groupRowInnerRenderer?": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "groupRowInnerRendererFramework?": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "groupMultiAutoColumn?": "/** @deprecated - Use groupDisplayType = 'multipleColumns' instead\n */",
@@ -2124,6 +2124,8 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "angularCompileRows?": "/** @deprecated */",
+      "angularCompileFilters?": "/** @deprecated */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
       "postProcessPopup?": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
@@ -9395,9 +9397,26 @@
       "dimensions?": "/** Dimensions of downloaded chart. The current chart dimensions will be used if not specified. */"
     }
   },
+  "CloseChartsToolPanelParams": {
+    "meta": {},
+    "type": { "chartId": "string" },
+    "docs": { "chartId": "/** The id of the created chart. */" }
+  },
   "ChartModelType": {
     "meta": { "isTypeAlias": true },
     "type": "'range' | 'pivot'"
+  },
+  "ChartsToolPanelTabs": {
+    "meta": { "isTypeAlias": true },
+    "type": "'settings' | 'data' | 'format'"
+  },
+  "OpenChartsToolPanelParams": {
+    "meta": {},
+    "type": { "chartId": "string", "tabName?": "ChartsToolPanelTabs" },
+    "docs": {
+      "chartId": "/** The id of the created chart. */",
+      "tabName?": "/** Tab name of the charts tool panel. The default settings tab will be used if not specified. */"
+    }
   },
   "ChartModel": {
     "meta": {},
@@ -9427,7 +9446,9 @@
       "createPivotChart(params: CreatePivotChartParams)": "ChartRef | undefined",
       "restoreChart(model: ChartModel, chartContainer?: HTMLElement)": "ChartRef | undefined",
       "getChartImageDataURL(params: GetChartImageDataUrlParams)": "string | undefined",
-      "downloadChart(params: ChartDownloadParams)": "void"
+      "downloadChart(params: ChartDownloadParams)": "void",
+      "openChartsToolPanel(params: OpenChartsToolPanelParams)": "void",
+      "closeChartsToolPanel(chartId: string)": "void"
     }
   },
   "ClientSideRowModelSteps": {
@@ -9550,7 +9571,8 @@
       "setPivotModeSectionVisible(visible: boolean)": "void",
       "setRowGroupsSectionVisible(visible: boolean)": "void",
       "setValuesSectionVisible(visible: boolean)": "void",
-      "setPivotSectionVisible(visible: boolean)": "void"
+      "setPivotSectionVisible(visible: boolean)": "void",
+      "refresh()": "void"
     }
   },
   "ColumnVO": {
@@ -10275,7 +10297,8 @@
       "collapseFilterGroups(groupIds?: string[])": "void",
       "expandFilters(colIds?: string[])": "void",
       "collapseFilters(colIds?: string[])": "void",
-      "syncLayoutWithGrid()": "void"
+      "syncLayoutWithGrid()": "void",
+      "refresh()": "void"
     }
   },
   "IFrameworkOverrides": {
@@ -13929,7 +13952,6 @@
       "detailCellRendererParams?": "any",
       "detailRowHeight?": "number",
       "detailRowAutoHeight?": "boolean",
-      "groupRowsSticky?": "boolean",
       "context?": "any",
       "alignedGrids?": "{ api?: GridApi | null; columnApi?: ColumnApi | null; }[]",
       "tabIndex?": "number",
@@ -14015,6 +14037,7 @@
       "groupRowRendererParams?": "any",
       "suppressMakeColumnVisibleAfterUnGroup?": "boolean",
       "treeData?": "boolean",
+      "groupRowsSticky?": "boolean",
       "groupRowInnerRenderer?": "any",
       "groupRowInnerRendererFramework?": "any",
       "groupMultiAutoColumn?": "boolean",
@@ -14317,7 +14340,6 @@
       "detailCellRendererParams?": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
       "detailRowHeight?": "/** Set fixed height in pixels for each detail row. */",
       "detailRowAutoHeight?": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
-      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "context?": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "alignedGrids?": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "tabIndex?": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -14403,6 +14425,7 @@
       "groupRowRendererParams?": "/** Customise the parameters provided to the `groupRowRenderer` component. */",
       "suppressMakeColumnVisibleAfterUnGroup?": "/** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false` */",
       "treeData?": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
+      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "groupRowInnerRenderer?": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "groupRowInnerRendererFramework?": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "groupMultiAutoColumn?": "/** @deprecated - Use groupDisplayType = 'multipleColumns' instead\n */",
@@ -14479,6 +14502,8 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "angularCompileRows?": "/** @deprecated */",
+      "angularCompileFilters?": "/** @deprecated */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
       "postProcessPopup?": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
@@ -14705,7 +14730,6 @@
       "detailCellRendererParams?": "any",
       "detailRowHeight?": "number",
       "detailRowAutoHeight?": "boolean",
-      "groupRowsSticky?": "boolean",
       "context?": "any",
       "alignedGrids?": "{ api?: GridApi | null; columnApi?: ColumnApi | null; }[]",
       "tabIndex?": "number",
@@ -14791,6 +14815,7 @@
       "groupRowRendererParams?": "any",
       "suppressMakeColumnVisibleAfterUnGroup?": "boolean",
       "treeData?": "boolean",
+      "groupRowsSticky?": "boolean",
       "groupRowInnerRenderer?": "any",
       "groupRowInnerRendererFramework?": "any",
       "groupMultiAutoColumn?": "boolean",
@@ -15093,7 +15118,6 @@
       "detailCellRendererParams?": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
       "detailRowHeight?": "/** Set fixed height in pixels for each detail row. */",
       "detailRowAutoHeight?": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
-      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "context?": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "alignedGrids?": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "tabIndex?": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -15179,6 +15203,7 @@
       "groupRowRendererParams?": "/** Customise the parameters provided to the `groupRowRenderer` component. */",
       "suppressMakeColumnVisibleAfterUnGroup?": "/** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false` */",
       "treeData?": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
+      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "groupRowInnerRenderer?": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "groupRowInnerRendererFramework?": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "groupMultiAutoColumn?": "/** @deprecated - Use groupDisplayType = 'multipleColumns' instead\n */",
@@ -15255,6 +15280,8 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "angularCompileRows?": "/** @deprecated */",
+      "angularCompileFilters?": "/** @deprecated */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
       "postProcessPopup?": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
@@ -15485,7 +15512,6 @@
       "detailCellRendererParams?": "any",
       "detailRowHeight?": "number",
       "detailRowAutoHeight?": "boolean",
-      "groupRowsSticky?": "boolean",
       "context?": "any",
       "alignedGrids?": "{ api?: GridApi | null; columnApi?: ColumnApi | null; }[]",
       "tabIndex?": "number",
@@ -15571,6 +15597,7 @@
       "groupRowRendererParams?": "any",
       "suppressMakeColumnVisibleAfterUnGroup?": "boolean",
       "treeData?": "boolean",
+      "groupRowsSticky?": "boolean",
       "groupRowInnerRenderer?": "any",
       "groupRowInnerRendererFramework?": "any",
       "groupMultiAutoColumn?": "boolean",
@@ -15873,7 +15900,6 @@
       "detailCellRendererParams?": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
       "detailRowHeight?": "/** Set fixed height in pixels for each detail row. */",
       "detailRowAutoHeight?": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
-      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "context?": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "alignedGrids?": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "tabIndex?": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -15959,6 +15985,7 @@
       "groupRowRendererParams?": "/** Customise the parameters provided to the `groupRowRenderer` component. */",
       "suppressMakeColumnVisibleAfterUnGroup?": "/** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false` */",
       "treeData?": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
+      "groupRowsSticky?": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
       "groupRowInnerRenderer?": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "groupRowInnerRendererFramework?": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "groupMultiAutoColumn?": "/** @deprecated - Use groupDisplayType = 'multipleColumns' instead\n */",
@@ -16035,6 +16062,8 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "angularCompileRows?": "/** @deprecated */",
+      "angularCompileFilters?": "/** @deprecated */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
       "postProcessPopup?": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",

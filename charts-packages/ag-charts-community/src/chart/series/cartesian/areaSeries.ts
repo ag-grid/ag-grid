@@ -271,12 +271,13 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const yData: number[][] = [];
         const xData = [];
         const xValues = [];
+        const missingYKeys = new Set(yKeys);
 
         for (let datum of data) {
             // X datum
             if (!(xKey in datum)) {
                 doOnce(
-                    () => console.warn(`The key '${xKey}' was not found in the data: `, datum),
+                    () => console.warn(`AG Charts - The key '${xKey}' was not found in the data: `, datum),
                     `${xKey} not found in data`
                 );
                 continue;
@@ -292,15 +293,14 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
             // Y datum
             yKeys.forEach((yKey, i) => {
+                const seriesYs = yData[i] || (yData[i] = []);
+
                 if (!(yKey in datum)) {
-                    doOnce(
-                        () => console.warn(`The key '${yKey}' was not found in the data: `, datum),
-                        `${yKey} not found in data`
-                    );
+                    seriesYs.push(NaN);
                     return;
                 }
+                missingYKeys.delete(yKey);
                 const value = datum[yKey];
-                const seriesYs = yData[i] || (yData[i] = []);
 
                 if (!seriesItemEnabled.get(yKey)) {
                     seriesYs.push(NaN);
@@ -309,6 +309,14 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     seriesYs.push(yDatum);
                 }
             });
+        }
+
+        if (missingYKeys.size > 0) {
+            const missingYKeysString = JSON.stringify([...missingYKeys]);
+            doOnce(
+                () => console.log(`AG Charts - yKeys ${missingYKeysString} were not found in the data.`),
+                `${missingYKeysString} not found in data.`,
+            );
         }
 
         this.yData = yData;

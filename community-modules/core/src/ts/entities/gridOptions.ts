@@ -344,9 +344,6 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */
     detailRowAutoHeight?: boolean;
 
-    /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/
-    groupRowsSticky?: boolean;
-
     // *** Miscellaneous *** //
     // changeable, but no immediate impact
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */
@@ -596,6 +593,9 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */
     treeData?: boolean;
 
+    /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/
+    groupRowsSticky?: boolean;
+
     /** @deprecated - this is now groupRowRendererParams.innerRenderer */
     groupRowInnerRenderer?: any;
     /** @deprecated - this is now groupRowRendererParams.innerRenderer */
@@ -811,7 +811,9 @@ export interface GridOptions<TData = any> {
 
     deltaSort?: boolean;
     treeDataDisplayType?: TreeDataDisplayType;
+    /** @deprecated  */
     angularCompileRows?: boolean;
+    /** @deprecated  */
     angularCompileFilters?: boolean;
     functionsPassive?: boolean;
     enableGroupEdit?: boolean;

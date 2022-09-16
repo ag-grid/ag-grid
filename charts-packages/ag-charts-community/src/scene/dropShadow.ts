@@ -1,14 +1,34 @@
-import { ChangeDetectable, SceneChangeDetection, RedrawType } from './changeDetectable';
+import { BOOLEAN, COLOR_STRING, NUMBER, ValidateAndChangeDetection } from '../util/validation';
+import { ChangeDetectable, RedrawType } from './changeDetectable';
 
 export class DropShadow extends ChangeDetectable {
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    @ValidateAndChangeDetection({
+        validatePredicate: BOOLEAN,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     enabled = true;
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+
+    @ValidateAndChangeDetection({
+        validatePredicate: COLOR_STRING,
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     color = 'rgba(0, 0, 0, 0.5)';
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+
+    @ValidateAndChangeDetection({
+        validatePredicate: NUMBER(0),
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     xOffset = 0;
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+
+    @ValidateAndChangeDetection({
+        validatePredicate: NUMBER(0),
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     yOffset = 0;
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+
+    @ValidateAndChangeDetection({
+        validatePredicate: NUMBER(0),
+        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
+    })
     blur = 5;
 }

@@ -2717,10 +2717,6 @@
       "description": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "groupRowsSticky": {
-      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "context": {
       "description": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "type": { "returnType": "any", "optional": true }
@@ -3077,6 +3073,10 @@
       "description": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "groupRowsSticky": {
+      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "groupRowInnerRenderer": {
       "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "type": { "returnType": "any", "optional": true }
@@ -3389,9 +3389,11 @@
       "type": { "returnType": "TreeDataDisplayType", "optional": true }
     },
     "angularCompileRows": {
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "angularCompileFilters": {
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "functionsPassive": {
@@ -16129,7 +16131,24 @@
       }
     }
   },
+  "CloseChartsToolPanelParams": {
+    "chartId": {
+      "description": "/** The id of the created chart. */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
   "ChartModelType": {},
+  "ChartsToolPanelTabs": {},
+  "OpenChartsToolPanelParams": {
+    "chartId": {
+      "description": "/** The id of the created chart. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "tabName": {
+      "description": "/** Tab name of the charts tool panel. The default settings tab will be used if not specified. */",
+      "type": { "returnType": "ChartsToolPanelTabs", "optional": true }
+    }
+  },
   "ChartModel": {
     "version": { "type": { "returnType": "string", "optional": true } },
     "modelType": {
@@ -16221,6 +16240,20 @@
     "downloadChart": {
       "type": {
         "arguments": { "params": "ChartDownloadParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "openChartsToolPanel": {
+      "type": {
+        "arguments": { "params": "OpenChartsToolPanelParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "closeChartsToolPanel": {
+      "type": {
+        "arguments": { "chartId": "string" },
         "returnType": "void",
         "optional": false
       }
@@ -16593,6 +16626,9 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "refresh": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
   "ColumnVO": {
@@ -17799,6 +17835,9 @@
       }
     },
     "syncLayoutWithGrid": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "refresh": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
@@ -24748,10 +24787,6 @@
       "description": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "groupRowsSticky": {
-      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "context": {
       "description": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "type": { "returnType": "any", "optional": true }
@@ -25108,6 +25143,10 @@
       "description": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "groupRowsSticky": {
+      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "groupRowInnerRenderer": {
       "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "type": { "returnType": "any", "optional": true }
@@ -25420,9 +25459,11 @@
       "type": { "returnType": "TreeDataDisplayType", "optional": true }
     },
     "angularCompileRows": {
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "angularCompileFilters": {
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "functionsPassive": {
@@ -27543,10 +27584,6 @@
       "description": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "groupRowsSticky": {
-      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "context": {
       "description": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "type": { "returnType": "any", "optional": true }
@@ -27903,6 +27940,10 @@
       "description": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "groupRowsSticky": {
+      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "groupRowInnerRenderer": {
       "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "type": { "returnType": "any", "optional": true }
@@ -28215,9 +28256,11 @@
       "type": { "returnType": "TreeDataDisplayType", "optional": true }
     },
     "angularCompileRows": {
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "angularCompileFilters": {
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "functionsPassive": {
@@ -30348,10 +30391,6 @@
       "description": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "groupRowsSticky": {
-      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "context": {
       "description": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "type": { "returnType": "any", "optional": true }
@@ -30708,6 +30747,10 @@
       "description": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "groupRowsSticky": {
+      "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "groupRowInnerRenderer": {
       "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "type": { "returnType": "any", "optional": true }
@@ -31020,9 +31063,11 @@
       "type": { "returnType": "TreeDataDisplayType", "optional": true }
     },
     "angularCompileRows": {
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "angularCompileFilters": {
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "functionsPassive": {

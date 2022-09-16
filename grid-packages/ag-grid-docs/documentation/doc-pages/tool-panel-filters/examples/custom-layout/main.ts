@@ -107,12 +107,12 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function setCustomSortLayout() {
-  var filtersToolPanel = gridOptions.api!.getToolPanelInstance('filters') as any as IFiltersToolPanel
+  var filtersToolPanel = gridOptions.api!.getToolPanelInstance('filters');
   filtersToolPanel!.setFilterLayout(sortedToolPanelColumnDefs)
 }
 
 function setCustomGroupLayout() {
-  var filtersToolPanel = gridOptions.api!.getToolPanelInstance('filters') as any as IFiltersToolPanel
+  var filtersToolPanel = gridOptions.api!.getToolPanelInstance('filters');
   filtersToolPanel!.setFilterLayout(customToolPanelColumnDefs)
 }
 
