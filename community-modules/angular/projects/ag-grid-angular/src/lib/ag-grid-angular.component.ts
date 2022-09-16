@@ -154,7 +154,8 @@ import {
     GetLocaleTextParams,
     IsRowFilterable,
     RowModelType,
-    IRowDragItem
+    IRowDragItem,
+    ToolPanelSizeChangedEvent
 } from "@ag-grid-community/core";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
@@ -972,6 +973,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 
     /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status.     */
     @Output() public toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent<TData>> = new EventEmitter<ToolPanelVisibleChangedEvent<TData>>();
+    /** The tool panel size has been changed.     */
+    @Output() public toolPanelSizeChanged: EventEmitter<ToolPanelSizeChangedEvent<TData>> = new EventEmitter<ToolPanelSizeChangedEvent<TData>>();
     /** Paste operation has started.     */
     @Output() public pasteStart: EventEmitter<PasteStartEvent<TData>> = new EventEmitter<PasteStartEvent<TData>>();
     /** Paste operation has ended.     */

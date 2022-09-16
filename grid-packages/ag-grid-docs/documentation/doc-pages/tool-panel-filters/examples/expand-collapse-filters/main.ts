@@ -44,21 +44,20 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function collapseAll() {
-  (gridOptions.api!.getToolPanelInstance('filters') as any as IFiltersToolPanel).collapseFilters()
+  gridOptions.api!.getToolPanelInstance('filters')!.collapseFilters()
 }
 
 function expandYearAndSport() {
-  (gridOptions
-    .api!.getToolPanelInstance('filters') as any as IFiltersToolPanel)
+  gridOptions.api!.getToolPanelInstance('filters')!
     .expandFilters(['year', 'sport'])
 }
 
 function collapseYear() {
-  (gridOptions.api!.getToolPanelInstance('filters') as any as IFiltersToolPanel).collapseFilters(['year'])
+  gridOptions.api!.getToolPanelInstance('filters')!.collapseFilters(['year'])
 }
 
 function expandAll() {
-  (gridOptions.api!.getToolPanelInstance('filters') as any as IFiltersToolPanel).expandFilters()
+  gridOptions.api!.getToolPanelInstance('filters')!.expandFilters()
 }
 
 // setup the grid after the page has finished loading

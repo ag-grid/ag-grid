@@ -2,7 +2,10 @@ import {
     Autowired,
     Component,
     HorizontalResizeService,
-    PostConstruct
+    PostConstruct,
+    ToolPanelSizeChangedEvent,
+    WithoutGridCommon,
+    Events
 } from "@ag-grid-community/core";
 
 export class HorizontalResizeComp extends Component {
@@ -30,18 +33,33 @@ export class HorizontalResizeComp extends Component {
             dragStartPixels: 1,
             onResizeStart: this.onResizeStart.bind(this),
             onResizing: this.onResizing.bind(this),
-            onResizeEnd: this.onResizing.bind(this)
+            onResizeEnd: this.onResizeEnd.bind(this)
         });
 
         this.addDestroyFunc(finishedWithResizeFunc);
         this.setInverted(this.gridOptionsWrapper.isEnableRtl());
     }
 
-    private onResizeStart(): void {
-        this.startingWidth = this.elementToResize.offsetWidth;
+    private dispatchResizeEvent(start: boolean, end: boolean, width: number) {
+        const event: WithoutGridCommon<ToolPanelSizeChangedEvent> = {
+            type: Events.EVENT_TOOL_PANEL_SIZE_CHANGED,
+            width: width,
+            started: start,
+            ended: end,
+        };
+        this.eventService.dispatchEvent(event)
     }
 
-    private onResizing(delta: number): void {
+    private onResizeStart(): void {
+        this.startingWidth = this.elementToResize.offsetWidth;        
+        this.dispatchResizeEvent(true, false, this.startingWidth);
+    }
+
+    private onResizeEnd(delta: number): void {
+        return this.onResizing(delta, true);
+    }
+
+    private onResizing(delta: number, isEnd: boolean = false): void {
         const direction = this.inverted ? -1 : 1;
         let newWidth = Math.max(this.minWidth, Math.floor(this.startingWidth - (delta * direction)));
 
@@ -49,6 +67,7 @@ export class HorizontalResizeComp extends Component {
             newWidth = Math.min(this.maxWidth, newWidth);
         }
         this.elementToResize.style.width = `${newWidth}px`;
+        this.dispatchResizeEvent(false, isEnd, newWidth);        
     }
 
     public setInverted(inverted: boolean) {

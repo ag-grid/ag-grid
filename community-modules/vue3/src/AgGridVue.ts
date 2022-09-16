@@ -1,4 +1,4 @@
-import {defineComponent, PropType, h} from 'vue';
+import {defineComponent, PropType, h, getCurrentInstance} from 'vue';
 import {markRaw, toRaw} from '@vue/reactivity';
 import {ComponentUtil, Grid, GridOptions, Module, RowNode} from '@ag-grid-community/core';
 
@@ -166,7 +166,7 @@ export const AgGridVue = defineComponent({
             this.$emit(DATA_MODEL_EMIT_NAME, Object.freeze(this.getRowData()));
         }, 20);
 
-        const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
+        const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this, getCurrentInstance() ? (getCurrentInstance() as any).provides : null);
 
         // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
         // with mergeDeep for example

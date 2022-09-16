@@ -43,28 +43,28 @@ const gridOptions: GridOptions<IOlympicData> = {
   sideBar: 'filters',
   onGridReady: (params) => {
     // initially collapse all filter groups
-    (params.api.getToolPanelInstance('filters') as any as IFiltersToolPanel).collapseFilterGroups()
+    params.api.getToolPanelInstance('filters')!.collapseFilterGroups()
   },
 }
 
 function collapseAll() {
-  (gridOptions.api!.getToolPanelInstance('filters') as any as IFiltersToolPanel).collapseFilterGroups()
+  gridOptions.api!.getToolPanelInstance('filters')!.collapseFilterGroups()
 }
 
 function expandAthleteAndCompetition() {
-  (gridOptions
-    .api!.getToolPanelInstance('filters') as any as IFiltersToolPanel)
+  gridOptions
+    .api!.getToolPanelInstance('filters')!
     .expandFilterGroups(['athleteGroupId', 'competitionGroupId'])
 }
 
 function collapseCompetition() {
-  (gridOptions
-    .api!.getToolPanelInstance('filters') as any as IFiltersToolPanel)
+  gridOptions
+    .api!.getToolPanelInstance('filters')!
     .collapseFilterGroups(['competitionGroupId'])
 }
 
 function expandAll() {
-  (gridOptions.api!.getToolPanelInstance('filters') as any as IFiltersToolPanel).expandFilterGroups()
+  gridOptions.api!.getToolPanelInstance('filters')!.expandFilterGroups()
 }
 
 // setup the grid after the page has finished loading

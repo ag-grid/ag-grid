@@ -42,13 +42,13 @@ export class VueComponentFactory {
         return props;
     }
 
-    public static createAndMountComponent(component: any, params: any, parent: any) {
+    public static createAndMountComponent(component: any, params: any, parent: any, provides: any) {
         const componentDefinition = VueComponentFactory.getComponentDefinition(component, parent);
         if (!componentDefinition) {
             return;
         }
 
-        const {vNode, destroy, el} = this.mount(componentDefinition, {params: Object.freeze(params)}, parent)
+        const {vNode, destroy, el} = this.mount(componentDefinition, {params: Object.freeze(params)}, parent, provides || {})
 
         // note that the component creation is synchronous so that componentInstance is set by this point
         return {
@@ -58,11 +58,11 @@ export class VueComponentFactory {
         };
     }
 
-    public static mount(component: any, props: any, parent: any) {
+    public static mount(component: any, props: any, parent: any, provides: any) {
         let vNode: any = createVNode(component, props)
 
         vNode.appContext = parent.$.appContext;
-        vNode.appContext.provides = {...(vNode.appContext.provides ? vNode.appContext.provides : {}), ...(parent.$parent.$options.provide ? parent.$parent.$options.provide : {})};
+        vNode.appContext.provides = {...provides, ...(vNode.appContext.provides ? vNode.appContext.provides : {}), ...(parent.$parent.$options.provide ? parent.$parent.$options.provide : {})};
 
         let el: any = document.createElement('div')
         render(vNode, el)

@@ -3629,5 +3629,9 @@
   "FieldFn": {
     "meta": { "isTypeAlias": true },
     "type": "(date: Date) => number"
+  },
+  "ValidatePredicate": {
+    "meta": { "isTypeAlias": true },
+    "type": "(v: any) => boolean"
   }
 }

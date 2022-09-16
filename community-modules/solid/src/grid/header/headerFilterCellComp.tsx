@@ -67,7 +67,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     return (
         <div ref={eGui!} class={getCssClassesString()} style={getStyle()} role="gridcell" tabIndex={-1}>
             <div ref={eFloatingFilterBody!} class={getBodyCssClassesString()} role="presentation">
-                { getUserCompDetails() && <UserComp compDetails={getUserCompDetails()!} setRef={setRef}/> }
+                { getUserCompDetails() && <UserComp compDetails={getUserCompDetails()!} ref={setRef}/> }
             </div>
             <div ref={eButtonWrapper!} class={getButtonWrapperCssClassesString()} role="presentation">
                 <button ref={eButtonShowMainFilter!} type="button" aria-label="Open Filter Menu" class="ag-floating-filter-button-button" tabIndex={-1}></button>

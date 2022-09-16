@@ -102,9 +102,7 @@ function reset(type: string) {
 var MANGLED_COLOURS = ['ReD', 'OrAnGe', 'WhItE', 'YeLlOw']
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  ((gridOptions.api!.getToolPanelInstance(
-    'filters'
-  ) as any) as IFiltersToolPanel).expandFilters()
+  gridOptions.api!.getToolPanelInstance('filters')!.expandFilters()
 }
 
 // setup the grid after the page has finished loading

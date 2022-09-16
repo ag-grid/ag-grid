@@ -18,6 +18,7 @@ function buildGlob(basePath) {
     return glob.sync(`${basePath}/**/*.ts`, opts);
 }
 
+// Matches the paths used in grid-packages-ag-grid-docs/dev-server.js
 const INTERFACE_GLOBS = [
     ...buildGlob('../core/src/ts'),
     ...buildGlob('../../enterprise-modules/set-filter/src'),
@@ -450,18 +451,18 @@ function extractMethodsAndPropsFromNode(node, srcFile) {
 function writeFormattedFile(dir, filename, data) {
     const fullPath = dir + filename;
 
+    const currentContent = fs.readFileSync(fullPath).toString('utf-8');
+    const config = prettierJs.resolveConfig.sync(fullPath, {});
+    const fileOptions = { ...config, filepath: fullPath };
+    const newContent = prettierJs.format(JSON.stringify(data), fileOptions);
+
     if (VERIFY_MODE) {
-        const currentContent = fs.readFileSync(fullPath).toString('utf-8');
-
-        const config = prettierJs.resolveConfig.sync(fullPath, {});
-        const fileOptions = { ...config, filepath: fullPath };
-        const newContent = prettierJs.format(JSON.stringify(data), fileOptions);
-
         if (currentContent !== newContent) {
             console.warn(`Needs to be updated: ${fullPath}`);
             process.exit(1);
         }
-    } else {
+    } else if (currentContent !== newContent) {
+        // Only write if content changed.
         fs.writeFileSync(fullPath, JSON.stringify(data));
         gulp.src(fullPath)
             .pipe(prettier({}))

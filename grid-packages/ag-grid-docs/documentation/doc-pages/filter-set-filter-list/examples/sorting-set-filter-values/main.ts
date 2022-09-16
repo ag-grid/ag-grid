@@ -31,9 +31,7 @@ const gridOptions: GridOptions = {
   rowData: getRowData(),
   sideBar: 'filters',
   onGridReady: (params) => {
-    ((params.api.getToolPanelInstance(
-      'filters'
-    ) as any) as IFiltersToolPanel).expandFilters()
+    params.api.getToolPanelInstance('filters')!.expandFilters();
   },
 }
 

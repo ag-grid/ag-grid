@@ -80,7 +80,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl})=> {
             <div ref={eResize!} class="ag-header-cell-resize" role="presentation"></div>
             <div ref={eHeaderCompWrapper!} class="ag-header-cell-comp-wrapper" role="presentation">
             { getUserCompDetails() 
-                && <UserComp compDetails={getUserCompDetails()!} setRef={setRef} clearRef={clearRef} /> }
+                && <UserComp compDetails={getUserCompDetails()!} ref={setRef} /> }
             </div>
         </div>
     );

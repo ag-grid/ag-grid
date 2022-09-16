@@ -6,7 +6,7 @@
 		"dockerfile": "Dockerfile",
 		// Update 'VARIANT' to pick an Ubuntu version: hirsute, focal, bionic
 		// Use hirsute or bionic on local arm64/Apple Silicon.
-		"args": { "VARIANT": "hirsute" }
+		"args": { "VARIANT": "jammy" }
 	},
 
 	// Set *default* container specific settings.json values on container create.

@@ -11,7 +11,7 @@ import { createId } from './util/id';
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from './util/angle';
 import { doOnce } from './util/function';
 import { ContinuousScale } from './scale/continuousScale';
-import { CountableTimeInterval } from './util/time/interval';
+import { CountableTimeInterval, TimeInterval } from './util/time/interval';
 import { CrossLine } from './chart/crossline/crossLine';
 import {
     Validate,
@@ -22,10 +22,26 @@ import {
     OPT_FONT_STYLE,
     OPT_FONT_WEIGHT,
     STRING,
-    OPT_STRING,
+    OPT_COLOR_STRING,
+    OPTIONAL,
+    ARRAY,
 } from './util/validation';
 import { ChartAxisDirection } from './chart/chartAxis';
 import { Layers } from './chart/layers';
+
+const TICK_COUNT = (v: any) => NUMBER(0)(v) || v instanceof TimeInterval;
+const OPT_TICK_COUNT = (v: any) => OPTIONAL(v, TICK_COUNT);
+
+const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
+const GRID_STYLE = (v: any) =>
+    ARRAY()(v, (o) => {
+        for (let key in o) {
+            if (!GRID_STYLE_KEYS.includes(key)) {
+                return false;
+            }
+        }
+        return true;
+    });
 
 enum Tags {
     Tick,
@@ -38,6 +54,15 @@ export interface GridStyle {
 }
 
 type TickCount = number | CountableTimeInterval;
+
+export class AxisLine {
+    @Validate(NUMBER(0))
+    width: number = 1;
+
+    @Validate(OPT_COLOR_STRING)
+    color?: string = 'rgba(195, 195, 195, 1)';
+}
+
 export class AxisTick {
     /**
      * The line width to be used by axis ticks.
@@ -55,7 +80,7 @@ export class AxisTick {
      * The color of the axis ticks.
      * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
      */
-    @Validate(OPT_STRING)
+    @Validate(OPT_COLOR_STRING)
     color?: string = 'rgba(195, 195, 195, 1)';
 
     /**
@@ -67,6 +92,7 @@ export class AxisTick {
      *     axis.tick.count = year;
      *     axis.tick.count = month.every(6);
      */
+    @Validate(OPT_TICK_COUNT)
     count?: TickCount = undefined;
 }
 
@@ -101,7 +127,7 @@ export class AxisLabel {
      * The color of the labels.
      * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
      */
-    @Validate(STRING)
+    @Validate(OPT_COLOR_STRING)
     color?: string = 'rgba(87, 87, 87, 1)';
 
     /**
@@ -238,21 +264,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._crossLines;
     }
 
-    readonly line: {
-        /**
-         * The line width to be used by the axis line.
-         */
-        width: number;
-        /**
-         * The color of the axis line.
-         * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
-         */
-        color?: string;
-    } = {
-        width: 1,
-        color: 'rgba(195, 195, 195, 1)',
-    };
-
+    readonly line = new AxisLine();
     readonly tick = new AxisTick();
     readonly label = new AxisLabel();
 
@@ -445,6 +457,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
      * Contains only one {@link GridStyle} object by default, meaning all grid lines
      * have the same style.
      */
+    @Validate(GRID_STYLE)
     gridStyle: GridStyle[] = [
         {
             stroke: 'rgba(219, 219, 219, 1)',
@@ -939,6 +952,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return String(datum);
     }
 
+    @Validate(NUMBER(0))
     thickness: number = 0;
 
     computeBBox(): BBox {

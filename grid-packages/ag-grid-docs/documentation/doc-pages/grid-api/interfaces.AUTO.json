@@ -1798,6 +1798,7 @@
       "isFullWidthCell?": "(rowNode: RowNode<TData>) => boolean",
       "isFullWidthRow?": "(params: IsFullWidthRowParams<TData>) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "void",
+      "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "void",
       "onPasteStart?(event: PasteStartEvent<TData>)": "void",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "void",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "void",
@@ -2179,6 +2180,7 @@
       "isFullWidthCell?": "/** @deprecated Use `isFullWidthRow` instead.\n */",
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
       "onPasteStart?(event: PasteStartEvent<TData>)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "/** Paste operation has ended. */",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "/** A column, or group of columns, was hidden / shown. */",
@@ -3202,6 +3204,27 @@
       "type": "string"
     },
     "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "ToolPanelSizeChangedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "type": "'toolPanelSizeChanged'",
+      "started": "boolean",
+      "ended": "boolean",
+      "width": "number",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "started": "/** True if this is the first change to the Tool Panel size. */",
+      "ended": "/** True if this is the last change to the Tool Panel size. */",
+      "width": "/** New width of the ToolPanel component. */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -9370,9 +9393,26 @@
       "dimensions?": "/** Dimensions of downloaded chart. The current chart dimensions will be used if not specified. */"
     }
   },
+  "CloseChartsToolPanelParams": {
+    "meta": {},
+    "type": { "chartId": "string" },
+    "docs": { "chartId": "/** The id of the created chart. */" }
+  },
   "ChartModelType": {
     "meta": { "isTypeAlias": true },
     "type": "'range' | 'pivot'"
+  },
+  "ChartsToolPanelTabs": {
+    "meta": { "isTypeAlias": true },
+    "type": "'settings' | 'data' | 'format'"
+  },
+  "OpenChartsToolPanelParams": {
+    "meta": {},
+    "type": { "chartId": "string", "tabName?": "ChartsToolPanelTabs" },
+    "docs": {
+      "chartId": "/** The id of the created chart. */",
+      "tabName?": "/** Tab name of the charts tool panel. The default settings tab will be used if not specified. */"
+    }
   },
   "ChartModel": {
     "meta": {},
@@ -9402,7 +9442,9 @@
       "createPivotChart(params: CreatePivotChartParams)": "ChartRef | undefined",
       "restoreChart(model: ChartModel, chartContainer?: HTMLElement)": "ChartRef | undefined",
       "getChartImageDataURL(params: GetChartImageDataUrlParams)": "string | undefined",
-      "downloadChart(params: ChartDownloadParams)": "void"
+      "downloadChart(params: ChartDownloadParams)": "void",
+      "openChartsToolPanel(params: OpenChartsToolPanelParams)": "void",
+      "closeChartsToolPanel(chartId: string)": "void"
     }
   },
   "ClientSideRowModelSteps": {
@@ -9525,7 +9567,8 @@
       "setPivotModeSectionVisible(visible: boolean)": "void",
       "setRowGroupsSectionVisible(visible: boolean)": "void",
       "setValuesSectionVisible(visible: boolean)": "void",
-      "setPivotSectionVisible(visible: boolean)": "void"
+      "setPivotSectionVisible(visible: boolean)": "void",
+      "refresh()": "void"
     }
   },
   "ColumnVO": {
@@ -10250,7 +10293,8 @@
       "collapseFilterGroups(groupIds?: string[])": "void",
       "expandFilters(colIds?: string[])": "void",
       "collapseFilters(colIds?: string[])": "void",
-      "syncLayoutWithGrid()": "void"
+      "syncLayoutWithGrid()": "void",
+      "refresh()": "void"
     }
   },
   "IFrameworkOverrides": {
@@ -14128,6 +14172,7 @@
       "isFullWidthCell?": "(rowNode: RowNode<TData>) => boolean",
       "isFullWidthRow?": "(params: IsFullWidthRowParams<TData>) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "void",
+      "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "void",
       "onPasteStart?(event: PasteStartEvent<TData>)": "void",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "void",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "void",
@@ -14509,6 +14554,7 @@
       "isFullWidthCell?": "/** @deprecated Use `isFullWidthRow` instead.\n */",
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
       "onPasteStart?(event: PasteStartEvent<TData>)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "/** Paste operation has ended. */",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "/** A column, or group of columns, was hidden / shown. */",
@@ -14902,6 +14948,7 @@
       "isFullWidthCell?": "(rowNode: RowNode<TData>) => boolean",
       "isFullWidthRow?": "(params: IsFullWidthRowParams<TData>) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "void",
+      "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "void",
       "onPasteStart?(event: PasteStartEvent<TData>)": "void",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "void",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "void",
@@ -15283,6 +15330,7 @@
       "isFullWidthCell?": "/** @deprecated Use `isFullWidthRow` instead.\n */",
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
       "onPasteStart?(event: PasteStartEvent<TData>)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "/** Paste operation has ended. */",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "/** A column, or group of columns, was hidden / shown. */",
@@ -15680,6 +15728,7 @@
       "isFullWidthCell?": "(rowNode: RowNode<TData>) => boolean",
       "isFullWidthRow?": "(params: IsFullWidthRowParams<TData>) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "void",
+      "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "void",
       "onPasteStart?(event: PasteStartEvent<TData>)": "void",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "void",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "void",
@@ -16061,6 +16110,7 @@
       "isFullWidthCell?": "/** @deprecated Use `isFullWidthRow` instead.\n */",
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
       "onPasteStart?(event: PasteStartEvent<TData>)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "/** Paste operation has ended. */",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "/** A column, or group of columns, was hidden / shown. */",

@@ -23,7 +23,7 @@ import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Marker } from '../../marker/marker';
 import { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
 import { checkDatum, isContinuous } from '../../../util/value';
-import { Deprecated } from '../../../util/validation';
+import { Deprecated, OPT_FUNCTION, OPT_STRING, STRING, Validate } from '../../../util/validation';
 
 interface ScatterNodeDatum extends Required<SeriesNodeDatum> {
     readonly label: MeasuredLabel;
@@ -48,6 +48,7 @@ export interface ScatterTooltipRendererParams extends CartesianTooltipRendererPa
 }
 
 export class ScatterSeriesTooltip extends SeriesTooltip {
+    @Validate(OPT_FUNCTION)
     renderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
@@ -96,14 +97,25 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     @Deprecated('Use marker.strokeOpacity instead.', { default: 1 })
     strokeOpacity: number = 1;
 
+    @Validate(OPT_STRING)
     title?: string = undefined;
+
+    @Validate(OPT_STRING)
     labelKey?: string = undefined;
 
+    @Validate(STRING)
     xName: string = '';
+
+    @Validate(STRING)
     yName: string = '';
+
+    @Validate(OPT_STRING)
     sizeName?: string = 'Size';
+
+    @Validate(OPT_STRING)
     labelName?: string = 'Label';
 
+    @Validate(STRING)
     protected _xKey: string = '';
     set xKey(value: string) {
         this._xKey = value;
@@ -113,6 +125,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         return this._xKey;
     }
 
+    @Validate(STRING)
     protected _yKey: string = '';
     set yKey(value: string) {
         this._yKey = value;
@@ -122,6 +135,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         return this._yKey;
     }
 
+    @Validate(OPT_STRING)
     protected _sizeKey?: string = undefined;
     set sizeKey(value: string | undefined) {
         this._sizeKey = value;

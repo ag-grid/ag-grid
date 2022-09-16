@@ -81,9 +81,7 @@ function setCountriesToAll() {
 }
 
 function onFirstDataRendered() {
-    ((gridOptions.api!.getToolPanelInstance(
-        'filters'
-    ) as any) as IFiltersToolPanel).expandFilters()
+    gridOptions.api!.getToolPanelInstance('filters')!.expandFilters()
 }
 
 // setup the grid after the page has finished loading

@@ -159,7 +159,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
     );
 
     const showFullWidthJsx = ()=> (
-        <UserComp compDetails={ getFullWidthCompDetails()! } setRef={setFullWidthRef}/>
+        <UserComp compDetails={ getFullWidthCompDetails()! } ref={setFullWidthRef}/>
     );
 
     return (

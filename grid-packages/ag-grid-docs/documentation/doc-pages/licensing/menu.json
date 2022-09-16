@@ -1618,6 +1618,11 @@
                 "title": "Downloading Chart Image",
                 "url": "/integrated-charts-api-downloading-image/",
                 "enterprise": true
+              },
+              {
+                "title": "Open/Close Chart Tool Panel",
+                "url": "/integrated-charts-api-charts-tool-panel/",
+                "enterprise": true
               }
             ]
           },

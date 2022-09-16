@@ -92,7 +92,7 @@ const GridExample = () => {
 
 
     const onFirstDataRendered = useCallback((params: FirstDataRenderedEvent) => {
-        ((gridRef.current!.api.getToolPanelInstance('filters') as any) as IFiltersToolPanel).expandFilters();
+        gridRef.current!.api.getToolPanelInstance('filters')!.expandFilters();
     }, [])
 
 

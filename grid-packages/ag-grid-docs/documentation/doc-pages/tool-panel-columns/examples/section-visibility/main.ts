@@ -46,30 +46,22 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function showPivotModeSection() {
-  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
-    'columns'
-  ) as unknown) as IColumnToolPanel
+  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns')!;
   columnToolPanel.setPivotModeSectionVisible(true)
 }
 
 function showRowGroupsSection() {
-  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
-    'columns'
-  ) as unknown) as IColumnToolPanel
+  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns')!;
   columnToolPanel.setRowGroupsSectionVisible(true)
 }
 
 function showValuesSection() {
-  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
-    'columns'
-  ) as unknown) as IColumnToolPanel
+  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns')!;
   columnToolPanel.setValuesSectionVisible(true)
 }
 
 function showPivotSection() {
-  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
-    'columns'
-  ) as unknown) as IColumnToolPanel
+  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns')!;
   columnToolPanel.setPivotSectionVisible(true)
 }
 

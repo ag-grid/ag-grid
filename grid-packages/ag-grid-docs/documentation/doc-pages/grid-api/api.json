@@ -658,8 +658,19 @@
                 "name": "Downloading Chart Image",
                 "url": "/integrated-charts-api-downloading-image/"
             }
+        },
+        "openChartsToolPanel": {
+            "more": {
+                "name": "Open Charts Tool Panel",
+                "url": "/integrated-charts-api-charts-tool-panel/"
+            }
+        },
+        "closeChartsToolPanel": {
+            "more": {
+                "name": "Close Charts Tool Panel",
+                "url": "/integrated-charts-api-charts-tool-panel/"
+            }
         }
-        
     },
     "miscellaneous": {
         "meta": {

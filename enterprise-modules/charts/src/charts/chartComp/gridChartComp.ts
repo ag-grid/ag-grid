@@ -7,7 +7,9 @@ import {
     CellRange,
     ChartCreated,
     ChartDestroyed,
+    ChartMenuOptions,
     ChartModel,
+    ChartsToolPanelTabs,
     ChartType,
     Component,
     Events,
@@ -402,6 +404,21 @@ export class GridChartComp extends Component {
 
     public downloadChart(dimensions?: { width: number, height: number }, fileName?: string, fileFormat?: string): void {
         this.chartProxy.downloadChart(dimensions, fileName, fileFormat);
+    }
+
+    public openChartsToolPanel(tabName?: ChartsToolPanelTabs) {
+        const chartsToolPanelTabMapping: { [key in ChartsToolPanelTabs]: ChartMenuOptions } = {
+            settings: "chartSettings",
+            data: "chartData",
+            format: "chartFormat"
+        }
+        const menuTabName = tabName ? chartsToolPanelTabMapping[tabName] : tabName;
+
+        this.chartMenu.showMenu(menuTabName);
+    }
+
+    public closeChartsToolPanel() {
+        this.chartMenu.hideMenu();
     }
 
     public getChartId(): string {
