@@ -18,21 +18,22 @@ export function Validate(predicate: ValidatePredicate) {
                 } else {
                     this[privateKey] = v;
                 }
-
-                const cleanKey = key.replace(/^_*/, '');
-                console.warn(`AG Charts - Property [${cleanKey}] cannot be set to [${JSON.stringify(v)}], ignoring.`);
+                return;
             }
-            const getter = function () {
-                return this[privateKey];
-            };
 
-            Object.defineProperty(target, key, {
-                set: setter,
-                get: getter,
-                enumerable: true,
-                configurable: false,
-            });
+            const cleanKey = key.replace(/^_*/, '');
+            console.warn(`AG Charts - Property [${cleanKey}] cannot be set to [${JSON.stringify(v)}], ignoring.`);
         };
+        const getter = function () {
+            return this[privateKey];
+        };
+
+        Object.defineProperty(target, key, {
+            set: setter,
+            get: getter,
+            enumerable: true,
+            configurable: false,
+        });
     };
 }
 
