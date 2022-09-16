@@ -276,7 +276,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             // X datum
             if (!(xKey in datum)) {
                 doOnce(
-                    () => console.warn(`The key '${xKey}' was not found in the data: `, datum),
+                    () => console.warn(`AG Charts - The key '${xKey}' was not found in the data: `, datum),
                     `${xKey} not found in data`
                 );
                 continue;
@@ -295,10 +295,6 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 const seriesYs = yData[i] || (yData[i] = []);
 
                 if (!(yKey in datum)) {
-                    doOnce(
-                        () => console.warn(`The key '${yKey}' was not found in the data: `, datum),
-                        `${yKey} not found in data`
-                    );
                     seriesYs.push(NaN);
                     return;
                 }

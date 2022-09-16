@@ -94,6 +94,10 @@ describe('AreaSeries', () => {
             console.warn = jest.fn();
         });
 
+        afterEach(() => {
+            expect(console.warn).not.toBeCalled();
+        });
+
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = { ...example.options };
@@ -128,10 +132,6 @@ describe('AreaSeries', () => {
                 if (example.extraScreenshotActions) {
                     await example.extraScreenshotActions(chart);
                     await compare();
-                }
-
-                if (exampleName !== 'STACKED_AREA_MISSING_FIRST_Y_DATA_EXAMPLE') {
-                    expect(console.warn).not.toBeCalled();
                 }
             });
         }
