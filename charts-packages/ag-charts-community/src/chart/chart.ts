@@ -18,6 +18,7 @@ import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
 import { BOOLEAN, NUMBER, STRING, Validate } from '../util/validation';
+import { sleep } from '../util/async';
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
@@ -509,6 +510,7 @@ export abstract class Chart extends Observable {
 
     destroy() {
         this._performUpdateType = ChartUpdateType.NONE;
+        this._pendingFactoryUpdates.splice(0);
 
         this.tooltip.destroy();
         SizeMonitor.unobserve(this.element);
@@ -517,7 +519,7 @@ export abstract class Chart extends Observable {
         this.cleanupDomListeners(this.scene.canvas.element);
 
         this.scene.destroy();
-        this.series.forEach(s => s.destroy());
+        this.series.forEach((s) => s.destroy());
         this.series = [];
     }
 
@@ -527,25 +529,36 @@ export abstract class Chart extends Observable {
         }
     }
 
-    private _pendingFactoryUpdates: number = 0;
+    private _pendingFactoryUpdates: (() => Promise<void>)[] = [];
     get pendingFactoryUpdates() {
-        return this._pendingFactoryUpdates;
+        return this._pendingFactoryUpdates.length;
     }
-    registerPendingFactoryUpdate<T>(cb: () => Promise<T>) {
-        this._pendingFactoryUpdates++;
-        return cb()
-            .then((r) => {
-                this._pendingFactoryUpdates--;
+    requestFactoryUpdate(cb: () => Promise<void>) {
+        this._pendingFactoryUpdates.push(cb);
 
-                return r;
-            })
-            .catch(e => {
-                this._pendingFactoryUpdates--;
+        if (this._pendingFactoryUpdates.length > 1) {
+            // Factory callback process already running, the callback will be invoked asynchronously.
+            return;
+        }
 
-                throw e;
-            });
+        const processCallbacks = async () => {
+            while (this._pendingFactoryUpdates.length > 0) {
+                while (this.updatePending) {
+                    await sleep(1);
+                }
+                try {
+                    await this._pendingFactoryUpdates[0]();
+                } catch (e) {
+                    console.error(e);
+                }
+
+                this._pendingFactoryUpdates.splice(0, 1);
+            }
+        };
+
+        processCallbacks();
     }
-    
+
     private _performUpdateType: ChartUpdateType = ChartUpdateType.NONE;
     get performUpdateType() {
         return this._performUpdateType;
@@ -844,7 +857,6 @@ export abstract class Chart extends Observable {
         this.updateContext.firstResizeReceived = true;
 
         if (this.scene.resize(width, height)) {
-
             this.background.width = this.width;
             this.background.height = this.height;
 
@@ -1412,15 +1424,10 @@ export abstract class Chart extends Observable {
 
     async waitForUpdate(timeoutMs = 5000): Promise<void> {
         const start = performance.now();
-        const sleep = (sleepTimeoutMs: number) => {
-            return new Promise((resolve) => {
-                setTimeout(() => resolve(undefined), sleepTimeoutMs);
-            });
-        };
-    
+
         while (this.pendingFactoryUpdates > 0 || this.updatePending) {
-            if ((performance.now() - start) > timeoutMs) {
-                throw new Error('waitForChartStability() timeout reached.');
+            if (performance.now() - start > timeoutMs) {
+                throw new Error('waitForUpdate() timeout reached.');
             }
             await sleep(5);
         }

@@ -157,7 +157,9 @@ export abstract class AgChartV2 {
             );
         }
 
-        AgChartV2.updateDelta(chart, mergedOptions, userOptions);
+        chart.requestFactoryUpdate(async () => {
+            await AgChartV2.updateDelta(chart, mergedOptions, userOptions);
+        });
         return chart as T;
     }
 
@@ -168,39 +170,41 @@ export abstract class AgChartV2 {
             mixinOpts['debug'] = true;
         }
 
-        const mergedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>, mixinOpts);
+        chart.requestFactoryUpdate(async () => {
+            const mergedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>, mixinOpts);
 
-        if (chartType(mergedOptions) !== chartType(chart.options as ChartOptionType<typeof chart>)) {
-            chart.destroy();
-            console.warn('AG Charts - options supplied require a different type of chart, please recreate the chart.');
-            return;
-        }
+            if (chartType(mergedOptions) !== chartType(chart.options as ChartOptionType<typeof chart>)) {
+                chart.destroy();
+                console.warn(
+                    'AG Charts - options supplied require a different type of chart, please recreate the chart.'
+                );
+                return;
+            }
 
-        const deltaOptions = jsonDiff<ChartOptionType<T>>(chart.options as ChartOptionType<T>, mergedOptions, {
-            stringify: ['data'],
+            const deltaOptions = jsonDiff<ChartOptionType<T>>(chart.options as ChartOptionType<T>, mergedOptions, {
+                stringify: ['data'],
+            });
+            if (deltaOptions == null) {
+                return;
+            }
+
+            await AgChartV2.updateDelta<T>(chart as T, deltaOptions, userOptions);
         });
-        if (deltaOptions == null) {
-            return;
-        }
-
-        AgChartV2.updateDelta<T>(chart as T, deltaOptions, userOptions);
     }
 
-    private static updateDelta<T extends ChartType>(
+    private static async updateDelta<T extends ChartType>(
         chart: T,
         update: Partial<ChartOptionType<T>>,
         userOptions: ChartOptionType<T>
     ) {
-        return chart.registerPendingFactoryUpdate(async () => {
-            if (update.type == null) {
-                update = { ...update, type: chart.options.type || optionsType(update) };
-            }
-            debug('delta update', update);
-    
-            await chart.awaitUpdateCompletion();
-    
-            applyChartOptions(chart, update as ChartOptionType<typeof chart>, userOptions);
-        })
+        if (update.type == null) {
+            update = { ...update, type: chart.options.type || optionsType(update) };
+        }
+        debug('delta update', update);
+
+        await chart.awaitUpdateCompletion();
+
+        applyChartOptions(chart, update as ChartOptionType<typeof chart>, userOptions);
     }
 }
 
