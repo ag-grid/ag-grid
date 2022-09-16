@@ -80,7 +80,7 @@ const options: AgCartesianChartOptions = {
       type: "category",
       position: "bottom",
       gridStyle: [{
-        strokeWidth: 0
+        stroke: undefined
       }],
     },
     {
