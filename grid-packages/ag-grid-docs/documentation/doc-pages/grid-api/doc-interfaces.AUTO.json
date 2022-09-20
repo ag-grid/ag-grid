@@ -4119,7 +4119,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or \n *   if cell value has changed as a result of paste operation. */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n *   if cell value has changed as a result of paste operation. */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -4128,7 +4128,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or \n *   if cell value has changed as a result of paste operation. */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n *   if cell value has changed as a result of paste operation. */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -26183,7 +26183,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or \n *   if cell value has changed as a result of paste operation. */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n *   if cell value has changed as a result of paste operation. */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -26192,7 +26192,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or \n *   if cell value has changed as a result of paste operation. */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n *   if cell value has changed as a result of paste operation. */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -28980,7 +28980,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or \n *   if cell value has changed as a result of paste operation. */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n *   if cell value has changed as a result of paste operation. */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -28989,7 +28989,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or \n *   if cell value has changed as a result of paste operation. */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n *   if cell value has changed as a result of paste operation. */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -31787,7 +31787,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or \n *   if cell value has changed as a result of paste operation. */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n *   if cell value has changed as a result of paste operation. */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -31796,7 +31796,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or \n *   if cell value has changed as a result of paste operation. */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n *   if cell value has changed as a result of paste operation. */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",

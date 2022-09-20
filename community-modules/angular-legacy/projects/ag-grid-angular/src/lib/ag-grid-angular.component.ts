@@ -1043,7 +1043,7 @@ Allows you to set the ID for a particular row node based on the data.
     /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
      * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.     */
     @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent<TData>> = new EventEmitter<ComponentStateChangedEvent<TData>>();
-    /** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or 
+    /** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or
      *   if cell value has changed as a result of paste operation.     */
     @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent<TData>> = new EventEmitter<CellValueChangedEvent<TData>>();
     /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`.     */
