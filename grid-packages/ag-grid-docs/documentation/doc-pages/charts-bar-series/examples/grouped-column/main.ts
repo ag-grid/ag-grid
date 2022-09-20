@@ -4,6 +4,17 @@ import { getData } from "./data";
 
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
+  theme: {
+    overrides: {
+      column: {
+        axes: {
+          category: {
+            groupPaddingInner: 0,
+          },
+        },
+      },
+    },
+  },
   title: {
     text: "Apple's revenue by product category",
   },
