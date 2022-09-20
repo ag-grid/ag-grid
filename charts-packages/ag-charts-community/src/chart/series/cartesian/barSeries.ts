@@ -581,8 +581,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         if (xAxis instanceof CategoryAxis) {
             groupScale.padding = xAxis.groupPaddingInner;
+            groupScale.round = false;
         } else {
             groupScale.padding = 0.1;
+            groupScale.round = true;
         }
 
         const barWidth =
