@@ -158,6 +158,11 @@ export abstract class AgChartV2 {
         }
 
         chart.requestFactoryUpdate(async () => {
+            if (chart.destroyed) {
+                // Chart destroyed, skip processing.
+                return;
+            }
+
             await AgChartV2.updateDelta(chart, mergedOptions, userOptions);
         });
         return chart as T;
@@ -171,6 +176,11 @@ export abstract class AgChartV2 {
         }
 
         chart.requestFactoryUpdate(async () => {
+            if (chart.destroyed) {
+                // Chart destroyed, skip processing.
+                return;
+            }
+
             const mergedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>, mixinOpts);
 
             if (chartType(mergedOptions) !== chartType(chart.options as ChartOptionType<typeof chart>)) {

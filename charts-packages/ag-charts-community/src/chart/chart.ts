@@ -350,7 +350,7 @@ export abstract class Chart extends Observable {
                 parentNode.removeChild(this.element);
             }
 
-            if (value) {
+            if (value && !this.destroyed) {
                 value.appendChild(this.element);
             }
 
@@ -458,6 +458,11 @@ export abstract class Chart extends Observable {
         return this._subtitle;
     }
 
+    private _destroyed: boolean = false;
+    get destroyed() {
+        return this._destroyed;
+    }
+
     private static tooltipDocuments: Document[] = [];
 
     protected constructor(document = window.document) {
@@ -470,7 +475,7 @@ export abstract class Chart extends Observable {
         root.appendChild(background.node);
 
         const element = (this.element = document.createElement('div'));
-        element.setAttribute('class', 'ag-chart-wrapper');
+        element.classList.add('ag-chart-wrapper');
         element.style.position = 'relative';
 
         this.scene = new Scene({ document });
@@ -521,6 +526,8 @@ export abstract class Chart extends Observable {
         this.scene.destroy();
         this.series.forEach((s) => s.destroy());
         this.series = [];
+
+        this._destroyed = true;
     }
 
     log(opts: any) {
