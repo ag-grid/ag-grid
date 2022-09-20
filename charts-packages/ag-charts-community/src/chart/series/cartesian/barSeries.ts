@@ -265,7 +265,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
             const { groupScale } = this;
             groupScale.domain = visibleStacks;
-            groupScale.round = true;
         }
     }
     get yKeys(): string[][] {
@@ -581,7 +580,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         groupScale.range = [0, xBandWidth!];
 
         if (xAxis instanceof CategoryAxis) {
-            groupScale.padding = this.grouped && yKeys.length > 1 ? xAxis.groupPaddingInner : 0;
+            groupScale.padding = xAxis.groupPaddingInner;
+        } else {
+            groupScale.padding = 0.1;
         }
 
         const barWidth =
