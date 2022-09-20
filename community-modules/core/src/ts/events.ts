@@ -146,7 +146,7 @@ export interface DragStartedEvent<TData = any> extends DragEvent<TData> {
 }
 
 export interface DragStoppedEvent<TData = any> extends DragEvent<TData> {
-    type: 'dragStopped'
+    type: 'dragStopped';
 }
 
 // For internal use only.
