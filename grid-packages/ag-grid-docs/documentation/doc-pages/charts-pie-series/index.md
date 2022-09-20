@@ -118,7 +118,7 @@ The config specifies the offset value from the maximum pie radius which all pie 
 
 <chart-example title='Doughnut Chart' name='doughnut-chart' type='generated'></chart-example>
 
-## Text Inside A Doughnut
+## Text Inside a Doughnut
 
 The `innerLabels` property can be used to put several text lines inside a doughnut chart.
 
@@ -132,7 +132,7 @@ series: [{
 }]
 ```
 
-<chart-example title='Text Inside A Doughnut Chart' name='text-inside-doughnut' type='generated'></chart-example>
+<chart-example title='Text Inside a Doughnut Chart' name='text-inside-doughnut' type='generated'></chart-example>
 
 ## Multiple Doughnuts
 
