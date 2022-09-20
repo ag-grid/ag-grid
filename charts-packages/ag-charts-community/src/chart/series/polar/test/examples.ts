@@ -123,7 +123,7 @@ export const DOUGHNUT_SERIES_INNER_TEXT: AgPolarChartOptions = {
             labelKey: 'os',
             angleKey: 'share',
             innerRadiusOffset: -30,
-            innerTextLines: [
+            innerLabels: [
                 { text: '35%', color: 'orange', fontSize: 50 },
                 { text: 'Coverage' },
             ],
