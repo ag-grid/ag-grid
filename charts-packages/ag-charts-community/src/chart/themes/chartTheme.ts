@@ -264,6 +264,7 @@ export class ChartTheme {
             },
             category: {
                 ...ChartTheme.getAxisDefaults(),
+                groupPaddingInner: 0.1,
                 label: {
                     ...ChartTheme.getAxisDefaults().label,
                     autoRotate: true,

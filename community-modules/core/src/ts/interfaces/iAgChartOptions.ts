@@ -620,6 +620,7 @@ export interface AgCategoryAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'category';
     paddingInner?: number;
     paddingOuter?: number;
+    groupPaddingInner?: number;
     /** Configuration for the axis ticks. */
     tick?: AgAxisNumberTickOptions;
 }
