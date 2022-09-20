@@ -5,8 +5,8 @@ const KEY_DELETE = 'Delete';
 const KEY_F2 = 'F2';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
-const KEY_ARROW_Left = 'ArrowLeft';
-const KEY_ARROW_Right = 'ArrowRight';
+const KEY_ARROW_LEFT = 'ArrowLeft';
+const KEY_ARROW_RIGHT = 'ArrowRight';
 
 export default memo(forwardRef((props: ICellEditorParams, ref) => {
     const createInitialState = () => {
@@ -64,7 +64,7 @@ export default memo(forwardRef((props: ICellEditorParams, ref) => {
     const cancelBeforeStart = props.charPress && ('1234567890'.indexOf(props.charPress) < 0);
 
     const isLeftOrRight = (event: any) => {
-        return [KEY_ARROW_Left, KEY_ARROW_Right].indexOf(event.key) > -1;
+        return [KEY_ARROW_LEFT, KEY_ARROW_RIGHT].indexOf(event.key) > -1;
     };
 
     const isCharNumeric = (charStr: string) => {
