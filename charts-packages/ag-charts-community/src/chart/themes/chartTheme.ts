@@ -481,7 +481,7 @@ export class ChartTheme {
                     yOffset: 3,
                     blur: 5,
                 },
-                innerTextLines: {
+                innerLabels: {
                     fontStyle: undefined,
                     fontWeight: undefined,
                     fontSize: 12,

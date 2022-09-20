@@ -3202,59 +3202,59 @@
       "type": { "returnType": "PixelSize", "optional": true }
     }
   },
-  "AgDoughnutInnerTextLine": {
+  "AgDoughnutInnerLabel": {
     "text": {
-      "description": "/** The text to show in the text line. */",
+      "description": "/** The text to show in the inner label. */",
       "type": { "returnType": "string", "optional": false }
     },
     "fontStyle": {
-      "description": "/** The font style to use for the text line. */",
+      "description": "/** The font style to use for the inner label. */",
       "type": { "returnType": "FontStyle", "optional": true }
     },
     "fontWeight": {
-      "description": "/** The font weight to use for the text line. */",
+      "description": "/** The font weight to use for the inner label. */",
       "type": { "returnType": "FontWeight", "optional": true }
     },
     "fontSize": {
-      "description": "/** The font size in pixels to use for the text line. */",
+      "description": "/** The font size in pixels to use for the inner label. */",
       "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
-      "description": "/** The font family to use for the text line. */",
+      "description": "/** The font family to use for the inner label. */",
       "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
-      "description": "/** The colour to use for the text line. */",
+      "description": "/** The colour to use for the inner label. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "margin": {
-      "description": "/** The margin in pixels before and after the text line. */",
+      "description": "/** The margin in pixels before and after the inner label. */",
       "type": { "returnType": "number", "optional": true }
     }
   },
-  "AgDoughnutInnerTextThemeOptions": {
+  "AgDoughnutInnerLabelThemeOptions": {
     "fontStyle": {
-      "description": "/** The font style to use for the text line. */",
+      "description": "/** The font style to use for the inner label. */",
       "type": { "returnType": "FontStyle", "optional": true }
     },
     "fontWeight": {
-      "description": "/** The font weight to use for the text line. */",
+      "description": "/** The font weight to use for the inner label. */",
       "type": { "returnType": "FontWeight", "optional": true }
     },
     "fontSize": {
-      "description": "/** The font size in pixels to use for the text line. */",
+      "description": "/** The font size in pixels to use for the inner label. */",
       "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
-      "description": "/** The font family to use for the text line. */",
+      "description": "/** The font family to use for the inner label. */",
       "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
-      "description": "/** The colour to use for the text line. */",
+      "description": "/** The colour to use for the inner label. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "margin": {
-      "description": "/** The margin in pixels before and after the text line. */",
+      "description": "/** The margin in pixels before and after the inner label. */",
       "type": { "returnType": "number", "optional": true }
     }
   },
@@ -3355,9 +3355,9 @@
       "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgPieSeriesTooltip", "optional": true }
     },
-    "innerTextLines": {
+    "innerLabels": {
       "description": "/** Text lines to display inside the doughnut chart */",
-      "type": { "returnType": "AgDoughnutInnerTextLine[]", "optional": true }
+      "type": { "returnType": "AgDoughnutInnerLabel[]", "optional": true }
     },
     "formatter": {
       "type": {

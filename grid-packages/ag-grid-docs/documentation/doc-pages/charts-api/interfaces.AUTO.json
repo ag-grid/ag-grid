@@ -490,7 +490,7 @@
   "AgPieSeriesTheme": {
     "meta": {},
     "type": {
-      "innerTextLines?": "AgDoughnutInnerTextThemeOptions",
+      "innerLabels?": "AgDoughnutInnerLabelThemeOptions",
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
       "label?": "AgPieSeriesLabelOptions<DatumType>",
@@ -547,7 +547,7 @@
       "radiusMax?": "/** Override of the automatically determined maximum radiusKey value from the data. */",
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
-      "innerTextLines?": "/** Text lines to display inside the doughnut chart */",
+      "innerLabels?": "/** Text lines to display inside the doughnut chart */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
@@ -2094,7 +2094,7 @@
       "strokeWidth?": "/** The width in pixels of the stroke for callout lines. */"
     }
   },
-  "AgDoughnutInnerTextLine": {
+  "AgDoughnutInnerLabel": {
     "meta": {},
     "type": {
       "text": "string",
@@ -2106,16 +2106,16 @@
       "margin?": "number"
     },
     "docs": {
-      "text": "/** The text to show in the text line. */",
-      "fontStyle?": "/** The font style to use for the text line. */",
-      "fontWeight?": "/** The font weight to use for the text line. */",
-      "fontSize?": "/** The font size in pixels to use for the text line. */",
-      "fontFamily?": "/** The font family to use for the text line. */",
-      "color?": "/** The colour to use for the text line. */",
-      "margin?": "/** The margin in pixels before and after the text line. */"
+      "text": "/** The text to show in the inner label. */",
+      "fontStyle?": "/** The font style to use for the inner label. */",
+      "fontWeight?": "/** The font weight to use for the inner label. */",
+      "fontSize?": "/** The font size in pixels to use for the inner label. */",
+      "fontFamily?": "/** The font family to use for the inner label. */",
+      "color?": "/** The colour to use for the inner label. */",
+      "margin?": "/** The margin in pixels before and after the inner label. */"
     }
   },
-  "AgDoughnutInnerTextThemeOptions": {
+  "AgDoughnutInnerLabelThemeOptions": {
     "meta": {},
     "type": {
       "fontStyle?": "FontStyle",
@@ -2126,12 +2126,12 @@
       "margin?": "number"
     },
     "docs": {
-      "fontStyle?": "/** The font style to use for the text line. */",
-      "fontWeight?": "/** The font weight to use for the text line. */",
-      "fontSize?": "/** The font size in pixels to use for the text line. */",
-      "fontFamily?": "/** The font family to use for the text line. */",
-      "color?": "/** The colour to use for the text line. */",
-      "margin?": "/** The margin in pixels before and after the text line. */"
+      "fontStyle?": "/** The font style to use for the inner label. */",
+      "fontWeight?": "/** The font weight to use for the inner label. */",
+      "fontSize?": "/** The font size in pixels to use for the inner label. */",
+      "fontFamily?": "/** The font family to use for the inner label. */",
+      "color?": "/** The colour to use for the inner label. */",
+      "margin?": "/** The margin in pixels before and after the inner label. */"
     }
   },
   "AgPieSeriesOptions": {
@@ -2164,7 +2164,7 @@
       "radiusMax?": "number",
       "shadow?": "AgDropShadowOptions",
       "tooltip?": "AgPieSeriesTooltip",
-      "innerTextLines?": "AgDoughnutInnerTextLine[]",
+      "innerLabels?": "AgDoughnutInnerLabel[]",
       "formatter?": "(params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat",
       "data?": "DatumType[]",
       "visible?": "boolean",
@@ -2197,7 +2197,7 @@
       "radiusMax?": "/** Override of the automatically determined maximum radiusKey value from the data. */",
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
-      "innerTextLines?": "/** Text lines to display inside the doughnut chart */",
+      "innerLabels?": "/** Text lines to display inside the doughnut chart */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
@@ -3223,8 +3223,8 @@
   },
   "PieNodeTag": {
     "meta": { "isEnum": true },
-    "type": ["Sector", "Callout", "Label", "InnerText"],
-    "docs": [null, null, null, null]
+    "type": ["Sector", "Callout", "Label"],
+    "docs": [null, null, null]
   },
   "PieSeriesFormatterParams": {
     "meta": {},

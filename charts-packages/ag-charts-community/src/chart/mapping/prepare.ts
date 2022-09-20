@@ -324,11 +324,11 @@ function prepareEnabledOptions<T extends AgChartOptions>(options: T, mergedOptio
 }
 
 function preparePieOptions(pieSeriesTheme: any, seriesOptions: any, mergedSeries: any) {
-    if (Array.isArray(seriesOptions.innerTextLines)) {
-        mergedSeries.innerTextLines = seriesOptions.innerTextLines.map((ln: any) => {
-            return jsonMerge(pieSeriesTheme.innerTextLines, ln);
+    if (Array.isArray(seriesOptions.innerLabels)) {
+        mergedSeries.innerLabels = seriesOptions.innerLabels.map((ln: any) => {
+            return jsonMerge(pieSeriesTheme.innerLabels, ln);
         });
     } else {
-        mergedSeries.innerTextLines = DELETE;
+        mergedSeries.innerLabels = DELETE;
     }
 }

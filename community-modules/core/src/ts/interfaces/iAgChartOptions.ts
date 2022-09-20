@@ -181,8 +181,8 @@ export interface AgPolarSeriesTheme {
     pie?: AgPieSeriesTheme;
 }
 
-export interface AgPieSeriesTheme extends Omit<AgPieSeriesOptions, 'innerTextLines'> {
-    innerTextLines?: AgDoughnutInnerTextThemeOptions;
+export interface AgPieSeriesTheme extends Omit<AgPieSeriesOptions, 'innerLabels'> {
+    innerLabels?: AgDoughnutInnerLabelThemeOptions;
 }
 
 export interface AgHierarchySeriesTheme {
@@ -1184,24 +1184,24 @@ export interface AgPieSeriesCalloutOptions {
     strokeWidth?: PixelSize;
 }
 
-export interface AgDoughnutInnerTextLine {
-    /** The text to show in the text line. */
+export interface AgDoughnutInnerLabel {
+    /** The text to show in the inner label. */
     text: string;
-    /** The font style to use for the text line. */
+    /** The font style to use for the inner label. */
     fontStyle?: FontStyle;
-    /** The font weight to use for the text line. */
+    /** The font weight to use for the inner label. */
     fontWeight?: FontWeight;
-    /** The font size in pixels to use for the text line. */
+    /** The font size in pixels to use for the inner label. */
     fontSize?: FontSize;
-    /** The font family to use for the text line. */
+    /** The font family to use for the inner label. */
     fontFamily?: FontFamily;
-    /** The colour to use for the text line. */
+    /** The colour to use for the inner label. */
     color?: CssColor;
-    /** The margin in pixels before and after the text line. */
+    /** The margin in pixels before and after the inner label. */
     margin?: number;
 }
 
-export interface AgDoughnutInnerTextThemeOptions extends Omit<AgDoughnutInnerTextLine, 'text'> {}
+export interface AgDoughnutInnerLabelThemeOptions extends Omit<AgDoughnutInnerLabel, 'text'> {}
 
 /** Configuration for pie/doughnut series. */
 export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
@@ -1253,7 +1253,7 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     /** Series-specific tooltip configuration. */
     tooltip?: AgPieSeriesTooltip;
     /** Text lines to display inside the doughnut chart */
-    innerTextLines?: AgDoughnutInnerTextLine[];
+    innerLabels?: AgDoughnutInnerLabel[];
     formatter?: (params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat;
 }
 

@@ -71,7 +71,6 @@ enum PieNodeTag {
     Sector,
     Callout,
     Label,
-    InnerText,
 }
 
 export interface PieSeriesFormatterParams {
@@ -136,7 +135,7 @@ export class PieTitle extends Caption {
     showInLegend = false;
 }
 
-export class DoughnutInnerTextLine extends Label {
+export class DoughnutInnerLabel extends Label {
     text = '';
     margin = 2;
 }
@@ -153,7 +152,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.highlightGroup
     ).selectAll<Group>();
     private labelSelection: Selection<Group, Group, PieNodeDatum, any>;
-    private innerTextSelection: Selection<Group, Group, DoughnutInnerTextLine, any>;
+    private innerLabelsSelection: Selection<Text, Group, DoughnutInnerLabel, any>;
 
     /**
      * The processed data that gets visualized.
@@ -216,7 +215,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     @Validate(STRING)
     angleName = '';
 
-    readonly innerTextLines: DoughnutInnerTextLine[] = [];
+    readonly innerLabels: DoughnutInnerLabel[] = [];
 
     /**
      * The key of the numeric field to use to determine the radii of pie slices.
@@ -285,11 +284,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         super({ useLabelLayer: true });
 
         const pieLabels = new Group();
-        const innerTexts = new Group();
+        const innerLabels = new Group();
         this.labelGroup!.append(pieLabels);
-        this.labelGroup!.append(innerTexts);
+        this.labelGroup!.append(innerLabels);
         this.labelSelection = Selection.select(pieLabels).selectAll<Group>();
-        this.innerTextSelection = Selection.select(innerTexts).selectAll<Group>();
+        this.innerLabelsSelection = Selection.select(innerLabels).selectAll<Text>();
     }
 
     visibleChanged() {
@@ -489,7 +488,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private updateGroupSelection() {
-        const { groupSelection, highlightSelection, labelSelection, innerTextSelection } = this;
+        const { groupSelection, highlightSelection, labelSelection, innerLabelsSelection } = this;
 
         const update = (selection: typeof groupSelection) => {
             const updateGroups = selection.setData(this.groupSelectionData);
@@ -518,15 +517,14 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
         this.labelSelection = updateLabels.merge(enterLabels);
 
-        const updateInnerText = innerTextSelection.setData(this.innerTextLines);
-        updateInnerText.exit.remove();
+        const updateInnerLabels = innerLabelsSelection.setData(this.innerLabels);
+        updateInnerLabels.exit.remove();
 
-        const enterFancy = updateInnerText.enter.append(Group);
-        enterFancy.append(Text).each((node) => {
-            node.tag = PieNodeTag.InnerText;
+        const enterFancy = updateInnerLabels.enter.append(Text);
+        enterFancy.each((node) => {
             node.pointerEvents = PointerEvents.None;
         });
-        this.innerTextSelection = updateInnerText.merge(enterFancy);
+        this.innerLabelsSelection = updateInnerLabels.merge(enterFancy);
     }
 
     private updateNodes() {
@@ -681,13 +679,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             });
         }
 
-        this.updateInnerTextNodes();
+        this.updateInnerLabelNodes();
     }
 
-    private updateInnerTextNodes() {
+    private updateInnerLabelNodes() {
         const textBBoxes: BBox[] = [];
         const margins: number[] = [];
-        this.innerTextSelection.selectByTag<Text>(PieNodeTag.InnerText).each((text, datum) => {
+        this.innerLabelsSelection.each((text, datum) => {
             const { fontStyle, fontWeight, fontSize, fontFamily, color } = datum;
             text.fontStyle = fontStyle;
             text.fontWeight = fontWeight;
@@ -702,17 +700,19 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             textBBoxes.push(text.computeBBox());
             margins.push(datum.margin);
         });
+        const getMarginTop = (index: number) => (index === 0 ? 0 : margins[index]);
+        const getMarginBottom = (index: number) => (index === margins.length - 1 ? 0 : margins[index]);
         const totalHeight = textBBoxes.reduce((sum, bbox, i) => {
-            return sum + bbox.height + margins[i];
+            return sum + bbox.height + getMarginTop(i) + getMarginBottom(i);
         }, 0);
         const textBottoms: number[] = [];
         for (let i = 0, prev = -totalHeight / 2; i < textBBoxes.length; i++) {
             const bbox = textBBoxes[i];
-            const bottom = bbox.height + prev + margins[i];
+            const bottom = bbox.height + prev + getMarginTop(i);
             textBottoms.push(bottom);
-            prev = bottom + margins[i];
+            prev = bottom + getMarginBottom(i);
         }
-        this.innerTextSelection.selectByTag<Text>(PieNodeTag.InnerText).each((text, _datum, index) => {
+        this.innerLabelsSelection.each((text, _datum, index) => {
             text.y = textBottoms[index];
         });
     }

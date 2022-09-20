@@ -99,7 +99,7 @@ export class DarkTheme extends ChartTheme {
                         title: {
                             color: fontColor,
                         },
-                        innerTextLines: {
+                        innerLabels: {
                             color: fontColor,
                         },
                     },

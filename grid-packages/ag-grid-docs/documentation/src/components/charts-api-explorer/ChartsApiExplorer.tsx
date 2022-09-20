@@ -84,6 +84,11 @@ const createOptionsJson = (chartType: string, options: any) => {
                 labelKey: 'month',
                 ...options.series,
             }];
+            const firstSeries = json.series?.[0];
+            if (firstSeries?.innerLabels) {
+                // special handling for inner labels which requires an array
+                firstSeries.innerLabels = [firstSeries.innerLabels];
+            }
             break;
         case 'histogram':
             json.series = [{

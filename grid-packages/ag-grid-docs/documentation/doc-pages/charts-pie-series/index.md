@@ -120,12 +120,12 @@ The config specifies the offset value from the maximum pie radius which all pie 
 
 ## Text Inside A Doughnut
 
-The `innerTextLines` property can be used to put several text lines inside a doughnut chart.
+The `innerLabels` property can be used to put several text lines inside a doughnut chart.
 
 ```js
 series: [{
     ...
-    innerTextLines: [
+    innerLabels: [
         { text: '85%', fontSize: 48, color: 'blue' },
         { text: 'Coverage', margin: 4 }
     ]

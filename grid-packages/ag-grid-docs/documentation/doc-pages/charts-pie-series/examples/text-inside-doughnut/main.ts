@@ -18,7 +18,7 @@ const options: AgChartOptions = {
       fills: ['#358ccb', '#d0d4d6'],
       strokeWidth: 0,
       innerRadiusOffset: -20,
-      innerTextLines: [
+      innerLabels: [
         { 
           text: percentage(data[0].count),
           color: '#358ccb',

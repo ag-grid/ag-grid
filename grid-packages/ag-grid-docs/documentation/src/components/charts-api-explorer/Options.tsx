@@ -262,7 +262,7 @@ export const Options = ({ jsonData, chartType, axisType, updateOption }) => {
         );
     };
     const isRequiresWholeObject = (prop: string) => ['highlightStyle', 'item', 'series'].includes(prop);
-    const isArraySkipped = (prop: string) => ['series', 'axes', 'gridStyle', 'crossLines'].includes(prop);
+    const isArraySkipped = (prop: string) => ['series', 'axes', 'gridStyle', 'crossLines', 'innerLabels'].includes(prop);
     const isEditable = (prop: string) => !['data'].includes(prop);
 
     const isSearching = getTrimmedSearchText() !== '';

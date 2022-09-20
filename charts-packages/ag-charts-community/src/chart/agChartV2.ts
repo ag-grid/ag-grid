@@ -22,7 +22,7 @@ import { BarSeries } from './series/cartesian/barSeries';
 import { HistogramSeries } from './series/cartesian/histogramSeries';
 import { LineSeries } from './series/cartesian/lineSeries';
 import { ScatterSeries } from './series/cartesian/scatterSeries';
-import { PieSeries, PieTitle, DoughnutInnerTextLine } from './series/polar/pieSeries';
+import { PieSeries, PieTitle, DoughnutInnerLabel } from './series/polar/pieSeries';
 import { TreemapSeries } from './series/hierarchy/treemapSeries';
 import { ChartAxis } from './chartAxis';
 import { LogAxis } from './axis/logAxis';
@@ -414,7 +414,7 @@ const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
         subtitle: Caption,
         shadow: DropShadow,
         'axes[].crossLines[]': CrossLine,
-        'series[].innerTextLines[]': DoughnutInnerTextLine,
+        'series[].innerLabels[]': DoughnutInnerLabel,
     },
     allowedTypes: {
         'series[].marker.shape': ['primitive', 'function'],
