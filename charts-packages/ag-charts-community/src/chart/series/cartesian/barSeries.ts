@@ -581,9 +581,14 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         if (xAxis instanceof CategoryAxis) {
             groupScale.padding = xAxis.groupPaddingInner;
-            groupScale.round = false;
         } else {
             groupScale.padding = 0.1;
+        }
+
+        // To get exactly `0` padding we need to turn off rounding
+        if (groupScale.padding === 0) {
+            groupScale.round = false;
+        } else {
             groupScale.round = true;
         }
 
