@@ -6,6 +6,7 @@ import { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
 import { clamper } from '../../../scale/continuousScale';
 import { Sector } from '../../../scene/shape/sector';
+import { BBox } from '../../../scene/bbox';
 import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle, SeriesTooltip } from './../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
@@ -134,6 +135,11 @@ export class PieTitle extends Caption {
     showInLegend = false;
 }
 
+export class DoughnutInnerLabel extends Label {
+    text = '';
+    margin = 2;
+}
+
 export class PieSeries extends PolarSeries<PieNodeDatum> {
     static className = 'PieSeries';
     static type = 'pie' as const;
@@ -146,6 +152,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.highlightGroup
     ).selectAll<Group>();
     private labelSelection: Selection<Group, Group, PieNodeDatum, any>;
+    private innerLabelsSelection: Selection<Text, Group, DoughnutInnerLabel, any>;
 
     /**
      * The processed data that gets visualized.
@@ -207,6 +214,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     @Validate(STRING)
     angleName = '';
+
+    readonly innerLabels: DoughnutInnerLabel[] = [];
 
     /**
      * The key of the numeric field to use to determine the radii of pie slices.
@@ -274,7 +283,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     constructor() {
         super({ useLabelLayer: true });
 
-        this.labelSelection = Selection.select(this.labelGroup!).selectAll<Group>();
+        const pieLabels = new Group();
+        const innerLabels = new Group();
+        this.labelGroup!.append(pieLabels);
+        this.labelGroup!.append(innerLabels);
+        this.labelSelection = Selection.select(pieLabels).selectAll<Group>();
+        this.innerLabelsSelection = Selection.select(innerLabels).selectAll<Text>();
     }
 
     visibleChanged() {
@@ -474,7 +488,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private updateGroupSelection() {
-        const { groupSelection, highlightSelection, labelSelection } = this;
+        const { groupSelection, highlightSelection, labelSelection, innerLabelsSelection } = this;
 
         const update = (selection: typeof groupSelection) => {
             const updateGroups = selection.setData(this.groupSelectionData);
@@ -502,6 +516,15 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             node.pointerEvents = PointerEvents.None;
         });
         this.labelSelection = updateLabels.merge(enterLabels);
+
+        const updateInnerLabels = innerLabelsSelection.setData(this.innerLabels);
+        updateInnerLabels.exit.remove();
+
+        const enterFancy = updateInnerLabels.enter.append(Text);
+        enterFancy.each((node) => {
+            node.pointerEvents = PointerEvents.None;
+        });
+        this.innerLabelsSelection = updateInnerLabels.merge(enterFancy);
     }
 
     private updateNodes() {
@@ -655,6 +678,43 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 }
             });
         }
+
+        this.updateInnerLabelNodes();
+    }
+
+    private updateInnerLabelNodes() {
+        const textBBoxes: BBox[] = [];
+        const margins: number[] = [];
+        this.innerLabelsSelection.each((text, datum) => {
+            const { fontStyle, fontWeight, fontSize, fontFamily, color } = datum;
+            text.fontStyle = fontStyle;
+            text.fontWeight = fontWeight;
+            text.fontSize = fontSize;
+            text.fontFamily = fontFamily;
+            text.text = datum.text;
+            text.x = 0;
+            text.y = 0;
+            text.fill = color;
+            text.textAlign = 'center';
+            text.textBaseline = 'alphabetic';
+            textBBoxes.push(text.computeBBox());
+            margins.push(datum.margin);
+        });
+        const getMarginTop = (index: number) => (index === 0 ? 0 : margins[index]);
+        const getMarginBottom = (index: number) => (index === margins.length - 1 ? 0 : margins[index]);
+        const totalHeight = textBBoxes.reduce((sum, bbox, i) => {
+            return sum + bbox.height + getMarginTop(i) + getMarginBottom(i);
+        }, 0);
+        const textBottoms: number[] = [];
+        for (let i = 0, prev = -totalHeight / 2; i < textBBoxes.length; i++) {
+            const bbox = textBBoxes[i];
+            const bottom = bbox.height + prev + getMarginTop(i);
+            textBottoms.push(bottom);
+            prev = bottom + getMarginBottom(i);
+        }
+        this.innerLabelsSelection.each((text, _datum, index) => {
+            text.y = textBottoms[index];
+        });
     }
 
     fireNodeClickEvent(event: MouseEvent, datum: PieNodeDatum): void {

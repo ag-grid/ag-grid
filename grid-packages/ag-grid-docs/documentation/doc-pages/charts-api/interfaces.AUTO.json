@@ -486,9 +486,75 @@
       "histogram?": "AgHistogramSeriesOptions"
     }
   },
-  "AgPolarSeriesTheme": {
+  "AgPolarSeriesTheme": { "meta": {}, "type": { "pie?": "AgPieSeriesTheme" } },
+  "AgPieSeriesTheme": {
     "meta": {},
-    "type": { "pie?": "AgPieSeriesOptions" }
+    "type": {
+      "innerLabels?": "AgDoughnutInnerLabelThemeOptions",
+      "type?": "'pie'",
+      "title?": "AgPieTitleOptions",
+      "label?": "AgPieSeriesLabelOptions<DatumType>",
+      "callout?": "AgPieSeriesCalloutOptions",
+      "angleKey?": "string",
+      "angleName?": "string",
+      "radiusKey?": "string",
+      "radiusName?": "string",
+      "labelKey?": "string",
+      "labelName?": "string",
+      "fills?": "CssColor[]",
+      "strokes?": "CssColor[]",
+      "fillOpacity?": "Opacity",
+      "strokeOpacity?": "Opacity",
+      "strokeWidth?": "PixelSize",
+      "lineDash?": "PixelSize[]",
+      "lineDashOffset?": "PixelSize",
+      "rotation?": "number",
+      "outerRadiusOffset?": "PixelSize",
+      "innerRadiusOffset?": "PixelSize",
+      "radiusMin?": "number",
+      "radiusMax?": "number",
+      "shadow?": "AgDropShadowOptions",
+      "tooltip?": "AgPieSeriesTooltip",
+      "formatter?": "(params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat",
+      "data?": "DatumType[]",
+      "visible?": "boolean",
+      "showInLegend?": "boolean",
+      "cursor?": "string",
+      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
+      "highlightStyle?": "AgSeriesHighlightStyle"
+    },
+    "docs": {
+      "title?": "/** Configuration for the series title. */",
+      "label?": "/** Configuration for the labels used for the segments. */",
+      "callout?": "/** Configuration for the callouts used with the labels for the segments. */",
+      "angleKey?": "/** The key to use to retrieve angle values from the data. */",
+      "angleName?": "/** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "radiusKey?": "/** The key to use to retrieve radius values from the data. */",
+      "radiusName?": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "labelKey?": "/** The key to use to retrieve label values from the data. */",
+      "labelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "fills?": "/** The colours to cycle through for the fills of the segments. */",
+      "strokes?": "/** The colours to cycle through for the strokes of the segments. */",
+      "fillOpacity?": "/** The opacity of the fill for the segments. */",
+      "strokeOpacity?": "/** The opacity of the stroke for the segments. */",
+      "strokeWidth?": "/** The width in pixels of the stroke for the segments. */",
+      "lineDash?": "/** Defines how the pie sector strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */",
+      "lineDashOffset?": "/** The initial offset of the dashed line in pixels. */",
+      "rotation?": "/** The rotation of the pie series in degrees. */",
+      "outerRadiusOffset?": "/** The offset in pixels of the outer radius of the series. Used to construct doughnut charts. */",
+      "innerRadiusOffset?": "/** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not given, or a value of zero is given, a pie chart will be rendered. */",
+      "radiusMin?": "/** Override of the automatically determined minimum radiusKey value from the data. */",
+      "radiusMax?": "/** Override of the automatically determined maximum radiusKey value from the data. */",
+      "shadow?": "/** Configuration for the shadow used behind the chart series. */",
+      "tooltip?": "/** Series-specific tooltip configuration. */",
+      "innerLabels?": "/** Text lines to display inside the doughnut chart */",
+      "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "visible?": "/** Whether or not to display the series. */",
+      "showInLegend?": "/** Whether or not to include the series in the legend. */",
+      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
+    }
   },
   "AgHierarchySeriesTheme": {
     "meta": {},
@@ -2028,6 +2094,46 @@
       "strokeWidth?": "/** The width in pixels of the stroke for callout lines. */"
     }
   },
+  "AgDoughnutInnerLabel": {
+    "meta": {},
+    "type": {
+      "text": "string",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor",
+      "margin?": "number"
+    },
+    "docs": {
+      "text": "/** The text to show in the inner label. */",
+      "fontStyle?": "/** The font style to use for the inner label. */",
+      "fontWeight?": "/** The font weight to use for the inner label. */",
+      "fontSize?": "/** The font size in pixels to use for the inner label. */",
+      "fontFamily?": "/** The font family to use for the inner label. */",
+      "color?": "/** The colour to use for the inner label. */",
+      "margin?": "/** The margin in pixels before and after the inner label. */"
+    }
+  },
+  "AgDoughnutInnerLabelThemeOptions": {
+    "meta": {},
+    "type": {
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor",
+      "margin?": "number"
+    },
+    "docs": {
+      "fontStyle?": "/** The font style to use for the inner label. */",
+      "fontWeight?": "/** The font weight to use for the inner label. */",
+      "fontSize?": "/** The font size in pixels to use for the inner label. */",
+      "fontFamily?": "/** The font family to use for the inner label. */",
+      "color?": "/** The colour to use for the inner label. */",
+      "margin?": "/** The margin in pixels before and after the inner label. */"
+    }
+  },
   "AgPieSeriesOptions": {
     "meta": {
       "typeParams": ["DatumType = any"],
@@ -2058,6 +2164,7 @@
       "radiusMax?": "number",
       "shadow?": "AgDropShadowOptions",
       "tooltip?": "AgPieSeriesTooltip",
+      "innerLabels?": "AgDoughnutInnerLabel[]",
       "formatter?": "(params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat",
       "data?": "DatumType[]",
       "visible?": "boolean",
@@ -2090,6 +2197,7 @@
       "radiusMax?": "/** Override of the automatically determined maximum radiusKey value from the data. */",
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
+      "innerLabels?": "/** Text lines to display inside the doughnut chart */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
