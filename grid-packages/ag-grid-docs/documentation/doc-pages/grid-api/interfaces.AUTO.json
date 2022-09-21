@@ -7167,6 +7167,9 @@
       "thickness?": "PixelSize"
     },
     "docs": {
+      "paddingInner?": "/** The size of the gap between the categories as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.2` */",
+      "paddingOuter?": "/** The padding on the outside i.e. left and right of the first and last category. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.3` */",
+      "groupPaddingInner?": "/** This property is for grouped column/bar series plotted on a category axis. It is a proportion between 0 and 1 which determines the size of the gap between the bars or columns within a single group along the axis.\n * Default: `0.2` */",
       "tick?": "/** Configuration for the axis ticks. */",
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
@@ -7919,6 +7922,9 @@
       "thickness?": "PixelSize"
     },
     "docs": {
+      "paddingInner?": "/** The size of the gap between the categories as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.2` */",
+      "paddingOuter?": "/** The padding on the outside i.e. left and right of the first and last category. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.3` */",
+      "groupPaddingInner?": "/** This property is for grouped column/bar series plotted on a category axis. It is a proportion between 0 and 1 which determines the size of the gap between the bars or columns within a single group along the axis.\n * Default: `0.2` */",
       "tick?": "/** Configuration for the axis ticks. */",
       "position?": "/** The position on the chart where the axis should be rendered. */",
       "title?": "/** Configuration for the title shown next to the axis. */",

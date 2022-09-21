@@ -618,8 +618,17 @@ export interface AgLogAxisOptions extends AgBaseCartesianAxisOptions {
 
 export interface AgCategoryAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'category';
+    /** The size of the gap between the categories as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.
+     * Default: `0.2`
+     */
     paddingInner?: number;
+    /** The padding on the outside i.e. left and right of the first and last category. In association with `paddingInner`, this value can be between 0 and 1.
+     * Default: `0.3`
+     */
     paddingOuter?: number;
+    /** This property is for grouped column/bar series plotted on a category axis. It is a proportion between 0 and 1 which determines the size of the gap between the bars or columns within a single group along the axis.
+     * Default: `0.2`
+     */
     groupPaddingInner?: number;
     /** Configuration for the axis ticks. */
     tick?: AgAxisNumberTickOptions;
