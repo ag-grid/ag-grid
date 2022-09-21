@@ -1,6 +1,7 @@
 import { Group } from '../../../scene/group';
 import { Line } from '../../../scene/shape/line';
 import { Text } from '../../../scene/shape/text';
+import { Circle } from '../../marker/circle';
 import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
@@ -140,6 +141,10 @@ export class DoughnutInnerLabel extends Label {
     margin = 2;
 }
 
+export class DoughnutInnerCircle extends Circle {
+    fill = 'transparent';
+}
+
 export class PieSeries extends PolarSeries<PieNodeDatum> {
     static className = 'PieSeries';
     static type = 'pie' as const;
@@ -216,6 +221,26 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     angleName = '';
 
     readonly innerLabels: DoughnutInnerLabel[] = [];
+
+    private _innerCircle?: DoughnutInnerCircle;
+    get innerCircle(): DoughnutInnerCircle | undefined {
+        return this._innerCircle;
+    }
+    set innerCircle(value: DoughnutInnerCircle | undefined) {
+        const oldCircle = this._innerCircle;
+
+        if (oldCircle !== value) {
+            if (oldCircle) {
+                this.backgroundGroup.removeChild(oldCircle);
+            }
+
+            if (value) {
+                this.backgroundGroup.appendChild(value);
+            }
+
+            this._innerCircle = value;
+        }
+    }
 
     /**
      * The key of the numeric field to use to determine the radii of pie slices.
@@ -540,6 +565,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         this.seriesGroup.opacity = this.getOpacity();
 
+        this.updateInnerCircle();
+
         const {
             fills,
             strokes,
@@ -680,6 +707,19 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
 
         this.updateInnerLabelNodes();
+    }
+
+    private updateInnerCircle() {
+        if (!this.innerCircle) {
+            return;
+        }
+        if (this.innerRadiusOffset === 0) {
+            this.innerCircle.size = 0;
+        } else {
+            const offset = Math.min(this.outerRadiusOffset, this.innerRadiusOffset);
+            const antiAliasingPadding = 1;
+            this.innerCircle.size = (this.radius + offset) * 2 + antiAliasingPadding;
+        }
     }
 
     private updateInnerLabelNodes() {

@@ -2103,7 +2103,7 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "margin?": "number"
+      "margin?": "PixelSize"
     },
     "docs": {
       "text": "/** The text to show in the inner label. */",
@@ -2123,7 +2123,7 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "margin?": "number"
+      "margin?": "PixelSize"
     },
     "docs": {
       "fontStyle?": "/** The font style to use for the inner label. */",
@@ -2132,6 +2132,14 @@
       "fontFamily?": "/** The font family to use for the inner label. */",
       "color?": "/** The colour to use for the inner label. */",
       "margin?": "/** The margin in pixels before and after the inner label. */"
+    }
+  },
+  "AgDoughnutInnerCircle": {
+    "meta": {},
+    "type": { "fill": "CssColor", "fillOpacity?": "Opacity" },
+    "docs": {
+      "fill": "/** The colour of the fill for the inner circle. */",
+      "fillOpacity?": "/** The opacity of the fill for the segments. */"
     }
   },
   "AgPieSeriesOptions": {

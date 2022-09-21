@@ -3229,7 +3229,7 @@
     },
     "margin": {
       "description": "/** The margin in pixels before and after the inner label. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgDoughnutInnerLabelThemeOptions": {
@@ -3255,7 +3255,17 @@
     },
     "margin": {
       "description": "/** The margin in pixels before and after the inner label. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
+    }
+  },
+  "AgDoughnutInnerCircle": {
+    "fill": {
+      "description": "/** The colour of the fill for the inner circle. */",
+      "type": { "returnType": "CssColor", "optional": false }
+    },
+    "fillOpacity": {
+      "description": "/** The opacity of the fill for the segments. */",
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgPieSeriesOptions": {

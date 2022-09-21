@@ -1198,10 +1198,17 @@ export interface AgDoughnutInnerLabel {
     /** The colour to use for the inner label. */
     color?: CssColor;
     /** The margin in pixels before and after the inner label. */
-    margin?: number;
+    margin?: PixelSize;
 }
 
 export interface AgDoughnutInnerLabelThemeOptions extends Omit<AgDoughnutInnerLabel, 'text'> {}
+
+export interface AgDoughnutInnerCircle {
+    /** The colour of the fill for the inner circle. */
+    fill: CssColor;
+    /** The opacity of the fill for the segments. */
+    fillOpacity?: Opacity;
+}
 
 /** Configuration for pie/doughnut series. */
 export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
