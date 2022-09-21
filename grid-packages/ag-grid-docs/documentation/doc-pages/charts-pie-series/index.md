@@ -134,6 +134,17 @@ series: [{
 
 <chart-example title='Text Inside a Doughnut Chart' name='text-inside-doughnut' type='generated'></chart-example>
 
+The colour of the doughnut's centre can also be changed:
+
+```js
+series: [{
+    ...
+    innerCircle: {
+        fill: 'aliceblue',
+    }
+}]
+```
+
 ## Multiple Doughnuts
 
 As well as the `innerRadiusOffset` we can also configure the `outerRadiusOffset`. This gives us the ability to render multiple pie series in a single chart without overlapping.
