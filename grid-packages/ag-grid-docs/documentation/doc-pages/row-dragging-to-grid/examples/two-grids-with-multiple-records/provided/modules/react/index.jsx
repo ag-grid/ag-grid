@@ -187,7 +187,7 @@ class GridExample extends Component {
     getTopToolBar = () => (
         <div className="example-toolbar panel panel-default">
             <div className="panel-body">
-                <div style={{ display: 'inline-flex' }} onChange={this.onRadioChange} >
+                <div onChange={this.onRadioChange} >
                     <input type="radio" id="move" name="radio" value="0" checked={this.state.radioChecked === 0} />
                     <label for="move">Remove Source Rows</label>
                     <input type="radio" id="deselect" name="radio" value="1" checked={this.state.radioChecked === 1} />
