@@ -30,6 +30,7 @@ import {
     STRING,
     COLOR_STRING_ARRAY,
     Validate,
+    COLOR_STRING,
 } from '../../../util/validation';
 
 export interface PieSeriesNodeClickEvent extends TypedEvent {
@@ -137,12 +138,17 @@ export class PieTitle extends Caption {
 }
 
 export class DoughnutInnerLabel extends Label {
+    @Validate(STRING)
     text = '';
+    @Validate(NUMBER())
     margin = 2;
 }
 
-export class DoughnutInnerCircle extends Circle {
+export class DoughnutInnerCircle {
+    @Validate(COLOR_STRING)
     fill = 'transparent';
+    @Validate(OPT_NUMBER(0, 1))
+    fillOpacity? = 1;
 }
 
 export class PieSeries extends PolarSeries<PieNodeDatum> {
@@ -222,23 +228,30 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     readonly innerLabels: DoughnutInnerLabel[] = [];
 
-    private _innerCircle?: DoughnutInnerCircle;
+    private _innerCircleConfig?: DoughnutInnerCircle;
+    private _innerCircleNode?: Circle;
     get innerCircle(): DoughnutInnerCircle | undefined {
-        return this._innerCircle;
+        return this._innerCircleConfig;
     }
     set innerCircle(value: DoughnutInnerCircle | undefined) {
-        const oldCircle = this._innerCircle;
+        const oldCircleCfg = this._innerCircleConfig;
 
-        if (oldCircle !== value) {
-            if (oldCircle) {
-                this.backgroundGroup.removeChild(oldCircle);
+        if (oldCircleCfg !== value) {
+            const oldNode = this._innerCircleNode;
+            let circle: Circle | undefined;
+            if (oldNode) {
+                this.backgroundGroup.removeChild(oldNode);
             }
 
             if (value) {
-                this.backgroundGroup.appendChild(value);
+                circle = new Circle();
+                circle.fill = value.fill;
+                circle.fillOpacity = value.fillOpacity ?? 1;
+                this.backgroundGroup.appendChild(circle);
             }
 
-            this._innerCircle = value;
+            this._innerCircleConfig = value;
+            this._innerCircleNode = circle;
         }
     }
 
@@ -710,15 +723,16 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private updateInnerCircle() {
-        if (!this.innerCircle) {
+        const circle = this._innerCircleNode;
+        if (!circle) {
             return;
         }
         if (this.innerRadiusOffset === 0) {
-            this.innerCircle.size = 0;
+            circle.size = 0;
         } else {
             const offset = Math.min(this.outerRadiusOffset, this.innerRadiusOffset);
             const antiAliasingPadding = 1;
-            this.innerCircle.size = (this.radius + offset) * 2 + antiAliasingPadding;
+            circle.size = (this.radius + offset) * 2 + antiAliasingPadding;
         }
     }
 

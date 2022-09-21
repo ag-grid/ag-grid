@@ -2,6 +2,7 @@
  * Constants to declare the expected nominal zIndex for all types of layer in chart rendering.
  */
 export enum Layers {
+    SERIES_BACKGROUND_ZINDEX = -10,
     AXIS_GRIDLINES_ZINDEX = 0,
     SERIES_CROSSLINE_RANGE_ZINDEX = 10,
     AXIS_ZINDEX = 20,

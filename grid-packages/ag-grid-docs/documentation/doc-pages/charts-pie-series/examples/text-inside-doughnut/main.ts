@@ -13,13 +13,13 @@ const options: AgChartOptions = {
         {
             type: 'pie',
             angleKey: 'count',
-            fills: ['#358ccb', '#d0d4d6'],
+            fills: ['#35ab7c', '#dff3ea'],
             strokeWidth: 0,
             innerRadiusOffset: -20,
             innerLabels: [
                 {
                     text: percentage(data[0].count),
-                    color: '#358ccb',
+                    color: '#35ab7c',
                     fontSize: 72,
                 },
                 {
@@ -28,6 +28,9 @@ const options: AgChartOptions = {
                     margin: 4,
                 },
             ],
+            innerCircle: {
+                fill: '#dff3ea',
+            }
         },
     ],
 }

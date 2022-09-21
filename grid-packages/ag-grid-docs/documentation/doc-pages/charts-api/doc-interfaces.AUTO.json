@@ -900,7 +900,7 @@
       "type": { "returnType": "AgPieSeriesTooltip", "optional": true }
     },
     "innerCircle": {
-      "description": "/** The centre of the doughnut chart */",
+      "description": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */",
       "type": { "returnType": "AgDoughnutInnerCircle", "optional": true }
     },
     "formatter": {
@@ -3370,11 +3370,11 @@
       "type": { "returnType": "AgPieSeriesTooltip", "optional": true }
     },
     "innerLabels": {
-      "description": "/** Text lines to display inside the doughnut chart */",
+      "description": "/** Configuration for the text lines to display inside the series, typically used when rendering a doughnut chart */",
       "type": { "returnType": "AgDoughnutInnerLabel[]", "optional": true }
     },
     "innerCircle": {
-      "description": "/** The centre of the doughnut chart */",
+      "description": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */",
       "type": { "returnType": "AgDoughnutInnerCircle", "optional": true }
     },
     "formatter": {

@@ -121,29 +121,22 @@ The config specifies the offset value from the maximum pie radius which all pie 
 ## Text Inside a Doughnut
 
 The `innerLabels` property can be used to put several text lines inside a doughnut chart.
+The colour of the doughnut's centre can be changed by using `innerCircle`.
 
 ```js
 series: [{
     ...
     innerLabels: [
-        { text: '85%', fontSize: 48, color: 'blue' },
+        { text: '85%', fontSize: 48, color: 'green' },
         { text: 'Coverage', margin: 4 }
-    ]
+    ],
+    innerCircle: {
+        fill: 'lightgreen',
+    }
 }]
 ```
 
 <chart-example title='Text Inside a Doughnut Chart' name='text-inside-doughnut' type='generated'></chart-example>
-
-The colour of the doughnut's centre can also be changed:
-
-```js
-series: [{
-    ...
-    innerCircle: {
-        fill: 'aliceblue',
-    }
-}]
-```
 
 ## Multiple Doughnuts
 

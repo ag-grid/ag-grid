@@ -221,7 +221,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             new Group({
                 name: `${this.id}-background`,
                 layer: useSeriesGroupLayer,
-                zIndex: Layers.AXIS_GRIDLINES_ZINDEX,
+                zIndex: Layers.SERIES_BACKGROUND_ZINDEX,
             })
         );
 

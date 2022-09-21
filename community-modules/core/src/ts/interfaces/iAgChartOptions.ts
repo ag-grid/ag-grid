@@ -1259,9 +1259,9 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     shadow?: AgDropShadowOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgPieSeriesTooltip;
-    /** Text lines to display inside the doughnut chart */
+    /** Configuration for the text lines to display inside the series, typically used when rendering a doughnut chart */
     innerLabels?: AgDoughnutInnerLabel[];
-    /** The centre of the doughnut chart */
+    /** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */
     innerCircle?: AgDoughnutInnerCircle;
     formatter?: (params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat;
 }
