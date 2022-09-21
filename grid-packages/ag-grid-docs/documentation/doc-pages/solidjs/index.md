@@ -7,13 +7,13 @@ As of AG Grid v28.2.0, AG Grid comes with full support for [SolidJS](https://www
 
 AG Grid Solid shares the same 'business logic layer' as the other AG Grid versions (React, Angular, Vue, or just JavaScript). This means the features of AG Grid Solid are identical to the features in AG Grid's other framework flavours. However because the rendering is done 100% in Solid, the grid works as a native Solid Component.
 
-AG Grid Solid is NOT a JavaScript component with a thin Solid wrapper. AG Grid is the Real Deal when it comes to Sold!
+AG Grid Solid is NOT a JavaScript component with a thin Solid wrapper. AG Grid is the Real Deal when it comes to a Data Grid Implementation for SolidJS.
 
 ## Show Me
 
 Below is a simple example using AG Grid with SolidJS. Take a look at the code and note the use of the ```AgGridSolid``` component.
 
-<iframe style="width:100%; height: 500px" src="https://stackblitz.com/edit/solidjs-template-7c8vtv?embed=1&file=src/App.tsx&view=preview"></iframe>
+<iframe style="width:100%; height: 500px" src="https://stackblitz.com/edit/solidjs-template-7c8vtv?embed=1&file=src/App.tsx"></iframe>
 
 This page does not introduce the basics of AG Grid, it is assumed you are already familiar with it. This is because SolidJS is an emerging technology and we assume if you are developing with SolidJS then you are a confident and knowledged developer. If you are not familiar with AG Grid, then it is recommended you start with [Getting Started with AG Grid and React](/getting-started/) and then refer back to here.
 
@@ -47,7 +47,7 @@ Once the Solid grid component is imported, it can then be inserted into the Soli
 />
 ```
 
-As with the other frameworks, it is best to place the grid component inside another DOM element that has a set size. The grid will then fill the size of the parent element. You also need to import CSS files for a) the core css which is mandatory and b) a grid theme which is optional. The theme also needs to be specified as a CSS class in a parent element to the grid.
+It's best to place the grid component inside another DOM element that has a set size. The grid will then fill the size of the parent element. You also need to import CSS files for a) the core CSS which is mandatory and b) a grid theme which is optional. The theme also needs to be specified as a CSS class in a parent element to the grid.
 
 
 ```jsx
@@ -173,12 +173,7 @@ See [Cell Renderers](/component-cell-renderer/) for full details on creating Rea
 
 ## Using Cell Editors
 
-Below is an example showing different types of Solid Cell Editors. Note the following:
-
-* Edit any cell by double clicking the mouse.
-* **Country** and **Athlete Columns** have default editors (not customised).
-* **Gold Column** is using a **Solid Inline Cell Renderer**. The editing happens inside the cells.
-* **Silver Column** is using a **Solid Popup Cell Renderer** (`cellEditorPopup=true`). The editing happens in a popup.
+Below is an example showing different types of Solid [Cell Editors](/component-cell-editor/). Edit any cell by double clicking the mouse. The Gold and Silver Columns use custom Solid Components. Gold edits inside the cell and and Silver edits in a popup (`cellEditorPopup=true`).
 
 <div style='border: 4px solid green; height: 500px; padding: 50px;'>
 <h2>Example: Editors</h2>
@@ -189,30 +184,26 @@ See [Cell Editors](/component-cell-editor/) for full details on creating React C
 
 ## Customising Headers
 
-Below is an example showing a grid configured with a custom Solid Column Header component.
-
-* Columns Athlete and Age use a Header Comp that displays the Header name and allows sorting (by clicking on the header).
-* All other columns do not have their Headers customised and work as normal.
-
+This example demonstrates custom [Column Headers](/component-header/) and [Column Group Headers](/component-header/#header-group-components) using Solid components.
 
 <div style='border: 4px solid green; height: 500px; padding: 50px;'>
 <h2>Example: Headers</h2>
 </div>
 
-See [Header Components](/component-header/) for full details on creating React Header Components and then apply this knowledge to Solid.
+See [Column Headers](/component-header/) and [Column Group Headers](/component-header/#header-group-components) for full details on creating these components with React and then apply this knowledge to Solid.
 
 
 ## Advanced Grid Features
 
-Below is an example of AG Grid Solid with more advanced features.
-
-This example includes **Integrated Charting**. Select a range of cells covering the first three columns and about 10 rows, then right click and select Chart Range from the Context Menu.
+Below is an example of AG Grid Solid showing more advanced features such as [Row Grouping](/grouping/), [Range Selection](/range-selection/) and [Integrated Charting](/integrated-charts/).
 
 <div style='border: 4px solid green; height: 500px; padding: 50px;'>
 <h2>Example: Advanced Grid</h2>
 </div>
 
-Below is an example using Master Detail. When the master grid is AG Grid Solid, then the detail grids also use AG Grid Solid. In the example both Master and Detail grids are using Solid Cell Renderers.
+## Master Detail
+
+When the master grid is AG Grid Solid, then the detail grids also use AG Grid Solid. In the example both Master and Detail grids are using Solid Cell Renderers.
 
 <div style='border: 4px solid green; height: 500px; padding: 50px;'>
 <h2>Example: Master Detail</h2>
