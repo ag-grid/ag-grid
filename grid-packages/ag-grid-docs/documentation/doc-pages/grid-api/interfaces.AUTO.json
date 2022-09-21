@@ -7307,6 +7307,7 @@
       "radiusMax?": "number",
       "shadow?": "AgDropShadowOptions",
       "tooltip?": "AgPieSeriesTooltip",
+      "innerCircle?": "AgDoughnutInnerCircle",
       "formatter?": "(params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat",
       "data?": "DatumType[]",
       "visible?": "boolean",
@@ -7339,7 +7340,8 @@
       "radiusMax?": "/** Override of the automatically determined maximum radiusKey value from the data. */",
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
-      "innerLabels?": "/** Text lines to display inside the doughnut chart */",
+      "innerLabels?": "/** Configuration for the text lines to display inside the series, typically used when rendering a doughnut chart */",
+      "innerCircle?": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
@@ -8899,7 +8901,7 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "margin?": "number"
+      "margin?": "PixelSize"
     },
     "docs": {
       "text": "/** The text to show in the inner label. */",
@@ -8919,7 +8921,7 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "margin?": "number"
+      "margin?": "PixelSize"
     },
     "docs": {
       "fontStyle?": "/** The font style to use for the inner label. */",
@@ -8928,6 +8930,14 @@
       "fontFamily?": "/** The font family to use for the inner label. */",
       "color?": "/** The colour to use for the inner label. */",
       "margin?": "/** The margin in pixels before and after the inner label. */"
+    }
+  },
+  "AgDoughnutInnerCircle": {
+    "meta": {},
+    "type": { "fill": "CssColor", "fillOpacity?": "Opacity" },
+    "docs": {
+      "fill": "/** The colour of the fill for the inner circle. */",
+      "fillOpacity?": "/** The opacity of the fill for the segments. */"
     }
   },
   "AgPieSeriesOptions": {
@@ -8961,6 +8971,7 @@
       "shadow?": "AgDropShadowOptions",
       "tooltip?": "AgPieSeriesTooltip",
       "innerLabels?": "AgDoughnutInnerLabel[]",
+      "innerCircle?": "AgDoughnutInnerCircle",
       "formatter?": "(params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat",
       "data?": "DatumType[]",
       "visible?": "boolean",
@@ -8993,7 +9004,8 @@
       "radiusMax?": "/** Override of the automatically determined maximum radiusKey value from the data. */",
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
-      "innerLabels?": "/** Text lines to display inside the doughnut chart */",
+      "innerLabels?": "/** Configuration for the text lines to display inside the series, typically used when rendering a doughnut chart */",
+      "innerCircle?": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",

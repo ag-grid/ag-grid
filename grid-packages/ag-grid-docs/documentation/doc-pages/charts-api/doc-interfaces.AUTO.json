@@ -909,6 +909,10 @@
       "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgPieSeriesTooltip", "optional": true }
     },
+    "innerCircle": {
+      "description": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */",
+      "type": { "returnType": "AgDoughnutInnerCircle", "optional": true }
+    },
     "formatter": {
       "type": {
         "arguments": { "params": "AgPieSeriesFormatterParams<DatumType>" },
@@ -3249,7 +3253,7 @@
     },
     "margin": {
       "description": "/** The margin in pixels before and after the inner label. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgDoughnutInnerLabelThemeOptions": {
@@ -3275,7 +3279,17 @@
     },
     "margin": {
       "description": "/** The margin in pixels before and after the inner label. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
+    }
+  },
+  "AgDoughnutInnerCircle": {
+    "fill": {
+      "description": "/** The colour of the fill for the inner circle. */",
+      "type": { "returnType": "CssColor", "optional": false }
+    },
+    "fillOpacity": {
+      "description": "/** The opacity of the fill for the segments. */",
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgPieSeriesOptions": {
@@ -3376,8 +3390,12 @@
       "type": { "returnType": "AgPieSeriesTooltip", "optional": true }
     },
     "innerLabels": {
-      "description": "/** Text lines to display inside the doughnut chart */",
+      "description": "/** Configuration for the text lines to display inside the series, typically used when rendering a doughnut chart */",
       "type": { "returnType": "AgDoughnutInnerLabel[]", "optional": true }
+    },
+    "innerCircle": {
+      "description": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */",
+      "type": { "returnType": "AgDoughnutInnerCircle", "optional": true }
     },
     "formatter": {
       "type": {

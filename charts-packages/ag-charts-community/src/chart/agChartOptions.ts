@@ -1208,10 +1208,17 @@ export interface AgDoughnutInnerLabel {
     /** The colour to use for the inner label. */
     color?: CssColor;
     /** The margin in pixels before and after the inner label. */
-    margin?: number;
+    margin?: PixelSize;
 }
 
 export interface AgDoughnutInnerLabelThemeOptions extends Omit<AgDoughnutInnerLabel, 'text'> {}
+
+export interface AgDoughnutInnerCircle {
+    /** The colour of the fill for the inner circle. */
+    fill: CssColor;
+    /** The opacity of the fill for the segments. */
+    fillOpacity?: Opacity;
+}
 
 /** Configuration for pie/doughnut series. */
 export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
@@ -1262,8 +1269,10 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     shadow?: AgDropShadowOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgPieSeriesTooltip;
-    /** Text lines to display inside the doughnut chart */
+    /** Configuration for the text lines to display inside the series, typically used when rendering a doughnut chart */
     innerLabels?: AgDoughnutInnerLabel[];
+    /** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */
+    innerCircle?: AgDoughnutInnerCircle;
     formatter?: (params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat;
 }
 

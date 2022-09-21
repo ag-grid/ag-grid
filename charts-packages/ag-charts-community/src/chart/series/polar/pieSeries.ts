@@ -1,6 +1,7 @@
 import { Group } from '../../../scene/group';
 import { Line } from '../../../scene/shape/line';
 import { Text } from '../../../scene/shape/text';
+import { Circle } from '../../marker/circle';
 import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
@@ -29,6 +30,7 @@ import {
     STRING,
     COLOR_STRING_ARRAY,
     Validate,
+    COLOR_STRING,
 } from '../../../util/validation';
 
 export interface PieSeriesNodeClickEvent extends TypedEvent {
@@ -136,8 +138,17 @@ export class PieTitle extends Caption {
 }
 
 export class DoughnutInnerLabel extends Label {
+    @Validate(STRING)
     text = '';
+    @Validate(NUMBER())
     margin = 2;
+}
+
+export class DoughnutInnerCircle {
+    @Validate(COLOR_STRING)
+    fill = 'transparent';
+    @Validate(OPT_NUMBER(0, 1))
+    fillOpacity? = 1;
 }
 
 export class PieSeries extends PolarSeries<PieNodeDatum> {
@@ -216,6 +227,33 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     angleName = '';
 
     readonly innerLabels: DoughnutInnerLabel[] = [];
+
+    private _innerCircleConfig?: DoughnutInnerCircle;
+    private _innerCircleNode?: Circle;
+    get innerCircle(): DoughnutInnerCircle | undefined {
+        return this._innerCircleConfig;
+    }
+    set innerCircle(value: DoughnutInnerCircle | undefined) {
+        const oldCircleCfg = this._innerCircleConfig;
+
+        if (oldCircleCfg !== value) {
+            const oldNode = this._innerCircleNode;
+            let circle: Circle | undefined;
+            if (oldNode) {
+                this.backgroundGroup.removeChild(oldNode);
+            }
+
+            if (value) {
+                circle = new Circle();
+                circle.fill = value.fill;
+                circle.fillOpacity = value.fillOpacity ?? 1;
+                this.backgroundGroup.appendChild(circle);
+            }
+
+            this._innerCircleConfig = value;
+            this._innerCircleNode = circle;
+        }
+    }
 
     /**
      * The key of the numeric field to use to determine the radii of pie slices.
@@ -538,6 +576,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         this.seriesGroup.opacity = this.getOpacity();
 
+        this.updateInnerCircle();
+
         const {
             fills,
             strokes,
@@ -678,6 +718,20 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
 
         this.updateInnerLabelNodes();
+    }
+
+    private updateInnerCircle() {
+        const circle = this._innerCircleNode;
+        if (!circle) {
+            return;
+        }
+        if (this.innerRadiusOffset === 0) {
+            circle.size = 0;
+        } else {
+            const offset = Math.min(this.outerRadiusOffset, this.innerRadiusOffset);
+            const antiAliasingPadding = 1;
+            circle.size = (this.radius + offset) * 2 + antiAliasingPadding;
+        }
     }
 
     private updateInnerLabelNodes() {
