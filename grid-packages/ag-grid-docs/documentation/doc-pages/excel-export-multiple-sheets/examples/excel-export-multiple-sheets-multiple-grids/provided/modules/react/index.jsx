@@ -148,6 +148,8 @@ class GridExample extends Component {
             this.setState({
                 rightApi: params.api,
             });
+        }
+        if (this.state.leftApi && this.state.rightApi) {
             this.addGridDropZone();
         }
     }
