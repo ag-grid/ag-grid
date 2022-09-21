@@ -178,7 +178,11 @@ export interface AgCartesianSeriesTheme {
 }
 
 export interface AgPolarSeriesTheme {
-    pie?: AgPieSeriesOptions;
+    pie?: AgPieSeriesTheme;
+}
+
+export interface AgPieSeriesTheme extends Omit<AgPieSeriesOptions, 'innerLabels'> {
+    innerLabels?: AgDoughnutInnerLabelThemeOptions;
 }
 
 export interface AgHierarchySeriesTheme {
@@ -616,6 +620,7 @@ export interface AgCategoryAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'category';
     paddingInner?: number;
     paddingOuter?: number;
+    groupPaddingInner?: number;
     /** Configuration for the axis ticks. */
     tick?: AgAxisNumberTickOptions;
 }
@@ -1180,6 +1185,25 @@ export interface AgPieSeriesCalloutOptions {
     strokeWidth?: PixelSize;
 }
 
+export interface AgDoughnutInnerLabel {
+    /** The text to show in the inner label. */
+    text: string;
+    /** The font style to use for the inner label. */
+    fontStyle?: FontStyle;
+    /** The font weight to use for the inner label. */
+    fontWeight?: FontWeight;
+    /** The font size in pixels to use for the inner label. */
+    fontSize?: FontSize;
+    /** The font family to use for the inner label. */
+    fontFamily?: FontFamily;
+    /** The colour to use for the inner label. */
+    color?: CssColor;
+    /** The margin in pixels before and after the inner label. */
+    margin?: number;
+}
+
+export interface AgDoughnutInnerLabelThemeOptions extends Omit<AgDoughnutInnerLabel, 'text'> {}
+
 /** Configuration for pie/doughnut series. */
 export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'pie';
@@ -1229,6 +1253,8 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     shadow?: AgDropShadowOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgPieSeriesTooltip;
+    /** Text lines to display inside the doughnut chart */
+    innerLabels?: AgDoughnutInnerLabel[];
     formatter?: (params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat;
 }
 

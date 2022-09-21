@@ -206,17 +206,15 @@ describe('CartesianChart', () => {
                 options.autoSize = false;
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
-
+    
                 chart = AgChartV2.create<any>(options);
                 await waitForChartStability(chart);
-
-                const seriesImpl = chart.series.find(
-                    (v: any) => v.yKey === yKey || v.yKeys?.some((s) => s.includes(yKey))
-                );
-
+    
+                const seriesImpl = chart.series.find((v: any) => v.yKey === yKey || v.yKeys?.some((s) => s.includes(yKey)));
+    
                 const nodeDataArray: SeriesNodeDataContext<any, any>[] = seriesImpl!['contextNodeData'];
                 const nodeData = nodeDataArray.find((n) => n.itemId === yKey);
-
+    
                 chart.changeHighlightDatum({ datum: nodeData?.nodeData[3] });
                 chart.update(ChartUpdateType.SERIES_UPDATE);
                 await compare(chart);

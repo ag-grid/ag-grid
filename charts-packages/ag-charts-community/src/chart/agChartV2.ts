@@ -22,7 +22,7 @@ import { BarSeries } from './series/cartesian/barSeries';
 import { HistogramSeries } from './series/cartesian/histogramSeries';
 import { LineSeries } from './series/cartesian/lineSeries';
 import { ScatterSeries } from './series/cartesian/scatterSeries';
-import { PieSeries, PieTitle } from './series/polar/pieSeries';
+import { PieSeries, PieTitle, DoughnutInnerLabel } from './series/polar/pieSeries';
 import { TreemapSeries } from './series/hierarchy/treemapSeries';
 import { ChartAxis } from './chartAxis';
 import { LogAxis } from './axis/logAxis';
@@ -157,44 +157,63 @@ export abstract class AgChartV2 {
             );
         }
 
-        AgChartV2.updateDelta(chart, mergedOptions, userOptions);
+        chart.requestFactoryUpdate(async () => {
+            if (chart.destroyed) {
+                // Chart destroyed, skip processing.
+                return;
+            }
+
+            await AgChartV2.updateDelta(chart, mergedOptions, userOptions);
+        });
         return chart as T;
     }
 
-    static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>): void {
+    static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>) {
         debug('user options', userOptions);
         const mixinOpts: any = {};
         if (AgChartV2.DEBUG()) {
             mixinOpts['debug'] = true;
         }
 
-        const mergedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>, mixinOpts);
+        chart.requestFactoryUpdate(async () => {
+            if (chart.destroyed) {
+                // Chart destroyed, skip processing.
+                return;
+            }
 
-        if (chartType(mergedOptions) !== chartType(chart.options as ChartOptionType<typeof chart>)) {
-            chart.destroy();
-            console.warn('AG Charts - options supplied require a different type of chart, please recreate the chart.');
-            return;
-        }
+            const mergedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>, mixinOpts);
 
-        const deltaOptions = jsonDiff<ChartOptionType<T>>(chart.options as ChartOptionType<T>, mergedOptions, {
-            stringify: ['data'],
+            if (chartType(mergedOptions) !== chartType(chart.options as ChartOptionType<typeof chart>)) {
+                chart.destroy();
+                console.warn(
+                    'AG Charts - options supplied require a different type of chart, please recreate the chart.'
+                );
+                return;
+            }
+
+            const deltaOptions = jsonDiff<ChartOptionType<T>>(chart.options as ChartOptionType<T>, mergedOptions, {
+                stringify: ['data'],
+            });
+            if (deltaOptions == null) {
+                return;
+            }
+
+            await AgChartV2.updateDelta<T>(chart as T, deltaOptions, userOptions);
         });
-        if (deltaOptions == null) {
-            return;
-        }
-
-        AgChartV2.updateDelta<T>(chart as T, deltaOptions, userOptions);
     }
 
-    private static updateDelta<T extends ChartType>(
+    private static async updateDelta<T extends ChartType>(
         chart: T,
         update: Partial<ChartOptionType<T>>,
         userOptions: ChartOptionType<T>
-    ): void {
+    ) {
         if (update.type == null) {
             update = { ...update, type: chart.options.type || optionsType(update) };
         }
         debug('delta update', update);
+
+        await chart.awaitUpdateCompletion();
+
         applyChartOptions(chart, update as ChartOptionType<typeof chart>, userOptions);
     }
 }
@@ -414,6 +433,7 @@ const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
         subtitle: Caption,
         shadow: DropShadow,
         'axes[].crossLines[]': CrossLine,
+        'series[].innerLabels[]': DoughnutInnerLabel,
     },
     allowedTypes: {
         'series[].marker.shape': ['primitive', 'function'],

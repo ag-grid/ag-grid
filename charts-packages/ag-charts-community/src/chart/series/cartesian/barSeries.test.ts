@@ -81,6 +81,7 @@ describe('BarSeries', () => {
                 options.height = CANVAS_HEIGHT;
 
                 chart = AgChartV2.create<any>(options);
+                await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 

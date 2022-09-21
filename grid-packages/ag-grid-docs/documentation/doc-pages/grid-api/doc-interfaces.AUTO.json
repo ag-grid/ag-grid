@@ -12665,6 +12665,9 @@
   "AgCategoryAxisThemeOptions": {
     "paddingInner": { "type": { "returnType": "number", "optional": true } },
     "paddingOuter": { "type": { "returnType": "number", "optional": true } },
+    "groupPaddingInner": {
+      "type": { "returnType": "number", "optional": true }
+    },
     "tick": {
       "description": "/** Configuration for the axis ticks. */",
       "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
@@ -12898,7 +12901,139 @@
     }
   },
   "AgPolarSeriesTheme": {
-    "pie": { "type": { "returnType": "AgPieSeriesOptions", "optional": true } }
+    "pie": { "type": { "returnType": "AgPieSeriesTheme", "optional": true } }
+  },
+  "AgPieSeriesTheme": {
+    "type": { "type": { "returnType": "'pie'", "optional": true } },
+    "title": {
+      "description": "/** Configuration for the series title. */",
+      "type": { "returnType": "AgPieTitleOptions", "optional": true }
+    },
+    "label": {
+      "description": "/** Configuration for the labels used for the segments. */",
+      "type": {
+        "returnType": "AgPieSeriesLabelOptions<DatumType>",
+        "optional": true
+      }
+    },
+    "callout": {
+      "description": "/** Configuration for the callouts used with the labels for the segments. */",
+      "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
+    },
+    "angleKey": {
+      "description": "/** The key to use to retrieve angle values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "angleName": {
+      "description": "/** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "radiusKey": {
+      "description": "/** The key to use to retrieve radius values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "radiusName": {
+      "description": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelKey": {
+      "description": "/** The key to use to retrieve label values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelName": {
+      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fills": {
+      "description": "/** The colours to cycle through for the fills of the segments. */",
+      "type": { "returnType": "CssColor[]", "optional": true }
+    },
+    "strokes": {
+      "description": "/** The colours to cycle through for the strokes of the segments. */",
+      "type": { "returnType": "CssColor[]", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** The opacity of the fill for the segments. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** The opacity of the stroke for the segments. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the stroke for the segments. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "lineDash": {
+      "description": "/** Defines how the pie sector strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */",
+      "type": { "returnType": "PixelSize[]", "optional": true }
+    },
+    "lineDashOffset": {
+      "description": "/** The initial offset of the dashed line in pixels. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "rotation": {
+      "description": "/** The rotation of the pie series in degrees. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "outerRadiusOffset": {
+      "description": "/** The offset in pixels of the outer radius of the series. Used to construct doughnut charts. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "innerRadiusOffset": {
+      "description": "/** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not given, or a value of zero is given, a pie chart will be rendered. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "radiusMin": {
+      "description": "/** Override of the automatically determined minimum radiusKey value from the data. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "radiusMax": {
+      "description": "/** Override of the automatically determined maximum radiusKey value from the data. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "shadow": {
+      "description": "/** Configuration for the shadow used behind the chart series. */",
+      "type": { "returnType": "AgDropShadowOptions", "optional": true }
+    },
+    "tooltip": {
+      "description": "/** Series-specific tooltip configuration. */",
+      "type": { "returnType": "AgPieSeriesTooltip", "optional": true }
+    },
+    "formatter": {
+      "type": {
+        "arguments": { "params": "AgPieSeriesFormatterParams<DatumType>" },
+        "returnType": "AgPieSeriesFormat",
+        "optional": true
+      }
+    },
+    "data": {
+      "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "type": { "returnType": "DatumType[]", "optional": true }
+    },
+    "visible": {
+      "description": "/** Whether or not to display the series. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showInLegend": {
+      "description": "/** Whether or not to include the series in the legend. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "cursor": {
+      "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "listeners": {
+      "description": "/** A map of event names to event listeners. */",
+      "type": {
+        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
+        "optional": true
+      }
+    },
+    "highlightStyle": {
+      "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
+      "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    }
   },
   "AgHierarchySeriesTheme": {
     "treemap": {
@@ -13672,6 +13807,9 @@
     "type": { "type": { "returnType": "'category'", "optional": false } },
     "paddingInner": { "type": { "returnType": "number", "optional": true } },
     "paddingOuter": { "type": { "returnType": "number", "optional": true } },
+    "groupPaddingInner": {
+      "type": { "returnType": "number", "optional": true }
+    },
     "tick": {
       "description": "/** Configuration for the axis ticks. */",
       "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
@@ -15168,6 +15306,62 @@
       "type": { "returnType": "PixelSize", "optional": true }
     }
   },
+  "AgDoughnutInnerLabel": {
+    "text": {
+      "description": "/** The text to show in the inner label. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the inner label. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the inner label. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the inner label. */",
+      "type": { "returnType": "FontSize", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the inner label. */",
+      "type": { "returnType": "FontFamily", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the inner label. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "margin": {
+      "description": "/** The margin in pixels before and after the inner label. */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "AgDoughnutInnerLabelThemeOptions": {
+    "fontStyle": {
+      "description": "/** The font style to use for the inner label. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the inner label. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the inner label. */",
+      "type": { "returnType": "FontSize", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the inner label. */",
+      "type": { "returnType": "FontFamily", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the inner label. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "margin": {
+      "description": "/** The margin in pixels before and after the inner label. */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
   "AgPieSeriesOptions": {
     "type": { "type": { "returnType": "'pie'", "optional": true } },
     "title": {
@@ -15264,6 +15458,10 @@
     "tooltip": {
       "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgPieSeriesTooltip", "optional": true }
+    },
+    "innerLabels": {
+      "description": "/** Text lines to display inside the doughnut chart */",
+      "type": { "returnType": "AgDoughnutInnerLabel[]", "optional": true }
     },
     "formatter": {
       "type": {

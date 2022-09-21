@@ -27,7 +27,7 @@ export class CartesianChart extends Chart {
     readonly seriesRoot = new ClipRect();
     readonly navigator = new Navigator(this);
 
-    performLayout(): void {
+    async performLayout() {
         this.scene.root!.visible = true;
 
         const { width, height, legend, navigator } = this;
