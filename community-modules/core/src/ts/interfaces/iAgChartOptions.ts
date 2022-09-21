@@ -1129,7 +1129,7 @@ export interface AgHistogramSeriesOptions<DatumType = any>
     yName?: string;
     /** For variable width bins, if true the histogram will represent the aggregated `yKey` values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins. */
     areaPlot?: boolean;
-    /** Set the bins explicitly. The bins need not be of equal width. Clashes with the `binCount` setting. */
+    /** Set the bins explicitly. The bins need not be of equal width. Note that `bins` is ignored if `binCount` is also supplied. */
     bins?: [number, number][];
     /** The number of bins to try to split the x axis into. Clashes with the `bins` setting. */
     binCount?: number;

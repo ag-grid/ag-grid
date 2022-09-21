@@ -15135,7 +15135,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "bins": {
-      "description": "/** Set the bins explicitly. The bins need not be of equal width. Clashes with the `binCount` setting. */",
+      "description": "/** Set the bins explicitly. The bins need not be of equal width. Note that `bins` is ignored if `binCount` is also supplied. */",
       "type": { "returnType": "[number, number][]", "optional": true }
     },
     "binCount": {
