@@ -1,4 +1,4 @@
-import { Column, Constants, CsvCustomContent, RowNode } from "@ag-grid-community/core";
+import { Column, ColumnGroup, Constants, CsvCustomContent, RowNode } from "@ag-grid-community/core";
 import { CsvSerializingParams, RowAccumulator, RowSpanningAccumulator } from "../interfaces";
 import { BaseGridSerializingSession } from "./baseGridSerializingSession";
 
@@ -52,7 +52,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         };
     }
 
-    private onNewHeaderGroupingRowColumn(header: string, index: number, span: number) {
+    private onNewHeaderGroupingRowColumn(columnGroup: ColumnGroup, header: string, index: number, span: number) {
         if (index != 0) {
             this.result += this.columnSeparator;
         }

@@ -4,7 +4,6 @@ import {
     Bean,
     Column,
     ColumnModel,
-    ExcelCell,
     ExcelExportParams,
     ExcelFactoryMode,
     ExcelStyle,
@@ -12,17 +11,18 @@ import {
     GridOptionsWrapper,
     IExcelCreator,
     PostConstruct,
-    RowNode,
     StylingService,
     ValueService,
     ExcelExportMultipleSheetParams,
     ExcelRow,
+    CssClassApplier,
+    ColumnGroup,
 } from '@ag-grid-community/core';
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { BaseCreator, Downloader, GridSerializer, RowType, ZipContainer } from "@ag-grid-community/csv-export";
-import { ExcelGridSerializingParams } from './baseExcelSerializingSession';
+import { ExcelGridSerializingParams, StyleLinkerInterface } from './baseExcelSerializingSession';
 import { ExcelXmlFactory } from './excelXmlFactory';
 
 type SerializingSession = ExcelXlsxSerializingSession | ExcelXmlSerializingSession;
@@ -241,9 +241,33 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
         return new (isXlsx ? ExcelXlsxSerializingSession : ExcelXmlSerializingSession)(config);
     }
 
-    private styleLinker(rowType: RowType, rowIndex: number, value: string, column: Column, node: RowNode): string[] | null {
-        if (rowType === RowType.HEADER) { return ["header"]; }
-        if (rowType === RowType.HEADER_GROUPING) { return ["header", "headerGroup"]; }
+    private styleLinker(params: StyleLinkerInterface): string[] {
+        const  { rowType, rowIndex, value, column, columnGroup, node } = params;
+        const isHeader = rowType === RowType.HEADER;
+        const isGroupHeader = rowType === RowType.HEADER_GROUPING;
+        const col = (isHeader ? column : columnGroup) as Column | ColumnGroup;
+
+        if (isHeader || isGroupHeader) {
+            const defaultClass = "header";
+            const defaultGroupClass = "headerGroup";
+            let headerClasses: string[] = [];
+
+            if (col) {
+                headerClasses = CssClassApplier.getHeaderClassesFromColDef(
+                    col.getDefinition(),
+                    this.gridOptionsWrapper,
+                    column || null,
+                    columnGroup || null
+                );
+            }
+
+            headerClasses.push(defaultClass);
+            if (isGroupHeader) {
+                headerClasses.push(defaultGroupClass);
+            }
+
+            return headerClasses;
+        }
 
         const styles = this.gridOptions.excelStyles;
 
@@ -256,13 +280,13 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
         });
 
         this.stylingService.processAllCellClasses(
-            column.getColDef(),
+            column!.getDefinition(),
             {
-                value: value,
-                data: node.data,
-                node: node,
-                colDef: column.getColDef(),
-                column: column,
+                value,
+                data: node!.data,
+                node: node!,
+                colDef: column!.getDefinition(),
+                column: column!,
                 rowIndex: rowIndex,
                 api: this.gridOptionsWrapper.getApi()!,
                 columnApi: this.gridOptionsWrapper.getColumnApi()!,

@@ -8780,7 +8780,7 @@
       "yKey?": "/** The key to use to retrieve y-values from the data. */",
       "yName?": "/** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
       "areaPlot?": "/** For variable width bins, if true the histogram will represent the aggregated `yKey` values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins. */",
-      "bins?": "/** Set the bins explicitly. The bins need not be of equal width. Clashes with the `binCount` setting. */",
+      "bins?": "/** Set the bins explicitly. The bins need not be of equal width. Note that `bins` is ignored if `binCount` is also supplied. */",
       "binCount?": "/** The number of bins to try to split the x axis into. Clashes with the `bins` setting. */",
       "aggregation?": "/** Dictates how the bins are aggregated. If set to 'sum', the value shown for the bins will be the total of the yKey values. If set to 'mean', it will display the average yKey value of the bin. */",
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
