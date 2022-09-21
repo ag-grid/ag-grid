@@ -189,10 +189,19 @@
     .ag-column-select-header-icon,
     .ag-floating-filter-button-button,
     .ag-filter-toolpanel-expand,
-    .ag-chart-menu-icon {
+    .ag-chart-menu-icon,
+    .ag-chart-menu-close {
         &:hover {
             color: var(--ag-alpine-active-color);
         }
+    }
+
+    .ag-chart-menu-close {
+        background: var(--ag-header-background-color);
+
+        @include ag.theme-rtl((
+            border-left: var(--ag-borders) var(--ag-secondary-border-color)
+        ));
     }
 
     .ag-chart-settings-card-item.ag-not-selected:hover {

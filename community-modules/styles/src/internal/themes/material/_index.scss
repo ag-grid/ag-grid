@@ -113,6 +113,10 @@
         padding-bottom: calc(var(--ag-grid-size) * 0.5);
     }
 
+    .ag-chart-menu-close {
+        background: var(--ag-header-background-color);
+    }
+
     @include ag.text-input {
         background: transparent;
         color: var(--ag-foreground-color);

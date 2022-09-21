@@ -126,6 +126,14 @@
     .ag-charts-format-sub-level-group-item {
         margin-bottom: calc(var(--ag-grid-size) * 1.5);
     }
+
+    .ag-chart-menu-close {
+        background: var(--ag-header-background-color);
+
+        @include ag.theme-rtl((
+            border-left: var(--ag-borders) var(--ag-secondary-border-color)
+        ));
+    }
 }
 
 .ag-theme-balham-dark {

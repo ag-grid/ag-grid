@@ -220,14 +220,20 @@
         justify-content: center;
     }
 
+    .ag-chart-menu-close {
+        padding: 0;
+        display: block;
+        cursor: pointer;
+        height: 100%;
+        border: none;
+    }
+
     .ag-chart .ag-chart-menu {
-        opacity: 0;
-        pointer-events: none;
+        display: none;
     }
 
     .ag-chart-menu-hidden:hover .ag-chart-menu {
-        opacity: 1;
-        pointer-events: all;
+        display: block;
     }
 
     .ag-charts-font-size-color {

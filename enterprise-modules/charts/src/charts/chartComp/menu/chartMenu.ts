@@ -8,7 +8,8 @@ import {
     Component,
     GetChartToolbarItemsParams,
     PostConstruct,
-    WithoutGridCommon
+    WithoutGridCommon,
+    RefSelector
 } from "@ag-grid-community/core";
 
 import { TabbedChartMenu } from "./tabbedChartMenu";
@@ -37,7 +38,15 @@ export class ChartMenu extends Component {
 
     private tabs: ChartMenuOptions[] = [];
 
-    private static TEMPLATE = `<div class="ag-chart-menu"></div>`;
+    private static TEMPLATE = `<div>
+        <div class="ag-chart-menu" ref="eMenu"></div>
+        <button class="ag-chart-menu-close" ref="eHideButton">
+            <span class="ag-icon ag-icon-contracted" ref="eHideButtonIcon"></span>
+        </button>
+    </div>`;
+    @RefSelector("eMenu") private eMenu: HTMLButtonElement;
+    @RefSelector("eHideButton") private eHideButton: HTMLButtonElement;
+    @RefSelector("eHideButtonIcon") private eHideButtonIcon: HTMLSpanElement;
 
     private tabbedMenu: TabbedChartMenu;
     private menuPanel?: AgPanel;
@@ -64,6 +73,8 @@ export class ChartMenu extends Component {
         //         this.createMenuPanel(0);
         //     }
         // });
+
+        this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this))
     }
 
     public isVisible(): boolean {
@@ -128,7 +139,7 @@ export class ChartMenu extends Component {
 
     private createButtons(): void {
         const chartToolbarOptions = this.getToolbarOptions();
-        const gui = this.getGui();
+        const gui = this.eMenu;
 
         chartToolbarOptions.forEach(button => {
             const buttonConfig = this.buttons[button];
@@ -215,6 +226,14 @@ export class ChartMenu extends Component {
         this.refreshMenuClasses();
     }
 
+    private toggleMenu() {
+        if (this.menuVisible) {
+            this.hideMenu();
+        } else {
+            this.showMenu();
+        }
+    }
+
     public showMenu(tabName?: ChartMenuOptions): void {
         const menuTabName = tabName || ChartMenu.DEFAULT_TAB;
         let tab = this.tabs.indexOf(menuTabName);
@@ -243,6 +262,9 @@ export class ChartMenu extends Component {
     private refreshMenuClasses() {
         this.eChartContainer.classList.toggle('ag-chart-menu-visible', this.menuVisible);
         this.eChartContainer.classList.toggle('ag-chart-menu-hidden', !this.menuVisible);
+
+        this.eHideButtonIcon.classList.toggle('ag-icon-contracted', this.menuVisible);
+        this.eHideButtonIcon.classList.toggle('ag-icon-expanded', !this.menuVisible);
     }
 
     private showParent(width: number): void {
