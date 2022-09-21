@@ -246,24 +246,21 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
         const isHeader = rowType === RowType.HEADER;
         const isGroupHeader = rowType === RowType.HEADER_GROUPING;
         const col = (isHeader ? column : columnGroup) as Column | ColumnGroup;
+        let headerClasses: string[] = [];
 
         if (isHeader || isGroupHeader) {
-            const defaultClass = "header";
-            const defaultGroupClass = "headerGroup";
-            let headerClasses: string[] = [];
-
+            headerClasses.push('header');
+            if (isGroupHeader) {
+                headerClasses.push('headerGroup');
+            }
+            
             if (col) {
-                headerClasses = CssClassApplier.getHeaderClassesFromColDef(
+                headerClasses = headerClasses.concat(CssClassApplier.getHeaderClassesFromColDef(
                     col.getDefinition(),
                     this.gridOptionsWrapper,
                     column || null,
                     columnGroup || null
-                );
-            }
-
-            headerClasses.push(defaultClass);
-            if (isGroupHeader) {
-                headerClasses.push(defaultGroupClass);
+                ));
             }
 
             return headerClasses;

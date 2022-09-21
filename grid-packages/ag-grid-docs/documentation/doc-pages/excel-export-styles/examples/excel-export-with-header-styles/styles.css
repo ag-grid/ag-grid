@@ -1,0 +1,21 @@
+#myGrid {
+    width: 100%;
+    height: 100%;
+}
+
+.ag-header-group-cell,
+.ag-header-cell {
+    border-bottom: 1px solid #ffab00;
+}
+
+.gold-header {
+    background-color: gold;
+}
+
+.silver-header {
+    background-color: silver
+}
+
+.bronze-header {
+    background-color: chocolate;
+}
