@@ -31,6 +31,7 @@ import {
     COLOR_STRING_ARRAY,
     Validate,
     COLOR_STRING,
+    OPT_ONE_OF,
 } from '../../../util/validation';
 
 export interface PieSeriesNodeClickEvent extends TypedEvent {
@@ -42,6 +43,8 @@ export interface PieSeriesNodeClickEvent extends TypedEvent {
     readonly labelKey?: string;
     readonly radiusKey?: string;
 }
+
+type PieLabelPosition = 'inside' | 'outside';
 
 interface PieNodeDatum extends SeriesNodeDatum {
     readonly index: number;
@@ -111,6 +114,9 @@ class PieSeriesLabel extends Label {
 
     @Validate(NUMBER(0))
     minAngle = 20; // in degrees
+
+    @Validate(OPT_ONE_OF('inside', 'outside'))
+    position: PieLabelPosition = 'outside';
 
     @Validate(OPT_FUNCTION)
     formatter?: (params: PieSeriesLabelFormatterParams) => string = undefined;
@@ -605,6 +611,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         const centerOffsets: number[] = [];
         const innerRadius = radiusScale.convert(0);
+        const labelPosition = this.label.position;
 
         const updateSectorFn = (sector: Sector, datum: PieNodeDatum, index: number, isDatumHighlighted: boolean) => {
             const radius = radiusScale.convert(datum.radius, clamper);
@@ -678,7 +685,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const radius = radiusScale.convert(datum.radius, clamper);
             const outerRadius = Math.max(0, radius);
 
-            if (datum.label && outerRadius !== 0) {
+            if (datum.label && outerRadius !== 0 && labelPosition === 'outside') {
                 line.strokeWidth = calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
                 line.x1 = datum.midCos * outerRadius;
@@ -699,7 +706,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 const outerRadius = Math.max(0, radius);
 
                 if (label && outerRadius !== 0) {
-                    const labelRadius = centerOffsets[index] + outerRadius + calloutLength + offset;
+                    const labelRadius =
+                        labelPosition === 'outside'
+                            ? centerOffsets[index] + outerRadius + calloutLength + offset
+                            : labelPosition === 'inside'
+                            ? (radius + innerRadius) / 2
+                            : 0;
 
                     text.fontStyle = fontStyle;
                     text.fontWeight = fontWeight;
@@ -709,8 +721,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     text.x = datum.midCos * labelRadius;
                     text.y = datum.midSin * labelRadius;
                     text.fill = color;
-                    text.textAlign = label.textAlign;
-                    text.textBaseline = label.textBaseline;
+                    text.textAlign = labelPosition === 'outside' ? label.textAlign : 'center';
+                    text.textBaseline = labelPosition === 'outside' ? label.textBaseline : 'middle';
                 } else {
                     text.fill = undefined;
                 }

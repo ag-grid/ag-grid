@@ -2019,6 +2019,7 @@
     "type": {
       "offset?": "PixelSize",
       "minAngle?": "number",
+      "position?": "'inside' | 'outside'",
       "formatter?": "(params: AgPieSeriesLabelFormatterParams<DatumType>) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
@@ -2030,6 +2031,7 @@
     "docs": {
       "offset?": "/** Distance in pixels between the callout line and the label text. */",
       "minAngle?": "/** Minimum angle in degrees required for a segment to show a label. */",
+      "position?": "/** Position of segment labels: inside or outside. */",
       "enabled?": "/** Whether or not the labels should be shown. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",
@@ -3208,6 +3210,10 @@
       "labelKey?": "string",
       "radiusKey?": "string"
     }
+  },
+  "PieLabelPosition": {
+    "meta": { "isTypeAlias": true },
+    "type": "'inside' | 'outside'"
   },
   "PieNodeDatum": {
     "meta": {},

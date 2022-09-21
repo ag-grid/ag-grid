@@ -124,6 +124,13 @@ export const OPT_LINE_JOIN = (v: any) => OPTIONAL(v, LINE_JOIN);
 const POSITIONS = ['top', 'right', 'bottom', 'left'];
 export const POSITION = (v: any) => POSITIONS.includes(v);
 
+export function ONE_OF(...values: any[]) {
+    return (v: any) => values.includes(v);
+}
+export function OPT_ONE_OF(...values: any[]) {
+    return (v: any) => OPTIONAL(v, ONE_OF(...values));
+}
+
 export function Deprecated(message?: string, opts?: { default: any }) {
     let logged = false;
     const { default: def = undefined } = opts ?? {};

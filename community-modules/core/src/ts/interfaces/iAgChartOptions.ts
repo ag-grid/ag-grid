@@ -1157,6 +1157,8 @@ export interface AgPieSeriesLabelOptions<DatumType> extends AgChartLabelOptions 
     offset?: PixelSize;
     /** Minimum angle in degrees required for a segment to show a label. */
     minAngle?: number;
+    /** Position of segment labels: inside or outside. */
+    position?: 'inside' | 'outside';
     formatter?: (params: AgPieSeriesLabelFormatterParams<DatumType>) => string;
 }
 

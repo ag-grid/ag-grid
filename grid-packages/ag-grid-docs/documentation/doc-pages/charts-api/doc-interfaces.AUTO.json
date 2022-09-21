@@ -3119,6 +3119,10 @@
       "description": "/** Minimum angle in degrees required for a segment to show a label. */",
       "type": { "returnType": "number", "optional": true }
     },
+    "position": {
+      "description": "/** Position of segment labels: inside or outside. */",
+      "type": { "returnType": "'inside' | 'outside'", "optional": true }
+    },
     "formatter": {
       "type": {
         "arguments": { "params": "AgPieSeriesLabelFormatterParams<DatumType>" },
@@ -4450,6 +4454,7 @@
     "labelKey": { "type": { "returnType": "string", "optional": true } },
     "radiusKey": { "type": { "returnType": "string", "optional": true } }
   },
+  "PieLabelPosition": {},
   "PieNodeDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
     "radius": { "type": { "returnType": "number", "optional": false } },
