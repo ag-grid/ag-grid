@@ -1,5 +1,6 @@
 import {
     Column,
+    ColumnGroup,
     ColumnWidthCallbackParams,
     RowHeightCallbackParams,
     Constants,
@@ -26,6 +27,15 @@ import {
 } from "@ag-grid-community/csv-export";
 import { getHeightFromProperty } from "./assets/excelUtils";
 
+export interface StyleLinkerInterface {
+    rowType: RowType;
+    rowIndex: number;
+    value: string;
+    column?: Column;
+    columnGroup?: ColumnGroup;
+    node?: RowNode;
+}
+
 export interface ExcelGridSerializingParams extends GridSerializingParams {
     autoConvertFormulas?: boolean;
     baseExcelStyles: ExcelStyle[];
@@ -36,7 +46,7 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     margins?: ExcelSheetMargin;
     pageSetup?: ExcelSheetPageSetup;
     sheetName: string;
-    styleLinker: (rowType: RowType, rowIndex: number, value: string, column?: Column, node?: RowNode) => string[];
+    styleLinker: (params: StyleLinkerInterface) => string[];
     addImageToCell?: (rowIndex: number, column: Column, value: string) => { image: ExcelImage, value?: string } | undefined;
     suppressTextAsCDATA?: boolean;
 }
@@ -110,8 +120,8 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
             height: getHeightFromProperty(this.rows.length + 1, this.config.headerRowHeight)
         });
         return {
-            onColumn: (header: string, index: number, span: number, collapsibleRanges: number[][]) => {
-                const styleIds: string[] = this.config.styleLinker(RowType.HEADER_GROUPING, 1, `grouping-${header}`, undefined, undefined);
+            onColumn: (columnGroup: ColumnGroup, header: string, index: number, span: number, collapsibleRanges: number[][]) => {
+                const styleIds: string[] = this.config.styleLinker({ rowType: RowType.HEADER_GROUPING, rowIndex: 1, value: `grouping-${header}`, columnGroup });
                 currentCells.push({
                     ...this.createMergedCell(this.getStyleId(styleIds), this.getDataTypeForValue('string'), header, span),
                     collapsibleRanges
@@ -181,7 +191,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     private onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
         return (column, index) => {
             const nameForCol = this.extractHeaderValue(column);
-            const styleIds: string[] = this.config.styleLinker(RowType.HEADER, rowIndex, nameForCol, column, undefined);
+            const styleIds: string[] = this.config.styleLinker({ rowType: RowType.HEADER, rowIndex, value: nameForCol, column });
             currentCells.push(this.createCell(this.getStyleId(styleIds), this.getDataTypeForValue('string'), nameForCol));
         };
     }
@@ -208,7 +218,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                 _.last(this.rows).outlineLevel = node.level;
             }
             const valueForCell = this.extractRowCellValue(column, index, rowIndex, Constants.EXPORT_TYPE_EXCEL, node);
-            const styleIds: string[] = this.config.styleLinker(RowType.BODY, rowIndex, valueForCell, column, node);
+            const styleIds: string[] = this.config.styleLinker({ rowType: RowType.BODY, rowIndex, value: valueForCell, column, node });
             const excelStyleId: string | null = this.getStyleId(styleIds);
             const colSpan = column.getColSpan(node);
             const addedImage = this.addImage(rowIndex, column, valueForCell);

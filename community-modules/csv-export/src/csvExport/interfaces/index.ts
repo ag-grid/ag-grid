@@ -1,5 +1,6 @@
 import {
     Column,
+    ColumnGroup,
     ColumnModel,
     GridOptionsWrapper,
     ProcessCellForExportParams,
@@ -21,7 +22,7 @@ export interface RowAccumulator {
 }
 
 export interface RowSpanningAccumulator {
-    onColumn(header: string, index: number, span: number, collapsibleGroupRanges: number[][]): void;
+    onColumn(columnGroup: ColumnGroup, header: string, index: number, span: number, collapsibleGroupRanges: number[][]): void;
 }
 
 export interface GridSerializingParams {

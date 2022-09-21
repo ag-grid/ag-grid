@@ -343,7 +343,7 @@ export class GridSerializer extends BeanStub {
                 return collapsibleGroups;
             }, []);
 
-            gridRowIterator.onColumn(name || '', columnIndex++, columnGroup.getLeafColumns().length - 1, collapsibleGroupRanges);
+            gridRowIterator.onColumn(columnGroup, name || '', columnIndex++, columnGroup.getLeafColumns().length - 1, collapsibleGroupRanges);
         });
     }
 }
