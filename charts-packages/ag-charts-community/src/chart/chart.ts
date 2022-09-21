@@ -18,6 +18,7 @@ import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
 import { BOOLEAN, NUMBER, STRING, Validate } from '../util/validation';
+import { sleep } from '../util/async';
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
@@ -349,7 +350,7 @@ export abstract class Chart extends Observable {
                 parentNode.removeChild(this.element);
             }
 
-            if (value) {
+            if (value && !this.destroyed) {
                 value.appendChild(this.element);
             }
 
@@ -457,6 +458,11 @@ export abstract class Chart extends Observable {
         return this._subtitle;
     }
 
+    private _destroyed: boolean = false;
+    get destroyed() {
+        return this._destroyed;
+    }
+
     private static tooltipDocuments: Document[] = [];
 
     protected constructor(document = window.document) {
@@ -469,7 +475,7 @@ export abstract class Chart extends Observable {
         root.appendChild(background.node);
 
         const element = (this.element = document.createElement('div'));
-        element.setAttribute('class', 'ag-chart-wrapper');
+        element.classList.add('ag-chart-wrapper');
         element.style.position = 'relative';
 
         this.scene = new Scene({ document });
@@ -509,6 +515,7 @@ export abstract class Chart extends Observable {
 
     destroy() {
         this._performUpdateType = ChartUpdateType.NONE;
+        this._pendingFactoryUpdates.splice(0);
 
         this.tooltip.destroy();
         SizeMonitor.unobserve(this.element);
@@ -519,6 +526,44 @@ export abstract class Chart extends Observable {
         this.scene.destroy();
         this.series.forEach((s) => s.destroy());
         this.series = [];
+
+        this._destroyed = true;
+    }
+
+    log(opts: any) {
+        if (this.debug) {
+            console.log(opts);
+        }
+    }
+
+    private _pendingFactoryUpdates: (() => Promise<void>)[] = [];
+    get pendingFactoryUpdates() {
+        return this._pendingFactoryUpdates.length;
+    }
+    requestFactoryUpdate(cb: () => Promise<void>) {
+        this._pendingFactoryUpdates.push(cb);
+
+        if (this._pendingFactoryUpdates.length > 1) {
+            // Factory callback process already running, the callback will be invoked asynchronously.
+            return;
+        }
+
+        const processCallbacks = async () => {
+            while (this._pendingFactoryUpdates.length > 0) {
+                while (this.updatePending) {
+                    await sleep(1);
+                }
+                try {
+                    await this._pendingFactoryUpdates[0]();
+                } catch (e) {
+                    console.error(e);
+                }
+
+                this._pendingFactoryUpdates.splice(0, 1);
+            }
+        };
+
+        processCallbacks();
     }
 
     private _performUpdateType: ChartUpdateType = ChartUpdateType.NONE;
@@ -533,17 +578,19 @@ export abstract class Chart extends Observable {
         return this._lastPerformUpdateError;
     }
 
-    private firstRenderComplete = false;
-    private firstResizeReceived = false;
+    private updateContext = { firstRenderComplete: false, firstResizeReceived: false };
     private seriesToUpdate: Set<Series> = new Set();
-    private performUpdateTrigger = debouncedCallback(({ count }) => {
+    private performUpdateTrigger = debouncedCallback(async ({ count }) => {
         try {
-            this.performUpdate(count);
+            await this.performUpdate(count);
         } catch (error) {
             this._lastPerformUpdateError = error;
             console.error(error);
         }
     });
+    public async awaitUpdateCompletion() {
+        await this.performUpdateTrigger.await();
+    }
     public update(
         type = ChartUpdateType.FULL,
         opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
@@ -563,19 +610,18 @@ export abstract class Chart extends Observable {
             this.performUpdateTrigger.schedule();
         }
     }
-    private performUpdate(count: number) {
+    private async performUpdate(count: number) {
         const {
             _performUpdateType: performUpdateType,
-            firstRenderComplete,
-            firstResizeReceived,
             extraDebugStats,
+            updateContext: { firstRenderComplete, firstResizeReceived },
         } = this;
         const splits = [performance.now()];
 
         switch (performUpdateType) {
             case ChartUpdateType.FULL:
             case ChartUpdateType.PROCESS_DATA:
-                this.processData();
+                await this.processData();
                 splits.push(performance.now());
 
                 // Disable tooltip/highlight if the data fundamentally shifted.
@@ -583,44 +629,40 @@ export abstract class Chart extends Observable {
             // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (!firstRenderComplete && !firstResizeReceived) {
-                    if (this.debug) {
-                        console.log({ firstRenderComplete, firstResizeReceived });
-                    }
+                    this.log({ firstRenderComplete, firstResizeReceived });
                     // Reschedule if canvas size hasn't been set yet to avoid a race.
                     this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
                     this.performUpdateTrigger.schedule();
                     break;
                 }
 
-                this.performLayout();
+                await this.performLayout();
                 splits.push(performance.now());
             // Fall-through to next pipeline stage.
             case ChartUpdateType.SERIES_UPDATE:
-                this.seriesToUpdate.forEach((series) => {
-                    series.update();
-                });
+                const seriesUpdates = [...this.seriesToUpdate].map((series) => series.update());
                 this.seriesToUpdate.clear();
+                await Promise.all(seriesUpdates);
+
                 splits.push(performance.now());
             // Fall-through to next pipeline stage.
             case ChartUpdateType.SCENE_RENDER:
-                this.scene.render({ debugSplitTimes: splits, extraDebugStats });
-                this.firstRenderComplete = true;
+                await this.scene.render({ debugSplitTimes: splits, extraDebugStats });
+                this.updateContext.firstRenderComplete = true;
                 this.extraDebugStats = {};
             // Fall-through to next pipeline stage.
             case ChartUpdateType.NONE:
                 // Do nothing.
                 this._performUpdateType = ChartUpdateType.NONE;
         }
-        const end = performance.now();
 
-        if (this.debug) {
-            console.log({
-                chart: this,
-                durationMs: Math.round((end - splits[0]) * 100) / 100,
-                count,
-                performUpdateType: ChartUpdateType[performUpdateType],
-            });
-        }
+        const end = performance.now();
+        this.log({
+            chart: this,
+            durationMs: Math.round((end - splits[0]) * 100) / 100,
+            count,
+            performUpdateType: ChartUpdateType[performUpdateType],
+        });
     }
 
     readonly element: HTMLElement;
@@ -819,9 +861,9 @@ export abstract class Chart extends Observable {
     }
 
     private resize(width: number, height: number) {
-        if (this.scene.resize(width, height)) {
-            this.firstResizeReceived = true;
+        this.updateContext.firstResizeReceived = true;
 
+        if (this.scene.resize(width, height)) {
             this.background.width = this.width;
             this.background.height = this.height;
 
@@ -829,15 +871,14 @@ export abstract class Chart extends Observable {
         }
     }
 
-    processData(): void {
+    async processData() {
         if (this.axes.length > 0 || this.series.some((s) => s instanceof CartesianSeries)) {
             this.assignAxesToSeries(true);
             this.assignSeriesToAxes();
         }
 
-        this.series.forEach((s) => s.processData());
-
-        this.updateLegend();
+        await Promise.all(this.series.map((s) => s.processData()));
+        await this.updateLegend();
     }
 
     placeLabels(): Map<Series<any>, PlacedLabel[]> {
@@ -867,7 +908,7 @@ export abstract class Chart extends Observable {
         return new Map(labels.map((l, i) => [visibleSeries[i], l]));
     }
 
-    private updateLegend() {
+    private async updateLegend() {
         const legendData: LegendDatum[] = [];
 
         this.series.filter((s) => s.showInLegend).forEach((series) => series.listSeriesItems(legendData));
@@ -887,7 +928,7 @@ export abstract class Chart extends Observable {
         this.legend.data = legendData;
     }
 
-    abstract performLayout(): void;
+    abstract performLayout(): Promise<void>;
 
     protected positionCaptions(): { captionAutoPadding?: number } {
         const { _title: title, _subtitle: subtitle } = this;
@@ -1389,31 +1430,14 @@ export abstract class Chart extends Observable {
     }
 
     async waitForUpdate(timeoutMs = 5000): Promise<void> {
-        return new Promise((resolve, reject) => {
-            let retryMs = 10;
-            let startMs = Date.now();
-            const cb = () => {
-                if (this.lastPerformUpdateError) {
-                    reject(this.lastPerformUpdateError);
-                    return;
-                }
+        const start = performance.now();
 
-                if (!this.updatePending) {
-                    resolve();
-                    return;
-                }
-
-                const timeMs = Date.now() - startMs;
-                if (timeMs >= timeoutMs) {
-                    reject('timeout reached');
-                    return;
-                }
-
-                retryMs *= 2;
-                setTimeout(cb, retryMs);
-            };
-
-            cb();
-        });
+        while (this.pendingFactoryUpdates > 0 || this.updatePending) {
+            if (performance.now() - start > timeoutMs) {
+                throw new Error('waitForUpdate() timeout reached.');
+            }
+            await sleep(5);
+        }
+        await this.awaitUpdateCompletion();
     }
 }

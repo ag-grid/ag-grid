@@ -314,7 +314,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
     }
 
-    processData(): boolean {
+    async processData() {
         const { angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData, label } = this;
         const data = angleKey && this.data ? this.data : [];
 
@@ -449,15 +449,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             datumIndex++;
             end = start; // Update for next iteration.
         });
-
-        return true;
     }
 
-    createNodeData() {
+    async createNodeData() {
         return [];
     }
 
-    update(): void {
+    async update() {
         const { radius, innerRadiusOffset, outerRadiusOffset, title } = this;
 
         this.radiusScale.range = [
@@ -479,15 +477,15 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
         }
 
-        this.updateSelections();
-        this.updateNodes();
+        await this.updateSelections();
+        await this.updateNodes();
     }
 
-    private updateSelections() {
-        this.updateGroupSelection();
+    private async updateSelections() {
+        await this.updateGroupSelection();
     }
 
-    private updateGroupSelection() {
+    private async updateGroupSelection() {
         const { groupSelection, highlightSelection, labelSelection, innerLabelsSelection } = this;
 
         const update = (selection: typeof groupSelection) => {
@@ -527,7 +525,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.innerLabelsSelection = updateInnerLabels.merge(enterFancy);
     }
 
-    private updateNodes() {
+    private async updateNodes() {
         if (!this.chart) {
             return;
         }

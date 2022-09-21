@@ -13,6 +13,7 @@ import { AgChartV2 } from '../agChartV2';
 import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { LineSeries } from '../series/cartesian/lineSeries';
+import { waitForChartStability } from '../test/utils';
 
 const data = [
     { label: 'Android', v1: 5.67, v2: 8.63, v3: 8.14, v4: 6.45, v5: 1.37 },
@@ -315,41 +316,44 @@ describe('ChartTheme', () => {
             ],
         };
 
-        const cartesianChart = AgChartV2.create(cartesianChartOptions);
-        const polarChart = AgChartV2.create(polarChartOptions);
+        test('Cartesian chart instance properties', async () => {
+            let cartesianChart = AgChartV2.create(cartesianChartOptions);
+            await waitForChartStability(cartesianChart);
+    
+            expect(cartesianChart!.title && cartesianChart!.title.enabled).toBe(true);
+            expect(cartesianChart!.title && cartesianChart!.title.fontSize).toBe(24);
+            expect(cartesianChart!.title && cartesianChart!.title.fontWeight).toBe('normal');
 
-        test('Cartesian chart instance properties', () => {
-            expect(cartesianChart.title && cartesianChart.title.enabled).toBe(true);
-            expect(cartesianChart.title && cartesianChart.title.fontSize).toBe(24);
-            expect(cartesianChart.title && cartesianChart.title.fontWeight).toBe('normal');
+            expect(cartesianChart!.background.fill).toBe('red');
 
-            expect(cartesianChart.background.fill).toBe('red');
-
-            expect(cartesianChart.series[0].type).toBe('bar');
-            expect((cartesianChart.series[0] as BarSeries).fills).toEqual(['red', 'green', 'blue', 'red', 'green']);
-            expect((cartesianChart.series[0] as BarSeries).strokes).toEqual(['cyan', 'cyan', 'cyan', 'cyan', 'cyan']);
-            expect((cartesianChart.series[0] as BarSeries).label.enabled).toBe(true);
-            expect((cartesianChart.series[0] as BarSeries).label.color).toBe('blue');
-            expect((cartesianChart.series[0] as BarSeries).label.fontSize).toBe(18);
-            expect((cartesianChart.series[0] as BarSeries).tooltip.enabled).toBe(false);
-            expect((cartesianChart.series[0] as BarSeries).tooltip.renderer).toBe(columnTooltipRenderer);
+            expect(cartesianChart!.series[0].type).toBe('bar');
+            expect((cartesianChart!.series[0] as BarSeries).fills).toEqual(['red', 'green', 'blue', 'red', 'green']);
+            expect((cartesianChart!.series[0] as BarSeries).strokes).toEqual(['cyan', 'cyan', 'cyan', 'cyan', 'cyan']);
+            expect((cartesianChart!.series[0] as BarSeries).label.enabled).toBe(true);
+            expect((cartesianChart!.series[0] as BarSeries).label.color).toBe('blue');
+            expect((cartesianChart!.series[0] as BarSeries).label.fontSize).toBe(18);
+            expect((cartesianChart!.series[0] as BarSeries).tooltip.enabled).toBe(false);
+            expect((cartesianChart!.series[0] as BarSeries).tooltip.renderer).toBe(columnTooltipRenderer);
         });
 
-        test('Polar chart intstance properties', () => {
-            expect(polarChart.title && polarChart.title.enabled).toBe(true);
-            expect(polarChart.title && polarChart.title.fontSize).toBe(24);
-            expect(polarChart.title && polarChart.title.fontWeight).toBe('normal');
+        test('Polar chart intstance properties', async () => {
+            let polarChart = AgChartV2.create(polarChartOptions);
+            await waitForChartStability(polarChart);
+    
+            expect(polarChart!.title && polarChart!.title.enabled).toBe(true);
+            expect(polarChart!.title && polarChart!.title.fontSize).toBe(24);
+            expect(polarChart!.title && polarChart!.title.fontWeight).toBe('normal');
 
-            expect(polarChart.background.fill).toBe('red');
+            expect(polarChart!.background.fill).toBe('red');
 
-            expect(polarChart.series[0].type).toBe('pie');
-            expect((polarChart.series[0] as PieSeries).fills).toEqual(['red', 'green', 'blue']);
-            expect((polarChart.series[0] as PieSeries).strokes).toEqual(['cyan', 'cyan', 'cyan']);
-            expect((polarChart.series[0] as PieSeries).label.enabled).toBe(true);
-            expect((polarChart.series[0] as PieSeries).label.color).toBe('yellow');
-            expect((polarChart.series[0] as PieSeries).label.fontSize).toBe(18);
-            expect((polarChart.series[0] as PieSeries).tooltip.enabled).toBe(false);
-            expect((polarChart.series[0] as PieSeries).tooltip.renderer).toBe(pieTooltipRenderer);
+            expect(polarChart!.series[0].type).toBe('pie');
+            expect((polarChart!.series[0] as PieSeries).fills).toEqual(['red', 'green', 'blue']);
+            expect((polarChart!.series[0] as PieSeries).strokes).toEqual(['cyan', 'cyan', 'cyan']);
+            expect((polarChart!.series[0] as PieSeries).label.enabled).toBe(true);
+            expect((polarChart!.series[0] as PieSeries).label.color).toBe('yellow');
+            expect((polarChart!.series[0] as PieSeries).label.fontSize).toBe(18);
+            expect((polarChart!.series[0] as PieSeries).tooltip.enabled).toBe(false);
+            expect((polarChart!.series[0] as PieSeries).tooltip.renderer).toBe(pieTooltipRenderer);
         });
     });
 
@@ -419,7 +423,7 @@ describe('ChartTheme', () => {
             defaultTheme = null;
         });
 
-        test('Themed bottom category, unthemed left number', () => {
+        test('Themed bottom category, unthemed left number', async () => {
             const chart = AgChartV2.create({
                 theme,
                 data,
@@ -431,6 +435,7 @@ describe('ChartTheme', () => {
                     },
                 ],
             } as AgCartesianChartOptions);
+            await waitForChartStability(chart);
 
             expect(chart.axes[0].type).toBe('number');
             expect(chart.axes[0].position).toBe('left');
@@ -443,7 +448,7 @@ describe('ChartTheme', () => {
             expect(chart.axes[1].label.fontSize).toBe(18);
         });
 
-        test('Specialized chart type themed bottom category, unthemed left number', () => {
+        test('Specialized chart type themed bottom category, unthemed left number', async () => {
             const chart = AgChartV2.create({
                 type: 'area',
                 theme,
@@ -455,6 +460,7 @@ describe('ChartTheme', () => {
                     },
                 ],
             } as AgCartesianChartOptions);
+            await waitForChartStability(chart);
 
             expect(chart.axes[0].type).toBe('number');
             expect(chart.axes[0].position).toBe('left');
@@ -467,7 +473,7 @@ describe('ChartTheme', () => {
             expect(chart.axes[1].label.fontSize).toBe(18);
         });
 
-        test('Themed right number, unthemed top category', () => {
+        test('Themed right number, unthemed top category', async () => {
             const chart = AgChartV2.create({
                 theme,
                 data,
@@ -489,6 +495,7 @@ describe('ChartTheme', () => {
                     },
                 ],
             } as AgCartesianChartOptions);
+            await waitForChartStability(chart);
 
             expect(chart.axes[0].type).toBe('number');
             expect(chart.axes[0].position).toBe('right');
@@ -501,7 +508,7 @@ describe('ChartTheme', () => {
             expect(chart.axes[1].label.fontSize).toBe(12);
         });
 
-        test('Partially themed axes', () => {
+        test('Partially themed axes', async () => {
             const chart = AgChartV2.create({
                 theme,
                 data,
@@ -540,6 +547,7 @@ describe('ChartTheme', () => {
                     },
                 ],
             } as AgCartesianChartOptions);
+            await waitForChartStability(chart);
 
             expect(chart.axes[0].type).toBe('number');
             expect(chart.axes[0].position).toBe('right');
@@ -650,8 +658,9 @@ describe('ChartTheme', () => {
             ],
         };
 
-        test('Cartesian chart instance properties', () => {
+        test('Cartesian chart instance properties', async () => {
             const cartesianChart = AgChartV2.create(cartesianChartOptions);
+            await waitForChartStability(cartesianChart);
             const { series } = cartesianChart;
 
             expect(series[0].type).toEqual('bar');
