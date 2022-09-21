@@ -565,9 +565,16 @@
     }
   },
   "AgCategoryAxisThemeOptions": {
-    "paddingInner": { "type": { "returnType": "number", "optional": true } },
-    "paddingOuter": { "type": { "returnType": "number", "optional": true } },
+    "paddingInner": {
+      "description": "/** The size of the gap between the categories as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.2` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "paddingOuter": {
+      "description": "/** The padding on the outside i.e. left and right of the first and last category. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.3` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "groupPaddingInner": {
+      "description": "/** This property is for grouped column/bar series plotted on a category axis. It is a proportion between 0 and 1 which determines the size of the gap between the bars or columns within a single group along the axis.\n * Default: `0.2` */",
       "type": { "returnType": "number", "optional": true }
     },
     "tick": {
@@ -1707,9 +1714,16 @@
   },
   "AgCategoryAxisOptions": {
     "type": { "type": { "returnType": "'category'", "optional": false } },
-    "paddingInner": { "type": { "returnType": "number", "optional": true } },
-    "paddingOuter": { "type": { "returnType": "number", "optional": true } },
+    "paddingInner": {
+      "description": "/** The size of the gap between the categories as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.2` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "paddingOuter": {
+      "description": "/** The padding on the outside i.e. left and right of the first and last category. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.3` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "groupPaddingInner": {
+      "description": "/** This property is for grouped column/bar series plotted on a category axis. It is a proportion between 0 and 1 which determines the size of the gap between the bars or columns within a single group along the axis.\n * Default: `0.2` */",
       "type": { "returnType": "number", "optional": true }
     },
     "tick": {
