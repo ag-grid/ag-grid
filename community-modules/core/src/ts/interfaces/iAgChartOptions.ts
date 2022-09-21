@@ -1261,6 +1261,8 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     tooltip?: AgPieSeriesTooltip;
     /** Text lines to display inside the doughnut chart */
     innerLabels?: AgDoughnutInnerLabel[];
+    /** The centre of the doughnut chart */
+    innerCircle?: AgDoughnutInnerCircle;
     formatter?: (params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat;
 }
 

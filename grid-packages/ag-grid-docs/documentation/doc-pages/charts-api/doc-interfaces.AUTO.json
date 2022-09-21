@@ -899,6 +899,10 @@
       "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgPieSeriesTooltip", "optional": true }
     },
+    "innerCircle": {
+      "description": "/** The centre of the doughnut chart */",
+      "type": { "returnType": "AgDoughnutInnerCircle", "optional": true }
+    },
     "formatter": {
       "type": {
         "arguments": { "params": "AgPieSeriesFormatterParams<DatumType>" },
@@ -3368,6 +3372,10 @@
     "innerLabels": {
       "description": "/** Text lines to display inside the doughnut chart */",
       "type": { "returnType": "AgDoughnutInnerLabel[]", "optional": true }
+    },
+    "innerCircle": {
+      "description": "/** The centre of the doughnut chart */",
+      "type": { "returnType": "AgDoughnutInnerCircle", "optional": true }
     },
     "formatter": {
       "type": {
