@@ -22,6 +22,7 @@ export class HdpiCanvas {
         domLayer = false,
         zIndex = 0,
         name = undefined as undefined | string,
+        overrideDevicePixelRatio = undefined as undefined | number,
     }) {
         this.document = document;
         this.element = document.createElement('canvas');
@@ -45,7 +46,7 @@ export class HdpiCanvas {
             }
         }
 
-        this.setPixelRatio();
+        this.setPixelRatio(overrideDevicePixelRatio);
         this.resize(width, height);
     }
 

@@ -465,7 +465,7 @@ export abstract class Chart extends Observable {
 
     private static tooltipDocuments: Document[] = [];
 
-    protected constructor(document = window.document) {
+    protected constructor(document = window.document, overrideDevicePixelRatio?: number) {
         super();
 
         const root = new Group({ name: 'root' });
@@ -478,7 +478,7 @@ export abstract class Chart extends Observable {
         element.classList.add('ag-chart-wrapper');
         element.style.position = 'relative';
 
-        this.scene = new Scene({ document });
+        this.scene = new Scene({ document, overrideDevicePixelRatio });
         this.scene.debug.consoleLog = this._debug;
         this.scene.root = root;
         this.scene.container = element;

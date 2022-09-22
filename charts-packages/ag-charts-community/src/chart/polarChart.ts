@@ -10,8 +10,8 @@ export class PolarChart extends Chart {
 
     padding = new Padding(40);
 
-    constructor(document = window.document) {
-        super(document);
+    constructor(document = window.document, overrideDevicePixelRatio?: number) {
+        super(document, overrideDevicePixelRatio);
 
         this.scene.root!.append(this.legend.group);
     }

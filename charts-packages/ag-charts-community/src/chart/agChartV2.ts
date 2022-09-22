@@ -138,7 +138,7 @@ export abstract class AgChart {
 export abstract class AgChartV2 {
     static DEBUG = () => windowValue('agChartsDebug') ?? false;
 
-    static create<T extends ChartType>(userOptions: ChartOptionType<T> & { devidePixelRatio?: number }): T {
+    static create<T extends ChartType>(userOptions: ChartOptionType<T> & { overrideDevicePixelRatio?: number }): T {
         debug('user options', userOptions);
         const mixinOpts: any = {};
         if (AgChartV2.DEBUG()) {
@@ -146,15 +146,16 @@ export abstract class AgChartV2 {
         }
 
         const mergedOptions = prepareOptions(userOptions, mixinOpts);
+        const { overrideDevicePixelRatio } = userOptions;
 
         const chart = isAgCartesianChartOptions(mergedOptions)
             ? mergedOptions.type === 'groupedCategory'
-                ? new GroupedCategoryChart(document)
-                : new CartesianChart(document)
+                ? new GroupedCategoryChart(document, overrideDevicePixelRatio)
+                : new CartesianChart(document, overrideDevicePixelRatio)
             : isAgHierarchyChartOptions(mergedOptions)
-            ? new HierarchyChart(document)
+            ? new HierarchyChart(document, overrideDevicePixelRatio)
             : isAgPolarChartOptions(mergedOptions)
-            ? new PolarChart(document)
+            ? new PolarChart(document, overrideDevicePixelRatio)
             : undefined;
 
         if (!chart) {
@@ -223,12 +224,13 @@ export abstract class AgChartV2 {
                 width,
                 height,
                 autoSize: false,
+                overrideDevicePixelRatio: 1,
             };
 
             const clonedChart = AgChartV2.create(options as any);
 
             clonedChart.waitForUpdate().then(() => {
-                clonedChart.scene.download();
+                clonedChart.scene.download(fileName, fileFormat);
                 clonedChart.destroy();
             });
         } else {
