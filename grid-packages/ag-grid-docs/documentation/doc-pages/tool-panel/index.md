@@ -24,7 +24,7 @@ In addition to the provided Tool Panels, it is also possible to provide custom T
 
 For more details refer to the section: [Custom Tool Panel Components](/component-tool-panel/).
 
-## Api
+## API
 
 The `gridApi` has the following methods that can be used to interact with the tool panel.
 
