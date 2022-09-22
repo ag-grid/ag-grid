@@ -82,6 +82,8 @@ type SeriesOptionType<T extends Series> = T extends LineSeries
     ? AgTreemapSeriesOptions
     : never;
 
+type DownloadOptions = { width?: number; height?: number; fileName?: string; fileFormat?: string };
+
 function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian' | 'polar' | 'hierarchy' {
     if (isAgCartesianChartOptions(options)) {
         return 'cartesian';
@@ -127,12 +129,16 @@ export abstract class AgChart {
     ) {
         return AgChartV2.update(chart, options as any);
     }
+
+    public static download<T extends AgChartOptions>(chart: AgChartType<T>, options: DownloadOptions) {
+        return AgChartV2.download(chart, options);
+    }
 }
 
 export abstract class AgChartV2 {
     static DEBUG = () => windowValue('agChartsDebug') ?? false;
 
-    static create<T extends ChartType>(userOptions: ChartOptionType<T>): T {
+    static create<T extends ChartType>(userOptions: ChartOptionType<T> & { devidePixelRatio?: number }): T {
         debug('user options', userOptions);
         const mixinOpts: any = {};
         if (AgChartV2.DEBUG()) {
@@ -200,6 +206,34 @@ export abstract class AgChartV2 {
 
             await AgChartV2.updateDelta<T>(chart as T, deltaOptions, userOptions);
         });
+    }
+
+    static download(chart: Chart, opts?: DownloadOptions) {
+        let { width, height, fileName, fileFormat } = opts || {};
+        const currentWidth = chart.width;
+        const currentHeight = chart.height;
+
+        width = width ?? currentWidth;
+        height = height ?? currentHeight;
+
+        if (currentWidth !== width || currentHeight !== height) {
+            const options = {
+                ...chart.userOptions,
+                container: document.createElement('div'),
+                width,
+                height,
+                autoSize: false,
+            };
+
+            const clonedChart = AgChartV2.create(options as any);
+
+            clonedChart.waitForUpdate().then(() => {
+                clonedChart.scene.download();
+                clonedChart.destroy();
+            });
+        } else {
+            chart.scene.download(fileName, fileFormat);
+        }
     }
 
     private static async updateDelta<T extends ChartType>(

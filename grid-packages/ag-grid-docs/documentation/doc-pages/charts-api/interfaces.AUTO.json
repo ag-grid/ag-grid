@@ -2597,6 +2597,10 @@
     "meta": { "isTypeAlias": true, "typeParams": ["T extends Series"] },
     "type": "T extends LineSeries ? AgLineSeriesOptions : T extends BarSeries ? AgBarSeriesOptions : T extends AreaSeries ? AgAreaSeriesOptions : T extends ScatterSeries ? AgScatterSeriesOptions : T extends HistogramSeries ? AgHistogramSeriesOptions : T extends PieSeries ? AgPieSeriesOptions : T extends TreemapSeries ? AgTreemapSeriesOptions : never"
   },
+  "DownloadOptions": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ width?: number; height?: number; fileName?: string; fileFormat?: string; }"
+  },
   "ObservableLike": {
     "meta": { "isTypeAlias": true },
     "type": "{ addEventListener(key: string, cb: SourceEventListener<any>): void; clearEventListeners(): void; }"
