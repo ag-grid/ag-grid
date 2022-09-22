@@ -30,6 +30,7 @@ import {
     OPT_FONT_WEIGHT,
     NUMBER,
     OPTIONAL,
+    predicateWithMessage,
 } from '../../util/validation';
 
 const CROSSLINE_LABEL_POSITIONS = [
@@ -52,9 +53,15 @@ const CROSSLINE_LABEL_POSITIONS = [
     'insideBottomRight',
 ];
 
-const OPT_CROSSLINE_LABEL_POSITION = (v: any) => OPTIONAL(v, (v: any) => CROSSLINE_LABEL_POSITIONS.includes(v));
+const OPT_CROSSLINE_LABEL_POSITION = predicateWithMessage(
+    (v: any) => OPTIONAL(v, (v: any) => CROSSLINE_LABEL_POSITIONS.includes(v)),
+    `expecting an optional crossLine label position keyword such as 'topLeft', 'topRight' or 'inside'`
+);
 
-const OPT_CROSSLINE_TYPE = (v: any) => OPTIONAL(v, (v: any) => v === 'range' || v === 'line');
+const OPT_CROSSLINE_TYPE = predicateWithMessage(
+    (v: any) => OPTIONAL(v, (v: any) => v === 'range' || v === 'line'),
+    `expecting a crossLine type keyword such as 'range' or 'line'`
+);
 
 export class CrossLineLabel {
     @Validate(OPT_BOOLEAN)

@@ -32,10 +32,14 @@ import {
     OPT_COLOR_STRING,
     STRING,
     Validate,
+    predicateWithMessage,
 } from '../../../util/validation';
 
 const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
-const HISTOGRAM_AGGREGATION = (v: any) => HISTOGRAM_AGGREGATIONS.includes(v);
+const HISTOGRAM_AGGREGATION = predicateWithMessage(
+    (v: any) => HISTOGRAM_AGGREGATIONS.includes(v),
+    `expecting a histogram aggregation keyword such as 'count', 'sum' or 'mean`
+);
 
 enum HistogramSeriesNodeTag {
     Bin,

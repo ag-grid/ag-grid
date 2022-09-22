@@ -5,15 +5,23 @@ import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
 import { ChartAxis } from '../chartAxis';
 import { doOnce } from '../../util/function';
-import { BOOLEAN, Validate } from '../../util/validation';
+import { BOOLEAN, predicateWithMessage, Validate } from '../../util/validation';
 
 function NUMBER_OR_NAN(min?: number, max?: number) {
     // Can be NaN or finite number
-    return (v: any) =>
-        typeof v === 'number' &&
-        (isNaN(v) || Number.isFinite(v)) &&
-        (min !== undefined ? v >= min : true) &&
-        (max !== undefined ? v <= max : true);
+    const message = `expecting a finite Number${
+        (min !== undefined ? ', more than or equal to ' + min : '') +
+        (max !== undefined ? ', less than or equal to ' + max : '')
+    }`;
+
+    return predicateWithMessage(
+        (v: any) =>
+            typeof v === 'number' &&
+            (isNaN(v) || Number.isFinite(v)) &&
+            (min !== undefined ? v >= min : true) &&
+            (max !== undefined ? v <= max : true),
+        message
+    );
 }
 
 // Instead of clamping the values outside of domain to the range,
