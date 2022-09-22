@@ -801,7 +801,7 @@ export class GridApi<TData = any> {
             return;
         }
         const comp = this.sideBarComp.getToolPanelInstance(id);
-        return unwrapUserComp(comp) as TToolPanel | undefined;
+        return unwrapUserComp(comp) as any;
     }
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {

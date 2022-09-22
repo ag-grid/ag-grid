@@ -157,6 +157,7 @@ export class FakeHScrollCtrl extends BeanStub {
         this.view.setHeight(scrollContainerSize);
         this.view.setViewportHeight(scrollContainerSize);
         this.view.setContainerHeight(scrollContainerSize);
+        this.view.addOrRemoveCssClass('ag-hidden', !hScrollShowing);
     }
 
     public getViewport(): HTMLElement {

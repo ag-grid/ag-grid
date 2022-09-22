@@ -4,6 +4,10 @@
     flex-direction: column;
 }
 
+.panel-body {
+    display: flex;
+    align-items: center;
+}
 .panel-body input {
     margin-right: 2px !important;
 }

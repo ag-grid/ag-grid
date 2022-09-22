@@ -147,6 +147,9 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     // The group node that contains all the nodes used to render this series.
     readonly group: Group = new Group();
 
+    // The group node that contains the background graphics.
+    readonly backgroundGroup: Group;
+
     // The group node that contains the series rendering in it's default (non-highlighted) state.
     readonly seriesGroup: Group;
 
@@ -213,6 +216,15 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         super();
 
         const { group } = this;
+
+        this.backgroundGroup = group.appendChild(
+            new Group({
+                name: `${this.id}-background`,
+                layer: useSeriesGroupLayer,
+                zIndex: Layers.SERIES_BACKGROUND_ZINDEX,
+            })
+        );
+
         this.seriesGroup = group.appendChild(
             new Group({
                 name: `${this.id}-series`,
@@ -220,6 +232,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
             })
         );
+
         this.pickGroup = this.seriesGroup.appendChild(new Group());
 
         this.highlightGroup = group.appendChild(
@@ -289,10 +302,10 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     abstract getDomain(direction: ChartAxisDirection): any[];
 
     // Fetch required values from the `chart.data` or `series.data` objects and process them.
-    abstract processData(): void;
+    abstract processData(): Promise<void>;
 
     // Using processed data, create data that backs visible nodes.
-    abstract createNodeData(): C[];
+    abstract createNodeData(): Promise<C[]>;
 
     // Indicate that something external changed and we should recalculate nodeData.
     markNodeDataDirty() {
@@ -304,7 +317,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     }
 
     // Produce data joins and update selection's nodes using node data.
-    abstract update(): void;
+    abstract update(): Promise<void>;
 
     protected getOpacity(datum?: { itemId?: any }): number {
         const {

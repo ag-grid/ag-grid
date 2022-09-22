@@ -162,8 +162,11 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
                 : isSeriesOptionType(userSuppliedOptionsType)
                 ? userSuppliedOptionsType
                 : defaultSeriesType;
-
-            return jsonMerge(seriesThemes[type] || {}, { ...s, type });
+            const mergedSeries = jsonMerge(seriesThemes[type] || {}, { ...s, type });
+            if (type === 'pie') {
+                preparePieOptions(seriesThemes.pie, s, mergedSeries);
+            }
+            return mergedSeries;
         })
     ).map((s) => prepareSeries(context, s)) as any[];
 
@@ -318,4 +321,14 @@ function prepareEnabledOptions<T extends AgChartOptions>(options: T, mergedOptio
         { skip: ['data'] },
         mergedOptions
     );
+}
+
+function preparePieOptions(pieSeriesTheme: any, seriesOptions: any, mergedSeries: any) {
+    if (Array.isArray(seriesOptions.innerLabels)) {
+        mergedSeries.innerLabels = seriesOptions.innerLabels.map((ln: any) => {
+            return jsonMerge(pieSeriesTheme.innerLabels, ln);
+        });
+    } else {
+        mergedSeries.innerLabels = DELETE;
+    }
 }

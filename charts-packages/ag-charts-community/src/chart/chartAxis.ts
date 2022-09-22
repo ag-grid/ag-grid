@@ -156,10 +156,6 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
     calculateDomain({ primaryTickCount }: { primaryTickCount?: number }) {
         const { direction, boundSeries, includeInvisibleDomains } = this;
 
-        if (boundSeries.length === 0) {
-            console.warn('AG Charts - chart series not initialised; check series and axes configuration.');
-        }
-
         if (this.linkedTo) {
             this.domain = this.linkedTo.domain;
         } else {

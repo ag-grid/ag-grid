@@ -264,6 +264,7 @@ export class ChartTheme {
             },
             category: {
                 ...ChartTheme.getAxisDefaults(),
+                groupPaddingInner: 0.1,
                 label: {
                     ...ChartTheme.getAxisDefaults().label,
                     autoRotate: true,
@@ -480,6 +481,14 @@ export class ChartTheme {
                     xOffset: 3,
                     yOffset: 3,
                     blur: 5,
+                },
+                innerLabels: {
+                    fontStyle: undefined,
+                    fontWeight: undefined,
+                    fontSize: 12,
+                    fontFamily: ChartTheme.fontFamily,
+                    color: 'rgb(70, 70, 70)',
+                    margin: 2,
                 },
             },
         },

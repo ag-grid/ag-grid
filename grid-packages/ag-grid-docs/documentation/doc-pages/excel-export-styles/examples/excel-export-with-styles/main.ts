@@ -1,89 +1,41 @@
-import { Grid, CellClassParams, ColDef, ColGroupDef, GridOptions, GridReadyEvent } from '@ag-grid-community/core'
+import { Grid, CellClassParams, ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
+  { field: 'athlete', minWidth: 200 },
   {
-    headerName: 'Top Level Column Group',
-    children: [
-      {
-        headerName: 'Group A',
-        children: [
-          { field: 'athlete', minWidth: 200 },
-          {
-            field: 'age',
-            cellClass: 'twoDecimalPlaces',
-            cellClassRules: {
-              greenBackground: (params) => {
-                return params.value < 23
-              },
-              redFont: (params) => {
-                return params.value < 20
-              },
-            },
-          },
-          {
-            field: 'country',
-            minWidth: 200,
-            cellClassRules: {
-              redFont: (params) => {
-                return params.value === 'United States'
-              },
-            },
-          },
-          {
-            headerName: 'Group',
-            valueGetter: 'data.country.charAt(0)',
-            cellClassRules: {
-              boldBorders: (params) => {
-                return params.value === 'U'
-              },
-            },
-            cellClass: ['redFont', 'greenBackground'],
-          },
-          {
-            field: 'year',
-            cellClassRules: {
-              notInExcel: (params) => {
-                return true
-              },
-            },
-          },
-        ],
+    field: 'age',
+    cellClassRules: {
+      greenBackground: (params) => {
+        return params.value < 23
       },
-      {
-        headerName: 'Group B',
-        children: [
-          {
-            field: 'date',
-            minWidth: 150,
-            cellClass: 'dateFormat',
-            valueGetter: (params) => {
-              var val = params.data.date
-
-              if (val.indexOf('/') < 0) {
-                return val
-              }
-
-              var split = val.split('/')
-
-              return split[2] + '-' + split[1] + '-' + split[0]
-            },
-          },
-          { field: 'sport', minWidth: 150 },
-          {
-            field: 'gold',
-            cellClassRules: {
-              boldBorders: (params) => {
-                return params.value > 2
-              },
-            },
-          },
-          { field: 'silver', cellClass: 'textFormat' },
-          { field: 'bronze' },
-          { field: 'total' },
-        ],
+      redFont: (params) => {
+        return params.value < 20
       },
-    ],
+    },
   },
+  {
+    field: 'country',
+    minWidth: 200,
+    cellClassRules: {
+      redFont: (params) => {
+        return params.value === 'United States'
+      },
+    },
+  },
+  {
+    headerName: 'Group',
+    valueGetter: 'data.country.charAt(0)',
+    cellClass: ['redFont', 'greenBackground'],
+  },
+  {
+    field: 'year',
+    cellClassRules: {
+      notInExcel: (params) => {
+        return true
+      },
+    },
+  },
+  { field: 'sport', minWidth: 150 },
 ]
 
 const gridOptions: GridOptions<IOlympicData> = {
@@ -102,74 +54,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   columnDefs: columnDefs,
 
-  onGridReady: (params: GridReadyEvent) => {
-    (document.getElementById('fontSize') as HTMLInputElement).checked = true;
-    (document.getElementById('fontSizeValue') as HTMLInputElement).value = "14";
-    (document.getElementById('rowHeight') as HTMLInputElement).checked = true;
-    (document.getElementById('rowHeightValue') as HTMLInputElement).value = "30";
-    (document.getElementById('headerRowHeight') as HTMLInputElement).checked = true;
-    (document.getElementById('headerRowHeightValue') as HTMLInputElement).value = "30";
-  },
-
-  pinnedTopRowData: [
-    {
-      athlete: 'Floating <Top> Athlete',
-      age: 999,
-      country: 'Floating <Top> Country',
-      year: 2020,
-      date: '2020-08-01',
-      sport: 'Track & Field',
-      gold: 22,
-      silver: '003',
-      bronze: 44,
-      total: 55,
-    } as any,
-  ],
-
-  pinnedBottomRowData: [
-    {
-      athlete: 'Floating <Bottom> Athlete',
-      age: 888,
-      country: 'Floating <Bottom> Country',
-      year: 2030,
-      date: '2030-08-01',
-      sport: 'Track & Field',
-      gold: 222,
-      silver: '005',
-      bronze: 244,
-      total: 255,
-    } as any,
-  ],
-
   excelStyles: [
     {
       id: 'cell',
       alignment: {
         vertical: 'Center',
-      },
-    },
-    {
-      id: 'header',
-      alignment: {
-        vertical: 'Center',
-      },
-      interior: {
-        color: '#f8f8f8',
-        pattern: 'Solid',
-        patternColor: undefined
-      },
-      borders: {
-        borderBottom: {
-          color: '#babfc7',
-          lineStyle: 'Continuous',
-          weight: 1,
-        },
-      },
-    },
-    {
-      id: 'headerGroup',
-      font: {
-        bold: true,
       },
     },
     {
@@ -198,84 +87,12 @@ const gridOptions: GridOptions<IOlympicData> = {
         fontName: 'Calibri Light',
         color: '#ffffff',
       },
-    },
-    {
-      id: 'boldBorders',
-      borders: {
-        borderBottom: {
-          color: '#000000',
-          lineStyle: 'Continuous',
-          weight: 3,
-        },
-        borderLeft: {
-          color: '#000000',
-          lineStyle: 'Continuous',
-          weight: 3,
-        },
-        borderRight: {
-          color: '#000000',
-          lineStyle: 'Continuous',
-          weight: 3,
-        },
-        borderTop: {
-          color: '#000000',
-          lineStyle: 'Continuous',
-          weight: 3,
-        },
-      },
-    },
-    {
-      id: 'dateFormat',
-      dataType: 'DateTime',
-      numberFormat: {
-        format: 'mm/dd/yyyy;@',
-      },
-    },
-    {
-      id: 'twoDecimalPlaces',
-      numberFormat: {
-        format: '#,##0.00',
-      },
-    },
-    {
-      id: 'textFormat',
-      dataType: 'String',
-    },
+    }
   ],
 }
 
-function getBooleanValue(cssSelector: string) {
-  return (document.querySelector(cssSelector) as HTMLInputElement).checked === true
-}
-
-function getTextValue(cssSelector: string) {
-  return (document.querySelector(cssSelector) as HTMLInputElement).value
-}
-
-function getNumericValue(cssSelector: string) {
-  var value = parseFloat(getTextValue(cssSelector))
-  if (isNaN(value)) {
-    var message = 'Invalid number entered in ' + cssSelector + ' field'
-    alert(message)
-    throw new Error(message)
-  }
-  return value
-}
-
-function onBtExport() {
-  var params = {
-    fontSize: getBooleanValue('#fontSize')
-      ? getNumericValue('#fontSizeValue')
-      : undefined,
-    rowHeight: getBooleanValue('#rowHeight')
-      ? getNumericValue('#rowHeightValue')
-      : undefined,
-    headerRowHeight: getBooleanValue('#headerRowHeight')
-      ? getNumericValue('#headerRowHeightValue')
-      : undefined,
-  }
-
-  gridOptions.api!.exportDataAsExcel(params)
+function onBtnExportDataAsExcel() {
+  gridOptions.api!.exportDataAsExcel()
 }
 
 // setup the grid after the page has finished loading

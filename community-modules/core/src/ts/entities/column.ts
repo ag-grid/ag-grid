@@ -191,7 +191,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         this.initMinAndMaxWidths();
         this.initDotNotation();
         this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_COL_DEF_CHANGED, "api"));
-    }    
+    }
 
     /**
      * Returns the column definition provided by the application.
@@ -453,7 +453,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     private createColumnEvent(type: string, source: ColumnEventType): ColumnEvent {
-        return {            
+        return {
             type: type,
             column: this,
             columns: [this],

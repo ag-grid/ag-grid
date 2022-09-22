@@ -1,3 +1,4 @@
+import { NUMBER, Validate } from '../../util/validation';
 import { BandScale } from '../../scale/bandScale';
 import { ChartAxis } from '../chartAxis';
 export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
@@ -11,6 +12,9 @@ export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
 
         this.includeInvisibleDomains = true;
     }
+
+    @Validate(NUMBER(0, 1))
+    groupPaddingInner: number = 0.1;
 
     set paddingInner(value: number) {
         this._paddingOverrideEnabled = true;

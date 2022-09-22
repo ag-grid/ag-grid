@@ -170,8 +170,8 @@ export class PieChartProxy extends ChartProxy {
         const primaryOpts = primaryOptions(primarySeries);
 
         return [
+            filteredOutOptions(primarySeries, angleKey),
             primaryOpts,
-            filteredOutOptions(primarySeries, angleKey)
         ];
     }
 

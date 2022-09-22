@@ -497,7 +497,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
         const stopMeasuring = () => {
             isMeasuring = false;
-            stopResizeObserver && stopResizeObserver();
+            if (stopResizeObserver) {
+                stopResizeObserver();
+            }
             stopResizeObserver = undefined;
         };
 
@@ -512,7 +514,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         // Displaying the sort icon changes the available area for text, so sort changes can affect height
         this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, () => {
             // Rendering changes for sort, happen after the event... not ideal
-            isMeasuring && this.beans.frameworkOverrides.setTimeout(() => measureHeight(0));
+            if (isMeasuring) {
+                this.beans.frameworkOverrides.setTimeout(() => measureHeight(0));
+            }
         });
         this.addRefreshFunction(checkMeasuring);
     }

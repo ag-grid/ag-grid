@@ -499,6 +499,7 @@ export class Color {
         teal: '#008080',
         thistle: '#D8BFD8',
         tomato: '#FF6347',
+        transparent: '#00000000',
         turquoise: '#40E0D0',
         violet: '#EE82EE',
         wheat: '#F5DEB3',

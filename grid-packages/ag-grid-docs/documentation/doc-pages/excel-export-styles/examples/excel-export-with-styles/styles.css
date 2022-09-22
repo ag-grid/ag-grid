@@ -1,8 +1,18 @@
-.greenBackground{
+.page-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-wrapper {
+    flex: 1 1 0px;
+}
+
+.greenBackground {
     background-color: #b5e6b5;
 }
 
-.redFont{
+.redFont {
     color: red;
     font-style: italic;
     text-decoration: underline;
@@ -13,41 +23,6 @@
     color: #fff;
 }
 
-.boldBorders{
-    border: 3px solid black !important;
-}
-
-.notInExcel{
+.notInExcel {
     color: #1b6d85;
-}
-.details > label {
-    margin-bottom: 10px;
-}
-.details > label:first-of-type {
-    margin-top: 10px;
-}
-.details > label:last-of-type {
-    margin-bottom: 0;
-}
-.option {
-    display: block;
-    margin: 5px 10px 5px 0;
-}
-.grid-wrapper {
-    display: flex;
-    flex: 1 1 0px;
-    flex-grow: 1;
-}
-.grid-wrapper > div {
-    width: 100%;
-    height: 100%;
-}
-.container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-.columns {
-    display: flex;
-    flex-direction: row;
 }

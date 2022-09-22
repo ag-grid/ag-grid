@@ -1,4 +1,4 @@
-import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer, UserCompDetails } from "ag-grid-community";
+import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer, UserCompDetails, _ } from "ag-grid-community";
 import React, { useContext, useImperativeHandle, forwardRef, useEffect, useMemo, useRef, useState, memo } from 'react';
 import { BeansContext } from "../beansContext";
 import { showJsComp } from "../jsComp";
@@ -62,6 +62,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const useFwRenderer = innerCompDetails && innerCompDetails.componentFromFramework;
     const FwRenderer = useFwRenderer ? innerCompDetails!.componentClass : undefined;
     const useValue = innerCompDetails == null && value != null;
+    const escapedValue = _.escapeString(value, true);
 
     return (
         <span className={className} ref={eGui} {...(!props.colDef ? { role: 'gridcell' } : {})}>
@@ -69,7 +70,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
             <span className={contractedClassName} ref={eContractedRef}></span>
             <span className={checkboxClassName} ref={eCheckboxRef}></span>
             <span className="ag-group-value" ref={eValueRef}>
-                { useValue && <>{value}</> }
+                { useValue && <>{escapedValue}</> }
                 { useFwRenderer && <FwRenderer {...innerCompDetails!.params}/> }
             </span>
             <span className="ag-group-child-count">{childCount}</span>

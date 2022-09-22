@@ -48,6 +48,10 @@ const EXAMPLES: Record<string, PolarTestCase> = {
         options: examples.DOUGHNUT_SERIES,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
     },
+    DOUGHNUT_SERIES_INNER_TEXT: {
+        options: examples.DOUGHNUT_SERIES_INNER_TEXT,
+        assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
+    },
     DOUGHNUT_SERIES_DIFFERENT_RADII: {
         options: examples.DOUGHNUT_SERIES_DIFFERENT_RADII,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
@@ -91,6 +95,7 @@ describe('PolarSeries', () => {
                 options.height = CANVAS_HEIGHT;
 
                 chart = AgChartV2.create<PolarChart>(options);
+                await waitForChartStability(chart);
                 await example.assertions(chart);
             });
 

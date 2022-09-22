@@ -73,9 +73,10 @@ AG Grid is tested for a wide variety of security vulnerabilities using the [Sona
 
 ## SonarQube Results
 
-The SonarQube security test results for `ag-grid-community` and `ag-grid-enterprise` are shown below:
+The SonarQube security test results for our main NPM packages are shown below:
 
-| Ag-Grid Package | Result |
-| --------------- | ------ |
-| ag-grid-community | [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-community)](https://sonarcloud.io/dashboard?id=ag-grid-community) |
-| ag-grid-enterprise | [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-enterprise)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
+| AG-Grid Package     | Result |
+| ------------------- | ------ |
+| ag-grid-community   | [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-community)](https://sonarcloud.io/dashboard?id=ag-grid-community) |
+| ag-grid-enterprise  | [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-enterprise)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
+| ag-charts-community | [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-charts-community)](https://sonarcloud.io/dashboard?id=ag-charts-community) |
