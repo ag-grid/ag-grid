@@ -86,5 +86,14 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "nx": {
+    "implicitDependencies": [
+      "@ag-grid-community/client-side-row-model",
+      "@ag-grid-community/core",
+      "@ag-grid-community/csv-export",
+      "@ag-grid-community/infinite-row-model",
+      "@ag-grid-community/styles"
+    ]
   }
 }

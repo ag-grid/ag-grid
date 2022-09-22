@@ -56,5 +56,10 @@
     "typescript": "~3.7.7",
     "replace-in-file": "4.1.0",
     "rimraf": "3.0.2"
+  },
+  "nx": {
+    "implicitDependencies": [
+      "ag-grid-enterprise"
+    ]
   }
 }

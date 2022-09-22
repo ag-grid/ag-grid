@@ -69,5 +69,10 @@
     "tsickle": "^0.37.0",
     "typescript": "~3.8.3",
     "rimraf": "3.0.2"
+  },
+  "nx": {
+    "implicitDependencies": [
+      "ag-charts-community"
+    ]
   }
 }

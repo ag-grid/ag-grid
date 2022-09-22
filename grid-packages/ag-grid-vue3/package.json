@@ -49,5 +49,11 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "nx": {
+    "implicitDependencies": [
+      "@ag-grid-community/vue3",
+      "ag-grid-enterprise"
+    ]
   }
 }

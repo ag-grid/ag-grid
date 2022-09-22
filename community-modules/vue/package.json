@@ -52,5 +52,10 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "nx": {
+    "implicitDependencies": [
+      "ag-grid-enterprise"
+    ]
   }
 }

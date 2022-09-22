@@ -188,5 +188,10 @@
     "webpack-hot-middleware": "2.23.1",
     "webpack-stream": "5.1.1",
     "zone.js": "^0.10.3"
+  },
+  "nx": {
+    "implicitDependencies": [
+      "ag-grid-documentation"
+    ]
   }
 }

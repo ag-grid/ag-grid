@@ -90,5 +90,11 @@
     "rollup-plugin-typescript2": "^0.24.3",
     "typescript": "~3.7.7",
     "rimraf": "3.0.2"
+  },
+  "nx": {
+    "implicitDependencies": [
+      "@ag-grid-enterprise/all-modules",
+      "ag-grid-community"
+    ]
   }
 }

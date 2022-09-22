@@ -48,12 +48,12 @@
     "@ag-grid-enterprise/sparklines": "~28.1.0",
     "@ag-grid-enterprise/status-bar": "~28.1.0",
     "@ag-grid-enterprise/viewport-row-model": "~28.1.0",
+    "ag-charts-community": "~6.1.0",
     "@fortawesome/fontawesome-svg-core": "1.2.34",
     "@fortawesome/free-solid-svg-icons": "5.15.2",
     "@fortawesome/react-fontawesome": "0.1.14",
     "@types/jquery": "3.5.8",
     "@types/jqueryui": "1.12.16",
-    "ag-charts-community": "~6.1.0",
     "algoliasearch": "4.11.0",
     "bootstrap": "4.6.0",
     "classnames": "2.3.1",
@@ -137,5 +137,10 @@
     "ts-jest": "26.5.6",
     "yargs": "16.2.0",
     "rimraf": "3.0.2"
+  },
+  "nx": {
+    "implicitDependencies": [
+      "ag-grid-enterprise"
+    ]
   }
 }

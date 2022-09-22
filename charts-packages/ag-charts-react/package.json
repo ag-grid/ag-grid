@@ -124,5 +124,10 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "nx": {
+    "implicitDependencies": [
+      "ag-charts-community"
+    ]
   }
 }

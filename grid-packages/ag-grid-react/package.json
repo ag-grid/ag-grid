@@ -162,5 +162,11 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "nx": {
+    "implicitDependencies": [
+      "@ag-grid-community/react",
+      "ag-grid-enterprise"
+    ]
   }
 }

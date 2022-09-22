@@ -8,5 +8,23 @@
         ]
       }
     }
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "{projectRoot}/dist",
+        "{projectRoot}/lib",
+        "{projectRoot}/build",
+        "{projectRoot}/public/build"
+      ]
+    },
+    "build-prod": {
+      "dependsOn": [
+        "^build-prod"
+      ]
+    }
   }
 }

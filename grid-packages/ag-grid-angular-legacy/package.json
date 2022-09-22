@@ -60,5 +60,11 @@
     "gulp": "^4.0.0",
     "gulp-replace": "^1.0.0",
     "rimraf": "3.0.2"
+  },
+  "nx": {
+    "implicitDependencies": [
+      "@ag-grid-community/angular-legacy",
+      "ag-grid-enterprise"
+    ]
   }
 }

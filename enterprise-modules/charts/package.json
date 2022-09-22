@@ -64,5 +64,12 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "nx": {
+    "implicitDependencies": [
+      "ag-charts-community",
+      "@ag-grid-enterprise/core",
+      "@ag-grid-enterprise/range-selection"
+    ]
   }
 }

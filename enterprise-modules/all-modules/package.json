@@ -123,5 +123,28 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "nx": {
+    "implicitDependencies": [
+      "@ag-grid-community/all-modules",
+      "@ag-grid-enterprise/charts",
+      "@ag-grid-enterprise/clipboard",
+      "@ag-grid-enterprise/column-tool-panel",
+      "@ag-grid-enterprise/core",
+      "@ag-grid-enterprise/excel-export",
+      "@ag-grid-enterprise/filter-tool-panel",
+      "@ag-grid-enterprise/master-detail",
+      "@ag-grid-enterprise/menu",
+      "@ag-grid-enterprise/multi-filter",
+      "@ag-grid-enterprise/range-selection",
+      "@ag-grid-enterprise/rich-select",
+      "@ag-grid-enterprise/row-grouping",
+      "@ag-grid-enterprise/server-side-row-model",
+      "@ag-grid-enterprise/set-filter",
+      "@ag-grid-enterprise/side-bar",
+      "@ag-grid-enterprise/sparklines",
+      "@ag-grid-enterprise/status-bar",
+      "@ag-grid-enterprise/viewport-row-model"
+    ]
   }
 }
