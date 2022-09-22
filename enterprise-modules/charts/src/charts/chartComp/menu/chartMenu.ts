@@ -38,7 +38,7 @@ export class ChartMenu extends Component {
 
     private tabs: ChartMenuOptions[] = [];
 
-    private static TEMPLATE = `<div>
+    private static TEMPLATE = `<div class="ag-chart-menu-test-4-1 ag-chart-toolbar-1-1">
         <div class="ag-chart-menu" ref="eMenu"></div>
         <button class="ag-chart-menu-close" ref="eHideButton">
             <span class="ag-icon ag-icon-contracted" ref="eHideButtonIcon"></span>

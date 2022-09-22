@@ -196,13 +196,97 @@
         }
     }
 
-    .ag-chart-menu-close {
-        background: var(--ag-header-background-color);
-
-        @include ag.theme-rtl((
-            border-left: var(--ag-borders) var(--ag-secondary-border-color)
-        ));
+    // Vertical bar
+    .ag-chart-menu-test-1 {
+        .ag-chart-menu-close {
+            background: var(--ag-header-background-color);
+    
+            @include ag.theme-rtl((
+                border-left: var(--ag-borders) var(--ag-secondary-border-color)
+            ));
+        }
     }
+
+    // Circle middle
+    .ag-chart-menu-test-2 {
+        .ag-chart-menu-close {
+            background: none;
+        }
+    
+        .ag-chart-menu-close .ag-icon {
+            color: var(--ag-border-color);
+            border: 1px solid var(--ag-secondary-border-color);
+            padding: 2px;
+            margin: 2px;
+            border-radius: 15px;
+        }
+    }
+
+    // Circle top
+    .ag-chart-menu-test-3 {
+        .ag-chart-menu-close {
+            background: none;
+            display: flex;
+            padding-top: 5px;
+        }
+
+        .ag-chart-menu-close .ag-icon {
+            color: var(--ag-border-color);
+            border: 1px solid var(--ag-secondary-border-color);
+            padding: 2px;
+            margin: 2px;
+            border-radius: 15px;
+        }
+    }
+
+    // Square tab
+    .ag-chart-menu-test-4 {
+        .ag-chart-menu-close {
+            background: none;
+        }
+
+        .ag-chart-menu-close .ag-icon {
+            background: none;
+            border-top: 1px solid var(--ag-secondary-border-color);
+            border-left: 1px solid var(--ag-secondary-border-color);
+            border-bottom: 1px solid var(--ag-secondary-border-color);
+            padding: 9px 1px 9px 2px;
+        }
+
+        .ag-chart-menu-close .ag-icon:hover {
+            background: var(--ag-header-background-color);
+        }
+    }
+
+    // Square tab with smaller click area
+    .ag-chart-menu-test-4-1,
+    // Square tab with smaller click area and hover expansion
+    .ag-chart-menu-test-4-2 {
+        .ag-chart-menu-close {
+            background: none;
+        }
+
+        .ag-chart-menu-close .ag-icon {
+            background: none;
+            border-top: 1px solid var(--ag-secondary-border-color);
+            border-left: 1px solid var(--ag-secondary-border-color);
+            border-bottom: 1px solid var(--ag-secondary-border-color);
+        }
+
+        .ag-chart-menu-close .ag-icon:hover {
+            background: var(--ag-header-background-color);
+        }
+    }
+
+    .ag-chart-menu-close-3 .ag-icon {
+        color: var(--ag-border-color);
+        border: 1px solid var(--ag-secondary-border-color);
+        padding: 2px;
+        margin: 2px;
+        border-radius: 15px;
+    }
+
+
 
     .ag-chart-settings-card-item.ag-not-selected:hover {
         opacity: 0.35;

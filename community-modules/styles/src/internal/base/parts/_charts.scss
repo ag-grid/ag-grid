@@ -220,20 +220,120 @@
         justify-content: center;
     }
 
-    .ag-chart-menu-close {
-        padding: 0;
-        display: block;
-        cursor: pointer;
-        height: 100%;
-        border: none;
-    }
-
     .ag-chart .ag-chart-menu {
         display: none;
     }
 
     .ag-chart-menu-hidden:hover .ag-chart-menu {
         display: block;
+    }
+
+    .ag-chart-menu-test-1,
+    .ag-chart-menu-test-2,
+    .ag-chart-menu-test-3,
+    .ag-chart-menu-test-4 {
+        .ag-chart-menu-close {
+            padding: 0;
+            display: block;
+            cursor: pointer;
+            height: 100%;
+            border: none;
+
+            .ag-icon {
+                padding: 9px 1px 9px 2px;
+            }
+        }
+    }
+
+    .ag-chart-menu-test-4-1 {
+        display: flex;
+
+        .ag-chart-menu-close {
+            position: absolute;
+            right: 0;
+            top: 45%;
+            padding: 0;
+            display: block;
+            cursor: pointer;
+            border: none;
+
+            .ag-icon {
+                padding: 9px 0 9px 0;
+            }
+        }
+    }
+
+    .ag-chart-menu-test-4-2 {
+        display: flex;
+
+        .ag-chart-menu-close {
+            position: absolute;
+            right: 0;
+            top: 45%;
+            padding: 0;
+            display: block;
+            cursor: pointer;
+            border: none;
+
+            .ag-icon {
+                padding: 9px 0 9px 1px;
+            }
+        }
+
+        .ag-chart-menu-close:hover {
+            .ag-icon {
+                padding: 9px 2px 9px 1px;
+            }
+        }
+    }
+
+    .ag-chart {
+        .ag-chart-toolbar-1 {
+            .ag-chart-menu {
+                display: flex;
+                flex-direction: row;
+                right: 25px;
+                overflow: auto;
+                top: 5px;
+                width: 70px;
+                justify-content: right;
+                gap: 5px;
+            }
+
+            // Hide burger menu
+            .ag-icon-menu {
+                display: none;
+            }
+        }
+
+        .ag-chart-toolbar-1-1 {
+            .ag-chart-menu {
+                display: flex;
+                flex-direction: row;
+                right: 5px;
+                overflow: auto;
+                top: 5px;
+                width: 70px;
+                justify-content: right;
+                gap: 5px;
+            }
+
+            // Hide burger menu
+            .ag-icon-menu {
+                display: none;
+            }
+        }
+
+        .ag-chart-toolbar-2 {
+            .ag-chart-menu {
+                display: flex;
+                flex-direction: row;
+                left: 10px;
+                overflow: auto;
+                top: 5px;
+                width: 100px;
+            }
+        }
     }
 
     .ag-charts-font-size-color {
