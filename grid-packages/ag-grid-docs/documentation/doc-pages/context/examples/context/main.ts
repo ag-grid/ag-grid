@@ -16,6 +16,7 @@ const columnDefs: ColDef[] = [
     cellRenderer: getCurrencyCellRenderer(),
     valueGetter: reportingCurrencyValueGetter,
     headerValueGetter: 'ctx.reportingCurrency',
+    equals: (v1, v2) => v1.currency === v2.currency && v1.amount === v2.amount,
   },
 ]
 

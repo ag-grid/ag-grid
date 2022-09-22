@@ -810,7 +810,7 @@ export class CellCtrl extends BeanStub {
         return this.beans.valueFormatterService.formatValue(this.column, this.rowNode, value);
     }
 
-    public updateAndFormatValue(force = false): boolean {
+    private updateAndFormatValue(force = false): boolean {
         const oldValue = this.value;
         const oldValueFormatted = this.valueFormatted;
 
@@ -826,7 +826,7 @@ export class CellCtrl extends BeanStub {
     private valuesAreEqual(val1: any, val2: any): boolean {
         // if the user provided an equals method, use that, otherwise do simple comparison
         const colDef = this.column.getColDef();
-        return colDef.equals ? colDef.equals(val1, val2) : val1 === val2;
+        return colDef.equals ? colDef.equals(val1, val2) : typeof val1 === typeof val2 && val1?.toString() === val2?.toString();
     }
 
     public getComp(): ICellComp {
