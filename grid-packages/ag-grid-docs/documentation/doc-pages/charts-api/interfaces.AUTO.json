@@ -3765,6 +3765,6 @@
   },
   "ValidatePredicate": {
     "meta": { "isTypeAlias": true },
-    "type": "(v: any) => boolean"
+    "type": "{ (v: any, additionalPredicate?: (v: any) => boolean): boolean; message?: string; }"
   }
 }

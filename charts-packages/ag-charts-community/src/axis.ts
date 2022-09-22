@@ -25,23 +25,33 @@ import {
     OPT_COLOR_STRING,
     OPTIONAL,
     ARRAY,
+    predicateWithMessage,
 } from './util/validation';
 import { ChartAxisDirection } from './chart/chartAxis';
 import { Layers } from './chart/layers';
 
-const TICK_COUNT = (v: any) => NUMBER(0)(v) || v instanceof TimeInterval;
-const OPT_TICK_COUNT = (v: any) => OPTIONAL(v, TICK_COUNT);
+const TICK_COUNT = predicateWithMessage(
+    (v: any) => NUMBER(0)(v) || v instanceof TimeInterval,
+    `expecting a tick count Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`
+);
+const OPT_TICK_COUNT = predicateWithMessage(
+    (v: any) => OPTIONAL(v, TICK_COUNT),
+    `expecting an optional tick count Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`
+);
 
 const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
-const GRID_STYLE = (v: any) =>
-    ARRAY()(v, (o) => {
-        for (let key in o) {
-            if (!GRID_STYLE_KEYS.includes(key)) {
-                return false;
+const GRID_STYLE = predicateWithMessage(
+    (v: any) =>
+        ARRAY()(v, (o) => {
+            for (let key in o) {
+                if (!GRID_STYLE_KEYS.includes(key)) {
+                    return false;
+                }
             }
-        }
-        return true;
-    });
+            return true;
+        }),
+    `expecting an Array of objects with gridline style properties such as 'stroke' and 'lineDash'`
+);
 
 enum Tags {
     Tick,

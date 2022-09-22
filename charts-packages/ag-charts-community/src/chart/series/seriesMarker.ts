@@ -7,11 +7,15 @@ import {
     OPT_COLOR_STRING,
     OPT_NUMBER,
     OPT_NUMBER_ARRAY,
+    predicateWithMessage,
     ValidateAndChangeDetection,
 } from '../../util/validation';
 
 const MARKER_SHAPES = ['circle', 'cross', 'diamond', 'heart', 'plus', 'square', 'triangle'];
-const MARKER_SHAPE = (v: any) => MARKER_SHAPES.includes(v) || Object.getPrototypeOf(v) === Marker;
+const MARKER_SHAPE = predicateWithMessage(
+    (v: any) => MARKER_SHAPES.includes(v) || Object.getPrototypeOf(v) === Marker,
+    `expecting a marker shape keyword such as 'circle', 'diamond' or 'square' or an object extending the Marker class`
+);
 
 export class SeriesMarker extends ChangeDetectable {
     @ValidateAndChangeDetection({
