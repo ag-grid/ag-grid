@@ -819,9 +819,16 @@
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
     "label": {
-      "description": "/** Configuration for the labels used for the segments. */",
+      "description": "/** Configuration for the labels used outside of the segments. */",
       "type": {
         "returnType": "AgPieSeriesLabelOptions<DatumType>",
+        "optional": true
+      }
+    },
+    "segmentLabel": {
+      "description": "/** Configuration for the labels used inside the segments. */",
+      "type": {
+        "returnType": "AgPieSeriesSegmentLabelOptions<DatumType>",
         "optional": true
       }
     },
@@ -851,6 +858,14 @@
     },
     "labelName": {
       "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "segmentLabelKey": {
+      "description": "/** The key to use to retrieve segment label values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "segmentLabelName": {
+      "description": "/** A human-readable description of the segment label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fills": {
@@ -3119,11 +3134,47 @@
       "description": "/** Minimum angle in degrees required for a segment to show a label. */",
       "type": { "returnType": "number", "optional": true }
     },
-    "position": {
-      "description": "/** Position of segment labels: inside or outside. */",
-      "type": { "returnType": "'inside' | 'outside'", "optional": true }
+    "formatter": {
+      "description": "/** A function that allows the modification of the label text based on input parameters. */",
+      "type": {
+        "arguments": { "params": "AgPieSeriesLabelFormatterParams<DatumType>" },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["DatumType"] },
+    "enabled": {
+      "description": "/** Whether or not the labels should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the labels. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the labels. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the labels. */",
+      "type": { "returnType": "FontSize", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the labels. */",
+      "type": { "returnType": "FontFamily", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the labels. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    }
+  },
+  "AgPieSeriesSegmentLabelOptions": {
+    "offset": {
+      "description": "/** Distance in pixels between the callout line and the label text. */",
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "formatter": {
+      "description": "/** A function that allows the modification of the label text based on input parameters. */",
       "type": {
         "arguments": { "params": "AgPieSeriesLabelFormatterParams<DatumType>" },
         "returnType": "string",
@@ -3164,6 +3215,7 @@
     "highlighted": { "type": { "returnType": "boolean", "optional": false } },
     "angleKey": { "type": { "returnType": "string", "optional": false } },
     "radiusKey": { "type": { "returnType": "string", "optional": true } },
+    "segmentLabelKey": { "type": { "returnType": "string", "optional": true } },
     "meta": { "typeParams": ["DatumType"] }
   },
   "AgPieSeriesFormat": {
@@ -3303,9 +3355,16 @@
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
     "label": {
-      "description": "/** Configuration for the labels used for the segments. */",
+      "description": "/** Configuration for the labels used outside of the segments. */",
       "type": {
         "returnType": "AgPieSeriesLabelOptions<DatumType>",
+        "optional": true
+      }
+    },
+    "segmentLabel": {
+      "description": "/** Configuration for the labels used inside the segments. */",
+      "type": {
+        "returnType": "AgPieSeriesSegmentLabelOptions<DatumType>",
         "optional": true
       }
     },
@@ -3335,6 +3394,14 @@
     },
     "labelName": {
       "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "segmentLabelKey": {
+      "description": "/** The key to use to retrieve segment label values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "segmentLabelName": {
+      "description": "/** A human-readable description of the segment label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fills": {
@@ -3446,6 +3513,14 @@
       "description": "/** labelName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
     },
+    "segmentLabelKey": {
+      "description": "/** segmentLabelKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "segmentLabelName": {
+      "description": "/** segmentLabelName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "angleKey": {
       "description": "/** angleKey as specified on series options. */",
       "type": { "returnType": "string", "optional": false }
@@ -3498,6 +3573,18 @@
     },
     "labelName": {
       "description": "/** labelName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "segmentLabelKey": {
+      "description": "/** segmentL as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "segmentLabelValue": {
+      "description": "/** segmentLabelValue as read from series data via the segmentLabelKey property. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "segmentLabelName": {
+      "description": "/** segmentLabelName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
     },
     "angleKey": {
@@ -4452,9 +4539,9 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "angleKey": { "type": { "returnType": "string", "optional": false } },
     "labelKey": { "type": { "returnType": "string", "optional": true } },
+    "segmentLabelKey": { "type": { "returnType": "string", "optional": true } },
     "radiusKey": { "type": { "returnType": "string", "optional": true } }
   },
-  "PieLabelPosition": {},
   "PieNodeDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
     "radius": { "type": { "returnType": "number", "optional": false } },
@@ -4469,6 +4556,12 @@
         "optional": true
       }
     },
+    "segmentLabel": {
+      "type": {
+        "returnType": "{\n        readonly text: string;\n    }",
+        "optional": true
+      }
+    },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
@@ -4479,6 +4572,10 @@
   "PieTooltipRendererParams": {
     "labelKey": { "type": { "returnType": "string", "optional": true } },
     "labelName": { "type": { "returnType": "string", "optional": true } },
+    "segmentLabelKey": { "type": { "returnType": "string", "optional": true } },
+    "segmentLabelName": {
+      "type": { "returnType": "string", "optional": true }
+    },
     "angleKey": { "type": { "returnType": "string", "optional": false } },
     "angleValue": { "type": { "returnType": "any", "optional": false } },
     "angleName": { "type": { "returnType": "string", "optional": true } },
@@ -4509,6 +4606,13 @@
     "labelKey": { "type": { "returnType": "string", "optional": true } },
     "labelValue": { "type": { "returnType": "string", "optional": true } },
     "labelName": { "type": { "returnType": "string", "optional": true } },
+    "segmentLabelKey": { "type": { "returnType": "string", "optional": true } },
+    "segmentLabelValue": {
+      "type": { "returnType": "string", "optional": true }
+    },
+    "segmentLabelName": {
+      "type": { "returnType": "string", "optional": true }
+    },
     "angleKey": { "type": { "returnType": "string", "optional": false } },
     "angleValue": { "type": { "returnType": "any", "optional": true } },
     "angleName": { "type": { "returnType": "string", "optional": true } },
@@ -4516,6 +4620,12 @@
     "radiusValue": { "type": { "returnType": "any", "optional": true } },
     "radiusName": { "type": { "returnType": "string", "optional": true } },
     "value": { "type": { "returnType": "any", "optional": true } }
+  },
+  "SectorBoundaries": {
+    "startAngle": { "type": { "returnType": "number", "optional": false } },
+    "endAngle": { "type": { "returnType": "number", "optional": false } },
+    "innerRadius": { "type": { "returnType": "number", "optional": false } },
+    "outerRadius": { "type": { "returnType": "number", "optional": false } }
   },
   "PolarSeriesMarkerFormatterParams": {
     "angleKey": { "type": { "returnType": "string", "optional": false } },

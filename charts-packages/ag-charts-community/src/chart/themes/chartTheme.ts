@@ -453,6 +453,8 @@ export class ChartTheme {
                 radiusName: undefined,
                 labelKey: undefined,
                 labelName: undefined,
+                segmentLabelKey: undefined,
+                segmentLabelName: undefined,
                 label: {
                     enabled: true,
                     fontStyle: undefined,
@@ -462,6 +464,15 @@ export class ChartTheme {
                     color: 'rgb(70, 70, 70)',
                     offset: 3,
                     minAngle: 20,
+                },
+                segmentLabel: {
+                    enabled: true,
+                    fontStyle: undefined,
+                    fontWeight: undefined,
+                    fontSize: 12,
+                    fontFamily: ChartTheme.fontFamily,
+                    color: 'rgb(70, 70, 70)',
+                    offset: 0,
                 },
                 callout: {
                     length: 10,
