@@ -1,0 +1,6 @@
+node_modules
+dist
+gitignore
+
+# VSC Settings
+.vscode/settings.json

@@ -1,0 +1,67 @@
+{
+  "name": "ag-grid-solid",
+  "version": "28.1.1",
+  "description": "AG Grid SolidJS Component",
+  "license": "MIT",
+  "author": "Niall Crosby <niall.crosby@ag-grid.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "homepage": "https://www.ag-grid.com/react-data-grid/solidjs/",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "solid": "./dist/source/index.jsx",
+      "import": "./dist/esm/index.js",
+      "browser": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "node": "./dist/cjs/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite serve dev",
+    "clean": "rimraf bundles dist .hash",
+    "build": "npx gulp && rollup -c",
+    "build-prod": "npm run build",
+    "format": "prettier -w \"src/**/*.{js,ts,json,css,tsx,jsx}\" \"dev/**/*.{js,ts,json,css,tsx,jsx}\"",
+    "update-deps": "taze -w && pnpm i",
+    "typecheck": "tsc --noEmit",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "solid-js": ">=1.0.0",
+    "ag-grid-community": "~28.1.1"
+  },
+  "devDependencies": {
+    "ag-grid-community": "~28.1.1",
+    "ag-grid-enterprise": "~28.1.1",
+    "prettier": "2.7.1",
+    "rollup": "^2.77.2",
+    "rollup-preset-solid": "^1.4.0",
+    "typescript": "^4.7.4",
+    "solid-js": "^1.4.8",
+    "taze": "^0.7.6",
+    "vite": "^3.0.4",
+    "vite-plugin-solid": "^2.3.0",
+    "gulp": "^4.0.0",
+    "gulp-replace": "^1.0.0"
+  },
+  "keywords": [
+    "solid"
+  ],
+  "packageManager": "pnpm@7.5.0",
+  "publishConfig": {
+    "access": "public"
+  }
+}
