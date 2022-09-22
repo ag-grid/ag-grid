@@ -618,8 +618,17 @@ export interface AgLogAxisOptions extends AgBaseCartesianAxisOptions {
 
 export interface AgCategoryAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'category';
+    /** The size of the gap between the categories as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.
+     * Default: `0.2`
+     */
     paddingInner?: number;
+    /** The padding on the outside i.e. left and right of the first and last category. In association with `paddingInner`, this value can be between 0 and 1.
+     * Default: `0.3`
+     */
     paddingOuter?: number;
+    /** This property is for grouped column/bar series plotted on a category axis. It is a proportion between 0 and 1 which determines the size of the gap between the bars or columns within a single group along the axis.
+     * Default: `0.2`
+     */
     groupPaddingInner?: number;
     /** Configuration for the axis ticks. */
     tick?: AgAxisNumberTickOptions;
@@ -1129,7 +1138,7 @@ export interface AgHistogramSeriesOptions<DatumType = any>
     yName?: string;
     /** For variable width bins, if true the histogram will represent the aggregated `yKey` values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins. */
     areaPlot?: boolean;
-    /** Set the bins explicitly. The bins need not be of equal width. Clashes with the `binCount` setting. */
+    /** Set the bins explicitly. The bins need not be of equal width. Note that `bins` is ignored if `binCount` is also supplied. */
     bins?: [number, number][];
     /** The number of bins to try to split the x axis into. Clashes with the `bins` setting. */
     binCount?: number;
@@ -1199,10 +1208,17 @@ export interface AgDoughnutInnerLabel {
     /** The colour to use for the inner label. */
     color?: CssColor;
     /** The margin in pixels before and after the inner label. */
-    margin?: number;
+    margin?: PixelSize;
 }
 
 export interface AgDoughnutInnerLabelThemeOptions extends Omit<AgDoughnutInnerLabel, 'text'> {}
+
+export interface AgDoughnutInnerCircle {
+    /** The colour of the fill for the inner circle. */
+    fill: CssColor;
+    /** The opacity of the fill for the segments. */
+    fillOpacity?: Opacity;
+}
 
 /** Configuration for pie/doughnut series. */
 export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
@@ -1253,8 +1269,10 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     shadow?: AgDropShadowOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgPieSeriesTooltip;
-    /** Text lines to display inside the doughnut chart */
+    /** Configuration for the text lines to display inside the series, typically used when rendering a doughnut chart */
     innerLabels?: AgDoughnutInnerLabel[];
+    /** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */
+    innerCircle?: AgDoughnutInnerCircle;
     formatter?: (params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat;
 }
 

@@ -379,6 +379,9 @@
       "thickness?": "PixelSize"
     },
     "docs": {
+      "paddingInner?": "/** The size of the gap between the categories as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.2` */",
+      "paddingOuter?": "/** The padding on the outside i.e. left and right of the first and last category. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.3` */",
+      "groupPaddingInner?": "/** This property is for grouped column/bar series plotted on a category axis. It is a proportion between 0 and 1 which determines the size of the gap between the bars or columns within a single group along the axis.\n * Default: `0.2` */",
       "tick?": "/** Configuration for the axis ticks. */",
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
@@ -516,6 +519,7 @@
       "radiusMax?": "number",
       "shadow?": "AgDropShadowOptions",
       "tooltip?": "AgPieSeriesTooltip",
+      "innerCircle?": "AgDoughnutInnerCircle",
       "formatter?": "(params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat",
       "data?": "DatumType[]",
       "visible?": "boolean",
@@ -548,7 +552,8 @@
       "radiusMax?": "/** Override of the automatically determined maximum radiusKey value from the data. */",
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
-      "innerLabels?": "/** Text lines to display inside the doughnut chart */",
+      "innerLabels?": "/** Configuration for the text lines to display inside the series, typically used when rendering a doughnut chart */",
+      "innerCircle?": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
@@ -1131,6 +1136,9 @@
       "thickness?": "PixelSize"
     },
     "docs": {
+      "paddingInner?": "/** The size of the gap between the categories as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.2` */",
+      "paddingOuter?": "/** The padding on the outside i.e. left and right of the first and last category. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.3` */",
+      "groupPaddingInner?": "/** This property is for grouped column/bar series plotted on a category axis. It is a proportion between 0 and 1 which determines the size of the gap between the bars or columns within a single group along the axis.\n * Default: `0.2` */",
       "tick?": "/** Configuration for the axis ticks. */",
       "position?": "/** The position on the chart where the axis should be rendered. */",
       "title?": "/** Configuration for the title shown next to the axis. */",
@@ -1992,7 +2000,7 @@
       "yKey?": "/** The key to use to retrieve y-values from the data. */",
       "yName?": "/** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
       "areaPlot?": "/** For variable width bins, if true the histogram will represent the aggregated `yKey` values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins. */",
-      "bins?": "/** Set the bins explicitly. The bins need not be of equal width. Clashes with the `binCount` setting. */",
+      "bins?": "/** Set the bins explicitly. The bins need not be of equal width. Note that `bins` is ignored if `binCount` is also supplied. */",
       "binCount?": "/** The number of bins to try to split the x axis into. Clashes with the `bins` setting. */",
       "aggregation?": "/** Dictates how the bins are aggregated. If set to 'sum', the value shown for the bins will be the total of the yKey values. If set to 'mean', it will display the average yKey value of the bin. */",
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
@@ -2105,7 +2113,7 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "margin?": "number"
+      "margin?": "PixelSize"
     },
     "docs": {
       "text": "/** The text to show in the inner label. */",
@@ -2125,7 +2133,7 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "margin?": "number"
+      "margin?": "PixelSize"
     },
     "docs": {
       "fontStyle?": "/** The font style to use for the inner label. */",
@@ -2134,6 +2142,14 @@
       "fontFamily?": "/** The font family to use for the inner label. */",
       "color?": "/** The colour to use for the inner label. */",
       "margin?": "/** The margin in pixels before and after the inner label. */"
+    }
+  },
+  "AgDoughnutInnerCircle": {
+    "meta": {},
+    "type": { "fill": "CssColor", "fillOpacity?": "Opacity" },
+    "docs": {
+      "fill": "/** The colour of the fill for the inner circle. */",
+      "fillOpacity?": "/** The opacity of the fill for the segments. */"
     }
   },
   "AgPieSeriesOptions": {
@@ -2167,6 +2183,7 @@
       "shadow?": "AgDropShadowOptions",
       "tooltip?": "AgPieSeriesTooltip",
       "innerLabels?": "AgDoughnutInnerLabel[]",
+      "innerCircle?": "AgDoughnutInnerCircle",
       "formatter?": "(params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat",
       "data?": "DatumType[]",
       "visible?": "boolean",
@@ -2199,7 +2216,8 @@
       "radiusMax?": "/** Override of the automatically determined maximum radiusKey value from the data. */",
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
-      "innerLabels?": "/** Text lines to display inside the doughnut chart */",
+      "innerLabels?": "/** Configuration for the text lines to display inside the series, typically used when rendering a doughnut chart */",
+      "innerCircle?": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
@@ -2683,6 +2701,7 @@
   "Layers": {
     "meta": { "isEnum": true },
     "type": [
+      "SERIES_BACKGROUND_ZINDEX = -10",
       "AXIS_GRIDLINES_ZINDEX = 0",
       "SERIES_CROSSLINE_RANGE_ZINDEX = 10",
       "AXIS_ZINDEX = 20",
@@ -2691,7 +2710,7 @@
       "SERIES_CROSSLINE_LINE_ZINDEX = 2500",
       "LEGEND_ZINDEX = 3000"
     ],
-    "docs": [null, null, null, null, null, null, null]
+    "docs": [null, null, null, null, null, null, null, null]
   },
   "LegendDatum": {
     "meta": {},

@@ -136,11 +136,22 @@ export function capitalise(str: string): string {
     return str[0].toUpperCase() + str.substr(1).toLowerCase();
 }
 
-export function escapeString(toEscape?: string | null): string | null {
+export function escapeString(toEscape?: string | null, skipEscapingHtmlChars?: boolean): string | null {
+    if (toEscape == null) {
+        return null;
+    }
+
     // we call toString() twice, in case value is an object, where user provides
     // a toString() method, and first call to toString() returns back something other
     // than a string (eg a number to render)
-    return toEscape == null ? null : toEscape.toString().toString().replace(reUnescapedHtml, chr => HTML_ESCAPES[chr]);
+    const stringResult = toEscape.toString().toString();
+
+    if (skipEscapingHtmlChars) {
+        return stringResult;
+    }
+
+    // in react we don't need to escape html characters, as it's done by the framework
+    return stringResult.replace(reUnescapedHtml, chr => HTML_ESCAPES[chr]);
 }
 
 /**

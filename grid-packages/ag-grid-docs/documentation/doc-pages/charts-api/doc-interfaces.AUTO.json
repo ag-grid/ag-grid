@@ -565,9 +565,16 @@
     }
   },
   "AgCategoryAxisThemeOptions": {
-    "paddingInner": { "type": { "returnType": "number", "optional": true } },
-    "paddingOuter": { "type": { "returnType": "number", "optional": true } },
+    "paddingInner": {
+      "description": "/** The size of the gap between the categories as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.2` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "paddingOuter": {
+      "description": "/** The padding on the outside i.e. left and right of the first and last category. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.3` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "groupPaddingInner": {
+      "description": "/** This property is for grouped column/bar series plotted on a category axis. It is a proportion between 0 and 1 which determines the size of the gap between the bars or columns within a single group along the axis.\n * Default: `0.2` */",
       "type": { "returnType": "number", "optional": true }
     },
     "tick": {
@@ -901,6 +908,10 @@
     "tooltip": {
       "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgPieSeriesTooltip", "optional": true }
+    },
+    "innerCircle": {
+      "description": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */",
+      "type": { "returnType": "AgDoughnutInnerCircle", "optional": true }
     },
     "formatter": {
       "type": {
@@ -1707,9 +1718,16 @@
   },
   "AgCategoryAxisOptions": {
     "type": { "type": { "returnType": "'category'", "optional": false } },
-    "paddingInner": { "type": { "returnType": "number", "optional": true } },
-    "paddingOuter": { "type": { "returnType": "number", "optional": true } },
+    "paddingInner": {
+      "description": "/** The size of the gap between the categories as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.2` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "paddingOuter": {
+      "description": "/** The padding on the outside i.e. left and right of the first and last category. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.3` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "groupPaddingInner": {
+      "description": "/** This property is for grouped column/bar series plotted on a category axis. It is a proportion between 0 and 1 which determines the size of the gap between the bars or columns within a single group along the axis.\n * Default: `0.2` */",
       "type": { "returnType": "number", "optional": true }
     },
     "tick": {
@@ -3037,7 +3055,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "bins": {
-      "description": "/** Set the bins explicitly. The bins need not be of equal width. Clashes with the `binCount` setting. */",
+      "description": "/** Set the bins explicitly. The bins need not be of equal width. Note that `bins` is ignored if `binCount` is also supplied. */",
       "type": { "returnType": "[number, number][]", "optional": true }
     },
     "binCount": {
@@ -3235,7 +3253,7 @@
     },
     "margin": {
       "description": "/** The margin in pixels before and after the inner label. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgDoughnutInnerLabelThemeOptions": {
@@ -3261,7 +3279,17 @@
     },
     "margin": {
       "description": "/** The margin in pixels before and after the inner label. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
+    }
+  },
+  "AgDoughnutInnerCircle": {
+    "fill": {
+      "description": "/** The colour of the fill for the inner circle. */",
+      "type": { "returnType": "CssColor", "optional": false }
+    },
+    "fillOpacity": {
+      "description": "/** The opacity of the fill for the segments. */",
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgPieSeriesOptions": {
@@ -3362,8 +3390,12 @@
       "type": { "returnType": "AgPieSeriesTooltip", "optional": true }
     },
     "innerLabels": {
-      "description": "/** Text lines to display inside the doughnut chart */",
+      "description": "/** Configuration for the text lines to display inside the series, typically used when rendering a doughnut chart */",
       "type": { "returnType": "AgDoughnutInnerLabel[]", "optional": true }
+    },
+    "innerCircle": {
+      "description": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */",
+      "type": { "returnType": "AgDoughnutInnerCircle", "optional": true }
     },
     "formatter": {
       "type": {

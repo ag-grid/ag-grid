@@ -124,9 +124,12 @@ export const DOUGHNUT_SERIES_INNER_TEXT: AgPolarChartOptions = {
             angleKey: 'share',
             innerRadiusOffset: -30,
             innerLabels: [
-                { text: '35%', color: 'orange', fontSize: 50 },
-                { text: 'Coverage' },
+                { text: '35%', color: 'white', fontSize: 50 },
+                { text: 'Market', margin: 10 },
             ],
+            innerCircle: {
+                fill: '#a3a2a1',
+            },
         },
     ],
 };
