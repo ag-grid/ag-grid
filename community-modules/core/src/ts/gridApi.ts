@@ -1699,6 +1699,12 @@ export class GridApi<TData = any> {
         }
     }
 
+    /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
+    public copyToClipboard(params?: IClipboardCopyParams) {
+        if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
+        this.clipboardService.copyToClipboard(params);
+    }
+
     /** Copies the selected rows to the clipboard. */
     public copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void {
         if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }

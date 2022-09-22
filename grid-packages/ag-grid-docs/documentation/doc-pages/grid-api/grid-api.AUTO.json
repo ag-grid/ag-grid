@@ -1158,6 +1158,10 @@
       "returnType": "ChartRef | undefined"
     }
   },
+  "copyToClipboard": {
+    "description": "/** Copies data to clipboard by following the same rules as pressing Ctrl+C. */",
+    "type": { "arguments": { "params?": "IClipboardCopyParams" } }
+  },
   "copySelectedRowsToClipboard": {
     "description": "/** Copies the selected rows to the clipboard. */",
     "type": {
