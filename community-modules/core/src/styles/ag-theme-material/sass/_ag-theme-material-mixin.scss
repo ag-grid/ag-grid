@@ -118,6 +118,10 @@
         padding-bottom: ag-param(grid-size) * 0.5;
     }
 
+    .ag-chart-menu-close .ag-icon {
+        border: none;
+    }
+
     .ag-group-toolbar {
         @if ag-param(subheader-background-color) {
             background-color: rgba(ag-param(subheader-background-color), 0.5);

@@ -216,14 +216,48 @@
     justify-content: center;
 }
 
-.ag-chart .ag-chart-menu {
-    opacity: 0;
-    pointer-events: none;
+.ag-chart-menu-hidden:hover .ag-chart-menu {
+    display: block;
 }
 
-.ag-chart-menu-hidden:hover .ag-chart-menu {
-    opacity: 1;
-    pointer-events: all;
+.ag-chart-menu-close {
+    display: none;
+}
+
+.ag-chart .ag-charts-tool-panel-button-enable .ag-chart-menu {
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+    top: 5px;
+    gap: 5px;
+    width: auto;
+
+    @include ag-unthemed-rtl((
+        right: 5px,
+        justify-content: right
+    ));
+}
+
+.ag-charts-tool-panel-button-enable {
+    .ag-chart-menu-close {
+        position: absolute;
+        top: 45%;
+        padding: 0;
+        display: block;
+        cursor: pointer;
+        border: none;
+
+        @include ag-unthemed-rtl((right: 0px));
+
+        .ag-icon {
+            padding: 9px 0 9px 0;
+        }
+    }
+
+    // Hide burger menu
+    .ag-icon-menu {
+        display: none;
+    }
 }
 
 .ag-charts-font-size-color {

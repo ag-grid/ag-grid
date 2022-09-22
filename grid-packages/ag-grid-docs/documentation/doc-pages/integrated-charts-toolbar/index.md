@@ -94,6 +94,20 @@ The example below shows how the toolbar can be customised. Notice the following:
 
 <grid-example title='Custom Toolbar' name='custom-toolbar' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
+## Showing the Charts Tool Panel button
+
+An alternative way to show the chart toolbar is to have a Charts Tool Panel button to show and hide the panel. This also shows the chart toolbar on the top right of the chart and hides the menu icon there.
+
+To show the Charts Tool Panel button, add `enableChartsToolPanelButton` to the grid options.
+
+<snippet>
+const gridOptions = {
+    enableChartsToolPanelButton: true
+}
+</snippet>
+
+<grid-example title='Charts Tool Panel button' name='charts-tool-panel-button' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
 ## Next Up
 
 Continue to the next section to learn about the: [Chart Container](/integrated-charts-container/).

@@ -455,6 +455,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public customChartThemes: { [name: string]: AgChartTheme } | undefined = undefined;
     /** Chart theme overrides applied to all themes.     */
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
+    /** Set to `true` to Enable Charts Tool Panel button to toggle the panel. Default: `false`     */
+    @Input() public enableChartsToolPanelButton: boolean | undefined = undefined;
     /** Provide your own loading cell renderer to use when data is loading via a DataSource.
      * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.     */
     @Input() public loadingCellRenderer: any = undefined;
@@ -1231,6 +1233,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressSetColumnStateEvents: boolean | null | '';
     static ngAcceptInputType_suppressColumnStateEvents: boolean | null | '';
     static ngAcceptInputType_enableCharts: boolean | null | '';
+    static ngAcceptInputType_enableChartsToolPanelButton: boolean | null | '';
     static ngAcceptInputType_deltaColumnMode: boolean | null | '';
     static ngAcceptInputType_suppressMaintainUnsortedOrder: boolean | null | '';
     static ngAcceptInputType_enableCellTextSelection: boolean | null | '';

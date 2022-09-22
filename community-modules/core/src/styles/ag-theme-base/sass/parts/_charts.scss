@@ -20,6 +20,20 @@
         }
     }
 
+    .ag-chart-menu-close {
+        @include ag-color-property(background, background-color);
+    }
+
+    .ag-chart-menu-close .ag-icon {
+        background: none;
+        border: 1px solid ag-param(secondary-border-color);
+        border-right: none;
+    }
+
+    .ag-chart-menu-close .ag-icon:hover {
+        @include ag-color-property(background, header-background-color);
+    }
+
     .ag-chart-mini-thumbnail {
         border: 1px solid;
         @include ag-color-property(border-color, secondary-border-color);
