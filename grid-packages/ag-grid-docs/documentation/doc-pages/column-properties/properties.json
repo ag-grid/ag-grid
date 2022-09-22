@@ -438,7 +438,13 @@
         "rowDrag": {},
         "rowDragText": {},
         "dndSource": {},
-        "dndSourceOnRowDrag": {}
+        "dndSourceOnRowDrag": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "DragEvent"
+                ]
+            }
+        }
     },
     "events": {
         "meta": {
