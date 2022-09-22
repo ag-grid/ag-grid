@@ -44,6 +44,10 @@ const EXAMPLES: Record<string, PolarTestCase> = {
         options: examples.PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MAX,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
     },
+    PIE_SLICES_LABELS: {
+        options: examples.PIE_SLICES_LABELS,
+        assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
+    },
     DOUGHNUT_SERIES: {
         options: examples.DOUGHNUT_SERIES,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),

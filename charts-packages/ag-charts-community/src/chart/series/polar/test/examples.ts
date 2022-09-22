@@ -97,6 +97,24 @@ export const PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MAX: AgPolarChartOptions = 
     ],
 };
 
+export const PIE_SLICES_LABELS: AgPolarChartOptions = {
+    title: {
+        text: 'Market Share',
+    },
+    data: DATA_MARKET_SHARE,
+    series: [
+        {
+            type: 'pie',
+            labelKey: 'os',
+            angleKey: 'share',
+            segmentLabelKey: 'share',
+            segmentLabel: {
+                color: 'white',
+            },
+        },
+    ],
+};
+
 export const DOUGHNUT_SERIES: AgPolarChartOptions = {
     title: {
         text: 'Market Share',
