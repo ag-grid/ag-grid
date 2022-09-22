@@ -1,11 +1,11 @@
 #!/bin/bash
 
-if [ "$#" -ne 8 ]
+if [ "$#" -ne 6 ]
   then
-    echo "You must supply a source branch, new branch name, release version, dependency version, projects and modules to update"
-    echo "For example: ./scripts/release/checkoutAndBuildNewBranchFromLatest.sh latest b19.1.2 19.1.2 ~19.1.0 2.0.0 ~2.0.0 all all"
-    echo "For example: ./scripts/release/checkoutAndBuildNewBranchFromLatest.sh latest b19.1.2 19.1.2 ~19.1.0 2.0.0 ~2.0.0 charts react"
-    echo "For example: ./scripts/release/checkoutAndBuildNewBranchFromLatest.sh latest b19.1.2 19.1.2 ~19.1.0 2.0.0 ~2.0.0 grid react,vue"
+    echo "You must supply a source branch, new branch name, grid version, charts version projects and modules to update"
+    echo "For example: ./scripts/release/createAndBuildNewBranchFromExistingBranch.sh latest b19.1.2 19.1.2 2.0.0 all all"
+    echo "For example: ./scripts/release/createAndBuildNewBranchFromExistingBranch.sh latest b19.1.2 19.1.2 2.0.0 charts react"
+    echo "For example: ./scripts/release/createAndBuildNewBranchFromExistingBranch.sh latest b19.1.2 19.1.2 2.0.0 grid react,vue"
     exit 1
 fi
 
@@ -13,13 +13,13 @@ SOURCE_BRANCH=$1
 NEW_BRANCH=$2
 
 NEW_GRID_VERSION=$3
-PEER_GRID_VERSION=$4
+PEER_GRID_VERSION="~$3"
 
-NEW_CHARTS_VERSION=$5
-PEER_CHARTS_VERSION=$6
+NEW_CHARTS_VERSION=$4
+PEER_CHARTS_VERSION="~$4"
 
-PROJECTS_TO_VERSION=$7
-MODULES_TO_VERSION=$8
+PROJECTS_TO_VERSION=$5
+MODULES_TO_VERSION=$6
 
 if [ $PROJECTS_TO_VERSION != "all" ] && [ $PROJECTS_TO_VERSION != "grid" ] && [ $PROJECTS_TO_VERSION != "charts" ]; then
   echo "Projects to version must be one of [all,grid,charts]"
