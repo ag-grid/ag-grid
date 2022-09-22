@@ -274,7 +274,8 @@ export class PivotColDefService extends BeanStub {
                 colIds = colIds.concat(this.extractColIdsForValueColumn(groupDef, valueCol));
             });
 
-            this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, valueCol, colIds, insertAfter);
+            const withGroup = valueCols.length > 1 || !this.gridOptionsWrapper.isRemovePivotHeaderRowWhenSingleValueColumn();
+            this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, valueCol, colIds, insertAfter, withGroup);
         }
     }
 
@@ -300,7 +301,8 @@ export class PivotColDefService extends BeanStub {
                                 pivotColumnDefs: ColDef[],
                                 valueColumn: Column,
                                 colIds: string[],
-                                insertAfter: boolean): void {
+                                insertAfter: boolean,
+                                addGroup: boolean): void {
 
         const measureColumns = this.columnModel.getValueColumns();
 
@@ -317,11 +319,11 @@ export class PivotColDefService extends BeanStub {
         colDef.colId = PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + colDef.colId;
         pivotColumnDefs.push(colDef);
 
-        const valueGroup: ColGroupDef = {
+        const valueGroup: ColGroupDef | ColDef = addGroup ? {
             children: [colDef],
             pivotKeys: [],
-            groupId: colDef.colId,
-        };
+            groupId: `${PivotColDefService.PIVOT_ROW_TOTAL_PREFIX}_pivotGroup_${valueColumn.getColId()}`,
+        } : colDef;
 
         insertAfter ? parentChildren.push(valueGroup) : parentChildren.unshift(valueGroup);
     }
