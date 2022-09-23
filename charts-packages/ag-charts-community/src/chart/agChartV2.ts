@@ -145,8 +145,10 @@ export abstract class AgChartV2 {
             mixinOpts['debug'] = true;
         }
 
-        const mergedOptions = prepareOptions(userOptions, mixinOpts);
         const { overrideDevicePixelRatio } = userOptions;
+        delete userOptions['overrideDevicePixelRatio'];
+
+        const mergedOptions = prepareOptions(userOptions, mixinOpts);
 
         const chart = isAgCartesianChartOptions(mergedOptions)
             ? mergedOptions.type === 'groupedCategory'
@@ -217,7 +219,11 @@ export abstract class AgChartV2 {
         width = width ?? currentWidth;
         height = height ?? currentHeight;
 
-        if (currentWidth !== width || currentHeight !== height) {
+        const unchanged = chart.scene.canvas.pixelRatio === 1 && currentWidth === width && currentHeight === height;
+
+        if (unchanged) {
+            chart.scene.download(fileName, fileFormat);
+        } else {
             const options = {
                 ...chart.userOptions,
                 container: document.createElement('div'),
@@ -233,8 +239,6 @@ export abstract class AgChartV2 {
                 clonedChart.scene.download(fileName, fileFormat);
                 clonedChart.destroy();
             });
-        } else {
-            chart.scene.download(fileName, fileFormat);
         }
     }
 
