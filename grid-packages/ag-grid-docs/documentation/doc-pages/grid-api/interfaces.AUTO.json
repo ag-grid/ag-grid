@@ -9107,7 +9107,7 @@
       "labelKey?": "/** labelKey as specified on series options. */",
       "labelValue?": "/** labelValue as read from series data via the labelKey property. */",
       "labelName?": "/** labelName as specified on series options. */",
-      "sectorLabelKey?": "/** segmentL as specified on series options. */",
+      "sectorLabelKey?": "/** sectorLabelKey as specified on series options. */",
       "sectorLabelValue?": "/** sectorLabelValue as read from series data via the sectorLabelKey property. */",
       "sectorLabelName?": "/** sectorLabelName as specified on series options. */",
       "angleKey": "/** angleKey as specified on series options. */",

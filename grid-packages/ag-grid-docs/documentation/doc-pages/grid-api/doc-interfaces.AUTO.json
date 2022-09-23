@@ -15674,7 +15674,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "sectorLabelKey": {
-      "description": "/** segmentL as specified on series options. */",
+      "description": "/** sectorLabelKey as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
     },
     "sectorLabelValue": {

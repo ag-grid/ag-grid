@@ -1313,7 +1313,7 @@ export interface AgPieSeriesLabelFormatterParams<DatumType> {
     /** labelName as specified on series options. */
     readonly labelName?: string;
 
-    /** segmentL as specified on series options. */
+    /** sectorLabelKey as specified on series options. */
     readonly sectorLabelKey?: string;
     /** sectorLabelValue as read from series data via the sectorLabelKey property. */
     readonly sectorLabelValue?: string;
