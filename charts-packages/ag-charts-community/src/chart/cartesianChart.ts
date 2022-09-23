@@ -10,8 +10,8 @@ export class CartesianChart extends Chart {
     static className = 'CartesianChart';
     static type: 'cartesian' | 'groupedCategory' = 'cartesian';
 
-    constructor(document = window.document) {
-        super(document);
+    constructor(document = window.document, overrideDevicePixelRatio?: number) {
+        super(document, overrideDevicePixelRatio);
 
         // Prevent the scene from rendering chart components in an invalid state
         // (before first layout is performed).

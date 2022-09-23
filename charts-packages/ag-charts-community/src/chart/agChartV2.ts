@@ -82,6 +82,14 @@ type SeriesOptionType<T extends Series> = T extends LineSeries
     ? AgTreemapSeriesOptions
     : never;
 
+type DownloadOptions = {
+    width?: number;
+    height?: number;
+    fileName?: string;
+    /** The standard MIME type for the image format to return. If you do not specify this parameter, the default value is a PNG format image. See `Canvas.toDataURL()` */
+    fileFormat?: string;
+};
+
 function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian' | 'polar' | 'hierarchy' {
     if (isAgCartesianChartOptions(options)) {
         return 'cartesian';
@@ -127,28 +135,35 @@ export abstract class AgChart {
     ) {
         return AgChartV2.update(chart, options as any);
     }
+
+    public static download<T extends AgChartOptions>(chart: AgChartType<T>, options: DownloadOptions) {
+        return AgChartV2.download(chart, options);
+    }
 }
 
 export abstract class AgChartV2 {
     static DEBUG = () => windowValue('agChartsDebug') ?? false;
 
-    static create<T extends ChartType>(userOptions: ChartOptionType<T>): T {
+    static create<T extends ChartType>(userOptions: ChartOptionType<T> & { overrideDevicePixelRatio?: number }): T {
         debug('user options', userOptions);
         const mixinOpts: any = {};
         if (AgChartV2.DEBUG()) {
             mixinOpts['debug'] = true;
         }
 
+        const { overrideDevicePixelRatio } = userOptions;
+        delete userOptions['overrideDevicePixelRatio'];
+
         const mergedOptions = prepareOptions(userOptions, mixinOpts);
 
         const chart = isAgCartesianChartOptions(mergedOptions)
             ? mergedOptions.type === 'groupedCategory'
-                ? new GroupedCategoryChart(document)
-                : new CartesianChart(document)
+                ? new GroupedCategoryChart(document, overrideDevicePixelRatio)
+                : new CartesianChart(document, overrideDevicePixelRatio)
             : isAgHierarchyChartOptions(mergedOptions)
-            ? new HierarchyChart(document)
+            ? new HierarchyChart(document, overrideDevicePixelRatio)
             : isAgPolarChartOptions(mergedOptions)
-            ? new PolarChart(document)
+            ? new PolarChart(document, overrideDevicePixelRatio)
             : undefined;
 
         if (!chart) {
@@ -199,6 +214,44 @@ export abstract class AgChartV2 {
             }
 
             await AgChartV2.updateDelta<T>(chart as T, deltaOptions, userOptions);
+        });
+    }
+
+    /**
+     * Returns the content of the current canvas as an image.
+     * @param opts The download options including `width` and `height` of the image as well as `fileName` and `fileFormat`.
+     */
+    static download(chart: Chart, opts?: DownloadOptions) {
+        let { width, height, fileName, fileFormat } = opts || {};
+        const currentWidth = chart.width;
+        const currentHeight = chart.height;
+
+        const unchanged =
+            (width === undefined && height === undefined) ||
+            (chart.scene.canvas.pixelRatio === 1 && currentWidth === width && currentHeight === height);
+
+        if (unchanged) {
+            chart.scene.download(fileName, fileFormat);
+            return;
+        }
+
+        width = width ?? currentWidth;
+        height = height ?? currentHeight;
+
+        const options = {
+            ...chart.userOptions,
+            container: document.createElement('div'),
+            width,
+            height,
+            autoSize: false,
+            overrideDevicePixelRatio: 1,
+        };
+
+        const clonedChart = AgChartV2.create(options as any);
+
+        clonedChart.waitForUpdate().then(() => {
+            clonedChart.scene.download(fileName, fileFormat);
+            clonedChart.destroy();
         });
     }
 

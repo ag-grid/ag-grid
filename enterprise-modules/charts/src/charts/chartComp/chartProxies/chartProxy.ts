@@ -1,5 +1,5 @@
 import { _, AgChartThemeOverrides, ChartType, SeriesChartType } from "@ag-grid-community/core";
-import { AgChartTheme, AgChartThemePalette, Chart, ChartTheme, getIntegratedChartTheme, themes } from "ag-charts-community";
+import { AgChart, AgChartTheme, AgChartThemePalette, Chart, ChartTheme, getIntegratedChartTheme, themes } from "ag-charts-community";
 import { deepMerge } from "../utils/object";
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
@@ -144,28 +144,12 @@ export abstract class ChartProxy {
         return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
     }
 
-    public downloadChart(dimensions?: { width: number, height: number }, fileName?: string, fileFormat?: string) {
+    public downloadChart(dimensions?: { width: number; height: number }, fileName?: string, fileFormat?: string) {
         const { chart } = this;
         const imageFileName = fileName || (chart.title ? chart.title.text : 'chart');
+        const { width, height } = dimensions || {};
 
-        if (dimensions) {
-            const currentWidth = this.chart.width;
-            const currentHeight = this.chart.height;
-
-            // resize chart dimensions
-            this.chart.width = dimensions.width;
-            this.chart.height = dimensions.height;
-
-            this.chart.waitForUpdate().then(() => {
-                chart.scene.download(imageFileName, fileFormat);
-
-                // restore chart dimensions
-                this.chart.width = currentWidth;
-                this.chart.height = currentHeight;
-            });
-        } else {
-            chart.scene.download(fileName, fileFormat);
-        }
+        AgChart.download(chart, { width, height, fileName: imageFileName, fileFormat });
     }
 
     public getChartImageDataURL(type?: string) {

@@ -42,6 +42,7 @@ export class Scene {
         opts: {
             width?: number;
             height?: number;
+            overrideDevicePixelRatio?: number;
         } & Partial<SceneOptions>
     ) {
         const {
@@ -49,12 +50,15 @@ export class Scene {
             mode = windowValue('agChartsSceneRenderModel') || 'adv-composite',
             width,
             height,
+            overrideDevicePixelRatio = undefined,
         } = opts;
+
+        this.overrideDevicePixelRatio = overrideDevicePixelRatio;
 
         this.opts = { document, mode };
         this.debug.stats = windowValue('agChartsSceneStats') ?? false;
         this.debug.dirtyTree = windowValue('agChartsSceneDirtyTree') ?? false;
-        this.canvas = new HdpiCanvas({ document, width, height });
+        this.canvas = new HdpiCanvas({ document, width, height, overrideDevicePixelRatio });
         this.ctx = this.canvas.context;
     }
 
@@ -72,6 +76,8 @@ export class Scene {
     getDataURL(type?: string): string {
         return this.canvas.getDataURL(type);
     }
+
+    overrideDevicePixelRatio?: number;
 
     get width(): number {
         return this.pendingSize ? this.pendingSize[0] : this.canvas.width;
@@ -113,7 +119,7 @@ export class Scene {
         }
 
         const { zIndex = this._nextZIndex++, name, zIndexSubOrder } = opts || {};
-        const { width, height } = this;
+        const { width, height, overrideDevicePixelRatio } = this;
         const domLayer = mode === 'dom-composite';
         const advLayer = mode === 'adv-composite';
         const canvas =
@@ -125,10 +131,12 @@ export class Scene {
                       domLayer,
                       zIndex,
                       name,
+                      overrideDevicePixelRatio,
                   })
                 : new HdpiOffscreenCanvas({
                       width,
                       height,
+                      overrideDevicePixelRatio,
                   });
         const newLayer = {
             id: this._nextLayerId++,
@@ -344,7 +352,7 @@ export class Scene {
         debugSplitTimes: number[],
         ctx: CanvasRenderingContext2D,
         renderCtxStats: RenderContext['stats'],
-        extraDebugStats = {},
+        extraDebugStats = {}
     ) {
         const end = performance.now();
 
@@ -359,12 +367,7 @@ export class Scene {
             const time = (start: number, end: number) => {
                 return `${Math.round((end - start) * 100) / 100}ms`;
             };
-            const {
-                layersRendered = 0,
-                layersSkipped = 0,
-                nodesRendered = 0,
-                nodesSkipped = 0,
-            } = renderCtxStats ?? {};
+            const { layersRendered = 0, layersSkipped = 0, nodesRendered = 0, nodesSkipped = 0 } = renderCtxStats ?? {};
 
             const splits = debugSplitTimes
                 .map((t, i) => (i > 0 ? time(debugSplitTimes[i - 1], t) : null))
