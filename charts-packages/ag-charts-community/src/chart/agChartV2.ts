@@ -82,7 +82,13 @@ type SeriesOptionType<T extends Series> = T extends LineSeries
     ? AgTreemapSeriesOptions
     : never;
 
-type DownloadOptions = { width?: number; height?: number; fileName?: string; fileFormat?: string };
+type DownloadOptions = {
+    width?: number;
+    height?: number;
+    fileName?: string;
+    /** The standard MIME type for the image format to return. If you do not specify this parameter, the default value is a PNG format image. See `Canvas.toDataURL()` */
+    fileFormat?: string;
+};
 
 function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian' | 'polar' | 'hierarchy' {
     if (isAgCartesianChartOptions(options)) {
@@ -211,6 +217,10 @@ export abstract class AgChartV2 {
         });
     }
 
+    /**
+     * Returns the content of the current canvas as an image.
+     * @param opts The download options including `width` and `height` of the image as well as `fileName` and `fileFormat`.
+     */
     static download(chart: Chart, opts?: DownloadOptions) {
         let { width, height, fileName, fileFormat } = opts || {};
         const currentWidth = chart.width;
