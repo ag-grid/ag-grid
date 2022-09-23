@@ -819,21 +819,21 @@
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
     "label": {
-      "description": "/** Configuration for the labels used outside of the segments. */",
+      "description": "/** Configuration for the labels used outside of the sectors. */",
       "type": {
         "returnType": "AgPieSeriesLabelOptions<DatumType>",
         "optional": true
       }
     },
     "sectorLabel": {
-      "description": "/** Configuration for the labels used inside the segments. */",
+      "description": "/** Configuration for the labels used inside the sectors. */",
       "type": {
         "returnType": "AgPieSeriesSectorLabelOptions<DatumType>",
         "optional": true
       }
     },
     "callout": {
-      "description": "/** Configuration for the callouts used with the labels for the segments. */",
+      "description": "/** Configuration for the callouts used with the labels for the sectors. */",
       "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "angleKey": {
@@ -869,23 +869,23 @@
       "type": { "returnType": "string", "optional": true }
     },
     "fills": {
-      "description": "/** The colours to cycle through for the fills of the segments. */",
+      "description": "/** The colours to cycle through for the fills of the sectors. */",
       "type": { "returnType": "CssColor[]", "optional": true }
     },
     "strokes": {
-      "description": "/** The colours to cycle through for the strokes of the segments. */",
+      "description": "/** The colours to cycle through for the strokes of the sectors. */",
       "type": { "returnType": "CssColor[]", "optional": true }
     },
     "fillOpacity": {
-      "description": "/** The opacity of the fill for the segments. */",
+      "description": "/** The opacity of the fill for the sectors. */",
       "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
-      "description": "/** The opacity of the stroke for the segments. */",
+      "description": "/** The opacity of the stroke for the sectors. */",
       "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** The width in pixels of the stroke for the segments. */",
+      "description": "/** The width in pixels of the stroke for the sectors. */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "lineDash": {
@@ -3344,7 +3344,7 @@
       "type": { "returnType": "CssColor", "optional": false }
     },
     "fillOpacity": {
-      "description": "/** The opacity of the fill for the segments. */",
+      "description": "/** The opacity of the fill for the inner circle. */",
       "type": { "returnType": "Opacity", "optional": true }
     }
   },
@@ -3355,21 +3355,21 @@
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
     "label": {
-      "description": "/** Configuration for the labels used outside of the segments. */",
+      "description": "/** Configuration for the labels used outside of the sectors. */",
       "type": {
         "returnType": "AgPieSeriesLabelOptions<DatumType>",
         "optional": true
       }
     },
     "sectorLabel": {
-      "description": "/** Configuration for the labels used inside the segments. */",
+      "description": "/** Configuration for the labels used inside the sectors. */",
       "type": {
         "returnType": "AgPieSeriesSectorLabelOptions<DatumType>",
         "optional": true
       }
     },
     "callout": {
-      "description": "/** Configuration for the callouts used with the labels for the segments. */",
+      "description": "/** Configuration for the callouts used with the labels for the sectors. */",
       "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "angleKey": {
@@ -3405,23 +3405,23 @@
       "type": { "returnType": "string", "optional": true }
     },
     "fills": {
-      "description": "/** The colours to cycle through for the fills of the segments. */",
+      "description": "/** The colours to cycle through for the fills of the sectors. */",
       "type": { "returnType": "CssColor[]", "optional": true }
     },
     "strokes": {
-      "description": "/** The colours to cycle through for the strokes of the segments. */",
+      "description": "/** The colours to cycle through for the strokes of the sectors. */",
       "type": { "returnType": "CssColor[]", "optional": true }
     },
     "fillOpacity": {
-      "description": "/** The opacity of the fill for the segments. */",
+      "description": "/** The opacity of the fill for the sectors. */",
       "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
-      "description": "/** The opacity of the stroke for the segments. */",
+      "description": "/** The opacity of the stroke for the sectors. */",
       "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** The width in pixels of the stroke for the segments. */",
+      "description": "/** The width in pixels of the stroke for the sectors. */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "lineDash": {

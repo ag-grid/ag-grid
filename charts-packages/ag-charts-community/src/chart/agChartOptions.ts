@@ -1225,7 +1225,7 @@ export interface AgDoughnutInnerLabelThemeOptions extends Omit<AgDoughnutInnerLa
 export interface AgDoughnutInnerCircle {
     /** The colour of the fill for the inner circle. */
     fill: CssColor;
-    /** The opacity of the fill for the segments. */
+    /** The opacity of the fill for the inner circle. */
     fillOpacity?: Opacity;
 }
 
@@ -1234,11 +1234,11 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     type?: 'pie';
     /** Configuration for the series title. */
     title?: AgPieTitleOptions;
-    /** Configuration for the labels used outside of the segments. */
+    /** Configuration for the labels used outside of the sectors. */
     label?: AgPieSeriesLabelOptions<DatumType>;
-    /** Configuration for the labels used inside the segments. */
+    /** Configuration for the labels used inside the sectors. */
     sectorLabel?: AgPieSeriesSectorLabelOptions<DatumType>;
-    /** Configuration for the callouts used with the labels for the segments. */
+    /** Configuration for the callouts used with the labels for the sectors. */
     callout?: AgPieSeriesCalloutOptions;
     /** The key to use to retrieve angle values from the data. */
     angleKey?: string;
@@ -1256,15 +1256,15 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     sectorLabelKey?: string;
     /** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     sectorLabelName?: string;
-    /** The colours to cycle through for the fills of the segments. */
+    /** The colours to cycle through for the fills of the sectors. */
     fills?: CssColor[];
-    /** The colours to cycle through for the strokes of the segments. */
+    /** The colours to cycle through for the strokes of the sectors. */
     strokes?: CssColor[];
-    /** The opacity of the fill for the segments. */
+    /** The opacity of the fill for the sectors. */
     fillOpacity?: Opacity;
-    /** The opacity of the stroke for the segments. */
+    /** The opacity of the stroke for the sectors. */
     strokeOpacity?: Opacity;
-    /** The width in pixels of the stroke for the segments. */
+    /** The width in pixels of the stroke for the sectors. */
     strokeWidth?: PixelSize;
     /** Defines how the pie sector strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
     lineDash?: PixelSize[];
