@@ -216,30 +216,33 @@ export abstract class AgChartV2 {
         const currentWidth = chart.width;
         const currentHeight = chart.height;
 
-        width = width ?? currentWidth;
-        height = height ?? currentHeight;
-
-        const unchanged = chart.scene.canvas.pixelRatio === 1 && currentWidth === width && currentHeight === height;
+        const unchanged =
+            (width === undefined && height === undefined) ||
+            (chart.scene.canvas.pixelRatio === 1 && currentWidth === width && currentHeight === height);
 
         if (unchanged) {
             chart.scene.download(fileName, fileFormat);
-        } else {
-            const options = {
-                ...chart.userOptions,
-                container: document.createElement('div'),
-                width,
-                height,
-                autoSize: false,
-                overrideDevicePixelRatio: 1,
-            };
-
-            const clonedChart = AgChartV2.create(options as any);
-
-            clonedChart.waitForUpdate().then(() => {
-                clonedChart.scene.download(fileName, fileFormat);
-                clonedChart.destroy();
-            });
+            return;
         }
+
+        width = width ?? currentWidth;
+        height = height ?? currentHeight;
+
+        const options = {
+            ...chart.userOptions,
+            container: document.createElement('div'),
+            width,
+            height,
+            autoSize: false,
+            overrideDevicePixelRatio: 1,
+        };
+
+        const clonedChart = AgChartV2.create(options as any);
+
+        clonedChart.waitForUpdate().then(() => {
+            clonedChart.scene.download(fileName, fileFormat);
+            clonedChart.destroy();
+        });
     }
 
     private static async updateDelta<T extends ChartType>(
