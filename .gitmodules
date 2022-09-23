@@ -62,3 +62,6 @@
 [submodule "examples-grid/ag-grid-solid-example"]
 	path = examples-grid/ag-grid-solid-example
 	url = https://github.com/ag-grid/ag-grid-solid-example.git
+[submodule "examples-grid/ag-grid-solid-package-example"]
+	path = examples-grid/ag-grid-solid-package-example
+	url = https://github.com/ag-grid/ag-grid-solid-package-example.git
