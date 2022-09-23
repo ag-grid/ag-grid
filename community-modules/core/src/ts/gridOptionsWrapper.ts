@@ -543,6 +543,14 @@ export class GridOptionsWrapper {
             this.matchesGroupDisplayType('groupRows', this.gridOptions.groupDisplayType) : false;
     }
 
+    public isSuppressColumnPillSortAction() {
+        return isTrue(this.gridOptions.suppressColumnPillSortAction);
+    }
+
+    public isSuppressColumnPillSortIndicator() {
+        return isTrue(this.gridOptions.suppressColumnPillSortIndicator);
+    }
+
     public isGroupRowsSticky(): boolean {
         return isTrue(this.gridOptions.groupRowsSticky);
     }

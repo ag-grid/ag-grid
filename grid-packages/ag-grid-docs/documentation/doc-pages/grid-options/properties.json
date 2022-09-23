@@ -917,6 +917,8 @@
                 "url": "/grouping-group-panel/#enabling-row-group-panel"
             }
         },
+        "suppressColumnPillSortAction": {},
+        "suppressColumnPillSortIndicator": {},
         "groupRowRenderer": {
             "description": "Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.",
             "more": {
