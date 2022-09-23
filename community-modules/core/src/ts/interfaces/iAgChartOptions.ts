@@ -1383,9 +1383,11 @@ export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
     nodePadding?: PixelSize;
     /** Whether or not to use gradients for treemap tiles. */
     gradient?: boolean;
+    /** A callback function for adjusting the styles of a particular treemap tile based on the input parameters */
     formatter?: (params: AgTreemapSeriesFormatterParams<DataValue>) => AgTreemapSeriesFormat;
 }
 
+/** The parameters of the treemap series formatter function */
 export interface AgTreemapSeriesFormatterParams<DataValue = any> {
     /** Datum from the series data array that the treemap tile is being rendered for. */
     readonly datum: DataValue;
@@ -1411,6 +1413,7 @@ export interface AgTreemapSeriesFormatterParams<DataValue = any> {
     readonly highlighted: boolean;
 }
 
+/** The formatted style of a treemap tile */
 export interface AgTreemapSeriesFormat {
     /** The colour of the fill for the treemap tile. */
     readonly fill?: string;
