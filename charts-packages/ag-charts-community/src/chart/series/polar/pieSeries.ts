@@ -40,7 +40,7 @@ export interface PieSeriesNodeClickEvent extends TypedEvent {
     readonly datum: any;
     readonly angleKey: string;
     readonly labelKey?: string;
-    readonly segmentLabelKey?: string;
+    readonly sectorLabelKey?: string;
     readonly radiusKey?: string;
 }
 
@@ -59,7 +59,7 @@ interface PieNodeDatum extends SeriesNodeDatum {
         readonly textBaseline: CanvasTextBaseline;
     };
 
-    readonly segmentLabel?: {
+    readonly sectorLabel?: {
         readonly text: string;
     };
 }
@@ -67,8 +67,8 @@ interface PieNodeDatum extends SeriesNodeDatum {
 export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
     readonly labelKey?: string;
     readonly labelName?: string;
-    readonly segmentLabelKey?: string;
-    readonly segmentLabelName?: string;
+    readonly sectorLabelKey?: string;
+    readonly sectorLabelName?: string;
 }
 
 class PieHighlightStyle extends HighlightStyle {
@@ -103,9 +103,9 @@ interface PieSeriesLabelFormatterParams {
     readonly labelKey?: string;
     readonly labelValue?: string;
     readonly labelName?: string;
-    readonly segmentLabelKey?: string;
-    readonly segmentLabelValue?: string;
-    readonly segmentLabelName?: string;
+    readonly sectorLabelKey?: string;
+    readonly sectorLabelValue?: string;
+    readonly sectorLabelName?: string;
     readonly angleKey: string;
     readonly angleValue?: any;
     readonly angleName?: string;
@@ -126,7 +126,7 @@ class PieSeriesLabel extends Label {
     formatter?: (params: PieSeriesLabelFormatterParams) => string = undefined;
 }
 
-class PieSeriesSegmentLabel extends Label {
+class PieSeriesSectorLabel extends Label {
     @Validate(NUMBER())
     offset = 0;
 
@@ -211,7 +211,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.highlightGroup
     ).selectAll<Group>();
     private labelSelection: Selection<Group, Group, PieNodeDatum, any>;
-    private segmentLabelSelection: Selection<Text, Group, PieNodeDatum, any>;
+    private sectorLabelSelection: Selection<Text, Group, PieNodeDatum, any>;
     private innerLabelsSelection: Selection<Text, Group, DoughnutInnerLabel, any>;
 
     /**
@@ -253,7 +253,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     readonly label = new PieSeriesLabel();
-    readonly segmentLabel = new PieSeriesSegmentLabel();
+    readonly sectorLabel = new PieSeriesSectorLabel();
     readonly callout = new PieSeriesCallout();
 
     tooltip: PieSeriesTooltip = new PieSeriesTooltip();
@@ -329,10 +329,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     labelName?: string = undefined;
 
     @Validate(OPT_STRING)
-    segmentLabelKey?: string = undefined;
+    sectorLabelKey?: string = undefined;
 
     @Validate(OPT_STRING)
-    segmentLabelName?: string = undefined;
+    sectorLabelName?: string = undefined;
 
     @Validate(COLOR_STRING_ARRAY)
     fills: string[] = ['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
@@ -378,13 +378,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         super({ useLabelLayer: true });
 
         const pieLabels = new Group();
-        const pieSegmentLabels = new Group();
+        const pieSectorLabels = new Group();
         const innerLabels = new Group();
         this.labelGroup!.append(pieLabels);
-        this.labelGroup!.append(pieSegmentLabels);
+        this.labelGroup!.append(pieSectorLabels);
         this.labelGroup!.append(innerLabels);
         this.labelSelection = Selection.select(pieLabels).selectAll<Group>();
-        this.segmentLabelSelection = Selection.select(pieSegmentLabels).selectAll<Text>();
+        this.sectorLabelSelection = Selection.select(pieSectorLabels).selectAll<Text>();
         this.innerLabelsSelection = Selection.select(innerLabels).selectAll<Text>();
     }
 
@@ -412,7 +412,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     async processData() {
-        const { angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData, label, segmentLabel } = this;
+        const { angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData, label, sectorLabel } = this;
         const data = angleKey && this.data ? this.data : [];
 
         const angleData: number[] = data.map(
@@ -429,9 +429,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         const labelFormatter = label.formatter;
         const labelKey = label.enabled ? this.labelKey : undefined;
-        const segmentLabelKey = segmentLabel.enabled ? this.segmentLabelKey : undefined;
+        const sectorLabelKey = sectorLabel.enabled ? this.sectorLabelKey : undefined;
         let labelData: string[] = [];
-        let segmentLabelData: string[] = [];
+        let sectorLabelData: string[] = [];
         let radiusData: number[] = [];
 
         const getLabelFormatterParams = <T extends { [prop: string]: any }>(
@@ -448,8 +448,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 labelKey,
                 labelValue: labelKey ? datum[labelKey] : undefined,
                 labelName: this.labelName,
-                segmentLabelKey,
-                segmentLabelValue: segmentLabelKey ? datum[segmentLabelKey] : undefined,
+                sectorLabelKey,
+                sectorLabelValue: sectorLabelKey ? datum[sectorLabelKey] : undefined,
             };
         };
 
@@ -483,16 +483,16 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
         }
 
-        const segmentLabelFormatter = segmentLabel.formatter;
+        const sectorLabelFormatter = sectorLabel.formatter;
 
-        if (segmentLabelKey) {
-            if (segmentLabelFormatter) {
-                segmentLabelData = data.map((datum) => {
+        if (sectorLabelKey) {
+            if (sectorLabelFormatter) {
+                sectorLabelData = data.map((datum) => {
                     const formatterParams = getLabelFormatterParams(datum);
-                    return segmentLabelFormatter(formatterParams);
+                    return sectorLabelFormatter(formatterParams);
                 });
             } else {
-                segmentLabelData = data.map((datum) => String(datum[segmentLabelKey]));
+                sectorLabelData = data.map((datum) => String(datum[sectorLabelKey]));
             }
         }
 
@@ -566,9 +566,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                           textBaseline,
                       }
                     : undefined,
-                segmentLabel: segmentLabelKey
+                sectorLabel: sectorLabelKey
                     ? {
-                          text: segmentLabelData[datumIndex],
+                          text: sectorLabelData[datumIndex],
                       }
                     : undefined,
             });
@@ -613,8 +613,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private async updateGroupSelection() {
-        const { groupSelection, highlightSelection, labelSelection, segmentLabelSelection, innerLabelsSelection } =
-            this;
+        const { groupSelection, highlightSelection, labelSelection, sectorLabelSelection, innerLabelsSelection } = this;
 
         const update = (selection: typeof groupSelection) => {
             const updateGroups = selection.setData(this.groupSelectionData);
@@ -643,13 +642,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
         this.labelSelection = updateLabels.merge(enterLabels);
 
-        const updateSegmentLabels = segmentLabelSelection.setData(this.groupSelectionData);
-        updateSegmentLabels.exit.remove();
-        const enterSegmentLabels = updateSegmentLabels.enter.append(Text);
-        enterSegmentLabels.each((node) => {
+        const updateSectorLabels = sectorLabelSelection.setData(this.groupSelectionData);
+        updateSectorLabels.exit.remove();
+        const enterSectorLabels = updateSectorLabels.enter.append(Text);
+        enterSectorLabels.each((node) => {
             node.pointerEvents = PointerEvents.None;
         });
-        this.segmentLabelSelection = updateSegmentLabels.merge(enterSegmentLabels);
+        this.sectorLabelSelection = updateSectorLabels.merge(enterSectorLabels);
 
         const updateInnerLabels = innerLabelsSelection.setData(this.innerLabels);
         updateInnerLabels.exit.remove();
@@ -818,29 +817,29 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             });
         }
 
-        this.updateSegmentLabelNodes();
+        this.updateSectorLabelNodes();
         this.updateInnerLabelNodes();
     }
 
-    private updateSegmentLabelNodes() {
+    private updateSectorLabelNodes() {
         const { radiusScale } = this;
         const innerRadius = radiusScale.convert(0);
-        const { fontSize, fontStyle, fontWeight, fontFamily, offset, color } = this.segmentLabel;
+        const { fontSize, fontStyle, fontWeight, fontFamily, offset, color } = this.sectorLabel;
 
-        this.segmentLabelSelection.each((text, datum) => {
-            const segmentLabel = datum.segmentLabel;
+        this.sectorLabelSelection.each((text, datum) => {
+            const sectorLabel = datum.sectorLabel;
             const radius = radiusScale.convert(datum.radius, clamper);
             const outerRadius = Math.max(0, radius);
 
             text.fill = undefined;
-            if (segmentLabel && outerRadius !== 0) {
+            if (sectorLabel && outerRadius !== 0) {
                 const labelRadius = (radius + innerRadius) / 2 + offset;
 
                 text.fontStyle = fontStyle;
                 text.fontWeight = fontWeight;
                 text.fontSize = fontSize;
                 text.fontFamily = fontFamily;
-                text.text = segmentLabel.text;
+                text.text = sectorLabel.text;
                 text.x = datum.midCos * labelRadius;
                 text.y = datum.midSin * labelRadius;
                 text.textAlign = 'center';

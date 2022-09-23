@@ -107,8 +107,8 @@ export const PIE_SLICES_LABELS: AgPolarChartOptions = {
             type: 'pie',
             labelKey: 'os',
             angleKey: 'share',
-            segmentLabelKey: 'share',
-            segmentLabel: {
+            sectorLabelKey: 'share',
+            sectorLabel: {
                 color: 'white',
             },
         },

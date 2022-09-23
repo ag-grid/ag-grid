@@ -1161,7 +1161,7 @@ export interface AgPieSeriesLabelOptions<DatumType> extends AgChartLabelOptions 
     formatter?: (params: AgPieSeriesLabelFormatterParams<DatumType>) => string;
 }
 
-export interface AgPieSeriesSegmentLabelOptions<DatumType> extends AgChartLabelOptions {
+export interface AgPieSeriesSectorLabelOptions<DatumType> extends AgChartLabelOptions {
     /** Distance in pixels between the callout line and the label text. */
     offset?: PixelSize;
     /** A function that allows the modification of the label text based on input parameters. */
@@ -1176,7 +1176,7 @@ export interface AgPieSeriesFormatterParams<DatumType> {
     readonly highlighted: boolean;
     readonly angleKey: string;
     readonly radiusKey?: string;
-    readonly segmentLabelKey?: string;
+    readonly sectorLabelKey?: string;
 }
 
 export interface AgPieSeriesFormat {
@@ -1237,7 +1237,7 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     /** Configuration for the labels used outside of the segments. */
     label?: AgPieSeriesLabelOptions<DatumType>;
     /** Configuration for the labels used inside the segments. */
-    segmentLabel?: AgPieSeriesSegmentLabelOptions<DatumType>;
+    sectorLabel?: AgPieSeriesSectorLabelOptions<DatumType>;
     /** Configuration for the callouts used with the labels for the segments. */
     callout?: AgPieSeriesCalloutOptions;
     /** The key to use to retrieve angle values from the data. */
@@ -1252,10 +1252,10 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     labelKey?: string;
     /** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     labelName?: string;
-    /** The key to use to retrieve segment label values from the data. */
-    segmentLabelKey?: string;
-    /** A human-readable description of the segment label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
-    segmentLabelName?: string;
+    /** The key to use to retrieve sector label values from the data. */
+    sectorLabelKey?: string;
+    /** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
+    sectorLabelName?: string;
     /** The colours to cycle through for the fills of the segments. */
     fills?: CssColor[];
     /** The colours to cycle through for the strokes of the segments. */
@@ -1296,10 +1296,10 @@ export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRe
     labelKey?: string;
     /** labelName as specified on series options. */
     labelName?: string;
-    /** segmentLabelKey as specified on series options. */
-    segmentLabelKey?: string;
-    /** segmentLabelName as specified on series options. */
-    segmentLabelName?: string;
+    /** sectorLabelKey as specified on series options. */
+    sectorLabelKey?: string;
+    /** sectorLabelName as specified on series options. */
+    sectorLabelName?: string;
 }
 
 export interface AgPieSeriesLabelFormatterParams<DatumType> {
@@ -1314,11 +1314,11 @@ export interface AgPieSeriesLabelFormatterParams<DatumType> {
     readonly labelName?: string;
 
     /** segmentL as specified on series options. */
-    readonly segmentLabelKey?: string;
-    /** segmentLabelValue as read from series data via the segmentLabelKey property. */
-    readonly segmentLabelValue?: string;
-    /** segmentLabelName as specified on series options. */
-    readonly segmentLabelName?: string;
+    readonly sectorLabelKey?: string;
+    /** sectorLabelValue as read from series data via the sectorLabelKey property. */
+    readonly sectorLabelValue?: string;
+    /** sectorLabelName as specified on series options. */
+    readonly sectorLabelName?: string;
 
     /** angleKey as specified on series options. */
     readonly angleKey: string;

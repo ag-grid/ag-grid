@@ -82,16 +82,16 @@ series: [{
 }]
 ```
 
-Additionally labels can be put inside pie chart sectors by using the `segmentLabelKey`.
-The `segmentLabel` property holds the style configuration for these labels:
+Additionally labels can be put inside pie chart sectors by using the `sectorLabelKey`.
+The `sectorLabel` property holds the style configuration for these labels:
 
 ```diff
 series: [{
     type: 'pie',
     angleKey: 'value',
     labelKey: 'label',
-+   segmentLabelKey: 'value',
-+   segmentLabel: {
++   sectorLabelKey: 'value',
++   sectorLabel: {
 +       color: 'white',
 +       fontWeight: 'bold'
 +   }
@@ -100,7 +100,7 @@ series: [{
 
 <chart-example title='Pie Chart with Labels in Slices' name='pie-labels-in-slices' type='generated'></chart-example>
 
-Please check the [API reference](#api-reference) below to learn more about `label`, `segmentLabel` and `callout`, as well as other series configuration.
+Please check the [API reference](#api-reference) below to learn more about `label`, `sectorLabel` and `callout`, as well as other series configuration.
 
 ## Variable Slice Radius
 

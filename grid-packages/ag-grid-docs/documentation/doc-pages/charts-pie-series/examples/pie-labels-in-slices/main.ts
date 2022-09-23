@@ -10,8 +10,8 @@ const options: AgChartOptions = {
             type: 'pie',
             angleKey: 'value',
             labelKey: 'label',
-            segmentLabelKey: 'value',
-            segmentLabel: {
+            sectorLabelKey: 'value',
+            sectorLabel: {
                 color: 'white',
                 fontWeight: 'bold',
             },

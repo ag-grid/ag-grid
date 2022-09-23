@@ -8179,7 +8179,7 @@ Object {
       "radiusKey": undefined,
       "radiusName": undefined,
       "rotation": 0,
-      "segmentLabel": Object {
+      "sectorLabel": Object {
         "color": "rgb(70, 70, 70)",
         "enabled": true,
         "fontFamily": "Verdana, sans-serif",
@@ -8188,8 +8188,8 @@ Object {
         "fontWeight": undefined,
         "offset": 0,
       },
-      "segmentLabelKey": undefined,
-      "segmentLabelName": undefined,
+      "sectorLabelKey": undefined,
+      "sectorLabelName": undefined,
       "shadow": Object {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
@@ -8890,7 +8890,7 @@ Object {
       "radiusKey": undefined,
       "radiusName": undefined,
       "rotation": 0,
-      "segmentLabel": Object {
+      "sectorLabel": Object {
         "color": "rgb(70, 70, 70)",
         "enabled": true,
         "fontFamily": "Verdana, sans-serif",
@@ -8899,8 +8899,8 @@ Object {
         "fontWeight": undefined,
         "offset": 0,
       },
-      "segmentLabelKey": undefined,
-      "segmentLabelName": undefined,
+      "sectorLabelKey": undefined,
+      "sectorLabelName": undefined,
       "shadow": Object {
         "blur": 5,
         "color": "rgba(0, 0, 0, 0.5)",
