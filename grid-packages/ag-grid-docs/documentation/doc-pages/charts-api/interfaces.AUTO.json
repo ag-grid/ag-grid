@@ -2394,6 +2394,7 @@
       "tooltip?": "/** Series-specific tooltip configuration. */",
       "nodePadding?": "/** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */",
       "gradient?": "/** Whether or not to use gradients for treemap tiles. */",
+      "formatter?": "/** A callback function for adjusting the styles of a particular treemap tile based on the input parameters */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
@@ -2403,7 +2404,10 @@
     }
   },
   "AgTreemapSeriesFormatterParams": {
-    "meta": { "typeParams": ["DataValue = any"] },
+    "meta": {
+      "typeParams": ["DataValue = any"],
+      "doc": "/** The parameters of the treemap series formatter function */"
+    },
     "type": {
       "datum": "DataValue",
       "labelKey": "string",
@@ -2432,7 +2436,7 @@
     }
   },
   "AgTreemapSeriesFormat": {
-    "meta": {},
+    "meta": { "doc": "/** The formatted style of a treemap tile */" },
     "type": {
       "fill?": "string",
       "fillOpacity?": "string",

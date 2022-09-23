@@ -15777,6 +15777,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "formatter": {
+      "description": "/** A callback function for adjusting the styles of a particular treemap tile based on the input parameters */",
       "type": {
         "arguments": { "params": "AgTreemapSeriesFormatterParams<DataValue>" },
         "returnType": "AgTreemapSeriesFormat",
