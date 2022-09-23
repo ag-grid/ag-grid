@@ -1617,12 +1617,8 @@
         }
 
         .ag-icon-contracted,
+        .ag-icon-expanded,
         .ag-icon-tree-closed {
-            display: block;
-            transform: rotate(180deg);
-        }
-
-        .ag-icon-expanded {
             display: block;
             transform: rotate(180deg);
         }
