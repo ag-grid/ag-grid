@@ -2662,6 +2662,10 @@
       "description": "/** Chart theme overrides applied to all themes. */",
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
+    "enableChartsToolPanelButton": {
+      "description": "/** Set to `true` to Enable Charts Tool Panel button to toggle the panel. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "loadingCellRenderer": {
       "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
       "type": { "returnType": "any", "optional": true }
@@ -24957,6 +24961,10 @@
       "description": "/** Chart theme overrides applied to all themes. */",
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
+    "enableChartsToolPanelButton": {
+      "description": "/** Set to `true` to Enable Charts Tool Panel button to toggle the panel. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "loadingCellRenderer": {
       "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
       "type": { "returnType": "any", "optional": true }
@@ -27753,6 +27761,10 @@
     "chartThemeOverrides": {
       "description": "/** Chart theme overrides applied to all themes. */",
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
+    },
+    "enableChartsToolPanelButton": {
+      "description": "/** Set to `true` to Enable Charts Tool Panel button to toggle the panel. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
     },
     "loadingCellRenderer": {
       "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
@@ -30560,6 +30572,10 @@
     "chartThemeOverrides": {
       "description": "/** Chart theme overrides applied to all themes. */",
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
+    },
+    "enableChartsToolPanelButton": {
+      "description": "/** Set to `true` to Enable Charts Tool Panel button to toggle the panel. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
     },
     "loadingCellRenderer": {
       "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",

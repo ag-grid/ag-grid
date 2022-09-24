@@ -299,6 +299,10 @@
     "description": "/** Chart theme overrides applied to all themes. */",
     "type": { "returnType": "AgChartThemeOverrides" }
   },
+  "enableChartsToolPanelButton": {
+    "description": "/** Set to `true` to Enable Charts Tool Panel button to toggle the panel. Default: `false` */",
+    "type": { "returnType": "boolean" }
+  },
   "loadingCellRenderer": {
     "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
     "type": { "returnType": "any" }

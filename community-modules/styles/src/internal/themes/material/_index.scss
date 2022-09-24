@@ -113,6 +113,18 @@
         padding-bottom: calc(var(--ag-grid-size) * 0.5);
     }
 
+    .ag-chart-menu-close {
+        background: var(--ag-background-color);
+    }
+
+    .ag-chart-menu-close .ag-icon {
+        background: none;
+    }
+
+    .ag-chart-menu-close .ag-icon:hover {
+        background: var(--ag-subheader-background-color);
+    }
+
     @include ag.text-input {
         background: transparent;
         color: var(--ag-foreground-color);

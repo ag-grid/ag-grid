@@ -126,6 +126,20 @@
     .ag-charts-format-sub-level-group-item {
         margin-bottom: calc(var(--ag-grid-size) * 1.5);
     }
+
+    .ag-chart-menu-close {
+        background: var(--ag-background-color);
+    }
+
+    .ag-chart-menu-close .ag-icon {
+        background: none;
+        border: 1px solid var(--ag-secondary-border-color);
+        border-right: none;
+    }
+
+    .ag-chart-menu-close .ag-icon:hover {
+        background: var(--ag-header-background-color);
+    }
 }
 
 .ag-theme-balham-dark {

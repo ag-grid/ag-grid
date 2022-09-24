@@ -302,6 +302,8 @@ export interface GridOptions<TData = any> {
     customChartThemes?: { [name: string]: AgChartTheme };
     /** Chart theme overrides applied to all themes. */
     chartThemeOverrides?: AgChartThemeOverrides;
+    /** Set to `true` to Enable Charts Tool Panel button to toggle the panel. Default: `false` */
+    enableChartsToolPanelButton?: boolean;
 
     // *** Loading Cell Renderers *** //
     /**
