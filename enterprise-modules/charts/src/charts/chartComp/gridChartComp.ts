@@ -146,14 +146,14 @@ export class GridChartComp extends Component {
         this.addTitleEditComp();
 
         this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATE, this.update.bind(this));
 
         if (this.chartMenu) {
             // chart menu may not exist, i.e. cross filtering
             this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, () => this.downloadChart());
         }
 
-        this.refresh();
+        this.update();
         this.raiseChartCreatedEvent();
     }
 
@@ -332,7 +332,7 @@ export class GridChartComp extends Component {
         }
     }
 
-    private refresh(): void {
+    private update(): void {
         if (this.shouldRecreateChart()) {
             this.createChart();
         }
@@ -370,6 +370,11 @@ export class GridChartComp extends Component {
 
         let chartUpdateParams = this.chartController.getChartUpdateParams();
         chartProxy.update(chartUpdateParams);
+
+        this.chartProxy.getChart().waitForUpdate().then(() => {
+            this.chartController.raiseChartUpdatedEvent();
+        });
+
         this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
     }
 

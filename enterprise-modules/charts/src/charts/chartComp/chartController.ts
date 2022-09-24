@@ -22,12 +22,10 @@ import { ChartProxy, UpdateChartParams } from "./chartProxies/chartProxy";
 import { getChartTheme } from "ag-charts-community";
 import { ChartSeriesType, getSeriesType } from "./utils/seriesTypeMapper";
 
-export interface ChartModelUpdatedEvent extends AgEvent {
-}
-
 export class ChartController extends BeanStub {
 
     public static EVENT_CHART_UPDATED = 'chartUpdated';
+    public static EVENT_CHART_MODEL_UPDATE = 'chartModelUpdate';
     public static EVENT_CHART_TYPE_CHANGED = 'chartTypeChanged';
     public static EVENT_CHART_SERIES_CHART_TYPE_CHANGED = 'chartSeriesChartTypeChanged';
 
@@ -75,7 +73,7 @@ export class ChartController extends BeanStub {
         if (this.model.unlinked) { return; }
 
         this.model.updateData();
-        this.raiseChartUpdatedEvent();
+        this.raiseChartModelUpdateEvent();
     }
 
     public updateForRangeChange(): void {
@@ -147,13 +145,13 @@ export class ChartController extends BeanStub {
 
         this.model.updateSeriesChartTypes();
 
-        this.raiseChartUpdatedEvent();
+        this.raiseChartModelUpdateEvent();
         this.raiseChartOptionsChangedEvent();
     }
 
     public setChartThemeName(chartThemeName: string): void {
         this.model.chartThemeName = chartThemeName;
-        this.raiseChartUpdatedEvent();
+        this.raiseChartModelUpdateEvent();
         this.raiseChartOptionsChangedEvent();
     }
 
@@ -223,7 +221,7 @@ export class ChartController extends BeanStub {
         }
 
         if (!silent) {
-            this.raiseChartUpdatedEvent();
+            this.raiseChartModelUpdateEvent();
         }
     }
 
@@ -342,8 +340,16 @@ export class ChartController extends BeanStub {
         };
     }
 
-    private raiseChartUpdatedEvent(): void {
-        const event: ChartModelUpdatedEvent = Object.freeze({
+    private raiseChartModelUpdateEvent(): void {
+        const event = Object.freeze({
+            type: ChartController.EVENT_CHART_MODEL_UPDATE
+        });
+
+        this.dispatchEvent(event);
+    }
+
+    public raiseChartUpdatedEvent(): void {
+        const event = Object.freeze({
             type: ChartController.EVENT_CHART_UPDATED
         });
 

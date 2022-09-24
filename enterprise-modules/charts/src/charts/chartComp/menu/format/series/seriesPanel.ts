@@ -92,7 +92,6 @@ export class SeriesPanel extends Component {
         this.destroyActivePanels();
 
         const chart = this.chartController.getChartProxy().getChart();
-
         chart.waitForUpdate().then(() => {
             if (this.chartController.isComboChart()) {
                 this.updateSeriesType();
