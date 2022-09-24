@@ -892,8 +892,8 @@ export class GridOptionsWrapper {
         return false;
     }
 
-    public isEnableChartsToolPanelButton() {
-        return isTrue(this.gridOptions.enableChartsToolPanelButton);
+    public isEnableChartToolPanelsButton() {
+        return isTrue(this.gridOptions.enableChartToolPanelsButton);
     }
 
     public getColResizeDefault() {

@@ -1,7 +1,6 @@
 import { ChartMenuOptions, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
-
 const columnDefs: ColDef[] = [
   { field: 'country', width: 150, chartDataType: 'category' },
   { field: 'gold', chartDataType: 'series' },
@@ -44,17 +43,24 @@ const gridOptions: GridOptions = {
   enableRangeSelection: true,
   onFirstDataRendered: onFirstDataRendered,
   enableCharts: true,
-  enableChartsToolPanelButton: true
+  enableChartToolPanelsButton: true
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   var createRangeChartParams: CreateRangeChartParams = {
     cellRange: {
       rowStartIndex: 0,
-      rowEndIndex: 5,
+      rowEndIndex: 4,
       columns: ['country', 'gold', 'silver', 'bronze'],
     },
     chartType: 'column',
+    chartThemeOverrides: {
+      column: {
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
   }
 
   params.api.createRangeChart(createRangeChartParams)

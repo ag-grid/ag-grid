@@ -353,16 +353,16 @@
                 "url": "/integrated-charts-user-created/#enabling-user-created-charts"
             }
         },
-        "enableChartsToolPanelButton": {
+        "enableChartToolPanelsButton": {
             "more": {
-                "name": "Enabling Charts Tool Panel Button",
-                "url": "/integrated-charts-toolbar/#showing-the-charts-tool-panel-button"
+                "name": "Enabling Chart Tool Panels Button",
+                "url": "/integrated-charts-toolbar/#chart-tool-panels-button"
             }
         },
         "getChartToolbarItems": {
             "more": {
                 "name": "Configuring Toolbar Items",
-                "url": "/integrated-charts-toolbar/#configuring-toolbar-items-and-menu-panels"
+                "url": "/integrated-charts-toolbar/#toolbar-customisation"
             }
         },
         "createChartContainer": {

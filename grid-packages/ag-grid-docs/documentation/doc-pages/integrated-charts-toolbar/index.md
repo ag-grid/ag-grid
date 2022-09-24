@@ -71,42 +71,41 @@ Notice that the chart range disappears from the grid when the chart has been unl
 
 The 'Download Chart' toolbar item will download the chart as a PNG file. Note that the chart is drawn using Canvas in the browser and as such the user can also right click on the chart and save just like any other image on a web page.
 
-## Configuring Toolbar Items and Menu Panels
+## Toolbar Customisation
 
-By default all available toolbar items and menu panels can be accessed. However, items can be removed and reordered via the `gridOptions.getChartToolbarItems(params)` callback function.
+By default, all available toolbar items and menu panels can be accessed. However, items can be removed and reordered via the `gridOptions.getChartToolbarItems(params)` callback function.
 
 <api-documentation source='grid-options/properties.json' section='charts' names='["getChartToolbarItems"]'  ></api-documentation>
 
 This function receives the `GetChartToolbarItemsParams` object which contains the list of elements that are included by default in `defaultItems`, along with the grid APIs.
 
-
 The list returned by the `gridOptions.getChartToolbarItems(params)` callback can be modified to reorder and omit items from the toolbar. For instance, returning an empty array will hide all toolbar items.
 
-### Example: Custom Toolbar Layout
-
 The example below shows how the toolbar can be customised. Notice the following:
-
 
 - **Download Chart** - has been positioned as the first toolbar item.
 - **Chart Data Panel** - appears first in the tabbed menu.
 - **Chart Format Panel** - has been removed from the tabbed menu.
 - **Unlink Toolbar Item** - has been removed from the toolbar.
 
-<grid-example title='Custom Toolbar' name='custom-toolbar' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Toolbar Customisation' name='custom-toolbar' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
-## Showing the Charts Tool Panel button
+## Chart Tool Panels Button
 
-An alternative way to show the chart toolbar is to have a Charts Tool Panel button to show and hide the panel. This also shows the chart toolbar on the top right of the chart and hides the menu icon there.
-
-To show the Charts Tool Panel button, add `enableChartsToolPanelButton` to the grid options.
+The Chart Tool Panels Button offers and alternative way to access the Chart Tool Panels and is enabled as shown below:
 
 <snippet>
 const gridOptions = {
-    enableChartsToolPanelButton: true
+    enableChartToolPanelsButton: true
 }
 </snippet>
 
-<grid-example title='Charts Tool Panel button' name='charts-tool-panel-button' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+When enabled, a button will appear on the left-hand-side (right-hand-side when `RTL=true`) of the chart. Note that the
+Toolbar icons will be permanently shown, minus the 'hamburger' icon. 
+
+The following example demonstrates the results of enabling `enableChartToolPanelsButton`:
+
+<grid-example title='Chart Tool Panels button' name='chart-tool-panels-button' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ## Next Up
 

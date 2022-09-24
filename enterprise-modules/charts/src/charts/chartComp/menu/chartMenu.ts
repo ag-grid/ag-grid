@@ -74,7 +74,7 @@ export class ChartMenu extends Component {
         //     }
         // });
 
-        if (this.gridOptionsWrapper.isEnableChartsToolPanelButton()) {
+        if (this.gridOptionsWrapper.isEnableChartToolPanelsButton()) {
             this.getGui().classList.add('ag-charts-tool-panel-button-enable');
             this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this))
         }
@@ -142,7 +142,7 @@ export class ChartMenu extends Component {
 
     private createButtons(): void {
         const chartToolbarOptions = this.getToolbarOptions();
-        const gui = this.eMenu;
+        const menuEl = this.eMenu;
 
         chartToolbarOptions.forEach(button => {
             const buttonConfig = this.buttons[button];
@@ -162,7 +162,7 @@ export class ChartMenu extends Component {
 
             this.addManagedListener(buttonEl, 'click', callback);
 
-            gui.appendChild(buttonEl);
+            menuEl.appendChild(buttonEl);
         });
     }
 
@@ -230,11 +230,7 @@ export class ChartMenu extends Component {
     }
 
     private toggleMenu() {
-        if (this.menuVisible) {
-            this.hideMenu();
-        } else {
-            this.showMenu();
-        }
+        this.menuVisible ? this.hideMenu() : this.showMenu();
     }
 
     public showMenu(tabName?: ChartMenuOptions): void {
@@ -266,7 +262,7 @@ export class ChartMenu extends Component {
         this.eChartContainer.classList.toggle('ag-chart-menu-visible', this.menuVisible);
         this.eChartContainer.classList.toggle('ag-chart-menu-hidden', !this.menuVisible);
 
-        if (this.gridOptionsWrapper.isEnableChartsToolPanelButton()) {
+        if (this.gridOptionsWrapper.isEnableChartToolPanelsButton()) {
             this.eHideButtonIcon.classList.toggle('ag-icon-contracted', this.menuVisible);
             this.eHideButtonIcon.classList.toggle('ag-icon-expanded', !this.menuVisible);
         }

@@ -2662,8 +2662,8 @@
       "description": "/** Chart theme overrides applied to all themes. */",
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
-    "enableChartsToolPanelButton": {
-      "description": "/** Set to `true` to Enable Charts Tool Panel button to toggle the panel. Default: `false` */",
+    "enableChartToolPanelsButton": {
+      "description": "/** Set to `true` to show the Chart Tool Panels button. Note that this will also remove the 'hamburger' menu option from the Chart Toolbar. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "loadingCellRenderer": {
@@ -24961,8 +24961,8 @@
       "description": "/** Chart theme overrides applied to all themes. */",
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
-    "enableChartsToolPanelButton": {
-      "description": "/** Set to `true` to Enable Charts Tool Panel button to toggle the panel. Default: `false` */",
+    "enableChartToolPanelsButton": {
+      "description": "/** Set to `true` to show the Chart Tool Panels button. Note that this will also remove the 'hamburger' menu option from the Chart Toolbar. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "loadingCellRenderer": {
@@ -27762,8 +27762,8 @@
       "description": "/** Chart theme overrides applied to all themes. */",
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
-    "enableChartsToolPanelButton": {
-      "description": "/** Set to `true` to Enable Charts Tool Panel button to toggle the panel. Default: `false` */",
+    "enableChartToolPanelsButton": {
+      "description": "/** Set to `true` to show the Chart Tool Panels button. Note that this will also remove the 'hamburger' menu option from the Chart Toolbar. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "loadingCellRenderer": {
@@ -30573,8 +30573,8 @@
       "description": "/** Chart theme overrides applied to all themes. */",
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
-    "enableChartsToolPanelButton": {
-      "description": "/** Set to `true` to Enable Charts Tool Panel button to toggle the panel. Default: `false` */",
+    "enableChartToolPanelsButton": {
+      "description": "/** Set to `true` to show the Chart Tool Panels button. Note that this will also remove the 'hamburger' menu option from the Chart Toolbar. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "loadingCellRenderer": {
