@@ -307,13 +307,17 @@ export class ChartDatasource extends BeanStub {
         // `pivotKeys` is not used by the SSRM for pivoting, so it is safe to reuse this colDef property. This way
         // the same logic can be used for CSRM and SSRM to extract legend names in extractRowsFromGridRowModel()
         secondaryColumns.forEach(col => {
-            const keys = col.getColId().split(pivotKeySeparator);
-            col.getColDef().pivotKeys = keys.slice(0, keys.length - 1);
+            if (pivotKeySeparator === '') {
+                col.getColDef().pivotKeys = [];
+            } else {
+                const keys = col.getColId().split(pivotKeySeparator);
+                col.getColDef().pivotKeys = keys.slice(0, keys.length - 1);
+            }
         });
     }
 
     private extractPivotKeySeparator(secondaryColumns: Column[]) {
-        if (secondaryColumns.length === 0) { return ""; }
+        if (secondaryColumns.length === 0) { return ''; }
 
         const extractSeparator = (columnGroup: ColumnGroup, childId: string): string => {
             const groupId = columnGroup.getGroupId();
@@ -325,6 +329,9 @@ export class ChartDatasource extends BeanStub {
         };
 
         const firstSecondaryCol = secondaryColumns[0];
+        if (firstSecondaryCol.getParent() == null) {
+            return '';
+        }
         return extractSeparator(firstSecondaryCol.getParent(), firstSecondaryCol.getColId());
     }
 
