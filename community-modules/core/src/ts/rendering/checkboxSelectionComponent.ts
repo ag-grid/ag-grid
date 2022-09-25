@@ -89,13 +89,16 @@ export class CheckboxSelectionComponent extends Component {
 
         this.onSelectionChanged();
 
-        // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
-        // would possibly get selected twice
-        this.addGuiEventListener('click', event => stopPropagationForAgGrid(event));
-        // likewise we don't want double click on this icon to open a group
-        this.addGuiEventListener('dblclick', event => stopPropagationForAgGrid(event));
+        // we don't want double click on this icon to open a group
+        this.addManagedListener(this.eCheckbox.getInputElement(), 'dblclick', (event) => {
+            stopPropagationForAgGrid(event);
+        });
 
         this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (event) => {
+            // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
+            // would possibly get selected twice
+            stopPropagationForAgGrid(event);
+
             const isSelected = this.eCheckbox.getValue();
             const previousValue = this.eCheckbox.getPreviousValue();
 
