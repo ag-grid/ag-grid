@@ -695,10 +695,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.     */
     @Input() public treeData: boolean | undefined = undefined;
-    /** Set to `true` to prevent the column sort from changing when a user clicks the column pill in the row group panel or row group section of the side bar     */
-    @Input() public suppressColumnPillSortAction: boolean | undefined = undefined;
-    /** Set to `true` to hide the sort direction indicator from the column pill in the row group panel and row group section of the side bar     */
-    @Input() public suppressColumnPillSortIndicator: boolean | undefined = undefined;
+    /** Set to `true` to suppress sort indicators and actions from the row group panel     */
+    @Input() public rowGroupPanelSuppressSort: boolean | undefined = undefined;
     /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.     */
     @Input() public groupRowsSticky: boolean | undefined = undefined;
     /** @deprecated - this is now groupRowRendererParams.innerRenderer
@@ -1314,8 +1312,7 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_suppressCopySingleCellRanges: boolean | null | '';
     static ngAcceptInputType_groupRowsSticky: boolean | null | '';
     static ngAcceptInputType_serverSideInfiniteScroll: boolean | null | '';
-    static ngAcceptInputType_suppressColumnPillSortAction: boolean | null | '';
-    static ngAcceptInputType_suppressColumnPillSortIndicator: boolean | null | '';
+    static ngAcceptInputType_rowGroupPanelSuppressSort: boolean | null | '';
     // @END@
 }
 

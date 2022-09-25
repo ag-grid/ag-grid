@@ -923,8 +923,12 @@
                 "url": "/grouping-group-panel/#enabling-row-group-panel"
             }
         },
-        "suppressColumnPillSortAction": {},
-        "suppressColumnPillSortIndicator": {},
+        "rowGroupPanelSuppressSort": {
+            "more": {
+                "name": "Suppress Sorting",
+                "url": "/grouping-group-panel/#suppress-sorting"
+            }
+        },
         "groupRowRenderer": {
             "description": "Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.",
             "more": {
