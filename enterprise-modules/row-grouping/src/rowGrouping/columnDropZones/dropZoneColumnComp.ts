@@ -106,12 +106,13 @@ export class DropZoneColumnComp extends Component {
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
         const columnSort = this.column.getSort();
+        const isDisplayingSort = !this.gridOptionsWrapper.isSuppressColumnPillSortIndicator();
 
         const ariaInstructions = [
             [
                 aggFuncName && `${aggFuncName}${aggSeparator}`,
                 name,
-                this.isGroupingZone() && columnSort && `, ${sortDirection[columnSort]}`
+                this.isGroupingZone() && isDisplayingSort && columnSort && `, ${sortDirection[columnSort]}`
             ].filter(part => !!part).join(''),
         ];
 
@@ -121,7 +122,8 @@ export class DropZoneColumnComp extends Component {
             ariaInstructions.push(aggregationMenuAria);
         }
 
-        if (this.isGroupingZone() && this.column.getColDef().sortable) {
+        const doesClickSort = !this.gridOptionsWrapper.isSuppressColumnPillSortAction();
+        if (this.isGroupingZone() && this.column.getColDef().sortable && doesClickSort) {
             const sortProgressAria = translate('ariaDropZoneColumnGroupItemDescription', 'Press ENTER to sort');
             ariaInstructions.push(sortProgressAria);
         }
@@ -150,22 +152,26 @@ export class DropZoneColumnComp extends Component {
             return;
         }
 
-        this.eSortIndicator.setupSort(this.column, true);
+        if (!this.gridOptionsWrapper.isSuppressColumnPillSortIndicator()) {
+            this.eSortIndicator.setupSort(this.column, true);
+        }
 
-        const performSort = (event: MouseEvent | KeyboardEvent) => {
-            event.preventDefault();
-            const sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
-            const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
-            this.sortController.progressSort(this.column, multiSort, 'uiColumnSorted');
-        };
-
-        this.addGuiEventListener('click', performSort);
-        this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
-            const isEnter = e.key === KeyCode.ENTER;
-            if (isEnter && this.isGroupingZone()) {
-                performSort(e);
-            }
-        });
+        if (!this.gridOptionsWrapper.isSuppressColumnPillSortAction()) {
+            const performSort = (event: MouseEvent | KeyboardEvent) => {
+                event.preventDefault();
+                const sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
+                const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
+                this.sortController.progressSort(this.column, multiSort, 'uiColumnSorted');
+            };
+    
+            this.addGuiEventListener('click', performSort);
+            this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
+                const isEnter = e.key === KeyCode.ENTER;
+                if (isEnter && this.isGroupingZone()) {
+                    performSort(e);
+                }
+            });
+        }
     }
 
     private addDragSource(): void {
