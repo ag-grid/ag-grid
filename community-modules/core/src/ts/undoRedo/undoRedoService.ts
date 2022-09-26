@@ -1,29 +1,34 @@
-import { Autowired, Bean, PostConstruct } from "../context/context";
+import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 import { CellEditingStartedEvent, CellValueChangedEvent, FillEndEvent, RowEditingStartedEvent } from "../events";
 import { FocusService } from "../focusService";
 import { IRowModel } from "../interfaces/iRowModel";
-import { GridApi } from "../gridApi";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { CellValueChange, FillUndoRedoAction, LastFocusedCell, UndoRedoAction, UndoRedoStack } from "./undoRedoStack";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
 import { RowNode } from "../entities/rowNode";
 import { Constants } from "../constants/constants";
-import { ModuleNames } from "../modules/moduleNames";
-import { ModuleRegistry } from "../modules/moduleRegistry";
-import { CellRange, CellRangeParams } from "../interfaces/IRangeService";
+import { CellRange, CellRangeParams, IRangeService } from "../interfaces/IRangeService";
 import { BeanStub } from "../context/beanStub";
 import { CellPosition, CellPositionUtils } from "../entities/cellPosition";
+import { Column } from '../entities/column';
+import { ColumnModel } from "../columns/columnModel";
+import { CtrlsService } from "../ctrlsService";
+import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 
 @Bean('undoRedoService')
 export class UndoRedoService extends BeanStub {
 
     @Autowired('focusService') private focusService: FocusService;
-    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
+    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Optional('rangeService') private readonly rangeService: IRangeService;
+
+    private gridBodyCtrl: GridBodyCtrl;
 
     private cellValueChanges: CellValueChange[] = [];
 
@@ -70,6 +75,10 @@ export class UndoRedoService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DRAG_END, this.clearStacks);
+
+        this.ctrlsService.whenReady(() => {
+            this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        });
     }
 
     private onCellValueChanged = (event: CellValueChangedEvent): void => {
@@ -185,7 +194,7 @@ export class UndoRedoService extends BeanStub {
                 columns: range.columns
             };
 
-            this.gridApi.addCellRange(cellRangeParams);
+            this.rangeService.addCellRange(cellRangeParams);
 
             return;
         }
@@ -206,15 +215,22 @@ export class UndoRedoService extends BeanStub {
 
     private setLastFocusedCell(lastFocusedCell: LastFocusedCell) {
         const { rowIndex, columnId, rowPinned } = lastFocusedCell;
+        const isRangeEnabled = this.rangeService && this.gridOptionsWrapper.isEnableRangeSelection();
+        const scrollFeature = this.gridBodyCtrl.getScrollFeature();
 
-        this.gridApi.ensureIndexVisible(rowIndex);
-        this.gridApi.ensureColumnVisible(columnId);
+        const column: Column | null = this.columnModel.getGridColumn(columnId);
 
-        if (ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule)) {
-            this.gridApi.clearRangeSelection();
+        if (!column) { return; }
+
+        scrollFeature.ensureIndexVisible(rowIndex);
+        scrollFeature.ensureColumnVisible(column);
+
+        const cellPosition: CellPosition = { rowIndex, column, rowPinned };
+        this.focusService.setFocusedCell({ ...cellPosition, forceBrowserFocus: true });
+
+        if (isRangeEnabled) {
+            this.rangeService.setRangeToCell(cellPosition);
         }
-
-        this.focusService.setFocusedCell({ rowIndex: rowIndex, column: columnId, rowPinned, forceBrowserFocus: true });
     }
 
     private addRowEditingListeners(): void {
