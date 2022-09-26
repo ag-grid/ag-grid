@@ -47,14 +47,13 @@ export interface CloseChartToolPanelParams {
 
 export type ChartModelType = 'range' | 'pivot';
 
-export type ChartToolPanelTabs = 'settings' | 'data' | 'format';
+export type ChartToolPanelName = 'settings' | 'data' | 'format';
 
 export interface OpenChartToolPanelParams {
     /** The id of the created chart. */
     chartId: string;
-
-    /** Tab name of the Chart Tool Panel. The default settings tab will be used if not specified.*/
-    tabName?: ChartToolPanelTabs;
+    /** Name of the Chart Tool Panel. The default 'Settings' Tool Panel will be used if not specified.*/
+    panel?: ChartToolPanelName;
 }
 
 export interface ChartModel {

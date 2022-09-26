@@ -9589,16 +9589,16 @@
     "meta": { "isTypeAlias": true },
     "type": "'range' | 'pivot'"
   },
-  "ChartToolPanelTabs": {
+  "ChartToolPanelName": {
     "meta": { "isTypeAlias": true },
     "type": "'settings' | 'data' | 'format'"
   },
   "OpenChartToolPanelParams": {
     "meta": {},
-    "type": { "chartId": "string", "tabName?": "ChartToolPanelTabs" },
+    "type": { "chartId": "string", "panel?": "ChartToolPanelName" },
     "docs": {
       "chartId": "/** The id of the created chart. */",
-      "tabName?": "/** Tab name of the Chart Tool Panel. The default settings tab will be used if not specified. */"
+      "panel?": "/** Name of the Chart Tool Panel. The default 'Settings' Tool Panel will be used if not specified. */"
     }
   },
   "ChartModel": {

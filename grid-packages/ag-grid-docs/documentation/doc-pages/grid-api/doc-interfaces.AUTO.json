@@ -16466,15 +16466,15 @@
     }
   },
   "ChartModelType": {},
-  "ChartToolPanelTabs": {},
+  "ChartToolPanelName": {},
   "OpenChartToolPanelParams": {
     "chartId": {
       "description": "/** The id of the created chart. */",
       "type": { "returnType": "string", "optional": false }
     },
-    "tabName": {
-      "description": "/** Tab name of the Chart Tool Panel. The default settings tab will be used if not specified. */",
-      "type": { "returnType": "ChartToolPanelTabs", "optional": true }
+    "panel": {
+      "description": "/** Name of the Chart Tool Panel. The default 'Settings' Tool Panel will be used if not specified. */",
+      "type": { "returnType": "ChartToolPanelName", "optional": true }
     }
   },
   "ChartModel": {
