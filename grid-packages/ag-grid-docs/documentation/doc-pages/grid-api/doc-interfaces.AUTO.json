@@ -3081,12 +3081,8 @@
       "description": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "suppressColumnPillSortAction": {
-      "description": "/** Set to `true` to prevent the column sort from changing when a user clicks the column pill in the row group panel or row group section of the side bar */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressColumnPillSortIndicator": {
-      "description": "/** Set to `true` to hide the sort direction indicator from the column pill in the row group panel and row group section of the side bar */",
+    "rowGroupPanelSuppressSort": {
+      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
@@ -25486,12 +25482,8 @@
       "description": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "suppressColumnPillSortAction": {
-      "description": "/** Set to `true` to prevent the column sort from changing when a user clicks the column pill in the row group panel or row group section of the side bar */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressColumnPillSortIndicator": {
-      "description": "/** Set to `true` to hide the sort direction indicator from the column pill in the row group panel and row group section of the side bar */",
+    "rowGroupPanelSuppressSort": {
+      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
@@ -28299,12 +28291,8 @@
       "description": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "suppressColumnPillSortAction": {
-      "description": "/** Set to `true` to prevent the column sort from changing when a user clicks the column pill in the row group panel or row group section of the side bar */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressColumnPillSortIndicator": {
-      "description": "/** Set to `true` to hide the sort direction indicator from the column pill in the row group panel and row group section of the side bar */",
+    "rowGroupPanelSuppressSort": {
+      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
@@ -31122,12 +31110,8 @@
       "description": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "suppressColumnPillSortAction": {
-      "description": "/** Set to `true` to prevent the column sort from changing when a user clicks the column pill in the row group panel or row group section of the side bar */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressColumnPillSortIndicator": {
-      "description": "/** Set to `true` to hide the sort direction indicator from the column pill in the row group panel and row group section of the side bar */",
+    "rowGroupPanelSuppressSort": {
+      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {

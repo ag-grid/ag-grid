@@ -597,11 +597,9 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */
     treeData?: boolean;
 
-    /** Set to `true` to prevent the column sort from changing when a user clicks the column pill in the row group panel or row group section of the side bar  */
-    suppressColumnPillSortAction?: boolean;
 
-    /** Set to `true` to hide the sort direction indicator from the column pill in the row group panel and row group section of the side bar */
-    suppressColumnPillSortIndicator?: boolean;
+    /** Set to `true` to suppress sort indicators and actions from the row group panel */
+    rowGroupPanelSuppressSort?: boolean;
 
     /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/
     groupRowsSticky?: boolean;

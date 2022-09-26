@@ -106,13 +106,13 @@ export class DropZoneColumnComp extends Component {
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
         const columnSort = this.column.getSort();
-        const isDisplayingSort = !this.gridOptionsWrapper.isSuppressColumnPillSortIndicator();
+        const isSortSuppressed = !this.gridOptionsWrapper.isRowGroupPanelSuppressSort();
 
         const ariaInstructions = [
             [
                 aggFuncName && `${aggFuncName}${aggSeparator}`,
                 name,
-                this.isGroupingZone() && isDisplayingSort && columnSort && `, ${sortDirection[columnSort]}`
+                this.isGroupingZone() && !isSortSuppressed && columnSort && `, ${sortDirection[columnSort]}`
             ].filter(part => !!part).join(''),
         ];
 
@@ -122,8 +122,7 @@ export class DropZoneColumnComp extends Component {
             ariaInstructions.push(aggregationMenuAria);
         }
 
-        const doesClickSort = !this.gridOptionsWrapper.isSuppressColumnPillSortAction();
-        if (this.isGroupingZone() && this.column.getColDef().sortable && doesClickSort) {
+        if (this.isGroupingZone() && this.column.getColDef().sortable && !isSortSuppressed) {
             const sortProgressAria = translate('ariaDropZoneColumnGroupItemDescription', 'Press ENTER to sort');
             ariaInstructions.push(sortProgressAria);
         }
@@ -152,11 +151,8 @@ export class DropZoneColumnComp extends Component {
             return;
         }
 
-        if (!this.gridOptionsWrapper.isSuppressColumnPillSortIndicator()) {
+        if (!this.gridOptionsWrapper.isRowGroupPanelSuppressSort()) {
             this.eSortIndicator.setupSort(this.column, true);
-        }
-
-        if (!this.gridOptionsWrapper.isSuppressColumnPillSortAction()) {
             const performSort = (event: MouseEvent | KeyboardEvent) => {
                 event.preventDefault();
                 const sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
