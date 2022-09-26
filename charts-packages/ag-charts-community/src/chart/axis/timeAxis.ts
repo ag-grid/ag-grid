@@ -27,18 +27,7 @@ export class TimeAxis extends ChartAxis<TimeScale> {
     }
 
     @Validate(BOOLEAN)
-    private _nice: boolean = true;
-    set nice(value: boolean) {
-        if (this._nice !== value) {
-            this._nice = value;
-            if (value && this.scale.nice) {
-                this.scale.nice(typeof this.calculatedTickCount === 'number' ? this.calculatedTickCount : undefined);
-            }
-        }
-    }
-    get nice(): boolean {
-        return this._nice;
-    }
+    nice: boolean = true;
 
     set domain(domain: Date[]) {
         this.setDomain(domain);
@@ -49,30 +38,10 @@ export class TimeAxis extends ChartAxis<TimeScale> {
     }
 
     @Validate(OPT_DATE)
-    private _min?: Date = undefined;
-    set min(value: Date | undefined) {
-        if (this._min === value) {
-            return;
-        }
-
-        this._min = value;
-    }
-    get min(): Date | undefined {
-        return this._min;
-    }
+    min?: Date = undefined;
 
     @Validate(OPT_DATE)
-    private _max?: Date = undefined;
-    set max(value: Date | undefined) {
-        if (this._max === value) {
-            return;
-        }
-
-        this._max = value;
-    }
-    get max(): Date | undefined {
-        return this._max;
-    }
+    max?: Date = undefined;
 
     private setDomain(domain: Date[], _primaryTickCount?: number) {
         const { scale, nice, min, max, calculatedTickCount } = this;
