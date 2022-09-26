@@ -1279,7 +1279,7 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     rotation?: number;
     /** The offset in pixels of the outer radius of the series. Used to construct doughnut charts. */
     outerRadiusOffset?: PixelSize;
-    /** The ratio of the outer radius of the series. Used to adjust the outer radius proportionally. */
+    /** The ratio of the outer radius of the series. Used to adjust the outer radius proportionally to the automatically calculated value. */
     outerRadiusRatio?: Ratio;
     /** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not provided, or innerRadiusRatio is unset, or a value of zero is given, a pie chart will be rendered. */
     innerRadiusOffset?: PixelSize;

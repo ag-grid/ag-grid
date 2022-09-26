@@ -13020,7 +13020,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "outerRadiusRatio": {
-      "description": "/** The ratio of the outer radius of the series. Used to adjust the outer radius proportionally. */",
+      "description": "/** The ratio of the outer radius of the series. Used to adjust the outer radius proportionally to the automatically calculated value. */",
       "type": { "returnType": "Ratio", "optional": true }
     },
     "innerRadiusOffset": {
@@ -15568,7 +15568,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "outerRadiusRatio": {
-      "description": "/** The ratio of the outer radius of the series. Used to adjust the outer radius proportionally. */",
+      "description": "/** The ratio of the outer radius of the series. Used to adjust the outer radius proportionally to the automatically calculated value. */",
       "type": { "returnType": "Ratio", "optional": true }
     },
     "innerRadiusOffset": {

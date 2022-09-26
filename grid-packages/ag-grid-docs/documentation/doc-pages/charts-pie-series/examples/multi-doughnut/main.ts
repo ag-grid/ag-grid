@@ -19,7 +19,7 @@ const options: AgChartOptions = {
       },
       labelKey: 'os',
       angleKey: 'share',
-      innerRadiusOffset: -40,
+      innerRadiusRatio: 0.8,
     },
     {
       type: 'pie',
@@ -28,8 +28,8 @@ const options: AgChartOptions = {
       },
       labelKey: 'os',
       angleKey: 'satisfaction',
-      outerRadiusOffset: -100,
-      innerRadiusOffset: -140,
+      outerRadiusRatio: 0.5,
+      innerRadiusRatio: 0.3,
     },
   ],
 }
