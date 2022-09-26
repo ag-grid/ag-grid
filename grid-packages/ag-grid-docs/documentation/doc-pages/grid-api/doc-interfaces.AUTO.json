@@ -12823,6 +12823,14 @@
       "description": "/** Configuration for the axis ticks. */",
       "type": { "returnType": "AgAxisTimeTickOptions", "optional": true }
     },
+    "min": {
+      "description": "/** User override for the automatically determined min value (based on series data). */",
+      "type": { "returnType": "Date", "optional": true }
+    },
+    "max": {
+      "description": "/** User override for the automatically determined max value (based on series data). */",
+      "type": { "returnType": "Date", "optional": true }
+    },
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
@@ -13940,6 +13948,14 @@
     "tick": {
       "description": "/** Configuration for the axis ticks. */",
       "type": { "returnType": "AgAxisTimeTickOptions", "optional": true }
+    },
+    "min": {
+      "description": "/** User override for the automatically determined min value (based on series data). */",
+      "type": { "returnType": "Date", "optional": true }
+    },
+    "max": {
+      "description": "/** User override for the automatically determined max value (based on series data). */",
+      "type": { "returnType": "Date", "optional": true }
     },
     "position": {
       "description": "/** The position on the chart where the axis should be rendered. */",

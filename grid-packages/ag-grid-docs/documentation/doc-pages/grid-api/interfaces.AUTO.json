@@ -7229,6 +7229,8 @@
     "type": {
       "nice?": "boolean",
       "tick?": "AgAxisTimeTickOptions",
+      "min?": "Date",
+      "max?": "Date",
       "top?": "Omit<AgTimeAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "right?": "Omit<AgTimeAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "bottom?": "Omit<AgTimeAxisOptions, AgCartesianAxisThemeSpecialOptions>",
@@ -7245,6 +7247,8 @@
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
       "tick?": "/** Configuration for the axis ticks. */",
+      "min?": "/** User override for the automatically determined min value (based on series data). */",
+      "max?": "/** User override for the automatically determined max value (based on series data). */",
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
@@ -7982,6 +7986,8 @@
       "type": "'time'",
       "nice?": "boolean",
       "tick?": "AgAxisTimeTickOptions",
+      "min?": "Date",
+      "max?": "Date",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
@@ -7994,6 +8000,8 @@
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
       "tick?": "/** Configuration for the axis ticks. */",
+      "min?": "/** User override for the automatically determined min value (based on series data). */",
+      "max?": "/** User override for the automatically determined max value (based on series data). */",
       "position?": "/** The position on the chart where the axis should be rendered. */",
       "title?": "/** Configuration for the title shown next to the axis. */",
       "line?": "/** Configuration for the axis line. */",

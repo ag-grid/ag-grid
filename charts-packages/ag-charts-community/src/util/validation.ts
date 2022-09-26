@@ -77,6 +77,10 @@ export const OPT_BOOLEAN = predicateWithMessage((v: any) => OPTIONAL(v, BOOLEAN)
 export const STRING = predicateWithMessage((v: any) => typeof v === 'string', 'expecting a String');
 export const OPT_STRING = predicateWithMessage((v: any) => OPTIONAL(v, STRING), 'expecting an optional String');
 
+export const DATE = predicateWithMessage((v: any) => v instanceof Date && !isNaN(+v), 'expecting a Date object');
+export const OPT_DATE = predicateWithMessage((v: any) => OPTIONAL(v, DATE), 'expecting an optional Date');
+export const DATE_ARRAY = predicateWithMessage((v: any) => ARRAY()(v, DATE), 'expecting an Array of Date objects');
+
 const colorMessage = `A color string can be in one of the following formats to be valid: #rgb, #rrggbb, rgb(r, g, b), rgba(r, g, b, a) or a CSS color name such as 'white', 'orange', 'cyan', etc`;
 
 export const COLOR_STRING = predicateWithMessage((v: any) => {

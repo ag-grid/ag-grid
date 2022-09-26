@@ -646,6 +646,10 @@ export interface AgTimeAxisOptions extends AgBaseCartesianAxisOptions {
     nice?: boolean;
     /** Configuration for the axis ticks. */
     tick?: AgAxisTimeTickOptions;
+    /** User override for the automatically determined min value (based on series data). */
+    min?: Date;
+    /** User override for the automatically determined max value (based on series data). */
+    max?: Date;
 }
 
 export type AgCartesianAxisOptions =

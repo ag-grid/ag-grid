@@ -1,12 +1,9 @@
-import { ARRAY, BOOLEAN, predicateWithMessage, Validate } from '../../util/validation';
+import { BOOLEAN, Validate, OPT_DATE } from '../../util/validation';
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
 import { ChartAxis } from '../chartAxis';
 import { clamper } from './numberAxis';
-
-const DATE = predicateWithMessage((v: any) => v instanceof Date && !isNaN(+v), 'expecting a Date object');
-const DATE_ARRAY = predicateWithMessage((v: any) => ARRAY()(v, DATE), 'expecting an Array of Date objects');
 
 export class TimeAxis extends ChartAxis<TimeScale> {
     static className = 'TimeAxis';
@@ -43,23 +40,44 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         return this._nice;
     }
 
-    @Validate(DATE_ARRAY)
-    private _domain: Date[] = [];
     set domain(domain: Date[]) {
-        this._domain = domain;
         this.setDomain(domain);
     }
+
     get domain(): Date[] {
         return this.scale.domain;
     }
 
+    @Validate(OPT_DATE)
+    private _min?: Date = undefined;
+    set min(value: Date | undefined) {
+        if (this._min === value) {
+            return;
+        }
+
+        this._min = value;
+        this.scale.domain = [value!, this.scale.domain[1]];
+    }
+    get min(): Date | undefined {
+        return this._min;
+    }
+
+    @Validate(OPT_DATE)
+    private _max?: Date = undefined;
+    set max(value: Date | undefined) {
+        if (this._max === value) {
+            return;
+        }
+
+        this._max = value;
+        this.scale.domain = [this.scale.domain[0], value!];
+    }
+    get max(): Date | undefined {
+        return this._max;
+    }
+
     private setDomain(domain: Date[], _primaryTickCount?: number) {
-        const {
-            scale,
-            nice,
-            _domain: [min, max],
-            calculatedTickCount,
-        } = this;
+        const { scale, nice, min, max, calculatedTickCount } = this;
 
         if (domain.length > 2) {
             domain = (extent(domain, isContinuous, Number) || [0, 1000]).map((x) => new Date(x));
