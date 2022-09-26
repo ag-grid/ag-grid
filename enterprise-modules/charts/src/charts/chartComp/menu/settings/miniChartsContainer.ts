@@ -1,4 +1,4 @@
-import { AgGroupComponent, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
+import { CHART_TYPE_KEYS, ChartTypeKeys, AgGroupComponent, Autowired, ChartType, Component, PartialChartGroups, PostConstruct, DEFAULT_CHART_GROUPS } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import {
@@ -22,19 +22,42 @@ import {
     MiniStackedColumn,
 } from "./miniCharts";
 
-type ChartGroupsType =
-      'barGroup'
-    | 'columnGroup'
-    | 'pieGroup'
-    | 'lineGroup'
-    | 'scatterGroup'
-    | 'areaGroup'
-    | 'histogramGroup'
-    | 'combinationGroup';
-
-type ChartGroups = {
-    [key in ChartGroupsType]: any[];
-};
+const miniChartMapping = {
+    columnGroup: {
+        column: MiniColumn,
+        stackedColumn: MiniStackedColumn,
+        normalizedColumn: MiniNormalizedColumn
+    },
+    barGroup: {
+        bar: MiniBar,
+        stackedBar: MiniStackedBar,
+        normalizedBar: MiniNormalizedBar
+    },
+    pieGroup: {
+        pie: MiniPie,
+        doughnut: MiniDoughnut
+    },
+    lineGroup: {
+        line: MiniLine
+    },
+    scatterGroup: {
+        scatter: MiniScatter,
+        bubble: MiniBubble
+    },
+    areaGroup: {
+        area: MiniArea,
+        stackedArea: MiniStackedArea,
+        normalizedArea: MiniNormalizedArea
+    },
+    histogramGroup: {
+        histogram: MiniHistogram
+    },
+    combinationGroup: {
+        columnLineCombo: MiniColumnLineCombo,
+        areaColumnCombo: MiniAreaColumnCombo,
+        customCombo: MiniCustomCombo
+    }
+}
 
 export class MiniChartsContainer extends Component {
 
@@ -45,64 +68,30 @@ export class MiniChartsContainer extends Component {
     private wrappers: { [key: string]: HTMLElement } = {};
     private chartController: ChartController;
 
-    private chartGroups: ChartGroups = {
-        columnGroup: [
-            MiniColumn,
-            MiniStackedColumn,
-            MiniNormalizedColumn
-        ],
-        barGroup: [
-            MiniBar,
-            MiniStackedBar,
-            MiniNormalizedBar
-        ],
-        pieGroup: [
-            MiniPie,
-            MiniDoughnut
-        ],
-        lineGroup: [
-            MiniLine
-        ],
-        scatterGroup: [
-            MiniScatter,
-            MiniBubble
-        ],
-        areaGroup: [
-            MiniArea,
-            MiniStackedArea,
-            MiniNormalizedArea
-        ],
-        histogramGroup: [
-            MiniHistogram
-        ],
-        combinationGroup:  [
-            MiniColumnLineCombo,
-            MiniAreaColumnCombo,
-            MiniCustomCombo
-        ]
-    };
+    private chartGroups: PartialChartGroups;
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    constructor(chartController: ChartController, fills: string[], strokes: string[]) {
+    constructor(chartController: ChartController, fills: string[], strokes: string[], chartGroups: PartialChartGroups = DEFAULT_CHART_GROUPS) {
         super(MiniChartsContainer.TEMPLATE);
 
         this.chartController = chartController;
         this.fills = fills;
         this.strokes = strokes;
+        this.chartGroups = {...chartGroups};
     }
 
     @PostConstruct
     private init() {
         // hide MiniCustomCombo if no custom combo exists
-        if (!this.chartController.customComboExists()) {
-            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(miniChart => miniChart !== MiniCustomCombo);
+        if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
+            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(chartType => chartType !== CHART_TYPE_KEYS.combinationGroup.customCombo);
         }
 
         const eGui = this.getGui();
 
-        Object.keys(this.chartGroups).forEach(group => {
-            const chartGroup = this.chartGroups[group as ChartGroupsType];
+        Object.keys(this.chartGroups).forEach((group: keyof ChartTypeKeys) => {
+            const chartGroupValues = this.chartGroups[group];
             const groupComponent = this.createBean(new AgGroupComponent({
                 title: this.chartTranslationService.translate(group),
                 suppressEnabledCheckbox: true,
@@ -112,16 +101,19 @@ export class MiniChartsContainer extends Component {
                 direction: 'horizontal'
             }));
 
-            chartGroup.forEach(MiniClass => {
+            chartGroupValues!.forEach((chartType: keyof ChartTypeKeys[typeof group]) => {
+                const MiniClass = miniChartMapping[group][chartType] as any;
+
                 const miniWrapper = document.createElement('div');
                 miniWrapper.classList.add('ag-chart-mini-thumbnail');
 
+                const miniClassChartType: ChartType = MiniClass.chartType;
                 this.addManagedListener(miniWrapper, 'click', () => {
-                    this.chartController.setChartType(MiniClass.chartType);
+                    this.chartController.setChartType(miniClassChartType);
                     this.updateSelectedMiniChart();
                 });
 
-                this.wrappers[MiniClass.chartType] = miniWrapper;
+                this.wrappers[miniClassChartType] = miniWrapper;
 
                 this.createBean(new MiniClass(miniWrapper, this.fills, this.strokes));
                 groupComponent.addItem(miniWrapper);

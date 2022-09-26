@@ -1563,6 +1563,7 @@
       "customChartThemes?": "{ [name: string]: AgChartTheme; }",
       "chartThemeOverrides?": "AgChartThemeOverrides",
       "enableChartToolPanelsButton?": "boolean",
+      "chartToolPanels?": "ChartToolPanels",
       "loadingCellRenderer?": "any",
       "loadingCellRendererFramework?": "any",
       "loadingCellRendererParams?": "any",
@@ -1954,6 +1955,7 @@
       "customChartThemes?": "/** A map containing custom chart themes. */",
       "chartThemeOverrides?": "/** Chart theme overrides applied to all themes. */",
       "enableChartToolPanelsButton?": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
+      "chartToolPanels?": "/** Chart Tool Panel overrides. */",
       "loadingCellRenderer?": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
       "loadingCellRendererFramework?": "/** @deprecated As of v27, use `loadingCellRenderer` for framework components too.\n */",
       "loadingCellRendererParams?": "/** Params to be passed to the `loadingCellRenderer` component. */",
@@ -9558,6 +9560,22 @@
       "init?(params: T)": "/** The init(params) method is called on the component once. */"
     }
   },
+  "ChartTypeKeys": {
+    "meta": { "isTypeAlias": true },
+    "type": "typeof CHART_TYPE_KEYS"
+  },
+  "ChartGroups": {
+    "meta": { "isTypeAlias": true },
+    "type": "{[chartType in keyof ChartTypeKeys]: (keyof ChartTypeKeys[chartType])[]}"
+  },
+  "PartialChartGroups": {
+    "meta": { "isTypeAlias": true },
+    "type": "Partial<ChartGroups>"
+  },
+  "ChartToolPanels": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ settingsPanel: { chartGroups: PartialChartGroups; }; }"
+  },
   "ChartType": {
     "meta": { "isTypeAlias": true },
     "type": "'column' | 'groupedColumn' | 'stackedColumn' | 'normalizedColumn' | 'bar' | 'groupedBar' | 'stackedBar' | 'normalizedBar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'area' | 'stackedArea' | 'normalizedArea' | 'histogram' | 'columnLineCombo' | 'areaColumnCombo' | 'customCombo'"
@@ -14144,6 +14162,7 @@
       "customChartThemes?": "{ [name: string]: AgChartTheme; }",
       "chartThemeOverrides?": "AgChartThemeOverrides",
       "enableChartToolPanelsButton?": "boolean",
+      "chartToolPanels?": "ChartToolPanels",
       "loadingCellRenderer?": "any",
       "loadingCellRendererFramework?": "any",
       "loadingCellRendererParams?": "any",
@@ -14535,6 +14554,7 @@
       "customChartThemes?": "/** A map containing custom chart themes. */",
       "chartThemeOverrides?": "/** Chart theme overrides applied to all themes. */",
       "enableChartToolPanelsButton?": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
+      "chartToolPanels?": "/** Chart Tool Panel overrides. */",
       "loadingCellRenderer?": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
       "loadingCellRendererFramework?": "/** @deprecated As of v27, use `loadingCellRenderer` for framework components too.\n */",
       "loadingCellRendererParams?": "/** Params to be passed to the `loadingCellRenderer` component. */",
@@ -14928,6 +14948,7 @@
       "customChartThemes?": "{ [name: string]: AgChartTheme; }",
       "chartThemeOverrides?": "AgChartThemeOverrides",
       "enableChartToolPanelsButton?": "boolean",
+      "chartToolPanels?": "ChartToolPanels",
       "loadingCellRenderer?": "any",
       "loadingCellRendererFramework?": "any",
       "loadingCellRendererParams?": "any",
@@ -15319,6 +15340,7 @@
       "customChartThemes?": "/** A map containing custom chart themes. */",
       "chartThemeOverrides?": "/** Chart theme overrides applied to all themes. */",
       "enableChartToolPanelsButton?": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
+      "chartToolPanels?": "/** Chart Tool Panel overrides. */",
       "loadingCellRenderer?": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
       "loadingCellRendererFramework?": "/** @deprecated As of v27, use `loadingCellRenderer` for framework components too.\n */",
       "loadingCellRendererParams?": "/** Params to be passed to the `loadingCellRenderer` component. */",
@@ -15716,6 +15738,7 @@
       "customChartThemes?": "{ [name: string]: AgChartTheme; }",
       "chartThemeOverrides?": "AgChartThemeOverrides",
       "enableChartToolPanelsButton?": "boolean",
+      "chartToolPanels?": "ChartToolPanels",
       "loadingCellRenderer?": "any",
       "loadingCellRendererFramework?": "any",
       "loadingCellRendererParams?": "any",
@@ -16107,6 +16130,7 @@
       "customChartThemes?": "/** A map containing custom chart themes. */",
       "chartThemeOverrides?": "/** Chart theme overrides applied to all themes. */",
       "enableChartToolPanelsButton?": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
+      "chartToolPanels?": "/** Chart Tool Panel overrides. */",
       "loadingCellRenderer?": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
       "loadingCellRendererFramework?": "/** @deprecated As of v27, use `loadingCellRenderer` for framework components too.\n */",
       "loadingCellRendererParams?": "/** Params to be passed to the `loadingCellRenderer` component. */",

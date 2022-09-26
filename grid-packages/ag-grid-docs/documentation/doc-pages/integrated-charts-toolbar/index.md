@@ -90,6 +90,65 @@ The example below shows how the toolbar can be customised. Notice the following:
 
 <grid-example title='Toolbar Customisation' name='custom-toolbar' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
+## Chart Tool Panel Customisation
+
+The Chart Tool Panel can be customised within the `chartToolPanels` grid option.
+
+<api-documentation source='grid-options/properties.json' section='charts' names='["chartToolPanels"]' ></api-documentation>
+
+### Customising settings panel chart groups
+
+The list of chart groups shown on the settings panel can be customised using the `chartToolPanels.settingsPanel.chartGroups` grid option. The full list of chart groups are as follows:
+
+<snippet>
+const gridOptions = {
+    chartToolPanels: {
+        settingsPanel: {
+            chartGroups: {
+                columnGroup: [
+                    'column',
+                    'stackedColumn',
+                    'normalizedColumn'
+                ],
+                barGroup: [
+                    'bar',
+                    'stackedBar',
+                    'normalizedBar'
+                ],
+                pieGroup: [
+                    'pie',
+                    'doughnut'
+                ],
+                lineGroup: [
+                    'line'
+                ],
+                scatterGroup: [
+                    'scatter',
+                    'bubble'
+                ],
+                areaGroup: [
+                    'area',
+                    'stackedArea',
+                    'normalizedArea'
+                ],
+                histogramGroup: [
+                    'histogram'
+                ],
+                combinationGroup: [
+                    'columnLineCombo',
+                    'areaColumnCombo',
+                    'customCombo'
+                ]
+            }
+        }
+    }
+}
+</snippet>
+
+The example below shows a reordering of chart groups with some chart groups and types removed:
+
+<grid-example title='Customising settings panel chart groups' name='customise-chart-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
 ## Chart Tool Panels Button
 
 The Chart Tool Panels Button offers an alternative way to access the Chart Tool Panels and is enabled as shown below:

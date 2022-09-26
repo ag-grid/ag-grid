@@ -32,6 +32,7 @@ import { exists, missing, values } from './utils/generic';
 import { isNumeric } from './utils/number';
 import { iterateObject } from './utils/object';
 import { capitalise } from './utils/string';
+import { ChartToolPanels } from './interfaces/iChartOptions';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -1543,6 +1544,10 @@ export class GridOptionsWrapper {
     public getChartThemes(): string[] {
         // return default themes if user hasn't supplied any
         return this.gridOptions.chartThemes || ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
+    }
+
+    public getChartToolPanels(): ChartToolPanels | undefined {
+        return this.gridOptions.chartToolPanels;
     }
 
     public getClipboardDelimiter() {

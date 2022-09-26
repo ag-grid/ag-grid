@@ -70,7 +70,7 @@ import {
     ProcessCellForExportParams, ProcessGroupHeaderForExportParams, ProcessHeaderForExportParams
 } from "../interfaces/exportParams";
 import { AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
-import { ChartMenuOptions } from "../interfaces/iChartOptions";
+import { ChartMenuOptions, ChartToolPanels } from "../interfaces/iChartOptions";
 import { AgGridCommon } from "../interfaces/iCommon";
 import { IDatasource } from "../interfaces/iDatasource";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
@@ -306,6 +306,8 @@ export interface GridOptions<TData = any> {
     chartThemeOverrides?: AgChartThemeOverrides;
     /** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */
     enableChartToolPanelsButton?: boolean;
+    /** Chart Tool Panel overrides. */
+    chartToolPanels?: ChartToolPanels;
 
     // *** Loading Cell Renderers *** //
     /**
