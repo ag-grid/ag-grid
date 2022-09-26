@@ -92,7 +92,7 @@ The example below shows how the toolbar can be customised. Notice the following:
 
 ## Chart Tool Panels Button
 
-The Chart Tool Panels Button offers and alternative way to access the Chart Tool Panels and is enabled as shown below:
+The Chart Tool Panels Button offers an alternative way to access the Chart Tool Panels and is enabled as shown below:
 
 <snippet>
 const gridOptions = {
@@ -100,7 +100,7 @@ const gridOptions = {
 }
 </snippet>
 
-When enabled, a button will appear on the left-hand-side (right-hand-side when `RTL=true`) of the chart. Note that the
+When enabled, a button will appear on the left-hand-side (right-hand-side when `enableRtl=true`) of the chart. Note that the
 Toolbar icons will be permanently shown, minus the 'hamburger' icon. 
 
 The following example demonstrates the results of enabling `enableChartToolPanelsButton`:
