@@ -52,7 +52,7 @@ export class UndoRedoService extends BeanStub {
         this.addCellEditingListeners();
         this.addPasteListeners();
         this.addFillListeners();
-        this.addClearCellValuesListeners();
+        this.addCellKeyListeners();
 
         this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged);
         // undo / redo is restricted to actual editing so we clear the stacks when other operations are
@@ -270,7 +270,7 @@ export class UndoRedoService extends BeanStub {
         });
     }
 
-    private addClearCellValuesListeners(): void {
+    private addCellKeyListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_KEY_CHANGED_VALUE_START, () => {
             this.isClearingRangeCellValues = true;
         });
