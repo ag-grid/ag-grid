@@ -9,7 +9,7 @@ import {
     ChartDestroyed,
     ChartMenuOptions,
     ChartModel,
-    ChartToolPanelTabs,
+    ChartToolPanelName,
     ChartType,
     Component,
     Events,
@@ -410,15 +410,15 @@ export class GridChartComp extends Component {
         this.chartProxy.downloadChart(dimensions, fileName, fileFormat);
     }
 
-    public openChartToolPanel(tabName?: ChartToolPanelTabs) {
-        const chartToolPanelTabMapping: { [key in ChartToolPanelTabs]: ChartMenuOptions } = {
+    public openChartToolPanel(panel?: ChartToolPanelName) {
+        const chartToolPanelTabMapping: { [key in ChartToolPanelName]: ChartMenuOptions } = {
             settings: "chartSettings",
             data: "chartData",
             format: "chartFormat"
         }
-        const menuTabName = tabName ? chartToolPanelTabMapping[tabName] : tabName;
+        const menuPanel = panel ? chartToolPanelTabMapping[panel] : panel;
 
-        this.chartMenu.showMenu(menuTabName);
+        this.chartMenu.showMenu(menuPanel);
     }
 
     public closeChartToolPanel() {

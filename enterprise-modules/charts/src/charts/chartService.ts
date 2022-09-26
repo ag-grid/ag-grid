@@ -88,7 +88,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     public openChartToolPanel(params: OpenChartToolPanelParams) {
         const chartComp = Array.from(this.activeChartComps).find(c => c.getChartId() === params.chartId);
-        chartComp?.openChartToolPanel(params.tabName);
+        chartComp?.openChartToolPanel(params.panel);
     }
 
     public closeChartToolPanel(chartId: string) {
