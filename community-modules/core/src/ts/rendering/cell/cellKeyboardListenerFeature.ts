@@ -5,7 +5,7 @@ import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { KeyCode } from "../../constants/keyCode";
 import { RowCtrl } from "../row/rowCtrl";
-import { isEventFromPrintableCharacter } from "../../utils/keyboard";
+import { isDeleteKey, isEventFromPrintableCharacter } from "../../utils/keyboard";
 
 export class CellKeyboardListenerFeature extends BeanStub {
 
@@ -85,7 +85,11 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onBackspaceOrDeleteKeyPressed(key: string, event: KeyboardEvent): void {
-        if (!this.cellCtrl.isEditing()) {
+        if (this.cellCtrl.isEditing()) { return; }
+
+        if (this.beans.rangeService && this.beans.gridOptionsWrapper.isClearRangeCellValuesOnDelete() && isDeleteKey(key)) {
+            this.beans.rangeService.clearCellRangeCellValues();
+        } else {
             this.cellCtrl.startRowOrCellEdit(key, undefined, event);
         }
     }
