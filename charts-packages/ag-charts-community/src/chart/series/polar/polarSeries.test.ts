@@ -56,6 +56,10 @@ const EXAMPLES: Record<string, PolarTestCase> = {
         options: examples.DOUGHNUT_SERIES_INNER_TEXT,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
     },
+    DOUGHNUT_SERIES_RATIO: {
+        options: examples.DOUGHNUT_SERIES_RATIO,
+        assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
+    },
     DOUGHNUT_SERIES_DIFFERENT_RADII: {
         options: examples.DOUGHNUT_SERIES_DIFFERENT_RADII,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
