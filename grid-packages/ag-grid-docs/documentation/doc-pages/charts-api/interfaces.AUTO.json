@@ -2054,6 +2054,7 @@
     "meta": { "typeParams": ["DatumType"] },
     "type": {
       "offset?": "PixelSize",
+      "positionRatio?": "Ratio",
       "formatter?": "(params: AgPieSeriesLabelFormatterParams<DatumType>) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
@@ -2063,7 +2064,8 @@
       "color?": "CssColor"
     },
     "docs": {
-      "offset?": "/** Distance in pixels between the callout line and the label text. */",
+      "offset?": "/** Distance in pixels, used to make the label text closer to or further from the center. */",
+      "positionRatio?": "/** Position of labels as a ratio proportional to pie radius (or doughnut thickness). */",
       "formatter?": "/** A function that allows the modification of the label text based on input parameters. */",
       "enabled?": "/** Whether or not the labels should be shown. */",
       "fontStyle?": "/** The font style to use for the labels. */",

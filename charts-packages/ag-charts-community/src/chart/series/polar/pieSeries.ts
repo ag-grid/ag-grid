@@ -130,6 +130,9 @@ class PieSeriesSectorLabel extends Label {
     @Validate(NUMBER())
     offset = 0;
 
+    @Validate(NUMBER(0, 1))
+    positionRatio = 0.5;
+
     @Validate(OPT_FUNCTION)
     formatter?: (params: PieSeriesLabelFormatterParams) => string = undefined;
 }
@@ -845,7 +848,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private updateSectorLabelNodes() {
         const { radiusScale } = this;
         const innerRadius = radiusScale.convert(0);
-        const { fontSize, fontStyle, fontWeight, fontFamily, offset, color } = this.sectorLabel;
+        const { fontSize, fontStyle, fontWeight, fontFamily, offset, positionRatio, color } = this.sectorLabel;
 
         this.sectorLabelSelection.each((text, datum) => {
             const sectorLabel = datum.sectorLabel;
@@ -854,7 +857,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
             let isTextVisible = false;
             if (sectorLabel && outerRadius !== 0) {
-                const labelRadius = (radius + innerRadius) / 2 + offset;
+                const labelRadius = innerRadius * (1 - positionRatio) + radius * positionRatio + offset;
 
                 text.fill = color;
                 text.fontStyle = fontStyle;
