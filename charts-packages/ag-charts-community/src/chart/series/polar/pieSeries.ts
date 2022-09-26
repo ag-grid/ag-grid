@@ -831,10 +831,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const radius = radiusScale.convert(datum.radius, clamper);
             const outerRadius = Math.max(0, radius);
 
-            text.fill = undefined;
+            text.visible = false;
             if (sectorLabel && outerRadius !== 0) {
                 const labelRadius = (radius + innerRadius) / 2 + offset;
 
+                text.fill = color;
                 text.fontStyle = fontStyle;
                 text.fontWeight = fontWeight;
                 text.fontSize = fontSize;
@@ -857,7 +858,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     const { startAngle, endAngle } = datum;
                     const sectorBounds = { startAngle, endAngle, innerRadius, outerRadius };
                     if (corners.every(([x, y]) => isPointInArc(x, y, sectorBounds))) {
-                        text.fill = color;
+                        text.visible = true;
                     }
                 }
             }
