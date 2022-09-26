@@ -1,4 +1,4 @@
-import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer, UserCompDetails } from "ag-grid-community";
+import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer, UserCompDetails, _ } from "ag-grid-community";
 import { createMemo, createSignal, onMount, useContext } from 'solid-js';
 import { BeansContext } from "../core/beansContext";
 import { CssClasses } from "../core/utils";
@@ -32,7 +32,8 @@ const GroupCellRenderer = (props: GroupCellRendererParams) => {
         const compProxy: IGroupCellRenderer = {
             setInnerRenderer: (details, valueToDisplay) => {
                 setInnerCompDetails(details);
-                setValue(valueToDisplay);
+                const escapedValue = _.escapeString(valueToDisplay, true);
+                setValue(escapedValue);
             },
             setChildCount: count => setChildCount(count),
             addOrRemoveCssClass: (name, on) => setCssClasses(getCssClasses().setClass(name, on)),
