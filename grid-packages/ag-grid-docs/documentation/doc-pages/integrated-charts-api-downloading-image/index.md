@@ -3,7 +3,7 @@ title: "Downloading Chart Image"
 enterprise: true
 ---
 
-This section shows how to download charts via the Charts Toolbar and Grid API.
+This section shows how to download charts via the Chart Toolbar and Grid API.
 
 ## Downloading Charts via Chart Toolbar
 
@@ -39,6 +39,6 @@ The example below demonstrates how you can retrieve images rendered from the cha
 
 ## Next Up
 
-Continue to the next section to learn about: [Charts Tool Panel API](/integrated-charts-api-charts-tool-panel/).
+Continue to the next section to learn about: [Chart Tool Panel API](/integrated-charts-api-chart-tool-panel/).
 
 

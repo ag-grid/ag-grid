@@ -263,9 +263,9 @@ export {
 export {
     IChartService,
     ChartDownloadParams,
-    OpenChartsToolPanelParams,
-    CloseChartsToolPanelParams,
-    ChartsToolPanelTabs,
+    OpenChartToolPanelParams,
+    CloseChartToolPanelParams,
+    ChartToolPanelTabs,
     ChartModel,
     GetChartImageDataUrlParams,
     ChartModelType,

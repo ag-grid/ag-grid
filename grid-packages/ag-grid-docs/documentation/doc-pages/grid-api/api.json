@@ -660,16 +660,16 @@
                 "url": "/integrated-charts-api-downloading-image/"
             }
         },
-        "openChartsToolPanel": {
+        "openChartToolPanel": {
             "more": {
-                "name": "Open Charts Tool Panel",
-                "url": "/integrated-charts-api-charts-tool-panel/"
+                "name": "Open Chart Tool Panel",
+                "url": "/integrated-charts-api-chart-tool-panel/"
             }
         },
-        "closeChartsToolPanel": {
+        "closeChartToolPanel": {
             "more": {
-                "name": "Close Charts Tool Panel",
-                "url": "/integrated-charts-api-charts-tool-panel/"
+                "name": "Close Chart Tool Panel",
+                "url": "/integrated-charts-api-chart-tool-panel/"
             }
         }
     },
