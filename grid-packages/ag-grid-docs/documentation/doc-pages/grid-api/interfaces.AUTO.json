@@ -9533,7 +9533,7 @@
       "dimensions?": "/** Dimensions of downloaded chart. The current chart dimensions will be used if not specified. */"
     }
   },
-  "CloseChartsToolPanelParams": {
+  "CloseChartToolPanelParams": {
     "meta": {},
     "type": { "chartId": "string" },
     "docs": { "chartId": "/** The id of the created chart. */" }
@@ -9542,16 +9542,16 @@
     "meta": { "isTypeAlias": true },
     "type": "'range' | 'pivot'"
   },
-  "ChartsToolPanelTabs": {
+  "ChartToolPanelTabs": {
     "meta": { "isTypeAlias": true },
     "type": "'settings' | 'data' | 'format'"
   },
-  "OpenChartsToolPanelParams": {
+  "OpenChartToolPanelParams": {
     "meta": {},
-    "type": { "chartId": "string", "tabName?": "ChartsToolPanelTabs" },
+    "type": { "chartId": "string", "tabName?": "ChartToolPanelTabs" },
     "docs": {
       "chartId": "/** The id of the created chart. */",
-      "tabName?": "/** Tab name of the charts tool panel. The default settings tab will be used if not specified. */"
+      "tabName?": "/** Tab name of the Chart Tool Panel. The default settings tab will be used if not specified. */"
     }
   },
   "ChartModel": {
@@ -9583,8 +9583,8 @@
       "restoreChart(model: ChartModel, chartContainer?: HTMLElement)": "ChartRef | undefined",
       "getChartImageDataURL(params: GetChartImageDataUrlParams)": "string | undefined",
       "downloadChart(params: ChartDownloadParams)": "void",
-      "openChartsToolPanel(params: OpenChartsToolPanelParams)": "void",
-      "closeChartsToolPanel(chartId: string)": "void"
+      "openChartToolPanel(params: OpenChartToolPanelParams)": "void",
+      "closeChartToolPanel(chartId: string)": "void"
     }
   },
   "ClientSideRowModelSteps": {

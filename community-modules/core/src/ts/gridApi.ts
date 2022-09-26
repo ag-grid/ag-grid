@@ -59,8 +59,8 @@ import { ICellEditor } from "./interfaces/iCellEditor";
 import { ChartType, CrossFilterChartType, SeriesChartType } from "./interfaces/iChartOptions";
 import {
     ChartDownloadParams,
-    OpenChartsToolPanelParams,
-    CloseChartsToolPanelParams,
+    OpenChartToolPanelParams,
+    CloseChartToolPanelParams,
     ChartModel,
     GetChartImageDataUrlParams,
     IChartService,
@@ -1653,17 +1653,17 @@ export class GridApi<TData = any> {
         }
     }
 
-    /** Open the Charts Tool Panel. */
-    public openChartsToolPanel(params: OpenChartsToolPanelParams) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.openChartsToolPanel')) {
-            return this.chartService.openChartsToolPanel(params);
+    /** Open the Chart Tool Panel. */
+    public openChartToolPanel(params: OpenChartToolPanelParams) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.openChartToolPanel')) {
+            return this.chartService.openChartToolPanel(params);
         }
     }
 
-    /** Close the Charts Tool Panel. */
-    public closeChartsToolPanel(params: CloseChartsToolPanelParams) {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.closeChartsToolPanel')) {
-            return this.chartService.closeChartsToolPanel(params.chartId);
+    /** Close the Chart Tool Panel. */
+    public closeChartToolPanel(params: CloseChartToolPanelParams) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.closeChartToolPanel')) {
+            return this.chartService.closeChartToolPanel(params.chartId);
         }
     }
 

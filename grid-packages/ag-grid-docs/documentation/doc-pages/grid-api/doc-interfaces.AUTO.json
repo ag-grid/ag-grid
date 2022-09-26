@@ -16368,22 +16368,22 @@
       }
     }
   },
-  "CloseChartsToolPanelParams": {
+  "CloseChartToolPanelParams": {
     "chartId": {
       "description": "/** The id of the created chart. */",
       "type": { "returnType": "string", "optional": false }
     }
   },
   "ChartModelType": {},
-  "ChartsToolPanelTabs": {},
-  "OpenChartsToolPanelParams": {
+  "ChartToolPanelTabs": {},
+  "OpenChartToolPanelParams": {
     "chartId": {
       "description": "/** The id of the created chart. */",
       "type": { "returnType": "string", "optional": false }
     },
     "tabName": {
-      "description": "/** Tab name of the charts tool panel. The default settings tab will be used if not specified. */",
-      "type": { "returnType": "ChartsToolPanelTabs", "optional": true }
+      "description": "/** Tab name of the Chart Tool Panel. The default settings tab will be used if not specified. */",
+      "type": { "returnType": "ChartToolPanelTabs", "optional": true }
     }
   },
   "ChartModel": {
@@ -16481,14 +16481,14 @@
         "optional": false
       }
     },
-    "openChartsToolPanel": {
+    "openChartToolPanel": {
       "type": {
-        "arguments": { "params": "OpenChartsToolPanelParams" },
+        "arguments": { "params": "OpenChartToolPanelParams" },
         "returnType": "void",
         "optional": false
       }
     },
-    "closeChartsToolPanel": {
+    "closeChartToolPanel": {
       "type": {
         "arguments": { "chartId": "string" },
         "returnType": "void",

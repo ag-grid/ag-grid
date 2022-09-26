@@ -1,4 +1,4 @@
-import { ChartCreated, CreateRangeChartParams, FirstDataRenderedEvent, ChartsToolPanelTabs, Grid, GridOptions } from '@ag-grid-community/core';
+import { ChartCreated, CreateRangeChartParams, FirstDataRenderedEvent, ChartToolPanelTabs, Grid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -53,23 +53,23 @@ function onChartCreated(event: ChartCreated) {
   chartId = event.chartId
 }
 
-function openChartsToolPanel(tabName?: ChartsToolPanelTabs) {
+function openChartToolPanel(tabName?: ChartToolPanelTabs) {
   if (!chartId) {
     return
   }
 
-  gridOptions.api!.openChartsToolPanel({
+  gridOptions.api!.openChartToolPanel({
     chartId,
     tabName
   })
 }
 
-function closeChartsToolPanel() {
+function closeChartToolPanel() {
   if (!chartId) {
     return
   }
 
-  gridOptions.api!.closeChartsToolPanel({ chartId })
+  gridOptions.api!.closeChartToolPanel({ chartId })
 }
 
 // setup the grid after the page has finished loading

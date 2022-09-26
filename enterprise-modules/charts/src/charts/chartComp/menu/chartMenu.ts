@@ -75,7 +75,7 @@ export class ChartMenu extends Component {
         // });
 
         if (this.gridOptionsWrapper.isEnableChartToolPanelsButton()) {
-            this.getGui().classList.add('ag-charts-tool-panel-button-enable');
+            this.getGui().classList.add('ag-chart-tool-panel-button-enable');
             this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this))
         }
     }
