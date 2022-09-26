@@ -177,14 +177,16 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     // this is used when doing delta updates, eg Redux, keeps nodes in right order
     private sortChildren(details: GroupingDetails): void {
-        const orderChildren = (node: RowNode) => {
-            if (node.childrenAfterGroup) {
-                _.sortRowNodesByOrder(node.childrenAfterGroup!, details.rowNodeOrder);
-                node.childrenAfterGroup.forEach(orderChildren)
+        details.changedPath.forEachChangedNodeDepthFirst(node => {
+            if (!node.childrenAfterGroup) {
+                return;
             }
-        }
-        
-        orderChildren(details.rootNode);
+
+            const didSort = _.sortRowNodesByOrder(node.childrenAfterGroup!, details.rowNodeOrder);
+            if (didSort) {
+                details.changedPath.addParentNode(node);
+            }
+        }, false, true);
     }
 
     private orderGroups(rootNode: RowNode): void {
