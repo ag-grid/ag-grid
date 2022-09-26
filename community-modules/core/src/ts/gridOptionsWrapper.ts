@@ -766,6 +766,10 @@ export class GridOptionsWrapper {
         return toNumber(this.gridOptions.undoRedoCellEditingLimit);
     }
 
+    public isEnableCellEditingOnBackspace(): boolean {
+        return isTrue(this.gridOptions.enableCellEditingOnBackspace);
+    }
+
     public getRowStyle() {
         return this.gridOptions.rowStyle;
     }

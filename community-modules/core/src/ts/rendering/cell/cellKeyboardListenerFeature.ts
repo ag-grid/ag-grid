@@ -91,13 +91,13 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
         if (cellCtrl.isEditing()) { return; }
 
-        if (isDeleteKey(key)) {
+        if (isDeleteKey(key, gridOptionsWrapper.isEnableCellEditingOnBackspace())) {
             if (rangeService && gridOptionsWrapper.isEnableRangeSelection()) {
                 rangeService.clearCellRangeCellValues();
             } else if (cellCtrl.isCellEditable()) {
-                eventService.dispatchEvent({ type: Events.EVENT_CLEAR_CELL_VALUES_START });
+                eventService.dispatchEvent({ type: Events.EVENT_CELL_KEY_CHANGED_VALUE_START });
                 rowNode.setDataValue(cellCtrl.getColumn(), '');
-                eventService.dispatchEvent({ type: Events.EVENT_CLEAR_CELL_VALUES_END });
+                eventService.dispatchEvent({ type: Events.EVENT_CELL_KEY_CHANGED_VALUE_END });
             }
         } else {
             cellCtrl.startRowOrCellEdit(key, undefined, event);

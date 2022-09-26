@@ -263,6 +263,8 @@ export interface GridOptions<TData = any> {
      * Default: `false`
      */
     enterMovesDownAfterEdit?: boolean;
+    /** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users. */
+    enableCellEditingOnBackspace?: boolean;
     /** Set to `true` to enable Undo / Redo while editing. */
     undoRedoCellEditing?: boolean;
     /** Set the size of the undo / redo stack. Default: `10` */

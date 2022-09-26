@@ -2592,6 +2592,10 @@
       "description": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "enableCellEditingOnBackspace": {
+      "description": "/** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "undoRedoCellEditing": {
       "description": "/** Set to `true` to enable Undo / Redo while editing. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -24993,6 +24997,10 @@
       "description": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "enableCellEditingOnBackspace": {
+      "description": "/** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "undoRedoCellEditing": {
       "description": "/** Set to `true` to enable Undo / Redo while editing. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -27800,6 +27808,10 @@
     },
     "enterMovesDownAfterEdit": {
       "description": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "enableCellEditingOnBackspace": {
+      "description": "/** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "undoRedoCellEditing": {
@@ -30619,6 +30631,10 @@
     },
     "enterMovesDownAfterEdit": {
       "description": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "enableCellEditingOnBackspace": {
+      "description": "/** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "undoRedoCellEditing": {

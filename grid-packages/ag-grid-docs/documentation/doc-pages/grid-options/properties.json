@@ -257,6 +257,7 @@
                 "url": "/cell-editing-start-stop/#enter-key-navigation"
             }
         },
+        "enableCellEditingOnBackspace": {},
         "undoRedoCellEditing": {
             "more": {
                 "name": "Undo / Redo Edits",

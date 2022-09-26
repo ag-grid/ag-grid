@@ -271,11 +271,11 @@ export class UndoRedoService extends BeanStub {
     }
 
     private addClearCellValuesListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_CLEAR_CELL_VALUES_START, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_KEY_CHANGED_VALUE_START, () => {
             this.isClearingRangeCellValues = true;
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_CLEAR_CELL_VALUES_END, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_KEY_CHANGED_VALUE_END, () => {
             const action = new UndoRedoAction(this.cellValueChanges);
             this.pushActionsToUndoStack(action);
             this.isClearingRangeCellValues = false;

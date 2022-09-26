@@ -92,8 +92,8 @@ export class Events {
     public static EVENT_FILL_START: 'fillStart' = 'fillStart';
     public static EVENT_FILL_END: 'fillEnd' = 'fillEnd';
 
-    public static EVENT_CLEAR_CELL_VALUES_START: 'clearCellValuesStart' = 'clearCellValuesStart';
-    public static EVENT_CLEAR_CELL_VALUES_END: 'clearCellValuesEnd' = 'clearCellValuesEnd';
+    public static EVENT_CELL_KEY_CHANGED_VALUE_START: 'cellKeyChangedValueStart' = 'cellKeyChangedValueStart';
+    public static EVENT_CELL_KEY_CHANGED_VALUE_END: 'cellKeyChangedValueEnd' = 'cellKeyChangedValueEnd';
 
     public static EVENT_CELL_CLICKED: 'cellClicked' = 'cellClicked';
     public static EVENT_CELL_DOUBLE_CLICKED: 'cellDoubleClicked' = 'cellDoubleClicked';

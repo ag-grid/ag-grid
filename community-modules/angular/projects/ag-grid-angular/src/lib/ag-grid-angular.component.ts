@@ -423,6 +423,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * i.e. pressing the Enter key will move down to the cell beneath.
      * Default: `false`     */
     @Input() public enterMovesDownAfterEdit: boolean | undefined = undefined;
+    /** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users.     */
+    @Input() public enableCellEditingOnBackspace: boolean | undefined = undefined;
     /** Set to `true` to enable Undo / Redo while editing.     */
     @Input() public undoRedoCellEditing: boolean | undefined = undefined;
     /** Set the size of the undo / redo stack. Default: `10`     */
@@ -1275,6 +1277,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressReactUi: boolean | null | '';
     static ngAcceptInputType_readOnlyEdit: boolean | null | '';
     static ngAcceptInputType_suppressRowVirtualisation: boolean | null | '';
+    static ngAcceptInputType_enableCellEditingOnBackspace: boolean | null | '';
     static ngAcceptInputType_resetRowDataOnUpdate: boolean | null | '';
     static ngAcceptInputType_removePivotHeaderRowWhenSingleValueColumn: boolean | null | '';
     static ngAcceptInputType_suppressCopySingleCellRanges: boolean | null | '';
