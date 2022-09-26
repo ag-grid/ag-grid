@@ -56,7 +56,6 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         }
 
         this._min = value;
-        this.scale.domain = [value!, this.scale.domain[1]];
     }
     get min(): Date | undefined {
         return this._min;
@@ -70,7 +69,6 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         }
 
         this._max = value;
-        this.scale.domain = [this.scale.domain[0], value!];
     }
     get max(): Date | undefined {
         return this._max;
