@@ -9579,7 +9579,7 @@
       "chartId": "/** The id of the created chart. */",
       "fileName?": "/** Name of downloaded image file. The chart title will be used by default */",
       "fileFormat?": "/** A string indicating the image format.\n * The default format type is `image/png`.\n * Options: `image/png`, `image/jpeg` */",
-      "dimensions?": "/** Dimensions of downloaded chart. The current chart dimensions will be used if not specified. */"
+      "dimensions?": "/** Dimensions of downloaded chart image in pixels. The current chart dimensions will be used if not specified. */"
     }
   },
   "CloseChartToolPanelParams": {

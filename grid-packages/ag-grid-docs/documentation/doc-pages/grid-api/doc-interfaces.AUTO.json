@@ -16456,9 +16456,9 @@
       "type": { "returnType": "string", "optional": true }
     },
     "dimensions": {
-      "description": "/** Dimensions of downloaded chart. The current chart dimensions will be used if not specified. */",
+      "description": "/** Dimensions of downloaded chart image in pixels. The current chart dimensions will be used if not specified. */",
       "type": {
-        "returnType": "{\n        width: number,\n        height: number\n    }",
+        "returnType": "{\n        width: number;\n        height: number;\n    }",
         "optional": true
       }
     }
