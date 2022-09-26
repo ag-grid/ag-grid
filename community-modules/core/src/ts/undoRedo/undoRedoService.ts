@@ -35,7 +35,7 @@ export class UndoRedoService extends BeanStub {
 
     private isPasting = false;
     private isFilling = false;
-    private isClearingRangeCellValues = false;
+    private isChangeFromKeyShortcuts = false;
 
     @PostConstruct
     public init(): void {
@@ -77,7 +77,7 @@ export class UndoRedoService extends BeanStub {
         const isCellEditing = this.activeCellEdit !== null && this.cellPositionUtils.equals(this.activeCellEdit, eventCell);
         const isRowEditing = this.activeRowEdit !== null && this.rowPositionUtils.sameRow(this.activeRowEdit, eventCell);
 
-        const shouldCaptureAction = isCellEditing || isRowEditing || this.isPasting || this.isFilling || this.isClearingRangeCellValues;
+        const shouldCaptureAction = isCellEditing || isRowEditing || this.isPasting || this.isFilling || this.isChangeFromKeyShortcuts;
 
         if (!shouldCaptureAction) { return; }
 
@@ -237,7 +237,7 @@ export class UndoRedoService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_EDITING_STOPPED, () => {
             this.activeCellEdit = null;
 
-            const shouldPushAction = !this.activeRowEdit && !this.isPasting && !this.isFilling && !this.isClearingRangeCellValues;
+            const shouldPushAction = !this.activeRowEdit && !this.isPasting && !this.isFilling && !this.isChangeFromKeyShortcuts;
 
             if (shouldPushAction) {
                 const action = new UndoRedoAction(this.cellValueChanges);
@@ -271,14 +271,14 @@ export class UndoRedoService extends BeanStub {
     }
 
     private addCellKeyListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_KEY_CHANGED_VALUE_START, () => {
-            this.isClearingRangeCellValues = true;
+        this.addManagedListener(this.eventService, Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START, () => {
+            this.isChangeFromKeyShortcuts = true;
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_KEY_CHANGED_VALUE_END, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END, () => {
             const action = new UndoRedoAction(this.cellValueChanges);
             this.pushActionsToUndoStack(action);
-            this.isClearingRangeCellValues = false;
+            this.isChangeFromKeyShortcuts = false;
         });
     }
 

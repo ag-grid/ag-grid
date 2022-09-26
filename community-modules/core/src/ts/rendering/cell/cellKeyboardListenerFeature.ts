@@ -91,17 +91,19 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
         if (cellCtrl.isEditing()) { return; }
 
+        eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
+
         if (isDeleteKey(key, gridOptionsWrapper.isEnableCellEditingOnBackspace())) {
             if (rangeService && gridOptionsWrapper.isEnableRangeSelection()) {
                 rangeService.clearCellRangeCellValues();
             } else if (cellCtrl.isCellEditable()) {
-                eventService.dispatchEvent({ type: Events.EVENT_CELL_KEY_CHANGED_VALUE_START });
                 rowNode.setDataValue(cellCtrl.getColumn(), '');
-                eventService.dispatchEvent({ type: Events.EVENT_CELL_KEY_CHANGED_VALUE_END });
             }
         } else {
             cellCtrl.startRowOrCellEdit(key, undefined, event);
         }
+
+        eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END });
     }
 
     private onEnterKeyDown(e: KeyboardEvent): void {
