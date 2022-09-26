@@ -12929,14 +12929,21 @@
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
     "label": {
-      "description": "/** Configuration for the labels used for the segments. */",
+      "description": "/** Configuration for the labels used outside of the sectors. */",
       "type": {
         "returnType": "AgPieSeriesLabelOptions<DatumType>",
         "optional": true
       }
     },
+    "sectorLabel": {
+      "description": "/** Configuration for the labels used inside the sectors. */",
+      "type": {
+        "returnType": "AgPieSeriesSectorLabelOptions<DatumType>",
+        "optional": true
+      }
+    },
     "callout": {
-      "description": "/** Configuration for the callouts used with the labels for the segments. */",
+      "description": "/** Configuration for the callouts used with the labels for the sectors. */",
       "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "angleKey": {
@@ -12963,24 +12970,32 @@
       "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
+    "sectorLabelKey": {
+      "description": "/** The key to use to retrieve sector label values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sectorLabelName": {
+      "description": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "fills": {
-      "description": "/** The colours to cycle through for the fills of the segments. */",
+      "description": "/** The colours to cycle through for the fills of the sectors. */",
       "type": { "returnType": "CssColor[]", "optional": true }
     },
     "strokes": {
-      "description": "/** The colours to cycle through for the strokes of the segments. */",
+      "description": "/** The colours to cycle through for the strokes of the sectors. */",
       "type": { "returnType": "CssColor[]", "optional": true }
     },
     "fillOpacity": {
-      "description": "/** The opacity of the fill for the segments. */",
+      "description": "/** The opacity of the fill for the sectors. */",
       "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
-      "description": "/** The opacity of the stroke for the segments. */",
+      "description": "/** The opacity of the stroke for the sectors. */",
       "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** The width in pixels of the stroke for the segments. */",
+      "description": "/** The width in pixels of the stroke for the sectors. */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "lineDash": {
@@ -15230,6 +15245,46 @@
       "type": { "returnType": "number", "optional": true }
     },
     "formatter": {
+      "description": "/** A function that allows the modification of the label text based on input parameters. */",
+      "type": {
+        "arguments": { "params": "AgPieSeriesLabelFormatterParams<DatumType>" },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["DatumType"] },
+    "enabled": {
+      "description": "/** Whether or not the labels should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the labels. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the labels. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the labels. */",
+      "type": { "returnType": "FontSize", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the labels. */",
+      "type": { "returnType": "FontFamily", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the labels. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    }
+  },
+  "AgPieSeriesSectorLabelOptions": {
+    "offset": {
+      "description": "/** Distance in pixels between the callout line and the label text. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "formatter": {
+      "description": "/** A function that allows the modification of the label text based on input parameters. */",
       "type": {
         "arguments": { "params": "AgPieSeriesLabelFormatterParams<DatumType>" },
         "returnType": "string",
@@ -15270,6 +15325,7 @@
     "highlighted": { "type": { "returnType": "boolean", "optional": false } },
     "angleKey": { "type": { "returnType": "string", "optional": false } },
     "radiusKey": { "type": { "returnType": "string", "optional": true } },
+    "sectorLabelKey": { "type": { "returnType": "string", "optional": true } },
     "meta": { "typeParams": ["DatumType"] }
   },
   "AgPieSeriesFormat": {
@@ -15398,7 +15454,7 @@
       "type": { "returnType": "CssColor", "optional": false }
     },
     "fillOpacity": {
-      "description": "/** The opacity of the fill for the segments. */",
+      "description": "/** The opacity of the fill for the inner circle. */",
       "type": { "returnType": "Opacity", "optional": true }
     }
   },
@@ -15409,14 +15465,21 @@
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
     "label": {
-      "description": "/** Configuration for the labels used for the segments. */",
+      "description": "/** Configuration for the labels used outside of the sectors. */",
       "type": {
         "returnType": "AgPieSeriesLabelOptions<DatumType>",
         "optional": true
       }
     },
+    "sectorLabel": {
+      "description": "/** Configuration for the labels used inside the sectors. */",
+      "type": {
+        "returnType": "AgPieSeriesSectorLabelOptions<DatumType>",
+        "optional": true
+      }
+    },
     "callout": {
-      "description": "/** Configuration for the callouts used with the labels for the segments. */",
+      "description": "/** Configuration for the callouts used with the labels for the sectors. */",
       "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "angleKey": {
@@ -15443,24 +15506,32 @@
       "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
+    "sectorLabelKey": {
+      "description": "/** The key to use to retrieve sector label values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sectorLabelName": {
+      "description": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "fills": {
-      "description": "/** The colours to cycle through for the fills of the segments. */",
+      "description": "/** The colours to cycle through for the fills of the sectors. */",
       "type": { "returnType": "CssColor[]", "optional": true }
     },
     "strokes": {
-      "description": "/** The colours to cycle through for the strokes of the segments. */",
+      "description": "/** The colours to cycle through for the strokes of the sectors. */",
       "type": { "returnType": "CssColor[]", "optional": true }
     },
     "fillOpacity": {
-      "description": "/** The opacity of the fill for the segments. */",
+      "description": "/** The opacity of the fill for the sectors. */",
       "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
-      "description": "/** The opacity of the stroke for the segments. */",
+      "description": "/** The opacity of the stroke for the sectors. */",
       "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** The width in pixels of the stroke for the segments. */",
+      "description": "/** The width in pixels of the stroke for the sectors. */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "lineDash": {
@@ -15552,6 +15623,14 @@
       "description": "/** labelName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
     },
+    "sectorLabelKey": {
+      "description": "/** sectorLabelKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sectorLabelName": {
+      "description": "/** sectorLabelName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "angleKey": {
       "description": "/** angleKey as specified on series options. */",
       "type": { "returnType": "string", "optional": false }
@@ -15604,6 +15683,18 @@
     },
     "labelName": {
       "description": "/** labelName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sectorLabelKey": {
+      "description": "/** sectorLabelKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sectorLabelValue": {
+      "description": "/** sectorLabelValue as read from series data via the sectorLabelKey property. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sectorLabelName": {
+      "description": "/** sectorLabelName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
     },
     "angleKey": {

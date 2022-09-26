@@ -498,6 +498,7 @@
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
       "label?": "AgPieSeriesLabelOptions<DatumType>",
+      "sectorLabel?": "AgPieSeriesSectorLabelOptions<DatumType>",
       "callout?": "AgPieSeriesCalloutOptions",
       "angleKey?": "string",
       "angleName?": "string",
@@ -505,6 +506,8 @@
       "radiusName?": "string",
       "labelKey?": "string",
       "labelName?": "string",
+      "sectorLabelKey?": "string",
+      "sectorLabelName?": "string",
       "fills?": "CssColor[]",
       "strokes?": "CssColor[]",
       "fillOpacity?": "Opacity",
@@ -530,19 +533,22 @@
     },
     "docs": {
       "title?": "/** Configuration for the series title. */",
-      "label?": "/** Configuration for the labels used for the segments. */",
-      "callout?": "/** Configuration for the callouts used with the labels for the segments. */",
+      "label?": "/** Configuration for the labels used outside of the sectors. */",
+      "sectorLabel?": "/** Configuration for the labels used inside the sectors. */",
+      "callout?": "/** Configuration for the callouts used with the labels for the sectors. */",
       "angleKey?": "/** The key to use to retrieve angle values from the data. */",
       "angleName?": "/** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "radiusKey?": "/** The key to use to retrieve radius values from the data. */",
       "radiusName?": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "labelKey?": "/** The key to use to retrieve label values from the data. */",
       "labelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "fills?": "/** The colours to cycle through for the fills of the segments. */",
-      "strokes?": "/** The colours to cycle through for the strokes of the segments. */",
-      "fillOpacity?": "/** The opacity of the fill for the segments. */",
-      "strokeOpacity?": "/** The opacity of the stroke for the segments. */",
-      "strokeWidth?": "/** The width in pixels of the stroke for the segments. */",
+      "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
+      "sectorLabelName?": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "fills?": "/** The colours to cycle through for the fills of the sectors. */",
+      "strokes?": "/** The colours to cycle through for the strokes of the sectors. */",
+      "fillOpacity?": "/** The opacity of the fill for the sectors. */",
+      "strokeOpacity?": "/** The opacity of the stroke for the sectors. */",
+      "strokeWidth?": "/** The width in pixels of the stroke for the sectors. */",
       "lineDash?": "/** Defines how the pie sector strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */",
       "lineDashOffset?": "/** The initial offset of the dashed line in pixels. */",
       "rotation?": "/** The rotation of the pie series in degrees. */",
@@ -2030,6 +2036,30 @@
     "docs": {
       "offset?": "/** Distance in pixels between the callout line and the label text. */",
       "minAngle?": "/** Minimum angle in degrees required for a segment to show a label. */",
+      "formatter?": "/** A function that allows the modification of the label text based on input parameters. */",
+      "enabled?": "/** Whether or not the labels should be shown. */",
+      "fontStyle?": "/** The font style to use for the labels. */",
+      "fontWeight?": "/** The font weight to use for the labels. */",
+      "fontSize?": "/** The font size in pixels to use for the labels. */",
+      "fontFamily?": "/** The font family to use for the labels. */",
+      "color?": "/** The colour to use for the labels. */"
+    }
+  },
+  "AgPieSeriesSectorLabelOptions": {
+    "meta": { "typeParams": ["DatumType"] },
+    "type": {
+      "offset?": "PixelSize",
+      "formatter?": "(params: AgPieSeriesLabelFormatterParams<DatumType>) => string",
+      "enabled?": "boolean",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor"
+    },
+    "docs": {
+      "offset?": "/** Distance in pixels between the callout line and the label text. */",
+      "formatter?": "/** A function that allows the modification of the label text based on input parameters. */",
       "enabled?": "/** Whether or not the labels should be shown. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",
@@ -2047,7 +2077,8 @@
       "strokeWidth": "PixelSize",
       "highlighted": "boolean",
       "angleKey": "string",
-      "radiusKey?": "string"
+      "radiusKey?": "string",
+      "sectorLabelKey?": "string"
     }
   },
   "AgPieSeriesFormat": {
@@ -2149,7 +2180,7 @@
     "type": { "fill": "CssColor", "fillOpacity?": "Opacity" },
     "docs": {
       "fill": "/** The colour of the fill for the inner circle. */",
-      "fillOpacity?": "/** The opacity of the fill for the segments. */"
+      "fillOpacity?": "/** The opacity of the fill for the inner circle. */"
     }
   },
   "AgPieSeriesOptions": {
@@ -2161,6 +2192,7 @@
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
       "label?": "AgPieSeriesLabelOptions<DatumType>",
+      "sectorLabel?": "AgPieSeriesSectorLabelOptions<DatumType>",
       "callout?": "AgPieSeriesCalloutOptions",
       "angleKey?": "string",
       "angleName?": "string",
@@ -2168,6 +2200,8 @@
       "radiusName?": "string",
       "labelKey?": "string",
       "labelName?": "string",
+      "sectorLabelKey?": "string",
+      "sectorLabelName?": "string",
       "fills?": "CssColor[]",
       "strokes?": "CssColor[]",
       "fillOpacity?": "Opacity",
@@ -2194,19 +2228,22 @@
     },
     "docs": {
       "title?": "/** Configuration for the series title. */",
-      "label?": "/** Configuration for the labels used for the segments. */",
-      "callout?": "/** Configuration for the callouts used with the labels for the segments. */",
+      "label?": "/** Configuration for the labels used outside of the sectors. */",
+      "sectorLabel?": "/** Configuration for the labels used inside the sectors. */",
+      "callout?": "/** Configuration for the callouts used with the labels for the sectors. */",
       "angleKey?": "/** The key to use to retrieve angle values from the data. */",
       "angleName?": "/** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "radiusKey?": "/** The key to use to retrieve radius values from the data. */",
       "radiusName?": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "labelKey?": "/** The key to use to retrieve label values from the data. */",
       "labelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "fills?": "/** The colours to cycle through for the fills of the segments. */",
-      "strokes?": "/** The colours to cycle through for the strokes of the segments. */",
-      "fillOpacity?": "/** The opacity of the fill for the segments. */",
-      "strokeOpacity?": "/** The opacity of the stroke for the segments. */",
-      "strokeWidth?": "/** The width in pixels of the stroke for the segments. */",
+      "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
+      "sectorLabelName?": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "fills?": "/** The colours to cycle through for the fills of the sectors. */",
+      "strokes?": "/** The colours to cycle through for the strokes of the sectors. */",
+      "fillOpacity?": "/** The opacity of the fill for the sectors. */",
+      "strokeOpacity?": "/** The opacity of the stroke for the sectors. */",
+      "strokeWidth?": "/** The width in pixels of the stroke for the sectors. */",
       "lineDash?": "/** Defines how the pie sector strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */",
       "lineDashOffset?": "/** The initial offset of the dashed line in pixels. */",
       "rotation?": "/** The rotation of the pie series in degrees. */",
@@ -2231,6 +2268,8 @@
     "type": {
       "labelKey?": "string",
       "labelName?": "string",
+      "sectorLabelKey?": "string",
+      "sectorLabelName?": "string",
       "angleKey": "string",
       "angleValue?": "any",
       "angleName?": "string",
@@ -2244,6 +2283,8 @@
     "docs": {
       "labelKey?": "/** labelKey as specified on series options. */",
       "labelName?": "/** labelName as specified on series options. */",
+      "sectorLabelKey?": "/** sectorLabelKey as specified on series options. */",
+      "sectorLabelName?": "/** sectorLabelName as specified on series options. */",
       "angleKey": "/** angleKey as specified on series options. */",
       "angleValue?": "/** angleValue as read from series data via the angleKey property. */",
       "angleName?": "/** angleName as specified on series options. */",
@@ -2262,6 +2303,9 @@
       "labelKey?": "string",
       "labelValue?": "string",
       "labelName?": "string",
+      "sectorLabelKey?": "string",
+      "sectorLabelValue?": "string",
+      "sectorLabelName?": "string",
       "angleKey": "string",
       "angleValue?": "any",
       "angleName?": "string",
@@ -2275,6 +2319,9 @@
       "labelKey?": "/** labelKey as specified on series options. */",
       "labelValue?": "/** labelValue as read from series data via the labelKey property. */",
       "labelName?": "/** labelName as specified on series options. */",
+      "sectorLabelKey?": "/** sectorLabelKey as specified on series options. */",
+      "sectorLabelValue?": "/** sectorLabelValue as read from series data via the sectorLabelKey property. */",
+      "sectorLabelName?": "/** sectorLabelName as specified on series options. */",
       "angleKey": "/** angleKey as specified on series options. */",
       "angleValue?": "/** angleValue as read from series data via the angleKey property. */",
       "angleName?": "/** angleName as specified on series options. */",
@@ -3214,6 +3261,7 @@
       "datum": "any",
       "angleKey": "string",
       "labelKey?": "string",
+      "sectorLabelKey?": "string",
       "radiusKey?": "string"
     }
   },
@@ -3228,6 +3276,7 @@
       "midCos": "number",
       "midSin": "number",
       "label?": "{ readonly text: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; }",
+      "sectorLabel?": "{ readonly text: string; }",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
@@ -3239,6 +3288,8 @@
     "type": {
       "labelKey?": "string",
       "labelName?": "string",
+      "sectorLabelKey?": "string",
+      "sectorLabelName?": "string",
       "angleKey": "string",
       "angleValue": "any",
       "angleName?": "string",
@@ -3278,6 +3329,9 @@
       "labelKey?": "string",
       "labelValue?": "string",
       "labelName?": "string",
+      "sectorLabelKey?": "string",
+      "sectorLabelValue?": "string",
+      "sectorLabelName?": "string",
       "angleKey": "string",
       "angleValue?": "any",
       "angleName?": "string",
@@ -3285,6 +3339,15 @@
       "radiusValue?": "any",
       "radiusName?": "string",
       "value?": "any"
+    }
+  },
+  "SectorBoundaries": {
+    "meta": {},
+    "type": {
+      "startAngle": "number",
+      "endAngle": "number",
+      "innerRadius": "number",
+      "outerRadius": "number"
     }
   },
   "PolarSeriesMarkerFormatterParams": {
