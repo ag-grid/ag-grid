@@ -4738,10 +4738,11 @@
     "canvas": {
       "type": {
         "returnType": "HdpiOffscreenCanvas | HdpiCanvas",
-        "optional": false
+        "optional": true
       }
     }
   },
+  "LazyLayer": {},
   "ValueFn": { "meta": { "typeParams": ["P", "GDatum", "PDatum"] } },
   "KeyFn": { "meta": { "typeParams": ["N", "G", "GDatum"] } },
   "ArcType": {},

@@ -1,15 +1,13 @@
 import { Node, RedrawType, SceneChangeDetection, RenderContext } from './node';
 import { BBox } from './bbox';
-import { HdpiCanvas } from '../canvas/hdpiCanvas';
-import { Scene } from './scene';
+import { Scene, LazyLayer } from './scene';
 import { Path2D } from './path2D';
-import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { compoundAscending, ascendingStringNumberUndefined } from '../util/compare';
 
 export class Group extends Node {
     static className = 'Group';
 
-    protected layer?: HdpiCanvas | HdpiOffscreenCanvas;
+    protected layer?: LazyLayer;
     protected clipPath: Path2D = new Path2D();
     readonly name?: string;
 
@@ -23,8 +21,9 @@ export class Group extends Node {
     opacity: number = 1;
 
     protected opacityChanged() {
-        if (this.layer) {
-            this.layer.opacity = this.opacity;
+        const canvas = this.layer?.get();
+        if (canvas) {
+            canvas.opacity = this.opacity;
         }
     }
 
@@ -95,8 +94,9 @@ export class Group extends Node {
     }
 
     protected visibilityChanged() {
-        if (this.layer) {
-            this.layer.enabled = this.visible;
+        const canvas = this.layer?.get();
+        if (canvas) {
+            canvas.enabled = this.visible;
         }
     }
 
@@ -172,12 +172,13 @@ export class Group extends Node {
 
         if (layer) {
             // Switch context to the canvas layer we use for this group.
-            ctx = layer.context;
+            const canvas = layer.getOrCreate();
+            ctx = canvas.context;
             ctx.save();
             ctx.setTransform(renderCtx.ctx.getTransform());
 
             forceRender = true;
-            layer.clear();
+            canvas.clear();
 
             if (clipBBox) {
                 const { width, height, x, y } = clipBBox;
@@ -219,7 +220,7 @@ export class Group extends Node {
         ctx.restore();
 
         if (layer) {
-            layer.snapshot();
+            layer.getOrCreate().snapshot();
         }
     }
 

@@ -3507,8 +3507,12 @@
       "name?": "string",
       "zIndex": "number",
       "zIndexSubOrder?": "[string, number]",
-      "canvas": "HdpiOffscreenCanvas | HdpiCanvas"
+      "canvas?": "HdpiOffscreenCanvas | HdpiCanvas"
     }
+  },
+  "LazyLayer": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ id: number; getOrCreate(): HdpiCanvas | HdpiOffscreenCanvas; get(): HdpiCanvas | HdpiOffscreenCanvas | undefined; }"
   },
   "ValueFn": {
     "meta": { "isTypeAlias": true, "typeParams": ["P", "GDatum", "PDatum"] },
