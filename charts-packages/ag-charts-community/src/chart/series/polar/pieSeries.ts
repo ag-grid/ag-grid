@@ -862,9 +862,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     }
                 }
             }
-            if (text.visible !== isTextVisible) {
-                text.visible = isTextVisible;
-            }
+            text.visible = isTextVisible;
         });
     }
 
