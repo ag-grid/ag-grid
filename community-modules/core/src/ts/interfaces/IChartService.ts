@@ -34,7 +34,7 @@ export interface ChartDownloadParams {
     /**
      * Dimensions of downloaded chart image in pixels. The current chart dimensions will be used if not specified.
      */
-     dimensions?: {
+    dimensions?: {
         width: number;
         height: number;
     };
