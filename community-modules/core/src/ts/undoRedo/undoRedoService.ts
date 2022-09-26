@@ -35,6 +35,7 @@ export class UndoRedoService extends BeanStub {
 
     private isPasting = false;
     private isFilling = false;
+    private isClearingRangeCellValues = false;
 
     @PostConstruct
     public init(): void {
@@ -51,6 +52,7 @@ export class UndoRedoService extends BeanStub {
         this.addCellEditingListeners();
         this.addPasteListeners();
         this.addFillListeners();
+        this.addRangeCellValueListeners();
 
         this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged);
         // undo / redo is restricted to actual editing so we clear the stacks when other operations are
@@ -75,7 +77,7 @@ export class UndoRedoService extends BeanStub {
         const isCellEditing = this.activeCellEdit !== null && this.cellPositionUtils.equals(this.activeCellEdit, eventCell);
         const isRowEditing = this.activeRowEdit !== null && this.rowPositionUtils.sameRow(this.activeRowEdit, eventCell);
 
-        const shouldCaptureAction = isCellEditing || isRowEditing || this.isPasting || this.isFilling;
+        const shouldCaptureAction = isCellEditing || isRowEditing || this.isPasting || this.isFilling || this.isClearingRangeCellValues;
 
         if (!shouldCaptureAction) { return; }
 
@@ -235,7 +237,7 @@ export class UndoRedoService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_EDITING_STOPPED, () => {
             this.activeCellEdit = null;
 
-            const shouldPushAction = !this.activeRowEdit && !this.isPasting && !this.isFilling;
+            const shouldPushAction = !this.activeRowEdit && !this.isPasting && !this.isFilling && !this.isClearingRangeCellValues;
 
             if (shouldPushAction) {
                 const action = new UndoRedoAction(this.cellValueChanges);
@@ -265,6 +267,18 @@ export class UndoRedoService extends BeanStub {
             const action = new FillUndoRedoAction(this.cellValueChanges, event.initialRange, event.finalRange);
             this.pushActionsToUndoStack(action);
             this.isFilling = false;
+        });
+    }
+
+    private addRangeCellValueListeners(): void {
+        this.addManagedListener(this.eventService, Events.EVENT_CLEAR_RANGE_CELL_VALUES_START, () => {
+            this.isClearingRangeCellValues = true;
+        });
+
+        this.addManagedListener(this.eventService, Events.EVENT_CLEAR_RANGE_CELL_VALUES_END, () => {
+            const action = new UndoRedoAction(this.cellValueChanges);
+            this.pushActionsToUndoStack(action);
+            this.isClearingRangeCellValues = false;
         });
     }
 

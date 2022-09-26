@@ -449,6 +449,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressClearOnFillReduction);
     }
 
+    public isClearRangeCellValuesOnDelete() {
+        return isTrue(this.gridOptions.clearRangeCellValuesOnDelete);
+    }
+
     public isShowToolPanel() {
         return isTrue(this.gridOptions.sideBar && Array.isArray(this.getSideBar().toolPanels));
     }

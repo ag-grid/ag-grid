@@ -2,7 +2,7 @@ import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
 import { SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams } from '../entities/colDef';
-import { isBrowserEdge } from './browser';
+import { isBrowserEdge, isMacOsUserAgent } from './browser';
 import { ColumnGroup } from '../entities/columnGroup';
 import { exists } from './generic';
 import { KeyCode } from '../constants/keyCode';
@@ -141,4 +141,12 @@ export function normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string {
     }
 
     return code;
+}
+
+export function isDeleteKey(key: string) {
+    if (key === KeyCode.DELETE) { return true; }
+    if (key === KeyCode.BACKSPACE) {
+        return isMacOsUserAgent();
+    }
+    return false;
 }

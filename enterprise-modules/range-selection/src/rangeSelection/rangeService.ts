@@ -338,6 +338,24 @@ export class RangeService extends BeanStub implements IRangeService {
         this.newestRangeStartCell = position;
     }
 
+    public clearCellRangeCellValues(): void {
+        this.eventService.dispatchEvent({ type: Events.EVENT_CLEAR_RANGE_CELL_VALUES_START });
+
+        this.cellRanges.forEach(cellRange => {
+            this.forEachRowInRange(cellRange, rowPosition => {
+                const rowNode = this.rowPositionUtils.getRowNode(rowPosition);
+                if (!rowNode) { return; }
+                for (let i = 0; i < cellRange.columns.length; i++) {
+                    const column = this.columnModel.getGridColumn(cellRange.columns[i]);
+                    if (!column || !column.isCellEditable(rowNode)) { return; }
+                    rowNode.setDataValue(column, '');
+                }
+            });
+        });
+
+        this.eventService.dispatchEvent({ type: Events.EVENT_CLEAR_RANGE_CELL_VALUES_END });
+    }
+
     public createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined {
         let columns: Column[] | undefined;
         let startsOnTheRight: boolean = false;
@@ -437,12 +455,8 @@ export class RangeService extends BeanStub implements IRangeService {
         if (len <= 1) return true;
 
         this.cellRanges.forEach(range => {
-            const topRow = this.getRangeStartRow(range);
-            const bottomRow = this.getRangeEndRow(range);
-            let currentRow: RowPosition | null = topRow;
-            
-            while (currentRow) {
-                const rowName = `${currentRow.rowPinned || 'normal'}_${currentRow.rowIndex}`;
+            this.forEachRowInRange(range, row => {
+                const rowName = `${row.rowPinned || 'normal'}_${row.rowIndex}`;
                 const columns = rowToColumnMap.get(rowName);
                 const currentRangeColIds = range.columns.map(col => col.getId());
                 if (columns) {
@@ -451,10 +465,7 @@ export class RangeService extends BeanStub implements IRangeService {
                 } else {
                     rowToColumnMap.set(rowName, currentRangeColIds);
                 }
-
-                if (this.rowPositionUtils.sameRow(currentRow, bottomRow)) { break; }
-                currentRow = this.cellNavigationService.getRowBelow(currentRow);
-            }
+            });
         });
 
         let columnsString: string | undefined;
@@ -469,6 +480,19 @@ export class RangeService extends BeanStub implements IRangeService {
         }
 
         return true;
+    }
+
+    private forEachRowInRange(cellRange: CellRange, callback: (row: RowPosition) => void) {
+        const topRow = this.getRangeStartRow(cellRange);
+        const bottomRow = this.getRangeEndRow(cellRange);
+        let currentRow: RowPosition | null = topRow;
+        
+        while (currentRow) {
+            callback(currentRow);
+
+            if (this.rowPositionUtils.sameRow(currentRow, bottomRow)) { break; }
+            currentRow = this.cellNavigationService.getRowBelow(currentRow);
+        }
     }
 
     public removeAllCellRanges(silent?: boolean): void {
