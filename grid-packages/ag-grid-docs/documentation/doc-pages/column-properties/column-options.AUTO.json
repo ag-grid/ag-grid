@@ -508,7 +508,7 @@
     "type": { "returnType": "('asc' | 'desc' | null)[]" }
   },
   "comparator": {
-    "description": "/** Comparator function for custom sorting. */",
+    "description": "/** Override the default sorting order by providing a custom sort comparator. \n * \n * - `valueA`, `valueB` are the values to compare.\n * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.\n * - `isDescending` - `true` if sort direction is `desc`. Not to be used for inverting the return value as the grid already applies `asc` or `desc` ordering.\n * \n * Return:\n *   - `0`  valueA is the same as valueB\n *   - `> 0` Sort valueA after valueB \n *   - `< 0` Sort valueA before valueB */",
     "type": {
       "arguments": {
         "valueA": "any",

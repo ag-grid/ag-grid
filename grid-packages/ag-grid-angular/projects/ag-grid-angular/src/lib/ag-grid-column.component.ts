@@ -316,7 +316,16 @@ export class AgGridColumn<TData = any> {
     @Input() public initialSortIndex: number | undefined;
     /** Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]`     */
     @Input() public sortingOrder: ('asc' | 'desc' | null)[] | undefined;
-    /** Comparator function for custom sorting.     */
+    /** Override the default sorting order by providing a custom sort comparator. 
+     * 
+     * - `valueA`, `valueB` are the values to compare.
+     * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.
+     * - `isDescending` - `true` if sort direction is `desc`. Not to be used for inverting the return value as the grid already applies `asc` or `desc` ordering.
+     * 
+     * Return:
+     *  - `0`  valueA is the same as valueB
+     *  - `> 0` Sort valueA after valueB 
+     *  - `< 0` Sort valueA before valueB     */
     @Input() public comparator: ((valueA: any, valueB: any, nodeA: RowNode<TData>, nodeB: RowNode<TData>, isDescending: boolean) => number) | undefined;
     /** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. Default: `false`     */
     @Input() public unSortIcon: boolean | undefined;
