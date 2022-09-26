@@ -297,6 +297,7 @@ function applyChartOptions<T extends CartesianChart | PolarChart | HierarchyChar
     }
 
     let updateType = ChartUpdateType.PERFORM_LAYOUT;
+    let forceNodeDataRefresh = false;
     if (options.series && options.series.length > 0) {
         applySeries<T, O>(chart, options);
     }
@@ -304,6 +305,7 @@ function applyChartOptions<T extends CartesianChart | PolarChart | HierarchyChar
         const axesPresent = applyAxes<T, O>(chart, options);
         if (axesPresent) {
             updateType = ChartUpdateType.PROCESS_DATA;
+            forceNodeDataRefresh = true;
         }
     }
 
@@ -329,7 +331,7 @@ function applyChartOptions<T extends CartesianChart | PolarChart | HierarchyChar
     chart.options = jsonMerge(chart.options || {}, options);
     chart.userOptions = jsonMerge(chart.userOptions || {}, userOptions);
 
-    chart.update(updateType);
+    chart.update(updateType, { forceNodeDataRefresh });
 }
 
 function applySeries<T extends CartesianChart | PolarChart | HierarchyChart, O extends ChartOptionType<T>>(

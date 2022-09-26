@@ -103,32 +103,10 @@ export class NumberAxis extends ChartAxis {
     }
 
     @Validate(NUMBER_OR_NAN())
-    protected _min: number = NaN;
-    set min(value: number) {
-        if (this._min !== value) {
-            this._min = value;
-            if (!isNaN(value)) {
-                this.scale.domain = [value, this.scale.domain[1]];
-            }
-        }
-    }
-    get min(): number {
-        return this._min;
-    }
+    min: number = NaN;
 
     @Validate(NUMBER_OR_NAN())
-    protected _max: number = NaN;
-    set max(value: number) {
-        if (this._max !== value) {
-            this._max = value;
-            if (!isNaN(value)) {
-                this.scale.domain = [this.scale.domain[0], value];
-            }
-        }
-    }
-    get max(): number {
-        return this._max;
-    }
+    max: number = NaN;
 
     formatDatum(datum: number): string {
         if (typeof datum === 'number') {
@@ -146,6 +124,14 @@ export class NumberAxis extends ChartAxis {
     }
 
     protected updateDomain(domain: any[], isYAxis: boolean, primaryTickCount?: number) {
+        const { min, max } = this;
+        if (!isNaN(min)) {
+            domain = [min, domain[1]];
+        }
+        if (!isNaN(max)) {
+            domain = [domain[0], max];
+        }
+
         if (isYAxis) {
             // the `primaryTickCount` is used to align the secondary axis tick count with the primary
             this.setDomain(domain, primaryTickCount);
