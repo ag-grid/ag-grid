@@ -6,6 +6,7 @@ import { RowNode } from "../../entities/rowNode";
 import { KeyCode } from "../../constants/keyCode";
 import { RowCtrl } from "../row/rowCtrl";
 import { isDeleteKey, isEventFromPrintableCharacter } from "../../utils/keyboard";
+import { Events } from "../../eventKeys";
 
 export class CellKeyboardListenerFeature extends BeanStub {
 
@@ -85,12 +86,21 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onBackspaceOrDeleteKeyPressed(key: string, event: KeyboardEvent): void {
-        if (this.cellCtrl.isEditing()) { return; }
+        const { cellCtrl, beans, rowNode } = this;
+        const { gridOptionsWrapper, rangeService, eventService } = beans;
 
-        if (this.beans.rangeService && this.beans.gridOptionsWrapper.isClearRangeCellValuesOnDelete() && isDeleteKey(key)) {
-            this.beans.rangeService.clearCellRangeCellValues();
+        if (cellCtrl.isEditing()) { return; }
+
+        if (isDeleteKey(key)) {
+            if (rangeService && gridOptionsWrapper.isEnableRangeSelection()) {
+                rangeService.clearCellRangeCellValues();
+            } else if (cellCtrl.isCellEditable()) {
+                eventService.dispatchEvent({ type: Events.EVENT_CLEAR_CELL_VALUES_START });
+                rowNode.setDataValue(cellCtrl.getColumn(), '');
+                eventService.dispatchEvent({ type: Events.EVENT_CLEAR_CELL_VALUES_END });
+            }
         } else {
-            this.cellCtrl.startRowOrCellEdit(key, undefined, event);
+            cellCtrl.startRowOrCellEdit(key, undefined, event);
         }
     }
 

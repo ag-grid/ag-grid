@@ -779,8 +779,6 @@ export interface GridOptions<TData = any> {
     fillHandleDirection?: 'x' | 'y' | 'xy';
     /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`*/
     suppressClearOnFillReduction?: boolean;
-    /** Set this to `true` to clear the content of a cell range when the delete key is pressed. */
-    clearRangeCellValuesOnDelete?: boolean;
 
     /** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */
     rowDeselection?: boolean;

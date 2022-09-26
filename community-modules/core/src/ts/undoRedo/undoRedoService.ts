@@ -52,7 +52,7 @@ export class UndoRedoService extends BeanStub {
         this.addCellEditingListeners();
         this.addPasteListeners();
         this.addFillListeners();
-        this.addRangeCellValueListeners();
+        this.addClearCellValuesListeners();
 
         this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged);
         // undo / redo is restricted to actual editing so we clear the stacks when other operations are
@@ -270,12 +270,12 @@ export class UndoRedoService extends BeanStub {
         });
     }
 
-    private addRangeCellValueListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_CLEAR_RANGE_CELL_VALUES_START, () => {
+    private addClearCellValuesListeners(): void {
+        this.addManagedListener(this.eventService, Events.EVENT_CLEAR_CELL_VALUES_START, () => {
             this.isClearingRangeCellValues = true;
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_CLEAR_RANGE_CELL_VALUES_END, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_CLEAR_CELL_VALUES_END, () => {
             const action = new UndoRedoAction(this.cellValueChanges);
             this.pushActionsToUndoStack(action);
             this.isClearingRangeCellValues = false;

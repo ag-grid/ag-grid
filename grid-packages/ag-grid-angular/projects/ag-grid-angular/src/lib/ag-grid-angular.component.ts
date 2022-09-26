@@ -828,8 +828,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public fillHandleDirection: 'x' | 'y' | 'xy' | undefined = undefined;
     /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`     */
     @Input() public suppressClearOnFillReduction: boolean | undefined = undefined;
-    /** Set this to `true` to clear the content of a cell range when the delete key is pressed.     */
-    @Input() public clearRangeCellValuesOnDelete: boolean | undefined = undefined;
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`     */
     @Input() public sortingOrder: ('asc' | 'desc' | null)[] | undefined = undefined;
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false`     */
@@ -1277,7 +1275,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressReactUi: boolean | null | '';
     static ngAcceptInputType_readOnlyEdit: boolean | null | '';
     static ngAcceptInputType_suppressRowVirtualisation: boolean | null | '';
-    static ngAcceptInputType_clearRangeCellValuesOnDelete: boolean | null | '';
     static ngAcceptInputType_resetRowDataOnUpdate: boolean | null | '';
     static ngAcceptInputType_removePivotHeaderRowWhenSingleValueColumn: boolean | null | '';
     static ngAcceptInputType_suppressCopySingleCellRanges: boolean | null | '';

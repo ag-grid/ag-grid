@@ -339,7 +339,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public clearCellRangeCellValues(): void {
-        this.eventService.dispatchEvent({ type: Events.EVENT_CLEAR_RANGE_CELL_VALUES_START });
+        this.eventService.dispatchEvent({ type: Events.EVENT_CLEAR_CELL_VALUES_START });
 
         this.cellRanges.forEach(cellRange => {
             this.forEachRowInRange(cellRange, rowPosition => {
@@ -353,7 +353,7 @@ export class RangeService extends BeanStub implements IRangeService {
             });
         });
 
-        this.eventService.dispatchEvent({ type: Events.EVENT_CLEAR_RANGE_CELL_VALUES_END });
+        this.eventService.dispatchEvent({ type: Events.EVENT_CLEAR_CELL_VALUES_END });
     }
 
     public createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined {

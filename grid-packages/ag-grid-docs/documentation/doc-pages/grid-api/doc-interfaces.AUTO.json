@@ -3329,10 +3329,6 @@
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "clearRangeCellValuesOnDelete": {
-      "description": "/** Set this to `true` to clear the content of a cell range when the delete key is pressed. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "rowDeselection": {
       "description": "/** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection\n */",
       "type": { "returnType": "boolean", "optional": true }
@@ -25734,10 +25730,6 @@
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "clearRangeCellValuesOnDelete": {
-      "description": "/** Set this to `true` to clear the content of a cell range when the delete key is pressed. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "rowDeselection": {
       "description": "/** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection\n */",
       "type": { "returnType": "boolean", "optional": true }
@@ -28545,10 +28537,6 @@
     },
     "suppressClearOnFillReduction": {
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false` */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "clearRangeCellValuesOnDelete": {
-      "description": "/** Set this to `true` to clear the content of a cell range when the delete key is pressed. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowDeselection": {
@@ -31368,10 +31356,6 @@
     },
     "suppressClearOnFillReduction": {
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false` */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "clearRangeCellValuesOnDelete": {
-      "description": "/** Set this to `true` to clear the content of a cell range when the delete key is pressed. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowDeselection": {
