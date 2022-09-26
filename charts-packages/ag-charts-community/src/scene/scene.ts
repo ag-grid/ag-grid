@@ -57,6 +57,9 @@ export class Scene {
         this.debug.dirtyTree = windowValue('agChartsSceneDirtyTree') ?? false;
         this.canvas = new HdpiCanvas({ document, width, height });
         this.ctx = this.canvas.context;
+
+        this._root = new Group({ name: 'root', layer: true });
+        this._root._setScene(this);
     }
 
     set container(value: HTMLElement | undefined) {
@@ -209,29 +212,8 @@ export class Scene {
         return this._dirty;
     }
 
-    _root: Node | null = null;
-    set root(node: Node | null) {
-        if (node === this._root) {
-            return;
-        }
-
-        if (this._root) {
-            this._root._setScene();
-        }
-
-        this._root = node;
-
-        if (node) {
-            // If `node` is the root node of another scene ...
-            if (node.parent === null && node.scene && node.scene !== this) {
-                node.scene.root = null;
-            }
-            node._setScene(this);
-        }
-
-        this.markDirty();
-    }
-    get root(): Node | null {
+    _root: Group;
+    get root(): Group {
         return this._root;
     }
 
@@ -290,7 +272,11 @@ export class Scene {
         if (!root || root.dirty >= RedrawType.TRIVIAL) {
             // start with a blank canvas, clear previous drawing
             canvasCleared = true;
-            canvas.clear();
+
+            if (mode === 'simple' || mode === 'dom-composite') {
+                // Direct canvas rendering of all elements - clear before rendering.
+                canvas.clear();
+            }
         }
 
         if (root && this.debug.dirtyTree) {
@@ -309,12 +295,13 @@ export class Scene {
 
             if (root.visible) {
                 ctx.save();
-                this.renderSceneGraph(renderCtx);
+                await this.renderSceneGraph(renderCtx);
                 ctx.restore();
             }
         }
 
         if (mode !== 'dom-composite' && layers.length > 0 && canvasCleared) {
+            canvas.clear();
             ctx.save();
             ctx.setTransform(1 / canvas.pixelRatio, 0, 0, 1 / canvas.pixelRatio, 0, 0);
             layers.forEach(({ canvas: { imageSource, enabled, opacity } }) => {
@@ -337,11 +324,7 @@ export class Scene {
         }
     }
 
-    debugStats(
-        debugSplitTimes: number[],
-        ctx: CanvasRenderingContext2D,
-        extraDebugStats = {},
-    ) {
+    debugStats(debugSplitTimes: number[], ctx: CanvasRenderingContext2D, extraDebugStats = {}) {
         const end = performance.now();
 
         if (this.debug.stats) {
@@ -383,7 +366,7 @@ export class Scene {
             return;
         }
 
-        const initStack: { node: Node; idx: number; renderCtx: RenderContext }[] = [
+        const initStack: { node: Node; idx: number; renderCtx: RenderContext; childRenderCtx?: RenderContext }[] = [
             { node: root, idx: 0, renderCtx: initRenderCtx },
         ];
 
@@ -393,57 +376,44 @@ export class Scene {
                 let batchCount = 0;
                 while (deadline < performance.now() && batchCount < RENDER_NODE_BATCH_SIZE && stack.length > 0) {
                     const stackEl = stack[stack.length - 1];
-                    let { node, renderCtx, idx } = stackEl;
-                    let childAddedToStack = false;
+                    let { node, renderCtx, childRenderCtx, idx } = stackEl;
+
+                    if (!node.visible) {
+                        node.markClean();
+                        stack.pop();
+                        batchCount++;
+                        continue;
+                    }
 
                     if (stackEl.idx === 0) {
-                        renderCtx = node.preChildRender?.(renderCtx) ?? renderCtx;
+                        childRenderCtx = node.preChildRender?.(renderCtx) ?? renderCtx;
+                    } else {
+                        childRenderCtx = childRenderCtx ?? renderCtx;
                     }
 
-                    const { forceRender, resized, ctx } = renderCtx;
-                    while (
-                        deadline < performance.now() &&
-                        batchCount < RENDER_NODE_BATCH_SIZE &&
-                        !childAddedToStack &&
-                        node.children.length > idx
-                    ) {
-                        const child = node.children[idx];
-                        if (!child.visible) {
-                            // Nothing to do.
-                            child.markClean({ recursive: false });
-                        } else if (!forceRender && !resized && child.dirty < RedrawType.TRIVIAL) {
-                            // Nothing to do.
-                            child.markClean({ recursive: false });
-                        } else if (child.children.length > 0) {
-                            stack.push({ node: child, idx: 0, renderCtx });
+                    const { forceRender, resized, ctx } = childRenderCtx;
+                    if (!forceRender && !resized && node.dirty < RedrawType.TRIVIAL) {
+                        node.markClean();
+                        idx = node.children.length; // Skip over children.
+                    }
 
-                            // Break here as we want to go depth first.
-                            childAddedToStack = true;
-                        } else {
-                            // Render marks this node (and children) as clean - no need to explicitly markClean().
-                            ctx.save();
-                            child.render(renderCtx);
-                            ctx.restore();
-                        }
-
-                        batchCount++;
+                    if (idx < node.children.length) {
+                        stack.push({ node: node.children[idx], idx: 0, renderCtx: childRenderCtx });
                         idx++;
-                    }
 
-                    if (childAddedToStack || node.children.length > idx) {
                         // Need to save state in stack for when we come back to this node.
-                        stackEl.renderCtx = renderCtx;
+                        stackEl.childRenderCtx = childRenderCtx;
                         stackEl.idx = idx;
                     } else {
-                        // We're done with this node in the stack.
+                        // Render marks this node (and children) as clean - no need to explicitly markClean().
                         ctx.save();
-                        node.render(renderCtx);
+                        node.render(childRenderCtx);
                         ctx.restore();
-                        node.postChildRender?.(renderCtx);
+                        node.postChildRender?.(childRenderCtx);
                         stack.pop();
-
-                        batchCount++;
                     }
+
+                    batchCount++;
                 }
 
                 if (stack.length > 0) {

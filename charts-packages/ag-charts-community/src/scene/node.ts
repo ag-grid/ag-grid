@@ -467,11 +467,6 @@ export abstract class Node extends ChangeDetectable {
             .inverseTo(this.inverseMatrix);
     }
 
-    protected _scheduledRendering = true;
-    get scheduledRendering() {
-        return this._scheduledRendering;
-    }
-
     render(_renderCtx: RenderContext) {
         this._dirty = RedrawType.NONE;
     }

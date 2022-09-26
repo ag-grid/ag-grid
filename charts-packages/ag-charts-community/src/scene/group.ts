@@ -190,6 +190,7 @@ export class Group extends Node {
         } else {
             // Only apply opacity if this isn't a distinct layer - opacity will be applied
             // at composition time.
+            ctx.save();
             ctx.globalAlpha *= this.opacity;
         }
 
@@ -215,8 +216,9 @@ export class Group extends Node {
         let { ctx } = renderCtx;
         const { layer } = this;
 
+        ctx.restore();
+
         if (layer) {
-            ctx.restore();
             layer.snapshot();
         }
     }

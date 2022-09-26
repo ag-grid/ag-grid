@@ -45,10 +45,9 @@ export class Range extends Shape {
     }
 
     render(renderCtx: RenderContext) {
-        let { ctx, forceRender, stats } = renderCtx;
+        let { ctx, forceRender } = renderCtx;
 
         if (this.dirty === RedrawType.NONE && !forceRender) {
-            if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 

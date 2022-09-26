@@ -1,5 +1,4 @@
 import { Scene } from '../scene/scene';
-import { Group } from '../scene/group';
 import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
 import { Node } from '../scene/node';
@@ -468,21 +467,18 @@ export abstract class Chart extends Observable {
     protected constructor(document = window.document) {
         super();
 
-        const root = new Group({ name: 'root' });
-        const background = this.background;
-
-        background.fill = 'white';
-        root.appendChild(background.node);
-
         const element = (this.element = document.createElement('div'));
         element.classList.add('ag-chart-wrapper');
         element.style.position = 'relative';
 
         this.scene = new Scene({ document });
         this.scene.debug.consoleLog = this._debug;
-        this.scene.root = root;
         this.scene.container = element;
         this.autoSize = true;
+
+        const background = this.background;
+        background.fill = 'white';
+        this.scene.root.appendChild(background.node);
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
