@@ -364,8 +364,14 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     @Validate(NUMBER())
     outerRadiusOffset = 0;
 
+    @Validate(NUMBER(0))
+    outerRadiusRatio = 1;
+
     @Validate(NUMBER())
     innerRadiusOffset = 0;
+
+    @Validate(NUMBER(0))
+    innerRadiusRatio = 1;
 
     @Validate(NUMBER(0))
     strokeWidth = 1;
@@ -582,13 +588,27 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return [];
     }
 
-    async update() {
-        const { radius, innerRadiusOffset, outerRadiusOffset, title } = this;
+    private getInnerRadius() {
+        const { radius, innerRadiusRatio, innerRadiusOffset } = this;
+        const innerRadius = radius * (innerRadiusRatio ?? 1) + (innerRadiusOffset ? innerRadiusOffset : 0);
+        if (innerRadius === radius) {
+            return 0;
+        }
+        return innerRadius;
+    }
 
-        this.radiusScale.range = [
-            innerRadiusOffset ? radius + innerRadiusOffset : 0,
-            radius + (outerRadiusOffset || 0),
-        ];
+    private getOuterRadius() {
+        const { radius, outerRadiusRatio, outerRadiusOffset } = this;
+        const outerRadius = radius * (outerRadiusRatio ?? 1) + (outerRadiusOffset ? outerRadiusOffset : 0);
+        return outerRadius;
+    }
+
+    async update() {
+        const { title } = this;
+        const innerRadius = this.getInnerRadius();
+        const outerRadius = this.getOuterRadius();
+
+        this.radiusScale.range = [innerRadius, outerRadius];
 
         this.group.translationX = this.centerX;
         this.group.translationY = this.centerY;
@@ -599,7 +619,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             if (outerRadius === 0) {
                 title.node.visible = false;
             } else {
-                title.node.translationY = -radius - outerRadiusOffset - 2;
+                const titleOffset = 2;
+                title.node.translationY = -outerRadius - titleOffset;
                 title.node.visible = title.enabled;
             }
         }
@@ -871,12 +892,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         if (!circle) {
             return;
         }
-        if (this.innerRadiusOffset === 0) {
+        const innerRadius = this.getInnerRadius();
+        if (innerRadius === 0) {
             circle.size = 0;
         } else {
-            const offset = Math.min(this.outerRadiusOffset, this.innerRadiusOffset);
+            const circleRadius = Math.min(innerRadius, this.getOuterRadius());
             const antiAliasingPadding = 1;
-            circle.size = (this.radius + offset) * 2 + antiAliasingPadding;
+            circle.size = Math.ceil(circleRadius * 2 + antiAliasingPadding);
         }
     }
 

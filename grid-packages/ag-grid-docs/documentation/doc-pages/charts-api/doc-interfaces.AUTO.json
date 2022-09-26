@@ -30,6 +30,7 @@
   "CssColor": {},
   "Opacity": {},
   "PixelSize": {},
+  "Ratio": {},
   "DataValue": {},
   "AgChartThemePalette": {
     "fills": {
@@ -904,9 +905,17 @@
       "description": "/** The offset in pixels of the outer radius of the series. Used to construct doughnut charts. */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
+    "outerRadiusRatio": {
+      "description": "/** The ratio of the outer radius of the series. Used to adjust the outer radius proportionally. */",
+      "type": { "returnType": "Ratio", "optional": true }
+    },
     "innerRadiusOffset": {
-      "description": "/** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not given, or a value of zero is given, a pie chart will be rendered. */",
+      "description": "/** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not provided, or innerRadiusRatio is unset, or a value of zero is given, a pie chart will be rendered. */",
       "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "innerRadiusRatio": {
+      "description": "/** The ratio of the inner radius of the series. Used to construct doughnut charts. If this is not provided, or innerRadiusOffset is unset, or a value of zero or one is given, a pie chart will be rendered. */",
+      "type": { "returnType": "Ratio", "optional": true }
     },
     "radiusMin": {
       "description": "/** Override of the automatically determined minimum radiusKey value from the data. */",
@@ -925,7 +934,7 @@
       "type": { "returnType": "AgPieSeriesTooltip", "optional": true }
     },
     "innerCircle": {
-      "description": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */",
+      "description": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset or innerRadiusRatio */",
       "type": { "returnType": "AgDoughnutInnerCircle", "optional": true }
     },
     "formatter": {
@@ -3440,9 +3449,17 @@
       "description": "/** The offset in pixels of the outer radius of the series. Used to construct doughnut charts. */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
+    "outerRadiusRatio": {
+      "description": "/** The ratio of the outer radius of the series. Used to adjust the outer radius proportionally. */",
+      "type": { "returnType": "Ratio", "optional": true }
+    },
     "innerRadiusOffset": {
-      "description": "/** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not given, or a value of zero is given, a pie chart will be rendered. */",
+      "description": "/** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not provided, or innerRadiusRatio is unset, or a value of zero is given, a pie chart will be rendered. */",
       "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "innerRadiusRatio": {
+      "description": "/** The ratio of the inner radius of the series. Used to construct doughnut charts. If this is not provided, or innerRadiusOffset is unset, or a value of zero or one is given, a pie chart will be rendered. */",
+      "type": { "returnType": "Ratio", "optional": true }
     },
     "radiusMin": {
       "description": "/** Override of the automatically determined minimum radiusKey value from the data. */",
@@ -3465,7 +3482,7 @@
       "type": { "returnType": "AgDoughnutInnerLabel[]", "optional": true }
     },
     "innerCircle": {
-      "description": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */",
+      "description": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset or innerRadiusRatio */",
       "type": { "returnType": "AgDoughnutInnerCircle", "optional": true }
     },
     "formatter": {
