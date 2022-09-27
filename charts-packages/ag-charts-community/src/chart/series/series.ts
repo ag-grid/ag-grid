@@ -4,7 +4,6 @@ import { Observable } from '../../util/observable';
 import { ChartAxis, ChartAxisDirection } from '../chartAxis';
 import { Chart } from '../chart';
 import { createId } from '../../util/id';
-import { Label } from '../label';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
 import {
@@ -176,8 +175,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     // Flag to determine if we should recalculate node data.
     protected nodeDataRefresh = true;
-
-    readonly label = new Label();
 
     abstract tooltip: SeriesTooltip;
 
