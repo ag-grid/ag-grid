@@ -631,4 +631,8 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             });
         }
     }
+
+    protected isLabelEnabled() {
+        return this.label.enabled;
+    }
 }
