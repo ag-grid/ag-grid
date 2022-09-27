@@ -13,6 +13,7 @@ const commander = require("commander");
 const menu = require('./doc-pages/licensing/menu.json');
 const supportedFrameworks = require('./src/utils/supported-frameworks');
 const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
+const puppeteer = require("puppeteer-core");
 
 const options = commander
     .option('-d, --debug <debug>', 'if debug = true (not provided - it\'ll default to true), the script writes the records it would upload into JSON files for inspection', true)
@@ -46,16 +47,31 @@ const cleanContents = contents => {
         .trim();
 };
 
-const createRecords = async (url, framework, breadcrumb, rank) => {
+const createRecords = async (browser, url, framework, breadcrumb, rank, loadFromAgGrid) => {
     const records = [];
     const path = convertToFrameworkUrl(url, framework);
-    const filePath = `public${path}index.html`;
 
-    if (!fs.existsSync(filePath)) {
-        return records;
+    let dom = null;
+    if (loadFromAgGrid) {
+        const prodUrl = `https://www.ag-grid.com${path}`;
+
+        const page = await browser.newPage();
+        await page.setViewport({width: 800, height: 570});
+
+        await page.goto(prodUrl, {waitUntil: 'networkidle2'});
+        await page.waitForFunction(() => document.querySelectorAll("[id^='reference-']").length > 5)
+
+        const content = await page.content();
+        dom = await new JSDOM(content);
+    } else {
+        const filePath = `public${path}index.html`;
+
+        if (!fs.existsSync(filePath)) {
+            return records;
+        }
+
+        dom = await JSDOM.fromFile(filePath);
     }
-
-    const dom = await JSDOM.fromFile(filePath);
 
     let key = undefined;
     let heading = undefined;
@@ -157,6 +173,14 @@ const createRecords = async (url, framework, breadcrumb, rank) => {
     return records;
 };
 
+const readFromAgGrid = url => url === '/grid-options/' ||
+    url === '/grid-api/' ||
+    url === '/grid-events/' ||
+    url === '/row-object/' ||
+    url === '/column-properties/' ||
+    url === '/column-api/' ||
+    url === '/column-object/';
+
 const processIndexForFramework = async framework => {
     let rank = 10000; // using this rank ensures that pages that are earlier in the menu will rank higher in results
     const records = [];
@@ -164,9 +188,14 @@ const processIndexForFramework = async framework => {
 
     const exclusions = ["charts-api-themes", "charts-api", "charts-api-explorer"];
 
+    const browser = await puppeteer.launch({
+        executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+        ignoreHTTPSErrors: true
+    });
+
     console.log(`Generating records for ${indexName}...`);
 
-    const iterateItems = async (items, prefix) => {
+    const iterateItems = async (items, prefix, parentTitle) => {
         if (!items) {
             return;
         }
@@ -177,12 +206,12 @@ const processIndexForFramework = async framework => {
             const breadcrumb = breadcrumbPrefix + item.title;
 
             if (item.url && !exclusions.some(exclusion => exclusion === item.url.replace(/\//g, ''))) {
-                records.push(...await createRecords(item.url, framework, breadcrumb, rank));
+                records.push(...await createRecords(browser, item.url, framework, breadcrumb, rank, readFromAgGrid(item.url)));
 
                 rank -= 10;
             }
 
-            await iterateItems(item.items, breadcrumb);
+            await iterateItems(item.items, breadcrumb, parentTitle);
         }
     };
 
@@ -196,7 +225,7 @@ const processIndexForFramework = async framework => {
 
         console.log(`Wrote Algolia records for ${indexName} to ${fileName}`);
     } else {
-        console.log(`Pushing records for ${indexName} to Algolia...`);
+        console.log(`Pushing records for ${indexName} to Algolia ...`);
 
         const index = algoliaClient.initIndex(indexName);
 
@@ -224,6 +253,8 @@ const processIndexForFramework = async framework => {
             console.error(`Failed to save records.`, e);
         }
     }
+
+    browser.close();
 };
 
 const run = async () => {
