@@ -637,8 +637,8 @@ export interface ValueFormatterParams<TData = any, TValue = any> extends BaseCol
     value: TValue;
 }
 
-export interface ValueFormatterFunc<TData = any> {
-    (params: ValueFormatterParams<TData>): string;
+export interface ValueFormatterFunc<TData = any, TValue = any> {
+    (params: ValueFormatterParams<TData, TValue>): string;
 }
 
 export interface KeyCreatorParams<TData = any, TValue = any> extends BaseColDefParams<TData> {
