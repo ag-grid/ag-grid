@@ -21,9 +21,23 @@ By default Excel renders every exported value in a cell using a single line. If 
 
 ## Export All Unprocessed Rows
 
-By default, all visible rows are exported, by using the `exportedRows` param, you can configure to export all rows, rather than the default which is after filtering and sorting has been applied.
+By default, the grid exports grid rows after filtering and sorting has been applied. This means that if you’ve filtered the grid, only the filtered rows will be exported in the order they appear in visually at the time of export. 
 
-Note that when all rows is selected, the exported file ignores any filter or sort applied to the data.
+You can override this and export all rows instead of only the filtered rows by setting the `exportedRows` param to ‘all’. 
+
+[[note]]
+| When exporting all rows, the exported process ignores any filter or sort applied to the grid.
+
+You can verify this in the example below:
+- Filter the Country column to only show rows for Australia
+- Sort descending by Athlete column
+- Uncheck the All Rows checkbox and click the Export to Excel button
+
+Observe how only the filtered rows are exported in the Excel file in descending order by Athlete column
+
+- Check the All Rows checkbox and click the Export to Excel button
+
+Observe how all rows are exported in the Excel file in the original unsorted row order
 
 <grid-example title='Excel Export - All Rows' name='excel-export-all-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "csv"] }'></grid-example>
 

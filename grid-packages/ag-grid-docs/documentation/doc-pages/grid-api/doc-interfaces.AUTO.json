@@ -2592,6 +2592,10 @@
       "description": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "enableCellEditingOnBackspace": {
+      "description": "/** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "undoRedoCellEditing": {
       "description": "/** Set to `true` to enable Undo / Redo while editing. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -3077,12 +3081,8 @@
       "description": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "suppressColumnPillSortAction": {
-      "description": "/** Set to `true` to prevent the column sort from changing when a user clicks the column pill in the row group panel or row group section of the side bar */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressColumnPillSortIndicator": {
-      "description": "/** Set to `true` to hide the sort direction indicator from the column pill in the row group panel and row group section of the side bar */",
+    "rowGroupPanelSuppressSort": {
+      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
@@ -3327,10 +3327,6 @@
     },
     "suppressClearOnFillReduction": {
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false` */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "clearRangeCellValuesOnDelete": {
-      "description": "/** Set this to `true` to clear the content of a cell range when the delete key is pressed. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowDeselection": {
@@ -16472,9 +16468,9 @@
       "type": { "returnType": "string", "optional": true }
     },
     "dimensions": {
-      "description": "/** Dimensions of downloaded chart. The current chart dimensions will be used if not specified. */",
+      "description": "/** Dimensions of downloaded chart image in pixels. The current chart dimensions will be used if not specified. */",
       "type": {
-        "returnType": "{\n        width: number,\n        height: number\n    }",
+        "returnType": "{\n        width: number;\n        height: number;\n    }",
         "optional": true
       }
     }
@@ -16486,15 +16482,15 @@
     }
   },
   "ChartModelType": {},
-  "ChartToolPanelTabs": {},
+  "ChartToolPanelName": {},
   "OpenChartToolPanelParams": {
     "chartId": {
       "description": "/** The id of the created chart. */",
       "type": { "returnType": "string", "optional": false }
     },
-    "tabName": {
-      "description": "/** Tab name of the Chart Tool Panel. The default settings tab will be used if not specified. */",
-      "type": { "returnType": "ChartToolPanelTabs", "optional": true }
+    "panel": {
+      "description": "/** Name of the Chart Tool Panel. The default 'Settings' Tool Panel will be used if not specified. */",
+      "type": { "returnType": "ChartToolPanelName", "optional": true }
     }
   },
   "ChartModel": {
@@ -25013,6 +25009,10 @@
       "description": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "enableCellEditingOnBackspace": {
+      "description": "/** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "undoRedoCellEditing": {
       "description": "/** Set to `true` to enable Undo / Redo while editing. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -25498,12 +25498,8 @@
       "description": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "suppressColumnPillSortAction": {
-      "description": "/** Set to `true` to prevent the column sort from changing when a user clicks the column pill in the row group panel or row group section of the side bar */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressColumnPillSortIndicator": {
-      "description": "/** Set to `true` to hide the sort direction indicator from the column pill in the row group panel and row group section of the side bar */",
+    "rowGroupPanelSuppressSort": {
+      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
@@ -25748,10 +25744,6 @@
     },
     "suppressClearOnFillReduction": {
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false` */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "clearRangeCellValuesOnDelete": {
-      "description": "/** Set this to `true` to clear the content of a cell range when the delete key is pressed. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowDeselection": {
@@ -27826,6 +27818,10 @@
       "description": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "enableCellEditingOnBackspace": {
+      "description": "/** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "undoRedoCellEditing": {
       "description": "/** Set to `true` to enable Undo / Redo while editing. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -28311,12 +28307,8 @@
       "description": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "suppressColumnPillSortAction": {
-      "description": "/** Set to `true` to prevent the column sort from changing when a user clicks the column pill in the row group panel or row group section of the side bar */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressColumnPillSortIndicator": {
-      "description": "/** Set to `true` to hide the sort direction indicator from the column pill in the row group panel and row group section of the side bar */",
+    "rowGroupPanelSuppressSort": {
+      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
@@ -28561,10 +28553,6 @@
     },
     "suppressClearOnFillReduction": {
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false` */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "clearRangeCellValuesOnDelete": {
-      "description": "/** Set this to `true` to clear the content of a cell range when the delete key is pressed. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowDeselection": {
@@ -30649,6 +30637,10 @@
       "description": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "enableCellEditingOnBackspace": {
+      "description": "/** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "undoRedoCellEditing": {
       "description": "/** Set to `true` to enable Undo / Redo while editing. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -31134,12 +31126,8 @@
       "description": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "suppressColumnPillSortAction": {
-      "description": "/** Set to `true` to prevent the column sort from changing when a user clicks the column pill in the row group panel or row group section of the side bar */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressColumnPillSortIndicator": {
-      "description": "/** Set to `true` to hide the sort direction indicator from the column pill in the row group panel and row group section of the side bar */",
+    "rowGroupPanelSuppressSort": {
+      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
@@ -31384,10 +31372,6 @@
     },
     "suppressClearOnFillReduction": {
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false` */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "clearRangeCellValuesOnDelete": {
-      "description": "/** Set this to `true` to clear the content of a cell range when the delete key is pressed. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowDeselection": {

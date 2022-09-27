@@ -427,6 +427,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * i.e. pressing the Enter key will move down to the cell beneath.
      * Default: `false`     */
     @Input() public enterMovesDownAfterEdit: boolean | undefined = undefined;
+    /** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users.     */
+    @Input() public enableCellEditingOnBackspace: boolean | undefined = undefined;
     /** Set to `true` to enable Undo / Redo while editing.     */
     @Input() public undoRedoCellEditing: boolean | undefined = undefined;
     /** Set the size of the undo / redo stack. Default: `10`     */
@@ -695,10 +697,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.     */
     @Input() public treeData: boolean | undefined = undefined;
-    /** Set to `true` to prevent the column sort from changing when a user clicks the column pill in the row group panel or row group section of the side bar     */
-    @Input() public suppressColumnPillSortAction: boolean | undefined = undefined;
-    /** Set to `true` to hide the sort direction indicator from the column pill in the row group panel and row group section of the side bar     */
-    @Input() public suppressColumnPillSortIndicator: boolean | undefined = undefined;
+    /** Set to `true` to suppress sort indicators and actions from the row group panel     */
+    @Input() public rowGroupPanelSuppressSort: boolean | undefined = undefined;
     /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.     */
     @Input() public groupRowsSticky: boolean | undefined = undefined;
     /** @deprecated - this is now groupRowRendererParams.innerRenderer
@@ -850,8 +850,6 @@ Full Store is used.
     @Input() public fillHandleDirection: 'x' | 'y' | 'xy' | undefined = undefined;
     /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`     */
     @Input() public suppressClearOnFillReduction: boolean | undefined = undefined;
-    /** Set this to `true` to clear the content of a cell range when the delete key is pressed.     */
-    @Input() public clearRangeCellValuesOnDelete: boolean | undefined = undefined;
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`     */
     @Input() public sortingOrder: ('asc' | 'desc' | null)[] | undefined = undefined;
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false`     */
@@ -1311,14 +1309,13 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_suppressReactUi: boolean | null | '';
     static ngAcceptInputType_readOnlyEdit: boolean | null | '';
     static ngAcceptInputType_suppressRowVirtualisation: boolean | null | '';
-    static ngAcceptInputType_clearRangeCellValuesOnDelete: boolean | null | '';
+    static ngAcceptInputType_enableCellEditingOnBackspace: boolean | null | '';
     static ngAcceptInputType_resetRowDataOnUpdate: boolean | null | '';
     static ngAcceptInputType_removePivotHeaderRowWhenSingleValueColumn: boolean | null | '';
     static ngAcceptInputType_suppressCopySingleCellRanges: boolean | null | '';
     static ngAcceptInputType_groupRowsSticky: boolean | null | '';
     static ngAcceptInputType_serverSideInfiniteScroll: boolean | null | '';
-    static ngAcceptInputType_suppressColumnPillSortAction: boolean | null | '';
-    static ngAcceptInputType_suppressColumnPillSortIndicator: boolean | null | '';
+    static ngAcceptInputType_rowGroupPanelSuppressSort: boolean | null | '';
     // @END@
 }
 

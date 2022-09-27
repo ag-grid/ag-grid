@@ -25,10 +25,10 @@ export class ChartMenu extends Component {
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     public static EVENT_DOWNLOAD_CHART = "downloadChart";
-    private static DEFAULT_TAB: ChartMenuOptions = "chartSettings";
+    private static DEFAULT_PANEL: ChartMenuOptions = "chartSettings";
 
     private buttons: ChartToolbarButtons = {
-        chartSettings: ['menu', () => this.showMenu(ChartMenu.DEFAULT_TAB)],
+        chartSettings: ['menu', () => this.showMenu(ChartMenu.DEFAULT_PANEL)],
         chartData: ['menu', () => this.showMenu("chartData")],
         chartFormat: ['menu', () => this.showMenu("chartFormat")],
         chartLink: ['linked', e => this.toggleDetached(e)],
@@ -36,7 +36,7 @@ export class ChartMenu extends Component {
         chartDownload: ['save', () => this.saveChart()]
     };
 
-    private tabs: ChartMenuOptions[] = [];
+    private panels: ChartMenuOptions[] = [];
 
     private static TEMPLATE = `<div>
         <div class="ag-chart-menu" ref="eMenu"></div>
@@ -116,11 +116,11 @@ export class ChartMenu extends Component {
         }
 
         const ignoreOptions: ChartMenuOptions[] = ['chartUnlink', 'chartLink', 'chartDownload'];
-        this.tabs = tabOptions.filter(option => ignoreOptions.indexOf(option) === -1);
+        this.panels = tabOptions.filter(option => ignoreOptions.indexOf(option) === -1);
 
         return tabOptions.filter(value =>
             ignoreOptions.indexOf(value) !== -1 ||
-            (this.tabs.length && value === this.tabs[0])
+            (this.panels.length && value === this.panels[0])
         );
     }
 
@@ -189,7 +189,7 @@ export class ChartMenu extends Component {
         this.tabbedMenu = this.createBean(new TabbedChartMenu({
             controller: this.chartController,
             type: this.chartController.getChartType(),
-            panels: this.tabs,
+            panels: this.panels,
             chartOptionsService: this.chartOptionsService
         }));
 
@@ -233,12 +233,12 @@ export class ChartMenu extends Component {
         this.menuVisible ? this.hideMenu() : this.showMenu();
     }
 
-    public showMenu(tabName?: ChartMenuOptions): void {
-        const menuTabName = tabName || ChartMenu.DEFAULT_TAB;
-        let tab = this.tabs.indexOf(menuTabName);
+    public showMenu(panel?: ChartMenuOptions): void {
+        const menuPanel = panel || ChartMenu.DEFAULT_PANEL;
+        let tab = this.panels.indexOf(menuPanel);
         if (tab < 0) {
-            console.warn(`AG Grid: '${tabName}' is not a valid Chart Tool Panel tab name`);
-            tab = this.tabs.indexOf(ChartMenu.DEFAULT_TAB)
+            console.warn(`AG Grid: '${panel}' is not a valid Chart Tool Panel name`);
+            tab = this.panels.indexOf(ChartMenu.DEFAULT_PANEL)
         }
 
         if (this.menuPanel) {

@@ -257,6 +257,7 @@
                 "url": "/cell-editing-start-stop/#enter-key-navigation"
             }
         },
+        "enableCellEditingOnBackspace": {},
         "undoRedoCellEditing": {
             "more": {
                 "name": "Undo / Redo Edits",
@@ -923,8 +924,12 @@
                 "url": "/grouping-group-panel/#enabling-row-group-panel"
             }
         },
-        "suppressColumnPillSortAction": {},
-        "suppressColumnPillSortIndicator": {},
+        "rowGroupPanelSuppressSort": {
+            "more": {
+                "name": "Suppress Sorting",
+                "url": "/grouping-group-panel/#suppress-sorting"
+            }
+        },
         "groupRowRenderer": {
             "description": "Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.",
             "more": {

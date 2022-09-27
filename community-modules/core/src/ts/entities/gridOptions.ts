@@ -263,6 +263,8 @@ export interface GridOptions<TData = any> {
      * Default: `false`
      */
     enterMovesDownAfterEdit?: boolean;
+    /** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users. */
+    enableCellEditingOnBackspace?: boolean;
     /** Set to `true` to enable Undo / Redo while editing. */
     undoRedoCellEditing?: boolean;
     /** Set the size of the undo / redo stack. Default: `10` */
@@ -595,11 +597,9 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */
     treeData?: boolean;
 
-    /** Set to `true` to prevent the column sort from changing when a user clicks the column pill in the row group panel or row group section of the side bar  */
-    suppressColumnPillSortAction?: boolean;
 
-    /** Set to `true` to hide the sort direction indicator from the column pill in the row group panel and row group section of the side bar */
-    suppressColumnPillSortIndicator?: boolean;
+    /** Set to `true` to suppress sort indicators and actions from the row group panel */
+    rowGroupPanelSuppressSort?: boolean;
 
     /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/
     groupRowsSticky?: boolean;
@@ -779,8 +779,6 @@ export interface GridOptions<TData = any> {
     fillHandleDirection?: 'x' | 'y' | 'xy';
     /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`*/
     suppressClearOnFillReduction?: boolean;
-    /** Set this to `true` to clear the content of a cell range when the delete key is pressed. */
-    clearRangeCellValuesOnDelete?: boolean;
 
     /** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */
     rowDeselection?: boolean;
