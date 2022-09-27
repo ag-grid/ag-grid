@@ -359,7 +359,7 @@ export abstract class CartesianSeries<
         this.highlightSelection = await this.updateHighlightSelectionItem({ item, highlightSelection });
 
         let labelItem: C['labelData'][number] | undefined;
-        if (this.label.enabled && item != null) {
+        if ((this as any).label?.enabled && item != null) {
             const { itemId = undefined } = item;
 
             for (const { labelData } of contextNodeData) {
