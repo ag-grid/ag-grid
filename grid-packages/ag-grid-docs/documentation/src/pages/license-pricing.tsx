@@ -12,7 +12,12 @@ const LicensePricing = () => {
                     <section className={styles['license-pricing__content__packages']}>
                         <div>
                             <div>
-                                <img src="../images/loudspeaker_grey.png" style={{maxWidth: 50}} alt="warning"/>
+                                <div style={{width: "75px"}}>
+                                    <div style={{backgroundColor: "#0057b7", height: "25px"}}>
+                                    </div>
+                                    <div style={{backgroundColor: "#ffd700", height: "25px"}}>
+                                    </div>
+                                </div>
                             </div>
                             <div>
                                 <h3>Sales Update</h3>
@@ -47,6 +52,23 @@ const LicensePricing = () => {
                             </div>
                             <div>
                                 <h3>AG Grid Enterprise</h3>
+
+                                    <div style={{float: "right", marginLeft: "10px", marginBottom: "10px", padding: 5, border: "1px solid rgba(0, 0, 0, 0.5)", borderRadius: 4}}>
+                                    <div style={{textAlign: "center"}}>
+                                        <h3>
+                                        Enterprise License<br/>Explained Video
+                                        </h3>
+                                    </div>
+                                    <a href="https://www.youtube.com/watch?v=20SLdu4wLtI" target="_">
+                                        <div className="LearningVideos-module--learning-videos__video__anchor-body__body__video-content--Bz5su d-flex">
+                                            <img src="https://localhost:8000/videos/AgGridVideo.png"/>
+                                            <h5 className="LearningVideos-module--learning-videos__video__anchor-body__body__video-content__running-time--TN9pm">
+                                                8:30
+                                            </h5>
+                                        </div>
+                                    </a>
+                                </div>
+                                
                                 <p>
                                     AG Grid Enterprise is a commercial product distributed under our <a
                                     href="/eula/AG-Grid-Enterprise-License-Latest.html">EULA</a> and supported by our
@@ -70,6 +92,7 @@ const LicensePricing = () => {
                                     Expanded definitions and FAQ responses are available further down the page. You can e-mail
                                     us at any time on <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
                                 </p>
+
                             </div>
                         </div>
                     </section>
