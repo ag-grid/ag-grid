@@ -21,7 +21,6 @@
   "types": "dist/types/index.d.ts",
   "exports": {
     ".": {
-      "solid": "./dist/source/index.jsx",
       "import": "./dist/esm/index.js",
       "browser": "./dist/esm/index.js",
       "require": "./dist/cjs/index.js",

@@ -13,7 +13,7 @@ AG Grid Solid is NOT a JavaScript component with a thin Solid wrapper. AG Grid i
 
 Below is a simple example using AG Grid with SolidJS. Take a look at the code and note the use of the ```AgGridSolid``` component.
 
-<iframe style="width:100%; height: 500px" src="https://stackblitz.com/edit/solidjs-template-7c8vtv?embed=1&file=src/App.tsx"></iframe>
+<iframe style="width:100%; height: 500px" src="https://stackblitz.com/edit/solidjs-template-gvftye?embed=1&file=src/App.tsx"></iframe>
 
 This page does not introduce the basics of AG Grid, it is assumed you are already familiar with it. This is because SolidJS is an emerging technology and we assume if you are developing with SolidJS then you are a confident and knowledged developer. If you are not familiar with AG Grid, then it is recommended you start with [Getting Started with AG Grid and React](/getting-started/) and then refer back to here.
 
@@ -163,21 +163,15 @@ const MySolidApp = ()=> {
 
 The example below demonstrates using [Cell Renderer](/component-cell-renderer/) to customise the cells in the Age Column. Note that the Cell Renderer is a standard Solid Component and is set onto the grid using the Column Definitions.
 
-<div style='border: 4px solid green; height: 500px; padding: 50px;'>
-<h2>Example: Simple</h2>
-</div>
-
+[//]: # (<iframe style="width:100%; height: 500px" src="https://stackblitz.com/edit/solidjs-template-z3ncqk?embed=1&file=src/App.tsx"></iframe>)
 
 See [Cell Renderers](/component-cell-renderer/) for full details on creating React Cell Renderers and then apply this knowledge to Solid.
-
 
 ## Using Cell Editors
 
 Below is an example showing different types of Solid [Cell Editors](/component-cell-editor/). Edit any cell by double clicking the mouse. The Gold and Silver Columns use custom Solid Components. Gold edits inside the cell and and Silver edits in a popup (`cellEditorPopup=true`).
 
-<div style='border: 4px solid green; height: 500px; padding: 50px;'>
-<h2>Example: Editors</h2>
-</div>
+[//]: # (<iframe style="width:100%; height: 500px" src="https://stackblitz.com/edit/solidjs-template-bhhxsm?embed=1&file=src/App.tsx"></iframe>)
 
 See [Cell Editors](/component-cell-editor/) for full details on creating React Cell Editors and then apply this knowledge to Solid.
 
@@ -186,9 +180,7 @@ See [Cell Editors](/component-cell-editor/) for full details on creating React C
 
 This example demonstrates custom [Column Headers](/component-header/) and [Column Group Headers](/component-header/#header-group-components) using Solid components.
 
-<div style='border: 4px solid green; height: 500px; padding: 50px;'>
-<h2>Example: Headers</h2>
-</div>
+[//]: # (<iframe style="width:100%; height: 500px" src="https://stackblitz.com/edit/solidjs-template-wnpr7s?embed=1&file=src/App.tsx"></iframe>)
 
 See [Column Headers](/component-header/) and [Column Group Headers](/component-header/#header-group-components) for full details on creating these components with React and then apply this knowledge to Solid.
 
@@ -197,17 +189,13 @@ See [Column Headers](/component-header/) and [Column Group Headers](/component-h
 
 Below is an example of AG Grid Solid showing more advanced features such as [Row Grouping](/grouping/), [Range Selection](/range-selection/) and [Integrated Charting](/integrated-charts/).
 
-<div style='border: 4px solid green; height: 500px; padding: 50px;'>
-<h2>Example: Advanced Grid</h2>
-</div>
+[//]: # (<iframe style="width:100%; height: 500px" src="https://stackblitz.com/edit/solidjs-template-qsmpa3?embed=1&file=src/App.tsx"></iframe>)
 
 ## Master Detail
 
 When the master grid is AG Grid Solid, then the detail grids also use AG Grid Solid. In the example both Master and Detail grids are using Solid Cell Renderers.
 
-<div style='border: 4px solid green; height: 500px; padding: 50px;'>
-<h2>Example: Master Detail</h2>
-</div>
+[//]: # (<iframe style="width:100%; height: 500px" src="https://stackblitz.com/edit/solidjs-template-vt3cco?embed=1&file=src/App.tsx"></iframe>)
 
 ## Modules
 
@@ -229,22 +217,4 @@ import AgGridSolid from '@ag-grid-community/solid';
 
 The example below shows an AG Grid Solid example using modules.
 
-<div style='border: 4px solid green; height: 500px; padding: 50px;'>
-<h2>Example: Simple - Modules</h2>
-</div>
-
-
-
-[//]: # (<g rid-example title='React UI' name='solid' type='solid' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>)
-
-[//]: # (<g rid-example title='React UI Editors' name='editors' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>)
-
-[//]: # (<g rid-example title='React UI Headers' name='headers' type='react' options=' { "showImportsDropdown": false }'></grid-example>)
-
-[//]: # (<g rid-example title='React UI Render Cycles' name='no-wasted-render' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>)
-
-[//]: # (<g rid-example title='React UI Advanced Features' name='advanced-features' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>)
-
-[//]: # (<g rid-example title='React UI Master Detail' name='master-detail' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>)
-
-[//]: # (<g rid-example title='React UI All Customisations' name='all-customisations' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>)
+[//]: # (<iframe style="width:100%; height: 500px" src="https://stackblitz.com/edit/solidjs-template-skz4ot?embed=1&file=src/App.tsx"></iframe>)
