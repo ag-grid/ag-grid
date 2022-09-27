@@ -3178,7 +3178,7 @@
     }
   },
   "AgPieSeriesSectorLabelOptions": {
-    "offset": {
+    "positionOffset": {
       "description": "/** Distance in pixels, used to make the label text closer to or further from the center. */",
       "type": { "returnType": "PixelSize", "optional": true }
     },

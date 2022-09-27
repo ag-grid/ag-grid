@@ -162,7 +162,7 @@ export const DOUGHNUT_SERIES_RATIO: AgPolarChartOptions = {
             type: 'pie',
             sectorLabelKey: 'share',
             angleKey: 'share',
-            outerRadiusRatio: 0.90,
+            outerRadiusRatio: 0.9,
             innerRadiusRatio: 0.2,
             sectorLabel: {
                 positionRatio: 0.7,
