@@ -187,6 +187,7 @@ export class Group extends Node {
         this.basicRender(renderCtx);
     }
 
+    private lastBBox?: BBox = undefined;
     private basicRender(renderCtx: RenderContext) {
         const { opts: { name = undefined } = {} } = this;
         const { _debug: { consoleLog = false } = {} } = this;
@@ -204,6 +205,13 @@ export class Group extends Node {
             // By default there is no need to force redraw a group which has it's own canvas layer
             // as the layer is independent of any other layer.
             forceRender = false;
+
+            // If bounding-box of a layer changes, force re-render.
+            const currentBBox = this.computeBBox();
+            if (this.lastBBox === undefined || !this.lastBBox.equals(currentBBox)) {
+                forceRender = true;
+                this.lastBBox = currentBBox;
+            }
         }
 
         if (!isDirty && !isChildDirty && !forceRender) {
