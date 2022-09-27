@@ -172,7 +172,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
 
                         // see if value is wrapped, can happen when doing count() or avg() functions
-                        if (value.value) {
+                        if ('value' in value) {
                             value = value.value;
                         }
 
