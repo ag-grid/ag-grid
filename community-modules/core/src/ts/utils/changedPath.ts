@@ -93,8 +93,9 @@ export class ChangedPath {
     public forEachChangedNodeDepthFirst(
         callback: (rowNode: RowNode) => void,
         traverseLeafNodes = false,
+        includeUnchangedNodes = false,
     ): void {
-        if (this.active) {
+        if (this.active && !includeUnchangedNodes) {
             // if we are active, then use the change path to callback
             // only for updated groups
             this.depthFirstSearchChangedPath(this.pathRoot, callback);
