@@ -428,8 +428,6 @@ export class MenuItemMapper extends BeanStub {
 
     private createAggregationSubMenu(column: Column): MenuItemDef[] {
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        const columnIsAlreadyAggValue = column.isValueActive();
-        const funcNames = this.aggFuncService.getFuncNames(column);
 
         let columnToUse: Column | undefined;
         if (column.isPrimary()) {
@@ -440,17 +438,22 @@ export class MenuItemMapper extends BeanStub {
         }
 
         const result: MenuItemDef[] = [];
+        if (columnToUse) {
+            const columnIsAlreadyAggValue = columnToUse.isValueActive();
+            const funcNames = this.aggFuncService.getFuncNames(columnToUse);
 
-        funcNames.forEach(funcName => {
-            result.push({
-                name: localeTextFunc(funcName, funcName),
-                action: () => {
-                    this.columnModel.setColumnAggFunc(columnToUse, funcName, "contextMenu");
-                    this.columnModel.addValueColumn(columnToUse, "contextMenu");
-                },
-                checked: columnIsAlreadyAggValue && columnToUse!.getAggFunc() === funcName
+            funcNames.forEach(funcName => {
+                result.push({
+                    name: localeTextFunc(funcName, funcName),
+                    action: () => {
+                        this.columnModel.setColumnAggFunc(columnToUse, funcName, "contextMenu");
+                        this.columnModel.addValueColumn(columnToUse, "contextMenu");
+                    },
+                    checked: columnIsAlreadyAggValue && columnToUse!.getAggFunc() === funcName
+                });
             });
-        });
+
+        }
 
         return result;
     }
