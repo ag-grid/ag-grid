@@ -143,9 +143,9 @@ export function normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string {
     return code;
 }
 
-export function isDeleteKey(key: string) {
+export function isDeleteKey(key: string, alwaysReturnFalseOnBackspace = false) {
     if (key === KeyCode.DELETE) { return true; }
-    if (key === KeyCode.BACKSPACE) {
+    if (!alwaysReturnFalseOnBackspace && key === KeyCode.BACKSPACE) {
         return isMacOsUserAgent();
     }
     return false;

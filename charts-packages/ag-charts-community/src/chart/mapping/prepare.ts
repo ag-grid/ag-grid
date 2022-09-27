@@ -172,10 +172,10 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
 
     if (isAgCartesianChartOptions(mergedOptions)) {
         mergedOptions.axes = mergedOptions.axes?.map((a) => {
-            const type = a.type || 'number';
+            const type = a.type ?? 'number';
             const axis = { ...a, type };
             const axesTheme = jsonMerge(axesThemes[type], axesThemes[type][a.position || 'unknown'] || {});
-            return prepareAxis(axis, axesTheme);
+            return prepareAxis(axis as any, axesTheme);
         });
     }
 

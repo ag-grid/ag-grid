@@ -41,6 +41,8 @@ const gridOptions = {
 
 Custom sorting is provided at a column level by configuring a comparator on the column definition.
 
+<api-documentation source='column-properties/properties.json' section='sort' names='["comparator"]' ></api-documentation>
+
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
     // enable sorting on all columns by default
@@ -64,13 +66,6 @@ const gridOptions = {
     ]
 }
 </snippet>
-
-The parameters are as follows:
-
-- `valueA, valueB`: The values in the cells to be compared. Typically sorts are done on these values only.
-- `nodeA, nodeB`: The [Row Nodes](/row-object/) for the rows getting sorted. These can be used if more information, such as data from other columns, are needed for the comparison.
-- `isDescending`: `true` for Descending, `false` for Ascending.
-
 
 ### Custom Sorting Example
 

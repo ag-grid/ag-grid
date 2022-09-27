@@ -319,7 +319,7 @@ describe('ChartTheme', () => {
         test('Cartesian chart instance properties', async () => {
             let cartesianChart = AgChartV2.create(cartesianChartOptions);
             await waitForChartStability(cartesianChart);
-    
+
             expect(cartesianChart!.title && cartesianChart!.title.enabled).toBe(true);
             expect(cartesianChart!.title && cartesianChart!.title.fontSize).toBe(24);
             expect(cartesianChart!.title && cartesianChart!.title.fontWeight).toBe('normal');
@@ -339,7 +339,7 @@ describe('ChartTheme', () => {
         test('Polar chart intstance properties', async () => {
             let polarChart = AgChartV2.create(polarChartOptions);
             await waitForChartStability(polarChart);
-    
+
             expect(polarChart!.title && polarChart!.title.enabled).toBe(true);
             expect(polarChart!.title && polarChart!.title.fontSize).toBe(24);
             expect(polarChart!.title && polarChart!.title.fontWeight).toBe('normal');

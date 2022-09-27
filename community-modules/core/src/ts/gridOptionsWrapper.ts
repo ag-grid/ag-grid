@@ -449,10 +449,6 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressClearOnFillReduction);
     }
 
-    public isClearRangeCellValuesOnDelete() {
-        return isTrue(this.gridOptions.clearRangeCellValuesOnDelete);
-    }
-
     public isShowToolPanel() {
         return isTrue(this.gridOptions.sideBar && Array.isArray(this.getSideBar().toolPanels));
     }
@@ -547,12 +543,8 @@ export class GridOptionsWrapper {
             this.matchesGroupDisplayType('groupRows', this.gridOptions.groupDisplayType) : false;
     }
 
-    public isSuppressColumnPillSortAction() {
-        return isTrue(this.gridOptions.suppressColumnPillSortAction);
-    }
-
-    public isSuppressColumnPillSortIndicator() {
-        return isTrue(this.gridOptions.suppressColumnPillSortIndicator);
+    public isRowGroupPanelSuppressSort() {
+        return isTrue(this.gridOptions.rowGroupPanelSuppressSort);
     }
 
     public isGroupRowsSticky(): boolean {
@@ -768,6 +760,10 @@ export class GridOptionsWrapper {
 
     public getUndoRedoCellEditingLimit(): number | undefined {
         return toNumber(this.gridOptions.undoRedoCellEditingLimit);
+    }
+
+    public isEnableCellEditingOnBackspace(): boolean {
+        return isTrue(this.gridOptions.enableCellEditingOnBackspace);
     }
 
     public getRowStyle() {

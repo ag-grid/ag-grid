@@ -1,4 +1,4 @@
-import { ChartCreated, CreateRangeChartParams, FirstDataRenderedEvent, ChartToolPanelTabs, Grid, GridOptions } from '@ag-grid-community/core';
+import { ChartCreated, CreateRangeChartParams, FirstDataRenderedEvent, ChartToolPanelName, Grid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -53,14 +53,14 @@ function onChartCreated(event: ChartCreated) {
   chartId = event.chartId
 }
 
-function openChartToolPanel(tabName?: ChartToolPanelTabs) {
+function openChartToolPanel(panel?: ChartToolPanelName) {
   if (!chartId) {
     return
   }
 
   gridOptions.api!.openChartToolPanel({
     chartId,
-    tabName
+    panel
   })
 }
 

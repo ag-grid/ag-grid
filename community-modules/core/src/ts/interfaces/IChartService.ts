@@ -32,12 +32,12 @@ export interface ChartDownloadParams {
     fileFormat?: string;
 
     /**
-     * Dimensions of downloaded chart. The current chart dimensions will be used if not specified.
+     * Dimensions of downloaded chart image in pixels. The current chart dimensions will be used if not specified.
      */
     dimensions?: {
-        width: number,
-        height: number
-    }
+        width: number;
+        height: number;
+    };
 }
 
 export interface CloseChartToolPanelParams {
@@ -47,14 +47,13 @@ export interface CloseChartToolPanelParams {
 
 export type ChartModelType = 'range' | 'pivot';
 
-export type ChartToolPanelTabs = 'settings' | 'data' | 'format'
+export type ChartToolPanelName = 'settings' | 'data' | 'format';
 
 export interface OpenChartToolPanelParams {
     /** The id of the created chart. */
     chartId: string;
-    
-    /** Tab name of the Chart Tool Panel. The default settings tab will be used if not specified.*/
-    tabName?: ChartToolPanelTabs;
+    /** Name of the Chart Tool Panel. The default 'Settings' Tool Panel will be used if not specified.*/
+    panel?: ChartToolPanelName;
 }
 
 export interface ChartModel {

@@ -315,7 +315,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const missingYKeysString = JSON.stringify([...missingYKeys]);
             doOnce(
                 () => console.log(`AG Charts - yKeys ${missingYKeysString} were not found in the data.`),
-                `${missingYKeysString} not found in data.`,
+                `${missingYKeysString} not found in data.`
             );
         }
 

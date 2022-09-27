@@ -90,9 +90,9 @@ export const NUMBER_AXIS_NO_SERIES: AgChartOptions = {
 export const NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN: AgChartOptions = {
     ...NUMBER_AXIS_NO_SERIES,
     axes: NUMBER_AXIS_NO_SERIES.axes?.map((a) => {
-        if (a.position === 'left') {
+        if (a.position === 'left' && a.type === 'number') {
             return { ...a, min: 66, max: 84 };
-        } else if (a.position === 'bottom') {
+        } else if (a.position === 'bottom' && a.type === 'number') {
             return { ...a, min: 150, max: 290 };
         }
         return a;
@@ -108,10 +108,10 @@ export const TIME_AXIS_NO_SERIES: AgChartOptions = {
 export const TIME_AXIS_NO_SERIES_FIXED_DOMAIN: AgChartOptions = {
     ...TIME_AXIS_NO_SERIES,
     axes: TIME_AXIS_NO_SERIES.axes?.map((a) => {
-        if (a.position === 'left') {
+        if (a.position === 'left' && a.type === 'number') {
             return { ...a, min: 2.4, max: 4.7 };
-        } else if (a.position === 'bottom') {
-            return { ...a, domain: [new Date('2020-01-01T00:25:35.920Z'), new Date('2020-01-31T14:15:33.950Z')] };
+        } else if (a.position === 'bottom' && a.type === 'time') {
+            return { ...a, min: new Date('2020-01-01T00:25:35.920Z'), max: new Date('2020-01-31T14:15:33.950Z') };
         }
         return a;
     }),
@@ -126,9 +126,9 @@ export const COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES: AgChartOptions = {
 export const COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN: AgChartOptions = {
     ...COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES,
     axes: COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES.axes?.map((a) => {
-        if (a.position === 'left') {
+        if (a.position === 'left' && a.type === 'number') {
             return { ...a, min: 0, max: 4000 };
-        } else if (a.position === 'right') {
+        } else if (a.position === 'right' && a.type === 'number') {
             return { ...a, min: 100000, max: 140000 };
         }
         return a;

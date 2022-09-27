@@ -37,8 +37,7 @@ This is demonstrated in the following example, note the following:
 
 - Only the `country`, `year` and `sport` columns can be dragged to the Row Group Panel as they have `enableRowGroup` enabled.
 
-- The columns can be clicked in the Row Group Panel to progress their sort. (This behaviour can be prevented using the properties `suppressColumnPillSortAction` 
-  and `suppressColumnPillSortIndicator`)
+- The columns can be clicked in the Row Group Panel to progress their sort.
 
 <grid-example title='Enabling Row Group Panel' name='row-group-panel' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
@@ -62,6 +61,17 @@ The example below demonstrates these three properties. Note the following:
 - While dragging the column header over the drop zone, before it is dropped, the column appears translucent to indicate that the grouping has not yet been applied.
 
 <grid-example title='Keep Columns Visible' name='keep-columns-visible' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+## Suppress Sorting
+
+By default, the column pills display sort indicators, and when clicked progress the columns sort status. This behaviour can be prevented by enabling the `rowGroupPanelSuppressSort` property.
+
+The example below demonstrates this property. Note the following:
+
+- The column pills within the row group panels do not have sort indicators.
+- Clicking on a column pill does not change the columns sort.
+
+<grid-example title='Prevent Panel Sorting' name='prevent-panel-sorting' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Next Up
 

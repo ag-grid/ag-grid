@@ -885,7 +885,7 @@ export abstract class Chart extends Observable {
         const visibleSeries: Series[] = [];
         const data: (readonly PointLabelDatum[])[] = [];
         for (const series of this.series) {
-            if (!series.visible || !series.label.enabled) {
+            if (!series.visible) {
                 continue;
             }
 
@@ -1199,7 +1199,10 @@ export abstract class Chart extends Observable {
         }
 
         lastPick.event = meta.event;
-        this.tooltip.show(this.mergeTooltipDatum(meta, pick.datum));
+
+        if (pick.series.tooltip.enabled) {
+            this.tooltip.show(this.mergeTooltipDatum(meta, pick.datum));
+        }
     }
 
     protected onMouseDown(_event: MouseEvent) {

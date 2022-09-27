@@ -265,7 +265,7 @@ export {
     ChartDownloadParams,
     OpenChartToolPanelParams,
     CloseChartToolPanelParams,
-    ChartToolPanelTabs,
+    ChartToolPanelName,
     ChartModel,
     GetChartImageDataUrlParams,
     ChartModelType,

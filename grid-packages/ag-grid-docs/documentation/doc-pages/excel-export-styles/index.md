@@ -86,23 +86,24 @@ Note the following:
 
 Similarly to styling cells, the grid will use the result of [headerClass](/column-properties/#reference-header-headerClass) from the column definition to style the grid headers.
 
-Note the following:
+Default Column Header Export Styles:
 
 - An Excel Style with id `header` gets automatically applied to all (grouped and not grouped) AG Grid headers when exported to Excel.
-
 - An Excel Style with id `headerGroup` gets automatically applied to the AG Grid grouped headers when exported to Excel.
 
-- All headers will be vertically aligned to the middle, have a grey background colour of `#f8f8f8` and an orange bottom border bottom of colour `#ffab00` due to the Excel Style id `header`.
+You can define custom styles to apply to specific column headers when exported to Excel. In the example below, export to Excel and note:
+
+- All column headers will be vertically aligned to the middle, have a grey background colour of `#f8f8f8` and an orange bottom border bottom of colour `#ffab00` due to the Excel Style id `header`.
 
 - All grouped headers will have a bold font due to Excel Style id `headerGroup`.
 
-- The Gold header will have a gold-like background color.
+- The Gold column header will have a gold-like background color.
 
-- The Silver header will have a silver-like background color.
+- The Silver column header will have a silver-like background color.
 
-- The Bronze header will have a bronze-like background color.
+- The Bronze column header will have a bronze-like background color.
 
-- All header rows have a height of **30px**.
+- All column header rows have a height of **30px**.
 
 <grid-example title='Excel Export - Header Styles' name='excel-export-with-header-styles' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel"] }'></grid-example>
 

@@ -15,13 +15,13 @@ export class DropShadow extends ChangeDetectable {
     color = 'rgba(0, 0, 0, 0.5)';
 
     @ValidateAndChangeDetection({
-        validatePredicate: NUMBER(0),
+        validatePredicate: NUMBER(),
         sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
     })
     xOffset = 0;
 
     @ValidateAndChangeDetection({
-        validatePredicate: NUMBER(0),
+        validatePredicate: NUMBER(),
         sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
     })
     yOffset = 0;
