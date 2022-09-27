@@ -173,6 +173,9 @@ const createRecords = async (browser, url, framework, breadcrumb, rank, loadFrom
     return records;
 };
 
+// we read these pages from ag-grid.com and parse them as these pages no longer have
+// the page content statically - they're loaded via JS
+// we'll run this after we deploy to ag-grid.com so the indices will be accurate
 const readFromAgGrid = url => url === '/grid-options/' ||
     url === '/grid-api/' ||
     url === '/grid-events/' ||
