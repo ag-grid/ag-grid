@@ -18684,7 +18684,11 @@
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "removeAllCellRanges": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
+      "type": {
+        "arguments": { "silent?": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
     },
     "getCellRangeCount": {
       "type": {

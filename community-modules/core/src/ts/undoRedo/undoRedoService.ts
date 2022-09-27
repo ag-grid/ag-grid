@@ -4,7 +4,7 @@ import { CellEditingStartedEvent, CellValueChangedEvent, FillEndEvent, RowEditin
 import { FocusService } from "../focusService";
 import { IRowModel } from "../interfaces/iRowModel";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { CellValueChange, FillUndoRedoAction, LastFocusedCell, UndoRedoAction, UndoRedoStack } from "./undoRedoStack";
+import { CellValueChange, RangeUndoRedoAction, LastFocusedCell, UndoRedoAction, UndoRedoStack } from "./undoRedoStack";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
 import { RowNode } from "../entities/rowNode";
 import { Constants } from "../constants/constants";
@@ -39,8 +39,7 @@ export class UndoRedoService extends BeanStub {
     private activeRowEdit: RowPosition | null = null;
 
     private isPasting = false;
-    private isFilling = false;
-    private isChangeFromKeyShortcuts = false;
+    private isRangeInAction = false;
 
     @PostConstruct
     public init(): void {
@@ -86,7 +85,7 @@ export class UndoRedoService extends BeanStub {
         const isCellEditing = this.activeCellEdit !== null && this.cellPositionUtils.equals(this.activeCellEdit, eventCell);
         const isRowEditing = this.activeRowEdit !== null && this.rowPositionUtils.sameRow(this.activeRowEdit, eventCell);
 
-        const shouldCaptureAction = isCellEditing || isRowEditing || this.isPasting || this.isFilling || this.isChangeFromKeyShortcuts;
+        const shouldCaptureAction = isCellEditing || isRowEditing || this.isPasting || this.isRangeInAction;
 
         if (!shouldCaptureAction) { return; }
 
@@ -125,10 +124,10 @@ export class UndoRedoService extends BeanStub {
 
         this.processAction(undoAction, (cellValueChange: CellValueChange) => cellValueChange.oldValue);
 
-        if (undoAction instanceof FillUndoRedoAction) {
-            this.processRangeAndCellFocus(undoAction.cellValueChanges, undoAction.initialRange);
+        if (undoAction instanceof RangeUndoRedoAction) {
+            this.processRange(undoAction.ranges || [undoAction.initialRange]);
         } else {
-            this.processRangeAndCellFocus(undoAction.cellValueChanges);
+            this.processCell(undoAction.cellValueChanges);
         }
 
         this.redoStack.push(undoAction);
@@ -143,10 +142,10 @@ export class UndoRedoService extends BeanStub {
 
         this.processAction(redoAction, (cellValueChange: CellValueChange) => cellValueChange.newValue);
 
-        if (redoAction instanceof FillUndoRedoAction) {
-            this.processRangeAndCellFocus(redoAction.cellValueChanges, redoAction.finalRange);
+        if (redoAction instanceof RangeUndoRedoAction) {
+            this.processRange(redoAction.ranges || [redoAction.finalRange]);
         } else {
-            this.processRangeAndCellFocus(redoAction.cellValueChanges);
+            this.processCell(redoAction.cellValueChanges);
         }
 
         this.undoStack.push(redoAction);
@@ -170,20 +169,25 @@ export class UndoRedoService extends BeanStub {
         });
     }
 
-    private processRangeAndCellFocus(cellValueChanges: CellValueChange[], range?: CellRange) {
+    private processRange(ranges: (CellRange | undefined)[]) {
         let lastFocusedCell: LastFocusedCell;
 
-        if (range) {
+        this.rangeService.removeAllCellRanges(true);
+        ranges.forEach((range, idx) => {
+            if (!range) { return; }
+
             const startRow = range.startRow;
             const endRow = range.endRow;
 
-            lastFocusedCell = {
-                rowPinned: startRow!.rowPinned,
-                rowIndex: startRow!.rowIndex,
-                columnId: range.startColumn.getColId()
-            };
+            if (idx === ranges.length -1) {
+                lastFocusedCell = {
+                    rowPinned: startRow!.rowPinned,
+                    rowIndex: startRow!.rowIndex,
+                    columnId: range.startColumn.getColId()
+                };
 
-            this.setLastFocusedCell(lastFocusedCell);
+                this.setLastFocusedCell(lastFocusedCell);
+            }
 
             const cellRangeParams: CellRangeParams = {
                 rowStartIndex: startRow!.rowIndex,
@@ -195,27 +199,26 @@ export class UndoRedoService extends BeanStub {
             };
 
             this.rangeService.addCellRange(cellRangeParams);
+        });
+    }
 
-            return;
-        }
-
+    private processCell(cellValueChanges: CellValueChange[]) {
         const cellValueChange = cellValueChanges[0];
         const { rowIndex, rowPinned } = cellValueChange;
         const rowPosition: RowPosition = { rowIndex, rowPinned };
         const row = this.getRowNode(rowPosition);
 
-        lastFocusedCell = {
+        const lastFocusedCell: LastFocusedCell = {
             rowPinned: cellValueChange.rowPinned,
             rowIndex: row!.rowIndex!,
             columnId: cellValueChange.columnId
         };
 
-        this.setLastFocusedCell(lastFocusedCell);
+        this.setLastFocusedCell(lastFocusedCell, true);
     }
 
-    private setLastFocusedCell(lastFocusedCell: LastFocusedCell) {
+    private setLastFocusedCell(lastFocusedCell: LastFocusedCell, setRangeToCell?: boolean) {
         const { rowIndex, columnId, rowPinned } = lastFocusedCell;
-        const isRangeEnabled = this.rangeService && this.gridOptionsWrapper.isEnableRangeSelection();
         const scrollFeature = this.gridBodyCtrl.getScrollFeature();
 
         const column: Column | null = this.columnModel.getGridColumn(columnId);
@@ -228,7 +231,7 @@ export class UndoRedoService extends BeanStub {
         const cellPosition: CellPosition = { rowIndex, column, rowPinned };
         this.focusService.setFocusedCell({ ...cellPosition, forceBrowserFocus: true });
 
-        if (isRangeEnabled) {
+        if (setRangeToCell) {
             this.rangeService.setRangeToCell(cellPosition);
         }
     }
@@ -253,7 +256,7 @@ export class UndoRedoService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_EDITING_STOPPED, () => {
             this.activeCellEdit = null;
 
-            const shouldPushAction = !this.activeRowEdit && !this.isPasting && !this.isFilling && !this.isChangeFromKeyShortcuts;
+            const shouldPushAction = !this.activeRowEdit && !this.isPasting && !this.isRangeInAction;
 
             if (shouldPushAction) {
                 const action = new UndoRedoAction(this.cellValueChanges);
@@ -276,25 +279,30 @@ export class UndoRedoService extends BeanStub {
 
     private addFillListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_FILL_START, () => {
-            this.isFilling = true;
+            this.isRangeInAction = true;
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_FILL_END, (event: FillEndEvent) => {
-            const action = new FillUndoRedoAction(this.cellValueChanges, event.initialRange, event.finalRange);
+            const action = new RangeUndoRedoAction(this.cellValueChanges, event.initialRange, event.finalRange);
             this.pushActionsToUndoStack(action);
-            this.isFilling = false;
+            this.isRangeInAction = false;
         });
     }
 
     private addCellKeyListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START, () => {
-            this.isChangeFromKeyShortcuts = true;
+            this.isRangeInAction = true;
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END, () => {
-            const action = new UndoRedoAction(this.cellValueChanges);
+            let action: UndoRedoAction;
+            if (this.rangeService && this.gridOptionsWrapper.isEnableRangeSelection()) {
+                action = new RangeUndoRedoAction(this.cellValueChanges, undefined, undefined, [...this.rangeService.getCellRanges()]);
+            } else {
+                action = new UndoRedoAction(this.cellValueChanges);
+            }
             this.pushActionsToUndoStack(action);
-            this.isChangeFromKeyShortcuts = false;
+            this.isRangeInAction = false;
         });
     }
 
