@@ -1,12 +1,9 @@
-import { ARRAY, BOOLEAN, predicateWithMessage, Validate } from '../../util/validation';
+import { BOOLEAN, Validate, OPT_DATE } from '../../util/validation';
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
 import { ChartAxis } from '../chartAxis';
 import { clamper } from './numberAxis';
-
-const DATE = predicateWithMessage((v: any) => v instanceof Date && !isNaN(+v), 'expecting a Date object');
-const DATE_ARRAY = predicateWithMessage((v: any) => ARRAY()(v, DATE), 'expecting an Array of Date objects');
 
 export class TimeAxis extends ChartAxis<TimeScale> {
     static className = 'TimeAxis';
@@ -30,36 +27,24 @@ export class TimeAxis extends ChartAxis<TimeScale> {
     }
 
     @Validate(BOOLEAN)
-    private _nice: boolean = true;
-    set nice(value: boolean) {
-        if (this._nice !== value) {
-            this._nice = value;
-            if (value && this.scale.nice) {
-                this.scale.nice(typeof this.calculatedTickCount === 'number' ? this.calculatedTickCount : undefined);
-            }
-        }
-    }
-    get nice(): boolean {
-        return this._nice;
-    }
+    nice: boolean = true;
 
-    @Validate(DATE_ARRAY)
-    private _domain: Date[] = [];
     set domain(domain: Date[]) {
-        this._domain = domain;
         this.setDomain(domain);
     }
+
     get domain(): Date[] {
         return this.scale.domain;
     }
 
+    @Validate(OPT_DATE)
+    min?: Date = undefined;
+
+    @Validate(OPT_DATE)
+    max?: Date = undefined;
+
     private setDomain(domain: Date[], _primaryTickCount?: number) {
-        const {
-            scale,
-            nice,
-            _domain: [min, max],
-            calculatedTickCount,
-        } = this;
+        const { scale, nice, min, max, calculatedTickCount } = this;
 
         if (domain.length > 2) {
             domain = (extent(domain, isContinuous, Number) || [0, 1000]).map((x) => new Date(x));
