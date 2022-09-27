@@ -23,14 +23,15 @@ export class UndoRedoAction {
     }
 }
 
-export class FillUndoRedoAction extends UndoRedoAction {
-    initialRange: CellRange;
-    finalRange: CellRange;
+export class RangeUndoRedoAction extends UndoRedoAction {
 
-    constructor(cellValueChanges: CellValueChange[], initialRange: CellRange, finalRange: CellRange) {
+    constructor(
+        cellValueChanges: CellValueChange[],
+        public readonly initialRange?: CellRange,
+        public readonly finalRange?: CellRange,
+        public readonly ranges?: CellRange[]
+    ) {
         super(cellValueChanges);
-        this.initialRange = initialRange;
-        this.finalRange = finalRange;
     }
 }
 

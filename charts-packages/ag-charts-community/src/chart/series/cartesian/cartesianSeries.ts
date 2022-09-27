@@ -359,7 +359,7 @@ export abstract class CartesianSeries<
         this.highlightSelection = await this.updateHighlightSelectionItem({ item, highlightSelection });
 
         let labelItem: C['labelData'][number] | undefined;
-        if ((this as any).label?.enabled && item != null) {
+        if (this.isLabelEnabled() && item != null) {
             const { itemId = undefined } = item;
 
             for (const { labelData } of contextNodeData) {
@@ -616,6 +616,8 @@ export abstract class CartesianSeries<
         labelSelection: LabelDataSelection<Text, C>;
         seriesIdx: number;
     }): Promise<void>;
+
+    protected abstract isLabelEnabled(): boolean;
 }
 
 export interface CartesianSeriesMarkerFormat {

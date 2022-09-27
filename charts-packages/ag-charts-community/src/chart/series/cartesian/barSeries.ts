@@ -1016,4 +1016,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         this.nodeDataRefresh = true;
     }
+
+    protected isLabelEnabled() {
+        return this.label.enabled;
+    }
 }

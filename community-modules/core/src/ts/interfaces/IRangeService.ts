@@ -6,7 +6,7 @@ import { RowPinnedType } from "../entities/rowNode";
 
 export interface IRangeService {
     isEmpty(): boolean;
-    removeAllCellRanges(): void;
+    removeAllCellRanges(silent?: boolean): void;
     getCellRangeCount(cell: CellPosition): number;
     isCellInAnyRange(cell: CellPosition): boolean;
     isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean;

@@ -546,4 +546,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             });
         }
     }
+
+    protected isLabelEnabled() {
+        return this.label.enabled;
+    }
 }

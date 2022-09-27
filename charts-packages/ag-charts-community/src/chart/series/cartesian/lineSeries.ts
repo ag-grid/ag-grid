@@ -566,4 +566,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
             });
         }
     }
+
+    protected isLabelEnabled() {
+        return this.label.enabled;
+    }
 }

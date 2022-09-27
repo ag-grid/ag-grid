@@ -961,4 +961,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             });
         }
     }
+
+    protected isLabelEnabled() {
+        return this.label.enabled;
+    }
 }
