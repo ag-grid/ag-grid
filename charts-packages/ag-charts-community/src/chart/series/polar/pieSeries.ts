@@ -31,6 +31,7 @@ import {
     COLOR_STRING_ARRAY,
     Validate,
     COLOR_STRING,
+    Deprecated,
 } from '../../../util/validation';
 
 export interface PieSeriesNodeClickEvent extends TypedEvent {
@@ -39,7 +40,9 @@ export interface PieSeriesNodeClickEvent extends TypedEvent {
     readonly series: PieSeries;
     readonly datum: any;
     readonly angleKey: string;
+    /** @deprecated Use calloutLabelKey */
     readonly labelKey?: string;
+    readonly calloutLabelKey?: string;
     readonly sectorLabelKey?: string;
     readonly radiusKey?: string;
 }
@@ -53,7 +56,7 @@ interface PieNodeDatum extends SeriesNodeDatum {
     readonly midCos: number;
     readonly midSin: number;
 
-    readonly label?: {
+    readonly calloutLabel?: {
         readonly text: string;
         readonly textAlign: CanvasTextAlign;
         readonly textBaseline: CanvasTextBaseline;
@@ -65,8 +68,12 @@ interface PieNodeDatum extends SeriesNodeDatum {
 }
 
 export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
+    /** @deprecated Use calloutLabelKey */
     readonly labelKey?: string;
+    /** @deprecated Use calloutLabelName */
     readonly labelName?: string;
+    readonly calloutLabelKey?: string;
+    readonly calloutLabelName?: string;
     readonly sectorLabelKey?: string;
     readonly sectorLabelName?: string;
 }
@@ -100,9 +107,15 @@ export interface PieSeriesFormat {
 
 interface PieSeriesLabelFormatterParams {
     readonly datum: any;
+    /** @deprecated Use calloutLabelKey */
     readonly labelKey?: string;
+    /** @deprecated Use calloutLabelValue */
     readonly labelValue?: string;
+    /** @deprecated Use calloutLabelName */
     readonly labelName?: string;
+    readonly calloutLabelKey?: string;
+    readonly calloutLabelValue?: string;
+    readonly calloutLabelName?: string;
     readonly sectorLabelKey?: string;
     readonly sectorLabelValue?: string;
     readonly sectorLabelName?: string;
@@ -115,7 +128,7 @@ interface PieSeriesLabelFormatterParams {
     readonly value?: any;
 }
 
-class PieSeriesLabel extends Label {
+class PieSeriesCalloutLabel extends Label {
     @Validate(NUMBER(0))
     offset = 3; // from the callout line
 
@@ -137,7 +150,7 @@ class PieSeriesSectorLabel extends Label {
     formatter?: (params: PieSeriesLabelFormatterParams) => string = undefined;
 }
 
-class PieSeriesCallout extends Observable {
+class PieSeriesCalloutLine extends Observable {
     @Validate(COLOR_STRING_ARRAY)
     colors: string[] = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
 
@@ -213,7 +226,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private highlightSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(
         this.highlightGroup
     ).selectAll<Group>();
-    private labelSelection: Selection<Group, Group, PieNodeDatum, any>;
+    private calloutSelection: Selection<Group, Group, PieNodeDatum, any>;
     private sectorLabelSelection: Selection<Text, Group, PieNodeDatum, any>;
     private innerLabelsSelection: Selection<Text, Group, DoughnutInnerLabel, any>;
 
@@ -255,9 +268,83 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return this._title;
     }
 
-    readonly label = new PieSeriesLabel();
+    private _showLabelDeprecationWarning() {
+        doOnce(
+            () =>
+                console.warn(
+                    'AG Charts - the use of series.label in the pie chart series is deprecated. Please use series.calloutLabel or series.sectorLabel instead.'
+                ),
+            'deprecated use of series.label property in pie chart series'
+        );
+    }
+    private _calloutLabel = new PieSeriesCalloutLabel();
+    private _createLabelDeprecationProxy() {
+        return new Proxy(this._calloutLabel, {
+            get: (target, prop: keyof PieSeriesCalloutLabel) => {
+                return target[prop];
+            },
+            set: (target: any, prop: keyof PieSeriesCalloutLabel, value: any) => {
+                this._showLabelDeprecationWarning();
+                target[prop] = value;
+                return true;
+            },
+        });
+    }
+    private _labelDeprecationProxy = this._createLabelDeprecationProxy();
+    get label() {
+        return this._labelDeprecationProxy;
+    }
+    set label(value: PieSeriesCalloutLabel) {
+        this._showLabelDeprecationWarning();
+        this._calloutLabel = value;
+        this._labelDeprecationProxy = this._createLabelDeprecationProxy();
+    }
+    get calloutLabel(): PieSeriesCalloutLabel {
+        return this._calloutLabel;
+    }
+    set calloutLabel(value: PieSeriesCalloutLabel) {
+        this._calloutLabel = value;
+    }
+
     readonly sectorLabel = new PieSeriesSectorLabel();
-    readonly callout = new PieSeriesCallout();
+
+    private _showCalloutDeprecationWarning() {
+        doOnce(
+            () =>
+                console.warn(
+                    'AG Charts - the use of series.callout in the pie chart series is deprecated. Please use series.calloutLine instead.'
+                ),
+            'deprecated use of series.callout property in pie chart series'
+        );
+    }
+    private _calloutLine = new PieSeriesCalloutLine();
+    private _createCalloutDeprecationProxy() {
+        return new Proxy(this._calloutLine, {
+            get: (target, prop: keyof PieSeriesCalloutLine) => {
+                return target[prop];
+            },
+            set: (target: any, prop: keyof PieSeriesCalloutLine, value: any) => {
+                this._showCalloutDeprecationWarning();
+                target[prop] = value;
+                return true;
+            },
+        });
+    }
+    private _calloutDeprecationProxy = this._createCalloutDeprecationProxy();
+    get callout() {
+        return this._calloutDeprecationProxy;
+    }
+    set callout(value: PieSeriesCalloutLine) {
+        this._showCalloutDeprecationWarning();
+        this._calloutLine = value;
+        this._calloutDeprecationProxy = this._createCalloutDeprecationProxy();
+    }
+    get calloutLine(): PieSeriesCalloutLine {
+        return this._calloutLine;
+    }
+    set calloutLine(value: PieSeriesCalloutLine) {
+        this._calloutLine = value;
+    }
 
     tooltip: PieSeriesTooltip = new PieSeriesTooltip();
 
@@ -325,11 +412,17 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     @Validate(OPT_NUMBER(0))
     radiusMax?: number = undefined;
 
-    @Validate(OPT_STRING)
+    @Deprecated('Use calloutLabelKey instead')
     labelKey?: string = undefined;
 
-    @Validate(OPT_STRING)
+    @Deprecated('Use calloutLabelName instead')
     labelName?: string = undefined;
+
+    @Validate(OPT_STRING)
+    calloutLabelKey?: string = undefined;
+
+    @Validate(OPT_STRING)
+    calloutLabelName?: string = undefined;
 
     @Validate(OPT_STRING)
     sectorLabelKey?: string = undefined;
@@ -392,7 +485,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.labelGroup!.append(pieLabels);
         this.labelGroup!.append(pieSectorLabels);
         this.labelGroup!.append(innerLabels);
-        this.labelSelection = Selection.select(pieLabels).selectAll<Group>();
+        this.calloutSelection = Selection.select(pieLabels).selectAll<Group>();
         this.sectorLabelSelection = Selection.select(pieSectorLabels).selectAll<Text>();
         this.innerLabelsSelection = Selection.select(innerLabels).selectAll<Text>();
     }
@@ -409,7 +502,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     setColors(fills: string[], strokes: string[]) {
         this.fills = fills;
         this.strokes = strokes;
-        this.callout.colors = strokes;
+        this.calloutLine.colors = strokes;
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -421,7 +514,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     async processData() {
-        const { angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData, label, sectorLabel } = this;
+        const { angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData, calloutLabel, sectorLabel } =
+            this;
         const data = angleKey && this.data ? this.data : [];
 
         const angleData: number[] = data.map(
@@ -436,8 +530,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             return angleData.map((datum) => (sum += datum / angleDataTotal));
         })();
 
-        const labelFormatter = label.formatter;
-        const labelKey = label.enabled ? this.labelKey : undefined;
+        const labelFormatter = calloutLabel.formatter;
+        const labelKey = calloutLabel.enabled ? this.calloutLabelKey : undefined;
         const sectorLabelKey = sectorLabel.enabled ? this.sectorLabelKey : undefined;
         let labelData: string[] = [];
         let sectorLabelData: string[] = [];
@@ -456,7 +550,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 radiusName: this.radiusName,
                 labelKey,
                 labelValue: labelKey ? datum[labelKey] : undefined,
-                labelName: this.labelName,
+                labelName: this.calloutLabelName,
                 sectorLabelKey,
                 sectorLabelValue: sectorLabelKey ? datum[sectorLabelKey] : undefined,
             };
@@ -545,7 +639,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const midCos = Math.cos(midAngle);
             const midSin = Math.sin(midAngle);
 
-            const labelMinAngle = toRadians(label.minAngle);
+            const labelMinAngle = toRadians(calloutLabel.minAngle);
             const labelVisible = labelKey && span > labelMinAngle;
             const midAngle180 = normalizeAngle180(midAngle);
 
@@ -568,7 +662,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 midAngle,
                 midCos,
                 midSin,
-                label: labelVisible
+                calloutLabel: labelVisible
                     ? {
                           text: labelData[datumIndex],
                           textAlign,
@@ -640,7 +734,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private async updateGroupSelection() {
-        const { groupSelection, highlightSelection, labelSelection, sectorLabelSelection, innerLabelsSelection } = this;
+        const { groupSelection, highlightSelection, calloutSelection, sectorLabelSelection, innerLabelsSelection } =
+            this;
 
         const update = (selection: typeof groupSelection) => {
             const updateGroups = selection.setData(this.groupSelectionData);
@@ -655,7 +750,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.groupSelection = update(groupSelection);
         this.highlightSelection = update(highlightSelection);
 
-        const updateLabels = labelSelection.setData(this.groupSelectionData);
+        const updateLabels = calloutSelection.setData(this.groupSelectionData);
         updateLabels.exit.remove();
 
         const enterLabels = updateLabels.enter.append(Group);
@@ -667,7 +762,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             node.tag = PieNodeTag.Label;
             node.pointerEvents = PointerEvents.None;
         });
-        this.labelSelection = updateLabels.merge(enterLabels);
+        this.calloutSelection = updateLabels.merge(enterLabels);
 
         const updateSectorLabels = sectorLabelSelection.setData(this.groupSelectionData);
         updateSectorLabels.exit.remove();
@@ -710,7 +805,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             fillOpacity: seriesFillOpacity,
             strokeOpacity,
             radiusScale,
-            callout,
+            calloutLine,
             shadow,
             chart: { highlightedDatum },
             highlightStyle: {
@@ -800,13 +895,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
         });
 
-        const { colors: calloutColors, length: calloutLength, strokeWidth: calloutStrokeWidth } = callout;
+        const { colors: calloutColors, length: calloutLength, strokeWidth: calloutStrokeWidth } = calloutLine;
 
-        this.labelSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
+        this.calloutSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
             const radius = radiusScale.convert(datum.radius, clamper);
             const outerRadius = Math.max(0, radius);
 
-            if (datum.label && outerRadius !== 0) {
+            if (datum.calloutLabel && outerRadius !== 0) {
                 line.strokeWidth = calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
                 line.x1 = datum.midCos * outerRadius;
@@ -819,10 +914,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
 
         {
-            const { offset, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
+            const { offset, fontStyle, fontWeight, fontSize, fontFamily, color } = this.calloutLabel;
 
-            this.labelSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum, index) => {
-                const label = datum.label;
+            this.calloutSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum, index) => {
+                const label = datum.calloutLabel;
                 const radius = radiusScale.convert(datum.radius, clamper);
                 const outerRadius = Math.max(0, radius);
 
@@ -966,7 +1061,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             series: this,
             datum: datum.datum,
             angleKey: this.angleKey,
-            labelKey: this.labelKey,
+            labelKey: this.calloutLabelKey,
+            calloutLabelKey: this.calloutLabelKey,
             radiusKey: this.radiusKey,
         });
     }
