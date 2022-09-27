@@ -1,4 +1,48 @@
-import { CellClassFunc, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CellStyle, CellStyleFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, DndSourceOnRowDragParams, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, HeaderValueGetterFunc, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, KeyCreatorParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "@ag-grid-community/core";
+// @START_IMPORTS@
+import {
+    CellClassFunc,
+    CellClassRules,
+    CellClickedEvent,
+    CellContextMenuEvent,
+    CellDoubleClickedEvent,
+    CellEditorSelectorFunc,
+    CellRendererSelectorFunc,
+    CellStyle,
+    CellStyleFunc,
+    CheckboxSelectionCallback,
+    ColDef,
+    ColGroupDef,
+    ColSpanParams,
+    ColumnsMenuParams,
+    DndSourceCallback,
+    DndSourceOnRowDragParams,
+    EditableCallback,
+    GetQuickFilterTextParams,
+    HeaderCheckboxSelectionCallback,
+    HeaderClass,
+    HeaderValueGetterFunc,
+    IAggFunc,
+    ICellRendererComp,
+    ICellRendererFunc,
+    IRowDragItem,
+    ITooltipParams,
+    KeyCreatorParams,
+    NewValueParams,
+    RowDragCallback,
+    RowNode,
+    RowSpanParams,
+    SuppressHeaderKeyboardEventParams,
+    SuppressKeyboardEventParams,
+    SuppressNavigableCallback,
+    SuppressPasteCallback,
+    ToolPanelClass,
+    ValueFormatterFunc,
+    ValueGetterFunc,
+    ValueParserFunc,
+    ValueSetterFunc
+} from "@ag-grid-community/core";
+// @END_IMPORTS@
+
 import { Component, ContentChildren, Input, QueryList } from "@angular/core";
 
 @Component({

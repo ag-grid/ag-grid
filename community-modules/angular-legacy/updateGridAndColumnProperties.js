@@ -97,7 +97,8 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
     result = writeSortedLines(eventsToWrite, result);
     result = addTypeCoercionHints(result, compUtils.BOOLEAN_PROPERTIES);
 
-    return result;
+    const typesToImport = extractTypes({ eventTypeLookup, typeLookup }, skippableProperties);
+    return { code: result, types: typesToImport };
 }
 
 function addTypeCoercionHints(result, boolProps) {
@@ -148,6 +149,24 @@ function addDocLine(docLookup, property, result) {
 function parseFile(sourceFile) {
     const src = fs.readFileSync(sourceFile, 'utf8');
     return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
+}
+
+function extractTypes(context, propsToSkip = []) {
+    let allTypes = [...Object.entries(context.typeLookup).filter(([k, v]) => !propsToSkip.includes(k)).map(([k, v]) => v), ...Object.values(context.eventTypeLookup)];
+
+    let propertyTypes = [];
+    const regex = new RegExp(/(?<!\w)(?:[A-Z]\w+)/, 'g')
+    allTypes.forEach(tt => {
+        const matches = tt.matchAll(regex);
+        for (const match of matches) {
+            propertyTypes.push(Array.from(match, m => m))
+        }
+    })
+    let expandedTypes = propertyTypes.flatMap(m => m)
+
+    const nonAgTypes = ['Partial', 'Document', 'HTMLElement', 'Function', 'TData']
+    expandedTypes = [...new Set(expandedTypes)].filter(t => !nonAgTypes.includes(t)).sort();
+    return expandedTypes;
 }
 
 function getGridPropertiesAndEventsJs() {
@@ -222,19 +241,27 @@ function getGridColumnPropertiesJs() {
 
     let result = writeSortedLines(propsToWrite, '');
     result = addTypeCoercionHints(result, ColDefUtil.BOOLEAN_PROPERTIES);
+    const typesToImport = extractTypes(context, skippableProperties);
 
-    return result;
+    return { code: result, types: typesToImport };
 }
 
 const updateGridProperties = (getGridPropertiesAndEvents) => {
     // extract the grid properties & events and add them to our angular grid component
-    const gridPropertiesAndEvents = getGridPropertiesAndEvents();
+    const { code: gridPropertiesAndEvents, types } = getGridPropertiesAndEvents();
     const optionsForGrid = {
         files: './projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts',
         from: /(\/\/ @START@)[^]*(\/\/ @END@)/,
         to: `// @START@${EOL}${gridPropertiesAndEvents}    // @END@`,
     };
 
+    const typesForGrid = {
+        files: './projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts',
+        from: /(\/\/ @START_IMPORTS@)[^]*(\/\/ @END_IMPORTS@)/,
+        to: `// @START_IMPORTS@${EOL}import {${EOL}    ${types.join(',' + EOL + '    ')}${EOL}} from "@ag-grid-community/core";${EOL}// @END_IMPORTS@`,
+    };
+
+    replace(typesForGrid);
     replace(optionsForGrid)
         .then(filesChecked => {
             const changes = filesChecked.filter(change => change.hasChanged);
@@ -244,13 +271,19 @@ const updateGridProperties = (getGridPropertiesAndEvents) => {
 
 const updateColProperties = (getGridColumnProperties) => {
     // extract the grid column properties our angular grid column component
-    const gridColumnProperties = getGridColumnProperties();
+    const { code: gridColumnProperties, types } = getGridColumnProperties();
     const optionsForGridColumn = {
         files: './projects/ag-grid-angular/src/lib/ag-grid-column.component.ts',
         from: /(\/\/ @START@)[^]*(\s.*\/\/ @END@)/,
         to: `// @START@${EOL}${gridColumnProperties}    // @END@`,
     };
+    const typesForGrid = {
+        files: './projects/ag-grid-angular/src/lib/ag-grid-column.component.ts',
+        from: /(\/\/ @START_IMPORTS@)[^]*(\/\/ @END_IMPORTS@)/,
+        to: `// @START_IMPORTS@${EOL}import {${EOL}    ${types.join(',' + EOL + '    ')}${EOL}} from "@ag-grid-community/core";${EOL}// @END_IMPORTS@`,
+    };
 
+    replace(typesForGrid);
     replace(optionsForGridColumn)
         .then(filesChecked => {
             const changes = filesChecked.filter(change => change.hasChanged);
