@@ -26,7 +26,7 @@ By default, the grid exports grid rows after filtering and sorting has been appl
 You can override this and export all rows instead of only the filtered rows by setting the `exportedRows` param to ‘all’. 
 
 [[note]]
-| When exporting all rows, the exported process ignores any filter or sort applied to the grid.
+| When exporting all rows, any column filters or sort applied to the grid are ignored and all rows are exported in the original order.
 
 You can verify this in the example below:
 - Filter the Country column to only show rows for Australia
