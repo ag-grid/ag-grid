@@ -268,83 +268,27 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return this._title;
     }
 
-    private _showLabelDeprecationWarning() {
-        doOnce(
-            () =>
-                console.warn(
-                    'AG Charts - the use of series.label in the pie chart series is deprecated. Please use series.calloutLabel or series.sectorLabel instead.'
-                ),
-            'deprecated use of series.label property in pie chart series'
-        );
-    }
-    private _calloutLabel = new PieSeriesCalloutLabel();
-    private _createLabelDeprecationProxy() {
-        return new Proxy(this._calloutLabel, {
-            get: (target, prop: keyof PieSeriesCalloutLabel) => {
-                return target[prop];
-            },
-            set: (target: any, prop: keyof PieSeriesCalloutLabel, value: any) => {
-                this._showLabelDeprecationWarning();
-                target[prop] = value;
-                return true;
-            },
-        });
-    }
-    private _labelDeprecationProxy = this._createLabelDeprecationProxy();
-    get label() {
-        return this._labelDeprecationProxy;
-    }
-    set label(value: PieSeriesCalloutLabel) {
-        this._showLabelDeprecationWarning();
-        this._calloutLabel = value;
-        this._labelDeprecationProxy = this._createLabelDeprecationProxy();
-    }
-    get calloutLabel(): PieSeriesCalloutLabel {
-        return this._calloutLabel;
-    }
-    set calloutLabel(value: PieSeriesCalloutLabel) {
-        this._calloutLabel = value;
-    }
+    calloutLabel = new PieSeriesCalloutLabel();
+
+    @Deprecated<PieSeries>('Use calloutLabel or sectorLabel instead.', {
+        accessors: {
+            get: (target) => target.calloutLabel,
+            set: (target, v) => (target.calloutLabel = v),
+        },
+    })
+    label = this.calloutLabel;
 
     readonly sectorLabel = new PieSeriesSectorLabel();
 
-    private _showCalloutDeprecationWarning() {
-        doOnce(
-            () =>
-                console.warn(
-                    'AG Charts - the use of series.callout in the pie chart series is deprecated. Please use series.calloutLine instead.'
-                ),
-            'deprecated use of series.callout property in pie chart series'
-        );
-    }
-    private _calloutLine = new PieSeriesCalloutLine();
-    private _createCalloutDeprecationProxy() {
-        return new Proxy(this._calloutLine, {
-            get: (target, prop: keyof PieSeriesCalloutLine) => {
-                return target[prop];
-            },
-            set: (target: any, prop: keyof PieSeriesCalloutLine, value: any) => {
-                this._showCalloutDeprecationWarning();
-                target[prop] = value;
-                return true;
-            },
-        });
-    }
-    private _calloutDeprecationProxy = this._createCalloutDeprecationProxy();
-    get callout() {
-        return this._calloutDeprecationProxy;
-    }
-    set callout(value: PieSeriesCalloutLine) {
-        this._showCalloutDeprecationWarning();
-        this._calloutLine = value;
-        this._calloutDeprecationProxy = this._createCalloutDeprecationProxy();
-    }
-    get calloutLine(): PieSeriesCalloutLine {
-        return this._calloutLine;
-    }
-    set calloutLine(value: PieSeriesCalloutLine) {
-        this._calloutLine = value;
-    }
+    calloutLine = new PieSeriesCalloutLine();
+
+    @Deprecated<PieSeries>('Use calloutLine instead.', {
+        accessors: {
+            get: (target) => target.calloutLine,
+            set: (target, v) => (target.calloutLine = v),
+        },
+    })
+    callout = this.calloutLine;
 
     tooltip: PieSeriesTooltip = new PieSeriesTooltip();
 
@@ -412,10 +356,20 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     @Validate(OPT_NUMBER(0))
     radiusMax?: number = undefined;
 
-    @Deprecated('Use calloutLabelKey instead')
+    @Deprecated<PieSeries>('Use calloutLabelKey instead.', {
+        accessors: {
+            get: (target) => target.calloutLabelKey,
+            set: (target, v) => (target.calloutLabelKey = v),
+        },
+    })
     labelKey?: string = undefined;
 
-    @Deprecated('Use calloutLabelName instead')
+    @Deprecated('Use calloutLabelName instead.', {
+        accessors: {
+            get: (target) => target.calloutLabelName,
+            set: (target, v) => (target.calloutLabelKey = v),
+        },
+    })
     labelName?: string = undefined;
 
     @Validate(OPT_STRING)

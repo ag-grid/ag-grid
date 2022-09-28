@@ -140,6 +140,7 @@ export function deepMerge(target: any, source: any, options?: any): any {
     }
 }
 
+// Be careful, typeof null === 'object'!
 export function isObject(value: any): boolean {
-    return typeof value === 'object' && !Array.isArray(value);
+    return value && typeof value === 'object';
 }
