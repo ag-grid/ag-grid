@@ -46,7 +46,7 @@
     "testModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").testModules()'",
     "cleanLegacy": "npx lerna clean --scope '{ag-grid-community,ag-grid-enterprise}'",
     "bootstrapLegacy": "npx lerna bootstrap --scope '{ag-grid-community,ag-grid-enterprise}'",
-    "buildAngular": "npx lerna run build --scope '{@ag-grid-community/core,ag-grid-angular,ag-grid-angular-legacy}'",
+    "buildAngular": "npx lerna run build --scope '{@ag-grid-community/core,@ag-grid-community/angular,@ag-grid-community/angular-legacy,ag-grid-angular,ag-grid-angular-legacy}'",
     "buildVue": "npx lerna run build --scope '{@ag-grid-community/core,ag-grid-vue}'",
     "buildReact": "npx lerna run build --scope '{@ag-grid-community/core,ag-grid-react}'",
     "docs": "cd grid-packages/ag-grid-docs && npm start",

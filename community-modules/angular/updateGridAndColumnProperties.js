@@ -249,19 +249,13 @@ function getGridColumnPropertiesJs() {
 const updateGridProperties = (getGridPropertiesAndEvents) => {
     // extract the grid properties & events and add them to our angular grid component
     const { code: gridPropertiesAndEvents, types } = getGridPropertiesAndEvents();
+    const importsForProps = `import {${EOL}    ${types.join(',' + EOL + '    ')}${EOL}} from "@ag-grid-community/core";`
     const optionsForGrid = {
         files: './projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts',
-        from: /(\/\/ @START@)[^]*(\/\/ @END@)/,
-        to: `// @START@${EOL}${gridPropertiesAndEvents}    // @END@`,
+        from: [/(\/\/ @START@)[^]*(\/\/ @END@)/, /(\/\/ @START_IMPORTS@)[^]*(\/\/ @END_IMPORTS@)/],
+        to: [`// @START@${EOL}${gridPropertiesAndEvents}    // @END@`, `// @START_IMPORTS@${EOL}${importsForProps}${EOL}// @END_IMPORTS@`],
     };
 
-    const typesForGrid = {
-        files: './projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts',
-        from: /(\/\/ @START_IMPORTS@)[^]*(\/\/ @END_IMPORTS@)/,
-        to: `// @START_IMPORTS@${EOL}import {${EOL}    ${types.join(',' + EOL + '    ')}${EOL}} from "@ag-grid-community/core";${EOL}// @END_IMPORTS@`,
-    };
-
-    replace(typesForGrid);
     replace(optionsForGrid)
         .then(filesChecked => {
             const changes = filesChecked.filter(change => change.hasChanged);
@@ -274,17 +268,10 @@ const updateColProperties = (getGridColumnProperties) => {
     const { code: gridColumnProperties, types } = getGridColumnProperties();
     const optionsForGridColumn = {
         files: './projects/ag-grid-angular/src/lib/ag-grid-column.component.ts',
-        from: /(\/\/ @START@)[^]*(\s.*\/\/ @END@)/,
-        to: `// @START@${EOL}${gridColumnProperties}    // @END@`,
+        from: [/(\/\/ @START@)[^]*(\s.*\/\/ @END@)/, /(\/\/ @START_IMPORTS@)[^]*(\/\/ @END_IMPORTS@)/],
+        to: [`// @START@${EOL}${gridColumnProperties}    // @END@`, `// @START_IMPORTS@${EOL}import {${EOL}    ${types.join(',' + EOL + '    ')}${EOL}} from "@ag-grid-community/core";${EOL}// @END_IMPORTS@`]
     };
 
-    const typesForGrid = {
-        files: './projects/ag-grid-angular/src/lib/ag-grid-column.component.ts',
-        from: /(\/\/ @START_IMPORTS@)[^]*(\/\/ @END_IMPORTS@)/,
-        to: `// @START_IMPORTS@${EOL}import {${EOL}    ${types.join(',' + EOL + '    ')}${EOL}} from "@ag-grid-community/core";${EOL}// @END_IMPORTS@`,
-    };
-
-    replace(typesForGrid);
     replace(optionsForGridColumn)
         .then(filesChecked => {
             const changes = filesChecked.filter(change => change.hasChanged);

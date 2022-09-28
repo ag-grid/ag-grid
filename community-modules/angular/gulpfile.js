@@ -39,4 +39,4 @@ gulp.task('compile-main', compileMain);
 gulp.task('clean-post-build-artifacts', cleanPostBuildArtifacts);
 gulp.task('main-post-compile-rename', mainPostCompileRename);
 gulp.task('compile-source', compileSource);
-gulp.task('default', series('update-properties', 'compile-main', 'compile-source', 'main-post-compile-rename', 'clean-post-build-artifacts'));
+gulp.task('default', series('update-angular-components', 'compile-main', 'compile-source', 'main-post-compile-rename', 'clean-post-build-artifacts'));

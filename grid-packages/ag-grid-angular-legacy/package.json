@@ -34,6 +34,8 @@
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
+    "ag-grid-community": "~28.1.0",
+    "@ag-grid-community/angular-legacy": "~28.1.0",
     "@angular-devkit/build-angular": "~0.901.15",
     "@angular-devkit/build-ng-packagr": "~0.901.15",
     "@angular/cli": "~9.1.15",
@@ -42,7 +44,6 @@
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "12.20.20",
-    "ag-grid-community": "~28.1.0",
     "codelyzer": "^5.1.2",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~4.2.1",

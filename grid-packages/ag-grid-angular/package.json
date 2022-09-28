@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "ag-grid-community": "~28.1.0",
+    "@ag-grid-community/angular": "~28.1.0",
     "@angular-devkit/build-angular": "~12.2.17",
     "@angular/cli": "~12.2.17",
     "@angular/compiler-cli": "~12.2.0",
