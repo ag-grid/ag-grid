@@ -136,6 +136,16 @@ The example below shows five columns formatted, demonstrating each of the method
 
 <grid-example title='Cell Renderer' name='cell-renderer' type='mixed'></grid-example>
 
+## Custom Group Cell Renderer Example
+
+The example below demonstrates how to implement a simple custom group cell renderer.
+
+- The example has a custom icon which represents whether the group is open
+- Reacts to the row events if the group is expanded from another source
+- Cleans up event listeners when it's disposed of
+
+<grid-example title='Group Renderers' name='custom-group-renderer' type='mixed' options='{"enterprise": true, "modules": ["clientside", "rowgrouping"]}'></grid-example>
+
 ## Accessing Cell Renderer Instances
 
 After the grid has created an instance of a cell renderer for a cell it is possible to access that instance. This is useful if you want to call a method that you provide on the cell renderer that has nothing to do with the operation of the grid. Accessing cell renderers is done using the grid API `getCellRendererInstances(params)`.

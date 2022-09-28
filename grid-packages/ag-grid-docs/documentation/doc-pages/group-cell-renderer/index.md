@@ -63,3 +63,6 @@ The example is built up as follows:
     - `innerRenderer=SimpleCellRenderer`: Puts custom rendering for displaying the value. The group cellRenderer will take care of all the expand / collapse, selection etc, but then allow you to customise the display of the value. In this example we add a border when the value is a group, and we set the colour based on whether the cell is a leaf node or not.
 
 <grid-example title='Group Renderers' name='group-renderer' type='mixed' options='{"enterprise": true, "modules": ["clientside", "rowgrouping"]}'></grid-example>
+
+[[note]]
+| If you require functionality that is not provided by the `agGroupCellRenderer`, you can use a [custom cell renderer](/component-cell-renderer/#custom-group-cell-renderer-example) to provide your own extended functionality.
