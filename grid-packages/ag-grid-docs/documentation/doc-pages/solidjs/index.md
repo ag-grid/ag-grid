@@ -157,8 +157,6 @@ const MySolidApp = ()=> {
 
 ```
 
-
-
 ## Custom Cells
 
 The example below demonstrates using [Cell Renderer](/component-cell-renderer/) to customise the cells in the Age Column. Note that the Cell Renderer is a standard Solid Component and is set onto the grid using the Column Definitions.
@@ -170,6 +168,17 @@ See [Cell Renderers](/component-cell-renderer/) for full details on creating Rea
 ## Using Cell Editors
 
 Below is an example showing different types of Solid [Cell Editors](/component-cell-editor/). Edit any cell by double clicking the mouse. The Gold and Silver Columns use custom Solid Components. Gold edits inside the cell and and Silver edits in a popup (`cellEditorPopup=true`).
+
+A custom Cell Editor component requires the component to expose an API from the componet to the grid. Using React this is done using an Imperative Handle. In Solid this is done by calling `ref(api)` on the props.
+
+```jsx
+const api = {
+    ...
+};
+
+props.ref(api);
+```
+
 
 [//]: # (<iframe style="width:100%; height: 500px" src="https://stackblitz.com/edit/solidjs-template-bhhxsm?embed=1&file=src/App.tsx"></iframe>)
 
