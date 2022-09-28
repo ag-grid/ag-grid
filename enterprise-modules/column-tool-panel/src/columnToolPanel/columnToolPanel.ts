@@ -61,7 +61,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public init(params: ToolPanelColumnCompParams): void {
-        const defaultParams: ToolPanelColumnCompParams = {
+        const defaultParams: Omit<ToolPanelColumnCompParams, 'context'> = {
             suppressColumnMove: false,
             suppressColumnSelectAll: false,
             suppressColumnFilter: false,
@@ -74,11 +74,12 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             suppressSyncLayoutWithGrid: false,
             api: this.gridApi,
             columnApi: this.columnApi,
-            context: this.gridOptionsWrapper.getContext()
         };
-
-        _.mergeDeep(defaultParams, params);
-        this.params = defaultParams;
+        this.params = {
+            ...defaultParams,
+            ...params,
+            context: this.gridOptionsWrapper.getContext(),
+        };
 
         if (this.isRowGroupingModuleLoaded() && !this.params.suppressPivotMode) {
             // DO NOT CHANGE TO createManagedBean
