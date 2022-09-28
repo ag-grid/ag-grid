@@ -1,4 +1,4 @@
-import { BOOLEAN, Validate, OPT_DATE } from '../../util/validation';
+import { BOOLEAN, Validate, OPT_DATE, AND, LESS_THAN, GREATER_THAN } from '../../util/validation';
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
@@ -37,10 +37,10 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         return this.scale.domain;
     }
 
-    @Validate(OPT_DATE)
+    @Validate(AND(OPT_DATE, LESS_THAN('max')))
     min?: Date = undefined;
 
-    @Validate(OPT_DATE)
+    @Validate(AND(OPT_DATE, GREATER_THAN('min')))
     max?: Date = undefined;
 
     private setDomain(domain: Date[], _primaryTickCount?: number) {
