@@ -176,11 +176,14 @@
     }
 
     .ag-cell, .ag-full-width-row .ag-cell-wrapper.ag-row-group {
+        // assign internal variables to simplify the `line-height` value
+        --ag-internal-calculated-line-height: var(--ag-line-height, ag-param(row-height) - 2px);
+        --ag-internal-padded-row-height: ag-param(row-height) - 2px;
         // draw a transparent border so that the cell size doesn't change when we add a range border
         border: 1px solid transparent;
         // adjust for transparent border
         // Needed to capitalize min, because it clashes with old versions of Sass
-        line-height: Min(var(--ag-line-height, ag-param(row-height) - 2px), ag-param(row-height) - 2px);
+        line-height: Min(var(--ag-internal-calculated-line-height), var(--ag-internal-padded-row-height));
         padding-left: ag-param(cell-horizontal-padding) - 1px;
         padding-right: ag-param(cell-horizontal-padding) - 1px;
         -webkit-font-smoothing: subpixel-antialiased;
