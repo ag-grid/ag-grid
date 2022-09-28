@@ -9572,9 +9572,13 @@
     "meta": { "isTypeAlias": true },
     "type": "Partial<ChartGroups>"
   },
+  "ChartToolPanelName": {
+    "meta": { "isTypeAlias": true },
+    "type": "'settings' | 'data' | 'format'"
+  },
   "ChartToolPanels": {
     "meta": { "isTypeAlias": true },
-    "type": "{ settingsPanel: { chartGroups: PartialChartGroups; }; }"
+    "type": "{ settingsPanel?: { chartGroups: PartialChartGroups; }; panels?: ChartToolPanelName[]; }"
   },
   "ChartType": {
     "meta": { "isTypeAlias": true },
@@ -9584,9 +9588,17 @@
     "meta": { "isTypeAlias": true },
     "type": "'column' | 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'area'"
   },
+  "ChartToolPanelMenuOptions": {
+    "meta": { "isTypeAlias": true },
+    "type": "'chartSettings' | 'chartData' | 'chartFormat'"
+  },
+  "ChartToolbarMenuItemOptions": {
+    "meta": { "isTypeAlias": true },
+    "type": "'chartLink' | 'chartUnlink' | 'chartDownload'"
+  },
   "ChartMenuOptions": {
     "meta": { "isTypeAlias": true },
-    "type": "'chartSettings' | 'chartData' | 'chartFormat' | 'chartLink' | 'chartUnlink' | 'chartDownload'"
+    "type": "ChartToolPanelMenuOptions | ChartToolbarMenuItemOptions"
   },
   "SeriesChartType": {
     "meta": {},
@@ -9627,10 +9639,6 @@
   "ChartModelType": {
     "meta": { "isTypeAlias": true },
     "type": "'range' | 'pivot'"
-  },
-  "ChartToolPanelName": {
-    "meta": { "isTypeAlias": true },
-    "type": "'settings' | 'data' | 'format'"
   },
   "OpenChartToolPanelParams": {
     "meta": {},

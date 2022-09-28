@@ -5,11 +5,15 @@ import {
     AgPromise,
     Autowired,
     ChartMenuOptions,
+    ChartToolPanelMenuOptions,
     Component,
     GetChartToolbarItemsParams,
     PostConstruct,
     WithoutGridCommon,
-    RefSelector
+    RefSelector,
+    CHART_TOOL_PANEL_MENU_OPTIONS,
+    CHART_TOOLBAR_ALLOW_LIST,
+    CHART_TOOL_PANEL_ALLOW_LIST
 } from "@ag-grid-community/core";
 
 import { TabbedChartMenu } from "./tabbedChartMenu";
@@ -25,7 +29,7 @@ export class ChartMenu extends Component {
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     public static EVENT_DOWNLOAD_CHART = "downloadChart";
-    private static DEFAULT_PANEL: ChartMenuOptions = "chartSettings";
+    private static DEFAULT_PANEL: ChartToolPanelMenuOptions = "chartSettings";
 
     private buttons: ChartToolbarButtons = {
         chartSettings: ['menu', () => this.showMenu(ChartMenu.DEFAULT_PANEL)],
@@ -36,7 +40,7 @@ export class ChartMenu extends Component {
         chartDownload: ['save', () => this.saveChart()]
     };
 
-    private panels: ChartMenuOptions[] = [];
+    private panels: ChartToolPanelMenuOptions[] = [];
 
     private static TEMPLATE = `<div>
         <div class="ag-chart-menu" ref="eMenu"></div>
@@ -85,43 +89,85 @@ export class ChartMenu extends Component {
     }
 
     private getToolbarOptions(): ChartMenuOptions[] {
-        let tabOptions: ChartMenuOptions[] = [
-            'chartSettings',
-            'chartData',
-            'chartFormat',
-            this.chartController.isChartLinked() ? 'chartLink' : 'chartUnlink',
-            'chartDownload'
-        ];
+        const useChartToolPanelCustomisation = Boolean(this.gridOptionsWrapper.getChartToolPanels())
 
-        const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
-
-        if (toolbarItemsFunc) {
+        if (useChartToolPanelCustomisation) {
+            const defaultChartToolbarOptions: ChartMenuOptions[] = [
+                this.chartController.isChartLinked() ? 'chartLink' : 'chartUnlink',
+                'chartDownload'
+            ];
+    
+            const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
             const params: WithoutGridCommon<GetChartToolbarItemsParams> = {
-                defaultItems: tabOptions
+                defaultItems: defaultChartToolbarOptions
             };
+            let chartToolbarOptions = toolbarItemsFunc
+                ? toolbarItemsFunc(params).filter(option => {
+                    if (!CHART_TOOLBAR_ALLOW_LIST.includes(option)) {
+                        const msg = CHART_TOOL_PANEL_ALLOW_LIST.includes(option as any)
+                            ? `AG Grid: '${option}' is a Chart Tool Panel option and will be ignored since 'chartToolPanels' is used. Please use 'chartToolPanels.panels' grid option instead`
+                            : `AG Grid: '${option}' is not a valid Chart Toolbar Option`;
+                        console.warn(msg);
+                        return false;
+                    }
 
-            tabOptions = toolbarItemsFunc(params).filter(option => {
-                if (!this.buttons[option]) {
-                    console.warn(`AG Grid: '${option} is not a valid Chart Toolbar Option`);
-                    return false;
-                }
+                    return true;
+                })
+                : defaultChartToolbarOptions;
 
-                return true;
-            });
+            const panelsOverride = this.gridOptionsWrapper.getChartToolPanels()?.panels;
+            this.panels = panelsOverride
+                ? panelsOverride.map(panel => CHART_TOOL_PANEL_MENU_OPTIONS[panel])
+                : Object.values(CHART_TOOL_PANEL_MENU_OPTIONS);
+
+            // pivot charts use the column tool panel instead of the data panel
+            if (this.chartController.isPivotChart()) {
+                this.panels = this.panels.filter(panel => panel !== 'chartData');
+            }
+
+            return this.panels.length > 0
+                // Only one panel is required to display menu icon in toolbar
+                ? [this.panels[0], ...chartToolbarOptions]
+                : chartToolbarOptions;
+        } else { // To be deprecated in future. Toolbar options will be different to chart tool panels.
+            let tabOptions: ChartMenuOptions[] = [
+                'chartSettings',
+                'chartData',
+                'chartFormat',
+                this.chartController.isChartLinked() ? 'chartLink' : 'chartUnlink',
+                'chartDownload'
+            ];
+    
+            const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
+    
+            if (toolbarItemsFunc) {
+                const params: WithoutGridCommon<GetChartToolbarItemsParams> = {
+                    defaultItems: tabOptions
+                };
+    
+                tabOptions = toolbarItemsFunc(params).filter(option => {
+                    if (!this.buttons[option]) {
+                        console.warn(`AG Grid: '${option}' is not a valid Chart Toolbar Option`);
+                        return false;
+                    }
+    
+                    return true;
+                });
+            }
+    
+            // pivot charts use the column tool panel instead of the data panel
+            if (this.chartController.isPivotChart()) {
+                tabOptions = tabOptions.filter(option => option !== 'chartData');
+            }
+    
+            const ignoreOptions: ChartMenuOptions[] = ['chartUnlink', 'chartLink', 'chartDownload'];
+            this.panels = tabOptions.filter(option => ignoreOptions.indexOf(option) === -1) as ChartToolPanelMenuOptions[];
+    
+            return tabOptions.filter(value =>
+                ignoreOptions.indexOf(value) !== -1 ||
+                (this.panels.length && value === this.panels[0])
+            );
         }
-
-        // pivot charts use the column tool panel instead of the data panel
-        if (this.chartController.isPivotChart()) {
-            tabOptions = tabOptions.filter(option => option !== 'chartData');
-        }
-
-        const ignoreOptions: ChartMenuOptions[] = ['chartUnlink', 'chartLink', 'chartDownload'];
-        this.panels = tabOptions.filter(option => ignoreOptions.indexOf(option) === -1);
-
-        return tabOptions.filter(value =>
-            ignoreOptions.indexOf(value) !== -1 ||
-            (this.panels.length && value === this.panels[0])
-        );
     }
 
     private toggleDetached(e: MouseEvent): void {
@@ -233,7 +279,7 @@ export class ChartMenu extends Component {
         this.menuVisible ? this.hideMenu() : this.showMenu();
     }
 
-    public showMenu(panel?: ChartMenuOptions): void {
+    public showMenu(panel?: ChartToolPanelMenuOptions): void {
         const menuPanel = panel || ChartMenu.DEFAULT_PANEL;
         let tab = this.panels.indexOf(menuPanel);
         if (tab < 0) {

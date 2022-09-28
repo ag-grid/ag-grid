@@ -149,6 +149,16 @@ The example below shows a reordering of chart groups with some chart groups and 
 
 <grid-example title='Customising settings panel chart groups' name='customise-chart-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
+### Customising panels
+
+The Chart Tool Panels can be reorganised using the `chartToolPanels.panels` grid option.
+
+Note that when the `chartToolPanels` grid option is used, the panels returned from `gridOptions.getChartToolbarItems(params)` are ignored. If `chartToolPanels` is set without `chartToolPanels.panels`, **all panels** will be shown regardless of the results of `gridOptions.getChartToolbarItems(params)`.
+
+The example below shows panels being reorganised:
+
+<grid-example title='Customising panels' name='customise-panels' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
 ## Chart Tool Panels Button
 
 The Chart Tool Panels Button offers an alternative way to access the Chart Tool Panels and is enabled as shown below:

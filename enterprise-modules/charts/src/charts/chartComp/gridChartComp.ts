@@ -7,7 +7,6 @@ import {
     CellRange,
     ChartCreated,
     ChartDestroyed,
-    ChartMenuOptions,
     ChartModel,
     ChartToolPanelName,
     ChartType,
@@ -19,7 +18,8 @@ import {
     PostConstruct,
     RefSelector,
     SeriesChartType,
-    WithoutGridCommon
+    WithoutGridCommon,
+    CHART_TOOL_PANEL_MENU_OPTIONS
 } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./chartTitle/titleEdit";
@@ -411,13 +411,7 @@ export class GridChartComp extends Component {
     }
 
     public openChartToolPanel(panel?: ChartToolPanelName) {
-        const chartToolPanelTabMapping: { [key in ChartToolPanelName]: ChartMenuOptions } = {
-            settings: "chartSettings",
-            data: "chartData",
-            format: "chartFormat"
-        }
-        const menuPanel = panel ? chartToolPanelTabMapping[panel] : panel;
-
+        const menuPanel = panel ? CHART_TOOL_PANEL_MENU_OPTIONS[panel] : panel;
         this.chartMenu.showMenu(menuPanel);
     }
 

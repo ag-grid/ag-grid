@@ -83,10 +83,13 @@ export const DEFAULT_CHART_GROUPS: PartialChartGroups = {
     ]
 }
 
+export type ChartToolPanelName = 'settings' | 'data' | 'format';
+
 export type ChartToolPanels = {
-    settingsPanel: {
-        chartGroups: PartialChartGroups
-    }
+    settingsPanel?: {
+        chartGroups: PartialChartGroups,
+    },
+    panels?: ChartToolPanelName[]
 }
 
 export type ChartType =
@@ -121,13 +124,25 @@ export type CrossFilterChartType =
     | 'doughnut'
     | 'area';
 
-export type ChartMenuOptions =
-      'chartSettings'
-    | 'chartData'
-    | 'chartFormat'
-    | 'chartLink'
-    | 'chartUnlink'
-    | 'chartDownload';
+export type ChartToolPanelMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat';
+export type ChartToolbarMenuItemOptions = 'chartLink' | 'chartUnlink' | 'chartDownload';
+export type ChartMenuOptions = ChartToolPanelMenuOptions | ChartToolbarMenuItemOptions;
+export const CHART_TOOL_PANEL_ALLOW_LIST: ChartToolPanelMenuOptions[] = [
+    'chartSettings', 
+    'chartData', 
+    'chartFormat'
+];
+export const CHART_TOOLBAR_ALLOW_LIST: ChartMenuOptions[] = [
+    'chartUnlink',
+    'chartLink',
+    'chartDownload'
+];
+
+export const CHART_TOOL_PANEL_MENU_OPTIONS: { [key in ChartToolPanelName]: ChartToolPanelMenuOptions } = {
+    settings: "chartSettings",
+    data: "chartData",
+    format: "chartFormat"
+}
 
 export interface SeriesChartType {
     colId: string;

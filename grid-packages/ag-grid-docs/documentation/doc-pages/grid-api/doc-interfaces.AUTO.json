@@ -16468,9 +16468,12 @@
   "ChartTypeKeys": {},
   "ChartGroups": {},
   "PartialChartGroups": {},
+  "ChartToolPanelName": {},
   "ChartToolPanels": {},
   "ChartType": {},
   "CrossFilterChartType": {},
+  "ChartToolPanelMenuOptions": {},
+  "ChartToolbarMenuItemOptions": {},
   "ChartMenuOptions": {},
   "SeriesChartType": {
     "colId": { "type": { "returnType": "string", "optional": false } },
@@ -16515,7 +16518,6 @@
     }
   },
   "ChartModelType": {},
-  "ChartToolPanelName": {},
   "OpenChartToolPanelParams": {
     "chartId": {
       "description": "/** The id of the created chart. */",
