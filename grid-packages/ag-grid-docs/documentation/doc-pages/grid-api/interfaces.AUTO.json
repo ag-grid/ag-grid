@@ -5040,6 +5040,7 @@
     "type": {
       "oldValue": "any",
       "newValue": "any",
+      "valueChanged": "boolean",
       "column": "Column",
       "colDef": "ColDef<TData>",
       "value": "TValue",
@@ -5056,6 +5057,7 @@
     "docs": {
       "oldValue": "/** The old value before editing */",
       "newValue": "/** The new value after editing */",
+      "valueChanged": "/** Property indicating if the value of the editor has changed */",
       "value": "/** The value for the cell */",
       "data": "/** The user provided data for the row. */",
       "node": "/** The row node. */",

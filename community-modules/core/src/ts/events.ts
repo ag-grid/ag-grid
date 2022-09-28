@@ -487,6 +487,8 @@ export interface CellEditingStoppedEvent<TData = any, TValue = any> extends Cell
     oldValue: any;
     /** The new value after editing */
     newValue: any;
+    /** Property indicating if the value of the editor has changed */
+    valueChanged: boolean;
 }
 
 export interface CellValueChangedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {

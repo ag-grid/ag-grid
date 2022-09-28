@@ -253,10 +253,8 @@ export class RowContainerEventsFeature extends BeanStub {
         if (keyCode === KeyCode.C) { return this.onCtrlAndC(keyboardEvent); }
         if (keyCode === KeyCode.V) { return this.onCtrlAndV(); }
         if (keyCode === KeyCode.D) { return this.onCtrlAndD(keyboardEvent); }
-        if (keyCode === KeyCode.Z) {
-            return keyboardEvent.shiftKey ? this.undoRedoService.redo() : this.undoRedoService.undo();
-        }
-        if (keyCode === KeyCode.Y) { return this.undoRedoService.redo(); }
+        if (keyCode === KeyCode.Z) { return this.onCtrlAndZ(keyboardEvent); }
+        if (keyCode === KeyCode.Y) { return this.onCtrlAndY(); }
     }
 
     private onCtrlAndA(event: KeyboardEvent): void {
@@ -316,6 +314,21 @@ export class RowContainerEventsFeature extends BeanStub {
             this.clipboardService.copyRangeDown();
         }
         event.preventDefault();
+    }
+
+    private onCtrlAndZ(event: KeyboardEvent): void {
+        if (!this.gridOptionsWrapper.isUndoRedoCellEditing()) { return; }
+        event.preventDefault();
+
+        if (event.shiftKey) {
+            this.undoRedoService.redo();
+        } else {
+            this.undoRedoService.undo();
+        }
+    }
+
+    private onCtrlAndY(): void {
+        this.undoRedoService.redo();
     }
 
 }

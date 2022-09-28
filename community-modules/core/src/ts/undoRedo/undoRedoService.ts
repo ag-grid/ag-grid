@@ -1,6 +1,6 @@
 import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
-import { CellEditingStartedEvent, CellValueChangedEvent, FillEndEvent, RowEditingStartedEvent } from "../events";
+import { CellEditingStartedEvent, CellEditingStoppedEvent, CellValueChangedEvent, FillEndEvent, RowEditingStartedEvent } from "../events";
 import { FocusService } from "../focusService";
 import { IRowModel } from "../interfaces/iRowModel";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
@@ -253,10 +253,10 @@ export class UndoRedoService extends BeanStub {
             this.activeCellEdit = { column: e.column, rowIndex: e.rowIndex!, rowPinned: e.rowPinned };
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_EDITING_STOPPED, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_EDITING_STOPPED, (e: CellEditingStoppedEvent) => {
             this.activeCellEdit = null;
 
-            const shouldPushAction = !this.activeRowEdit && !this.isPasting && !this.isRangeInAction;
+            const shouldPushAction = e.valueChanged && !this.activeRowEdit && !this.isPasting && !this.isRangeInAction;
 
             if (shouldPushAction) {
                 const action = new UndoRedoAction(this.cellValueChanges);

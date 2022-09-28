@@ -9031,6 +9031,10 @@
       "description": "/** The new value after editing */",
       "type": { "returnType": "any", "optional": false }
     },
+    "valueChanged": {
+      "description": "/** Property indicating if the value of the editor has changed */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },

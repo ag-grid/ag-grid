@@ -490,16 +490,17 @@ export class CellCtrl extends BeanStub {
         this.cellComp.setEditDetails(); // passing nothing stops editing
         this.updateAndFormatValue();
         this.refreshCell({ forceRefresh: true, suppressFlash: true });
-        this.dispatchEditingStoppedEvent(oldValue, newValue);
+        this.dispatchEditingStoppedEvent(oldValue, newValue, !cancel && !!valueChanged);
 
         return valueChanged;
     }
 
-    private dispatchEditingStoppedEvent(oldValue: any, newValue: any): void {
+    private dispatchEditingStoppedEvent(oldValue: any, newValue: any, valueChanged: boolean): void {
         const editingStoppedEvent = {
             ...this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED),
             oldValue,
-            newValue
+            newValue,
+            valueChanged
         };
 
         this.beans.eventService.dispatchEvent(editingStoppedEvent);
