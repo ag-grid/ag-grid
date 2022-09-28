@@ -3842,8 +3842,12 @@
     "meta": { "isTypeAlias": true },
     "type": "(date: Date) => number"
   },
+  "ValidationContext": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ target: any; }"
+  },
   "ValidatePredicate": {
     "meta": { "isTypeAlias": true },
-    "type": "{ (v: any, additionalPredicate?: (v: any) => boolean): boolean; message?: string; }"
+    "type": "{ (v: any, ctx: ValidationContext): boolean; message?: string; }"
   }
 }
