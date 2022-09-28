@@ -80,15 +80,20 @@ export const AND = (...predicates: ValidatePredicate[]) => {
     );
 };
 
+const isComparable = (v: any) => {
+    return v != null && !isNaN(v);
+};
 export const LESS_THAN = (otherField: string) =>
     predicateWithMessage(
-        (v: number | Date, ctx) => ctx.target[otherField] == null || v < ctx.target[otherField],
+        (v: number | Date, ctx) =>
+            !isComparable(v) || !isComparable(ctx.target[otherField]) || v < ctx.target[otherField],
         `expected to be less than ${otherField}`
     );
 export const GREATER_THAN = (otherField: string) =>
     predicateWithMessage(
-        (v: number | Date, ctx) => ctx.target[otherField] == null || v > ctx.target[otherField],
-        `expected to be less than ${otherField}`
+        (v: number | Date, ctx) =>
+            !isComparable(v) || !isComparable(ctx.target[otherField]) || v > ctx.target[otherField],
+        `expected to be greater than ${otherField}`
     );
 
 export const FUNCTION = predicateWithMessage((v: any) => typeof v === 'function', 'expecting a Function');
