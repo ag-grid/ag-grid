@@ -75,7 +75,7 @@
           },
           {
             "title": "SolidJS",
-            "icon": "solid",
+            "icon": "solidNew",
             "url": "/solidjs",
             "frameworks": [
               "react"
