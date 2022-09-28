@@ -100,8 +100,7 @@ const gridOptions = {
 }
 </snippet>
 
-When enabled, a button will appear on the left-hand-side (right-hand-side when `enableRtl=true`) of the chart. Note that the
-Toolbar icons will be permanently shown, minus the 'hamburger' icon. 
+When enabled, a button will appear on the right-hand-side (left-hand-side when `enableRtl=true`) of the chart. Note that the Toolbar icons will be permanently shown, except the ‘hamburger' icon which isn’t shown.
 
 The following example demonstrates the results of enabling `enableChartToolPanelsButton`:
 
