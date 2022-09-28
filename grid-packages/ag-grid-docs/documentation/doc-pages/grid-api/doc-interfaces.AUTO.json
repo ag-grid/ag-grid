@@ -3082,7 +3082,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowGroupPanelSuppressSort": {
-      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel */",
+      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel. Default: `false`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
@@ -25503,7 +25503,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowGroupPanelSuppressSort": {
-      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel */",
+      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel. Default: `false`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
@@ -28312,7 +28312,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowGroupPanelSuppressSort": {
-      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel */",
+      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel. Default: `false`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {
@@ -31131,7 +31131,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowGroupPanelSuppressSort": {
-      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel */",
+      "description": "/** Set to `true` to suppress sort indicators and actions from the row group panel. Default: `false`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRowsSticky": {

@@ -695,7 +695,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.     */
     @Input() public treeData: boolean | undefined = undefined;
-    /** Set to `true` to suppress sort indicators and actions from the row group panel     */
+    /** Set to `true` to suppress sort indicators and actions from the row group panel. Default: `false`.     */
     @Input() public rowGroupPanelSuppressSort: boolean | undefined = undefined;
     /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.     */
     @Input() public groupRowsSticky: boolean | undefined = undefined;

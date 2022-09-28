@@ -598,7 +598,7 @@ export interface GridOptions<TData = any> {
     treeData?: boolean;
 
 
-    /** Set to `true` to suppress sort indicators and actions from the row group panel */
+    /** Set to `true` to suppress sort indicators and actions from the row group panel. Default: `false`. */
     rowGroupPanelSuppressSort?: boolean;
 
     /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/
