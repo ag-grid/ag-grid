@@ -54,12 +54,12 @@ const CROSSLINE_LABEL_POSITIONS = [
 ];
 
 const OPT_CROSSLINE_LABEL_POSITION = predicateWithMessage(
-    (v: any) => OPTIONAL(v, (v: any) => CROSSLINE_LABEL_POSITIONS.includes(v)),
+    (v: any, ctx) => OPTIONAL(v, ctx, (v: any) => CROSSLINE_LABEL_POSITIONS.includes(v)),
     `expecting an optional crossLine label position keyword such as 'topLeft', 'topRight' or 'inside'`
 );
 
 const OPT_CROSSLINE_TYPE = predicateWithMessage(
-    (v: any) => OPTIONAL(v, (v: any) => v === 'range' || v === 'line'),
+    (v: any, ctx) => OPTIONAL(v, ctx, (v: any) => v === 'range' || v === 'line'),
     `expecting a crossLine type keyword such as 'range' or 'line'`
 );
 

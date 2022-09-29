@@ -5,7 +5,7 @@ import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
 import { ChartAxis } from '../chartAxis';
 import { doOnce } from '../../util/function';
-import { BOOLEAN, predicateWithMessage, Validate } from '../../util/validation';
+import { BOOLEAN, predicateWithMessage, Validate, GREATER_THAN, AND, LESS_THAN } from '../../util/validation';
 
 function NUMBER_OR_NAN(min?: number, max?: number) {
     // Can be NaN or finite number
@@ -102,10 +102,10 @@ export class NumberAxis extends ChartAxis {
         return this.scale.domain;
     }
 
-    @Validate(NUMBER_OR_NAN())
+    @Validate(AND(NUMBER_OR_NAN(), LESS_THAN('max')))
     min: number = NaN;
 
-    @Validate(NUMBER_OR_NAN())
+    @Validate(AND(NUMBER_OR_NAN(), GREATER_THAN('min')))
     max: number = NaN;
 
     formatDatum(datum: number): string {

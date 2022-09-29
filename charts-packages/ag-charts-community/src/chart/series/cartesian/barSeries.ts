@@ -37,11 +37,13 @@ import {
     COLOR_STRING_ARRAY,
     Validate,
     OPTIONAL,
+    ValidatePredicate,
 } from '../../../util/validation';
 import { CategoryAxis } from '../../axis/categoryAxis';
 
 const BAR_LABEL_PLACEMENTS = ['inside', 'outside'];
-const OPT_BAR_LABEL_PLACEMENT = (v: any) => OPTIONAL(v, (v: any) => BAR_LABEL_PLACEMENTS.includes(v));
+const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
+    OPTIONAL(v, ctx, (v: any) => BAR_LABEL_PLACEMENTS.includes(v));
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
