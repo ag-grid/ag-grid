@@ -17377,10 +17377,6 @@
     "bestFit": { "type": { "returnType": "boolean", "optional": true } }
   },
   "ExcelRow": {
-    "index": {
-      "description": "/** Row index. */",
-      "type": { "returnType": "number", "optional": true }
-    },
     "collapsed": {
       "description": "/** Collapsed state. */",
       "type": { "returnType": "boolean", "optional": true }

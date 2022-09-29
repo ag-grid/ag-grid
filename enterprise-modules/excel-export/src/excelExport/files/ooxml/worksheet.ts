@@ -25,7 +25,6 @@ const getMergedCellsAndAddColumnGroups = (rows: ExcelRow[], cols: ExcelColumn[])
     rows.forEach((currentRow, rowIdx) => {
         const cells = currentRow.cells;
         let merges = 0;
-        currentRow.index = rowIdx + 1;
         let lastCol: ExcelColumn;
 
         cells.forEach((currentCell, cellIdx) => {

@@ -10039,7 +10039,6 @@
   "ExcelRow": {
     "meta": {},
     "type": {
-      "index?": "number",
       "collapsed?": "boolean",
       "hidden?": "boolean",
       "height?": "number",
@@ -10047,7 +10046,6 @@
       "cells": "ExcelCell[]"
     },
     "docs": {
-      "index?": "/** Row index. */",
       "collapsed?": "/** Collapsed state. */",
       "hidden?": "/** Hidden state. */",
       "height?": "/** The height of the row. */",
