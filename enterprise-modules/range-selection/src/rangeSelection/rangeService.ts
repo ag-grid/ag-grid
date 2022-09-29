@@ -338,15 +338,17 @@ export class RangeService extends BeanStub implements IRangeService {
         this.newestRangeStartCell = position;
     }
 
-    public clearCellRangeCellValues(): void {
-        this.cellRanges.forEach(cellRange => {
+    public clearCellRangeCellValues(cellRanges?: CellRange[]): void {
+        if (!cellRanges) { cellRanges = this.cellRanges; }
+
+        cellRanges.forEach(cellRange => {
             this.forEachRowInRange(cellRange, rowPosition => {
                 const rowNode = this.rowPositionUtils.getRowNode(rowPosition);
                 if (!rowNode) { return; }
                 for (let i = 0; i < cellRange.columns.length; i++) {
                     const column = this.columnModel.getGridColumn(cellRange.columns[i]);
                     if (!column || !column.isCellEditable(rowNode)) { return; }
-                    rowNode.setDataValue(column, '');
+                    rowNode.setDataValue(column, null, 'rangeService');
                 }
             });
         });
