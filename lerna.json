@@ -8,7 +8,7 @@
     "examples-grid/*",
     "grid-packages/ag-grid-docs/documentation/"
   ],
-  "useNx": false,
+  "useNx": true,
   "command": {
     "bootstrap": {
       "npmClientArgs": [
