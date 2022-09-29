@@ -71,3 +71,7 @@ This example demonstrates:
 - when a legend item is clicked, an alert message is shown with the `legendItemClick` event contents.
 
 <chart-example title='Legend Item Click Event' name='legend-item-click-event' type='generated'></chart-example>
+
+## Next Up
+
+Continue to the next section to learn about [exporting the chart image](../export/).

@@ -1,0 +1,30 @@
+.wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#toolPanel {
+    text-align: center;
+}
+
+.toolPanelButton {
+    background-color: #fff;
+    border: 1px solid #d5d9d9;
+    border-radius: 12px;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.toolPanelButton:hover {
+    background-color: #f7fafa;
+}
+
+.spacer {
+    display: inline-block;
+    min-width: 20px;
+}
+
+#myChart {
+    height: 100%;
+}

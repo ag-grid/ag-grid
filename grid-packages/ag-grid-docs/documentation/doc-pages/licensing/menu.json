@@ -1963,6 +1963,10 @@
               {
                 "title": "Events",
                 "url": "/charts-events/"
+              },
+              {
+                "title": "Export",
+                "url": "/charts-export/"
               }
             ]
           }
