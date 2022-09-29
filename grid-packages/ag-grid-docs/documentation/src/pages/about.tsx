@@ -133,9 +133,9 @@ const AboutPage = () => {
                             <div className="row">
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='../images/team/edd.jpeg' alt="Edmund King, Developer"/>
+                                        <img src='../images/team/tak.png' alt="Tak Tran, Developer"/>
                                     </div>
-                                    <h3>Edmund King</h3>
+                                    <h3>Tak Tran</h3>
                                     <h4>Developer, Grid Core</h4>
                                 </div>
                                 <div className="col-md-4">
@@ -152,8 +152,16 @@ const AboutPage = () => {
                                     <h3>Mana Peirov</h3>
                                     <h4>Developer, Data Visualisation</h4>
                                 </div>
+
                             </div>
                             <div className="row">
+                                <div className="col-md-4">
+                                    <div>
+                                        <img src='../images/team/alex.png' alt="Alex (Sasha) Shutau, Developer"/>
+                                    </div>
+                                    <h3>Alex (Sasha) Shutau</h3>
+                                    <h4>Developer, Data Visualisation</h4>
+                                </div>
                                 <div className="col-md-4">
                                     <div>
                                         <img src='../images/team/alberto.jpg'
@@ -164,27 +172,13 @@ const AboutPage = () => {
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='../images/team/shuheb.jpg' alt="Shuheb Ahmed, Developer"/>
-                                    </div>
-                                    <h3>Shuheb Ahmed</h3>
-                                    <h4>Developer</h4>
-                                </div>
-                                <div className="col-md-4">
-                                    <div>
-                                        <img src='../images/team/bam.jpg' alt="Bamdad Fard, Developer"/>
-                                    </div>
-                                    <h3>Bamdad Fard</h3>
-                                    <h4>Developer</h4>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-md-4">
-                                    <div>
                                         <img src='../images/team/marats.jpeg' alt="Marats Stelihs, Developer"/>
                                     </div>
                                     <h3>Marats Stelihs</h3>
                                     <h4>Developer</h4>
                                 </div>
+                            </div>
+                            <div className="row">
                                 <div className="col-md-4">
                                     <div>
                                         <img src='../images/team/abs.jpeg' alt="AbdiWali Jama, Developer"/>
@@ -199,21 +193,12 @@ const AboutPage = () => {
                                     <h3>Kiril Matev</h3>
                                     <h4>Technical Product Manager</h4>
                                 </div>
-                            </div>
-                            <div className="row">
                                 <div className="col-md-4">
                                     <div>
                                         <img src='../images/team/viqas.jpg' alt="Viqas Hussain, Lead Developer"/>
                                     </div>
                                     <h3>Viqas Hussain</h3>
                                     <h4>Lead Developer, E-commerce</h4>
-                                </div>
-                                <div className="col-md-4">
-                                    <div>
-                                        <img src='../images/team/alan.jpg' alt="Alan Richardson, Digital Marketing"/>
-                                    </div>
-                                    <h3>Alan Richardson</h3>
-                                    <h4>Digital Marketing</h4>
                                 </div>
                             </div>
                         </article>
