@@ -55,16 +55,18 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
         this.initialised = true;
 
-        const defaultParams: ToolPanelFiltersCompParams = {
+        const defaultParams: Omit<ToolPanelFiltersCompParams, 'context'> = {
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false,
             api: this.gridApi,
             columnApi: this.columnApi,
+        };
+        this.params = {
+            ...defaultParams,
+            ...this.params,
             context: this.gridOptionsWrapper.getContext()
         };
-        _.mergeDeep(defaultParams, params);
-        this.params = defaultParams;
 
         this.filtersToolPanelHeaderPanel.init(this.params);
         this.filtersToolPanelListPanel.init(this.params);
