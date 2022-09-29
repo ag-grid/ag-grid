@@ -472,7 +472,8 @@ export class ChartTheme {
                     fontSize: 12,
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
-                    offset: 0,
+                    positionOffset: 0,
+                    positionRatio: 0.5,
                 },
                 callout: {
                     length: 10,

@@ -136,6 +136,17 @@ The config specifies the offset value from the maximum pie radius which all pie 
 
 <chart-example title='Doughnut Chart' name='doughnut-chart' type='generated'></chart-example>
 
+Alternatively a doughnut chart can be created by using the `innerRadiusRatio` property. A value between `0.0` and `1.0` should be assigned:
+
+```diff
+series: [{
+    type: 'pie',
+    labelKey: 'os',
+    angleKey: 'share',
++   innerRadiusRatio: 0.75,
+}]
+```
+
 ## Text Inside a Doughnut
 
 The `innerLabels` property can be used to put several text lines inside a doughnut chart.
@@ -158,26 +169,28 @@ series: [{
 
 ## Multiple Doughnuts
 
-As well as the `innerRadiusOffset` we can also configure the `outerRadiusOffset`. This gives us the ability to render multiple pie series in a single chart without overlapping.
+As well as the `innerRadiusOffset` or `innerRadiusRatio` we can also configure the `outerRadiusOffset` or `outerRadiusRatio`.
+This gives us the ability to render multiple pie series in a single chart without overlapping.
 
 ```js
 series: [
     {
         type: 'pie',
-        outerRadiusOffset: 0, // default
-        innerRadiusOffset: -40,
+        outerRadiusRatio: 1,   // 100% (default)
+        innerRadiusRatio: 0.8, // 80%
         ...
     },
     {
         type: 'pie',
-        outerRadiusOffset: -100,
-        innerRadiusOffset: -140,
+        outerRadiusRatio: 0.5, // 50%
+        innerRadiusRatio: 0.3, // 30%
         ...
     }
 ]
 ```
 
-In the snippet above we configure the `outerRadiusOffset` of the second (inner) series to be smaller than the `innerRadiusOffset` of the first (outer) series. The difference of `60` between these offsets will determine the size of the gap between the outer and inner series. The difference between `outerRadiusOffset` and `innerRadiusOffset` for each series will determine the thickness of the rings, which will be `40` for both series in this case.
+In the snippet above we configure the `outerRadiusRatio` of the second (inner) series to be smaller than the `innerRadiusRatio` of the first (outer) series.
+The difference of `0.3` (`30%`) between these offsets will determine the size of the gap between the outer and inner series. The difference between `outerRadiusRatio` and `innerRadiusRatio` for each series will determine the thickness of the rings, which will be `20%` of the total radius for both series in this case.
 
 The example below uses one pie series to plot the market share of each operating system and another pie series to plot user satisfaction level with each OS:
 

@@ -152,6 +152,25 @@ export const DOUGHNUT_SERIES_INNER_TEXT: AgPolarChartOptions = {
     ],
 };
 
+export const DOUGHNUT_SERIES_RATIO: AgPolarChartOptions = {
+    title: {
+        text: 'Market Share',
+    },
+    data: DATA_MARKET_SHARE,
+    series: [
+        {
+            type: 'pie',
+            sectorLabelKey: 'share',
+            angleKey: 'share',
+            outerRadiusRatio: 0.9,
+            innerRadiusRatio: 0.2,
+            sectorLabel: {
+                positionRatio: 0.7,
+            },
+        },
+    ],
+};
+
 export const GROUPED_DOUGHNUT_SERIES: AgPolarChartOptions = {
     title: {
         text: 'Market Share',

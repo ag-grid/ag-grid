@@ -39,6 +39,9 @@ export type Opacity = number;
 /** Alias to denote that a value is a measurement in pixels. */
 export type PixelSize = number;
 
+/** Alias to denote that a value is a ratio, usually in the range [0, 1]. */
+export type Ratio = number;
+
 /** Alias to denote that a value is a data value. */
 export type DataValue = any;
 
@@ -1166,8 +1169,10 @@ export interface AgPieSeriesLabelOptions<DatumType> extends AgChartLabelOptions 
 }
 
 export interface AgPieSeriesSectorLabelOptions<DatumType> extends AgChartLabelOptions {
-    /** Distance in pixels between the callout line and the label text. */
-    offset?: PixelSize;
+    /** Distance in pixels, used to make the label text closer to or further from the center. This offset is applied after positionRatio. */
+    positionOffset?: PixelSize;
+    /** Position of labels as a ratio proportional to pie radius (or doughnut thickness). Additional offset in pixels can be applied by using positionOffset. */
+    positionRatio?: Ratio;
     /** A function that allows the modification of the label text based on input parameters. */
     formatter?: (params: AgPieSeriesLabelFormatterParams<DatumType>) => string;
 }
@@ -1278,8 +1283,12 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     rotation?: number;
     /** The offset in pixels of the outer radius of the series. Used to construct doughnut charts. */
     outerRadiusOffset?: PixelSize;
-    /** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not given, or a value of zero is given, a pie chart will be rendered. */
+    /** The ratio of the outer radius of the series. Used to adjust the outer radius proportionally to the automatically calculated value. */
+    outerRadiusRatio?: Ratio;
+    /** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not provided, or innerRadiusRatio is unset, or a value of zero is given, a pie chart will be rendered. */
     innerRadiusOffset?: PixelSize;
+    /** The ratio of the inner radius of the series. Used to construct doughnut charts. If this is not provided, or innerRadiusOffset is unset, or a value of zero or one is given, a pie chart will be rendered. */
+    innerRadiusRatio?: Ratio;
     /** Override of the automatically determined minimum radiusKey value from the data. */
     radiusMin?: number;
     /** Override of the automatically determined maximum radiusKey value from the data. */
@@ -1290,7 +1299,7 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     tooltip?: AgPieSeriesTooltip;
     /** Configuration for the text lines to display inside the series, typically used when rendering a doughnut chart */
     innerLabels?: AgDoughnutInnerLabel[];
-    /** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset */
+    /** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset or innerRadiusRatio */
     innerCircle?: AgDoughnutInnerCircle;
     formatter?: (params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat;
 }
