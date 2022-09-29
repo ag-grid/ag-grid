@@ -91,8 +91,8 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         customContent.forEach(row => {
             const rowLen = this.rows.length + 1;
 
-            this.rows.push({
-                height: getHeightFromProperty(rowLen, this.config.rowHeight),
+            const rowObj: ExcelRow = {
+                height: getHeightFromProperty(rowLen, row.height || this.config.rowHeight),
                 cells: (row.cells || []).map((cell, idx) => {
                     const image = this.addImage(rowLen, this.columnsToExport[idx], cell.data?.value as string);
                     const ret = { ...cell };
@@ -109,7 +109,13 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                     return ret;
                 }),
                 outlineLevel: row.outlineLevel || undefined
-            });
+            };
+
+            if (row.index != null) { rowObj.index = row.index; }
+            if (row.collapsed != null) { rowObj.collapsed = row.collapsed; }
+            if (row.hidden != null) { rowObj.hidden = row.hidden; }
+
+            this.rows.push(rowObj);
         });
     }
 
