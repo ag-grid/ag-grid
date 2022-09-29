@@ -16,25 +16,25 @@ describe('deprecation module', () => {
     beforeEach(() => {
         class TestDeprecation implements TestDeprecationObject {
             validPrimitive = 7;
-        
+
             validObject = { prop: 7 };
-        
+
             @Deprecated('Use validPrimitive instead', { default: 7 })
             deprecatedPrimitive = 7;
-            
+
             @Deprecated('Use validObject instead', {
                 accessors: {
                     get: (target) => target.validObject,
-                    set: (target, value) => target.validObject = value,
-                }
+                    set: (target, value) => (target.validObject = value),
+                },
             })
             deprecatedObject = this.validObject;
-        
+
             @Deprecated('Use validPrimitive instead', {
                 accessors: {
                     get: (target) => target.validPrimitive,
-                    set: (target, value) => target.validPrimitive = value,
-                }
+                    set: (target, value) => (target.validPrimitive = value),
+                },
             })
             deprecatedPrimitiveWithAccessors = 7;
         }

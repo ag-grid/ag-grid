@@ -1032,7 +1032,17 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             return '';
         }
 
-        const { fills, tooltip, angleName, radiusKey, radiusName, calloutLabelKey, sectorLabelKey, calloutLabelName, sectorLabelName } = this;
+        const {
+            fills,
+            tooltip,
+            angleName,
+            radiusKey,
+            radiusName,
+            calloutLabelKey,
+            sectorLabelKey,
+            calloutLabelName,
+            sectorLabelName,
+        } = this;
 
         const { renderer: tooltipRenderer } = tooltip;
         const color = fills[nodeDatum.index % fills.length];
