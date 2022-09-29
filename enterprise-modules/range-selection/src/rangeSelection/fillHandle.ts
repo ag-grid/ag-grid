@@ -228,7 +228,7 @@ export class FillHandle extends AbstractSelectionHandle {
                     const cellValue = this.getValueFromObject(this.valueService.getValue(col, rowNode));
 
                     if (!fromUserFunction || cellValue !== currentValue) {
-                        rowNode.setDataValue(col, currentValue);
+                        rowNode.setDataValue(col, currentValue, 'rangeService');
                     } else {
                         skipValue = true;
                     }
@@ -251,25 +251,13 @@ export class FillHandle extends AbstractSelectionHandle {
     }
 
     private clearCellsInRange(startRow: RowPosition, endRow: RowPosition, columns: Column[]) {
-        let currentRow: RowPosition | null | undefined = startRow;
-
-        let finished = false;
-
-        while (!finished && currentRow) {
-            const rowNode = this.rowPositionUtils.getRowNode(currentRow);
-
-            // should never happen, defensive programming
-            if (!rowNode) { break; }
-
-            columns.forEach((col: Column) => {
-                if (col.isCellEditable(rowNode)) {
-                    rowNode.setDataValue(col, null);
-                }
-            });
-
-            finished = this.rowPositionUtils.sameRow(currentRow, endRow);
-            currentRow = this.cellNavigationService.getRowBelow(currentRow);
-        }
+        const cellRange: CellRange = {
+            startRow,
+            endRow,
+            columns,
+            startColumn: columns[0]
+        };
+        this.rangeService.clearCellRangeCellValues([cellRange]);
     }
 
     private processValues(

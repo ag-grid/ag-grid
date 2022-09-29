@@ -179,7 +179,7 @@ export class UndoRedoService extends BeanStub {
             const startRow = range.startRow;
             const endRow = range.endRow;
 
-            if (idx === ranges.length -1) {
+            if (idx === ranges.length - 1) {
                 lastFocusedCell = {
                     rowPinned: startRow!.rowPinned,
                     rowIndex: startRow!.rowIndex,
