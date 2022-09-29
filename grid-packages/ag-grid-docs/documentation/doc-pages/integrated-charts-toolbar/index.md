@@ -151,11 +151,11 @@ The example below shows a reordering of chart groups with some chart groups and 
 
 ### Customising panels
 
-The Chart Tool Panels can be reorganised using the `chartToolPanels.panels` grid option.
+The Chart Tool Panels can be reorganised using the `chartToolPanels.panels` grid option, and a tool panel can be opened when the chart is loaded using the `chartToolPanels.defaultToolPanel` grid option.
 
 Note that when the `chartToolPanels` grid option is used, the panels returned from `gridOptions.getChartToolbarItems(params)` are ignored. If `chartToolPanels` is set without `chartToolPanels.panels`, **all panels** will be shown regardless of the results of `gridOptions.getChartToolbarItems(params)`.
 
-The example below shows panels being reorganised:
+The example below shows panels being reorganised with the `format` tool panel open by default:
 
 <grid-example title='Customising panels' name='customise-panels' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 

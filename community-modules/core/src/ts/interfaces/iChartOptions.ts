@@ -89,7 +89,8 @@ export type ChartToolPanels = {
     settingsPanel?: {
         chartGroups: PartialChartGroups,
     },
-    panels?: ChartToolPanelName[]
+    panels?: ChartToolPanelName[],
+    defaultToolPanel?: ChartToolPanelName
 }
 
 export type ChartType =

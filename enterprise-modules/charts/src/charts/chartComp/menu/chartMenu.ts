@@ -29,10 +29,9 @@ export class ChartMenu extends Component {
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     public static EVENT_DOWNLOAD_CHART = "downloadChart";
-    private static DEFAULT_PANEL: ChartToolPanelMenuOptions = "chartSettings";
 
     private buttons: ChartToolbarButtons = {
-        chartSettings: ['menu', () => this.showMenu(ChartMenu.DEFAULT_PANEL)],
+        chartSettings: ['menu', () => this.showMenu(this.defaultPanel)],
         chartData: ['menu', () => this.showMenu("chartData")],
         chartFormat: ['menu', () => this.showMenu("chartFormat")],
         chartLink: ['linked', e => this.toggleDetached(e)],
@@ -41,6 +40,7 @@ export class ChartMenu extends Component {
     };
 
     private panels: ChartToolPanelMenuOptions[] = [];
+    private defaultPanel: ChartToolPanelMenuOptions;
 
     private static TEMPLATE = `<div>
         <div class="ag-chart-menu" ref="eMenu"></div>
@@ -67,6 +67,12 @@ export class ChartMenu extends Component {
     @PostConstruct
     private postConstruct(): void {
         this.createButtons();
+
+        const showDefaultToolPanel = Boolean(this.gridOptionsWrapper.getChartToolPanels()?.defaultToolPanel);
+        if (showDefaultToolPanel) {
+            this.showMenu(this.defaultPanel, false);
+        }
+
         this.refreshMenuClasses();
 
         // TODO requires a better solution as this causes the docs the 'jump' when pages are reloaded
@@ -125,6 +131,9 @@ export class ChartMenu extends Component {
                 this.panels = this.panels.filter(panel => panel !== 'chartData');
             }
 
+            const defaultToolPanel = this.gridOptionsWrapper.getChartToolPanels()?.defaultToolPanel;
+            this.defaultPanel = (defaultToolPanel && CHART_TOOL_PANEL_MENU_OPTIONS[defaultToolPanel]) || this.panels[0];
+
             return this.panels.length > 0
                 // Only one panel is required to display menu icon in toolbar
                 ? [this.panels[0], ...chartToolbarOptions]
@@ -162,6 +171,7 @@ export class ChartMenu extends Component {
     
             const ignoreOptions: ChartMenuOptions[] = ['chartUnlink', 'chartLink', 'chartDownload'];
             this.panels = tabOptions.filter(option => ignoreOptions.indexOf(option) === -1) as ChartToolPanelMenuOptions[];
+            this.defaultPanel = this.panels[0];
     
             return tabOptions.filter(value =>
                 ignoreOptions.indexOf(value) !== -1 ||
@@ -279,12 +289,16 @@ export class ChartMenu extends Component {
         this.menuVisible ? this.hideMenu() : this.showMenu();
     }
 
-    public showMenu(panel?: ChartToolPanelMenuOptions): void {
-        const menuPanel = panel || ChartMenu.DEFAULT_PANEL;
+    public showMenu(panel?: ChartToolPanelMenuOptions, animate: boolean = true): void {
+        if (!animate) {
+            this.eMenuPanelContainer.classList.add('ag-no-transition');
+        }
+
+        const menuPanel = panel || this.defaultPanel;
         let tab = this.panels.indexOf(menuPanel);
         if (tab < 0) {
             console.warn(`AG Grid: '${panel}' is not a valid Chart Tool Panel name`);
-            tab = this.panels.indexOf(ChartMenu.DEFAULT_PANEL)
+            tab = this.panels.indexOf(this.defaultPanel)
         }
 
         if (this.menuPanel) {
@@ -292,6 +306,14 @@ export class ChartMenu extends Component {
             this.showContainer();
         } else {
             this.createMenuPanel(tab).then(this.showContainer.bind(this));
+        }
+
+        if (!animate) {
+            // Wait for menu to render
+            setTimeout(() => {
+                if (!this.isAlive()) { return; }
+                this.eMenuPanelContainer.classList.remove('ag-no-transition');
+            }, 500);
         }
     }
 

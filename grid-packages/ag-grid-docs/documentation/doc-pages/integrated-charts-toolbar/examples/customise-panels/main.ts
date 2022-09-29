@@ -1,4 +1,4 @@
-import { ChartCreated, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
+import { ColDef, CreateRangeChartParams, FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 const columnDefs: ColDef[] = [
@@ -42,10 +42,10 @@ const gridOptions: GridOptions = {
   popupParent: document.body,
   enableRangeSelection: true,
   onFirstDataRendered: onFirstDataRendered,
-  onChartCreated: onChartCreated,
   enableCharts: true,
   chartToolPanels: {
-    panels: ['format', 'settings']
+    panels: ['data', 'format', 'settings'],
+    defaultToolPanel: 'format'
   },
 }
 
@@ -67,10 +67,6 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   }
 
   params.api.createRangeChart(createRangeChartParams)
-}
-
-function onChartCreated(params: ChartCreated) {
-  params.api.openChartToolPanel(params)
 }
 
 // setup the grid after the page has finished loading

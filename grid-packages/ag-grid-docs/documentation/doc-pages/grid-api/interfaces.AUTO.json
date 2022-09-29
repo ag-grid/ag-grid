@@ -9578,7 +9578,7 @@
   },
   "ChartToolPanels": {
     "meta": { "isTypeAlias": true },
-    "type": "{ settingsPanel?: { chartGroups: PartialChartGroups; }; panels?: ChartToolPanelName[]; }"
+    "type": "{ settingsPanel?: { chartGroups: PartialChartGroups; }; panels?: ChartToolPanelName[]; defaultToolPanel?: ChartToolPanelName; }"
   },
   "ChartType": {
     "meta": { "isTypeAlias": true },
