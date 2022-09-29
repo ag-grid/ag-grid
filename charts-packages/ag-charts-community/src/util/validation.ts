@@ -27,7 +27,7 @@ export function Validate(predicate: ValidatePredicate) {
 
             const cleanKey = key.replace(/^_*/, '');
             let targetClass = target.constructor?.className ?? target.constructor?.name;
-            if (targetClass?.length < 2) {
+            if (targetClass?.length < 3) {
                 targetClass = null;
             }
             if (predicate.message) {
