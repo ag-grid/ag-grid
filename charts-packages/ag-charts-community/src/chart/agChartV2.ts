@@ -136,7 +136,7 @@ export abstract class AgChart {
         return AgChartV2.update(chart, options as any);
     }
 
-    public static download<T extends AgChartOptions>(chart: AgChartType<T>, options: DownloadOptions) {
+    public static download<T extends AgChartOptions>(chart: AgChartType<T>, options?: DownloadOptions) {
         return AgChartV2.download(chart, options);
     }
 }
