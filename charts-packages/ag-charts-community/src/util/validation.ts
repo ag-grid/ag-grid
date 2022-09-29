@@ -26,14 +26,19 @@ export function Validate(predicate: ValidatePredicate) {
             }
 
             const cleanKey = key.replace(/^_*/, '');
+            const targetClass = target.constructor?.name ?? 'unknown';
             if (predicate.message) {
                 console.warn(
-                    `AG Charts - Property [${cleanKey}] cannot be set to [${JSON.stringify(v)}]; ${
+                    `AG Charts - Property [${cleanKey}] of [${targetClass}] cannot be set to [${JSON.stringify(v)}]; ${
                         predicate.message
                     }, ignoring.`
                 );
             } else {
-                console.warn(`AG Charts - Property [${cleanKey}] cannot be set to [${JSON.stringify(v)}], ignoring.`);
+                console.warn(
+                    `AG Charts - Property [${cleanKey}] of [${targetClass}] cannot be set to [${JSON.stringify(
+                        v
+                    )}], ignoring.`
+                );
             }
         };
         const getter = function () {
