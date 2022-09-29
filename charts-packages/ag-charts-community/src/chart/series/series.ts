@@ -6,9 +6,9 @@ import { Chart } from '../chart';
 import { createId } from '../../util/id';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
+import { Deprecated } from '../../util/deprecation';
 import {
     BOOLEAN,
-    Deprecated,
     OPT_BOOLEAN,
     OPT_NUMBER,
     OPT_COLOR_STRING,

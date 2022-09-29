@@ -537,7 +537,7 @@ export const DOUGHNUT_SERIES_LABELS: AgPolarChartOptions = {
         ...DOUGHNUT_EXAMPLE.series.map((s) => {
             return {
                 ...s,
-                label: {
+                calloutLabel: {
                     enabled: true,
                 },
             };
@@ -553,7 +553,7 @@ export const GROUPED_DOUGHNUT_SERIES_LABELS: AgPolarChartOptions = {
             title: {
                 text: 'Market Share',
             },
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'share',
             innerRadiusOffset: -40,
         },
@@ -562,7 +562,7 @@ export const GROUPED_DOUGHNUT_SERIES_LABELS: AgPolarChartOptions = {
             title: {
                 text: 'Satisfaction',
             },
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'satisfaction',
             outerRadiusOffset: -70,
             innerRadiusOffset: -200,

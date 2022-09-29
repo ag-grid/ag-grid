@@ -553,8 +553,8 @@
       "angleName?": "/** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "radiusKey?": "/** The key to use to retrieve radius values from the data. */",
       "radiusName?": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "labelKey?": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey instead.\n */",
-      "labelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName instead.\n */",
+      "labelKey?": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
+      "labelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n */",
       "calloutLabelKey?": "/** The key to use to retrieve label values from the data. */",
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
@@ -2267,8 +2267,8 @@
       "angleName?": "/** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "radiusKey?": "/** The key to use to retrieve radius values from the data. */",
       "radiusName?": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "labelKey?": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey instead.\n */",
-      "labelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName instead.\n */",
+      "labelKey?": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
+      "labelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n */",
       "calloutLabelKey?": "/** The key to use to retrieve label values from the data. */",
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
@@ -2320,8 +2320,8 @@
       "color?": "CssColor"
     },
     "docs": {
-      "labelKey?": "/** labelKey as specified on series options.\n * @deprecated Use series.calloutLabelKey instead.\n */",
-      "labelName?": "/** labelName as specified on series options.\n * @deprecated Use series.calloutLabelName instead.\n */",
+      "labelKey?": "/** labelKey as specified on series options.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
+      "labelName?": "/** labelName as specified on series options.\n * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n */",
       "calloutLabelKey?": "/** calloutLabelKey as specified on series options. */",
       "calloutLabelName?": "/** calloutLabelName as specified on series options. */",
       "sectorLabelKey?": "/** sectorLabelKey as specified on series options. */",
@@ -3312,7 +3312,9 @@
       "sectorLabelKey?": "string",
       "radiusKey?": "string"
     },
-    "docs": { "labelKey?": "/** @deprecated Use calloutLabelKey\n */" }
+    "docs": {
+      "labelKey?": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */"
+    }
   },
   "PieNodeDatum": {
     "meta": {},
@@ -3352,8 +3354,8 @@
       "color?": "string"
     },
     "docs": {
-      "labelKey?": "/** @deprecated Use calloutLabelKey\n */",
-      "labelName?": "/** @deprecated Use calloutLabelName\n */"
+      "labelKey?": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
+      "labelName?": "/** @deprecated Use calloutLabelName or sectorLabelName\n */"
     }
   },
   "PieNodeTag": {
@@ -3399,9 +3401,9 @@
       "value?": "any"
     },
     "docs": {
-      "labelKey?": "/** @deprecated Use calloutLabelKey\n */",
-      "labelValue?": "/** @deprecated Use calloutLabelValue\n */",
-      "labelName?": "/** @deprecated Use calloutLabelName\n */"
+      "labelKey?": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
+      "labelValue?": "/** @deprecated Use calloutLabelValue or sectorLabelValue\n */",
+      "labelName?": "/** @deprecated Use calloutLabelName or sectorLabelName\n */"
     }
   },
   "SectorBoundaries": {
@@ -3673,6 +3675,17 @@
   "Comparator": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(a: T, b: T) => number"
+  },
+  "DeprecationOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "default?": "T",
+      "accessors?": "{ get(target: T): any; set(target: T, v: any): void; }"
+    },
+    "docs": {
+      "default?": "/** Default value */",
+      "accessors?": "/** Getter and setter for a target property to use instead of deprecated */"
+    }
   },
   "LiteralProperties": {
     "meta": { "isTypeAlias": true },

@@ -12991,11 +12991,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey instead.\n */",
+      "description": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName instead.\n */",
+      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -15567,11 +15567,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey instead.\n */",
+      "description": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName instead.\n */",
+      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -15701,11 +15701,11 @@
   },
   "AgPieSeriesTooltipRendererParams": {
     "labelKey": {
-      "description": "/** labelKey as specified on series options.\n * @deprecated Use series.calloutLabelKey instead.\n */",
+      "description": "/** labelKey as specified on series options.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** labelName as specified on series options.\n * @deprecated Use series.calloutLabelName instead.\n */",
+      "description": "/** labelName as specified on series options.\n * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {

@@ -1276,13 +1276,13 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     /**
      * The key to use to retrieve label values from the data.
      *
-     * @deprecated Use series.calloutLabelKey instead.
+     * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.
      */
     labelKey?: string;
     /**
      * A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.
      *
-     * @deprecated Use series.calloutLabelName instead.
+     * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.
      */
     labelName?: string;
     /** The key to use to retrieve label values from the data. */
@@ -1337,13 +1337,13 @@ export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRe
     /**
      * labelKey as specified on series options.
      *
-     * @deprecated Use series.calloutLabelKey instead.
+     * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.
      */
     labelKey?: string;
     /**
      * labelName as specified on series options.
      *
-     * @deprecated Use series.calloutLabelName instead.
+     * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.
      */
     labelName?: string;
     /** calloutLabelKey as specified on series options. */

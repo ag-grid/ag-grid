@@ -20,6 +20,7 @@ import { Observable, TypedEvent } from '../../../util/observable';
 import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxis';
 import { TooltipRendererResult, toTooltipHtml } from '../../chart';
+import { Deprecated } from '../../../util/deprecation';
 import {
     BOOLEAN,
     NUMBER,
@@ -31,7 +32,6 @@ import {
     COLOR_STRING_ARRAY,
     Validate,
     COLOR_STRING,
-    Deprecated,
 } from '../../../util/validation';
 
 export interface PieSeriesNodeClickEvent extends TypedEvent {
@@ -40,7 +40,7 @@ export interface PieSeriesNodeClickEvent extends TypedEvent {
     readonly series: PieSeries;
     readonly datum: any;
     readonly angleKey: string;
-    /** @deprecated Use calloutLabelKey */
+    /** @deprecated Use calloutLabelKey or sectorLabelKey */
     readonly labelKey?: string;
     readonly calloutLabelKey?: string;
     readonly sectorLabelKey?: string;
@@ -68,9 +68,9 @@ interface PieNodeDatum extends SeriesNodeDatum {
 }
 
 export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
-    /** @deprecated Use calloutLabelKey */
+    /** @deprecated Use calloutLabelKey or sectorLabelKey */
     readonly labelKey?: string;
-    /** @deprecated Use calloutLabelName */
+    /** @deprecated Use calloutLabelName or sectorLabelName */
     readonly labelName?: string;
     readonly calloutLabelKey?: string;
     readonly calloutLabelName?: string;
@@ -107,11 +107,11 @@ export interface PieSeriesFormat {
 
 interface PieSeriesLabelFormatterParams {
     readonly datum: any;
-    /** @deprecated Use calloutLabelKey */
+    /** @deprecated Use calloutLabelKey or sectorLabelKey */
     readonly labelKey?: string;
-    /** @deprecated Use calloutLabelValue */
+    /** @deprecated Use calloutLabelValue or sectorLabelValue */
     readonly labelValue?: string;
-    /** @deprecated Use calloutLabelName */
+    /** @deprecated Use calloutLabelName or sectorLabelName */
     readonly labelName?: string;
     readonly calloutLabelKey?: string;
     readonly calloutLabelValue?: string;
@@ -356,7 +356,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     @Validate(OPT_NUMBER(0))
     radiusMax?: number = undefined;
 
-    @Deprecated<PieSeries>('Use calloutLabelKey instead.', {
+    @Deprecated<PieSeries>('Use calloutLabelKey or sectorLabelKey instead.', {
         accessors: {
             get: (target) => target.calloutLabelKey,
             set: (target, v) => (target.calloutLabelKey = v),
@@ -364,7 +364,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     })
     labelKey?: string = undefined;
 
-    @Deprecated('Use calloutLabelName instead.', {
+    @Deprecated('Use calloutLabelName or sectorLabelName instead.', {
         accessors: {
             get: (target) => target.calloutLabelName,
             set: (target, v) => (target.calloutLabelKey = v),
@@ -505,8 +505,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 labelKey,
                 labelValue: labelKey ? datum[labelKey] : undefined,
                 labelName: this.calloutLabelName,
+                calloutLabelKey: labelKey,
+                calloutLabelValue: labelKey ? datum[labelKey] : undefined,
+                calloutLabelName: this.calloutLabelName,
                 sectorLabelKey,
                 sectorLabelValue: sectorLabelKey ? datum[sectorLabelKey] : undefined,
+                sectorLabelName: this.sectorLabelName,
             };
         };
 
@@ -1028,12 +1032,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             return '';
         }
 
-        const { fills, tooltip, angleName, radiusKey, radiusName, labelKey, labelName } = this;
+        const { fills, tooltip, angleName, radiusKey, radiusName, calloutLabelKey, sectorLabelKey, calloutLabelName, sectorLabelName } = this;
 
         const { renderer: tooltipRenderer } = tooltip;
         const color = fills[nodeDatum.index % fills.length];
         const datum = nodeDatum.datum;
-        const label = labelKey ? `${datum[labelKey]}: ` : '';
+        const label = calloutLabelKey ? `${datum[calloutLabelKey]}: ` : '';
         const angleValue = datum[angleKey];
         const formattedAngleValue = typeof angleValue === 'number' ? toFixed(angleValue) : angleValue.toString();
         const title = this.title ? this.title.text : undefined;
@@ -1054,8 +1058,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     radiusKey,
                     radiusValue: radiusKey ? datum[radiusKey] : undefined,
                     radiusName,
-                    labelKey,
-                    labelName,
+                    labelKey: calloutLabelKey,
+                    labelName: calloutLabelName,
+                    calloutLabelKey,
+                    calloutLabelName,
+                    sectorLabelKey,
+                    sectorLabelName,
                     title,
                     color,
                 }),
@@ -1067,16 +1075,16 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {
-        const { labelKey, data } = this;
+        const { calloutLabelKey, data } = this;
 
-        if (data && data.length && labelKey) {
+        if (data && data.length && calloutLabelKey) {
             const { fills, strokes, id } = this;
 
             const titleText = this.title && this.title.showInLegend && this.title.text;
             data.forEach((datum, index) => {
                 let labelParts = [];
                 titleText && labelParts.push(titleText);
-                labelParts.push(String(datum[labelKey]));
+                labelParts.push(String(datum[calloutLabelKey]));
 
                 legendData.push({
                     id,

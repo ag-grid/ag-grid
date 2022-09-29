@@ -65,11 +65,11 @@ const options: AgChartOptions = {
       title: {
         text: 'Q1',
       },
-      label: {
+      calloutLabel: {
         enabled: false,
       },
       angleKey: 'Q1',
-      labelKey: 'beverage',
+      calloutLabelKey: 'beverage',
       showInLegend: true,
       outerRadiusOffset: 0,
       innerRadiusOffset: -20,
@@ -79,11 +79,11 @@ const options: AgChartOptions = {
       title: {
         text: 'Q2',
       },
-      label: {
+      calloutLabel: {
         enabled: false,
       },
       angleKey: 'Q2',
-      labelKey: 'beverage',
+      calloutLabelKey: 'beverage',
       outerRadiusOffset: -40,
       innerRadiusOffset: -60,
     },
@@ -92,11 +92,11 @@ const options: AgChartOptions = {
       title: {
         text: 'Q3',
       },
-      label: {
+      calloutLabel: {
         enabled: false,
       },
       angleKey: 'Q3',
-      labelKey: 'beverage',
+      calloutLabelKey: 'beverage',
       outerRadiusOffset: -80,
       innerRadiusOffset: -100,
     },
@@ -105,11 +105,11 @@ const options: AgChartOptions = {
       title: {
         text: 'Q4',
       },
-      label: {
+      calloutLabel: {
         enabled: false,
       },
       angleKey: 'Q4',
-      labelKey: 'beverage',
+      calloutLabelKey: 'beverage',
       outerRadiusOffset: -120,
       innerRadiusOffset: -140,
     },

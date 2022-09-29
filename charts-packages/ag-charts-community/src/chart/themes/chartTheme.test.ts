@@ -166,7 +166,7 @@ describe('ChartTheme', () => {
                     },
                     series: {
                         pie: {
-                            label: {
+                            calloutLabel: {
                                 enabled: true,
                                 color: 'yellow',
                                 fontSize: 20,
@@ -192,8 +192,8 @@ describe('ChartTheme', () => {
                 {
                     type: 'pie',
                     angleKey: 'v1',
-                    labelKey: 'label',
-                    label: {
+                    calloutLabelKey: 'label',
+                    calloutLabel: {
                         fontSize: 18,
                     },
                 },
@@ -220,9 +220,9 @@ describe('ChartTheme', () => {
             expect(chart.series[0].type).toBe('pie');
             expect((chart.series[0] as PieSeries).fills).toEqual(['red', 'green', 'blue']);
             expect((chart.series[0] as PieSeries).strokes).toEqual(['cyan', 'cyan', 'cyan']);
-            expect((chart.series[0] as PieSeries).label.enabled).toBe(true);
-            expect((chart.series[0] as PieSeries).label.color).toBe('yellow');
-            expect((chart.series[0] as PieSeries).label.fontSize).toBe(18);
+            expect((chart.series[0] as PieSeries).calloutLabel.enabled).toBe(true);
+            expect((chart.series[0] as PieSeries).calloutLabel.color).toBe('yellow');
+            expect((chart.series[0] as PieSeries).calloutLabel.fontSize).toBe(18);
             expect((chart.series[0] as PieSeries).tooltip.enabled).toBe(false);
             expect((chart.series[0] as PieSeries).tooltip.renderer).toBe(tooltipRenderer);
         });
@@ -260,7 +260,7 @@ describe('ChartTheme', () => {
                             },
                         },
                         pie: {
-                            label: {
+                            calloutLabel: {
                                 enabled: true,
                                 color: 'yellow',
                                 fontSize: 20,
@@ -308,8 +308,8 @@ describe('ChartTheme', () => {
                 {
                     type: 'pie',
                     angleKey: 'v1',
-                    labelKey: 'label',
-                    label: {
+                    calloutLabelKey: 'label',
+                    calloutLabel: {
                         fontSize: 18,
                     },
                 },
@@ -349,9 +349,9 @@ describe('ChartTheme', () => {
             expect(polarChart!.series[0].type).toBe('pie');
             expect((polarChart!.series[0] as PieSeries).fills).toEqual(['red', 'green', 'blue']);
             expect((polarChart!.series[0] as PieSeries).strokes).toEqual(['cyan', 'cyan', 'cyan']);
-            expect((polarChart!.series[0] as PieSeries).label.enabled).toBe(true);
-            expect((polarChart!.series[0] as PieSeries).label.color).toBe('yellow');
-            expect((polarChart!.series[0] as PieSeries).label.fontSize).toBe(18);
+            expect((polarChart!.series[0] as PieSeries).calloutLabel.enabled).toBe(true);
+            expect((polarChart!.series[0] as PieSeries).calloutLabel.color).toBe('yellow');
+            expect((polarChart!.series[0] as PieSeries).calloutLabel.fontSize).toBe(18);
             expect((polarChart!.series[0] as PieSeries).tooltip.enabled).toBe(false);
             expect((polarChart!.series[0] as PieSeries).tooltip.renderer).toBe(pieTooltipRenderer);
         });

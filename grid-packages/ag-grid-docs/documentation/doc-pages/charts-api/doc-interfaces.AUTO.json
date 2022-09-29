@@ -873,11 +873,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey instead.\n */",
+      "description": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName instead.\n */",
+      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -3449,11 +3449,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey instead.\n */",
+      "description": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName instead.\n */",
+      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -3583,11 +3583,11 @@
   },
   "AgPieSeriesTooltipRendererParams": {
     "labelKey": {
-      "description": "/** labelKey as specified on series options.\n * @deprecated Use series.calloutLabelKey instead.\n */",
+      "description": "/** labelKey as specified on series options.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** labelName as specified on series options.\n * @deprecated Use series.calloutLabelName instead.\n */",
+      "description": "/** labelName as specified on series options.\n * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -4638,7 +4638,7 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "angleKey": { "type": { "returnType": "string", "optional": false } },
     "labelKey": {
-      "description": "/** @deprecated Use calloutLabelKey\n */",
+      "description": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": { "type": { "returnType": "string", "optional": true } },
@@ -4674,11 +4674,11 @@
   },
   "PieTooltipRendererParams": {
     "labelKey": {
-      "description": "/** @deprecated Use calloutLabelKey\n */",
+      "description": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** @deprecated Use calloutLabelName\n */",
+      "description": "/** @deprecated Use calloutLabelName or sectorLabelName\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": { "type": { "returnType": "string", "optional": true } },
@@ -4715,15 +4715,15 @@
   "PieSeriesLabelFormatterParams": {
     "datum": { "type": { "returnType": "any", "optional": false } },
     "labelKey": {
-      "description": "/** @deprecated Use calloutLabelKey\n */",
+      "description": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelValue": {
-      "description": "/** @deprecated Use calloutLabelValue\n */",
+      "description": "/** @deprecated Use calloutLabelValue or sectorLabelValue\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** @deprecated Use calloutLabelName\n */",
+      "description": "/** @deprecated Use calloutLabelName or sectorLabelName\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": { "type": { "returnType": "string", "optional": true } },
@@ -4989,6 +4989,20 @@
   "ShapeLineCap": {},
   "ShapeLineJoin": {},
   "Comparator": { "meta": { "typeParams": ["T"] } },
+  "DeprecationOptions": {
+    "default": {
+      "description": "/** Default value */",
+      "type": { "returnType": "T", "optional": true }
+    },
+    "accessors": {
+      "description": "/** Getter and setter for a target property to use instead of deprecated */",
+      "type": {
+        "returnType": "{ get(target: T): any; set(target: T, v: any): void }",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["T"] }
+  },
   "LiteralProperties": {},
   "SkippableProperties": {},
   "IsLiteralProperty": { "meta": { "typeParams": ["T", "K extends keyof T"] } },
@@ -5205,6 +5219,5 @@
   "OffsetFn": {},
   "CountFn": {},
   "FieldFn": {},
-  "ValidationContext": {},
   "ValidatePredicate": {}
 }

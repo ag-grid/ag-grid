@@ -9,7 +9,7 @@ const options: AgChartOptions = {
         {
             type: 'pie',
             angleKey: 'value',
-            labelKey: 'label',
+            calloutLabelKey: 'label',
             sectorLabelKey: 'value',
             sectorLabel: {
                 color: 'white',
