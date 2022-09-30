@@ -8,47 +8,6 @@
                 }
             }
         }
-
-        &__packages {
-            > div {
-                @extend .card, .row, .flex-md-row, .flex-nowrap, .py-3;
-                > div:first-child {
-                    min-width: 10rem;
-                    @extend .col-md, .d-flex, .justify-content-center, .mb-4, .mb-md-0, .align-items-start;
-                    img {
-                        min-width: 5rem;
-                    }
-                }
-                >div:last-child {
-                    @extend .col-lg, .flex-fill;
-                }
-                h2 {
-                    @extend .card-title;
-                }
-                h3 {
-                    @extend .card-subtitle, .mb-2, .text-muted;
-                }
-                ul {
-                    @extend .card-text;
-                }
-                span {
-                    font-family: monospace;
-                    @extend .mx-2;
-                }
-                .package-install {
-                    @extend .d-flex;
-                    span:first-child {
-                        @extend .ml-0;
-                    }
-                    span:last-child {
-                        @extend .ml-auto;
-                        @include media-breakpoint-down(sm) {
-                            display: none;
-                        }
-                    }
-                }
-            }
-        }
     }
     
     &__licenses {
@@ -153,6 +112,78 @@
     #side-bar {
         @media (max-width:1646px) {
             display: none !important;
+        }
+    }
+}
+
+.license-pricing__content {
+    .license-pricing__content__packages {
+        > div {
+            @extend .card, .row, .flex-md-row, .flex-nowrap, .py-4;
+            > div:first-child {
+                min-width: 10rem;
+                @extend .col-md, .d-flex, .justify-content-center, .mb-4, .mb-md-0, .align-items-start;
+                img {
+                    min-width: 5rem;
+                }
+            }
+            >div:last-child {
+                @extend .col-lg, .flex-fill;
+            }
+            h2 {
+                @extend .card-title;
+            }
+            h3 {
+                @extend .card-subtitle, .mb-2, .text-muted;
+            }
+            ul {
+                @extend .card-text;
+            }
+            span {
+                font-family: monospace;
+                @extend .mx-2;
+            }
+            .package-install {
+                @extend .d-flex;
+                span:first-child {
+                    @extend .ml-0;
+                }
+                span:last-child {
+                    @extend .ml-auto;
+                    @include media-breakpoint-down(sm) {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        &__ag-enterprise {
+            &__contents {
+                display: flex;
+                gap: 2rem;
+            }
+
+            &__video {
+                @extend .card, .p-2, .rounded-sm;
+                min-width: 300px;
+                height: 100%;
+
+                h4 {
+                    text-align: center;
+                }
+
+                img {
+                    width: 100%;
+                }
+
+                a { 
+                    position: relative;
+                }
+
+                span {
+                    left: 0;
+                }
+            }
         }
     }
 }
