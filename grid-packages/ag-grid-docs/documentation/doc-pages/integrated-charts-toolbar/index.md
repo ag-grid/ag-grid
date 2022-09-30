@@ -92,19 +92,19 @@ The example below shows how the toolbar can be customised. Notice the following:
 
 ## Chart Tool Panel Customisation
 
-The Chart Tool Panel can be customised within the `chartToolPanels` grid option.
+The Chart Tool Panel can be customised within the `chartToolPanelsDef` grid option.
 
-<api-documentation source='grid-options/properties.json' section='charts' names='["chartToolPanels"]' ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='charts' names='["chartToolPanelsDef"]' ></api-documentation>
 
 ### Customising settings panel chart groups
 
-The list of chart groups shown on the settings panel can be customised using the `chartToolPanels.settingsPanel.chartGroups` grid option. The full list of chart groups are as follows:
+The list of chart groups shown on the settings panel can be customised using the `chartToolPanelsDef.settingsPanel.chartGroupsDef` grid option. The full list of chart groups are as follows:
 
 <snippet>
 const gridOptions = {
-    chartToolPanels: {
+    chartToolPanelsDef: {
         settingsPanel: {
-            chartGroups: {
+            chartGroupsDef: {
                 columnGroup: [
                     'column',
                     'stackedColumn',
@@ -151,9 +151,9 @@ The example below shows a reordering of chart groups with some chart groups and 
 
 ### Customising panels
 
-The Chart Tool Panels can be reorganised using the `chartToolPanels.panels` grid option, and a tool panel can be opened when the chart is loaded using the `chartToolPanels.defaultToolPanel` grid option.
+The Chart Tool Panels can be reorganised using the `chartToolPanelsDef.panels` grid option, and a tool panel can be opened when the chart is loaded using the `chartToolPanelsDef.defaultToolPanel` grid option.
 
-Note that when the `chartToolPanels` grid option is used, the panels returned from `gridOptions.getChartToolbarItems(params)` are ignored. If `chartToolPanels` is set without `chartToolPanels.panels`, **all panels** will be shown regardless of the results of `gridOptions.getChartToolbarItems(params)`.
+Note that when the `chartToolPanels` grid option is used, the panels returned from `gridOptions.getChartToolbarItems(params)` are ignored. If `chartToolPanelsDef` is defined without `chartToolPanelsDef.panels`, **all panels** will be shown regardless of the results of `gridOptions.getChartToolbarItems(params)`.
 
 The example below shows panels being reorganised with the `format` tool panel open by default:
 

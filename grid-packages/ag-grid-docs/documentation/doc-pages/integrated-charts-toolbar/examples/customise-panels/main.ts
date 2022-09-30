@@ -43,7 +43,7 @@ const gridOptions: GridOptions = {
   enableRangeSelection: true,
   onFirstDataRendered: onFirstDataRendered,
   enableCharts: true,
-  chartToolPanels: {
+  chartToolPanelsDef: {
     panels: ['data', 'format', 'settings'],
     defaultToolPanel: 'format'
   },

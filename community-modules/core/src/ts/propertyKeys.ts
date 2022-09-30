@@ -16,7 +16,7 @@ export class PropertyKeys {
         'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'defaultCsvExportParams', 'defaultExcelExportParams', 'columnTypes',
         'rowClassRules', 'detailCellRendererParams', 'loadingCellRendererParams', 'loadingOverlayComponentParams',
         'noRowsOverlayComponentParams', 'popupParent', 'colResizeDefault', 'statusBar', 'sideBar', 'chartThemeOverrides',
-        'customChartThemes', 'chartToolPanels'
+        'customChartThemes', 'chartToolPanelsDef'
     ];
 
     public static ARRAY_PROPERTIES = [

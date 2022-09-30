@@ -1,4 +1,4 @@
-import { CHART_TYPE_KEYS, ChartTypeKeys, AgGroupComponent, Autowired, ChartType, Component, PartialChartGroups, PostConstruct, DEFAULT_CHART_GROUPS } from "@ag-grid-community/core";
+import { CHART_TYPE_KEYS, ChartTypeKeys, AgGroupComponent, Autowired, ChartType, Component, PartialChartGroupsDef, PostConstruct, DEFAULT_CHART_GROUPS } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import {
@@ -68,11 +68,11 @@ export class MiniChartsContainer extends Component {
     private wrappers: { [key: string]: HTMLElement } = {};
     private chartController: ChartController;
 
-    private chartGroups: PartialChartGroups;
+    private chartGroups: PartialChartGroupsDef;
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    constructor(chartController: ChartController, fills: string[], strokes: string[], chartGroups: PartialChartGroups = DEFAULT_CHART_GROUPS) {
+    constructor(chartController: ChartController, fills: string[], strokes: string[], chartGroups: PartialChartGroupsDef = DEFAULT_CHART_GROUPS) {
         super(MiniChartsContainer.TEMPLATE);
 
         this.chartController = chartController;

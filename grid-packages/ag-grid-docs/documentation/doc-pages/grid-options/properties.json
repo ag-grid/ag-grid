@@ -397,7 +397,7 @@
                 "url": "/integrated-charts-customisation/#overriding-existing-themes"
             }
         },
-        "chartToolPanels": {
+        "chartToolPanelsDef": {
             "more": {
                 "name": "Chart Tool Panel customisation",
                 "url": "/integrated-charts-toolbar/#chart-tool-panel-customisation"

@@ -75,7 +75,7 @@ export class ChartSettingsPanel extends Component {
 
     private resetPalettes(forceReset?: boolean): void {
         const palettes = this.chartController.getPalettes();
-        const chartGroups = this.gridOptionsWrapper.getChartToolPanels()?.settingsPanel?.chartGroups;
+        const chartGroups = this.gridOptionsWrapper.getChartToolPanelsDef()?.settingsPanel?.chartGroupsDef;
 
         if ((_.shallowCompare(palettes, this.palettes) && !forceReset) || this.isAnimating) {
             return;

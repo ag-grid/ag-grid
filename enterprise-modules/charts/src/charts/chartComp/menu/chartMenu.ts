@@ -68,7 +68,7 @@ export class ChartMenu extends Component {
     private postConstruct(): void {
         this.createButtons();
 
-        const showDefaultToolPanel = Boolean(this.gridOptionsWrapper.getChartToolPanels()?.defaultToolPanel);
+        const showDefaultToolPanel = Boolean(this.gridOptionsWrapper.getChartToolPanelsDef()?.defaultToolPanel);
         if (showDefaultToolPanel) {
             this.showMenu(this.defaultPanel, false);
         }
@@ -95,7 +95,7 @@ export class ChartMenu extends Component {
     }
 
     private getToolbarOptions(): ChartMenuOptions[] {
-        const useChartToolPanelCustomisation = Boolean(this.gridOptionsWrapper.getChartToolPanels())
+        const useChartToolPanelCustomisation = Boolean(this.gridOptionsWrapper.getChartToolPanelsDef())
 
         if (useChartToolPanelCustomisation) {
             const defaultChartToolbarOptions: ChartMenuOptions[] = [
@@ -111,7 +111,7 @@ export class ChartMenu extends Component {
                 ? toolbarItemsFunc(params).filter(option => {
                     if (!CHART_TOOLBAR_ALLOW_LIST.includes(option)) {
                         const msg = CHART_TOOL_PANEL_ALLOW_LIST.includes(option as any)
-                            ? `AG Grid: '${option}' is a Chart Tool Panel option and will be ignored since 'chartToolPanels' is used. Please use 'chartToolPanels.panels' grid option instead`
+                            ? `AG Grid: '${option}' is a Chart Tool Panel option and will be ignored since 'chartToolPanelsDef' is used. Please use 'chartToolPanelsDef.panels' grid option instead`
                             : `AG Grid: '${option}' is not a valid Chart Toolbar Option`;
                         console.warn(msg);
                         return false;
@@ -121,7 +121,7 @@ export class ChartMenu extends Component {
                 })
                 : defaultChartToolbarOptions;
 
-            const panelsOverride = this.gridOptionsWrapper.getChartToolPanels()?.panels;
+            const panelsOverride = this.gridOptionsWrapper.getChartToolPanelsDef()?.panels;
             this.panels = panelsOverride
                 ? panelsOverride.map(panel => CHART_TOOL_PANEL_MENU_OPTIONS[panel])
                 : Object.values(CHART_TOOL_PANEL_MENU_OPTIONS);
@@ -131,7 +131,7 @@ export class ChartMenu extends Component {
                 this.panels = this.panels.filter(panel => panel !== 'chartData');
             }
 
-            const defaultToolPanel = this.gridOptionsWrapper.getChartToolPanels()?.defaultToolPanel;
+            const defaultToolPanel = this.gridOptionsWrapper.getChartToolPanelsDef()?.defaultToolPanel;
             this.defaultPanel = (defaultToolPanel && CHART_TOOL_PANEL_MENU_OPTIONS[defaultToolPanel]) || this.panels[0];
 
             return this.panels.length > 0

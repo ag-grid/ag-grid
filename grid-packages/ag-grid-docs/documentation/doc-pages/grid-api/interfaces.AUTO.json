@@ -1563,7 +1563,7 @@
       "customChartThemes?": "{ [name: string]: AgChartTheme; }",
       "chartThemeOverrides?": "AgChartThemeOverrides",
       "enableChartToolPanelsButton?": "boolean",
-      "chartToolPanels?": "ChartToolPanels",
+      "chartToolPanelsDef?": "ChartToolPanelsDef",
       "loadingCellRenderer?": "any",
       "loadingCellRendererFramework?": "any",
       "loadingCellRendererParams?": "any",
@@ -1955,7 +1955,7 @@
       "customChartThemes?": "/** A map containing custom chart themes. */",
       "chartThemeOverrides?": "/** Chart theme overrides applied to all themes. */",
       "enableChartToolPanelsButton?": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
-      "chartToolPanels?": "/** Chart Tool Panel overrides. */",
+      "chartToolPanelsDef?": "/** Chart Tool Panel overrides. */",
       "loadingCellRenderer?": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
       "loadingCellRendererFramework?": "/** @deprecated As of v27, use `loadingCellRenderer` for framework components too.\n */",
       "loadingCellRendererParams?": "/** Params to be passed to the `loadingCellRenderer` component. */",
@@ -9564,21 +9564,21 @@
     "meta": { "isTypeAlias": true },
     "type": "typeof CHART_TYPE_KEYS"
   },
-  "ChartGroups": {
+  "ChartGroupsDef": {
     "meta": { "isTypeAlias": true },
     "type": "{[chartType in keyof ChartTypeKeys]: (keyof ChartTypeKeys[chartType])[]}"
   },
-  "PartialChartGroups": {
+  "PartialChartGroupsDef": {
     "meta": { "isTypeAlias": true },
-    "type": "Partial<ChartGroups>"
+    "type": "Partial<ChartGroupsDef>"
   },
   "ChartToolPanelName": {
     "meta": { "isTypeAlias": true },
     "type": "'settings' | 'data' | 'format'"
   },
-  "ChartToolPanels": {
+  "ChartToolPanelsDef": {
     "meta": { "isTypeAlias": true },
-    "type": "{ settingsPanel?: { chartGroups: PartialChartGroups; }; panels?: ChartToolPanelName[]; defaultToolPanel?: ChartToolPanelName; }"
+    "type": "{ settingsPanel?: { chartGroupsDef: PartialChartGroupsDef; }; panels?: ChartToolPanelName[]; defaultToolPanel?: ChartToolPanelName; }"
   },
   "ChartType": {
     "meta": { "isTypeAlias": true },
@@ -14170,7 +14170,7 @@
       "customChartThemes?": "{ [name: string]: AgChartTheme; }",
       "chartThemeOverrides?": "AgChartThemeOverrides",
       "enableChartToolPanelsButton?": "boolean",
-      "chartToolPanels?": "ChartToolPanels",
+      "chartToolPanelsDef?": "ChartToolPanelsDef",
       "loadingCellRenderer?": "any",
       "loadingCellRendererFramework?": "any",
       "loadingCellRendererParams?": "any",
@@ -14562,7 +14562,7 @@
       "customChartThemes?": "/** A map containing custom chart themes. */",
       "chartThemeOverrides?": "/** Chart theme overrides applied to all themes. */",
       "enableChartToolPanelsButton?": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
-      "chartToolPanels?": "/** Chart Tool Panel overrides. */",
+      "chartToolPanelsDef?": "/** Chart Tool Panel overrides. */",
       "loadingCellRenderer?": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
       "loadingCellRendererFramework?": "/** @deprecated As of v27, use `loadingCellRenderer` for framework components too.\n */",
       "loadingCellRendererParams?": "/** Params to be passed to the `loadingCellRenderer` component. */",
@@ -14956,7 +14956,7 @@
       "customChartThemes?": "{ [name: string]: AgChartTheme; }",
       "chartThemeOverrides?": "AgChartThemeOverrides",
       "enableChartToolPanelsButton?": "boolean",
-      "chartToolPanels?": "ChartToolPanels",
+      "chartToolPanelsDef?": "ChartToolPanelsDef",
       "loadingCellRenderer?": "any",
       "loadingCellRendererFramework?": "any",
       "loadingCellRendererParams?": "any",
@@ -15348,7 +15348,7 @@
       "customChartThemes?": "/** A map containing custom chart themes. */",
       "chartThemeOverrides?": "/** Chart theme overrides applied to all themes. */",
       "enableChartToolPanelsButton?": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
-      "chartToolPanels?": "/** Chart Tool Panel overrides. */",
+      "chartToolPanelsDef?": "/** Chart Tool Panel overrides. */",
       "loadingCellRenderer?": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
       "loadingCellRendererFramework?": "/** @deprecated As of v27, use `loadingCellRenderer` for framework components too.\n */",
       "loadingCellRendererParams?": "/** Params to be passed to the `loadingCellRenderer` component. */",
@@ -15746,7 +15746,7 @@
       "customChartThemes?": "{ [name: string]: AgChartTheme; }",
       "chartThemeOverrides?": "AgChartThemeOverrides",
       "enableChartToolPanelsButton?": "boolean",
-      "chartToolPanels?": "ChartToolPanels",
+      "chartToolPanelsDef?": "ChartToolPanelsDef",
       "loadingCellRenderer?": "any",
       "loadingCellRendererFramework?": "any",
       "loadingCellRendererParams?": "any",
@@ -16138,7 +16138,7 @@
       "customChartThemes?": "/** A map containing custom chart themes. */",
       "chartThemeOverrides?": "/** Chart theme overrides applied to all themes. */",
       "enableChartToolPanelsButton?": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
-      "chartToolPanels?": "/** Chart Tool Panel overrides. */",
+      "chartToolPanelsDef?": "/** Chart Tool Panel overrides. */",
       "loadingCellRenderer?": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
       "loadingCellRendererFramework?": "/** @deprecated As of v27, use `loadingCellRenderer` for framework components too.\n */",
       "loadingCellRendererParams?": "/** Params to be passed to the `loadingCellRenderer` component. */",

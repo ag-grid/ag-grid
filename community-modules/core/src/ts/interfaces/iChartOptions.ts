@@ -37,16 +37,16 @@ export const CHART_TYPE_KEYS = {
 
 export type ChartTypeKeys = typeof CHART_TYPE_KEYS;
 
-export type ChartGroups = {
+export type ChartGroupsDef = {
     [chartType in keyof ChartTypeKeys]: (keyof ChartTypeKeys[chartType])[];
 };
 
-export type PartialChartGroups = Partial<ChartGroups>;
+export type PartialChartGroupsDef = Partial<ChartGroupsDef>;
 
 /************************************************************************************************
  * If you update these, then also update the `integrated-charts-toolbar` docs. *
  ************************************************************************************************/
-export const DEFAULT_CHART_GROUPS: PartialChartGroups = {
+export const DEFAULT_CHART_GROUPS: PartialChartGroupsDef = {
     columnGroup: [
         'column',
         'stackedColumn',
@@ -85,9 +85,9 @@ export const DEFAULT_CHART_GROUPS: PartialChartGroups = {
 
 export type ChartToolPanelName = 'settings' | 'data' | 'format';
 
-export type ChartToolPanels = {
+export type ChartToolPanelsDef = {
     settingsPanel?: {
-        chartGroups: PartialChartGroups,
+        chartGroupsDef: PartialChartGroupsDef,
     },
     panels?: ChartToolPanelName[],
     defaultToolPanel?: ChartToolPanelName

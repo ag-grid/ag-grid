@@ -44,22 +44,22 @@ const gridOptions: GridOptions = {
   onFirstDataRendered: onFirstDataRendered,
   onChartCreated: onChartCreated,
   enableCharts: true,
-  chartToolPanels: {
+  chartToolPanelsDef: {
     settingsPanel: {        
-        chartGroups: {
-          pieGroup: [
-              'pie',
-              'doughnut'
-          ],
-          columnGroup: [
-              'stackedColumn',
-              'column',
-              'normalizedColumn'
-          ],
-          barGroup: [
-              'bar'
-          ],
-        }
+      chartGroupsDef: {
+        pieGroup: [
+            'pie',
+            'doughnut'
+        ],
+        columnGroup: [
+            'stackedColumn',
+            'column',
+            'normalizedColumn'
+        ],
+        barGroup: [
+            'bar'
+        ],
+      }
     },
   },
 }
