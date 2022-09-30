@@ -156,6 +156,35 @@
                 }
             }
         }
+
+        &__ag-enterprise {
+            &__contents {
+                display: flex;
+                gap: 2rem;
+            }
+
+            &__video {
+                @extend .card, .p-2, .rounded-sm;
+                min-width: 300px;
+                height: 100%;
+
+                h4 {
+                    text-align: center;
+                }
+
+                img {
+                    width: 100%;
+                }
+
+                a { 
+                    position: relative;
+                }
+
+                span {
+                    left: 0;
+                }
+            }
+        }
     }
 }
 

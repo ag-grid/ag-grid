@@ -50,49 +50,46 @@ const LicensePricing = () => {
                             <div>
                                 <img src="../images/svg/enterprise.svg" style={{maxWidth: 50}} alt="Enterprise"/>
                             </div>
-                            <div>
+                            <div className={styles['license-pricing__content__packages__ag-enterprise']}>
                                 <h3>AG Grid Enterprise</h3>
-
-                                    <div style={{float: "right", marginLeft: "10px", marginBottom: "10px", padding: 5, border: "1px solid rgba(0, 0, 0, 0.5)", borderRadius: 4}}>
-                                    <div style={{textAlign: "center"}}>
-                                        <h3>
-                                        Enterprise License<br/>Explained Video
-                                        </h3>
+                                <div className={styles['license-pricing__content__packages__ag-enterprise__contents']}>
+                                    <div>
+                                        <p>
+                                            AG Grid Enterprise is a commercial product distributed under our <a
+                                            href="/eula/AG-Grid-Enterprise-License-Latest.html">EULA</a> and supported by our
+                                            technical staff. It has advanced functionality like Row Grouping, Range Selection,
+                                            Master / Detail, Server Side Row Model and <a href="/javascript-grid/licensing/">more</a>.
+                                            AG Grid Enterprise also comes with <a href="/javascript-grid/integrated-charts/">Integrated Charts</a>, allowing
+                                            users to create charts
+                                            using the grid's UI.
+                                        </p>
+                                        <p>
+                                            To evaluate AG Grid Enterprise you don’t need our permission – all features are unlocked.
+                                            To temporarily hide the watermark and browser console errors e-mail <a
+                                            href="mailto:info@ag-grid.com">info@ag-grid.com</a> to
+                                            get a temporary evaluation key.
+                                        </p>
+                                        <p>
+                                            Once you’re ready to begin development, please purchase an appropriate license key from the
+                                            options below.
+                                        </p>
+                                        <p>
+                                            Expanded definitions and FAQ responses are available further down the page. You can e-mail
+                                            us at any time on <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
+                                        </p>
                                     </div>
-                                    <a href="https://www.youtube.com/watch?v=20SLdu4wLtI" target="_">
-                                        <div className="LearningVideos-module--learning-videos__video__anchor-body__body__video-content--Bz5su d-flex">
+                                    <div className={styles['license-pricing__content__packages__ag-enterprise__video']}>
+                                        <h4>
+                                        Enterprise License<br/>Explained Video
+                                        </h4>
+                                        <a href="https://www.youtube.com/watch?v=20SLdu4wLtI" target="_">
                                             <img src="https://localhost:8000/videos/AgGridVideo.png"/>
-                                            <h5 className="LearningVideos-module--learning-videos__video__anchor-body__body__video-content__running-time--TN9pm">
+                                            <span className="LearningVideos-module--learning-videos__video__anchor-body__body__video-content__running-time--TN9pm">
                                                 8:30
-                                            </h5>
-                                        </div>
-                                    </a>
+                                            </span>
+                                        </a>
+                                    </div>
                                 </div>
-                                
-                                <p>
-                                    AG Grid Enterprise is a commercial product distributed under our <a
-                                    href="/eula/AG-Grid-Enterprise-License-Latest.html">EULA</a> and supported by our
-                                    technical staff. It has advanced functionality like Row Grouping, Range Selection,
-                                    Master / Detail, Server Side Row Model and <a href="/javascript-grid/licensing/">more</a>.
-                                    AG Grid Enterprise also comes with <a href="/javascript-grid/integrated-charts/">Integrated Charts</a>, allowing
-                                    users to create charts
-                                    using the grid's UI.
-                                </p>
-                                <p>
-                                    To evaluate AG Grid Enterprise you don’t need our permission – all features are unlocked.
-                                    To temporarily hide the watermark and browser console errors e-mail <a
-                                    href="mailto:info@ag-grid.com">info@ag-grid.com</a> to
-                                    get a temporary evaluation key.
-                                </p>
-                                <p>
-                                    Once you’re ready to begin development, please purchase an appropriate license key from the
-                                    options below.
-                                </p>
-                                <p>
-                                    Expanded definitions and FAQ responses are available further down the page. You can e-mail
-                                    us at any time on <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
-                                </p>
-
                             </div>
                         </div>
                     </section>
