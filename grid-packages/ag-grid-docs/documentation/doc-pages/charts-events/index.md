@@ -7,7 +7,7 @@ This section explains how to listen and respond to various chart and series even
 
 ## Series Event - nodeClick
 
-Fired when this series' node is clicked. Depending on the type of series, a node can mean a bar or a pie slice, or a marker, such as a line or an area series marker. A node is typically associated with a single element from the `data` or `series[].data` array, unless the node represents an aggregation of values (e.g. histogram series bins).
+Fired when this series' node is clicked. Depending on the type of series, a node can mean a bar or a pie sector, or a marker, such as a line or an area series marker. A node is typically associated with a single element from the `data` or `series[].data` array, unless the node represents an aggregation of values (e.g. histogram series bins).
 
 Every `nodeClick` event contains:
 

@@ -2,13 +2,13 @@
 title: "Pie and Doughnut Series"
 ---
 
-Pie series are useful for illustrating the numerical proportion of data values. The slices in a pie series show the contribution of individual values to the whole.
+Pie series are useful for illustrating the numerical proportion of data values. The sectors in a pie series show the contribution of individual values to the whole.
 
 For example, a pie series could be used to visualise the market share of each competitor as a proportion of the total.
 
 ## Basic Configuration
 
-To plot a basic pie all we need is an array of values that will determine the angle of each pie slice. The total of all values will correspond to the full pie.
+To plot a basic pie all we need is an array of values that will determine the angle of each pie sector. The total of all values will correspond to the full pie.
 
 A minimal pie series configuration is shown below:
 
@@ -18,13 +18,13 @@ series: [{
     angleKey: 'value'
 }]
 ```
-This results in the chart shown below. Note that [tooltips](/charts-tooltips/) show the absolute value of each pie slice.
+This results in the chart shown below. Note that [tooltips](/charts-tooltips/) show the absolute value of each pie sector.
 
 <chart-example title='Basic Pie Chart' name='basic-pie' type='generated'></chart-example>
 
-## Slice Labels
+## Sector Labels
 
-In the example above there's no legend or labels next to pie slices. To show those, the label information must be in the `data`. Additionally, we'll have to provide the `labelKey`:
+In the example above there's no legend or labels next to pie sectors. To show those, the label information must be in the `data`. Additionally, we'll have to provide the `labelKey`:
 
 ```diff
 series: [{
@@ -38,9 +38,9 @@ Now we get labels, a legend, and the tooltips will also show labels along with t
 
 <chart-example title='Pie Chart with Labels' name='pie-labels' type='generated'></chart-example>
 
-Each individual slice can be toggled on and off via the legend.
+Each individual sector can be toggled on and off via the legend.
 
-You might notice that not all of the slices in the chart above have a label. The reason for this is that certain slices can be small, and if there's a cluster of small slices their labels will overlap, resulting in a messy chart. To prevent this from happening the series will only show labels for slices with an angle greater than a certain value, which by default is set to be `20` degrees. This value is adjustable via the `label.minAngle` config:
+You might notice that not all of the sectors in the chart above have a label. The reason for this is that certain sectors can be small, and if there's a cluster of small sectors their labels will overlap, resulting in a messy chart. To prevent this from happening the series will only show labels for sectors with an angle greater than a certain value, which by default is set to be `20` degrees. This value is adjustable via the `label.minAngle` config:
 
 ```js
 series: [{
@@ -52,7 +52,7 @@ series: [{
 ```
 
 The `label.formatter` function can be used to change the text value displayed in the label.
-It receives a single object as a parameter containing values associated with a pie segment.
+It receives a single object as a parameter containing values associated with a pie sector.
 Please see the [API reference](#api-reference) for the full list of available properties.
 
 For example, to display the numeric values for a given pie sector in the label,
@@ -98,13 +98,13 @@ series: [{
 }]
 ```
 
-<chart-example title='Pie Chart with Labels in Slices' name='pie-labels-in-slices' type='generated'></chart-example>
+<chart-example title='Pie Chart with Labels in Sectors' name='pie-labels-in-sectors' type='generated'></chart-example>
 
 Please check the [API reference](#api-reference) below to learn more about `label`, `sectorLabel` and `callout`, as well as other series configuration.
 
-## Variable Slice Radius
+## Variable Sector Radius
 
-Let's say we have the data for both the market share of mobile operating systems and the level of user satisfaction with each OS. We could represent the satisfaction level as the radius of a slice using the `radiusKey` config like so:
+Let's say we have the data for both the market share of mobile operating systems and the level of user satisfaction with each OS. We could represent the satisfaction level as the radius of a sector using the `radiusKey` config like so:
 
 ```js
 series: [{
@@ -115,9 +115,9 @@ series: [{
 }]
 ```
 
-A pie chart where slices have different radii is also known as a **rose chart**.
+A pie chart where sectors have different radii is also known as a **rose chart**.
 
-<chart-example title='Slices with Different Radii' name='slice-radius' type='generated'></chart-example>
+<chart-example title='Sectors with Different Radii' name='sector-radius' type='generated'></chart-example>
 
 ## Doughnuts
 
@@ -132,7 +132,7 @@ series: [{
 }]
 ```
 
-The config specifies the offset value from the maximum pie radius which all pie slices use by default (the maximum pie series radius is determined automatically by the chart depending on the chart's dimensions). `-70` in the snippet above means the inner radius of the series should be 70 pixels smaller than the maximum radius.
+The config specifies the offset value from the maximum pie radius which all pie sectors use by default (the maximum pie series radius is determined automatically by the chart depending on the chart's dimensions). `-70` in the snippet above means the inner radius of the series should be 70 pixels smaller than the maximum radius.
 
 <chart-example title='Doughnut Chart' name='doughnut-chart' type='generated'></chart-example>
 

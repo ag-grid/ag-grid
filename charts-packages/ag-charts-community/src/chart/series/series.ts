@@ -25,7 +25,7 @@ import { SizedPoint, Point } from '../../scene/point';
  */
 export interface SeriesNodeDatum {
     // For example, in `sectorNode.datum.seriesDatum`:
-    // `sectorNode` - represents a pie slice
+    // `sectorNode` - represents a pie sector
     // `datum` - contains metadata derived from the immutable series datum and used
     //           to set the properties of the node, such as start/end angles
     // `datum` - raw series datum, an element from the `series.data` array

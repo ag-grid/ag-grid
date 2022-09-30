@@ -392,7 +392,7 @@ export interface AgChartBackground {
 }
 
 export interface AgBaseChartListeners {
-    /** The listener to call when a node (marker, column, bar, tile or a pie slice) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */
+    /** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */
     seriesNodeClick: (event: { type: 'seriesNodeClick'; series: any; datum: any; xKey: string; yKey: string }) => any;
     /** Generic listeners. */
     [key: string]: Function;
@@ -707,7 +707,7 @@ export interface AgSeriesHighlightStyle {
 }
 
 export interface AgBaseSeriesListeners<DatumType> {
-    /** The listener to call when a node (marker, column, bar, tile or a pie slice) in the series is clicked. */
+    /** The listener to call when a node (marker, column, bar, tile or a pie sector) in the series is clicked. */
     nodeClick: (params: { type: 'nodeClick'; series: any; datum: DatumType; xKey: string; yKey: string }) => any;
 }
 
@@ -1162,7 +1162,7 @@ export interface AgHistogramSeriesOptions<DatumType = any>
 export interface AgPieSeriesLabelOptions<DatumType> extends AgChartLabelOptions {
     /** Distance in pixels between the callout line and the label text. */
     offset?: PixelSize;
-    /** Minimum angle in degrees required for a segment to show a label. */
+    /** Minimum angle in degrees required for a sector to show a label. */
     minAngle?: number;
     /** A function that allows the modification of the label text based on input parameters. */
     formatter?: (params: AgPieSeriesLabelFormatterParams<DatumType>) => string;

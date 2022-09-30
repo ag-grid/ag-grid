@@ -224,7 +224,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     private angleScale: LinearScale = (() => {
         const scale = new LinearScale();
-        // Each slice is a ratio of the whole, where all ratios add up to 1.
+        // Each sector is a ratio of the whole, where all ratios add up to 1.
         scale.domain = [0, 1];
         // Add 90 deg to start the first pie at 12 o'clock.
         scale.range = [-Math.PI, Math.PI].map((angle) => angle + Math.PI / 2);
@@ -271,7 +271,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     /**
      * The key of the numeric field to use to determine the angle (for example,
-     * a pie slice angle).
+     * a pie sector angle).
      */
     @Validate(STRING)
     angleKey = '';
@@ -309,7 +309,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     /**
-     * The key of the numeric field to use to determine the radii of pie slices.
+     * The key of the numeric field to use to determine the radii of pie sectors.
      * The largest value will correspond to the full radius and smaller values to
      * proportionally smaller radii.
      */
@@ -429,8 +429,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         );
         const angleDataTotal = angleData.reduce((a, b) => a + b, 0);
 
-        // The ratios (in [0, 1] interval) used to calculate the end angle value for every pie slice.
-        // Each slice starts where the previous one ends, so we only keep the ratios for end angles.
+        // The ratios (in [0, 1] interval) used to calculate the end angle value for every pie sector.
+        // Each sector starts where the previous one ends, so we only keep the ratios for end angles.
         const angleDataRatios = (() => {
             let sum = 0;
             return angleData.map((datum) => (sum += datum / angleDataTotal));
@@ -529,12 +529,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             { textAlign: 'right', textBaseline: 'middle' },
         ];
 
-        // Process segments.
+        // Process sectors.
         let end = 0;
         angleDataRatios.forEach((start) => {
             if (isNaN(start)) {
                 return;
-            } // No segments displayed - nothing to do.
+            } // No sectors displayed - nothing to do.
 
             const radius = radiusKey ? radiusData[datumIndex] : 1;
             const startAngle = angleScale.convert(start) + rotation;
@@ -755,7 +755,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 });
             }
 
-            // Bring highlighted slice's parent group to front.
+            // Bring highlighted sector's parent group to front.
             const parent = sector.parent && sector.parent.parent;
             if (isDatumHighlighted && parent) {
                 parent.removeChild(sector.parent!);
