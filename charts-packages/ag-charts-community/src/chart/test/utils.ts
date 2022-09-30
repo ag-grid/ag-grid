@@ -55,7 +55,7 @@ export function loadExampleOptions(name: string, evalFn = 'options'): any {
             // Remove declares.
             .map((line) => line.replace(/declare var.*;/g, ''))
             // Remove sugars.
-            .map((line) => line.replace(/[a-z]!/g, ''))
+            .map((line) => line.replace(/([a-z])!/g, '$1'))
             // Remove primitives + primitive arrays.
             .map((line) => line.replace(/: (number|string|any)(\[\]){0,}/g, ''))
             // Remove unsupported keywords.
@@ -71,7 +71,7 @@ export function loadExampleOptions(name: string, evalFn = 'options'): any {
         return eval(evalExpr);
     } catch (error) {
         console.error(`AG Charts - unable to read example data for [${name}]; error: ${error.message}`);
-        // console.log(evalExpr);
+        console.log(evalExpr);
         return [];
     }
 }

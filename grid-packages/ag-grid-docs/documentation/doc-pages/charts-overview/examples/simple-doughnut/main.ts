@@ -3,7 +3,7 @@ import { AgChartOptions } from 'ag-charts-community';
 import { getData } from "./data";
 
 const data = getData();
-const numberFormatter = new Intl.NumberFormat('en-US');
+const numFormatter = new Intl.NumberFormat('en-US');
 const total = data.reduce((sum, d) => sum + d['2018/19'], 0);
 
 const options: AgChartOptions = {
@@ -33,7 +33,7 @@ const options: AgChartOptions = {
         fontWeight: 'bold',
         formatter: ({ datum, sectorLabelKey }) => {
           const value = datum[sectorLabelKey!];
-          return numberFormatter.format(value);
+          return numFormatter.format(value);
         }
       },
       title: {
@@ -42,7 +42,7 @@ const options: AgChartOptions = {
       innerRadiusRatio: 0.5,
       innerLabels: [
         {
-          text: numberFormatter.format(total),
+          text: numFormatter.format(total),
           fontSize: 18,
           fontWeight: 'bold',
         },
