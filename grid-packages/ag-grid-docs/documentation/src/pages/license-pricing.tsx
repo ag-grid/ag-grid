@@ -8,7 +8,7 @@ const LicensePricing = () => {
         <div className={styles['page-content']} style={{marginLeft: "5rem", marginRight: "4rem"}}>
             <div className={styles['license-pricing']}>
                 <div className={styles['license-pricing__content']}>
-                    <h1 className={styles['page-title']}>AG Grid Licensing & Pricing</h1>
+                    <h1 className={styles['page-title']}>AG Grid Licensing &amp; Pricing</h1>
                     <section className={styles['license-pricing__content__packages']}>
                         <div>
                             <div>
