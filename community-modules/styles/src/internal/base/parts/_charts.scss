@@ -233,11 +233,11 @@
         flex-direction: row;
         overflow: auto;
         top: 5px;
-        gap: 5px;
+        gap: 7px;
         width: auto;
 
         @include ag.unthemed-rtl((
-            right: 5px,
+            right: 10px,
             justify-content: right
         ));
     }
