@@ -75,6 +75,7 @@ export class ChartSettingsPanel extends Component {
 
     private resetPalettes(forceReset?: boolean): void {
         const palettes = this.chartController.getPalettes();
+        const chartGroups = this.gridOptionsWrapper.getChartToolPanels()?.settingsPanel?.chartGroups;
 
         if ((_.shallowCompare(palettes, this.palettes) && !forceReset) || this.isAnimating) {
             return;
@@ -92,7 +93,7 @@ export class ChartSettingsPanel extends Component {
         this.palettes.forEach((palette, index) => {
             const isActivePalette = this.activePaletteIndex === index;
             const { fills, strokes } = palette;
-            const miniChartsContainer = this.createBean(new MiniChartsContainer(this.chartController, fills, strokes));
+            const miniChartsContainer = this.createBean(new MiniChartsContainer(this.chartController, fills, strokes, chartGroups));
 
             this.miniCharts.push(miniChartsContainer);
             this.eMiniChartsContainer.appendChild(miniChartsContainer.getGui());

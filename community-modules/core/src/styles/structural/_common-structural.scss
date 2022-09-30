@@ -18,6 +18,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     visibility: hidden !important;
 }
 
+.ag-no-transition {
+    transition: none !important;
+}
+
 .ag-drag-handle {
     cursor: grab;
 }

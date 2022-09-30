@@ -40,6 +40,7 @@ import {
     ChartOptionsChanged,
     ChartRangeSelectionChanged,
     ChartRefParams,
+    ChartToolPanels,
     ColDef,
     ColGroupDef,
     ColumnAggFuncChangeRequestEvent,
@@ -457,6 +458,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
     /** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false`     */
     @Input() public enableChartToolPanelsButton: boolean | undefined = undefined;
+    /** Chart Tool Panel overrides.     */
+    @Input() public chartToolPanels: ChartToolPanels | undefined = undefined;
     /** Provide your own loading cell renderer to use when data is loading via a DataSource.
      * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.     */
     @Input() public loadingCellRenderer: any = undefined;

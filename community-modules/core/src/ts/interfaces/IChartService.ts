@@ -1,4 +1,4 @@
-import { ChartType, SeriesChartType } from "./iChartOptions";
+import { ChartToolPanelName, ChartType, SeriesChartType } from "./iChartOptions";
 import { ChartRef } from "../entities/gridOptions";
 import { CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams } from "../gridApi";
 import { CellRangeParams } from "./IRangeService";
@@ -46,8 +46,6 @@ export interface CloseChartToolPanelParams {
 }
 
 export type ChartModelType = 'range' | 'pivot';
-
-export type ChartToolPanelName = 'settings' | 'data' | 'format';
 
 export interface OpenChartToolPanelParams {
     /** The id of the created chart. */

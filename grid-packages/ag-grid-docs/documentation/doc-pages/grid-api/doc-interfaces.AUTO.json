@@ -2670,6 +2670,10 @@
       "description": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "chartToolPanels": {
+      "description": "/** Chart Tool Panel overrides. */",
+      "type": { "returnType": "ChartToolPanels", "optional": true }
+    },
     "loadingCellRenderer": {
       "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
       "type": { "returnType": "any", "optional": true }
@@ -16461,8 +16465,15 @@
       }
     }
   },
+  "ChartTypeKeys": {},
+  "ChartGroups": {},
+  "PartialChartGroups": {},
+  "ChartToolPanelName": {},
+  "ChartToolPanels": {},
   "ChartType": {},
   "CrossFilterChartType": {},
+  "ChartToolPanelMenuOptions": {},
+  "ChartToolbarMenuItemOptions": {},
   "ChartMenuOptions": {},
   "SeriesChartType": {
     "colId": { "type": { "returnType": "string", "optional": false } },
@@ -16507,7 +16518,6 @@
     }
   },
   "ChartModelType": {},
-  "ChartToolPanelName": {},
   "OpenChartToolPanelParams": {
     "chartId": {
       "description": "/** The id of the created chart. */",
@@ -25112,6 +25122,10 @@
       "description": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "chartToolPanels": {
+      "description": "/** Chart Tool Panel overrides. */",
+      "type": { "returnType": "ChartToolPanels", "optional": true }
+    },
     "loadingCellRenderer": {
       "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
       "type": { "returnType": "any", "optional": true }
@@ -27920,6 +27934,10 @@
     "enableChartToolPanelsButton": {
       "description": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "chartToolPanels": {
+      "description": "/** Chart Tool Panel overrides. */",
+      "type": { "returnType": "ChartToolPanels", "optional": true }
     },
     "loadingCellRenderer": {
       "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
@@ -30739,6 +30757,10 @@
     "enableChartToolPanelsButton": {
       "description": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "chartToolPanels": {
+      "description": "/** Chart Tool Panel overrides. */",
+      "type": { "returnType": "ChartToolPanels", "optional": true }
     },
     "loadingCellRenderer": {
       "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
