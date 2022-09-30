@@ -26,7 +26,9 @@
         "predocker:init": "docker build -t charts:latest .docker",
         "docker:init": ".docker/run.sh init",
         "docker:run": ".docker/run.sh run",
-        "docker:test": ".docker/run.sh run npm run test-update"
+        "docker:test-watch": ".docker/run.sh run npm run test-watch",
+        "docker:test-update": ".docker/run.sh run npm run test-update",
+        "docker:clean": ".docker/run.sh clean"
     },
     "repository": {
         "type": "git",
