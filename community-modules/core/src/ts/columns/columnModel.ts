@@ -3171,7 +3171,7 @@ export class ColumnModel extends BeanStub {
             this.lastSecondaryOrder = this.gridColumns;
         }
 
-        let sortOrderToRecover = undefined;
+        let sortOrderToRecover: Column[] | undefined = undefined;
 
         if (this.secondaryColumns && this.secondaryBalancedTree) {
             const hasSameColumns = this.secondaryColumns.every((col) => {
