@@ -8,7 +8,7 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:0-${VARIANT}
 RUN apt-get update && \
     export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
-        pkg-config \
+        pkg-config build-essential \
         # node-canvas dependencies. \
         libpixman-1-dev libcairo2-dev libpango1.0-dev libjpeg8-dev libgif-dev
 

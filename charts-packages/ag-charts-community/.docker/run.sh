@@ -9,7 +9,7 @@ NODE_MODULES_PATH=${CHARTS_PATH}/node_modules
 
 case $1 in
     init)
-        docker run -it \
+        docker run --rm -it \
             -v ${LOCAL_REPO_ROOT}:${BASE_PATH}:ro \
             -v charts-nm:${NODE_MODULES_PATH} \
             -w ${CHARTS_PATH} \
@@ -19,7 +19,7 @@ case $1 in
 
     run)
         shift 1
-        docker run -it \
+        docker run --rm -it \
             -v ${LOCAL_REPO_ROOT}:${BASE_PATH}:ro \
             -v ${LOCAL_REPO_ROOT}/charts-packages/ag-charts-community:${CHARTS_PATH} \
             -v charts-nm:${NODE_MODULES_PATH} \
@@ -29,9 +29,13 @@ case $1 in
     ;;
 
     clean)
-        docker volume rm charts-nm
-        docker image rm charts:latest
-        docker system prune -y
+        if (docker volume ls charts-nmdocker 2>/dev/null >/dev/null) ; then
+            docker volume rm charts-nm
+        fi
+        if (docker image ls | grep charts:latest 2>/dev/null >/dev/null) ; then
+            docker image rm charts:latest
+        fi
+        docker system prune -f
     ;;
 
     *)

@@ -1,6 +1,6 @@
 #!/bin/bash -il
 
-set -eu
+set -e
 
 source /root/.bashrc
 $@
