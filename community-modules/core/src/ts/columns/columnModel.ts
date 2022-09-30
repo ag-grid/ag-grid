@@ -3171,6 +3171,8 @@ export class ColumnModel extends BeanStub {
             this.lastSecondaryOrder = this.gridColumns;
         }
 
+        let sortOrderToRecover = undefined;
+
         if (this.secondaryColumns && this.secondaryBalancedTree) {
             const hasSameColumns = this.secondaryColumns.every((col) => {
                 return this.gridColumnsMap[col.getColId()] !== undefined;
@@ -3180,14 +3182,12 @@ export class ColumnModel extends BeanStub {
             this.gridColumns = this.secondaryColumns.slice();
             this.gridColsArePrimary = false;
 
-            // add the auto column back before recovering the previous sort
-            this.addAutoGroupToGridColumns();
 
             // If the current columns are the same or a subset of the previous
             // we keep the previous order, otherwise we go back to the order the pivot
             // cols are generated in
             if (hasSameColumns) {
-                this.orderGridColsLike(this.lastSecondaryOrder);
+                sortOrderToRecover = this.lastSecondaryOrder;
             }
         } else if (this.primaryColumns) {
             this.gridBalancedTree = this.primaryColumnTree.slice();
@@ -3195,14 +3195,25 @@ export class ColumnModel extends BeanStub {
             this.gridColumns = this.primaryColumns.slice();
             this.gridColsArePrimary = true;
 
-            // add the auto column back before recovering the previous sort
-            this.addAutoGroupToGridColumns();
-
             // updateGridColumns gets called after user adds a row group. we want to maintain the order of the columns
             // when this happens (eg if user moved a column) rather than revert back to the original column order.
             // likewise if changing in/out of pivot mode, we want to maintain the order of the cols
-            this.orderGridColsLike(this.lastPrimaryOrder);
+            sortOrderToRecover = this.lastPrimaryOrder;
         }
+
+
+        // create the new auto columns
+        const areAutoColsChanged = this.createGroupAutoColumnsIfNeeded();
+        // if auto group cols have changed, and we have a sort order, we need to move auto cols to the start
+        if (areAutoColsChanged && sortOrderToRecover) {
+            const groupAutoColsMap = convertToMap<Column, true>(this.groupAutoColumns!.map(col => [col, true]));
+            // if group columns has changed, we don't preserve the group column order, so remove them from the old order
+            sortOrderToRecover = sortOrderToRecover.filter(col => groupAutoColsMap.has(col));
+            // and add them to the start of the order
+            sortOrderToRecover = [...this.groupAutoColumns!, ...sortOrderToRecover];
+        }
+        this.addAutoGroupToGridColumns();
+        this.orderGridColsLike(sortOrderToRecover);
 
 
         this.gridColumns = this.placeLockedColumns(this.gridColumns);
@@ -3340,8 +3351,6 @@ export class ColumnModel extends BeanStub {
     }
 
     private addAutoGroupToGridColumns(): void {
-        // add in auto-group here
-        this.createGroupAutoColumnsIfNeeded();
 
         if (missing(this.groupAutoColumns)) { return; }
 
@@ -3882,8 +3891,12 @@ export class ColumnModel extends BeanStub {
         return this.groupAutoColumns;
     }
 
-    private createGroupAutoColumnsIfNeeded(): void {
-        if (!this.autoGroupsNeedBuilding) { return; }
+    /**
+     * Creates new auto group columns if required
+     * @returns whether auto cols have changed
+     */
+    private createGroupAutoColumnsIfNeeded(): boolean {
+        if (!this.autoGroupsNeedBuilding) { return false; }
 
         this.autoGroupsNeedBuilding = false;
 
@@ -3908,10 +3921,12 @@ export class ColumnModel extends BeanStub {
             // definitions. otherwise we could ignore the new cols because they appear to be the same.
             if (autoColsDifferent || this.forceRecreateAutoGroups) {
                 this.groupAutoColumns = newAutoGroupCols;
+                return true;
             }
         } else {
             this.groupAutoColumns = null;
         }
+        return false;
     }
 
     private autoColsEqual(colsA: Column[] | null, colsB: Column[] | null): boolean {
