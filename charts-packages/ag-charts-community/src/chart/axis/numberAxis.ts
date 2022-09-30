@@ -125,11 +125,18 @@ export class NumberAxis extends ChartAxis {
 
     protected updateDomain(domain: any[], isYAxis: boolean, primaryTickCount?: number) {
         const { min, max } = this;
+
+        if (domain.length > 2) {
+            domain = extent(domain, isContinuous, Number) || [NaN, NaN];
+        }
         if (!isNaN(min)) {
             domain = [min, domain[1]];
         }
         if (!isNaN(max)) {
             domain = [domain[0], max];
+        }
+        if (domain[0] > domain[1]) {
+            domain = [];
         }
 
         if (isYAxis) {

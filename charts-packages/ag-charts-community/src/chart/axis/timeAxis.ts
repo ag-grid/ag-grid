@@ -49,7 +49,15 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         if (domain.length > 2) {
             domain = (extent(domain, isContinuous, Number) || [0, 1000]).map((x) => new Date(x));
         }
-        domain = [min instanceof Date ? min : domain[0], max instanceof Date ? max : domain[1]];
+        if (min instanceof Date) {
+            domain = [min, domain[1]];
+        }
+        if (max instanceof Date) {
+            domain = [domain[0], max];
+        }
+        if (domain[0] > domain[1]) {
+            domain = [];
+        }
 
         this.scale.domain = domain;
         if (nice && scale.nice) {
