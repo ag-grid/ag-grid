@@ -15,7 +15,7 @@ export const PIE_SERIES: AgPolarChartOptions = {
     ],
 };
 
-export const PIE_SLICES_DIFFERENT_RADII: AgPolarChartOptions = {
+export const PIE_SECTORS_DIFFERENT_RADII: AgPolarChartOptions = {
     title: {
         text: 'Market Share',
     },
@@ -33,7 +33,7 @@ export const PIE_SLICES_DIFFERENT_RADII: AgPolarChartOptions = {
 const minRadius = Math.min(...DATA_MARKET_SHARE.map((d) => d.satisfaction));
 const maxRadius = Math.max(...DATA_MARKET_SHARE.map((d) => d.satisfaction));
 
-export const PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MIN: AgPolarChartOptions = {
+export const PIE_SECTORS_DIFFERENT_RADII_SMALL_RADIUS_MIN: AgPolarChartOptions = {
     title: {
         text: 'Market Share',
     },
@@ -49,7 +49,7 @@ export const PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MIN: AgPolarChartOptions = 
     ],
 };
 
-export const PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MIN: AgPolarChartOptions = {
+export const PIE_SECTORS_DIFFERENT_RADII_LARGE_RADIUS_MIN: AgPolarChartOptions = {
     title: {
         text: 'Market Share',
     },
@@ -65,7 +65,7 @@ export const PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MIN: AgPolarChartOptions = 
     ],
 };
 
-export const PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MAX: AgPolarChartOptions = {
+export const PIE_SECTORS_DIFFERENT_RADII_SMALL_RADIUS_MAX: AgPolarChartOptions = {
     title: {
         text: 'Market Share',
     },
@@ -81,7 +81,7 @@ export const PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MAX: AgPolarChartOptions = 
     ],
 };
 
-export const PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MAX: AgPolarChartOptions = {
+export const PIE_SECTORS_DIFFERENT_RADII_LARGE_RADIUS_MAX: AgPolarChartOptions = {
     title: {
         text: 'Market Share',
     },
@@ -97,7 +97,7 @@ export const PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MAX: AgPolarChartOptions = 
     ],
 };
 
-export const PIE_SLICES_LABELS: AgPolarChartOptions = {
+export const PIE_SECTORS_LABELS: AgPolarChartOptions = {
     title: {
         text: 'Market Share',
     },

@@ -13437,7 +13437,7 @@
   },
   "AgBaseChartListeners": {
     "seriesNodeClick": {
-      "description": "/** The listener to call when a node (marker, column, bar, tile or a pie slice) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
+      "description": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
       "type": {
         "arguments": {
           "event": "{ type: 'seriesNodeClick'; series: any; datum: any; xKey: string; yKey: string; }"
@@ -14050,7 +14050,7 @@
   },
   "AgBaseSeriesListeners": {
     "nodeClick": {
-      "description": "/** The listener to call when a node (marker, column, bar, tile or a pie slice) in the series is clicked. */",
+      "description": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in the series is clicked. */",
       "type": {
         "arguments": {
           "params": "{ type: 'nodeClick'; series: any; datum: DatumType; xKey: string; yKey: string; }"
@@ -15270,7 +15270,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "minAngle": {
-      "description": "/** Minimum angle in degrees required for a segment to show a label. */",
+      "description": "/** Minimum angle in degrees required for a sector to show a label. */",
       "type": { "returnType": "number", "optional": true }
     },
     "formatter": {

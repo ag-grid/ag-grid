@@ -24,28 +24,28 @@ const EXAMPLES: Record<string, PolarTestCase> = {
         options: examples.PIE_SERIES,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
     },
-    PIE_SLICES_DIFFERENT_RADII: {
-        options: examples.PIE_SLICES_DIFFERENT_RADII,
+    PIE_SECTORS_DIFFERENT_RADII: {
+        options: examples.PIE_SECTORS_DIFFERENT_RADII,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
     },
-    PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MIN: {
-        options: examples.PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MIN,
+    PIE_SECTORS_DIFFERENT_RADII_SMALL_RADIUS_MIN: {
+        options: examples.PIE_SECTORS_DIFFERENT_RADII_SMALL_RADIUS_MIN,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
     },
-    PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MIN: {
-        options: examples.PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MIN,
+    PIE_SECTORS_DIFFERENT_RADII_LARGE_RADIUS_MIN: {
+        options: examples.PIE_SECTORS_DIFFERENT_RADII_LARGE_RADIUS_MIN,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
     },
-    PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MAX: {
-        options: examples.PIE_SLICES_DIFFERENT_RADII_SMALL_RADIUS_MAX,
+    PIE_SECTORS_DIFFERENT_RADII_SMALL_RADIUS_MAX: {
+        options: examples.PIE_SECTORS_DIFFERENT_RADII_SMALL_RADIUS_MAX,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
     },
-    PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MAX: {
-        options: examples.PIE_SLICES_DIFFERENT_RADII_LARGE_RADIUS_MAX,
+    PIE_SECTORS_DIFFERENT_RADII_LARGE_RADIUS_MAX: {
+        options: examples.PIE_SECTORS_DIFFERENT_RADII_LARGE_RADIUS_MAX,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
     },
-    PIE_SLICES_LABELS: {
-        options: examples.PIE_SLICES_LABELS,
+    PIE_SECTORS_LABELS: {
+        options: examples.PIE_SECTORS_LABELS,
         assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
     },
     DOUGHNUT_SERIES: {

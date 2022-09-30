@@ -7634,7 +7634,7 @@
       "[key: string]": "Function"
     },
     "docs": {
-      "seriesNodeClick": "/** The listener to call when a node (marker, column, bar, tile or a pie slice) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
+      "seriesNodeClick": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
       "[key: string]": "/** Generic listeners. */"
     }
   },
@@ -8070,7 +8070,7 @@
       "nodeClick": "(params: { type: 'nodeClick'; series: any; datum: DatumType; xKey: string; yKey: string; }) => any"
     },
     "docs": {
-      "nodeClick": "/** The listener to call when a node (marker, column, bar, tile or a pie slice) in the series is clicked. */"
+      "nodeClick": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in the series is clicked. */"
     }
   },
   "AgBaseSeriesOptions": {
@@ -8844,7 +8844,7 @@
     },
     "docs": {
       "offset?": "/** Distance in pixels between the callout line and the label text. */",
-      "minAngle?": "/** Minimum angle in degrees required for a segment to show a label. */",
+      "minAngle?": "/** Minimum angle in degrees required for a sector to show a label. */",
       "formatter?": "/** A function that allows the modification of the label text based on input parameters. */",
       "enabled?": "/** Whether or not the labels should be shown. */",
       "fontStyle?": "/** The font style to use for the labels. */",
