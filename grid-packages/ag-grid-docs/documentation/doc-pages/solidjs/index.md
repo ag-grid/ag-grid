@@ -5,9 +5,14 @@ frameworks: ["react"]
 
 As of AG Grid v28.2.0, AG Grid comes with full support for [SolidJS](https://www.solidjs.com/). When using AG Grid with Solid, all of the grid's core rendering (headers, rows, cells etc) is rendered using Solid.
 
+<video-section id="0yksxqGDdqQ" title="Video Tutorial for Getting Started with AG Grid Community">
+<p>
 AG Grid Solid shares the same 'business logic layer' as the other AG Grid versions (React, Angular, Vue, or just JavaScript). This means the features of AG Grid Solid are identical to the features in AG Grid's other framework flavours. However because the rendering is done 100% in Solid, the grid works as a native Solid Component.
 
 AG Grid Solid is NOT a JavaScript component with a thin Solid wrapper. AG Grid is the Real Deal when it comes to a Data Grid Implementation for SolidJS.
+</p>
+</video-section>
+
 
 ## Show Me
 
