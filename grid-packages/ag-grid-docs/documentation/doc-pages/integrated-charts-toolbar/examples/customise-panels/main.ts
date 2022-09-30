@@ -56,7 +56,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
       rowEndIndex: 4,
       columns: ['country', 'gold', 'silver', 'bronze'],
     },
-    chartType: 'column',
+    chartType: 'groupedColumn',
     chartThemeOverrides: {
       column: {
         legend: {

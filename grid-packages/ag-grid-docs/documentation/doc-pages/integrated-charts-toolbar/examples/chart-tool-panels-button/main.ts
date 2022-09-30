@@ -1,4 +1,4 @@
-import { ChartMenuOptions, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
+import { ColDef, CreateRangeChartParams, FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 const columnDefs: ColDef[] = [
@@ -53,7 +53,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
       rowEndIndex: 4,
       columns: ['country', 'gold', 'silver', 'bronze'],
     },
-    chartType: 'column',
+    chartType: 'groupedColumn',
     chartThemeOverrides: {
       column: {
         legend: {
