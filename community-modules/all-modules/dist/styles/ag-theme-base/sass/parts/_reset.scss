@@ -1,0 +1,15 @@
+
+@mixin ag-theme-base-part-reset {
+
+    // IMPORTANT! All resets must be scoped to elements with an [class^='ag-'] attribute to
+    // avoid messing with custom component styles
+
+    [class^='ag-'], [class^='ag-']:focus, [class^='ag-']:after, [class^='ag-']:before {
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    [class^='ag-']::-ms-clear {
+        display: none;
+    }
+}

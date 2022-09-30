@@ -1,0 +1,7 @@
+@import "../mixins/ag-theme-mixins";
+@import "../ag-theme-base/sass/ag-theme-base-default-params";
+
+@include ag-register-params($ag-theme-base-default-params);
+
+@include ag-icons-font-face();
+@include ag-icons-webfont();

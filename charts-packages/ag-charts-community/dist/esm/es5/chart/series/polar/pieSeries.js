@@ -1,0 +1,1031 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
+import { Group } from '../../../scene/group';
+import { Line } from '../../../scene/shape/line';
+import { Text } from '../../../scene/shape/text';
+import { Circle } from '../../marker/circle';
+import { Selection } from '../../../scene/selection';
+import { LinearScale } from '../../../scale/linearScale';
+import { clamper } from '../../../scale/continuousScale';
+import { Sector } from '../../../scene/shape/sector';
+import { HighlightStyle, SeriesTooltip } from './../series';
+import { Label } from '../../label';
+import { PointerEvents } from '../../../scene/node';
+import { normalizeAngle180, toRadians } from '../../../util/angle';
+import { doOnce } from '../../../util/function';
+import { toFixed, mod } from '../../../util/number';
+import { Caption } from '../../../caption';
+import { Observable } from '../../../util/observable';
+import { PolarSeries } from './polarSeries';
+import { ChartAxisDirection } from '../../chartAxis';
+import { toTooltipHtml } from '../../chart';
+import { BOOLEAN, NUMBER, OPT_FUNCTION, OPT_LINE_DASH, OPT_NUMBER, OPT_STRING, STRING, COLOR_STRING_ARRAY, Validate, COLOR_STRING, } from '../../../util/validation';
+var PieHighlightStyle = /** @class */ (function (_super) {
+    __extends(PieHighlightStyle, _super);
+    function PieHighlightStyle() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate([
+        Validate(OPT_NUMBER(0))
+    ], PieHighlightStyle.prototype, "centerOffset", void 0);
+    return PieHighlightStyle;
+}(HighlightStyle));
+var PieNodeTag;
+(function (PieNodeTag) {
+    PieNodeTag[PieNodeTag["Sector"] = 0] = "Sector";
+    PieNodeTag[PieNodeTag["Callout"] = 1] = "Callout";
+    PieNodeTag[PieNodeTag["Label"] = 2] = "Label";
+})(PieNodeTag || (PieNodeTag = {}));
+var PieSeriesLabel = /** @class */ (function (_super) {
+    __extends(PieSeriesLabel, _super);
+    function PieSeriesLabel() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.offset = 3; // from the callout line
+        _this.minAngle = 20; // in degrees
+        _this.formatter = undefined;
+        return _this;
+    }
+    __decorate([
+        Validate(NUMBER(0))
+    ], PieSeriesLabel.prototype, "offset", void 0);
+    __decorate([
+        Validate(NUMBER(0))
+    ], PieSeriesLabel.prototype, "minAngle", void 0);
+    __decorate([
+        Validate(OPT_FUNCTION)
+    ], PieSeriesLabel.prototype, "formatter", void 0);
+    return PieSeriesLabel;
+}(Label));
+var PieSeriesSectorLabel = /** @class */ (function (_super) {
+    __extends(PieSeriesSectorLabel, _super);
+    function PieSeriesSectorLabel() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.positionOffset = 0;
+        _this.positionRatio = 0.5;
+        _this.formatter = undefined;
+        return _this;
+    }
+    __decorate([
+        Validate(NUMBER())
+    ], PieSeriesSectorLabel.prototype, "positionOffset", void 0);
+    __decorate([
+        Validate(NUMBER(0, 1))
+    ], PieSeriesSectorLabel.prototype, "positionRatio", void 0);
+    __decorate([
+        Validate(OPT_FUNCTION)
+    ], PieSeriesSectorLabel.prototype, "formatter", void 0);
+    return PieSeriesSectorLabel;
+}(Label));
+var PieSeriesCallout = /** @class */ (function (_super) {
+    __extends(PieSeriesCallout, _super);
+    function PieSeriesCallout() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.colors = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
+        _this.length = 10;
+        _this.strokeWidth = 1;
+        return _this;
+    }
+    __decorate([
+        Validate(COLOR_STRING_ARRAY)
+    ], PieSeriesCallout.prototype, "colors", void 0);
+    __decorate([
+        Validate(NUMBER(0))
+    ], PieSeriesCallout.prototype, "length", void 0);
+    __decorate([
+        Validate(NUMBER(0))
+    ], PieSeriesCallout.prototype, "strokeWidth", void 0);
+    return PieSeriesCallout;
+}(Observable));
+var PieSeriesTooltip = /** @class */ (function (_super) {
+    __extends(PieSeriesTooltip, _super);
+    function PieSeriesTooltip() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.renderer = undefined;
+        return _this;
+    }
+    __decorate([
+        Validate(OPT_FUNCTION)
+    ], PieSeriesTooltip.prototype, "renderer", void 0);
+    return PieSeriesTooltip;
+}(SeriesTooltip));
+export { PieSeriesTooltip };
+var PieTitle = /** @class */ (function (_super) {
+    __extends(PieTitle, _super);
+    function PieTitle() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.showInLegend = false;
+        return _this;
+    }
+    __decorate([
+        Validate(BOOLEAN)
+    ], PieTitle.prototype, "showInLegend", void 0);
+    return PieTitle;
+}(Caption));
+export { PieTitle };
+var DoughnutInnerLabel = /** @class */ (function (_super) {
+    __extends(DoughnutInnerLabel, _super);
+    function DoughnutInnerLabel() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.text = '';
+        _this.margin = 2;
+        return _this;
+    }
+    __decorate([
+        Validate(STRING)
+    ], DoughnutInnerLabel.prototype, "text", void 0);
+    __decorate([
+        Validate(NUMBER())
+    ], DoughnutInnerLabel.prototype, "margin", void 0);
+    return DoughnutInnerLabel;
+}(Label));
+export { DoughnutInnerLabel };
+var DoughnutInnerCircle = /** @class */ (function () {
+    function DoughnutInnerCircle() {
+        this.fill = 'transparent';
+        this.fillOpacity = 1;
+    }
+    __decorate([
+        Validate(COLOR_STRING)
+    ], DoughnutInnerCircle.prototype, "fill", void 0);
+    __decorate([
+        Validate(OPT_NUMBER(0, 1))
+    ], DoughnutInnerCircle.prototype, "fillOpacity", void 0);
+    return DoughnutInnerCircle;
+}());
+export { DoughnutInnerCircle };
+function isPointInArc(x, y, sector) {
+    var radius = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+    var innerRadius = sector.innerRadius, outerRadius = sector.outerRadius;
+    if (radius < Math.min(innerRadius, outerRadius) || radius > Math.max(innerRadius, outerRadius)) {
+        return false;
+    }
+    // Start and End angles are expected to be [-90, 270]
+    // while Math.atan2 returns [-180, 180]
+    var angle = Math.atan2(y, x);
+    if (angle < -Math.PI / 2) {
+        angle += 2 * Math.PI;
+    }
+    // Start is actually bigger than End clock-wise
+    var startAngle = sector.startAngle, endAngle = sector.endAngle;
+    if (endAngle === -Math.PI / 2) {
+        return angle < startAngle;
+    }
+    if (startAngle === (3 * Math.PI) / 2) {
+        return angle > endAngle;
+    }
+    return angle >= endAngle && angle <= startAngle;
+}
+var PieSeries = /** @class */ (function (_super) {
+    __extends(PieSeries, _super);
+    function PieSeries() {
+        var _this = _super.call(this, { useLabelLayer: true }) || this;
+        _this.radiusScale = new LinearScale();
+        _this.groupSelection = Selection.select(_this.pickGroup).selectAll();
+        _this.highlightSelection = Selection.select(_this.highlightGroup).selectAll();
+        /**
+         * The processed data that gets visualized.
+         */
+        _this.groupSelectionData = [];
+        _this.angleScale = (function () {
+            var scale = new LinearScale();
+            // Each sector is a ratio of the whole, where all ratios add up to 1.
+            scale.domain = [0, 1];
+            // Add 90 deg to start the first pie at 12 o'clock.
+            scale.range = [-Math.PI, Math.PI].map(function (angle) { return angle + Math.PI / 2; });
+            return scale;
+        })();
+        // When a user toggles a series item (e.g. from the legend), its boolean state is recorded here.
+        _this.seriesItemEnabled = [];
+        _this.label = new PieSeriesLabel();
+        _this.sectorLabel = new PieSeriesSectorLabel();
+        _this.callout = new PieSeriesCallout();
+        _this.tooltip = new PieSeriesTooltip();
+        /**
+         * The key of the numeric field to use to determine the angle (for example,
+         * a pie sector angle).
+         */
+        _this.angleKey = '';
+        _this.angleName = '';
+        _this.innerLabels = [];
+        /**
+         * The key of the numeric field to use to determine the radii of pie sectors.
+         * The largest value will correspond to the full radius and smaller values to
+         * proportionally smaller radii.
+         */
+        _this.radiusKey = undefined;
+        _this.radiusName = undefined;
+        _this.radiusMin = undefined;
+        _this.radiusMax = undefined;
+        _this.labelKey = undefined;
+        _this.labelName = undefined;
+        _this.sectorLabelKey = undefined;
+        _this.sectorLabelName = undefined;
+        _this.fills = ['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
+        _this.strokes = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
+        _this.fillOpacity = 1;
+        _this.strokeOpacity = 1;
+        _this.lineDash = [0];
+        _this.lineDashOffset = 0;
+        _this.formatter = undefined;
+        /**
+         * The series rotation in degrees.
+         */
+        _this.rotation = 0;
+        _this.outerRadiusOffset = 0;
+        _this.outerRadiusRatio = 1;
+        _this.innerRadiusOffset = 0;
+        _this.innerRadiusRatio = 1;
+        _this.strokeWidth = 1;
+        _this.shadow = undefined;
+        _this.highlightStyle = new PieHighlightStyle();
+        _this.datumSectorRefs = new WeakMap();
+        var pieLabels = new Group();
+        var pieSectorLabels = new Group();
+        var innerLabels = new Group();
+        _this.labelGroup.append(pieLabels);
+        _this.labelGroup.append(pieSectorLabels);
+        _this.labelGroup.append(innerLabels);
+        _this.labelSelection = Selection.select(pieLabels).selectAll();
+        _this.sectorLabelSelection = Selection.select(pieSectorLabels).selectAll();
+        _this.innerLabelsSelection = Selection.select(innerLabels).selectAll();
+        return _this;
+    }
+    Object.defineProperty(PieSeries.prototype, "title", {
+        get: function () {
+            return this._title;
+        },
+        set: function (value) {
+            var _a, _b;
+            var oldTitle = this._title;
+            if (oldTitle !== value) {
+                if (oldTitle) {
+                    (_a = this.labelGroup) === null || _a === void 0 ? void 0 : _a.removeChild(oldTitle.node);
+                }
+                if (value) {
+                    value.node.textBaseline = 'bottom';
+                    (_b = this.labelGroup) === null || _b === void 0 ? void 0 : _b.appendChild(value.node);
+                }
+                this._title = value;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "data", {
+        get: function () {
+            return this._data;
+        },
+        set: function (input) {
+            this._data = input;
+            this.processSeriesItemEnabled();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "innerCircle", {
+        get: function () {
+            return this._innerCircleConfig;
+        },
+        set: function (value) {
+            var _a;
+            var oldCircleCfg = this._innerCircleConfig;
+            if (oldCircleCfg !== value) {
+                var oldNode = this._innerCircleNode;
+                var circle = void 0;
+                if (oldNode) {
+                    this.backgroundGroup.removeChild(oldNode);
+                }
+                if (value) {
+                    circle = new Circle();
+                    circle.fill = value.fill;
+                    circle.fillOpacity = (_a = value.fillOpacity, (_a !== null && _a !== void 0 ? _a : 1));
+                    this.backgroundGroup.appendChild(circle);
+                }
+                this._innerCircleConfig = value;
+                this._innerCircleNode = circle;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    PieSeries.prototype.visibleChanged = function () {
+        this.processSeriesItemEnabled();
+    };
+    PieSeries.prototype.processSeriesItemEnabled = function () {
+        var _a;
+        var _b = this, data = _b.data, visible = _b.visible;
+        this.seriesItemEnabled = ((_a = data) === null || _a === void 0 ? void 0 : _a.map(function () { return visible; })) || [];
+    };
+    PieSeries.prototype.setColors = function (fills, strokes) {
+        this.fills = fills;
+        this.strokes = strokes;
+        this.callout.colors = strokes;
+    };
+    PieSeries.prototype.getDomain = function (direction) {
+        if (direction === ChartAxisDirection.X) {
+            return this.angleScale.domain;
+        }
+        else {
+            return this.radiusScale.domain;
+        }
+    };
+    PieSeries.prototype.processData = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData, label, sectorLabel, data, angleData, angleDataTotal, angleDataRatios, labelFormatter, labelKey, sectorLabelKey, labelData, sectorLabelData, radiusData, getLabelFormatterParams, showValueDeprecationWarning_1, sectorLabelFormatter, _b, radiusMin, radiusMax, radii, min_1, max, delta_1, rotation, halfPi, datumIndex, quadrantTextOpts, end;
+            var _this = this;
+            return __generator(this, function (_c) {
+                _a = this, angleKey = _a.angleKey, radiusKey = _a.radiusKey, seriesItemEnabled = _a.seriesItemEnabled, angleScale = _a.angleScale, groupSelectionData = _a.groupSelectionData, label = _a.label, sectorLabel = _a.sectorLabel;
+                data = angleKey && this.data ? this.data : [];
+                angleData = data.map(function (datum, index) { return (seriesItemEnabled[index] && Math.abs(+datum[angleKey])) || 0; });
+                angleDataTotal = angleData.reduce(function (a, b) { return a + b; }, 0);
+                angleDataRatios = (function () {
+                    var sum = 0;
+                    return angleData.map(function (datum) { return (sum += datum / angleDataTotal); });
+                })();
+                labelFormatter = label.formatter;
+                labelKey = label.enabled ? this.labelKey : undefined;
+                sectorLabelKey = sectorLabel.enabled ? this.sectorLabelKey : undefined;
+                labelData = [];
+                sectorLabelData = [];
+                radiusData = [];
+                getLabelFormatterParams = function (datum) {
+                    return {
+                        datum: datum,
+                        angleKey: angleKey,
+                        angleValue: datum[angleKey],
+                        angleName: _this.angleName,
+                        radiusKey: radiusKey,
+                        radiusValue: radiusKey ? datum[radiusKey] : undefined,
+                        radiusName: _this.radiusName,
+                        labelKey: labelKey,
+                        labelValue: labelKey ? datum[labelKey] : undefined,
+                        labelName: _this.labelName,
+                        sectorLabelKey: sectorLabelKey,
+                        sectorLabelValue: sectorLabelKey ? datum[sectorLabelKey] : undefined,
+                    };
+                };
+                if (labelKey) {
+                    if (labelFormatter) {
+                        showValueDeprecationWarning_1 = function () {
+                            return doOnce(function () {
+                                return console.warn('AG Charts - the use of { value } in the pie chart label formatter function is deprecated. Please use { datum, labelKey, ... } instead.');
+                            }, 'deprecated use of "value" property in pie chart label formatter');
+                        };
+                        labelData = data.map(function (datum) {
+                            var deprecatedValue = datum[labelKey];
+                            var formatterParams = __assign(__assign({}, getLabelFormatterParams(datum)), { get value() {
+                                    showValueDeprecationWarning_1();
+                                    return deprecatedValue;
+                                },
+                                set value(v) {
+                                    showValueDeprecationWarning_1();
+                                    deprecatedValue = v;
+                                } });
+                            return labelFormatter(formatterParams);
+                        });
+                    }
+                    else {
+                        labelData = data.map(function (datum) { return String(datum[labelKey]); });
+                    }
+                }
+                sectorLabelFormatter = sectorLabel.formatter;
+                if (sectorLabelKey) {
+                    if (sectorLabelFormatter) {
+                        sectorLabelData = data.map(function (datum) {
+                            var formatterParams = getLabelFormatterParams(datum);
+                            return sectorLabelFormatter(formatterParams);
+                        });
+                    }
+                    else {
+                        sectorLabelData = data.map(function (datum) { return String(datum[sectorLabelKey]); });
+                    }
+                }
+                if (radiusKey) {
+                    _b = this, radiusMin = _b.radiusMin, radiusMax = _b.radiusMax;
+                    radii = data.map(function (datum) { return Math.abs(datum[radiusKey]); });
+                    min_1 = (radiusMin !== null && radiusMin !== void 0 ? radiusMin : 0);
+                    max = radiusMax ? radiusMax : Math.max.apply(Math, __spread(radii));
+                    delta_1 = max - min_1;
+                    radiusData = radii.map(function (value) { return (delta_1 ? (value - min_1) / delta_1 : 1); });
+                }
+                groupSelectionData.length = 0;
+                rotation = toRadians(this.rotation);
+                halfPi = Math.PI / 2;
+                datumIndex = 0;
+                quadrantTextOpts = [
+                    { textAlign: 'center', textBaseline: 'bottom' },
+                    { textAlign: 'left', textBaseline: 'middle' },
+                    { textAlign: 'center', textBaseline: 'hanging' },
+                    { textAlign: 'right', textBaseline: 'middle' },
+                ];
+                end = 0;
+                angleDataRatios.forEach(function (start) {
+                    if (isNaN(start)) {
+                        return;
+                    } // No sectors displayed - nothing to do.
+                    var radius = radiusKey ? radiusData[datumIndex] : 1;
+                    var startAngle = angleScale.convert(start) + rotation;
+                    var endAngle = angleScale.convert(end) + rotation;
+                    var midAngle = (startAngle + endAngle) / 2;
+                    var span = Math.abs(endAngle - startAngle);
+                    var midCos = Math.cos(midAngle);
+                    var midSin = Math.sin(midAngle);
+                    var labelMinAngle = toRadians(label.minAngle);
+                    var labelVisible = labelKey && span > labelMinAngle;
+                    var midAngle180 = normalizeAngle180(midAngle);
+                    // Split the circle into quadrants like so: ⊗
+                    var quadrantStart = (-3 * Math.PI) / 4; // same as `normalizeAngle180(toRadians(-135))`
+                    var quadrantOffset = midAngle180 - quadrantStart;
+                    var quadrant = Math.floor(quadrantOffset / halfPi);
+                    var quadrantIndex = mod(quadrant, quadrantTextOpts.length);
+                    var _a = quadrantTextOpts[quadrantIndex], textAlign = _a.textAlign, textBaseline = _a.textBaseline;
+                    groupSelectionData.push({
+                        series: _this,
+                        datum: data[datumIndex],
+                        itemId: datumIndex,
+                        index: datumIndex,
+                        radius: radius,
+                        startAngle: startAngle,
+                        endAngle: endAngle,
+                        midAngle: midAngle,
+                        midCos: midCos,
+                        midSin: midSin,
+                        label: labelVisible
+                            ? {
+                                text: labelData[datumIndex],
+                                textAlign: textAlign,
+                                textBaseline: textBaseline,
+                            }
+                            : undefined,
+                        sectorLabel: sectorLabelKey
+                            ? {
+                                text: sectorLabelData[datumIndex],
+                            }
+                            : undefined,
+                    });
+                    datumIndex++;
+                    end = start; // Update for next iteration.
+                });
+                return [2 /*return*/];
+            });
+        });
+    };
+    PieSeries.prototype.createNodeData = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, []];
+            });
+        });
+    };
+    PieSeries.prototype.getInnerRadius = function () {
+        var _a = this, radius = _a.radius, innerRadiusRatio = _a.innerRadiusRatio, innerRadiusOffset = _a.innerRadiusOffset;
+        var innerRadius = radius * ((innerRadiusRatio !== null && innerRadiusRatio !== void 0 ? innerRadiusRatio : 1)) + (innerRadiusOffset ? innerRadiusOffset : 0);
+        if (innerRadius === radius) {
+            return 0;
+        }
+        return innerRadius;
+    };
+    PieSeries.prototype.getOuterRadius = function () {
+        var _a = this, radius = _a.radius, outerRadiusRatio = _a.outerRadiusRatio, outerRadiusOffset = _a.outerRadiusOffset;
+        var outerRadius = radius * ((outerRadiusRatio !== null && outerRadiusRatio !== void 0 ? outerRadiusRatio : 1)) + (outerRadiusOffset ? outerRadiusOffset : 0);
+        return outerRadius;
+    };
+    PieSeries.prototype.update = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var title, innerRadius, outerRadius, outerRadius_1, titleOffset;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        title = this.title;
+                        innerRadius = this.getInnerRadius();
+                        outerRadius = this.getOuterRadius();
+                        this.radiusScale.range = [innerRadius, outerRadius];
+                        this.group.translationX = this.centerX;
+                        this.group.translationY = this.centerY;
+                        if (title) {
+                            outerRadius_1 = Math.max(0, this.radiusScale.range[1]);
+                            if (outerRadius_1 === 0) {
+                                title.node.visible = false;
+                            }
+                            else {
+                                titleOffset = 2;
+                                title.node.translationY = -outerRadius_1 - titleOffset;
+                                title.node.visible = title.enabled;
+                            }
+                        }
+                        return [4 /*yield*/, this.updateSelections()];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, this.updateNodes()];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    PieSeries.prototype.updateSelections = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.updateGroupSelection()];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    PieSeries.prototype.updateGroupSelection = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, groupSelection, highlightSelection, labelSelection, sectorLabelSelection, innerLabelsSelection, update, updateLabels, enterLabels, updateSectorLabels, enterSectorLabels, updateInnerLabels, enterInnerLabels;
+            var _this = this;
+            return __generator(this, function (_b) {
+                _a = this, groupSelection = _a.groupSelection, highlightSelection = _a.highlightSelection, labelSelection = _a.labelSelection, sectorLabelSelection = _a.sectorLabelSelection, innerLabelsSelection = _a.innerLabelsSelection;
+                update = function (selection) {
+                    var updateGroups = selection.setData(_this.groupSelectionData);
+                    updateGroups.exit.remove();
+                    var enterGroups = updateGroups.enter.append(Group);
+                    enterGroups.append(Sector).each(function (node) { return (node.tag = PieNodeTag.Sector); });
+                    return updateGroups.merge(enterGroups);
+                };
+                this.groupSelection = update(groupSelection);
+                this.highlightSelection = update(highlightSelection);
+                updateLabels = labelSelection.setData(this.groupSelectionData);
+                updateLabels.exit.remove();
+                enterLabels = updateLabels.enter.append(Group);
+                enterLabels.append(Line).each(function (node) {
+                    node.tag = PieNodeTag.Callout;
+                    node.pointerEvents = PointerEvents.None;
+                });
+                enterLabels.append(Text).each(function (node) {
+                    node.tag = PieNodeTag.Label;
+                    node.pointerEvents = PointerEvents.None;
+                });
+                this.labelSelection = updateLabels.merge(enterLabels);
+                updateSectorLabels = sectorLabelSelection.setData(this.groupSelectionData);
+                updateSectorLabels.exit.remove();
+                enterSectorLabels = updateSectorLabels.enter.append(Text);
+                enterSectorLabels.each(function (node) {
+                    node.pointerEvents = PointerEvents.None;
+                });
+                this.sectorLabelSelection = updateSectorLabels.merge(enterSectorLabels);
+                updateInnerLabels = innerLabelsSelection.setData(this.innerLabels);
+                updateInnerLabels.exit.remove();
+                enterInnerLabels = updateInnerLabels.enter.append(Text);
+                enterInnerLabels.each(function (node) {
+                    node.pointerEvents = PointerEvents.None;
+                });
+                this.innerLabelsSelection = updateInnerLabels.merge(enterInnerLabels);
+                return [2 /*return*/];
+            });
+        });
+    };
+    PieSeries.prototype.updateNodes = function () {
+        var _a, _b;
+        return __awaiter(this, void 0, void 0, function () {
+            var isVisible, _c, fills, strokes, seriesFillOpacity, strokeOpacity, radiusScale, callout, shadow, highlightedDatum, _d, deprecatedFill, deprecatedStroke, deprecatedStrokeWidth, _e, _f, highlightedFill, _g, highlightFillOpacity, _h, highlightedStroke, _j, highlightedDatumStrokeWidth, angleKey, radiusKey, formatter, centerOffsets, innerRadius, updateSectorFn, calloutColors, calloutLength, calloutStrokeWidth, _k, offset_1, fontStyle_1, fontWeight_1, fontSize_1, fontFamily_1, color_1;
+            var _this = this;
+            return __generator(this, function (_l) {
+                if (!this.chart) {
+                    return [2 /*return*/];
+                }
+                isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
+                this.group.visible = isVisible;
+                this.seriesGroup.visible = isVisible;
+                this.highlightGroup.visible = isVisible && ((_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.highlightedDatum) === null || _b === void 0 ? void 0 : _b.series) === this;
+                this.labelGroup.visible = isVisible;
+                this.seriesGroup.opacity = this.getOpacity();
+                this.updateInnerCircle();
+                _c = this, fills = _c.fills, strokes = _c.strokes, seriesFillOpacity = _c.fillOpacity, strokeOpacity = _c.strokeOpacity, radiusScale = _c.radiusScale, callout = _c.callout, shadow = _c.shadow, highlightedDatum = _c.chart.highlightedDatum, _d = _c.highlightStyle, deprecatedFill = _d.fill, deprecatedStroke = _d.stroke, deprecatedStrokeWidth = _d.strokeWidth, _e = _d.item, _f = _e.fill, highlightedFill = _f === void 0 ? deprecatedFill : _f, _g = _e.fillOpacity, highlightFillOpacity = _g === void 0 ? seriesFillOpacity : _g, _h = _e.stroke, highlightedStroke = _h === void 0 ? deprecatedStroke : _h, _j = _e.strokeWidth, highlightedDatumStrokeWidth = _j === void 0 ? deprecatedStrokeWidth : _j, angleKey = _c.angleKey, radiusKey = _c.radiusKey, formatter = _c.formatter;
+                centerOffsets = [];
+                innerRadius = radiusScale.convert(0);
+                updateSectorFn = function (sector, datum, index, isDatumHighlighted) {
+                    var radius = radiusScale.convert(datum.radius, clamper);
+                    var fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : fills[index % fills.length];
+                    var fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
+                    var stroke = isDatumHighlighted && highlightedStroke !== undefined
+                        ? highlightedStroke
+                        : strokes[index % strokes.length];
+                    var strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
+                        ? highlightedDatumStrokeWidth
+                        : _this.getStrokeWidth(_this.strokeWidth);
+                    var format = undefined;
+                    if (formatter) {
+                        format = formatter({
+                            datum: datum.datum,
+                            angleKey: angleKey,
+                            radiusKey: radiusKey,
+                            fill: fill,
+                            stroke: stroke,
+                            strokeWidth: strokeWidth,
+                            highlighted: isDatumHighlighted,
+                        });
+                    }
+                    // Bring highlighted sector's parent group to front.
+                    var parent = sector.parent && sector.parent.parent;
+                    if (isDatumHighlighted && parent) {
+                        parent.removeChild(sector.parent);
+                        parent.appendChild(sector.parent);
+                    }
+                    sector.innerRadius = Math.max(0, innerRadius);
+                    sector.outerRadius = Math.max(0, radius);
+                    sector.startAngle = datum.startAngle;
+                    sector.endAngle = datum.endAngle;
+                    sector.fill = (format && format.fill) || fill;
+                    sector.stroke = (format && format.stroke) || stroke;
+                    sector.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
+                    sector.fillOpacity = fillOpacity;
+                    sector.strokeOpacity = strokeOpacity;
+                    sector.lineDash = _this.lineDash;
+                    sector.lineDashOffset = _this.lineDashOffset;
+                    sector.fillShadow = shadow;
+                    sector.lineJoin = 'round';
+                    centerOffsets.push(sector.centerOffset);
+                    _this.datumSectorRefs.set(datum, sector);
+                };
+                this.groupSelection
+                    .selectByTag(PieNodeTag.Sector)
+                    .each(function (node, datum, index) { return updateSectorFn(node, datum, index, false); });
+                this.highlightSelection.selectByTag(PieNodeTag.Sector).each(function (node, datum, index) {
+                    var isDatumHighlighted = !!highlightedDatum && highlightedDatum.series === _this && datum.itemId === highlightedDatum.itemId;
+                    node.visible = isDatumHighlighted;
+                    if (node.visible) {
+                        updateSectorFn(node, datum, index, isDatumHighlighted);
+                    }
+                });
+                calloutColors = callout.colors, calloutLength = callout.length, calloutStrokeWidth = callout.strokeWidth;
+                this.labelSelection.selectByTag(PieNodeTag.Callout).each(function (line, datum, index) {
+                    var radius = radiusScale.convert(datum.radius, clamper);
+                    var outerRadius = Math.max(0, radius);
+                    if (datum.label && outerRadius !== 0) {
+                        line.strokeWidth = calloutStrokeWidth;
+                        line.stroke = calloutColors[index % calloutColors.length];
+                        line.x1 = datum.midCos * outerRadius;
+                        line.y1 = datum.midSin * outerRadius;
+                        line.x2 = datum.midCos * (outerRadius + calloutLength);
+                        line.y2 = datum.midSin * (outerRadius + calloutLength);
+                    }
+                    else {
+                        line.stroke = undefined;
+                    }
+                });
+                {
+                    _k = this.label, offset_1 = _k.offset, fontStyle_1 = _k.fontStyle, fontWeight_1 = _k.fontWeight, fontSize_1 = _k.fontSize, fontFamily_1 = _k.fontFamily, color_1 = _k.color;
+                    this.labelSelection.selectByTag(PieNodeTag.Label).each(function (text, datum, index) {
+                        var label = datum.label;
+                        var radius = radiusScale.convert(datum.radius, clamper);
+                        var outerRadius = Math.max(0, radius);
+                        if (label && outerRadius !== 0) {
+                            var labelRadius = centerOffsets[index] + outerRadius + calloutLength + offset_1;
+                            text.fontStyle = fontStyle_1;
+                            text.fontWeight = fontWeight_1;
+                            text.fontSize = fontSize_1;
+                            text.fontFamily = fontFamily_1;
+                            text.text = label.text;
+                            text.x = datum.midCos * labelRadius;
+                            text.y = datum.midSin * labelRadius;
+                            text.fill = color_1;
+                            text.textAlign = label.textAlign;
+                            text.textBaseline = label.textBaseline;
+                        }
+                        else {
+                            text.fill = undefined;
+                        }
+                    });
+                }
+                this.updateSectorLabelNodes();
+                this.updateInnerLabelNodes();
+                return [2 /*return*/];
+            });
+        });
+    };
+    PieSeries.prototype.updateSectorLabelNodes = function () {
+        var _this = this;
+        var radiusScale = this.radiusScale;
+        var innerRadius = radiusScale.convert(0);
+        var _a = this.sectorLabel, fontSize = _a.fontSize, fontStyle = _a.fontStyle, fontWeight = _a.fontWeight, fontFamily = _a.fontFamily, positionOffset = _a.positionOffset, positionRatio = _a.positionRatio, color = _a.color;
+        this.sectorLabelSelection.each(function (text, datum) {
+            var sectorLabel = datum.sectorLabel;
+            var radius = radiusScale.convert(datum.radius, clamper);
+            var outerRadius = Math.max(0, radius);
+            var isTextVisible = false;
+            if (sectorLabel && outerRadius !== 0) {
+                var labelRadius = innerRadius * (1 - positionRatio) + radius * positionRatio + positionOffset;
+                text.fill = color;
+                text.fontStyle = fontStyle;
+                text.fontWeight = fontWeight;
+                text.fontSize = fontSize;
+                text.fontFamily = fontFamily;
+                text.text = sectorLabel.text;
+                text.x = datum.midCos * labelRadius;
+                text.y = datum.midSin * labelRadius;
+                text.textAlign = 'center';
+                text.textBaseline = 'middle';
+                var sector = _this.datumSectorRefs.get(datum);
+                if (sector) {
+                    var bbox = text.computeBBox();
+                    var corners = [
+                        [bbox.x, bbox.y],
+                        [bbox.x + bbox.width, bbox.y],
+                        [bbox.x + bbox.width, bbox.y + bbox.height],
+                        [bbox.x, bbox.y + bbox.height],
+                    ];
+                    var startAngle = datum.startAngle, endAngle = datum.endAngle;
+                    var sectorBounds_1 = { startAngle: startAngle, endAngle: endAngle, innerRadius: innerRadius, outerRadius: outerRadius };
+                    if (corners.every(function (_a) {
+                        var _b = __read(_a, 2), x = _b[0], y = _b[1];
+                        return isPointInArc(x, y, sectorBounds_1);
+                    })) {
+                        isTextVisible = true;
+                    }
+                }
+            }
+            text.visible = isTextVisible;
+        });
+    };
+    PieSeries.prototype.updateInnerCircle = function () {
+        var circle = this._innerCircleNode;
+        if (!circle) {
+            return;
+        }
+        var innerRadius = this.getInnerRadius();
+        if (innerRadius === 0) {
+            circle.size = 0;
+        }
+        else {
+            var circleRadius = Math.min(innerRadius, this.getOuterRadius());
+            var antiAliasingPadding = 1;
+            circle.size = Math.ceil(circleRadius * 2 + antiAliasingPadding);
+        }
+    };
+    PieSeries.prototype.updateInnerLabelNodes = function () {
+        var textBBoxes = [];
+        var margins = [];
+        this.innerLabelsSelection.each(function (text, datum) {
+            var fontStyle = datum.fontStyle, fontWeight = datum.fontWeight, fontSize = datum.fontSize, fontFamily = datum.fontFamily, color = datum.color;
+            text.fontStyle = fontStyle;
+            text.fontWeight = fontWeight;
+            text.fontSize = fontSize;
+            text.fontFamily = fontFamily;
+            text.text = datum.text;
+            text.x = 0;
+            text.y = 0;
+            text.fill = color;
+            text.textAlign = 'center';
+            text.textBaseline = 'alphabetic';
+            textBBoxes.push(text.computeBBox());
+            margins.push(datum.margin);
+        });
+        var getMarginTop = function (index) { return (index === 0 ? 0 : margins[index]); };
+        var getMarginBottom = function (index) { return (index === margins.length - 1 ? 0 : margins[index]); };
+        var totalHeight = textBBoxes.reduce(function (sum, bbox, i) {
+            return sum + bbox.height + getMarginTop(i) + getMarginBottom(i);
+        }, 0);
+        var textBottoms = [];
+        for (var i = 0, prev = -totalHeight / 2; i < textBBoxes.length; i++) {
+            var bbox = textBBoxes[i];
+            var bottom = bbox.height + prev + getMarginTop(i);
+            textBottoms.push(bottom);
+            prev = bottom + getMarginBottom(i);
+        }
+        this.innerLabelsSelection.each(function (text, _datum, index) {
+            text.y = textBottoms[index];
+        });
+    };
+    PieSeries.prototype.fireNodeClickEvent = function (event, datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            event: event,
+            series: this,
+            datum: datum.datum,
+            angleKey: this.angleKey,
+            labelKey: this.labelKey,
+            radiusKey: this.radiusKey,
+        });
+    };
+    PieSeries.prototype.getTooltipHtml = function (nodeDatum) {
+        var angleKey = this.angleKey;
+        if (!angleKey) {
+            return '';
+        }
+        var _a = this, fills = _a.fills, tooltip = _a.tooltip, angleName = _a.angleName, radiusKey = _a.radiusKey, radiusName = _a.radiusName, labelKey = _a.labelKey, labelName = _a.labelName;
+        var tooltipRenderer = tooltip.renderer;
+        var color = fills[nodeDatum.index % fills.length];
+        var datum = nodeDatum.datum;
+        var label = labelKey ? datum[labelKey] + ": " : '';
+        var angleValue = datum[angleKey];
+        var formattedAngleValue = typeof angleValue === 'number' ? toFixed(angleValue) : angleValue.toString();
+        var title = this.title ? this.title.text : undefined;
+        var content = label + formattedAngleValue;
+        var defaults = {
+            title: title,
+            backgroundColor: color,
+            content: content,
+        };
+        if (tooltipRenderer) {
+            return toTooltipHtml(tooltipRenderer({
+                datum: datum,
+                angleKey: angleKey,
+                angleValue: angleValue,
+                angleName: angleName,
+                radiusKey: radiusKey,
+                radiusValue: radiusKey ? datum[radiusKey] : undefined,
+                radiusName: radiusName,
+                labelKey: labelKey,
+                labelName: labelName,
+                title: title,
+                color: color,
+            }), defaults);
+        }
+        return toTooltipHtml(defaults);
+    };
+    PieSeries.prototype.listSeriesItems = function (legendData) {
+        var _this = this;
+        var _a = this, labelKey = _a.labelKey, data = _a.data;
+        if (data && data.length && labelKey) {
+            var _b = this, fills_1 = _b.fills, strokes_1 = _b.strokes, id_1 = _b.id;
+            var titleText_1 = this.title && this.title.showInLegend && this.title.text;
+            data.forEach(function (datum, index) {
+                var labelParts = [];
+                titleText_1 && labelParts.push(titleText_1);
+                labelParts.push(String(datum[labelKey]));
+                legendData.push({
+                    id: id_1,
+                    itemId: index,
+                    enabled: _this.seriesItemEnabled[index],
+                    label: {
+                        text: labelParts.join(' - '),
+                    },
+                    marker: {
+                        fill: fills_1[index % fills_1.length],
+                        stroke: strokes_1[index % strokes_1.length],
+                        fillOpacity: _this.fillOpacity,
+                        strokeOpacity: _this.strokeOpacity,
+                    },
+                });
+            });
+        }
+    };
+    PieSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
+        this.seriesItemEnabled[itemId] = enabled;
+        this.nodeDataRefresh = true;
+    };
+    PieSeries.className = 'PieSeries';
+    PieSeries.type = 'pie';
+    __decorate([
+        Validate(STRING)
+    ], PieSeries.prototype, "angleKey", void 0);
+    __decorate([
+        Validate(STRING)
+    ], PieSeries.prototype, "angleName", void 0);
+    __decorate([
+        Validate(OPT_STRING)
+    ], PieSeries.prototype, "radiusKey", void 0);
+    __decorate([
+        Validate(OPT_STRING)
+    ], PieSeries.prototype, "radiusName", void 0);
+    __decorate([
+        Validate(OPT_NUMBER(0))
+    ], PieSeries.prototype, "radiusMin", void 0);
+    __decorate([
+        Validate(OPT_NUMBER(0))
+    ], PieSeries.prototype, "radiusMax", void 0);
+    __decorate([
+        Validate(OPT_STRING)
+    ], PieSeries.prototype, "labelKey", void 0);
+    __decorate([
+        Validate(OPT_STRING)
+    ], PieSeries.prototype, "labelName", void 0);
+    __decorate([
+        Validate(OPT_STRING)
+    ], PieSeries.prototype, "sectorLabelKey", void 0);
+    __decorate([
+        Validate(OPT_STRING)
+    ], PieSeries.prototype, "sectorLabelName", void 0);
+    __decorate([
+        Validate(COLOR_STRING_ARRAY)
+    ], PieSeries.prototype, "fills", void 0);
+    __decorate([
+        Validate(COLOR_STRING_ARRAY)
+    ], PieSeries.prototype, "strokes", void 0);
+    __decorate([
+        Validate(NUMBER(0, 1))
+    ], PieSeries.prototype, "fillOpacity", void 0);
+    __decorate([
+        Validate(NUMBER(0, 1))
+    ], PieSeries.prototype, "strokeOpacity", void 0);
+    __decorate([
+        Validate(OPT_LINE_DASH)
+    ], PieSeries.prototype, "lineDash", void 0);
+    __decorate([
+        Validate(NUMBER(0))
+    ], PieSeries.prototype, "lineDashOffset", void 0);
+    __decorate([
+        Validate(OPT_FUNCTION)
+    ], PieSeries.prototype, "formatter", void 0);
+    __decorate([
+        Validate(NUMBER(-360, 360))
+    ], PieSeries.prototype, "rotation", void 0);
+    __decorate([
+        Validate(NUMBER())
+    ], PieSeries.prototype, "outerRadiusOffset", void 0);
+    __decorate([
+        Validate(NUMBER(0))
+    ], PieSeries.prototype, "outerRadiusRatio", void 0);
+    __decorate([
+        Validate(NUMBER())
+    ], PieSeries.prototype, "innerRadiusOffset", void 0);
+    __decorate([
+        Validate(NUMBER(0))
+    ], PieSeries.prototype, "innerRadiusRatio", void 0);
+    __decorate([
+        Validate(NUMBER(0))
+    ], PieSeries.prototype, "strokeWidth", void 0);
+    return PieSeries;
+}(PolarSeries));
+export { PieSeries };

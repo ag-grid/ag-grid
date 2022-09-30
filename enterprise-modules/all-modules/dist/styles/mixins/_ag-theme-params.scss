@@ -1,0 +1,386 @@
+
+// Utilities to parse params supplied as a map. Values can be defined in terms of
+// other values, with modifications. For example:
+// 
+// @include ag-register-params((
+//     a: ag-derived(b, $times: c, $plus: 2),
+//     b: 4,
+//     c: 10
+// ));
+// @debug ag-param(a); // outputs 42
+
+// Define a derived parameter. Derived values are lazily evaluated. This function is
+// sugar for defining a data structure to record the derived value's parameters.
+@use "sass:math";
+
+@function ag-derived(
+    $reference-name,
+    $times: null,
+    $divide: null,
+    $plus: null,
+    $minus: null,
+    $opacity: null,
+    $lighten: null,
+    $darken: null, 
+    $mix: null,
+    $self-overlay: null
+) {
+    $derived: (
+        "--ag-is-derived-value": true,
+        "reference-name": $reference-name
+    );
+    @if $times != null {
+        $derived: map-merge($derived, ("times": $times));
+    }
+    @if $divide != null {
+        $derived: map-merge($derived, ("divide": $divide));
+    }
+    @if $plus != null {
+        $derived: map-merge($derived, ("plus": $plus));
+    }
+    @if $minus != null {
+        $derived: map-merge($derived, ("minus": $minus));
+    }
+    @if $opacity != null {
+        $derived: map-merge($derived, ("opacity": $opacity));
+    }
+    @if $lighten != null {
+        $derived: map-merge($derived, ("lighten": $lighten));
+    }
+    @if $darken != null {
+        $derived: map-merge($derived, ("darken": $darken));
+    }
+    @if $mix != null {
+        $derived: map-merge($derived, ("mix": $mix));
+    }
+    @if $self-overlay != null {
+        $derived: map-merge($derived, ("self-overlay": $self-overlay));
+    }
+    @return $derived;
+}
+
+// Use a parameter in SCSS, e.g. `color: ag-param(foreground-color)`
+@function ag-param($name) {
+    $resolved: -ag-param-unchecked($name);
+    @if str-index(inspect($resolved), "ag-derived(") != null {
+        @error "#{$name} param contains a ag-derived() as a CSS function call expression. This means that you have tried to use ag-derived() before the function is defined - you need to include the file that defines it.";
+    }
+    @if type-of($resolved) == map {
+        @error "ag-param(#{$name}) resolved to a map, which is not valid CSS: #{inspect($resolved)}";
+    }
+    @each $part in $resolved {
+        @if type-of($part) == map {
+            @error "ag-param(#{$name}) resolved to a list containing a map, which is not valid CSS: #{str-slice(inspect($resolved), 0, 1000)}";
+        }
+    }
+    @return $resolved;
+}
+
+// Return true if a param has a value other than null or false
+@function ag-param-is-set($name) {
+    $value: -ag-param-unchecked($name);
+    @return $value != null and $value != false;
+}
+
+// Return true if two params have different values
+@function ag-params-are-different($name-a, $name-b) {
+    @return -ag-param-unchecked($name-a) != -ag-param-unchecked($name-b);
+}
+
+
+// A mixin to apply a color to an element. This sets the value of a CSS property using a
+// theme parameter, and also emits CSS that allows the value to be overridden at runtime
+// using CSS variables. If the mixin is called like this:
+//
+//   @include ag-color-property(background-color, header-background-color)
+//
+// ... and the header-background-color parameter is set to `red` then the emitted CSS will
+// be something like:
+//
+//   background-color: red;
+//   background-color: var(--ag-header-background-color, red);
+//
+// The optional $important argument can be used to add a CSS !important directive
+@mixin ag-color-property($property, $param, $important: false) {
+    $value: ag-param($param);
+    $important: if($important, !important, null);
+
+    @if $value != null {
+        #{$property}: $value $important;
+    }
+    @if not ag-param-is-set(suppress-css-var-overrides) {
+        $value-as-css-var: -ag-param-as-css-var($param);
+        @if $value != $value-as-css-var {
+            #{$property}: $value-as-css-var $important;
+        }
+    }
+}
+
+
+$-ag-allow-color-param-access-with-ag-param: true;
+@mixin ag-allow-color-param-access-with-ag-param($allow) {
+    $-ag-allow-color-param-access-with-ag-param: $allow !global;
+}
+
+// Merge params supplied to a theme with the defaults, optionally validate, and register
+// the resulting map globally for use with ag-param()
+//
+// $params: params supplied by the derived theme
+// $defaults: values for params not in $params
+@function ag-process-theme-variables($params, $defaults) {
+    $params: -ag-require-type($params, map, "$params argument to ag-process-theme-variables");
+    // Derived themes can add params, and those new params would trigger validation errors when
+    // passed to the base theme, so don't re-validate params that have already been validated
+    @if not map-has-key($params, "--ag-already-validated") {
+        @each $key in map-keys($params) {
+            @if not map-has-key($defaults, $key) and str-index($key, "--internal-") != 1 {
+                @warn "Unrecognised param \"#{$key}\"";
+            }
+        }
+    }
+    @if map-get($params, "icons-font-codes") and map-get($defaults, "icons-font-codes") {
+        $merged-codes: map-merge(map-get($defaults, "icons-font-codes"), map-get($params, "icons-font-codes"));
+        $params: map-merge($params, ("icons-font-codes": $merged-codes));
+    }
+    $params: map-merge($defaults, $params);
+    $params: map-merge($params, ("--ag-already-validated": true));
+    $-ag-params: $params !global;
+    @return $params;
+}
+
+// global map of params used by ag-param()
+$-ag-params: null !default;
+
+// Register a params map globally so that it can be used by ag-param($name)
+// NOTE: Custom themes should NOT use this, use ag-process-theme-variables() instead
+@mixin ag-register-params($params) {
+    $params: -ag-require-type($params, "map", "$params argument");
+    $-ag-params: $params !global;
+}
+
+//
+// PRIVATE IMPLEMENTATION FUNCTIONS
+//
+
+// Return a parameter value as a CSS variable declaration
+@function -ag-param-as-css-var($name) {
+    $value: map-get($-ag-params, $name);
+    @if -is-ag-derived($value) {
+        $has-modificatons: length($value) > 2;
+        @if $has-modificatons {
+            $value: ag-param($name);
+        }
+        @else {
+            $reference-name: map-get($value, "reference-name");
+            $value: -ag-param-as-css-var($reference-name);
+        }
+    }
+
+    @if $value == null {
+        @return var(--ag-#{$name});
+    }
+
+    @return var(--ag-#{$name}, #{$value});
+}
+
+// Get a parameter, with no checks other than that the parameter exists
+@function -ag-param-unchecked($name) {
+    @if $-ag-params == null {
+        @error "ag-param() called before ag-register-params";
+    }
+    @if str-index($name, "--internal-") == 1 {
+        // internal vars are returned without ag-derived resolution or validation that the var exists
+        @return map-get($-ag-params, $name);
+    }
+    @if not map-has-key($-ag-params, $name) {
+        @error "ag-param(#{$name}): no such parameter";
+    }
+    @return -ag-resolve-param-name($-ag-params, $name);
+}
+
+// Return true if a value is a record returned by ag-derived()
+@function -is-ag-derived($value) {
+    @return type-of($value) == map and map-get($value, "--ag-is-derived-value") == true;
+}
+
+@function -ag-resolve-param-name($params, $name) {
+    $value: map-get($params, $name);
+    @return -ag-resolve-param-value($params, $value, $name);
+}
+
+@function -ag-resolve-param-value($params, $input-value, $context-name) {
+    @if type-of($input-value) == list {
+        $resolved: $input-value;
+        @for $i from 1 through length($input-value) {
+            $resolved: set-nth($resolved, $i, -ag-resolve-param-value($params, nth($resolved, $i), $context-name));
+        }
+        @return $resolved;
+    }
+    @if not -is-ag-derived($input-value) {
+        @return $input-value;
+    }
+    $derived: $input-value;
+    $reference-name: map-get($derived, "reference-name");
+    @if not map-has-key($params, $reference-name) {
+        @error "ag-derived: no such parameter \"#{$reference-name}\"";
+    }
+    $resolved: map-get($params, $reference-name);
+    $resolved: -ag-resolve-param-value($params, $resolved, $reference-name);
+
+    $resolved: -ag-apply-derived-operator($params, $resolved, $derived, "times", $context-name);
+    $resolved: -ag-apply-derived-operator($params, $resolved, $derived, "divide", $context-name);
+    $resolved: -ag-apply-derived-operator($params, $resolved, $derived, "plus", $context-name);
+    $resolved: -ag-apply-derived-operator($params, $resolved, $derived, "minus", $context-name);
+    $resolved: -ag-apply-derived-operator($params, $resolved, $derived, "opacity", $context-name);
+    $resolved: -ag-apply-derived-operator($params, $resolved, $derived, "mix", $context-name);
+    $resolved: -ag-apply-derived-operator($params, $resolved, $derived, "lighten", $context-name);
+    $resolved: -ag-apply-derived-operator($params, $resolved, $derived, "darken", $context-name);
+    $resolved: -ag-apply-derived-operator($params, $resolved, $derived, "self-overlay", $context-name);
+
+    @return -ag-resolve-param-value($params, $resolved, $reference-name);
+}
+
+@function -ag-apply-derived-operator($params, $lhs, $derived, $operator, $context-name) {
+    @if $lhs == null {
+        @return $lhs;
+    }
+    $rhs: map-get($derived, $operator);
+    @if $rhs == null {
+        @return $lhs;
+    }
+    @if -ag-is-css-var-token($lhs) {
+        $reference-name: map-get($derived, "reference-name");
+        @warn "Problem while calculating theme parameter `#{$context-name}: #{-ag-inspect-derived-value($derived)}`. This rule attempts to modify the color of `#{$reference-name}` using $#{$operator}, but (#{$reference-name}: #{$lhs}) is a CSS variable and can't be modified at compile time. Either set `#{$reference-name}` to a CSS color value (e.g. #ffffff) or provide a value for `#{$context-name}` that does not use $#{$operator}";
+        @return null;
+    }
+    @if $operator == "mix" {
+        $color-param: nth($rhs, 1);
+        $color: -ag-resolve-param-name($params, $color-param);
+        @if -ag-is-css-var-token($color) {
+            $reference-name: map-get($derived, "reference-name");
+            @warn "Problem while calculating theme parameter `#{$context-name}: #{-ag-inspect-derived-value($derived)}`. This rule attempts to modify the color of `#{$reference-name}` using $#{$operator}, but (#{$color-param}) is a CSS variable and can't be modified at compile time. Either set `#{$color-param}` to a CSS color value (e.g. #ffffff) or provide a value for `#{$context-name}` that does not use $#{$operator}";
+            @return null;
+        }
+    }
+    @if type-of($rhs) == string {
+        $rhs: -ag-resolve-param-name($params, $rhs);
+    }
+    $operator-function: "-ag-operator-function-#{$operator}";
+    @if not function-exists($operator-function) {
+        @error "No such function #{$operator-function}";
+    }
+    @return call(get-function($operator-function), $params, $lhs, $rhs);
+}
+
+// return a string representation of an ag-derived value for debugging
+@function -ag-inspect-derived-value($derived) {
+    @return "ag-derived("
+        + map-get($derived, "reference-name")
+        + if(map-get($derived, "times"), ", $times: #{map-get($derived, "times")}", "")
+        + if(map-get($derived, "divide"), ", $divide: #{map-get($derived, "divide")}", "")
+        + if(map-get($derived, "plus"), ", $plus: #{map-get($derived, "plus")}", "")
+        + if(map-get($derived, "minus"), ", $minus: #{map-get($derived, "minus")}", "")
+        + if(map-get($derived, "opacity"), ", $opacity: #{map-get($derived, "opacity")}", "")
+        + if(map-get($derived, "mix"), ", $mix: #{map-get($derived, "mix")}", "")
+        + if(map-get($derived, "lighten"), ", $lighten: #{map-get($derived, "lighten")}", "")
+        + if(map-get($derived, "darken"), ", $darken: #{map-get($derived, "darken")}", "")
+        + if(map-get($derived, "self-overlay"), ", $self-overlay: #{map-get($derived, "self-overlay")}", "")
+        + ")";
+}
+
+@function -ag-is-css-var-token($value) {
+    @return type-of($value) == string and str-index($value, "var(") != null
+}
+
+@function -ag-require-type($value, $expected, $context) {
+    @if type-of($value) == $expected or ($expected == "map" and $value == ()) {
+        @return $value;
+    }
+    @error "Expected #{$context} to be a #{$expected} but got a #{type-of($value)} instead (#{inspect($value)})";
+}
+
+@function -ag-operator-function-times($params, $lhs, $rhs) {
+    $lhs: -ag-require-type($lhs, "number", "value before $times");
+    $rhs: -ag-require-type($rhs, "number", "argument to $times");
+    @return $lhs * $rhs;
+}
+
+@function -ag-operator-function-divide($params, $lhs, $rhs) {
+    $lhs: -ag-require-type($lhs, "number", "value before $divide");
+    $rhs: -ag-require-type($rhs, "number", "argument to $divide");
+    @return math.div($lhs, $rhs);
+}
+
+@function -ag-operator-function-plus($params, $lhs, $rhs) {
+    $lhs: -ag-require-type($lhs, "number", "value before $plus");
+    $rhs: -ag-require-type($rhs, "number", "argument to $plus");
+    @return $lhs + $rhs;
+}
+
+@function -ag-operator-function-minus($params, $lhs, $rhs) {
+    $lhs: -ag-require-type($lhs, "number", "value before $minus");
+    $rhs: -ag-require-type($rhs, "number", "argument to $minus");
+    @return $lhs - $rhs;
+}
+
+@function -ag-operator-function-opacity($params, $lhs, $rhs) {
+    $lhs: -ag-require-type($lhs, "color", "value before $opacity");
+    $rhs: -ag-require-type($rhs, "number", "argument to $opacity");
+    @if $rhs < 0 or $rhs > 1 {
+        @error "Expected argument to $opacity to be between 0 and 1, got #{inspect($rhs)} instead.";
+    }
+    @return rgba($lhs, $rhs);
+}
+
+@function -ag-operator-function-mix($params, $lhs, $rhs) {
+    $lhs: -ag-require-type($lhs, "color", "value before $mix");
+    @if length($rhs) != 2 {
+        @error "Expected argument to $mix to be a 2-item array [color, percentage] but got #{inspect($rhs)}";
+    }
+    $color: nth($rhs, 1);
+    @if type-of($color) == string {
+        $color: -ag-resolve-param-name($params, $color);
+    }
+    $percentage: nth($rhs, 2);
+    @if type-of($color) != color or type-of($percentage) != number {
+        @error "Expected argument to $mix to be a 2-item array [color, number] but got [#{type-of($color)}, #{type-of($percentage)}]: #{inspect($rhs)}";
+    }
+    @return mix($color, $lhs, $percentage);
+}
+
+@function -ag-operator-function-lighten($params, $lhs, $rhs) {
+    $lhs: -ag-require-type($lhs, "color", "value before $lighten");
+    $rhs: -ag-require-type($rhs, "number", "argument to $lighten");
+    @if $rhs < 0 or $rhs > 100 {
+        @error "Expected argument to $lighten to be between 0 and 100, got #{inspect($rhs)} instead.";
+    }
+    @return lighten($lhs, $rhs);
+}
+
+@function -ag-operator-function-darken($params, $lhs, $rhs) {
+    $lhs: -ag-require-type($lhs, "color", "value before $darken");
+    $rhs: -ag-require-type($rhs, "number", "argument to $darken");
+    @if $rhs < 0 or $rhs > 100 {
+        @error "Expected argument to $darken to be between 0 and 100, got #{inspect($rhs)} instead.";
+    }
+    @return darken($lhs, $rhs);
+}
+
+
+@function -ag-operator-function-self-overlay($params, $color, $times) {
+    $color: -ag-require-type($color, "color", "value before $self-overlay");
+    $times: -ag-require-type($times, "number", "argument to $self-overlay");
+    @if $times < 0 or $times > 100 {
+        @error "Expected argument to $self-overlay to be between 0 and 100, got #{inspect($times)} instead.";
+    }
+
+    $solidity: 1 - opacity($color);
+    $output-solidity: 1;
+    @if $times > 0 {
+        @for $i from 1 through $times {
+            $output-solidity: $output-solidity * $solidity;
+        }
+    }
+
+    @return rgba($color, 1 - $output-solidity);
+}

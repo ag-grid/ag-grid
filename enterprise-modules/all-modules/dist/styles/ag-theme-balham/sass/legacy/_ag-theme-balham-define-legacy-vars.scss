@@ -1,0 +1,158 @@
+@import "../../../ag-theme-base/sass/legacy/ag-theme-base-rename-legacy-vars";
+
+// In v23 we moved from using global variables to maps of parameters to configure Grid themes.
+// This file is part of a backwards-compatibility layer designed to emulate the pre-v23 behaviour
+// and so should not be modified.
+
+// DO NOT EDIT (see note above)
+$flat-clouds: #ECF0F1;
+// DO NOT EDIT (see note above)
+$flat-silver: #BDC3C7;
+// DO NOT EDIT (see note above)
+$flat-concrete: #95A5A6;
+// DO NOT EDIT (see note above)
+$flat-asbestos: #7F8C8D;
+// DO NOT EDIT (see note above)
+$flat-gray-1: $flat-clouds;
+// DO NOT EDIT (see note above)
+$flat-gray-2: $flat-silver;
+// DO NOT EDIT (see note above)
+$flat-gray-3: $flat-concrete;
+// DO NOT EDIT (see note above)
+$flat-gray-4: $flat-asbestos;
+// DO NOT EDIT (see note above)
+$ag-foreground-opacity: 0.87 !default;
+// DO NOT EDIT (see note above)
+$ag-secondary-foreground-color-opacity: 0.54 !default;
+// DO NOT EDIT (see note above)
+$ag-disabled-foreground-color-opacity: 0.38 !default;
+// DO NOT EDIT (see note above)
+$ag-grid-size: 4px !default;
+// DO NOT EDIT (see note above)
+$ag-icon-size: 16px !default;
+// DO NOT EDIT (see note above)
+$ag-row-height: $ag-grid-size * 7 !default;
+// DO NOT EDIT (see note above)
+$ag-default-background: white !default;
+// DO NOT EDIT (see note above)
+$ag-chrome-background: lighten($flat-gray-1, 3) !default;
+// DO NOT EDIT (see note above)
+$ag-active: #0091EA !default;
+// DO NOT EDIT (see note above)
+$ag-foreground-color: #000 !default;
+// DO NOT EDIT (see note above)
+$ag-border-color: $flat-silver !default;
+// DO NOT EDIT (see note above)
+$ag-icon-color: $flat-gray-4 !default;
+// DO NOT EDIT (see note above)
+$ag-alt-icon-color: $ag-default-background !default;
+// DO NOT EDIT (see note above)
+$ag-alt-background: $flat-gray-1 !default;
+// DO NOT EDIT (see note above)
+$ag-odd-row-background-color: rgb(252, 253, 254) !default;
+// DO NOT EDIT (see note above)
+$ag-header-cell-moving-background-color: $ag-default-background !default;
+// DO NOT EDIT (see note above)
+$ag-foreground-color: rgba($ag-foreground-color, $ag-foreground-opacity) !default; // foreground
+// DO NOT EDIT (see note above)
+$ag-secondary-foreground-color: rgba($ag-foreground-color, $ag-secondary-foreground-color-opacity) !default; // foreground-secondary
+// DO NOT EDIT (see note above)
+$ag-disabled-foreground-color: rgba($ag-foreground-color, $ag-disabled-foreground-color-opacity) !default; // foreground-disabled
+// DO NOT EDIT (see note above)
+$ag-input-border-color: $flat-gray-3 !default;
+// DO NOT EDIT (see note above)
+$ag-input-disabled-background-color: #ebebeb !default;
+// DO NOT EDIT (see note above)
+$ag-primary-color: $ag-active !default;
+// DO NOT EDIT (see note above)
+$ag-accent-color: $ag-active !default;
+// DO NOT EDIT (see note above)
+$ag-range-selection-background-color: transparentize($ag-active, 0.8) !default;
+// DO NOT EDIT (see note above)
+$ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1) !default;
+// DO NOT EDIT (see note above)
+$ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1) !default;
+// DO NOT EDIT (see note above)
+$ag-range-selection-highlight-color: $ag-active !default;
+// DO NOT EDIT (see note above)
+$ag-selected-color: lighten($ag-active, 40) !default;
+// DO NOT EDIT (see note above)
+$ag-background-color: $ag-default-background !default;
+// DO NOT EDIT (see note above)
+$ag-editor-background-color: $ag-chrome-background !default;
+// DO NOT EDIT (see note above)
+$ag-panel-background-color: $ag-chrome-background !default;
+// DO NOT EDIT (see note above)
+$ag-tool-panel-background-color: $ag-chrome-background !default;
+// DO NOT EDIT (see note above)
+$ag-header-background-color: $ag-chrome-background !default;
+// DO NOT EDIT (see note above)
+$ag-header-cell-hover-background-color: $ag-header-background-color !default;
+// DO NOT EDIT (see note above)
+$ag-header-foreground-color: $ag-secondary-foreground-color !default;
+// DO NOT EDIT (see note above)
+$ag-hover-color: $ag-alt-background !default;
+// DO NOT EDIT (see note above)
+$ag-chip-background-color: darken($ag-alt-background, 5) !default;
+// DO NOT EDIT (see note above)
+$ag-row-stub-background-color: inherit !default;
+// DO NOT EDIT (see note above)
+$ag-row-floating-background-color: inherit !default;
+// DO NOT EDIT (see note above)
+$ag-cell-data-changed-color: #fce4ec !default;
+// DO NOT EDIT (see note above)
+$ag-value-change-delta-up-color: #43a047 !default;
+// DO NOT EDIT (see note above)
+$ag-value-change-delta-down-color: #e53935 !default;
+// DO NOT EDIT (see note above)
+$ag-value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;
+// DO NOT EDIT (see note above)
+$ag-header-height: $ag-grid-size * 8 !default;
+// DO NOT EDIT (see note above)
+$ag-virtual-item-height: $ag-grid-size * 7 !default;
+// DO NOT EDIT (see note above)
+$ag-row-border-width: 1px !default;
+// DO NOT EDIT (see note above)
+$ag-toolpanel-indent-size: $ag-grid-size + $ag-icon-size !default;
+// DO NOT EDIT (see note above)
+$ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
+// DO NOT EDIT (see note above)
+$ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
+// DO NOT EDIT (see note above)
+$ag-header-icon-size: 14px !default;
+// DO NOT EDIT (see note above)
+$ag-border-radius: 2px !default;
+// DO NOT EDIT (see note above)
+$ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif !default;
+// DO NOT EDIT (see note above)
+$ag-font-size: 12px !default;
+// DO NOT EDIT (see note above)
+$ag-font-weight: 400 !default;
+// DO NOT EDIT (see note above)
+$ag-secondary-font-family: $ag-font-family !default; //font-secondary
+// DO NOT EDIT (see note above)
+$ag-secondary-font-size: 12px !default; // font-secondary-size
+// DO NOT EDIT (see note above)
+$ag-secondary-font-weight: 600 !default; // font-secondary-weight
+// DO NOT EDIT (see note above)
+$ag-card-radius: 2px !default;
+// DO NOT EDIT (see note above)
+$ag-card-shadow: none !default;
+// DO NOT EDIT (see note above)
+$ag-tooltip-background-color: lighten($flat-gray-2, 5%) !default;
+// DO NOT EDIT (see note above)
+$ag-tooltip-foreground-color: $ag-foreground-color !default;
+// DO NOT EDIT (see note above)
+$ag-tooltip-border-radius: $ag-border-radius !default;
+// DO NOT EDIT (see note above)
+$ag-tooltip-border-color: $ag-tooltip-background-color !default;
+// DO NOT EDIT (see note above)
+@import "../ag-theme-balham-font-vars";
+// DO NOT EDIT (see note above)
+$ag-icon-font-family: $ag-theme-balham-icon-font-family !default;
+// DO NOT EDIT (see note above)
+$ag-icons-data: $ag-theme-balham-icons-data !default;
+// DO NOT EDIT (see note above)
+$ag-icons-font-codes: $ag-theme-balham-icons-font-codes !default;
+
+@import "../../../ag-theme-base/sass/legacy/ag-theme-base-define-legacy-vars";
