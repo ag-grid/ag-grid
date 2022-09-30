@@ -1,6 +1,21 @@
 {
   "javascript": [
     {
+      "title": "AG Grid Enterprise License Explained",
+      "url": "https://www.youtube.com/watch?v=20SLdu4wLtI&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "AG Grid Enterprise License"
+      },
+      "keyPoints": [
+        "Community MIT License.",
+        "Single App License.",
+        "Multiple App License.",
+        "Deployment License."
+      ],
+      "runningTime": "4:42"
+    },
+    {
       "title": "Getting Started with AG Grid Community",
       "url": "https://www.youtube.com/watch?v=j-Odsb0EjVo&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
       "thumbnail": {
@@ -57,6 +72,21 @@
     }
   ],
   "react": [
+    {
+      "title": "AG Grid Enterprise License Explained",
+      "url": "https://www.youtube.com/watch?v=20SLdu4wLtI&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "AG Grid Enterprise License"
+      },
+      "keyPoints": [
+        "Community MIT License.",
+        "Single App License.",
+        "Multiple App License.",
+        "Deployment License."
+      ],
+      "runningTime": "4:42"
+    },
     {
       "title": "Getting Started with AG Grid Community",
       "url": "https://www.youtube.com/watch?v=Pr__B6HM_s4&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
@@ -228,6 +258,21 @@
   ],
   "angular": [
     {
+      "title": "AG Grid Enterprise License Explained",
+      "url": "https://www.youtube.com/watch?v=20SLdu4wLtI&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "AG Grid Enterprise License"
+      },
+      "keyPoints": [
+        "Community MIT License.",
+        "Single App License.",
+        "Multiple App License.",
+        "Deployment License."
+      ],
+      "runningTime": "4:42"
+    },
+    {
       "title": "Getting Started with AG Grid Community",
       "url": "https://www.youtube.com/watch?v=_cRDVM6NlPk&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
       "thumbnail": {
@@ -299,6 +344,21 @@
     }
   ],
   "vue": [
+    {
+      "title": "AG Grid Enterprise License Explained",
+      "url": "https://www.youtube.com/watch?v=20SLdu4wLtI&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "AG Grid Enterprise License"
+      },
+      "keyPoints": [
+        "Community MIT License.",
+        "Single App License.",
+        "Multiple App License.",
+        "Deployment License."
+      ],
+      "runningTime": "4:42"
+    },
     {
       "title": "Getting Started with AG Grid Community",
       "url": "https://www.youtube.com/watch?v=V14w_NFuZB4&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
