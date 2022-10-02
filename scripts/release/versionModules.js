@@ -119,7 +119,7 @@ function updateDevDependencies(fileContents) {
 }
 
 function updatePeerDependencies(fileContents) {
-    return updateDependency(fileContents, 'peerDependencies', dependencyVersion, chartsDependencyVersion);
+    return updateDependency(fileContents, 'peerDependencies', ">28.1.0", ">6.1.0");
 }
 
 function updateDependency(fileContents, property, dependencyVersion, chartsDependencyVersion) {
@@ -156,3 +156,6 @@ function updateDependency(fileContents, property, dependencyVersion, chartsDepen
 }
 
 main();
+
+// node scripts/release/versionModules.js 6.2.0 ~6.2.0 '["charts-packages", "examples-charts"]' all
+// node scripts/release/versionModules.js 28.2.0 ~28.2.0 '["grid-packages", "community-modules", "enterprise-modules", "examples-grid"]' all ~6.2.0

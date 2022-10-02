@@ -1,12 +1,7 @@
 {
   "packages": [
-    "community-modules/*",
-    "enterprise-modules/*",
     "charts-packages/*",
-    "grid-packages/*",
-    "examples-charts/*",
-    "examples-grid/*",
-    "grid-packages/ag-grid-docs/documentation/"
+    "community-modules/*"
   ],
   "useNx": false,
   "command": {
