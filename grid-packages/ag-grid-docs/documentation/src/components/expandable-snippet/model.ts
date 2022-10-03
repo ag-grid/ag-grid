@@ -97,6 +97,7 @@ export type JsonModelProperty = {
     meta?: {
         min?: number;
         max?: number;
+        step?: number;
         unit?: string;
         options?: any[];
         suggestions?: any[];
@@ -430,7 +431,7 @@ function plainType(type: string): string {
         type = type.substring(0, genericIndex);
     }
     return type.replace(/[\[\]\?\!]/g, "");
-} 
+}
 
 
 function typeClass(
