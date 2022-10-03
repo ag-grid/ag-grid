@@ -52,12 +52,16 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
 export type ChartToolPanelName = 'settings' | 'data' | 'format';
 
 export interface ChartSettingsPanel {
+    /** Chart groups customisations for which charts are displayed in the settings panel */
     chartGroupsDef?: ChartGroupsDef;
 }
 
 export interface ChartToolPanelsDef {
+    /** Customisations for the settings panel */
     settingsPanel?: ChartSettingsPanel,
+    /** The ordered list of panels to show in the chart tool panels. If none specified, all panels are shown */
     panels?: ChartToolPanelName[],
+    /** The panel to open by default when the chart loads. If none specified, the tool panel is hidden by default and the first panel is open when triggered. */
     defaultToolPanel?: ChartToolPanelName
 }
 

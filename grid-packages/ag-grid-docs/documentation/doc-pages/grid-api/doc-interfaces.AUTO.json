@@ -16504,17 +16504,21 @@
   "ChartToolPanelName": {},
   "ChartSettingsPanel": {
     "chartGroupsDef": {
+      "description": "/** Chart groups customisations for which charts are displayed in the settings panel */",
       "type": { "returnType": "ChartGroupsDef", "optional": true }
     }
   },
   "ChartToolPanelsDef": {
     "settingsPanel": {
+      "description": "/** Customisations for the settings panel */",
       "type": { "returnType": "ChartSettingsPanel", "optional": true }
     },
     "panels": {
+      "description": "/** The ordered list of panels to show in the chart tool panels. If none specified, all panels are shown */",
       "type": { "returnType": "ChartToolPanelName[]", "optional": true }
     },
     "defaultToolPanel": {
+      "description": "/** The panel to open by default when the chart loads. If none specified, the tool panel is hidden by default and the first panel is open when triggered. */",
       "type": { "returnType": "ChartToolPanelName", "optional": true }
     }
   },
