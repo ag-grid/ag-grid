@@ -21,6 +21,8 @@ const VueExample = {
                 class="ag-theme-alpine"
                 :columnDefs="columnDefs"
                 @grid-ready="onGridReady"
+                @cell-double-clicked="onCellDoubleClicked"
+                @cell-key-down="onCellKeyDown"
                 :autoGroupColumnDef="autoGroupColumnDef"
                 :defaultColDef="defaultColDef"
                 :groupDefaultExpanded="groupDefaultExpanded"
@@ -71,6 +73,25 @@ const VueExample = {
                 .then((resp) => resp.json())
                 .then((data) => updateData(data));
         },
+        onCellDoubleClicked: (params) => {
+            if(params.colDef.showRowGroup) {
+                params.node.setExpanded(!params.node.expanded);
+            }
+        },
+        onCellKeyDown: (params) => {
+            if (!('colDef' in params)) {
+                return;
+            }
+            if (!(params.event instanceof KeyboardEvent)) {
+                return;
+            }
+            if (params.event.code !== "Enter") {
+                return;
+            }
+            if(params.colDef.showRowGroup) {
+                params.node.setExpanded(!params.node.expanded);
+            }
+        }
     },
 };
 
