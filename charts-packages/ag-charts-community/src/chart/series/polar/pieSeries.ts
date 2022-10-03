@@ -854,6 +854,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const innerRadius = radiusScale.convert(0);
         const { fontSize, fontStyle, fontWeight, fontFamily, positionOffset, positionRatio, color } = this.sectorLabel;
 
+        const isDoughnut = innerRadius > 0;
+        const singleVisibleSector = this.seriesItemEnabled.filter(Boolean).length === 1;
+
         this.sectorLabelSelection.each((text, datum) => {
             const sectorLabel = datum.sectorLabel;
             const radius = radiusScale.convert(datum.radius, clamper);
@@ -869,8 +872,14 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 text.fontSize = fontSize;
                 text.fontFamily = fontFamily;
                 text.text = sectorLabel.text;
-                text.x = datum.midCos * labelRadius;
-                text.y = datum.midSin * labelRadius;
+                const shouldPutTextInCenter = !isDoughnut && singleVisibleSector;
+                if (shouldPutTextInCenter) {
+                    text.x = 0;
+                    text.y = 0;
+                } else {
+                    text.x = datum.midCos * labelRadius;
+                    text.y = datum.midSin * labelRadius;
+                }
                 text.textAlign = 'center';
                 text.textBaseline = 'middle';
 
