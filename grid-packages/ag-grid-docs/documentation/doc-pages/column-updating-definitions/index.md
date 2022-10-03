@@ -18,7 +18,7 @@ The example below demonstrates adding and removing columns from a grid. Note the
 
 <grid-example title='Add & Remove Columns' name='add-remove-columns' type='mixed' options='{ "modules": true }'></grid-example>
 
-In the example above, note that any state applied to any column (e.g. sort, filter, width,) will be kept
+In the example above, note that any state applied to any column (e.g. sort, filter, width) will be kept
 if the column still exists after the new definitions are applied. For example try the following:
 
 - Resize Country column. Note changing columns doesn't impact its width.
