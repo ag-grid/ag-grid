@@ -103,6 +103,10 @@ export class MiniChartsContainer extends Component {
 
             chartGroupValues!.forEach((chartType: keyof ChartTypeKeys[typeof group]) => {
                 const MiniClass = miniChartMapping[group][chartType] as any;
+                if (!MiniClass) {
+                    console.warn(`AG Grid - invalid chart type '${chartType}' in group '${group}'`);
+                    return;
+                }
 
                 const miniWrapper = document.createElement('div');
                 miniWrapper.classList.add('ag-chart-mini-thumbnail');
