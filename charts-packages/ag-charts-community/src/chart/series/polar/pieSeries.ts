@@ -594,7 +594,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private getInnerRadius() {
         const { radius, innerRadiusRatio, innerRadiusOffset } = this;
         const innerRadius = radius * (innerRadiusRatio ?? 1) + (innerRadiusOffset ? innerRadiusOffset : 0);
-        if (innerRadius === radius) {
+        if (innerRadius === radius || innerRadius < 0) {
             return 0;
         }
         return innerRadius;
@@ -603,6 +603,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private getOuterRadius() {
         const { radius, outerRadiusRatio, outerRadiusOffset } = this;
         const outerRadius = radius * (outerRadiusRatio ?? 1) + (outerRadiusOffset ? outerRadiusOffset : 0);
+        if (outerRadius < 0) {
+            return 0;
+        }
         return outerRadius;
     }
 
