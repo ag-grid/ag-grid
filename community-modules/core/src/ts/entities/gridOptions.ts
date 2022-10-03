@@ -306,7 +306,7 @@ export interface GridOptions<TData = any> {
     chartThemeOverrides?: AgChartThemeOverrides;
     /** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */
     enableChartToolPanelsButton?: boolean;
-    /** Chart Tool Panel overrides. */
+    /** Allows customisation of the Chart Tool Panels, such as changing the tool panels visibility and order, as well as choosing which charts should be displayed in the settings panel. */
     chartToolPanelsDef?: ChartToolPanelsDef;
 
     // *** Loading Cell Renderers *** //

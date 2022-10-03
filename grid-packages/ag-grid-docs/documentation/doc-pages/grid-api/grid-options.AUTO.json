@@ -308,7 +308,7 @@
     "type": { "returnType": "boolean" }
   },
   "chartToolPanelsDef": {
-    "description": "/** Chart Tool Panel overrides. */",
+    "description": "/** Allows customisation of the Chart Tool Panels, such as changing the tool panels visibility and order, as well as choosing which charts should be displayed in the settings panel. */",
     "type": { "returnType": "ChartToolPanelsDef" }
   },
   "loadingCellRenderer": {
