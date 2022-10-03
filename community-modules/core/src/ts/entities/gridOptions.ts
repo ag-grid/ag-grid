@@ -518,7 +518,8 @@ export interface GridOptions<TData = any> {
     /**
      * A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.
      * If this callback is not set, the current cell value will be used.
-     * If the `rowDragText` callback is set in the ColDef it will take precedence over this.
+     * If the `rowDragText` callback is set in the ColDef it will take precedence over this, except when
+     * `rowDragEntireRow=true`.
      */
     rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
 
