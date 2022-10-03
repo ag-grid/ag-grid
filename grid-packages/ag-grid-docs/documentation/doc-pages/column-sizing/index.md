@@ -120,7 +120,7 @@ Flex sizing works by dividing the remaining space in the grid among all flex col
 
 [[note]]
 | The flex config does **not** work with a `width` config
-| in same column. If you need to provide a minimum width for a column,
+| in the same column. If you need to provide a minimum width for a column,
 | you should use flex and the `minWidth` config. Flex will also take `maxWidth`
 | into account.
 
