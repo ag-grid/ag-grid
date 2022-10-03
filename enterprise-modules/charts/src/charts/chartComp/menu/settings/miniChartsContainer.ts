@@ -1,4 +1,4 @@
-import { CHART_TYPE_KEYS, ChartTypeKeys, AgGroupComponent, Autowired, ChartType, Component, PartialChartGroupsDef, PostConstruct, DEFAULT_CHART_GROUPS } from "@ag-grid-community/core";
+import { AgGroupComponent, Autowired, ChartType, Component, PostConstruct, DEFAULT_CHART_GROUPS, ChartGroupsDef } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import {
@@ -68,11 +68,11 @@ export class MiniChartsContainer extends Component {
     private wrappers: { [key: string]: HTMLElement } = {};
     private chartController: ChartController;
 
-    private chartGroups: PartialChartGroupsDef;
+    private chartGroups: ChartGroupsDef;
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    constructor(chartController: ChartController, fills: string[], strokes: string[], chartGroups: PartialChartGroupsDef = DEFAULT_CHART_GROUPS) {
+    constructor(chartController: ChartController, fills: string[], strokes: string[], chartGroups: ChartGroupsDef = DEFAULT_CHART_GROUPS) {
         super(MiniChartsContainer.TEMPLATE);
 
         this.chartController = chartController;
@@ -85,12 +85,12 @@ export class MiniChartsContainer extends Component {
     private init() {
         // hide MiniCustomCombo if no custom combo exists
         if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
-            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(chartType => chartType !== CHART_TYPE_KEYS.combinationGroup.customCombo);
+            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(chartType => chartType !== 'customCombo');
         }
 
         const eGui = this.getGui();
 
-        Object.keys(this.chartGroups).forEach((group: keyof ChartTypeKeys) => {
+        Object.keys(this.chartGroups).forEach((group: keyof ChartGroupsDef) => {
             const chartGroupValues = this.chartGroups[group];
             const groupComponent = this.createBean(new AgGroupComponent({
                 title: this.chartTranslationService.translate(group),
@@ -101,7 +101,7 @@ export class MiniChartsContainer extends Component {
                 direction: 'horizontal'
             }));
 
-            chartGroupValues!.forEach((chartType: keyof ChartTypeKeys[typeof group]) => {
+            chartGroupValues!.forEach((chartType: keyof ChartGroupsDef[typeof group]) => {
                 const MiniClass = miniChartMapping[group][chartType] as any;
                 if (!MiniClass) {
                     console.warn(`AG Grid - invalid chart type '${chartType}' in group '${group}'`);
