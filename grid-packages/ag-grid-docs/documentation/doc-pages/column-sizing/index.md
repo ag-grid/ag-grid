@@ -45,7 +45,7 @@ Call the Grid Api `api.sizeColumnsToFit(params)` to make the currently visible c
 If you don't want a particular column to be included in the auto resize, then set the column definition `suppressSizeToFit=true`. This is helpful if, for example, you want the first column to remain fixed width, but all other columns to fill the width of the table.
 
 The grid calculates new column widths while maintaining the ratio of the column default widths. So for example
-if Column A has a default size twice as width as Column B, then after calling `api.sizeColumnsToFit()` Column A
+if Column A has a default size twice as wide as Column B, then after calling `api.sizeColumnsToFit()` Column A
 will still be twice the size of Column B, assuming no Column min-width or max-width constraints are violated.
 
 Column default widths, rather than current widths, are used while calculating the new widths. This insures
@@ -83,7 +83,7 @@ Just like Excel, each column can be 'auto resized' by double clicking the right 
 
 Note the following with regards autosizing columns:
 
-- The grid works out the best width by considering the virtually rendered rows only. For example, if your grid has 10,000 rows, but only 50 rendered due to virtualisation of rows, then only these 50 will be considered for working out the width to display. The rendered rows are all the rows you can see on the screen through the horizontal scroll plus a small buffer (default buffer size is 20).
+- The grid works out the best width by considering the virtually rendered rows only. For example, if your grid has 10,000 rows, but only 50 rendered due to virtualisation of rows, then only these 50 will be considered for working out the width to display. The rendered rows are all the rows you can see on the screen through the vertical scroll plus a small buffer (default buffer size is 20).
 - Autosizing columns looks at the rendered cells on the screen, and works out the width based on what it sees. It cannot see the columns that are not rendered due to column virtualisation. Thus it is not possible to autosize a column that is not visible on the screen.<br/><br/> Column Virtualisation is the technique the grid uses to render large amounts of columns without degrading performance by only rendering columns that are visible due to the horizontal scroll positions. For example, the grid can have 1,000 columns with only 10 rendered if the horizontal scroll is only showing 10 columns.<br/><br/>To get around this, you can turn off column virtualisation by setting grid property `suppressColumnVirtualisation=true`. The choice is yours, whether you want column virtualisation working OR auto-size working using off-screen columns.
 
 By default the grid will also resize the column to fit the header. If you do not want the headers to be included in the autosize calculation, set the grid property `skipHeaderOnAutoSize=true`.
@@ -120,7 +120,7 @@ Flex sizing works by dividing the remaining space in the grid among all flex col
 
 [[note]]
 | The flex config does **not** work with a `width` config
-| in same column. If you need to provide a minimum width for a column,
+| in the same column. If you need to provide a minimum width for a column,
 | you should use flex and the `minWidth` config. Flex will also take `maxWidth`
 | into account.
 

@@ -18,7 +18,7 @@ The example below demonstrates adding and removing columns from a grid. Note the
 
 <grid-example title='Add & Remove Columns' name='add-remove-columns' type='mixed' options='{ "modules": true }'></grid-example>
 
-In the example above, note that any state applied to any column (e.g. sort, filter, width,) will be kept
+In the example above, note that any state applied to any column (e.g. sort, filter, width) will be kept
 if the column still exists after the new definitions are applied. For example try the following:
 
 - Resize Country column. Note changing columns doesn't impact its width.
@@ -125,7 +125,7 @@ state attributes as by default they will be `undefined`.
 When a new Column Definition is passed to the grid, the grid needs to work out if it's an update of a Column or a new
 Column.
 
-Most of the time the `field` attribute to match the Column. However `field` is both an optional and non-unique
+Most of the time the `field` attribute will match the Column. However `field` is both an optional and non-unique
 attribute, e.g. a `valueGetter` could be used instead of field, or two columns could share the same field.
 
 Given the `field` is not a unique identifier, the grid uses the following rules to match columns:
@@ -144,7 +144,7 @@ each time.
 - Athlete column is matched by object equality as the same column definition instance is provided to the grid each time.
 - Age column is matched by `colId`. The `colId` is needed as the column has no `field` attribute.
 - All other columns except Country are matched using the `field` attribute.
-- Country column is not matched as it's a different object instance and has not `colId` or `field` attributes.
+- Country column is not matched as it's a different object instance and has no `colId` or `field` attributes.
 
 <grid-example title='Matching Columns' name='matching-columns' type='mixed' options='{ "modules": true }'></grid-example>
 
@@ -170,7 +170,7 @@ If the Columns are cleared out (clicking Clear) then when columns are set again 
 <grid-example title='Column Definition Order' name='col-def-order' type='mixed' options='{ "modules": true }'></grid-example>
 
 If there are new Columns added (eg the new set of Column Definitions has additional Columns to those currently
-present), then these new Column will always be added at the end.
+present), then these new Columns will always be added at the end.
 
 In order for the Column Order to be maintained, the grid needs to match the Columns. This can be done by ensuring
 each Column has a `field` or `colId` defined. Any Columns that can't be matched will be treated as new Columns and

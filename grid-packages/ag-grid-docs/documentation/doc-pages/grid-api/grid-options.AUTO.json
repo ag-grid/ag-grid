@@ -308,7 +308,7 @@
     "type": { "returnType": "boolean" }
   },
   "chartToolPanelsDef": {
-    "description": "/** Chart Tool Panel overrides. */",
+    "description": "/** Allows customisation of the Chart Tool Panels, such as changing the tool panels visibility and order, as well as choosing which charts should be displayed in the settings panel. */",
     "type": { "returnType": "ChartToolPanelsDef" }
   },
   "loadingCellRenderer": {
@@ -602,7 +602,7 @@
     "type": { "returnType": "boolean" }
   },
   "rowDragText": {
-    "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the current cell value will be used.\n * If the `rowDragText` callback is set in the ColDef it will take precedence over this. */",
+    "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the current cell value will be used.\n * If the `rowDragText` callback is set in the ColDef it will take precedence over this, except when\n * `rowDragEntireRow=true`. */",
     "type": {
       "arguments": { "params": "IRowDragItem", "dragItemCount": "number" },
       "returnType": "string"

@@ -1,5 +1,5 @@
-import { Grid, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from '@ag-grid-community/core'
-
+import { Grid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+declare var FakeServer: any;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'athlete', minWidth: 220 },
@@ -19,7 +19,31 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   rowModelType: 'serverSide',
   animateRows: true,
-  serverSideSortOnServer: true
+  serverSideSortOnServer: true,
+}
+
+function getServerSideDatasource(server: any): IServerSideDatasource {
+  return {
+    getRows: (params) => {
+      console.log('[Datasource] - rows requested by grid: ', params.request)
+
+      var response = server.getData(params.request)
+
+      // adding delay to simulate real server call
+      setTimeout(function () {
+        if (response.success) {
+          // call the success callback
+          params.success({
+            rowData: response.rows,
+            rowCount: response.lastRow
+          })
+        } else {
+          // inform the grid request failed
+          params.fail()
+        }
+      }, 400)
+    },
+  }
 }
 
 // setup the grid after the page has finished loading
@@ -31,49 +55,12 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(response => response.json())
     .then(function (data) {
       // setup the fake server with entire dataset
-      var fakeServer = createFakeServer(data)
+      var fakeServer = new FakeServer(data)
 
       // create datasource with a reference to the fake server
-      var datasource = createServerSideDatasource(fakeServer)
+      var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
       gridOptions.api!.setServerSideDatasource(datasource)
     })
 })
-
-function createServerSideDatasource(server: any): IServerSideDatasource {
-  return {
-    getRows: (params: IServerSideGetRowsParams) => {
-      console.log(
-        '[Datasource] - rows requested by grid: startRow = ' +
-        params.request.startRow +
-        ', endRow = ' +
-        params.request.endRow
-      )
-
-      // get data for request from our fake server
-      var response = server.getData()
-
-      // simulating real server call with a 500ms delay
-      setTimeout(function () {
-        if (response.success) {
-          // supply rows for requested block to grid
-          params.success({ rowData: response.rows })
-        } else {
-          params.fail()
-        }
-      }, 1000)
-    },
-  }
-}
-
-function createFakeServer(allData: any[]) {
-  return {
-    getData: () => {
-      return {
-        success: true,
-        rows: allData,
-      }
-    },
-  }
-}

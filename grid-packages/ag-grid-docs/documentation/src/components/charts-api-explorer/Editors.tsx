@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { HuePicker, AlphaPicker } from 'react-color';
 import classnames from 'classnames';
 
-import { FontFamily, FontWeight, FontStyle, FontSize, Opacity } from 'ag-charts-community';
+import { FontFamily, FontWeight, FontStyle, FontSize, Opacity, Ratio } from 'ag-charts-community';
 
 import { doOnEnter } from '../key-handlers';
 import styles from './Editors.module.scss';
@@ -53,6 +53,12 @@ const OPACITY_PROPS: AliasTypeProps<Opacity> = {
     max: 1,
 };
 
+const RATIO_PROPS: AliasTypeProps<Ratio> = {
+    step: 0.1,
+    min: 0,
+    max: 1
+};
+
 const getMaxSize = () => {
     const DEFAULT_WIDTH = 800;
     const DEFAULT_HEIGHT = 600;
@@ -91,6 +97,7 @@ export const getPrimitivePropertyEditor = (desc: JsonProperty) => {
                 return ColourEditor;
             case 'PixelSize':
             case 'Opacity':
+            case 'Ratio':
                 return NumberEditor;
             case 'FontFamily':
             case 'FontStyle':
@@ -116,7 +123,7 @@ export const getPrimitivePropertyEditor = (desc: JsonProperty) => {
 export const getPrimitiveEditor = ({ meta, desc }: JsonModelProperty, key: string) => {
     let editor: any;
     let editorProps: Record<string, any> = {};
-    
+
     let specialOverride = SPECIAL_OVERRIDE_PROPS[key];
     if (specialOverride != null) {
         // Apply special overrides to a copy of meta before application below.
@@ -136,6 +143,8 @@ export const getPrimitiveEditor = ({ meta, desc }: JsonModelProperty, key: strin
                 return { editor: NumberEditor, editorProps: { ...meta, unit: 'px' } };
             case 'Opacity':
                 return { editor: NumberEditor, editorProps: { ...OPACITY_PROPS, ...meta } };
+            case 'Ratio':
+                    return { editor: NumberEditor, editorProps: { ...RATIO_PROPS, ...meta } };
             case 'FontFamily':
                 return {
                     editor: PresetEditor,

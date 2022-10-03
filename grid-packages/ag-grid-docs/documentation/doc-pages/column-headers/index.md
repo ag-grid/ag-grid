@@ -173,7 +173,7 @@ When you provide your own template, everything should work as expected as long a
 | `eLabel` | The container where there is going to be an onClick mouse listener to trigger the sort. |
 | `eText` | The text displayed on the column. |
 | `eFilter` | The container with the icon that will appear if the user filters this column. |
-| `eSortOrder` | In case of sorting my multiple columns, this shows the index that represents the position of this column in the order. |
+| `eSortOrder` | In case of sorting on multiple columns, this shows the index that represents the position of this column in the order. |
 | `eSortAsc` | In case of sorting ascending the data in the column, this shows the associated icon. |
 | `eSortDesc` | In case of sorting descending the data in the column, this shows the descending icon. |
 | `eSortNone` | In case of no sort being applied, this shows the associated icon. Note this icon by default is empty. |

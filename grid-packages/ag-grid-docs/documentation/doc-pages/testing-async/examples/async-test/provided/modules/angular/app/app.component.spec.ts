@@ -2,7 +2,7 @@ import { DebugElement } from '@angular/core';
 import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
-import { AgGridModule } from 'ag-grid-angular';
+import { AgGridModule } from '@ag-grid-community/angular';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {

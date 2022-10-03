@@ -594,7 +594,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private getInnerRadius() {
         const { radius, innerRadiusRatio, innerRadiusOffset } = this;
         const innerRadius = radius * (innerRadiusRatio ?? 1) + (innerRadiusOffset ? innerRadiusOffset : 0);
-        if (innerRadius === radius) {
+        if (innerRadius === radius || innerRadius < 0) {
             return 0;
         }
         return innerRadius;
@@ -603,6 +603,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private getOuterRadius() {
         const { radius, outerRadiusRatio, outerRadiusOffset } = this;
         const outerRadius = radius * (outerRadiusRatio ?? 1) + (outerRadiusOffset ? outerRadiusOffset : 0);
+        if (outerRadius < 0) {
+            return 0;
+        }
         return outerRadius;
     }
 
@@ -692,6 +695,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         const isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
         this.group.visible = isVisible;
+        this.backgroundGroup.visible = isVisible;
         this.seriesGroup.visible = isVisible;
         this.highlightGroup.visible = isVisible && this.chart?.highlightedDatum?.series === this;
         this.labelGroup!.visible = isVisible;
@@ -850,6 +854,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const innerRadius = radiusScale.convert(0);
         const { fontSize, fontStyle, fontWeight, fontFamily, positionOffset, positionRatio, color } = this.sectorLabel;
 
+        const isDoughnut = innerRadius > 0;
+        const singleVisibleSector = this.seriesItemEnabled.filter(Boolean).length === 1;
+
         this.sectorLabelSelection.each((text, datum) => {
             const sectorLabel = datum.sectorLabel;
             const radius = radiusScale.convert(datum.radius, clamper);
@@ -865,8 +872,14 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 text.fontSize = fontSize;
                 text.fontFamily = fontFamily;
                 text.text = sectorLabel.text;
-                text.x = datum.midCos * labelRadius;
-                text.y = datum.midSin * labelRadius;
+                const shouldPutTextInCenter = !isDoughnut && singleVisibleSector;
+                if (shouldPutTextInCenter) {
+                    text.x = 0;
+                    text.y = 0;
+                } else {
+                    text.x = datum.midCos * labelRadius;
+                    text.y = datum.midSin * labelRadius;
+                }
                 text.textAlign = 'center';
                 text.textBaseline = 'middle';
 
@@ -928,6 +941,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const totalHeight = textBBoxes.reduce((sum, bbox, i) => {
             return sum + bbox.height + getMarginTop(i) + getMarginBottom(i);
         }, 0);
+        const totalWidth = Math.max(...textBBoxes.map((bbox) => bbox.width));
+        const innerRadius = this.getInnerRadius();
+        const labelRadius = Math.sqrt(Math.pow(totalWidth / 2, 2) + Math.pow(totalHeight / 2, 2));
+        const labelsVisible = labelRadius <= (innerRadius > 0 ? innerRadius : this.getOuterRadius());
+
         const textBottoms: number[] = [];
         for (let i = 0, prev = -totalHeight / 2; i < textBBoxes.length; i++) {
             const bbox = textBBoxes[i];
@@ -937,6 +955,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
         this.innerLabelsSelection.each((text, _datum, index) => {
             text.y = textBottoms[index];
+            text.visible = labelsVisible;
         });
     }
 

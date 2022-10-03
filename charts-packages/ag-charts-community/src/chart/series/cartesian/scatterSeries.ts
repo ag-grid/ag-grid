@@ -396,8 +396,11 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         labelSelection: Selection<Text, Group, ScatterNodeDatum, any>;
     }) {
         const { labelSelection } = opts;
+        const {
+            label: { enabled },
+        } = this;
 
-        const placedLabels = this.chart?.placeLabels().get(this) ?? [];
+        const placedLabels = enabled ? this.chart?.placeLabels().get(this) ?? [] : [];
 
         const placedNodeDatum = placedLabels.map(
             (v): ScatterNodeDatum => ({

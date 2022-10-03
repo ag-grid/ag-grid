@@ -7,7 +7,7 @@ title: "Column Definitions"
 
 [[only-react]]
 |<video-section id="aDCepyF_DUY" title="React Column Definitions" header="true">
-|Each column in the grid is defined using a Column Definition (`ColDef`). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
+|Each column in the grid is defined using a Column Definition (<code>ColDef</code>). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
 |</video-section>
 
 

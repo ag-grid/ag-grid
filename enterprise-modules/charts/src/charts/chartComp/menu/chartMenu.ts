@@ -121,9 +121,17 @@ export class ChartMenu extends Component {
                 })
                 : defaultChartToolbarOptions;
 
-            const panelsOverride = this.gridOptionsWrapper.getChartToolPanelsDef()?.panels;
+            const panelsOverride = this.gridOptionsWrapper.getChartToolPanelsDef()?.panels
+                ?.map(panel => {
+                    const menuOption = CHART_TOOL_PANEL_MENU_OPTIONS[panel]
+                    if (!menuOption) {
+                        console.warn(`AG Grid - invalid panel in chartToolPanelsDef.panels: '${panel}'`);
+                    }
+                    return menuOption;
+                })
+                .filter(panel => Boolean(panel));
             this.panels = panelsOverride
-                ? panelsOverride.map(panel => CHART_TOOL_PANEL_MENU_OPTIONS[panel])
+                ? panelsOverride
                 : Object.values(CHART_TOOL_PANEL_MENU_OPTIONS);
 
             // pivot charts use the column tool panel instead of the data panel

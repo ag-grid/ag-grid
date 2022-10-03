@@ -464,7 +464,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
     /** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false`     */
     @Input() public enableChartToolPanelsButton: boolean | undefined = undefined;
-    /** Chart Tool Panel overrides.     */
+    /** Allows customisation of the Chart Tool Panels, such as changing the tool panels visibility and order, as well as choosing which charts should be displayed in the settings panel.     */
     @Input() public chartToolPanelsDef: ChartToolPanelsDef | undefined = undefined;
     /** Provide your own loading cell renderer to use when data is loading via a DataSource.
      * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.     */
@@ -631,7 +631,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public rowDragMultiRow: boolean | undefined = undefined;
     /** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.
      * If this callback is not set, the current cell value will be used.
-     * If the `rowDragText` callback is set in the ColDef it will take precedence over this.     */
+     * If the `rowDragText` callback is set in the ColDef it will take precedence over this, except when
+     * `rowDragEntireRow=true`.     */
     @Input() public rowDragText: ((params: IRowDragItem, dragItemCount: number) => string) | undefined = undefined;
     /** Provide your own cell renderer component to use for full width rows.
      * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.     */

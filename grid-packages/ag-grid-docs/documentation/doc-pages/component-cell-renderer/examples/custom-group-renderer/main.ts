@@ -36,6 +36,25 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     groupDefaultExpanded: 1,
     animateRows: true,
+    onCellDoubleClicked: (params) => {
+        if(params.colDef.showRowGroup) {
+            params.node.setExpanded(!params.node.expanded);
+        }
+    },
+    onCellKeyDown: (params) => {
+        if (!('colDef' in params)) {
+            return;
+        }
+        if (!(params.event instanceof KeyboardEvent)) {
+            return;
+        }
+        if (params.event.code !== "Enter") {
+            return;
+        }
+        if(params.colDef.showRowGroup) {
+            params.node.setExpanded(!params.node.expanded);
+        }
+    }
 }
 
 // setup the grid after the page has finished loading

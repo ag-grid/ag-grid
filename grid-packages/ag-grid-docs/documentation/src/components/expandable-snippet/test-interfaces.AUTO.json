@@ -151,7 +151,7 @@
     },
     "JsonModelProperty": {
         "meta": { "isTypeAlias": true },
-        "type": "{ deprecated: boolean; required: boolean; documentation?: string; default?: any; meta?: { min?: number; max?: number; unit?: string; options?: any[]; suggestions?: any[]; }; desc: JsonProperty; }"
+        "type": "{ deprecated: boolean; required: boolean; documentation?: string; default?: any; meta?: { min?: number; max?: number; step?: number; unit?: string; options?: any[]; suggestions?: any[]; }; desc: JsonProperty; }"
     },
     "JsonModel": {
         "meta": {},
