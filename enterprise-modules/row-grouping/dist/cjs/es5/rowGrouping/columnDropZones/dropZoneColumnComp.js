@@ -64,7 +64,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
         var columnSort = this.column.getSort();
-        var isSortSuppressed = !this.gridOptionsWrapper.isRowGroupPanelSuppressSort();
+        var isSortSuppressed = this.gridOptionsWrapper.isRowGroupPanelSuppressSort();
         var ariaInstructions = [
             [
                 aggFuncName && "" + aggFuncName + aggSeparator,

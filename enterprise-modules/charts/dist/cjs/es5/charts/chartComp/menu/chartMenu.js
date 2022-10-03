@@ -87,7 +87,7 @@ var ChartMenu = /** @class */ (function (_super) {
     };
     ChartMenu.prototype.getToolbarOptions = function () {
         var _this = this;
-        var _a, _b;
+        var _a, _b, _c;
         var useChartToolPanelCustomisation = Boolean(this.gridOptionsWrapper.getChartToolPanelsDef());
         if (useChartToolPanelCustomisation) {
             var defaultChartToolbarOptions = [
@@ -110,15 +110,21 @@ var ChartMenu = /** @class */ (function (_super) {
                     return true;
                 })
                 : defaultChartToolbarOptions;
-            var panelsOverride = (_a = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _a === void 0 ? void 0 : _a.panels;
+            var panelsOverride = (_b = (_a = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _a === void 0 ? void 0 : _a.panels) === null || _b === void 0 ? void 0 : _b.map(function (panel) {
+                var menuOption = core_1.CHART_TOOL_PANEL_MENU_OPTIONS[panel];
+                if (!menuOption) {
+                    console.warn("AG Grid - invalid panel in chartToolPanelsDef.panels: '" + panel + "'");
+                }
+                return menuOption;
+            }).filter(function (panel) { return Boolean(panel); });
             this.panels = panelsOverride
-                ? panelsOverride.map(function (panel) { return core_1.CHART_TOOL_PANEL_MENU_OPTIONS[panel]; })
+                ? panelsOverride
                 : Object.values(core_1.CHART_TOOL_PANEL_MENU_OPTIONS);
             // pivot charts use the column tool panel instead of the data panel
             if (this.chartController.isPivotChart()) {
                 this.panels = this.panels.filter(function (panel) { return panel !== 'chartData'; });
             }
-            var defaultToolPanel = (_b = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _b === void 0 ? void 0 : _b.defaultToolPanel;
+            var defaultToolPanel = (_c = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _c === void 0 ? void 0 : _c.defaultToolPanel;
             this.defaultPanel = (defaultToolPanel && core_1.CHART_TOOL_PANEL_MENU_OPTIONS[defaultToolPanel]) || this.panels[0];
             return this.panels.length > 0
                 // Only one panel is required to display menu icon in toolbar

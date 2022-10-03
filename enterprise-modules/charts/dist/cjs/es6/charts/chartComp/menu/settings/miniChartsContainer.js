@@ -56,7 +56,7 @@ class MiniChartsContainer extends core_1.Component {
     init() {
         // hide MiniCustomCombo if no custom combo exists
         if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
-            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(chartType => chartType !== core_1.CHART_TYPE_KEYS.combinationGroup.customCombo);
+            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(chartType => chartType !== 'customCombo');
         }
         const eGui = this.getGui();
         Object.keys(this.chartGroups).forEach((group) => {
@@ -71,6 +71,10 @@ class MiniChartsContainer extends core_1.Component {
             }));
             chartGroupValues.forEach((chartType) => {
                 const MiniClass = miniChartMapping[group][chartType];
+                if (!MiniClass) {
+                    console.warn(`AG Grid - invalid chart type '${chartType}' in group '${group}'`);
+                    return;
+                }
                 const miniWrapper = document.createElement('div');
                 miniWrapper.classList.add('ag-chart-mini-thumbnail');
                 const miniClassChartType = MiniClass.chartType;

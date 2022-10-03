@@ -2292,7 +2292,6 @@ var ColumnUtils = /** @class */ (function (_super) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* unused harmony export CHART_TYPE_KEYS */
 /* unused harmony export DEFAULT_CHART_GROUPS */
 /* unused harmony export CHART_TOOL_PANEL_ALLOW_LIST */
 /* unused harmony export CHART_TOOLBAR_ALLOW_LIST */
@@ -2303,42 +2302,6 @@ var ColumnUtils = /** @class */ (function (_super) {
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var CHART_TYPE_KEYS = {
-    columnGroup: {
-        column: 'column',
-        stackedColumn: 'stackedColumn',
-        normalizedColumn: 'normalizedColumn'
-    },
-    barGroup: {
-        bar: 'bar',
-        stackedBar: 'stackedBar',
-        normalizedBar: 'normalizedBar'
-    },
-    pieGroup: {
-        pie: 'pie',
-        doughnut: 'doughnut'
-    },
-    lineGroup: {
-        line: 'line'
-    },
-    scatterGroup: {
-        scatter: 'scatter',
-        bubble: 'bubble'
-    },
-    areaGroup: {
-        area: 'area',
-        stackedArea: 'stackedArea',
-        normalizedArea: 'normalizedArea'
-    },
-    histogramGroup: {
-        histogram: 'histogram'
-    },
-    combinationGroup: {
-        columnLineCombo: 'columnLineCombo',
-        areaColumnCombo: 'areaColumnCombo',
-        customCombo: 'customCombo'
-    }
-};
 /************************************************************************************************
  * If you update these, then also update the `integrated-charts-toolbar` docs. *
  ************************************************************************************************/
@@ -9288,6 +9251,7 @@ var cellCtrl_CellCtrl = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.suppressRefreshCell = false;
         _this.onCellCompAttachedFuncs = [];
+        _this.removeAutoHeightListeners = null;
         _this.column = column;
         _this.rowNode = rowNode;
         _this.beans = beans;
@@ -9359,7 +9323,6 @@ var cellCtrl_CellCtrl = /** @class */ (function (_super) {
         this.cellComp = comp;
         this.gow = this.beans.gridOptionsWrapper;
         this.eGui = eGui;
-        this.eCellWrapper = eCellWrapper;
         this.printLayout = printLayout;
         // we force to make sure formatter gets called at least once,
         // even if value has not changed (is is undefined)
@@ -9372,7 +9335,9 @@ var cellCtrl_CellCtrl = /** @class */ (function (_super) {
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
         this.setupControlComps();
-        this.setupAutoHeight();
+        if (eCellWrapper) {
+            this.refreshAutoHeight(eCellWrapper);
+        }
         this.setAriaColIndex();
         if (!this.gow.isSuppressCellFocus()) {
             this.cellComp.setTabIndex(-1);
@@ -9398,13 +9363,12 @@ var cellCtrl_CellCtrl = /** @class */ (function (_super) {
             this.onCellCompAttachedFuncs = [];
         }
     };
-    CellCtrl.prototype.setupAutoHeight = function () {
+    CellCtrl.prototype.refreshAutoHeight = function (eCellWrapper) {
         var _this = this;
         if (!this.column.isAutoHeight()) {
             return;
         }
-        var eAutoHeightContainer = this.eCellWrapper;
-        var eParentCell = eAutoHeightContainer.parentElement;
+        var eParentCell = eCellWrapper.parentElement;
         // taking minRowHeight from getRowHeightForNode means the getRowHeight() callback is used,
         // thus allowing different min heights for different rows.
         var minRowHeight = this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height;
@@ -9418,13 +9382,13 @@ var cellCtrl_CellCtrl = /** @class */ (function (_super) {
                 return;
             }
             var _a = Object(dom["getElementSize"])(eParentCell), paddingTop = _a.paddingTop, paddingBottom = _a.paddingBottom;
-            var wrapperHeight = eAutoHeightContainer.offsetHeight;
+            var wrapperHeight = eCellWrapper.offsetHeight;
             var autoHeight = wrapperHeight + paddingTop + paddingBottom;
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
                 var doc = _this.beans.gridOptionsWrapper.getDocument();
-                var notYetInDom = !doc || !doc.contains(eAutoHeightContainer);
+                var notYetInDom = !doc || !doc.contains(eCellWrapper);
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
                 // as a) may not be React and b) the cell could be empty anyway
                 var possiblyNoContentYet = autoHeight == 0;
@@ -9439,11 +9403,15 @@ var cellCtrl_CellCtrl = /** @class */ (function (_super) {
         var listener = function () { return measureHeight(0); };
         // do once to set size in case size doesn't change, common when cell is blank
         listener();
-        var destroyResizeObserver = this.beans.resizeObserverService.observeResize(eAutoHeightContainer, listener);
-        this.addDestroyFunc(function () {
+        var destroyResizeObserver = this.beans.resizeObserverService.observeResize(eCellWrapper, listener);
+        if (this.removeAutoHeightListeners) {
+            this.removeAutoHeightListeners();
+            this.removeAutoHeightListeners = null;
+        }
+        this.removeAutoHeightListeners = function () {
             destroyResizeObserver();
             _this.rowNode.setRowAutoHeight(undefined, _this.column);
-        });
+        };
     };
     CellCtrl.prototype.getInstanceId = function () {
         return this.instanceId;
@@ -10185,6 +10153,10 @@ var cellCtrl_CellCtrl = /** @class */ (function (_super) {
     };
     CellCtrl.prototype.destroy = function () {
         this.onCellCompAttachedFuncs = [];
+        if (this.removeAutoHeightListeners) {
+            this.removeAutoHeightListeners();
+            this.removeAutoHeightListeners = null;
+        }
         _super.prototype.destroy.call(this);
     };
     CellCtrl.prototype.createSelectionCheckbox = function () {

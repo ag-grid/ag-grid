@@ -215,6 +215,11 @@ const CellComp = (props) => {
         }
         return () => destroyFuncs.forEach(f => f());
     }, [showCellWrapper, includeDndSource, includeRowDrag, includeSelection, cellWrapperVersion]);
+    react_1.useEffect(() => {
+        if (cellWrapperVersion > 0 && eCellWrapper.current) {
+            cellCtrl.refreshAutoHeight(eCellWrapper.current);
+        }
+    }, [eCellWrapper, cellWrapperVersion]);
     // we use layout effect here as we want to synchronously process setComp and it's side effects
     // to ensure the component is fully initialised prior to the first browser paint. See AG-7018.
     useEffectOnce_1.useLayoutEffectOnce(() => {

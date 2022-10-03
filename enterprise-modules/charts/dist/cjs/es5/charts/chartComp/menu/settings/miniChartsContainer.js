@@ -84,7 +84,7 @@ var MiniChartsContainer = /** @class */ (function (_super) {
         var _this = this;
         // hide MiniCustomCombo if no custom combo exists
         if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
-            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(function (chartType) { return chartType !== core_1.CHART_TYPE_KEYS.combinationGroup.customCombo; });
+            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(function (chartType) { return chartType !== 'customCombo'; });
         }
         var eGui = this.getGui();
         Object.keys(this.chartGroups).forEach(function (group) {
@@ -99,6 +99,10 @@ var MiniChartsContainer = /** @class */ (function (_super) {
             }));
             chartGroupValues.forEach(function (chartType) {
                 var MiniClass = miniChartMapping[group][chartType];
+                if (!MiniClass) {
+                    console.warn("AG Grid - invalid chart type '" + chartType + "' in group '" + group + "'");
+                    return;
+                }
                 var miniWrapper = document.createElement('div');
                 miniWrapper.classList.add('ag-chart-mini-thumbnail');
                 var miniClassChartType = MiniClass.chartType;

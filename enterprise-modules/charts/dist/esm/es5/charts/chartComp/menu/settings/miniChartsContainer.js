@@ -28,7 +28,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { CHART_TYPE_KEYS, AgGroupComponent, Autowired, Component, PostConstruct, DEFAULT_CHART_GROUPS } from "@ag-grid-community/core";
+import { AgGroupComponent, Autowired, Component, PostConstruct, DEFAULT_CHART_GROUPS } from "@ag-grid-community/core";
 import { MiniArea, MiniAreaColumnCombo, MiniBar, MiniBubble, MiniColumn, MiniColumnLineCombo, MiniCustomCombo, MiniDoughnut, MiniHistogram, MiniLine, MiniNormalizedArea, MiniNormalizedBar, MiniNormalizedColumn, MiniPie, MiniScatter, MiniStackedArea, MiniStackedBar, MiniStackedColumn, } from "./miniCharts";
 var miniChartMapping = {
     columnGroup: {
@@ -82,7 +82,7 @@ var MiniChartsContainer = /** @class */ (function (_super) {
         var _this = this;
         // hide MiniCustomCombo if no custom combo exists
         if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
-            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(function (chartType) { return chartType !== CHART_TYPE_KEYS.combinationGroup.customCombo; });
+            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(function (chartType) { return chartType !== 'customCombo'; });
         }
         var eGui = this.getGui();
         Object.keys(this.chartGroups).forEach(function (group) {
@@ -97,6 +97,10 @@ var MiniChartsContainer = /** @class */ (function (_super) {
             }));
             chartGroupValues.forEach(function (chartType) {
                 var MiniClass = miniChartMapping[group][chartType];
+                if (!MiniClass) {
+                    console.warn("AG Grid - invalid chart type '" + chartType + "' in group '" + group + "'");
+                    return;
+                }
                 var miniWrapper = document.createElement('div');
                 miniWrapper.classList.add('ag-chart-mini-thumbnail');
                 var miniClassChartType = MiniClass.chartType;

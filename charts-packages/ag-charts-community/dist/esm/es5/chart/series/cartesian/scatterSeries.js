@@ -362,10 +362,11 @@ var ScatterSeries = /** @class */ (function (_super) {
     ScatterSeries.prototype.updateLabelSelection = function (opts) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var labelSelection, placedLabels, placedNodeDatum, updateLabels, enterLabels;
+            var labelSelection, enabled, placedLabels, placedNodeDatum, updateLabels, enterLabels;
             return __generator(this, function (_c) {
                 labelSelection = opts.labelSelection;
-                placedLabels = (_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.placeLabels().get(this), (_b !== null && _b !== void 0 ? _b : []));
+                enabled = this.label.enabled;
+                placedLabels = enabled ? (_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.placeLabels().get(this), (_b !== null && _b !== void 0 ? _b : [])) : [];
                 placedNodeDatum = placedLabels.map(function (v) { return (__assign(__assign({}, v.datum), { point: {
                         x: v.x,
                         y: v.y,

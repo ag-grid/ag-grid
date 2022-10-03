@@ -51,7 +51,7 @@ class ChartMenu extends core_1.Component {
         return this.menuVisible;
     }
     getToolbarOptions() {
-        var _a, _b;
+        var _a, _b, _c;
         const useChartToolPanelCustomisation = Boolean(this.gridOptionsWrapper.getChartToolPanelsDef());
         if (useChartToolPanelCustomisation) {
             const defaultChartToolbarOptions = [
@@ -74,15 +74,21 @@ class ChartMenu extends core_1.Component {
                     return true;
                 })
                 : defaultChartToolbarOptions;
-            const panelsOverride = (_a = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _a === void 0 ? void 0 : _a.panels;
+            const panelsOverride = (_b = (_a = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _a === void 0 ? void 0 : _a.panels) === null || _b === void 0 ? void 0 : _b.map(panel => {
+                const menuOption = core_1.CHART_TOOL_PANEL_MENU_OPTIONS[panel];
+                if (!menuOption) {
+                    console.warn(`AG Grid - invalid panel in chartToolPanelsDef.panels: '${panel}'`);
+                }
+                return menuOption;
+            }).filter(panel => Boolean(panel));
             this.panels = panelsOverride
-                ? panelsOverride.map(panel => core_1.CHART_TOOL_PANEL_MENU_OPTIONS[panel])
+                ? panelsOverride
                 : Object.values(core_1.CHART_TOOL_PANEL_MENU_OPTIONS);
             // pivot charts use the column tool panel instead of the data panel
             if (this.chartController.isPivotChart()) {
                 this.panels = this.panels.filter(panel => panel !== 'chartData');
             }
-            const defaultToolPanel = (_b = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _b === void 0 ? void 0 : _b.defaultToolPanel;
+            const defaultToolPanel = (_c = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _c === void 0 ? void 0 : _c.defaultToolPanel;
             this.defaultPanel = (defaultToolPanel && core_1.CHART_TOOL_PANEL_MENU_OPTIONS[defaultToolPanel]) || this.panels[0];
             return this.panels.length > 0
                 // Only one panel is required to display menu icon in toolbar

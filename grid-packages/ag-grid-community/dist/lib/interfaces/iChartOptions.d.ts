@@ -1,56 +1,30 @@
-export declare const CHART_TYPE_KEYS: {
-    columnGroup: {
-        column: string;
-        stackedColumn: string;
-        normalizedColumn: string;
-    };
-    barGroup: {
-        bar: string;
-        stackedBar: string;
-        normalizedBar: string;
-    };
-    pieGroup: {
-        pie: string;
-        doughnut: string;
-    };
-    lineGroup: {
-        line: string;
-    };
-    scatterGroup: {
-        scatter: string;
-        bubble: string;
-    };
-    areaGroup: {
-        area: string;
-        stackedArea: string;
-        normalizedArea: string;
-    };
-    histogramGroup: {
-        histogram: string;
-    };
-    combinationGroup: {
-        columnLineCombo: string;
-        areaColumnCombo: string;
-        customCombo: string;
-    };
-};
-export declare type ChartTypeKeys = typeof CHART_TYPE_KEYS;
-export declare type ChartGroupsDef = {
-    [chartType in keyof ChartTypeKeys]: (keyof ChartTypeKeys[chartType])[];
-};
-export declare type PartialChartGroupsDef = Partial<ChartGroupsDef>;
+export interface ChartGroupsDef {
+    columnGroup?: ('column' | 'stackedColumn' | 'normalizedColumn')[];
+    barGroup?: ('bar' | 'stackedBar' | 'normalizedBar')[];
+    pieGroup?: ('pie' | 'doughnut')[];
+    lineGroup?: ('line')[];
+    scatterGroup?: ('scatter' | 'bubble')[];
+    areaGroup?: ('area' | 'stackedArea' | 'normalizedArea')[];
+    histogramGroup?: ('histogram')[];
+    combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[];
+}
 /************************************************************************************************
  * If you update these, then also update the `integrated-charts-toolbar` docs. *
  ************************************************************************************************/
-export declare const DEFAULT_CHART_GROUPS: PartialChartGroupsDef;
+export declare const DEFAULT_CHART_GROUPS: ChartGroupsDef;
 export declare type ChartToolPanelName = 'settings' | 'data' | 'format';
-export declare type ChartToolPanelsDef = {
-    settingsPanel?: {
-        chartGroupsDef: PartialChartGroupsDef;
-    };
+export interface ChartSettingsPanel {
+    /** Chart groups customisations for which charts are displayed in the settings panel */
+    chartGroupsDef?: ChartGroupsDef;
+}
+export interface ChartToolPanelsDef {
+    /** Customisations for the settings panel */
+    settingsPanel?: ChartSettingsPanel;
+    /** The ordered list of panels to show in the chart tool panels. If none specified, all panels are shown */
     panels?: ChartToolPanelName[];
+    /** The panel to open by default when the chart loads. If none specified, the tool panel is hidden by default and the first panel is open when triggered. */
     defaultToolPanel?: ChartToolPanelName;
-};
+}
 export declare type ChartType = 'column' | 'groupedColumn' | 'stackedColumn' | 'normalizedColumn' | 'bar' | 'groupedBar' | 'stackedBar' | 'normalizedBar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'area' | 'stackedArea' | 'normalizedArea' | 'histogram' | 'columnLineCombo' | 'areaColumnCombo' | 'customCombo';
 export declare type CrossFilterChartType = 'column' | 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'area';
 export declare type ChartToolPanelMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat';

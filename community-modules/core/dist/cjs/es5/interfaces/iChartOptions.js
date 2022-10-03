@@ -6,42 +6,6 @@
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CHART_TYPE_KEYS = {
-    columnGroup: {
-        column: 'column',
-        stackedColumn: 'stackedColumn',
-        normalizedColumn: 'normalizedColumn'
-    },
-    barGroup: {
-        bar: 'bar',
-        stackedBar: 'stackedBar',
-        normalizedBar: 'normalizedBar'
-    },
-    pieGroup: {
-        pie: 'pie',
-        doughnut: 'doughnut'
-    },
-    lineGroup: {
-        line: 'line'
-    },
-    scatterGroup: {
-        scatter: 'scatter',
-        bubble: 'bubble'
-    },
-    areaGroup: {
-        area: 'area',
-        stackedArea: 'stackedArea',
-        normalizedArea: 'normalizedArea'
-    },
-    histogramGroup: {
-        histogram: 'histogram'
-    },
-    combinationGroup: {
-        columnLineCombo: 'columnLineCombo',
-        areaColumnCombo: 'areaColumnCombo',
-        customCombo: 'customCombo'
-    }
-};
 /************************************************************************************************
  * If you update these, then also update the `integrated-charts-toolbar` docs. *
  ************************************************************************************************/

@@ -39,6 +39,7 @@ export class CellCtrl extends BeanStub {
         super();
         this.suppressRefreshCell = false;
         this.onCellCompAttachedFuncs = [];
+        this.removeAutoHeightListeners = null;
         this.column = column;
         this.rowNode = rowNode;
         this.beans = beans;
@@ -107,7 +108,6 @@ export class CellCtrl extends BeanStub {
         this.cellComp = comp;
         this.gow = this.beans.gridOptionsWrapper;
         this.eGui = eGui;
-        this.eCellWrapper = eCellWrapper;
         this.printLayout = printLayout;
         // we force to make sure formatter gets called at least once,
         // even if value has not changed (is is undefined)
@@ -120,7 +120,9 @@ export class CellCtrl extends BeanStub {
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
         this.setupControlComps();
-        this.setupAutoHeight();
+        if (eCellWrapper) {
+            this.refreshAutoHeight(eCellWrapper);
+        }
         this.setAriaColIndex();
         if (!this.gow.isSuppressCellFocus()) {
             this.cellComp.setTabIndex(-1);
@@ -146,12 +148,11 @@ export class CellCtrl extends BeanStub {
             this.onCellCompAttachedFuncs = [];
         }
     }
-    setupAutoHeight() {
+    refreshAutoHeight(eCellWrapper) {
         if (!this.column.isAutoHeight()) {
             return;
         }
-        const eAutoHeightContainer = this.eCellWrapper;
-        const eParentCell = eAutoHeightContainer.parentElement;
+        const eParentCell = eCellWrapper.parentElement;
         // taking minRowHeight from getRowHeightForNode means the getRowHeight() callback is used,
         // thus allowing different min heights for different rows.
         const minRowHeight = this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height;
@@ -165,13 +166,13 @@ export class CellCtrl extends BeanStub {
                 return;
             }
             const { paddingTop, paddingBottom } = getElementSize(eParentCell);
-            const wrapperHeight = eAutoHeightContainer.offsetHeight;
+            const wrapperHeight = eCellWrapper.offsetHeight;
             const autoHeight = wrapperHeight + paddingTop + paddingBottom;
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
                 const doc = this.beans.gridOptionsWrapper.getDocument();
-                const notYetInDom = !doc || !doc.contains(eAutoHeightContainer);
+                const notYetInDom = !doc || !doc.contains(eCellWrapper);
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
                 // as a) may not be React and b) the cell could be empty anyway
                 const possiblyNoContentYet = autoHeight == 0;
@@ -186,11 +187,15 @@ export class CellCtrl extends BeanStub {
         const listener = () => measureHeight(0);
         // do once to set size in case size doesn't change, common when cell is blank
         listener();
-        const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eAutoHeightContainer, listener);
-        this.addDestroyFunc(() => {
+        const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eCellWrapper, listener);
+        if (this.removeAutoHeightListeners) {
+            this.removeAutoHeightListeners();
+            this.removeAutoHeightListeners = null;
+        }
+        this.removeAutoHeightListeners = () => {
             destroyResizeObserver();
             this.rowNode.setRowAutoHeight(undefined, this.column);
-        });
+        };
     }
     getInstanceId() {
         return this.instanceId;
@@ -915,6 +920,10 @@ export class CellCtrl extends BeanStub {
     }
     destroy() {
         this.onCellCompAttachedFuncs = [];
+        if (this.removeAutoHeightListeners) {
+            this.removeAutoHeightListeners();
+            this.removeAutoHeightListeners = null;
+        }
         super.destroy();
     }
     createSelectionCheckbox() {

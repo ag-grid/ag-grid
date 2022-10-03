@@ -284,7 +284,8 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             const { labelSelection } = opts;
-            const placedLabels = (_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.placeLabels().get(this), (_b !== null && _b !== void 0 ? _b : []));
+            const { label: { enabled }, } = this;
+            const placedLabels = enabled ? (_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.placeLabels().get(this), (_b !== null && _b !== void 0 ? _b : [])) : [];
             const placedNodeDatum = placedLabels.map((v) => (Object.assign(Object.assign({}, v.datum), { point: {
                     x: v.x,
                     y: v.y,

@@ -21,7 +21,7 @@
   "peerDependencies": {
     "@angular/common": ">=8.0.0",
     "@angular/core": ">=8.0.0",
-    "ag-charts-community": "~6.2.0"
+    "ag-charts-community": ">6.1.0"
   },
   "main": "bundles/ag-charts-angular-legacy.umd.js",
   "module": "fesm5/ag-charts-angular-legacy.js",

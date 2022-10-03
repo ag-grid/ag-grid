@@ -1,4 +1,4 @@
-import { Component, PartialChartGroupsDef } from "@ag-grid-community/core";
+import { Component, ChartGroupsDef } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 export declare class MiniChartsContainer extends Component {
     static TEMPLATE: string;
@@ -8,7 +8,7 @@ export declare class MiniChartsContainer extends Component {
     private chartController;
     private chartGroups;
     private chartTranslationService;
-    constructor(chartController: ChartController, fills: string[], strokes: string[], chartGroups?: PartialChartGroupsDef);
+    constructor(chartController: ChartController, fills: string[], strokes: string[], chartGroups?: ChartGroupsDef);
     private init;
     updateSelectedMiniChart(): void;
 }

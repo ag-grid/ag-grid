@@ -1032,9 +1032,13 @@ export interface AgPieSeriesLabelOptions<DatumType> extends AgChartLabelOptions 
     formatter?: (params: AgPieSeriesLabelFormatterParams<DatumType>) => string;
 }
 export interface AgPieSeriesSectorLabelOptions<DatumType> extends AgChartLabelOptions {
-    /** Distance in pixels, used to make the label text closer to or further from the center. This offset is applied after positionRatio. */
+    /** Distance in pixels, used to make the label text closer to or further from the center. This offset is applied after positionRatio.
+     * Default: `0`
+     */
     positionOffset?: PixelSize;
-    /** Position of labels as a ratio proportional to pie radius (or doughnut thickness). Additional offset in pixels can be applied by using positionOffset. */
+    /** Position of labels as a ratio proportional to pie radius (or doughnut thickness). Additional offset in pixels can be applied by using positionOffset.
+     * Default: `0.5`
+     */
     positionRatio?: Ratio;
     /** A function that allows the modification of the label text based on input parameters. */
     formatter?: (params: AgPieSeriesLabelFormatterParams<DatumType>) => string;

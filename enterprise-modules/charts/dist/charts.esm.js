@@ -23995,6 +23995,7 @@ var CellCtrl = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.suppressRefreshCell = false;
         _this.onCellCompAttachedFuncs = [];
+        _this.removeAutoHeightListeners = null;
         _this.column = column;
         _this.rowNode = rowNode;
         _this.beans = beans;
@@ -24066,7 +24067,6 @@ var CellCtrl = /** @class */ (function (_super) {
         this.cellComp = comp;
         this.gow = this.beans.gridOptionsWrapper;
         this.eGui = eGui;
-        this.eCellWrapper = eCellWrapper;
         this.printLayout = printLayout;
         // we force to make sure formatter gets called at least once,
         // even if value has not changed (is is undefined)
@@ -24079,7 +24079,9 @@ var CellCtrl = /** @class */ (function (_super) {
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
         this.setupControlComps();
-        this.setupAutoHeight();
+        if (eCellWrapper) {
+            this.refreshAutoHeight(eCellWrapper);
+        }
         this.setAriaColIndex();
         if (!this.gow.isSuppressCellFocus()) {
             this.cellComp.setTabIndex(-1);
@@ -24105,13 +24107,12 @@ var CellCtrl = /** @class */ (function (_super) {
             this.onCellCompAttachedFuncs = [];
         }
     };
-    CellCtrl.prototype.setupAutoHeight = function () {
+    CellCtrl.prototype.refreshAutoHeight = function (eCellWrapper) {
         var _this = this;
         if (!this.column.isAutoHeight()) {
             return;
         }
-        var eAutoHeightContainer = this.eCellWrapper;
-        var eParentCell = eAutoHeightContainer.parentElement;
+        var eParentCell = eCellWrapper.parentElement;
         // taking minRowHeight from getRowHeightForNode means the getRowHeight() callback is used,
         // thus allowing different min heights for different rows.
         var minRowHeight = this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height;
@@ -24125,13 +24126,13 @@ var CellCtrl = /** @class */ (function (_super) {
                 return;
             }
             var _a = getElementSize(eParentCell), paddingTop = _a.paddingTop, paddingBottom = _a.paddingBottom;
-            var wrapperHeight = eAutoHeightContainer.offsetHeight;
+            var wrapperHeight = eCellWrapper.offsetHeight;
             var autoHeight = wrapperHeight + paddingTop + paddingBottom;
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
                 var doc = _this.beans.gridOptionsWrapper.getDocument();
-                var notYetInDom = !doc || !doc.contains(eAutoHeightContainer);
+                var notYetInDom = !doc || !doc.contains(eCellWrapper);
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
                 // as a) may not be React and b) the cell could be empty anyway
                 var possiblyNoContentYet = autoHeight == 0;
@@ -24146,11 +24147,15 @@ var CellCtrl = /** @class */ (function (_super) {
         var listener = function () { return measureHeight(0); };
         // do once to set size in case size doesn't change, common when cell is blank
         listener();
-        var destroyResizeObserver = this.beans.resizeObserverService.observeResize(eAutoHeightContainer, listener);
-        this.addDestroyFunc(function () {
+        var destroyResizeObserver = this.beans.resizeObserverService.observeResize(eCellWrapper, listener);
+        if (this.removeAutoHeightListeners) {
+            this.removeAutoHeightListeners();
+            this.removeAutoHeightListeners = null;
+        }
+        this.removeAutoHeightListeners = function () {
             destroyResizeObserver();
             _this.rowNode.setRowAutoHeight(undefined, _this.column);
-        });
+        };
     };
     CellCtrl.prototype.getInstanceId = function () {
         return this.instanceId;
@@ -24892,6 +24897,10 @@ var CellCtrl = /** @class */ (function (_super) {
     };
     CellCtrl.prototype.destroy = function () {
         this.onCellCompAttachedFuncs = [];
+        if (this.removeAutoHeightListeners) {
+            this.removeAutoHeightListeners();
+            this.removeAutoHeightListeners = null;
+        }
         _super.prototype.destroy.call(this);
     };
     CellCtrl.prototype.createSelectionCheckbox = function () {
@@ -48725,42 +48734,6 @@ var __read$H = (undefined && undefined.__read) || function (o, n) {
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var CHART_TYPE_KEYS = {
-    columnGroup: {
-        column: 'column',
-        stackedColumn: 'stackedColumn',
-        normalizedColumn: 'normalizedColumn'
-    },
-    barGroup: {
-        bar: 'bar',
-        stackedBar: 'stackedBar',
-        normalizedBar: 'normalizedBar'
-    },
-    pieGroup: {
-        pie: 'pie',
-        doughnut: 'doughnut'
-    },
-    lineGroup: {
-        line: 'line'
-    },
-    scatterGroup: {
-        scatter: 'scatter',
-        bubble: 'bubble'
-    },
-    areaGroup: {
-        area: 'area',
-        stackedArea: 'stackedArea',
-        normalizedArea: 'normalizedArea'
-    },
-    histogramGroup: {
-        histogram: 'histogram'
-    },
-    combinationGroup: {
-        columnLineCombo: 'columnLineCombo',
-        areaColumnCombo: 'areaColumnCombo',
-        customCombo: 'customCombo'
-    }
-};
 /************************************************************************************************
  * If you update these, then also update the `integrated-charts-toolbar` docs. *
  ************************************************************************************************/
@@ -69763,10 +69736,11 @@ var ScatterSeries = /** @class */ (function (_super) {
     ScatterSeries.prototype.updateLabelSelection = function (opts) {
         var _a, _b;
         return __awaiter$4(this, void 0, void 0, function () {
-            var labelSelection, placedLabels, placedNodeDatum, updateLabels, enterLabels;
+            var labelSelection, enabled, placedLabels, placedNodeDatum, updateLabels, enterLabels;
             return __generator$4(this, function (_c) {
                 labelSelection = opts.labelSelection;
-                placedLabels = (_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.placeLabels().get(this), (_b !== null && _b !== void 0 ? _b : []));
+                enabled = this.label.enabled;
+                placedLabels = enabled ? (_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.placeLabels().get(this), (_b !== null && _b !== void 0 ? _b : [])) : [];
                 placedNodeDatum = placedLabels.map(function (v) { return (__assign$p(__assign$p({}, v.datum), { point: {
                         x: v.x,
                         y: v.y,
@@ -72316,7 +72290,7 @@ var PieSeries = /** @class */ (function (_super) {
     PieSeries.prototype.getInnerRadius = function () {
         var _a = this, radius = _a.radius, innerRadiusRatio = _a.innerRadiusRatio, innerRadiusOffset = _a.innerRadiusOffset;
         var innerRadius = radius * ((innerRadiusRatio !== null && innerRadiusRatio !== void 0 ? innerRadiusRatio : 1)) + (innerRadiusOffset ? innerRadiusOffset : 0);
-        if (innerRadius === radius) {
+        if (innerRadius === radius || innerRadius < 0) {
             return 0;
         }
         return innerRadius;
@@ -72324,6 +72298,9 @@ var PieSeries = /** @class */ (function (_super) {
     PieSeries.prototype.getOuterRadius = function () {
         var _a = this, radius = _a.radius, outerRadiusRatio = _a.outerRadiusRatio, outerRadiusOffset = _a.outerRadiusOffset;
         var outerRadius = radius * ((outerRadiusRatio !== null && outerRadiusRatio !== void 0 ? outerRadiusRatio : 1)) + (outerRadiusOffset ? outerRadiusOffset : 0);
+        if (outerRadius < 0) {
+            return 0;
+        }
         return outerRadius;
     };
     PieSeries.prototype.update = function () {
@@ -72428,6 +72405,7 @@ var PieSeries = /** @class */ (function (_super) {
                 }
                 isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
                 this.group.visible = isVisible;
+                this.backgroundGroup.visible = isVisible;
                 this.seriesGroup.visible = isVisible;
                 this.highlightGroup.visible = isVisible && ((_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.highlightedDatum) === null || _b === void 0 ? void 0 : _b.series) === this;
                 this.labelGroup.visible = isVisible;
@@ -72541,6 +72519,8 @@ var PieSeries = /** @class */ (function (_super) {
         var radiusScale = this.radiusScale;
         var innerRadius = radiusScale.convert(0);
         var _a = this.sectorLabel, fontSize = _a.fontSize, fontStyle = _a.fontStyle, fontWeight = _a.fontWeight, fontFamily = _a.fontFamily, positionOffset = _a.positionOffset, positionRatio = _a.positionRatio, color = _a.color;
+        var isDoughnut = innerRadius > 0;
+        var singleVisibleSector = this.seriesItemEnabled.filter(Boolean).length === 1;
         this.sectorLabelSelection.each(function (text, datum) {
             var sectorLabel = datum.sectorLabel;
             var radius = radiusScale.convert(datum.radius, clamper$1);
@@ -72554,8 +72534,15 @@ var PieSeries = /** @class */ (function (_super) {
                 text.fontSize = fontSize;
                 text.fontFamily = fontFamily;
                 text.text = sectorLabel.text;
-                text.x = datum.midCos * labelRadius;
-                text.y = datum.midSin * labelRadius;
+                var shouldPutTextInCenter = !isDoughnut && singleVisibleSector;
+                if (shouldPutTextInCenter) {
+                    text.x = 0;
+                    text.y = 0;
+                }
+                else {
+                    text.x = datum.midCos * labelRadius;
+                    text.y = datum.midSin * labelRadius;
+                }
                 text.textAlign = 'center';
                 text.textBaseline = 'middle';
                 var sector = _this.datumSectorRefs.get(datum);
@@ -72618,6 +72605,10 @@ var PieSeries = /** @class */ (function (_super) {
         var totalHeight = textBBoxes.reduce(function (sum, bbox, i) {
             return sum + bbox.height + getMarginTop(i) + getMarginBottom(i);
         }, 0);
+        var totalWidth = Math.max.apply(Math, __spread$9(textBBoxes.map(function (bbox) { return bbox.width; })));
+        var innerRadius = this.getInnerRadius();
+        var labelRadius = Math.sqrt(Math.pow(totalWidth / 2, 2) + Math.pow(totalHeight / 2, 2));
+        var labelsVisible = labelRadius <= (innerRadius > 0 ? innerRadius : this.getOuterRadius());
         var textBottoms = [];
         for (var i = 0, prev = -totalHeight / 2; i < textBBoxes.length; i++) {
             var bbox = textBBoxes[i];
@@ -72627,6 +72618,7 @@ var PieSeries = /** @class */ (function (_super) {
         }
         this.innerLabelsSelection.each(function (text, _datum, index) {
             text.y = textBottoms[index];
+            text.visible = labelsVisible;
         });
     };
     PieSeries.prototype.fireNodeClickEvent = function (event, datum) {
@@ -80188,7 +80180,7 @@ var MiniChartsContainer = /** @class */ (function (_super) {
         var _this = this;
         // hide MiniCustomCombo if no custom combo exists
         if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
-            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(function (chartType) { return chartType !== CHART_TYPE_KEYS.combinationGroup.customCombo; });
+            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(function (chartType) { return chartType !== 'customCombo'; });
         }
         var eGui = this.getGui();
         Object.keys(this.chartGroups).forEach(function (group) {
@@ -80203,6 +80195,10 @@ var MiniChartsContainer = /** @class */ (function (_super) {
             }));
             chartGroupValues.forEach(function (chartType) {
                 var MiniClass = miniChartMapping[group][chartType];
+                if (!MiniClass) {
+                    console.warn("AG Grid - invalid chart type '" + chartType + "' in group '" + group + "'");
+                    return;
+                }
                 var miniWrapper = document.createElement('div');
                 miniWrapper.classList.add('ag-chart-mini-thumbnail');
                 var miniClassChartType = MiniClass.chartType;
@@ -80597,7 +80593,7 @@ var ChartMenu = /** @class */ (function (_super) {
     };
     ChartMenu.prototype.getToolbarOptions = function () {
         var _this = this;
-        var _a, _b;
+        var _a, _b, _c;
         var useChartToolPanelCustomisation = Boolean(this.gridOptionsWrapper.getChartToolPanelsDef());
         if (useChartToolPanelCustomisation) {
             var defaultChartToolbarOptions = [
@@ -80620,15 +80616,21 @@ var ChartMenu = /** @class */ (function (_super) {
                     return true;
                 })
                 : defaultChartToolbarOptions;
-            var panelsOverride = (_a = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _a === void 0 ? void 0 : _a.panels;
+            var panelsOverride = (_b = (_a = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _a === void 0 ? void 0 : _a.panels) === null || _b === void 0 ? void 0 : _b.map(function (panel) {
+                var menuOption = CHART_TOOL_PANEL_MENU_OPTIONS[panel];
+                if (!menuOption) {
+                    console.warn("AG Grid - invalid panel in chartToolPanelsDef.panels: '" + panel + "'");
+                }
+                return menuOption;
+            }).filter(function (panel) { return Boolean(panel); });
             this.panels = panelsOverride
-                ? panelsOverride.map(function (panel) { return CHART_TOOL_PANEL_MENU_OPTIONS[panel]; })
+                ? panelsOverride
                 : Object.values(CHART_TOOL_PANEL_MENU_OPTIONS);
             // pivot charts use the column tool panel instead of the data panel
             if (this.chartController.isPivotChart()) {
                 this.panels = this.panels.filter(function (panel) { return panel !== 'chartData'; });
             }
-            var defaultToolPanel = (_b = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _b === void 0 ? void 0 : _b.defaultToolPanel;
+            var defaultToolPanel = (_c = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _c === void 0 ? void 0 : _c.defaultToolPanel;
             this.defaultPanel = (defaultToolPanel && CHART_TOOL_PANEL_MENU_OPTIONS[defaultToolPanel]) || this.panels[0];
             return this.panels.length > 0
                 // Only one panel is required to display menu icon in toolbar

@@ -48,7 +48,7 @@ class DropZoneColumnComp extends core_1.Component {
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
         const columnSort = this.column.getSort();
-        const isSortSuppressed = !this.gridOptionsWrapper.isRowGroupPanelSuppressSort();
+        const isSortSuppressed = this.gridOptionsWrapper.isRowGroupPanelSuppressSort();
         const ariaInstructions = [
             [
                 aggFuncName && `${aggFuncName}${aggSeparator}`,

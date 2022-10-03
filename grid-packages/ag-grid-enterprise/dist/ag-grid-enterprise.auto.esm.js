@@ -3,7 +3,7 @@
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
-import { _, Autowired, PreConstruct, Bean, BeanStub, PostConstruct, RefSelector, Component, ModuleNames, Constants, Events, ChangedPath, Optional, CsvExportModule, KeyCode, EventService, Column, ProvidedColumnGroup, AgMenuList, AgMenuItemComponent, AgCheckbox, CssClassApplier, DragSourceType, DragAndDropService, TouchListener, AutoScrollService, VirtualList, PreDestroy, NumberSequence, RowNode, ManagedFocusFeature, PositionableFeature, TabGuardComp, ModuleRegistry, ExcelFactoryMode, XmlFactory, RowType, BaseGridSerializingSession, Downloader, BaseCreator, ZipContainer, GridSerializer, CsvCreator, AgGroupComponent, CellRangeType, AgAbstractField, AgRadioButton, AgToggleButton, AgSelect, AgSlider, AgAngleSelect, CHART_TYPE_KEYS, DEFAULT_CHART_GROUPS, TabbedLayout, AgPromise, CHART_TOOLBAR_ALLOW_LIST, CHART_TOOL_PANEL_ALLOW_LIST, CHART_TOOL_PANEL_MENU_OPTIONS, AgPanel, Color as Color$2, AgDialog, SelectionHandleType, Grid, ProvidedFilter, PopupComponent, ServerSideTransactionResultStatus, RowNodeBlock, Qualifier, TextFilter, AllCommunityModules } from 'ag-grid-community';
+import { _, Autowired, PreConstruct, Bean, BeanStub, PostConstruct, RefSelector, Component, ModuleNames, Constants, Events, ChangedPath, Optional, CsvExportModule, KeyCode, EventService, Column, ProvidedColumnGroup, AgMenuList, AgMenuItemComponent, AgCheckbox, CssClassApplier, DragSourceType, DragAndDropService, TouchListener, AutoScrollService, VirtualList, PreDestroy, NumberSequence, RowNode, ManagedFocusFeature, PositionableFeature, TabGuardComp, ModuleRegistry, ExcelFactoryMode, XmlFactory, RowType, BaseGridSerializingSession, Downloader, BaseCreator, ZipContainer, GridSerializer, CsvCreator, AgGroupComponent, CellRangeType, AgAbstractField, AgRadioButton, AgToggleButton, AgSelect, AgSlider, AgAngleSelect, DEFAULT_CHART_GROUPS, TabbedLayout, AgPromise, CHART_TOOLBAR_ALLOW_LIST, CHART_TOOL_PANEL_ALLOW_LIST, CHART_TOOL_PANEL_MENU_OPTIONS, AgPanel, Color as Color$2, AgDialog, SelectionHandleType, Grid, ProvidedFilter, PopupComponent, ServerSideTransactionResultStatus, RowNodeBlock, Qualifier, TextFilter, AllCommunityModules } from 'ag-grid-community';
 export * from 'ag-grid-community';
 
 var __extends$3t = (undefined && undefined.__extends) || (function () {
@@ -4722,7 +4722,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
         var columnSort = this.column.getSort();
-        var isSortSuppressed = !this.gridOptionsWrapper.isRowGroupPanelSuppressSort();
+        var isSortSuppressed = this.gridOptionsWrapper.isRowGroupPanelSuppressSort();
         var ariaInstructions = [
             [
                 aggFuncName && "" + aggFuncName + aggSeparator,
@@ -32306,10 +32306,11 @@ var ScatterSeries = /** @class */ (function (_super) {
     ScatterSeries.prototype.updateLabelSelection = function (opts) {
         var _a, _b;
         return __awaiter$4(this, void 0, void 0, function () {
-            var labelSelection, placedLabels, placedNodeDatum, updateLabels, enterLabels;
+            var labelSelection, enabled, placedLabels, placedNodeDatum, updateLabels, enterLabels;
             return __generator$4(this, function (_c) {
                 labelSelection = opts.labelSelection;
-                placedLabels = (_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.placeLabels().get(this), (_b !== null && _b !== void 0 ? _b : []));
+                enabled = this.label.enabled;
+                placedLabels = enabled ? (_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.placeLabels().get(this), (_b !== null && _b !== void 0 ? _b : [])) : [];
                 placedNodeDatum = placedLabels.map(function (v) { return (__assign$u(__assign$u({}, v.datum), { point: {
                         x: v.x,
                         y: v.y,
@@ -34859,7 +34860,7 @@ var PieSeries = /** @class */ (function (_super) {
     PieSeries.prototype.getInnerRadius = function () {
         var _a = this, radius = _a.radius, innerRadiusRatio = _a.innerRadiusRatio, innerRadiusOffset = _a.innerRadiusOffset;
         var innerRadius = radius * ((innerRadiusRatio !== null && innerRadiusRatio !== void 0 ? innerRadiusRatio : 1)) + (innerRadiusOffset ? innerRadiusOffset : 0);
-        if (innerRadius === radius) {
+        if (innerRadius === radius || innerRadius < 0) {
             return 0;
         }
         return innerRadius;
@@ -34867,6 +34868,9 @@ var PieSeries = /** @class */ (function (_super) {
     PieSeries.prototype.getOuterRadius = function () {
         var _a = this, radius = _a.radius, outerRadiusRatio = _a.outerRadiusRatio, outerRadiusOffset = _a.outerRadiusOffset;
         var outerRadius = radius * ((outerRadiusRatio !== null && outerRadiusRatio !== void 0 ? outerRadiusRatio : 1)) + (outerRadiusOffset ? outerRadiusOffset : 0);
+        if (outerRadius < 0) {
+            return 0;
+        }
         return outerRadius;
     };
     PieSeries.prototype.update = function () {
@@ -34971,6 +34975,7 @@ var PieSeries = /** @class */ (function (_super) {
                 }
                 isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
                 this.group.visible = isVisible;
+                this.backgroundGroup.visible = isVisible;
                 this.seriesGroup.visible = isVisible;
                 this.highlightGroup.visible = isVisible && ((_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.highlightedDatum) === null || _b === void 0 ? void 0 : _b.series) === this;
                 this.labelGroup.visible = isVisible;
@@ -35084,6 +35089,8 @@ var PieSeries = /** @class */ (function (_super) {
         var radiusScale = this.radiusScale;
         var innerRadius = radiusScale.convert(0);
         var _a = this.sectorLabel, fontSize = _a.fontSize, fontStyle = _a.fontStyle, fontWeight = _a.fontWeight, fontFamily = _a.fontFamily, positionOffset = _a.positionOffset, positionRatio = _a.positionRatio, color = _a.color;
+        var isDoughnut = innerRadius > 0;
+        var singleVisibleSector = this.seriesItemEnabled.filter(Boolean).length === 1;
         this.sectorLabelSelection.each(function (text, datum) {
             var sectorLabel = datum.sectorLabel;
             var radius = radiusScale.convert(datum.radius, clamper$2);
@@ -35097,8 +35104,15 @@ var PieSeries = /** @class */ (function (_super) {
                 text.fontSize = fontSize;
                 text.fontFamily = fontFamily;
                 text.text = sectorLabel.text;
-                text.x = datum.midCos * labelRadius;
-                text.y = datum.midSin * labelRadius;
+                var shouldPutTextInCenter = !isDoughnut && singleVisibleSector;
+                if (shouldPutTextInCenter) {
+                    text.x = 0;
+                    text.y = 0;
+                }
+                else {
+                    text.x = datum.midCos * labelRadius;
+                    text.y = datum.midSin * labelRadius;
+                }
                 text.textAlign = 'center';
                 text.textBaseline = 'middle';
                 var sector = _this.datumSectorRefs.get(datum);
@@ -35161,6 +35175,10 @@ var PieSeries = /** @class */ (function (_super) {
         var totalHeight = textBBoxes.reduce(function (sum, bbox, i) {
             return sum + bbox.height + getMarginTop(i) + getMarginBottom(i);
         }, 0);
+        var totalWidth = Math.max.apply(Math, __spread$a(textBBoxes.map(function (bbox) { return bbox.width; })));
+        var innerRadius = this.getInnerRadius();
+        var labelRadius = Math.sqrt(Math.pow(totalWidth / 2, 2) + Math.pow(totalHeight / 2, 2));
+        var labelsVisible = labelRadius <= (innerRadius > 0 ? innerRadius : this.getOuterRadius());
         var textBottoms = [];
         for (var i = 0, prev = -totalHeight / 2; i < textBBoxes.length; i++) {
             var bbox = textBBoxes[i];
@@ -35170,6 +35188,7 @@ var PieSeries = /** @class */ (function (_super) {
         }
         this.innerLabelsSelection.each(function (text, _datum, index) {
             text.y = textBottoms[index];
+            text.visible = labelsVisible;
         });
     };
     PieSeries.prototype.fireNodeClickEvent = function (event, datum) {
@@ -42731,7 +42750,7 @@ var MiniChartsContainer = /** @class */ (function (_super) {
         var _this = this;
         // hide MiniCustomCombo if no custom combo exists
         if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
-            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(function (chartType) { return chartType !== CHART_TYPE_KEYS.combinationGroup.customCombo; });
+            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(function (chartType) { return chartType !== 'customCombo'; });
         }
         var eGui = this.getGui();
         Object.keys(this.chartGroups).forEach(function (group) {
@@ -42746,6 +42765,10 @@ var MiniChartsContainer = /** @class */ (function (_super) {
             }));
             chartGroupValues.forEach(function (chartType) {
                 var MiniClass = miniChartMapping[group][chartType];
+                if (!MiniClass) {
+                    console.warn("AG Grid - invalid chart type '" + chartType + "' in group '" + group + "'");
+                    return;
+                }
                 var miniWrapper = document.createElement('div');
                 miniWrapper.classList.add('ag-chart-mini-thumbnail');
                 var miniClassChartType = MiniClass.chartType;
@@ -43140,7 +43163,7 @@ var ChartMenu = /** @class */ (function (_super) {
     };
     ChartMenu.prototype.getToolbarOptions = function () {
         var _this = this;
-        var _a, _b;
+        var _a, _b, _c;
         var useChartToolPanelCustomisation = Boolean(this.gridOptionsWrapper.getChartToolPanelsDef());
         if (useChartToolPanelCustomisation) {
             var defaultChartToolbarOptions = [
@@ -43163,15 +43186,21 @@ var ChartMenu = /** @class */ (function (_super) {
                     return true;
                 })
                 : defaultChartToolbarOptions;
-            var panelsOverride = (_a = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _a === void 0 ? void 0 : _a.panels;
+            var panelsOverride = (_b = (_a = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _a === void 0 ? void 0 : _a.panels) === null || _b === void 0 ? void 0 : _b.map(function (panel) {
+                var menuOption = CHART_TOOL_PANEL_MENU_OPTIONS[panel];
+                if (!menuOption) {
+                    console.warn("AG Grid - invalid panel in chartToolPanelsDef.panels: '" + panel + "'");
+                }
+                return menuOption;
+            }).filter(function (panel) { return Boolean(panel); });
             this.panels = panelsOverride
-                ? panelsOverride.map(function (panel) { return CHART_TOOL_PANEL_MENU_OPTIONS[panel]; })
+                ? panelsOverride
                 : Object.values(CHART_TOOL_PANEL_MENU_OPTIONS);
             // pivot charts use the column tool panel instead of the data panel
             if (this.chartController.isPivotChart()) {
                 this.panels = this.panels.filter(function (panel) { return panel !== 'chartData'; });
             }
-            var defaultToolPanel = (_b = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _b === void 0 ? void 0 : _b.defaultToolPanel;
+            var defaultToolPanel = (_c = this.gridOptionsWrapper.getChartToolPanelsDef()) === null || _c === void 0 ? void 0 : _c.defaultToolPanel;
             this.defaultPanel = (defaultToolPanel && CHART_TOOL_PANEL_MENU_OPTIONS[defaultToolPanel]) || this.panels[0];
             return this.panels.length > 0
                 // Only one panel is required to display menu icon in toolbar

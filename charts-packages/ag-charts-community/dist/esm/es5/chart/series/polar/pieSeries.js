@@ -564,7 +564,7 @@ var PieSeries = /** @class */ (function (_super) {
     PieSeries.prototype.getInnerRadius = function () {
         var _a = this, radius = _a.radius, innerRadiusRatio = _a.innerRadiusRatio, innerRadiusOffset = _a.innerRadiusOffset;
         var innerRadius = radius * ((innerRadiusRatio !== null && innerRadiusRatio !== void 0 ? innerRadiusRatio : 1)) + (innerRadiusOffset ? innerRadiusOffset : 0);
-        if (innerRadius === radius) {
+        if (innerRadius === radius || innerRadius < 0) {
             return 0;
         }
         return innerRadius;
@@ -572,6 +572,9 @@ var PieSeries = /** @class */ (function (_super) {
     PieSeries.prototype.getOuterRadius = function () {
         var _a = this, radius = _a.radius, outerRadiusRatio = _a.outerRadiusRatio, outerRadiusOffset = _a.outerRadiusOffset;
         var outerRadius = radius * ((outerRadiusRatio !== null && outerRadiusRatio !== void 0 ? outerRadiusRatio : 1)) + (outerRadiusOffset ? outerRadiusOffset : 0);
+        if (outerRadius < 0) {
+            return 0;
+        }
         return outerRadius;
     };
     PieSeries.prototype.update = function () {
@@ -676,6 +679,7 @@ var PieSeries = /** @class */ (function (_super) {
                 }
                 isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
                 this.group.visible = isVisible;
+                this.backgroundGroup.visible = isVisible;
                 this.seriesGroup.visible = isVisible;
                 this.highlightGroup.visible = isVisible && ((_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.highlightedDatum) === null || _b === void 0 ? void 0 : _b.series) === this;
                 this.labelGroup.visible = isVisible;
@@ -789,6 +793,8 @@ var PieSeries = /** @class */ (function (_super) {
         var radiusScale = this.radiusScale;
         var innerRadius = radiusScale.convert(0);
         var _a = this.sectorLabel, fontSize = _a.fontSize, fontStyle = _a.fontStyle, fontWeight = _a.fontWeight, fontFamily = _a.fontFamily, positionOffset = _a.positionOffset, positionRatio = _a.positionRatio, color = _a.color;
+        var isDoughnut = innerRadius > 0;
+        var singleVisibleSector = this.seriesItemEnabled.filter(Boolean).length === 1;
         this.sectorLabelSelection.each(function (text, datum) {
             var sectorLabel = datum.sectorLabel;
             var radius = radiusScale.convert(datum.radius, clamper);
@@ -802,8 +808,15 @@ var PieSeries = /** @class */ (function (_super) {
                 text.fontSize = fontSize;
                 text.fontFamily = fontFamily;
                 text.text = sectorLabel.text;
-                text.x = datum.midCos * labelRadius;
-                text.y = datum.midSin * labelRadius;
+                var shouldPutTextInCenter = !isDoughnut && singleVisibleSector;
+                if (shouldPutTextInCenter) {
+                    text.x = 0;
+                    text.y = 0;
+                }
+                else {
+                    text.x = datum.midCos * labelRadius;
+                    text.y = datum.midSin * labelRadius;
+                }
                 text.textAlign = 'center';
                 text.textBaseline = 'middle';
                 var sector = _this.datumSectorRefs.get(datum);
@@ -866,6 +879,10 @@ var PieSeries = /** @class */ (function (_super) {
         var totalHeight = textBBoxes.reduce(function (sum, bbox, i) {
             return sum + bbox.height + getMarginTop(i) + getMarginBottom(i);
         }, 0);
+        var totalWidth = Math.max.apply(Math, __spread(textBBoxes.map(function (bbox) { return bbox.width; })));
+        var innerRadius = this.getInnerRadius();
+        var labelRadius = Math.sqrt(Math.pow(totalWidth / 2, 2) + Math.pow(totalHeight / 2, 2));
+        var labelsVisible = labelRadius <= (innerRadius > 0 ? innerRadius : this.getOuterRadius());
         var textBottoms = [];
         for (var i = 0, prev = -totalHeight / 2; i < textBBoxes.length; i++) {
             var bbox = textBBoxes[i];
@@ -875,6 +892,7 @@ var PieSeries = /** @class */ (function (_super) {
         }
         this.innerLabelsSelection.each(function (text, _datum, index) {
             text.y = textBottoms[index];
+            text.visible = labelsVisible;
         });
     };
     PieSeries.prototype.fireNodeClickEvent = function (event, datum) {

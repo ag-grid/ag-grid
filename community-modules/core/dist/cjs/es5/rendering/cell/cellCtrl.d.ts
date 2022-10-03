@@ -36,7 +36,6 @@ export declare class CellCtrl extends BeanStub {
     static DOM_DATA_KEY_CELL_CTRL: string;
     private instanceId;
     private eGui;
-    private eCellWrapper;
     private cellComp;
     private beans;
     private gow;
@@ -61,11 +60,12 @@ export declare class CellCtrl extends BeanStub {
     private suppressRefreshCell;
     private customRowDragComp;
     private onCellCompAttachedFuncs;
+    private removeAutoHeightListeners;
     constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl);
     private addFeatures;
     private addTooltipFeature;
     setComp(comp: ICellComp, eGui: HTMLElement, eCellWrapper: HTMLElement | undefined, printLayout: boolean, startEditing: boolean): void;
-    private setupAutoHeight;
+    refreshAutoHeight(eCellWrapper: HTMLElement): void;
     getInstanceId(): string;
     private showValue;
     private setupControlComps;
