@@ -79,7 +79,6 @@ export class CellCtrl extends BeanStub {
     private instanceId: string;
 
     private eGui: HTMLElement;
-    private eCellWrapper: HTMLElement | undefined;
     private cellComp: ICellComp;
     private beans: Beans;
     private gow: GridOptionsWrapper;
@@ -114,6 +113,7 @@ export class CellCtrl extends BeanStub {
     private customRowDragComp: RowDragComp;
 
     private onCellCompAttachedFuncs: (() => void)[] = [];
+    private removeAutoHeightListeners: (() => void) | null = null;
 
     constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl) {
         super();
@@ -208,7 +208,6 @@ export class CellCtrl extends BeanStub {
         this.cellComp = comp;
         this.gow = this.beans.gridOptionsWrapper;
         this.eGui = eGui;
-        this.eCellWrapper = eCellWrapper;
         this.printLayout = printLayout;
 
         // we force to make sure formatter gets called at least once,
@@ -225,7 +224,11 @@ export class CellCtrl extends BeanStub {
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
         this.setupControlComps();
-        this.setupAutoHeight();
+
+        if (eCellWrapper) {
+            this.refreshAutoHeight(eCellWrapper);
+        }
+
         this.setAriaColIndex();
 
         if (!this.gow.isSuppressCellFocus()) {
@@ -255,11 +258,10 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    private setupAutoHeight(): void {
+    public refreshAutoHeight(eCellWrapper: HTMLElement): void {
         if (!this.column.isAutoHeight()) { return; }
 
-        const eAutoHeightContainer = this.eCellWrapper!;
-        const eParentCell = eAutoHeightContainer.parentElement!;
+        const eParentCell = eCellWrapper.parentElement!;
         // taking minRowHeight from getRowHeightForNode means the getRowHeight() callback is used,
         // thus allowing different min heights for different rows.
         const minRowHeight = this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height;
@@ -271,14 +273,14 @@ export class CellCtrl extends BeanStub {
             if (!this.isAlive()) { return; }
 
             const { paddingTop, paddingBottom } = getElementSize(eParentCell);
-            const wrapperHeight = eAutoHeightContainer.offsetHeight;
+            const wrapperHeight = eCellWrapper!.offsetHeight;
             const autoHeight = wrapperHeight + paddingTop + paddingBottom;
 
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
                 const doc = this.beans.gridOptionsWrapper.getDocument();
-                const notYetInDom = !doc || !doc.contains(eAutoHeightContainer);
+                const notYetInDom = !doc || !doc.contains(eCellWrapper);
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
                 // as a) may not be React and b) the cell could be empty anyway
@@ -299,12 +301,17 @@ export class CellCtrl extends BeanStub {
         // do once to set size in case size doesn't change, common when cell is blank
         listener();
 
-        const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eAutoHeightContainer, listener);
+        const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eCellWrapper, listener);
 
-        this.addDestroyFunc(() => {
+        if (this.removeAutoHeightListeners) {
+            this.removeAutoHeightListeners();
+            this.removeAutoHeightListeners = null;
+        }
+
+        this.removeAutoHeightListeners = () => {
             destroyResizeObserver();
             this.rowNode.setRowAutoHeight(undefined, this.column);
-        });
+        };
     }
 
     public getInstanceId(): string {
@@ -1133,6 +1140,12 @@ export class CellCtrl extends BeanStub {
 
     public destroy(): void {
         this.onCellCompAttachedFuncs = [];
+
+        if (this.removeAutoHeightListeners) {
+            this.removeAutoHeightListeners();
+            this.removeAutoHeightListeners = null;
+        }
+
         super.destroy();
     }
 
