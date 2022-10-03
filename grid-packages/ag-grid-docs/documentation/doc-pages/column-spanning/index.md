@@ -27,10 +27,10 @@ The interface for the colSpan callback is as follows:
 
 ## Column Spanning Simple Example
 
-Below shows a simple example using column spanning. The example doesn't make much sense, it just arbitrarily sets column span on some cells for demonstrations purposes, however we thought it easier to show column spanning with the familiar Olympic winners data before going a bit deeper into its usages. The following can be noted:
+Below shows a simple example using column spanning. The example doesn't make much sense, it just arbitrarily sets column span on some cells for demonstration purposes, however we thought it easier to show column spanning with the familiar Olympic winners data before going a bit deeper into its usages. The following can be noted:
 
 - The Country column is configured to span 2 columns when 'Russia' and 4 columns when 'United States'. All other times it's normal (1 column).
-- To help demonstrate the spanned column, the County column is shaded using CSS styling.
+- To help demonstrate the spanned column, the Country column is shaded using CSS styling.
 - Resizing any columns that are spanned over will also resize the spanned cells. For example, resizing the column immediately to the right of 'Country' will resize all cells spanning over the resized column.
 - The first two columns are pinned. If you drag the country column into the pinned area, you will notice that the spanning is constrained within the pinned section, e.g. if you place Country as the last pinned column, no spanning will occur, as the spanning can only happen over cells in the same region, and Country now has no further columns inside the pinned region.
 
