@@ -57,7 +57,7 @@ A group can have children initially hidden. If you want to show or hide children
 
 If a group has any child that is dependent on the open / closed state, the open / close icon will appear. Otherwise the icon will not be shown.
 
-Having columns only show when closed is useful when you want to replace a column with others. For example, in the code snippet above (and the example below), the 'Total' columns is replaced with other columns when the group is opened.
+Having columns only show when closed is useful when you want to replace a column with others. For example, in the code snippet above (and the example below), the 'Total' column is replaced with other columns when the group is opened.
 
 If a group has an 'incompatible' set of children, then the group opening / closing will not be activated. An incompatible set is one which will have no columns visible at some point (i.e. all are set to 'open' or 'closed').
 
