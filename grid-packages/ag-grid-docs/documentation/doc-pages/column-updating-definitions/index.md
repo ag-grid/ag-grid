@@ -72,7 +72,7 @@ All stateful attributes of Column Definitions are as follows:
 | to update Column Definitions and expect the grid to respond. Other developers may find this non-intuitive and will
 | prefer interacting with [Column State](/column-state/) directly.
 
-The **Initial Attribute** will be used only when the **Column is Created** only. The **Stateful Attribute** will be used
+The **Initial Attribute** will be used only when the **Column is Created**. The **Stateful Attribute** will be used
 when the **Column is Created or Updated**.
 
 <snippet suppressFrameworkContext=true>
