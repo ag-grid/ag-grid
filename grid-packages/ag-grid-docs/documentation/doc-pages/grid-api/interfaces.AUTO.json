@@ -9560,25 +9560,42 @@
       "init?(params: T)": "/** The init(params) method is called on the component once. */"
     }
   },
-  "ChartTypeKeys": {
-    "meta": { "isTypeAlias": true },
-    "type": "typeof CHART_TYPE_KEYS"
-  },
   "ChartGroupsDef": {
-    "meta": { "isTypeAlias": true },
-    "type": "{[chartType in keyof ChartTypeKeys]: (keyof ChartTypeKeys[chartType])[]}"
-  },
-  "PartialChartGroupsDef": {
-    "meta": { "isTypeAlias": true },
-    "type": "Partial<ChartGroupsDef>"
+    "meta": {},
+    "type": {
+      "columnGroup?": "('column' | 'stackedColumn' | 'normalizedColumn')[]",
+      "barGroup?": "('bar' | 'stackedBar' | 'normalizedBar')[]",
+      "pieGroup?": "('pie' | 'doughnut')[]",
+      "lineGroup?": "('line')[]",
+      "scatterGroup?": "('scatter' | 'bubble')[]",
+      "areaGroup?": "('area' | 'stackedArea' | 'normalizedArea')[]",
+      "histogramGroup?": "('histogram')[]",
+      "combinationGroup?": "('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[]"
+    }
   },
   "ChartToolPanelName": {
     "meta": { "isTypeAlias": true },
     "type": "'settings' | 'data' | 'format'"
   },
+  "ChartSettingsPanel": {
+    "meta": {},
+    "type": { "chartGroupsDef?": "ChartGroupsDef" },
+    "docs": {
+      "chartGroupsDef?": "/** Chart groups customisations for which charts are displayed in the settings panel */"
+    }
+  },
   "ChartToolPanelsDef": {
-    "meta": { "isTypeAlias": true },
-    "type": "{ settingsPanel?: { chartGroupsDef: PartialChartGroupsDef; }; panels?: ChartToolPanelName[]; defaultToolPanel?: ChartToolPanelName; }"
+    "meta": {},
+    "type": {
+      "settingsPanel?": "ChartSettingsPanel",
+      "panels?": "ChartToolPanelName[]",
+      "defaultToolPanel?": "ChartToolPanelName"
+    },
+    "docs": {
+      "settingsPanel?": "/** Customisations for the settings panel */",
+      "panels?": "/** The ordered list of panels to show in the chart tool panels. If none specified, all panels are shown */",
+      "defaultToolPanel?": "/** The panel to open by default when the chart loads. If none specified, the tool panel is hidden by default and the first panel is open when triggered. */"
+    }
   },
   "ChartType": {
     "meta": { "isTypeAlias": true },
