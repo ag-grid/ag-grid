@@ -72,7 +72,7 @@ All stateful attributes of Column Definitions are as follows:
 | to update Column Definitions and expect the grid to respond. Other developers may find this non-intuitive and will
 | prefer interacting with [Column State](/column-state/) directly.
 
-The **Initial Attribute** will be used only when the **Column is Created**. The **Stateful Attribute** will be used
+The **Initial Attribute** will be used only when the **Column is Created** only. The **Stateful Attribute** will be used
 when the **Column is Created or Updated**.
 
 <snippet suppressFrameworkContext=true>
@@ -125,7 +125,7 @@ state attributes as by default they will be `undefined`.
 When a new Column Definition is passed to the grid, the grid needs to work out if it's an update of a Column or a new
 Column.
 
-Most of the time the `field` attribute to match the Column. However `field` is both an optional and non-unique
+Most of the time the `field` attribute will match the Column. However `field` is both an optional and non-unique
 attribute, e.g. a `valueGetter` could be used instead of field, or two columns could share the same field.
 
 Given the `field` is not a unique identifier, the grid uses the following rules to match columns:
@@ -144,7 +144,7 @@ each time.
 - Athlete column is matched by object equality as the same column definition instance is provided to the grid each time.
 - Age column is matched by `colId`. The `colId` is needed as the column has no `field` attribute.
 - All other columns except Country are matched using the `field` attribute.
-- Country column is not matched as it's a different object instance and has not `colId` or `field` attributes.
+- Country column is not matched as it's a different object instance and has no `colId` or `field` attributes.
 
 <grid-example title='Matching Columns' name='matching-columns' type='mixed' options='{ "modules": true }'></grid-example>
 
