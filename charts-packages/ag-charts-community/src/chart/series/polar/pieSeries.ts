@@ -692,6 +692,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         const isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
         this.group.visible = isVisible;
+        this.backgroundGroup.visible = isVisible;
         this.seriesGroup.visible = isVisible;
         this.highlightGroup.visible = isVisible && this.chart?.highlightedDatum?.series === this;
         this.labelGroup!.visible = isVisible;
