@@ -9560,25 +9560,34 @@
       "init?(params: T)": "/** The init(params) method is called on the component once. */"
     }
   },
-  "ChartTypeKeys": {
-    "meta": { "isTypeAlias": true },
-    "type": "typeof CHART_TYPE_KEYS"
-  },
   "ChartGroupsDef": {
-    "meta": { "isTypeAlias": true },
-    "type": "{[chartType in keyof ChartTypeKeys]: (keyof ChartTypeKeys[chartType])[]}"
-  },
-  "PartialChartGroupsDef": {
-    "meta": { "isTypeAlias": true },
-    "type": "Partial<ChartGroupsDef>"
+    "meta": {},
+    "type": {
+      "columnGroup?": "('column' | 'stackedColumn' | 'normalizedColumn')[]",
+      "barGroup?": "('bar' | 'stackedBar' | 'normalizedBar')[]",
+      "pieGroup?": "('pie' | 'doughnut')[]",
+      "lineGroup?": "('line')[]",
+      "scatterGroup?": "('scatter' | 'bubble')[]",
+      "areaGroup?": "('area' | 'stackedArea' | 'normalizedArea')[]",
+      "histogramGroup?": "('histogram')[]",
+      "combinationGroup?": "('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[]"
+    }
   },
   "ChartToolPanelName": {
     "meta": { "isTypeAlias": true },
     "type": "'settings' | 'data' | 'format'"
   },
+  "ChartSettingsPanel": {
+    "meta": {},
+    "type": { "chartGroupsDef?": "ChartGroupsDef" }
+  },
   "ChartToolPanelsDef": {
-    "meta": { "isTypeAlias": true },
-    "type": "{ settingsPanel?: { chartGroupsDef: PartialChartGroupsDef; }; panels?: ChartToolPanelName[]; defaultToolPanel?: ChartToolPanelName; }"
+    "meta": {},
+    "type": {
+      "settingsPanel?": "ChartSettingsPanel",
+      "panels?": "ChartToolPanelName[]",
+      "defaultToolPanel?": "ChartToolPanelName"
+    }
   },
   "ChartType": {
     "meta": { "isTypeAlias": true },

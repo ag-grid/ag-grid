@@ -16465,11 +16465,59 @@
       }
     }
   },
-  "ChartTypeKeys": {},
-  "ChartGroupsDef": {},
-  "PartialChartGroupsDef": {},
+  "ChartGroupsDef": {
+    "columnGroup": {
+      "type": {
+        "returnType": "('column' | 'stackedColumn' | 'normalizedColumn')[]",
+        "optional": true
+      }
+    },
+    "barGroup": {
+      "type": {
+        "returnType": "('bar' | 'stackedBar' | 'normalizedBar')[]",
+        "optional": true
+      }
+    },
+    "pieGroup": {
+      "type": { "returnType": "('pie' | 'doughnut')[]", "optional": true }
+    },
+    "lineGroup": { "type": { "returnType": "('line')[]", "optional": true } },
+    "scatterGroup": {
+      "type": { "returnType": "('scatter' | 'bubble')[]", "optional": true }
+    },
+    "areaGroup": {
+      "type": {
+        "returnType": "('area' | 'stackedArea' | 'normalizedArea')[]",
+        "optional": true
+      }
+    },
+    "histogramGroup": {
+      "type": { "returnType": "('histogram')[]", "optional": true }
+    },
+    "combinationGroup": {
+      "type": {
+        "returnType": "('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[]",
+        "optional": true
+      }
+    }
+  },
   "ChartToolPanelName": {},
-  "ChartToolPanelsDef": {},
+  "ChartSettingsPanel": {
+    "chartGroupsDef": {
+      "type": { "returnType": "ChartGroupsDef", "optional": true }
+    }
+  },
+  "ChartToolPanelsDef": {
+    "settingsPanel": {
+      "type": { "returnType": "ChartSettingsPanel", "optional": true }
+    },
+    "panels": {
+      "type": { "returnType": "ChartToolPanelName[]", "optional": true }
+    },
+    "defaultToolPanel": {
+      "type": { "returnType": "ChartToolPanelName", "optional": true }
+    }
+  },
   "ChartType": {},
   "CrossFilterChartType": {},
   "ChartToolPanelMenuOptions": {},
