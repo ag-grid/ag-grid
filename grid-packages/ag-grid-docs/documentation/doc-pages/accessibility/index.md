@@ -132,15 +132,13 @@ const gridOptions = {
 
 This means if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered.
 
-There is no property to suppress row virtualisation however if you want to do this you can set the rowBuffer property to be very large as follows:
+Row virtualisation can be disabled as follows:
 
 <snippet>
 const gridOptions = {
-    rowBuffer: 9999,
+    suppressRowVirtualisation: true,
 }
 </snippet>
-
-This sets number of rows rendered outside the scrollable viewable area the grid renders. The defaults is 20.
 
 However note that lots of rendered rows will mean a very large amount of rendering in the DOM which will slow things down.
 
