@@ -45,7 +45,7 @@ Call the Grid Api `api.sizeColumnsToFit(params)` to make the currently visible c
 If you don't want a particular column to be included in the auto resize, then set the column definition `suppressSizeToFit=true`. This is helpful if, for example, you want the first column to remain fixed width, but all other columns to fill the width of the table.
 
 The grid calculates new column widths while maintaining the ratio of the column default widths. So for example
-if Column A has a default size twice as width as Column B, then after calling `api.sizeColumnsToFit()` Column A
+if Column A has a default size twice as wide as Column B, then after calling `api.sizeColumnsToFit()` Column A
 will still be twice the size of Column B, assuming no Column min-width or max-width constraints are violated.
 
 Column default widths, rather than current widths, are used while calculating the new widths. This insures
