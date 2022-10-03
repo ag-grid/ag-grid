@@ -1,5 +1,5 @@
 ---
-title: "SolidJS"
+title: "Getting Started with AG Grid"
 frameworks: ["react"]
 ---
 

@@ -112,7 +112,8 @@ const DocPageTemplate = ({data, pageContext: {framework, jsonDataAsString, examp
         }
     }
 
-    const pageTitle = getHeaderTitle(title, framework, pageName.startsWith('charts-'), version);
+    // solidjs is still tactical and "lives" under react - make a bit of an exception here so the title makes sense
+    const pageTitle = pageName === 'solidjs' ? `SolidJS Data Grid: ${title}` : getHeaderTitle(title, framework, pageName.startsWith('charts-'), version);
 
     return (
         <div id="doc-page-wrapper" className={styles['doc-page-wrapper']}>
