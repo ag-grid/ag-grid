@@ -932,6 +932,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const totalHeight = textBBoxes.reduce((sum, bbox, i) => {
             return sum + bbox.height + getMarginTop(i) + getMarginBottom(i);
         }, 0);
+        const totalWidth = Math.max(...textBBoxes.map((bbox) => bbox.width));
+        const innerRadius = this.getInnerRadius();
+        const labelRadius = Math.sqrt(Math.pow(totalWidth / 2, 2) + Math.pow(totalHeight / 2, 2));
+        const labelsVisible = labelRadius <= (innerRadius > 0 ? innerRadius : this.getOuterRadius());
+
         const textBottoms: number[] = [];
         for (let i = 0, prev = -totalHeight / 2; i < textBBoxes.length; i++) {
             const bbox = textBBoxes[i];
@@ -941,6 +946,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
         this.innerLabelsSelection.each((text, _datum, index) => {
             text.y = textBottoms[index];
+            text.visible = labelsVisible;
         });
     }
 
