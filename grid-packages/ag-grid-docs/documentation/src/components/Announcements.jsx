@@ -11,6 +11,18 @@ import styles from './Announcements.module.scss';
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
 
 
+    <Announcement date="Oct 4" version="28.2.0">
+        <p className="card-text">
+            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-28-2/">What's new in AG Grid 28.2.0</a><br/><br/>
+            Minor release with new features and bug fixes.
+        </p>
+        <ul>
+            <li className={styles['announcement__list-item']}>
+                <a href="https://ag-grid.com/react-data-grid/solidjs/">Introducing SolidJS</a>
+            </li>
+        </ul>
+    </Announcement>
+
     <Announcement date="Aug 3" version="28.1.0">
         <p className="card-text">
             <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-28-1/">What's new in AG Grid 28.1.0</a><br/><br/>
