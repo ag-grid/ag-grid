@@ -2,6 +2,8 @@ import React from 'react';
 import SEO from './components/SEO';
 // @ts-ignore
 import styles from './components/assets/homepage/homepage.module.scss';
+// @ts-ignore
+import {hostPrefix} from '../utils/consts';
 
 const LicensePricing = () => {
     return (
@@ -83,7 +85,7 @@ const LicensePricing = () => {
                                         Enterprise License<br/>Explained Video
                                         </h4>
                                         <a href="https://www.youtube.com/watch?v=20SLdu4wLtI" target="_">
-                                            <img src="https://localhost:8000/videos/AgGridVideo.png"/>
+                                            <img src={`${hostPrefix}/videos/AgGridVideo.png`}/>
                                             <span className="LearningVideos-module--learning-videos__video__anchor-body__body__video-content__running-time--TN9pm">
                                                 8:30
                                             </span>
