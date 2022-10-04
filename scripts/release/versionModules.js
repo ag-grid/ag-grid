@@ -156,3 +156,4 @@ function updateDependency(fileContents, property, dependencyVersion, chartsDepen
 }
 
 main();
+

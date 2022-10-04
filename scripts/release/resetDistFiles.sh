@@ -11,6 +11,7 @@ git reset grid-packages/ag-grid-vue3/lib/main.js
 git reset grid-packages/ag-grid-vue3/main.d.ts
 git reset grid-packages/ag-grid-vue3/main.js
 git reset grid-packages/ag-grid-vue3/lib/
+git reset grid-packages/ag-grid-solid/dist
 git reset grid-packages/ag-grid-react/lib
 git reset grid-packages/ag-grid-react/bundles/
 git reset grid-packages/ag-grid-enterprise/main.d.ts
@@ -50,6 +51,7 @@ git reset enterprise-modules/excel-export/typings
 git reset community-modules/csv-export/dist
 git reset community-modules/csv-export/typings
 git reset community-modules/infinite-row-model/dist
+git reset community-modules/solid/dist
 git reset community-modules/react/lib
 git reset community-modules/react/bundles
 git reset community-modules/vue/dist
