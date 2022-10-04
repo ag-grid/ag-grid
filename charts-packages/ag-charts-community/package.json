@@ -12,7 +12,7 @@
     "test": "if test -z \"$TEAMCITY_PROJECT_NAME\" ; then exec npm run test:dev ; else exec npm run test:ci ; fi",
     "test-watch": "npm run test:dev -- --watch",
     "test-update": "export SNAPSHOT_FAILURE_THRESHOLD=0.005 ; npm run test:dev -- -u",
-    "build-cjs": "npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
+    "build-cjs": "rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
     "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",

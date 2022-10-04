@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "clean": "rimraf dist ts-lint-rules/dist .hash",
-    "build-cjs": "npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
+    "build-cjs": "rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "build-css": "npx gulp copy-grid-core-styles",
     "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",

@@ -29,6 +29,8 @@ docs_are_running
 release*.zip
 archive*.zip
 
+*.tsbuildinfo
+
 # latest only
 dist
 

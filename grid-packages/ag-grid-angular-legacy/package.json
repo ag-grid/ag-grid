@@ -7,7 +7,6 @@
     "start": "./node_modules/.bin/ng serve",
     "build": "npx gulp copy-from-module-source && ./node_modules/.bin/ng build --prod && npm run hash",
     "build-prod": "npm run build",
-    "build-cjs": "npm run build",
     "test:e2e": "./node_modules/.bin/ng test --watch false --browsers ChromeHeadless",
     "lint": "./node_modules/.bin/ng lint",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"

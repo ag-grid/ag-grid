@@ -20,6 +20,7 @@
     "updateSubModules": "sh ./scripts/updateSubModules.sh",
     "clean": "npx lerna run clean && npx lerna clean --yes",
     "bootstrap": "npx lerna bootstrap --no-ci",
+    "build-tsc": "npx tsc --build",
     "build": "npx lerna run build",
     "build-prod": "npx lerna run build-prod",
     "package": "npx lerna run package --parallel --ignore '{ag-grid-community,ag-grid-enterprise,ag-grid-documentation,ag-grid-angular-cli-package-example,ag-grid-angular-cli-legacy-package-example,ag-grid-solid-package-example,ag-grid-react-package-example,ag-grid-vue2-package-example,ag-grid-vue3-package-example}' && npx lerna run package --scope '{ag-grid-community,ag-grid-enterprise,ag-grid-documentation,ag-grid-angular-cli-package-example,ag-grid-angular-cli-legacy-package-example,ag-grid-react-package-example,ag-grid-vue2-package-example,ag-grid-vue3-package-example,ag-grid-solid-package-example}'",

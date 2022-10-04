@@ -9,7 +9,7 @@
     "lint": "npx tslint -p tsconfig.cjs.es5.json src/ts/**/*.ts",
     "lint-fix": "npx tslint -p tsconfig.cjs.es5.json -c tslint-fix.json --fix src/ts/**/*.ts",
     "precheck": "npx tsc -p tsconfig-precheck.json",
-    "build": "npm run precheck && npx gulp && npx tsc -p tsconfig.typings.json && npm run hash",
+    "build": "rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npm run precheck && npx gulp && npx tsc -p tsconfig.typings.json && npm run hash",
     "build-prod": "npm run precheck && npx gulp prod && npx tsc -p tsconfig.typings.json --sourceMap false && npm run hash",
     "build-css": "npx gulp scss-no-clean",
     "test": "npx jest",

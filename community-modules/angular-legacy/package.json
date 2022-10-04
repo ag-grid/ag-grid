@@ -7,7 +7,6 @@
     "start": "./node_modules/.bin/ng serve",
     "build": "npm run update-angular-components && ./node_modules/.bin/ng build --prod && npm run verify-properties && npm run hash",
     "build-prod": "npm run build",
-    "build-cjs": "npm run build",
     "test:e2e": "./node_modules/.bin/ng test --watch false --browsers ChromeHeadless",
     "lint": "./node_modules/.bin/ng lint",
     "update-angular-components": "node updateGridAndColumnProperties.js",
