@@ -30,7 +30,7 @@
   "scripts": {
     "dev": "vite serve dev",
     "clean": "rimraf bundles dist .hash",
-    "build": "npx gulp && rollup -c",
+    "build": "npx gulp && rollup -c && npm run hash",
     "build-prod": "npm run build",
     "format": "prettier -w \"src/**/*.{js,ts,json,css,tsx,jsx}\" \"dev/**/*.{js,ts,json,css,tsx,jsx}\"",
     "update-deps": "taze -w && pnpm i",
