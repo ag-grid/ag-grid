@@ -29,8 +29,6 @@ docs_are_running
 release*.zip
 archive*.zip
 
-*.tsbuildinfo
-
 # latest only
 dist
 
@@ -109,7 +107,7 @@ charts-packages/ag-charts-vue3/lib/**
 charts-packages/ag-charts-angular/dist
 
 
-###### Remove once Nx fix the deep nested .gitignore
+###### Remove once Nx fix the deep nested .gitignore 
 ###### This is just a copy of the documentation gitignore
 _gen
 _dev
@@ -190,4 +188,4 @@ package-lock.json
 
 .examplesHash
 
-###### Remove once Nx fix the deep nested .gitignore
+###### Remove once Nx fix the deep nested .gitignore 
