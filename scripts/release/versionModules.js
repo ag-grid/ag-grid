@@ -119,7 +119,7 @@ function updateDevDependencies(fileContents) {
 }
 
 function updatePeerDependencies(fileContents) {
-    return updateDependency(fileContents, 'peerDependencies', ">28.1.0", ">6.1.0");
+    return updateDependency(fileContents, 'peerDependencies', dependencyVersion, chartsDependencyVersion);
 }
 
 function updateDependency(fileContents, property, dependencyVersion, chartsDependencyVersion) {

@@ -7,7 +7,7 @@ function forEachDirectory {
 
   for directory in "${directories[@]}";
   do
-    for subDirectory in $(ls "$directory" | grep -v 'angular\|react\|vue\|styles')
+    for subDirectory in $(ls "$directory" | grep -v 'angular\|react\|vue\|styles\|solid')
     do
       RELATIVE_PATH=$directory/$subDirectory/dist
       # if the directory (with dist) doesn't exist it's probably a framework or styles and can be ignored
