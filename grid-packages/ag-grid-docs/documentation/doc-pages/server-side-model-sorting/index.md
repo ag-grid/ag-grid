@@ -70,7 +70,7 @@ As previously mentioned, when not using Infinite Scroll, the grid will sort on t
 - Grid property `serverSideSortOnServer=true` to force Server-side Sorting.
 - Rows are loaded every time the sort order changes.
 
-<grid-example title='No Infinite Scroll Server-side Sorting' name='full-sort-server-side' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
+<grid-example title='No Infinite Scroll Server-side Sorting' name='full-sort-server-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 ## Client-side Row Group Sorting
 

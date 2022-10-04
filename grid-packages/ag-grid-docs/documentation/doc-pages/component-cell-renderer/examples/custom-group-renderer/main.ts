@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions } from '@ag-grid-community/core';
+import { CellDoubleClickedEvent, CellKeyDownEvent, ColDef, Grid, GridOptions } from '@ag-grid-community/core';
 import { CustomGroupCellRenderer } from './customGroupCellRenderer_typescript';
 
 const columnDefs: ColDef[] = [
@@ -36,12 +36,12 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     groupDefaultExpanded: 1,
     animateRows: true,
-    onCellDoubleClicked: (params) => {
+    onCellDoubleClicked: (params: CellDoubleClickedEvent<IOlympicData, any>) => {
         if(params.colDef.showRowGroup) {
             params.node.setExpanded(!params.node.expanded);
         }
     },
-    onCellKeyDown: (params) => {
+    onCellKeyDown: (params: CellKeyDownEvent<IOlympicData, any>) => {
         if (!('colDef' in params)) {
             return;
         }
