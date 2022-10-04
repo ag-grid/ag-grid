@@ -1,6 +1,7 @@
 {
     "extends": "../../module-build/tsconfig.cjs.es5.json",
     "compilerOptions": {
+        "composite": true,
         "outDir": "dist/cjs/es5",
         "baseUrl": ".",
         "paths": {
