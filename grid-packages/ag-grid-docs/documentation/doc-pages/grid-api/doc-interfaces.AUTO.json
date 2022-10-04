@@ -16569,10 +16569,31 @@
       "type": { "returnType": "ChartGroupsDef", "optional": true }
     }
   },
+  "ChartFormatPanelGroup": {},
+  "ChartFormatPanelGroupDef": {
+    "type": {
+      "description": "/** The format panel group type */",
+      "type": { "returnType": "ChartFormatPanelGroup", "optional": false }
+    },
+    "isOpen": {
+      "description": "/** Whether the format panel group is open by default. If not specified, it is closed */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "ChartFormatPanel": {
+    "groups": {
+      "description": "/** The format panel group configurations, their order and whether they are shown. If not specified shows all groups */",
+      "type": { "returnType": "ChartFormatPanelGroupDef[]", "optional": true }
+    }
+  },
   "ChartToolPanelsDef": {
     "settingsPanel": {
       "description": "/** Customisations for the settings panel */",
       "type": { "returnType": "ChartSettingsPanel", "optional": true }
+    },
+    "formatPanel": {
+      "description": "/** Customisations for the format panel */",
+      "type": { "returnType": "ChartFormatPanel", "optional": true }
     },
     "panels": {
       "description": "/** The ordered list of panels to show in the chart tool panels. If none specified, all panels are shown */",

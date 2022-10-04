@@ -153,6 +153,43 @@ The example below shows a reordering of chart groups with some chart groups and 
 
 <grid-example title='Customising settings panel chart groups' name='customise-chart-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
+### Customising format panel groups
+
+The groups shown on the format panel can be customised using the `chartToolPanelsDef.formatPanel.groups` grid option. The list specified also indicates the order the groups are shown and whether they are open by default. If `chartToolPanelsDef.formatPanel.groups` is not specified, all groups are shown and are closed by default.
+
+[[note]]
+| Different chart types will show different groups, as relevant and will override what is specified in the grid option eg, a pie chart does not have series, so if pie chart is selected, the `series` formatting group will not show even if it is in `chartToolPanelsDef.formatPanel.groups`
+
+The default list and order of format groups are as follows:
+
+<snippet>
+const gridOptions = {
+    chartToolPanelsDef: {
+        formatPanel: {
+            groups: [
+                {
+                    type: 'chart'
+                    // If `isOpen` is not specified, group is closed by default
+                    // isOpen: false
+                },
+                { type: 'legend', isOpen: false },
+                { type: 'axis', isOpen: false },
+                { type: 'series', isOpen: false },
+                { type: 'navigator', isOpen: false }
+            ]
+        }
+    }
+}
+</snippet>
+
+The following example shows the format panel with:
+
+* `chart` group open by default
+* `series`, `legend` and `axis` groups shown afterwards, closed by default
+* `navigator` not shown
+
+<grid-example title='Customising format panel groups' name='customise-format-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
 ### Customising chart tool panels
 
 The Chart Tool Panels can be reorganised using the `chartToolPanelsDef.panels` grid option, and a tool panel can be opened when the chart is loaded using the `chartToolPanelsDef.defaultToolPanel` grid option.
