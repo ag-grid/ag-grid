@@ -514,6 +514,21 @@ const buildCoreModules = async (exitOnError) => {
 
         return;
     }
+
+    // temp addition for AG-7340
+    // future commits will make this more generic/flexible
+    cp.spawnSync('./node_modules/.bin/tsc', ['-p', 'tsconfig.typings.json'], {
+        stdio: 'inherit',
+        cwd: '../../community-modules/csv-export'
+    });
+    cp.spawnSync('./node_modules/.bin/tsc', ['-p', 'tsconfig.typings.json'], {
+        stdio: 'inherit',
+        cwd: '../../enterprise-modules/set-filter'
+    });
+    cp.spawnSync('./node_modules/.bin/tsc', ['-p', 'tsconfig.typings.json'], {
+        stdio: 'inherit',
+        cwd: '../../enterprise-modules/excel-export'
+    });
     console.log("Core Modules Built");
 
     console.log("Rebuilding Packages Based on Change State");
