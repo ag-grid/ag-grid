@@ -12,7 +12,13 @@ const tcpPortUsed = require('tcp-port-used');
 const {generateDocumentationExamples} = require('./example-generator-documentation');
 const {watchValidateExampleTypes} = require('./example-validator');
 const {updateBetweenStrings, getAllModules, processStdio} = require('./utils');
-const { getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss, generateAutoDocFiles } = require('./lernaOperations');
+const {
+    getFlattenedBuildChainInfo,
+    buildPackages,
+    buildCss,
+    watchCss,
+    generateAutoDocFiles
+} = require('./lernaOperations');
 const {EOL} = os;
 
 const key = fs.readFileSync(process.env.AG_DOCS_KEY || './selfsigned.key', 'utf8');
@@ -431,13 +437,6 @@ const rebuildPackagesBasedOnChangeState = async (chartsOnly = false, skipSelf = 
         })
         .map(changedPackage => skipSelf && lernaBuildChainInfo[changedPackage][0] === changedPackage ? lernaBuildChainInfo[changedPackage].slice(1) : lernaBuildChainInfo[changedPackage]));
 
-
-    if (modulesState["@ag-grid-community/core"].moduleChanged ||
-        modulesState["@ag-grid-community/styles"].moduleChanged) {
-        console.log("Core / Styles have changed - rebuilding CSS");
-        await buildCss();
-    }
-
     const lernaPackagesToRebuild = new Set();
     changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
 
@@ -461,7 +460,7 @@ const watchCoreModules = async (skipFrameworks, chartsOnly) => {
     tsWatch.stdout.on('data', await processStdio(async (output) => {
         console.log("Core Typescript: " + output);
         if (output.includes("Found 0 errors. Watching for file changes.")) {
-            if(!chartsOnly) {
+            if (!chartsOnly) {
                 await rebuildPackagesBasedOnChangeState(chartsOnly, false, skipFrameworks);
             }
             // because we use TSC to build the core modules (and not npm) we need to manually update the changed
@@ -533,7 +532,7 @@ const buildCoreModules = async (exitOnError, chartsOnly) => {
     });
     console.log("Core Modules Built");
 
-    if(!chartsOnly) {
+    if (!chartsOnly) {
         console.log("Rebuilding Packages Based on Change State");
         await rebuildPackagesBasedOnChangeState(chartsOnly, false, false);
         console.log("Changed Packages Rebuilt");
@@ -610,7 +609,7 @@ const performInitialBuild = async (chartsOnly) => {
 };
 
 const addWebpackMiddleware = (app, chartsOnly) => {
-    if(!chartsOnly) {
+    if (!chartsOnly) {
         // for js examples that just require community functionality (landing pages, vanilla community examples etc)
         // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
         addWebpackMiddlewareForConfig(app, 'webpack.community-grid-all-umd.beta.config.js', '/dev/@ag-grid-community/all-modules/dist', 'ag-grid-community.js');
@@ -755,7 +754,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, done)
                 process.exit(0);
             });
 
-            if(chartsOnly) {
+            if (chartsOnly) {
                 console.log("Build & Watching Charts Only");
             }
 
@@ -775,7 +774,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, done)
                 return next();
             });
 
-            if(!chartsOnly) {
+            if (!chartsOnly) {
                 updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules);
             }
 
@@ -785,7 +784,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, done)
             console.log("Watch Core Modules & CSS");
             await watchCoreModulesAndCss(skipFrameworks, chartsOnly);
 
-            if(!chartsOnly) {
+            if (!chartsOnly) {
                 console.log("Watching Auto Doc Files");
                 await watchAutoDocFiles();
             }
