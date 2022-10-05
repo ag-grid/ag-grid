@@ -61,8 +61,8 @@ export class PieChartProxy extends ChartProxy {
                 type: this.standaloneChartType,
                 angleKey: f.colId,
                 angleName: f.displayName!,
-                labelKey: params.category.id,
-                labelName: params.category.name,
+                calloutLabelKey: params.category.id,
+                calloutLabelName: params.category.name,
             }
 
             if (this.chartType === 'doughnut') {
@@ -78,8 +78,8 @@ export class PieChartProxy extends ChartProxy {
                         text: seriesDefaults.title.text || f.displayName,
                         showInLegend: numFields > 1,
                     },
-                    callout: {
-                        ...seriesDefaults.callout,
+                    calloutLine: {
+                        ...seriesDefaults.calloutLine,
                         colors: this.chartTheme.palette.strokes,
                     }
                 }
@@ -130,7 +130,7 @@ export class PieChartProxy extends ChartProxy {
         const primaryOptions = (seriesOptions: AgPieSeriesOptions) => {
             return {
                 ...seriesOptions,
-                label: { enabled: false }, // hide labels on primary series
+                calloutLabel: { enabled: false }, // hide labels on primary series
                 highlightStyle: { item: { fill: undefined } },
                 radiusKey: seriesOptions.angleKey,
                 angleKey: seriesOptions.angleKey + '-total',
@@ -151,10 +151,10 @@ export class PieChartProxy extends ChartProxy {
             return {
                 ...deepMerge({}, primaryOpts),
                 radiusKey: angleKey + '-filtered-out',
-                label: seriesOverrides.label, // labels can be shown on the 'filtered-out' series
-                callout: {
-                    ...seriesOverrides.callout,
-                    colors: seriesOverrides.callout.colors ?? palette.strokes,
+                calloutLabel: seriesOverrides.calloutLabel, // labels can be shown on the 'filtered-out' series
+                calloutLine: {
+                    ...seriesOverrides.calloutLabel,
+                    colors: seriesOverrides.calloutLabel.colors ?? palette.strokes,
                 },
                 fills: changeOpacity(seriesOptions.fills ?? palette.fills, 0.3),
                 strokes: changeOpacity(seriesOptions.strokes ?? palette.strokes, 0.3),
@@ -191,7 +191,7 @@ export class PieChartProxy extends ChartProxy {
 
     private getCrossFilterTooltipRenderer(title: string) {
         return (params: PieTooltipRendererParams) => {
-            const label = params.datum[params.labelKey as string];
+            const label = params.datum[params.calloutLabelKey as string];
             const ratio = params.datum[params.radiusKey as string];
             const totalValue = params.angleValue;
             return { title, content: `${label}: ${totalValue * ratio}` };

@@ -72,10 +72,10 @@ const gridOptions: GridOptions = {
         enabled: false,
       },
       series: {
-        label: {
+        calloutLabel: {
           enabled: true,
         },
-        callout: {
+        calloutLine: {
           length: 20,
         },
       },

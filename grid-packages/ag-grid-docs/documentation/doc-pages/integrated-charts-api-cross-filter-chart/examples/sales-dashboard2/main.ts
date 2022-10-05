@@ -116,7 +116,7 @@ function createSalesByRefChart(gridApi: GridApi) {
           title: {
             enabled: false,
           },
-          label: {
+          calloutLabel: {
             enabled: false,
           },
         },
