@@ -1,4 +1,4 @@
-import { expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { expect, beforeEach, afterEach } from '@jest/globals';
 import { Canvas, createCanvas, PngConfig } from 'canvas';
 import * as pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
@@ -10,6 +10,7 @@ import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
 import { AgCartesianChartOptions, AgChartOptions, AgPolarChartOptions } from '../agChartOptions';
 import { resetIds } from '../../util/id';
+import * as mockCanvas from './mock-canvas';
 
 export interface TestCase {
     options: AgChartOptions;
@@ -36,45 +37,6 @@ process.env.FONTCONFIG_NAME = `${__dirname}/fonts.conf`;
 
 export const CANVAS_WIDTH = 800;
 export const CANVAS_HEIGHT = 600;
-
-export function loadExampleOptions(name: string, evalFn = 'options'): any {
-    const filters = [/^import .*/, /.*AgChart\.(update|create)/, /.* container\: .*/ /*, /.* data/*/];
-    const dataFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/data.ts`;
-    const exampleFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/main.ts`;
-
-    const cleanTs = (content: Buffer) =>
-        content
-            .toString()
-            .split('\n')
-            // Remove grossly unsupported lines.
-            .filter((line) => !filters.some((f) => f.test(line)))
-            // Remove types, without matching string literals.
-            .map((line) =>
-                ["'", '"'].some((v) => line.indexOf(v) >= 0) ? line : line.replace(/: [A-Z][A-Za-z<, >]*/g, '')
-            )
-            // Remove declares.
-            .map((line) => line.replace(/declare var.*;/g, ''))
-            // Remove sugars.
-            .map((line) => line.replace(/([a-z])!/g, '$1'))
-            // Remove primitives + primitive arrays.
-            .map((line) => line.replace(/: (number|string|any)(\[\]){0,}/g, ''))
-            // Remove unsupported keywords.
-            .map((line) => line.replace(/export /g, ''));
-
-    const dataFileContent = cleanTs(fs.readFileSync(dataFile));
-    const exampleFileLines = cleanTs(fs.readFileSync(exampleFile));
-
-    let evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
-    try {
-        // @ts-ignore - used in the eval() call.
-        const agCharts = require('../../main');
-        return eval(evalExpr);
-    } catch (error) {
-        console.error(`AG Charts - unable to read example data for [${name}]; error: ${error.message}`);
-        console.log(evalExpr);
-        return [];
-    }
-}
 
 export function repeat<T>(value: T, count: number): T[] {
     const result = new Array(count);
@@ -200,53 +162,19 @@ export function extractImageData({
 }
 
 export function setupMockCanvas(): { nodeCanvas?: Canvas } {
-    let realCreateElement: typeof document.createElement;
-    let ctx: { nodeCanvas?: Canvas } = {};
-    let canvasStack: Canvas[] = [];
-    let canvases: Canvas[] = [];
+    let mockCtx: mockCanvas.MockContext = new mockCanvas.MockContext();
 
     beforeEach(() => {
         resetIds();
-        ctx.nodeCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-        canvasStack = [ctx.nodeCanvas];
-        window['agChartsSceneRenderModel'] = 'composite';
 
-        realCreateElement = document.createElement;
-        document.createElement = jest.fn((element, options) => {
-            if (element === 'canvas') {
-                const mockedElement: HTMLCanvasElement = realCreateElement.call(document, element, options);
-
-                let [nextCanvas] = canvasStack.splice(0, 1);
-                if (!nextCanvas) {
-                    nextCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-                }
-                canvases.push(nextCanvas);
-
-                mockedElement.getContext = (p) => {
-                    const context2d = nextCanvas.getContext(p, { alpha: true });
-                    context2d.patternQuality = 'good';
-                    context2d.quality = 'good';
-                    context2d.textDrawingMode = 'path';
-                    context2d.antialias = 'subpixel';
-
-                    return context2d as any;
-                };
-
-                return mockedElement;
-            }
-
-            return realCreateElement.call(document, element, options);
-        });
+        mockCanvas.setup({ mockCtx, width: CANVAS_WIDTH, height: CANVAS_HEIGHT });
     });
 
     afterEach(() => {
-        document.createElement = realCreateElement;
-        ctx.nodeCanvas = null;
-        canvasStack = [];
-        canvases = [];
+        mockCanvas.teardown(mockCtx);
     });
 
-    return ctx;
+    return mockCtx.ctx;
 }
 
 export function toMatchImage(actual, expected) {

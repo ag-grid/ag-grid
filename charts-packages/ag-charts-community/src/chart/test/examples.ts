@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
 import {
     DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY,
@@ -13,7 +15,45 @@ import {
     DATA_APPLE_REVENUE_BY_PRODUCT,
     DATA_BROWSER_MARKET_SHARE_MISSING_FIRST_Y,
 } from './data';
-import { loadExampleOptions } from './utils';
+
+export function loadExampleOptions(name: string, evalFn = 'options'): any {
+    const filters = [/^import .*/, /.*AgChart\.(update|create)/, /.* container\: .*/ /*, /.* data/*/];
+    const dataFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/data.ts`;
+    const exampleFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/main.ts`;
+
+    const cleanTs = (content: Buffer) =>
+        content
+            .toString()
+            .split('\n')
+            // Remove grossly unsupported lines.
+            .filter((line) => !filters.some((f) => f.test(line)))
+            // Remove types, without matching string literals.
+            .map((line) =>
+                ["'", '"'].some((v) => line.indexOf(v) >= 0) ? line : line.replace(/: [A-Z][A-Za-z<, >]*/g, '')
+            )
+            // Remove declares.
+            .map((line) => line.replace(/declare var.*;/g, ''))
+            // Remove sugars.
+            .map((line) => line.replace(/([a-z])!/g, '$1'))
+            // Remove primitives + primitive arrays.
+            .map((line) => line.replace(/: (number|string|any)(\[\]){0,}/g, ''))
+            // Remove unsupported keywords.
+            .map((line) => line.replace(/export /g, ''));
+
+    const dataFileContent = cleanTs(fs.readFileSync(dataFile));
+    const exampleFileLines = cleanTs(fs.readFileSync(exampleFile));
+
+    let evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
+    try {
+        // @ts-ignore - used in the eval() call.
+        const agCharts = require('../../main');
+        return eval(evalExpr);
+    } catch (error) {
+        console.error(`AG Charts - unable to read example data for [${name}]; error: ${error.message}`);
+        console.log(evalExpr);
+        return [];
+    }
+}
 
 export const DOCS_EXAMPLES = {
     '100--stacked-area': loadExampleOptions('100--stacked-area'),
