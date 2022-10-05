@@ -8144,6 +8144,7 @@ Object {
         "offset": 3,
       },
       "calloutLabelKey": "type",
+      "calloutLabelName": undefined,
       "calloutLine": Object {
         "length": 10,
         "strokeWidth": 2,
@@ -8889,6 +8890,7 @@ Object {
         "offset": 3,
       },
       "calloutLabelKey": "religion",
+      "calloutLabelName": undefined,
       "calloutLine": Object {
         "length": 10,
         "strokeWidth": 2,
@@ -8915,8 +8917,6 @@ Object {
         },
       },
       "innerRadiusOffset": 0,
-      "labelKey": undefined,
-      "labelName": undefined,
       "lineDash": Array [
         0,
       ],

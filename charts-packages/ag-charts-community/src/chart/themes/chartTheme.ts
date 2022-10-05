@@ -451,8 +451,8 @@ export class ChartTheme {
                 angleName: '',
                 radiusKey: undefined,
                 radiusName: undefined,
-                labelKey: undefined,
-                labelName: undefined,
+                calloutLabelKey: undefined,
+                calloutLabelName: undefined,
                 sectorLabelKey: undefined,
                 sectorLabelName: undefined,
                 calloutLabel: {

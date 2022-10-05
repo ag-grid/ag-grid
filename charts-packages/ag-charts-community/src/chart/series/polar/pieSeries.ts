@@ -20,7 +20,7 @@ import { Observable, TypedEvent } from '../../../util/observable';
 import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxis';
 import { TooltipRendererResult, toTooltipHtml } from '../../chart';
-import { Deprecated } from '../../../util/deprecation';
+import { DeprecatedAndRenamedTo } from '../../../util/deprecation';
 import {
     BOOLEAN,
     NUMBER,
@@ -270,24 +270,14 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     calloutLabel = new PieSeriesCalloutLabel();
 
-    @Deprecated<PieSeries>('Use calloutLabel or sectorLabel instead.', {
-        accessors: {
-            get: (target) => target.calloutLabel,
-            set: (target, v) => (target.calloutLabel = v),
-        },
-    })
+    @DeprecatedAndRenamedTo('calloutLabel')
     label = this.calloutLabel;
 
     readonly sectorLabel = new PieSeriesSectorLabel();
 
     calloutLine = new PieSeriesCalloutLine();
 
-    @Deprecated<PieSeries>('Use calloutLine instead.', {
-        accessors: {
-            get: (target) => target.calloutLine,
-            set: (target, v) => (target.calloutLine = v),
-        },
-    })
+    @DeprecatedAndRenamedTo('calloutLine')
     callout = this.calloutLine;
 
     tooltip: PieSeriesTooltip = new PieSeriesTooltip();
@@ -356,27 +346,17 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     @Validate(OPT_NUMBER(0))
     radiusMax?: number = undefined;
 
-    @Deprecated<PieSeries>('Use calloutLabelKey or sectorLabelKey instead.', {
-        accessors: {
-            get: (target) => target.calloutLabelKey,
-            set: (target, v) => (target.calloutLabelKey = v),
-        },
-    })
-    labelKey?: string = undefined;
-
-    @Deprecated('Use calloutLabelName or sectorLabelName instead.', {
-        accessors: {
-            get: (target) => target.calloutLabelName,
-            set: (target, v) => (target.calloutLabelKey = v),
-        },
-    })
-    labelName?: string = undefined;
-
     @Validate(OPT_STRING)
     calloutLabelKey?: string = undefined;
 
     @Validate(OPT_STRING)
     calloutLabelName?: string = undefined;
+
+    @DeprecatedAndRenamedTo('calloutLabelKey')
+    labelKey?: string = undefined;
+
+    @DeprecatedAndRenamedTo('calloutLabelName')
+    labelName?: string = undefined;
 
     @Validate(OPT_STRING)
     sectorLabelKey?: string = undefined;

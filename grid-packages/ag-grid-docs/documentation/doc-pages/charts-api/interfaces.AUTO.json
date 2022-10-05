@@ -3676,17 +3676,6 @@
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(a: T, b: T) => number"
   },
-  "DeprecationOptions": {
-    "meta": { "typeParams": ["T"] },
-    "type": {
-      "default?": "T",
-      "accessors?": "{ get(target: T): any; set(target: T, v: any): void; }"
-    },
-    "docs": {
-      "default?": "/** Default value */",
-      "accessors?": "/** Getter and setter for a target property to use instead of deprecated */"
-    }
-  },
   "LiteralProperties": {
     "meta": { "isTypeAlias": true },
     "type": "'shape' | 'data'"

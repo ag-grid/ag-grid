@@ -4989,20 +4989,6 @@
   "ShapeLineCap": {},
   "ShapeLineJoin": {},
   "Comparator": { "meta": { "typeParams": ["T"] } },
-  "DeprecationOptions": {
-    "default": {
-      "description": "/** Default value */",
-      "type": { "returnType": "T", "optional": true }
-    },
-    "accessors": {
-      "description": "/** Getter and setter for a target property to use instead of deprecated */",
-      "type": {
-        "returnType": "{ get(target: T): any; set(target: T, v: any): void }",
-        "optional": true
-      }
-    },
-    "meta": { "typeParams": ["T"] }
-  },
   "LiteralProperties": {},
   "SkippableProperties": {},
   "IsLiteralProperty": { "meta": { "typeParams": ["T", "K extends keyof T"] } },
