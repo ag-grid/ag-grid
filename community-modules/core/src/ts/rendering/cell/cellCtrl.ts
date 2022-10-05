@@ -113,7 +113,6 @@ export class CellCtrl extends BeanStub {
     private customRowDragComp: RowDragComp;
 
     private onCellCompAttachedFuncs: (() => void)[] = [];
-    private removeAutoHeightListeners: (() => void) | null = null;
 
     constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl) {
         super();
@@ -226,7 +225,7 @@ export class CellCtrl extends BeanStub {
         this.setupControlComps();
 
         if (eCellWrapper) {
-            this.refreshAutoHeight(eCellWrapper);
+            this.setupAutoHeight(eCellWrapper);
         }
 
         this.setAriaColIndex();
@@ -258,7 +257,7 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    public refreshAutoHeight(eCellWrapper: HTMLElement): void {
+    private setupAutoHeight(eCellWrapper: HTMLElement): void {
         if (!this.column.isAutoHeight()) { return; }
 
         const eParentCell = eCellWrapper.parentElement!;
@@ -303,15 +302,10 @@ export class CellCtrl extends BeanStub {
 
         const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eCellWrapper, listener);
 
-        if (this.removeAutoHeightListeners) {
-            this.removeAutoHeightListeners();
-            this.removeAutoHeightListeners = null;
-        }
-
-        this.removeAutoHeightListeners = () => {
+        this.addDestroyFunc(() => {
             destroyResizeObserver();
             this.rowNode.setRowAutoHeight(undefined, this.column);
-        };
+        });
     }
 
     public getInstanceId(): string {
@@ -1140,12 +1134,6 @@ export class CellCtrl extends BeanStub {
 
     public destroy(): void {
         this.onCellCompAttachedFuncs = [];
-
-        if (this.removeAutoHeightListeners) {
-            this.removeAutoHeightListeners();
-            this.removeAutoHeightListeners = null;
-        }
-
         super.destroy();
     }
 

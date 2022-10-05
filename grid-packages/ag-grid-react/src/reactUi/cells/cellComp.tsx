@@ -177,7 +177,7 @@ const CellComp = (props: {
     }, []);
     
     const showTools = renderDetails != null && (includeSelection || includeDndSource || includeRowDrag);
-    const showCellWrapper = (forceWrapper && !cellCtrl.isEditing()) || showTools;
+    const showCellWrapper = forceWrapper || showTools;
 
     const setCellEditorRef = useCallback((popup: boolean, cellEditor: ICellEditor | undefined) => {
         cellEditorRef.current = cellEditor;
@@ -258,7 +258,9 @@ const CellComp = (props: {
         setCellEditorRef(isPopup, cellEditor);
 
         if (!isPopup) {
-            eGui.current!.appendChild(compGui);
+            const parentEl = (forceWrapper ? eCellWrapper : eGui).current;
+            parentEl?.appendChild(compGui);
+
             cellEditor.afterGuiAttached && cellEditor.afterGuiAttached();
         }
 
@@ -312,12 +314,6 @@ const CellComp = (props: {
         return () => destroyFuncs.forEach(f => f());
 
     }, [showCellWrapper, includeDndSource, includeRowDrag, includeSelection, cellWrapperVersion]);
-
-    useEffect(() => {
-        if (cellWrapperVersion > 0 && eCellWrapper.current) {
-            cellCtrl.refreshAutoHeight(eCellWrapper.current);
-        }
-    }, [eCellWrapper, cellWrapperVersion])
 
     // we use layout effect here as we want to synchronously process setComp and it's side effects
     // to ensure the component is fully initialised prior to the first browser paint. See AG-7018.
