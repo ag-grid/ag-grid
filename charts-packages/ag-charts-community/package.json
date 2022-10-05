@@ -28,7 +28,8 @@
         "docker:run": ".docker/run.sh run",
         "docker:test-watch": ".docker/run.sh run npm run test-watch",
         "docker:test-update": ".docker/run.sh run npm run test-update",
-        "docker:clean": ".docker/run.sh clean"
+        "docker:clean": ".docker/run.sh clean",
+        "generate-chart-gallery": "npx ts-node -T tools/gallery-thumbnail-generator.ts"
     },
     "repository": {
         "type": "git",
