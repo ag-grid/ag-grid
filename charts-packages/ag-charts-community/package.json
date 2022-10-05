@@ -71,6 +71,7 @@
         "@babel/types": "7.12.7",
         "@types/jest": "^25.2.1",
         "@types/jest-image-snapshot": "^4.3.1",
+        "@types/node": "^16.0.0",
         "@types/pixelmatch": "^5.2.4",
         "canvas": "^2.9.0",
         "eslint": "^6.8.0",

@@ -14,6 +14,8 @@ export function setup({ mockCtx = new MockContext(), width = 800, height = 600 }
 
     if (typeof window !== 'undefined') {
         window['agChartsSceneRenderModel'] = 'composite';
+    } else {
+        global['agChartsSceneRenderModel'] = 'composite';
     }
 
     const realCreateElement = document.createElement;
