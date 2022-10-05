@@ -8192,18 +8192,6 @@ Object {
       ],
       "innerRadiusOffset": 0,
       "innerRadiusRatio": 0.5,
-      "label": Object {
-        "color": "rgb(70, 70, 70)",
-        "enabled": false,
-        "fontFamily": "Verdana, sans-serif",
-        "fontSize": 12,
-        "fontStyle": undefined,
-        "fontWeight": undefined,
-        "minAngle": 20,
-        "offset": 3,
-      },
-      "labelKey": "undefined",
-      "labelName": undefined,
       "lineDash": Array [
         0,
       ],
