@@ -131,6 +131,10 @@ const EXAMPLES: Record<string, TestCase> = {
         options: examples.GROUPED_CATEGORY_AXIS_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['groupedCategory', 'number'], seriesTypes: ['bar'] }),
     },
+    CROSS_LINES_EXAMPLE: {
+        options: examples.CROSS_LINES_EXAMPLE,
+        assertions: cartesianChartAssertions({ seriesTypes: ['bar'] }),
+    },
 };
 
 describe('Gallery Examples', () => {
