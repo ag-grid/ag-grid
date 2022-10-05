@@ -11,6 +11,7 @@
     "start": "NODE_OPTIONS=--max-old-space-size=${AG_DOCS_HEAP_SIZE:-6144} npx gulp serve",
     "serve-core-only": "NODE_OPTIONS=--max-old-space-size=${AG_DOCS_HEAP_SIZE:-6144} npx gulp serve-core-only",
     "serve-with-formatting": "npx gulp serve-with-formatting",
+    "serve-charts-core-only": "npx gulp serve-charts-core-only",
     "tsc": "npx tsc -p tests/config/tsconfig.json",
     "test": "npx jest",
     "test:e2e": "npm run lint-examples && npm run validate-examples && npm run validate-docs",

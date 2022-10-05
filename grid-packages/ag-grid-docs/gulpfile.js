@@ -148,7 +148,8 @@ gulp.task('release', series('clean-dist', 'process-src', 'copy-from-dist', 'copy
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 
-//                                                               this, skipFrameworks,  skipExampleFormatting
-gulp.task('serve',                  require('./dev-server').bind(null, false,           true));
-gulp.task('serve-core-only',        require('./dev-server').bind(null, true,            true));
-gulp.task('serve-with-formatting',  require('./dev-server').bind(null, false,           false));
+//                                                               this,         skipFrameworks,   skipExampleFormatting, chartsOnly
+gulp.task('serve',                  require('./dev-server').bind(null, false,           true, false));
+gulp.task('serve-core-only',        require('./dev-server').bind(null, true,            true, false));
+gulp.task('serve-with-formatting',  require('./dev-server').bind(null, false,           false, false));
+gulp.task('serve-charts-core-only', require('./dev-server').bind(null, true,            true, true));

@@ -680,7 +680,7 @@ module.exports.generateChartExamples = (scope, trigger, done, tsRegistered = fal
     }
 };
 
-module.exports.generateDocumentationExamples = async (scope, trigger) => {
+module.exports.generateDocumentationExamples = async (chartsOnly, scope, trigger) => {
     require('ts-node').register();
     if (trigger) {
         console.log(`\u270E ${trigger} was changed`);
@@ -692,8 +692,7 @@ module.exports.generateDocumentationExamples = async (scope, trigger) => {
     }
 
     return new Promise(resolve => {
-        module.exports.generateGridExamples(
-            scope, trigger, () => module.exports.generateChartExamples(scope, trigger, () => resolve(), true), true
-        );
+        module.exports.generateChartExamples(scope, trigger, chartsOnly ? () => resolve() :
+            () => module.exports.generateGridExamples(scope, trigger, () => resolve() , true), true)
     });
 };

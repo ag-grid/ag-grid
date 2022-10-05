@@ -52,6 +52,7 @@
     "buildReact": "npx lerna run build --scope '{@ag-grid-community/core,ag-grid-react}'",
     "docs": "cd grid-packages/ag-grid-docs && npm start",
     "docs-core-only": "cd grid-packages/ag-grid-docs && npm run serve-core-only",
+    "docs-charts-core-only": "cd grid-packages/ag-grid-docs && npm run serve-charts-core-only",
     "docs-clean": "cd grid-packages/ag-grid-docs/documentation && npm run clean",
     "docsWithFormatting": "cd grid-packages/ag-grid-docs && npm run serve-with-formatting",
     "updateAndRebuild": "npm i && npm run bootstrap && npm run build",
