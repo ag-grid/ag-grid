@@ -266,7 +266,7 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
      * Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.
      * This is used to figure out which menu tabs are present and in which order the tabs are shown.
      */
-    menuTabs?: string[];
+    menuTabs?: ColumnMenuTab[];
     /** Params used to change the behaviour and appearance of the Columns Menu tab. */
     columnsMenuParams?: ColumnsMenuParams;
     /** Set to `true` if no menu should be shown for this column header. Default: `false` */
@@ -555,6 +555,8 @@ export interface GetQuickFilterTextParams<TData = any, TValue = any> extends AgG
     /** ColDef provided for this column */
     colDef: ColDef<TData>;
 }
+
+export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab';
 
 export interface ColumnsMenuParams {
     /** To suppress updating the layout of columns as they are rearranged in the grid */

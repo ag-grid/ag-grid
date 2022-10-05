@@ -13,6 +13,7 @@ import {
     ColDef,
     ColGroupDef,
     ColSpanParams,
+    ColumnMenuTab,
     ColumnsMenuParams,
     DndSourceCallback,
     DndSourceOnRowDragParams,
@@ -243,7 +244,7 @@ export class AgGridColumn<TData = any> {
     @Input() public headerComponentParams: any;
     /** Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.
      * This is used to figure out which menu tabs are present and in which order the tabs are shown.     */
-    @Input() public menuTabs: string[] | undefined;
+    @Input() public menuTabs: ColumnMenuTab[] | undefined;
     /** Params used to change the behaviour and appearance of the Columns Menu tab.     */
     @Input() public columnsMenuParams: ColumnsMenuParams | undefined;
     /** Set to `true` if no menu should be shown for this column header. Default: `false`     */

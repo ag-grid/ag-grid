@@ -11,9 +11,9 @@ The menu will be displayed by default and will be made up of three panels. If yo
 
 The property `menuTabs` is an array of strings. The valid values are: `'filterMenuTab'`, `'generalMenuTab'` and `'columnsMenuTab'`.
 
-- `generalMenuTab`: Include in the `menuTabs` array to show the main panel.
-- `filterMenuTab`: Include in the `menuTabs` array to show the filter panel.
-- `columnsMenuTab`: Include in the `menuTabs` array to show the column selection panel.
+- `generalMenuTab`: Include to show the main panel.
+- `filterMenuTab`: Include to show the filter panel.
+- `columnsMenuTab`: Include to show the column selection panel.
 
 To not show the menu at all, set this property to an empty array`[]`. In addition, you can set the attribute `suppressMenu=true` to the column definition to not show the menu for a particular column.
 
@@ -75,7 +75,7 @@ The example below shows the `getMainMenuItems()` in action. To demonstrate diffe
 - Country column trims down the default items by removing values.
 - Date column changes the order of the tabs to `['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']`
 - Sport column changes the order of the tabs to `['filterMenuTab', 'columnsMenuTab']`. Note that the `'generalMenuTab'` is suppressed.
-- Gold column changes the order of the tabs to `['generalMenuTab', 'gibberishMenuTab']`. Note that the `'filterMenuTab'` and `'columnsMenuTab'` are suppressed. Also there is a warning on the console letting the user know that `'gibberishMenuTab'` is an invalid option and it is ignored.
+- Gold column changes the tabs to `['generalMenuTab']`. Note that the `'filterMenuTab'` and `'columnsMenuTab'` are suppressed.
 - Silver column hides the menu by suppressing all the menuTabs that can be shown: `[]`.
 - All other columns return the default list.
 - `postProcessPopup` is used on the Gold column to reposition the menu 25px lower.

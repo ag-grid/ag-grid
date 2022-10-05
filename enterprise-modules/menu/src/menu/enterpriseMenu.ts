@@ -7,6 +7,7 @@ import {
     Column,
     ColumnApi,
     ColumnModel,
+    ColumnMenuTab,
     Constants,
     FilterManager,
     FilterWrapper,
@@ -71,7 +72,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         }, 'columnMenu', defaultTab, undefined, mouseEvent.target as HTMLElement);
     }
 
-    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, containerType: ContainerType, defaultTab?: string, restrictToTabs?: string[]): void {
+    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, containerType: ContainerType, defaultTab?: string, restrictToTabs?: ColumnMenuTab[]): void {
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
@@ -105,7 +106,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         positionCallback: (menu: EnterpriseMenu) => void,
         containerType: ContainerType,
         defaultTab?: string,
-        restrictToTabs?: string[],
+        restrictToTabs?: ColumnMenuTab[],
         eventSource?: HTMLElement
     ): void {
         const menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
@@ -215,10 +216,10 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 export class EnterpriseMenu extends BeanStub {
 
     public static EVENT_TAB_SELECTED = 'tabSelected';
-    public static TAB_FILTER = 'filterMenuTab';
-    public static TAB_GENERAL = 'generalMenuTab';
-    public static TAB_COLUMNS = 'columnsMenuTab';
-    public static TABS_DEFAULT = [EnterpriseMenu.TAB_GENERAL, EnterpriseMenu.TAB_FILTER, EnterpriseMenu.TAB_COLUMNS];
+    public static TAB_FILTER: 'filterMenuTab' = 'filterMenuTab';
+    public static TAB_GENERAL: 'generalMenuTab' = 'generalMenuTab';
+    public static TAB_COLUMNS: 'columnsMenuTab' = 'columnsMenuTab';
+    public static TABS_DEFAULT: ColumnMenuTab[] = [EnterpriseMenu.TAB_GENERAL, EnterpriseMenu.TAB_FILTER, EnterpriseMenu.TAB_COLUMNS];
     public static MENU_ITEM_SEPARATOR = 'separator';
 
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -243,9 +244,9 @@ export class EnterpriseMenu extends BeanStub {
     private initialSelection: string;
     private tabFactories: { [p: string]: () => TabbedItem; } = {};
     private includeChecks: { [p: string]: () => boolean; } = {};
-    private restrictTo?: string[];
+    private restrictTo?: ColumnMenuTab[];
 
-    constructor(column: Column, initialSelection: string, restrictTo?: string[]) {
+    constructor(column: Column, initialSelection: string, restrictTo?: ColumnMenuTab[]) {
         super();
         this.column = column;
         this.initialSelection = initialSelection;
@@ -294,9 +295,9 @@ export class EnterpriseMenu extends BeanStub {
         return true;
     }
 
-    private isValidMenuTabItem(menuTabName: string): boolean {
+    private isValidMenuTabItem(menuTabName: ColumnMenuTab): boolean {
         let isValid: boolean = true;
-        let itemsToConsider: string[] = EnterpriseMenu.TABS_DEFAULT;
+        let itemsToConsider = EnterpriseMenu.TABS_DEFAULT;
 
         if (this.restrictTo != null) {
             isValid = this.restrictTo.indexOf(menuTabName) > -1;

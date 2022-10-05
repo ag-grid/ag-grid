@@ -530,7 +530,7 @@
       "headerComponent?": "any",
       "headerComponentFramework?": "any",
       "headerComponentParams?": "any",
-      "menuTabs?": "string[]",
+      "menuTabs?": "ColumnMenuTab[]",
       "columnsMenuParams?": "ColumnsMenuParams",
       "suppressMenu?": "boolean",
       "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback<TData>",
@@ -1036,6 +1036,10 @@
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */"
     }
+  },
+  "ColumnMenuTab": {
+    "meta": { "isTypeAlias": true },
+    "type": "'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'"
   },
   "ColumnsMenuParams": {
     "meta": {},
@@ -13819,7 +13823,7 @@
       "headerComponent?": "any",
       "headerComponentFramework?": "any",
       "headerComponentParams?": "any",
-      "menuTabs?": "string[]",
+      "menuTabs?": "ColumnMenuTab[]",
       "columnsMenuParams?": "ColumnsMenuParams",
       "suppressMenu?": "boolean",
       "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback<TData>",

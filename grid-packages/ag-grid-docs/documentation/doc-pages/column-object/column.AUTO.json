@@ -366,8 +366,8 @@
   "isAllowRowGroup": { "type": { "arguments": {}, "returnType": "boolean" } },
   "getMenuTabs": {
     "type": {
-      "arguments": { "defaultValues": "string[]" },
-      "returnType": "string[]"
+      "arguments": { "defaultValues": "ColumnMenuTab[]" },
+      "returnType": "ColumnMenuTab[]"
     }
   },
   "isLockPosition": { "type": { "arguments": {}, "returnType": "boolean" } },
