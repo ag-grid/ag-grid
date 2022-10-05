@@ -25,7 +25,7 @@ export interface PolarTestCase extends TestCase {
     options: AgPolarChartOptions;
 }
 
-const FAILURE_THRESHOLD = Number(process.env.SNAPSHOT_FAILURE_THRESHOLD ?? 0.005);
+const FAILURE_THRESHOLD = Number(process.env.SNAPSHOT_FAILURE_THRESHOLD ?? 0.05);
 export const IMAGE_SNAPSHOT_DEFAULTS = { failureThreshold: FAILURE_THRESHOLD, failureThresholdType: 'percent' };
 export const CANVAS_TO_BUFFER_DEFAULTS: PngConfig = { compressionLevel: 6, filters: (Canvas as any).PNG_NO_FILTERS };
 
