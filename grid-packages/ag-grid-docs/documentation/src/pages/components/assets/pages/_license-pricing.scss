@@ -72,8 +72,14 @@
                         position: relative;
                     }
     
-                    span {
+                    &__running-time {
                         left: 0;
+                        position: absolute;
+                        padding: 0.25rem;
+                        font-size: smaller;
+                        margin: 0;
+                        color: white;
+                        background-color: rgba(0, 0, 0, 0.5);
                     }
                 }
             }

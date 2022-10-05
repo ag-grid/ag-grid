@@ -86,7 +86,7 @@ const LicensePricing = () => {
                                         </h4>
                                         <a href="https://www.youtube.com/watch?v=20SLdu4wLtI" target="_">
                                             <img src={`${hostPrefix}/videos/AgGridVideo.png`}/>
-                                            <span className="LearningVideos-module--learning-videos__video__anchor-body__body__video-content__running-time--TN9pm">
+                                            <span className={styles['license-pricing__content__packages__ag-enterprise__video__running-time']}>
                                                 8:30
                                             </span>
                                         </a>
