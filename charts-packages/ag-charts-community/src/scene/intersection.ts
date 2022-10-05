@@ -73,8 +73,7 @@ export function cubicSegmentIntersections(
     const roots = cubicRoots(a, b, c, d);
 
     // Verify that the roots are within bounds of the linear segment.
-    for (let i = 0; i < roots.length; i++) {
-        const t = roots[i];
+    for (const t of roots) {
         const tt = t * t;
         const ttt = t * tt;
 

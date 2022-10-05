@@ -2710,6 +2710,10 @@
     ],
     "docs": [null, null, null, null, null, null]
   },
+  "OptionalHTMLElement": {
+    "meta": { "isTypeAlias": true },
+    "type": "HTMLElement | undefined | null"
+  },
   "ChartAxisDirection": {
     "meta": { "isEnum": true },
     "type": ["X = 'x'", "Y = 'y'"],

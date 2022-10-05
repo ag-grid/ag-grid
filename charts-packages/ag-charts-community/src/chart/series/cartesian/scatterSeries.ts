@@ -201,8 +201,6 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         } else {
             this.yDomain = this.yData;
         }
-
-        return;
     }
 
     getDomain(direction: ChartAxisDirection): any[] {

@@ -275,8 +275,6 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             }
         }
         traverse(this.dataRoot);
-
-        return;
     }
 
     protected getLabelCenterX(datum: any): number {

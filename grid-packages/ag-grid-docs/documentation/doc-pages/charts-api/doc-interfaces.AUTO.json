@@ -4139,6 +4139,7 @@
     "backgroundColor": { "type": { "returnType": "string", "optional": true } }
   },
   "ChartUpdateType": {},
+  "OptionalHTMLElement": {},
   "ChartAxisDirection": {},
   "ChartAxisPosition": {},
   "ChartAxisMeta": {

@@ -23,9 +23,7 @@ export default function (a: any, b: any): (t: number) => any {
             c = Color.fromString(b);
             b = c;
             return color(a, b);
-        } catch (e) {
-            // return string(a, b);
-        }
+        } catch (e) {}
     }
 
     if (b instanceof Color) {

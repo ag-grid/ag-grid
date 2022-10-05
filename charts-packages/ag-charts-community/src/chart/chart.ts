@@ -275,7 +275,7 @@ export class ChartTooltip extends Observable {
                 this.updateClass(true, this.constrained);
             }
 
-            if (top < window.pageYOffset) {
+            if (top < window.scrollY) {
                 top = meta.pageY + 20;
                 this.constrained = true;
                 this.updateClass(true, this.constrained);
@@ -317,6 +317,7 @@ export enum ChartUpdateType {
     NONE,
 }
 
+type OptionalHTMLElement = HTMLElement | undefined | null;
 export abstract class Chart extends Observable {
     readonly id = createId(this);
 
@@ -341,8 +342,8 @@ export abstract class Chart extends Observable {
 
     private extraDebugStats: Record<string, number> = {};
 
-    private _container: HTMLElement | undefined | null = undefined;
-    set container(value: HTMLElement | undefined | null) {
+    private _container: OptionalHTMLElement = undefined;
+    set container(value: OptionalHTMLElement) {
         if (this._container !== value) {
             const { parentNode } = this.element;
 
@@ -357,7 +358,7 @@ export abstract class Chart extends Observable {
             this._container = value;
         }
     }
-    get container(): HTMLElement | undefined | null {
+    get container(): OptionalHTMLElement {
         return this._container;
     }
 
