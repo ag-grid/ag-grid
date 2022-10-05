@@ -61,8 +61,8 @@ export class CalloutPanel extends Component {
                 .onValueChange(newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.getSelectedSeries()));
         };
 
-        initInput("callout.length", this.calloutLengthSlider, "length", 40);
-        initInput("callout.strokeWidth", this.calloutStrokeWidthSlider, "strokeWidth", 10);
-        initInput("label.offset", this.labelOffsetSlider, "offset", 30);
+        initInput('calloutLine.length', this.calloutLengthSlider, 'length', 40);
+        initInput('calloutLine.strokeWidth', this.calloutStrokeWidthSlider, 'strokeWidth', 10);
+        initInput('calloutLabel.offset', this.labelOffsetSlider, 'offset', 30);
     }
 }
