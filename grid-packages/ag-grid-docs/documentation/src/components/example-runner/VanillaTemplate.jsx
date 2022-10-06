@@ -36,20 +36,20 @@ const VanillaBody = ({ library, appLocation, options, scriptFiles, indexFragment
 
     if (library === 'charts') {
         scriptPath = isUsingPublishedPackages()
-            ? `https://unpkg.com/ag-charts-community@${agChartsVersion}/dist/ag-charts-community.min.js`
+            ? `https://cdn.jsdelivr.net/npm/ag-charts-community@${agChartsVersion}/dist/ag-charts-community.min.js`
             : isDevelopment()
                 ? `${localPrefix}/ag-charts-community/dist/ag-charts-community.js`
                 : `${localPrefix}/ag-charts-community/dist/ag-charts-community.min.js`;
     } else {
         if (options.enterprise) {
             scriptPath = isUsingPublishedPackages()
-                ? `https://unpkg.com/ag-grid-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js`
+                ? `https://cdn.jsdelivr.net/npm/ag-grid-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js`
                 : isDevelopment()
                     ? `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`
                     : `${localPrefix}/ag-grid-enterprise/dist/ag-grid-enterprise.min.js`;
         } else {
             scriptPath = isUsingPublishedPackages()
-                ? `https://unpkg.com/ag-grid-community@${agGridVersion}/dist/ag-grid-community.min.js`
+                ? `https://cdn.jsdelivr.net/npm/ag-grid-community@${agGridVersion}/dist/ag-grid-community.min.js`
                 : isDevelopment()
                     ? `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.js`
                     : `${localPrefix}/ag-grid-community/dist/ag-grid-community.min.js`;

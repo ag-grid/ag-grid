@@ -346,7 +346,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 | <html lang="en">
 |     <head>
 |         <title>AG Charts Basic Example</title>
-|         <script src="https://unpkg.com/ag-charts-community/dist/ag-charts-community.min.js">
+|         <script src="https://cdn.jsdelivr.net/npm/ag-charts-community/dist/ag-charts-community.min.js">
 |         </script>
 |     </head>
 |     <body>

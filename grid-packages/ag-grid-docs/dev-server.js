@@ -376,7 +376,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         '        /* END OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
         gridCommunityModules.filter(module => module.moduleDirName !== 'all-modules'),
         [],
-        module => `        "${module.publishedName}": \`https://unpkg.com/${module.minVersionedCjs}\`,`,
+        module => `        "${module.publishedName}": \`https://cdn.jsdelivr.net/npm/${module.minVersionedCjs}\`,`,
         () => {
         });
 
@@ -385,8 +385,8 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         '        /* END OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
         gridCommunityModules.filter(module => module.moduleDirName !== 'all-modules'),
         gridEnterpriseModules.filter(module => module.moduleDirName !== 'all-modules'),
-        module => `        "${module.publishedName}": \`https://unpkg.com/${module.minVersionedCjs}\`,`,
-        module => `        "${module.publishedName}": \`https://unpkg.com/${module.minVersionedCjs}\`,`);
+        module => `        "${module.publishedName}": \`https://cdn.jsdelivr.net/npm/${module.minVersionedCjs}\`,`,
+        module => `        "${module.publishedName}": \`https://cdn.jsdelivr.net/npm/${module.minVersionedCjs}\`,`);
 
     fs.writeFileSync(utilityFilename, updatedUtilFileContents, 'UTF-8');
 }

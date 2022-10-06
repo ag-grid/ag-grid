@@ -1,7 +1,7 @@
 import React from 'react';
 import isDevelopment from 'utils/is-development';
 
-const DEVELOPMENT_CSP = "default-src 'self'; script-src 'self'; script-src-elem 'self' 'unsafe-inline' localhost:8080 unpkg.com; connect-src 'self' unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src data:";
+const DEVELOPMENT_CSP = "default-src 'self'; script-src 'self'; script-src-elem 'self' 'unsafe-inline' localhost:8080 cdn.jsdelivr.net; connect-src 'self' cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src data:";
 
 /**
  * This metadata is used across all examples. In development, we insert a timestamp to force the example to

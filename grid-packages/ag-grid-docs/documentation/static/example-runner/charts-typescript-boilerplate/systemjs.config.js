@@ -41,7 +41,7 @@
             assign(
                 {
                     // paths serve as alias
-                    "npm:": "https://unpkg.com/",
+                    "npm:": "https://cdn.jsdelivr.net/npm/",
                 }, sjsPaths)
         ,
         // map tells the System loader where to look for things

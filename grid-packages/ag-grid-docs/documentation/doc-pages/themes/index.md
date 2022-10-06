@@ -73,15 +73,15 @@ You can load the structural styles and theme from a free CDN by adding this code
 ```html
 <link
   rel="stylesheet"
-  href="https://unpkg.com/ag-grid-community@@AG_GRID_VERSION@/styles/ag-grid.css" />
+  href="https://cdn.jsdelivr.net/npm/ag-grid-community@@AG_GRID_VERSION@/styles/ag-grid.css" />
 
 <link
   rel="stylesheet"
-  href="https://unpkg.com/ag-grid-community@@AG_GRID_VERSION@/styles/ag-theme-alpine.css" />
+  href="https://cdn.jsdelivr.net/npm/ag-grid-community@@AG_GRID_VERSION@/styles/ag-theme-alpine.css" />
 ```
 
 [[note]]
-| Change the theme name in the URL to the one that you're using, and ensure that the version number in the URL matches the JS version you're using. This is useful for testing and prototyping but not recommended for production as your app will be unavailable if the unpkg servers are down.
+| Change the theme name in the URL to the one that you're using, and ensure that the version number in the URL matches the JS version you're using. This is useful for testing and prototyping but not recommended for production as your app will be unavailable if the jsdelivr servers are down.
 
 ### Loading the Roboto font for Material theme
 

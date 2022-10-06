@@ -247,7 +247,7 @@ export const getCssFilePaths = (importType, theme) => {
     const agCommunityPackage = importType === 'packages' ? 'ag-grid-community' : '@ag-grid-community';
 
     const getCssFilePath = file => isUsingPublishedPackages() ?
-        `https://unpkg.com/@ag-grid-community/styles@${agGridVersion}/styles/${file}` :
+        `https://cdn.jsdelivr.net/npm/@ag-grid-community/styles@${agGridVersion}/styles/${file}` :
         `${localPrefix}/${agCommunityPackage}/styles/${file}`;
 
     return cssFiles.map(getCssFilePath);

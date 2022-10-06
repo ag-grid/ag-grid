@@ -58,17 +58,17 @@ const extrasMap = {
         styles: ['https://use.fontawesome.com/releases/v5.6.3/css/all.css']
     },
     'xlsx-style': {
-        scripts: ['https://unpkg.com/xlsx-style@0.8.13/dist/xlsx.full.min.js']
+        scripts: ['https://cdn.jsdelivr.net/npm/xlsx-style@0.8.13/dist/xlsx.full.min.js']
     },
     materialdesign: {
         styles: [
-            'https://unpkg.com/@angular/material/prebuilt-themes/indigo-pink.css',
+            'https://cdn.jsdelivr.net/npm/@angular/material/prebuilt-themes/indigo-pink.css',
             'https://fonts.googleapis.com/icon?family=Material+Icons'
         ]
     },
     materialdesignicons: {
         styles: [
-            'https://unpkg.com/@mdi/font/css/materialdesignicons.css'
+            'https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.css'
         ]
     }
 };

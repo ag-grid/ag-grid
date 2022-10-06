@@ -15,7 +15,7 @@
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
         paths: {
-            'npm:': 'https://unpkg.com/'
+            'npm:': 'https://cdn.jsdelivr.net/npm/'
         },
         map: assign(
             {

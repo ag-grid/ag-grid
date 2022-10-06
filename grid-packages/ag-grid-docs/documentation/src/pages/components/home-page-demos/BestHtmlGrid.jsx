@@ -9,7 +9,7 @@ if(isDevelopment()) {
     helmet.push(<link key="best-html-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/styles/ag-theme-material.css`} crossOrigin="anonymous"/>);
     helmet.push(<script key="enterprise-lib" src={`${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`} type="text/javascript"/>);
 } else {
-    helmet.push(<script key="enterprise-lib" src="https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.min.js" type="text/javascript"/>);
+    helmet.push(<script key="enterprise-lib" src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js" type="text/javascript" />);
 }
 
 const BestHtmlDemo = () => (

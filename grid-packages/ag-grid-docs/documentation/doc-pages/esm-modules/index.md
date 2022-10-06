@@ -80,8 +80,8 @@ For example:
 <!doctype html>
 <html>
 <head>
-    <link rel="stylesheet" href="https://unpkg.com/ag-grid-enterprise/styles/ag-grid.css">
-    <link rel="stylesheet" href="https://unpkg.com/ag-grid-enterprise/styles/ag-theme-alpine.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/styles/ag-grid.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/styles/ag-theme-alpine.css">
     <script type="module">
         import {
             ClientSideRowModelModule,
@@ -103,7 +103,7 @@ For example:
             SideBarModule,
             StatusBarModule,
             ViewportRowModelModule,
-        } from 'https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.esm.js';
+        } from 'https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.esm.js';
 
         ModuleRegistry.registerModules([
             ClientSideRowModelModule,

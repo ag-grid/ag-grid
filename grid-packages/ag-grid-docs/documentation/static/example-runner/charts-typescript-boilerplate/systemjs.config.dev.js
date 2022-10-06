@@ -35,7 +35,7 @@
         },
         paths: {
             // paths serve as alias
-            "npm:": "https://unpkg.com/"
+            "npm:": "https://cdn.jsdelivr.net/npm/"
         },
         // map tells the System loader where to look for things
         map: assign(

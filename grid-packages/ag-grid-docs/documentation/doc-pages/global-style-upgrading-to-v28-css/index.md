@@ -9,7 +9,7 @@ The Legacy CSS files are deprecated and will be removed from the Grid in a futur
 
 ## Updating the CSS import paths
 
-There are many ways to import CSS, but however you are doing this in your app you need to delete the `/dist` part from the path. For example if you're using the unpkg CDN:
+There are many ways to import CSS, but however you are doing this in your app you need to delete the `/dist` part from the path. For example if you're using the jsdelivr CDN:
 
 ### Packages
 
@@ -17,12 +17,12 @@ There are many ways to import CSS, but however you are doing this in your app yo
 <!-- old path -->
 <link
   rel="stylesheet"
-  href="https://unpkg.com/ag-grid-community@@AG_GRID_VERSION@/dist/styles/ag-grid.css" />
+  href="https://cdn.jsdelivr.net/npm/ag-grid-community@@AG_GRID_VERSION@/dist/styles/ag-grid.css" />
 
 <!-- new path -->
 <link
   rel="stylesheet"
-  href="https://unpkg.com/ag-grid-community@@AG_GRID_VERSION@/styles/ag-grid.css" />
+  href="https://cdn.jsdelivr.net/npm/ag-grid-community@@AG_GRID_VERSION@/styles/ag-grid.css" />
 ```
 
 ### Modules
@@ -33,12 +33,12 @@ If you are using [Grid Modules](/modules/) then you will need to use the new `@a
 <!-- old path -->
 <link
   rel="stylesheet"
-  href="https://unpkg.com/@ag-grid-community/core@@AG_GRID_VERSION@/dist/styles/ag-grid.css" />
+  href="https://cdn.jsdelivr.net/npm/@ag-grid-community/core@@AG_GRID_VERSION@/dist/styles/ag-grid.css" />
 
 <!-- new path -->
 <link
   rel="stylesheet"
-  href="https://unpkg.com/@ag-grid-community/styles@@AG_GRID_VERSION@/ag-grid.css" />
+  href="https://cdn.jsdelivr.net/npm/@ag-grid-community/styles@@AG_GRID_VERSION@/ag-grid.css" />
 ```
 
 [[only-javascript]]
@@ -56,7 +56,7 @@ If you are using [Grid Modules](/modules/) then you will need to use the new `@a
 |     </head>
 |     <body>
 |     <div id="myGrid" class="ag-theme-alpine"></div>
-|     <script src="//https://unpkg.com/browse/ag-grid-community@@AG_GRID_VERSION@/dist/ag-grid-community.min.js"></script>
+|     <script src="//https://cdn.jsdelivr.net/npm/browse/ag-grid-community@@AG_GRID_VERSION@/dist/ag-grid-community.min.js"></script>
 |     <!-- Style added after AG Grid bundle -->
 |     <style>
 |         .ag-theme-alpine {

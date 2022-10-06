@@ -16,8 +16,8 @@ If however you want to use ES Modules directly in the browser then you can do so
 <!doctype html>
 <html>
 <head>
-    <link rel="stylesheet" href="https://unpkg.com/ag-grid-enterprise/styles/ag-grid.css">
-    <link rel="stylesheet" href="https://unpkg.com/ag-grid-enterprise/styles/ag-theme-alpine.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/styles/ag-grid.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/styles/ag-theme-alpine.css">
     <script type="module">
         import {
             Grid

@@ -42,9 +42,9 @@
         },
         paths: {
             // paths serve as alias
-            "npm:": "https://unpkg.com/"
+            "npm:": "https://cdn.jsdelivr.net/npm/"
         },
-        // RxJS makes a lot of requests to unpkg. This guy addressed it:
+        // RxJS makes a lot of requests to jsdelivr. This guy addressed it:
         // https://github.com/OasisDigital/rxjs-system-bundle.
         bundles: {
             "npm:rxjs-system-bundle@6.3.3/Rx.system.min.js": [

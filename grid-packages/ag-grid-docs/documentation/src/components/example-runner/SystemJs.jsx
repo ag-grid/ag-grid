@@ -81,60 +81,62 @@ const localConfiguration = {
     }
 };
 
+const NPM_CDN = 'https://cdn.jsdelivr.net/npm';
+
 const publishedConfiguration = {
     gridMap: {
-        "@ag-grid-community/styles": `https://unpkg.com/@ag-grid-community/styles@${agGridVersion}/`,
-        "@ag-grid-community/react": `https://unpkg.com/@ag-grid-community/react@${agGridReactVersion}/`,
-        "@ag-grid-community/angular": `https://unpkg.com/@ag-grid-community/angular@${agGridAngularVersion}/`,
-        "@ag-grid-community/vue": `https://unpkg.com/@ag-grid-community/vue@${agGridVueVersion}/`,
-        "@ag-grid-community/vue3": `https://unpkg.com/@ag-grid-community/vue3@${agGridVue3Version}/`,
-        "ag-grid-community": `https://unpkg.com/ag-grid-community@${agGridVersion}/`,
-        "ag-grid-enterprise": `https://unpkg.com/ag-grid-enterprise@${agGridEnterpriseVersion}/`,
-        "ag-grid-angular": `https://unpkg.com/ag-grid-angular@${agGridAngularVersion}/`,
-        "ag-grid-react": `https://unpkg.com/ag-grid-react@${agGridReactVersion}/`,
-        "ag-grid-vue": `https://unpkg.com/ag-grid-vue@${agGridVueVersion}/`,
-        "ag-grid-vue3": `https://unpkg.com/ag-grid-vue3@${agGridVue3Version}/`
+        "@ag-grid-community/styles": `${NPM_CDN}/@ag-grid-community/styles@${agGridVersion}/`,
+        "@ag-grid-community/react": `${NPM_CDN}/@ag-grid-community/react@${agGridReactVersion}/`,
+        "@ag-grid-community/angular": `${NPM_CDN}/@ag-grid-community/angular@${agGridAngularVersion}/`,
+        "@ag-grid-community/vue": `${NPM_CDN}/@ag-grid-community/vue@${agGridVueVersion}/`,
+        "@ag-grid-community/vue3": `${NPM_CDN}/@ag-grid-community/vue3@${agGridVue3Version}/`,
+        "ag-grid-community": `${NPM_CDN}/ag-grid-community@${agGridVersion}/`,
+        "ag-grid-enterprise": `${NPM_CDN}/ag-grid-enterprise@${agGridEnterpriseVersion}/`,
+        "ag-grid-angular": `${NPM_CDN}/ag-grid-angular@${agGridAngularVersion}/`,
+        "ag-grid-react": `${NPM_CDN}/ag-grid-react@${agGridReactVersion}/`,
+        "ag-grid-vue": `${NPM_CDN}/ag-grid-vue@${agGridVueVersion}/`,
+        "ag-grid-vue3": `${NPM_CDN}/ag-grid-vue3@${agGridVue3Version}/`
     },
     gridCommunityPaths: {
         /* START OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */
-        "@ag-grid-community/client-side-row-model": `https://unpkg.com/@ag-grid-community/client-side-row-model@${agGridVersion}/dist/client-side-row-model.cjs.min.js`,
-        "@ag-grid-community/core": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/core.cjs.min.js`,
-        "@ag-grid-community/csv-export": `https://unpkg.com/@ag-grid-community/csv-export@${agGridVersion}/dist/csv-export.cjs.min.js`,
-        "@ag-grid-community/infinite-row-model": `https://unpkg.com/@ag-grid-community/infinite-row-model@${agGridVersion}/dist/infinite-row-model.cjs.min.js`,
+        "@ag-grid-community/client-side-row-model": `https://cdn.jsdelivr.net/npm/@ag-grid-community/client-side-row-model@${agGridVersion}/dist/client-side-row-model.cjs.min.js`,
+        "@ag-grid-community/core": `https://cdn.jsdelivr.net/npm/@ag-grid-community/core@${agGridVersion}/dist/core.cjs.min.js`,
+        "@ag-grid-community/csv-export": `https://cdn.jsdelivr.net/npm/@ag-grid-community/csv-export@${agGridVersion}/dist/csv-export.cjs.min.js`,
+        "@ag-grid-community/infinite-row-model": `https://cdn.jsdelivr.net/npm/@ag-grid-community/infinite-row-model@${agGridVersion}/dist/infinite-row-model.cjs.min.js`,
         /* END OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */
     },
     gridEnterprisePaths: {
         /* START OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
-        "@ag-grid-community/client-side-row-model": `https://unpkg.com/@ag-grid-community/client-side-row-model@${agGridVersion}/dist/client-side-row-model.cjs.min.js`,
-        "@ag-grid-community/core": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/core.cjs.min.js`,
-        "@ag-grid-community/csv-export": `https://unpkg.com/@ag-grid-community/csv-export@${agGridVersion}/dist/csv-export.cjs.min.js`,
-        "@ag-grid-community/infinite-row-model": `https://unpkg.com/@ag-grid-community/infinite-row-model@${agGridVersion}/dist/infinite-row-model.cjs.min.js`,
-        "@ag-grid-enterprise/charts": `https://unpkg.com/@ag-grid-enterprise/charts@${agGridVersion}/dist/charts.cjs.min.js`,
-        "@ag-grid-enterprise/clipboard": `https://unpkg.com/@ag-grid-enterprise/clipboard@${agGridVersion}/dist/clipboard.cjs.min.js`,
-        "@ag-grid-enterprise/column-tool-panel": `https://unpkg.com/@ag-grid-enterprise/column-tool-panel@${agGridVersion}/dist/column-tool-panel.cjs.min.js`,
-        "@ag-grid-enterprise/core": `https://unpkg.com/@ag-grid-enterprise/core@${agGridVersion}/dist/core.cjs.min.js`,
-        "@ag-grid-enterprise/excel-export": `https://unpkg.com/@ag-grid-enterprise/excel-export@${agGridVersion}/dist/excel-export.cjs.min.js`,
-        "@ag-grid-enterprise/filter-tool-panel": `https://unpkg.com/@ag-grid-enterprise/filter-tool-panel@${agGridVersion}/dist/filter-tool-panel.cjs.min.js`,
-        "@ag-grid-enterprise/master-detail": `https://unpkg.com/@ag-grid-enterprise/master-detail@${agGridVersion}/dist/master-detail.cjs.min.js`,
-        "@ag-grid-enterprise/menu": `https://unpkg.com/@ag-grid-enterprise/menu@${agGridVersion}/dist/menu.cjs.min.js`,
-        "@ag-grid-enterprise/multi-filter": `https://unpkg.com/@ag-grid-enterprise/multi-filter@${agGridVersion}/dist/multi-filter.cjs.min.js`,
-        "@ag-grid-enterprise/range-selection": `https://unpkg.com/@ag-grid-enterprise/range-selection@${agGridVersion}/dist/range-selection.cjs.min.js`,
-        "@ag-grid-enterprise/rich-select": `https://unpkg.com/@ag-grid-enterprise/rich-select@${agGridVersion}/dist/rich-select.cjs.min.js`,
-        "@ag-grid-enterprise/row-grouping": `https://unpkg.com/@ag-grid-enterprise/row-grouping@${agGridVersion}/dist/row-grouping.cjs.min.js`,
-        "@ag-grid-enterprise/server-side-row-model": `https://unpkg.com/@ag-grid-enterprise/server-side-row-model@${agGridVersion}/dist/server-side-row-model.cjs.min.js`,
-        "@ag-grid-enterprise/set-filter": `https://unpkg.com/@ag-grid-enterprise/set-filter@${agGridVersion}/dist/set-filter.cjs.min.js`,
-        "@ag-grid-enterprise/side-bar": `https://unpkg.com/@ag-grid-enterprise/side-bar@${agGridVersion}/dist/side-bar.cjs.min.js`,
-        "@ag-grid-enterprise/sparklines": `https://unpkg.com/@ag-grid-enterprise/sparklines@${agGridVersion}/dist/sparklines.cjs.min.js`,
-        "@ag-grid-enterprise/status-bar": `https://unpkg.com/@ag-grid-enterprise/status-bar@${agGridVersion}/dist/status-bar.cjs.min.js`,
-        "@ag-grid-enterprise/viewport-row-model": `https://unpkg.com/@ag-grid-enterprise/viewport-row-model@${agGridVersion}/dist/viewport-row-model.cjs.min.js`,
+        "@ag-grid-community/client-side-row-model": `https://cdn.jsdelivr.net/npm/@ag-grid-community/client-side-row-model@${agGridVersion}/dist/client-side-row-model.cjs.min.js`,
+        "@ag-grid-community/core": `https://cdn.jsdelivr.net/npm/@ag-grid-community/core@${agGridVersion}/dist/core.cjs.min.js`,
+        "@ag-grid-community/csv-export": `https://cdn.jsdelivr.net/npm/@ag-grid-community/csv-export@${agGridVersion}/dist/csv-export.cjs.min.js`,
+        "@ag-grid-community/infinite-row-model": `https://cdn.jsdelivr.net/npm/@ag-grid-community/infinite-row-model@${agGridVersion}/dist/infinite-row-model.cjs.min.js`,
+        "@ag-grid-enterprise/charts": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/charts@${agGridVersion}/dist/charts.cjs.min.js`,
+        "@ag-grid-enterprise/clipboard": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/clipboard@${agGridVersion}/dist/clipboard.cjs.min.js`,
+        "@ag-grid-enterprise/column-tool-panel": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/column-tool-panel@${agGridVersion}/dist/column-tool-panel.cjs.min.js`,
+        "@ag-grid-enterprise/core": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/core@${agGridVersion}/dist/core.cjs.min.js`,
+        "@ag-grid-enterprise/excel-export": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/excel-export@${agGridVersion}/dist/excel-export.cjs.min.js`,
+        "@ag-grid-enterprise/filter-tool-panel": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/filter-tool-panel@${agGridVersion}/dist/filter-tool-panel.cjs.min.js`,
+        "@ag-grid-enterprise/master-detail": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/master-detail@${agGridVersion}/dist/master-detail.cjs.min.js`,
+        "@ag-grid-enterprise/menu": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/menu@${agGridVersion}/dist/menu.cjs.min.js`,
+        "@ag-grid-enterprise/multi-filter": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/multi-filter@${agGridVersion}/dist/multi-filter.cjs.min.js`,
+        "@ag-grid-enterprise/range-selection": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/range-selection@${agGridVersion}/dist/range-selection.cjs.min.js`,
+        "@ag-grid-enterprise/rich-select": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/rich-select@${agGridVersion}/dist/rich-select.cjs.min.js`,
+        "@ag-grid-enterprise/row-grouping": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/row-grouping@${agGridVersion}/dist/row-grouping.cjs.min.js`,
+        "@ag-grid-enterprise/server-side-row-model": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/server-side-row-model@${agGridVersion}/dist/server-side-row-model.cjs.min.js`,
+        "@ag-grid-enterprise/set-filter": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/set-filter@${agGridVersion}/dist/set-filter.cjs.min.js`,
+        "@ag-grid-enterprise/side-bar": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/side-bar@${agGridVersion}/dist/side-bar.cjs.min.js`,
+        "@ag-grid-enterprise/sparklines": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/sparklines@${agGridVersion}/dist/sparklines.cjs.min.js`,
+        "@ag-grid-enterprise/status-bar": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/status-bar@${agGridVersion}/dist/status-bar.cjs.min.js`,
+        "@ag-grid-enterprise/viewport-row-model": `https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/viewport-row-model@${agGridVersion}/dist/viewport-row-model.cjs.min.js`,
         /* END OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
     },
     chartMap: {
-        "ag-charts-react": `https://unpkg.com/ag-charts-react@${agChartsReactVersion}/`,
-        "ag-charts-angular": `https://unpkg.com/ag-charts-angular@${agChartsAngularVersion}/`,
-        "ag-charts-vue": `https://unpkg.com/ag-charts-vue@${agChartsVueVersion}/`,
-        "ag-charts-vue3": `https://unpkg.com/ag-charts-vue3@${agChartsVueVersion}/`,
-        "ag-charts-community": `https://unpkg.com/ag-charts-community@${agChartsVersion}/dist/ag-charts-community.cjs.min.js`,
+        "ag-charts-react": `${NPM_CDN}/ag-charts-react@${agChartsReactVersion}/`,
+        "ag-charts-angular": `${NPM_CDN}/ag-charts-angular@${agChartsAngularVersion}/`,
+        "ag-charts-vue": `${NPM_CDN}/ag-charts-vue@${agChartsVueVersion}/`,
+        "ag-charts-vue3": `${NPM_CDN}/ag-charts-vue3@${agChartsVueVersion}/`,
+        "ag-charts-community": `${NPM_CDN}/ag-charts-community@${agChartsVersion}/dist/ag-charts-community.cjs.min.js`,
     },
     chartPaths: {}
 };
@@ -260,11 +262,11 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
         systemJsPaths = isEnterprise ? configuration.gridEnterprisePaths : configuration.gridCommunityPaths;
     }
 
-    let systemJsVersion = "https://unpkg.com/systemjs@0.19.47/dist/system.js";
+    let systemJsVersion = `${NPM_CDN}/systemjs@0.19.47/dist/system.js`;
     if (framework === 'angular') {
         // Angular needs a later version to be able to import @esm-bundle/angular__compiler which
         // it requires to correctly renderer dynamic components.
-        systemJsVersion = "https://unpkg.com/systemjs@0.21.6/dist/system.js";
+        systemJsVersion = `${NPM_CDN}/systemjs@0.21.6/dist/system.js`;
     }
 
 

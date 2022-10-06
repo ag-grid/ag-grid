@@ -144,8 +144,8 @@ describe('Context/Reducer Example', () => {
 
         mount(<SimpleContextHookExample/>, {
             stylesheets: [
-                'https://unpkg.com/@ag-grid-community/styles/ag-grid.css',
-                'https://unpkg.com/@ag-grid-community/styles/ag-theme-alpine.css'
+                'https://cdn.jsdelivr.net/npm/@ag-grid-community/styles/ag-grid.css',
+                'https://cdn.jsdelivr.net/npm/@ag-grid-community/styles/ag-theme-alpine.css'
             ]
         })
 

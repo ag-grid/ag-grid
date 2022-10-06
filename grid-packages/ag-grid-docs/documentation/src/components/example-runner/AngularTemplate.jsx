@@ -21,8 +21,8 @@ const AngularTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath
             <div id="app" dangerouslySetInnerHTML={{ __html: `<my-app>Loading Angular example&hellip;</my-app>` }}></div>
 
             <script dangerouslySetInnerHTML={{ __html: `document.write('<base href="' + document.location + '" />');` }}></script>
-            <script src="https://unpkg.com/core-js-bundle@3.6.5/minified.js"></script>
-            <script src="https://unpkg.com/zone.js@0.11.2/dist/zone.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/core-js-bundle@3.6.5/minified.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/zone.js@0.11.2/dist/zone.min.js"></script>
             <Scripts files={scriptFiles} />
             <SystemJs
                 library={library}
