@@ -28,7 +28,8 @@
         "docker:run": ".docker/run.sh run",
         "docker:test-watch": ".docker/run.sh run npm run test-watch",
         "docker:test-update": ".docker/run.sh run npm run test-update",
-        "docker:clean": ".docker/run.sh clean"
+        "docker:clean": ".docker/run.sh clean",
+        "generate-chart-gallery": "npx ts-node -T tools/gallery-thumbnail-generator.ts"
     },
     "repository": {
         "type": "git",
@@ -71,6 +72,7 @@
         "@babel/types": "7.12.7",
         "@types/jest": "^25.2.1",
         "@types/jest-image-snapshot": "^4.3.1",
+        "@types/node": "^16.0.0",
         "@types/pixelmatch": "^5.2.4",
         "canvas": "^2.9.0",
         "eslint": "^6.8.0",

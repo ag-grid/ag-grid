@@ -6,8 +6,6 @@
   "license": "BSD",
   "scripts": {
     "generate-examples": "cd .. && npm run generate-examples && cd documentation",
-    "generate-chart-gallery": "node generate-chart-gallery.js",
-    "generate-chart-gallery-force": "node generate-chart-gallery.js --force-thumbnails",
     "generate-cypress-config": "node generate-cypress-config.js",
     "customise": "node customise.js",
     "build": "npm run clean && npm run customise && npm run generate-examples && npm run generate-cypress-config",

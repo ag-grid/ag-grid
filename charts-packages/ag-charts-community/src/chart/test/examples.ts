@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
 import {
     DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY,
@@ -13,7 +15,62 @@ import {
     DATA_APPLE_REVENUE_BY_PRODUCT,
     DATA_BROWSER_MARKET_SHARE_MISSING_FIRST_Y,
 } from './data';
-import { loadExampleOptions } from './utils';
+
+export function loadExampleOptions(name: string, evalFn = 'options'): any {
+    const filters = [/^import .*/, /.*AgChart\.(update|create)/, /.* container\: .*/ /*, /.* data/*/];
+    const dataFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/data.ts`;
+    const exampleFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/main.ts`;
+
+    const cleanTs = (content: Buffer) => {
+        const inputLines = content.toString().split('\n');
+        const lines: string[] = [];
+
+        let skipNext = false;
+        for (let line of inputLines) {
+            if (skipNext) {
+                skipNext = false;
+                continue;
+            }
+
+            if (line.indexOf('@ts-ignore') >= 0) {
+                skipNext = true;
+                continue;
+            }
+
+            // Remove grossly unsupported lines.
+            if (filters.some((f) => f.test(line))) continue;
+            // Remove types, without matching string literals.
+            line = ["'", '"'].some((v) => line.indexOf(v) >= 0) ? line : line.replace(/: [A-Z][A-Za-z<, >]*/g, '');
+            // Remove declares.
+            line = line.replace(/declare var.*;/g, '');
+            // Remove sugars.
+            line = line.replace(/([a-z])!/g, '$1');
+            // Remove primitives + primitive arrays.
+            line = line.replace(/: (number|string|any)(\[\]){0,}/g, '');
+            // Remove unsupported keywords.
+            line = line.replace(/export /g, '');
+
+            lines.push(line);
+        }
+
+        return lines;
+    };
+
+    const dataFileExists = fs.existsSync(dataFile);
+    const dataFileContent = dataFileExists ? cleanTs(fs.readFileSync(dataFile)) : [];
+    const exampleFileLines = cleanTs(fs.readFileSync(exampleFile));
+
+    let evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
+    try {
+        // @ts-ignore - used in the eval() call.
+        const agCharts = require('../../main');
+        return eval(evalExpr);
+    } catch (error) {
+        console.error(`AG Charts - unable to read example data for [${name}]; error: ${error.message}`);
+        console.log(evalExpr);
+        return [];
+    }
+}
 
 export const DOCS_EXAMPLES = {
     '100--stacked-area': loadExampleOptions('100--stacked-area'),
@@ -26,6 +83,7 @@ export const DOCS_EXAMPLES = {
     'chart-customisation': loadExampleOptions('chart-customisation'),
     'column-with-negative-values': loadExampleOptions('column-with-negative-values'),
     'combination-of-different-series-types': loadExampleOptions('combination-of-different-series-types'),
+    'cross-lines': loadExampleOptions('cross-lines'),
     'custom-marker-shapes': loadExampleOptions('custom-marker-shapes'),
     'custom-tooltips': loadExampleOptions('custom-tooltips'),
     'grouped-bar': loadExampleOptions('grouped-bar'),
@@ -35,7 +93,7 @@ export const DOCS_EXAMPLES = {
     'log-axis': loadExampleOptions('log-axis'),
     'market-index-treemap': loadExampleOptions('market-index-treemap'),
     'per-marker-customisation': loadExampleOptions('per-marker-customisation'),
-    // 'real-time-data-updates': loadExampleOptions('real-time-data-updates'),
+    'real-time-data-updates': loadExampleOptions('real-time-data-updates'),
     'simple-area': loadExampleOptions('simple-area'),
     'simple-bar': loadExampleOptions('simple-bar'),
     'simple-bubble': loadExampleOptions('simple-bubble'),
@@ -80,6 +138,7 @@ export const SIMPLE_HISTOGRAM_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['sim
 export const HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['histogram-with-specified-bins'];
 export const XY_HISTOGRAM_WITH_MEAN_EXAMPLE: AgCartesianChartOptions =
     DOCS_EXAMPLES['xy-histogram-with-mean-aggregation'];
+export const CROSS_LINES_EXAMPLE: AgCartesianChartOptions = DOCS_EXAMPLES['cross-lines'];
 
 export const GROUPED_CATEGORY_AXIS_EXAMPLE: AgChartOptions = {};
 {

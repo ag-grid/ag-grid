@@ -67,7 +67,8 @@ const options: AgChartOptions = {
         {
           type: 'range',
           range: ['Jan', 'Mar'],
-          fill: 'rgb(223,223,223, 0.3)',
+          fill: '#DFDFDF',
+          fillOpacity: 0.3,
           strokeWidth: 0,
           label: {
             text: 'Q1',
@@ -87,7 +88,8 @@ const options: AgChartOptions = {
         {
           type: 'range',
           range: ['Jul', 'Sep'],
-          fill: 'rgb(223,223,223, 0.3)',
+          fill: '#DFDFDF',
+          fillOpacity: 0.3,
           strokeWidth: 0,
           label: {
             text: 'Q3',
@@ -113,8 +115,10 @@ const options: AgChartOptions = {
         {
           type: 'line',
           value: -321,
-          fill: 'rgb(51,0,102, 0.1)',
-          stroke: 'rgb(51,0,102, 0.3)',
+          fill: '#330066',
+          fillOpacity: 0.1,
+          stroke: '#330066',
+          strokeOpacity: 0.3,
           lineDash: [10, 2],
           label: {
             text: 'Peak Male Release',
@@ -125,8 +129,10 @@ const options: AgChartOptions = {
         {
           type: 'range',
           range: [-90, 65],
-          fill: 'rgb(51,0,102, 0.1)',
-          stroke: 'rgb(51,0,102, 0.2)',
+          fill: '#330066',
+          fillOpacity: 0.1,
+          stroke: '#330066',
+          strokeOpacity: 0.2,
           strokeWidth: 0,
           label: {
             text: 'Female Range',
