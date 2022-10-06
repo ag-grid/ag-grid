@@ -10,7 +10,6 @@ import { Caption } from './caption';
 import { createId } from './util/id';
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from './util/angle';
 import { doOnce } from './util/function';
-import { ContinuousScale } from './scale/continuousScale';
 import { CountableTimeInterval, TimeInterval } from './util/time/interval';
 import { CrossLine } from './chart/crossline/crossLine';
 import {
@@ -29,6 +28,7 @@ import {
 } from './util/validation';
 import { ChartAxisDirection } from './chart/chartAxis';
 import { Layers } from './chart/layers';
+import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -238,8 +238,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     ticks?: any[];
-    protected getTicks() {
-        return this.ticks ?? this.scale.ticks!(this.calculatedTickCount);
+    protected getTicks(offset?: number) {
+        return this.ticks ?? this.scale.ticks!(this.calculatedTickCount, offset);
     }
 
     readonly axisGroup = new Group({ name: `${this.id}-axis`, layer: true, zIndex: Layers.AXIS_ZINDEX });
@@ -546,30 +546,35 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
         const halfBandwidth = (scale.bandwidth || 0) / 2;
 
-        const ticks = this.getTicks();
+        let count = 0;
+        let labelOverlap = true;
+        let ticks: any[] = [];
+        const checkOverlap = this.tick.count === undefined;
+        const labelPadding = 15;
 
-        const tickGroupSelection = this.updateTicks({ ticks });
-        const labelBboxes = this.updateLabels({
-            parallelFlipRotation,
-            regularFlipRotation,
-            sideFlag,
-            tickLineGroupSelection: tickGroupSelection,
-            ticks,
-        });
-        const gridlineGroupSelection = this.updateGridLines({
+        while (labelOverlap && count < 10) {
+            ticks = this.updateSelections({ count, halfBandwidth, gridLength });
+
+            const labelData = this.updateLabels({
+                parallelFlipRotation,
+                regularFlipRotation,
+                sideFlag,
+                tickLineGroupSelection: this.tickGroupSelection,
+                ticks,
+            });
+
+            labelOverlap = checkOverlap ? axisLabelsOverlap(labelData, labelPadding) : false;
+            count++;
+        }
+
+        this.updateGridLines({
             gridLength,
-            ticks,
             halfBandwidth,
-            labelBboxes,
             sideFlag,
         });
-
-        this.tickGroupSelection = tickGroupSelection;
-        this.gridlineGroupSelection = gridlineGroupSelection;
 
         let anyTickVisible = false;
-        const translationYFn = (_: unknown, datum: any) => Math.round(scale.convert(datum) + halfBandwidth);
-        const visibleFn = (node: Group) => {
+        const visibleFn = (node: Group, _datum: any) => {
             const min = Math.floor(requestedRangeMin);
             const max = Math.ceil(requestedRangeMax);
             const visible = min !== max && node.translationY >= min && node.translationY <= max;
@@ -577,8 +582,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
             return visible;
         };
 
-        tickGroupSelection.attrFn('translationY', translationYFn).attrFn('visible', visibleFn);
-        gridlineGroupSelection.attrFn('translationY', translationYFn).attrFn('visible', visibleFn);
+        const { gridlineGroupSelection, tickGroupSelection } = this;
+        gridlineGroupSelection.attrFn('visible', visibleFn);
+        tickGroupSelection.attrFn('visible', visibleFn);
 
         this.tickGroup.visible = anyTickVisible;
         this.gridlineGroup.visible = anyTickVisible;
@@ -593,10 +599,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         tickGroupSelection
             .selectByTag<Line>(Tags.Tick)
-            .each((line, _, index) => {
+            .each((line) => {
                 line.strokeWidth = tick.width;
                 line.stroke = tick.color;
-                line.visible = labelBboxes.has(index);
             })
             .attr('x1', sideFlag * tick.size)
             .attr('x2', 0)
@@ -616,7 +621,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         });
     }
 
-    private updateTicks({ ticks }: { ticks: any[] }) {
+    private updateTickGroupSelection({ ticks }: { ticks: any[] }) {
         const updateAxis = this.tickGroupSelection.setData(ticks);
         updateAxis.exit.remove();
 
@@ -628,21 +633,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return updateAxis.merge(enterAxis);
     }
 
-    private updateGridLines({
-        gridLength,
-        ticks,
-        labelBboxes,
-        halfBandwidth,
-        sideFlag,
-    }: {
-        gridLength: number;
-        ticks: any[];
-        labelBboxes: Map<number, BBox | null>;
-        halfBandwidth: number;
-        sideFlag: -1 | 1;
-    }) {
-        const { gridStyle, scale, tick } = this;
-
+    private updateGridLineGroupSelection(gridLength: number, ticks: any[]) {
         const updateGridlines = this.gridlineGroupSelection.setData(gridLength ? ticks : []);
         updateGridlines.exit.remove();
         let gridlineGroupSelection = updateGridlines;
@@ -657,6 +648,43 @@ export class Axis<S extends Scale<D, number>, D = any> {
             gridlineGroupSelection = updateGridlines.merge(enterGridline);
         }
 
+        return gridlineGroupSelection;
+    }
+
+    private updateSelections({
+        count,
+        halfBandwidth,
+        gridLength,
+    }: {
+        count: number;
+        halfBandwidth: number;
+        gridLength: number;
+    }) {
+        const { scale } = this;
+        const ticks = this.getTicks(count);
+        const gridlineGroupSelection = this.updateGridLineGroupSelection(gridLength, ticks);
+        const tickGroupSelection = this.updateTickGroupSelection({ ticks });
+
+        const translationYFn = (_: unknown, datum: any) => Math.round(scale.convert(datum) + halfBandwidth);
+        gridlineGroupSelection.attrFn('translationY', translationYFn);
+        tickGroupSelection.attrFn('translationY', translationYFn);
+
+        this.tickGroupSelection = tickGroupSelection;
+        this.gridlineGroupSelection = gridlineGroupSelection;
+
+        return ticks;
+    }
+
+    private updateGridLines({
+        gridLength,
+        halfBandwidth,
+        sideFlag,
+    }: {
+        gridLength: number;
+        halfBandwidth: number;
+        sideFlag: -1 | 1;
+    }) {
+        const { gridStyle, scale, tick } = this;
         if (gridLength && gridStyle.length) {
             const styleCount = gridStyle.length;
             let gridLines: Selection<Shape, Group, D, D>;
@@ -664,7 +692,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             if (this.radialGrid) {
                 const angularGridLength = normalizeAngle360Inclusive(toRadians(gridLength));
 
-                gridLines = gridlineGroupSelection.selectByTag<Arc>(Tags.GridLine).each((arc, datum, index) => {
+                gridLines = this.gridlineGroupSelection.selectByTag<Arc>(Tags.GridLine).each((arc, datum) => {
                     const radius = Math.round(scale.convert(datum) + halfBandwidth);
 
                     arc.centerX = 0;
@@ -672,15 +700,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     arc.endAngle = angularGridLength;
                     arc.radiusX = radius;
                     arc.radiusY = radius;
-                    arc.visible = labelBboxes.has(index);
                 });
             } else {
-                gridLines = gridlineGroupSelection.selectByTag<Line>(Tags.GridLine).each((line, _, index) => {
+                gridLines = this.gridlineGroupSelection.selectByTag<Line>(Tags.GridLine).each((line) => {
                     line.x1 = 0;
                     line.x2 = -sideFlag * gridLength;
                     line.y1 = 0;
                     line.y2 = 0;
-                    line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1 && labelBboxes.has(index);
+                    line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1;
                 });
             }
 
@@ -693,8 +720,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 gridLine.fill = undefined;
             });
         }
-
-        return gridlineGroupSelection;
     }
 
     private updateLabels({
@@ -770,7 +795,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const step = availableRange / labelCount;
 
         const calculateLabelsLength = (bboxes: Map<number, BBox | null>, useWidth: boolean) => {
-            let totalLength = 0;
             let rotate = false;
             const lastIdx = bboxes.size - 1;
             const padding = 12;
@@ -782,18 +806,17 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 const divideBy = (i === 0 && halfFirstLabelLength) || (i === lastIdx && halfLastLabelLength) ? 2 : 1;
                 const length = useWidth ? bbox.width / divideBy : bbox.height / divideBy;
                 const lengthWithPadding = length <= 0 ? 0 : length + padding;
-                totalLength += lengthWithPadding;
 
                 if (lengthWithPadding > step) {
                     rotate = true;
                 }
             }
-            return { totalLength, rotate };
+            return rotate;
         };
 
         let useWidth = parallelLabels; // When the labels are parallel to the axis line, use the width of the text to calculate the total length of all labels
 
-        let { totalLength: totalLabelLength, rotate } = calculateLabelsLength(labelBboxes, useWidth);
+        let rotate = calculateLabelsLength(labelBboxes, useWidth);
 
         this._labelAutoRotated = false;
         if (label.rotation === undefined && label.autoRotate === true && rotate) {
@@ -816,8 +839,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
                         ? true
                         : false;
             }
-
-            totalLabelLength = calculateLabelsLength(labelBboxes, useWidth).totalLength;
         }
 
         const autoRotation = parallelLabels ? (parallelFlipFlag * Math.PI) / 2 : regularFlipFlag === -1 ? Math.PI : 0;
@@ -840,6 +861,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             ? 'end'
             : 'start';
 
+        const labelData: PointLabelDatum[] = [];
         labelSelection.each((label) => {
             if (label.text === '' || label.text == undefined) {
                 label.visible = false; // hide empty labels
@@ -851,33 +873,29 @@ export class Axis<S extends Scale<D, number>, D = any> {
             label.x = labelX;
             label.rotationCenterX = labelX;
             label.rotation = autoRotation + labelRotation + labelAutoRotation;
+
+            const userHidden = label.text === '' || label.text == undefined;
+
+            if (userHidden) {
+                return;
+            }
+
+            const { x = 0, y = 0, width = 0, height = 0 } = label.computeTransformedBBox() || {};
+            labelData.push({
+                point: {
+                    x,
+                    y,
+                    size: 0,
+                },
+                label: {
+                    width,
+                    height,
+                    text: label.text,
+                },
+            });
         });
 
-        if (totalLabelLength > availableRange) {
-            const isContinuous = scale instanceof ContinuousScale;
-
-            const averageLabelLength = totalLabelLength / labelCount;
-            const labelsToShow = Math.floor(availableRange / averageLabelLength);
-            const showEvery = labelsToShow > 2 ? Math.ceil(labelCount / labelsToShow) : labelCount;
-
-            let visibleLabelIndex = 0;
-            labelSelection.each((label, _, index) => {
-                if (label.visible !== true) {
-                    return;
-                }
-
-                const forceVisible =
-                    isContinuous && this.tick.count === undefined ? index === 0 || index === labelCount - 1 : false; // always show first and last labels for a continuous axis when tick count has not been specified by the user
-                label.visible = forceVisible || visibleLabelIndex % showEvery === 0 ? true : false;
-                visibleLabelIndex++;
-
-                if (!label.visible) {
-                    labelBboxes.delete(index);
-                }
-            });
-        }
-
-        return labelBboxes;
+        return labelData;
     }
 
     private updateLine() {

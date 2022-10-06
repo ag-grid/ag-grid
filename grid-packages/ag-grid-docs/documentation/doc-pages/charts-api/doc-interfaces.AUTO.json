@@ -4903,7 +4903,7 @@
     },
     "ticks": {
       "type": {
-        "arguments": { "count": "any" },
+        "arguments": { "count": "any", "offset?": "number" },
         "returnType": "D[]",
         "optional": true
       }
