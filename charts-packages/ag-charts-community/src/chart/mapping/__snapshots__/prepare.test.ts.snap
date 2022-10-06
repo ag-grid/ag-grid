@@ -8133,7 +8133,19 @@ Object {
     Object {
       "angleKey": "2018/19",
       "angleName": "",
-      "callout": Object {
+      "calloutLabel": Object {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "minAngle": 20,
+        "offset": 3,
+      },
+      "calloutLabelKey": "type",
+      "calloutLabelName": undefined,
+      "calloutLine": Object {
         "length": 10,
         "strokeWidth": 2,
       },
@@ -8180,18 +8192,6 @@ Object {
       ],
       "innerRadiusOffset": 0,
       "innerRadiusRatio": 0.5,
-      "label": Object {
-        "color": "rgb(70, 70, 70)",
-        "enabled": false,
-        "fontFamily": "Verdana, sans-serif",
-        "fontSize": 12,
-        "fontStyle": undefined,
-        "fontWeight": undefined,
-        "minAngle": 20,
-        "offset": 3,
-      },
-      "labelKey": "type",
-      "labelName": undefined,
       "lineDash": Array [
         0,
       ],
@@ -8867,7 +8867,19 @@ Object {
     Object {
       "angleKey": "population",
       "angleName": "",
-      "callout": Object {
+      "calloutLabel": Object {
+        "color": "rgb(70, 70, 70)",
+        "enabled": true,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": undefined,
+        "fontWeight": undefined,
+        "minAngle": 0,
+        "offset": 3,
+      },
+      "calloutLabelKey": "religion",
+      "calloutLabelName": undefined,
+      "calloutLine": Object {
         "length": 10,
         "strokeWidth": 2,
       },
@@ -8893,18 +8905,6 @@ Object {
         },
       },
       "innerRadiusOffset": 0,
-      "label": Object {
-        "color": "rgb(70, 70, 70)",
-        "enabled": true,
-        "fontFamily": "Verdana, sans-serif",
-        "fontSize": 12,
-        "fontStyle": undefined,
-        "fontWeight": undefined,
-        "minAngle": 0,
-        "offset": 3,
-      },
-      "labelKey": "religion",
-      "labelName": undefined,
       "lineDash": Array [
         0,
       ],

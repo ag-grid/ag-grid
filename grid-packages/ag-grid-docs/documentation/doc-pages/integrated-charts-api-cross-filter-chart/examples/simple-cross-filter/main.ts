@@ -41,7 +41,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
           title: {
             enabled: false,
           },
-          label: {
+          calloutLabel: {
             enabled: false,
           },
         },

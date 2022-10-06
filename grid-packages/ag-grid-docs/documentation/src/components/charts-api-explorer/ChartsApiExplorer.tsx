@@ -81,7 +81,7 @@ const createOptionsJson = (chartType: string, options: any) => {
             json.series = [{
                 type: 'pie',
                 angleKey: 'revenue',
-                labelKey: 'month',
+                calloutLabelKey: 'month',
                 ...options.series,
             }];
             const firstSeries = json.series?.[0];

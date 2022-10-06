@@ -368,6 +368,7 @@ export {
     HeaderCheckboxSelectionCallbackParams,
     HeaderCheckboxSelectionCallback,
     ColumnsMenuParams,
+    ColumnMenuTab,
     HeaderClassParams,
     HeaderClass,
     ToolPanelClassParams,

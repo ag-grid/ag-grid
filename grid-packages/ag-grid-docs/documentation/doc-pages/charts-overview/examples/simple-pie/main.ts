@@ -16,12 +16,12 @@ const options: AgChartOptions = {
     {
       data: getData(),
       type: 'pie',
-      labelKey: 'religion',
+      calloutLabelKey: 'religion',
       angleKey: 'population',
-      label: {
+      calloutLabel: {
         minAngle: 0,
       },
-      callout: {
+      calloutLine: {
         strokeWidth: 2,
       },
       fills: [

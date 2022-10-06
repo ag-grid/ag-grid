@@ -8,29 +8,42 @@ export function initFontPanelParams(
     chartOptionsService: ChartOptionsService,
     getSelectedSeries: () => ChartSeriesType) {
 
+    const getFontOptionExpression = (fontOption: string) => {
+        const labelProperty = getSelectedSeries() === 'pie' ? 'calloutLabel' : 'label';
+        return `${labelProperty}.${fontOption}`;
+    };
+    const getFontOption = <T = string>(fontOption: string) => {
+        const expression = getFontOptionExpression(fontOption);
+        return chartOptionsService.getSeriesOption<T>(expression, getSelectedSeries());
+    };
+    const setFontOption = (fontOption: string, value: any) => {
+        const expression = getFontOptionExpression(fontOption);
+        chartOptionsService.setSeriesOption(expression, value, getSelectedSeries());
+    };
+
     const initialFont = {
-        family: chartOptionsService.getSeriesOption("label.fontFamily", getSelectedSeries()),
-        style: chartOptionsService.getSeriesOption("label.fontStyle", getSelectedSeries()),
-        weight: chartOptionsService.getSeriesOption("label.fontWeight", getSelectedSeries()),
-        size: chartOptionsService.getSeriesOption<number>("label.fontSize", getSelectedSeries()),
-        color: chartOptionsService.getSeriesOption("label.color", getSelectedSeries())
+        family: getFontOption('fontFamily'),
+        style: getFontOption('fontStyle'),
+        weight: getFontOption('fontWeight'),
+        size: getFontOption<number>('fontSize'),
+        color: getFontOption('color'),
     };
 
     const setFont = (font: Font) => {
         if (font.family) {
-            chartOptionsService.setSeriesOption("label.fontFamily", font.family, getSelectedSeries());
+            setFontOption('fontFamily', font.family);
         }
         if (font.weight) {
-            chartOptionsService.setSeriesOption("label.fontWeight", font.weight, getSelectedSeries());
+            setFontOption('fontWeight', font.weight);
         }
         if (font.style) {
-            chartOptionsService.setSeriesOption("label.fontStyle", font.style, getSelectedSeries());
+            setFontOption('fontStyle', font.style);
         }
         if (font.size) {
-            chartOptionsService.setSeriesOption("label.fontSize", font.size, getSelectedSeries());
+            setFontOption('fontSize', font.size);
         }
         if (font.color) {
-            chartOptionsService.setSeriesOption("label.color", font.color, getSelectedSeries());
+            setFontOption('color', font.color);
         }
     };
 
@@ -38,8 +51,8 @@ export function initFontPanelParams(
 
     const params: FontPanelParams = {
         name: chartTranslationService.translate('labels'),
-        enabled: chartOptionsService.getSeriesOption("label.enabled", getSelectedSeries()) || false,
-        setEnabled: (enabled: boolean) => chartOptionsService.setSeriesOption("label.enabled", enabled, getSelectedSeries()),
+        enabled: getFontOption('enabled') || false,
+        setEnabled: (enabled: boolean) => setFontOption('enabled', enabled),
         suppressEnabledCheckbox: false,
         initialFont: initialFont,
         setFont: setFont

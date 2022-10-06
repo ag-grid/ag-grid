@@ -7,7 +7,8 @@ import {
     ColSpanParams,
     IAggFunc,
     ColumnFunctionCallbackParams,
-    RowSpanParams
+    RowSpanParams,
+    ColumnMenuTab
 } from "./colDef";
 import { EventService } from "../eventService";
 import { Autowired, PostConstruct } from "../context/context";
@@ -818,7 +819,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return this.colDef.enableRowGroup === true;
     }
 
-    public getMenuTabs(defaultValues: string[]): string[] {
+    public getMenuTabs(defaultValues: ColumnMenuTab[]): ColumnMenuTab[] {
         let menuTabs = this.getColDef().menuTabs;
 
         if (menuTabs == null) {

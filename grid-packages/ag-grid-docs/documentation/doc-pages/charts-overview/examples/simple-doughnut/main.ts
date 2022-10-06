@@ -20,12 +20,12 @@ const options: AgChartOptions = {
   series: [
     {
       type: 'pie',
-      labelKey: 'type',
+      calloutLabelKey: 'type',
       fillOpacity: 0.9,
       strokeWidth: 0,
       angleKey: '2018/19',
       sectorLabelKey: '2018/19',
-      label: {
+      calloutLabel: {
         enabled: false,
       },
       sectorLabel: {

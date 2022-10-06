@@ -14,7 +14,7 @@ const options: AgChartOptions = {
   series: [
     {
       type: 'pie',
-      labelKey: 'os',
+      calloutLabelKey: 'os',
       angleKey: 'share',
       innerRadiusOffset: -70,
     },

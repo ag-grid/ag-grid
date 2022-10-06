@@ -17,7 +17,7 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'gold',
-    menuTabs: ['generalMenuTab', 'gibberishMenuTab'],
+    menuTabs: ['generalMenuTab'],
   },
   { field: 'silver', menuTabs: [] },
   { field: 'bronze' },

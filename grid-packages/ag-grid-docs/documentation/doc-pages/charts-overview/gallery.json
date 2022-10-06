@@ -1,126 +1,163 @@
+
 {
     "Bar/Column": {
         "Simple Bar": {
-            "description": "Bar charts represent data using horizontal bars, with the length of each bar proportional to the value being plotted. They are useful for categorical data, and are simple to interpret. They work best where the number of data points is limited."
+            "description": "Bar charts represent data using horizontal bars, with the length of each bar proportional to the value being plotted. They are useful for categorical data, and are simple to interpret. They work best where the number of data points is limited.",
+            "example": "simple-bar"
         },
         "Grouped Bar": {
-            "description": "Grouped bar charts (also known as clustered bar charts) show multiple series with the <a href='../simple-bar/'>bars</a> grouped by category, to allow for easier comparisons across different series."
+            "description": "Grouped bar charts (also known as clustered bar charts) show multiple series with the <a href='../simple-bar/'>bars</a> grouped by category, to allow for easier comparisons across different series.",
+            "example": "grouped-bar"
         },
         "Stacked Bar": {
-            "description": "Stacked bar charts allow part-to-whole comparisons, with series stacked from left to right in the horizontal <a href='../simple-bar/'>bars</a>. They make it easy to compare combined bar lengths."
+            "description": "Stacked bar charts allow part-to-whole comparisons, with series stacked from left to right in the horizontal <a href='../simple-bar/'>bars</a>. They make it easy to compare combined bar lengths.",
+            "example": "stacked-bar"
         },
         "100% Stacked Bar": {
-            "description": "100% stacked bar charts show the relative percentage of multiple series in <a href='../stacked-bar/'>stacked bars</a>, where each stacked bar always totals to 100%."
+            "description": "100% stacked bar charts show the relative percentage of multiple series in <a href='../stacked-bar/'>stacked bars</a>, where each stacked bar always totals to 100%.",
+            "example": "100--stacked-bar"
         },
         "Bar With Labels": {
-            "description": "Using labels in a <a href='../simple-bar/'>bar chart</a> can be useful to highlight the values of each bar."
+            "description": "Using labels in a <a href='../simple-bar/'>bar chart</a> can be useful to highlight the values of each bar.",
+            "example": "bar-with-labels"
         },
         "Simple Column": {
-            "description": "Column charts (also known as vertical <a href='../simple-bar/'>bar charts</a>) represent data using vertical columns, with the height of each column proportional to the value being plotted. They can be used to plot both nominal and ordinal data, and are simple to interpret. They work best where the number of data points is limited."
+            "description": "Column charts (also known as vertical <a href='../simple-bar/'>bar charts</a>) represent data using vertical columns, with the height of each column proportional to the value being plotted. They can be used to plot both nominal and ordinal data, and are simple to interpret. They work best where the number of data points is limited.",
+            "example": "simple-column"
         },
         "Grouped Column": {
-            "description": "Grouped column charts (also known as clustered column charts) present multiple series with the <a href='../simple-column/'>columns</a> grouped by category, to allow for easier comparisons across different series."
+            "description": "Grouped column charts (also known as clustered column charts) present multiple series with the <a href='../simple-column/'>columns</a> grouped by category, to allow for easier comparisons across different series.",
+            "example": "grouped-column"
         },
         "Stacked Column": {
-            "description": "Stacked column charts allow part-to-whole comparisons, with series stacked on top of each other in the vertical <a href='../simple-column/'>columns</a>."
+            "description": "Stacked column charts allow part-to-whole comparisons, with series stacked on top of each other in the vertical <a href='../simple-column/'>columns</a>.",
+            "example": "stacked-column"
         },
         "100% Stacked Column": {
-            "description": "100% stacked column charts show the relative percentage of multiple series in <a href='../stacked-column/'>stacked columns</a>, where each stacked column always totals to 100%."
+            "description": "100% stacked column charts show the relative percentage of multiple series in <a href='../stacked-column/'>stacked columns</a>, where each stacked column always totals to 100%.",
+            "example": "100--stacked-column"
         },
         "Column With Negative Values": {
-            "description": "Column and bar charts can also be used to represent negative values alongside positive ones."
+            "description": "Column and bar charts can also be used to represent negative values alongside positive ones.",
+            "example": "column-with-negative-values"
         }
     },
     "Pie/Doughnut": {
         "Simple Pie": {
-            "description": "Pie charts are used to express a part-to-whole relationship, where all the slices combine to represent 100%. They work best for a small number of categories."
+            "description": "Pie charts are used to express a part-to-whole relationship, where all the slices combine to represent 100%. They work best for a small number of categories.",
+            "example": "simple-pie"
         },
         "Simple Doughnut": {
-            "description": "Doughnut charts are similar to <a href='../simple-pie/'>pie charts</a>, being used to express a part-to-whole relationship, but allow for multiple series to be shown on the same chart for comparison."
+            "description": "Doughnut charts are similar to <a href='../simple-pie/'>pie charts</a>, being used to express a part-to-whole relationship, but allow for multiple series to be shown on the same chart for comparison.",
+            "example": "simple-doughnut"
         }
     },
     "Line": {
         "Simple Line": {
-            "description": "Line charts represent each series as a separate line. They are useful to show change or trends over time, and are able to better present more data points than <a href='../simple-bar/'>bar</a> or <a href='../simple-column/'>column</a> charts."
+            "description": "Line charts represent each series as a separate line. They are useful to show change or trends over time, and are able to better present more data points than <a href='../simple-bar/'>bar</a> or <a href='../simple-column/'>column</a> charts.",
+            "example": "simple-line"
         },
         "Line With Gaps": {
-            "description": "When data is missing in some line series compared to others, these gaps in the data are reflected in the lines."
+            "description": "When data is missing in some line series compared to others, these gaps in the data are reflected in the lines.",
+            "example": "line-with-gaps"
         }
     },
     "Scatter/Bubble": {
         "Simple Scatter": {
-            "description": "Scatter charts (also known as scatter plots or XY charts) show the relationship between two variables, placing one variable on each axis, and can be useful for demonstrating any correlation between the variables."
+            "description": "Scatter charts (also known as scatter plots or XY charts) show the relationship between two variables, placing one variable on each axis, and can be useful for demonstrating any correlation between the variables.",
+            "example": "simple-scatter"
         },
         "Simple Bubble": {
-            "description": "Bubble charts are a specialised type of <a href='../simple-scatter/'>scatter charts</a> that can represent a third variable through the size of each marker (or bubble)."
+            "description": "Bubble charts are a specialised type of <a href='../simple-scatter/'>scatter charts</a> that can represent a third variable through the size of each marker (or bubble).",
+            "example": "simple-bubble"
         },
         "Bubble With Negative Values": {
-            "description": "The axes of scatter and bubble charts can be extended to plot positive and negative values."
+            "description": "The axes of scatter and bubble charts can be extended to plot positive and negative values.",
+            "example": "bubble-with-negative-values"
         },
         "Bubble With Categories": {
-            "description": "The axes of scatter and bubble charts can show categories in addition to values."
+            "description": "The axes of scatter and bubble charts can show categories in addition to values.",
+            "example": "bubble-with-categories"
         }
     },
     "Area": {
         "Simple Area": {
-            "description": "Area charts plot series using a line with the area below the line filled. They are useful to show changes over time, and are easy to interpret."
+            "description": "Area charts plot series using a line with the area below the line filled. They are useful to show changes over time, and are easy to interpret.",
+            "example": "simple-area"
         },
         "Stacked Area": {
-            "description": "Stacked area charts plot multiple <a href='../simple-area/'>area</a> series stacked on top of each other, showing how part-to-whole relationships change over time."
+            "description": "Stacked area charts plot multiple <a href='../simple-area/'>area</a> series stacked on top of each other, showing how part-to-whole relationships change over time.",
+            "example": "stacked-area"
         },
         "100% Stacked Area": {
-            "description": "100% stacked area charts show the relative percentage of multiple series in <a href='../stacked-area/'>stacked areas</a>, where the cumulative area always totals to 100%."
+            "description": "100% stacked area charts show the relative percentage of multiple series in <a href='../stacked-area/'>stacked areas</a>, where the cumulative area always totals to 100%.",
+            "example": "100--stacked-area"
         },
         "Area With Negative Values": {
-            "description": "<a href='../simple-area/'>Area charts</a> can also be used with negative values, with the area between the line and the axis being filled."
+            "description": "<a href='../simple-area/'>Area charts</a> can also be used with negative values, with the area between the line and the axis being filled.",
+            "example": "area-with-negative-values"
         }
     },
     "Histogram": {
         "Simple Histogram": {
-            "description": "Histograms show your data grouped into bins, revealing underlying trends. A standard histogram plots the population size of each bin against the y-axis. Here we show the distribution of car engine sizes, using the <code>engine-size</code> field from the available data."
+            "description": "Histograms show your data grouped into bins, revealing underlying trends. A standard histogram plots the population size of each bin against the y-axis. Here we show the distribution of car engine sizes, using the <code>engine-size</code> field from the available data.",
+            "example": "simple-histogram"
         },
         "Histogram With Specified Bins": {
-            "description": "Rather than using the automatically generated fixed-width bins, it is possible to explicitly specify bins. In this case the bins can be different widths. In the example below the data is split into light, medium, and heavy vehicles, and we also demonstrate custom tooltips to give names to these categories."
+            "description": "Rather than using the automatically generated fixed-width bins, it is possible to explicitly specify bins. In this case the bins can be different widths. In the example below the data is split into light, medium, and heavy vehicles, and we also demonstrate custom tooltips to give names to these categories.",
+            "example": "histogram-with-specified-bins"
         },
         "XY Histogram With Mean Aggregation": {
-            "description": "Here we bin the data by car engine size, but plot the average highway MPG in the y-axis, revealing the relationship between these two fields. We also plot the same data as a scatter series to illustrate the aggregation."
+            "description": "Here we bin the data by car engine size, but plot the average highway MPG in the y-axis, revealing the relationship between these two fields. We also plot the same data as a scatter series to illustrate the aggregation.",
+            "example": "xy-histogram-with-mean-aggregation"
         }
     },
     "Treemap": {
         "Market Index Treemap": {
-            "description": "A treemap of a snapshot of the S&P 500 stock market index."
+            "description": "A treemap of a snapshot of the S&P 500 stock market index.",
+            "example": "market-index-treemap"
         }
     },
     "Feature Highlights": {
         "Cross Lines": {
-            "description": "Cross lines or shaded regions will emphasise trends and draw attention to important information such as a threshold."
+            "description": "Cross lines or shaded regions will emphasise trends and draw attention to important information such as a threshold.",
+            "example": "cross-lines"
         },
         "Time Axis With Irregular Intervals": {
-            "description": "A time axis represents a continuous length of time, and so can be easily used to visualise data with irregular time intervals."
+            "description": "A time axis represents a continuous length of time, and so can be easily used to visualise data with irregular time intervals.",
+            "example": "time-axis-with-irregular-intervals"
         },
         "Log Axis": {
-            "description": "Log axis charts are great at showing the rate of change over time. If the line is straight, the rate of change is constant."
+            "description": "Log axis charts are great at showing the rate of change over time. If the line is straight, the rate of change is constant.",
+            "example": "log-axis"
         },
         "Real-Time Data Updates": {
-            "description": "Charts will re-render immediately when new data is provided. This example demonstrates the performance of a chart with new data introduced every 50 milliseconds."
+            "description": "Charts will re-render immediately when new data is provided. This example demonstrates the performance of a chart with new data introduced every 50 milliseconds.",
+            "example": "real-time-data-updates"
         },
         "Combination of Different Series Types": {
-            "description": "Different types of data series can be combined together in the same chart. This example shows how a <a href='../simple-line/'>line series</a> might be combined with a <a href='../grouped-column/'>grouped column series</a>."
+            "description": "Different types of data series can be combined together in the same chart. This example shows how a <a href='../simple-line/'>line series</a> might be combined with a <a href='../grouped-column/'>grouped column series</a>.",
+            "example": "combination-of-different-series-types"
         },
         "_Large Datasets": {
-            "description": "Scatter, line, area and bar series have been optimised for large datasets. This example shows a configuration that is optimised for fast rendering of these series types."
+            "description": "Scatter, line, area and bar series have been optimised for large datasets. This example shows a configuration that is optimised for fast rendering of these series types.",
+            "example": ""
         },
         "Chart Customisation": {
-            "description": "As well as the series themselves, many other aspects of the charts can be customised and formatted to your liking, including the background, padding, titles, axes, and legend."
+            "description": "As well as the series themselves, many other aspects of the charts can be customised and formatted to your liking, including the background, padding, titles, axes, and legend.",
+            "example": "chart-customisation"
         },
         "Custom Marker Shapes": {
-            "description": "The library provides a variety of different marker shapes that can be used. In addition, you can provide your own shapes by extending the <code>Marker</code> class, as shown with the heart-shaped marker below."
+            "description": "The library provides a variety of different marker shapes that can be used. In addition, you can provide your own shapes by extending the <code>Marker</code> class, as shown with the heart-shaped marker below.",
+            "example": "custom-marker-shapes"
         },
         "Custom Tooltips": {
-            "description": "The tooltips used in the charts can be fully customised, using your own HTML and CSS to achieve the look you want."
+            "description": "The tooltips used in the charts can be fully customised, using your own HTML and CSS to achieve the look you want.",
+            "example": "custom-tooltips"
         },
         "Per-Marker Customisation": {
-            "description": "As well as customising all markers for a particular series, you can also customise each marker in the series individually, based on the datum that the marker represents. For example, the colour of the markers below is set based on the magnitude."
+            "description": "As well as customising all markers for a particular series, you can also customise each marker in the series individually, based on the datum that the marker represents. For example, the colour of the markers below is set based on the magnitude.",
+            "example": "per-marker-customisation"
         }
     }
 }

@@ -17,7 +17,7 @@ const options: AgChartOptions = {
       title: {
         text: 'Market Share',
       },
-      labelKey: 'os',
+      calloutLabelKey: 'os',
       angleKey: 'share',
       innerRadiusRatio: 0.8,
     },
@@ -26,7 +26,7 @@ const options: AgChartOptions = {
       title: {
         text: 'Satisfaction',
       },
-      labelKey: 'os',
+      calloutLabelKey: 'os',
       angleKey: 'satisfaction',
       outerRadiusRatio: 0.5,
       innerRadiusRatio: 0.3,

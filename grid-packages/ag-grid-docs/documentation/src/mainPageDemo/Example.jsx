@@ -853,7 +853,7 @@ const Example = () => {
             polar: {
                 series: {
                     pie: {
-                        label: {
+                        calloutLabel: {
                             enabled: false
                         },
                         tooltip: {
