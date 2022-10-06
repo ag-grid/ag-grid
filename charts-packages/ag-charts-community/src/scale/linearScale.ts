@@ -8,8 +8,9 @@ import { tickFormat } from '../util/numberFormat';
 export class LinearScale extends ContinuousScale {
     readonly type = 'linear';
 
-    ticks(count = 10) {
+    ticks(count = 10, offset?: number) {
         const d = this._domain;
+        count = Math.max(0, count - (offset ?? 0));
         return ticks(d[0], d[d.length - 1], count);
     }
 

@@ -316,8 +316,6 @@ export class CartesianChart extends Chart {
                     break;
             }
 
-            axis.calculateTickCount();
-
             if (axis.direction === ChartAxisDirection.X) {
                 let { min, max, enabled } = navigator;
                 if (enabled) {
@@ -378,6 +376,7 @@ export class CartesianChart extends Chart {
                     );
                     break;
             }
+
             axis.update();
 
             newAxisWidths[position] = (newAxisWidths[position] ?? 0) + axisThickness;
