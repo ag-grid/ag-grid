@@ -177,8 +177,8 @@
 
     .ag-cell, .ag-full-width-row .ag-cell-wrapper.ag-row-group {
         // assign internal variables to simplify the `line-height` value
-        --ag-internal-calculated-line-height: var(--ag-line-height, ag-param(row-height) - 2px);
-        --ag-internal-padded-row-height: ag-param(row-height) - 2px;
+        --ag-internal-calculated-line-height: var(--ag-line-height, #{ag-param(row-height) - 2px});
+        --ag-internal-padded-row-height: #{ag-param(row-height) - 2px};
         // draw a transparent border so that the cell size doesn't change when we add a range border
         border: 1px solid transparent;
         // adjust for transparent border
