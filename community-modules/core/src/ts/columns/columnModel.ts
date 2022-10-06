@@ -1614,7 +1614,7 @@ export class ColumnModel extends BeanStub {
                     hide: !visible,
                 })
             ),
-        });
+        }, source);
     }
 
     public setColumnPinned(key: string | Column | null, pinned: ColumnPinnedType, source: ColumnEventType = "api"): void {
@@ -1937,7 +1937,7 @@ export class ColumnModel extends BeanStub {
         this.applyColumnState({ state: columnStates, applyOrder: true }, source);
     }
 
-    public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType = "api"): boolean {
+    public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType): boolean {
         if (missingOrEmpty(this.primaryColumns)) { return false; }
 
         if (params && params.state && !params.state.forEach) {
