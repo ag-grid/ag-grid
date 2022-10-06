@@ -383,6 +383,10 @@
         text-overflow: ellipsis;
     }
 
+    .ag-header-cell:not(.ag-header-cell-auto-height) .ag-header-cell-comp-wrapper {
+        height: 100%;
+    }
+
     .ag-header-cell-comp-wrapper {
         width: 100%;
         overflow: hidden;
@@ -1286,9 +1290,10 @@
         justify-content: space-between;
         flex-direction: row-reverse;
         align-items: center;
+        height: 100%;
         width: 100%;
         overflow: hidden;
-        padding: 5px 0px 5px 0px;
+        padding: 5px 0px;
     }
 
     .ag-right-aligned-header .ag-cell-label-container {

@@ -56,11 +56,6 @@ The following example shows how you can provide a unique look and feel to the he
 - The column labels have CSS applied to them so they are displayed vertically.
 
 ```css
-.ag-cell-label-container {
-    /* Necessary to allow for text to grow vertically */
-    height: 100%;
-}
-
 .ag-header-cell-label {
     /* Necessary to allow for text to grow vertically */
     height: 100%;

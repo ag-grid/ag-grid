@@ -492,6 +492,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         const startMeasuring = () => {
             isMeasuring = true;
             measureHeight(0);
+            this.comp.addOrRemoveCssClass('ag-header-cell-auto-height', true);
             stopResizeObserver = this.resizeObserverService.observeResize(wrapperElement, () => measureHeight(0));
         };
 
@@ -500,6 +501,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             if (stopResizeObserver) {
                 stopResizeObserver();
             }
+            this.comp.addOrRemoveCssClass('ag-header-cell-auto-height', false);
             stopResizeObserver = undefined;
         };
 
