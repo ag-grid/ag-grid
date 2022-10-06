@@ -80,16 +80,13 @@ const LicensePricing = () => {
                                             us at any time on <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
                                         </p>
                                     </div>
-                                    <div className={styles['license-pricing__content__packages__ag-enterprise__video']}>
-                                        <h4>
-                                        Enterprise License<br/>Explained Video
-                                        </h4>
-                                        <a href="https://www.youtube.com/watch?v=20SLdu4wLtI" target="_">
-                                            <img src={`${hostPrefix}/videos/AgGridVideo.png`}/>
-                                            <span className={styles['license-pricing__content__packages__ag-enterprise__video__running-time']}>
-                                                8:30
-                                            </span>
-                                        </a>
+                                    <div style={{float: 'right'}}>
+                                        <iframe width="400" height="226" 
+                                            src="https://www.youtube.com/embed/20SLdu4wLtI" 
+                                            title="YouTube video player" 
+                                            frameborder="0" 
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>                                            
+                                        </iframe>
                                     </div>
                                 </div>
                             </div>
