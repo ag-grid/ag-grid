@@ -451,11 +451,11 @@ export class ChartTheme {
                 angleName: '',
                 radiusKey: undefined,
                 radiusName: undefined,
-                labelKey: undefined,
-                labelName: undefined,
+                calloutLabelKey: undefined,
+                calloutLabelName: undefined,
                 sectorLabelKey: undefined,
                 sectorLabelName: undefined,
-                label: {
+                calloutLabel: {
                     enabled: true,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -475,7 +475,7 @@ export class ChartTheme {
                     positionOffset: 0,
                     positionRatio: 0.5,
                 },
-                callout: {
+                calloutLine: {
                     length: 10,
                     strokeWidth: 2,
                 },

@@ -1247,12 +1247,24 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     type?: 'pie';
     /** Configuration for the series title. */
     title?: AgPieTitleOptions;
-    /** Configuration for the labels used outside of the sectors. */
+    /**
+     * Configuration for the labels used outside of the sectors.
+     *
+     * @deprecated Use series.calloutLabel instead.
+     */
     label?: AgPieSeriesLabelOptions<DatumType>;
+    /** Configuration for the labels used outside of the sectors. */
+    calloutLabel?: AgPieSeriesLabelOptions<DatumType>;
     /** Configuration for the labels used inside the sectors. */
     sectorLabel?: AgPieSeriesSectorLabelOptions<DatumType>;
-    /** Configuration for the callouts used with the labels for the sectors. */
+    /**
+     * Configuration for the callout lines used with the labels for the sectors.
+     *
+     * @deprecated Use series.calloutLine instead.
+     */
     callout?: AgPieSeriesCalloutOptions;
+    /** Configuration for the callout lines used with the labels for the sectors. */
+    calloutLine?: AgPieSeriesCalloutOptions;
     /** The key to use to retrieve angle values from the data. */
     angleKey?: string;
     /** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
@@ -1261,10 +1273,22 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     radiusKey?: string;
     /** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     radiusName?: string;
-    /** The key to use to retrieve label values from the data. */
+    /**
+     * The key to use to retrieve label values from the data.
+     *
+     * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.
+     */
     labelKey?: string;
-    /** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
+    /**
+     * A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.
+     *
+     * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.
+     */
     labelName?: string;
+    /** The key to use to retrieve label values from the data. */
+    calloutLabelKey?: string;
+    /** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
+    calloutLabelName?: string;
     /** The key to use to retrieve sector label values from the data. */
     sectorLabelKey?: string;
     /** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
@@ -1305,14 +1329,27 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     innerLabels?: AgDoughnutInnerLabel[];
     /** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset or innerRadiusRatio */
     innerCircle?: AgDoughnutInnerCircle;
+    /** A formatter function for adjusting the styling of the pie sectors. */
     formatter?: (params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat;
 }
 
 export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRendererParams {
-    /** labelKey as specified on series options. */
+    /**
+     * labelKey as specified on series options.
+     *
+     * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.
+     */
     labelKey?: string;
-    /** labelName as specified on series options. */
+    /**
+     * labelName as specified on series options.
+     *
+     * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.
+     */
     labelName?: string;
+    /** calloutLabelKey as specified on series options. */
+    calloutLabelKey?: string;
+    /** calloutLabelName as specified on series options. */
+    calloutLabelName?: string;
     /** sectorLabelKey as specified on series options. */
     sectorLabelKey?: string;
     /** sectorLabelName as specified on series options. */
@@ -1323,12 +1360,31 @@ export interface AgPieSeriesLabelFormatterParams<DatumType> {
     /** Datum from the series data array that the label is being rendered for. */
     readonly datum: DatumType;
 
-    /** labelKey as specified on series options. */
+    /**
+     * labelKey as specified on series options.
+     *
+     * @deprecated Use calloutLabelKey instead.
+     */
     readonly labelKey?: string;
-    /** labelValue as read from series data via the labelKey property. */
+    /**
+     * labelValue as read from series data via the labelKey property.
+     *
+     * @deprecated Use calloutLabelValue instead.
+     */
     readonly labelValue?: string;
-    /** labelName as specified on series options. */
+    /**
+     * labelName as specified on series options.
+     *
+     * @deprecated Use calloutLabelName instead.
+     */
     readonly labelName?: string;
+
+    /** calloutLabelKey as specified on series options. */
+    readonly calloutLabelKey?: string;
+    /** calloutLabelValue as read from series data via the calloutLabelKey property. */
+    readonly calloutLabelValue?: string;
+    /** calloutLabelName as specified on series options. */
+    readonly calloutLabelName?: string;
 
     /** sectorLabelKey as specified on series options. */
     readonly sectorLabelKey?: string;

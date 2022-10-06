@@ -64,7 +64,7 @@ export class AppComponent {
       {
         type: "pie",
         angleKey: "v4",
-        labelKey: "label",
+        calloutLabelKey: "label",
       },
     ],
   }
@@ -136,10 +136,10 @@ var myTheme: AgChartTheme = {
       },
       series: {
         pie: {
-          label: {
+          calloutLabel: {
             enabled: true,
           },
-          callout: {
+          calloutLine: {
             colors: ["gray"],
           },
         },

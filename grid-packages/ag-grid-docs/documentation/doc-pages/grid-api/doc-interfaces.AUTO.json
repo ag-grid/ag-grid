@@ -12947,6 +12947,13 @@
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
     "label": {
+      "description": "/** Configuration for the labels used outside of the sectors.\n * @deprecated Use series.calloutLabel instead.\n */",
+      "type": {
+        "returnType": "AgPieSeriesLabelOptions<DatumType>",
+        "optional": true
+      }
+    },
+    "calloutLabel": {
       "description": "/** Configuration for the labels used outside of the sectors. */",
       "type": {
         "returnType": "AgPieSeriesLabelOptions<DatumType>",
@@ -12961,7 +12968,11 @@
       }
     },
     "callout": {
-      "description": "/** Configuration for the callouts used with the labels for the sectors. */",
+      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n * @deprecated Use series.calloutLine instead.\n */",
+      "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
+    },
+    "calloutLine": {
+      "description": "/** Configuration for the callout lines used with the labels for the sectors. */",
       "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "angleKey": {
@@ -12981,10 +12992,18 @@
       "type": { "returnType": "string", "optional": true }
     },
     "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data. */",
+      "description": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
+      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "calloutLabelKey": {
+      "description": "/** The key to use to retrieve label values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "calloutLabelName": {
       "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
@@ -13065,6 +13084,7 @@
       "type": { "returnType": "AgDoughnutInnerCircle", "optional": true }
     },
     "formatter": {
+      "description": "/** A formatter function for adjusting the styling of the pie sectors. */",
       "type": {
         "arguments": { "params": "AgPieSeriesFormatterParams<DatumType>" },
         "returnType": "AgPieSeriesFormat",
@@ -15503,6 +15523,13 @@
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
     "label": {
+      "description": "/** Configuration for the labels used outside of the sectors.\n * @deprecated Use series.calloutLabel instead.\n */",
+      "type": {
+        "returnType": "AgPieSeriesLabelOptions<DatumType>",
+        "optional": true
+      }
+    },
+    "calloutLabel": {
       "description": "/** Configuration for the labels used outside of the sectors. */",
       "type": {
         "returnType": "AgPieSeriesLabelOptions<DatumType>",
@@ -15517,7 +15544,11 @@
       }
     },
     "callout": {
-      "description": "/** Configuration for the callouts used with the labels for the sectors. */",
+      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n * @deprecated Use series.calloutLine instead.\n */",
+      "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
+    },
+    "calloutLine": {
+      "description": "/** Configuration for the callout lines used with the labels for the sectors. */",
       "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "angleKey": {
@@ -15537,10 +15568,18 @@
       "type": { "returnType": "string", "optional": true }
     },
     "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data. */",
+      "description": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
+      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "calloutLabelKey": {
+      "description": "/** The key to use to retrieve label values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "calloutLabelName": {
       "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
@@ -15625,6 +15664,7 @@
       "type": { "returnType": "AgDoughnutInnerCircle", "optional": true }
     },
     "formatter": {
+      "description": "/** A formatter function for adjusting the styling of the pie sectors. */",
       "type": {
         "arguments": { "params": "AgPieSeriesFormatterParams<DatumType>" },
         "returnType": "AgPieSeriesFormat",
@@ -15662,11 +15702,19 @@
   },
   "AgPieSeriesTooltipRendererParams": {
     "labelKey": {
-      "description": "/** labelKey as specified on series options. */",
+      "description": "/** labelKey as specified on series options.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** labelName as specified on series options. */",
+      "description": "/** labelName as specified on series options.\n * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "calloutLabelKey": {
+      "description": "/** calloutLabelKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "calloutLabelName": {
+      "description": "/** calloutLabelName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
     },
     "sectorLabelKey": {
@@ -15720,15 +15768,27 @@
       "type": { "returnType": "DatumType", "optional": false }
     },
     "labelKey": {
-      "description": "/** labelKey as specified on series options. */",
+      "description": "/** labelKey as specified on series options.\n * @deprecated Use calloutLabelKey instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelValue": {
-      "description": "/** labelValue as read from series data via the labelKey property. */",
+      "description": "/** labelValue as read from series data via the labelKey property.\n * @deprecated Use calloutLabelValue instead.\n */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** labelName as specified on series options. */",
+      "description": "/** labelName as specified on series options.\n * @deprecated Use calloutLabelName instead.\n */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "calloutLabelKey": {
+      "description": "/** calloutLabelKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "calloutLabelValue": {
+      "description": "/** calloutLabelValue as read from series data via the calloutLabelKey property. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "calloutLabelName": {
+      "description": "/** calloutLabelName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
     },
     "sectorLabelKey": {

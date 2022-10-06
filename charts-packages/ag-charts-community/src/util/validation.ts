@@ -1,6 +1,7 @@
 import { Color } from './color';
 import { SceneChangeDetection, SceneChangeDetectionOptions } from '../scene/changeDetectable';
 type ValidationContext = { target: any };
+
 export type ValidatePredicate = {
     (v: any, ctx: ValidationContext): boolean;
     message?: string;
@@ -257,41 +258,6 @@ export const POSITION = predicateWithMessage(
     (v: any) => POSITIONS.includes(v),
     `expecting a position keyword such as 'top', 'right', 'bottom' or 'left`
 );
-
-export function Deprecated(message?: string, opts?: { default: any }) {
-    let logged = false;
-    const { default: def = undefined } = opts ?? {};
-
-    return function (target: any, key: any) {
-        // `target` is either a constructor (static member) or prototype (instance member)
-        const privateKey = `__${key}`;
-
-        if (!target[key]) {
-            const setter = function (v: any) {
-                if (v !== def && !logged) {
-                    const cleanKey = key.replace(/^_*/, '');
-                    const msg = [`AG Charts - Property [${cleanKey}] is deprecated.`, message]
-                        .filter((v) => v != null)
-                        .join(' ');
-                    console.warn(msg);
-                    logged = true;
-                }
-
-                this[privateKey] = v;
-            };
-            const getter = function () {
-                return this[privateKey];
-            };
-
-            Object.defineProperty(target, key, {
-                set: setter,
-                get: getter,
-                enumerable: true,
-                configurable: false,
-            });
-        }
-    };
-}
 
 export const ValidateAndChangeDetection = (opts: {
     validatePredicate: ValidatePredicate;

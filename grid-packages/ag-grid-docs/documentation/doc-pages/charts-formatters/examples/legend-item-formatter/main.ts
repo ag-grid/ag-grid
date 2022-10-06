@@ -54,7 +54,7 @@ const options: AgChartOptions = {
     {
       type: "pie",
       angleKey: "count",
-      labelKey: "type",
+      calloutLabelKey: "type",
     },
   ],
   legend: {

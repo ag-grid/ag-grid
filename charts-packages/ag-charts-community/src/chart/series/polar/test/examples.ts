@@ -9,7 +9,7 @@ export const PIE_SERIES: AgPolarChartOptions = {
     series: [
         {
             type: 'pie',
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'share',
         },
     ],
@@ -23,7 +23,7 @@ export const PIE_SECTORS_DIFFERENT_RADII: AgPolarChartOptions = {
     series: [
         {
             type: 'pie',
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'share',
             radiusKey: 'satisfaction',
         },
@@ -41,7 +41,7 @@ export const PIE_SECTORS_DIFFERENT_RADII_SMALL_RADIUS_MIN: AgPolarChartOptions =
     series: [
         {
             type: 'pie',
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'share',
             radiusKey: 'satisfaction',
             radiusMin: minRadius - 2,
@@ -57,7 +57,7 @@ export const PIE_SECTORS_DIFFERENT_RADII_LARGE_RADIUS_MIN: AgPolarChartOptions =
     series: [
         {
             type: 'pie',
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'share',
             radiusKey: 'satisfaction',
             radiusMin: maxRadius + 2,
@@ -73,7 +73,7 @@ export const PIE_SECTORS_DIFFERENT_RADII_SMALL_RADIUS_MAX: AgPolarChartOptions =
     series: [
         {
             type: 'pie',
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'share',
             radiusKey: 'satisfaction',
             radiusMax: minRadius - 2,
@@ -89,7 +89,7 @@ export const PIE_SECTORS_DIFFERENT_RADII_LARGE_RADIUS_MAX: AgPolarChartOptions =
     series: [
         {
             type: 'pie',
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'share',
             radiusKey: 'satisfaction',
             radiusMax: maxRadius + 2,
@@ -105,7 +105,7 @@ export const PIE_SECTORS_LABELS: AgPolarChartOptions = {
     series: [
         {
             type: 'pie',
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'share',
             sectorLabelKey: 'share',
             sectorLabel: {
@@ -123,7 +123,7 @@ export const DOUGHNUT_SERIES: AgPolarChartOptions = {
     series: [
         {
             type: 'pie',
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'share',
             innerRadiusOffset: -70,
         },
@@ -138,7 +138,7 @@ export const DOUGHNUT_SERIES_INNER_TEXT: AgPolarChartOptions = {
     series: [
         {
             type: 'pie',
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'share',
             innerRadiusOffset: -30,
             innerLabels: [
@@ -182,7 +182,7 @@ export const GROUPED_DOUGHNUT_SERIES: AgPolarChartOptions = {
             title: {
                 text: 'Market Share',
             },
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'share',
             innerRadiusOffset: -40,
         },
@@ -191,7 +191,7 @@ export const GROUPED_DOUGHNUT_SERIES: AgPolarChartOptions = {
             title: {
                 text: 'Satisfaction',
             },
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'satisfaction',
             outerRadiusOffset: -100,
             innerRadiusOffset: -140,
@@ -210,7 +210,7 @@ export const DOUGHNUT_SERIES_DIFFERENT_RADII: AgPolarChartOptions = {
             title: {
                 text: 'Market Share',
             },
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'share',
             radiusKey: 'satisfaction',
             innerRadiusOffset: -100,
@@ -229,7 +229,7 @@ export const GROUPED_DOUGHNUT_SERIES_DIFFERENT_RADII: AgPolarChartOptions = {
             title: {
                 text: 'Market Share',
             },
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'share',
             radiusKey: 'satisfaction',
             innerRadiusOffset: -100,
@@ -239,7 +239,7 @@ export const GROUPED_DOUGHNUT_SERIES_DIFFERENT_RADII: AgPolarChartOptions = {
             title: {
                 text: 'Satisfaction',
             },
-            labelKey: 'os',
+            calloutLabelKey: 'os',
             angleKey: 'satisfaction',
             radiusKey: 'satisfaction',
             outerRadiusOffset: -150,

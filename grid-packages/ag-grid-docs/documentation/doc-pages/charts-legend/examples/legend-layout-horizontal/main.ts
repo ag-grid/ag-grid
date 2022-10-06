@@ -29,7 +29,7 @@ const options: AgChartOptions = {
     {
       type: 'pie',
       angleKey: 'value',
-      labelKey: 'label',
+      calloutLabelKey: 'label',
       strokeWidth: 3,
     },
   ],

@@ -24,13 +24,13 @@ This results in the chart shown below. Note that [tooltips](/charts-tooltips/) s
 
 ## Sector Labels
 
-In the example above there's no legend or labels next to pie sectors. To show those, the label information must be in the `data`. Additionally, we'll have to provide the `labelKey`:
+In the example above there's no legend or labels next to pie sectors. To show those, the label information must be in the `data`. Additionally, we'll have to provide the `calloutLabelKey`:
 
 ```diff
 series: [{
     type: 'pie',
     angleKey: 'value',
-+   labelKey: 'label'
++   calloutLabelKey: 'label'
 }]
 ```
 
@@ -40,18 +40,18 @@ Now we get labels, a legend, and the tooltips will also show labels along with t
 
 Each individual sector can be toggled on and off via the legend.
 
-You might notice that not all of the sectors in the chart above have a label. The reason for this is that certain sectors can be small, and if there's a cluster of small sectors their labels will overlap, resulting in a messy chart. To prevent this from happening the series will only show labels for sectors with an angle greater than a certain value, which by default is set to be `20` degrees. This value is adjustable via the `label.minAngle` config:
+You might notice that not all of the sectors in the chart above have a label. The reason for this is that certain sectors can be small, and if there's a cluster of small sectors their labels will overlap, resulting in a messy chart. To prevent this from happening the series will only show labels for sectors with an angle greater than a certain value, which by default is set to be `20` degrees. This value is adjustable via the `calloutLabel.minAngle` config:
 
 ```js
 series: [{
     ...
-    label: {
+    calloutLabel: {
         minAngle: 20
     }
 }]
 ```
 
-The `label.formatter` function can be used to change the text value displayed in the label.
+The `calloutLabel.formatter` function can be used to change the text value displayed in the label.
 It receives a single object as a parameter containing values associated with a pie sector.
 Please see the [API reference](#api-reference) for the full list of available properties.
 
@@ -61,9 +61,9 @@ you can use the following label formatter function:
 ```js
 series: [{
     ...
-    label: {
-        formatter: ({ datum, labelKey, angleKey }) => {
-            return `${datum[labelKey]}: ${datum[angleKey]}`;
+    calloutLabel: {
+        formatter: ({ datum, calloutLabelKey, angleKey }) => {
+            return `${datum[calloutLabelKey]}: ${datum[angleKey]}`;
         }
     }
 }]
@@ -74,7 +74,7 @@ The label's callout can be configured to have a different `length`, `color` and 
 ```js
 series: [{
     ...
-    callout: {
+    calloutLine: {
         colors: ['red'],
         length: 20,
         strokeWidth: 3
@@ -89,7 +89,7 @@ The `sectorLabel` property holds the style configuration for these labels:
 series: [{
     type: 'pie',
     angleKey: 'value',
-    labelKey: 'label',
+    calloutLabelKey: 'label',
 +   sectorLabelKey: 'value',
 +   sectorLabel: {
 +       color: 'white',
@@ -100,7 +100,7 @@ series: [{
 
 <chart-example title='Pie Chart with Labels in Sectors' name='pie-labels-in-sectors' type='generated'></chart-example>
 
-Please check the [API reference](#api-reference) below to learn more about `label`, `sectorLabel` and `callout`, as well as other series configuration.
+Please check the [API reference](#api-reference) below to learn more about `calloutLabel`, `calloutLine` and `sectorLabel`, as well as other series configuration.
 
 ## Variable Sector Radius
 
@@ -109,7 +109,7 @@ Let's say we have the data for both the market share of mobile operating systems
 ```js
 series: [{
     type: 'pie',
-    labelKey: 'os',
+    calloutLabelKey: 'os',
     angleKey: 'share',
     radiusKey: 'satisfaction'
 }]
@@ -126,7 +126,7 @@ Pie series can be used to create a doughnut chart by using the `innerRadiusOffse
 ```js
 series: [{
     type: 'pie',
-    labelKey: 'os',
+    calloutLabelKey: 'os',
     angleKey: 'share',
     innerRadiusOffset: -70
 }]

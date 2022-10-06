@@ -68,7 +68,7 @@ const gridOptions: GridOptions = {
           yOffset: 0,
           blur: 1,
         },
-        label: {
+        calloutLabel: {
           enabled: true,
           fontStyle: 'italic',
           fontWeight: 'bold',
@@ -77,7 +77,7 @@ const gridOptions: GridOptions = {
           color: '#2222aa',
           minAngle: 30,
         },
-        callout: {
+        calloutLine: {
           strokeWidth: 3,
           colors: ['black', '#00ff00'],
           length: 15,
@@ -92,9 +92,9 @@ const gridOptions: GridOptions = {
                 params.angleValue +
                 '<br>' +
                 '<b>' +
-                params.labelName!.toUpperCase() +
+                params.calloutLabelName!.toUpperCase() +
                 ':</b> ' +
-                params.datum[params.labelKey!],
+                params.datum[params.calloutLabelKey!],
             }
           },
         },

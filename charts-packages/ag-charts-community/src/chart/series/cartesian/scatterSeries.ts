@@ -23,7 +23,8 @@ import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Marker } from '../../marker/marker';
 import { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
 import { checkDatum, isContinuous } from '../../../util/value';
-import { Deprecated, OPT_FUNCTION, OPT_STRING, STRING, Validate } from '../../../util/validation';
+import { Deprecated } from '../../../util/deprecation';
+import { OPT_FUNCTION, OPT_STRING, STRING, Validate } from '../../../util/validation';
 
 interface ScatterNodeDatum extends Required<SeriesNodeDatum> {
     readonly label: MeasuredLabel;
