@@ -45,7 +45,7 @@ You might notice that not all of the sectors in the chart above have a label. Th
 ```js
 series: [{
     ...
-    lacalloutLabelbel: {
+    calloutLabel: {
         minAngle: 20
     }
 }]
