@@ -4,6 +4,7 @@ import { JSDOM } from 'jsdom';
 import * as mockCanvas from '../src/chart/test/mock-canvas';
 import * as examples from '../src/chart/test/examples';
 import { AgChartV2 } from '../src/chart/agChartV2';
+import { AgChartOptions } from '../src/chart/agChartOptions';
 
 const galleryJson = `${__dirname}/../../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/gallery.json`;
 const outputPath = `${__dirname}/../../../grid-packages/ag-grid-docs/documentation/src/components/chart-gallery/thumbnails`;
@@ -24,6 +25,17 @@ for (const group of Object.values(galleryOpts)) {
 const genThumbnails = async () => {
     const width = 800;
     const height = 570;
+    const optionOverrides: Partial<AgChartOptions> = {
+        autoSize: false,
+        width,
+        height,
+        padding: {
+            top: 20,
+            left: 30,
+            right: 30,
+            bottom: 40,
+        },
+    };
 
     for (const thumbnail of examplesToGenerate) {
         const example = examples.DOCS_EXAMPLES[thumbnail];
@@ -44,7 +56,7 @@ const genThumbnails = async () => {
 
         const mockCtx = mockCanvas.setup({ width, height });
 
-        const options = { ...example, autoSize: false, width, height };
+        const options = { ...example, ...optionOverrides };
         const chart = AgChartV2.create<any>(options);
         await chart.waitForUpdate(5_000);
 
