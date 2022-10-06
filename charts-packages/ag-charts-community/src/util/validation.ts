@@ -88,6 +88,15 @@ export const AND = (...predicates: ValidatePredicate[]) => {
             .join(' AND ')
     );
 };
+export const OR = (...predicates: ValidatePredicate[]) => {
+    return predicateWithMessage(
+        (v: any, ctx) => predicates.some((p) => p(v, ctx)),
+        predicates
+            .map((p) => p.message)
+            .filter((m) => m != null)
+            .join(' OR ')
+    );
+};
 
 const isComparable = (v: any) => {
     return v != null && !isNaN(v);

@@ -1,5 +1,5 @@
 import day from '../../util/time/day';
-import { AgChartOptions } from '../agChartOptions';
+import { AgChartOptions, AgCartesianChartOptions } from '../agChartOptions';
 import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY_EXTENDED } from './data';
 import * as data from './data-axes';
 import * as examples from './examples';
@@ -55,6 +55,34 @@ export const TIME_AXIS_BASIC_EXAMPLE: AgChartOptions = {
             yName: 'Likes',
             type: 'line',
         },
+    ],
+};
+
+export const TIME_AXIS_MIN_MAX_DATE_EXAMPLE: AgCartesianChartOptions = {
+    ...TIME_AXIS_BASIC_EXAMPLE,
+    axes: [
+        {
+            type: 'time',
+            position: 'bottom',
+            min: new Date(2022, 1, 15, 0, 0, 0),
+            max: new Date(2022, 2, 15, 0, 0, 0),
+            tick: { count: day },
+        },
+        { type: 'number', position: 'left' },
+    ],
+};
+
+export const TIME_AXIS_MIN_MAX_NUMBER_EXAMPLE: AgCartesianChartOptions = {
+    ...TIME_AXIS_MIN_MAX_DATE_EXAMPLE,
+    axes: [
+        {
+            type: 'time',
+            position: 'bottom',
+            min: new Date(2022, 1, 15, 0, 0, 0).getTime(),
+            max: new Date(2022, 2, 15, 0, 0, 0).getTime(),
+            tick: { count: day },
+        },
+        { type: 'number', position: 'left' },
     ],
 };
 
