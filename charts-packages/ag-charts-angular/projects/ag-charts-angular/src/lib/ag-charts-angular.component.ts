@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Input, ViewEncapsulation} from "@angular/core";
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, ViewEncapsulation } from "@angular/core";
 
 import { Chart, AgChart, AgChartOptions } from 'ag-charts-community';
 
@@ -8,7 +8,7 @@ import { Chart, AgChart, AgChartOptions } from 'ag-charts-community';
     template: '',
     encapsulation: ViewEncapsulation.None
 })
-export class AgChartsAngular implements AfterViewInit {
+export class AgChartsAngular implements AfterViewInit, OnChanges, OnDestroy {
 
     private _nativeElement: any;
     private _initialised = false;

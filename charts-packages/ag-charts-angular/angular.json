@@ -31,9 +31,21 @@
             "tsConfig": "projects/ag-charts-angular/tsconfig.spec.json",
             "karmaConfig": "projects/ag-charts-angular/karma.conf.js"
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/ag-charts-angular/**/*.ts",
+              "projects/ag-charts-angular/**/*.html"
+            ]
+          }
         }
       }
     }
   },
-  "defaultProject": "ag-charts-angular"
+  "defaultProject": "ag-charts-angular",
+  "cli": {
+    "defaultCollection": "@angular-eslint/schematics"
+  }
 }
