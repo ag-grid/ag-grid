@@ -310,4 +310,78 @@ export class Matrix {
 
         return Matrix.matrix;
     }
+
+    static updateTransformMatrix(
+        matrix: Matrix,
+        scalingX: number,
+        scalingY: number,
+        rotation: number,
+        translationX: number,
+        translationY: number,
+        scalingCenterX?: number | null,
+        scalingCenterY?: number | null,
+        rotationCenterX?: number | null,
+        rotationCenterY?: number | null
+    ) {
+        // Assume that centers of scaling and rotation are at the origin.
+        const [bbcx, bbcy] = [0, 0];
+
+        const sx = scalingX;
+        const sy = scalingY;
+        let scx: number;
+        let scy: number;
+
+        if (sx === 1 && sy === 1) {
+            scx = 0;
+            scy = 0;
+        } else {
+            scx = scalingCenterX == null ? bbcx : scalingCenterX;
+            scy = scalingCenterY == null ? bbcy : scalingCenterY;
+        }
+
+        const r = rotation;
+        const cos = Math.cos(r);
+        const sin = Math.sin(r);
+        let rcx: number;
+        let rcy: number;
+
+        if (r === 0) {
+            rcx = 0;
+            rcy = 0;
+        } else {
+            rcx = rotationCenterX == null ? bbcx : rotationCenterX;
+            rcy = rotationCenterY == null ? bbcy : rotationCenterY;
+        }
+
+        const tx = translationX;
+        const ty = translationY;
+
+        // The transform matrix `M` is a result of the following transformations:
+        // 1) translate the center of scaling to the origin
+        // 2) scale
+        // 3) translate back
+        // 4) translate the center of rotation to the origin
+        // 5) rotate
+        // 6) translate back
+        // 7) translate
+        //         (7)          (6)             (5)             (4)           (3)           (2)           (1)
+        //     | 1 0 tx |   | 1 0 rcx |   | cos -sin 0 |   | 1 0 -rcx |   | 1 0 scx |   | sx 0 0 |   | 1 0 -scx |
+        // M = | 0 1 ty | * | 0 1 rcy | * | sin  cos 0 | * | 0 1 -rcy | * | 0 1 scy | * | 0 sy 0 | * | 0 1 -scy |
+        //     | 0 0  1 |   | 0 0  1  |   |  0    0  1 |   | 0 0  1   |   | 0 0  1  |   | 0  0 0 |   | 0 0  1   |
+
+        // Translation after steps 1-4 above:
+        const tx4 = scx * (1 - sx) - rcx;
+        const ty4 = scy * (1 - sy) - rcy;
+
+        matrix.setElements([
+            cos * sx,
+            sin * sx,
+            -sin * sy,
+            cos * sy,
+            cos * tx4 - sin * ty4 + rcx + tx,
+            sin * tx4 + cos * ty4 + rcy + ty,
+        ]);
+
+        return matrix;
+    }
 }
