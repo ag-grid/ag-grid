@@ -152,9 +152,9 @@ export class PieChartProxy extends ChartProxy {
                 ...deepMerge({}, primaryOpts),
                 radiusKey: angleKey + '-filtered-out',
                 calloutLabel: seriesOverrides.calloutLabel, // labels can be shown on the 'filtered-out' series
-                calloutLine: {
-                    ...seriesOverrides.calloutLabel,
-                    colors: seriesOverrides.calloutLabel.colors ?? palette.strokes,
+                calloutLine: seriesOverrides.calloutLine && {
+                    ...seriesOverrides.calloutLine,
+                    colors: seriesOverrides.calloutLine.colors ?? palette.strokes,
                 },
                 fills: changeOpacity(seriesOptions.fills ?? palette.fills, 0.3),
                 strokes: changeOpacity(seriesOptions.strokes ?? palette.strokes, 0.3),
