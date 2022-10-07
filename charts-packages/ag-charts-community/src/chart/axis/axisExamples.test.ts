@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
-import { AgChartOptions } from '../agChartOptions';
+import { AgChartOptions, AgCartesianAxisType } from '../agChartOptions';
 import { AgChartV2 } from '../agChartV2';
 import { Chart, ChartUpdateType } from '../chart';
 import { ChartAxis, ChartAxisPosition, ChartAxisDirection } from '../chartAxis';
@@ -52,6 +52,7 @@ type TestCase = {
     options: AgChartOptions;
     assertions: (chart: Chart) => Promise<void>;
     extraScreenshotActions?: (chart: Chart) => Promise<void>;
+    compare?: AgCartesianAxisType[];
 };
 const EXAMPLES = mixinDerivedCases({
     BASIC_CATEGORY_AXIS: {
@@ -69,6 +70,16 @@ const EXAMPLES = mixinDerivedCases({
     BASIC_TIME_AXIS: {
         options: examples.TIME_AXIS_BASIC_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
+    },
+    BASIC_TIME_MIN_MAX_DATE_AXIS: {
+        options: examples.TIME_AXIS_MIN_MAX_DATE_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
+        compare: ['time'],
+    },
+    BASIC_TIME_MIN_MAX_NUMBER_AXIS: {
+        options: examples.TIME_AXIS_MIN_MAX_NUMBER_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
+        compare: ['time'],
     },
     NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE: {
         options: examples.NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE,
@@ -191,6 +202,10 @@ describe('Axis Examples', () => {
                 await waitForChartStability(chart);
 
                 for (const axis of chart.axes) {
+                    if (example.compare != null && !example.compare.includes(axis.type as AgCartesianAxisType)) {
+                        continue;
+                    }
+
                     const axesBBox = calculateAxisBBox(axis);
                     const imageData = extractImageData({ ...ctx, bbox: axesBBox });
 
