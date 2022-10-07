@@ -237,7 +237,7 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
 ): Target {
     const {
         path = undefined,
-        matcherPath = path ? path.replace(/(\[[0-9+]{1,}\])/i, '[]') : undefined,
+        matcherPath = path ? path.replace(/(\[[0-9+]+\])/i, '[]') : undefined,
         skip = [],
         constructors = {},
         allowedTypes = {},

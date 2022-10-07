@@ -21,43 +21,25 @@ interface Bounds extends Readonly<Point> {
     readonly height: number;
 }
 
-function circleRectOverlap(cx: number, cy: number, r: number, x: number, y: number, w: number, h: number): boolean {
+function circleRectOverlap(c: SizedPoint, x: number, y: number, w: number, h: number): boolean {
     // Find closest horizontal and vertical edges.
-    let edgeX = cx < x ? x : cx > x + w ? x + w : cx;
-    let edgeY = cy < y ? y : cy > y + h ? y + h : cy;
+    let edgeX = c.x < x ? x : c.x > x + w ? x + w : c.x;
+    let edgeY = c.y < y ? y : c.y > y + h ? y + h : c.y;
     // Find distance to closest edges.
-    const dx = cx - edgeX;
-    const dy = cy - edgeY;
+    const dx = c.x - edgeX;
+    const dy = c.y - edgeY;
     const d = Math.sqrt(dx * dx + dy * dy);
-    return d <= r;
+    return d <= c.size * 0.5;
 }
 
-function rectRectOverlap(
-    x1: number,
-    y1: number,
-    w1: number,
-    h1: number,
-    x2: number,
-    y2: number,
-    w2: number,
-    h2: number
-): boolean {
-    const xOverlap = x1 + w1 > x2 && x1 < x2 + w2;
-    const yOverlap = y1 + h1 > y2 && y1 < y2 + h2;
+function rectRectOverlap(r1: Bounds, x2: number, y2: number, w2: number, h2: number): boolean {
+    const xOverlap = r1.x + r1.width > x2 && r1.x < x2 + w2;
+    const yOverlap = r1.y + r1.height > y2 && r1.y < y2 + h2;
     return xOverlap && yOverlap;
 }
 
-function rectContainsRect(
-    r1x: number,
-    r1y: number,
-    r1w: number,
-    r1h: number,
-    r2x: number,
-    r2y: number,
-    r2w: number,
-    r2h: number
-) {
-    return r2x + r2w < r1x + r1w && r2x > r1x && r2y > r1y && r2y + r2h < r1y + r1h;
+function rectContainsRect(r1: Bounds, r2x: number, r2y: number, r2w: number, r2h: number) {
+    return r2x + r2w < r1.x + r1.width && r2x > r1.x && r2y > r1.y && r2y + r2h < r1.y + r1.height;
 }
 
 export function isPointLabelDatum(x: any): x is PointLabelDatum {
@@ -91,22 +73,19 @@ export function placeLabels(
             const y = d.point.y - r - l.height - padding;
             const { width, height } = l;
 
-            const withinBounds =
-                !bounds || rectContainsRect(bounds.x, bounds.y, bounds.width, bounds.height, x, y, width, height);
+            const withinBounds = !bounds || rectContainsRect(bounds, x, y, width, height);
             if (!withinBounds) {
                 continue;
             }
 
             const overlapPoints = data.some((datum) =>
-                datum.some((d) => circleRectOverlap(d.point.x, d.point.y, d.point.size * 0.5, x, y, width, height))
+                datum.some((d) => circleRectOverlap(d.point, x, y, width, height))
             );
             if (overlapPoints) {
                 continue;
             }
 
-            const overlapLabels = result.some((labels) =>
-                labels.some((l) => rectRectOverlap(l.x, l.y, l.width, l.height, x, y, width, height))
-            );
+            const overlapLabels = result.some((labels) => labels.some((l) => rectRectOverlap(l, x, y, width, height)));
             if (overlapLabels) {
                 continue;
             }

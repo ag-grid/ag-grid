@@ -277,7 +277,7 @@ function debug(message?: any, ...optionalParams: any[]): void {
     }
 }
 
-function applyChartOptions<T extends CartesianChart | PolarChart | HierarchyChart, O extends ChartOptionType<T>>(
+function applyChartOptions<T extends ChartType, O extends ChartOptionType<T>>(
     chart: T,
     options: O,
     userOptions: O
@@ -334,10 +334,7 @@ function applyChartOptions<T extends CartesianChart | PolarChart | HierarchyChar
     chart.update(updateType, { forceNodeDataRefresh });
 }
 
-function applySeries<T extends CartesianChart | PolarChart | HierarchyChart, O extends ChartOptionType<T>>(
-    chart: T,
-    options: O
-) {
+function applySeries<T extends ChartType, O extends ChartOptionType<T>>(chart: T, options: O) {
     const optSeries = options.series;
     if (!optSeries) {
         return;
@@ -368,10 +365,7 @@ function applySeries<T extends CartesianChart | PolarChart | HierarchyChart, O e
     chart.series = createSeries(optSeries);
 }
 
-function applyAxes<T extends CartesianChart | PolarChart | HierarchyChart, O extends ChartOptionType<T>>(
-    chart: T,
-    options: O & AgCartesianChartOptions
-) {
+function applyAxes<T extends ChartType, O extends ChartOptionType<T>>(chart: T, options: O & AgCartesianChartOptions) {
     const optAxes = options.axes;
     if (!optAxes) {
         return false;

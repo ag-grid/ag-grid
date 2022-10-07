@@ -81,7 +81,6 @@ export class NumberAxis extends ChartAxis {
             const [d, ticks] = calculateNiceSecondaryAxis(domain, primaryTickCount);
             scale.domain = d;
             this.ticks = ticks;
-            return;
         } else {
             scale.domain = domain;
 

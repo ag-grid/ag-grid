@@ -309,7 +309,7 @@ function formatGroup(grouping: number[], thousands: string): (value: string, wid
 }
 
 export function formatNumerals(numerals: string[]): (value: string) => string {
-    return (value) => value.replace(/[0-9]/g, (i) => numerals[+i]);
+    return (value) => value.replace(/\d/g, (i) => numerals[+i]);
 }
 
 // Trims insignificant zeros, e.g., replaces 1.2000k with 1.2k.
