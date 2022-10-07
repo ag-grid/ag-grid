@@ -30,6 +30,7 @@ import { ChartAxisDirection } from './chart/chartAxis';
 import { Layers } from './chart/layers';
 import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
+import { Matrix } from './scene/matrix';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -56,6 +57,11 @@ const GRID_STYLE = predicateWithMessage(
 enum Tags {
     Tick,
     GridLine,
+}
+
+export interface AxisNodeDatum {
+    readonly tick: any;
+    readonly translationY: number;
 }
 
 export interface GridStyle {
@@ -633,8 +639,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         });
     }
 
-    private updateTickGroupSelection({ ticks }: { ticks: any[] }) {
-        const updateAxis = this.tickGroupSelection.setData(ticks);
+    private updateTickGroupSelection({ data }: { data: AxisNodeDatum[] }) {
+        const updateAxis = this.tickGroupSelection.setData(data);
         updateAxis.exit.remove();
 
         const enterAxis = updateAxis.enter.append(Group);
@@ -645,8 +651,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return updateAxis.merge(enterAxis);
     }
 
-    private updateGridLineGroupSelection({ gridLength, ticks }: { gridLength: number; ticks: any[] }) {
-        const updateGridlines = this.gridlineGroupSelection.setData(gridLength ? ticks : []);
+    private updateGridLineGroupSelection({ gridLength, data }: { gridLength: number; data: AxisNodeDatum[] }) {
+        const updateGridlines = this.gridlineGroupSelection.setData(gridLength ? data : []);
         updateGridlines.exit.remove();
         let gridlineGroupSelection = updateGridlines;
         if (gridLength) {
@@ -676,10 +682,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }) {
         const { scale } = this;
         ticks = ticks ?? this.getTicks(count);
-        const gridlineGroupSelection = this.updateGridLineGroupSelection({ gridLength, ticks });
-        const tickGroupSelection = this.updateTickGroupSelection({ ticks });
+        const data = ticks.map((t) => ({ tick: t, translationY: Math.round(scale.convert(t) + halfBandwidth) }));
+        const gridlineGroupSelection = this.updateGridLineGroupSelection({ gridLength, data });
+        const tickGroupSelection = this.updateTickGroupSelection({ data });
 
-        const translationYFn = (_: unknown, datum: any) => Math.round(scale.convert(datum) + halfBandwidth);
+        const translationYFn = (_: unknown, datum: any) => datum.translationY;
         gridlineGroupSelection.attrFn('translationY', translationYFn);
         tickGroupSelection.attrFn('translationY', translationYFn);
 
@@ -777,12 +784,13 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let halfLastLabelLength = false;
         const availableRange = requestedRangeMax - requestedRangeMin;
         const labelSelection = tickLineGroupSelection.selectByClass(Text).each((node, datum, index) => {
+            const { tick } = datum;
             node.fontStyle = label.fontStyle;
             node.fontWeight = label.fontWeight;
             node.fontSize = label.fontSize;
             node.fontFamily = label.fontFamily;
             node.fill = label.color;
-            node.text = this.formatTickDatum(datum, index);
+            node.text = this.formatTickDatum(tick, index);
 
             node.visible = node.parent!.visible;
             if (node.visible !== true) {
@@ -876,7 +884,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
             : 'start';
 
         const labelData: PointLabelDatum[] = [];
-        labelSelection.each((label) => {
+
+        const combinedRotation = autoRotation + labelRotation + labelAutoRotation;
+        const labelRotationMatrix = new Matrix();
+        if (combinedRotation) {
+            Matrix.updateTransformMatrix(labelRotationMatrix, 1, 1, combinedRotation, 0, 0);
+        }
+
+        labelSelection.each((label, datum) => {
             if (label.text === '' || label.text == undefined) {
                 label.visible = false; // hide empty labels
                 return;
@@ -886,7 +901,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             label.textAlign = labelTextAlign;
             label.x = labelX;
             label.rotationCenterX = labelX;
-            label.rotation = autoRotation + labelRotation + labelAutoRotation;
+            label.rotation = combinedRotation;
 
             const userHidden = label.text === '' || label.text == undefined;
 
@@ -894,7 +909,19 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 return;
             }
 
-            const { x = 0, y = 0, width = 0, height = 0 } = label.computeTransformedBBox() || {};
+            // Text.computeBBox() does not take into account any of the transformations that have been applied to the label nodes, only the width and height are useful.
+            // Rather than taking into account all transformations including those of parent nodes which would be the result of `computeTransformedBBox()`, giving the x and y in the entire axis coordinate space,
+            // take into account only the rotation and translation applied to individual label nodes to get the x y coordinates of the labels relative to each other
+            // this makes label collision detection a lot simpler
+
+            const bbox: BBox = label.computeBBox();
+            const { width = 0, height = 0 } = bbox;
+
+            const { translationY } = datum;
+            const translatedBBox = new BBox(labelX, translationY, 0, 0);
+            labelRotationMatrix.transformBBox(translatedBBox, 0, bbox);
+            const { x = 0, y = 0 } = bbox;
+
             labelData.push({
                 point: {
                     x,

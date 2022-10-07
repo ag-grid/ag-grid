@@ -1,5 +1,9 @@
 {
   "Tags": {},
+  "AxisNodeDatum": {
+    "tick": { "type": { "returnType": "any", "optional": false } },
+    "translationY": { "type": { "returnType": "number", "optional": false } }
+  },
   "GridStyle": {
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "lineDash": { "type": { "returnType": "number[]", "optional": true } }
