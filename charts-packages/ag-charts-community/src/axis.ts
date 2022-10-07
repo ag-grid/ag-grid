@@ -29,6 +29,7 @@ import {
 import { ChartAxisDirection } from './chart/chartAxis';
 import { Layers } from './chart/layers';
 import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
+import { ContinuousScale } from './scale/continuousScale';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -549,13 +550,25 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let count = 0;
         let labelOverlap = true;
         let ticks: any[] = [];
+        let labelData: PointLabelDatum[] = [];
         const checkOverlap = this.tick.count === undefined;
-        const labelPadding = 15;
+        const continuous = scale instanceof ContinuousScale;
+        const labelPadding = continuous ? 15 : 0;
 
         while (labelOverlap && count < 10) {
-            ticks = this.updateSelections({ count, halfBandwidth, gridLength });
+            let unchanged = true;
+            while (unchanged && count < 10) {
+                const prevTicks = ticks;
+                count++;
 
-            const labelData = this.updateLabels({
+                const filteredTicks =
+                    continuous || count === 1 ? undefined : ticks.filter((_, i) => (i + 1) % count === 0);
+                ticks = this.updateSelections({ count, halfBandwidth, gridLength, ticks: filteredTicks });
+
+                unchanged = ticks.every((t, i) => t === prevTicks[i]);
+            }
+
+            labelData = this.updateLabels({
                 parallelFlipRotation,
                 regularFlipRotation,
                 sideFlag,
@@ -564,7 +577,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
             });
 
             labelOverlap = checkOverlap ? axisLabelsOverlap(labelData, labelPadding) : false;
-            count++;
         }
 
         this.updateGridLines({
@@ -633,7 +645,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return updateAxis.merge(enterAxis);
     }
 
-    private updateGridLineGroupSelection(gridLength: number, ticks: any[]) {
+    private updateGridLineGroupSelection({ gridLength, ticks }: { gridLength: number; ticks: any[] }) {
         const updateGridlines = this.gridlineGroupSelection.setData(gridLength ? ticks : []);
         updateGridlines.exit.remove();
         let gridlineGroupSelection = updateGridlines;
@@ -655,14 +667,16 @@ export class Axis<S extends Scale<D, number>, D = any> {
         count,
         halfBandwidth,
         gridLength,
+        ticks,
     }: {
         count: number;
         halfBandwidth: number;
         gridLength: number;
+        ticks?: any[];
     }) {
         const { scale } = this;
-        const ticks = this.getTicks(count);
-        const gridlineGroupSelection = this.updateGridLineGroupSelection(gridLength, ticks);
+        ticks = ticks ?? this.getTicks(count);
+        const gridlineGroupSelection = this.updateGridLineGroupSelection({ gridLength, ticks });
         const tickGroupSelection = this.updateTickGroupSelection({ ticks });
 
         const translationYFn = (_: unknown, datum: any) => Math.round(scale.convert(datum) + halfBandwidth);
