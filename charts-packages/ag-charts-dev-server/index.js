@@ -1,55 +1,38 @@
-// @ts-check
-import { exec } from 'child_process';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { transpileFiles } from './transpiler.js';
+import { transpileTSAndWatch } from './transpiler.js';
 import { createDevServer } from './dev-server.js';
 import { createLivereloadServer } from './livereload-server.js';
 import { glob } from './file.js';
-import { log } from './log.js';
-
-function openURL(/** @type {string} */url) {
-    const { platform } = process;
-    const start = platform == 'darwin' ? 'open' : platform == 'win32' ? 'start' : 'xdg-open';
-    exec(`${start} ${url}`);
-}
-
+import { log, openURLInBrowser } from './utils.js';
 
 const PORT = 2020;
 const SRC_DIR = '../ag-charts-community/src';
+const SRC_ENTRY = `${SRC_DIR}/main.ts`;
+const CHARTS_DEST_DIR = 'ag-charts';
 const STATIC_DIR = 'www';
-
-async function getSrcFiles() {
-    /** @type {string[]} */
-    const tsFiles = await glob(`${SRC_DIR}/**/*.ts`);
-    return tsFiles.filter((file) => {
-        // Filter out test files
-        return !(
-            file.endsWith('.test.ts') ||
-            file.includes('/test/')
-        );
-    });
-}
+const DEBOUNCE = 250;
 
 async function run() {
-    const staticFiles = await glob(`${STATIC_DIR}/**/*.*`);
-    const srcFiles = await getSrcFiles();
-    const transpiledFiles = await transpileFiles(srcFiles, { cwd: SRC_DIR });
-
     const devServer = createDevServer(PORT);
     const livereloadServer = createLivereloadServer(devServer.httpServer);
 
+    const staticFiles = await glob(`${STATIC_DIR}/**/*.*`);
     for (const file of staticFiles) {
         const content = await fs.readFile(file, 'utf8');
         const relative = path.relative(STATIC_DIR, file);
         devServer.addStaticFile(relative, content);
     }
 
-    for (const transpiled of transpiledFiles) {
-        devServer.addStaticFile(transpiled.jsFile, transpiled.jsContent);
-        devServer.addStaticFile(transpiled.sourcemapFile, transpiled.sourcemapContent);
-        devServer.addStaticFile(transpiled.tsFile, transpiled.tsContent);
-    }
+    const watcher = transpileTSAndWatch({
+        entry: SRC_ENTRY,
+        srcDir: SRC_DIR,
+        destDir: CHARTS_DEST_DIR,
+        debounce: DEBOUNCE,
+        emit: (file, content) => {
+            devServer.addStaticFile(file, content);
+        },
+    });
 
     let isStopped = false;
 
@@ -58,9 +41,7 @@ async function run() {
 
         livereloadServer.close();
         devServer.close();
-        // watchers.forEach((watcher) => {
-        //     watcher.stop();
-        // });
+        watcher.stop();
         isStopped = true;
     }
 
@@ -68,9 +49,10 @@ async function run() {
     process.on('SIGINT', stop);
 
     await devServer.start();
+    watcher.onChange(() => livereloadServer.sendMessage({ type: 'reload-full' }));
 
     log.ok('watching...');
-    openURL(`http://localhost:${PORT}/`);
+    openURLInBrowser(`http://localhost:${PORT}/`);
 }
 
 run();

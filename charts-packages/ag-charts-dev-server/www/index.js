@@ -1,8 +1,8 @@
-// @ts-check
+import './livereload-client.js';
 
 async function loadAgCharts() {
     // @ts-ignore
-    return await import('./main.js');
+    return await import('./ag-charts/main.js');
 }
 
 async function loadExamples() {

@@ -1,6 +1,5 @@
-// @ts-check
 import { WebSocketServer } from 'ws';
-import { log } from './log.js';
+import { log } from './utils.js';
 
 /**
  * @param {import('http').Server} httpServer

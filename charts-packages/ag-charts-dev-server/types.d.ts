@@ -1,8 +1,11 @@
-export interface TSOutput {
-    tsFile: string;
-    jsFile: string;
-    sourcemapFile: string;
-    tsContent: string;
-    jsContent: string;
-    sourcemapContent: string;
+export interface Transpiler {
+    onChange: (callback: () => void) => void;
+    stop: () => void;
+}
+export interface TranspilerOptions {
+    entry: string;
+    srcDir: string;
+    destDir: string;
+    debounce: number;
+    emit: (file: string, content: string) => void;
 }

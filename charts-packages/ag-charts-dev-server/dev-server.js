@@ -1,7 +1,6 @@
-// @ts-check
 import http from 'http';
 import path from 'path';
-import { log } from './log.js';
+import { log } from './utils.js';
 
 const mimeTypes = new Map(
     Object.entries({
