@@ -38,6 +38,10 @@ function rectRectOverlap(r1: Bounds, x2: number, y2: number, w2: number, h2: num
     return xOverlap && yOverlap;
 }
 
+function rectContainsRect(r1: Bounds, r2x: number, r2y: number, r2w: number, r2h: number) {
+    return r2x + r2w < r1.x + r1.width && r2x > r1.x && r2y > r1.y && r2y + r2h < r1.y + r1.height;
+}
+
 export function isPointLabelDatum(x: any): x is PointLabelDatum {
     return x != null && typeof x.point === 'object' && typeof x.label === 'object';
 }
@@ -69,7 +73,7 @@ export function placeLabels(
             const y = d.point.y - r - l.height - padding;
             const { width, height } = l;
 
-            const withinBounds = !bounds || rectRectOverlap(bounds, x, y, width, height);
+            const withinBounds = !bounds || rectContainsRect(bounds, x, y, width, height);
             if (!withinBounds) {
                 continue;
             }
