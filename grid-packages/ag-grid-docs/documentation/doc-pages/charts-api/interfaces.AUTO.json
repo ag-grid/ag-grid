@@ -4,6 +4,10 @@
     "type": ["Tick", "GridLine"],
     "docs": [null, null]
   },
+  "AxisNodeDatum": {
+    "meta": {},
+    "type": { "tick": "any", "translationY": "number" }
+  },
   "GridStyle": {
     "meta": {},
     "type": { "stroke?": "string", "lineDash?": "number[]" }
