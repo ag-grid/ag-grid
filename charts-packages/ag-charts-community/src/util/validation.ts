@@ -136,6 +136,14 @@ export const DATE = predicateWithMessage((v: any) => v instanceof Date && !isNaN
 export const OPT_DATE = predicateWithMessage((v: any, ctx) => OPTIONAL(v, ctx, DATE), 'expecting an optional Date');
 export const DATE_ARRAY = predicateWithMessage(ARRAY(undefined, DATE), 'expecting an Array of Date objects');
 
+export const DATETIME_MS = NUMBER(0);
+export const OPT_DATETIME_MS = predicateWithMessage(
+    (v: any, ctx) => OPTIONAL(v, ctx, DATETIME_MS),
+    'expecting an optional number'
+);
+
+export const OPT_DATE_OR_DATETIME_MS = OR(OPT_DATE, OPT_DATETIME_MS);
+
 const colorMessage = `A color string can be in one of the following formats to be valid: #rgb, #rrggbb, rgb(r, g, b), rgba(r, g, b, a) or a CSS color name such as 'white', 'orange', 'cyan', etc`;
 
 export const COLOR_STRING = predicateWithMessage((v: any) => {
