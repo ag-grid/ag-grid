@@ -1,9 +1,23 @@
 import { exec } from 'child_process';
+import glob from 'glob';
 
 export function openURLInBrowser(url) {
     const { platform } = process;
     const start = platform == 'darwin' ? 'open' : platform == 'win32' ? 'start' : 'xdg-open';
     exec(`${start} ${url}`);
+}
+
+/**
+ * @param {string} pattern
+ * @returns {Promise<string[]>}
+ */
+ export async function getFiles(pattern) {
+    return await (new Promise((resolve, reject) => {
+        glob(pattern, (err, matches) => {
+            if (err) reject(err);
+            else resolve(matches);
+        });
+    }))
 }
 
 /** @type {{ [color: string]: (text: string) => string }} */
@@ -23,8 +37,19 @@ function getTimeMessage(text) {
     return `${colors.gray(`${time}`)} ${text}`;
 }
 
-export const log = Object.assign((/** @type {string} */text) => console.log(getTimeMessage(text)), {
-    ok: (/** @type {string} */text) => console.info(getTimeMessage(colors.green(text))),
-    warn: (/** @type {string} */text) => console.warn(getTimeMessage(colors.yellow(text))),
-    error: (/** @type {string} */text) => console.error(getTimeMessage(colors.red(text))),
+/** @typedef {(text: string) => void} Logger */
+
+/** @type {Logger} */
+const simpleLog = (text) => console.log(getTimeMessage(text));
+/** @type {Logger} */
+const logOk = (text) => console.info(getTimeMessage(text));
+/** @type {Logger} */
+const logWarn = (text) => console.warn(getTimeMessage(text));
+/** @type {Logger} */
+const logError = (text) => console.error(getTimeMessage(text));
+
+export const log = Object.assign(simpleLog, {
+    ok: logOk,
+    warn: logWarn,
+    error: logError,
 });

@@ -3,9 +3,12 @@
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "checkJs": true,
+        "lib": [
+            "ESNext"
+        ],
+        "noEmit": true,
         "types": [
             "node"
-        ],
-        "noEmit": true
+        ]
     }
 }

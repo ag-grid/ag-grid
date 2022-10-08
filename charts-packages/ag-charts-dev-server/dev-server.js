@@ -21,7 +21,7 @@ export function createDevServer(/** @type {number} */port) {
     const server = http.createServer((req, res) => {
         const baseURL = `${req.headers.protocol}://${req.headers.host}/`;
         const parsedURL = new URL(/** @type {string} */(req.url), baseURL);
-        const pathName = parsedURL.pathname.replace(/^\//, '') || 'index.html';
+        const pathName = parsedURL.pathname.replace(/^\//, '').replace(/\/$/, '');
 
         // Display all the files
         if (pathName === '__dir__') {
@@ -37,14 +37,19 @@ export function createDevServer(/** @type {number} */port) {
             return;
         }
 
-        if (!files.has(pathName)) {
+        const fallbackPath = pathName ? `${pathName}/index.html` : 'index.html';
+        const successPath = [
+            pathName,
+            fallbackPath,
+        ].find((p) => files.has(p));
+        if (!successPath) {
             res.statusCode = 404;
             res.end(`Not found "${pathName}"`);
             return;
         }
 
-        const content = files.get(pathName);
-        const ext = path.extname(pathName);
+        const content = files.get(successPath);
+        const ext = path.extname(successPath);
         const contentType = mimeTypes.get(ext) || 'text/plain';
 
         res.statusCode = 200;
