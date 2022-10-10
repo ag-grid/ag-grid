@@ -73,6 +73,12 @@ The example below demonstrates this property. Note the following:
 
 <grid-example title='Prevent Panel Sorting' name='prevent-panel-sorting' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
+## Example: Multiple Group Columns
+
+The following example demonstrates the row group panel used alongside multiple group columns.
+
+<grid-example title='Multiple Group Columns' name='multiple-group-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
 ## Next Up
 
 Continue to the next section to learn how to add [Group Order](../grouping-group-order/).

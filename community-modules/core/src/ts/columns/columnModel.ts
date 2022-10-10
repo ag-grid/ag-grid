@@ -3208,7 +3208,7 @@ export class ColumnModel extends BeanStub {
         if (areAutoColsChanged && sortOrderToRecover) {
             const groupAutoColsMap = convertToMap<Column, true>(this.groupAutoColumns!.map(col => [col, true]));
             // if group columns has changed, we don't preserve the group column order, so remove them from the old order
-            sortOrderToRecover = sortOrderToRecover.filter(col => groupAutoColsMap.has(col));
+            sortOrderToRecover = sortOrderToRecover.filter(col => !groupAutoColsMap.has(col));
             // and add them to the start of the order
             sortOrderToRecover = [...this.groupAutoColumns!, ...sortOrderToRecover];
         }
