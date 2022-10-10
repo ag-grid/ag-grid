@@ -10,7 +10,7 @@ import { RowDragComp } from "./../row/rowDragComp";
 import { PopupEditorWrapper } from "./../cellEditors/popupEditorWrapper";
 import { DndSourceComp } from "./../dndSourceComp";
 import { TooltipParentComp } from "../../widgets/customTooltipFeature";
-import { setAriaDescribedBy, setAriaRole } from "../../utils/aria";
+import { setAriaDescribedBy, setAriaHidden, setAriaRole } from "../../utils/aria";
 import { escapeString } from "../../utils/string";
 import { missing } from "../../utils/generic";
 import { addStylesToElement, clearElement, loadTemplate, removeFromParent } from "../../utils/dom";
@@ -214,6 +214,8 @@ export class CellComp extends Component implements TooltipParentComp {
     private addControls(): void {
         const id = this.eCellValue!.id = `cell-${this.getCompId()}`;
         const describedByIds: string[] = [];
+
+        setAriaHidden(this.eCellWrapper!, true);
 
         if (this.includeRowDrag) {
             if (this.rowDraggingComp == null) {
