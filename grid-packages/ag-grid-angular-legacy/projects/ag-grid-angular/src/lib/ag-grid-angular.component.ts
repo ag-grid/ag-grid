@@ -392,7 +392,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false`     */
     @Input() public suppressRowGroupHidesColumns: boolean | undefined = undefined;
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing).     */
-    @Input() public colResizeDefault: string | undefined = undefined;
+    @Input() public colResizeDefault: 'shift' | undefined = undefined;
     /** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false`     */
     @Input() public suppressAutoSize: boolean | undefined = undefined;
     /** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.
@@ -407,7 +407,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.     */
-    @Input() public editType: string | undefined = undefined;
+    @Input() public editType: 'fullRow' | undefined = undefined;
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false`     */
     @Input() public singleClickEdit: boolean | undefined = undefined;
     /** Set to `true` so that neither single nor double click starts editing. Default: `false`     */
@@ -571,11 +571,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `true` to enable pivot mode. Default: `false`     */
     @Input() public pivotMode: boolean | undefined = undefined;
     /** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. Default: `never`     */
-    @Input() public pivotPanelShow: string | undefined = undefined;
+    @Input() public pivotPanelShow: 'always' | 'onlyWhenPivoting' | 'never' | undefined = undefined;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified.     */
-    @Input() public pivotColumnGroupTotals: string | undefined = undefined;
+    @Input() public pivotColumnGroupTotals: 'before' | 'after' | undefined = undefined;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.     */
-    @Input() public pivotRowTotals: string | undefined = undefined;
+    @Input() public pivotRowTotals: 'before' | 'after' | undefined = undefined;
     /** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column. Default: `false`     */
     @Input() public pivotSuppressAutoColumn: boolean | undefined = undefined;
     /** When enabled, pivot column groups will appear 'fixed', without the ability to expand and collapse the column groups. Default: `false`     */
@@ -686,7 +686,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. Default: `false`     */
     @Input() public groupHideOpenParents: boolean | undefined = undefined;
     /** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never`     */
-    @Input() public rowGroupPanelShow: string | undefined = undefined;
+    @Input() public rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never' | undefined = undefined;
     /** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
      * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.     */
     @Input() public groupRowRenderer: any = undefined;
@@ -863,7 +863,7 @@ Full Store is used.
     /** Set to `true` to always multi-sort when the user clicks a column header, regardless of key presses. Default: `false`     */
     @Input() public alwaysMultiSort: boolean | undefined = undefined;
     /** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key.     */
-    @Input() public multiSortKey: string | undefined = undefined;
+    @Input() public multiSortKey: 'ctrl' | undefined = undefined;
     /** Set to `true` to suppress sorting of un-sorted data to match original row data. Default: `false`     */
     @Input() public suppressMaintainUnsortedOrder: boolean | undefined = undefined;
     /** Icons to use inside the grid instead of the grid's default icons.     */

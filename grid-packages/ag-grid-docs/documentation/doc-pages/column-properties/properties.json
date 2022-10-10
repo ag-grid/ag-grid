@@ -161,12 +161,7 @@
         "hide": {},
         "initialHide": {},
         "lockVisible": {},
-        "lockPosition": {
-            "options": [
-                "left",
-                "right"
-            ]
-        },
+        "lockPosition": {},
         "suppressMovable": {}
     },
     "width": {
@@ -200,12 +195,7 @@
                 "url": "/column-pinning/"
             }
         },
-        "pinned": {
-            "options": [
-                "left",
-                "right"
-            ]
-        },
+        "pinned": {},
         "initialPinned": {},
         "lockPinned": {}
     },
@@ -272,23 +262,11 @@
             }
         },
         "sortable": {},
-        "sort": {
-            "options": [
-                null,
-                "asc",
-                "desc"
-            ]
-        },
+        "sort": {},
         "initialSort": {},
         "sortIndex": {},
         "initialSortIndex": {},
-        "sortingOrder": {
-            "options": [
-                null,
-                "asc",
-                "desc"
-            ]
-        },
+        "sortingOrder": {},
         "comparator": {},
         "unSortIcon": {}
     },

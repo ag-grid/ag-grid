@@ -209,7 +209,7 @@ export interface GridOptions<TData = any> {
 
     // *** Column Sizing *** //
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */
-    colResizeDefault?: string;
+    colResizeDefault?: 'shift';
     /** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */
     suppressAutoSize?: boolean;
     /**
@@ -237,7 +237,7 @@ export interface GridOptions<TData = any> {
 
     // *** Editing *** //
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */
-    editType?: string;
+    editType?: 'fullRow';
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */
     singleClickEdit?: boolean;
     /** Set to `true` so that neither single nor double click starts editing. Default: `false` */
@@ -445,11 +445,11 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to enable pivot mode. Default: `false` */
     pivotMode?: boolean;
     /** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. Default: `never` */
-    pivotPanelShow?: string;
+    pivotPanelShow?: 'always' | 'onlyWhenPivoting' | 'never';
     /** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified. */
-    pivotColumnGroupTotals?: string;
+    pivotColumnGroupTotals?: 'before' | 'after';
     /** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified. */
-    pivotRowTotals?: string;
+    pivotRowTotals?: 'before' | 'after';
     /** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column. Default: `false` */
     pivotSuppressAutoColumn?: boolean;
     /** When enabled, pivot column groups will appear 'fixed', without the ability to expand and collapse the column groups. Default: `false` */
@@ -584,7 +584,7 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. Default: `false` */
     groupHideOpenParents?: boolean;
     /** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never` */
-    rowGroupPanelShow?: string;
+    rowGroupPanelShow?: 'always' | 'onlyWhenGrouping' | 'never';
     /**
     * Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
     * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.
@@ -798,7 +798,7 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to always multi-sort when the user clicks a column header, regardless of key presses. Default: `false` */
     alwaysMultiSort?: boolean;
     /** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key. */
-    multiSortKey?: string;
+    multiSortKey?: 'ctrl';
     /** Set to `true` to suppress sorting of un-sorted data to match original row data. Default: `false` */
     suppressMaintainUnsortedOrder?: boolean;
 

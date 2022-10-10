@@ -174,10 +174,7 @@
             }
         },
         "colResizeDefault": {
-            "description": "Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down <kbd>Shift</kbd> while resizing).",
-            "options": [
-                "shift"
-            ]
+            "description": "Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down <kbd>Shift</kbd> while resizing)."
         },
         "suppressAutoSize": {
             "more": {
@@ -217,9 +214,6 @@
             }
         },
         "editType": {
-            "options": [
-                "fullRow"
-            ],
             "more": {
                 "name": "Full Row Editing",
                 "url": "/cell-editing-full-row/"
@@ -635,28 +629,14 @@
             "description": "See [Pivot](/pivoting/) and [Aggregation](/aggregation/) for more information"
         },
         "pivotMode": {},
-        "pivotPanelShow": {
-            "options": [
-                "never",
-                "always",
-                "onlyWhenPivoting"
-            ]
-        },
+        "pivotPanelShow": {},
         "pivotColumnGroupTotals": {
-            "options": [
-                "before",
-                "after"
-            ],
             "more": {
                 "name": "Pivot Column Group Totals",
                 "url": "/pivoting/#pivot-column-group-totals"
             }
         },
         "pivotRowTotals": {
-            "options": [
-                "before",
-                "after"
-            ],
             "more": {
                 "name": "Pivot Row Totals",
                 "url": "/pivoting/#pivot-row-totals"
@@ -743,11 +723,6 @@
             }
         },
         "domLayout": {
-            "options": [
-                "normal",
-                "autoHeight",
-                "print"
-            ],
             "description": "Switch between layout options. See [Printing](/printing/) and [Auto Height](/grid-size/#grid-auto-height). Default: `normal`"
         },
         "ensureDomOrder": {
@@ -920,11 +895,6 @@
             }
         },
         "rowGroupPanelShow": {
-            "options": [
-                "never",
-                "always",
-                "onlyWhenGrouping"
-            ],
             "more": {
                 "name": "Enabling Row Group Panel",
                 "url": "/grouping-group-panel/#enabling-row-group-panel"
@@ -1238,9 +1208,6 @@
         "alwaysMultiSort": {},
         "multiSortKey": {
             "description": "Set to `'ctrl'` to have multi sorting work using the <kbd>Ctrl</kbd> (or <kbd>Command ⌘</kbd> for Mac) key.",
-            "options": [
-                "ctrl"
-            ],
             "more": {
                 "name": "Multi Column Sorting",
                 "url": "/row-sorting/#multi-column-sorting"

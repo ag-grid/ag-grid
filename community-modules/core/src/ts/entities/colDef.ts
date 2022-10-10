@@ -180,7 +180,7 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
     initialHide?: boolean;
     /** Set to `true` to block making column visible / hidden via the UI (API will still work). Default: `false` */
     lockVisible?: boolean;
-    /** Lock a column to position to `'left'` or`'right'` to always have this column displayed in that position. true is treated as `'left'` */
+    /** Lock a column to position to `'left'` or`'right'` to always have this column displayed in that position. `true` is treated as `'left'` */
     lockPosition?: boolean | 'left' | 'right';
     /** Set to `true` if you do not want this column to be movable via dragging. Default: `false` */
     suppressMovable?: boolean;

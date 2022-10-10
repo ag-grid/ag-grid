@@ -175,7 +175,7 @@
     "type": { "returnType": "boolean" }
   },
   "lockPosition": {
-    "description": "/** Lock a column to position to `'left'` or`'right'` to always have this column displayed in that position. true is treated as `'left'` */",
+    "description": "/** Lock a column to position to `'left'` or`'right'` to always have this column displayed in that position. `true` is treated as `'left'` */",
     "type": { "returnType": "boolean | 'left' | 'right'" }
   },
   "suppressMovable": {

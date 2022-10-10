@@ -884,7 +884,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "lockPosition": {
-      "description": "/** Lock a column to position to `'left'` or`'right'` to always have this column displayed in that position. true is treated as `'left'` */",
+      "description": "/** Lock a column to position to `'left'` or`'right'` to always have this column displayed in that position. `true` is treated as `'left'` */",
       "type": { "returnType": "boolean | 'left' | 'right'", "optional": true }
     },
     "suppressMovable": {
@@ -2532,7 +2532,7 @@
     },
     "colResizeDefault": {
       "description": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'shift'", "optional": true }
     },
     "suppressAutoSize": {
       "description": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
@@ -2567,7 +2567,7 @@
     },
     "editType": {
       "description": "/** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'fullRow'", "optional": true }
     },
     "singleClickEdit": {
       "description": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */",
@@ -2859,15 +2859,18 @@
     },
     "pivotPanelShow": {
       "description": "/** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. Default: `never` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": {
+        "returnType": "'always' | 'onlyWhenPivoting' | 'never'",
+        "optional": true
+      }
     },
     "pivotColumnGroupTotals": {
       "description": "/** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'before' | 'after'", "optional": true }
     },
     "pivotRowTotals": {
       "description": "/** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'before' | 'after'", "optional": true }
     },
     "pivotSuppressAutoColumn": {
       "description": "/** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column. Default: `false` */",
@@ -3064,7 +3067,10 @@
     },
     "rowGroupPanelShow": {
       "description": "/** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": {
+        "returnType": "'always' | 'onlyWhenGrouping' | 'never'",
+        "optional": true
+      }
     },
     "groupRowRenderer": {
       "description": "/** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.\n * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details. */",
@@ -3360,7 +3366,7 @@
     },
     "multiSortKey": {
       "description": "/** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'ctrl'", "optional": true }
     },
     "suppressMaintainUnsortedOrder": {
       "description": "/** Set to `true` to suppress sorting of un-sorted data to match original row data. Default: `false` */",
@@ -24228,7 +24234,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "lockPosition": {
-      "description": "/** Lock a column to position to `'left'` or`'right'` to always have this column displayed in that position. true is treated as `'left'` */",
+      "description": "/** Lock a column to position to `'left'` or`'right'` to always have this column displayed in that position. `true` is treated as `'left'` */",
       "type": { "returnType": "boolean | 'left' | 'right'", "optional": true }
     },
     "suppressMovable": {
@@ -25096,7 +25102,7 @@
     },
     "colResizeDefault": {
       "description": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'shift'", "optional": true }
     },
     "suppressAutoSize": {
       "description": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
@@ -25131,7 +25137,7 @@
     },
     "editType": {
       "description": "/** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'fullRow'", "optional": true }
     },
     "singleClickEdit": {
       "description": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */",
@@ -25423,15 +25429,18 @@
     },
     "pivotPanelShow": {
       "description": "/** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. Default: `never` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": {
+        "returnType": "'always' | 'onlyWhenPivoting' | 'never'",
+        "optional": true
+      }
     },
     "pivotColumnGroupTotals": {
       "description": "/** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'before' | 'after'", "optional": true }
     },
     "pivotRowTotals": {
       "description": "/** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'before' | 'after'", "optional": true }
     },
     "pivotSuppressAutoColumn": {
       "description": "/** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column. Default: `false` */",
@@ -25628,7 +25637,10 @@
     },
     "rowGroupPanelShow": {
       "description": "/** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": {
+        "returnType": "'always' | 'onlyWhenGrouping' | 'never'",
+        "optional": true
+      }
     },
     "groupRowRenderer": {
       "description": "/** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.\n * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details. */",
@@ -25924,7 +25936,7 @@
     },
     "multiSortKey": {
       "description": "/** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'ctrl'", "optional": true }
     },
     "suppressMaintainUnsortedOrder": {
       "description": "/** Set to `true` to suppress sorting of un-sorted data to match original row data. Default: `false` */",
@@ -27909,7 +27921,7 @@
     },
     "colResizeDefault": {
       "description": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'shift'", "optional": true }
     },
     "suppressAutoSize": {
       "description": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
@@ -27944,7 +27956,7 @@
     },
     "editType": {
       "description": "/** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'fullRow'", "optional": true }
     },
     "singleClickEdit": {
       "description": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */",
@@ -28236,15 +28248,18 @@
     },
     "pivotPanelShow": {
       "description": "/** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. Default: `never` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": {
+        "returnType": "'always' | 'onlyWhenPivoting' | 'never'",
+        "optional": true
+      }
     },
     "pivotColumnGroupTotals": {
       "description": "/** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'before' | 'after'", "optional": true }
     },
     "pivotRowTotals": {
       "description": "/** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'before' | 'after'", "optional": true }
     },
     "pivotSuppressAutoColumn": {
       "description": "/** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column. Default: `false` */",
@@ -28441,7 +28456,10 @@
     },
     "rowGroupPanelShow": {
       "description": "/** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": {
+        "returnType": "'always' | 'onlyWhenGrouping' | 'never'",
+        "optional": true
+      }
     },
     "groupRowRenderer": {
       "description": "/** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.\n * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details. */",
@@ -28737,7 +28755,7 @@
     },
     "multiSortKey": {
       "description": "/** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'ctrl'", "optional": true }
     },
     "suppressMaintainUnsortedOrder": {
       "description": "/** Set to `true` to suppress sorting of un-sorted data to match original row data. Default: `false` */",
@@ -30732,7 +30750,7 @@
     },
     "colResizeDefault": {
       "description": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'shift'", "optional": true }
     },
     "suppressAutoSize": {
       "description": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
@@ -30767,7 +30785,7 @@
     },
     "editType": {
       "description": "/** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'fullRow'", "optional": true }
     },
     "singleClickEdit": {
       "description": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */",
@@ -31059,15 +31077,18 @@
     },
     "pivotPanelShow": {
       "description": "/** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. Default: `never` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": {
+        "returnType": "'always' | 'onlyWhenPivoting' | 'never'",
+        "optional": true
+      }
     },
     "pivotColumnGroupTotals": {
       "description": "/** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'before' | 'after'", "optional": true }
     },
     "pivotRowTotals": {
       "description": "/** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'before' | 'after'", "optional": true }
     },
     "pivotSuppressAutoColumn": {
       "description": "/** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column. Default: `false` */",
@@ -31264,7 +31285,10 @@
     },
     "rowGroupPanelShow": {
       "description": "/** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": {
+        "returnType": "'always' | 'onlyWhenGrouping' | 'never'",
+        "optional": true
+      }
     },
     "groupRowRenderer": {
       "description": "/** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.\n * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details. */",
@@ -31560,7 +31584,7 @@
     },
     "multiSortKey": {
       "description": "/** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'ctrl'", "optional": true }
     },
     "suppressMaintainUnsortedOrder": {
       "description": "/** Set to `true` to suppress sorting of un-sorted data to match original row data. Default: `false` */",
