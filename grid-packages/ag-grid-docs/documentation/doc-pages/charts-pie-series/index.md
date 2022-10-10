@@ -48,7 +48,7 @@ This example demonstrates:
   - Display of a per-sector callout label.
   - Labels for use in the legend.
   - Tooltips on segment hover including the callout label and sector value.
-  - Some callout labels are not displayed, where the sector is smaller than `minAngle` (defaults to `20`).
+  - Some callout labels are not displayed, where the sector is smaller than `calloutLabel.minAngle` (defaults to `20`).
 - Use of `sectorLabelKey` and `sectorLabel`, enabling:
   - Display of a per-sector inside label.
   - Some sector labels are not displayed, where the sector is too small to fit the label text.
