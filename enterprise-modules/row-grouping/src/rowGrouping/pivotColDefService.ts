@@ -347,6 +347,9 @@ export class PivotColDefService extends BeanStub {
         // pivot columns repeat over field, so it makes sense to use the unique id instead. For example if you want to
         // assign values to pinned bottom rows using setPinnedBottomRowData the value service will use this colId.
         colDef.field = colDef.colId;
+        // this is to support using pinned rows, normally the data will be extracted from the aggData object using the colId
+        // however pinned rows still access the data object by field, this prevents values with dots from being treated as complex objects
+        colDef.valueGetter = (params) => params.data[params.colDef.field!];
 
         colDef.pivotKeys = pivotKeys;
         colDef.pivotValueColumn = valueColumn;
