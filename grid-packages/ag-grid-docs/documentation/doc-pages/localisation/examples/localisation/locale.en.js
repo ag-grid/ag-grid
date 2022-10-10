@@ -72,6 +72,7 @@ const AG_GRID_LOCALE_EN = {
 
     // Other
     loadingOoo: 'Loading...',
+    loadingError: 'ERR',
     noRowsToShow: 'No Rows To Show',
     enabled: 'Enabled',
 
