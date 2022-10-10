@@ -119,7 +119,7 @@ export function axisLabelsOverlap(data: readonly PointLabelDatum[], padding?: nu
         height += padding ?? 0;
 
         const overlapLabels = result.some((l: PlacedLabel) => {
-            const overlap = rectRectOverlap(l.x, l.y, l.width, l.height, x, y, width, height);
+            const overlap = rectRectOverlap(l, x, y, width, height);
             return overlap;
         });
 

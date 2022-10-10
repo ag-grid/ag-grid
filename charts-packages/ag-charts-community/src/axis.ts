@@ -559,19 +559,18 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let labelData: PointLabelDatum[] = [];
         const checkOverlap = this.tick.count === undefined;
         const continuous = scale instanceof ContinuousScale;
-        const labelPadding = continuous ? 15 : 0;
+        const labelPadding = continuous ? 15 : 5;
 
         while (labelOverlap && count < 10) {
             let unchanged = true;
             while (unchanged && count < 10) {
                 const prevTicks = ticks;
-                count++;
 
-                const filteredTicks =
-                    continuous || count === 1 ? undefined : ticks.filter((_, i) => (i + 1) % count === 0);
+                const filteredTicks = continuous || count === 1 ? undefined : ticks.filter((_, i) => i % 2 === 0);
                 ticks = this.updateSelections({ count, halfBandwidth, gridLength, ticks: filteredTicks });
 
                 unchanged = ticks.every((t, i) => t === prevTicks[i]);
+                count++;
             }
 
             labelData = this.updateLabels({
@@ -592,7 +591,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         });
 
         let anyTickVisible = false;
-        const visibleFn = (node: Group, _datum: any) => {
+        const visibleFn = (node: Group) => {
             const min = Math.floor(requestedRangeMin);
             const max = Math.ceil(requestedRangeMax);
             const visible = min !== max && node.translationY >= min && node.translationY <= max;
