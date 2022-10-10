@@ -22,40 +22,43 @@ This results in the chart shown below. Note that [tooltips](/charts-tooltips/) s
 
 <chart-example title='Basic Pie Chart' name='basic-pie' type='generated'></chart-example>
 
-## Sector Labels
+## Labels
 
-In the example above there's no legend or labels next to pie sectors. To show those, the label information must be in the `data`. Additionally, we'll have to provide the `calloutLabelKey`:
+We support two types of label related to individual sectors:
+- Call-out labels: displayed adjacent to each sector with a joining line (configured via `calloutLabelKey`, `calloutLabel` and `calloutLabelLine` options).
+- Sector labels: displayed inside each sector (configured via `sectorLabelKey` and `sectorLabel` options).
+
+Additionally legend labels and tooltips are derived from the call-out label options.
 
 ```diff
 series: [{
     type: 'pie',
     angleKey: 'value',
-+   calloutLabelKey: 'label'
++   calloutLabelKey: 'label',
++   sectorLabelKey: 'value',
++   sectorLabel: {
++       color: 'white',
++       fontWeight: 'bold'
++   }
 }]
 ```
 
-Now we get labels, a legend, and the tooltips will also show labels along with the values:
+This example demonstrates:
+- Use of `calloutLabelKey`, enabling:
+  - Display of a per-sector callout label.
+  - Labels for use in the legend.
+  - Tooltips on segment hover including the callout label and sector value.
+  - Some callout labels are not displayed, where the sector is smaller than `minAngle` (defaults to `20`).
+- Use of `sectorLabelKey` and `sectorLabel`, enabling:
+  - Display of a per-sector inside label.
+  - Some sector labels are not displayed, where the sector is too small to fit the label text.
+- Individual sectors can be toggled on and off via the legend.
 
 <chart-example title='Pie Chart with Labels' name='pie-labels' type='generated'></chart-example>
 
-Each individual sector can be toggled on and off via the legend.
+The `calloutLabel.formatter` and `sectorLabel.formatter` functions can be used to change the text value displayed in the labels. They receive a single object as a parameter containing values associated with a pie sector. Please see the [API reference](#api-reference) for the full list of available properties.
 
-You might notice that not all of the sectors in the chart above have a label. The reason for this is that certain sectors can be small, and if there's a cluster of small sectors their labels will overlap, resulting in a messy chart. To prevent this from happening the series will only show labels for sectors with an angle greater than a certain value, which by default is set to be `20` degrees. This value is adjustable via the `calloutLabel.minAngle` config:
-
-```js
-series: [{
-    ...
-    calloutLabel: {
-        minAngle: 20
-    }
-}]
-```
-
-The `calloutLabel.formatter` function can be used to change the text value displayed in the label.
-It receives a single object as a parameter containing values associated with a pie sector.
-Please see the [API reference](#api-reference) for the full list of available properties.
-
-For example, to display the numeric values for a given pie sector in the label,
+For example, to display the numeric values for a given pie sector in the callout label,
 you can use the following label formatter function:
 
 ```js
@@ -68,37 +71,6 @@ series: [{
     }
 }]
 ```
-
-The label's callout can be configured to have a different `length`, `color` and `strokeWidth`, for example:
-
-```js
-series: [{
-    ...
-    calloutLine: {
-        colors: ['red'],
-        length: 20,
-        strokeWidth: 3
-    }
-}]
-```
-
-Additionally labels can be put inside pie chart sectors by using the `sectorLabelKey`.
-The `sectorLabel` property holds the style configuration for these labels:
-
-```diff
-series: [{
-    type: 'pie',
-    angleKey: 'value',
-    calloutLabelKey: 'label',
-+   sectorLabelKey: 'value',
-+   sectorLabel: {
-+       color: 'white',
-+       fontWeight: 'bold'
-+   }
-}]
-```
-
-<chart-example title='Pie Chart with Labels in Sectors' name='pie-labels-in-sectors' type='generated'></chart-example>
 
 Please check the [API reference](#api-reference) below to learn more about `calloutLabel`, `calloutLine` and `sectorLabel`, as well as other series configuration.
 
@@ -147,7 +119,7 @@ series: [{
 }]
 ```
 
-## Text Inside a Doughnut
+### Additional Doughnut Labels
 
 The `innerLabels` property can be used to put several text lines inside a doughnut chart.
 The colour of the doughnut's centre can be changed by using `innerCircle`.
@@ -167,7 +139,7 @@ series: [{
 
 <chart-example title='Text Inside a Doughnut Chart' name='text-inside-doughnut' type='generated'></chart-example>
 
-## Multiple Doughnuts
+### Multiple Doughnuts
 
 As well as the `innerRadiusOffset` or `innerRadiusRatio` we can also configure the `outerRadiusOffset` or `outerRadiusRatio`.
 This gives us the ability to render multiple pie series in a single chart without overlapping.
