@@ -11,6 +11,11 @@ import { ChartTranslationService } from "../../../services/chartTranslationServi
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
 
+interface NavigatorPanelOptions {
+    chartOptionsService: ChartOptionsService,
+    isExpandedOnInit?: boolean
+}
+
 export class NavigatorPanel extends Component {
 
     public static TEMPLATE = /* html */
@@ -25,8 +30,14 @@ export class NavigatorPanel extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService) {
+    private readonly chartOptionsService: ChartOptionsService;
+    private readonly isExpandedOnInit: boolean;
+
+    constructor({ chartOptionsService, isExpandedOnInit = false }: NavigatorPanelOptions) {
         super();
+
+        this.chartOptionsService = chartOptionsService;
+        this.isExpandedOnInit = isExpandedOnInit;
     }
 
     @PostConstruct
@@ -45,13 +56,13 @@ export class NavigatorPanel extends Component {
 
         this.navigatorGroup
             .setTitle(chartTranslationService.translate("navigator"))
-            .toggleGroupExpand(false)
             .hideEnabledCheckbox(false)
             .setEnabled(this.chartOptionsService.getChartOption<boolean>("navigator.enabled") || false)
             .onEnableChange(enabled => {
                 this.chartOptionsService.setChartOption("navigator.enabled", enabled);
                 this.navigatorGroup.toggleGroupExpand(true);
-            });
+            })
+            .toggleGroupExpand(this.isExpandedOnInit);
 
         const currentValue = this.chartOptionsService.getChartOption<number>("navigator.height");
         this.navigatorHeightSlider

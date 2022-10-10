@@ -22,6 +22,13 @@ import { ChartController } from "../../../chartController";
 import { ChartSeriesType, getSeriesType } from "../../../utils/seriesTypeMapper";
 import { CalloutPanel } from "./calloutPanel";
 
+interface SeriesPanelOptions {
+    chartController: ChartController,
+    chartOptionsService: ChartOptionsService,
+    seriesType?: ChartSeriesType,
+    isExpandedOnInit?: boolean
+}
+
 export class SeriesPanel extends Component {
 
     public static TEMPLATE = /* html */
@@ -33,6 +40,10 @@ export class SeriesPanel extends Component {
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
+
+    private readonly chartController: ChartController;
+    private readonly chartOptionsService: ChartOptionsService;
+    private readonly isExpandedOnInit: boolean;
 
     private seriesSelectOptions: Map<ChartSeriesType, ListOption>;
 
@@ -62,12 +73,19 @@ export class SeriesPanel extends Component {
         'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
     }
 
-    constructor(private readonly chartController: ChartController, private readonly chartOptionsService: ChartOptionsService,
-                seriesType?: ChartSeriesType) {
+    constructor({
+        chartController,
+        chartOptionsService,
+        seriesType,
+        isExpandedOnInit = false
+    }: SeriesPanelOptions) {
 
         super();
 
+        this.chartController = chartController;
+        this.chartOptionsService = chartOptionsService;
         this.seriesType = seriesType || this.getChartSeriesType();
+        this.isExpandedOnInit = isExpandedOnInit;
     }
 
     @PostConstruct
@@ -80,7 +98,7 @@ export class SeriesPanel extends Component {
 
         this.seriesGroup
             .setTitle(this.translate("series"))
-            .toggleGroupExpand(false)
+            .toggleGroupExpand(this.isExpandedOnInit)
             .hideEnabledCheckbox(true);
 
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED, this.refreshWidgets.bind(this));
