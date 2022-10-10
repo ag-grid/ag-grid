@@ -3,6 +3,7 @@ import { log } from './utils.js';
 
 /**
  * @param {import('http').Server} httpServer
+ * @returns {import('./types').LiveReloadServer}
  */
 export function createLivereloadServer(httpServer) {
     const sockets = new Set();
@@ -13,17 +14,15 @@ export function createLivereloadServer(httpServer) {
         ws.on('close', () => sockets.delete(ws));
     });
 
-    /**
-     * @param {any} message
-     */
-    function sendMessage(message) {
-        sockets.forEach((ws) => ws.send(JSON.stringify(message)));
-        log.ok(message.type);
-    }
-
-    function close() {
-        server.close();
-    }
-
-    return { sendMessage, close };
+    return {
+        sendMessage(message) {
+            sockets.forEach((ws) => ws.send(JSON.stringify(message)));
+            log.ok(message);
+        },
+        close() {
+            server.close((err) => {
+                err && log.error(`Live Reload server error: ${err}`);
+            });
+        },
+    };
 }

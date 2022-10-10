@@ -2,6 +2,8 @@ import http from 'http';
 import path from 'path';
 import { log } from './utils.js';
 
+/** @typedef {import('./types').DevServer} DevServer */
+
 const mimeTypes = new Map(
     Object.entries({
         '.css': 'text/css',
@@ -11,10 +13,15 @@ const mimeTypes = new Map(
         '.json': 'application/json',
         '.png': 'image/png',
         '.svg': 'image/svg+xml',
+        '.ts': 'application/typescript',
     }),
 );
 
-export function createDevServer(/** @type {number} */port) {
+/**
+ * @param {number} port
+ * @returns {DevServer}
+ */
+export function createDevServer(port) {
     /** @type {Map<string, string | Buffer>} */
     const files = new Map();
 
@@ -25,7 +32,7 @@ export function createDevServer(/** @type {number} */port) {
 
         // Display all the files
         if (pathName === '__dir__') {
-            const paths = Array.from(files.keys());
+            const paths = Array.from(files.keys()).sort();
             res.statusCode = 200;
             res.setHeader('Content-Type', 'text/html');
             const html = [
@@ -37,57 +44,55 @@ export function createDevServer(/** @type {number} */port) {
             return;
         }
 
-        const fallbackPath = pathName ? `${pathName}/index.html` : 'index.html';
-        const successPath = [
-            pathName,
-            fallbackPath,
-        ].find((p) => files.has(p));
-        if (!successPath) {
+        // Fallback to index.html
+        const filePath = pathName === ''
+            ? 'index.html'
+            : files.has(pathName)
+            ? pathName
+            : files.has(`${pathName}/index.html`)
+            ? `${pathName}/index.html`
+            : null;
+
+        // 404: not found
+        if (!filePath) {
             res.statusCode = 404;
             res.end(`Not found "${pathName}"`);
             return;
         }
 
-        const content = files.get(successPath);
-        const ext = path.extname(successPath);
+        // Write file
+        const content = files.get(filePath);
+        const ext = path.extname(filePath);
         const contentType = mimeTypes.get(ext) || 'text/plain';
-
         res.statusCode = 200;
         res.setHeader('Content-Type', contentType);
         res.end(content, content instanceof Buffer ? 'binary' : 'utf8');
     });
 
-    /**
-     * @param {string} path
-     * @param {string | Buffer} content
-     */
-    function addStaticFile(path, content) {
-        files.set(path, content);
-    }
+    return {
+        httpServer: server,
 
-    function close() {
-        server.close(() => log.ok('Dev Server exit'));
-    }
+        addStaticFile(path, content) {
+            files.set(path, content);
+        },
 
-    /**
-     * @param {string} extensionWithDot
-     * @param {string} mimeType
-     */
-    function addMimeType(extensionWithDot, mimeType) {
-        mimeTypes.set(extensionWithDot, mimeType);
-    }
-
-    /**
-     * @returns {Promise<void>}
-     */
-    function start() {
-        return new Promise((resolve) => {
-            server.listen(port, () => {
-                log.ok(`Dev Server started on port ${port}`);
-                resolve();
+        start() {
+            return new Promise((resolve) => {
+                server.listen(port, () => {
+                    log.ok(`Dev Server started on port ${port}`);
+                    resolve();
+                });
             });
-        });
-    }
+        },
 
-    return { start, addStaticFile, addMimeType, close, httpServer: server };
+        close() {
+            server.close((err) => {
+                if (err) {
+                    log.error(`Dev Server error: ${err}`);
+                } else {
+                    log.ok('Dev Server exit');
+                }
+            });
+        },
+    };
 }

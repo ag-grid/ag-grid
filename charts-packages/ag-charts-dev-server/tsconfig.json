@@ -4,6 +4,7 @@
         "allowSyntheticDefaultImports": true,
         "checkJs": true,
         "lib": [
+            "DOM",
             "ESNext"
         ],
         "noEmit": true,

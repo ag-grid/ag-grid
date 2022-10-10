@@ -8,7 +8,7 @@
         const socket = new WebSocket(`ws://${location.host}`);
         socket.addEventListener('message', (e) => {
             const message = JSON.parse(e.data);
-            if (message.type === 'reload-full') {
+            if (message === 'LiveReload:full') {
                 location.reload();
             }
         });

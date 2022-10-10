@@ -88,14 +88,16 @@ async function run() {
             const file = path.relative(ROOT_DIR, $file);
             const agChartsFile = path.relative(ROOT_DIR, SRC_ENTRY).replace(/\.ts$/, '.js');
 
-            // Browsers cannot resolve imports without file extensions
-            // (or configuring mime type will be required otherwise)
-            // so here we add .js extensions to ES imports and exports
-            // that start with "."
-            let content = $content
-                .replace(/^(import ['"]\..*?)(['"];?)$/gm, '$1.js$2')
-                .replace(/( from ['"]\..*?)(['"];?)$/gm, '$1.js$2')
-                .replace(/(['"])ag-charts-community(['"])/g, `$1/${agChartsFile}$2`);
+            let content = $content;
+            if (file.endsWith('.js')) {
+                // Fix ES imports and exports for browsers:
+                // - Add ".js" extensions.
+                // - Replace "ag-charts-community" with a file path. 
+                content = $content
+                    .replace(/^(import ['"]\..*?)(['"];?)$/gm, '$1.js$2')
+                    .replace(/( from ['"]\..*?)(['"];?)$/gm, '$1.js$2')
+                    .replace(/( from ['"])ag-charts-community(['"])/g, `$1/${agChartsFile}$2`);
+            }
 
             devServer.addStaticFile(
                 file,
@@ -109,17 +111,23 @@ async function run() {
     function stop() {
         if (isStopped) return;
 
+        log.warn('Dev Server stop requested');
         livereloadServer.close();
         devServer.close();
         transpiler.stop();
         isStopped = true;
+
+        setTimeout(() => {
+            log.warn('Dev Server took too long to exit');
+            process.exit();
+        }, 5000);
     }
 
     process.on('exit', stop);
     process.on('SIGINT', stop);
 
     await devServer.start();
-    transpiler.onChange(() => livereloadServer.sendMessage({ type: 'reload-full' }));
+    transpiler.onChange(() => livereloadServer.sendMessage('LiveReload:full'));
 
     log.ok('watching...');
     openURLInBrowser(`http://localhost:${PORT}/`);

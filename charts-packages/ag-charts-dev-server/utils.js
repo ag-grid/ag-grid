@@ -42,11 +42,11 @@ function getTimeMessage(text) {
 /** @type {Logger} */
 const simpleLog = (text) => console.log(getTimeMessage(text));
 /** @type {Logger} */
-const logOk = (text) => console.info(getTimeMessage(text));
+const logOk = (text) => console.info(getTimeMessage(colors.green(text)));
 /** @type {Logger} */
-const logWarn = (text) => console.warn(getTimeMessage(text));
+const logWarn = (text) => console.warn(getTimeMessage(colors.yellow(text)));
 /** @type {Logger} */
-const logError = (text) => console.error(getTimeMessage(text));
+const logError = (text) => console.error(getTimeMessage(colors.red(text)));
 
 export const log = Object.assign(simpleLog, {
     ok: logOk,

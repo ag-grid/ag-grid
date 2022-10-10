@@ -23,6 +23,8 @@
     },
     "homepage": "https://www.ag-grid.com/",
     "devDependencies": {
+        "@types/node": "18.8.3",
+        "@types/ws": "8.5.3",
         "glob": "8.0.3",
         "typescript": "4.8.4",
         "ws": "8.9.0"

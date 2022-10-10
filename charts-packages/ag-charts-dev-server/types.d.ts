@@ -1,3 +1,4 @@
+import type { Server } from 'http';
 import type ts from 'typescript';
 
 export interface Transpiler {
@@ -9,4 +10,16 @@ export interface TranspilerOptions {
     compilerOptions: ts.CompilerOptions;
     debounce: number;
     emit: (file: string, content: string) => void;
+}
+
+export interface DevServer {
+    httpServer: Server;
+    addStaticFile(path: string, content: string | Buffer): void;
+    start(): Promise<void>;
+    close(): void;
+}
+
+export interface LiveReloadServer {
+    sendMessage(message: any): void;
+    close(): void;
 }
