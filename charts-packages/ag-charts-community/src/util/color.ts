@@ -41,7 +41,7 @@ export class Color {
             return !!Color.stringToRgba(str);
         }
 
-        return !!Color.nameToHex[str];
+        return !!Color.nameToHex[str.toLowerCase()];
     }
 
     /**
@@ -61,7 +61,7 @@ export class Color {
         }
 
         // color name
-        const hex = Color.nameToHex[str];
+        const hex = Color.nameToHex[str.toLowerCase()];
         if (hex) {
             return Color.fromHexString(hex);
         }
