@@ -1,7 +1,7 @@
-import { exec } from 'child_process';
-import glob from 'glob';
+const { exec } = require('child_process');
+const glob = require('glob');
 
-export function openURLInBrowser(url) {
+function openURLInBrowser(url) {
     const { platform } = process;
     const start = platform == 'darwin' ? 'open' : platform == 'win32' ? 'start' : 'xdg-open';
     exec(`${start} ${url}`);
@@ -11,13 +11,13 @@ export function openURLInBrowser(url) {
  * @param {string} pattern
  * @returns {Promise<string[]>}
  */
- export async function getFiles(pattern) {
-    return await (new Promise((resolve, reject) => {
+async function getFiles(pattern) {
+    return await new Promise((resolve, reject) => {
         glob(pattern, (err, matches) => {
             if (err) reject(err);
             else resolve(matches);
         });
-    }))
+    });
 }
 
 /** @type {{ [color: string]: (text: string) => string }} */
@@ -29,11 +29,11 @@ const colors = {
 };
 
 /**
- * @param {string} text 
+ * @param {string} text
  * @returns {string}
  */
 function getTimeMessage(text) {
-    const time = (new Date()).toISOString().substring(11, 19);
+    const time = new Date().toISOString().substring(11, 19);
     return `${colors.gray(`${time}`)} ${text}`;
 }
 
@@ -48,8 +48,14 @@ const logWarn = (text) => console.warn(getTimeMessage(colors.yellow(text)));
 /** @type {Logger} */
 const logError = (text) => console.error(getTimeMessage(colors.red(text)));
 
-export const log = Object.assign(simpleLog, {
+const log = Object.assign(simpleLog, {
     ok: logOk,
     warn: logWarn,
     error: logError,
 });
+
+module.exports = {
+    openURLInBrowser,
+    getFiles,
+    log,
+};

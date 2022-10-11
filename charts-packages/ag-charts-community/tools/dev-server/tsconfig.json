@@ -3,13 +3,11 @@
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "checkJs": true,
-        "lib": [
-            "DOM",
-            "ESNext"
-        ],
+        "lib": ["DOM", "ESNext"],
         "noEmit": true,
-        "types": [
-            "node"
-        ]
+        "paths": {
+            "ag-charts-community": ["../../src/main.ts"]
+        },
+        "types": ["node"]
     }
 }

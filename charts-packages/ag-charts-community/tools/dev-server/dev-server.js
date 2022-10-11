@@ -1,6 +1,6 @@
-import http from 'http';
-import path from 'path';
-import { log } from './utils.js';
+const http = require('http');
+const path = require('path');
+const { log } = require('./utils.js');
 
 /** @typedef {import('./types').DevServer} DevServer */
 
@@ -14,20 +14,20 @@ const mimeTypes = new Map(
         '.png': 'image/png',
         '.svg': 'image/svg+xml',
         '.ts': 'application/typescript',
-    }),
+    })
 );
 
 /**
  * @param {number} port
  * @returns {DevServer}
  */
-export function createDevServer(port) {
+function createDevServer(port) {
     /** @type {Map<string, string | Buffer>} */
     const files = new Map();
 
     const server = http.createServer((req, res) => {
         const baseURL = `${req.headers.protocol}://${req.headers.host}/`;
-        const parsedURL = new URL(/** @type {string} */(req.url), baseURL);
+        const parsedURL = new URL(/** @type {string} */ (req.url), baseURL);
         const pathName = parsedURL.pathname.replace(/^\//, '').replace(/\/$/, '');
 
         // Display all the files
@@ -35,23 +35,20 @@ export function createDevServer(port) {
             const paths = Array.from(files.keys()).sort();
             res.statusCode = 200;
             res.setHeader('Content-Type', 'text/html');
-            const html = [
-                '<ul>',
-                ...paths.map((href) => `<li><a href="${href}">${href}</a></li>`),
-                '</ul>',
-            ].join('\n');
+            const html = ['<ul>', ...paths.map((href) => `<li><a href="${href}">${href}</a></li>`), '</ul>'].join('\n');
             res.end(html, 'utf8');
             return;
         }
 
         // Fallback to index.html
-        const filePath = pathName === ''
-            ? 'index.html'
-            : files.has(pathName)
-            ? pathName
-            : files.has(`${pathName}/index.html`)
-            ? `${pathName}/index.html`
-            : null;
+        const filePath =
+            pathName === ''
+                ? 'index.html'
+                : files.has(pathName)
+                ? pathName
+                : files.has(`${pathName}/index.html`)
+                ? `${pathName}/index.html`
+                : null;
 
         // 404: not found
         if (!filePath) {
@@ -96,3 +93,7 @@ export function createDevServer(port) {
         },
     };
 }
+
+module.exports = {
+    createDevServer,
+};

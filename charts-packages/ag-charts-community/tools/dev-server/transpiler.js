@@ -1,4 +1,4 @@
-import ts from 'typescript';
+const ts = require('typescript');
 
 /** @typedef {import('./types').Transpiler} Transpiler */
 /** @typedef {import('./types').TranspilerOptions} TranspilerOptions */
@@ -7,13 +7,14 @@ import ts from 'typescript';
  * @param {TranspilerOptions} options
  * @returns {Transpiler}
  */
-export function transpileTSAndWatch(options) {
+function transpileTSAndWatch(options) {
     const { entries, compilerOptions, debounce, emit } = options;
     const createProgram = ts.createEmitAndSemanticDiagnosticsBuilderProgram;
     let timeout = null;
     /** @type {ts.System} */
     const system = {
         ...ts.sys,
+
         // Substitute for writing into disc
         writeFile(file, content) {
             emit(file, content);
@@ -21,6 +22,7 @@ export function transpileTSAndWatch(options) {
             clearTimeout(timeout);
             timeout = setTimeout(() => listeners.forEach((cb) => cb()), debounce);
         },
+
         // Prevent clearing the console after rebuilds
         clearScreen: () => false,
     };
@@ -28,7 +30,9 @@ export function transpileTSAndWatch(options) {
     const watcher = ts.createWatchProgram(host);
 
     // Emit sources
-    watcher.getProgram().getSourceFiles()
+    watcher
+        .getProgram()
+        .getSourceFiles()
         .filter((src) => !src.fileName.includes('/node_modules/'))
         .filter((src) => !src.fileName.endsWith('.d.ts'))
         .forEach((src) => emit(src.fileName, src.text));
@@ -41,3 +45,7 @@ export function transpileTSAndWatch(options) {
         stop: () => watcher.close(),
     };
 }
+
+module.exports = {
+    transpileTSAndWatch,
+};

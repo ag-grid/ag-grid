@@ -1,11 +1,11 @@
-import { WebSocketServer } from 'ws';
-import { log } from './utils.js';
+const { WebSocketServer } = require('ws');
+const { log } = require('./utils.js');
 
 /**
  * @param {import('http').Server} httpServer
  * @returns {import('./types').LiveReloadServer}
  */
-export function createLivereloadServer(httpServer) {
+function createLivereloadServer(httpServer) {
     const sockets = new Set();
 
     const server = new WebSocketServer({ server: httpServer });
@@ -26,3 +26,7 @@ export function createLivereloadServer(httpServer) {
         },
     };
 }
+
+module.exports = {
+    createLivereloadServer,
+};
