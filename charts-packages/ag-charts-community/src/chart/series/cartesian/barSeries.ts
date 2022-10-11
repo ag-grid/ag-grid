@@ -592,7 +592,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             groupScale.round = true;
         }
 
-        const rawBarWidth = groupScale.round && groupScale.rawBandwidth > 0 && groupScale.rawBandwidth < 1 ? 1 : 0;
+        const rawBarWidth =
+            groupScale.round && groupScale.rawBandwidth > 0 && groupScale.rawBandwidth < 1
+                ? 1
+                : groupScale.rawBandwidth;
         const barWidth =
             groupScale.bandwidth >= 1
                 ? // Pixel-rounded value for low-volume bar charts.
