@@ -146,6 +146,7 @@ export class CrossLine {
     label: CrossLineLabel = new CrossLineLabel();
 
     scale?: Scale<any, number> = undefined;
+    visibleRange: [number, number] = [-Infinity, Infinity];
     gridLength: number = 0;
     sideFlag: 1 | -1 = -1;
     parallelFlipRotation: number = 0;
@@ -209,6 +210,7 @@ export class CrossLine {
             sideFlag,
             direction,
             label: { position = 'top' },
+            visibleRange,
         } = this;
 
         if (!scale) {
@@ -217,6 +219,7 @@ export class CrossLine {
 
         const isContinuous = scale instanceof ContinuousScale;
         const bandwidth = scale.bandwidth ?? 0;
+        const visibleRangeClamper = clamper(visibleRange);
 
         let xStart, xEnd, yStart, yEnd, clampedYStart, clampedYEnd;
 
@@ -227,6 +230,8 @@ export class CrossLine {
             Number(scale.convert(yStart, isContinuous ? clamper : undefined)),
             scale.convert(yEnd, isContinuous ? clamper : undefined) + bandwidth,
         ];
+        clampedYStart = visibleRangeClamper(clampedYStart);
+        clampedYEnd = visibleRangeClamper(clampedYEnd);
         [yStart, yEnd] = [Number(scale.convert(yStart)), scale.convert(yEnd) + bandwidth];
 
         const validRange =

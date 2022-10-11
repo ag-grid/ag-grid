@@ -331,6 +331,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const start = rr[0] - shift;
 
         scale.range = [start, start + span];
+        this.crossLines?.forEach((crossLine) => {
+            crossLine.visibleRange = [rr[0], rr[1]];
+        });
     }
 
     /**
