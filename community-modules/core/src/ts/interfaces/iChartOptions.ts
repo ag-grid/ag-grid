@@ -58,9 +58,6 @@ export interface ChartSettingsPanel {
 
 export type ChartFormatPanelGroup = 'chart' | 'legend' | 'axis' | 'series' | 'navigator';
 
-/************************************************************************************************
- * If you update these, then also update the `integrated-charts-toolbar` docs. *
- ************************************************************************************************/
 export const DEFAULT_FORMAT_PANEL_GROUPS_ORDER: ChartFormatPanelGroup[] = [
     'chart',
     'legend',
