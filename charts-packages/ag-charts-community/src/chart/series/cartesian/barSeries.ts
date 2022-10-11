@@ -592,12 +592,13 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             groupScale.round = true;
         }
 
+        const rawBarWidth = groupScale.round && groupScale.rawBandwidth > 0 && groupScale.rawBandwidth < 1 ? 1 : 0;
         const barWidth =
             groupScale.bandwidth >= 1
                 ? // Pixel-rounded value for low-volume bar charts.
                   groupScale.bandwidth
                 : // Handle high-volume bar charts gracefully.
-                  groupScale.rawBandwidth;
+                  rawBarWidth;
         const contexts: SeriesNodeDataContext<BarNodeDatum>[][] = [];
 
         xData.forEach((group, groupIndex) => {
