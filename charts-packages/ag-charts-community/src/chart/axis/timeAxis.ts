@@ -1,4 +1,4 @@
-import { BOOLEAN, Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS } from '../../util/validation';
+import { Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS } from '../../util/validation';
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
@@ -25,9 +25,6 @@ export class TimeAxis extends ChartAxis<TimeScale> {
             specifier: this.datumFormat,
         });
     }
-
-    @Validate(BOOLEAN)
-    nice: boolean = true;
 
     set domain(domain: Date[]) {
         this.setDomain(domain);
@@ -74,12 +71,15 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         this.onLabelFormatChange(this.label.format);
     }
 
-    protected onLabelFormatChange(format?: string) {
+    protected onLabelFormatChange(format?: string, ticks?: any[]) {
         if (format) {
             super.onLabelFormatChange(format);
         } else {
             // For time axis labels to look nice, even if date format wasn't set.
-            this.labelFormatter = this.scale.tickFormat({ ticks: this.getTicks(), count: this.calculatedTickCount });
+            this.labelFormatter = this.scale.tickFormat({
+                ticks: ticks ?? this.getTicks(),
+                count: this.calculatedTickCount,
+            });
         }
     }
 

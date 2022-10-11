@@ -231,6 +231,9 @@ export class AxisLabel {
 export class Axis<S extends Scale<D, number>, D = any> {
     readonly id = createId(this);
 
+    @Validate(BOOLEAN)
+    protected nice: boolean = true;
+
     protected _scale!: S;
     set scale(value: S) {
         this._scale = value;
@@ -398,12 +401,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     protected labelFormatter?: (datum: any) => string;
-    protected onLabelFormatChange(format?: string) {
+    protected onLabelFormatChange(format?: string, ticks?: any[]) {
         const { scale } = this;
         if (format && scale && scale.tickFormat) {
             try {
                 this.labelFormatter = scale.tickFormat({
-                    ticks: this.getTicks(),
+                    ticks: ticks ?? this.getTicks(),
                     count: this.calculatedTickCount,
                     specifier: format,
                 });
@@ -556,24 +559,37 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let count = 0;
         let labelOverlap = true;
         let ticks: any[] = [];
-        let labelData: PointLabelDatum[] = [];
-        const checkOverlap = this.tick.count === undefined;
+        const tickCount = this.tick.count !== undefined;
+        const defaultTickCount = 10;
         const continuous = scale instanceof ContinuousScale;
-        const labelPadding = continuous ? 15 : 5;
+        const calculateDomain = !this.ticks && !tickCount && this.nice && scale.nice;
 
-        while (labelOverlap && count < 10) {
+        while (labelOverlap && count < defaultTickCount) {
             let unchanged = true;
-            while (unchanged && count < 10) {
+            while (unchanged && count < defaultTickCount) {
                 const prevTicks = ticks;
 
-                const filteredTicks = continuous || count === 1 ? undefined : ticks.filter((_, i) => i % 2 === 0);
-                ticks = this.updateSelections({ count, halfBandwidth, gridLength, ticks: filteredTicks });
+                const filteredTicks =
+                    (continuous && !tickCount) || count === 0 ? undefined : ticks.filter((_, i) => i % 2 === 0);
+
+                if (calculateDomain) {
+                    scale.nice!(defaultTickCount - count);
+                }
+
+                ticks = this.updateSelections({
+                    tickCountOffset: count,
+                    halfBandwidth,
+                    gridLength,
+                    ticks: filteredTicks,
+                });
 
                 unchanged = ticks.every((t, i) => t === prevTicks[i]);
                 count++;
             }
 
-            labelData = this.updateLabels({
+            this.onLabelFormatChange(this.label.format, ticks);
+
+            const { labelData, rotated } = this.updateLabels({
                 parallelFlipRotation,
                 regularFlipRotation,
                 sideFlag,
@@ -581,7 +597,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 ticks,
             });
 
-            labelOverlap = checkOverlap ? axisLabelsOverlap(labelData, labelPadding) : false;
+            const labelPadding = rotated ? 0 : 10;
+
+            labelOverlap = axisLabelsOverlap(labelData, labelPadding);
         }
 
         this.updateGridLines({
@@ -669,18 +687,18 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     private updateSelections({
-        count,
+        tickCountOffset,
         halfBandwidth,
         gridLength,
         ticks,
     }: {
-        count: number;
+        tickCountOffset: number;
         halfBandwidth: number;
         gridLength: number;
         ticks?: any[];
     }) {
         const { scale } = this;
-        ticks = ticks ?? this.getTicks(count);
+        ticks = ticks ?? this.getTicks(tickCountOffset);
         const data = ticks.map((t) => ({ tick: t, translationY: Math.round(scale.convert(t) + halfBandwidth) }));
         const gridlineGroupSelection = this.updateGridLineGroupSelection({ gridLength, data });
         const tickGroupSelection = this.updateTickGroupSelection({ data });
@@ -935,7 +953,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             });
         });
 
-        return labelData;
+        return { labelData, rotated: !!(labelRotation || labelAutoRotation) };
     }
 
     private updateLine() {

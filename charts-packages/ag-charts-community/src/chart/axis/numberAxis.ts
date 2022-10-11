@@ -5,7 +5,7 @@ import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
 import { ChartAxis } from '../chartAxis';
 import { doOnce } from '../../util/function';
-import { BOOLEAN, predicateWithMessage, Validate, GREATER_THAN, AND, LESS_THAN } from '../../util/validation';
+import { predicateWithMessage, Validate, GREATER_THAN, AND, LESS_THAN } from '../../util/validation';
 
 function NUMBER_OR_NAN(min?: number, max?: number) {
     // Can be NaN or finite number
@@ -44,20 +44,6 @@ export class NumberAxis extends ChartAxis {
     constructor() {
         super(new LinearScale());
         (this.scale as ContinuousScale).clamper = clamper;
-    }
-
-    @Validate(BOOLEAN)
-    protected _nice: boolean = true;
-    set nice(value: boolean) {
-        if (this._nice !== value) {
-            this._nice = value;
-            if (value && this.scale.nice) {
-                this.scale.nice(typeof this.calculatedTickCount === 'number' ? this.calculatedTickCount : undefined);
-            }
-        }
-    }
-    get nice(): boolean {
-        return this._nice;
     }
 
     private setDomain(domain: number[], primaryTickCount?: number) {
