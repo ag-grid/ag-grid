@@ -96,6 +96,17 @@ The Chart Tool Panel can be customised within the `chartToolPanelsDef` grid opti
 
 <api-documentation source='grid-options/properties.json' section='charts' names='["chartToolPanelsDef"]' ></api-documentation>
 
+### Customising chart tool panels
+
+The Chart Tool Panels can be reorganised using the `chartToolPanelsDef.panels` grid option, and a tool panel can be opened when the chart is loaded using the `chartToolPanelsDef.defaultToolPanel` grid option.
+
+[[note]]
+| Note that when the `chartToolPanels` grid option is used, the panels returned from `gridOptions.getChartToolbarItems(params)` are ignored. If `chartToolPanelsDef` is defined without `chartToolPanelsDef.panels`, **all panels** will be shown regardless of the results of `gridOptions.getChartToolbarItems(params)`.
+
+The example below shows panels being reorganised with the `format` tool panel open by default:
+
+<grid-example title='Customising chart tool panels' name='customise-panels' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
 ### Customising settings panel chart groups
 
 The list of chart groups shown on the settings panel can be customised using the `chartToolPanelsDef.settingsPanel.chartGroupsDef` grid option. The full list of chart groups are as follows:
@@ -189,17 +200,6 @@ The following example shows the format panel with:
 * `navigator` not shown
 
 <grid-example title='Customising format panel groups' name='customise-format-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
-
-### Customising chart tool panels
-
-The Chart Tool Panels can be reorganised using the `chartToolPanelsDef.panels` grid option, and a tool panel can be opened when the chart is loaded using the `chartToolPanelsDef.defaultToolPanel` grid option.
-
-[[note]]
-| Note that when the `chartToolPanels` grid option is used, the panels returned from `gridOptions.getChartToolbarItems(params)` are ignored. If `chartToolPanelsDef` is defined without `chartToolPanelsDef.panels`, **all panels** will be shown regardless of the results of `gridOptions.getChartToolbarItems(params)`.
-
-The example below shows panels being reorganised with the `format` tool panel open by default:
-
-<grid-example title='Customising chart tool panels' name='customise-panels' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ## Chart Tool Panels Button
 
