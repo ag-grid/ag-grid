@@ -44,7 +44,7 @@ export interface AgEvent {
     type: string;
 }
 
-export interface AgGridEvent<TData> extends AgGridCommon<TData>, AgEvent { }
+export interface AgGridEvent<TData = any> extends AgGridCommon<TData>, AgEvent { }
 
 export interface ToolPanelVisibleChangedEvent<TData = any> extends AgGridEvent<TData> {
     source: string | undefined;

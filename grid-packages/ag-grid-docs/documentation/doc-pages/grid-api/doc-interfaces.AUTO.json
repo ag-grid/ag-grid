@@ -6370,7 +6370,7 @@
     }
   },
   "AgGridEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }

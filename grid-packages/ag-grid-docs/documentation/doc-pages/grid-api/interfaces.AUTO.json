@@ -3194,7 +3194,7 @@
     "docs": { "type": "/** Event identifier */" }
   },
   "AgGridEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
