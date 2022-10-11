@@ -367,6 +367,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     @Validate(COLOR_STRING_ARRAY)
     fills: string[] = ['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
 
+    private _formats: PieSeriesFormat[] | null = null;
+
     @Validate(COLOR_STRING_ARRAY)
     strokes: string[] = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
 
@@ -765,6 +767,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const centerOffsets: number[] = [];
         const innerRadius = radiusScale.convert(0);
 
+        this._formats = formatter ? [] : null;
+
         const updateSectorFn = (sector: Sector, datum: PieNodeDatum, index: number, isDatumHighlighted: boolean) => {
             const radius = radiusScale.convert(datum.radius, clamper);
             const fill =
@@ -790,6 +794,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     strokeWidth,
                     highlighted: isDatumHighlighted,
                 });
+                this._formats!.push(format);
             }
 
             // Bring highlighted sector's parent group to front.
@@ -1026,7 +1031,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         } = this;
 
         const { renderer: tooltipRenderer } = tooltip;
-        const color = fills[nodeDatum.index % fills.length];
+        const color = this._formats?.[nodeDatum.index].fill || fills[nodeDatum.index % fills.length];
         const datum = nodeDatum.datum;
         const label = calloutLabelKey ? `${datum[calloutLabelKey]}: ` : '';
         const angleValue = datum[angleKey];
