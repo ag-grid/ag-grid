@@ -3,14 +3,9 @@ import { AgChartOptions } from 'ag-charts-community';
 import { getData } from './data';
 
 const numFormatter = new Intl.NumberFormat('en-US');
-const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
-const usdShortFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact' } as any);
-
-const fills = [
-    '#db7451',
-    '#e4a944',
-    '#499fca',
-];
+const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+const usdShortOptions: any = { style: 'currency', currency: 'USD', notation: 'compact' };
+const usdShortFormatter = new Intl.NumberFormat('en-US', usdShortOptions);
 
 const options: AgChartOptions = {
     container: document.getElementById('myChart'),
@@ -50,7 +45,11 @@ const options: AgChartOptions = {
                 strokeWidth: 1,
                 colors: ['black'],
             },
-            fills,
+            fills: [
+                '#fb7451',
+                '#f4b944',
+                '#49afda',
+            ],
             strokeWidth: 0,
             tooltip: {
                 renderer: ({ datum, color }) => {
@@ -73,6 +72,6 @@ const options: AgChartOptions = {
     legend: {
         enabled: false,
     },
-}
+};
 
 const chart = agCharts.AgChart.create(options);

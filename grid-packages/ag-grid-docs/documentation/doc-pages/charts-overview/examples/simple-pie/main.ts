@@ -4,17 +4,6 @@ import { getData } from './data';
 
 const numFormatter = new Intl.NumberFormat('en-US');
 
-const fills = [
-    '#499fca',
-    '#57bc7b',
-    '#bcdf72',
-    '#fbeb37',
-    '#e4a944',
-    '#db7451',
-    '#62507c',
-    '#b7b5ba',
-];
-
 const options: AgChartOptions = {
     container: document.getElementById('myChart'),
     autoSize: true,
@@ -51,7 +40,16 @@ const options: AgChartOptions = {
             calloutLine: {
                 strokeWidth: 2,
             },
-            fills,
+            fills: [
+                '#49afda',
+                '#57cc8b',
+                '#bcdf72',
+                '#fbeb37',
+                '#f4b944',
+                '#fb7451',
+                '#72508c',
+                '#b7b5ba',
+            ],
             strokeWidth: 0,
             tooltip: {
                 renderer: ({ datum, color, calloutLabelKey, sectorLabelKey }) => {
@@ -73,6 +71,6 @@ const options: AgChartOptions = {
     legend: {
         enabled: false,
     },
-}
+};
 
 const chart = agCharts.AgChart.create(options);

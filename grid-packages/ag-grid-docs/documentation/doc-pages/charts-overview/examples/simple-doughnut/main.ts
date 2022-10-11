@@ -6,26 +6,6 @@ const data = getData();
 const numFormatter = new Intl.NumberFormat('en-US');
 const total = data.reduce((sum, d) => sum + d['2018/19'], 0);
 
-const _fills = [
-    '#499fca',
-    '#57bc7b',
-    '#bcdf72',
-    '#fbeb37',
-    '#62507c',
-    '#b7b5ba',
-];
-
-const fills = [
-    '#db7451',
-    '#e4a944',
-    '#57bc7b',
-    '#499fca',
-    '#3978cc',
-    '#62507c',
-    '#b489a5',
-    '#b7b5ba',
-];
-
 const options: AgChartOptions = {
     container: document.getElementById('myChart'),
     autoSize: true,
@@ -59,7 +39,16 @@ const options: AgChartOptions = {
             title: {
                 text: '2018/19',
             },
-            fills,
+            fills: [
+                '#fb7451',
+                '#f4b944',
+                '#57cc8b',
+                '#49afda',
+                '#3988dc',
+                '#72508c',
+                '#b499b5',
+                '#b7b5ba',
+            ],
             innerRadiusRatio: 0.5,
             innerLabels: [
                 {

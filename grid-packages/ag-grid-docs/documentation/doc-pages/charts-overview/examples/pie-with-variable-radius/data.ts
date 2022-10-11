@@ -1,3 +1,4 @@
+// Source: https://datatopics.worldbank.org/world-development-indicators/
 export function getData(): any[] {
     return [
         { country: 'Latvia', population: 1902000, gdpPerCapita: 17600 },

@@ -4,14 +4,6 @@ import { getData2020, getData2022 } from './data';
 
 const numFormatter = new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 0 });
 
-const fills = [
-    '#499fca',
-    '#57bc7b',
-    '#e4a944',
-    '#db7451',
-    '#b7b5ba',
-];
-
 const sharedSeriesOptions: AgPolarSeriesOptions = {
     sectorLabelKey: 'share',
     angleKey: 'share',
@@ -22,7 +14,13 @@ const sharedSeriesOptions: AgPolarSeriesOptions = {
             return numFormatter.format(datum[sectorLabelKey!]);
         },
     },
-    fills,
+    fills: [
+        '#49afda',
+        '#57cc8b',
+        '#f4b944',
+        '#fb7451',
+        '#b7b5ba',
+    ],
     strokeWidth: 0,
     tooltip: {
         renderer: ({ datum, color, sectorLabelKey }) => {
@@ -91,6 +89,6 @@ const options: AgChartOptions = {
             ],
         },
     ],
-}
+};
 
 const chart = agCharts.AgChart.create(options);
