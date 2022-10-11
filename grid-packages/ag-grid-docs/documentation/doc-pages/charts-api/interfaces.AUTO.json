@@ -12,9 +12,14 @@
     "meta": {},
     "type": { "stroke?": "string", "lineDash?": "number[]" }
   },
-  "TickCount": {
+  "TimeTickCount": {
     "meta": { "isTypeAlias": true },
     "type": "number | CountableTimeInterval"
+  },
+  "NumberTickCount": { "meta": { "isTypeAlias": true }, "type": "number" },
+  "TickCountType": {
+    "meta": { "isTypeAlias": true, "typeParams": ["S"] },
+    "type": "S extends TimeScale ? TimeTickCount : NumberTickCount"
   },
   "AxisLabelFormatterParams": {
     "meta": {},

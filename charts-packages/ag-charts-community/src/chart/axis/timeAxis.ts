@@ -21,7 +21,6 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         this.scale = scale;
         this.datumFormatter = scale.tickFormat({
             ticks: this.getTicks(),
-            count: this.calculatedTickCount,
             specifier: this.datumFormat,
         });
     }
@@ -41,7 +40,7 @@ export class TimeAxis extends ChartAxis<TimeScale> {
     max?: Date | number = undefined;
 
     private setDomain(domain: Date[], _primaryTickCount?: number) {
-        let { scale, nice, min, max, calculatedTickCount } = this;
+        let { scale, nice, min, max } = this;
 
         if (typeof min === 'number') {
             min = new Date(min);
@@ -65,7 +64,7 @@ export class TimeAxis extends ChartAxis<TimeScale> {
 
         this.scale.domain = domain;
         if (nice && scale.nice) {
-            scale.nice(typeof calculatedTickCount === 'number' ? calculatedTickCount : undefined);
+            scale.nice(this.tick.count);
         }
 
         this.onLabelFormatChange(this.label.format);
@@ -78,7 +77,6 @@ export class TimeAxis extends ChartAxis<TimeScale> {
             // For time axis labels to look nice, even if date format wasn't set.
             this.labelFormatter = this.scale.tickFormat({
                 ticks: ticks ?? this.getTicks(),
-                count: this.calculatedTickCount,
             });
         }
     }
@@ -90,6 +88,6 @@ export class TimeAxis extends ChartAxis<TimeScale> {
     protected updateDomain(domain: any[], _isYAxis: boolean, primaryTickCount?: number) {
         // the `primaryTickCount` is used to align the secondary axis tick count with the primary
         this.setDomain(domain, primaryTickCount);
-        return primaryTickCount ?? this.scale.ticks(this.calculatedTickCount).length;
+        return primaryTickCount ?? this.scale.ticks(this.tick.count).length;
     }
 }

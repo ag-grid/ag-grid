@@ -74,7 +74,7 @@ export class NumberAxis extends ChartAxis {
 
             (this.scale as ContinuousScale).clamp = true;
             if (this.nice && this.scale.nice) {
-                this.scale.nice(typeof this.calculatedTickCount === 'number' ? this.calculatedTickCount : undefined);
+                this.scale.nice(this.tick.count);
             }
         }
     }
@@ -127,7 +127,7 @@ export class NumberAxis extends ChartAxis {
         if (isYAxis) {
             // the `primaryTickCount` is used to align the secondary axis tick count with the primary
             this.setDomain(domain, primaryTickCount);
-            return primaryTickCount || this.scale.ticks!(this.calculatedTickCount).length;
+            return primaryTickCount || this.scale.ticks!(this.tick.count).length;
         }
 
         return super.updateDomain(domain, isYAxis, primaryTickCount);

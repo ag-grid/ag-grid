@@ -31,6 +31,7 @@ import { Layers } from './chart/layers';
 import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
 import { Matrix } from './scene/matrix';
+import { TimeScale } from './scale/timeScale';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -69,7 +70,10 @@ export interface GridStyle {
     lineDash?: number[];
 }
 
-type TickCount = number | CountableTimeInterval;
+type TimeTickCount = number | CountableTimeInterval;
+type NumberTickCount = number;
+
+type TickCountType<S> = S extends TimeScale ? TimeTickCount : NumberTickCount;
 
 export class AxisLine {
     @Validate(NUMBER(0))
@@ -79,7 +83,7 @@ export class AxisLine {
     color?: string = 'rgba(195, 195, 195, 1)';
 }
 
-export class AxisTick {
+export class AxisTick<S extends Scale<D, number>, D = any> {
     /**
      * The line width to be used by axis ticks.
      */
@@ -109,7 +113,7 @@ export class AxisTick {
      *     axis.tick.count = month.every(6);
      */
     @Validate(OPT_TICK_COUNT)
-    count?: TickCount = undefined;
+    count?: TickCountType<S> = undefined;
 }
 
 export interface AxisLabelFormatterParams {
@@ -249,7 +253,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     ticks?: any[];
     protected getTicks(offset?: number) {
-        return this.ticks ?? this.scale.ticks!(this.calculatedTickCount, offset);
+        return this.ticks ?? this.scale.ticks!(this.tick.count, offset);
     }
 
     readonly axisGroup = new Group({ name: `${this.id}-axis`, layer: true, zIndex: Layers.AXIS_ZINDEX });
@@ -284,7 +288,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     readonly line = new AxisLine();
-    readonly tick = new AxisTick();
+    readonly tick = new AxisTick<S>();
     readonly label = new AxisLabel();
 
     readonly translation = { x: 0, y: 0 };
@@ -295,29 +299,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._labelAutoRotated;
     }
 
-    /**
-     * This will be assigned a value when `this.calculateTickCount` is invoked.
-     * If the user has specified a tick count, it will be used, otherwise a tick count will be calculated based on the available range.
-     */
-    protected _calculatedTickCount?: TickCount = undefined;
-    get calculatedTickCount() {
-        return this._calculatedTickCount ?? this.tick.count;
-    }
-
     private attachCrossLine(crossLine: CrossLine) {
         this.crossLineGroup.appendChild(crossLine.group);
     }
 
     private detachCrossLine(crossLine: CrossLine) {
         this.crossLineGroup.removeChild(crossLine.group);
-    }
-
-    /**
-     * Overridden in ChartAxis subclass.
-     * Sets an appropriate tick count based on the available range.
-     */
-    calculateTickCount(_availableRange: number): void {
-        // Override point for subclasses.
     }
 
     /**
@@ -407,7 +394,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             try {
                 this.labelFormatter = scale.tickFormat({
                     ticks: ticks ?? this.getTicks(),
-                    count: this.calculatedTickCount,
+                    count: ticks?.length ?? this.tick.count,
                     specifier: format,
                 });
             } catch (e) {
@@ -441,7 +428,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             this._title = value;
 
             // position title so that it doesn't briefly get rendered in the top left hand corner of the canvas before update is called.
-            this.updateTitle({ ticks: this.ticks || this.scale.ticks!(this.calculatedTickCount) });
+            this.updateTitle({ ticks: this.ticks || this.scale.ticks!(this.tick.count) });
         }
     }
     get title(): Caption | undefined {
