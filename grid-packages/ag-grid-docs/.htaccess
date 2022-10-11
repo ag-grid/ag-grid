@@ -262,6 +262,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/charts/line-with-gaps/ /angular-charts/gallery/line-with-gaps/
     Redirect 301 /documentation/angular/charts/market-index-treemap/ /angular-charts/gallery/market-index-treemap/
     Redirect 301 /documentation/angular/charts/per-marker-customisation/ /angular-charts/gallery/per-marker-customisation/
+    Redirect 301 /documentation/angular/charts/pie-in-a-doughnut/ /angular-charts/gallery/pie-in-a-doughnut/
     Redirect 301 /documentation/angular/charts/real-time-data-updates/ /angular-charts/gallery/real-time-data-updates/
     Redirect 301 /documentation/angular/charts/simple-area/ /angular-charts/gallery/simple-area/
     Redirect 301 /documentation/angular/charts/simple-bar/ /angular-charts/gallery/simple-bar/
@@ -515,6 +516,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/charts/line-with-gaps/ /javascript-charts/gallery/line-with-gaps/
     Redirect 301 /documentation/javascript/charts/market-index-treemap/ /javascript-charts/gallery/market-index-treemap/
     Redirect 301 /documentation/javascript/charts/per-marker-customisation/ /javascript-charts/gallery/per-marker-customisation/
+    Redirect 301 /documentation/javascript/charts/pie-in-a-doughnut/ /javascript-charts/gallery/pie-in-a-doughnut/
     Redirect 301 /documentation/javascript/charts/real-time-data-updates/ /javascript-charts/gallery/real-time-data-updates/
     Redirect 301 /documentation/javascript/charts/simple-area/ /javascript-charts/gallery/simple-area/
     Redirect 301 /documentation/javascript/charts/simple-bar/ /javascript-charts/gallery/simple-bar/
@@ -755,6 +757,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/charts/line-with-gaps/ /react-charts/gallery/line-with-gaps/
     Redirect 301 /documentation/react/charts/market-index-treemap/ /react-charts/gallery/market-index-treemap/
     Redirect 301 /documentation/react/charts/per-marker-customisation/ /react-charts/gallery/per-marker-customisation/
+    Redirect 301 /documentation/react/charts/pie-in-a-doughnut/ /react-charts/gallery/pie-in-a-doughnut/
     Redirect 301 /documentation/react/charts/real-time-data-updates/ /react-charts/gallery/real-time-data-updates/
     Redirect 301 /documentation/react/charts/simple-area/ /react-charts/gallery/simple-area/
     Redirect 301 /documentation/react/charts/simple-bar/ /react-charts/gallery/simple-bar/
@@ -1000,6 +1003,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/charts/line-with-gaps/ /vue-charts/gallery/line-with-gaps/
     Redirect 301 /documentation/vue/charts/market-index-treemap/ /vue-charts/gallery/market-index-treemap/
     Redirect 301 /documentation/vue/charts/per-marker-customisation/ /vue-charts/gallery/per-marker-customisation/
+    Redirect 301 /documentation/vue/charts/pie-in-a-doughnut/ /vue-charts/gallery/pie-in-a-doughnut/
     Redirect 301 /documentation/vue/charts/real-time-data-updates/ /vue-charts/gallery/real-time-data-updates/
     Redirect 301 /documentation/vue/charts/simple-area/ /vue-charts/gallery/simple-area/
     Redirect 301 /documentation/vue/charts/simple-bar/ /vue-charts/gallery/simple-bar/

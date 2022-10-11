@@ -1711,6 +1711,14 @@
                   {
                     "title": "Simple Doughnut",
                     "url": "/charts-overview/gallery/simple-doughnut/"
+                  },
+                  {
+                    "title": "Pie In A Doughnut",
+                    "url": "/charts-overview/gallery/pie-in-a-doughnut/"
+                  },
+                  {
+                    "title": "Pie With Variable Radius",
+                    "url": "/charts-overview/gallery/pie-with-variable-radius/"
                   }
                 ]
               },

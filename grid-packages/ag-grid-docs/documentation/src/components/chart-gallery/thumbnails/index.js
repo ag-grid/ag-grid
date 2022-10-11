@@ -10,6 +10,8 @@ import thumbnail100StackedColumn from './100--stacked-column.png';
 import thumbnailColumnWithNegativeValues from './column-with-negative-values.png';
 import thumbnailSimplePie from './simple-pie.png';
 import thumbnailSimpleDoughnut from './simple-doughnut.png';
+import thumbnailPieInADoughnut from './pie-in-a-doughnut.png';
+import thumbnailPieWithVariableRadius from './pie-with-variable-radius.png';
 import thumbnailSimpleLine from './simple-line.png';
 import thumbnailLineWithGaps from './line-with-gaps.png';
 import thumbnailSimpleScatter from './simple-scatter.png';
@@ -47,6 +49,8 @@ const thumbnails = {
     'column-with-negative-values': thumbnailColumnWithNegativeValues,
     'simple-pie': thumbnailSimplePie,
     'simple-doughnut': thumbnailSimpleDoughnut,
+    'pie-in-a-doughnut': thumbnailPieInADoughnut,
+    'pie-with-variable-radius': thumbnailPieWithVariableRadius,
     'simple-line': thumbnailSimpleLine,
     'line-with-gaps': thumbnailLineWithGaps,
     'simple-scatter': thumbnailSimpleScatter,
