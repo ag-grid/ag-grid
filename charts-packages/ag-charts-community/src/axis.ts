@@ -587,11 +587,18 @@ export class Axis<S extends Scale<D, number>, D = any> {
         this.tickGroup.visible = anyTickVisible;
         this.gridlineGroup.visible = anyTickVisible;
 
+        this.crossLines?.forEach((crossLine) => {
+            crossLine.sideFlag = -sideFlag as -1 | 1;
+            crossLine.direction = rotation === -Math.PI / 2 ? ChartAxisDirection.X : ChartAxisDirection.Y;
+            crossLine.label.parallel =
+                crossLine.label.parallel !== undefined ? crossLine.label.parallel : parallelLabels;
+            crossLine.parallelFlipRotation = parallelFlipRotation;
+            crossLine.regularFlipRotation = regularFlipRotation;
+            crossLine.update(anySeriesActive);
+        });
+        this.updateTitle({ ticks });
+
         if (!anyTickVisible) {
-            this.crossLines?.forEach((crossLine) => {
-                crossLine.update(anySeriesActive);
-            });
-            this.updateTitle({ ticks });
             return;
         }
 
@@ -606,18 +613,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
             .attr('x2', 0)
             .attr('y1', 0)
             .attr('y2', 0);
-
-        this.updateTitle({ ticks });
-
-        this.crossLines?.forEach((crossLine) => {
-            crossLine.sideFlag = -sideFlag as -1 | 1;
-            crossLine.direction = rotation === -Math.PI / 2 ? ChartAxisDirection.X : ChartAxisDirection.Y;
-            crossLine.label.parallel =
-                crossLine.label.parallel !== undefined ? crossLine.label.parallel : parallelLabels;
-            crossLine.parallelFlipRotation = parallelFlipRotation;
-            crossLine.regularFlipRotation = regularFlipRotation;
-            crossLine.update(anySeriesActive);
-        });
     }
 
     private updateTicks({ ticks }: { ticks: any[] }) {

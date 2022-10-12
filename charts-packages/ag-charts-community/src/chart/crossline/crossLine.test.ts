@@ -175,6 +175,20 @@ const NAVIGATOR_ZOOM_EXAMPLES: Record<string, CartesianTestCase> = {
         },
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
     },
+    NAV_ZOOMED_INSIDE_CROSSLINES_1: {
+        options: {
+            ...examples.VALID_RANGE_CROSSLINES,
+            navigator: { min: 0.4, max: 0.6 },
+        },
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+    NAV_ZOOMED_INSIDE_CROSSLINES_2: {
+        options: {
+            ...examples.VALID_RANGE_CROSSLINES,
+            navigator: { min: 0.51, max: 0.55 },
+        },
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
+    },
 };
 
 const EXAMPLES: Record<string, CartesianTestCase> = {
