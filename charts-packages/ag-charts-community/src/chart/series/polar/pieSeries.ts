@@ -65,6 +65,8 @@ interface PieNodeDatum extends SeriesNodeDatum {
     readonly sectorLabel?: {
         readonly text: string;
     };
+
+    readonly sectorFormat: PieSeriesFormat;
 }
 
 export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
@@ -101,6 +103,7 @@ export interface PieSeriesFormatterParams {
 
 export interface PieSeriesFormat {
     fill?: string;
+    fillOpacity?: number;
     stroke?: string;
     strokeWidth?: number;
 }
@@ -367,8 +370,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     @Validate(COLOR_STRING_ARRAY)
     fills: string[] = ['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
 
-    private _formats: PieSeriesFormat[] | null = null;
-
     @Validate(COLOR_STRING_ARRAY)
     strokes: string[] = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
 
@@ -473,9 +474,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         let sectorLabelData: string[] = [];
         let radiusData: number[] = [];
 
-        const getLabelFormatterParams = <T extends { [prop: string]: any }>(
-            datum: T
-        ): PieSeriesLabelFormatterParams => {
+        const getLabelFormatterParams = (datum: any): PieSeriesLabelFormatterParams => {
             return {
                 datum,
                 angleKey,
@@ -590,11 +589,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const quadrantIndex = mod(quadrant, quadrantTextOpts.length);
 
             const { textAlign, textBaseline } = quadrantTextOpts[quadrantIndex];
+            const datum = data[datumIndex];
+            const itemId = datumIndex;
 
             groupSelectionData.push({
                 series: this,
-                datum: data[datumIndex],
-                itemId: datumIndex,
+                datum,
+                itemId,
                 index: datumIndex,
                 radius,
                 startAngle,
@@ -614,11 +615,45 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                           text: sectorLabelData[datumIndex],
                       }
                     : undefined,
+                sectorFormat: this.getSectorFormat(datum, itemId, datumIndex, false),
             });
 
             datumIndex++;
             end = start; // Update for next iteration.
         });
+    }
+
+    private getSectorFormat(datum: any, itemId: any, index: number, highlight: any): PieSeriesFormat {
+        const { angleKey, radiusKey, fills, strokes, fillOpacity: seriesFillOpacity, formatter } = this;
+
+        const highlightedDatum = this.chart!.highlightedDatum;
+        const isDatumHighlighted = highlight && highlightedDatum?.series === this && itemId === highlightedDatum.itemId;
+        const highlightedStyle = isDatumHighlighted ? this.highlightStyle.item : null;
+
+        const fill = highlightedStyle?.fill || fills[index % fills.length];
+        const fillOpacity = highlightedStyle?.fillOpacity ?? seriesFillOpacity;
+        const stroke = highlightedStyle?.stroke || strokes[index % strokes.length];
+        const strokeWidth = highlightedStyle?.strokeWidth ?? this.getStrokeWidth(this.strokeWidth);
+
+        let format: PieSeriesFormat | undefined;
+        if (formatter) {
+            format = formatter({
+                datum,
+                angleKey,
+                radiusKey,
+                fill,
+                stroke,
+                strokeWidth,
+                highlighted: isDatumHighlighted,
+            });
+        }
+
+        return {
+            fill: format?.fill || fill,
+            fillOpacity: format?.fillOpacity ?? fillOpacity,
+            stroke: format?.stroke || stroke,
+            strokeWidth: format?.strokeWidth ?? strokeWidth,
+        };
     }
 
     async createNodeData() {
@@ -740,63 +775,16 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.updateInnerCircle();
 
         const {
-            fills,
-            strokes,
-            fillOpacity: seriesFillOpacity,
-            strokeOpacity,
             radiusScale,
             calloutLine,
-            shadow,
             chart: { highlightedDatum },
-            highlightStyle: {
-                fill: deprecatedFill,
-                stroke: deprecatedStroke,
-                strokeWidth: deprecatedStrokeWidth,
-                item: {
-                    fill: highlightedFill = deprecatedFill,
-                    fillOpacity: highlightFillOpacity = seriesFillOpacity,
-                    stroke: highlightedStroke = deprecatedStroke,
-                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
-                },
-            },
-            angleKey,
-            radiusKey,
-            formatter,
         } = this;
 
         const centerOffsets: number[] = [];
         const innerRadius = radiusScale.convert(0);
 
-        this._formats = formatter ? [] : null;
-
         const updateSectorFn = (sector: Sector, datum: PieNodeDatum, index: number, isDatumHighlighted: boolean) => {
             const radius = radiusScale.convert(datum.radius, clamper);
-            const fill =
-                isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : fills[index % fills.length];
-            const fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
-            const stroke =
-                isDatumHighlighted && highlightedStroke !== undefined
-                    ? highlightedStroke
-                    : strokes[index % strokes.length];
-            const strokeWidth =
-                isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
-                    ? highlightedDatumStrokeWidth
-                    : this.getStrokeWidth(this.strokeWidth);
-
-            let format: PieSeriesFormat | undefined = undefined;
-            if (formatter) {
-                format = formatter({
-                    datum: datum.datum,
-                    angleKey,
-                    radiusKey,
-                    fill,
-                    stroke,
-                    strokeWidth,
-                    highlighted: isDatumHighlighted,
-                });
-                this._formats!.push(format);
-            }
-
             // Bring highlighted sector's parent group to front.
             const sectorParent = sector.parent;
             const sectorGrandParent = sectorParent?.parent;
@@ -811,14 +799,16 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
 
-            sector.fill = (format && format.fill) || fill;
-            sector.stroke = (format && format.stroke) || stroke;
-            sector.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
-            sector.fillOpacity = fillOpacity;
-            sector.strokeOpacity = strokeOpacity;
+            const format = this.getSectorFormat(datum.datum, datum.itemId, index, isDatumHighlighted);
+
+            sector.fill = format.fill;
+            sector.stroke = format.stroke;
+            sector.strokeWidth = format.strokeWidth!;
+            sector.fillOpacity = format.fillOpacity!;
+            sector.strokeOpacity = this.strokeOpacity;
             sector.lineDash = this.lineDash;
             sector.lineDashOffset = this.lineDashOffset;
-            sector.fillShadow = shadow;
+            sector.fillShadow = this.shadow;
             sector.lineJoin = 'round';
 
             centerOffsets.push(sector.centerOffset);
@@ -830,8 +820,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             .selectByTag<Sector>(PieNodeTag.Sector)
             .each((node, datum, index) => updateSectorFn(node, datum, index, false));
         this.highlightSelection.selectByTag<Sector>(PieNodeTag.Sector).each((node, datum, index) => {
-            const isDatumHighlighted =
-                !!highlightedDatum && highlightedDatum.series === this && datum.itemId === highlightedDatum.itemId;
+            const isDatumHighlighted = highlightedDatum?.series === this && datum.itemId === highlightedDatum.itemId;
 
             node.visible = isDatumHighlighted;
             if (node.visible) {
@@ -1019,7 +1008,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
 
         const {
-            fills,
             tooltip,
             angleName,
             radiusKey,
@@ -1031,7 +1019,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         } = this;
 
         const { renderer: tooltipRenderer } = tooltip;
-        const color = this._formats?.[nodeDatum.index].fill || fills[nodeDatum.index % fills.length];
+        const color = nodeDatum.sectorFormat.fill;
         const datum = nodeDatum.datum;
         const label = calloutLabelKey ? `${datum[calloutLabelKey]}: ` : '';
         const angleValue = datum[angleKey];
@@ -1074,7 +1062,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const { calloutLabelKey, data } = this;
 
         if (data && data.length && calloutLabelKey) {
-            const { fills, strokes, id } = this;
+            const { id } = this;
 
             const titleText = this.title && this.title.showInLegend && this.title.text;
             data.forEach((datum, index) => {
@@ -1090,8 +1078,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                         text: labelParts.join(' - '),
                     },
                     marker: {
-                        fill: fills[index % fills.length],
-                        stroke: strokes[index % strokes.length],
+                        fill: this.groupSelectionData[index].sectorFormat.fill!,
+                        stroke: this.groupSelectionData[index].sectorFormat.stroke!,
                         fillOpacity: this.fillOpacity,
                         strokeOpacity: this.strokeOpacity,
                     },

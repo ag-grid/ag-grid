@@ -15394,6 +15394,7 @@
   },
   "AgPieSeriesFormat": {
     "fill": { "type": { "returnType": "CssColor", "optional": true } },
+    "fillOpacity": { "type": { "returnType": "Opacity", "optional": true } },
     "stroke": { "type": { "returnType": "CssColor", "optional": true } },
     "strokeWidth": { "type": { "returnType": "PixelSize", "optional": true } }
   },
