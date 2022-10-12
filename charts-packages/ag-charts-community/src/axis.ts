@@ -32,6 +32,7 @@ import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
 import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
+import { calculateNiceSecondaryAxis } from './util/secondaryAxisTicks';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -492,7 +493,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
-    update() {
+    update(primaryTickCount?: number) {
         const {
             axisGroup,
             gridlineGroup,
@@ -546,21 +547,26 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let count = 0;
         let labelOverlap = true;
         let ticks: any[] = [];
-        const tickCount = this.tick.count !== undefined;
-        const defaultTickCount = 10;
+        const tickCount = this.tick.count ?? 10;
         const continuous = scale instanceof ContinuousScale;
-        const calculateDomain = !this.ticks && !tickCount && this.nice && scale.nice;
+        const secondaryAxis = primaryTickCount !== undefined;
+        const calculatePrimaryDomain = !secondaryAxis && this.nice && scale.nice;
 
-        while (labelOverlap && count < defaultTickCount) {
+        while (labelOverlap && count < tickCount) {
             let unchanged = true;
-            while (unchanged && count < defaultTickCount) {
+            while (unchanged && count < tickCount) {
                 const prevTicks = ticks;
 
-                const filteredTicks =
-                    (continuous && !tickCount) || count === 0 ? undefined : ticks.filter((_, i) => i % 2 === 0);
+                const filteredTicks = continuous || count === 0 ? undefined : ticks.filter((_, i) => i % 2 === 0);
 
-                if (calculateDomain) {
-                    scale.nice!(defaultTickCount - count);
+                if (calculatePrimaryDomain) {
+                    scale.nice!(tickCount - count);
+                }
+
+                if (continuous && secondaryAxis) {
+                    const [d, ticks] = calculateNiceSecondaryAxis(scale.domain, primaryTickCount ?? 0);
+                    scale.domain = d;
+                    this.ticks = ticks;
                 }
 
                 ticks = this.updateSelections({
@@ -569,6 +575,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     gridLength,
                     ticks: filteredTicks,
                 });
+
+                if (!secondaryAxis) {
+                    primaryTickCount = ticks.length;
+                }
 
                 unchanged = ticks.every((t, i) => t === prevTicks[i]);
                 count++;
@@ -641,6 +651,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
             crossLine.regularFlipRotation = regularFlipRotation;
             crossLine.update(anyTickVisible);
         });
+
+        return primaryTickCount;
     }
 
     private updateTickGroupSelection({ data }: { data: AxisNodeDatum[] }) {

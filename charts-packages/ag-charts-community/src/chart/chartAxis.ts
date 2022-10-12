@@ -97,7 +97,7 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
         return this._position;
     }
 
-    calculateDomain({ primaryTickCount }: { primaryTickCount?: number }) {
+    calculateDomain() {
         const { direction, boundSeries, includeInvisibleDomains } = this;
 
         if (this.linkedTo) {
@@ -111,15 +111,7 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
                 });
 
             const domain = new Array<any>().concat(...domains);
-            const isYAxis = this.direction === 'y';
-            primaryTickCount = this.updateDomain(domain, isYAxis, primaryTickCount);
+            this.domain = domain;
         }
-
-        return { primaryTickCount };
-    }
-
-    protected updateDomain(domain: any[], _isYAxis: boolean, primaryTickCount?: number) {
-        this.domain = domain;
-        return primaryTickCount;
     }
 }

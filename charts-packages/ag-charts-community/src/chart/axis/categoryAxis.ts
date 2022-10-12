@@ -42,7 +42,7 @@ export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
         return this.scale.domain.slice();
     }
 
-    calculateDomain({ primaryTickCount }: { primaryTickCount?: number }) {
+    calculateDomain() {
         if (!this._paddingOverrideEnabled) {
             const { boundSeries } = this;
 
@@ -55,6 +55,6 @@ export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
             }
         }
 
-        return super.calculateDomain({ primaryTickCount });
+        return super.calculateDomain();
     }
 }

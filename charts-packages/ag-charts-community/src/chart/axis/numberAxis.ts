@@ -1,4 +1,3 @@
-import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
 import { ContinuousScale } from '../../scale/continuousScale';
 import { LinearScale } from '../../scale/linearScale';
 import { extent } from '../../util/array';
@@ -46,36 +45,29 @@ export class NumberAxis extends ChartAxis {
         (this.scale as ContinuousScale).clamper = clamper;
     }
 
-    private setDomain(domain: number[], primaryTickCount?: number) {
+    private setDomain(domain: number[]) {
         const { scale, min, max } = this;
 
         if (domain.length > 2) {
-            domain = extent(domain, isContinuous, Number) || [];
+            domain = extent(domain, isContinuous, Number) || [NaN, NaN];
+        }
+        if (!isNaN(min)) {
+            domain = [min, domain[1]];
+        }
+        if (!isNaN(max)) {
+            domain = [domain[0], max];
+        }
+        if (domain[0] > domain[1]) {
+            domain = [];
         }
 
-        domain = [isNaN(min) ? domain[0] : min, isNaN(max) ? domain[1] : max];
+        scale.domain = domain;
 
-        if (primaryTickCount) {
-            // when `primaryTickCount` is supplied the current axis is a secondary axis which needs to be aligned to
-            // the primary by constraining the tick count to the primary axis tick count
-            if (isNaN(domain[0]) || isNaN(domain[1])) {
-                scale.domain = domain;
-                this.ticks = undefined;
-                return;
-            }
+        this.onLabelFormatChange(this.label.format); // not sure why this is required?
 
-            const [d, ticks] = calculateNiceSecondaryAxis(domain, primaryTickCount);
-            scale.domain = d;
-            this.ticks = ticks;
-        } else {
-            scale.domain = domain;
-
-            this.onLabelFormatChange(this.label.format); // not sure why this is required?
-
-            (this.scale as ContinuousScale).clamp = true;
-            if (this.nice && this.scale.nice) {
-                this.scale.nice(this.tick.count);
-            }
+        (this.scale as ContinuousScale).clamp = true;
+        if (this.nice && this.scale.nice) {
+            this.scale.nice(this.tick.count);
         }
     }
 
@@ -106,30 +98,5 @@ export class NumberAxis extends ChartAxis {
             );
             return String(datum);
         }
-    }
-
-    protected updateDomain(domain: any[], isYAxis: boolean, primaryTickCount?: number) {
-        const { min, max } = this;
-
-        if (domain.length > 2) {
-            domain = extent(domain, isContinuous, Number) || [NaN, NaN];
-        }
-        if (!isNaN(min)) {
-            domain = [min, domain[1]];
-        }
-        if (!isNaN(max)) {
-            domain = [domain[0], max];
-        }
-        if (domain[0] > domain[1]) {
-            domain = [];
-        }
-
-        if (isYAxis) {
-            // the `primaryTickCount` is used to align the secondary axis tick count with the primary
-            this.setDomain(domain, primaryTickCount);
-            return primaryTickCount || this.scale.ticks!(this.tick.count).length;
-        }
-
-        return super.updateDomain(domain, isYAxis, primaryTickCount);
     }
 }
