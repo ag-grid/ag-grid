@@ -32,7 +32,6 @@ import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
 import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
-import { calculateNiceSecondaryAxis } from './util/secondaryAxisTicks';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -239,7 +238,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
     @Validate(BOOLEAN)
     protected nice: boolean = true;
 
-    protected _scale!: S;
+    dataDomain: D[];
+
+    protected _scale: S;
     set scale(value: S) {
         this._scale = value;
         this.requestedRange = value.range.slice();
@@ -378,14 +379,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
     get visibleRange(): number[] {
         return this._visibleRange.slice();
-    }
-
-    set domain(value: D[]) {
-        this.scale.domain = value.slice();
-        this.onLabelFormatChange(this.label.format);
-    }
-    get domain(): D[] {
-        return this.scale.domain.slice();
     }
 
     protected labelFormatter?: (datum: any) => string;
@@ -547,26 +540,32 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let count = 0;
         let labelOverlap = true;
         let ticks: any[] = [];
-        const tickCount = this.tick.count ?? 10;
+        const tickCount = this.tick.count !== undefined;
+        const defaultTickCount = 10;
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
-        const calculatePrimaryDomain = !secondaryAxis && this.nice && scale.nice;
+        const calculatePrimaryDomain = !secondaryAxis && !tickCount && this.nice && scale.nice;
 
-        while (labelOverlap && count < tickCount) {
+        scale.domain = this.dataDomain;
+
+        if (this.nice && scale.nice) {
+            scale.nice!(this.tick.count);
+        }
+
+        while (labelOverlap && count < defaultTickCount) {
             let unchanged = true;
-            while (unchanged && count < tickCount) {
+            while (unchanged && count < defaultTickCount) {
                 const prevTicks = ticks;
 
-                const filteredTicks = continuous || count === 0 ? undefined : ticks.filter((_, i) => i % 2 === 0);
+                const filteredTicks =
+                    (continuous && !tickCount) || count === 0 ? undefined : ticks.filter((_, i) => i % 2 === 0);
 
                 if (calculatePrimaryDomain) {
-                    scale.nice!(tickCount - count);
+                    scale.nice!(defaultTickCount - count);
                 }
 
-                if (continuous && secondaryAxis) {
-                    const [d, ticks] = calculateNiceSecondaryAxis(scale.domain, primaryTickCount ?? 0);
-                    scale.domain = d;
-                    this.ticks = ticks;
+                if (secondaryAxis) {
+                    this.updateSecondaryAxisTicks(primaryTickCount);
                 }
 
                 ticks = this.updateSelections({
@@ -653,6 +652,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
         });
 
         return primaryTickCount;
+    }
+
+    updateSecondaryAxisTicks(_primaryTickCount: number | undefined): void {
+        throw new Error('AG Charts - unexpected call to updateSecondaryAxisTicks() - check axes configuration.');
     }
 
     private updateTickGroupSelection({ data }: { data: AxisNodeDatum[] }) {

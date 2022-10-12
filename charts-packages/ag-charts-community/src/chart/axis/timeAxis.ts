@@ -25,22 +25,14 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         });
     }
 
-    set domain(domain: Date[]) {
-        this.setDomain(domain);
-    }
-
-    get domain(): Date[] {
-        return this.scale.domain;
-    }
-
     @Validate(AND(OPT_DATE_OR_DATETIME_MS, LESS_THAN('max')))
     min?: Date | number = undefined;
 
     @Validate(AND(OPT_DATE_OR_DATETIME_MS, GREATER_THAN('min')))
     max?: Date | number = undefined;
 
-    private setDomain(domain: Date[], _primaryTickCount?: number) {
-        let { scale, nice, min, max } = this;
+    normaliseDataDomain(d: Date[]) {
+        let { min, max } = this;
 
         if (typeof min === 'number') {
             min = new Date(min);
@@ -49,25 +41,20 @@ export class TimeAxis extends ChartAxis<TimeScale> {
             max = new Date(max);
         }
 
-        if (domain.length > 2) {
-            domain = (extent(domain, isContinuous, Number) || [0, 1000]).map((x) => new Date(x));
+        if (d.length > 2) {
+            d = (extent(d, isContinuous, Number) || [0, 1000]).map((x) => new Date(x));
         }
         if (min instanceof Date) {
-            domain = [min, domain[1]];
+            d = [min, d[1]];
         }
         if (max instanceof Date) {
-            domain = [domain[0], max];
+            d = [d[0], max];
         }
-        if (domain[0] > domain[1]) {
-            domain = [];
-        }
-
-        this.scale.domain = domain;
-        if (nice && scale.nice) {
-            scale.nice(this.tick.count);
+        if (d[0] > d[1]) {
+            d = [];
         }
 
-        this.onLabelFormatChange(this.label.format);
+        return d;
     }
 
     protected onLabelFormatChange(format?: string, ticks?: any[]) {
@@ -83,11 +70,5 @@ export class TimeAxis extends ChartAxis<TimeScale> {
 
     formatDatum(datum: Date): string {
         return this.datumFormatter(datum);
-    }
-
-    protected updateDomain(domain: any[], _isYAxis: boolean, primaryTickCount?: number) {
-        // the `primaryTickCount` is used to align the secondary axis tick count with the primary
-        this.setDomain(domain, primaryTickCount);
-        return primaryTickCount ?? this.scale.ticks(this.tick.count).length;
     }
 }

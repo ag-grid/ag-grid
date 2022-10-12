@@ -1,6 +1,9 @@
 import { NumericTicks } from './ticks';
 
-export function calculateNiceSecondaryAxis(domain: number[], primaryTickCount: number): [any[], NumericTicks] {
+export function calculateNiceSecondaryAxis(
+    domain: number[],
+    primaryTickCount: number
+): [[number, number], NumericTicks] {
     // Make secondary axis domain nice using strict tick count, matching the tick count from the primary axis.
     // This is to make the secondary axis grid lines/ tick positions align with the ones from the primary axis.
     let start = Math.floor(domain[0]);

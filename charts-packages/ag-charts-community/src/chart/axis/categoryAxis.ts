@@ -32,14 +32,10 @@ export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
         return this.scale.paddingOuter;
     }
 
-    set domain(values: (string | object)[]) {
+    normaliseDataDomain(d: (string | object)[]): (string | object)[] {
         // Prevent duplicate categories.
-        const valuesSet = new Set<string | {}>(values);
-        this.scale.domain = new Array(...valuesSet.values());
-    }
-
-    get domain(): (string | object)[] {
-        return this.scale.domain.slice();
+        const valuesSet = new Set<string | {}>(d);
+        return new Array(...valuesSet.values());
     }
 
     calculateDomain() {

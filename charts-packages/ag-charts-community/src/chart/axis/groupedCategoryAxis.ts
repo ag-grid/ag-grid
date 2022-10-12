@@ -52,24 +52,6 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         this.labelSelection = Selection.select(axisGroup).selectAll<Text>();
     }
 
-    set domain(domainValues: any[]) {
-        // Prevent duplicate categories.
-        const values = domainValues.filter((s, i, arr) => arr.indexOf(s) === i);
-
-        this.scale.domain = values;
-        const tickTree = ticksToTree(values);
-        this.tickTreeLayout = treeLayout(tickTree);
-
-        const domain = values.slice();
-        domain.push('');
-        this.tickScale.domain = domain;
-
-        this.resizeTickTree();
-    }
-    get domain(): any[] {
-        return this.scale.domain;
-    }
-
     set range(value: number[]) {
         this.requestedRange = value.slice();
         this.updateRange();
@@ -140,7 +122,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         return this._gridLength;
     }
 
-    calculateDomain({ primaryTickCount }: { primaryTickCount?: number }) {
+    calculateDomain() {
         const { direction, boundSeries } = this;
         const domains: any[][] = [];
         let isNumericX: boolean | undefined = undefined;
@@ -161,10 +143,28 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                     domains.push(series.getDomain(direction));
                 }
             });
-        const domain = new Array<any>().concat(...domains);
-        this.domain = extent(domain, isContinuous) || domain;
 
-        return { primaryTickCount };
+        const domain = new Array<any>().concat(...domains);
+
+        const values = extent(domain, isContinuous) || domain;
+
+        this.dataDomain = this.normaliseDataDomain(values);
+    }
+
+    normaliseDataDomain(d: any[]): any[] {
+        // Prevent duplicate categories.
+        const values = d.filter((s, i, arr) => arr.indexOf(s) === i);
+
+        const tickTree = ticksToTree(values);
+        this.tickTreeLayout = treeLayout(tickTree);
+
+        const tickScaleDomain = values.slice();
+        tickScaleDomain.push('');
+        this.tickScale.domain = tickScaleDomain;
+
+        this.resizeTickTree();
+
+        return values;
     }
 
     /**
@@ -180,8 +180,11 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
      * but this extra level of async indirection will not just introduce an unwanted delay,
      * it will also make it harder to reason about the program.
      */
-    update() {
+    update(primaryTickCount?: number) {
         const { axisGroup, gridlineGroup, scale, label, tickScale, requestedRange } = this;
+
+        scale.domain = this.dataDomain;
+
         const rangeStart = scale.range[0];
         const rangeEnd = scale.range[1];
         const rangeLength = Math.abs(rangeEnd - rangeStart);
@@ -423,5 +426,6 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                 line.fill = undefined;
             });
         }
+        return primaryTickCount;
     }
 }

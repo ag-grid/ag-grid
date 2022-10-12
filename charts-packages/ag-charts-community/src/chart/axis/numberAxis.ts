@@ -1,10 +1,12 @@
 import { ContinuousScale } from '../../scale/continuousScale';
 import { LinearScale } from '../../scale/linearScale';
+import { LogScale } from '../../scale/logScale';
 import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
 import { ChartAxis } from '../chartAxis';
 import { doOnce } from '../../util/function';
 import { predicateWithMessage, Validate, GREATER_THAN, AND, LESS_THAN } from '../../util/validation';
+import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
 
 function NUMBER_OR_NAN(min?: number, max?: number) {
     // Can be NaN or finite number
@@ -36,7 +38,7 @@ export function clamper(domain: number[]): (x: number) => number {
     return (x) => (x >= a && x <= b ? x : NaN);
 }
 
-export class NumberAxis extends ChartAxis {
+export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
     static className = 'NumberAxis';
     static type = 'number' as 'number' | 'log';
 
@@ -45,38 +47,25 @@ export class NumberAxis extends ChartAxis {
         (this.scale as ContinuousScale).clamper = clamper;
     }
 
-    private setDomain(domain: number[]) {
-        const { scale, min, max } = this;
+    normaliseDataDomain(d: number[]) {
+        const { min, max } = this;
 
-        if (domain.length > 2) {
-            domain = extent(domain, isContinuous, Number) || [NaN, NaN];
+        if (d.length > 2) {
+            d = extent(d, isContinuous, Number) || [NaN, NaN];
         }
         if (!isNaN(min)) {
-            domain = [min, domain[1]];
+            d = [min, d[1]];
         }
         if (!isNaN(max)) {
-            domain = [domain[0], max];
+            d = [d[0], max];
         }
-        if (domain[0] > domain[1]) {
-            domain = [];
+        if (d[0] > d[1]) {
+            d = [];
         }
-
-        scale.domain = domain;
-
-        this.onLabelFormatChange(this.label.format); // not sure why this is required?
 
         (this.scale as ContinuousScale).clamp = true;
-        if (this.nice && this.scale.nice) {
-            this.scale.nice(this.tick.count);
-        }
-    }
 
-    set domain(domain: number[]) {
-        this.setDomain(domain);
-    }
-
-    get domain(): number[] {
-        return this.scale.domain;
+        return d;
     }
 
     @Validate(AND(NUMBER_OR_NAN(), LESS_THAN('max')))
@@ -98,5 +87,17 @@ export class NumberAxis extends ChartAxis {
             );
             return String(datum);
         }
+    }
+
+    updateSecondaryAxisTicks(primaryTickCount: number | undefined): void {
+        const { scale } = this;
+
+        if (this.dataDomain == null) {
+            throw new Error('AG Charts - dataDomain not calculated, cannot perform tick calculation.');
+        }
+
+        const [d, ticks] = calculateNiceSecondaryAxis(this.dataDomain, primaryTickCount ?? 0);
+        scale.domain = d;
+        this.ticks = ticks;
     }
 }

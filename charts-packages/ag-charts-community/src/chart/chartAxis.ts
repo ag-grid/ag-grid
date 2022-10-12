@@ -32,7 +32,7 @@ interface ChartAxisMeta {
     boundSeries: Series[];
 }
 
-export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extends Axis<S> {
+export class ChartAxis<S extends Scale<any, number> = Scale<any, number>, D = any> extends Axis<S, D> {
     @Validate(STRING_ARRAY)
     keys: string[] = [];
 
@@ -101,7 +101,7 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
         const { direction, boundSeries, includeInvisibleDomains } = this;
 
         if (this.linkedTo) {
-            this.domain = this.linkedTo.domain;
+            this.dataDomain = this.linkedTo.dataDomain;
         } else {
             const domains: any[][] = [];
             boundSeries
@@ -111,7 +111,11 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
                 });
 
             const domain = new Array<any>().concat(...domains);
-            this.domain = domain;
+            this.dataDomain = this.normaliseDataDomain(domain);
         }
+    }
+
+    normaliseDataDomain(d: D[]): D[] {
+        return d;
     }
 }
