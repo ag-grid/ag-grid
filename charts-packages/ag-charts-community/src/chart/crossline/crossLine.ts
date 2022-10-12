@@ -252,8 +252,8 @@ export class CrossLine {
         }
 
         this.isRange = validRange;
-        this.startLine = !isNaN(yStart);
-        this.endLine = !isNaN(yEnd);
+        this.startLine = !isNaN(yStart) && yStart === clampedYStart;
+        this.endLine = !isNaN(yEnd) && yEnd === clampedYEnd;
 
         if (!validRange && !this.startLine && !this.endLine) {
             return false;
