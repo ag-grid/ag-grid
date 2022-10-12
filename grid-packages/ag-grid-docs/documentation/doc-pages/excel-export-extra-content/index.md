@@ -50,6 +50,35 @@ In addition to exporting the Grid in the Excel file, you can also provide additi
 
 <grid-example title='Excel Export - Cover Page' name='excel-export-cover-page' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu", "setfilter"]}'></grid-example>
 
+## Export Customisation
+
+The Excel export can be customised using the following function params for `exportDataAsExcel`:
+
+<snippet>
+gridOptions.api.exportDataAsExcel({
+    processCellCallback: () => {},
+    processHeaderCallback: () => {},
+    processGroupHeaderCallback: () => {},
+    processRowGroupCallback: () => {},
+})
+</snippet>
+
+<api-documentation source='grid-api/api.json' config='{"isApi": true}' section='export' names='["exportDataAsExcel"]'></api-documentation>
+
+<interface-documentation interfaceName='ExcelExportParams' names='["exportDataAsExcel", "processGroupHeaderCallback", "processHeaderCallback", "processRowGroupCallback", "processCellCallback"]' ></interface-documentation>
+
+The following example shows Excel customisations where the exported document has the following:
+
+* Group headers with the prefix `group header: `
+* Headers with the prefix `header: `
+* All row groups with the prefix `row group: `
+* All cell values are surrounded by `_`, unless they are `undefined`, in which case they are empty
+
+[[note]]
+| Row groups are also cells, so will also have the `_` surrounding the value, whereas group headers and headers are not.
+
+<grid-example title='Excel Export - Customisation' name='excel-export-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "csv", "excel", "menu", "setfilter"]}'></grid-example>
+
 ## Next Up
 
 Continue to the next section: [Images](../excel-export-images/).
