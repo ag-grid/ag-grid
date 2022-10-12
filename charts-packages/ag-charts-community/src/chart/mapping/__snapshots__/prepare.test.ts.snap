@@ -8246,7 +8246,7 @@ Object {
       },
       "tooltip": Object {
         "enabled": true,
-        "renderer": undefined,
+        "renderer": [Function],
       },
       "type": "pie",
       "visible": true,
