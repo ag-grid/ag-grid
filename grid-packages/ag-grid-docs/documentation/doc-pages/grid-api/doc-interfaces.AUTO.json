@@ -17219,7 +17219,10 @@
   "ICsvCreator": {
     "getDataAsCsv": {
       "type": {
-        "arguments": { "params?": "CsvExportParams" },
+        "arguments": {
+          "params?": "CsvExportParams",
+          "skipDefaultParams?": "boolean"
+        },
         "returnType": "string",
         "optional": false
       }
