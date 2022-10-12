@@ -1,8 +1,8 @@
 /*
 * removes seo & cookie tracking type scripts/blocks from an archive
-* to be run from /home/ceolter/public_html/archive/cleanArchive and an archive version supplied
+* to be run from /home/aggrid/public_html/archive/cleanArchive and an archive version supplied
 * eg:
-* cd /home/ceolter/public_html/archive/cleanArchive/
+* cd /home/aggrid/public_html/archive/cleanArchive/
 * /opt/cpanel/ea-nodejs10/bin/node sanitise.js 26.0.0
 */
 const fs = require('fs');

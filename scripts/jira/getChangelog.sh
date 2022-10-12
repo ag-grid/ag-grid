@@ -1,5 +1,5 @@
 echo "Starting" >> changelog.log
-source /home/ceolter/.bash_profile
+source /home/aggrid/.bash_profile
 
-/opt/cpanel/ea-nodejs10/bin/node /home/ceolter/jira_reports/getChangelog.js
+JIRA_CREDENTIALS=$JIRA_CREDENTIALS /opt/cpanel/ea-nodejs10/bin/node /home/aggrid/jira_reports/getChangelog.js
 

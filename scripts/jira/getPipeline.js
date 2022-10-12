@@ -2,13 +2,13 @@ const fs = require('fs');
 const {executeJiraRequest, saveDataToFile, logger} = require("./utils");
 
 const PIPELINE_URL = "https://ag-grid.atlassian.net/rest/api/2/search?jql=filter=11839+order+by+key+desc";
-const PIPELINE_LOG = "/home/ceolter/jira_reports/pipeline.log";
-const PIPELINE_TMP_FILE = "/home/ceolter/public_html/pipeline/pipeline.tmp.json";
-const PIPELINE_FILE = "/home/ceolter/public_html/pipeline/pipeline.json";
-const PIPELINE_BAK_FILE = "/home/ceolter/public_html/pipeline/pipeline.bak.json";
+const PIPELINE_LOG = "/home/aggrid/jira_reports/pipeline.log";
+const PIPELINE_TMP_FILE = "/home/aggrid/public_html/pipeline/pipeline.tmp.json";
+const PIPELINE_FILE = "/home/aggrid/public_html/pipeline/pipeline.json";
+const PIPELINE_BAK_FILE = "/home/aggrid/public_html/pipeline/pipeline.bak.json";
 
 try {
-    logger("Pipeline Data Download Started", CHANGELOG_LOG);
+    logger("Pipeline Data Download Started", PIPELINE_LOG);
     const pipelineData = executeJiraRequest(PIPELINE_URL);
     logger("Pipeline Data Downloaded", PIPELINE_LOG);
 
