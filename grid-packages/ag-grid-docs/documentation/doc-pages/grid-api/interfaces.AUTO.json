@@ -8911,6 +8911,7 @@
     "meta": {},
     "type": {
       "fill?": "CssColor",
+      "fillOpacity?": "Opacity",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize"
     }

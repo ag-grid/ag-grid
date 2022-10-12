@@ -2109,6 +2109,7 @@
     "meta": {},
     "type": {
       "fill?": "CssColor",
+      "fillOpacity?": "Opacity",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize"
     }
@@ -3332,6 +3333,7 @@
       "midSin": "number",
       "calloutLabel?": "{ readonly text: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; }",
       "sectorLabel?": "{ readonly text: string; }",
+      "sectorFormat": "PieSeriesFormat",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
@@ -3381,7 +3383,12 @@
   },
   "PieSeriesFormat": {
     "meta": {},
-    "type": { "fill?": "string", "stroke?": "string", "strokeWidth?": "number" }
+    "type": {
+      "fill?": "string",
+      "fillOpacity?": "number",
+      "stroke?": "string",
+      "strokeWidth?": "number"
+    }
   },
   "PieSeriesLabelFormatterParams": {
     "meta": {},
