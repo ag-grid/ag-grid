@@ -514,6 +514,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const requestedRangeMax = Math.max(...requestedRange);
         const rotation = toRadians(this.rotation);
         const parallelLabels = label.parallel;
+        const anySeriesActive = this.isAnySeriesActive();
 
         const translationX = Math.floor(translation.x);
         const translationY = Math.floor(translation.y);
@@ -588,7 +589,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         if (!anyTickVisible) {
             this.crossLines?.forEach((crossLine) => {
-                crossLine.update(anyTickVisible);
+                crossLine.update(anySeriesActive);
             });
             this.updateTitle({ ticks });
             return;
@@ -615,7 +616,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 crossLine.label.parallel !== undefined ? crossLine.label.parallel : parallelLabels;
             crossLine.parallelFlipRotation = parallelFlipRotation;
             crossLine.regularFlipRotation = regularFlipRotation;
-            crossLine.update(anyTickVisible);
+            crossLine.update(anySeriesActive);
         });
     }
 
@@ -974,5 +975,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
     initCrossLine(crossLine: CrossLine) {
         crossLine.scale = this.scale;
         crossLine.gridLength = this.gridLength;
+    }
+
+    isAnySeriesActive() {
+        return false;
     }
 }

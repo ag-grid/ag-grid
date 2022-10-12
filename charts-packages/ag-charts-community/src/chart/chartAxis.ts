@@ -178,4 +178,8 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
         this.domain = domain;
         return primaryTickCount;
     }
+
+    isAnySeriesActive() {
+        return this.boundSeries.some((s) => this.includeInvisibleDomains || s.visible);
+    }
 }
