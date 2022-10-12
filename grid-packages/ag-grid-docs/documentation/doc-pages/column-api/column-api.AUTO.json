@@ -37,7 +37,10 @@
   "getDisplayNameForColumnGroup": {
     "description": "/** Returns the display name for a column group (when grouping columns). */",
     "type": {
-      "arguments": { "columnGroup": "ColumnGroup", "location": "string" },
+      "arguments": {
+        "columnGroup": "ColumnGroup",
+        "location": "string | null"
+      },
       "returnType": "string"
     }
   },
