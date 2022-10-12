@@ -446,7 +446,9 @@ export class GridChartComp extends Component {
             chartId: this.chartController.getChartId()
         });
 
-        this.eventService.dispatchEvent(event);
+        this.chartProxy.getChart().waitForUpdate().then(() => {
+            this.eventService.dispatchEvent(event);
+        });
     }
 
     private raiseChartDestroyedEvent(): void {

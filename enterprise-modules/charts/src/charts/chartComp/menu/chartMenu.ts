@@ -4,16 +4,18 @@ import {
     AgPanel,
     AgPromise,
     Autowired,
+    CHART_TOOL_PANEL_ALLOW_LIST,
+    CHART_TOOL_PANEL_MENU_OPTIONS,
+    CHART_TOOLBAR_ALLOW_LIST,
+    ChartCreated,
     ChartMenuOptions,
     ChartToolPanelMenuOptions,
     Component,
+    Events,
     GetChartToolbarItemsParams,
     PostConstruct,
-    WithoutGridCommon,
     RefSelector,
-    CHART_TOOL_PANEL_MENU_OPTIONS,
-    CHART_TOOLBAR_ALLOW_LIST,
-    CHART_TOOL_PANEL_ALLOW_LIST
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 
 import { TabbedChartMenu } from "./tabbedChartMenu";
@@ -68,25 +70,20 @@ export class ChartMenu extends Component {
     private postConstruct(): void {
         this.createButtons();
 
-        const showDefaultToolPanel = Boolean(this.gridOptionsWrapper.getChartToolPanelsDef()?.defaultToolPanel);
-        if (showDefaultToolPanel) {
-            this.showMenu(this.defaultPanel, false);
-        }
+        this.addManagedListener(this.eventService, Events.EVENT_CHART_CREATED, (e: ChartCreated) => {
+            if (e.chartId === this.chartController.getChartId()) {
+                const showDefaultToolPanel = Boolean(this.gridOptionsWrapper.getChartToolPanelsDef()?.defaultToolPanel);
+                if (showDefaultToolPanel) {
+                    this.showMenu(this.defaultPanel, false);
+                }
+            }
+        });
 
         this.refreshMenuClasses();
 
-        // TODO requires a better solution as this causes the docs the 'jump' when pages are reloaded
-        // this.addManagedListener(this.eventService, Events.EVENT_CHART_CREATED, (e: ChartCreated) => {
-        //     // creating settings panel ahead of time to prevent an undesirable 'jitter' when the canvas resizes
-        //     // caused as a result of scrollIntoView() when the selected chart type is scrolled into view
-        //     if (e.chartId === this.chartController.getChartId()) {
-        //         this.createMenuPanel(0);
-        //     }
-        // });
-
         if (this.gridOptionsWrapper.isEnableChartToolPanelsButton()) {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
-            this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this))
+            this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
         }
     }
 
