@@ -252,11 +252,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._scale;
     }
 
-    ticks?: any[];
-    protected getTicks(offset?: number) {
-        return this.ticks ?? this.scale.ticks!(this.tick.count, offset);
-    }
-
     readonly axisGroup = new Group({ name: `${this.id}-axis`, layer: true, zIndex: Layers.AXIS_ZINDEX });
     readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
 
@@ -381,13 +376,13 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     protected labelFormatter?: (datum: any) => string;
-    protected onLabelFormatChange(format?: string, ticks?: any[]) {
+    protected onLabelFormatChange(ticks: any[], format?: string) {
         const { scale } = this;
         if (format && scale && scale.tickFormat) {
             try {
                 this.labelFormatter = scale.tickFormat({
-                    ticks: ticks ?? this.getTicks(),
-                    count: ticks?.length ?? this.tick.count,
+                    ticks,
+                    count: ticks.length,
                     specifier: format,
                 });
             } catch (e) {
@@ -421,7 +416,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             this._title = value;
 
             // position title so that it doesn't briefly get rendered in the top left hand corner of the canvas before update is called.
-            this.updateTitle({ ticks: this.ticks || this.scale.ticks!(this.tick.count) });
+            this.updateTitle({ ticks: this.scale.ticks!(this.tick.count) });
         }
     }
     get title(): Caption | undefined {
@@ -539,40 +534,53 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let i = 0;
         let labelOverlap = true;
         let ticks: any[] = [];
-        const tickCount = this.tick.count !== undefined;
         const defaultTickCount = 10;
+        const tickCount = this.tick.count !== undefined;
+        const nice = this.nice && scale.nice;
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
-        const calculatePrimaryDomain = !secondaryAxis && !tickCount && this.nice && scale.nice;
+        const calculatePrimaryDomain = !secondaryAxis && !tickCount && nice;
 
         scale.domain = this.dataDomain;
-
-        if (this.nice && scale.nice) {
+        if (nice) {
             scale.nice!(this.tick.count);
         }
 
-        while (labelOverlap && i < defaultTickCount) {
+        while (labelOverlap) {
             let unchanged = true;
-            while (unchanged && i < defaultTickCount) {
-                const prevTicks = ticks;
-
-                const filteredTicks =
-                    (continuous && !tickCount) || i === 0 ? undefined : ticks.filter((_, i) => i % 2 === 0);
+            while (unchanged) {
+                if (i === defaultTickCount) {
+                    // The iteration count `i` is used to reduce the default tick count until all labels fit without overlapping
+                    // `i` cannot exceed `defaultTickCount` as it would lead to negative tick count values.
+                    // Break out of the while loops when then iteration count reaches `defaultTickCount`
+                    labelOverlap = false;
+                    break;
+                }
 
                 if (calculatePrimaryDomain) {
+                    // `scale.nice` mutates `scale.domain` based on new tick count
                     scale.domain = this.dataDomain;
                     scale.nice!(defaultTickCount - i);
                 }
 
+                const prevTicks = ticks;
+
+                // filter generated ticks if this is a category axis or this.tick.count is specified
+                const filteredTicks =
+                    (continuous && !tickCount) || i === 0 ? undefined : ticks.filter((_, i) => i % 2 === 0);
+
+                let secondaryAxisTicks;
                 if (secondaryAxis) {
-                    this.updateSecondaryAxisTicks(primaryTickCount);
+                    // `updateSecondaryAxisTicks` mutates `scale.domain` based on `primaryTickCount`
+                    secondaryAxisTicks = this.updateSecondaryAxisTicks(primaryTickCount);
                 }
 
-                ticks = this.updateSelections({
-                    tickCountOffset: i,
+                ticks = filteredTicks ?? secondaryAxisTicks ?? this.scale.ticks!(this.tick.count, i);
+
+                this.updateSelections({
                     halfBandwidth,
                     gridLength,
-                    ticks: filteredTicks,
+                    ticks,
                 });
 
                 if (!secondaryAxis) {
@@ -584,7 +592,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             }
 
             // When the scale domain or the ticks change, the label format may change
-            this.onLabelFormatChange(this.label.format, ticks);
+            this.onLabelFormatChange(ticks, this.label.format);
 
             const { labelData, rotated } = this.updateLabels({
                 parallelFlipRotation,
@@ -655,7 +663,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return primaryTickCount;
     }
 
-    updateSecondaryAxisTicks(_primaryTickCount: number | undefined): void {
+    updateSecondaryAxisTicks(_primaryTickCount: number | undefined): any[] {
         throw new Error('AG Charts - unexpected call to updateSecondaryAxisTicks() - check axes configuration.');
     }
 
@@ -690,18 +698,15 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     private updateSelections({
-        tickCountOffset,
+        ticks,
         halfBandwidth,
         gridLength,
-        ticks,
     }: {
-        tickCountOffset: number;
+        ticks: any[];
         halfBandwidth: number;
         gridLength: number;
-        ticks?: any[];
     }) {
         const { scale } = this;
-        ticks = ticks ?? this.getTicks(tickCountOffset);
         const data = ticks.map((t) => ({ tick: t, translationY: Math.round(scale.convert(t) + halfBandwidth) }));
         const gridlineGroupSelection = this.updateGridLineGroupSelection({ gridLength, data });
         const tickGroupSelection = this.updateTickGroupSelection({ data });
@@ -711,8 +716,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         this.tickGroupSelection = tickGroupSelection;
         this.gridlineGroupSelection = gridlineGroupSelection;
-
-        return ticks;
     }
 
     private updateGridLines({

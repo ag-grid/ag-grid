@@ -9,7 +9,6 @@ export class TimeAxis extends ChartAxis<TimeScale> {
     static className = 'TimeAxis';
     static type = 'time' as const;
 
-    private datumFormat = '%m/%d/%y, %H:%M:%S';
     private datumFormatter: (date: Date) => string;
 
     constructor() {
@@ -19,10 +18,6 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         scale.clamp = true;
         scale.clamper = clamper;
         this.scale = scale;
-        this.datumFormatter = scale.tickFormat({
-            ticks: this.getTicks(),
-            specifier: this.datumFormat,
-        });
     }
 
     @Validate(AND(OPT_DATE_OR_DATETIME_MS, LESS_THAN('max')))
@@ -57,14 +52,12 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         return d;
     }
 
-    protected onLabelFormatChange(format?: string, ticks?: any[]) {
+    protected onLabelFormatChange(ticks: any[], format?: string) {
         if (format) {
-            super.onLabelFormatChange(format);
+            super.onLabelFormatChange(ticks, format);
         } else {
             // For time axis labels to look nice, even if date format wasn't set.
-            this.labelFormatter = this.scale.tickFormat({
-                ticks: ticks ?? this.getTicks(),
-            });
+            this.labelFormatter = this.scale.tickFormat({ ticks });
         }
     }
 

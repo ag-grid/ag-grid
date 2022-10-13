@@ -89,15 +89,15 @@ export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
         }
     }
 
-    updateSecondaryAxisTicks(primaryTickCount: number | undefined): void {
-        const { scale } = this;
-
+    updateSecondaryAxisTicks(primaryTickCount: number | undefined): any[] {
         if (this.dataDomain == null) {
             throw new Error('AG Charts - dataDomain not calculated, cannot perform tick calculation.');
         }
 
         const [d, ticks] = calculateNiceSecondaryAxis(this.dataDomain, primaryTickCount ?? 0);
-        scale.domain = d;
-        this.ticks = ticks;
+
+        this.scale.domain = d;
+
+        return ticks;
     }
 }
