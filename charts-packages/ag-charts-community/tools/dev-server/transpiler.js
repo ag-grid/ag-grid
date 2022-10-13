@@ -20,7 +20,10 @@ function transpileTSAndWatch(options) {
             emit(file, content);
 
             clearTimeout(timeout);
-            timeout = setTimeout(() => listeners.forEach((cb) => cb()), debounce);
+            timeout = setTimeout(() => {
+                emitSources();
+                listeners.forEach((cb) => cb());
+            }, debounce);
         },
 
         // Prevent clearing the console after rebuilds
@@ -29,16 +32,18 @@ function transpileTSAndWatch(options) {
     const host = ts.createWatchCompilerHost(entries, compilerOptions, system, createProgram);
     const watcher = ts.createWatchProgram(host);
 
-    // Emit sources
-    watcher
-        .getProgram()
-        .getSourceFiles()
-        .filter((src) => !src.fileName.includes('/node_modules/'))
-        .filter((src) => !src.fileName.endsWith('.d.ts'))
-        .forEach((src) => emit(src.fileName, src.text));
+    const emitSources = () =>
+        watcher
+            .getProgram()
+            .getSourceFiles()
+            .filter((src) => !src.fileName.includes('/node_modules/'))
+            .filter((src) => !src.fileName.endsWith('.d.ts'))
+            .forEach((src) => emit(src.fileName, src.text));
 
     /** @type {Set<() => void>} */
     const listeners = new Set();
+
+    emitSources();
 
     return {
         onChange: (callback) => listeners.add(callback),
