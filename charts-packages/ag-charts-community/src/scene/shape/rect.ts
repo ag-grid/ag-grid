@@ -99,8 +99,8 @@ export class Rect extends Path {
         borderPath.clear({ trackChanges: true });
 
         if (crisp) {
-            w = this.alignLength(w);
-            h = this.alignLength(h);
+            w = this.align(x, w);
+            h = this.align(y, h);
             x = this.align(x);
             y = this.align(y);
         }

@@ -131,26 +131,16 @@ export abstract class Shape extends Node {
             return alignedStart;
         }
 
-        // Account for the rounding of alignedStart by increasing length to compensate before
-        // alignment.
-        return Math.round((length + start) * pixelRatio) / pixelRatio - alignedStart;
-    }
-
-    /**
-     * Returns a device-pixel aligned length.
-     */
-    alignLength(length: number) {
-        const pixelRatio = this.scene?.canvas?.pixelRatio ?? 1;
-        const pixelSize = 1 / pixelRatio;
-
-        if (length < pixelSize) {
+        if (length < 1) {
             // Avoid hiding shapes at all. Instead
             // the browser's canvas should make the
             // thin shape more transparent.
             return length;
         }
 
-        return Math.round(length * pixelRatio) / pixelRatio;
+        // Account for the rounding of alignedStart by increasing length to compensate before
+        // alignment.
+        return Math.round((length + start) * pixelRatio) / pixelRatio - alignedStart;
     }
 
     @SceneChangeDetection({ redraw: RedrawType.MINOR })
