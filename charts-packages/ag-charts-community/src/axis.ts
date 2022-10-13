@@ -598,16 +598,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
         });
         this.updateTitle({ ticks });
 
-        if (!anyTickVisible) {
-            return;
-        }
-
         tickGroupSelection
             .selectByTag<Line>(Tags.Tick)
             .each((line, _, index) => {
                 line.strokeWidth = tick.width;
                 line.stroke = tick.color;
-                line.visible = labelBboxes.has(index);
+                line.visible = anyTickVisible && labelBboxes.has(index);
             })
             .attr('x1', sideFlag * tick.size)
             .attr('x2', 0)
