@@ -3367,10 +3367,6 @@ export class ColumnModel extends BeanStub {
     // event, so will try and draw, but it will draw successfully when it acts on the
     // virtualColumnsChanged event
     private clearDisplayedAndViewportColumns(): void {
-        this.displayedTreeLeft = [];
-        this.displayedTreeRight = [];
-        this.displayedTreeCentre = [];
-
         this.viewportRowLeft = {};
         this.viewportRowRight = {};
         this.viewportRowCenter = {};
