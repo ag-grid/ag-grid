@@ -1,5 +1,9 @@
+import { ColDef, ColGroupDef } from "../main";
+
+type ColKey = keyof (ColDef) | (keyof ColGroupDef);
+
 export class ColDefUtil {
-    public static STRING_PROPERTIES = [
+    public static STRING_PROPERTIES: ColKey[] = [
         'headerName',
         'columnGroupShow',
         'headerClass',
@@ -27,7 +31,7 @@ export class ColDefUtil {
         'cellEditorPopupPosition'
     ];
 
-    public static OBJECT_PROPERTIES = [
+    public static OBJECT_PROPERTIES: ColKey[] = [
         'headerGroupComponent',
         'headerGroupComponentFramework',
         'headerGroupComponentParams',
@@ -49,7 +53,6 @@ export class ColDefUtil {
         'floatingFilterComponent',
         'floatingFilterComponentParams',
         'floatingFilterComponentFramework',
-        'floatingFilterFramework',
         'tooltipComponent',
         'tooltipComponentParams',
         'tooltipComponentFramework',
@@ -57,7 +60,7 @@ export class ColDefUtil {
         'columnsMenuParams'
     ];
 
-    public static ARRAY_PROPERTIES = [
+    public static ARRAY_PROPERTIES: ColKey[] = [
         'children',
         'sortingOrder',
         'allowedAggFuncs',
@@ -66,7 +69,7 @@ export class ColDefUtil {
         'cellClassRules',
         'icons'];
 
-    public static NUMBER_PROPERTIES = [
+    public static NUMBER_PROPERTIES: ColKey[] = [
         'sortedAt',
         'sortIndex',
         'initialSortIndex',
@@ -81,7 +84,7 @@ export class ColDefUtil {
         'pivotIndex',
         'initialPivotIndex'];
 
-    public static BOOLEAN_PROPERTIES = [
+    public static BOOLEAN_PROPERTIES: ColKey[] = [
         'suppressCellFlash',
         'suppressColumnsToolPanel',
         'suppressFiltersToolPanel',
@@ -126,7 +129,7 @@ export class ColDefUtil {
         'autoHeaderHeight'
     ];
 
-    public static FUNCTION_PROPERTIES = [
+    public static FUNCTION_PROPERTIES: ColKey[] = [
         'dndSourceOnRowDrag',
         'valueGetter',
         'valueSetter',
@@ -157,7 +160,7 @@ export class ColDefUtil {
         'cellEditorSelector'
     ];
 
-    public static ALL_PROPERTIES = [
+    public static ALL_PROPERTIES: ColKey[] = [
         ...ColDefUtil.ARRAY_PROPERTIES,
         ...ColDefUtil.OBJECT_PROPERTIES,
         ...ColDefUtil.STRING_PROPERTIES,

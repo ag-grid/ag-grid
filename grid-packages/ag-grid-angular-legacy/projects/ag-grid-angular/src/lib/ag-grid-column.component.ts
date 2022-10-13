@@ -90,7 +90,6 @@ export class AgGridColumn<TData = any> {
     @Input() public floatingFilterComponent: any;
     @Input() public floatingFilterComponentParams: any;
     @Input() public floatingFilterComponentFramework: any;
-    @Input() public floatingFilterFramework: any;
     @Input() public filter: any;
     /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name.     */
     @Input() public headerName: string | undefined;

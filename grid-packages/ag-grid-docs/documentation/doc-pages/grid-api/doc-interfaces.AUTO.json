@@ -114,6 +114,7 @@
       "type": { "returnType": "ColumnStateParams", "optional": true }
     }
   },
+  "ColKey": {},
   "ComponentMetadata": {
     "mandatoryMethodList": {
       "type": { "returnType": "string[]", "optional": false }
@@ -21708,6 +21709,7 @@
     "url": { "type": { "returnType": "string", "optional": false } }
   },
   "ModuleNames": {},
+  "GridOptionKey": {},
   "ICellComp": {
     "addOrRemoveCssClass": {
       "type": {

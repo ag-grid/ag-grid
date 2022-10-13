@@ -76,6 +76,10 @@
       "defaultState?": "/** State to apply to columns where state is missing for those columns */"
     }
   },
+  "ColKey": {
+    "meta": { "isTypeAlias": true },
+    "type": "keyof (ColDef) | (keyof ColGroupDef)"
+  },
   "ComponentMetadata": {
     "meta": {},
     "type": {
@@ -12419,6 +12423,10 @@
       null,
       null
     ]
+  },
+  "GridOptionKey": {
+    "meta": { "isTypeAlias": true },
+    "type": "keyof GridOptions"
   },
   "ICellComp": {
     "meta": {},
