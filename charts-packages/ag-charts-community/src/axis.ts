@@ -536,7 +536,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
         const halfBandwidth = (scale.bandwidth || 0) / 2;
 
-        let count = 0;
+        let i = 0;
         let labelOverlap = true;
         let ticks: any[] = [];
         const tickCount = this.tick.count !== undefined;
@@ -551,17 +551,17 @@ export class Axis<S extends Scale<D, number>, D = any> {
             scale.nice!(this.tick.count);
         }
 
-        while (labelOverlap && count < defaultTickCount) {
+        while (labelOverlap && i < defaultTickCount) {
             let unchanged = true;
-            while (unchanged && count < defaultTickCount) {
+            while (unchanged && i < defaultTickCount) {
                 const prevTicks = ticks;
 
                 const filteredTicks =
-                    (continuous && !tickCount) || count === 0 ? undefined : ticks.filter((_, i) => i % 2 === 0);
+                    (continuous && !tickCount) || i === 0 ? undefined : ticks.filter((_, i) => i % 2 === 0);
 
                 if (calculatePrimaryDomain) {
                     scale.domain = this.dataDomain;
-                    scale.nice!(defaultTickCount - count);
+                    scale.nice!(defaultTickCount - i);
                 }
 
                 if (secondaryAxis) {
@@ -569,7 +569,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 }
 
                 ticks = this.updateSelections({
-                    tickCountOffset: count,
+                    tickCountOffset: i,
                     halfBandwidth,
                     gridLength,
                     ticks: filteredTicks,
@@ -580,7 +580,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 }
 
                 unchanged = ticks.every((t, i) => t === prevTicks[i]);
-                count++;
+                i++;
             }
 
             // When the scale domain or the ticks change, the label format may change
@@ -706,9 +706,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const gridlineGroupSelection = this.updateGridLineGroupSelection({ gridLength, data });
         const tickGroupSelection = this.updateTickGroupSelection({ data });
 
-        const translationYFn = (_: unknown, datum: any) => datum.translationY;
-        gridlineGroupSelection.attrFn('translationY', translationYFn);
-        tickGroupSelection.attrFn('translationY', translationYFn);
+        gridlineGroupSelection.attrFn('translationY', (_, datum: any) => datum.translationY);
+        tickGroupSelection.attrFn('translationY', (_, datum: any) => datum.translationY);
 
         this.tickGroupSelection = tickGroupSelection;
         this.gridlineGroupSelection = gridlineGroupSelection;

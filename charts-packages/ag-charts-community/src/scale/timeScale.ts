@@ -174,10 +174,9 @@ export class TimeScale extends ContinuousScale {
         if (typeof interval === 'number') {
             const tickCount = Math.max(0, interval - (offset ?? 0));
             const tickIntervals = this.tickIntervals;
-            const n = tickIntervals.length;
             const target = Math.abs(stop - start) / tickCount;
             const i = complexBisectRight(tickIntervals, target, (interval) => interval[2]);
-            if (i === n) {
+            if (i === tickIntervals.length) {
                 step = tickStep(start / durationYear, stop / durationYear, tickCount);
                 interval = this.year;
             } else if (i) {
