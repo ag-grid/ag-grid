@@ -136,6 +136,23 @@ export abstract class Shape extends Node {
         return Math.round((length + start) * pixelRatio) / pixelRatio - alignedStart;
     }
 
+    /**
+     * Returns a device-pixel aligned length.
+     */
+    alignLength(length: number) {
+        const pixelRatio = this.scene?.canvas?.pixelRatio ?? 1;
+        const pixelSize = 1 / pixelRatio;
+
+        if (length < pixelSize) {
+            // Avoid hiding shapes at all. Instead
+            // the browser's canvas should make the
+            // thin shape more transparent.
+            return length;
+        }
+
+        return Math.round(length * pixelRatio) / pixelRatio;
+    }
+
     @SceneChangeDetection({ redraw: RedrawType.MINOR })
     lineDash: number[] | undefined = Shape.defaultStyles.lineDash;
 

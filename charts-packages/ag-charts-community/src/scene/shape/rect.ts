@@ -99,15 +99,30 @@ export class Rect extends Path {
         borderPath.clear({ trackChanges: true });
 
         if (crisp) {
-            // Order matters here, since we need unaligned x/y for w/h calculations.
-            w = this.align(x, w);
-            h = this.align(y, h);
+            w = this.alignLength(w);
+            h = this.alignLength(h);
             x = this.align(x);
             y = this.align(y);
         }
 
         if (strokeWidth) {
-            if (strokeWidth < w && strokeWidth < h) {
+            const pixelRatio = this.scene?.canvas.pixelRatio ?? 1;
+            const pixelSize = 1 / pixelRatio;
+            if (w < pixelSize) {
+                // Too narrow, draw a vertical stroke
+                const lx = x + w / 2;
+                borderPath.moveTo(lx, y);
+                borderPath.lineTo(lx, y + h);
+                strokeWidth = w;
+                this.borderClipPath = undefined;
+            } else if (h < pixelSize) {
+                // Too narrow, draw a horizontal stroke
+                const ly = y + h / 2;
+                borderPath.moveTo(x, ly);
+                borderPath.lineTo(x + w, ly);
+                strokeWidth = h;
+                this.borderClipPath = undefined;
+            } else if (strokeWidth < w && strokeWidth < h) {
                 const halfStrokeWidth = strokeWidth / 2;
                 x += halfStrokeWidth;
                 y += halfStrokeWidth;
@@ -117,14 +132,14 @@ export class Rect extends Path {
                 // Clipping not needed in this case; fill to center of stroke.
                 this.borderClipPath = undefined;
                 path.rect(x, y, w, h);
+                borderPath.rect(x, y, w, h);
             } else {
                 // Skip the fill and just render the stroke.
                 this.borderClipPath = this.borderClipPath ?? new Path2D();
                 this.borderClipPath.clear({ trackChanges: true });
                 this.borderClipPath.rect(x, y, w, h);
+                borderPath.rect(x, y, w, h);
             }
-
-            borderPath.rect(x, y, w, h);
         } else {
             // No borderPath needed, and thus no clipPath needed either. Fill to full extent of
             // Rect.

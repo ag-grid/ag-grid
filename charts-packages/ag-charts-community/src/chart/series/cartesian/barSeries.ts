@@ -592,16 +592,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             groupScale.round = true;
         }
 
-        const rawBarWidth =
-            groupScale.round && groupScale.rawBandwidth > 0 && groupScale.rawBandwidth < 1
-                ? 1
-                : groupScale.rawBandwidth;
         const barWidth =
             groupScale.bandwidth >= 1
                 ? // Pixel-rounded value for low-volume bar charts.
                   groupScale.bandwidth
                 : // Handle high-volume bar charts gracefully.
-                  rawBarWidth;
+                  groupScale.rawBandwidth;
         const contexts: SeriesNodeDataContext<BarNodeDatum>[][] = [];
 
         xData.forEach((group, groupIndex) => {
@@ -768,8 +764,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         const [visibleMin, visibleMax] = this.xAxis?.visibleRange ?? [];
         const isZoomed = visibleMin !== 0 || visibleMax !== 1;
-        const crisp = !isZoomed && !datumSelection.data.some((d) => (flipXY ? d.height <= 0.5 : d.width <= 0.5));
-
+        const crisp = !isZoomed;
         datumSelection.each((rect, datum) => {
             const { colorIndex } = datum;
             const fill =
