@@ -9,9 +9,6 @@ export interface ChartGroupsDef {
     combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[]
 }
 
-/************************************************************************************************
- * If you update these, then also update the `integrated-charts-toolbar` docs. *
- ************************************************************************************************/
 export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
     columnGroup: [
         'column',
@@ -57,14 +54,6 @@ export interface ChartSettingsPanel {
 }
 
 export type ChartFormatPanelGroup = 'chart' | 'legend' | 'axis' | 'series' | 'navigator';
-
-export const DEFAULT_FORMAT_PANEL_GROUPS_ORDER: ChartFormatPanelGroup[] = [
-    'chart',
-    'legend',
-    'axis',
-    'series',
-    'navigator'
-]
 
 export interface ChartFormatPanelGroupDef {
     /** The format panel group type */
