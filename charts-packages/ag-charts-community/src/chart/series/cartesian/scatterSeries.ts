@@ -14,7 +14,7 @@ import { TypedEvent } from '../../../util/observable';
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxis';
 import { getMarker } from '../../marker/util';
-import { TooltipRendererResult, toTooltipHtml } from '../../chart';
+import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { Label } from '../../label';

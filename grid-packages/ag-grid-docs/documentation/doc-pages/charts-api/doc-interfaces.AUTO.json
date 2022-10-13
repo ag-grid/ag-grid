@@ -4186,19 +4186,6 @@
     "source": { "type": { "returnType": "Chart", "optional": false } },
     "type": { "type": { "returnType": "string", "optional": false } }
   },
-  "TooltipMeta": {
-    "pageX": { "type": { "returnType": "number", "optional": false } },
-    "pageY": { "type": { "returnType": "number", "optional": false } },
-    "offsetX": { "type": { "returnType": "number", "optional": false } },
-    "offsetY": { "type": { "returnType": "number", "optional": false } },
-    "event": { "type": { "returnType": "MouseEvent", "optional": false } }
-  },
-  "TooltipRendererResult": {
-    "content": { "type": { "returnType": "string", "optional": true } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "backgroundColor": { "type": { "returnType": "string", "optional": true } }
-  },
   "ChartUpdateType": {},
   "OptionalHTMLElement": {},
   "ChartAxisDirection": {},
@@ -4874,6 +4861,19 @@
     }
   },
   "ChartThemeDefaults": {},
+  "TooltipMeta": {
+    "pageX": { "type": { "returnType": "number", "optional": false } },
+    "pageY": { "type": { "returnType": "number", "optional": false } },
+    "offsetX": { "type": { "returnType": "number", "optional": false } },
+    "offsetY": { "type": { "returnType": "number", "optional": false } },
+    "event": { "type": { "returnType": "MouseEvent", "optional": false } }
+  },
+  "TooltipRendererResult": {
+    "content": { "type": { "returnType": "string", "optional": true } },
+    "title": { "type": { "returnType": "string", "optional": true } },
+    "color": { "type": { "returnType": "string", "optional": true } },
+    "backgroundColor": { "type": { "returnType": "string", "optional": true } }
+  },
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }
   },

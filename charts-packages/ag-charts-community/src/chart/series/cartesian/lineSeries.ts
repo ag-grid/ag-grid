@@ -17,7 +17,7 @@ import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } f
 import { ChartAxisDirection } from '../../chartAxis';
 import { getMarker } from '../../marker/util';
 import { TypedEvent } from '../../../util/observable';
-import { TooltipRendererResult, toTooltipHtml } from '../../chart';
+import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
 import { interpolate } from '../../../util/string';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';

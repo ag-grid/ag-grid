@@ -16,7 +16,7 @@ import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legend';
 import { CartesianSeries } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxis';
-import { TooltipRendererResult, toTooltipHtml } from '../../chart';
+import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
 import { TypedEvent } from '../../../util/observable';
 import ticks, { tickStep } from '../../../util/ticks';

@@ -14,7 +14,7 @@ import { Marker } from '../../marker/marker';
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxis';
 import { getMarker } from '../../marker/util';
-import { TooltipRendererResult, toTooltipHtml } from '../../chart';
+import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
 import { equal } from '../../../util/equal';
 import { TypedEvent } from '../../../util/observable';

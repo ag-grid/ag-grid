@@ -4,7 +4,7 @@ import { TypedEvent } from '../../../util/observable';
 import { Label } from '../../label';
 import { SeriesNodeDatum, SeriesTooltip, TooltipRendererParams } from '../series';
 import { HierarchySeries } from './hierarchySeries';
-import { TooltipRendererResult, toTooltipHtml } from '../../chart';
+import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
 import { Group } from '../../../scene/group';
 import { Text } from '../../../scene/shape/text';
 import { Rect } from '../../../scene/shape/rect';

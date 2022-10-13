@@ -2708,25 +2708,6 @@
     "meta": {},
     "type": { "event": "MouseEvent", "source": "Chart", "type": "string" }
   },
-  "TooltipMeta": {
-    "meta": {},
-    "type": {
-      "pageX": "number",
-      "pageY": "number",
-      "offsetX": "number",
-      "offsetY": "number",
-      "event": "MouseEvent"
-    }
-  },
-  "TooltipRendererResult": {
-    "meta": {},
-    "type": {
-      "content?": "string",
-      "title?": "string",
-      "color?": "string",
-      "backgroundColor?": "string"
-    }
-  },
   "ChartUpdateType": {
     "meta": { "isEnum": true },
     "type": [
@@ -3546,6 +3527,25 @@
   "ChartThemeDefaults": {
     "meta": { "isTypeAlias": true },
     "type": "{ cartesian: AgCartesianThemeOptions; groupedCategory: AgCartesianThemeOptions; polar: AgPolarThemeOptions; hierarchy: AgHierarchyThemeOptions; } & { [key in keyof AgCartesianSeriesTheme]?: AgCartesianThemeOptions; } & { [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions; } & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions; }"
+  },
+  "TooltipMeta": {
+    "meta": {},
+    "type": {
+      "pageX": "number",
+      "pageY": "number",
+      "offsetX": "number",
+      "offsetY": "number",
+      "event": "MouseEvent"
+    }
+  },
+  "TooltipRendererResult": {
+    "meta": {},
+    "type": {
+      "content?": "string",
+      "title?": "string",
+      "color?": "string",
+      "backgroundColor?": "string"
+    }
   },
   "Tick": { "meta": {}, "type": { "labels": "string[]" } },
   "Node": {
