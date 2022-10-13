@@ -332,7 +332,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         scale.range = [start, start + span];
         this.crossLines?.forEach((crossLine) => {
-            crossLine.visibleRange = [rr[0], rr[1]];
+            crossLine.clippedRange = [rr[0], rr[1]];
         });
     }
 
