@@ -244,7 +244,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
     set scale(value: S) {
         this._scale = value;
         this.requestedRange = value.range.slice();
-        this.onLabelFormatChange();
         this.crossLines?.forEach((crossLine) => {
             this.initCrossLine(crossLine);
         });
@@ -561,6 +560,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     (continuous && !tickCount) || count === 0 ? undefined : ticks.filter((_, i) => i % 2 === 0);
 
                 if (calculatePrimaryDomain) {
+                    scale.domain = this.dataDomain;
                     scale.nice!(defaultTickCount - count);
                 }
 
@@ -583,6 +583,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 count++;
             }
 
+            // When the scale domain or the ticks change, the label format may change
             this.onLabelFormatChange(this.label.format, ticks);
 
             const { labelData, rotated } = this.updateLabels({
