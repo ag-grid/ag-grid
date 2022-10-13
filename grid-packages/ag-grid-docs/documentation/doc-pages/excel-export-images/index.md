@@ -72,3 +72,7 @@ Note the following:
 | Even if an ExcelCell object that merges multiple cells across is created, the `ExcelImage` still needs be informed of how many columns it will be spanning. This is done by passing `position: { colSpan: number }` to the `ExcelImage`.
 
 <grid-example title='Excel Export - Prepend Images' name='excel-export-prepend-images' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"] }'></grid-example>
+
+## Next Up
+
+Continue to the next section: [Multiple Sheets](../excel-export-multiple-sheets/).
