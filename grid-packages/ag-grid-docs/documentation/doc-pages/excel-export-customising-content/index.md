@@ -21,7 +21,8 @@ gridApi.exportDataAsExcel({
 
 <interface-documentation
     interfaceName='ExcelExportParams'
-    names='["processRowGroupCallback", "processCellCallback"]'>
+    names='["processRowGroupCallback", "processCellCallback"]'
+    config='{"description":"See below the functions on the `ExcelExportParams` interface to customise exported grid cell and row group values."}'>
 </interface-documentation>
 
 The following example shows Excel customisations where the exported document has the following:
@@ -51,7 +52,8 @@ gridApi.exportDataAsExcel({
 
 <interface-documentation
     interfaceName='ExcelExportParams'
-    names='["processGroupHeaderCallback", "processHeaderCallback"]'>
+    names='["processGroupHeaderCallback", "processHeaderCallback"]'
+    config='{"description":"See below the functions on the `ExcelExportParams` interface to customise exported column group headers and headers."}'>
 </interface-documentation>
 
 The following example shows Excel customisations where the exported document has the following:
