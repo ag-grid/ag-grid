@@ -131,11 +131,13 @@ export abstract class Shape extends Node {
             return alignedStart;
         }
 
+        if (length === 0) {
+            return 0;
+        }
+
         if (length < 1) {
-            // Avoid hiding shapes at all. Instead
-            // the browser's canvas should make the
-            // thin shape more transparent.
-            return length;
+            // Avoid hiding crisp shapes
+            return Math.ceil(length * pixelRatio) / pixelRatio;
         }
 
         // Account for the rounding of alignedStart by increasing length to compensate before

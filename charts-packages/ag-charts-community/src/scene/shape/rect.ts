@@ -91,14 +91,30 @@ export class Rect extends Path {
 
     private effectiveStrokeWidth: number = Shape.defaultStyles.strokeWidth;
 
+    /**
+     * When the rectangle's width or height is less than a pixel
+     * and crisp mode is on, the rectangle will still fit into the pixel,
+     * but will be less opaque to make an effect of holding less space.
+     */
+    private microPixelEffectOpacity: number = 1;
+
     protected updatePath() {
         const { path, borderPath, crisp } = this;
         let { x, y, width: w, height: h, strokeWidth } = this;
+        const pixelRatio = this.scene?.canvas.pixelRatio ?? 1;
+        const pixelSize = 1 / pixelRatio;
+        let microPixelEffectOpacity = 1;
 
         path.clear({ trackChanges: true });
         borderPath.clear({ trackChanges: true });
 
         if (crisp) {
+            if (w <= pixelSize) {
+                microPixelEffectOpacity *= w / pixelSize;
+            }
+            if (h <= pixelSize) {
+                microPixelEffectOpacity *= h / pixelSize;
+            }
             w = this.align(x, w);
             h = this.align(y, h);
             x = this.align(x);
@@ -106,21 +122,19 @@ export class Rect extends Path {
         }
 
         if (strokeWidth) {
-            const pixelRatio = this.scene?.canvas.pixelRatio ?? 1;
-            const pixelSize = 1 / pixelRatio;
             if (w < pixelSize) {
                 // Too narrow, draw a vertical stroke
-                const lx = x + w / 2;
+                const lx = x + pixelSize / 2;
                 borderPath.moveTo(lx, y);
                 borderPath.lineTo(lx, y + h);
-                strokeWidth = w;
+                strokeWidth = pixelSize;
                 this.borderClipPath = undefined;
             } else if (h < pixelSize) {
                 // Too narrow, draw a horizontal stroke
-                const ly = y + h / 2;
+                const ly = y + pixelSize / 2;
                 borderPath.moveTo(x, ly);
                 borderPath.lineTo(x + w, ly);
-                strokeWidth = h;
+                strokeWidth = pixelSize;
                 this.borderClipPath = undefined;
             } else if (strokeWidth < w && strokeWidth < h) {
                 const halfStrokeWidth = strokeWidth / 2;
@@ -149,6 +163,7 @@ export class Rect extends Path {
 
         this.effectiveStrokeWidth = strokeWidth;
         this.lastUpdatePathStrokeWidth = strokeWidth;
+        this.microPixelEffectOpacity = microPixelEffectOpacity;
     }
 
     computeBBox(): BBox {
@@ -164,7 +179,16 @@ export class Rect extends Path {
     }
 
     private renderRect(ctx: CanvasRenderingContext2D) {
-        const { stroke, effectiveStrokeWidth, fill, path, borderPath, borderClipPath, opacity } = this;
+        const {
+            stroke,
+            effectiveStrokeWidth,
+            fill,
+            path,
+            borderPath,
+            borderClipPath,
+            opacity,
+            microPixelEffectOpacity,
+        } = this;
 
         const borderActive = !!stroke && !!effectiveStrokeWidth;
 
@@ -180,7 +204,7 @@ export class Rect extends Path {
             } else {
                 ctx.fillStyle = fill;
             }
-            ctx.globalAlpha = opacity * fillOpacity;
+            ctx.globalAlpha = opacity * fillOpacity * microPixelEffectOpacity;
 
             // The canvas context scaling (depends on the device's pixel ratio)
             // has no effect on shadows, so we have to account for the pixel ratio
@@ -211,7 +235,7 @@ export class Rect extends Path {
             borderPath.draw(ctx);
 
             ctx.strokeStyle = stroke!;
-            ctx.globalAlpha = opacity * strokeOpacity;
+            ctx.globalAlpha = opacity * strokeOpacity * microPixelEffectOpacity;
 
             ctx.lineWidth = effectiveStrokeWidth;
             if (lineDash) {
