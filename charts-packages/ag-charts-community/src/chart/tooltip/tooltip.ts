@@ -4,8 +4,11 @@ export const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
+    transition: transform 0.05s ease;
     display: table;
     position: absolute;
+    left: 0px;
+    top: 0px;
     user-select: none;
     pointer-events: none;
     white-space: nowrap;
@@ -18,7 +21,7 @@ const defaultTooltipCss = `
 }
 
 .ag-chart-tooltip-hidden {
-    top: -10000px !important;
+    display: none;
 }
 
 .ag-chart-tooltip-title {
@@ -158,11 +161,10 @@ export class Tooltip {
     tracking: boolean = true;
 
     constructor(canvasElement: () => HTMLCanvasElement, document: Document, container: () => OptionalHTMLElement) {
-        this.class = '';
-
         const tooltipRoot = document.body;
         const element = document.createElement('div');
         this.element = tooltipRoot.appendChild(element);
+        this.element.classList.add(DEFAULT_TOOLTIP_CLASS);
         this.container = container;
 
         // Detect when the chart becomes invisible and hide the tooltip as well.
@@ -204,30 +206,23 @@ export class Tooltip {
 
     isVisible(): boolean {
         const { element } = this;
-        if (element.classList) {
-            // if not IE11
-            return !element.classList.contains(DEFAULT_TOOLTIP_CLASS + '-hidden');
-        }
 
-        // IE11 part.
-        const classes = element.getAttribute('class');
-        if (classes) {
-            return classes.split(' ').indexOf(DEFAULT_TOOLTIP_CLASS + '-hidden') < 0;
-        }
-        return false;
+        return !element.classList.contains(DEFAULT_TOOLTIP_CLASS + '-hidden');
     }
 
     updateClass(visible?: boolean, constrained?: boolean) {
-        const classList = [DEFAULT_TOOLTIP_CLASS, this.class];
+        const { element } = this;
 
-        if (visible !== true) {
-            classList.push(`${DEFAULT_TOOLTIP_CLASS}-hidden`);
+        if (visible === true) {
+            element.classList.remove(`${DEFAULT_TOOLTIP_CLASS}-hidden`);
+        } else {
+            element.classList.add(`${DEFAULT_TOOLTIP_CLASS}-hidden`);
         }
-        if (constrained !== true) {
-            classList.push(`${DEFAULT_TOOLTIP_CLASS}-arrow`);
+        if (constrained === true) {
+            element.classList.remove(`${DEFAULT_TOOLTIP_CLASS}-arrow`);
+        } else {
+            element.classList.add(`${DEFAULT_TOOLTIP_CLASS}-arrow`);
         }
-
-        this.element.setAttribute('class', classList.join(' '));
     }
 
     private showTimeout: number = 0;
@@ -270,8 +265,7 @@ export class Tooltip {
             }
         }
 
-        el.style.left = `${Math.round(left)}px`;
-        el.style.top = `${Math.round(top)}px`;
+        el.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
 
         if (this.delay > 0 && !instantly) {
             this.toggle(false);
