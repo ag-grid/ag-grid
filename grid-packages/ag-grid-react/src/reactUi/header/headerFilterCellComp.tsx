@@ -9,9 +9,9 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
     const {context} = useContext(BeansContext);
 
-    const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
+    const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses('ag-header-cell', 'ag-floating-filter'));
     const [cssBodyClasses, setBodyCssClasses] = useState<CssClasses>(new CssClasses());
-    const [cssButtonWrapperClasses, setButtonWrapperCssClasses] = useState<CssClasses>(new CssClasses());
+    const [cssButtonWrapperClasses, setButtonWrapperCssClasses] = useState<CssClasses>(new CssClasses('ag-floating-filter-button', 'ag-hidden'));
     const [width, setWidth] = useState<string>();
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
 
@@ -65,15 +65,15 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
         return showJsComp(userCompDetails, context, eFloatingFilterBody.current!, userCompRef);
     }, [userCompDetails]);
 
-    const style = useMemo( ()=> ({
+    const style = useMemo(() => ({
         width: width
     }), [width]);
     
-    const className = useMemo( ()=> 'ag-header-cell ag-floating-filter ' + cssClasses.toString(), [cssClasses] );
-    const bodyClassName = useMemo( ()=> cssBodyClasses.toString(), [cssBodyClasses] );
-    const buttonWrapperClassName = useMemo( ()=> 'ag-floating-filter-button ' + cssButtonWrapperClasses.toString(), [cssBodyClasses] );
+    const className = useMemo(() => cssClasses.toString(), [cssClasses] );
+    const bodyClassName = useMemo(() => cssBodyClasses.toString(), [cssBodyClasses] );
+    const buttonWrapperClassName = useMemo(() => cssButtonWrapperClasses.toString(), [cssButtonWrapperClasses] );
 
-    const userCompStateless = useMemo( ()=> {
+    const userCompStateless = useMemo(() => {
         const res = userCompDetails 
                     && userCompDetails.componentFromFramework 
                     && isComponentStateless(userCompDetails.componentClass);

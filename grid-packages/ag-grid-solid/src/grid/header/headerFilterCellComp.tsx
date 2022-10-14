@@ -56,13 +56,13 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
     });
 
-    const getStyle = createMemo( ()=> ({
+    const getStyle = createMemo(() => ({
         width: getWidth()
     }));
     
-    const getCssClassesString = createMemo( ()=> 'ag-header-cell ag-floating-filter ' + getCssClasses.toString() );
-    const getBodyCssClassesString = createMemo( ()=> getCssBodyClasses.toString(), );
-    const getButtonWrapperCssClassesString = createMemo( ()=> 'ag-floating-filter-button ' + getCssButtonWrapperClasses.toString() );
+    const getCssClassesString = createMemo(() => 'ag-header-cell ag-floating-filter ' + getCssClasses.toString());
+    const getBodyCssClassesString = createMemo(() => getCssBodyClasses.toString());
+    const getButtonWrapperCssClassesString = createMemo(() => 'ag-floating-filter-button ag-hidden' + getCssButtonWrapperClasses.toString());
     
     return (
         <div ref={eGui!} class={getCssClassesString()} style={getStyle()} role="gridcell" tabIndex={-1}>
