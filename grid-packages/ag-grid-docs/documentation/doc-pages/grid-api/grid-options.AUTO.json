@@ -730,7 +730,7 @@
   },
   "serverSideInfiniteScroll": {
     "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
-    "type": { "returnType": "boolean" }
+    "type": { "returnType": "boolean | 'legacy'" }
   },
   "cacheBlockSize": {
     "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",

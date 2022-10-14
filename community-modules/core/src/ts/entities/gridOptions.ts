@@ -637,7 +637,7 @@ export interface GridOptions<TData = any> {
     /** Set whether Server-side Row Model will use Infinite Scrolling
      * Default: `false`
      */
-    serverSideInfiniteScroll?: boolean;
+    serverSideInfiniteScroll?: boolean | 'legacy';
     /**
      * How many rows for each block in the store, i.e. how many rows returned from the server at a time.
      * Default: `100`
