@@ -53,7 +53,10 @@ export class AutoWidthCalculator extends BeanStub {
     }
 
     private addElementsToContainerAndGetWidth(elements: HTMLElement[]): number {
-        const eDummyContainer = document.createElement('span');
+        // this element has to be a form, otherwise form elements within a cell
+        // will be validated while being cloned. This can cause issues such as 
+        // radio buttons being reset and losing their values.
+        const eDummyContainer = document.createElement('form');
         // position fixed, so it isn't restricted to the boundaries of the parent
         eDummyContainer.style.position = 'fixed';
 
