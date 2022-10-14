@@ -161,7 +161,7 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
         } else {
             const domains: any[][] = [];
             boundSeries
-                .filter((s) => includeInvisibleDomains || s.visible)
+                .filter((s) => includeInvisibleDomains || s.isEnabled())
                 .forEach((series) => {
                     domains.push(series.getDomain(direction));
                 });
@@ -177,5 +177,9 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
     protected updateDomain(domain: any[], _isYAxis: boolean, primaryTickCount?: number) {
         this.domain = domain;
         return primaryTickCount;
+    }
+
+    isAnySeriesActive() {
+        return this.boundSeries.some((s) => this.includeInvisibleDomains || s.isEnabled());
     }
 }

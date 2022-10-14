@@ -146,6 +146,7 @@ export class CrossLine {
     label: CrossLineLabel = new CrossLineLabel();
 
     scale?: Scale<any, number> = undefined;
+    clippedRange: [number, number] = [-Infinity, Infinity];
     gridLength: number = 0;
     sideFlag: 1 | -1 = -1;
     parallelFlipRotation: number = 0;
@@ -209,6 +210,7 @@ export class CrossLine {
             sideFlag,
             direction,
             label: { position = 'top' },
+            clippedRange,
         } = this;
 
         if (!scale) {
@@ -217,6 +219,7 @@ export class CrossLine {
 
         const isContinuous = scale instanceof ContinuousScale;
         const bandwidth = scale.bandwidth ?? 0;
+        const clippedRangeClamper = clamper(clippedRange);
 
         let xStart, xEnd, yStart, yEnd, clampedYStart, clampedYEnd;
 
@@ -227,6 +230,8 @@ export class CrossLine {
             Number(scale.convert(yStart, isContinuous ? clamper : undefined)),
             scale.convert(yEnd, isContinuous ? clamper : undefined) + bandwidth,
         ];
+        clampedYStart = clippedRangeClamper(clampedYStart);
+        clampedYEnd = clippedRangeClamper(clampedYEnd);
         [yStart, yEnd] = [Number(scale.convert(yStart)), scale.convert(yEnd) + bandwidth];
 
         const validRange =
@@ -247,8 +252,8 @@ export class CrossLine {
         }
 
         this.isRange = validRange;
-        this.startLine = !isNaN(yStart);
-        this.endLine = !isNaN(yEnd);
+        this.startLine = !isNaN(yStart) && yStart === clampedYStart;
+        this.endLine = !isNaN(yEnd) && yEnd === clampedYEnd;
 
         if (!validRange && !this.startLine && !this.endLine) {
             return false;

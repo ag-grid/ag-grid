@@ -1,6 +1,7 @@
 import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
 import { ContinuousScale } from '../../scale/continuousScale';
 import { LinearScale } from '../../scale/linearScale';
+import { filter } from '../../scale/continuousScale';
 import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
 import { ChartAxis } from '../chartAxis';
@@ -24,26 +25,13 @@ function NUMBER_OR_NAN(min?: number, max?: number) {
     );
 }
 
-// Instead of clamping the values outside of domain to the range,
-// return NaNs to indicate invalid input.
-export function clamper(domain: number[]): (x: number) => number {
-    let a = domain[0];
-    let b = domain[domain.length - 1];
-
-    if (a > b) {
-        [a, b] = [b, a];
-    }
-
-    return (x) => (x >= a && x <= b ? x : NaN);
-}
-
 export class NumberAxis extends ChartAxis {
     static className = 'NumberAxis';
     static type = 'number' as 'number' | 'log';
 
     constructor() {
         super(new LinearScale());
-        (this.scale as ContinuousScale).clamper = clamper;
+        (this.scale as ContinuousScale).clamper = filter;
     }
 
     @Validate(BOOLEAN)

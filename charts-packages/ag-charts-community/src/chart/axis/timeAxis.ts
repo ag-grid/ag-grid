@@ -3,7 +3,7 @@ import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
 import { ChartAxis } from '../chartAxis';
-import { clamper } from './numberAxis';
+import { filter } from '../../scale/continuousScale';
 
 export class TimeAxis extends ChartAxis<TimeScale> {
     static className = 'TimeAxis';
@@ -17,7 +17,7 @@ export class TimeAxis extends ChartAxis<TimeScale> {
 
         const { scale } = this;
         scale.clamp = true;
-        scale.clamper = clamper;
+        scale.clamper = filter;
         this.scale = scale;
         this.datumFormatter = scale.tickFormat({
             ticks: this.getTicks(),
