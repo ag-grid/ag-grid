@@ -546,15 +546,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
             scale.nice!(this.tick.count);
         }
 
-        while (labelOverlap) {
+        tickLoop: while (labelOverlap) {
             let unchanged = true;
             while (unchanged) {
                 if (i === defaultTickCount) {
                     // The iteration count `i` is used to reduce the default tick count until all labels fit without overlapping
                     // `i` cannot exceed `defaultTickCount` as it would lead to negative tick count values.
                     // Break out of the while loops when then iteration count reaches `defaultTickCount`
-                    labelOverlap = false;
-                    break;
+                    break tickLoop;
                 }
 
                 if (calculatePrimaryDomain) {
