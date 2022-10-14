@@ -514,7 +514,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
 
         // calculate step
-        let domainLength = xAxis.domain[1] - xAxis.domain[0];
+        let domainLength = xAxis.dataDomain[1] - xAxis.dataDomain[0];
         let intervals = domainLength / (smallestInterval?.x ?? 1) + 1;
 
         // The number of intervals/bands is used to determine the width of individual bands by dividing the available range.

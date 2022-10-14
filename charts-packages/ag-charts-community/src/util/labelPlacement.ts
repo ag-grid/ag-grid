@@ -104,3 +104,39 @@ export function placeLabels(
 
     return result;
 }
+
+export function axisLabelsOverlap(data: readonly PointLabelDatum[], padding?: number): boolean {
+    let result: PlacedLabel[] = [];
+
+    for (let i = 0; i < data.length; i++) {
+        const datum = data[i];
+        let {
+            point: { x, y },
+            label: { width, height, text },
+        } = datum;
+
+        width += padding ?? 0;
+        height += padding ?? 0;
+
+        const overlapLabels = result.some((l: PlacedLabel) => {
+            const overlap = rectRectOverlap(l, x, y, width, height);
+            return overlap;
+        });
+
+        if (overlapLabels) {
+            return true;
+        }
+
+        result.push({
+            index: i,
+            text,
+            x,
+            y,
+            width,
+            height,
+            datum,
+        });
+    }
+
+    return false;
+}

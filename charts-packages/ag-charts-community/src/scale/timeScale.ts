@@ -158,14 +158,21 @@ export class TimeScale extends ContinuousScale {
      * @param stop The end time (timestamp).
      * @param step Number of intervals between ticks.
      */
-    tickInterval(
-        interval: number | CountableTimeInterval,
-        start: number,
-        stop: number,
-        step?: number
-    ): CountableTimeInterval | TimeInterval | undefined {
+    tickInterval({
+        interval,
+        start,
+        stop,
+        step,
+        offset,
+    }: {
+        interval: number | CountableTimeInterval;
+        start: number;
+        stop: number;
+        step?: number;
+        offset?: number;
+    }): CountableTimeInterval | TimeInterval | undefined {
         if (typeof interval === 'number') {
-            const tickCount = interval;
+            const tickCount = Math.max(0, interval - (offset ?? 0));
             const tickIntervals = this.tickIntervals;
             const target = Math.abs(stop - start) / tickCount;
             const i = complexBisectRight(tickIntervals, target, (interval) => interval[2]);
@@ -180,7 +187,6 @@ export class TimeScale extends ContinuousScale {
                 interval = this.millisecond;
             }
         }
-
         return step == undefined ? interval : interval.every(step);
     }
 
@@ -200,7 +206,7 @@ export class TimeScale extends ContinuousScale {
      * Returns uniformly-spaced dates that represent the scale's domain.
      * @param interval The desired tick count or a time interval object.
      */
-    ticks(interval: number | CountableTimeInterval = 10): Date[] {
+    ticks(interval: number | CountableTimeInterval = 10, offset?: number): Date[] {
         const d = super.getDomain();
         let t0 = d[0];
         let t1 = d[d.length - 1];
@@ -211,7 +217,7 @@ export class TimeScale extends ContinuousScale {
             t0 = t1;
             t1 = _;
         }
-        const t = this.tickInterval(interval, t0, t1);
+        const t = this.tickInterval({ interval, start: t0, stop: t1, offset });
         const i = t ? t.range(t0, t1 + 1) : []; // inclusive stop
 
         return reverse ? i.reverse() : i;
@@ -235,7 +241,7 @@ export class TimeScale extends ContinuousScale {
      */
     nice(interval: number | CountableTimeInterval = 10): void {
         const d = super.getDomain();
-        const i = this.tickInterval(interval, d[0], d[d.length - 1]);
+        const i = this.tickInterval({ interval, start: d[0], stop: d[d.length - 1] });
 
         if (i) {
             this.domain = this._nice(d, i);

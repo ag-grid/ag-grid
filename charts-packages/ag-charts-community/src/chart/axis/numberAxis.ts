@@ -1,12 +1,13 @@
-import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
 import { ContinuousScale } from '../../scale/continuousScale';
 import { LinearScale } from '../../scale/linearScale';
+import { LogScale } from '../../scale/logScale';
 import { filter } from '../../scale/continuousScale';
 import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
 import { ChartAxis } from '../chartAxis';
 import { doOnce } from '../../util/function';
-import { BOOLEAN, predicateWithMessage, Validate, GREATER_THAN, AND, LESS_THAN } from '../../util/validation';
+import { predicateWithMessage, Validate, GREATER_THAN, AND, LESS_THAN } from '../../util/validation';
+import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
 
 function NUMBER_OR_NAN(min?: number, max?: number) {
     // Can be NaN or finite number
@@ -25,7 +26,7 @@ function NUMBER_OR_NAN(min?: number, max?: number) {
     );
 }
 
-export class NumberAxis extends ChartAxis {
+export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
     static className = 'NumberAxis';
     static type = 'number' as 'number' | 'log';
 
@@ -34,59 +35,25 @@ export class NumberAxis extends ChartAxis {
         (this.scale as ContinuousScale).clamper = filter;
     }
 
-    @Validate(BOOLEAN)
-    protected _nice: boolean = true;
-    set nice(value: boolean) {
-        if (this._nice !== value) {
-            this._nice = value;
-            if (value && this.scale.nice) {
-                this.scale.nice(typeof this.calculatedTickCount === 'number' ? this.calculatedTickCount : undefined);
-            }
+    normaliseDataDomain(d: number[]) {
+        const { min, max } = this;
+
+        if (d.length > 2) {
+            d = extent(d, isContinuous, Number) || [NaN, NaN];
         }
-    }
-    get nice(): boolean {
-        return this._nice;
-    }
-
-    private setDomain(domain: number[], primaryTickCount?: number) {
-        const { scale, min, max } = this;
-
-        if (domain.length > 2) {
-            domain = extent(domain, isContinuous, Number) || [];
+        if (!isNaN(min)) {
+            d = [min, d[1]];
+        }
+        if (!isNaN(max)) {
+            d = [d[0], max];
+        }
+        if (d[0] > d[1]) {
+            d = [];
         }
 
-        domain = [isNaN(min) ? domain[0] : min, isNaN(max) ? domain[1] : max];
+        (this.scale as ContinuousScale).clamp = true;
 
-        if (primaryTickCount) {
-            // when `primaryTickCount` is supplied the current axis is a secondary axis which needs to be aligned to
-            // the primary by constraining the tick count to the primary axis tick count
-            if (isNaN(domain[0]) || isNaN(domain[1])) {
-                scale.domain = domain;
-                this.ticks = undefined;
-                return;
-            }
-
-            const [d, ticks] = calculateNiceSecondaryAxis(domain, primaryTickCount);
-            scale.domain = d;
-            this.ticks = ticks;
-        } else {
-            scale.domain = domain;
-
-            this.onLabelFormatChange(this.label.format); // not sure why this is required?
-
-            (this.scale as ContinuousScale).clamp = true;
-            if (this.nice && this.scale.nice) {
-                this.scale.nice(typeof this.calculatedTickCount === 'number' ? this.calculatedTickCount : undefined);
-            }
-        }
-    }
-
-    set domain(domain: number[]) {
-        this.setDomain(domain);
-    }
-
-    get domain(): number[] {
-        return this.scale.domain;
+        return d;
     }
 
     @Validate(AND(NUMBER_OR_NAN(), LESS_THAN('max')))
@@ -110,28 +77,15 @@ export class NumberAxis extends ChartAxis {
         }
     }
 
-    protected updateDomain(domain: any[], isYAxis: boolean, primaryTickCount?: number) {
-        const { min, max } = this;
-
-        if (domain.length > 2) {
-            domain = extent(domain, isContinuous, Number) || [NaN, NaN];
-        }
-        if (!isNaN(min)) {
-            domain = [min, domain[1]];
-        }
-        if (!isNaN(max)) {
-            domain = [domain[0], max];
-        }
-        if (domain[0] > domain[1]) {
-            domain = [];
+    updateSecondaryAxisTicks(primaryTickCount: number | undefined): any[] {
+        if (this.dataDomain == null) {
+            throw new Error('AG Charts - dataDomain not calculated, cannot perform tick calculation.');
         }
 
-        if (isYAxis) {
-            // the `primaryTickCount` is used to align the secondary axis tick count with the primary
-            this.setDomain(domain, primaryTickCount);
-            return primaryTickCount || this.scale.ticks!(this.calculatedTickCount).length;
-        }
+        const [d, ticks] = calculateNiceSecondaryAxis(this.dataDomain, primaryTickCount ?? 0);
 
-        return super.updateDomain(domain, isYAxis, primaryTickCount);
+        this.scale.domain = d;
+
+        return ticks;
     }
 }
