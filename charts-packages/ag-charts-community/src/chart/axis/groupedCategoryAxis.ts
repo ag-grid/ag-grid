@@ -180,7 +180,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
      * but this extra level of async indirection will not just introduce an unwanted delay,
      * it will also make it harder to reason about the program.
      */
-    update(primaryTickCount?: number) {
+    update(primaryTickCount?: number): number | undefined {
         const { axisGroup, gridlineGroup, scale, label, tickScale, requestedRange } = this;
 
         scale.domain = this.dataDomain;

@@ -483,7 +483,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
-    update(primaryTickCount?: number) {
+    update(primaryTickCount?: number): number | undefined {
         const {
             axisGroup,
             gridlineGroup,
@@ -641,6 +641,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             crossLine.regularFlipRotation = regularFlipRotation;
             crossLine.update(anySeriesActive);
         });
+
         this.updateTitle({ ticks });
 
         tickGroupSelection
@@ -654,6 +655,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
             .attr('x2', 0)
             .attr('y1', 0)
             .attr('y2', 0);
+
+        return primaryTickCount;
     }
 
     updateSecondaryAxisTicks(_primaryTickCount: number | undefined): any[] {
