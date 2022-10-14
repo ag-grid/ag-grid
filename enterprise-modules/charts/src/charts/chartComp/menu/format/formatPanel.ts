@@ -1,4 +1,12 @@
-import { _, ChartType, Component, PostConstruct } from "@ag-grid-community/core";
+import {
+    _,
+    ChartFormatPanel,
+    ChartFormatPanelGroup,
+    ChartFormatPanelGroupDef,
+    ChartType,
+    Component,
+    PostConstruct
+} from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { LegendPanel } from "./legend/legendPanel";
 import { AxisPanel } from "./axis/axisPanel";
@@ -6,10 +14,28 @@ import { NavigatorPanel } from "./navigator/navigatorPanel";
 import { ChartPanel } from "./chart/chartPanel";
 import { ChartOptionsService } from "../../services/chartOptionsService";
 import { SeriesPanel } from "./series/seriesPanel";
+import { ChartSeriesType, getSeriesType } from "../../utils/seriesTypeMapper";
+
+export interface FormatPanelOptions {
+    chartController: ChartController,
+    chartOptionsService: ChartOptionsService,
+    isExpandedOnInit?: boolean,
+    seriesType?: ChartSeriesType,
+}
 
 export function getMaxValue(currentValue: number, defaultMaxValue: number) {
     return Math.max(currentValue, defaultMaxValue);
 }
+
+const DefaultFormatPanelDef: ChartFormatPanel = {
+    groups: [
+        { type: 'chart' },
+        { type: 'legend' },
+        { type: 'series' },
+        { type: 'axis' },
+        { type: 'navigator' },
+    ]
+};
 
 export class FormatPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-format-wrapper"></div>`;
@@ -33,6 +59,7 @@ export class FormatPanel extends Component {
     private createPanels() {
         const chartType = this.chartController.getChartType();
         const isGrouping = this.chartController.isGrouping();
+        const seriesType = getSeriesType(chartType);
 
         if (chartType === this.chartType && isGrouping === this.isGrouping) {
             // existing panels can be re-used
@@ -41,66 +68,59 @@ export class FormatPanel extends Component {
 
         this.destroyPanels();
 
-        this.addComponent(new ChartPanel(this.chartOptionsService));
-        this.addComponent(new LegendPanel(this.chartOptionsService));
+        this.getFormatPanelDef().groups?.forEach((groupDef: ChartFormatPanelGroupDef) => {
+            const group = groupDef.type;
 
-        switch (chartType) {
-            case 'groupedColumn':
-            case 'stackedColumn':
-            case 'normalizedColumn':
-                this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
-                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService, 'column'));
-                this.addComponent(new NavigatorPanel(this.chartOptionsService));
-                break;
-            case 'groupedBar':
-            case 'stackedBar':
-            case 'normalizedBar':
-                this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
-                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService, 'bar'));
-                this.addComponent(new NavigatorPanel(this.chartOptionsService));
-                break;
-            case 'pie':
-            case 'doughnut':
-                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService, 'pie'));
-                break;
-            case 'line':
-                this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
-                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService, 'line'));
-                this.addComponent(new NavigatorPanel(this.chartOptionsService));
-                break;
-            case 'scatter':
-            case 'bubble':
-                this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
-                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService, 'scatter'));
-                this.addComponent(new NavigatorPanel(this.chartOptionsService));
-                break;
-            case 'area':
-            case 'stackedArea':
-            case 'normalizedArea':
-                this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
-                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService, 'area'));
-                this.addComponent(new NavigatorPanel(this.chartOptionsService));
-                break;
-            case 'histogram':
-                this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
-                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService, 'histogram'));
-                this.addComponent(new NavigatorPanel(this.chartOptionsService));
-                break;
-            case 'columnLineCombo':
-            case 'areaColumnCombo':
-            case 'customCombo':
-                this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
-                // there is no single series type supplied for combo charts, it is inferred by the Series Panel
-                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService));
-                this.addComponent(new NavigatorPanel(this.chartOptionsService));
-                break;
-            default:
-                // warn vanilla javascript users when they supply invalid chart type
-                console.warn(`AG Grid: ChartFormattingPanel - unexpected chart type index: ${chartType} supplied`);
-        }
+            // ensure the group should be displayed for the current series type
+            if (!this.isGroupPanelShownInSeries(group, seriesType)) {
+                return;
+            }
+
+            const opts: FormatPanelOptions = {
+                chartController: this.chartController,
+                chartOptionsService: this.chartOptionsService,
+                isExpandedOnInit: groupDef.isOpen,
+                seriesType
+            };
+
+            if (group === 'chart') {
+                this.addComponent(new ChartPanel(opts));
+
+            } else if (group === 'legend') {
+                this.addComponent(new LegendPanel(opts));
+
+            } else if (group === 'axis') {
+                this.addComponent(new AxisPanel(opts));
+
+            } else if (group === 'series') {
+                this.addComponent(new SeriesPanel(opts));
+
+            } else if (group === 'navigator') {
+                this.addComponent(new NavigatorPanel(opts));
+
+            } else {
+                console.warn(`AG Grid: invalid charts format panel group name supplied: '${groupDef.type}'`);
+            }
+        });
 
         this.chartType = chartType;
         this.isGrouping = isGrouping;
+    }
+
+    private getFormatPanelDef() {
+        const userProvidedFormatPanelDef = this.gridOptionsWrapper.getChartToolPanelsDef()?.formatPanel;
+        return userProvidedFormatPanelDef ? userProvidedFormatPanelDef : DefaultFormatPanelDef;
+    }
+
+    private isGroupPanelShownInSeries = (group: ChartFormatPanelGroup, seriesType: ChartSeriesType) => {
+        const commonGroupPanels = ['chart', 'legend', 'series'];
+        if (commonGroupPanels.includes(group)) {
+            return true;
+        }
+
+        const cartesianOnlyGroupPanels = ['axis', 'navigator'];
+        const cartesianSeries = ['bar', 'column', 'line', 'area', 'scatter', 'histogram', 'cartesian'];
+        return !!(cartesianOnlyGroupPanels.includes(group) && cartesianSeries.includes(seriesType));
     }
 
     private addComponent(component: Component): void {

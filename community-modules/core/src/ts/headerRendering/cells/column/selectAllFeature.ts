@@ -10,7 +10,7 @@ import { Column } from "../../../entities/column";
 import { RowNode } from "../../../entities/rowNode";
 import { SelectionService } from "../../../selectionService";
 import { HeaderCellCtrl } from "./headerCellCtrl";
-import { setAriaRole } from "../../../utils/aria";
+import { setAriaHidden, setAriaRole } from "../../../utils/aria";
 import { HeaderCheckboxSelectionCallbackParams } from "../../../entities/colDef";
 
 export class SelectAllFeature extends BeanStub {
@@ -62,6 +62,7 @@ export class SelectAllFeature extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
         this.addManagedListener(this.cbSelectAll, AgCheckbox.EVENT_CHANGED, this.onCbSelectAll.bind(this));
+        setAriaHidden(this.cbSelectAll.getGui(), true);
         this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
         this.refreshSelectAllLabel();
     }
@@ -126,6 +127,7 @@ export class SelectAllFeature extends BeanStub {
     private refreshSelectAllLabel(): void {
         if (!this.cbSelectAllVisible) {
             this.headerCellCtrl.setAriaDescriptionProperty('selectAll', null);
+            this.cbSelectAll.setInputAriaLabel(null);
         } else {
             const translate = this.gridOptionsWrapper.getLocaleTextFunc();
             const checked = this.cbSelectAll.getValue();
@@ -133,6 +135,7 @@ export class SelectAllFeature extends BeanStub {
             const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
 
             this.headerCellCtrl.setAriaDescriptionProperty('selectAll', `${ariaLabel} (${ariaStatus})`);
+            this.cbSelectAll.setInputAriaLabel(`${ariaLabel} (${ariaStatus})`);
         }
 
         this.headerCellCtrl.refreshAriaDescription();

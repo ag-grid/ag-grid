@@ -9,9 +9,6 @@ export interface ChartGroupsDef {
     combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[]
 }
 
-/************************************************************************************************
- * If you update these, then also update the `integrated-charts-toolbar` docs. *
- ************************************************************************************************/
 export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
     columnGroup: [
         'column',
@@ -56,9 +53,25 @@ export interface ChartSettingsPanel {
     chartGroupsDef?: ChartGroupsDef;
 }
 
+export type ChartFormatPanelGroup = 'chart' | 'legend' | 'axis' | 'series' | 'navigator';
+
+export interface ChartFormatPanelGroupDef {
+    /** The format panel group type */
+    type: ChartFormatPanelGroup,
+    /** Whether the format panel group is open by default. If not specified, it is closed */
+    isOpen?: boolean
+}
+
+export interface ChartFormatPanel {
+    /** The format panel group configurations, their order and whether they are shown. If not specified shows all groups */
+    groups?: ChartFormatPanelGroupDef[];
+}
+
 export interface ChartToolPanelsDef {
     /** Customisations for the settings panel */
     settingsPanel?: ChartSettingsPanel,
+    /** Customisations for the format panel */
+    formatPanel?: ChartFormatPanel,
     /** The ordered list of panels to show in the chart tool panels. If none specified, all panels are shown */
     panels?: ChartToolPanelName[],
     /** The panel to open by default when the chart loads. If none specified, the tool panel is hidden by default and the first panel is open when triggered. */

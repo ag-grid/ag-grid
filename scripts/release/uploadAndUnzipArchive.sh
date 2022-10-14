@@ -56,15 +56,15 @@ if [ "$2" != "skipWarning" ]; then
 fi
 
 # delete dir if it exists - can ignore dir not found error
-ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
+ssh -i $SSH_LOCATION -p 2022 aggrid@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
 
 # upload file
 curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
 
 ##unzip archive
-ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "cd public_html/archive/$VERSION && tar -m -xf $ARCHIVE"
+ssh -i $SSH_LOCATION -p 2022 aggrid@ag-grid.com "cd public_html/archive/$VERSION && tar -m -xf $ARCHIVE"
 
 
 #update folder permissions (default is 777 - change to 755)
-ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "chmod -R 755 public_html/archive/$VERSION"
+ssh -i $SSH_LOCATION -p 2022 aggrid@ag-grid.com "chmod -R 755 public_html/archive/$VERSION"
 

@@ -42,9 +42,9 @@ const gridOptions: GridOptions = {
   popupParent: document.body,
   enableRangeSelection: true,
   onFirstDataRendered: onFirstDataRendered,
-  onChartCreated: onChartCreated,
   enableCharts: true,
   chartToolPanelsDef: {
+    defaultToolPanel: 'settings',
     settingsPanel: {        
       chartGroupsDef: {
         pieGroup: [
@@ -82,10 +82,6 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   }
 
   params.api.createRangeChart(createRangeChartParams)
-}
-
-function onChartCreated(params: ChartCreated) {
-  params.api.openChartToolPanel(params)
 }
 
 // setup the grid after the page has finished loading

@@ -3275,6 +3275,7 @@
   },
   "AgPieSeriesFormat": {
     "fill": { "type": { "returnType": "CssColor", "optional": true } },
+    "fillOpacity": { "type": { "returnType": "Opacity", "optional": true } },
     "stroke": { "type": { "returnType": "CssColor", "optional": true } },
     "strokeWidth": { "type": { "returnType": "PixelSize", "optional": true } }
   },
@@ -4672,6 +4673,9 @@
         "optional": true
       }
     },
+    "sectorFormat": {
+      "type": { "returnType": "PieSeriesFormat", "optional": false }
+    },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
@@ -4716,6 +4720,7 @@
   },
   "PieSeriesFormat": {
     "fill": { "type": { "returnType": "string", "optional": true } },
+    "fillOpacity": { "type": { "returnType": "number", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } }
   },

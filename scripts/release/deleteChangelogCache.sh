@@ -26,4 +26,4 @@ while true; do
 done
 
 # download the new changelog information
-ssh -i ~/.ag_deploy/.ssh/ag_grid_site ceolter@ag-grid.com "/opt/cpanel/ea-nodejs10/bin/node /home/ceolter/jira_reports/getChangelog.js"
+ssh -i ~/.ag_deploy/.ssh/ag_grid_site aggrid@ag-grid.com "/opt/cpanel/ea-nodejs10/bin/node /home/aggrid/jira_reports/getChangelog.js"

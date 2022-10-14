@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>$EXAMPLE_TITLE</title>
+        <script type="module" src="$EXAMPLE_SCRIPT"></script>
+        <style>
+            html,
+            body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+            }
+        </style>
+        <script>
+            const socket = new WebSocket(`ws://${location.host}`);
+            socket.addEventListener('message', (e) => {
+                const message = JSON.parse(e.data);
+                if (message === 'LiveReload:full') {
+                    location.reload();
+                }
+            });
+        </script>
+    </head>
+
+    <body>
+        $EXAMPLE_CONTENT
+    </body>
+</html>

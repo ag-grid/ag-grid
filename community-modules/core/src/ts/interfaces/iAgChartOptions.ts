@@ -1194,6 +1194,7 @@ export interface AgPieSeriesFormatterParams<DatumType> {
 
 export interface AgPieSeriesFormat {
     fill?: CssColor;
+    fillOpacity?: Opacity;
     stroke?: CssColor;
     strokeWidth?: PixelSize;
 }

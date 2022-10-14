@@ -48,10 +48,10 @@ fi
 # copy the remote script that will create tmp dirs, unzip the new deployment etc to the upload dir (archives)
 curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T "./scripts/release/switchReleaseRemote.sh" ftp://ag-grid.com/
 # move prepareNewDeploymentRemote from the archives dir to the root, and make it executable
-ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "mv public_html/archive/switchReleaseRemote.sh ./"
-ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "chmod +x ./switchReleaseRemote.sh"
+ssh -i $SSH_LOCATION -p 2022 aggrid@ag-grid.com "mv public_html/archive/switchReleaseRemote.sh ./"
+ssh -i $SSH_LOCATION -p 2022 aggrid@ag-grid.com "chmod +x ./switchReleaseRemote.sh"
 
 # backup the old public_html, unzip the new release and update permissions etc
 # we do this via a remote script as there are many steps and doing so one by one remotely times out occasionally
-echo "cd /home/ceolter/ && ./switchReleaseRemote.sh $TIMESTAMP"
-ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "cd /home/ceolter/ && ./switchReleaseRemote.sh $TIMESTAMP"
+echo "cd /home/aggrid/ && ./switchReleaseRemote.sh $TIMESTAMP"
+ssh -i $SSH_LOCATION -p 2022 aggrid@ag-grid.com "cd /home/aggrid/ && ./switchReleaseRemote.sh $TIMESTAMP"

@@ -16,7 +16,7 @@ import { FontPanel } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { initFontPanelParams } from "./fontPanelParams";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { getMaxValue } from "../formatPanel";
+import { FormatPanelOptions, getMaxValue } from "../formatPanel";
 import { MarkersPanel } from "./markersPanel";
 import { ChartController } from "../../../chartController";
 import { ChartSeriesType, getSeriesType } from "../../../utils/seriesTypeMapper";
@@ -33,6 +33,10 @@ export class SeriesPanel extends Component {
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
+
+    private readonly chartController: ChartController;
+    private readonly chartOptionsService: ChartOptionsService;
+    private readonly isExpandedOnInit: boolean;
 
     private seriesSelectOptions: Map<ChartSeriesType, ListOption>;
 
@@ -62,12 +66,19 @@ export class SeriesPanel extends Component {
         'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
     }
 
-    constructor(private readonly chartController: ChartController, private readonly chartOptionsService: ChartOptionsService,
-                seriesType?: ChartSeriesType) {
+    constructor({
+        chartController,
+        chartOptionsService,
+        seriesType,
+        isExpandedOnInit = false
+    }: FormatPanelOptions) {
 
         super();
 
+        this.chartController = chartController;
+        this.chartOptionsService = chartOptionsService;
         this.seriesType = seriesType || this.getChartSeriesType();
+        this.isExpandedOnInit = isExpandedOnInit;
     }
 
     @PostConstruct
@@ -80,7 +91,7 @@ export class SeriesPanel extends Component {
 
         this.seriesGroup
             .setTitle(this.translate("series"))
-            .toggleGroupExpand(false)
+            .toggleGroupExpand(this.isExpandedOnInit)
             .hideEnabledCheckbox(true);
 
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED, this.refreshWidgets.bind(this));

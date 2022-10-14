@@ -76,6 +76,10 @@
       "defaultState?": "/** State to apply to columns where state is missing for those columns */"
     }
   },
+  "ColKey": {
+    "meta": { "isTypeAlias": true },
+    "type": "keyof (ColDef) | (keyof ColGroupDef)"
+  },
   "ComponentMetadata": {
     "meta": {},
     "type": {
@@ -3194,7 +3198,7 @@
     "docs": { "type": "/** Event identifier */" }
   },
   "AgGridEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -8911,6 +8915,7 @@
     "meta": {},
     "type": {
       "fill?": "CssColor",
+      "fillOpacity?": "Opacity",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize"
     }
@@ -9616,15 +9621,36 @@
       "chartGroupsDef?": "/** Chart groups customisations for which charts are displayed in the settings panel */"
     }
   },
+  "ChartFormatPanelGroup": {
+    "meta": { "isTypeAlias": true },
+    "type": "'chart' | 'legend' | 'axis' | 'series' | 'navigator'"
+  },
+  "ChartFormatPanelGroupDef": {
+    "meta": {},
+    "type": { "type": "ChartFormatPanelGroup", "isOpen?": "boolean" },
+    "docs": {
+      "type": "/** The format panel group type */",
+      "isOpen?": "/** Whether the format panel group is open by default. If not specified, it is closed */"
+    }
+  },
+  "ChartFormatPanel": {
+    "meta": {},
+    "type": { "groups?": "ChartFormatPanelGroupDef[]" },
+    "docs": {
+      "groups?": "/** The format panel group configurations, their order and whether they are shown. If not specified shows all groups */"
+    }
+  },
   "ChartToolPanelsDef": {
     "meta": {},
     "type": {
       "settingsPanel?": "ChartSettingsPanel",
+      "formatPanel?": "ChartFormatPanel",
       "panels?": "ChartToolPanelName[]",
       "defaultToolPanel?": "ChartToolPanelName"
     },
     "docs": {
       "settingsPanel?": "/** Customisations for the settings panel */",
+      "formatPanel?": "/** Customisations for the format panel */",
       "panels?": "/** The ordered list of panels to show in the chart tool panels. If none specified, all panels are shown */",
       "defaultToolPanel?": "/** The panel to open by default when the chart loads. If none specified, the tool panel is hidden by default and the first panel is open when triggered. */"
     }
@@ -9909,7 +9935,7 @@
   "ICsvCreator": {
     "meta": {},
     "type": {
-      "getDataAsCsv(params?: CsvExportParams)": "string",
+      "getDataAsCsv(params?: CsvExportParams, skipDefaultParams?: boolean)": "string",
       "exportDataAsCsv(params?: CsvExportParams)": "string"
     }
   },
@@ -12397,6 +12423,10 @@
       null,
       null
     ]
+  },
+  "GridOptionKey": {
+    "meta": { "isTypeAlias": true },
+    "type": "keyof GridOptions"
   },
   "ICellComp": {
     "meta": {},

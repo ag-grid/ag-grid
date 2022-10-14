@@ -52,4 +52,4 @@ In addition to exporting the Grid in the Excel file, you can also provide additi
 
 ## Next Up
 
-Continue to the next section: [Images](../excel-export-images/).
+Continue to the next section: [Customising Content](../excel-export-customising-content/).

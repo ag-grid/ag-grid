@@ -1,54 +1,76 @@
 import * as agCharts from 'ag-charts-community';
 import { AgChartOptions } from 'ag-charts-community';
-import { getData } from "./data";
+import { getData } from './data';
+
+const numFormatter = new Intl.NumberFormat('en-US');
 
 const options: AgChartOptions = {
-  container: document.getElementById('myChart'),
-  autoSize: true,
-  title: {
-    text: 'Religions of London Population (2016)',
-    fontSize: 18,
-  },
-  subtitle: {
-    text: 'Source: Office for National Statistics',
-  },
-  series: [
-    {
-      data: getData(),
-      type: 'pie',
-      calloutLabelKey: 'religion',
-      angleKey: 'population',
-      calloutLabel: {
-        minAngle: 0,
-      },
-      calloutLine: {
-        strokeWidth: 2,
-      },
-      fills: [
-        '#febe76',
-        '#ff7979',
-        '#badc58',
-        '#f9ca23',
-        '#f0932b',
-        '#eb4c4b',
-        '#6ab04c',
-        '#7ed6df',
-      ],
-      strokes: [
-        '#b28553',
-        '#b35555',
-        '#829a3e',
-        '#ae8d19',
-        '#a8671e',
-        '#a43535',
-        '#4a7b35',
-        '#58969c',
-      ],
+    container: document.getElementById('myChart'),
+    autoSize: true,
+    title: {
+        text: 'Religions of London Population (2016)',
+        fontSize: 18,
     },
-  ],
-  legend: {
-    enabled: false,
-  },
-}
+    subtitle: {
+        text: 'Source: Office for National Statistics',
+    },
+    padding: {
+        top: 32,
+        right: 20,
+        bottom: 32,
+        left: 20,
+    },
+    series: [
+        {
+            data: getData(),
+            type: 'pie',
+            calloutLabelKey: 'religion',
+            sectorLabelKey: 'population',
+            angleKey: 'population',
+            calloutLabel: {
+                minAngle: 0,
+            },
+            sectorLabel: {
+                color: 'white',
+                fontWeight: 'bold',
+                formatter: ({ datum, sectorLabelKey }) => {
+                    return numFormatter.format(datum[sectorLabelKey!]);
+                },
+            },
+            calloutLine: {
+                strokeWidth: 2,
+            },
+            fills: [
+                '#49afda',
+                '#57cc8b',
+                '#bcdf72',
+                '#fbeb37',
+                '#f4b944',
+                '#fb7451',
+                '#72508c',
+                '#b7b5ba',
+            ],
+            strokeWidth: 0,
+            tooltip: {
+                renderer: ({ datum, color, calloutLabelKey, sectorLabelKey }) => {
+                    return [
+                        `<div style="background-color: ${color}; padding: 4px 8px; border-top-left-radius: 5px; border-top-right-radius: 5px; font-weight: bold; color: white;">${datum[calloutLabelKey!]}</div>`,
+                        `<div style="padding: 4px 8px">${numFormatter.format(datum[sectorLabelKey!])}</div>`,
+                    ].join('\n');
+                },
+            },
+            highlightStyle: {
+                item: {
+                    fillOpacity: 0,
+                    stroke: '#535455',
+                    strokeWidth: 1,
+                },
+            },
+        },
+    ],
+    legend: {
+        enabled: false,
+    },
+};
 
-var chart = agCharts.AgChart.create(options)
+const chart = agCharts.AgChart.create(options);

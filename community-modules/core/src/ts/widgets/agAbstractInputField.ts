@@ -103,7 +103,7 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
         return this;
     }
 
-    public setInputAriaLabel(label: string): this {
+    public setInputAriaLabel(label?: string | null): this {
         setAriaLabel(this.eInput, label);
 
         return this;

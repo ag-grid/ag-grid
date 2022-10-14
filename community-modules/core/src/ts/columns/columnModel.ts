@@ -2603,7 +2603,7 @@ export class ColumnModel extends BeanStub {
     public getDisplayNameForProvidedColumnGroup(
         columnGroup: ColumnGroup | null,
         providedColumnGroup: ProvidedColumnGroup | null,
-        location: string
+        location: string | null
     ): string | null {
         const colGroupDef = providedColumnGroup ? providedColumnGroup.getColGroupDef() : null;
 
@@ -2614,7 +2614,7 @@ export class ColumnModel extends BeanStub {
         return null;
     }
 
-    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string | null {
+    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string | null): string | null {
         return this.getDisplayNameForProvidedColumnGroup(columnGroup, columnGroup.getProvidedColumnGroup(), location);
     }
 
@@ -3367,10 +3367,6 @@ export class ColumnModel extends BeanStub {
     // event, so will try and draw, but it will draw successfully when it acts on the
     // virtualColumnsChanged event
     private clearDisplayedAndViewportColumns(): void {
-        this.displayedTreeLeft = [];
-        this.displayedTreeRight = [];
-        this.displayedTreeCentre = [];
-
         this.viewportRowLeft = {};
         this.viewportRowRight = {};
         this.viewportRowCenter = {};

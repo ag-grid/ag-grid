@@ -51,9 +51,9 @@ export function getAriaDescribedBy(element: HTMLElement): string {
 }
 
 // ARIA ATTRIBUTE SETTERS
-export function setAriaLabel(element: HTMLElement, label?: string): void {
+export function setAriaLabel(element: HTMLElement, label?: string | null): void {
     const key = 'label';
-    if (label) {
+    if (label != null && label !== '') {
         setAriaAttribute(element, key, label);
     } else {
         removeAriaAttribute(element, key);
@@ -94,6 +94,14 @@ export function setAriaLevel(element: HTMLElement, level: number): void {
 
 export function setAriaDisabled(element: HTMLElement, disabled: boolean): void {
     setAriaAttribute(element, 'disabled', disabled);
+}
+
+export function setAriaHidden(element: HTMLElement, hidden: boolean): void {
+    if (hidden) {
+        setAriaAttribute(element, 'hidden', true);
+    } else {
+        removeAriaAttribute(element, 'hidden');
+    }
 }
 
 export function setAriaExpanded(element: HTMLElement, expanded: boolean): void {

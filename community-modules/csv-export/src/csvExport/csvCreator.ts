@@ -55,8 +55,11 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         return this.export(params);
     }
 
-    public getDataAsCsv(params?: CsvExportParams): string {
-        const mergedParams = this.getMergedParams(params);
+    public getDataAsCsv(params?: CsvExportParams, skipDefaultParams = false): string {
+        const mergedParams = skipDefaultParams
+            ? Object.assign({}, params)
+            : this.getMergedParams(params);
+
         return this.getData(mergedParams);
     }
 

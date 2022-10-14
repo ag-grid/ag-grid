@@ -105,7 +105,7 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>, D = an
         } else {
             const domains: any[][] = [];
             boundSeries
-                .filter((s) => includeInvisibleDomains || s.visible)
+                .filter((s) => includeInvisibleDomains || s.isEnabled())
                 .forEach((series) => {
                     domains.push(series.getDomain(direction));
                 });
@@ -117,5 +117,9 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>, D = an
 
     normaliseDataDomain(d: D[]): D[] {
         return d;
+    }
+
+    isAnySeriesActive() {
+        return this.boundSeries.some((s) => this.includeInvisibleDomains || s.isEnabled());
     }
 }

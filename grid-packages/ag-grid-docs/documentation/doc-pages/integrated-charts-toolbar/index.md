@@ -96,6 +96,17 @@ The Chart Tool Panel can be customised within the `chartToolPanelsDef` grid opti
 
 <api-documentation source='grid-options/properties.json' section='charts' names='["chartToolPanelsDef"]' ></api-documentation>
 
+### Customising chart tool panels
+
+The Chart Tool Panels can be reorganised using the `chartToolPanelsDef.panels` grid option, and a tool panel can be opened when the chart is loaded using the `chartToolPanelsDef.defaultToolPanel` grid option.
+
+[[note]]
+| Note that when the `chartToolPanels` grid option is used, the panels returned from `gridOptions.getChartToolbarItems(params)` are ignored. If `chartToolPanelsDef` is defined without `chartToolPanelsDef.panels`, **all panels** will be shown regardless of the results of `gridOptions.getChartToolbarItems(params)`.
+
+The example below shows panels being reorganised with the `format` tool panel open by default:
+
+<grid-example title='Customising chart tool panels' name='customise-panels' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
 ### Customising settings panel chart groups
 
 The list of chart groups shown on the settings panel can be customised using the `chartToolPanelsDef.settingsPanel.chartGroupsDef` grid option. The full list of chart groups are as follows:
@@ -153,16 +164,42 @@ The example below shows a reordering of chart groups with some chart groups and 
 
 <grid-example title='Customising settings panel chart groups' name='customise-chart-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
-### Customising chart tool panels
+### Customising format panel groups
 
-The Chart Tool Panels can be reorganised using the `chartToolPanelsDef.panels` grid option, and a tool panel can be opened when the chart is loaded using the `chartToolPanelsDef.defaultToolPanel` grid option.
+The groups shown on the format panel can be customised using the `chartToolPanelsDef.formatPanel.groups` grid option. The list specified also indicates the order the groups are shown and whether they are open by default. If `chartToolPanelsDef.formatPanel.groups` is not specified, all groups are shown and are closed by default.
 
 [[note]]
-| Note that when the `chartToolPanels` grid option is used, the panels returned from `gridOptions.getChartToolbarItems(params)` are ignored. If `chartToolPanelsDef` is defined without `chartToolPanelsDef.panels`, **all panels** will be shown regardless of the results of `gridOptions.getChartToolbarItems(params)`.
+| Different chart types will show different groups, as relevant and will override what is specified in the grid option eg, a pie chart does not have series, so if pie chart is selected, the `series` formatting group will not show even if it is in `chartToolPanelsDef.formatPanel.groups`
 
-The example below shows panels being reorganised with the `format` tool panel open by default:
+The default list and order of format groups are as follows:
 
-<grid-example title='Customising chart tool panels' name='customise-panels' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<snippet>
+const gridOptions = {
+    chartToolPanelsDef: {
+        formatPanel: {
+            groups: [
+                {
+                    type: 'chart'
+                    // If `isOpen` is not specified, group is closed by default
+                    // isOpen: false
+                },
+                { type: 'legend', isOpen: false },
+                { type: 'axis', isOpen: false },
+                { type: 'series', isOpen: false },
+                { type: 'navigator', isOpen: false }
+            ]
+        }
+    }
+}
+</snippet>
+
+The following example shows the format panel with:
+
+* `chart` group open by default
+* `series`, `legend` and `axis` groups shown afterwards, closed by default
+* `navigator` not shown
+
+<grid-example title='Customising format panel groups' name='customise-format-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ## Chart Tool Panels Button
 

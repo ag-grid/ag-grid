@@ -9,7 +9,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { getMaxValue } from "../formatPanel";
+import { FormatPanelOptions, getMaxValue } from "../formatPanel";
 
 export class NavigatorPanel extends Component {
 
@@ -25,8 +25,14 @@ export class NavigatorPanel extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService) {
+    private readonly chartOptionsService: ChartOptionsService;
+    private readonly isExpandedOnInit: boolean;
+
+    constructor({ chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
+
+        this.chartOptionsService = chartOptionsService;
+        this.isExpandedOnInit = isExpandedOnInit;
     }
 
     @PostConstruct
@@ -45,13 +51,13 @@ export class NavigatorPanel extends Component {
 
         this.navigatorGroup
             .setTitle(chartTranslationService.translate("navigator"))
-            .toggleGroupExpand(false)
             .hideEnabledCheckbox(false)
             .setEnabled(this.chartOptionsService.getChartOption<boolean>("navigator.enabled") || false)
             .onEnableChange(enabled => {
                 this.chartOptionsService.setChartOption("navigator.enabled", enabled);
                 this.navigatorGroup.toggleGroupExpand(true);
-            });
+            })
+            .toggleGroupExpand(this.isExpandedOnInit);
 
         const currentValue = this.chartOptionsService.getChartOption<number>("navigator.height");
         this.navigatorHeightSlider

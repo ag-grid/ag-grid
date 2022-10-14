@@ -17,7 +17,7 @@ import { AxisTicksPanel } from "./axisTicksPanel";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { getMaxValue } from "../formatPanel";
+import { FormatPanelOptions, getMaxValue } from "../formatPanel";
 
 export class AxisPanel extends Component {
 
@@ -37,16 +37,22 @@ export class AxisPanel extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
+    private readonly chartController: ChartController;
+    private readonly chartOptionsService: ChartOptionsService;
+    private readonly isExpandedOnInit: boolean;
+
     private activePanels: Component[] = [];
     private axisLabelUpdateFuncs: Function[] = [];
 
     private prevXRotation = 0;
     private prevYRotation = 0;
 
-    constructor(
-        private readonly chartController: ChartController,
-        private readonly chartOptionsService: ChartOptionsService) {
-            super();
+    constructor({ chartController, chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
+        super();
+
+        this.chartController = chartController;
+        this.chartOptionsService = chartOptionsService;
+        this.isExpandedOnInit = isExpandedOnInit;
     }
 
     @PostConstruct
@@ -68,7 +74,7 @@ export class AxisPanel extends Component {
     private initAxis() {
         this.axisGroup
             .setTitle(this.translate("axis"))
-            .toggleGroupExpand(false)
+            .toggleGroupExpand(this.isExpandedOnInit)
             .hideEnabledCheckbox(true);
 
         this.axisColorInput

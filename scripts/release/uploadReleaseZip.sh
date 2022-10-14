@@ -47,5 +47,5 @@ checkFileExists $SSH_LOCATION
 curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T $FILENAME ftp://ag-grid.com/
 
 # move file from the archives dir to the root
-ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "mv public_html/archive/$FILENAME ./"
+ssh -i $SSH_LOCATION -p 2022 aggrid@ag-grid.com "mv public_html/archive/$FILENAME ./"
 

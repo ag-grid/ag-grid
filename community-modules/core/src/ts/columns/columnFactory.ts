@@ -235,19 +235,17 @@ export class ColumnFactory extends BeanStub {
     ): ProvidedColumnGroup {
         const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
         const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId || null, null);
-        const providedGroup = new ProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
-
-        this.context.createBean(providedGroup);
-
         const existingGroup = this.findExistingGroup(colGroupDef, existingGroups);
-        // make sure we remove, so if user provided duplicate id, then we don't have more than
-        // one column instance for colDef with common id
-        if (existingGroup) {
-            removeFromArray(existingGroups, existingGroup);
-        }
 
-        if (existingGroup && existingGroup.isExpanded()) {
-            providedGroup.setExpanded(true);
+        let providedGroup: ProvidedColumnGroup;
+
+        if (existingGroup) {
+            providedGroup = existingGroup;
+            providedGroup.reset(colGroupDefMerged, level);
+            removeFromArray(existingGroups, existingGroup);
+        } else {
+            providedGroup = new ProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
+            this.context.createBean(providedGroup);    
         }
 
         const children = this.recursivelyCreateColumns(colGroupDefMerged.children,

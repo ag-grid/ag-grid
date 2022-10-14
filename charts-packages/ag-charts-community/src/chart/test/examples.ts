@@ -93,6 +93,8 @@ export const DOCS_EXAMPLES = {
     'log-axis': loadExampleOptions('log-axis'),
     'market-index-treemap': loadExampleOptions('market-index-treemap'),
     'per-marker-customisation': loadExampleOptions('per-marker-customisation'),
+    'pie-in-a-doughnut': loadExampleOptions('pie-in-a-doughnut'),
+    'pie-with-variable-radius': loadExampleOptions('pie-with-variable-radius'),
     'real-time-data-updates': loadExampleOptions('real-time-data-updates'),
     'simple-area': loadExampleOptions('simple-area'),
     'simple-bar': loadExampleOptions('simple-bar'),
@@ -123,6 +125,8 @@ export const ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE: AgChartOptions = DOCS_
 export const COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['column-with-negative-values'];
 export const SIMPLE_PIE_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-pie'];
 export const SIMPLE_DOUGHNUT_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-doughnut'];
+export const PIE_IN_A_DOUGHNUT: AgChartOptions = DOCS_EXAMPLES['pie-in-a-doughnut'];
+export const PIE_WITH_VARIABLE_RADIUS: AgChartOptions = DOCS_EXAMPLES['pie-with-variable-radius'];
 export const SIMPLE_LINE_CHART_EXAMPLE: AgCartesianChartOptions = DOCS_EXAMPLES['simple-line'];
 export const LINE_GRAPH_WITH_GAPS_EXAMPLE: AgCartesianChartOptions = DOCS_EXAMPLES['line-with-gaps'];
 export const SIMPLE_SCATTER_CHART_EXAMPLE: AgCartesianChartOptions = DOCS_EXAMPLES['simple-scatter'];

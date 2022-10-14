@@ -33,6 +33,18 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
         this.level = level;
     }
 
+    public reset(colGroupDef: ColGroupDef | null, level: number): void {
+        this.colGroupDef = colGroupDef;
+        this.level = level;
+
+        this.originalParent = null;
+
+        // we use ! below, as we want to set the object back to the
+        // way it was when it was first created
+        this.children = undefined!;
+        this.expandable = undefined!;
+    }
+
     public setOriginalParent(originalParent: ProvidedColumnGroup | null): void {
         this.originalParent = originalParent;
     }

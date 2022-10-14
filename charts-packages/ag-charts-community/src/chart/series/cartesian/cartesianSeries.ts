@@ -516,6 +516,19 @@ export abstract class CartesianSeries<
         }
     }
 
+    isEnabled() {
+        if (this.seriesItemEnabled.size > 0) {
+            for (const [, enabled] of this.seriesItemEnabled) {
+                if (enabled) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        return super.isEnabled();
+    }
+
     protected isPathOrSelectionDirty(): boolean {
         // Override point to allow more sophisticated dirty selection detection.
         return false;

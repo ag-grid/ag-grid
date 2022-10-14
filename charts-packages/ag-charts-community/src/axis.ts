@@ -324,6 +324,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const start = rr[0] - shift;
 
         scale.range = [start, start + span];
+        this.crossLines?.forEach((crossLine) => {
+            crossLine.clippedRange = [rr[0], rr[1]];
+        });
     }
 
     /**
@@ -496,6 +499,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const requestedRangeMax = Math.max(...requestedRange);
         const rotation = toRadians(this.rotation);
         const parallelLabels = label.parallel;
+        const anySeriesActive = this.isAnySeriesActive();
 
         const translationX = Math.floor(translation.x);
         const translationY = Math.floor(translation.y);
@@ -628,27 +632,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
         this.tickGroup.visible = anyTickVisible;
         this.gridlineGroup.visible = anyTickVisible;
 
-        if (!anyTickVisible) {
-            this.crossLines?.forEach((crossLine) => {
-                crossLine.update(anyTickVisible);
-            });
-            this.updateTitle({ ticks });
-            return;
-        }
-
-        tickGroupSelection
-            .selectByTag<Line>(Tags.Tick)
-            .each((line) => {
-                line.strokeWidth = tick.width;
-                line.stroke = tick.color;
-            })
-            .attr('x1', sideFlag * tick.size)
-            .attr('x2', 0)
-            .attr('y1', 0)
-            .attr('y2', 0);
-
-        this.updateTitle({ ticks });
-
         this.crossLines?.forEach((crossLine) => {
             crossLine.sideFlag = -sideFlag as -1 | 1;
             crossLine.direction = rotation === -Math.PI / 2 ? ChartAxisDirection.X : ChartAxisDirection.Y;
@@ -656,10 +639,21 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 crossLine.label.parallel !== undefined ? crossLine.label.parallel : parallelLabels;
             crossLine.parallelFlipRotation = parallelFlipRotation;
             crossLine.regularFlipRotation = regularFlipRotation;
-            crossLine.update(anyTickVisible);
+            crossLine.update(anySeriesActive);
         });
+        this.updateTitle({ ticks });
 
-        return primaryTickCount;
+        tickGroupSelection
+            .selectByTag<Line>(Tags.Tick)
+            .each((line) => {
+                line.strokeWidth = tick.width;
+                line.stroke = tick.color;
+                line.visible = anyTickVisible;
+            })
+            .attr('x1', sideFlag * tick.size)
+            .attr('x2', 0)
+            .attr('y1', 0)
+            .attr('y2', 0);
     }
 
     updateSecondaryAxisTicks(_primaryTickCount: number | undefined): any[] {
@@ -1051,5 +1045,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
     initCrossLine(crossLine: CrossLine) {
         crossLine.scale = this.scale;
         crossLine.gridLength = this.gridLength;
+    }
+
+    isAnySeriesActive() {
+        return false;
     }
 }

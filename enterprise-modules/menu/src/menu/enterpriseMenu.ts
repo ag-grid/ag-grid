@@ -29,7 +29,8 @@ import {
     CtrlsService,
     AgMenuList,
     AgMenuItemComponent,
-    MenuItemSelectedEvent
+    MenuItemSelectedEvent,
+    HeaderNavigationService
 
 } from '@ag-grid-community/core';
 
@@ -43,10 +44,11 @@ export interface TabSelectedEvent extends AgEvent {
 @Bean('menuFactory')
 export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
-    @Autowired('popupService') private popupService: PopupService;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('popupService') private readonly popupService: PopupService;
+    @Autowired('focusService') private readonly focusService: FocusService;
+    @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
+    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
     private lastSelectedTab: string;
     private activeMenu: EnterpriseMenu | null;
@@ -129,6 +131,9 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 if (_.isVisible(eventSource)) {
                     const focusableEl = this.focusService.findTabbableParent(eventSource);
                     if (focusableEl) {
+                        if (column) {
+                            this.headerNavigationService.scrollToColumn(column);
+                        }
                         focusableEl.focus();
                     }
                 }
@@ -222,13 +227,13 @@ export class EnterpriseMenu extends BeanStub {
     public static TABS_DEFAULT: ColumnMenuTab[] = [EnterpriseMenu.TAB_GENERAL, EnterpriseMenu.TAB_FILTER, EnterpriseMenu.TAB_COLUMNS];
     public static MENU_ITEM_SEPARATOR = 'separator';
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('focusService') private focusService: FocusService;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('filterManager') private readonly filterManager: FilterManager;
+    @Autowired('gridApi') private readonly gridApi: GridApi;
+    @Autowired('columnApi') private readonly columnApi: ColumnApi;
+    @Autowired('menuItemMapper') private readonly menuItemMapper: MenuItemMapper;
+    @Autowired('rowModel') private readonly rowModel: IRowModel;
+    @Autowired('focusService') private readonly focusService: FocusService;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;

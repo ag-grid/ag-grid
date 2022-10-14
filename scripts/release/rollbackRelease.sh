@@ -59,10 +59,10 @@ fi
 # copy the remote script that will restore public_html to the backup with the timestamp specified
 curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T "./scripts/release/rollbackReleaseRemote.sh" ftp://ag-grid.com/
 # move prepareNewDeploymentRemote from the archives dir to the root, and make it executable
-ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "mv public_html/archive/rollbackReleaseRemote.sh ./"
-ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "chmod +x ./rollbackReleaseRemote.sh"
+ssh -i $SSH_LOCATION -p 2022 aggrid@ag-grid.com "mv public_html/archive/rollbackReleaseRemote.sh ./"
+ssh -i $SSH_LOCATION -p 2022 aggrid@ag-grid.com "chmod +x ./rollbackReleaseRemote.sh"
 
 # restore public_html to the backup with the timestamp specified
 # we do this via a remote script as there are many steps and doing so one by one remotely times out occasionally
-echo "cd /home/ceolter/ && ./rollbackReleaseRemote.sh $TIMESTAMP"
-ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "cd /home/ceolter/ && ./rollbackReleaseRemote.sh $TIMESTAMP"
+echo "cd /home/aggrid/ && ./rollbackReleaseRemote.sh $TIMESTAMP"
+ssh -i $SSH_LOCATION -p 2022 aggrid@ag-grid.com "cd /home/aggrid/ && ./rollbackReleaseRemote.sh $TIMESTAMP"

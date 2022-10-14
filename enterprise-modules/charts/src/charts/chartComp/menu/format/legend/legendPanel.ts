@@ -13,7 +13,7 @@ import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { LegendPosition } from "ag-charts-community";
-import { getMaxValue } from "../formatPanel";
+import { FormatPanelOptions, getMaxValue } from "../formatPanel";
 
 export class LegendPanel extends Component {
 
@@ -41,10 +41,16 @@ export class LegendPanel extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
+    private readonly chartOptionsService: ChartOptionsService;
+    private readonly isExpandedOnInit: boolean;
+
     private activePanels: Component[] = [];
 
-    constructor(private readonly chartOptionsService: ChartOptionsService) {
+    constructor({ chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
+
+        this.chartOptionsService = chartOptionsService;
+        this.isExpandedOnInit = isExpandedOnInit;
     }
 
     @PostConstruct
@@ -67,7 +73,7 @@ export class LegendPanel extends Component {
             .setTitle(this.chartTranslationService.translate("legend"))
             .hideEnabledCheckbox(false)
             .setEnabled(this.chartOptionsService.getChartOption<boolean>("legend.enabled") || false)
-            .toggleGroupExpand(false)
+            .toggleGroupExpand(this.isExpandedOnInit)
             .onEnableChange(enabled => {
                 this.chartOptionsService.setChartOption("legend.enabled", enabled);
                 this.legendGroup.toggleGroupExpand(true);

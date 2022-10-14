@@ -12,6 +12,7 @@ import { ChartTranslationService } from "../../../services/chartTranslationServi
 import { BackgroundPanel } from "./backgroundPanel";
 import TitlePanel from "./titlePanel";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { FormatPanelOptions } from "../formatPanel";
 
 export class ChartPanel extends Component {
 
@@ -24,10 +25,19 @@ export class ChartPanel extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
+    private readonly chartOptionsService: ChartOptionsService;
+    private readonly isExpandedOnInit: boolean;
+
     private activePanels: Component[] = [];
 
-    constructor(private readonly chartOptionsService: ChartOptionsService) {
+    constructor({
+        chartOptionsService,
+        isExpandedOnInit = false
+    }: FormatPanelOptions) {
         super();
+
+        this.chartOptionsService = chartOptionsService;
+        this.isExpandedOnInit = isExpandedOnInit;
     }
 
     @PostConstruct
@@ -47,7 +57,7 @@ export class ChartPanel extends Component {
     private initGroup(): void {
         this.chartGroup
             .setTitle(this.chartTranslationService.translate('chart'))
-            .toggleGroupExpand(false)
+            .toggleGroupExpand(this.isExpandedOnInit)
             .hideEnabledCheckbox(true);
     }
 

@@ -3,7 +3,7 @@ const axios = require('axios');
 
 const YOUTUBE_KEY = process.env.YOUTUBE_KEY;
 const YOUTUBE_CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID;
-const DESTINATION = "/home/ceolter/public_html/videos/youtube.json";
+const DESTINATION = "/home/aggrid/public_html/videos/youtube.json";
 
 async function getVideoSummaries(query) {
     const executeQuery = async (props) => {
