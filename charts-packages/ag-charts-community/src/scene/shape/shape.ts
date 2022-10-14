@@ -131,6 +131,15 @@ export abstract class Shape extends Node {
             return alignedStart;
         }
 
+        if (length === 0) {
+            return 0;
+        }
+
+        if (length < 1) {
+            // Avoid hiding crisp shapes
+            return Math.ceil(length * pixelRatio) / pixelRatio;
+        }
+
         // Account for the rounding of alignedStart by increasing length to compensate before
         // alignment.
         return Math.round((length + start) * pixelRatio) / pixelRatio - alignedStart;
