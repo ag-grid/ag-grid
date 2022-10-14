@@ -72,6 +72,12 @@ export class LineSeriesTooltip extends SeriesTooltip {
     format?: string = undefined;
 }
 
+interface PointDatum {
+    xDatum: any;
+    yDatum: any;
+    datum: any;
+}
+
 type LineContext = SeriesNodeDataContext<LineNodeDatum>;
 export class LineSeries extends CartesianSeries<LineContext> {
     static className = 'LineSeries';
@@ -79,8 +85,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
     private xDomain: any[] = [];
     private yDomain: any[] = [];
-    private xData: any[] = [];
-    private yData: any[] = [];
+    private pointsData: PointDatum[] = [];
 
     readonly marker = new CartesianSeriesMarker();
 
@@ -135,7 +140,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
     protected _xKey: string = '';
     set xKey(value: string) {
         this._xKey = value;
-        this.xData = [];
+        this.pointsData.splice(0);
     }
     get xKey(): string {
         return this._xKey;
@@ -148,7 +153,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
     protected _yKey: string = '';
     set yKey(value: string) {
         this._yKey = value;
-        this.yData = [];
+        this.pointsData.splice(0);
     }
     get yKey(): string {
         return this._yKey;
@@ -165,7 +170,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
     }
 
     async processData() {
-        const { xAxis, yAxis, xKey, yKey, xData, yData } = this;
+        const { xAxis, yAxis, xKey, yKey, pointsData } = this;
         const data = xKey && yKey && this.data ? this.data : [];
 
         if (!xAxis || !yAxis) {
@@ -175,8 +180,9 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const isContinuousX = xAxis.scale instanceof ContinuousScale;
         const isContinuousY = yAxis.scale instanceof ContinuousScale;
 
-        xData.length = 0;
-        yData.length = 0;
+        const xData: any[] = [];
+        const yData: any[] = [];
+        pointsData.splice(0);
 
         for (const datum of data) {
             const x = datum[xKey];
@@ -186,12 +192,16 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
             if (isContinuousX && xDatum === undefined) {
                 continue;
-            } else {
-                xData.push(xDatum);
             }
 
             const yDatum = checkDatum(y, isContinuousY);
+            xData.push(xDatum);
             yData.push(yDatum);
+            pointsData.push({
+                xDatum,
+                yDatum,
+                datum,
+            });
         }
 
         this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData, isContinuous), xAxis) : xData;
@@ -210,7 +220,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             return [];
         }
 
-        const { xData, yData, label, xKey, yKey } = this;
+        const { pointsData, label, yKey } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
@@ -220,16 +230,16 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
         let moveTo = true;
         let prevXInRange: undefined | -1 | 0 | 1 = undefined;
-        let nextXYDatums: [number, number] | undefined = undefined;
+        let nextPoint: PointDatum | undefined = undefined;
         let actualLength = 0;
-        for (let i = 0; i < xData.length; i++) {
-            const xyDatums = nextXYDatums || [xData[i], yData[i]];
+        for (let i = 0; i < pointsData.length; i++) {
+            const point = nextPoint || pointsData[i];
 
-            if (xyDatums[1] === undefined) {
+            if (point.yDatum === undefined) {
                 prevXInRange = undefined;
                 moveTo = true;
             } else {
-                const [xDatum, yDatum] = xyDatums;
+                const { xDatum, yDatum, datum } = point;
                 const x = xScale.convert(xDatum) + xOffset;
                 if (isNaN(x)) {
                     prevXInRange = undefined;
@@ -238,10 +248,10 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 }
                 const tolerance = (xScale.bandwidth || markerSize * 0.5 + (strokeWidth || 0)) + 1;
 
-                nextXYDatums = yData[i + 1] === undefined ? undefined : [xData[i + 1], yData[i + 1]];
+                nextPoint = pointsData[i + 1]?.yDatum === undefined ? undefined : pointsData[i + 1];
                 const xInRange = xAxis.inRangeEx(x, 0, tolerance);
                 const nextXInRange =
-                    nextXYDatums && xAxis.inRangeEx(xScale.convert(nextXYDatums[0]) + xOffset, 0, tolerance);
+                    nextPoint && xAxis.inRangeEx(xScale.convert(nextPoint.xDatum) + xOffset, 0, tolerance);
                 if (xInRange === -1 && nextXInRange === -1) {
                     moveTo = true;
                     continue;
@@ -267,11 +277,9 @@ export class LineSeries extends CartesianSeries<LineContext> {
                             : '';
                 }
 
-                const seriesDatum = { [xKey]: xDatum, [yKey]: yDatum };
-
                 nodeData[actualLength++] = {
                     series: this,
-                    datum: seriesDatum,
+                    datum,
                     point: { x, y, moveTo, size },
                     label: labelText
                         ? {
