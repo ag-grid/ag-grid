@@ -75,6 +75,30 @@ describe('Rect', () => {
                 stroke: 'yellow',
                 ...mixin,
             })),
+            (() => {
+                const results: Array<Partial<Rect>> = [];
+                const thicknesses = [1, 0.5, 0.25, 0.125];
+                const strokeWidths = [1, 0];
+                const sizeProps: Array<Array<keyof Rect>> = [
+                    ['width', 'height'],
+                    ['height', 'width'],
+                ];
+                sizeProps.forEach(([thinProp, thickProp]) => {
+                    strokeWidths.forEach((strokeWidth) => {
+                        thicknesses.forEach((thickness) => {
+                            results.push({
+                                [thinProp]: thickness,
+                                [thickProp]: 40,
+                                strokeWidth,
+                                stroke: 'black',
+                                fill: 'red',
+                                crisp: true,
+                            });
+                        });
+                    });
+                });
+                return results;
+            })(),
         ];
 
         it('should render as expected', () => {

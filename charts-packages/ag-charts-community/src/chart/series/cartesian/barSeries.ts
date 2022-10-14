@@ -764,8 +764,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         const [visibleMin, visibleMax] = this.xAxis?.visibleRange ?? [];
         const isZoomed = visibleMin !== 0 || visibleMax !== 1;
-        const crisp = !isZoomed && !datumSelection.data.some((d) => (flipXY ? d.height <= 0.5 : d.width <= 0.5));
-
+        const crisp = !isZoomed;
         datumSelection.each((rect, datum) => {
             const { colorIndex } = datum;
             const fill =
