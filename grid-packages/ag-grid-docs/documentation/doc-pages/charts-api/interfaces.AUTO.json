@@ -3193,6 +3193,10 @@
     "meta": { "isTypeAlias": true },
     "type": "CartesianTooltipRendererParams"
   },
+  "PointDatum": {
+    "meta": {},
+    "type": { "xDatum": "any", "yDatum": "any", "datum": "any" }
+  },
   "LineContext": {
     "meta": { "isTypeAlias": true },
     "type": "SeriesNodeDataContext<LineNodeDatum>"
