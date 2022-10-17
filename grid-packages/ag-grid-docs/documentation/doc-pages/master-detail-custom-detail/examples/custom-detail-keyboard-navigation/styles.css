@@ -1,0 +1,25 @@
+p { font-size: 1em; margin-bottom: 1em; margin-top: 0; }
+
+.container {
+    max-width: 960px;
+    height: 100%;
+    margin: 10% auto;
+    padding: 2.5em;
+}
+
+form > div {
+    display: flex;
+    background-color: #EDF6FF;
+}
+
+form > div > p {
+    min-width: 33.33%;
+}
+
+form p { color: #0b0b18; }
+
+label {
+    display: block;
+    margin: 0.75em 25%;
+    font-weight: bold;
+}
