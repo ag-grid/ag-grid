@@ -1,7 +1,6 @@
-import { ContinuousScale } from '../../scale/continuousScale';
+import { ContinuousScale, filter } from '../../scale/continuousScale';
 import { LinearScale } from '../../scale/linearScale';
 import { LogScale } from '../../scale/logScale';
-import { filter } from '../../scale/continuousScale';
 import { extent } from '../../util/array';
 import { isContinuous } from '../../util/value';
 import { ChartAxis } from '../chartAxis';

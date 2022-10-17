@@ -34,7 +34,7 @@ const colors = {
  */
 function getTimeMessage(text) {
     const time = new Date().toISOString().substring(11, 19);
-    return `${colors.gray(`${time}`)} ${text}`;
+    return `${colors.gray(time)} ${text}`;
 }
 
 /** @typedef {(text: string) => void} Logger */

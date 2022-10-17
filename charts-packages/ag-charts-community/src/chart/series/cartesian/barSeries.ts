@@ -595,9 +595,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const barWidth =
             groupScale.bandwidth >= 1
                 ? // Pixel-rounded value for low-volume bar charts.
-                  groupScale.bandwidth
+                groupScale.bandwidth
                 : // Handle high-volume bar charts gracefully.
-                  groupScale.rawBandwidth;
+                groupScale.rawBandwidth;
         const contexts: SeriesNodeDataContext<BarNodeDatum>[][] = [];
 
         xData.forEach((group, groupIndex) => {
@@ -693,17 +693,17 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         label:
                             seriesItemEnabled.get(yKey) && labelText
                                 ? {
-                                      text: labelText,
-                                      fontStyle: labelFontStyle,
-                                      fontWeight: labelFontWeight,
-                                      fontSize: labelFontSize,
-                                      fontFamily: labelFontFamily,
-                                      textAlign: labelTextAlign,
-                                      textBaseline: labelTextBaseline,
-                                      fill: labelColor,
-                                      x: labelX,
-                                      y: labelY,
-                                  }
+                                    text: labelText,
+                                    fontStyle: labelFontStyle,
+                                    fontWeight: labelFontWeight,
+                                    fontSize: labelFontSize,
+                                    fontFamily: labelFontFamily,
+                                    textAlign: labelTextAlign,
+                                    textBaseline: labelTextBaseline,
+                                    fill: labelColor,
+                                    x: labelX,
+                                    y: labelY,
+                                }
                                 : undefined,
                     };
                     contexts[stackIndex][levelIndex].nodeData.push(nodeData);
@@ -964,10 +964,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             // vertical stack display order. Bar stacks are already consistent left-to-right with
             // the legend.
             const startLevel = flipXY ? 0 : stack.length - 1;
-            const endLevel = flipXY ? stack.length : -1;
             const direction = flipXY ? 1 : -1;
 
-            for (let levelIndex = startLevel; levelIndex !== endLevel; levelIndex += direction) {
+            for (let levelIndex = startLevel, step = 0; step < stack.length; levelIndex += direction, step++) {
                 const yKey = stack[levelIndex];
                 if (hideInLegend.indexOf(yKey) >= 0) {
                     return;

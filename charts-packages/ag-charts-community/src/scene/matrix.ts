@@ -318,10 +318,12 @@ export class Matrix {
         rotation: number,
         translationX: number,
         translationY: number,
-        scalingCenterX?: number | null,
-        scalingCenterY?: number | null,
-        rotationCenterX?: number | null,
-        rotationCenterY?: number | null
+        opts?: {
+            scalingCenterX?: number | null,
+            scalingCenterY?: number | null,
+            rotationCenterX?: number | null,
+            rotationCenterY?: number | null
+        },
     ) {
         // Assume that centers of scaling and rotation are at the origin.
         const [bbcx, bbcy] = [0, 0];
@@ -335,8 +337,8 @@ export class Matrix {
             scx = 0;
             scy = 0;
         } else {
-            scx = scalingCenterX == null ? bbcx : scalingCenterX;
-            scy = scalingCenterY == null ? bbcy : scalingCenterY;
+            scx = opts?.scalingCenterX == null ? bbcx : opts?.scalingCenterX;
+            scy = opts?.scalingCenterY == null ? bbcy : opts?.scalingCenterY;
         }
 
         const r = rotation;
@@ -349,8 +351,8 @@ export class Matrix {
             rcx = 0;
             rcy = 0;
         } else {
-            rcx = rotationCenterX == null ? bbcx : rotationCenterX;
-            rcy = rotationCenterY == null ? bbcy : rotationCenterY;
+            rcx = opts?.rotationCenterX == null ? bbcx : opts?.rotationCenterX;
+            rcy = opts?.rotationCenterY == null ? bbcy : opts?.rotationCenterY;
         }
 
         const tx = translationX;
