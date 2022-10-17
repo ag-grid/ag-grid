@@ -595,9 +595,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const barWidth =
             groupScale.bandwidth >= 1
                 ? // Pixel-rounded value for low-volume bar charts.
-                groupScale.bandwidth
+                  groupScale.bandwidth
                 : // Handle high-volume bar charts gracefully.
-                groupScale.rawBandwidth;
+                  groupScale.rawBandwidth;
         const contexts: SeriesNodeDataContext<BarNodeDatum>[][] = [];
 
         xData.forEach((group, groupIndex) => {
@@ -693,17 +693,17 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         label:
                             seriesItemEnabled.get(yKey) && labelText
                                 ? {
-                                    text: labelText,
-                                    fontStyle: labelFontStyle,
-                                    fontWeight: labelFontWeight,
-                                    fontSize: labelFontSize,
-                                    fontFamily: labelFontFamily,
-                                    textAlign: labelTextAlign,
-                                    textBaseline: labelTextBaseline,
-                                    fill: labelColor,
-                                    x: labelX,
-                                    y: labelY,
-                                }
+                                      text: labelText,
+                                      fontStyle: labelFontStyle,
+                                      fontWeight: labelFontWeight,
+                                      fontSize: labelFontSize,
+                                      fontFamily: labelFontFamily,
+                                      textAlign: labelTextAlign,
+                                      textBaseline: labelTextBaseline,
+                                      fill: labelColor,
+                                      x: labelX,
+                                      y: labelY,
+                                  }
                                 : undefined,
                     };
                     contexts[stackIndex][levelIndex].nodeData.push(nodeData);

@@ -319,11 +319,11 @@ export class Matrix {
         translationX: number,
         translationY: number,
         opts?: {
-            scalingCenterX?: number | null,
-            scalingCenterY?: number | null,
-            rotationCenterX?: number | null,
-            rotationCenterY?: number | null
-        },
+            scalingCenterX?: number | null;
+            scalingCenterY?: number | null;
+            rotationCenterX?: number | null;
+            rotationCenterY?: number | null;
+        }
     ) {
         // Assume that centers of scaling and rotation are at the origin.
         const [bbcx, bbcy] = [0, 0];
