@@ -89,6 +89,7 @@
     --ag-foreground-color: #fff;
     --ag-border-color: #68686e;
     --ag-secondary-border-color: #{color.change(#585652, $alpha: 0.5)};
+    --ag-modal-overlay-background-color: rgba(24, 29, 31, 0.66);
     --ag-header-background-color: #222628;
     --ag-odd-row-background-color: #222628;
     --ag-control-panel-background-color: #222628;
