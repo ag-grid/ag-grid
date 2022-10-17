@@ -1,4 +1,4 @@
-import { Validate, BOOLEAN, STRING, NUMBER } from '../../util/validation';
+import { Validate, BOOLEAN, NUMBER, OPT_STRING } from '../../util/validation';
 
 export const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
 
@@ -147,8 +147,9 @@ export class Tooltip {
     @Validate(BOOLEAN)
     enabled: boolean = true;
 
-    @Validate(STRING)
-    class: string = DEFAULT_TOOLTIP_CLASS;
+    @Validate(OPT_STRING)
+    class?: string = undefined;
+    lastClass?: string = undefined;
 
     @Validate(NUMBER(0))
     delay: number = 0;
@@ -211,7 +212,7 @@ export class Tooltip {
     }
 
     updateClass(visible?: boolean, constrained?: boolean) {
-        const { element } = this;
+        const { element, class: newClass, lastClass } = this;
 
         if (visible === true) {
             element.classList.remove(`${DEFAULT_TOOLTIP_CLASS}-hidden`);
@@ -222,6 +223,16 @@ export class Tooltip {
             element.classList.remove(`${DEFAULT_TOOLTIP_CLASS}-arrow`);
         } else {
             element.classList.add(`${DEFAULT_TOOLTIP_CLASS}-arrow`);
+        }
+
+        if (newClass !== lastClass) {
+            if (lastClass) {
+                element.classList.remove(lastClass);
+            }
+            if (newClass) {
+                element.classList.add(newClass);
+            }
+            this.lastClass = newClass;
         }
     }
 
