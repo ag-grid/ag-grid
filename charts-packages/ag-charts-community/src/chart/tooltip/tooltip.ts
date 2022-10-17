@@ -20,8 +20,12 @@ const defaultTooltipCss = `
     box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
 }
 
+.ag-chart-tooltip-no-animation {
+    transition: none !important;
+}
+
 .ag-chart-tooltip-hidden {
-    display: none;
+    visibility: hidden;
 }
 
 .ag-chart-tooltip-title {
@@ -214,16 +218,20 @@ export class Tooltip {
     updateClass(visible?: boolean, constrained?: boolean) {
         const { element, class: newClass, lastClass } = this;
 
-        if (visible === true) {
-            element.classList.remove(`${DEFAULT_TOOLTIP_CLASS}-hidden`);
-        } else {
-            element.classList.add(`${DEFAULT_TOOLTIP_CLASS}-hidden`);
-        }
-        if (constrained === true) {
-            element.classList.remove(`${DEFAULT_TOOLTIP_CLASS}-arrow`);
-        } else {
-            element.classList.add(`${DEFAULT_TOOLTIP_CLASS}-arrow`);
-        }
+        const wasVisible = !element.classList.contains(`${DEFAULT_TOOLTIP_CLASS}-hidden`);
+
+        const toggleClass = (name: string, include: boolean) => {
+            const className = `${DEFAULT_TOOLTIP_CLASS}-${name}`;
+            if (include) {
+                element.classList.add(className);
+            } else {
+                element.classList.remove(className);
+            }
+        };
+
+        toggleClass('no-animation', !wasVisible && !!visible); // No animation on first show.
+        toggleClass('hidden', !visible); // Hide if not visible.
+        toggleClass('arrow', !constrained); // Add arrow if tooltip is constrained.
 
         if (newClass !== lastClass) {
             if (lastClass) {
@@ -256,23 +264,20 @@ export class Tooltip {
 
         this.constrained = false;
         if (this.container()) {
-            const tooltipRect = el.getBoundingClientRect();
+            const tooltipWidth = el.getBoundingClientRect().width;
             const minLeft = 0;
-            const maxLeft = window.innerWidth - tooltipRect.width - 1;
+            const maxLeft = window.innerWidth - tooltipWidth - 1;
             if (left < minLeft) {
                 left = minLeft;
                 this.constrained = true;
-                this.updateClass(true, this.constrained);
             } else if (left > maxLeft) {
                 left = maxLeft;
                 this.constrained = true;
-                this.updateClass(true, this.constrained);
             }
 
             if (top < window.scrollY) {
                 top = meta.pageY + 20;
                 this.constrained = true;
-                this.updateClass(true, this.constrained);
             }
         }
 
