@@ -557,7 +557,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     // The iteration count `i` is used to reduce the default tick count until all labels fit without overlapping
                     // `i` cannot exceed `defaultTickCount` as it would lead to negative tick count values.
                     // Break out of the while loops when then iteration count reaches `defaultTickCount`
-                    labelOverlap = true;
                     break;
                 }
 
@@ -593,6 +592,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
                 unchanged = ticks.every((t, i) => t === prevTicks[i]);
                 i++;
+            }
+
+            if (unchanged) {
+                break;
             }
 
             // When the scale domain or the ticks change, the label format may change
