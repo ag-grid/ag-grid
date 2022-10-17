@@ -378,6 +378,18 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._visibleRange.slice();
     }
 
+    private _visibleLabels: string[] = [];
+
+    getVisibleLabels(): string[] {
+        return this._visibleLabels;
+    }
+
+    private _labelsRotation: number = 0;
+
+    getLabelsRotation(): number {
+        return this._labelsRotation;
+    }
+
     protected labelFormatter?: (datum: any) => string;
     protected onLabelFormatChange(ticks: any[], format?: string) {
         const { scale } = this;
@@ -897,6 +909,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
             Matrix.updateTransformMatrix(labelRotationMatrix, 1, 1, combinedRotation, 0, 0);
         }
 
+        this._labelsRotation = (combinedRotation / Math.PI) * 180;
+        this._visibleLabels = [];
+
         labelSelection.each((label, datum) => {
             if (label.text === '' || label.text == undefined) {
                 label.visible = false; // hide empty labels
@@ -940,6 +955,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     text: label.text,
                 },
             });
+
+            if (label.visible) {
+                this._visibleLabels.push(label.text);
+            }
         });
 
         return { labelData, rotated: !!(labelRotation || labelAutoRotation) };

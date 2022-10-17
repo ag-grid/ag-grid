@@ -101,9 +101,20 @@ export class Navigator {
                     clipSeries = true;
                 }
                 axis.visibleRange = [min, max];
-                const oldLabelAutoRotated = axis.labelAutoRotated;
+
+                const oldLabels = axis.getVisibleLabels();
+                const oldRotation = axis.getLabelsRotation();
+
                 axis.update();
-                if (axis.labelAutoRotated !== oldLabelAutoRotated) {
+                const labels = axis.getVisibleLabels();
+                const rotation = axis.getLabelsRotation();
+
+                const didLabelsChange =
+                    rotation !== oldRotation ||
+                    labels.length !== oldLabels.length ||
+                    !labels.every((l, i) => l === oldLabels[i]);
+
+                if (didLabelsChange) {
                     layoutRequired = true;
                 }
             }
