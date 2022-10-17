@@ -237,7 +237,8 @@ export class CrossLine {
         const validRange =
             !isNaN(clampedYStart) &&
             !isNaN(clampedYEnd) &&
-            (yStart === clampedYStart || yEnd === clampedYEnd || clampedYStart !== clampedYEnd);
+            (yStart === clampedYStart || yEnd === clampedYEnd || clampedYStart !== clampedYEnd) &&
+            (Math.abs(clampedYEnd - clampedYStart) > 0);
 
         if (validRange) {
             const reverse = clampedYStart !== Math.min(clampedYStart, clampedYEnd);
@@ -402,6 +403,11 @@ export class CrossLine {
     }
 
     calculatePadding(padding: Partial<Record<ChartAxisPosition, number>>, seriesRect: BBox) {
+        const { isRange, startLine, endLine } = this;
+        if (!isRange && !startLine && !endLine) {
+            return;
+        }
+
         const crossLineLabelBBox = this.computeLabelBBox();
 
         const labelX = crossLineLabelBBox?.x;
