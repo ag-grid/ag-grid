@@ -9,6 +9,7 @@ export class TimeAxis extends ChartAxis<TimeScale> {
     static className = 'TimeAxis';
     static type = 'time' as const;
 
+    private datumFormat = '%m/%d/%y, %H:%M:%S';
     private datumFormatter: (date: Date) => string;
 
     constructor() {
@@ -18,6 +19,10 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         scale.clamp = true;
         scale.clamper = filter;
         this.scale = scale;
+
+        this.datumFormatter = scale.tickFormat({
+            specifier: this.datumFormat,
+        });
     }
 
     @Validate(AND(OPT_DATE_OR_DATETIME_MS, LESS_THAN('max')))
