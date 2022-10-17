@@ -834,7 +834,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const step = availableRange / labelCount;
 
-        const calculateLabelsLength = (bboxes: Map<number, BBox | null>, useWidth: boolean) => {
+        const rotateLabels = (bboxes: Map<number, BBox | null>, parallelLabels: boolean) => {
             let rotate = false;
             const lastIdx = bboxes.size - 1;
             const padding = 12;
@@ -844,7 +844,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 }
 
                 const divideBy = (i === 0 && halfFirstLabelLength) || (i === lastIdx && halfLastLabelLength) ? 2 : 1;
-                const length = useWidth ? bbox.width / divideBy : bbox.height / divideBy;
+                // When the labels are parallel to the axis line, use the width of the text to calculate the total length of all labels
+                const length = parallelLabels ? bbox.width / divideBy : bbox.height / divideBy;
                 const lengthWithPadding = length <= 0 ? 0 : length + padding;
 
                 if (lengthWithPadding > step) {
@@ -854,9 +855,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             return rotate;
         };
 
-        let useWidth = parallelLabels; // When the labels are parallel to the axis line, use the width of the text to calculate the total length of all labels
-
-        let rotate = calculateLabelsLength(labelBboxes, useWidth);
+        const rotate = rotateLabels(labelBboxes, parallelLabels);
 
         this._labelAutoRotated = false;
         if (label.rotation === undefined && label.autoRotate === true && rotate) {
@@ -864,21 +863,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
             // automatically rotate the labels
             labelAutoRotation = normalizeAngle360(toRadians(label.autoRotateAngle));
             this._labelAutoRotated = true;
-        }
-
-        if (labelRotation || labelAutoRotation) {
-            // If the label rotation angle results in a non-parallel orientation, use the height of the texts to calculate the total length of all labels
-            if (parallelLabels) {
-                useWidth = labelRotation === Math.PI || labelAutoRotation === Math.PI ? true : false;
-            } else {
-                useWidth =
-                    labelRotation === Math.PI / 2 ||
-                    labelRotation === Math.PI + Math.PI / 2 ||
-                    labelAutoRotation === Math.PI / 2 ||
-                    labelAutoRotation === Math.PI + Math.PI / 2
-                        ? true
-                        : false;
-            }
         }
 
         const autoRotation = parallelLabels ? (parallelFlipFlag * Math.PI) / 2 : regularFlipFlag === -1 ? Math.PI : 0;
