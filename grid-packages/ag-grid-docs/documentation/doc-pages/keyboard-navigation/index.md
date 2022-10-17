@@ -125,6 +125,10 @@ Note the following:
 
 <grid-example title='Custom Keyboard Navigation' name='custom-keyboard-navigation' type='mixed'></grid-example>
 
+## Custom Master Detail Navigation
+
+[Master Detail Grids](/master-detail/) grids can contain [Custom Details](/master-detail-custom-detail/) that have their own renderer and hence will need to implement its own keyboard navigation. An example of this can be seen in the [Custom Details Keyboard Navigation Example](/master-detail-custom-detail/#keyboard-navigation).
+
 ## Tabbing into the Grid
 
 In applications where the grid is embedded into a larger page, by default, when tabbing into the grid, the first column header will be focused.

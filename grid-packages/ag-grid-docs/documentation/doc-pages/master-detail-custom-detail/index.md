@@ -80,3 +80,17 @@ In this simple example, it would be possible for the components to just update t
 
 <grid-example title='Custom Detail with Refresh' name='custom-detail-with-refresh' type='generated' options='{ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
+## Keyboard navigation
+
+To add keyboard navigation to custom detail panels, it must be implemented in the custom Detail Cell Renderer. There are several parts to this:
+
+1. Create a listener function for the `focus` event when the custom detail panel receives focus. Within this function, the event object `target` value is the custom detail row element, and event object `relatedTarget` value is the previous element that was previously focused on. You will need to find the parent of the `relatedTarget` with `role=row` attribute to get the previous row element. With the current row element and the previous row element, checking the `row-index` attribute allows you to see if the user is entering the focus from the previous or current row (ie, `row-index` increases or is the same from previous to current) or the next row (ie, `row-index` decreases from previous to current). With this knowledge, you can set focus using `element.focus()` on the relevant element in your custom detail panel
+2. Attach the above function to a `focus` listener on the `eParentOfValue` param value in the component initialisation
+3. Remove the above function from the `focus` listener in the component destroy or unmount method
+
+The following example shows an implementation of keyboard navigation in a custom detail panel where you can click on a cell on the `Mila Smith` row and <kbd>Tab</kbd> into the custom detail panel inputs of `Mila Smith`. You can also go backwards with <kbd>Shift</kbd>+<kbd>Tab</kbd> from the `Evelyn Taylor` row.
+
+[[note]]
+| This example is illustrative of the main concepts, but the actual implementation of custom keyboard navigation will vary based on the specific custom detail panel.
+
+<grid-example title='Custom Detail Cell Renderer Keyboard Navigation' name='custom-detail-keyboard-navigation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
