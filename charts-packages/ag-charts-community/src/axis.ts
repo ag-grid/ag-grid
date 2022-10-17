@@ -378,6 +378,24 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._visibleRange.slice();
     }
 
+    getVisibleLabels(): string[] {
+        const labels: string[] = [];
+        this.tickGroupSelection.selectByClass(Text).each((node) => {
+            if (node.visible) {
+                labels.push(node.text);
+            }
+        });
+        return labels;
+    }
+
+    getLabelsRotation(): number {
+        const label = this.tickGroupSelection.selectByClass(Text).node();
+        if (!label) {
+            return 0;
+        }
+        return (label.rotation / Math.PI) * 180;
+    }
+
     protected labelFormatter?: (datum: any) => string;
     protected onLabelFormatChange(ticks: any[], format?: string) {
         const { scale } = this;
