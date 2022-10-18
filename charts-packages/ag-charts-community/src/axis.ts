@@ -290,11 +290,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
     readonly translation = { x: 0, y: 0 };
     rotation: number = 0; // axis rotation angle in degrees
 
-    private _labelAutoRotated: boolean = false;
-    get labelAutoRotated(): boolean {
-        return this._labelAutoRotated;
-    }
-
     private attachCrossLine(crossLine: CrossLine) {
         this.crossLineGroup.appendChild(crossLine.group);
     }
@@ -376,18 +371,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
     get visibleRange(): number[] {
         return this._visibleRange.slice();
-    }
-
-    private _visibleLabels: string[] = [];
-
-    getVisibleLabels(): string[] {
-        return this._visibleLabels;
-    }
-
-    private _labelsRotation: number = 0;
-
-    getLabelsRotation(): number {
-        return this._labelsRotation;
     }
 
     protected labelFormatter?: (datum: any) => string;
@@ -873,12 +856,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const rotate = rotateLabels(labelBboxes, parallelLabels);
 
-        this._labelAutoRotated = false;
         if (label.rotation === undefined && label.autoRotate === true && rotate) {
             // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`rotate` is `true`),
             // automatically rotate the labels
             labelAutoRotation = normalizeAngle360(toRadians(label.autoRotateAngle));
-            this._labelAutoRotated = true;
         }
 
         const autoRotation = parallelLabels ? (parallelFlipFlag * Math.PI) / 2 : regularFlipFlag === -1 ? Math.PI : 0;
@@ -908,9 +889,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
         if (combinedRotation) {
             Matrix.updateTransformMatrix(labelRotationMatrix, 1, 1, combinedRotation, 0, 0);
         }
-
-        this._labelsRotation = (combinedRotation / Math.PI) * 180;
-        this._visibleLabels = [];
 
         labelSelection.each((label, datum) => {
             if (label.text === '' || label.text == undefined) {
@@ -955,10 +933,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     text: label.text,
                 },
             });
-
-            if (label.visible) {
-                this._visibleLabels.push(label.text);
-            }
         });
 
         return { labelData, rotated: !!(labelRotation || labelAutoRotation) };

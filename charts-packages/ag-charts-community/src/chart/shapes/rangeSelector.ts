@@ -36,9 +36,9 @@ export class RangeSelector extends Group {
 
         this.append([mask, minHandle, maxHandle]);
 
-        mask.onRangeChange = (min, max) => {
+        mask.onRangeChange = () => {
             this.updateHandles();
-            this.onRangeChange && this.onRangeChange(min, max);
+            this.onRangeChange?.();
         };
 
         return mask;
@@ -102,7 +102,7 @@ export class RangeSelector extends Group {
         this.isContainerNode = true;
     }
 
-    onRangeChange?: (min: number, max: number) => any;
+    onRangeChange?: () => any;
 
     private updateHandles() {
         const { minHandle, maxHandle, x, y, width, height, mask } = this;

@@ -79,7 +79,7 @@ export class RangeMask extends Path {
         if (this._min !== value) {
             this._min = value;
             this.dirtyPath = true;
-            this.onRangeChange && this.onRangeChange(value, this.max);
+            this.onRangeChange?.();
         }
     }
     get min(): number {
@@ -96,14 +96,14 @@ export class RangeMask extends Path {
         if (this._max !== value) {
             this._max = value;
             this.dirtyPath = true;
-            this.onRangeChange && this.onRangeChange(this.min, value);
+            this.onRangeChange?.();
         }
     }
     get max(): number {
         return this._max;
     }
 
-    onRangeChange?: (min: number, max: number) => any;
+    onRangeChange?: () => any;
 
     computeBBox(): BBox {
         const { x, y, width, height } = this;

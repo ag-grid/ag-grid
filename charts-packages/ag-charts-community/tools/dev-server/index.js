@@ -58,7 +58,7 @@ async function run() {
         console.error('Node.js version 16+ required.');
         return;
     }
-    
+
     const devServer = createDevServer(PORT);
     const livereloadServer = createLivereloadServer(devServer.httpServer);
 

@@ -238,7 +238,7 @@ export class CrossLine {
             !isNaN(clampedYStart) &&
             !isNaN(clampedYEnd) &&
             (yStart === clampedYStart || yEnd === clampedYEnd || clampedYStart !== clampedYEnd) &&
-            (Math.abs(clampedYEnd - clampedYStart) > 0);
+            Math.abs(clampedYEnd - clampedYStart) > 0;
 
         if (validRange) {
             const reverse = clampedYStart !== Math.min(clampedYStart, clampedYEnd);
