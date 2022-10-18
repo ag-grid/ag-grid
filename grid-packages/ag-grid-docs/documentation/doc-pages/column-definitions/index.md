@@ -46,54 +46,6 @@ const gridOptions = {
 
 Groups are explained in more detail in the section [Column Groups](/column-groups/).
 
-[[only-vue]]
-| ## Declarative Columns
-|
-| You can also define your grid column definition decoratively if you would prefer.
-|
-| You declare the grid as normal:
-|
-| ```jsx
-| <ag-grid-vue
-|         class="ag-theme-alpine"
-|         style="width: 700px; height: 400px;"
-|         :rowData="rowData"
-|         //...rest of definition
-| ```
-|
-| And within this component you can then define your column definitions:
-|
-| ```jsx
-| <ag-grid-vue
-|     //...rest of definition
-| >
-|     <ag-grid-column headerName="IT Skills">
-|         <ag-grid-column
-|             field="skills"
-|             :width="120"
-|             suppressSorting
-|             cellRenderer="SkillsCellRenderer"
-|             :menuTabs="['filterMenuTab']">
-|         </ag-grid-column>
-|         <ag-grid-column
-|             field="proficiency"
-|             :width="135"
-|             cellRenderer="ProficiencyCellRenderer"
-|             :menuTabs="['filterMenuTab']">
-|         </ag-grid-column>
-|     </ag-grid-column>
-| </ag-grid-vue>
-| ```
-|
-| In this example we're defining a grouped column with `IT Skills` having two
-| child columns `Skills and Proficiency`.
-|
-| Not that anything other than a string value will need to be bound (i.e. `:width="120"`) as
-| Vue will default to providing values as Strings.
-|
-| A full working example of defining a grid declaratively can be found in the
-| [Vue Playground Repo](https://github.com/seanlandsman/ag-grid-vue-playground).
-
 ## Accessing Row Data Values
 
 The `colDef.field` property is used to access values from the row data object. In most cases the `field` will be a property name from the row data object.
