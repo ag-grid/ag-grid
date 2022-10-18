@@ -12428,6 +12428,30 @@
     "meta": { "isTypeAlias": true },
     "type": "keyof GridOptions"
   },
+  "GetKeys": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T", "U"] },
+    "type": "{ [K in keyof T]: U extends T[K] ? K : (T[K] extends U | undefined ? K : never); }[keyof T]"
+  },
+  "AnyGridOptions": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ [K in keyof GridOptions]: GridOptions[K] extends 'NO_MATCH' ? K : never; }[keyof GridOptions]"
+  },
+  "KeysLike": {
+    "meta": { "isTypeAlias": true, "typeParams": ["U"] },
+    "type": "Exclude<GetKeys<GridOptions, U>, undefined>"
+  },
+  "KeysOfType": {
+    "meta": { "isTypeAlias": true, "typeParams": ["U"] },
+    "type": "Exclude<GetKeys<GridOptions, U>, AnyGridOptions>"
+  },
+  "CallbackKeys": {
+    "meta": { "isTypeAlias": true },
+    "type": "KeysOfType<(any: AgGridCommon<any>) => any>"
+  },
+  "FunctionKeys": {
+    "meta": { "isTypeAlias": true },
+    "type": "Exclude<KeysLike<Function>, CallbackKeys>"
+  },
   "ICellComp": {
     "meta": {},
     "type": {

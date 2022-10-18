@@ -21710,6 +21710,12 @@
   },
   "ModuleNames": {},
   "GridOptionKey": {},
+  "GetKeys": { "meta": { "typeParams": ["T", "U"] } },
+  "AnyGridOptions": {},
+  "KeysLike": { "meta": { "typeParams": ["U"] } },
+  "KeysOfType": { "meta": { "typeParams": ["U"] } },
+  "CallbackKeys": {},
+  "FunctionKeys": {},
   "ICellComp": {
     "addOrRemoveCssClass": {
       "type": {
