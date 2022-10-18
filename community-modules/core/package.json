@@ -12,10 +12,11 @@
     "build": "rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npm run precheck && npx gulp && npx tsc -p tsconfig.typings.json && npm run hash",
     "build-prod": "npm run precheck && npx gulp prod && npx tsc -p tsconfig.typings.json --sourceMap false && npm run hash",
     "build-css": "npx gulp scss-no-clean",
-    "test": "npx jest",
+    "test": "npx jest && npm run check-grid-options",
     "package": "node ../../module-build/rollup/build.js",
     "clean": "npx rimraf dist typings .hash",
     "check-scss-vars": "npx ts-node scripts/check-scss-vars.ts",
+    "check-grid-options": "npx ts-node scripts/check-gridOptions-propertyKeys.ts",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
