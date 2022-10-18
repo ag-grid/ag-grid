@@ -211,6 +211,7 @@ export class CrossLine {
             direction,
             label: { position = 'top' },
             clippedRange,
+            strokeWidth = 0,
         } = this;
 
         if (!scale) {
@@ -253,8 +254,8 @@ export class CrossLine {
         }
 
         this.isRange = validRange;
-        this.startLine = !isNaN(yStart) && yStart === clampedYStart;
-        this.endLine = !isNaN(yEnd) && yEnd === clampedYEnd;
+        this.startLine = !isNaN(yStart) && strokeWidth > 0 && yStart === clampedYStart;
+        this.endLine = !isNaN(yEnd) && strokeWidth > 0 && yEnd === clampedYEnd;
 
         if (!validRange && !this.startLine && !this.endLine) {
             return false;

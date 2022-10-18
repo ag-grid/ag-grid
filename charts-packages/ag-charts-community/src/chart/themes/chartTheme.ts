@@ -100,6 +100,7 @@ export class ChartTheme {
                 enabled: false,
                 fill: 'rgb(187,221,232)',
                 stroke: 'rgb(70,162,192)',
+                strokeWidth: 1,
                 label: {
                     enabled: false,
                     fontStyle: undefined,
