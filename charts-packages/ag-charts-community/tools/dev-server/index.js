@@ -54,6 +54,11 @@ function idToName(/** @type {string} */ id) {
 }
 
 async function run() {
+    if (Number(process.versions.node.split('.')[0]) < 16) {
+        console.error('Node.js version 16+ required.');
+        return;
+    }
+    
     const devServer = createDevServer(PORT);
     const livereloadServer = createLivereloadServer(devServer.httpServer);
 
