@@ -596,6 +596,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.
      * Default: `1000`     */
     @Input() public cellFadeDelay: number | undefined = undefined;
+    /** Set to `true` to have cells flash after data changes even when the change is due to filtering. Default: `false`     */
+    @Input() public allowShowChangeAfterFilter: boolean | undefined = undefined;
     /** Switch between layout options: `normal`, `autoHeight`, `print`.
      * Default: `normal`     */
     @Input() public domLayout: 'normal' | 'autoHeight' | 'print' | undefined = undefined;
@@ -1286,5 +1288,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_groupRowsSticky: boolean | null | '';
     static ngAcceptInputType_serverSideInfiniteScroll: boolean | null | '';
     static ngAcceptInputType_rowGroupPanelSuppressSort: boolean | null | '';
+    static ngAcceptInputType_allowShowChangeAfterFilter: boolean | null | '';
     // @END@
 }
