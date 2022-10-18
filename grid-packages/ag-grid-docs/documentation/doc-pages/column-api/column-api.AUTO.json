@@ -191,9 +191,12 @@
     }
   },
   "setColumnAggFunc": {
-    "description": "/** Sets the agg function for a column. `aggFunc` can be one of `'min' | 'max' | 'sum'`. */",
+    "description": "/** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */",
     "type": {
-      "arguments": { "key": "string | Column", "aggFunc": "string" },
+      "arguments": {
+        "key": "string | Column",
+        "aggFunc": "string | IAggFunc | null | undefined"
+      },
       "returnType": "void"
     }
   },
@@ -249,39 +252,39 @@
     }
   },
   "setValueColumns": {
-    "description": "/** Set the value columns. */",
+    "description": "/** Set the value columns to the provided list of columns. */",
     "type": {
       "arguments": { "colKeys": "(string | Column)[]" },
       "returnType": "void"
     }
   },
   "getValueColumns": {
-    "description": "/** Get value columns. */",
+    "description": "/** Get a list of the existing value columns. */",
     "type": { "arguments": {}, "returnType": "Column[]" }
   },
   "removeValueColumn": {
-    "description": "/** Remove a value column. */",
+    "description": "/** Remove the given column from the existing set of value columns. */",
     "type": {
       "arguments": { "colKey": "(string | Column)" },
       "returnType": "void"
     }
   },
   "removeValueColumns": {
-    "description": "/** Same as `removeValueColumns` but provide a list. */",
+    "description": "/** Like `removeValueColumn` but remove the given list of columns from the existing set of value columns. */",
     "type": {
       "arguments": { "colKeys": "(string | Column)[]" },
       "returnType": "void"
     }
   },
   "addValueColumn": {
-    "description": "/** Add a value column. */",
+    "description": "/** Add the given column to the set of existing value columns. */",
     "type": {
       "arguments": { "colKey": "(string | Column)" },
       "returnType": "void"
     }
   },
   "addValueColumns": {
-    "description": "/** Same as `addValueColumn` but provide a list. */",
+    "description": "/** Like `addValueColumn` but add the given list of columns to the existing set of value columns. */",
     "type": {
       "arguments": { "colKeys": "(string | Column)[]" },
       "returnType": "void"

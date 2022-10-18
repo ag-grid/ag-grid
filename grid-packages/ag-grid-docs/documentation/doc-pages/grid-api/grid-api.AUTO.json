@@ -290,8 +290,13 @@
     "type": { "arguments": { "step?": "string" }, "returnType": "any" }
   },
   "refreshClientSideRowModel": {
-    "description": "/** Gets the Client-Side Row Model to refresh, executing the grouping, filtering and sorting again. */",
-    "type": { "arguments": { "step?": "string" }, "returnType": "any" }
+    "description": "/** Refresh the Client-Side Row Model, executing the grouping, filtering and sorting again.\n * Optionally provide the step you wish the refresh to apply from. Defaults to `everything`. */",
+    "type": {
+      "arguments": {
+        "step?": "'everything' | 'group' | 'filter' | 'pivot' | 'aggregate' | 'sort' | 'map'"
+      },
+      "returnType": "any"
+    }
   },
   "isAnimationFrameQueueEmpty": {
     "description": "/** Returns `true` when there are no more animation frames left to process. */",

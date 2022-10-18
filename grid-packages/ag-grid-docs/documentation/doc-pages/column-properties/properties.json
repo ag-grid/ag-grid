@@ -378,17 +378,7 @@
             }
         },
         "enableValue": {},
-        "aggFunc": {
-            "options": [
-                "sum",
-                "min",
-                "max",
-                "count",
-                "avg",
-                "first",
-                "last"
-            ]
-        },
+        "aggFunc": {},
         "initialAggFunc": {},
         "allowedAggFuncs": {},
         "defaultAggFunc": {}

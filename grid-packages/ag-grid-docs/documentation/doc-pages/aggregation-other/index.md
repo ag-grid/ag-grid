@@ -65,16 +65,17 @@ The following example demonstrates restricting the aggregation functions. Note t
 
 ## Aggregation API
 
-After the grid is initialised an aggregation can be applied to a column using the following:
+After the grid is initialised aggregations can be applied / retrieved / removed via the `columnApi` with the following methods:
 
-1. Add the columns to the list of value columns via `columnApi.addValueColumn(colKey)` - the 'sum' `aggFunc` is used by default.
-1. (Optional) Modify the aggregation function on the column via `columnApi.setColumnAggFunc(colKey, aggFunc)`.
+<api-documentation source='column-api/api.json' section='valueColumns' ></api-documentation>
 
 When the grid initialises, any column definitions that have `aggFunc` set will be automatically added as a value column.
 
 ## Column Headers
 
 When aggregating, the column headers will include the aggregation function for the column. For example the header `'Bank Balance'` will become `'sum(Bank Balance)'` if you have the sum aggregation active on the column. To turn this off and display simply `'Bank Balance'` then set the grid property `suppressAggFuncInHeader`.
+
+<api-documentation source='grid-options/properties.json' section='rowPivoting' names='["suppressAggFuncInHeader"]' ></api-documentation>
 
 ## Empty Aggregation Calls
 
@@ -88,3 +89,5 @@ The empty aggregation calls happen in the following two scenarios:
 ## Recomputing Aggregates
 
 If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates through the API method `refreshClientSideRowModel('aggregate')`.
+
+<api-documentation source='grid-api/api.json' section='data' names='["refreshClientSideRowModel"]' ></api-documentation>
