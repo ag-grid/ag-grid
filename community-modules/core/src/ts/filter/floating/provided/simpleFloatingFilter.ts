@@ -37,7 +37,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     // used by:
     // 1) NumberFloatingFilter & TextFloatingFilter: Always, for both when editable and read only.
     // 2) DateFloatingFilter: Only when read only (as we show text rather than a date picker when read only)
-    protected getTextFromModel(model: ProvidedFilterModel): string | null {
+    protected getTextFromModel(model: ISimpleFilterModel): string | null {
         if (!model) { return null; }
 
         const isCombined = (model as any).operator != null;
@@ -52,6 +52,12 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
                 combinedModel.operator,
                 customOption2,
             ].join(' ');
+        } else if (
+            model.filterType === 'text'
+            && (model.type === SimpleFilter.BLANK || model.type === SimpleFilter.NOT_BLANK)
+        ) {
+            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            return translate(model.type, model.type);
         } else {
             const condition = model as ISimpleFilterModel;
             const customOption = this.optionsFactory.getCustomOption(condition.type);
