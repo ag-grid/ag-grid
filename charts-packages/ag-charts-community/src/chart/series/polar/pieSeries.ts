@@ -19,7 +19,7 @@ import { Caption } from '../../../caption';
 import { Observable, TypedEvent } from '../../../util/observable';
 import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxis';
-import { TooltipRendererResult, toTooltipHtml } from '../../chart';
+import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
 import { DeprecatedAndRenamedTo } from '../../../util/deprecation';
 import {
     BOOLEAN,

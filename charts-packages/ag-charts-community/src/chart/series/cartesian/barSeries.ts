@@ -16,7 +16,7 @@ import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legend';
 import { CartesianSeries } from './cartesianSeries';
 import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from '../../chartAxis';
-import { TooltipRendererResult, toTooltipHtml } from '../../chart';
+import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
 import { findMinMax } from '../../../util/array';
 import { equal } from '../../../util/equal';
 import { TypedEvent } from '../../../util/observable';
