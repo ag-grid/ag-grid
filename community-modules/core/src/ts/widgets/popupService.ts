@@ -17,6 +17,7 @@ import { setAriaLabel, setAriaRole } from "../utils/aria";
 import { PostProcessPopupParams } from "../entities/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ResizeObserverService } from "../misc/resizeObserverService";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch | null;
@@ -88,6 +89,7 @@ export class PopupService extends BeanStub {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
     @Autowired('resizeObserverService') public resizeObserverService: ResizeObserverService;
+    @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
 
     private gridCtrl: GridCtrl;
 
@@ -307,11 +309,14 @@ export class PopupService extends BeanStub {
         
         updatePosition();
 
-        // Since rendering popup contents can be asynchronous, use a resize observer to
-        // reposition the popup after initial updates to the size of the contents
-        const resizeObserverDestroyFunc = this.resizeObserverService.observeResize(ePopup, updatePosition);
-        // Only need to reposition when first open, so can clean up after a bit of time
-        setTimeout(() => resizeObserverDestroyFunc(), PopupService.WAIT_FOR_POPUP_CONTENT_RESIZE);
+        // Mouse tracking will recalculate positioning when moving, so won't need to recalculate here
+        if (!this.gridOptionsWrapper.isTooltipMouseTrack()) {
+            // Since rendering popup contents can be asynchronous, use a resize observer to
+            // reposition the popup after initial updates to the size of the contents
+            const resizeObserverDestroyFunc = this.resizeObserverService.observeResize(ePopup, updatePosition);
+            // Only need to reposition when first open, so can clean up after a bit of time
+            setTimeout(() => resizeObserverDestroyFunc(), PopupService.WAIT_FOR_POPUP_CONTENT_RESIZE);
+        }
     }
 
     public getActivePopups(): HTMLElement[] {
