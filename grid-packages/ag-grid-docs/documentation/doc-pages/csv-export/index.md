@@ -23,11 +23,18 @@ The same data that is in the grid gets exported, but none of the GUI representat
 [[note]]
 | The CSV export will be enabled by default. If you want to disable it, you can set the property `suppressCsvExport = true` in your gridOptions.
 
+## Security Concerns
+
+When opening CSV files, spreadsheet applications like Excel, Apple Numbers, Google Sheets and others will automatically execute cell values that start with the following symbols as formulas: `+`, `-`, `=`, `@`, `Tab (0x09)` and `Carriage Return (0x0D)`. In order to prevent any malicious content from being exported we recommend using the `callback` methods shown in the [CSV Export Params](/csv-export/#csvexportparams) to modify the exported cell values so that they do NOT start with any of the characters listed above. This way the applications will not execute the cell value directly if it starts with the characters listed above. If you'd like to keep the cell values unchanged when exporting, please allow exporting to Excel only.
+
+[[note]]
+| Detailed info regarding CSV Injection can be found in the [OWASP CSV Injection](https://owasp.org/www-community/attacks/CSV_Injection) website.
+
 ## Standard Export
 
 The example below shows the default behaviour when exporting the grid's data to CSV.
 
-Note the following: 
+Note the following:
 
 - You can use the `Show CSV export content text` button, to preview the output.
 - You can use the `Download CSV export file` button to download a csv file.
@@ -36,12 +43,11 @@ Note the following:
 
 <grid-example title='CSV Export' name='csv-export' type='generated' options='{  "modules":["clientside", "csv"], "exampleHeight": 400 }'></grid-example>
 
-
 ## Changing the column separator
 
 By default, a CSV file separates its columns using `,`. But this value `token` could be changed using the `columnSeparator` param.
 
-Note the following: 
+Note the following:
 
 - You can use the select field at the top to switch the value of the `columnSeparator` param.
 - You can use the `Show CSV export content text` button, to preview the output.
@@ -53,7 +59,7 @@ Note the following:
 
 By default cell values are encoded according to CSV format rules: values are wrapped in double quotes, and any double quotes within the values are escaped, so `my"value` becomes `"my""value"`. Pass true to insert the value into the CSV file without escaping. In this case it is your responsibility to ensure that no cells contain the columnSeparator character.
 
-Note the following: 
+Note the following:
 
 - You can use the select field at the top to switch the value of the `suppressQuotes` param.
 - You can edit the cells to preview the results with different inputs.

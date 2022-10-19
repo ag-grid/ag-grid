@@ -45,7 +45,6 @@ const gridOptions = {
 }
 </snippet>
 
-
 Note the following:
 
 - The `Full Name` column uses a `valueGetter` to combine `First Name` and `Last Name`.
