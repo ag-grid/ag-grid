@@ -210,7 +210,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const params = {
             value: this.selectedValue,
             valueFormatted: valueFormatted,
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridOptionsWrapper.getApi(),
         } as ICellRendererParams;
 
         const compDetails = this.userComponentFactory.getCellRendererDetails(this.params, params);
@@ -223,7 +223,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
             });
         } else {
             if (_.exists(this.selectedValue)) {
-                eValue.innerHTML = valueFormatted;
+                eValue.innerText = valueFormatted;
             } else {
                 _.clearElement(eValue);
             }
