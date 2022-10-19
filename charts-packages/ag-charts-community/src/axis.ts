@@ -702,12 +702,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
         gridLength: number;
     }) {
         const { scale } = this;
-        const data = ticks.map((t) => ({ tick: t, translationY: Math.round(scale.convert(t) + halfBandwidth) }));
+        const data = ticks.map((t) => ({ tick: t, translationY: scale.convert(t) + halfBandwidth }));
         const gridlineGroupSelection = this.updateGridLineGroupSelection({ gridLength, data });
         const tickGroupSelection = this.updateTickGroupSelection({ data });
 
-        gridlineGroupSelection.attrFn('translationY', (_, datum: any) => datum.translationY);
-        tickGroupSelection.attrFn('translationY', (_, datum: any) => datum.translationY);
+        // We need raw `translationY` values on `datum` for accurate label collision detection in axes.update()
+        // But node `translationY` values must be rounded to get pixel grid alignment
+        gridlineGroupSelection.attrFn('translationY', (_, datum: any) => Math.round(datum.translationY));
+        tickGroupSelection.attrFn('translationY', (_, datum: any) => Math.round(datum.translationY));
 
         this.tickGroupSelection = tickGroupSelection;
         this.gridlineGroupSelection = gridlineGroupSelection;
