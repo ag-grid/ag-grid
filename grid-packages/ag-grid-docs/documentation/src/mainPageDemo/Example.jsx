@@ -79,6 +79,38 @@ const countryCellRenderer = (props) => {
                   src={`https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[props.value]}.png`}/> {props.value}</>;
 }
 
+export class CountryCellRendererJs {
+    eGui;
+
+    init(params) {
+        this.eGui = document.createElement('span')
+        this.eGui.style.cursor = 'default'
+
+        //get flags from here: http://www.freeflagicons.com/
+        if (
+            params.value == null ||
+            params.value === '' ||
+            params.value === '(Select All)'
+        ) {
+            this.eGui.innerHTML = params.value
+        } else {
+            var flag =
+                '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' +
+                COUNTRY_CODES[params.value] +
+                '.png">'
+            this.eGui.innerHTML = flag + ' ' + params.value
+        }
+    }
+
+    getGui() {
+        return this.eGui
+    }
+
+    refresh() {
+        return false;
+    }
+}
+
 function ratingFilterRenderer(params) {
     const {value} = params;
     if (value === '(Select All)') {
@@ -576,7 +608,7 @@ const Example = () => {
         components: {
             personFilter: PersonFilter,
             personFloatingFilterComponent: PersonFloatingFilterComponent,
-            countryCellRenderer: countryCellRenderer,
+            countryCellRenderer: CountryCellRendererJs,
             countryFloatingFilterComponent: CountryFloatingFilterComponent,
             booleanCellRenderer: booleanCellRenderer,
             booleanFilterCellRenderer: booleanFilterCellRenderer,
