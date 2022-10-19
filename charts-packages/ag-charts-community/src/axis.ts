@@ -236,7 +236,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     readonly id = createId(this);
 
     @Validate(BOOLEAN)
-    protected nice: boolean = true;
+    nice: boolean = true;
 
     dataDomain: D[];
 
@@ -474,6 +474,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     private fractionDigits = 0;
+
+    /**
+     * The distance between the grid ticks and the axis ticks.
+     */
+    gridPadding = 0;
 
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
@@ -722,7 +727,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         halfBandwidth: number;
         sideFlag: -1 | 1;
     }) {
-        const { gridStyle, scale, tick } = this;
+        const { gridStyle, scale, tick, gridPadding } = this;
         if (gridLength && gridStyle.length) {
             const styleCount = gridStyle.length;
             let gridLines: Selection<Shape, Group, D, D>;
@@ -741,8 +746,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 });
             } else {
                 gridLines = this.gridlineGroupSelection.selectByTag<Line>(Tags.GridLine).each((line) => {
-                    line.x1 = 0;
-                    line.x2 = -sideFlag * gridLength;
+                    line.x1 = gridPadding;
+                    line.x2 = -sideFlag * gridLength + gridPadding;
                     line.y1 = 0;
                     line.y2 = 0;
                     line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1;
