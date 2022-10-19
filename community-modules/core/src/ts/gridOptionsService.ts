@@ -1,10 +1,26 @@
 import { Autowired, Bean } from "./context/context";
 import { GridOptions } from "./entities/gridOptions";
-import { AnyGridOptions, KeysOfType } from "./propertyKeys";
+import { isTrue } from "./gridOptionsWrapper";
+import { AnyGridOptions } from "./propertyKeys";
 
-type Filter<T> = Exclude<{
-    [P in keyof T]: T[P] extends boolean | undefined ? P : never
-}[keyof T], undefined>
+
+type GridOptionKey = keyof GridOptions;
+
+type GetKeys<T, U> = {
+    [K in keyof T]: T[K] extends U | undefined ? K : never
+}[keyof T];
+
+
+/**
+ * Get all the GridOptions properties of the provided type.
+ * Will also include `any` properties. 
+ */
+export type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
+/**
+ * Get all the GridOption properties that strictly contain the provided type.
+ * Does not include `any` properties.
+ */
+export type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 
 type OnlyBooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>
 
@@ -18,7 +34,7 @@ export class GridOptionsService {
     }
 
     is(property: OnlyBooleanProps): boolean {
-        return this.gridOptions[property];
+        return isTrue(this.gridOptions[property]);
     }
 
 }
@@ -26,3 +42,4 @@ export class GridOptionsService {
 const c = new GridOptionsService();
 
 c.is('sideBar') // probably dont want these included to force this business logic to be handle in the modules and not in this service.
+c.is('accentedSort')

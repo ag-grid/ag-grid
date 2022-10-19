@@ -40,7 +40,7 @@ const DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 const DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
 const DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
 
-function isTrue(value: any): boolean {
+export function isTrue(value: any): boolean {
     return value === true || value === 'true';
 }
 
