@@ -13,7 +13,7 @@ type GetKeys<T, U> = {
  *  Works by finding the properties that can extend a non existing string.
  *  This will only be the properties of type `any`.
  */
-type AnyGridOptions = {
+export type AnyGridOptions = {
     [K in keyof GridOptions]: GridOptions[K] extends 'NO_MATCH' ? K : never
 }[keyof GridOptions];
 
@@ -21,12 +21,12 @@ type AnyGridOptions = {
  * Get all the GridOptions properties of the provided type.
  * Will also include `any` properties. 
  */
-type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
+export type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
 /**
  * Get all the GridOption properties that strictly contain the provided type.
  * Does not include `any` properties.
  */
-type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
+export type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 type CallbackKeys = KeysOfType<(any: AgGridCommon<any>) => any>;
 /** All function properties excluding those explicity match the common callback interface. */
 type FunctionKeys = Exclude<KeysLike<Function>, CallbackKeys>;

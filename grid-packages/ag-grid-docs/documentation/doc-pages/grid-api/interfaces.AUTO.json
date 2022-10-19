@@ -6354,6 +6354,14 @@
       "updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams)": "void"
     }
   },
+  "Filter": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "Exclude<{ [P in keyof T]: T[P] extends boolean | undefined ? P : never; }[keyof T], undefined>"
+  },
+  "OnlyBooleanProps": {
+    "meta": { "isTypeAlias": true },
+    "type": "Exclude<KeysOfType<boolean>, AnyGridOptions>"
+  },
   "PropertyChangedEvent": {
     "meta": {},
     "type": { "currentValue": "any", "previousValue": "any", "type": "string" },

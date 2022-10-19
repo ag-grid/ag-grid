@@ -11140,6 +11140,8 @@
       }
     }
   },
+  "Filter": { "meta": { "typeParams": ["T"] } },
+  "OnlyBooleanProps": {},
   "PropertyChangedEvent": {
     "currentValue": { "type": { "returnType": "any", "optional": false } },
     "previousValue": { "type": { "returnType": "any", "optional": false } },
