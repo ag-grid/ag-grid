@@ -90,7 +90,6 @@ export class AgGridColumn<TData = any> {
     @Input() public floatingFilterComponent: any;
     @Input() public floatingFilterComponentParams: any;
     @Input() public floatingFilterComponentFramework: any;
-    @Input() public floatingFilterFramework: any;
     @Input() public filter: any;
     /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name.     */
     @Input() public headerName: string | undefined;
@@ -344,7 +343,7 @@ export class AgGridColumn<TData = any> {
      * This will not block the API or properties being used to achieve aggregation.
      * Default: `false`     */
     @Input() public enableValue: boolean | undefined;
-    /** Name of function to use for aggregation. You can also provide your own agg function.     */
+    /** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function.     */
     @Input() public aggFunc: string | IAggFunc<TData> | null | undefined;
     /** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialAggFunc: string | IAggFunc<TData> | undefined;

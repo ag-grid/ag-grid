@@ -17,13 +17,7 @@ import { AxisTicksPanel } from "./axisTicksPanel";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { getMaxValue } from "../formatPanel";
-
-interface AxisPanelOptions {
-    chartController: ChartController,
-    chartOptionsService: ChartOptionsService,
-    isExpandedOnInit?: boolean
-}
+import { FormatPanelOptions, getMaxValue } from "../formatPanel";
 
 export class AxisPanel extends Component {
 
@@ -53,7 +47,7 @@ export class AxisPanel extends Component {
     private prevXRotation = 0;
     private prevYRotation = 0;
 
-    constructor({ chartController, chartOptionsService, isExpandedOnInit = false }: AxisPanelOptions) {
+    constructor({ chartController, chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
         this.chartController = chartController;

@@ -1,6 +1,5 @@
 import { RangeSelector } from '../shapes/rangeSelector';
 import { CartesianChart } from '../cartesianChart';
-import { ChartAxisDirection } from '../chartAxis';
 import { BBox } from '../../scene/bbox';
 import { NavigatorMask } from './navigatorMask';
 import { NavigatorHandle } from './navigatorHandle';
@@ -88,30 +87,7 @@ export class Navigator {
         this.chart = chart;
 
         chart.scene.root!!.append(this.rs);
-        this.rs.onRangeChange = (min, max) => this.updateAxes(min, max);
-    }
-
-    updateAxes(min: number, max: number) {
-        const { chart } = this;
-        let clipSeries = false;
-        let layoutRequired = false;
-        chart.axes.forEach((axis) => {
-            if (axis.direction === ChartAxisDirection.X) {
-                if (!clipSeries && (min > 0 || max < 1)) {
-                    clipSeries = true;
-                }
-                axis.visibleRange = [min, max];
-                const oldLabelAutoRotated = axis.labelAutoRotated;
-                axis.update();
-                if (axis.labelAutoRotated !== oldLabelAutoRotated) {
-                    layoutRequired = true;
-                }
-            }
-        });
-        chart.seriesRoot.enabled = clipSeries;
-
-        const updateType = layoutRequired ? ChartUpdateType.PERFORM_LAYOUT : ChartUpdateType.SERIES_UPDATE;
-        chart.update(updateType, { forceNodeDataRefresh: true });
+        this.rs.onRangeChange = () => chart.update(ChartUpdateType.PERFORM_LAYOUT, { forceNodeDataRefresh: true });
     }
 
     onDragStart(offset: Offset) {

@@ -12,11 +12,7 @@ import { ChartTranslationService } from "../../../services/chartTranslationServi
 import { BackgroundPanel } from "./backgroundPanel";
 import TitlePanel from "./titlePanel";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
-
-interface ChartPanelOptions {
-    chartOptionsService: ChartOptionsService,
-    isExpandedOnInit?: boolean
-}
+import { FormatPanelOptions } from "../formatPanel";
 
 export class ChartPanel extends Component {
 
@@ -37,7 +33,7 @@ export class ChartPanel extends Component {
     constructor({
         chartOptionsService,
         isExpandedOnInit = false
-    }: ChartPanelOptions) {
+    }: FormatPanelOptions) {
         super();
 
         this.chartOptionsService = chartOptionsService;

@@ -1,16 +1,11 @@
 <div class="example-wrapper">
     <div class="example-header">
-        <label style="margin: 6px;">
-            <input type="radio" name="gridType" checked onchange="changeSelection('normal')"/> Normal
-        </label>
+        
+            <button style="margin: 6px;" onclick="changeSelection('normal')"> Normal </button>
+            
+            <button style="margin: 6px;" onclick="changeSelection('single')"> Remove Single Children </button>
     
-        <label style="margin: 6px;">
-            <input type="radio" name="gridType" onchange="changeSelection('single')"/> Remove Single Children
-        </label>
-    
-        <label style="margin: 6px;">
-            <input type="radio" name="gridType" onchange="changeSelection('lowest')"/> Remove Lowest Single Children
-        </label>
+            <button style="margin: 6px;" onclick="changeSelection('lowest')"> Remove Lowest Single Children </button>
     </div>
     <div id="myGrid" class="ag-theme-alpine"></div>
 </div>

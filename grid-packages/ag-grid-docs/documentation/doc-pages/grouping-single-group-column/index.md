@@ -110,7 +110,7 @@ The example below shows this feature. Note the following:
 - **Remove Single Children:** Removes single children using the property `groupRemoveSingleChildren=true`. All groups with just one child are removed.
 - **Remove Lowest Single Children:** Removes single children using the property `groupRemoveLowestSingleChildren=true`. All groups for the 'City' column with just one child are removed. The 'City' column is the lowest level group, so it's the only group candidate to be removed when it only has one child.
 
-<grid-example title='Removing Single Children' name='remove-single-children' type='typescript' options='{ "enterprise": true, "exampleHeight": 540, "modules":["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
+<grid-example title='Removing Single Children' name='remove-single-children' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules":["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
 
 [[note]]
 | Filtering does not impact what groups get removed. For example if you have a group with two

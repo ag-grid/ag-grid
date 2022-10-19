@@ -14,7 +14,7 @@ const gridOptions: GridOptions<IOlympicData> = {
       headerName: 'Athlete details',
       children: [
         { field: "athlete", minWidth: 200 },
-        { field: "country", minWidth: 200, rowGroup: true, hide: true },
+        { field: "country", minWidth: 150 },
         { field: "sport", minWidth: 150 },
       ]
     },
@@ -23,8 +23,7 @@ const gridOptions: GridOptions<IOlympicData> = {
       children: [
         { field: "gold" },
         { field: "silver" },
-        { field: "bronze" },
-        { field: "total" },
+        { field: "bronze" }
       ]
     }
   ],
@@ -41,19 +40,12 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 const getParams: () => ExcelExportParams = () => ({
-  processCellCallback(params: ProcessCellForExportParams): string {
-    const value = params.value
-    return value === undefined ? '' : `_${value}_`
+  processHeaderCallback(params: ProcessHeaderForExportParams): string {
+    return `header: ${params.columnApi.getDisplayNameForColumn(params.column, null)}`
   },
-  processHeaderCallback({ columnApi, column }: ProcessHeaderForExportParams): string {
-    return `header: ${columnApi.getDisplayNameForColumn(column, null)}`
-  },
-  processGroupHeaderCallback({ columnApi, columnGroup }: ProcessGroupHeaderForExportParams): string {
-    return `group header: ${columnApi.getDisplayNameForColumnGroup(columnGroup, null)}`
-  },
-  processRowGroupCallback(params: ProcessRowGroupForExportParams): string {
-    return `row group: ${params.node.key}`
-  },
+  processGroupHeaderCallback(params: ProcessGroupHeaderForExportParams): string {
+    return `group header: ${params.columnApi.getDisplayNameForColumnGroup(params.columnGroup, null)}`
+  }
 })
 
 function onBtExport() {

@@ -1,9 +1,9 @@
-import {defineComponent, PropType, h, getCurrentInstance} from 'vue';
+import {defineComponent, getCurrentInstance, h, PropType} from 'vue';
 import {markRaw, toRaw} from '@vue/reactivity';
 import {ComponentUtil, Grid, GridOptions, Module, RowNode} from '@ag-grid-community/core';
 
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
-import {getAgGridProperties, kebabNameToAttrEventName, kebabProperty, Properties} from './Utils';
+import {getAgGridProperties, Properties} from './Utils';
 import {AgGridColumn} from './AgGridColumn';
 import {VueFrameworkOverrides} from './VueFrameworkOverrides';
 
@@ -121,6 +121,20 @@ export const AgGridVue = defineComponent({
             return rowData ? rowData :
                 thisAsAny.rowData ? thisAsAny.rowData : thisAsAny.gridOptions.rowData;
         },
+        getProvides() {
+            let instance = getCurrentInstance() as any;
+            let provides = {};
+
+            while (instance) {
+                if (instance && instance.provides) {
+                    provides = {...provides, ...instance.provides}
+                }
+
+                instance = instance.parent;
+            }
+
+            return provides;
+        },
         /*
         * Prevents an infinite loop when using v-model for the rowData
         */
@@ -166,7 +180,9 @@ export const AgGridVue = defineComponent({
             this.$emit(DATA_MODEL_EMIT_NAME, Object.freeze(this.getRowData()));
         }, 20);
 
-        const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this, getCurrentInstance() ? (getCurrentInstance() as any).provides : null);
+
+        const provides = this.getProvides();
+        const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this, provides);
 
         // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
         // with mergeDeep for example

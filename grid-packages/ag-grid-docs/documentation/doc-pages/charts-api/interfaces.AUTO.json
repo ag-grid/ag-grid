@@ -4,13 +4,22 @@
     "type": ["Tick", "GridLine"],
     "docs": [null, null]
   },
+  "AxisNodeDatum": {
+    "meta": {},
+    "type": { "tick": "any", "translationY": "number" }
+  },
   "GridStyle": {
     "meta": {},
     "type": { "stroke?": "string", "lineDash?": "number[]" }
   },
-  "TickCount": {
+  "TimeTickCount": {
     "meta": { "isTypeAlias": true },
     "type": "number | CountableTimeInterval"
+  },
+  "NumberTickCount": { "meta": { "isTypeAlias": true }, "type": "number" },
+  "TickCountType": {
+    "meta": { "isTypeAlias": true, "typeParams": ["S"] },
+    "type": "S extends TimeScale ? TimeTickCount : NumberTickCount"
   },
   "AxisLabelFormatterParams": {
     "meta": {},
@@ -2708,25 +2717,6 @@
     "meta": {},
     "type": { "event": "MouseEvent", "source": "Chart", "type": "string" }
   },
-  "TooltipMeta": {
-    "meta": {},
-    "type": {
-      "pageX": "number",
-      "pageY": "number",
-      "offsetX": "number",
-      "offsetY": "number",
-      "event": "MouseEvent"
-    }
-  },
-  "TooltipRendererResult": {
-    "meta": {},
-    "type": {
-      "content?": "string",
-      "title?": "string",
-      "color?": "string",
-      "backgroundColor?": "string"
-    }
-  },
   "ChartUpdateType": {
     "meta": { "isEnum": true },
     "type": [
@@ -3184,6 +3174,10 @@
     "meta": { "isTypeAlias": true },
     "type": "CartesianTooltipRendererParams"
   },
+  "PointDatum": {
+    "meta": {},
+    "type": { "xDatum": "any", "yDatum": "any", "datum": "any" }
+  },
   "LineContext": {
     "meta": { "isTypeAlias": true },
     "type": "SeriesNodeDataContext<LineNodeDatum>"
@@ -3547,6 +3541,25 @@
     "meta": { "isTypeAlias": true },
     "type": "{ cartesian: AgCartesianThemeOptions; groupedCategory: AgCartesianThemeOptions; polar: AgPolarThemeOptions; hierarchy: AgHierarchyThemeOptions; } & { [key in keyof AgCartesianSeriesTheme]?: AgCartesianThemeOptions; } & { [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions; } & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions; }"
   },
+  "TooltipMeta": {
+    "meta": {},
+    "type": {
+      "pageX": "number",
+      "pageY": "number",
+      "offsetX": "number",
+      "offsetY": "number",
+      "event": "MouseEvent"
+    }
+  },
+  "TooltipRendererResult": {
+    "meta": {},
+    "type": {
+      "content?": "string",
+      "title?": "string",
+      "color?": "string",
+      "backgroundColor?": "string"
+    }
+  },
   "Tick": { "meta": {}, "type": { "labels": "string[]" } },
   "Node": {
     "meta": {},
@@ -3577,7 +3590,7 @@
       "range": "R[]",
       "convert(value: D, clamper?: (values: D[]) => (x: D) => D)": "R",
       "invert?(value: R)": "D",
-      "ticks?(count: any)": "D[]",
+      "ticks?(count: any, offset?: number)": "D[]",
       "tickFormat?({ count, ticks, specifier }: { count?: any; ticks?: any[]; specifier?: any; })": "(x: any) => string",
       "nice?(count?: number)": "void",
       "bandwidth?": "number"

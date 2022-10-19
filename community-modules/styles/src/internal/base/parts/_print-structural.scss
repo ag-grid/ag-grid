@@ -24,7 +24,8 @@
 
     @media print {
         .ag-root-wrapper.ag-layout-print {
-            &,
+            display: table;
+
             .ag-root-wrapper-body,
             .ag-root,
             .ag-body-viewport,
@@ -41,8 +42,8 @@
                 // https://bugzilla.mozilla.org/show_bug.cgi?id=939897
                 display: block !important;
             }
-            .ag-row {
-                page-break-inside: avoid;
+            .ag-row, .ag-cell {
+                break-inside: avoid;
             }
         }
     }

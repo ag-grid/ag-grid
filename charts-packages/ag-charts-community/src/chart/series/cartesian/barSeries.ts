@@ -16,7 +16,7 @@ import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legend';
 import { CartesianSeries } from './cartesianSeries';
 import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from '../../chartAxis';
-import { TooltipRendererResult, toTooltipHtml } from '../../chart';
+import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
 import { findMinMax } from '../../../util/array';
 import { equal } from '../../../util/equal';
 import { TypedEvent } from '../../../util/observable';
@@ -514,7 +514,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
 
         // calculate step
-        let domainLength = xAxis.domain[1] - xAxis.domain[0];
+        let domainLength = xAxis.dataDomain[1] - xAxis.dataDomain[0];
         let intervals = domainLength / (smallestInterval?.x ?? 1) + 1;
 
         // The number of intervals/bands is used to determine the width of individual bands by dividing the available range.
@@ -764,8 +764,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         const [visibleMin, visibleMax] = this.xAxis?.visibleRange ?? [];
         const isZoomed = visibleMin !== 0 || visibleMax !== 1;
-        const crisp = !isZoomed && !datumSelection.data.some((d) => (flipXY ? d.height <= 0.5 : d.width <= 0.5));
-
+        const crisp = !isZoomed;
         datumSelection.each((rect, datum) => {
             const { colorIndex } = datum;
             const fill =
@@ -965,10 +964,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             // vertical stack display order. Bar stacks are already consistent left-to-right with
             // the legend.
             const startLevel = flipXY ? 0 : stack.length - 1;
-            const endLevel = flipXY ? stack.length : -1;
             const direction = flipXY ? 1 : -1;
 
-            for (let levelIndex = startLevel; levelIndex !== endLevel; levelIndex += direction) {
+            for (let levelIndex = startLevel, step = 0; step < stack.length; levelIndex += direction, step++) {
                 const yKey = stack[levelIndex];
                 if (hideInLegend.indexOf(yKey) >= 0) {
                     return;

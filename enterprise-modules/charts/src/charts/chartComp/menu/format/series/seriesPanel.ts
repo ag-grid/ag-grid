@@ -16,18 +16,11 @@ import { FontPanel } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { initFontPanelParams } from "./fontPanelParams";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { getMaxValue } from "../formatPanel";
+import { FormatPanelOptions, getMaxValue } from "../formatPanel";
 import { MarkersPanel } from "./markersPanel";
 import { ChartController } from "../../../chartController";
 import { ChartSeriesType, getSeriesType } from "../../../utils/seriesTypeMapper";
 import { CalloutPanel } from "./calloutPanel";
-
-interface SeriesPanelOptions {
-    chartController: ChartController,
-    chartOptionsService: ChartOptionsService,
-    seriesType?: ChartSeriesType,
-    isExpandedOnInit?: boolean
-}
 
 export class SeriesPanel extends Component {
 
@@ -78,7 +71,7 @@ export class SeriesPanel extends Component {
         chartOptionsService,
         seriesType,
         isExpandedOnInit = false
-    }: SeriesPanelOptions) {
+    }: FormatPanelOptions) {
 
         super();
 

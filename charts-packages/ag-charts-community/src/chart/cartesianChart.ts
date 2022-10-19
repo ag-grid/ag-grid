@@ -316,8 +316,6 @@ export class CartesianChart extends Chart {
                     break;
             }
 
-            axis.calculateTickCount();
-
             if (axis.direction === ChartAxisDirection.X) {
                 let { min, max, enabled } = navigator;
                 if (enabled) {
@@ -331,10 +329,10 @@ export class CartesianChart extends Chart {
             }
 
             let primaryTickCount = primaryTickCounts[axis.direction];
-            ({ primaryTickCount } = axis.calculateDomain({ primaryTickCount }));
-            primaryTickCounts[axis.direction] = primaryTickCount;
+            const tickCount = primaryTickCount;
 
-            axis.update();
+            axis.calculateDomain();
+            primaryTickCount = axis.update(tickCount);
 
             let axisThickness = 0;
             if (axis.thickness) {
@@ -378,7 +376,9 @@ export class CartesianChart extends Chart {
                     );
                     break;
             }
-            axis.update();
+
+            primaryTickCount = axis.update(tickCount);
+            primaryTickCounts[axis.direction] = primaryTickCount;
 
             newAxisWidths[position] = (newAxisWidths[position] ?? 0) + axisThickness;
         });

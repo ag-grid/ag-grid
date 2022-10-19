@@ -1,10 +1,16 @@
 {
   "Tags": {},
+  "AxisNodeDatum": {
+    "tick": { "type": { "returnType": "any", "optional": false } },
+    "translationY": { "type": { "returnType": "number", "optional": false } }
+  },
   "GridStyle": {
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "lineDash": { "type": { "returnType": "number[]", "optional": true } }
   },
-  "TickCount": {},
+  "TimeTickCount": {},
+  "NumberTickCount": {},
+  "TickCountType": { "meta": { "typeParams": ["S"] } },
   "AxisLabelFormatterParams": {
     "value": { "type": { "returnType": "any", "optional": false } },
     "index": { "type": { "returnType": "number", "optional": false } },
@@ -4186,19 +4192,6 @@
     "source": { "type": { "returnType": "Chart", "optional": false } },
     "type": { "type": { "returnType": "string", "optional": false } }
   },
-  "TooltipMeta": {
-    "pageX": { "type": { "returnType": "number", "optional": false } },
-    "pageY": { "type": { "returnType": "number", "optional": false } },
-    "offsetX": { "type": { "returnType": "number", "optional": false } },
-    "offsetY": { "type": { "returnType": "number", "optional": false } },
-    "event": { "type": { "returnType": "MouseEvent", "optional": false } }
-  },
-  "TooltipRendererResult": {
-    "content": { "type": { "returnType": "string", "optional": true } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "backgroundColor": { "type": { "returnType": "string", "optional": true } }
-  },
   "ChartUpdateType": {},
   "OptionalHTMLElement": {},
   "ChartAxisDirection": {},
@@ -4534,6 +4527,11 @@
     "yKey": { "type": { "returnType": "string", "optional": false } }
   },
   "LineTooltipRendererParams": {},
+  "PointDatum": {
+    "xDatum": { "type": { "returnType": "any", "optional": false } },
+    "yDatum": { "type": { "returnType": "any", "optional": false } },
+    "datum": { "type": { "returnType": "any", "optional": false } }
+  },
   "LineContext": {},
   "ScatterNodeDatum": {
     "label": { "type": { "returnType": "MeasuredLabel", "optional": false } },
@@ -4874,6 +4872,19 @@
     }
   },
   "ChartThemeDefaults": {},
+  "TooltipMeta": {
+    "pageX": { "type": { "returnType": "number", "optional": false } },
+    "pageY": { "type": { "returnType": "number", "optional": false } },
+    "offsetX": { "type": { "returnType": "number", "optional": false } },
+    "offsetY": { "type": { "returnType": "number", "optional": false } },
+    "event": { "type": { "returnType": "MouseEvent", "optional": false } }
+  },
+  "TooltipRendererResult": {
+    "content": { "type": { "returnType": "string", "optional": true } },
+    "title": { "type": { "returnType": "string", "optional": true } },
+    "color": { "type": { "returnType": "string", "optional": true } },
+    "backgroundColor": { "type": { "returnType": "string", "optional": true } }
+  },
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }
   },
@@ -4908,7 +4919,7 @@
     },
     "ticks": {
       "type": {
-        "arguments": { "count": "any" },
+        "arguments": { "count": "any", "offset?": "number" },
         "returnType": "D[]",
         "optional": true
       }

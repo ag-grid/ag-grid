@@ -394,7 +394,7 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
      * Default: `false`
      */
     enableValue?: boolean;
-    /** Name of function to use for aggregation. You can also provide your own agg function. */
+    /** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function. */
     aggFunc?: string | IAggFunc<TData> | null;
     /** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialAggFunc?: string | IAggFunc<TData>;

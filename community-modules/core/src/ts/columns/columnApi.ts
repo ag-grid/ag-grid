@@ -1,4 +1,4 @@
-import { ColDef, ColGroupDef } from "../entities/colDef";
+import { ColDef, ColGroupDef, IAggFunc } from "../entities/colDef";
 import { IHeaderColumn } from "../entities/iHeaderColumn";
 import { ColumnModel, ColumnState, ApplyColumnStateParams } from "./columnModel";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
@@ -105,8 +105,8 @@ export class ColumnApi {
     public moveColumns(columnsToMoveKeys: (string | Column)[], toIndex: number) { this.columnModel.moveColumns(columnsToMoveKeys, toIndex, 'api'); }
     /** Move the column to a new position in the row grouping order. */
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.columnModel.moveRowGroupColumn(fromIndex, toIndex); }
-    /** Sets the agg function for a column. `aggFunc` can be one of `'min' | 'max' | 'sum'`. */
-    public setColumnAggFunc(key: string | Column, aggFunc: string): void { this.columnModel.setColumnAggFunc(key, aggFunc); }
+    /** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */
+    public setColumnAggFunc(key: string | Column, aggFunc: string | IAggFunc | null | undefined): void { this.columnModel.setColumnAggFunc(key, aggFunc); }
     /** Sets the column width on a single column. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
     public setColumnWidth(key: string | Column, newWidth: number, finished: boolean = true, source?: ColumnEventType): void {
         this.columnModel.setColumnWidths([{ key, newWidth }], false, finished, source);
@@ -129,17 +129,17 @@ export class ColumnApi {
     /** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
     public getPivotResultColumn(pivotKeys: string[], valueColKey: string | Column): Column | null { return this.columnModel.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 
-    /** Set the value columns. */
+    /** Set the value columns to the provided list of columns. */
     public setValueColumns(colKeys: (string | Column)[]): void { this.columnModel.setValueColumns(colKeys, 'api'); }
-    /** Get value columns. */
+    /** Get a list of the existing value columns. */
     public getValueColumns(): Column[] { return this.columnModel.getValueColumns(); }
-    /** Remove a value column. */
+    /** Remove the given column from the existing set of value columns. */
     public removeValueColumn(colKey: (string | Column)): void { this.columnModel.removeValueColumn(colKey, 'api'); }
-    /** Same as `removeValueColumns` but provide a list. */
+    /** Like `removeValueColumn` but remove the given list of columns from the existing set of value columns. */
     public removeValueColumns(colKeys: (string | Column)[]): void { this.columnModel.removeValueColumns(colKeys, 'api'); }
-    /** Add a value column. */
+    /** Add the given column to the set of existing value columns. */
     public addValueColumn(colKey: (string | Column)): void { this.columnModel.addValueColumn(colKey, 'api'); }
-    /** Same as `addValueColumn` but provide a list. */
+    /** Like `addValueColumn` but add the given list of columns to the existing set of value columns. */
     public addValueColumns(colKeys: (string | Column)[]): void { this.columnModel.addValueColumns(colKeys, 'api'); }
 
     /** Set the row group columns. */

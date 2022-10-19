@@ -9,12 +9,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { getMaxValue } from "../formatPanel";
-
-interface NavigatorPanelOptions {
-    chartOptionsService: ChartOptionsService,
-    isExpandedOnInit?: boolean
-}
+import { FormatPanelOptions, getMaxValue } from "../formatPanel";
 
 export class NavigatorPanel extends Component {
 
@@ -33,7 +28,7 @@ export class NavigatorPanel extends Component {
     private readonly chartOptionsService: ChartOptionsService;
     private readonly isExpandedOnInit: boolean;
 
-    constructor({ chartOptionsService, isExpandedOnInit = false }: NavigatorPanelOptions) {
+    constructor({ chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
         this.chartOptionsService = chartOptionsService;

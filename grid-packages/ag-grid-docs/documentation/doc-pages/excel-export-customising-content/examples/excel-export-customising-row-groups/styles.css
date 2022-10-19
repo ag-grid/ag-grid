@@ -1,0 +1,32 @@
+
+.details > label {
+    margin-bottom: 10px;
+}
+.details > label:first-of-type {
+    margin-top: 10px;
+}
+.details > label:last-of-type {
+    margin-bottom: 0;
+}
+.option {
+    display: block;
+    margin: 5px 10px 5px 0;
+}
+.grid-wrapper {
+    display: flex;
+    flex: 1 1 0px;
+}
+.grid-wrapper > div {
+    width: 100%;
+    height: 100%;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.columns {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

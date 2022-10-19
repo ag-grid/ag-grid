@@ -160,10 +160,6 @@ Three rotation approaches are available:
 
 Label skipping is performed automatically when there is a high likelihood of collisions.
 
-[[note]]
-| Label skipping isn't guaranteed to avoid overlapping labels, but will significantly reduce the chance
-| of this happening out-of-the-box. The more uniform the size of labels, the more accurate it will be.
-
 If `autoRotate` is enabled, rotation will be attempted first to find a label fit, before label skipping applies.
 Category axes have `autoRotate` enabled by default with the default `autoRotateAngle` of `335`.
 

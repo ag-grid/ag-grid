@@ -476,6 +476,10 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         this.nodeDataRefresh = true;
     }
 
+    isEnabled() {
+        return this.visible;
+    }
+
     readonly highlightStyle = new HighlightStyle();
 
     protected fixNumericExtent(extent?: [number | Date, number | Date], axis?: ChartAxis): number[] {

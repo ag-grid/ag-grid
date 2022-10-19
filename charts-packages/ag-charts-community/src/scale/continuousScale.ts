@@ -18,6 +18,19 @@ export function clamper(domain: number[]): (x: number) => number {
     return (x) => Math.max(a, Math.min(b, x));
 }
 
+// Instead of clamping the values outside of domain to the range,
+// return NaNs to indicate invalid input.
+export function filter(domain: number[]): (x: number) => number {
+    let a = domain[0];
+    let b = domain[domain.length - 1];
+
+    if (a > b) {
+        [a, b] = [b, a];
+    }
+
+    return (x) => (x >= a && x <= b ? x : NaN);
+}
+
 /**
  * An Interpolator factory returns an interpolator function.
  *

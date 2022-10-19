@@ -244,14 +244,14 @@
     }
 
     .ag-loading {
-        padding-left: ag-param(cell-horizontal-padding);
+        @include ag-theme-rtl(( padding-left: ag-param(cell-horizontal-padding) ));
         display: flex;
         height: 100%;
         align-items: center;
     }
 
     .ag-loading-icon {
-        padding-right: ag-param(cell-widget-spacing);
+        @include ag-theme-rtl(( padding-right: ag-param(cell-widget-spacing) ));
     }
 
     .ag-icon-loading {

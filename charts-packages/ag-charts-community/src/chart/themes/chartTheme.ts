@@ -13,8 +13,8 @@ import {
     AgCartesianSeriesTheme,
     AgHierarchySeriesTheme,
 } from '../agChartOptions';
-import { Chart } from '../chart';
 import { TimeInterval } from '../../util/time/interval';
+import { DEFAULT_TOOLTIP_CLASS } from '../tooltip/tooltip';
 
 const palette: AgChartThemePalette = {
     fills: ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'],
@@ -100,6 +100,7 @@ export class ChartTheme {
                 enabled: false,
                 fill: 'rgb(187,221,232)',
                 stroke: 'rgb(70,162,192)',
+                strokeWidth: 1,
                 label: {
                     enabled: false,
                     fontStyle: undefined,
@@ -247,7 +248,7 @@ export class ChartTheme {
                 enabled: true,
                 tracking: true,
                 delay: 0,
-                class: Chart.defaultTooltipClass,
+                class: DEFAULT_TOOLTIP_CLASS,
             },
         };
     }

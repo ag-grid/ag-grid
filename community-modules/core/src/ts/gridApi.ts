@@ -702,15 +702,19 @@ export class GridApi<TData = any> {
     /** @deprecated AG Grid: since version 18.x, api.refreshInMemoryRowModel() should be replaced with api.refreshClientSideRowModel() */
     public refreshInMemoryRowModel(step?: string): any {
         console.warn(`AG Grid: since version 18.x, api.refreshInMemoryRowModel() should be replaced with api.refreshClientSideRowModel()`);
-        this.refreshClientSideRowModel(step);
+        this.refreshClientSideRowModel(step as any);
     }
 
-    /** Gets the Client-Side Row Model to refresh, executing the grouping, filtering and sorting again. */
-    public refreshClientSideRowModel(step?: string): any {
+    /**
+     * Refresh the Client-Side Row Model, executing the grouping, filtering and sorting again.
+     * Optionally provide the step you wish the refresh to apply from. Defaults to `everything`.
+     */
+    public refreshClientSideRowModel(step?: 'everything' | 'group' | 'filter' | 'pivot' | 'aggregate' | 'sort' | 'map'): any {
         if (missing(this.clientSideRowModel)) { console.warn('cannot call refreshClientSideRowModel unless using normal row model'); }
 
         let paramsStep = ClientSideRowModelSteps.EVERYTHING;
         const stepsMapped: any = {
+            everything: ClientSideRowModelSteps.EVERYTHING,
             group: ClientSideRowModelSteps.EVERYTHING,
             filter: ClientSideRowModelSteps.FILTER,
             map: ClientSideRowModelSteps.MAP,

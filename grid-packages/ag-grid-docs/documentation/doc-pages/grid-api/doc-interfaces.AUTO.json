@@ -114,6 +114,7 @@
       "type": { "returnType": "ColumnStateParams", "optional": true }
     }
   },
+  "ColKey": {},
   "ComponentMetadata": {
     "mandatoryMethodList": {
       "type": { "returnType": "string[]", "optional": false }
@@ -1225,7 +1226,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "aggFunc": {
-      "description": "/** Name of function to use for aggregation. You can also provide your own agg function. */",
+      "description": "/** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function. */",
       "type": {
         "returnType": "string | IAggFunc<TData> | null",
         "optional": true
@@ -21708,6 +21709,13 @@
     "url": { "type": { "returnType": "string", "optional": false } }
   },
   "ModuleNames": {},
+  "GridOptionKey": {},
+  "GetKeys": { "meta": { "typeParams": ["T", "U"] } },
+  "AnyGridOptions": {},
+  "KeysLike": { "meta": { "typeParams": ["U"] } },
+  "KeysOfType": { "meta": { "typeParams": ["U"] } },
+  "CallbackKeys": {},
+  "FunctionKeys": {},
   "ICellComp": {
     "addOrRemoveCssClass": {
       "type": {
@@ -24600,7 +24608,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "aggFunc": {
-      "description": "/** Name of function to use for aggregation. You can also provide your own agg function. */",
+      "description": "/** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function. */",
       "type": {
         "returnType": "string | IAggFunc<TData> | null",
         "optional": true

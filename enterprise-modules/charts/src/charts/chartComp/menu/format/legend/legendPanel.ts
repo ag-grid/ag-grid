@@ -13,12 +13,7 @@ import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { LegendPosition } from "ag-charts-community";
-import { getMaxValue } from "../formatPanel";
-
-interface LegendPanelOptions {
-    chartOptionsService: ChartOptionsService,
-    isExpandedOnInit?: boolean
-}
+import { FormatPanelOptions, getMaxValue } from "../formatPanel";
 
 export class LegendPanel extends Component {
 
@@ -51,7 +46,7 @@ export class LegendPanel extends Component {
 
     private activePanels: Component[] = [];
 
-    constructor({ chartOptionsService, isExpandedOnInit = false }: LegendPanelOptions) {
+    constructor({ chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
         this.chartOptionsService = chartOptionsService;

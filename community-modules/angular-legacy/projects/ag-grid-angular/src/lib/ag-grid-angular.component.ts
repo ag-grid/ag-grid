@@ -6,6 +6,8 @@ import {
     ElementRef,
     EventEmitter,
     Input,
+    OnChanges,
+    OnDestroy,
     Output,
     QueryList,
     ViewContainerRef,
@@ -171,7 +173,7 @@ import { AgGridColumn } from "./ag-grid-column.component";
     // tell angular we don't want view encapsulation, we don't want a shadow root
     encapsulation: ViewEncapsulation.None
 })
-export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<any>> implements AfterViewInit {
+export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<any>> implements AfterViewInit, OnChanges, OnDestroy {
     // not intended for user to interact with. so putting _ in so if user gets reference
     // to this object, they kind'a know it's not part of the agreed interface
     private _nativeElement: any;
@@ -604,6 +606,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.
      * Default: `1000`     */
     @Input() public cellFadeDelay: number | undefined = undefined;
+    /** Set to `true` to have cells flash after data changes even when the change is due to filtering. Default: `false`     */
+    @Input() public allowShowChangeAfterFilter: boolean | undefined = undefined;
     /** Switch between layout options: `normal`, `autoHeight`, `print`.
      * Default: `normal`     */
     @Input() public domLayout: 'normal' | 'autoHeight' | 'print' | undefined = undefined;
@@ -1318,6 +1322,7 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_groupRowsSticky: boolean | null | '';
     static ngAcceptInputType_serverSideInfiniteScroll: boolean | null | '';
     static ngAcceptInputType_rowGroupPanelSuppressSort: boolean | null | '';
+    static ngAcceptInputType_allowShowChangeAfterFilter: boolean | null | '';
     // @END@
 }
 

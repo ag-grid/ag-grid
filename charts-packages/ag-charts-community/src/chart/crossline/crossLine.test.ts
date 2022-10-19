@@ -139,6 +139,86 @@ const CROSSLINES_RANGE_EXAMPLES: Record<string, CartesianTestCase> = mixinFlippe
     },
 });
 
+const NAVIGATOR_ZOOM_EXAMPLES: Record<string, CartesianTestCase> = {
+    NAV_ZOOMED_CROSSLINES: {
+        options: {
+            ...examples.VALID_RANGE_CROSSLINES,
+            navigator: { min: 0.4, max: 0.6 },
+        },
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+    NAV_ZOOMED_NO_CROSSLINES: {
+        options: {
+            ...examples.VALID_RANGE_CROSSLINES,
+            navigator: { min: 0.0, max: 0.05 },
+        },
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+    NAV_ZOOMED_NO_CROSSLINES_2: {
+        options: {
+            ...examples.VALID_RANGE_CROSSLINES,
+            navigator: { min: 0.95, max: 1.0 },
+        },
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+    NAV_ZOOMED_CLIPPED_CROSSLINES_1: {
+        options: {
+            ...examples.VALID_RANGE_CROSSLINES,
+            navigator: { min: 0.0, max: 0.5 },
+        },
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+    NAV_ZOOMED_CLIPPED_CROSSLINES_2: {
+        options: {
+            ...examples.VALID_RANGE_CROSSLINES,
+            navigator: { min: 0.5, max: 1.0 },
+        },
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+    NAV_ZOOMED_INSIDE_CROSSLINES_1: {
+        options: {
+            ...examples.VALID_RANGE_CROSSLINES,
+            navigator: { min: 0.4, max: 0.6 },
+        },
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+    NAV_ZOOMED_INSIDE_CROSSLINES_2: {
+        options: {
+            ...examples.VALID_RANGE_CROSSLINES,
+            navigator: { min: 0.51, max: 0.55 },
+        },
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+    NAV_ZOOMED_EDGE_CROSSLINES_1: {
+        options: {
+            ...examples.VALID_RANGE_CROSSLINES,
+            navigator: { min: 0.14661198412976173, max: 0.3286788694841538 },
+        },
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+    NAV_ZOOMED_EDGE_CROSSLINES_2: {
+        options: {
+            ...examples.VALID_RANGE_CROSSLINES,
+            navigator: { min: 0.15, max: 0.3286788694841538 + 0.001 },
+        },
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+    NAV_ZOOMED_EDGE_CROSSLINES_3: {
+        options: {
+            ...examples.VALID_RANGE_CROSSLINES,
+            navigator: { min: 1 - 0.3286788694841538, max: 1 - 0.14661198412976173 },
+        },
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+    NAV_ZOOMED_EDGE_CROSSLINES_4: {
+        options: {
+            ...examples.VALID_RANGE_CROSSLINES,
+            navigator: { min: 1 - 0.3286788694841538 - 0.006, max: 0.85 },
+        },
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+};
+
 const EXAMPLES: Record<string, CartesianTestCase> = {
     ...CROSSLINES_RANGE_EXAMPLES,
     ...CROSSLINES_LABEL_POSITON_EXAMPLES,
@@ -169,6 +249,7 @@ const EXAMPLES: Record<string, CartesianTestCase> = {
             seriesTypes: ['histogram', 'scatter'],
         }),
     },
+    ...NAVIGATOR_ZOOM_EXAMPLES,
 };
 
 describe('crossLines', () => {

@@ -76,6 +76,10 @@
       "defaultState?": "/** State to apply to columns where state is missing for those columns */"
     }
   },
+  "ColKey": {
+    "meta": { "isTypeAlias": true },
+    "type": "keyof (ColDef) | (keyof ColGroupDef)"
+  },
   "ComponentMetadata": {
     "meta": {},
     "type": {
@@ -703,7 +707,7 @@
       "initialRowGroupIndex?": "/** Same as `rowGroupIndex`, except only applied when creating a new column. Not applied when updating column definitions. */",
       "enableRowGroup?": "/** Set to `true` if you want to be able to row group by this column via the GUI.\n * This will not block the API or properties being used to achieve row grouping.\n * Default: `false` */",
       "enableValue?": "/** Set to `true` if you want to be able to aggregate by this column via the GUI.\n * This will not block the API or properties being used to achieve aggregation.\n * Default: `false` */",
-      "aggFunc?": "/** Name of function to use for aggregation. You can also provide your own agg function. */",
+      "aggFunc?": "/** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function. */",
       "initialAggFunc?": "/** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */",
       "defaultAggFunc?": "/** The name of the aggregation function to use for this column when it is enabled via the GUI.\n * Note that this does not immediately apply the aggregation function like `aggFunc`\n * Default: `sum` */",
       "allowedAggFuncs?": "/** Aggregation functions allowed on this column e.g. `['sum', 'avg']`.\n * If missing, all installed functions are allowed.\n * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API. */",
@@ -12420,6 +12424,34 @@
       null
     ]
   },
+  "GridOptionKey": {
+    "meta": { "isTypeAlias": true },
+    "type": "keyof GridOptions"
+  },
+  "GetKeys": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T", "U"] },
+    "type": "{ [K in keyof T]: U extends T[K] ? K : (T[K] extends U | undefined ? K : never); }[keyof T]"
+  },
+  "AnyGridOptions": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ [K in keyof GridOptions]: GridOptions[K] extends 'NO_MATCH' ? K : never; }[keyof GridOptions]"
+  },
+  "KeysLike": {
+    "meta": { "isTypeAlias": true, "typeParams": ["U"] },
+    "type": "Exclude<GetKeys<GridOptions, U>, undefined>"
+  },
+  "KeysOfType": {
+    "meta": { "isTypeAlias": true, "typeParams": ["U"] },
+    "type": "Exclude<GetKeys<GridOptions, U>, AnyGridOptions>"
+  },
+  "CallbackKeys": {
+    "meta": { "isTypeAlias": true },
+    "type": "KeysOfType<(any: AgGridCommon<any>) => any>"
+  },
+  "FunctionKeys": {
+    "meta": { "isTypeAlias": true },
+    "type": "Exclude<KeysLike<Function>, CallbackKeys>"
+  },
   "ICellComp": {
     "meta": {},
     "type": {
@@ -14046,7 +14078,7 @@
       "initialRowGroupIndex?": "/** Same as `rowGroupIndex`, except only applied when creating a new column. Not applied when updating column definitions. */",
       "enableRowGroup?": "/** Set to `true` if you want to be able to row group by this column via the GUI.\n * This will not block the API or properties being used to achieve row grouping.\n * Default: `false` */",
       "enableValue?": "/** Set to `true` if you want to be able to aggregate by this column via the GUI.\n * This will not block the API or properties being used to achieve aggregation.\n * Default: `false` */",
-      "aggFunc?": "/** Name of function to use for aggregation. You can also provide your own agg function. */",
+      "aggFunc?": "/** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function. */",
       "initialAggFunc?": "/** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */",
       "defaultAggFunc?": "/** The name of the aggregation function to use for this column when it is enabled via the GUI.\n * Note that this does not immediately apply the aggregation function like `aggFunc`\n * Default: `sum` */",
       "allowedAggFuncs?": "/** Aggregation functions allowed on this column e.g. `['sum', 'avg']`.\n * If missing, all installed functions are allowed.\n * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API. */",

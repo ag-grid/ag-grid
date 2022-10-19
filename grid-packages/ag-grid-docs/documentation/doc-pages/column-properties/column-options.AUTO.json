@@ -464,7 +464,7 @@
     "type": { "returnType": "boolean" }
   },
   "aggFunc": {
-    "description": "/** Name of function to use for aggregation. You can also provide your own agg function. */",
+    "description": "/** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function. */",
     "type": { "returnType": "string | IAggFunc<TData> | null" }
   },
   "initialAggFunc": {
