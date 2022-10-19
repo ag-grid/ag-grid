@@ -16,6 +16,7 @@ import { CtrlsService } from "../ctrlsService";
 import { setAriaLabel, setAriaRole } from "../utils/aria";
 import { PostProcessPopupParams } from "../entities/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { ResizeObserverService } from "../misc/resizeObserverService";
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch | null;
@@ -86,10 +87,13 @@ export class PopupService extends BeanStub {
     @Autowired('environment') private environment: Environment;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
+    @Autowired('resizeObserverService') public resizeObserverService: ResizeObserverService;
 
     private gridCtrl: GridCtrl;
 
     private popupList: AgPopup[] = [];
+
+    private static WAIT_FOR_POPUP_CONTENT_RESIZE: number = 200;
 
     @PostConstruct
     private postConstruct(): void {
@@ -279,24 +283,35 @@ export class PopupService extends BeanStub {
         y: number,
         keepWithinBounds?: boolean;
     }): void {
-        const { ePopup, keepWithinBounds, nudgeX, nudgeY } = params;
-        let { x, y } = params;
+        const { x, y, ePopup, keepWithinBounds, nudgeX, nudgeY } = params;
 
+        let currentX = x;
+        let currentY = y;
         if (nudgeX) {
-            x += nudgeX;
+            currentX += nudgeX;
         }
         if (nudgeY) {
-            y += nudgeY;
+            currentY += nudgeY;
         }
 
-        // if popup is overflowing to the bottom, move it up
-        if (keepWithinBounds) {
-            x = this.keepXYWithinBounds(ePopup, x, DIRECTION.horizontal);
-            y = this.keepXYWithinBounds(ePopup, y, DIRECTION.vertical);
+        const updatePosition = () => {    
+            // if popup is overflowing to the bottom, move it up
+            if (keepWithinBounds) {
+                currentX = this.keepXYWithinBounds(ePopup, currentX, DIRECTION.horizontal);
+                currentY = this.keepXYWithinBounds(ePopup, currentY, DIRECTION.vertical);
+            }
+    
+            ePopup.style.left = `${currentX}px`;
+            ePopup.style.top = `${currentY}px`;
         }
+        
+        updatePosition();
 
-        ePopup.style.left = `${x}px`;
-        ePopup.style.top = `${y}px`;
+        // Since rendering popup contents can be asynchronous, use a resize observer to
+        // reposition the popup after initial updates to the size of the contents
+        const resizeObserverDestroyFunc = this.resizeObserverService.observeResize(ePopup, updatePosition);
+        // Only need to reposition when first open, so can clean up after a bit of time
+        setTimeout(() => resizeObserverDestroyFunc(), PopupService.WAIT_FOR_POPUP_CONTENT_RESIZE);
     }
 
     public getActivePopups(): HTMLElement[] {
