@@ -112,15 +112,75 @@ export class ComponentUtil {
                 delete changesToApply.groupDisplayType;
             }
         }
+        // *********  CODE ORDER TO AVOID BUGS *************** //
+        // If you want to call an update method that just calls through to gridOptionsWrapper.setProperty then it needs to be
+        // called before the values get copied across otherwise the change will not fire an event because the method
+        // gridOptionsWrapper.setProperty does a diff check first.
 
-        // we need to do this before the generic handling, otherwise value gets set before we
-        // try to set it, and the grid then doesn't refresh the rows as it doesn't see any change.
-        // also it's possible we use the generic code setXXX below and put it up there instead,
-        // cover all cases.
+        // All these manual calls are required in the current setup as changes to these properties are being listened to in the 
+        // rest of the code base which can be found by searching for: "addManagedListener(this.gridOptionsWrapper"
+
+        if (changesToApply.domLayout) {
+            api.setDomLayout(changesToApply.domLayout.currentValue);
+            delete changesToApply.domLayout;
+        }
         if (changesToApply.rowClass) {
             api.setRowClass(changesToApply.rowClass.currentValue);
             delete changesToApply.rowClass;
         }
+        if (changesToApply.paginationPageSize) {
+            api.paginationSetPageSize(ComponentUtil.toNumber(changesToApply.paginationPageSize.currentValue));
+            delete changesToApply.paginationPageSize;
+        }
+        if (changesToApply.groupRemoveSingleChildren) {
+            api.setGroupRemoveSingleChildren(ComponentUtil.toBoolean(changesToApply.groupRemoveSingleChildren.currentValue));
+            delete changesToApply.groupRemoveSingleChildren;
+        }
+        if (changesToApply.groupRemoveLowestSingleChildren) {
+            api.setGroupRemoveLowestSingleChildren(ComponentUtil.toBoolean(changesToApply.groupRemoveLowestSingleChildren.currentValue));
+            delete changesToApply.groupRemoveLowestSingleChildren;
+        }
+        if (changesToApply.suppressRowDrag) {
+            api.setSuppressRowDrag(ComponentUtil.toBoolean(changesToApply.suppressRowDrag.currentValue));
+            delete changesToApply.suppressRowDrag;
+        }
+        if (changesToApply.suppressMoveWhenRowDragging) {
+            api.setSuppressMoveWhenRowDragging(ComponentUtil.toBoolean(changesToApply.suppressMoveWhenRowDragging.currentValue));
+            delete changesToApply.suppressMoveWhenRowDragging;
+        }
+        if (changesToApply.suppressRowClickSelection) {
+            api.setSuppressRowClickSelection(ComponentUtil.toBoolean(changesToApply.suppressRowClickSelection.currentValue));
+            delete changesToApply.suppressRowClickSelection;
+        }
+        if (changesToApply.suppressClipboardPaste) {
+            api.setSuppressClipboardPaste(ComponentUtil.toBoolean(changesToApply.suppressClipboardPaste.currentValue));
+            delete changesToApply.suppressClipboardPaste;
+        }
+        if (changesToApply.headerHeight) {
+            api.setHeaderHeight(ComponentUtil.toNumber(changesToApply.headerHeight.currentValue));
+            delete changesToApply.headerHeight;
+        }
+        if (changesToApply.pivotHeaderHeight) {
+            api.setPivotHeaderHeight(ComponentUtil.toNumber(changesToApply.pivotHeaderHeight.currentValue));
+            delete changesToApply.pivotHeaderHeight;
+        }
+        if (changesToApply.groupHeaderHeight) {
+            api.setGroupHeaderHeight(ComponentUtil.toNumber(changesToApply.groupHeaderHeight.currentValue));
+            delete changesToApply.groupHeaderHeight;
+        }
+        if (changesToApply.pivotGroupHeaderHeight) {
+            api.setPivotGroupHeaderHeight(ComponentUtil.toNumber(changesToApply.pivotGroupHeaderHeight.currentValue));
+            delete changesToApply.pivotGroupHeaderHeight;
+        }
+        if (changesToApply.floatingFiltersHeight) {
+            api.setFloatingFiltersHeight(ComponentUtil.toNumber(changesToApply.floatingFiltersHeight.currentValue));
+            delete changesToApply.floatingFiltersHeight;
+        }
+        if (changesToApply.functionsReadOnly) {
+            api.setFunctionsReadOnly(ComponentUtil.toBoolean(changesToApply.functionsReadOnly.currentValue));
+            delete changesToApply.functionsReadOnly;
+        }
+        // *********  CODE ORDER TO AVOID BUGS *************** //
 
         // check if any change for the simple types, and if so, then just copy in the new value
         [
@@ -140,69 +200,33 @@ export class ComponentUtil {
             .filter(keyExists)
             .forEach(key => pGridOptions[key] = ComponentUtil.toNumber(changesToApply[key].currentValue));
 
+
+        // *********  CODE ORDER TO AVOID BUGS *************** //
+        // The following manual updates call directly into code models and rely on the simple copy being made by the
+        // code above to keep gridOptions in sync with the change.
         if (changesToApply.enableCellTextSelection) {
             api.setEnableCellTextSelection(ComponentUtil.toBoolean(changesToApply.enableCellTextSelection.currentValue));
             delete changesToApply.enableCellTextSelection;
         }
-
         if (changesToApply.quickFilterText) {
             api.setQuickFilter(changesToApply.quickFilterText.currentValue);
             delete changesToApply.quickFilterText;
         }
-
         if (changesToApply.autoGroupColumnDef) {
             api.setAutoGroupColumnDef(changesToApply.autoGroupColumnDef.currentValue, "gridOptionsChanged");
             delete changesToApply.autoGroupColumnDef;
         }
-
         if (changesToApply.columnDefs) {
             api.setColumnDefs(changesToApply.columnDefs.currentValue, "gridOptionsChanged");
             delete changesToApply.columnDefs;
         }
-
         if (changesToApply.defaultColDef) {
             api.setDefaultColDef(changesToApply.defaultColDef.currentValue, "gridOptionsChanged");
             delete changesToApply.defaultColDef;
         }
-
-        if (changesToApply.paginationPageSize) {
-            api.paginationSetPageSize(ComponentUtil.toNumber(changesToApply.paginationPageSize.currentValue));
-            delete changesToApply.paginationPageSize;
-        }
-
         if (changesToApply.pivotMode) {
             columnApi.setPivotMode(ComponentUtil.toBoolean(changesToApply.pivotMode.currentValue));
             delete changesToApply.pivotMode;
-        }
-
-        if (changesToApply.groupRemoveSingleChildren) {
-            api.setGroupRemoveSingleChildren(ComponentUtil.toBoolean(changesToApply.groupRemoveSingleChildren.currentValue));
-            delete changesToApply.groupRemoveSingleChildren;
-        }
-
-        if (changesToApply.suppressRowDrag) {
-            api.setSuppressRowDrag(ComponentUtil.toBoolean(changesToApply.suppressRowDrag.currentValue));
-            delete changesToApply.suppressRowDrag;
-        }
-
-        if (changesToApply.suppressMoveWhenRowDragging) {
-            api.setSuppressMoveWhenRowDragging(ComponentUtil.toBoolean(changesToApply.suppressMoveWhenRowDragging.currentValue));
-            delete changesToApply.suppressMoveWhenRowDragging;
-        }
-
-        if (changesToApply.suppressRowClickSelection) {
-            api.setSuppressRowClickSelection(ComponentUtil.toBoolean(changesToApply.suppressRowClickSelection.currentValue));
-            delete changesToApply.suppressRowClickSelection;
-        }
-
-        if (changesToApply.suppressClipboardPaste) {
-            api.setSuppressClipboardPaste(ComponentUtil.toBoolean(changesToApply.suppressClipboardPaste.currentValue));
-            delete changesToApply.suppressClipboardPaste;
-        }
-
-        if (changesToApply.headerHeight) {
-            api.setHeaderHeight(ComponentUtil.toNumber(changesToApply.headerHeight.currentValue));
-            delete changesToApply.headerHeight;
         }
 
         // any remaining properties can be set in a generic way
