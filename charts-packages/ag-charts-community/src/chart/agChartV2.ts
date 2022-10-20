@@ -33,7 +33,7 @@ import { TimeAxis } from './axis/timeAxis';
 import { Chart, ChartUpdateType } from './chart';
 import { SourceEventListener } from '../util/observable';
 import { DropShadow } from '../scene/dropShadow';
-import { jsonDiff, jsonMerge, jsonApply } from '../util/json';
+import { jsonDiff, jsonMerge, jsonApply, TAKE_LAST } from '../util/json';
 import { GroupedCategoryChart } from './groupedCategoryChart';
 import {
     prepareOptions,
@@ -206,9 +206,7 @@ export abstract class AgChartV2 {
                 return;
             }
 
-            const deltaOptions = jsonDiff<ChartOptionType<T>>(chart.options as ChartOptionType<T>, mergedOptions, {
-                stringify: ['data'],
-            });
+            const deltaOptions = jsonDiff<ChartOptionType<T>>(chart.options as ChartOptionType<T>, mergedOptions);
             if (deltaOptions == null) {
                 return;
             }
@@ -328,8 +326,8 @@ function applyChartOptions<T extends ChartType, O extends ChartOptionType<T>>(
         Object.assign(chart.legend.listeners, options.legend.listeners);
     }
 
-    chart.options = jsonMerge(chart.options || {}, options);
-    chart.userOptions = jsonMerge(chart.userOptions || {}, userOptions);
+    chart.options = jsonMerge({ data: TAKE_LAST }, chart.options || {}, options);
+    chart.userOptions = jsonMerge({ data: TAKE_LAST }, chart.userOptions || {}, userOptions);
 
     chart.update(updateType, { forceNodeDataRefresh });
 }

@@ -15,7 +15,7 @@ import {
     DEFAULT_BAR_CHART_OVERRIDES,
     DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES,
 } from './defaults';
-import { jsonMerge, DELETE, jsonWalk } from '../../util/json';
+import { jsonMerge, DELETE, jsonWalk, TAKE_LAST } from '../../util/json';
 import { applySeriesTransform } from './transforms';
 import { getChartTheme } from './themes';
 import { processSeriesOptions, SeriesOptions } from './prepareSeries';
@@ -122,7 +122,7 @@ interface PreparationContext {
 }
 
 export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallbackOptions: T[]): T {
-    let options: T = fallbackOptions == null ? newOptions : jsonMerge(...fallbackOptions, newOptions);
+    let options: T = jsonMerge({ data: TAKE_LAST } as any, ...fallbackOptions, newOptions);
     sanityCheckOptions(options);
 
     // Determine type and ensure it's explicit in the options config.
@@ -204,7 +204,7 @@ function prepareMainOptions<T>(
 ): { context: PreparationContext; mergedOptions: T; axesThemes: any; seriesThemes: any } {
     const { theme, cleanedTheme, axesThemes, seriesThemes } = prepareTheme(options);
     const context: PreparationContext = { colourIndex: 0, palette: theme.palette };
-    const mergedOptions = jsonMerge(defaultOverrides, cleanedTheme, options);
+    const mergedOptions = jsonMerge({ data: TAKE_LAST }, defaultOverrides, cleanedTheme, options);
 
     return { context, mergedOptions, axesThemes, seriesThemes };
 }

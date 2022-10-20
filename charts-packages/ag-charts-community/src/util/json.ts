@@ -46,12 +46,10 @@ export type DeepPartial<T> = {
  *
  * @param source starting point for diff
  * @param target target for diff vs. source
- * @param opts.stringify properties to stringify for comparison purposes
  *
  * @returns `null` if no differences, or an object with the subset of properties that have changed.
  */
-export function jsonDiff<T extends any>(source: T, target: T, opts?: { stringify: string[] }): Partial<T> | null {
-    const { stringify = [] } = opts || {};
+export function jsonDiff<T extends any>(source: T, target: T): Partial<T> | null {
     const sourceType = classify(source);
     const targetType = classify(target);
 
@@ -97,13 +95,6 @@ export function jsonDiff<T extends any>(source: T, target: T, opts?: { stringify
             propsChangedCount++;
         };
 
-        if (stringify.includes(prop)) {
-            if (JSON.stringify(lhs[prop] !== JSON.stringify(rhs[prop]))) {
-                take(rhs[prop]);
-            }
-            continue;
-        }
-
         const lhsType = classify(lhs[prop]);
         const rhsType = classify(rhs[prop]);
         if (lhsType !== rhsType) {
@@ -134,7 +125,7 @@ export function jsonDiff<T extends any>(source: T, target: T, opts?: { stringify
             continue;
         }
 
-        const diff = jsonDiff(lhs[prop], rhs[prop], { stringify });
+        const diff = jsonDiff(lhs[prop], rhs[prop]);
         if (diff !== null) {
             take(diff);
         }
@@ -148,6 +139,12 @@ export function jsonDiff<T extends any>(source: T, target: T, opts?: { stringify
  * output.
  */
 export const DELETE = Symbol('<delete-property>') as any;
+
+/**
+ * Special value used by `jsonMerge` to signal that the last property value should be taken.
+ */
+export const TAKE_LAST = Symbol('<take-last-property>') as any;
+
 const NOT_SPECIFIED = Symbol('<unspecified-property>') as any;
 
 /**
@@ -187,7 +184,15 @@ export function jsonMerge<T>(...json: T[]): T {
         if (values.length === 0) {
             continue;
         }
+
+        const firstValue = values[0];
         const lastValue = values[values.length - 1];
+        if (firstValue === TAKE_LAST) {
+            if (lastValue !== TAKE_LAST) {
+                result[nextProp] = lastValue;
+            }
+            continue;
+        }
         if (lastValue === DELETE) {
             continue;
         }
