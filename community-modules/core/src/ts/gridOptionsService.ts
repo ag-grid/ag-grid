@@ -1,7 +1,7 @@
 import { Autowired, Bean } from "./context/context";
 import { GridOptions } from "./entities/gridOptions";
+import { AgEvent } from "./events";
 import { EventService } from "./eventService";
-import { isTrue, PropertyChangedEvent } from "./gridOptionsWrapper";
 import { AnyGridOptions } from "./propertyKeys";
 
 type GetKeys<T, U> = {
@@ -22,6 +22,18 @@ export type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 
 type OnlyBooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
 type NonBooleanProps = Exclude<keyof GridOptions, OnlyBooleanProps>;
+
+export interface PropertyChangedEvent extends AgEvent {
+    type: keyof GridOptions,
+    currentValue: any;
+    previousValue: any;
+}
+
+export type PropertyChangedListener = (event?: PropertyChangedEvent) => void
+
+export function isTrue(value: any): boolean {
+    return value === true || value === 'true';
+}
 
 @Bean('gridOptionsService')
 export class GridOptionsService {
@@ -51,10 +63,10 @@ export class GridOptionsService {
         }
     }
 
-    addPropertyChangeListener(key: keyof GridOptions, listener: EventListener): void {
+    addEventListener(key: keyof GridOptions, listener: PropertyChangedListener): void {
         this.propertyEventService.addEventListener(key, listener);
     }
-    removePropertyChangeListener(key: keyof GridOptions, listener: EventListener): void {
+    removeEventListener(key: keyof GridOptions, listener: PropertyChangedListener): void {
         this.propertyEventService.removeEventListener(key, listener);
     }
 }
