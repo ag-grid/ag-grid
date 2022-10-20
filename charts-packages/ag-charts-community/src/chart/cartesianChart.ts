@@ -232,182 +232,232 @@ export class CartesianChart extends Chart {
         bounds: BBox,
         lastPassSeriesRect?: BBox
     ) {
-        const { navigator, axes } = this;
+        const { axes } = this;
         const visited: Partial<Record<ChartAxisPosition, number>> = {};
         const newAxisWidths: Partial<Record<ChartAxisPosition, number>> = {};
 
         let clipSeries = false;
         let primaryTickCounts: Partial<Record<ChartAxisDirection, number>> = {};
 
+        const crossLinePadding = lastPassSeriesRect ? this.buildCrossLinePadding(lastPassSeriesRect, axisWidths) : {};
+        const axisBound = this.buildAxisBound(bounds, crossLinePadding);
+        const seriesRect = this.buildSeriesRect(axisBound, axisWidths);
+
+        // Set the number of ticks for continuous axes based on the available range
+        // before updating the axis domain via `this.updateAxes()` as the tick count has an effect on the calculated `nice` domain extent
+        axes.forEach((axis) => {
+            const { position } = axis;
+
+            let {
+                clipSeries: newClipSeries,
+                axisThickness,
+                axisOffset,
+            } = this.calculateAxisDimensions({
+                axis,
+                seriesRect,
+                axisWidths,
+                newAxisWidths,
+                primaryTickCounts,
+                clipSeries,
+                addInterAxisPadding: (visited[position] ?? 0) > 0,
+            });
+
+            visited[position] = (visited[position] ?? 0) + 1;
+            clipSeries = clipSeries || newClipSeries;
+
+            this.positionAxis({
+                axis,
+                axisBound,
+                axisOffset,
+                axisThickness,
+                axisWidths,
+                primaryTickCounts,
+                seriesRect,
+            });
+        });
+
+        return { clipSeries, seriesRect, axisWidths: newAxisWidths };
+    }
+
+    private buildCrossLinePadding(lastPassSeriesRect: BBox, axisWidths: Partial<Record<ChartAxisPosition, number>>) {
         const crossLinePadding: Partial<Record<ChartAxisPosition, number>> = {};
 
-        if (lastPassSeriesRect) {
-            this.axes.forEach((axis) => {
-                if (axis.crossLines) {
-                    axis.crossLines.forEach((crossLine) => {
-                        crossLine.calculatePadding(crossLinePadding, lastPassSeriesRect);
-                    });
-                }
-            });
-        }
-
+        this.axes.forEach((axis) => {
+            if (axis.crossLines) {
+                axis.crossLines.forEach((crossLine) => {
+                    crossLine.calculatePadding(crossLinePadding, lastPassSeriesRect);
+                });
+            }
+        });
         // Reduce cross-line padding to account for overlap with axes.
         for (const [side, padding = 0] of Object.entries(crossLinePadding) as [ChartAxisPosition, number][]) {
             crossLinePadding[side] = Math.max(padding - (axisWidths[side] ?? 0), 0);
         }
 
-        const buildAxisBound = () => {
-            const result = bounds.clone();
-            const { top = 0, right = 0, bottom = 0, left = 0 } = crossLinePadding;
-            result.x += left;
-            result.y += top;
-            result.width -= left + right;
-            result.height -= top + bottom;
-            return result;
-        };
-        const axisBound = buildAxisBound();
+        return crossLinePadding;
+    }
 
-        const buildSeriesRect = () => {
-            let result = axisBound.clone();
-            const { top, bottom, left, right } = axisWidths;
-            result.x += left ?? 0;
-            result.y += top ?? 0;
-            result.width -= (left ?? 0) + (right ?? 0);
-            result.height -= (top ?? 0) + (bottom ?? 0);
+    private buildAxisBound(bounds: BBox, crossLinePadding: Partial<Record<ChartAxisPosition, number>>) {
+        const result = bounds.clone();
+        const { top = 0, right = 0, bottom = 0, left = 0 } = crossLinePadding;
+        result.x += left;
+        result.y += top;
+        result.width -= left + right;
+        result.height -= top + bottom;
+        return result;
+    }
 
-            // Width and height should not be negative.
-            result.width = Math.max(0, result.width);
-            result.height = Math.max(0, result.height);
+    private buildSeriesRect(axisBound: BBox, axisWidths: Partial<Record<ChartAxisPosition, number>>) {
+        let result = axisBound.clone();
+        const { top, bottom, left, right } = axisWidths;
+        result.x += left ?? 0;
+        result.y += top ?? 0;
+        result.width -= (left ?? 0) + (right ?? 0);
+        result.height -= (top ?? 0) + (bottom ?? 0);
 
-            return result;
-        };
-        const seriesRect = buildSeriesRect();
+        // Width and height should not be negative.
+        result.width = Math.max(0, result.width);
+        result.height = Math.max(0, result.height);
 
-        const clampToOutsideSeriesRect = (value: number, dimension: 'x' | 'y', direction: -1 | 1) => {
-            const { x, y, width, height } = seriesRect;
-            const clampBounds = [x, y, x + width, y + height];
-            const fn = direction === 1 ? Math.min : Math.max;
-            const compareTo = clampBounds[(dimension === 'x' ? 0 : 1) + (direction === 1 ? 0 : 2)];
+        return result;
+    }
 
-            return fn(value, compareTo);
-        };
+    private clampToOutsideSeriesRect(seriesRect: BBox, value: number, dimension: 'x' | 'y', direction: -1 | 1) {
+        const { x, y, width, height } = seriesRect;
+        const clampBounds = [x, y, x + width, y + height];
+        const fn = direction === 1 ? Math.min : Math.max;
+        const compareTo = clampBounds[(dimension === 'x' ? 0 : 1) + (direction === 1 ? 0 : 2)];
 
-        const axesByPosition: Map<ChartAxisPosition, ChartAxis[]> = new Map();
+        return fn(value, compareTo);
+    }
 
-        // Set the number of ticks for continuous axes based on the available range
-        // before updating the axis domain via `this.updateAxes()` as the tick count has an effect on the calculated `nice` domain extent
-        axes.forEach((axis) => {
-            const { position, direction } = axis;
-            visited[position] = (visited[position] ?? 0) + 1;
+    private calculateAxisDimensions(opts: {
+        axis: ChartAxis;
+        seriesRect: BBox;
+        axisWidths: Partial<Record<ChartAxisPosition, number>>;
+        newAxisWidths: Partial<Record<ChartAxisPosition, number>>;
+        primaryTickCounts: Partial<Record<ChartAxisDirection, number>>;
+        clipSeries: boolean;
+        addInterAxisPadding: boolean;
+    }) {
+        const { axis, seriesRect, axisWidths, newAxisWidths, primaryTickCounts, addInterAxisPadding } = opts;
+        let { clipSeries } = opts;
+        const { navigator } = this;
+        const { position, direction } = axis;
 
-            const axisLeftRightRange = (axis: ChartAxis<any>) => {
-                if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
-                    return [0, seriesRect.height];
-                }
-                return [seriesRect.height, 0];
-            };
-
-            axis.label.mirrored = ['top', 'right'].includes(position);
-
-            const axisOffset = newAxisWidths[position] ?? 0;
-            switch (position) {
-                case ChartAxisPosition.Top:
-                case ChartAxisPosition.Bottom:
-                    axis.range = [0, seriesRect.width];
-                    axis.gridLength = seriesRect.height;
-                    break;
-                case ChartAxisPosition.Right:
-                case ChartAxisPosition.Left:
-                    axis.range = axisLeftRightRange(axis);
-                    axis.gridLength = seriesRect.width;
-                    break;
+        const axisLeftRightRange = (axis: ChartAxis<any>) => {
+            if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
+                return [0, seriesRect.height];
             }
+            return [seriesRect.height, 0];
+        };
 
-            if (axis.direction === ChartAxisDirection.X) {
-                let { min, max, enabled } = navigator;
-                if (enabled) {
-                    axis.visibleRange = [min, max];
-                } else {
-                    axis.visibleRange = [0, 1];
-                }
-            }
-            if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {
-                clipSeries = true;
-            }
+        axis.label.mirrored = ['top', 'right'].includes(position);
 
-            let primaryTickCount = axis.nice ? primaryTickCounts[axis.direction] : undefined;
-            const tickCount = primaryTickCount;
+        const axisOffset = newAxisWidths[position] ?? 0;
+        switch (position) {
+            case ChartAxisPosition.Top:
+            case ChartAxisPosition.Bottom:
+                axis.range = [0, seriesRect.width];
+                axis.gridLength = seriesRect.height;
+                break;
+            case ChartAxisPosition.Right:
+            case ChartAxisPosition.Left:
+                axis.range = axisLeftRightRange(axis);
+                axis.gridLength = seriesRect.width;
+                break;
+        }
 
-            axis.calculateDomain();
-            primaryTickCount = axis.update(tickCount);
-
-            let axisThickness = 0;
-            if (axis.thickness) {
-                axisThickness = axis.thickness;
+        if (axis.direction === ChartAxisDirection.X) {
+            let { min, max, enabled } = navigator;
+            if (enabled) {
+                axis.visibleRange = [min, max];
             } else {
-                const bbox = axis.computeBBox();
-                axisThickness = direction === ChartAxisDirection.X ? bbox.height : bbox.width;
+                axis.visibleRange = [0, 1];
             }
+        }
+        if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {
+            clipSeries = true;
+        }
 
-            // for multiple axes in the same direction and position, apply padding at the top of each inner axis (i.e. between axes).
-            const axisPadding = 15;
-            const visitCount = visited[position] ?? 0;
-            if (visitCount > 1) {
-                axisThickness += axisPadding;
-            }
-            axisThickness = Math.ceil(axisThickness);
+        let primaryTickCount = axis.nice ? primaryTickCounts[direction] : undefined;
 
-            switch (position) {
-                case ChartAxisPosition.Top:
-                    axis.translation.x = axisBound.x + (axisWidths.left ?? 0);
-                    axis.translation.y = clampToOutsideSeriesRect(axisBound.y + 1 + axisOffset + axisThickness, 'y', 1);
-                    break;
-                case ChartAxisPosition.Bottom:
-                    axis.translation.x = axisBound.x + (axisWidths.left ?? 0);
-                    axis.translation.y = clampToOutsideSeriesRect(
-                        axisBound.y + axisBound.height + 1 - axisThickness - axisOffset,
-                        'y',
-                        -1
-                    );
-                    break;
-                case ChartAxisPosition.Left:
-                    axis.translation.y = axisBound.y + (axisWidths.top ?? 0);
-                    axis.translation.x = clampToOutsideSeriesRect(axisBound.x + axisOffset + axisThickness, 'x', 1);
-                    break;
-                case ChartAxisPosition.Right:
-                    axis.translation.y = axisBound.y + (axisWidths.top ?? 0);
-                    axis.translation.x = clampToOutsideSeriesRect(
-                        axisBound.x + axisBound.width - axisThickness - axisOffset,
-                        'x',
-                        -1
-                    );
-                    break;
-            }
+        axis.calculateDomain();
+        axis.update(primaryTickCount);
 
-            primaryTickCount = axis.update(tickCount);
-            primaryTickCounts[axis.direction] = primaryTickCount;
+        let axisThickness = 0;
+        if (axis.thickness) {
+            axisThickness = axis.thickness;
+        } else {
+            const bbox = axis.computeBBox();
+            axisThickness = direction === ChartAxisDirection.X ? bbox.height : bbox.width;
+        }
 
-            newAxisWidths[position] = (newAxisWidths[position] ?? 0) + axisThickness;
+        // for multiple axes in the same direction and position, apply padding at the top of each inner axis (i.e. between axes).
+        const axisPadding = 15;
+        if (addInterAxisPadding) {
+            axisThickness += axisPadding;
+        }
+        axisThickness = Math.ceil(axisThickness);
+        newAxisWidths[position] = (newAxisWidths[position] ?? 0) + axisThickness;
 
-            // Increase the grid padding for previous axes
-            axis.gridPadding = 0;
-            let samePosAxes = axesByPosition.get(position);
-            if (!samePosAxes) {
-                samePosAxes = [];
-                axesByPosition.set(position, samePosAxes);
-            }
-            samePosAxes.forEach((otherAxis) => (otherAxis.gridPadding += axisThickness));
-            samePosAxes.push(axis);
-        });
+        axis.gridPadding = (axisWidths[position] ?? 0) - (newAxisWidths[position] ?? 0);
 
-        axesByPosition.forEach((axes) =>
-            axes.forEach((axis) => {
-                if (axis.gridPadding !== 0) {
-                    axis.update(axis.nice ? primaryTickCounts[axis.direction] : undefined);
-                }
-            })
-        );
+        return { clipSeries, axisThickness, axisOffset };
+    }
 
-        return { clipSeries, seriesRect, axisWidths: newAxisWidths };
+    private positionAxis(opts: {
+        axis: ChartAxis;
+        axisBound: BBox;
+        axisWidths: Partial<Record<ChartAxisPosition, number>>;
+        primaryTickCounts: Partial<Record<ChartAxisDirection, number>>;
+        seriesRect: BBox;
+        axisOffset: number;
+        axisThickness: number;
+    }) {
+        const { axis, axisBound, axisWidths, seriesRect, axisOffset, axisThickness, primaryTickCounts } = opts;
+        const { position, direction } = axis;
+
+        switch (position) {
+            case ChartAxisPosition.Top:
+                axis.translation.x = axisBound.x + (axisWidths.left ?? 0);
+                axis.translation.y = this.clampToOutsideSeriesRect(
+                    seriesRect,
+                    axisBound.y + 1 + axisOffset + axisThickness,
+                    'y',
+                    1
+                );
+                break;
+            case ChartAxisPosition.Bottom:
+                axis.translation.x = axisBound.x + (axisWidths.left ?? 0);
+                axis.translation.y = this.clampToOutsideSeriesRect(
+                    seriesRect,
+                    axisBound.y + axisBound.height + 1 - axisThickness - axisOffset,
+                    'y',
+                    -1
+                );
+                break;
+            case ChartAxisPosition.Left:
+                axis.translation.y = axisBound.y + (axisWidths.top ?? 0);
+                axis.translation.x = this.clampToOutsideSeriesRect(
+                    seriesRect,
+                    axisBound.x + axisOffset + axisThickness,
+                    'x',
+                    1
+                );
+                break;
+            case ChartAxisPosition.Right:
+                axis.translation.y = axisBound.y + (axisWidths.top ?? 0);
+                axis.translation.x = this.clampToOutsideSeriesRect(
+                    seriesRect,
+                    axisBound.x + axisBound.width - axisThickness - axisOffset,
+                    'x',
+                    -1
+                );
+                break;
+        }
+
+        let primaryTickCount = axis.update(primaryTickCounts[direction]);
+        primaryTickCounts[direction] = primaryTickCount;
     }
 }
