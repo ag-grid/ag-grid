@@ -251,6 +251,11 @@ export class CartesianChart extends Chart {
             });
         }
 
+        // Reduce cross-line padding to account for overlap with axes.
+        for (const [side, padding = 0] of Object.entries(crossLinePadding) as [ChartAxisPosition, number][]) {
+            crossLinePadding[side] = Math.max(padding - (axisWidths[side] ?? 0), 0);
+        }
+
         const buildAxisBound = () => {
             const result = bounds.clone();
             const { top = 0, right = 0, bottom = 0, left = 0 } = crossLinePadding;
