@@ -172,8 +172,9 @@ export class PopupService extends BeanStub {
         nudgeX?: number,
         nudgeY?: number,
         ePopup: HTMLElement,
+        skipObserver?: boolean
     }): void {
-        const { ePopup, nudgeX, nudgeY } = params;
+        const { ePopup, nudgeX, nudgeY, skipObserver } = params;
         const { x, y } = this.calculatePointerAlign(params.mouseEvent);
 
         this.positionPopup({
@@ -182,7 +183,8 @@ export class PopupService extends BeanStub {
             y,
             nudgeX,
             nudgeY,
-            keepWithinBounds: true
+            keepWithinBounds: true,
+            skipObserver
         });
 
         this.callPostProcessPopup(params.type, params.ePopup, null, params.mouseEvent, params.column, params.rowNode);
@@ -284,11 +286,13 @@ export class PopupService extends BeanStub {
         x: number,
         y: number,
         keepWithinBounds?: boolean;
+        skipObserver?: boolean
     }): void {
-        const { x, y, ePopup, keepWithinBounds, nudgeX, nudgeY } = params;
+        const { x, y, ePopup, keepWithinBounds, nudgeX, nudgeY, skipObserver } = params;
 
         let currentX = x;
         let currentY = y;
+
         if (nudgeX) {
             currentX += nudgeX;
         }
@@ -296,7 +300,7 @@ export class PopupService extends BeanStub {
             currentY += nudgeY;
         }
 
-        const updatePosition = () => {    
+        const updatePosition = () => {
             // if popup is overflowing to the bottom, move it up
             if (keepWithinBounds) {
                 currentX = this.keepXYWithinBounds(ePopup, currentX, DIRECTION.horizontal);
@@ -310,7 +314,7 @@ export class PopupService extends BeanStub {
         updatePosition();
 
         // Mouse tracking will recalculate positioning when moving, so won't need to recalculate here
-        if (!this.gridOptionsWrapper.isTooltipMouseTrack()) {
+        if (!skipObserver) {
             // Since rendering popup contents can be asynchronous, use a resize observer to
             // reposition the popup after initial updates to the size of the contents
             const resizeObserverDestroyFunc = this.resizeObserverService.observeResize(ePopup, updatePosition);

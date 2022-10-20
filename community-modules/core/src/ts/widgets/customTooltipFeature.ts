@@ -228,7 +228,8 @@ export class CustomTooltipFeature extends BeanStub {
             type: 'tooltip',
             mouseEvent: this.lastMouseEvent,
             ePopup: this.tooltipComp!.getGui(),
-            nudgeY: 18
+            nudgeY: 18,
+            skipObserver: this.tooltipMouseTrack
         });
     }
 
