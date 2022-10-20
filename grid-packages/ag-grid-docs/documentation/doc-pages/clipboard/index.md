@@ -135,6 +135,21 @@ These three callbacks above are demonstrated in the example below. Note the foll
 
 <grid-example title='Example Process' name='process' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
+### Processing Data from Clipboard
+
+To have complete control of processing clipboard data, you can use:
+
+<api-documentation source='grid-options/properties.json' section='clipboard' names='["processDataFromClipboard"]'  ></api-documentation>
+
+The following example shows custom code to process the data from the clipboard where:
+
+* Pasting any cell that starts with `Red` will paste a 4x4 grid with the top row being `['Orange', 'Orange']` and the bottom row being `['Grey', 'Grey']`
+* If there aren't any cells that start with `Red` and there is a cell that starts with `Yellow`, it will cancel the paste action and not paste anything
+* Otherwise, it will paste the data as is
+* The cells are coloured based on the colour that the cell content starts with
+
+<grid-example title='Example Process Data' name='process-all' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
+
 ## Changing the Delimiter for Copy & Paste
 
 By default, the grid will use `\t` (tab) as the field delimiter. This is to keep the copy / paste compatible with Excel. If you want another delimiter then you can set the property `gridOptions.clipboardDelimiter` to a value of your choosing.

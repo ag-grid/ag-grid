@@ -37,7 +37,7 @@ const gridOptions: GridOptions = {
     },
   },
 
-  processDataFromClipboard: processDataFromClipboard,
+  processDataFromClipboard,
 }
 
 function processDataFromClipboard(params: ProcessDataFromClipboardParams): string[][] | null {
