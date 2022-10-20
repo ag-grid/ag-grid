@@ -1,9 +1,6 @@
 import {
     Autowired,
-    Bean, BeanStub, ColumnApi, Constants,
-    FilterManager,
-    GridApi,
-    IImmutableService,
+    Bean, BeanStub, Constants, IImmutableService,
     IRowModel,
     PostConstruct,
     RowDataTransaction,
@@ -17,9 +14,6 @@ export class ImmutableService extends BeanStub implements IImmutableService {
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('filterManager') private filterManager: FilterManager;
 
     private clientSideRowModel: ClientSideRowModel;
 
@@ -31,7 +25,16 @@ export class ImmutableService extends BeanStub implements IImmutableService {
     }
 
     public isActive(): boolean {
-        return this.gridOptionsWrapper.isImmutableData();
+        // we used to have a property immutableData for this. however this was deprecated
+        // in favour of having Immutable Data on by default when getRowId is provided
+        const getRowIdProvided = this.gridOptionsService.get('getRowId') != null;
+        const immutableData = this.gridOptionsService.is('immutableData');
+        // this property is a backwards compatibility property, for those who want
+        // the old behaviour of Row ID's but NOT Immutable Data.
+        const resetRowDataOnUpdate = this.gridOptionsService.is('resetRowDataOnUpdate');
+
+        if (resetRowDataOnUpdate) { return false; }
+        return getRowIdProvided || immutableData;
     }
 
     public setRowData(rowData: any[]): void {
