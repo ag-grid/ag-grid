@@ -11140,19 +11140,19 @@
       }
     }
   },
-  "GridOptionKey": {},
   "GetKeys": { "meta": { "typeParams": ["T", "U"] } },
   "KeysLike": { "meta": { "typeParams": ["U"] } },
   "KeysOfType": { "meta": { "typeParams": ["U"] } },
   "OnlyBooleanProps": {},
+  "NonBooleanProps": {},
   "PropertyChangedEvent": {
-    "currentValue": { "type": { "returnType": "any", "optional": false } },
-    "previousValue": { "type": { "returnType": "any", "optional": false } },
     "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
+      "type": { "returnType": "keyof GridOptions", "optional": false }
+    },
+    "currentValue": { "type": { "returnType": "any", "optional": false } },
+    "previousValue": { "type": { "returnType": "any", "optional": false } }
   },
+  "PropertyChangedListener": {},
   "IAbstractHeaderCellComp": {},
   "IHeaderCellComp": {
     "setWidth": {
@@ -21714,6 +21714,7 @@
     "url": { "type": { "returnType": "string", "optional": false } }
   },
   "ModuleNames": {},
+  "GridOptionKey": {},
   "AnyGridOptions": {},
   "CallbackKeys": {},
   "FunctionKeys": {},

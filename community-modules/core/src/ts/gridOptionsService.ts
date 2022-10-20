@@ -1,10 +1,8 @@
 import { Autowired, Bean } from "./context/context";
 import { GridOptions } from "./entities/gridOptions";
-import { isTrue } from "./gridOptionsWrapper";
+import { EventService } from "./eventService";
+import { isTrue, PropertyChangedEvent } from "./gridOptionsWrapper";
 import { AnyGridOptions } from "./propertyKeys";
-
-
-type GridOptionKey = keyof GridOptions;
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never
@@ -22,24 +20,41 @@ export type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
  */
 export type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 
-type OnlyBooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>
+type OnlyBooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
+type NonBooleanProps = Exclude<keyof GridOptions, OnlyBooleanProps>;
 
 @Bean('gridOptionsService')
 export class GridOptionsService {
 
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
+    private propertyEventService: EventService = new EventService();
 
-    get<K extends keyof GridOptions>(property: K): GridOptions[K] {
+    public get<K extends NonBooleanProps>(property: K): GridOptions[K] {
         return this.gridOptions[property];
     }
 
-    is(property: OnlyBooleanProps): boolean {
+    public is(property: OnlyBooleanProps): boolean {
         return isTrue(this.gridOptions[property]);
     }
 
+    public set<K extends keyof GridOptions>(key: K, value: GridOptions[K], force = false): void {
+        const previousValue = this.gridOptions[key];
+
+        if (force || previousValue !== value) {
+            this.gridOptions[key] = value;
+            const event: PropertyChangedEvent = {
+                type: key,
+                currentValue: value,
+                previousValue: previousValue
+            };
+            this.propertyEventService.dispatchEvent(event);
+        }
+    }
+
+    addPropertyChangeListener(key: keyof GridOptions, listener: EventListener): void {
+        this.propertyEventService.addEventListener(key, listener);
+    }
+    removePropertyChangeListener(key: keyof GridOptions, listener: EventListener): void {
+        this.propertyEventService.removeEventListener(key, listener);
+    }
 }
-
-const c = new GridOptionsService();
-
-c.is('sideBar') // probably dont want these included to force this business logic to be handle in the modules and not in this service.
-c.is('accentedSort')

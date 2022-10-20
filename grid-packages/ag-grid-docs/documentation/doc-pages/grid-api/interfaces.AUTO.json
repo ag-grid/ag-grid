@@ -6354,10 +6354,6 @@
       "updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams)": "void"
     }
   },
-  "GridOptionKey": {
-    "meta": { "isTypeAlias": true },
-    "type": "keyof GridOptions"
-  },
   "GetKeys": {
     "meta": { "isTypeAlias": true, "typeParams": ["T", "U"] },
     "type": "{ [K in keyof T]: U extends T[K] ? K : (T[K] extends U | undefined ? K : never); }[keyof T]"
@@ -6374,10 +6370,22 @@
     "meta": { "isTypeAlias": true },
     "type": "Exclude<KeysOfType<boolean>, AnyGridOptions>"
   },
+  "NonBooleanProps": {
+    "meta": { "isTypeAlias": true },
+    "type": "Exclude<keyof GridOptions, OnlyBooleanProps>"
+  },
   "PropertyChangedEvent": {
     "meta": {},
-    "type": { "currentValue": "any", "previousValue": "any", "type": "string" },
+    "type": {
+      "type": "keyof GridOptions",
+      "currentValue": "any",
+      "previousValue": "any"
+    },
     "docs": { "type": "/** Event identifier */" }
+  },
+  "PropertyChangedListener": {
+    "meta": { "isTypeAlias": true },
+    "type": "(event?: PropertyChangedEvent) => void"
   },
   "IAbstractHeaderCellComp": { "meta": {}, "type": {} },
   "IHeaderCellComp": {
@@ -12443,6 +12451,10 @@
       null,
       null
     ]
+  },
+  "GridOptionKey": {
+    "meta": { "isTypeAlias": true },
+    "type": "keyof GridOptions"
   },
   "AnyGridOptions": {
     "meta": { "isTypeAlias": true },

@@ -95,6 +95,7 @@ import { RowNodeEventThrottle } from "./entities/rowNodeEventThrottle";
 import { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu";
 import { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorComp";
 import { WithoutGridCommon } from "./interfaces/iCommon";
+import { GridOptionsService } from "./gridOptionsService";
 
 export interface GridParams {
     // used by Web Components
@@ -303,7 +304,7 @@ export class GridCoreCreator {
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             RowContainerHeightService, HorizontalResizeService,
-            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper,
+            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, GridOptionsService,
             PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,

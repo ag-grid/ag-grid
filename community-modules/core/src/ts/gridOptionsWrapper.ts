@@ -72,9 +72,12 @@ function oneOrGreater(value: any, defaultValue?: number): number | undefined {
 }
 
 export interface PropertyChangedEvent extends AgEvent {
+    type: keyof GridOptions,
     currentValue: any;
     previousValue: any;
 }
+
+export type PropertyChangedListener = (event?: PropertyChangedEvent) => void
 
 @Bean('gridOptionsWrapper')
 export class GridOptionsWrapper {

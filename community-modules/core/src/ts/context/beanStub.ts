@@ -1,11 +1,13 @@
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { EventService } from "../eventService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { GridOptionsWrapper, PropertyChangedListener } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
 import { Autowired, Context, PreDestroy } from "./context";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { Component } from "../widgets/component";
 import { addSafePassiveEventListener } from "../utils/event";
+import { GridOptionsService } from "../gridOptionsService";
+import { GridOptions } from "../entities/gridOptions";
 
 export class BeanStub implements IEventEmitter {
 
@@ -24,6 +26,7 @@ export class BeanStub implements IEventEmitter {
     @Autowired('context') protected readonly context: Context;
     @Autowired('eventService') protected readonly eventService: EventService;
     @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') protected readonly gridOptionsService: GridOptionsService;
 
     // this was a test constructor niall built, when active, it prints after 5 seconds all beans/components that are
     // not destroyed. to use, create a new grid, then api.destroy() before 5 seconds. then anything that gets printed
@@ -91,6 +94,16 @@ export class BeanStub implements IEventEmitter {
         object: Window | HTMLElement | GridOptionsWrapper | IEventEmitter,
         event: string,
         listener: (event?: any) => void
+    ): (() => null) | undefined;
+    public addManagedListener(
+        object: GridOptionsService,
+        event: keyof GridOptions,
+        listener: PropertyChangedListener
+    ): (() => null) | undefined;
+    public addManagedListener(
+        object: Window | HTMLElement | GridOptionsWrapper | GridOptionsService | IEventEmitter,
+        event: string,
+        listener: (event?: any) => void
     ): (() => null) | undefined {
         if (this.destroyed) {
             return;
@@ -98,12 +111,19 @@ export class BeanStub implements IEventEmitter {
 
         if (object instanceof HTMLElement) {
             addSafePassiveEventListener(this.getFrameworkOverrides(), object, event, listener);
-        } else {
+        } else if (object instanceof GridOptionsService) {
+            object.addPropertyChangeListener(event as keyof GridOptions, listener)
+        }
+        else {
             object.addEventListener(event, listener);
         }
 
         const destroyFunc: () => null = () => {
-            object.removeEventListener(event, listener);
+            if (object instanceof GridOptionsService) {
+                object.removePropertyChangeListener(event as keyof GridOptions, listener);
+            } else {
+                object.removeEventListener(event, listener);
+            }
 
             this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
 
