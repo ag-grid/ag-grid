@@ -68,7 +68,7 @@ export class DropZoneColumnComp extends Component {
     public init(): void {
         this.setTemplate(DropZoneColumnComp.TEMPLATE);
         const eGui = this.getGui();
-        const isFunctionsReadOnly = this.gridOptionsWrapper.isFunctionsReadOnly();
+        const isFunctionsReadOnly = this.gridOptionsService.is('functionsReadOnly');
 
         this.addElementClasses(eGui);
         this.addElementClasses(this.eDragHandle, 'drag-handle');
@@ -106,7 +106,7 @@ export class DropZoneColumnComp extends Component {
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
         const columnSort = this.column.getSort();
-        const isSortSuppressed = this.gridOptionsWrapper.isRowGroupPanelSuppressSort();
+        const isSortSuppressed = this.gridOptionsService.is('rowGroupPanelSuppressSort');
 
         const ariaInstructions = [
             [
@@ -116,7 +116,7 @@ export class DropZoneColumnComp extends Component {
             ].filter(part => !!part).join(''),
         ];
 
-        const isFunctionsReadOnly = this.gridOptionsWrapper.isFunctionsReadOnly()
+        const isFunctionsReadOnly = this.gridOptionsService.is('functionsReadOnly')
         if (this.isAggregationZone() && !isFunctionsReadOnly) {
             const aggregationMenuAria = translate('ariaDropZoneColumnValueItemDescription', 'Press ENTER to change the aggregation type');
             ariaInstructions.push(aggregationMenuAria);
@@ -151,7 +151,7 @@ export class DropZoneColumnComp extends Component {
             return;
         }
 
-        if (!this.gridOptionsWrapper.isRowGroupPanelSuppressSort()) {
+        if (!this.gridOptionsService.is('rowGroupPanelSuppressSort')) {
             this.eSortIndicator.setupSort(this.column, true);
             const performSort = (event: MouseEvent | KeyboardEvent) => {
                 event.preventDefault();
@@ -200,13 +200,13 @@ export class DropZoneColumnComp extends Component {
             this.addCssClass('ag-column-drop-cell-ghost');
         }
 
-        if (this.isAggregationZone() && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
+        if (this.isAggregationZone() && !this.gridOptionsService.is('functionsReadOnly')) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
         }
     }
 
     private setupRemove(): void {
-        _.setDisplayed(this.eButton, !this.gridOptionsWrapper.isFunctionsReadOnly());
+        _.setDisplayed(this.eButton, !this.gridOptionsService.is('functionsReadOnly'));
 
         const agEvent: ColumnRemoveEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
 
@@ -219,7 +219,7 @@ export class DropZoneColumnComp extends Component {
                 this.dispatchEvent(agEvent);
             }
 
-            if (isEnter && this.isAggregationZone() && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
+            if (isEnter && this.isAggregationZone() && !this.gridOptionsService.is('functionsReadOnly')) {
                 e.preventDefault();
                 this.onShowAggFuncSelection();
             }
@@ -340,7 +340,7 @@ export class DropZoneColumnComp extends Component {
 
         const itemSelected = () => {
             hidePopup();
-            if (this.gridOptionsWrapper.isFunctionsPassive()) {
+            if (this.gridOptionsService.is('functionsPassive')) {
                 const event: WithoutGridCommon<ColumnAggFuncChangeRequestEvent> = {
                     type: Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
                     columns: [this.column],

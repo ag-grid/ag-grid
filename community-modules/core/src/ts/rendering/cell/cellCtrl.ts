@@ -13,6 +13,7 @@ import {
     CellEditRequestEvent
 } from "../../events";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { GridOptionsService } from "../../gridOptionsService";
 import { CellRangeFeature } from "./cellRangeFeature";
 import { exists, makeNull } from "../../utils/generic";
 import { BeanStub } from "../../context/beanStub";
@@ -82,6 +83,7 @@ export class CellCtrl extends BeanStub {
     private cellComp: ICellComp;
     private beans: Beans;
     private gow: GridOptionsWrapper;
+    private gos: GridOptionsService;
     private column: Column;
     private rowNode: RowNode;
     private rowCtrl: RowCtrl;
@@ -206,6 +208,7 @@ export class CellCtrl extends BeanStub {
     ): void {
         this.cellComp = comp;
         this.gow = this.beans.gridOptionsWrapper;
+        this.gos = this.beans.gridOptionsService;
         this.eGui = eGui;
         this.printLayout = printLayout;
 
@@ -230,7 +233,7 @@ export class CellCtrl extends BeanStub {
 
         this.setAriaColIndex();
 
-        if (!this.gow.isSuppressCellFocus()) {
+        if (!this.gos.is('suppressCellFocus')) {
             this.cellComp.setTabIndex(-1);
         }
 
@@ -333,7 +336,7 @@ export class CellCtrl extends BeanStub {
 
     public isForceWrapper(): boolean {
         // text selection requires the value to be wrapped in another element
-        const forceWrapper = this.beans.gridOptionsWrapper.isEnableCellTextSelection() || this.column.isAutoHeight();
+        const forceWrapper = this.beans.gridOptionsService.is('enableCellTextSelection') || this.column.isAutoHeight();
         return forceWrapper;
     }
 
@@ -433,7 +436,7 @@ export class CellCtrl extends BeanStub {
     private saveNewValue(oldValue: any, newValue: any): boolean {
         if (newValue === oldValue) { return false; }
 
-        if (this.beans.gridOptionsWrapper.isReadOnlyEdit()) {
+        if (this.beans.gridOptionsService.is('readOnlyEdit')) {
             this.dispatchEventForSaveValueReadOnly(oldValue, newValue);
             return false;
         }
@@ -705,7 +708,7 @@ export class CellCtrl extends BeanStub {
             const processingFilterChange = this.beans.filterManager.isSuppressFlashingCellsBecauseFiltering();
 
             const flashCell = !suppressFlash && !processingFilterChange &&
-                (this.beans.gridOptionsWrapper.isEnableCellChangeFlash() || colDef.enableCellChangeFlash);
+                (this.beans.gridOptionsService.is('enableCellChangeFlash') || colDef.enableCellChangeFlash);
 
             if (flashCell) {
                 this.flashCell();
@@ -738,7 +741,7 @@ export class CellCtrl extends BeanStub {
 
         if (fullRowEdit) { return; }
 
-        const enterMovesDownAfterEdit = this.beans.gridOptionsWrapper.isEnterMovesDownAfterEdit();
+        const enterMovesDownAfterEdit = this.beans.gridOptionsService.is('enterMovesDownAfterEdit');
 
         if (enterMovesDownAfterEdit) {
             this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.getCellPosition(), false);
@@ -845,10 +848,10 @@ export class CellCtrl extends BeanStub {
         const isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer && !lockedClosedGroup;
 
         // are we showing group footers
-        const groupFootersEnabled = this.beans.gridOptionsWrapper.isGroupIncludeFooter();
+        const groupFootersEnabled = this.beans.gridOptionsService.is('groupIncludeFooter');
 
         // if doing footers, we normally don't show agg data at group level when group is open
-        const groupAlwaysShowAggData = this.beans.gridOptionsWrapper.isGroupSuppressBlankHeader();
+        const groupAlwaysShowAggData = this.beans.gridOptionsService.is('groupSuppressBlankHeader');
 
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
@@ -1047,7 +1050,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
-        if (!this.cellComp || this.gow.isSuppressCellFocus()) { return; }
+        if (!this.cellComp || this.gos.is('suppressCellFocus')) { return; }
 
         const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
 
@@ -1090,7 +1093,7 @@ export class CellCtrl extends BeanStub {
 
     public onColumnHover(): void {
         if (!this.cellComp) { return; }
-        if (!this.beans.gridOptionsWrapper.isColumnHoverHighlight()) { return; }
+        if (!this.beans.gridOptionsService.is('columnHoverHighlight')) { return; }
 
         const isHovered = this.beans.columnHoverService.isHovered(this.column);
         this.cellComp.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);
@@ -1178,8 +1181,8 @@ export class CellCtrl extends BeanStub {
         dragStartPixels?: number,
         suppressVisibilityChange?: boolean
     ): RowDragComp | undefined {
-        const pagination = this.beans.gridOptionsWrapper.isPagination();
-        const rowDragManaged = this.beans.gridOptionsWrapper.isRowDragManaged();
+        const pagination = this.beans.gridOptionsService.is('pagination');
+        const rowDragManaged = this.beans.gridOptionsService.is('rowDragManaged');
         const clientSideRowModelActive = this.beans.gridOptionsWrapper.isRowModelDefault();
 
         if (rowDragManaged) {

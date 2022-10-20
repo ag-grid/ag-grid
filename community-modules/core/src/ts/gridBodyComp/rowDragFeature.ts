@@ -129,7 +129,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public getIconName(): string {
-        const managedDrag = this.gridOptionsWrapper.isRowDragManaged();
+        const managedDrag = this.gridOptionsService.is('rowDragManaged');
 
         if (managedDrag && this.shouldPreventRowMove()) {
             return DragAndDropService.ICON_NOT_ALLOWED;
@@ -147,7 +147,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return draggingEvent.dragItem.rowNodes || [];
         }
 
-        const isRowDragMultiRow = this.gridOptionsWrapper.isRowDragMultiRow();
+        const isRowDragMultiRow = this.gridOptionsService.is('rowDragMultiRow');
         const selectedNodes = [...this.selectionService.getSelectedNodes()].sort(
             (a, b) => {
                 if (a.rowIndex == null || b.rowIndex == null) { return 0; }
@@ -208,7 +208,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.lastDraggingEvent = draggingEvent;
 
         const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
-        const managedDrag = this.gridOptionsWrapper.isRowDragManaged();
+        const managedDrag = this.gridOptionsService.is('rowDragManaged');
 
         if (managedDrag) {
             this.doManagedDrag(draggingEvent, pixel);
@@ -219,14 +219,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
         const isFromThisGrid = this.isFromThisGrid(draggingEvent);
-        const managedDrag = this.gridOptionsWrapper.isRowDragManaged();
+        const managedDrag = this.gridOptionsService.is('rowDragManaged');
         const rowNodes = draggingEvent.dragItem.rowNodes!;
 
         if (managedDrag && this.shouldPreventRowMove()) {
             return;
         }
 
-        if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging() || !isFromThisGrid) {
+        if (this.gridOptionsService.is('suppressMoveWhenRowDragging') || !isFromThisGrid) {
             if (!this.isDropZoneWithinThisGrid(draggingEvent)) {
                 this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
             }
@@ -434,7 +434,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.dispatchGridEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
 
-        if (this.gridOptionsWrapper.isRowDragManaged()) {
+        if (this.gridOptionsService.is('rowDragManaged')) {
             this.clearRowHighlight();
         }
 
@@ -448,8 +448,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.stopDragging(draggingEvent);
 
         if (
-            this.gridOptionsWrapper.isRowDragManaged() &&
-            (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging() || !this.isFromThisGrid(draggingEvent)) &&
+            this.gridOptionsService.is('rowDragManaged') &&
+            (this.gridOptionsService.is('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
             !this.isDropZoneWithinThisGrid(draggingEvent)
         ) {
             this.moveRowAndClearHighlight(draggingEvent);

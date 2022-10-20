@@ -36,7 +36,7 @@ export class SortListener extends BeanStub {
 
         // when using tree data we just return the sort model with the 'ag-Grid-AutoColumn' as is, i.e not broken out
         // into it's constitute group columns as they are not defined up front and can vary per node.
-        if (this.gridOptionsWrapper.isTreeData()) {
+        if (this.gridOptionsService.is('treeData')) {
             return sortModel;
         }
 

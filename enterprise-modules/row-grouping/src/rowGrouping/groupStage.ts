@@ -70,7 +70,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     @PostConstruct
     private postConstruct(): void {
-        this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+        this.usingTreeData = this.gridOptionsService.is('treeData');
         if (this.usingTreeData) {
             this.getDataPath = this.gridOptionsWrapper.getDataPathFunc();
         }
@@ -123,7 +123,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             // someone complained that the parent attribute was causing some change detection
             // to break is some angular add-on - which i never used. taking the parent out breaks
             // a cyclic dependency, hence this flag got introduced.
-            includeParents: !this.gridOptionsWrapper.isSuppressParentsInRowNodes(),
+            includeParents: !this.gridOptionsService.is('suppressParentsInRowNodes'),
             expandByDefault: this.gridOptionsWrapper.getGroupDefaultExpanded()!,
             groupedCols: groupedCols!,
             rootNode: rowNode,

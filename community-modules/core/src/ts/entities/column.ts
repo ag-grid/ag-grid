@@ -25,6 +25,7 @@ import { ModuleRegistry } from "../modules/moduleRegistry";
 import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
 import { doOnce } from "../utils/function";
 import { mergeDeep } from "../utils/object";
+import { GridOptionsService } from "../gridOptionsService";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 
@@ -68,6 +69,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     public static EVENT_VALUE_CHANGED = 'columnValueChanged';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
 
     private readonly colId: any;
@@ -233,7 +235,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     private initDotNotation(): void {
-        const suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
+        const suppressDotNotation = this.gridOptionsService.is('suppressFieldDotNotation');
         this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
         this.tooltipFieldContainsDots = exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
     }
@@ -325,7 +327,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             }
         }
 
-        if (this.gridOptionsWrapper.isTreeData()) {
+        if (this.gridOptionsService.is('treeData')) {
             const itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(item => {
                 if (exists(colDefAny[item])) {
@@ -393,7 +395,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     public isCellEditable(rowNode: RowNode): boolean {
 
         // only allow editing of groups if the user has this option enabled
-        if (rowNode.group && !this.gridOptionsWrapper.isEnableGroupEdit()) {
+        if (rowNode.group && !this.gridOptionsService.is('enableGroupEdit')) {
             return false;
         }
 

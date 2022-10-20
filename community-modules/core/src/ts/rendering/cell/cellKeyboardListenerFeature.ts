@@ -87,13 +87,13 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
     private onBackspaceOrDeleteKeyPressed(key: string, event: KeyboardEvent): void {
         const { cellCtrl, beans, rowNode } = this;
-        const { gridOptionsWrapper, rangeService, eventService } = beans;
+        const { gridOptionsWrapper, gridOptionsService, rangeService, eventService } = beans;
 
         if (cellCtrl.isEditing()) { return; }
 
         eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
 
-        if (isDeleteKey(key, gridOptionsWrapper.isEnableCellEditingOnBackspace())) {
+        if (isDeleteKey(key, gridOptionsService.is('enableCellEditingOnBackspace'))) {
             if (rangeService && gridOptionsWrapper.isEnableRangeSelection()) {
                 rangeService.clearCellRangeCellValues();
             } else if (cellCtrl.isCellEditable()) {
@@ -110,7 +110,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (this.cellCtrl.isEditing() || this.rowCtrl.isEditing()) {
             this.cellCtrl.stopEditingAndFocus();
         } else {
-            if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
+            if (this.beans.gridOptionsService.is('enterMovesDown')) {
                 this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.cellCtrl.getCellPosition(), false);
             } else {
                 this.cellCtrl.startRowOrCellEdit(KeyCode.ENTER, undefined, e);
@@ -161,13 +161,13 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onSpaceKeyPressed(event: KeyboardEvent): void {
-        const { gridOptionsWrapper } = this.beans;
+        const { gridOptionsWrapper, gridOptionsService } = this.beans;
 
         if (!this.cellCtrl.isEditing() && gridOptionsWrapper.isRowSelection()) {
             const currentSelection = this.rowNode.isSelected();
             const newSelection = !currentSelection;
-            if (newSelection || !gridOptionsWrapper.isSuppressRowDeselection()) {
-                const groupSelectsFiltered = this.beans.gridOptionsWrapper.isGroupSelectsFiltered();
+            if (newSelection || !gridOptionsService.is('suppressRowDeselection')) {
+                const groupSelectsFiltered = this.beans.gridOptionsService.is('groupSelectsFiltered');
                 const updatedCount = this.rowNode.setSelectedParams({
                     newValue: newSelection,
                     rangeSelect: event.shiftKey,

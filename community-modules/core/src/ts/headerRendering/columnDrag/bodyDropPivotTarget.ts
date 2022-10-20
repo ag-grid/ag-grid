@@ -1,14 +1,14 @@
-import { DraggingEvent, DragAndDropService } from "../../dragAndDrop/dragAndDropService";
-import { Column, ColumnPinnedType } from "../../entities/column";
+import { GridOptionsService } from "../../gridOptionsService";
 import { ColumnModel } from "../../columns/columnModel";
 import { Autowired } from "../../context/context";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { DragAndDropService, DraggingEvent } from "../../dragAndDrop/dragAndDropService";
+import { Column, ColumnPinnedType } from "../../entities/column";
 import { DropListener } from "./bodyDropTarget";
 
 export class BodyDropPivotTarget implements DropListener {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
 
     private columnsToAggregate: Column[] = [];
     private columnsToGroup: Column[] = [];
@@ -25,7 +25,7 @@ export class BodyDropPivotTarget implements DropListener {
         this.clearColumnsList();
 
         // in pivot mode, we don't accept any drops if functions are read only
-        if (this.gridOptionsWrapper.isFunctionsReadOnly()) { return; }
+        if (this.gridOptionsService.is('functionsReadOnly')) { return; }
 
         const dragColumns: Column[] | undefined = draggingEvent.dragItem.columns;
 

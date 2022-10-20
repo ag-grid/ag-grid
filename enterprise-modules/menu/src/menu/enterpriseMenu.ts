@@ -78,7 +78,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
-        if (this.gridOptionsWrapper.isEnableRtl()) {
+        if (this.gridOptionsService.is('enableRtl')) {
             multiplier = 1;
             alignSide = 'right';
         }
@@ -399,7 +399,7 @@ export class EnterpriseMenu extends BeanStub {
 
         const isInMemoryRowModel = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 
-        const usingTreeData = this.gridOptionsWrapper.isTreeData();
+        const usingTreeData = this.gridOptionsService.is('treeData');
 
         const allowValueAgg =
             // if primary, then only allow aggValue if grouping and it's a value columns

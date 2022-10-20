@@ -3,7 +3,7 @@ import {
     ColumnModel,
     Events,
     ColumnPivotChangeRequestEvent,
-    GridOptionsWrapper,
+    GridOptionsService,
     ColumnEventType,
     Bean,
     IAggFuncService,
@@ -20,7 +20,7 @@ export class ModelItemUtils {
 
     @Autowired('aggFuncService') aggFuncService: IAggFuncService;
     @Autowired('columnModel') columnModel: ColumnModel;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('eventService') private eventService: EventService;
 
     public selectAllChildren(colTree: ColumnModelItem[], selectAllChecked: boolean, eventType: ColumnEventType): void {
@@ -79,7 +79,7 @@ export class ModelItemUtils {
     }
 
     private setAllPivot(columns: Column[], value: boolean, eventType: ColumnEventType): void {
-        if (this.gridOptionsWrapper.isFunctionsPassive()) {
+        if (this.gridOptionsService.is('functionsPassive')) {
             this.setAllPivotPassive(columns, value);
         } else {
             this.setAllPivotActive(columns, value, eventType);

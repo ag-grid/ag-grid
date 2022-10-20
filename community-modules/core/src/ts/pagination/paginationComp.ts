@@ -37,15 +37,15 @@ export class PaginationComp extends Component {
 
     @PostConstruct
     protected postConstruct(): void {
-        const isRtl = this.gridOptionsWrapper.isEnableRtl();
+        const isRtl = this.gridOptionsService.is('enableRtl');
         this.setTemplate(this.getTemplate());
         this.btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsWrapper)!);
         this.btPrevious.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsWrapper)!);
         this.btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsWrapper)!);
         this.btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsWrapper)!);
 
-        const isPaging = this.gridOptionsWrapper.isPagination();
-        const paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
+        const isPaging = this.gridOptionsService.is('pagination');
+        const paginationPanelEnabled = isPaging && !this.gridOptionsService.is('suppressPaginationPanel');
 
         if (!paginationPanelEnabled) {
             this.setDisplayed(false);

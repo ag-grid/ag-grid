@@ -8,6 +8,7 @@ import {
     ExcelFactoryMode,
     ExcelStyle,
     GridOptions,
+    GridOptionsService,
     GridOptionsWrapper,
     IExcelCreator,
     PostConstruct,
@@ -118,6 +119,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
 
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
 
     private exportMode: string = 'xlsx';
 
@@ -125,7 +127,8 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
     public postConstruct(): void {
         this.setBeans({
             gridSerializer: this.gridSerializer,
-            gridOptionsWrapper: this.gridOptionsWrapper
+            gridOptionsWrapper: this.gridOptionsWrapper,
+            gridOptionsService: this.gridOptionsService
         });
     }
 
@@ -219,7 +222,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
     }
 
     public createSerializingSession(params: ExcelExportParams): SerializingSession {
-        const { columnModel, valueService, gridOptionsWrapper } = this;
+        const { columnModel, valueService, gridOptionsWrapper, gridOptionsService } = this;
         const isXlsx = this.getExportMode() === 'xlsx';
 
         let sheetName = 'ag-grid';
@@ -233,6 +236,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
             columnModel,
             valueService,
             gridOptionsWrapper,
+            gridOptionsService,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
             baseExcelStyles: this.gridOptions.excelStyles || [],
             styleLinker: this.styleLinker.bind(this)
@@ -302,7 +306,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
     }
 
     public isExportSuppressed():boolean {
-        return this.gridOptionsWrapper.isSuppressExcelExport();
+        return this.gridOptionsService.is('suppressExcelExport');
     }
 
     private setExportMode(exportMode: string): void {

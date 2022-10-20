@@ -39,7 +39,7 @@ export class StickyRowFeature extends BeanStub {
     public checkStickyRows(): void {
         let height = 0;
 
-        if (!this.gridOptionsWrapper.isGroupRowsSticky()) {
+        if (!this.gridOptionsService.is('groupRowsSticky')) {
             this.refreshNodesAndContainerHeight([], height);
             return;
         }

@@ -97,7 +97,7 @@ export class GridBodyCtrl extends BeanStub {
         this.eBottom = eBottom;
         this.eStickyTop = eStickyTop;
 
-        this.setCellTextSelection(this.gridOptionsWrapper.isEnableCellTextSelect());
+        this.setCellTextSelection(this.gridOptionsService.is('enableCellTextSelection'));
 
         this.createManagedBean(new LayoutFeature(this.comp));
         this.bodyScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
@@ -189,7 +189,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addStopEditingWhenGridLosesFocus(): void {
-        if (!this.gridOptionsWrapper.isStopEditingWhenCellsLoseFocus()) { return; }
+        if (!this.gridOptionsService.is('stopEditingWhenCellsLoseFocus')) { return; }
 
         const focusOutListener = (event: FocusEvent): void => {
             // this is the element the focus is moving to
@@ -243,7 +243,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public isVerticalScrollShowing(): boolean {
-        const show = this.gridOptionsWrapper.isAlwaysShowVerticalScroll();
+        const show = this.gridOptionsService.is('alwaysShowVerticalScroll');
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
         const allowVerticalScroll = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
         this.comp.setAlwaysVerticalScrollClass(cssClass, show);
@@ -272,7 +272,7 @@ export class GridBodyCtrl extends BeanStub {
         // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
         const listener = (mouseEvent: MouseEvent) => {
-            if (this.gridOptionsWrapper.isPreventDefaultOnContextMenu()) {
+            if (this.gridOptionsService.is('preventDefaultOnContextMenu')) {
                 mouseEvent.preventDefault();
             }
             const { target } = mouseEvent;
@@ -290,7 +290,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private onBodyViewportWheel(e: WheelEvent): void {
-        if (!this.gridOptionsWrapper.isSuppressScrollWhenPopupsAreOpen()) { return; }
+        if (!this.gridOptionsService.is('suppressScrollWhenPopupsAreOpen')) { return; }
 
         if (this.popupService.hasAnchoredPopup()) {
             e.preventDefault();

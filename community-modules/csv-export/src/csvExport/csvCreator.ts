@@ -4,6 +4,7 @@ import {
     ColumnModel,
     CsvCustomContent,
     CsvExportParams,
+    GridOptionsService,
     GridOptionsWrapper,
     ICsvCreator,
     PostConstruct,
@@ -21,12 +22,14 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
 
     @PostConstruct
     public postConstruct(): void {
         this.setBeans({
             gridSerializer: this.gridSerializer,
-            gridOptionsWrapper: this.gridOptionsWrapper
+            gridOptionsWrapper: this.gridOptionsWrapper,
+            gridOptionsService: this.gridOptionsService
         });
     }
 
@@ -72,7 +75,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
-        const { columnModel, valueService, gridOptionsWrapper } = this;
+        const { columnModel, valueService, gridOptionsWrapper, gridOptionsService } = this;
         const {
             processCellCallback,
             processHeaderCallback,
@@ -85,6 +88,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         return new CsvSerializingSession({
             columnModel: columnModel,
             valueService,
+            gridOptionsService,
             gridOptionsWrapper,
             processCellCallback: processCellCallback || undefined,
             processHeaderCallback: processHeaderCallback || undefined,
@@ -96,6 +100,6 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     public isExportSuppressed(): boolean {
-        return this.gridOptionsWrapper.isSuppressCsvExport();
+        return this.gridOptionsService.is('suppressCsvExport');
     }
 }

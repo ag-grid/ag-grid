@@ -1,6 +1,7 @@
 import {
     Column,
     ColumnModel,
+    GridOptionsService,
     GridOptionsWrapper,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
@@ -17,6 +18,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     public columnModel: ColumnModel;
     public valueService: ValueService;
     public gridOptionsWrapper: GridOptionsWrapper;
+    public gridOptionsService: GridOptionsService
     public processCellCallback?: (params: ProcessCellForExportParams) => string;
     public processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
     public processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
@@ -26,7 +28,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     constructor(config: GridSerializingParams) {
         const {
-            columnModel, valueService, gridOptionsWrapper, processCellCallback,
+            columnModel, valueService, gridOptionsWrapper, gridOptionsService, processCellCallback,
             processHeaderCallback, processGroupHeaderCallback,
             processRowGroupCallback
         } = config;
@@ -34,6 +36,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         this.columnModel = columnModel;
         this.valueService = valueService;
         this.gridOptionsWrapper = gridOptionsWrapper;
+        this.gridOptionsService = gridOptionsService;
         this.processCellCallback = processCellCallback;
         this.processHeaderCallback = processHeaderCallback;
         this.processGroupHeaderCallback = processGroupHeaderCallback;
@@ -57,7 +60,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     public extractRowCellValue(column: Column, index: number, accumulatedRowIndex: number, type: string, node: RowNode) {
         // we render the group summary text e.g. "-> Parent -> Child"...
-        const hideOpenParents = this.gridOptionsWrapper.isGroupHideOpenParents();
+        const hideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
         const value = (!hideOpenParents && this.shouldRenderGroupSummaryCell(node, column, index))
             ? this.createValueForGroupNode(node)
             : this.valueService.getValue(column, node);

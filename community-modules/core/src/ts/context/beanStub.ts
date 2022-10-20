@@ -1,12 +1,12 @@
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { EventService } from "../eventService";
-import { GridOptionsWrapper, PropertyChangedListener } from "../gridOptionsWrapper";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
 import { Autowired, Context, PreDestroy } from "./context";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { Component } from "../widgets/component";
 import { addSafePassiveEventListener } from "../utils/event";
-import { GridOptionsService } from "../gridOptionsService";
+import { GridOptionsService, PropertyChangedListener } from "../gridOptionsService";
 import { GridOptions } from "../entities/gridOptions";
 
 export class BeanStub implements IEventEmitter {
@@ -94,16 +94,6 @@ export class BeanStub implements IEventEmitter {
         object: Window | HTMLElement | GridOptionsWrapper | IEventEmitter,
         event: string,
         listener: (event?: any) => void
-    ): (() => null) | undefined;
-    public addManagedListener(
-        object: GridOptionsService,
-        event: keyof GridOptions,
-        listener: PropertyChangedListener
-    ): (() => null) | undefined;
-    public addManagedListener(
-        object: Window | HTMLElement | GridOptionsWrapper | GridOptionsService | IEventEmitter,
-        event: string,
-        listener: (event?: any) => void
     ): (() => null) | undefined {
         if (this.destroyed) {
             return;
@@ -111,22 +101,34 @@ export class BeanStub implements IEventEmitter {
 
         if (object instanceof HTMLElement) {
             addSafePassiveEventListener(this.getFrameworkOverrides(), object, event, listener);
-        } else if (object instanceof GridOptionsService) {
-            object.addPropertyChangeListener(event as keyof GridOptions, listener)
-        }
-        else {
+        } else {
             object.addEventListener(event, listener);
         }
 
         const destroyFunc: () => null = () => {
-            if (object instanceof GridOptionsService) {
-                object.removePropertyChangeListener(event as keyof GridOptions, listener);
-            } else {
-                object.removeEventListener(event, listener);
-            }
-
+            object.removeEventListener(event, listener);
             this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
+            return null;
+        };
 
+        this.destroyFunctions.push(destroyFunc);
+
+        return destroyFunc;
+    }
+
+    public addManagedPropertyListener(
+        event: keyof GridOptions,
+        listener: PropertyChangedListener
+    ): (() => null) | undefined {
+        if (this.destroyed) {
+            return;
+        }
+
+        this.gridOptionsService.addEventListener(event, listener);
+
+        const destroyFunc: () => null = () => {
+            this.gridOptionsService.removeEventListener(event, listener);
+            this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
             return null;
         };
 

@@ -95,7 +95,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         this.logger.log('pasteFromClipboard');
 
         // Method 1 - native clipboard API, available in modern chrome browsers
-        const allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
+        const allowNavigator = !this.gridOptionsService.is('suppressClipboardApi');
         // Some browsers (Firefox) do not allow Web Applications to read from
         // the clipboard so verify if not only the ClipboardAPI is available,
         // but also if the `readText` method is public.
@@ -176,7 +176,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         if (parsedData == null) { return; }
 
-        if (this.gridOptionsWrapper.isSuppressLastEmptyLineOnPaste()) {
+        if (this.gridOptionsService.is('suppressLastEmptyLineOnPaste')) {
             this.removeLastLineIfBlank(parsedData!);
         }
 
@@ -220,7 +220,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         let changedPath: ChangedPath | undefined;
 
         if (this.clientSideRowModel) {
-            const onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
+            const onlyChangedColumns = this.gridOptionsService.is('aggregateOnlyChangedColumns');
             changedPath = new ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
         }
 
@@ -454,7 +454,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
         // so we should skip them when doing paste operations.
-        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsWrapper.isTreeData();
+        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.is('treeData');
 
         const getNextGoodRowNode = () => {
             while (true) {
@@ -518,16 +518,16 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         // don't override 'includeHeaders' if it has been explicitly set to 'false'
         if (includeHeaders == null) {
-            includeHeaders = this.gridOptionsWrapper.isCopyHeadersToClipboard();
+            includeHeaders = this.gridOptionsService.is('copyHeadersToClipboard');
         }
 
         if (includeGroupHeaders == null) {
-            includeGroupHeaders = this.gridOptionsWrapper.isCopyGroupHeadersToClipboard();
+            includeGroupHeaders = this.gridOptionsService.is('copyGroupHeadersToClipboard');
         }
 
         const copyParams = { includeHeaders, includeGroupHeaders };
 
-        const shouldCopyRows = !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
+        const shouldCopyRows = !this.gridOptionsService.is('suppressCopyRowsToClipboard');
 
         // Copy priority is Range > Row > Focus
         if (this.rangeService && !this.rangeService.isEmpty() && !this.shouldSkipSingleCellRange()) {
@@ -540,7 +540,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private shouldSkipSingleCellRange(): boolean {
-        return this.gridOptionsWrapper.isSuppressCopySingleCellRanges() && !this.rangeService.isMoreThanOneCell();
+        return this.gridOptionsService.is('suppressCopySingleCellRanges') && !this.rangeService.isMoreThanOneCell();
     }
 
     private iterateActiveRanges(onlyFirst: boolean, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
@@ -770,7 +770,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         }
 
         // method 2 - native clipboard API, available in modern chrome browsers
-        const allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
+        const allowNavigator = !this.gridOptionsService.is('suppressClipboardApi');
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.writeText(data).catch((e) => {
                 _.doOnce(() => {

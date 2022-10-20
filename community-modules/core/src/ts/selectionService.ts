@@ -35,7 +35,7 @@ export class SelectionService extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+        this.groupSelectsChildren = this.gridOptionsService.is('groupSelectsChildren');
         this.addManagedListener(this.eventService, Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     }
 
@@ -78,7 +78,7 @@ export class SelectionService extends BeanStub {
     // should only be called if groupSelectsChildren=true
     public updateGroupsFromChildrenSelections(changedPath?: ChangedPath): void {
         // we only do this when group selection state depends on selected children
-        if (!this.gridOptionsWrapper.isGroupSelectsChildren()) {
+        if (!this.gridOptionsService.is('groupSelectsChildren')) {
             return;
         }
         // also only do it if CSRM (code should never allow this anyway)

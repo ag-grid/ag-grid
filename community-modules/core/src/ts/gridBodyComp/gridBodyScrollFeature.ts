@@ -54,7 +54,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
+        this.enableRtl = this.gridOptionsService.is('enableRtl');
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
 
         this.ctrlsService.whenReady(p => {
@@ -70,7 +70,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.addManagedListener(this.centerRowContainerCtrl.getViewportElement(), 'scroll', this.onCenterViewportScroll.bind(this));
         this.addManagedListener(fakeHScroll.getViewport(), 'scroll', this.onFakeHorizontalScroll.bind(this));
 
-        const onVerticalScroll = this.gridOptionsWrapper.isDebounceVerticalScrollbar() ?
+        const onVerticalScroll = this.gridOptionsService.is('debounceVerticalScrollbar') ?
             debounce(this.onVerticalScroll.bind(this), 100)
             : this.onVerticalScroll.bind(this);
 
@@ -165,7 +165,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.animationFrameService.setScrollTop(scrollTop);
         this.nextScrollTop = scrollTop;
 
-        if (this.gridOptionsWrapper.isSuppressAnimationFrame()) {
+        if (this.gridOptionsService.is('suppressAnimationFrame')) {
             this.scrollTop = this.nextScrollTop;
             this.redrawRowsAfterScroll();
         } else {
@@ -383,8 +383,8 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
-        const isPaging = this.gridOptionsWrapper.isPagination();
-        const paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
+        const isPaging = this.gridOptionsService.is('pagination');
+        const paginationPanelEnabled = isPaging && !this.gridOptionsService.is('suppressPaginationPanel');
 
         if (!paginationPanelEnabled) {
             this.paginationProxy.goToPageWithIndex(index);

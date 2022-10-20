@@ -8,7 +8,8 @@ import {
     ServerSideGroupLevelParams,
     GetServerSideGroupLevelParamsParams,
     ColumnModel,
-    WithoutGridCommon
+    WithoutGridCommon,
+    GridOptionsService
 } from "@ag-grid-community/core";
 import { InfiniteStore } from "./infiniteStore";
 import { SSRMParams } from "../serverSideRowModel";
@@ -18,6 +19,7 @@ import { FullStore } from "./fullStore";
 export class StoreFactory {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
@@ -116,7 +118,7 @@ export class StoreFactory {
     private isInfiniteScroll(storeParams?: ServerSideGroupLevelParams): boolean {
         const res = (storeParams && storeParams.infiniteScroll != null)
             ? storeParams.infiniteScroll
-            : this.gridOptionsWrapper.isServerSideInfiniteScroll();
+            : this.gridOptionsService.is('serverSideInfiniteScroll');
         return res;
     }
 }

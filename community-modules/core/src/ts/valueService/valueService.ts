@@ -24,7 +24,7 @@ export class ValueService extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
+        this.cellExpressions = this.gridOptionsService.is('enableCellExpressions');
         this.initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,
@@ -65,11 +65,11 @@ export class ValueService extends BeanStub {
 
         if (forFilter && colDef.filterValueGetter) {
             result = this.executeFilterValueGetter(colDef.filterValueGetter, data, column, rowNode);
-        } else if (this.gridOptionsWrapper.isTreeData() && aggDataExists) {
+        } else if (this.gridOptionsService.is('treeData') && aggDataExists) {
             result = rowNode.aggData[colId];
-        } else if (this.gridOptionsWrapper.isTreeData() && colDef.valueGetter) {
+        } else if (this.gridOptionsService.is('treeData') && colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
-        } else if (this.gridOptionsWrapper.isTreeData() && (field && data)) {
+        } else if (this.gridOptionsService.is('treeData') && (field && data)) {
             result = getValueUsingField(data, field, column.isFieldContainsDots());
         } else if (groupDataExists) {
             result = rowNode.groupData![colId];
@@ -99,7 +99,7 @@ export class ValueService extends BeanStub {
 
     private getOpenedGroup(rowNode: RowNode, column: Column): any {
 
-        if (!this.gridOptionsWrapper.isShowOpenedGroup()) { return; }
+        if (!this.gridOptionsService.is('showOpenedGroup')) { return; }
 
         const colDef = column.getColDef();
         if (!colDef.showRowGroup) { return; }

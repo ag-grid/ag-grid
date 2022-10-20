@@ -53,7 +53,7 @@ export class CellMouseListenerFeature extends Beans {
             return;
         }
 
-        const { eventService, rangeService, gridOptionsWrapper } = this.beans;
+        const { eventService, rangeService, gridOptionsService } = this.beans;
         const multiKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
 
         if (rangeService && multiKeyPressed) {
@@ -74,8 +74,8 @@ export class CellMouseListenerFeature extends Beans {
             window.setTimeout(() => colDef.onCellClicked!(cellClickedEvent), 0);
         }
 
-        const editOnSingleClick = (gridOptionsWrapper.isSingleClickEdit() || colDef.singleClickEdit)
-            && !gridOptionsWrapper.isSuppressClickEdit();
+        const editOnSingleClick = (gridOptionsService.is('singleClickEdit') || colDef.singleClickEdit)
+            && !gridOptionsService.is('suppressClickEdit');
 
         if (editOnSingleClick) {
             this.cellCtrl.startRowOrCellEdit();
@@ -105,8 +105,8 @@ export class CellMouseListenerFeature extends Beans {
             window.setTimeout(() => (colDef.onCellDoubleClicked as any)(cellDoubleClickedEvent), 0);
         }
 
-        const editOnDoubleClick = !this.beans.gridOptionsWrapper.isSingleClickEdit()
-            && !this.beans.gridOptionsWrapper.isSuppressClickEdit();
+        const editOnDoubleClick = !this.beans.gridOptionsService.is('singleClickEdit')
+            && !this.beans.gridOptionsService.is('suppressClickEdit');
         if (editOnDoubleClick) {
             this.cellCtrl.startRowOrCellEdit(null, null, mouseEvent);
         }

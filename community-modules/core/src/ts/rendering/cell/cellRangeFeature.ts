@@ -107,7 +107,7 @@ export class CellRangeFeature {
         bottom: boolean,
         left: boolean;
     } {
-        const isRtl = this.beans.gridOptionsWrapper.isEnableRtl();
+        const isRtl = this.beans.gridOptionsService.is('enableRtl');
 
         let top = false;
         let right = false;
@@ -186,7 +186,7 @@ export class CellRangeFeature {
     }
 
     private shouldHaveSelectionHandle(): boolean {
-        const { gridOptionsWrapper, rangeService } = this.beans;
+        const { gridOptionsService, rangeService } = this.beans;
         const cellRanges = rangeService.getCellRanges();
         const rangesLen = cellRanges.length;
 
@@ -196,8 +196,8 @@ export class CellRangeFeature {
 
         const cellRange = last(cellRanges);
         const cellPosition = this.cellCtrl.getCellPosition();
-        const isFillHandleAvailable = gridOptionsWrapper.isEnableFillHandle() && !this.cellCtrl.isSuppressFillHandle();
-        const isRangeHandleAvailable = gridOptionsWrapper.isEnableRangeHandle();
+        const isFillHandleAvailable = gridOptionsService.is('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
+        const isRangeHandleAvailable = gridOptionsService.is('enableRangeHandle');
 
         let handleIsAvailable = rangesLen === 1 && !this.cellCtrl.isEditing() && (
             isFillHandleAvailable || isRangeHandleAvailable
@@ -218,9 +218,9 @@ export class CellRangeFeature {
     }
 
     private addSelectionHandle() {
-        const { gridOptionsWrapper, rangeService } = this.beans;
+        const { gridOptionsService, rangeService } = this.beans;
         const cellRangeType = last(rangeService.getCellRanges()).type;
-        const selectionHandleFill = gridOptionsWrapper.isEnableFillHandle() && missing(cellRangeType);
+        const selectionHandleFill = gridOptionsService.is('enableFillHandle') && missing(cellRangeType);
         const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
 
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {

@@ -327,8 +327,8 @@ export class CellComp extends Component implements TooltipParentComp {
         // is turned off.
         // and lastly we never use it if doing auto-height, as the auto-height service checks the
         // row height directly after the cell is created, it doesn't wait around for the tasks to complete
-        const angularCompileRows = this.beans.gridOptionsWrapper.isAngularCompileRows();
-        const suppressAnimationFrame = this.beans.gridOptionsWrapper.isSuppressAnimationFrame();
+        const angularCompileRows = this.beans.gridOptionsService.is('angularCompileRows');
+        const suppressAnimationFrame = this.beans.gridOptionsService.is('suppressAnimationFrame');
         const useTaskService = !angularCompileRows && !suppressAnimationFrame;
 
         const displayComponentVersionCopy = this.rendererVersion;
@@ -472,7 +472,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const popupService = this.beans.popupService;
 
-        const useModelPopup = this.beans.gridOptionsWrapper.isStopEditingWhenCellsLoseFocus();
+        const useModelPopup = this.beans.gridOptionsService.is('stopEditingWhenCellsLoseFocus');
 
         // see if position provided by colDef, if not then check old way of method on cellComp
         const positionToUse = position != null ? position : cellEditor.getPopupPosition ? cellEditor.getPopupPosition() : 'over';

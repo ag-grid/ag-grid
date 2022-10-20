@@ -297,27 +297,27 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private onCtrlAndC(event: KeyboardEvent): void {
 
-        if (!this.clipboardService || this.gridOptionsWrapper.isEnableCellTextSelection()) { return; }
+        if (!this.clipboardService || this.gridOptionsService.is('enableCellTextSelection')) { return; }
 
         this.clipboardService.copyToClipboard();
         event.preventDefault();
     }
 
     private onCtrlAndV(): void {
-        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule) && !this.gridOptionsWrapper.isSuppressClipboardPaste()) {
+        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule) && !this.gridOptionsService.is('suppressClipboardPaste')) {
             this.clipboardService.pasteFromClipboard();
         }
     }
 
     private onCtrlAndD(event: KeyboardEvent): void {
-        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule) && !this.gridOptionsWrapper.isSuppressClipboardPaste()) {
+        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule) && !this.gridOptionsService.is('suppressClipboardPaste')) {
             this.clipboardService.copyRangeDown();
         }
         event.preventDefault();
     }
 
     private onCtrlAndZ(event: KeyboardEvent): void {
-        if (!this.gridOptionsWrapper.isUndoRedoCellEditing()) { return; }
+        if (!this.gridOptionsService.is('undoRedoCellEditing')) { return; }
         event.preventDefault();
 
         if (event.shiftKey) {

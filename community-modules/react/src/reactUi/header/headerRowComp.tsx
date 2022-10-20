@@ -8,7 +8,7 @@ import { useEffectOnce } from '../useEffectOnce';
 
 const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
-    const {gridOptionsWrapper} = useContext(BeansContext);
+    const { gridOptionsService } = useContext(BeansContext);
 
     const [ transform, setTransform ] = useState<string>();
     const [ height, setHeight ] = useState<string>();
@@ -28,7 +28,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     const setCellCtrlsMaintainOrder = useCallback( (prev: AbstractHeaderCellCtrl[], next: AbstractHeaderCellCtrl[]) => {
 
         // if we are ensuring dom order, we set the ctrls into the dom in the same order they appear on screen
-        if (gridOptionsWrapper.isEnsureDomOrder()) {
+        if (gridOptionsService.is('ensureDomOrder')) {
             return next;
         }
 

@@ -250,7 +250,7 @@ export class ChartDataModel extends BeanStub {
     }
 
     public isGrouping(): boolean {
-        const usingTreeData = this.gridOptionsWrapper.isTreeData();
+        const usingTreeData = this.gridOptionsService.is('treeData');
         const groupedCols = usingTreeData ? null : this.columnModel.getRowGroupColumns();
         const isGroupActive = usingTreeData || (groupedCols && groupedCols.length > 0);
 

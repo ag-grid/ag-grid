@@ -60,7 +60,7 @@ export class FilterManager extends BeanStub {
         this.quickFilter = this.parseQuickFilter(this.gridOptionsWrapper.getQuickFilterText());
         this.setQuickFilterParts();
 
-        this.allowShowChangeAfterFilter = this.gridOptionsWrapper.isAllowShowChangeAfterFilter();
+        this.allowShowChangeAfterFilter = this.gridOptionsService.is('allowShowChangeAfterFilter');
         this.externalFilterPresent = this.gridOptionsWrapper.isExternalFilterPresent();
     }
 
@@ -388,7 +388,7 @@ export class FilterManager extends BeanStub {
     }
 
     private doesRowPassQuickFilter(node: RowNode): boolean {
-        const usingCache = this.gridOptionsWrapper.isCacheQuickFilter();
+        const usingCache = this.gridOptionsService.is('cacheQuickFilter');
 
         // each part must pass, if any fails, then the whole filter fails
         return this.quickFilterParts!.every(part =>

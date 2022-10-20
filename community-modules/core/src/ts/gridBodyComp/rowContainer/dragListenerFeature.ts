@@ -19,7 +19,7 @@ export class DragListenerFeature extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         if (
-            !this.gridOptionsWrapper.isEnableRangeSelection() || // no range selection if no property
+            !this.gridOptionsService.is('enableRangeSelection') || // no range selection if no property
             missing(this.rangeService) // no range selection if not enterprise version
         ) {
             return;

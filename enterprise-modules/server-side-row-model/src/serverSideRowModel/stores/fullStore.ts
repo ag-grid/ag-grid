@@ -86,7 +86,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     @PostConstruct
     private postConstruct(): void {
-        this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+        this.usingTreeData = this.gridOptionsService.is('treeData');
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
 
         if (!this.usingTreeData && this.groupLevel) {

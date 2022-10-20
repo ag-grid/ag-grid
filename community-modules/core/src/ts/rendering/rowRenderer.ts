@@ -110,10 +110,10 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_ROW_CLASS, this.redrawRows.bind(this));
 
-        if (this.gridOptionsWrapper.isGroupRowsSticky()) {
+        if (this.gridOptionsService.is('groupRowsSticky')) {
             if (this.rowModel.getType() != Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
                 doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
-            } else if (this.gridOptionsWrapper.isTreeData()) {
+            } else if (this.gridOptionsService.is('treeData')) {
                 doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups does not work with Tree Data.'), 'rowRenderer.stickyDoesNotWorkWithTreeData');
             }  else {
                 this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
@@ -133,7 +133,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private initialiseCache(): void {
-        if (this.gridOptionsWrapper.isKeepDetailRows()) {
+        if (this.gridOptionsService.is('keepDetailRows')) {
             const countProp = this.gridOptionsWrapper.getKeepDetailRowsCount();
             const count = countProp != null ? countProp : 3;
             this.cachedRowCtrls = new RowCtrlCache(count);
@@ -152,7 +152,7 @@ export class RowRenderer extends BeanStub {
 
     private updateAllRowCtrls(): void {
         const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
-        if (this.gridOptionsWrapper.isEnsureDomOrder()) {
+        if (this.gridOptionsService.is('ensureDomOrder')) {
             liveList.sort((a, b) => a.getRowNode().rowIndex - b.getRowNode.rowIndex);
         }
         const zombieList = getAllValuesInObject(this.zombieRowCtrls);
@@ -499,7 +499,7 @@ export class RowRenderer extends BeanStub {
 
     private scrollToTopIfNewData(params: RefreshViewParams): void {
         const scrollToTop = params.newData || params.newPage;
-        const suppressScrollToTop = this.gridOptionsWrapper.isSuppressScrollOnNewData();
+        const suppressScrollToTop = this.gridOptionsService.is('suppressScrollOnNewData');
 
         if (scrollToTop && !suppressScrollToTop) {
             this.gridBodyCtrl.getScrollFeature().scrollToTop();
@@ -893,7 +893,7 @@ export class RowRenderer extends BeanStub {
         });
 
         if (rowsToRecycle) {
-            const useAnimationFrame = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame() && !this.printLayout;
+            const useAnimationFrame = afterScroll && !this.gridOptionsService.is('suppressAnimationFrame') && !this.printLayout;
             if (useAnimationFrame) {
                 this.beans.animationFrameService.addDestroyTask(() => {
                     this.destroyRowCtrls(rowsToRecycle, animate);
@@ -1086,7 +1086,7 @@ export class RowRenderer extends BeanStub {
         } else {
             const bufferPixels = this.gridOptionsWrapper.getRowBufferInPixels();
             const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
-            const suppressRowVirtualisation = this.gridOptionsWrapper.isSuppressRowVirtualisation();
+            const suppressRowVirtualisation = this.gridOptionsService.is('suppressRowVirtualisation');
 
             let rowHeightsChanged = false;
             let firstPixel: number;
@@ -1139,7 +1139,7 @@ export class RowRenderer extends BeanStub {
         // killing the browser, we limit the number of rows. just in case some use case we didn't think
         // of, we also have a property to not do this operation.
         const rowLayoutNormal = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
-        const suppressRowCountRestriction = this.gridOptionsWrapper.isSuppressMaxRenderedRowRestriction();
+        const suppressRowCountRestriction = this.gridOptionsService.is('suppressMaxRenderedRowRestriction');
         const rowBufferMaxSize = Math.max(this.gridOptionsWrapper.getRowBuffer(), 500);
 
         if (rowLayoutNormal && !suppressRowCountRestriction) {
@@ -1256,7 +1256,7 @@ export class RowRenderer extends BeanStub {
         // we only do the animation frames after scrolling, as this is where we want the smooth user experience.
         // having animation frames for other times makes the grid look 'jumpy'.
 
-        const suppressAnimationFrame = this.gridOptionsWrapper.isSuppressAnimationFrame();
+        const suppressAnimationFrame = this.gridOptionsService.is('suppressAnimationFrame');
         const useAnimationFrameForCreate = afterScroll && !suppressAnimationFrame && !this.printLayout;
 
         const res = new RowCtrl(

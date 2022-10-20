@@ -46,7 +46,7 @@ export class AnimationFrameService extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+        this.useAnimationFrame = !this.gridOptionsService.is('suppressAnimationFrame');
     }
 
     public isOn(): boolean {

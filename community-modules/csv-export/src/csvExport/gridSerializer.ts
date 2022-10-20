@@ -58,16 +58,17 @@ export class GridSerializer extends BeanStub {
     private processRow<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T>, columnsToExport: Column[], node: RowNode): void {
         const rowSkipper: (params: ShouldRowBeSkippedParams) => boolean = params.shouldRowBeSkipped || (() => false);
         const gridOptionsWrapper = this.gridOptionsWrapper;
+        const gridOptionsService = this.gridOptionsService;
         const context = gridOptionsWrapper.getContext();
         const api = gridOptionsWrapper.getApi()!;
         const columnApi = gridOptionsWrapper.getColumnApi()!;
-        const skipSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveSingleChildren();
-        const skipLowestSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
+        const skipSingleChildrenGroup = gridOptionsService.is('groupRemoveSingleChildren');
+        const skipLowestSingleChildrenGroup = gridOptionsService.is('groupRemoveLowestSingleChildren');
         // if onlySelected, we ignore groupHideOpenParents as the user has explicitly selected the rows they wish to export.
         // similarly, if specific rowNodes are provided we do the same. (the clipboard service uses rowNodes to define which rows to export)
         const isClipboardExport = params.rowPositions != null;
         const isExplicitExportSelection = isClipboardExport || !!params.onlySelected;
-        const hideOpenParents = gridOptionsWrapper.isGroupHideOpenParents() && !isExplicitExportSelection;
+        const hideOpenParents = gridOptionsService.is('groupHideOpenParents') && !isExplicitExportSelection;
         const isLeafNode = this.columnModel.isPivotMode() ? node.leafGroup : !node.group;
         const skipRowGroups = params.skipGroups || params.skipRowGroups;
         const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
@@ -275,7 +276,7 @@ export class GridSerializer extends BeanStub {
 
         if (allColumns && !isPivotMode) {
             // add auto group column for tree data
-            const columns = this.gridOptionsWrapper.isTreeData()
+            const columns = this.gridOptionsService.is('treeData')
                 ? this.columnModel.getGridColumns([Constants.GROUP_AUTO_COLUMN_ID])
                 : [];
 

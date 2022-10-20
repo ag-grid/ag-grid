@@ -82,7 +82,7 @@ export class InfiniteStoreBlock extends RowNodeBlock {
 
     @PostConstruct
     protected postConstruct(): void {
-        this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+        this.usingTreeData = this.gridOptionsService.is('treeData');
 
         if (!this.usingTreeData && this.groupLevel) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];

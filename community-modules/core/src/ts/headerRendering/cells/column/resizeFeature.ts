@@ -86,7 +86,7 @@ export class ResizeFeature extends BeanStub {
 
         const refresh = () => {
             const resize = this.column.isResizable();
-            const autoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
+            const autoSize = !this.gridOptionsService.is('suppressAutoSize') && !colDef.suppressAutoSize;
             const propertyChange = resize !== canResize || autoSize !== canAutosize;
             if (propertyChange) {
                 canResize = resize;
@@ -126,7 +126,7 @@ export class ResizeFeature extends BeanStub {
         const notPinningLeft = this.pinned !== Constants.PINNED_LEFT;
         const pinningRight = this.pinned === Constants.PINNED_RIGHT;
 
-        if (this.gridOptionsWrapper.isEnableRtl()) {
+        if (this.gridOptionsService.is('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left
             if (notPinningLeft) {
                 result *= -1;

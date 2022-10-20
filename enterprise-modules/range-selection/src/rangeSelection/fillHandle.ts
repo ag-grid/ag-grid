@@ -157,7 +157,7 @@ export class FillHandle extends AbstractSelectionHandle {
 
         // if the range is being reduced in size, all we need to do is
         // clear the cells that are no longer part of the range
-        if (this.isReduce && !this.gridOptionsWrapper.isSuppressClearOnFillReduction()) {
+        if (this.isReduce && !this.gridOptionsService.is('suppressClearOnFillReduction')) {
             const columns = isVertical
                 ? initialRange.columns
                 : initialRange.columns.filter(col => finalRange.columns.indexOf(col) < 0);

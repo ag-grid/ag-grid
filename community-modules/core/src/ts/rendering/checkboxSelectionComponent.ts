@@ -63,13 +63,13 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private onCheckedClicked(event: MouseEvent): number {
-        const groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+        const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
         const updatedCount = this.rowNode.setSelectedParams({ newValue: false, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered });
         return updatedCount;
     }
 
     private onUncheckedClicked(event: MouseEvent): number {
-        const groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+        const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
         const updatedCount = this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered });
         return updatedCount;
     }

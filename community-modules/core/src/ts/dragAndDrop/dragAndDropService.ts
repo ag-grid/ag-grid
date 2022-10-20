@@ -558,7 +558,7 @@ export class DragAndDropService extends BeanStub {
 
         this.eGhostIcon.classList.toggle('ag-shake-left-to-right', shake);
 
-        if (eIcon === this.eHideIcon && this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns()) {
+        if (eIcon === this.eHideIcon && this.gridOptionsService.is('suppressDragLeaveHidesColumns')) {
             return;
         }
 

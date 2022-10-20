@@ -46,7 +46,7 @@ export class RowDragComp extends Component {
         this.checkCompatibility();
 
         if (!this.suppressVisibilityChange) {
-            const strategy = this.beans.gridOptionsWrapper.isRowDragManaged() ?
+            const strategy = this.beans.gridOptionsService.is('rowDragManaged') ?
                 new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) :
                 new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
 
@@ -60,7 +60,7 @@ export class RowDragComp extends Component {
     }
 
     private getSelectedNodes(): RowNode[] {
-        const isRowDragMultiRow = this.beans.gridOptionsWrapper.isRowDragMultiRow();
+        const isRowDragMultiRow = this.beans.gridOptionsService.is('rowDragMultiRow');
         if (!isRowDragMultiRow) { return [this.rowNode]; }
 
         const selection = this.beans.selectionService.getSelectedNodes();
@@ -70,8 +70,8 @@ export class RowDragComp extends Component {
 
     // returns true if all compatibility items work out
     private checkCompatibility(): void {
-        const managed = this.beans.gridOptionsWrapper.isRowDragManaged();
-        const treeData = this.beans.gridOptionsWrapper.isTreeData();
+        const managed = this.beans.gridOptionsService.is('rowDragManaged');
+        const treeData = this.beans.gridOptionsService.is('treeData');
 
         if (treeData && managed) {
             doOnce(() =>
@@ -193,7 +193,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
 
     private workOutVisibility(): void {
         // only show the drag if both sort and filter are not present
-        const neverDisplayed = this.beans.gridOptionsWrapper.isSuppressRowDrag();
+        const neverDisplayed = this.beans.gridOptionsService.is('suppressRowDrag');
         this.setDisplayedOrVisible(neverDisplayed);
     }
 }
@@ -235,7 +235,7 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         const gridBodyCon = this.beans.ctrlsService.getGridBodyCtrl();
         const rowDragFeature = gridBodyCon.getRowDragFeature();
         const shouldPreventRowMove = rowDragFeature && rowDragFeature.shouldPreventRowMove();
-        const suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
+        const suppressRowDrag = this.beans.gridOptionsService.is('suppressRowDrag');
         const hasExternalDropZones = this.beans.dragAndDropService.hasExternalDropZones();
         const neverDisplayed = (shouldPreventRowMove && !hasExternalDropZones) || suppressRowDrag;
 

@@ -168,7 +168,7 @@ export class RowContainerCtrl extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
+        this.enableRtl = this.gridOptionsService.is('enableRtl');
         this.embedFullWidthRows = this.gridOptionsWrapper.isEmbedFullWidthRows();
 
         this.forContainers([RowContainerName.CENTER],
@@ -263,7 +263,7 @@ export class RowContainerCtrl extends BeanStub {
             return;
         }
 
-        const listener = () => this.comp.setDomOrder(this.gridOptionsWrapper.isEnsureDomOrder());
+        const listener = () => this.comp.setDomOrder(this.gridOptionsService.is('ensureDomOrder'));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
         listener();
     }
@@ -345,7 +345,7 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     public isHorizontalScrollShowing(): boolean {
-        const isAlwaysShowHorizontalScroll = this.gridOptionsWrapper.isAlwaysShowHorizontalScroll();
+        const isAlwaysShowHorizontalScroll = this.gridOptionsService.is('alwaysShowHorizontalScroll');
         return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.eViewport);
     }
 

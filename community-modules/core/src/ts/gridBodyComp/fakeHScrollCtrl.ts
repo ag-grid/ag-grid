@@ -76,7 +76,7 @@ export class FakeHScrollCtrl extends BeanStub {
     private initialiseInvisibleScrollbar(): void {
         if (this.invisibleScrollbar !== undefined) { return; }
 
-        this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
+        this.enableRtl = this.gridOptionsService.is('enableRtl');
         this.invisibleScrollbar = isInvisibleScrollbar();
 
         if (this.invisibleScrollbar) {
@@ -148,7 +148,7 @@ export class FakeHScrollCtrl extends BeanStub {
     private setScrollVisible(): void {
         const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
         const invisibleScrollbar = this.invisibleScrollbar;
-        const isSuppressHorizontalScroll = this.gridOptionsWrapper.isSuppressHorizontalScroll();
+        const isSuppressHorizontalScroll = this.gridOptionsService.is('suppressHorizontalScroll');
         const scrollbarWidth = hScrollShowing ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
         const adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 15 : scrollbarWidth;
         const scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;

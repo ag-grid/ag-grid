@@ -267,7 +267,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
         if (!this.draggable) { return; }
 
-        const hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns();
+        const hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
         this.moveDragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eSource,
@@ -565,7 +565,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private addColumnHoverListener(): void {
         const listener = () => {
-            if (!this.gridOptionsWrapper.isColumnHoverHighlight()) { return; }
+            if (!this.gridOptionsService.is('columnHoverHighlight')) { return; }
             const isHovered = this.columnHoverService.isHovered(this.column);
             this.comp.addOrRemoveCssClass('ag-column-hover', isHovered);
         };

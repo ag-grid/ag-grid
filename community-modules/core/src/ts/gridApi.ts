@@ -50,6 +50,7 @@ import { FocusService } from "./focusService";
 import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
+import { GridOptionsService } from "./gridOptionsService";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
@@ -245,6 +246,7 @@ export class GridApi<TData = any> {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectionService') private selectionService: SelectionService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
     @Autowired('eventService') private eventService: EventService;
@@ -730,7 +732,7 @@ export class GridApi<TData = any> {
             console.error(`AG Grid: invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}`);
             return;
         }
-        const animate = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+        const animate = !this.gridOptionsService.is('suppressAnimationFrame');
         const modelParams: RefreshModelParams<TData> = {
             step: paramsStep,
             keepRenderedRows: true,
@@ -1890,7 +1892,7 @@ export class GridApi<TData = any> {
         this.rowRenderer.refreshFullWidthRows(res!.update);
 
         // do change detection for all present cells
-        if (!this.gridOptionsWrapper.isSuppressChangeDetection()) {
+        if (!this.gridOptionsService.is('suppressChangeDetection')) {
             this.rowRenderer.refreshCells();
         }
 

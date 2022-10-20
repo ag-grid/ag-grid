@@ -362,7 +362,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> implements I
         const resizable = !!(params && params.container === 'floatingFilter');
         let resizableObject: ResizableStructure;
 
-        if (this.gridOptionsWrapper.isEnableRtl()) {
+        if (this.gridOptionsService.is('enableRtl')) {
             resizableObject = { bottom: true, bottomLeft: true, left: true };
         } else {
             resizableObject = { bottom: true, bottomRight: true, right: true };

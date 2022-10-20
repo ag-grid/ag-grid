@@ -38,7 +38,7 @@ export class SortService extends BeanStub {
         changedPath: ChangedPath | undefined,
         sortContainsGroupColumns: boolean,
     ): void {
-        const groupMaintainOrder = this.gridOptionsWrapper.isGroupMaintainOrder();
+        const groupMaintainOrder = this.gridOptionsService.is('groupMaintainOrder');
         const groupColumnsPresent = this.columnModel.getAllGridColumns().some(c => c.isRowGroupActive());
 
         let allDirtyNodes: { [key: string]: true } = {};
@@ -210,11 +210,11 @@ export class SortService extends BeanStub {
     }
 
     private updateGroupDataForHideOpenParents(changedPath?: ChangedPath) {
-        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
+        if (!this.gridOptionsService.is('groupHideOpenParents')) {
             return;
         }
 
-        if (this.gridOptionsWrapper.isTreeData()) {
+        if (this.gridOptionsService.is('treeData')) {
             const msg = `AG Grid: The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them (as opposed to Row Grouping, which only has Aggregated Values at the group level).`;
             _.doOnce(() => console.warn(msg), 'sortService.hideOpenParentsWithTreeData');
             return false;
@@ -236,7 +236,7 @@ export class SortService extends BeanStub {
     }
 
     private pullDownGroupDataForHideOpenParents(rowNodes: RowNode[] | null, clearOperation: boolean) {
-        if (!this.gridOptionsWrapper.isGroupHideOpenParents() || _.missing(rowNodes)) { return; }
+        if (!this.gridOptionsService.is('groupHideOpenParents') || _.missing(rowNodes)) { return; }
 
         rowNodes.forEach(childRowNode => {
             const groupDisplayCols = this.columnModel.getGroupDisplayColumns();

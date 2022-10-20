@@ -47,7 +47,7 @@ export class SortController extends BeanStub {
 
         columnsToUpdate.forEach(col => col.setSort(sort, source));
 
-        const doingMultiSort = (multiSort || this.gridOptionsWrapper.isAlwaysMultiSort()) && !this.gridOptionsWrapper.isSuppressMultiSort();
+        const doingMultiSort = (multiSort || this.gridOptionsService.is('alwaysMultiSort')) && !this.gridOptionsService.is('suppressMultiSort');
 
         // clear sort on all columns except those changed, and update the icons
         if (!doingMultiSort) {

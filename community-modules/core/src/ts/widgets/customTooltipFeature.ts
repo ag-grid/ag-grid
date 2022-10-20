@@ -62,7 +62,7 @@ export class CustomTooltipFeature extends BeanStub {
     private postConstruct(): void {
         this.tooltipShowDelay = this.gridOptionsWrapper.getTooltipDelay('show') || this.DEFAULT_SHOW_TOOLTIP_DELAY;
         this.tooltipHideDelay = this.gridOptionsWrapper.getTooltipDelay('hide') || this.DEFAULT_HIDE_TOOLTIP_DELAY;
-        this.tooltipMouseTrack = this.gridOptionsWrapper.isTooltipMouseTrack();
+        this.tooltipMouseTrack = this.gridOptionsService.is('tooltipMouseTrack');
 
         const el = this.parentComp.getGui();
 

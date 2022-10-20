@@ -80,7 +80,7 @@ export class PivotColDefService extends BeanStub {
         const comparator = this.headerNameComparator.bind(this, primaryPivotColumnDefs.pivotComparator);
 
         // Base case for the compact layout, instead of recursing build the last layer of groups as measure columns instead
-        if (measureColumns.length === 1 && this.gridOptionsWrapper.isRemovePivotHeaderRowWhenSingleValueColumn() && index === maxDepth - 1) {
+        if (measureColumns.length === 1 && this.gridOptionsService.is('removePivotHeaderRowWhenSingleValueColumn') && index === maxDepth - 1) {
             const leafCols: ColDef[] = [];
 
             _.iterateObject(uniqueValue, (key) => {
@@ -133,7 +133,7 @@ export class PivotColDefService extends BeanStub {
         pivotColumnDefs: ColDef[],
     ) {
         if (
-            this.gridOptionsWrapper.isSuppressExpandablePivotGroups() ||
+            this.gridOptionsService.is('suppressExpandablePivotGroups') ||
             this.gridOptionsWrapper.getPivotColumnGroupTotals()
         ) {
             return;
@@ -274,7 +274,7 @@ export class PivotColDefService extends BeanStub {
                 colIds = colIds.concat(this.extractColIdsForValueColumn(groupDef, valueCol));
             });
 
-            const withGroup = valueCols.length > 1 || !this.gridOptionsWrapper.isRemovePivotHeaderRowWhenSingleValueColumn();
+            const withGroup = valueCols.length > 1 || !this.gridOptionsService.is('removePivotHeaderRowWhenSingleValueColumn');
             this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, valueCol, colIds, insertAfter, withGroup);
         }
     }

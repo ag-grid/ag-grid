@@ -81,7 +81,7 @@ export class HeaderRowComp extends Component {
             this.destroyBean(comp);
         });
 
-        const ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
+        const ensureDomOrder = this.gridOptionsService.is('ensureDomOrder');
         if (ensureDomOrder) {
             const comps = getAllValuesInObject(this.headerComps);
             // ordering the columns by left position orders them in the order they appear on the screen

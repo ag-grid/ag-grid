@@ -10,6 +10,7 @@ import {
     ExpandCollapseAllEvent,
     FilterChangedEvent,
     GridOptionsWrapper,
+    GridOptionsService,
     IClientSideRowModel,
     IRowNodeStage,
     ModelUpdatedEvent,
@@ -76,7 +77,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     @PostConstruct
     public init(): void {
         const refreshEverythingFunc = this.refreshModel.bind(this, { step: ClientSideRowModelSteps.EVERYTHING });
-        const animate = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+        const animate = !this.gridOptionsService.is('suppressAnimationFrame');
         const refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, {
             step: ClientSideRowModelSteps.EVERYTHING, // after cols change, row grouping (the first stage) could of changed
             afterColumnsChanged: true,
@@ -102,7 +103,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, refreshMapListener);
 
         this.rootNode = new RowNode(this.beans);
-        this.nodeManager = new ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper,
+        this.nodeManager = new ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper, this.gridOptionsService,
             this.eventService, this.columnModel,
             this.selectionService, this.beans);
     }
@@ -226,7 +227,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     public ensureRowsAtPixel(rowNodes: RowNode[], pixel: number, increment: number = 0): boolean {
         const indexAtPixelNow = this.getRowIndexAtPixel(pixel);
         const rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
-        const animate = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+        const animate = !this.gridOptionsService.is('suppressAnimationFrame');
 
         if (rowNodeAtPixelNow === rowNodes[0]) {
             return false;
@@ -322,7 +323,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         let rowNode = this.rootNode.childrenAfterSort![topLevelIndex];
 
-        if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
+        if (this.gridOptionsService.is('groupHideOpenParents')) {
             // if hideOpenParents, and this row open, then this row is now displayed at this index, first child is
             while (rowNode.expanded && rowNode.childrenAfterSort && rowNode.childrenAfterSort.length > 0) {
                 rowNode = rowNode.childrenAfterSort[0];
@@ -394,7 +395,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         const changedPath = new ChangedPath(false, this.rootNode);
 
-        if (noTransactions || this.gridOptionsWrapper.isTreeData()) {
+        if (noTransactions || this.gridOptionsService.is('treeData')) {
             changedPath.setInactive();
         }
 
@@ -402,7 +403,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private isSuppressModelUpdateAfterUpdateTransaction(params: RefreshModelParams): boolean {
-        if (!this.gridOptionsWrapper.isSuppressModelUpdateAfterUpdateTransaction()) { return false; }
+        if (!this.gridOptionsService.is('suppressModelUpdateAfterUpdateTransaction')) { return false; }
 
         // return true if we are only doing update transactions
         if (params.rowNodeTransactions == null) { return false; }
@@ -486,7 +487,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         const result: RowNode[] = [];
 
-        const groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+        const groupsSelectChildren = this.gridOptionsService.is('groupSelectsChildren');
 
         this.forEachNodeAfterFilterAndSort(rowNode => {
             const lookingForLastRow = firstRowHit && !lastRowHit;
@@ -678,7 +679,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     // + gridApi.expandAll()
     // + gridApi.collapseAll()
     public expandOrCollapseAll(expand: boolean): void {
-        const usingTreeData = this.gridOptionsWrapper.isTreeData();
+        const usingTreeData = this.gridOptionsService.is('treeData');
         const usingPivotMode = this.columnModel.isPivotActive();
 
         const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {
@@ -760,7 +761,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 this.restoreGroupState(groupState);
             }
 
-            if (this.gridOptionsWrapper.isGroupSelectsChildren()) {
+            if (this.gridOptionsService.is('groupSelectsChildren')) {
                 this.selectionService.updateGroupsFromChildrenSelections(changedPath);
             }
 
@@ -797,7 +798,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private getGroupState(): any {
-        if (!this.rootNode.childrenAfterGroup || !this.gridOptionsWrapper.isRememberGroupStateWhenNewData()) { return null; }
+        if (!this.rootNode.childrenAfterGroup || !this.gridOptionsService.is('rememberGroupStateWhenNewData')) { return null; }
         const result: any = {};
         _.traverseNodesWithKey(this.rootNode.childrenAfterGroup, (node: RowNode, key: string) => result[key] = node.expanded);
         return result;
@@ -937,7 +938,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private createRowNodeOrder(): { [id: string]: number; } | undefined {
-        const suppressSortOrder = this.gridOptionsWrapper.isSuppressMaintainUnsortedOrder();
+        const suppressSortOrder = this.gridOptionsService.is('suppressMaintainUnsortedOrder');
         if (suppressSortOrder) { return; }
 
         const orderMap: { [id: string]: number } = {};
@@ -958,7 +959,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         rowNodeOrder: { [id: string]: number; } | undefined,
         forceRowNodeOrder: boolean
     ): void {
-        const animate = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+        const animate = !this.gridOptionsService.is('suppressAnimationFrame');
 
         if (forceRowNodeOrder) {
             rowNodeOrder = this.createRowNodeOrder();

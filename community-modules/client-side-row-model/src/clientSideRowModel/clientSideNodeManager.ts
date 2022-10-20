@@ -1,6 +1,7 @@
 import {
     Beans, ColumnModel, Events,
     EventService,
+    GridOptionsService,
     GridOptionsWrapper,
     IsRowMaster,
     RowDataTransaction,
@@ -10,7 +11,6 @@ import {
     SelectionService, _,
     WithoutGridCommon
 } from "@ag-grid-community/core";
-
 export class ClientSideNodeManager {
 
     private static TOP_LEVEL = 0;
@@ -18,6 +18,7 @@ export class ClientSideNodeManager {
     private readonly rootNode: RowNode;
 
     private gridOptionsWrapper: GridOptionsWrapper;
+    private gridOptionsService: GridOptionsService;
     private eventService: EventService;
     private columnModel: ColumnModel;
     private selectionService: SelectionService;
@@ -36,10 +37,11 @@ export class ClientSideNodeManager {
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: { [id: string]: RowNode } = {};
 
-    constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, eventService: EventService,
+    constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, gridOptionsService: GridOptionsService, eventService: EventService,
         columnModel: ColumnModel, selectionService: SelectionService, beans: Beans) {
         this.rootNode = rootNode;
         this.gridOptionsWrapper = gridOptionsWrapper;
+        this.gridOptionsService = gridOptionsService;
         this.eventService = eventService;
         this.columnModel = columnModel;
         this.beans = beans;
@@ -61,10 +63,10 @@ export class ClientSideNodeManager {
     // @PostConstruct - this is not a bean, so postConstruct called by constructor
     public postConstruct(): void {
         // func below doesn't have 'this' pointer, so need to pull out these bits
-        this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
+        this.suppressParentsInRowNodes = this.gridOptionsService.is('suppressParentsInRowNodes');
         this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
-        this.doingTreeData = this.gridOptionsWrapper.isTreeData();
-        this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+        this.doingTreeData = this.gridOptionsService.is('treeData');
+        this.doingMasterDetail = this.gridOptionsService.is('masterDetail');
     }
 
     public getCopyOfNodesMap(): { [id: string]: RowNode } {
