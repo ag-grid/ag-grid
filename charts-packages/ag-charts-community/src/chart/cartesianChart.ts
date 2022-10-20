@@ -287,6 +287,8 @@ export class CartesianChart extends Chart {
             return fn(value, compareTo);
         };
 
+        const axesByPosition: Map<ChartAxisPosition, ChartAxis[]> = new Map();
+
         // Set the number of ticks for continuous axes based on the available range
         // before updating the axis domain via `this.updateAxes()` as the tick count has an effect on the calculated `nice` domain extent
         axes.forEach((axis) => {
@@ -328,7 +330,7 @@ export class CartesianChart extends Chart {
                 clipSeries = true;
             }
 
-            let primaryTickCount = primaryTickCounts[axis.direction];
+            let primaryTickCount = axis.nice ? primaryTickCounts[axis.direction] : undefined;
             const tickCount = primaryTickCount;
 
             axis.calculateDomain();
@@ -381,7 +383,25 @@ export class CartesianChart extends Chart {
             primaryTickCounts[axis.direction] = primaryTickCount;
 
             newAxisWidths[position] = (newAxisWidths[position] ?? 0) + axisThickness;
+
+            // Increase the grid padding for previous axes
+            axis.gridPadding = 0;
+            let samePosAxes = axesByPosition.get(position);
+            if (!samePosAxes) {
+                samePosAxes = [];
+                axesByPosition.set(position, samePosAxes);
+            }
+            samePosAxes.forEach((otherAxis) => (otherAxis.gridPadding += axisThickness));
+            samePosAxes.push(axis);
         });
+
+        axesByPosition.forEach((axes) =>
+            axes.forEach((axis) => {
+                if (axis.gridPadding !== 0) {
+                    axis.update(axis.nice ? primaryTickCounts[axis.direction] : undefined);
+                }
+            })
+        );
 
         return { clipSeries, seriesRect, axisWidths: newAxisWidths };
     }
