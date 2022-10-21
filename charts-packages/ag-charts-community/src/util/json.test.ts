@@ -137,7 +137,7 @@ describe('json module', () => {
                     date3: FIXED_DATE,
                 };
 
-                const merge = jsonMerge(base, mergee1 as any, mergee2);
+                const merge = jsonMerge([base, mergee1 as any, mergee2]);
                 expect(merge).toMatchSnapshot();
                 expect(merge).toHaveProperty('no', mergee1.no);
                 expect(merge).toHaveProperty('no2', mergee2.no2);
@@ -156,7 +156,7 @@ describe('json module', () => {
                 const mergee1: any = { a: [], b: [] };
                 const mergee2: any = { a: [[{ x2: 1 }, { y2: 1 }], [{ m2: 2, n2: 2 }]], c: [10, 9, 8, 7, 6] };
 
-                const merge = jsonMerge(base, mergee1, mergee2);
+                const merge = jsonMerge([base, mergee1, mergee2]);
                 expect(merge).toMatchSnapshot();
                 expect(merge).toHaveProperty('a', mergee2.a);
                 expect(merge).toHaveProperty('b', mergee1.b);
@@ -168,7 +168,7 @@ describe('json module', () => {
                 const mergee1: any = [];
                 const mergee2: any = [[{ x2: 1 }, { y2: 1 }], [{ m2: 2, n2: 2 }]];
 
-                const merge = jsonMerge(base, mergee1, mergee2);
+                const merge = jsonMerge([base, mergee1, mergee2]);
                 expect(merge).toMatchSnapshot();
                 expect(merge).toEqual(mergee2);
             });
@@ -178,7 +178,7 @@ describe('json module', () => {
                 const mergee1 = {};
                 const mergee2 = { c: DELETE, d: { 2: DELETE } };
 
-                const merge = jsonMerge(base, mergee1, mergee2);
+                const merge = jsonMerge([base, mergee1, mergee2]);
                 expect(merge).toMatchSnapshot();
                 expect(merge).not.toHaveProperty('c');
                 expect(merge).not.toHaveProperty('d.2');
@@ -189,10 +189,67 @@ describe('json module', () => {
                 const mergee1 = { a: {}, b: {} };
                 const mergee2 = { a: 'a' };
 
-                const merge = jsonMerge(base, mergee1, mergee2 as any);
+                const merge = jsonMerge([base, mergee1, mergee2 as any]);
                 expect(merge).toMatchSnapshot();
                 expect(merge).toHaveProperty('a', mergee2.a);
                 expect(merge).toHaveProperty('b', mergee1.b);
+            });
+        });
+
+        describe('for objects and arrays', () => {
+            it('should create deep clones for objects', () => {
+                const base = { a: { x: 1 } };
+                const mergee1 = { a: { y: 2 } };
+                const mergee2 = { a: { z: 3 } };
+
+                const merge = jsonMerge([base, mergee1, mergee2]);
+                expect(merge).toMatchSnapshot();
+                expect(merge).not.toBe(base);
+                expect(merge).not.toBe(mergee1);
+                expect(merge).not.toBe(mergee2);
+                expect(merge.a).not.toBe(base.a);
+                expect(merge.a).not.toBe(mergee1.a);
+                expect(merge.a).not.toBe(mergee2.a);
+                expect(merge.a).toHaveProperty('x', 1);
+                expect(merge.a).toHaveProperty('y', 2);
+                expect(merge.a).toHaveProperty('z', 3);
+            });
+
+            it('should create deep clones for arrays', () => {
+                const base = { a: [{ x: 1 }, { x: 2 }] };
+                const mergee = { a: [{ y: 1 }] };
+
+                const merge = jsonMerge([base, mergee]);
+                expect(merge).toMatchSnapshot();
+                expect(merge).not.toBe(base);
+                expect(merge).not.toBe(mergee);
+                expect(merge.a).toBeInstanceOf(Array);
+                expect(merge.a).not.toBe(base.a);
+                expect(merge.a).not.toBe(mergee.a);
+                expect(merge.a.length).toEqual(mergee.a.length);
+                expect(merge.a[0]).not.toBe(mergee.a[0]);
+                expect(merge.a[0]).toHaveProperty('y', 1);
+                expect(merge.a[0]).not.toHaveProperty('x');
+            });
+
+            it('should honour `avoidDeepClone', () => {
+                const base: any = {};
+                const mergee = { a: [{ x: 1 }], b: [{ y: 2 }] };
+
+                const merge = jsonMerge([base, mergee], { avoidDeepClone: ['b'] });
+                expect(merge).toMatchSnapshot();
+                expect(merge).not.toBe(base);
+                expect(merge).not.toBe(mergee);
+                expect(merge.a).toBeInstanceOf(Array);
+                expect(merge.b).toBeInstanceOf(Array);
+                expect(merge.a).not.toBe(mergee.a);
+                expect(merge.b).toBe(mergee.b);
+                expect(merge.a.length).toEqual(mergee.a.length);
+                expect(merge.b.length).toEqual(mergee.b.length);
+                expect(merge.a[0]).not.toBe(mergee.a[0]);
+                expect(merge.a[0]).toHaveProperty('x', 1);
+                expect(merge.b[0]).toBe(mergee.b[0]);
+                expect(merge.b[0]).toHaveProperty('y', 2);
             });
         });
     });

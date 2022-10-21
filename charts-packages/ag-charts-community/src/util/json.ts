@@ -142,11 +142,12 @@ export const DELETE = Symbol('<delete-property>') as any;
 
 const NOT_SPECIFIED = Symbol('<unspecified-property>') as any;
 
-/**
- * A collection of objects or arrays for which the
- * deep copying during the merge should be avoided.
- */
-export const avoidJsonMergeCopy = new WeakSet();
+export interface JsonMergeOptions {
+    /**
+     * Contains a list of properties where deep clones should be avoided
+     */
+    avoidDeepClone: string[];
+}
 
 /**
  * Merge together the provide JSON object structures, with the precedence of application running
@@ -156,10 +157,13 @@ export const avoidJsonMergeCopy = new WeakSet();
  * just performs a deep-clone of the entire array, no merging of elements attempted.
  *
  * @param json all json objects to merge
+ * @param opts merge options
+ * @param opts.avoidDeepClone contains a list of properties where deep clones should be avoided
  *
  * @returns the combination of all of the json inputs
  */
-export function jsonMerge<T>(...json: T[]): T {
+export function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T {
+    const avoidDeepClone = opts?.avoidDeepClone || [];
     const jsonTypes = json.map((v) => classify(v));
     if (jsonTypes.some((v) => v === 'array')) {
         // Clone final array.
@@ -167,7 +171,7 @@ export function jsonMerge<T>(...json: T[]): T {
         if (finalValue instanceof Array) {
             return finalValue.map((v) => {
                 const type = classify(v);
-                return type === 'array' ? jsonMerge([], v) : type === 'object' ? jsonMerge({}, v) : v;
+                return type === 'array' ? jsonMerge([[], v], opts) : type === 'object' ? jsonMerge([{}, v], opts) : v;
             }) as any;
         }
 
@@ -187,10 +191,6 @@ export function jsonMerge<T>(...json: T[]): T {
         }
 
         const lastValue = values[values.length - 1];
-        if (avoidJsonMergeCopy.has(lastValue)) {
-            result[nextProp] = lastValue;
-            continue;
-        }
         if (lastValue === DELETE) {
             continue;
         }
@@ -203,8 +203,8 @@ export function jsonMerge<T>(...json: T[]): T {
             continue;
         }
 
-        if (type === 'array' || type === 'object') {
-            result[nextProp] = jsonMerge(...values);
+        if ((type === 'array' || type === 'object') && !avoidDeepClone.includes(nextProp)) {
+            result[nextProp] = jsonMerge(values, opts);
         } else {
             // Just directly assign/overwrite.
             result[nextProp] = lastValue;

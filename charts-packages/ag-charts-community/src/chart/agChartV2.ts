@@ -41,6 +41,7 @@ import {
     isAgHierarchyChartOptions,
     isAgPolarChartOptions,
     optionsType,
+    noDataCloneMergeOptions,
 } from './mapping/prepare';
 import { SeriesOptionsTypes } from './mapping/defaults';
 import { CrossLine } from './crossline/crossLine';
@@ -326,8 +327,8 @@ function applyChartOptions<T extends ChartType, O extends ChartOptionType<T>>(
         Object.assign(chart.legend.listeners, options.legend.listeners);
     }
 
-    chart.options = jsonMerge(chart.options || {}, options);
-    chart.userOptions = jsonMerge(chart.userOptions || {}, userOptions);
+    chart.options = jsonMerge([chart.options || {}, options], noDataCloneMergeOptions);
+    chart.userOptions = jsonMerge([chart.userOptions || {}, userOptions], noDataCloneMergeOptions);
 
     chart.update(updateType, { forceNodeDataRefresh });
 }

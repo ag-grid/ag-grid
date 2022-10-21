@@ -5013,6 +5013,12 @@
     "meta": { "typeParams": ["T", "K extends keyof T"] }
   },
   "DeepPartial": { "meta": { "typeParams": ["T"] } },
+  "JsonMergeOptions": {
+    "avoidDeepClone": {
+      "description": "/** Contains a list of properties where deep clones should be avoided */",
+      "type": { "returnType": "string[]", "optional": false }
+    }
+  },
   "Classification": {},
   "MeasuredLabel": {
     "text": { "type": { "returnType": "string", "optional": false } },

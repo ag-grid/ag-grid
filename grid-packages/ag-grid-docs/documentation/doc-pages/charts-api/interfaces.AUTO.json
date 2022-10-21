@@ -3720,6 +3720,13 @@
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "{[P1 in keyof T]?: IsSkippableProperty<T, P1> extends true ? any : IsLiteralProperty<T, P1> extends true ? T[P1] : { [P2 in keyof T[P1]]?: IsSkippableProperty<T[P1], P2> extends true ? any : IsLiteralProperty<T[P1], P2> extends true ? T[P1][P2] : { [P3 in keyof T[P1][P2]]?: IsSkippableProperty<T[P1][P2], P3> extends true ? any : IsLiteralProperty<T[P1][P2], P3> extends true ? T[P1][P2][P3] : { [P4 in keyof T[P1][P2][P3]]?: IsSkippableProperty<T[P1][P2][P3], P4> extends true ? any : IsLiteralProperty<T[P1][P2][P3], P4> extends true ? T[P1][P2][P3][P4] : Partial<T[P1][P2][P3][P4]>; }; }; }}"
   },
+  "JsonMergeOptions": {
+    "meta": {},
+    "type": { "avoidDeepClone": "string[]" },
+    "docs": {
+      "avoidDeepClone": "/** Contains a list of properties where deep clones should be avoided */"
+    }
+  },
   "Classification": {
     "meta": { "isTypeAlias": true },
     "type": "'array' | 'object' | 'primitive'"
