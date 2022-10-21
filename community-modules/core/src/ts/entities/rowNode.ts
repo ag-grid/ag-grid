@@ -1119,7 +1119,7 @@ export class RowNode<TData = any> implements IEventEmitter {
         const isFullWidthRow = this.beans.gridOptionsService.getCallback('isFullWidthRow');
         const isFullWidthCell = this.beans.gridOptionsService.get('isFullWidthCell');
         if (isFullWidthRow) {
-            return this.beans.gridOptionsService.mergeGridCommonParams(isFullWidthRow);
+            return isFullWidthRow;
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (isFullWidthCell) {

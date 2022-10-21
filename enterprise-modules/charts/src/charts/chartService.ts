@@ -291,7 +291,7 @@ export class ChartService extends BeanStub implements IChartService {
         chartPaletteToRestore?: AgChartThemePalette,
         seriesChartTypes?: SeriesChartType[]): ChartRef | undefined {
 
-        const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
+        const createChartContainerFunc = this.gridOptionsService.getCallback('createChartContainer');
 
         const params: GridChartParams = {
             chartId: this.generateId(),

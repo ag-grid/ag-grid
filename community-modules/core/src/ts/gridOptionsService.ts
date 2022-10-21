@@ -29,6 +29,10 @@ type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
 type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any>) => any>, NoArgFuncs | AnyArgFuncs>;
 type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps>;
 
+
+type ExtractParamsFromCallback<TCallback> = TCallback extends (params: infer PA) => any ? PA : never;
+type ExtractReturnTypeFromCallback<TCallback> = TCallback extends (params: AgGridCommon<any>) => infer RT ? RT : never;
+type WrappedCallback<K extends CallbackProps, OriginalCallback extends GridOptions[K]> = undefined | ((params: WithoutGridCommon<ExtractParamsFromCallback<OriginalCallback>>) => ExtractReturnTypeFromCallback<OriginalCallback>)
 export interface PropertyChangedEvent extends AgEvent {
     type: keyof GridOptions,
     currentValue: any;
@@ -65,7 +69,7 @@ export class GridOptionsService {
         return toNumber(this.gridOptions[property]);
     }
 
-    public getCallback<K extends CallbackProps>(property: K) {
+    public getCallback<K extends CallbackProps>(property: K): WrappedCallback<K, GridOptions[K]> {
         return this.mergeGridCommonParams(this.gridOptions[property]);
     }
     /**
