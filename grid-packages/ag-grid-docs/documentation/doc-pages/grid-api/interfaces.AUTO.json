@@ -6390,6 +6390,24 @@
     "meta": { "isTypeAlias": true },
     "type": "Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps>"
   },
+  "ExtractParamsFromCallback": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TCallback"] },
+    "type": "TCallback extends (params: infer PA) => any ? PA : never"
+  },
+  "ExtractReturnTypeFromCallback": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TCallback"] },
+    "type": "TCallback extends (params: AgGridCommon<any>) => infer RT ? RT : never"
+  },
+  "WrappedCallback": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "K extends CallbackProps",
+        "OriginalCallback extends GridOptions[K]"
+      ]
+    },
+    "type": "undefined | ((params: WithoutGridCommon<ExtractParamsFromCallback<OriginalCallback>>) => ExtractReturnTypeFromCallback<OriginalCallback>)"
+  },
   "PropertyChangedEvent": {
     "meta": {},
     "type": {

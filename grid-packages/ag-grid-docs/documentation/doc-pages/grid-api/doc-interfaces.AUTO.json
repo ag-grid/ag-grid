@@ -11149,6 +11149,16 @@
   "AnyArgFuncs": {},
   "CallbackProps": {},
   "NonPrimitiveProps": {},
+  "ExtractParamsFromCallback": { "meta": { "typeParams": ["TCallback"] } },
+  "ExtractReturnTypeFromCallback": { "meta": { "typeParams": ["TCallback"] } },
+  "WrappedCallback": {
+    "meta": {
+      "typeParams": [
+        "K extends CallbackProps",
+        "OriginalCallback extends GridOptions[K]"
+      ]
+    }
+  },
   "PropertyChangedEvent": {
     "type": {
       "type": { "returnType": "keyof GridOptions", "optional": false }
