@@ -47,10 +47,12 @@ export class RichSelectRow extends Component {
 
     private populateWithRenderer(value: any, valueFormatted: string): boolean {
         // bad coder here - we are not populating all values of the cellRendererParams
-        const params = {
+        const params: ICellRendererParams = {
             value: value,
             valueFormatted: valueFormatted,
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            context: this.gridOptionsService.get('context')
         } as ICellRendererParams;
 
         const compDetails = this.userComponentFactory.getCellRendererDetails(this.params, params);

@@ -60,9 +60,9 @@ export class DndSourceComp extends Component {
         if (providedOnRowDrag) {
             const params: DndSourceOnRowDragParams = {
                 rowNode: this.rowNode, dragEvent: dragEvent,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext()
+                api: this.gridOptionsService.get('api')!,
+                columnApi: this.gridOptionsService.get('columnApi')!,
+                context: this.gridOptionsService.get('context')
             }
             providedOnRowDrag(params);
         } else {

@@ -66,7 +66,7 @@ export class MenuItemMapper extends BeanStub {
             case 'pinSubMenu':
                 return {
                     name: localeTextFunc('pinColumn', 'Pin Column'),
-                    icon: _.createIconNoSpan('menuPin', this.gridOptionsWrapper, null),
+                    icon: _.createIconNoSpan('menuPin', this.gridOptionsService, null),
                     subMenu: ['pinLeft', 'pinRight', 'clearPinned']
                 };
             case 'pinLeft':
@@ -91,7 +91,7 @@ export class MenuItemMapper extends BeanStub {
                 if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Aggregation from Menu')) {
                     return {
                         name: localeTextFunc('valueAggregation', 'Value Aggregation'),
-                        icon: _.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
+                        icon: _.createIconNoSpan('menuValue', this.gridOptionsService, null),
                         subMenu: this.createAggregationSubMenu(column!)
                     };
                 } else {
@@ -111,13 +111,13 @@ export class MenuItemMapper extends BeanStub {
                 return {
                     name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
                     action: () => this.columnModel.addRowGroupColumn(column, "contextMenu"),
-                    icon: _.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
+                    icon: _.createIconNoSpan('menuAddRowGroup', this.gridOptionsService, null)
                 };
             case 'rowUnGroup':
                 return {
                     name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
                     action: () => this.columnModel.removeRowGroupColumn(column, "contextMenu"),
-                    icon: _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
+                    icon: _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsService, null)
                 };
             case 'resetColumns':
                 return {
@@ -139,7 +139,7 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
-                        icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                        icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsService, null),
                         action: () => this.clipboardService.copyToClipboard()
                     };
                 } else {
@@ -150,7 +150,7 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                        icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                        icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsService, null),
                         action: () => this.clipboardService.copyToClipboard({ includeHeaders: true })
                     };
                 } else {
@@ -161,7 +161,7 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('copyWithGroupHeaders', 'Copy with Group Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                        icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                        icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsService, null),
                         action: () => this.clipboardService.copyToClipboard({ includeHeaders: true, includeGroupHeaders: true })
                     };
                 } else {
@@ -173,7 +173,7 @@ export class MenuItemMapper extends BeanStub {
                         name: localeTextFunc('paste', 'Paste'),
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
                         disabled: true,
-                        icon: _.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
+                        icon: _.createIconNoSpan('clipboardPaste', this.gridOptionsService, null),
                         action: () => this.clipboardService.pasteFromClipboard()
                     };
                 } else {
@@ -194,18 +194,18 @@ export class MenuItemMapper extends BeanStub {
                 return {
                     name: localeTextFunc('export', 'Export'),
                     subMenu: exportSubMenuItems,
-                    icon: _.createIconNoSpan('save', this.gridOptionsWrapper, null),
+                    icon: _.createIconNoSpan('save', this.gridOptionsService, null),
                 };
             case 'csvExport':
                 return {
                     name: localeTextFunc('csvExport', 'CSV Export'),
-                    icon: _.createIconNoSpan('csvExport', this.gridOptionsWrapper, null),
+                    icon: _.createIconNoSpan('csvExport', this.gridOptionsService, null),
                     action: () => this.gridApi.exportDataAsCsv({})
                 };
             case 'excelExport':
                 return {
                     name: localeTextFunc('excelExport', 'Excel Export'),
-                    icon: _.createIconNoSpan('excelExport', this.gridOptionsWrapper, null),
+                    icon: _.createIconNoSpan('excelExport', this.gridOptionsService, null),
                     action: () => this.gridApi.exportDataAsExcel()
                 };
             case 'separator':
@@ -250,7 +250,7 @@ export class MenuItemMapper extends BeanStub {
                         'pivotXYChart',
                         'pivotAreaChart'
                     ],
-                    icon: _.createIconNoSpan('chart', this.gridOptionsWrapper, null),
+                    icon: _.createIconNoSpan('chart', this.gridOptionsService, null),
                 };
 
             case 'chartRange':
@@ -266,7 +266,7 @@ export class MenuItemMapper extends BeanStub {
                         'rangeHistogramChart',
                         'rangeCombinationChart'
                     ],
-                    icon: _.createIconNoSpan('chart', this.gridOptionsWrapper, null),
+                    icon: _.createIconNoSpan('chart', this.gridOptionsService, null),
                 };
 
             case 'pivotColumnChart':

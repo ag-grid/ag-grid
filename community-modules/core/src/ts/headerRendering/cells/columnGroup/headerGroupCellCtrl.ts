@@ -102,7 +102,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
             },
             api: this.gridApi,
             columnApi: this.columnApi,
-            context: this.gridOptionsWrapper.getContext()
+            context: this.gridOptionsService.get('context')
         };
 
         if (!displayName) {
@@ -181,7 +181,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
     private addClasses(): void {
         const colGroupDef = this.columnGroup.getColGroupDef();
-        const classes = CssClassApplier.getHeaderClassesFromColDef(colGroupDef, this.gridOptionsWrapper, null, this.columnGroup);
+        const classes = CssClassApplier.getHeaderClassesFromColDef(colGroupDef, this.gridOptionsService, null, this.columnGroup);
 
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified

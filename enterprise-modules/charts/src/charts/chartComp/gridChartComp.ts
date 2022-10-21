@@ -159,7 +159,7 @@ export class GridChartComp extends Component {
 
     private validateCustomThemes() {
         const suppliedThemes = this.gridOptionsWrapper.getChartThemes();
-        const customChartThemes = this.gridOptionsWrapper.getCustomChartThemes();
+        const customChartThemes = this.gridOptionsService.get('customChartThemes');
         if (customChartThemes) {
             _.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
                 if (!_.includes(suppliedThemes, customThemeName)) {
@@ -190,7 +190,7 @@ export class GridChartComp extends Component {
             chartType,
             getChartThemeName: this.getChartThemeName.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
-            customChartThemes: this.gridOptionsWrapper.getCustomChartThemes(),
+            customChartThemes: this.gridOptionsService.get('customChartThemes'),
             getGridOptionsChartThemeOverrides: this.getGridOptionsChartThemeOverrides.bind(this),
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             crossFiltering: this.params.crossFiltering,
@@ -235,7 +235,7 @@ export class GridChartComp extends Component {
     }
 
     private getGridOptionsChartThemeOverrides(): AgChartThemeOverrides | undefined {
-        return this.gridOptionsWrapper.getChartThemeOverrides();
+        return this.gridOptionsService.get('chartThemeOverrides');
     }
 
     private static createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy {

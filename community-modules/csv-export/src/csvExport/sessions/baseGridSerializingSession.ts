@@ -97,9 +97,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         if (callback) {
             return callback({
                 column: column,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext()
+                api: this.gridOptionsService.get('api')!,
+                columnApi: this.gridOptionsService.get('columnApi')!,
+                context: this.gridOptionsService.get('context')
             });
         }
 
@@ -110,9 +110,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         if (this.processRowGroupCallback) {
             return this.processRowGroupCallback({
                 node: node,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext(),
+                api: this.gridOptionsService.get('api')!,
+                columnApi: this.gridOptionsService.get('columnApi')!,
+                context: this.gridOptionsService.get('context'),
             });
         }
         const keys = [node.key];
@@ -135,9 +135,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 column: column,
                 node: rowNode,
                 value: value,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext(),
+                api: this.gridOptionsService.get('api')!,
+                columnApi: this.gridOptionsService.get('columnApi')!,
+                context: this.gridOptionsService.get('context'),
                 type: type
             });
         }

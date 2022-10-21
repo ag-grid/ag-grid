@@ -72,7 +72,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private postConstruct(): void {
         this.usingTreeData = this.gridOptionsService.is('treeData');
         if (this.usingTreeData) {
-            this.getDataPath = this.gridOptionsWrapper.getDataPathFunc();
+            this.getDataPath = this.gridOptionsService.get('getDataPath');
         }
     }
 
@@ -651,7 +651,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
 
         // use callback if exists
-        const userCallback = this.gridOptionsWrapper.getIsGroupOpenByDefaultFunc();
+        const userCallback = this.gridOptionsService.getCallback('isGroupOpenByDefault');
         if (userCallback) {
             const params: WithoutGridCommon<IsGroupOpenByDefaultParams> = {
                 rowNode: groupNode,

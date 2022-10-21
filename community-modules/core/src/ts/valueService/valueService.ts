@@ -155,9 +155,9 @@ export class ValueService extends BeanStub {
             newValue: newValue,
             colDef: column.getColDef(),
             column: column,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            context: this.gridOptionsWrapper.getContext()
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            context: this.gridOptionsService.get('context')
         };
 
         params.newValue = newValue;
@@ -272,9 +272,9 @@ export class ValueService extends BeanStub {
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            context: this.gridOptionsWrapper.getContext(),
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            context: this.gridOptionsService.get('context'),
             getValue: this.getValueCallback.bind(this, rowNode)
         };
 
@@ -297,9 +297,9 @@ export class ValueService extends BeanStub {
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            context: this.gridOptionsWrapper.getContext(),
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            context: this.gridOptionsService.get('context'),
             getValue: this.getValueCallback.bind(this, rowNode)
         };
 
@@ -334,9 +334,9 @@ export class ValueService extends BeanStub {
                 column: col,
                 node: rowNode,
                 data: rowNode.data,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext()
+                api: this.gridOptionsService.get('api')!,
+                columnApi: this.gridOptionsService.get('columnApi')!,
+                context: this.gridOptionsService.get('context')
             };
             result = keyCreator(keyParams);
         }

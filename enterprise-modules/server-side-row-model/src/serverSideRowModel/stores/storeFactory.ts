@@ -55,7 +55,7 @@ export class StoreFactory {
 
         const maxBlocksInCache = (userStoreParams && userStoreParams.maxBlocksInCache != null)
             ? userStoreParams.maxBlocksInCache
-            : this.gridOptionsWrapper.getMaxBlocksInCache();
+            : this.gridOptionsService.getNum('maxBlocksInCache');
 
         const maxBlocksActive = maxBlocksInCache != null && maxBlocksInCache >= 0;
 
@@ -96,7 +96,7 @@ export class StoreFactory {
 
     private getLevelSpecificParams(parentNode: RowNode): ServerSideGroupLevelParams | undefined {
 
-        const callback = this.gridOptionsWrapper.getServerSideGroupLevelParamsFunc();
+        const callback = this.gridOptionsService.getCallback('getServerSideGroupLevelParams');
         if (!callback) { return undefined; }
 
         const params: WithoutGridCommon<GetServerSideGroupLevelParamsParams> = {

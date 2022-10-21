@@ -446,9 +446,9 @@ export class FilterManager extends BeanStub {
                 data: node.data,
                 column,
                 colDef,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext()
+                api: this.gridOptionsService.get('api')!,
+                columnApi: this.gridOptionsService.get('columnApi')!,
+                context: this.gridOptionsService.get('context')
             };
 
             value = colDef.getQuickFilterText(params);
@@ -565,15 +565,15 @@ export class FilterManager extends BeanStub {
 
     public createFilterParams(column: Column, colDef: ColDef): IFilterParams {
         const params: IFilterParams = {
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
             column,
             colDef: cloneObject(colDef),
             rowModel: this.rowModel,
             filterChangedCallback: () => { },
             filterModifiedCallback: () => { },
             valueGetter: this.createValueGetter(column),
-            context: this.gridOptionsWrapper.getContext(),
+            context: this.gridOptionsService.get('context'),
             doesRowPassOtherFilter: () => true,
         };
 

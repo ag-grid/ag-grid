@@ -525,7 +525,7 @@ export class NavigationService extends BeanStub {
             nextPosition = this.cellNavigationService.getNextTabbedCell(nextPosition, backwards);
 
             // allow user to override what cell to go to next
-            const userFunc = this.gridOptionsWrapper.getTabToNextCellFunc();
+            const userFunc = this.gridOptionsService.getCallback('tabToNextCell');
 
             if (exists(userFunc)) {
                 const params: WithoutGridCommon<TabToNextCellParams> = {
@@ -673,7 +673,7 @@ export class NavigationService extends BeanStub {
         // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
         // we allow this, however if processing 'enter after edit' we don't allow override
         if (allowUserOverride) {
-            const userFunc = this.gridOptionsWrapper.getNavigateToNextCellFunc();
+            const userFunc = this.gridOptionsService.getCallback('navigateToNextCell');
             if (exists(userFunc)) {
                 const params: WithoutGridCommon<NavigateToNextCellParams> = {
                     key: key,

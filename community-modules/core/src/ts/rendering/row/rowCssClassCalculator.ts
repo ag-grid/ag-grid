@@ -129,7 +129,7 @@ export class RowCssClassCalculator {
         }
 
         // part 2 - rowClassFunc
-        const rowClassFunc = this.gridOptionsWrapper.getRowClassFunc();
+        const rowClassFunc = this.gridOptionsService.getCallback('getRowClass');
 
         if (rowClassFunc) {
             const params: WithoutGridCommon<RowClassParams> = {
@@ -164,9 +164,9 @@ export class RowCssClassCalculator {
             data: rowNode.data,
             node: rowNode,
             rowIndex: rowNode.rowIndex!,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            context: this.gridOptionsWrapper.getContext()
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            context: this.gridOptionsService.get('context')
         };
 
         this.stylingService.processClassRules(

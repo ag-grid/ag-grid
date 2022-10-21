@@ -370,9 +370,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             data: rowNode.data,
             column: this,
             colDef: this.colDef,
-            context: this.gridOptionsWrapper.getContext(),
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!
+            context: this.gridOptionsService.get('context'),
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!
         };
     }
 
@@ -461,9 +461,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             column: this,
             columns: [this],
             source: source,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            context: this.gridOptionsWrapper.getContext()
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            context: this.gridOptionsService.get('context')
         };
     }
 
@@ -685,9 +685,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             data: rowNode.data,
             colDef: this.colDef,
             column: this,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            context: this.gridOptionsWrapper.getContext()
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            context: this.gridOptionsService.get('context')
         };
         return params;
     }

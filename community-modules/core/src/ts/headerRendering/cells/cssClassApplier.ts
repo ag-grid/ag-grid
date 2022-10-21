@@ -1,5 +1,5 @@
 import { AbstractColDef, HeaderClassParams, ToolPanelClassParams } from "../../entities/colDef";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { GridOptionsService } from "../../gridOptionsService";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { Column } from "../../entities/column";
 import { ProvidedColumnGroup } from "../../entities/providedColumnGroup";
@@ -9,7 +9,7 @@ export class CssClassApplier {
 
     public static getHeaderClassesFromColDef(
         abstractColDef: AbstractColDef | null,
-        gridOptionsWrapper: GridOptionsWrapper,
+        gridOptionsService: GridOptionsService,
         column: Column | null,
         columnGroup: ColumnGroup | null
     ): string[] {
@@ -18,7 +18,7 @@ export class CssClassApplier {
         return this.getColumnClassesFromCollDef(
             abstractColDef.headerClass,
             abstractColDef,
-            gridOptionsWrapper,
+            gridOptionsService,
             column,
             columnGroup
         );
@@ -26,7 +26,7 @@ export class CssClassApplier {
 
     public static getToolPanelClassesFromColDef(
         abstractColDef: AbstractColDef | null,
-        gridOptionsWrapper: GridOptionsWrapper,
+        gridOptionsService: GridOptionsService,
         column: Column | null,
         columnGroup: ProvidedColumnGroup | null
     ): string[] {
@@ -35,14 +35,14 @@ export class CssClassApplier {
         return this.getColumnClassesFromCollDef(
             abstractColDef.toolPanelClass,
             abstractColDef,
-            gridOptionsWrapper,
+            gridOptionsService,
             column,
             columnGroup
         );
     }
 
     private static getClassParams<T extends HeaderClassParams | ToolPanelClassParams>(abstractColDef: AbstractColDef,
-        gridOptionsWrapper: GridOptionsWrapper,
+        gridOptionsService: GridOptionsService,
         column: Column | null,
         columnGroup: T['columnGroup']): T {
         return {
@@ -52,16 +52,16 @@ export class CssClassApplier {
             colDef: abstractColDef,
             column: column,
             columnGroup: columnGroup,
-            api: gridOptionsWrapper.getApi()!,
-            columnApi: gridOptionsWrapper.getColumnApi()!,
-            context: gridOptionsWrapper.getContext()
+            api: gridOptionsService.get('api')!,
+            columnApi: gridOptionsService.get('columnApi')!,
+            context: gridOptionsService.get('context')
         } as T;
     }
 
     private static getColumnClassesFromCollDef<T extends HeaderClassParams | ToolPanelClassParams>(
         classesOrFunc: string | string[] | ((params: T) => string | string[] | undefined) | null | undefined,
         abstractColDef: AbstractColDef,
-        gridOptionsWrapper: GridOptionsWrapper,
+        gridOptionsService: GridOptionsService,
         column: Column | null,
         columnGroup: ColumnGroup | ProvidedColumnGroup | null
     ): string[] {
@@ -70,7 +70,7 @@ export class CssClassApplier {
         let classToUse: string | string[] | undefined;
 
         if (typeof classesOrFunc === 'function') {
-            const params: T = this.getClassParams(abstractColDef, gridOptionsWrapper, column, columnGroup);
+            const params: T = this.getClassParams(abstractColDef, gridOptionsService, column, columnGroup);
             classToUse = classesOrFunc(params);
         } else {
             classToUse = classesOrFunc;

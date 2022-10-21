@@ -166,9 +166,9 @@ export class CellCtrl extends BeanStub {
             if (valueGetter) {
                 return valueGetter({
                     location: 'cell',
-                    api: this.beans.gridOptionsWrapper.getApi()!,
-                    columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
-                    context: this.beans.gridOptionsWrapper.getContext(),
+                    api: this.beans.gridOptionsService.get('api')!,
+                    columnApi: this.beans.gridOptionsService.get('columnApi')!,
+                    context: this.beans.gridOptionsService.get('context'),
                     colDef: this.column.getColDef(),
                     column: this.column,
                     rowIndex: this.cellPosition.rowIndex,
@@ -463,7 +463,7 @@ export class CellCtrl extends BeanStub {
             api: this.beans.gridApi,
             columnApi: this.beans.columnApi,
             colDef: this.column.getColDef(),
-            context: this.beans.gridOptionsWrapper.getContext(),
+            context: this.beans.gridOptionsService.get('context'),
             data: rowNode.data,
             node: rowNode,
             oldValue,
@@ -558,10 +558,10 @@ export class CellCtrl extends BeanStub {
             rowIndex: this.getCellPosition().rowIndex,
             node: this.rowNode,
             data: this.rowNode.data,
-            api: this.beans.gridOptionsWrapper.getApi()!,
+            api: this.beans.gridOptionsService.get('api')!,
             cellStartedEdit: cellStartedEdit,
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
-            context: this.beans.gridOptionsWrapper.getContext(),
+            columnApi: this.beans.gridOptionsService.get('columnApi')!,
+            context: this.beans.gridOptionsService.get('context'),
             onKeyDown: this.onKeyDown.bind(this),
             stopEditing: this.stopEditingAndFocus.bind(this),
             eGridCell: this.getGui(),
@@ -589,9 +589,9 @@ export class CellCtrl extends BeanStub {
             colDef: this.column.getColDef(),
             column: this.column,
             rowIndex: this.getCellPosition().rowIndex,
-            api: this.beans.gridOptionsWrapper.getApi(),
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
-            context: this.beans.gridOptionsWrapper.getContext(),
+            api: this.beans.gridOptionsService.get('api'),
+            columnApi: this.beans.gridOptionsService.get('columnApi'),
+            context: this.beans.gridOptionsService.get('context'),
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.getGui(),
             eParentOfValue: this.cellComp.getParentOfValue(),
@@ -618,9 +618,9 @@ export class CellCtrl extends BeanStub {
             newValue: newValue,
             colDef: colDef,
             column: this.column,
-            api: this.beans.gridOptionsWrapper.getApi()!,
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
-            context: this.beans.gridOptionsWrapper.getContext()
+            api: this.beans.gridOptionsService.get('api')!,
+            columnApi: this.beans.gridOptionsService.get('columnApi')!,
+            context: this.beans.gridOptionsService.get('context')
         };
 
         const valueParser = colDef.valueParser;
@@ -762,11 +762,11 @@ export class CellCtrl extends BeanStub {
         const { gridOptionsWrapper } = this.beans;
 
         if (!flashDelay) {
-            flashDelay = this.gridOptionsService.getNum('cellFlashDelay', 500);
+            flashDelay = this.gridOptionsService.getNum('cellFlashDelay') || 500;
         }
 
         if (!exists(fadeDelay)) {
-            fadeDelay = this.gridOptionsService.getNum('cellFadeDelay', 1000);
+            fadeDelay = this.gridOptionsService.getNum('cellFadeDelay') || 1000;
         }
 
         // we want to highlight the cells, without any animation
@@ -885,7 +885,7 @@ export class CellCtrl extends BeanStub {
             value: this.value,
             column: this.column,
             colDef: this.column.getColDef(),
-            context: this.beans.gridOptionsWrapper.getContext(),
+            context: this.beans.gridOptionsService.get('context'),
             api: this.beans.gridApi,
             columnApi: this.beans.columnApi,
             rowPinned: this.rowNode.rowPinned,

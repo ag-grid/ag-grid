@@ -95,7 +95,7 @@ export class PaginationComp extends Component {
     }
 
     private formatNumber(value: number): string {
-        const userFunc = this.gridOptionsWrapper.getPaginationNumberFormatterFunc();
+        const userFunc = this.gridOptionsService.getCallback('paginationNumberFormatter');
 
         if (userFunc) {
             const params: WithoutGridCommon<PaginationNumberFormatterParams> = { value: value };

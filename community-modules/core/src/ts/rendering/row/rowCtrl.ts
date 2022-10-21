@@ -343,7 +343,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public executeProcessRowPostCreateFunc(): void {
-        const func = this.beans.gridOptionsWrapper.getProcessRowPostCreateFunc();
+        const func = this.beans.gridOptionsService.getCallback('processRowPostCreate');
         if (!func) { return; }
 
         const params: WithoutGridCommon<ProcessRowParams> = {
@@ -774,9 +774,9 @@ export class RowCtrl extends BeanStub {
             data: this.rowNode.data,
             rowIndex: this.rowNode.rowIndex!,
             rowPinned: this.rowNode.rowPinned,
-            context: this.beans.gridOptionsWrapper.getContext(),
-            api: this.beans.gridOptionsWrapper.getApi()!,
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
+            context: this.beans.gridOptionsService.get('context'),
+            api: this.beans.gridOptionsService.get('api')!,
+            columnApi: this.beans.gridOptionsService.get('columnApi')!,
             event: domEvent
         };
     }
@@ -923,9 +923,9 @@ export class RowCtrl extends BeanStub {
             value: this.rowNode.key,
             valueFormatted: this.rowNode.key,
             rowIndex: this.rowNode.rowIndex!,
-            api: this.beans.gridOptionsWrapper.getApi()!,
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
-            context: this.beans.gridOptionsWrapper.getContext(),
+            api: this.beans.gridOptionsService.get('api')!,
+            columnApi: this.beans.gridOptionsService.get('columnApi')!,
+            context: this.beans.gridOptionsService.get('context'),
             // these need to be taken out, as part of 'afterAttached' now
             eGridCell: eRow,
             eParentOfValue: eRow,
@@ -1132,7 +1132,7 @@ export class RowCtrl extends BeanStub {
         }
 
         // part 1 - rowStyleFunc
-        const rowStyleFunc = this.beans.gridOptionsWrapper.getRowStyleFunc();
+        const rowStyleFunc = this.beans.gridOptionsService.getCallback('getRowStyle');
         let rowStyleFuncResult: any;
 
         if (rowStyleFunc) {

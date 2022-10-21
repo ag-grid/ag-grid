@@ -55,7 +55,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.originalSelectedValue = params.value;
         this.focusAfterAttached = params.cellStartedEdit;
 
-        const icon = _.createIconNoSpan('smallDown', this.gridOptionsWrapper);
+        const icon = _.createIconNoSpan('smallDown', this.gridOptionsService);
         icon!.classList.add('ag-rich-select-value-icon');
         this.eValue.appendChild(icon!);
 
@@ -174,9 +174,9 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
                     column: this.params.column,
                     node: this.params.node,
                     data: this.params.data,
-                    api: this.gridOptionsWrapper.getApi()!,
-                    columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                    context: this.gridOptionsWrapper.getContext()
+                    api: this.gridOptionsService.get('api')!,
+                    columnApi: this.gridOptionsService.get('columnApi')!,
+                    context: this.gridOptionsService.get('context')
                 };
                 return this.params.colDef.keyCreator!(keyParams);
             });
@@ -210,7 +210,9 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const params = {
             value: this.selectedValue,
             valueFormatted: valueFormatted,
-            api: this.gridOptionsWrapper.getApi(),
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            context: this.gridOptionsService.get('context')
         } as ICellRendererParams;
 
         const compDetails = this.userComponentFactory.getCellRendererDetails(this.params, params);

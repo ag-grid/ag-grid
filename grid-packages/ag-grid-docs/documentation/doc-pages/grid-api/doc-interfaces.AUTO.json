@@ -11143,8 +11143,11 @@
   "GetKeys": { "meta": { "typeParams": ["T", "U"] } },
   "KeysLike": { "meta": { "typeParams": ["U"] } },
   "KeysOfType": { "meta": { "typeParams": ["U"] } },
-  "OnlyBooleanProps": {},
-  "OnlyNumberProps": {},
+  "BooleanProps": {},
+  "NumberProps": {},
+  "NoArgFuncs": {},
+  "AnyArgFuncs": {},
+  "CallbackProps": {},
   "NonPrimitiveProps": {},
   "PropertyChangedEvent": {
     "type": {

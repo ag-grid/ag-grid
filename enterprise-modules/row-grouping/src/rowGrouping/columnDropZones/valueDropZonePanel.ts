@@ -41,7 +41,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_AGGREGATE,
-            icon: _.createIconNoSpan('valuePanel', this.gridOptionsWrapper, null)!,
+            icon: _.createIconNoSpan('valuePanel', this.gridOptionsService, null)!,
             emptyMessage: emptyMessage,
             title: title
         });

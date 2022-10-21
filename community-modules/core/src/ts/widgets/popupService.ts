@@ -257,7 +257,7 @@ export class PopupService extends BeanStub {
         column?: Column | null,
         rowNode?: RowNode | null
     ): void {
-        const callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
+        const callback = this.gridOptionsService.getCallback('postProcessPopup');
         if (callback) {
             const params: WithoutGridCommon<PostProcessPopupParams> = {
                 column: column,
@@ -735,8 +735,8 @@ export class PopupService extends BeanStub {
 
         const params = {
             type: 'popupToFront',
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            api: this.gridOptionsService.get('api'),
+            columnApi: this.gridOptionsService.get('columnApi'),
             eWrapper
         };
 

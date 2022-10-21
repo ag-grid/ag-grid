@@ -72,7 +72,7 @@ export class ChartMenu extends Component {
 
         this.addManagedListener(this.eventService, Events.EVENT_CHART_CREATED, (e: ChartCreated) => {
             if (e.chartId === this.chartController.getChartId()) {
-                const showDefaultToolPanel = Boolean(this.gridOptionsWrapper.getChartToolPanelsDef()?.defaultToolPanel);
+                const showDefaultToolPanel = Boolean(this.gridOptionsService.get('chartToolPanelsDef')?.defaultToolPanel);
                 if (showDefaultToolPanel) {
                     this.showMenu(this.defaultPanel, false);
                 }
@@ -92,7 +92,7 @@ export class ChartMenu extends Component {
     }
 
     private getToolbarOptions(): ChartMenuOptions[] {
-        const useChartToolPanelCustomisation = Boolean(this.gridOptionsWrapper.getChartToolPanelsDef())
+        const useChartToolPanelCustomisation = Boolean(this.gridOptionsService.get('chartToolPanelsDef'))
 
         if (useChartToolPanelCustomisation) {
             const defaultChartToolbarOptions: ChartMenuOptions[] = [
@@ -118,7 +118,7 @@ export class ChartMenu extends Component {
                 })
                 : defaultChartToolbarOptions;
 
-            const panelsOverride = this.gridOptionsWrapper.getChartToolPanelsDef()?.panels
+            const panelsOverride = this.gridOptionsService.get('chartToolPanelsDef')?.panels
                 ?.map(panel => {
                     const menuOption = CHART_TOOL_PANEL_MENU_OPTIONS[panel]
                     if (!menuOption) {
@@ -136,7 +136,7 @@ export class ChartMenu extends Component {
                 this.panels = this.panels.filter(panel => panel !== 'chartData');
             }
 
-            const defaultToolPanel = this.gridOptionsWrapper.getChartToolPanelsDef()?.defaultToolPanel;
+            const defaultToolPanel = this.gridOptionsService.get('chartToolPanelsDef')?.defaultToolPanel;
             this.defaultPanel = (defaultToolPanel && CHART_TOOL_PANEL_MENU_OPTIONS[defaultToolPanel]) || this.panels[0];
 
             return this.panels.length > 0
@@ -210,7 +210,7 @@ export class ChartMenu extends Component {
             const [iconName, callback] = buttonConfig;
             const buttonEl = _.createIconNoSpan(
                 iconName,
-                this.gridOptionsWrapper,
+                this.gridOptionsService,
                 undefined,
                 true
             )!;

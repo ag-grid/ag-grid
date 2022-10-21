@@ -559,7 +559,7 @@ export abstract class BaseDropZonePanel extends Component {
         if (this.horizontal) {
             // for RTL it's a left arrow, otherwise it's a right arrow
             const enableRtl = this.beans.gridOptionsService.is('enableRtl');
-            const icon = _.createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.beans.gridOptionsWrapper)!;
+            const icon = _.createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.beans.gridOptionsService)!;
             this.addElementClasses(icon, 'cell-separator');
             eParent.appendChild(icon);
         }

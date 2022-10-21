@@ -331,9 +331,9 @@ export class UserComponentFactory extends BeanStub {
         paramsFromSelector: any = null
     ): any {
         const params: AgGridCommon<any> = {
-            context: this.gridOptionsWrapper.getContext(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            api: this.gridOptionsWrapper.getApi()!
+            context: this.gridOptionsService.get('context'),
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            api: this.gridOptionsService.get('api')!
         };
 
         mergeDeep(params, paramsFromGrid);

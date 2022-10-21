@@ -73,7 +73,7 @@ export class ToolPanelColumnGroupComp extends Component {
     public init(): void {
         this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
 
-        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper)!;
+        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsService)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-group-drag-handle');
 
         const checkboxGui = this.cbSelect.getGui();
@@ -238,8 +238,8 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private setupExpandContract(): void {
-        this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
-        this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
+        this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gridOptionsService, null));
+        this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gridOptionsService, null));
 
         this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));

@@ -6366,17 +6366,29 @@
     "meta": { "isTypeAlias": true, "typeParams": ["U"] },
     "type": "Exclude<GetKeys<GridOptions, U>, AnyGridOptions>"
   },
-  "OnlyBooleanProps": {
+  "BooleanProps": {
     "meta": { "isTypeAlias": true },
     "type": "Exclude<KeysOfType<boolean>, AnyGridOptions>"
   },
-  "OnlyNumberProps": {
+  "NumberProps": {
     "meta": { "isTypeAlias": true },
     "type": "Exclude<KeysOfType<number>, AnyGridOptions>"
   },
+  "NoArgFuncs": {
+    "meta": { "isTypeAlias": true },
+    "type": "KeysOfType<() => any>"
+  },
+  "AnyArgFuncs": {
+    "meta": { "isTypeAlias": true },
+    "type": "KeysOfType<(arg: 'NO_MATCH') => any>"
+  },
+  "CallbackProps": {
+    "meta": { "isTypeAlias": true },
+    "type": "Exclude<KeysOfType<(params: AgGridCommon<any>) => any>, NoArgFuncs | AnyArgFuncs>"
+  },
   "NonPrimitiveProps": {
     "meta": { "isTypeAlias": true },
-    "type": "Exclude<keyof GridOptions, OnlyBooleanProps | OnlyNumberProps>"
+    "type": "Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps>"
   },
   "PropertyChangedEvent": {
     "meta": {},

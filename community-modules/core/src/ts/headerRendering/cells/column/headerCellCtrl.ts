@@ -148,7 +148,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             },
             api: this.gridApi,
             columnApi: this.columnApi,
-            context: this.gridOptionsWrapper.getContext(),
+            context: this.gridOptionsService.get('context'),
             eGridHeader: this.getGui()
         } as IHeaderParams;
 
@@ -235,8 +235,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private setupClassesFromColDef(): void {
         const refreshHeaderClasses = () => {
             const colDef = this.column.getColDef();
-            const goa = this.gridOptionsWrapper;
-            const classes = CssClassApplier.getHeaderClassesFromColDef(colDef, goa, this.column, null);
+            const classes = CssClassApplier.getHeaderClassesFromColDef(colDef, this.gridOptionsService, this.column, null);
 
             const oldClasses = this.userHeaderClasses;
             this.userHeaderClasses = new Set(classes);
