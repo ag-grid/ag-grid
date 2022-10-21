@@ -484,39 +484,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined {
-        const {
-            axisGroup,
-            gridlineGroup,
-            crossLineGroup,
-            scale,
-            gridLength,
-            tick,
-            label,
-            requestedRange,
-            translation,
-        } = this;
+        this.calculateDomain();
+
+        const { scale, gridLength, tick, label, requestedRange } = this;
         const requestedRangeMin = Math.min(...requestedRange);
         const requestedRangeMax = Math.max(...requestedRange);
         const rotation = toRadians(this.rotation);
         const parallelLabels = label.parallel;
         const anySeriesActive = this.isAnySeriesActive();
-
-        const translationX = Math.floor(translation.x);
-        const translationY = Math.floor(translation.y);
-
-        crossLineGroup.translationX = translationX;
-        crossLineGroup.translationY = translationY;
-        crossLineGroup.rotation = rotation;
-
-        axisGroup.translationX = translationX;
-        axisGroup.translationY = translationY;
-        axisGroup.rotation = rotation;
-
-        gridlineGroup.translationX = translationX;
-        gridlineGroup.translationY = translationY;
-        gridlineGroup.rotation = rotation;
-
-        this.updateLine();
 
         // The side of the axis line to position the labels on.
         // -1 = left (default)
@@ -534,6 +509,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const parallelFlipRotation = normalizeAngle360(rotation);
         const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
         const halfBandwidth = (scale.bandwidth || 0) / 2;
+
+        this.updatePosition();
+        this.updateLine();
 
         let i = 0;
         let labelOverlap = true;
@@ -661,6 +639,47 @@ export class Axis<S extends Scale<D, number>, D = any> {
             .attr('y2', 0);
 
         return primaryTickCount;
+    }
+
+    protected calculateDomain() {
+        // Placeholder for subclasses to override.
+    }
+
+    updatePosition() {
+        const {
+            label,
+            axisGroup,
+            gridlineGroup,
+            crossLineGroup,
+            translation,
+            gridlineGroupSelection,
+            gridPadding,
+            gridLength,
+        } = this;
+        const rotation = toRadians(this.rotation);
+        const sideFlag = label.mirrored ? 1 : -1;
+
+        const translationX = Math.floor(translation.x);
+        const translationY = Math.floor(translation.y);
+
+        crossLineGroup.translationX = translationX;
+        crossLineGroup.translationY = translationY;
+        crossLineGroup.rotation = rotation;
+
+        axisGroup.translationX = translationX;
+        axisGroup.translationY = translationY;
+        axisGroup.rotation = rotation;
+
+        gridlineGroup.translationX = translationX;
+        gridlineGroup.translationY = translationY;
+        gridlineGroup.rotation = rotation;
+
+        gridlineGroupSelection.selectByTag<Line>(Tags.GridLine).each((line) => {
+            line.x1 = gridPadding;
+            line.x2 = -sideFlag * gridLength + gridPadding;
+            line.y1 = 0;
+            line.y2 = 0;
+        });
     }
 
     updateSecondaryAxisTicks(_primaryTickCount: number | undefined): any[] {
