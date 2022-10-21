@@ -30,6 +30,7 @@ import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
 import { InfiniteStoreBlock } from "../blocks/infiniteStoreBlock";
 import { BlockUtils } from "../blocks/blockUtils";
+import { isServerSideFilterAllLevels, isServerSideSortAllLevels } from "./storeOptionsService";
 
 enum FindResult { FOUND, CONTINUE_FIND, BREAK_FIND }
 
@@ -768,7 +769,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     }
 
     public refreshAfterFilter(params: StoreRefreshAfterParams): void {
-        const serverFiltersAllLevels = this.gridOptionsWrapper.isServerSideFilterAllLevels();
+        const serverFiltersAllLevels = isServerSideFilterAllLevels(this.gridOptionsService, this.gridOptionsWrapper);
         if (serverFiltersAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
             this.resetStore();
             return;
@@ -780,7 +781,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     }
 
     public refreshAfterSort(params: StoreRefreshAfterParams): void {
-        const serverSortsAllLevels = this.gridOptionsWrapper.isServerSideSortAllLevels();
+        const serverSortsAllLevels = isServerSideSortAllLevels(this.gridOptionsService, this.gridOptionsWrapper);
         if (serverSortsAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
             this.resetStore();
             return;
