@@ -13098,6 +13098,10 @@
         "optional": true
       }
     },
+    "id": {
+      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "type": { "returnType": "DatumType[]", "optional": true }
@@ -14094,6 +14098,10 @@
     "meta": { "typeParams": ["DatumType"] }
   },
   "AgBaseSeriesOptions": {
+    "id": {
+      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "type": { "returnType": "DatumType[]", "optional": true }
@@ -14552,6 +14560,10 @@
       "type": { "returnType": "AgLineSeriesTooltip", "optional": true }
     },
     "meta": { "typeParams": ["DatumType = any"] },
+    "id": {
+      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "type": { "returnType": "DatumType[]", "optional": true }
@@ -14747,6 +14759,10 @@
       "type": { "returnType": "AgScatterSeriesTooltip", "optional": true }
     },
     "meta": { "typeParams": ["DatumType = any"] },
+    "id": {
+      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "type": { "returnType": "DatumType[]", "optional": true }
@@ -14911,6 +14927,10 @@
     },
     "stacked": { "type": { "returnType": "boolean", "optional": true } },
     "meta": { "typeParams": ["DatumType = any"] },
+    "id": {
+      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "type": { "returnType": "DatumType[]", "optional": true }
@@ -15102,6 +15122,10 @@
       }
     },
     "meta": { "typeParams": ["DatumType = any"] },
+    "id": {
+      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "type": { "returnType": "DatumType[]", "optional": true }
@@ -15268,6 +15292,10 @@
       "type": { "returnType": "AgHistogramSeriesTooltip", "optional": true }
     },
     "meta": { "typeParams": ["DatumType = any"] },
+    "id": {
+      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "type": { "returnType": "DatumType[]", "optional": true }
@@ -15680,6 +15708,10 @@
       }
     },
     "meta": { "typeParams": ["DatumType = any"] },
+    "id": {
+      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "type": { "returnType": "DatumType[]", "optional": true }
@@ -16002,6 +16034,10 @@
       }
     },
     "meta": { "typeParams": ["DatumType = any"] },
+    "id": {
+      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "type": { "returnType": "DatumType[]", "optional": true }

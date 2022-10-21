@@ -712,6 +712,8 @@ export interface AgBaseSeriesListeners<DatumType> {
 }
 
 export interface AgBaseSeriesOptions<DatumType, ListenerDatumType = DatumType> {
+    /** An identifier for the series. If not specified, it will be generated. */
+    id?: string;
     /** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */
     data?: DatumType[];
     /** Whether or not to display the series. */

@@ -130,7 +130,8 @@ export type SeriesNodeDataContext<S = SeriesNodeDatum, L = S> = {
 export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataContext> extends Observable {
     protected static readonly highlightedZIndex = 1000000000000;
 
-    readonly id = createId(this);
+    @Validate(STRING)
+    id = createId(this);
 
     get type(): string {
         return (this.constructor as any).type || '';
