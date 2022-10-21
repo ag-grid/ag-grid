@@ -96,4 +96,5 @@ export interface SeriesMarkerFormatterParams {
     strokeWidth: number;
     size: number;
     highlighted: boolean;
+    seriesId: string;
 }

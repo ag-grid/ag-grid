@@ -386,6 +386,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
             },
+            id: seriesId,
         } = this;
         const { size, formatter } = marker;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
@@ -411,6 +412,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     strokeWidth,
                     size,
                     highlighted: isDatumHighlighted,
+                    seriesId,
                 });
             }
 
@@ -490,7 +492,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             return '';
         }
 
-        const { xName, yName, tooltip, marker } = this;
+        const { xName, yName, tooltip, marker, id: seriesId } = this;
         const { renderer: tooltipRenderer, format: tooltipFormat } = tooltip;
         const datum = nodeDatum.datum;
         const xValue = datum[xKey];
@@ -514,6 +516,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 strokeWidth,
                 size,
                 highlighted: false,
+                seriesId,
             });
         }
 
@@ -536,6 +539,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 yName,
                 title,
                 color,
+                seriesId,
             };
             if (tooltipFormat) {
                 return toTooltipHtml(
@@ -553,13 +557,17 @@ export class LineSeries extends CartesianSeries<LineContext> {
         return toTooltipHtml(defaults);
     }
 
-    listSeriesItems(legendData: LegendDatum[]): void {
+    getLegendData(): LegendDatum[] {
         const { id, data, xKey, yKey, yName, visible, title, marker, stroke, strokeOpacity } = this;
 
-        if (data && data.length && xKey && yKey) {
-            legendData.push({
+        if (!(data && data.length && xKey && yKey)) {
+            return [];
+        }
+        return [
+            {
                 id: id,
                 itemId: yKey,
+                seriesId: id,
                 enabled: visible,
                 label: {
                     text: title || yName || yKey,
@@ -571,8 +579,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     fillOpacity: marker.fillOpacity ?? 1,
                     strokeOpacity: marker.strokeOpacity ?? strokeOpacity ?? 1,
                 },
-            });
-        }
+            },
+        ];
     }
 
     protected isLabelEnabled() {

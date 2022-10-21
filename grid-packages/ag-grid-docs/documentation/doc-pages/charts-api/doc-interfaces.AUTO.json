@@ -1215,7 +1215,8 @@
   "AgChartLegendLabelFormatterParams": {
     "id": { "type": { "returnType": "string", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },
-    "value": { "type": { "returnType": "string", "optional": false } }
+    "value": { "type": { "returnType": "string", "optional": false } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } }
   },
   "AgChartLegendLabelOptions": {
     "maxLength": {
@@ -1351,13 +1352,20 @@
       "type": { "returnType": "CssColor", "optional": true }
     }
   },
+  "AgNodeClickEvent": {
+    "type": {
+      "type": { "returnType": "'seriesNodeClick'", "optional": false }
+    },
+    "series": { "type": { "returnType": "any", "optional": false } },
+    "datum": { "type": { "returnType": "any", "optional": false } },
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } }
+  },
   "AgBaseChartListeners": {
     "seriesNodeClick": {
       "description": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
       "type": {
-        "arguments": {
-          "event": "{ type: 'seriesNodeClick'; series: any; datum: any; xKey: string; yKey: string; }"
-        },
+        "arguments": { "event": "AgNodeClickEvent" },
         "returnType": "any",
         "optional": false
       }
@@ -2060,6 +2068,10 @@
       "description": "/** yName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
     },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "datum": {
       "description": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "type": { "returnType": "any", "optional": false }
@@ -2097,6 +2109,10 @@
     "radiusName": {
       "description": "/** radiusName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
+    },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
     },
     "datum": {
       "description": "/** Datum from the series data array that the tooltip is being rendered for. */",
@@ -2151,6 +2167,10 @@
     "yName": {
       "description": "/** yName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
+    },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
     },
     "datum": {
       "description": "/** Datum from the series data array that the tooltip is being rendered for. */",
@@ -2210,6 +2230,7 @@
     "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
     "size": { "type": { "returnType": "number", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
     "meta": { "typeParams": ["DatumType"] }
   },
   "AgCartesianSeriesMarkerFormatterParams": {
@@ -2221,7 +2242,8 @@
     "stroke": { "type": { "returnType": "CssColor", "optional": true } },
     "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
     "size": { "type": { "returnType": "number", "optional": false } },
-    "highlighted": { "type": { "returnType": "boolean", "optional": false } }
+    "highlighted": { "type": { "returnType": "boolean", "optional": false } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } }
   },
   "AgCartesianSeriesMarkerFormat": {
     "fill": { "type": { "returnType": "CssColor", "optional": true } },
@@ -2885,6 +2907,7 @@
     "highlighted": { "type": { "returnType": "boolean", "optional": false } },
     "xKey": { "type": { "returnType": "string", "optional": false } },
     "yKey": { "type": { "returnType": "string", "optional": false } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
     "meta": { "typeParams": ["DatumType"] }
   },
   "AgBarSeriesFormat": {
@@ -3299,6 +3322,7 @@
     "angleKey": { "type": { "returnType": "string", "optional": false } },
     "radiusKey": { "type": { "returnType": "string", "optional": true } },
     "sectorLabelKey": { "type": { "returnType": "string", "optional": true } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
     "meta": { "typeParams": ["DatumType"] }
   },
   "AgPieSeriesFormat": {
@@ -3669,6 +3693,10 @@
       "description": "/** radiusName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
     },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "datum": {
       "description": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "type": { "returnType": "any", "optional": false }
@@ -3751,6 +3779,10 @@
       "description": "/** The value of labelKey as specified on series options.\n * @deprecated Use item.datum instead.\n */",
       "type": { "returnType": "any", "optional": true }
     },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "meta": { "typeParams": ["DatumType"] }
   },
   "AgTreemapSeriesLabelOptions": {
@@ -3815,6 +3847,7 @@
     "labelKey": { "type": { "returnType": "string", "optional": false } },
     "valueKey": { "type": { "returnType": "string", "optional": false } },
     "color": { "type": { "returnType": "string", "optional": false } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
     "meta": { "typeParams": ["DatumType"] }
   },
   "AgTreemapSeriesTooltip": {
@@ -3990,6 +4023,10 @@
     "highlighted": {
       "description": "/** `true` if the tile is highlighted by hovering */",
       "type": { "returnType": "boolean", "optional": false }
+    },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
     },
     "meta": { "typeParams": ["DataValue = any"] }
   },
@@ -4253,6 +4290,7 @@
   "LegendDatum": {
     "id": { "type": { "returnType": "string", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
     "enabled": { "type": { "returnType": "boolean", "optional": false } },
     "marker": {
       "type": {
@@ -4272,7 +4310,8 @@
   "LegendLabelFormatterParams": {
     "id": { "type": { "returnType": "string", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },
-    "value": { "type": { "returnType": "string", "optional": false } }
+    "value": { "type": { "returnType": "string", "optional": false } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } }
   },
   "SeriesOptionsTypes": {},
   "AxesOptionsTypes": {},
@@ -4385,6 +4424,7 @@
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": true } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "title": { "type": { "returnType": "string", "optional": true } },
     "color": { "type": { "returnType": "string", "optional": true } }
@@ -4423,7 +4463,8 @@
     "strokeWidth": { "type": { "returnType": "number", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } },
     "xKey": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } }
+    "yKey": { "type": { "returnType": "string", "optional": false } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } }
   },
   "BarSeriesFormat": {
     "fill": { "type": { "returnType": "string", "optional": true } },
@@ -4502,7 +4543,8 @@
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": false } },
     "size": { "type": { "returnType": "number", "optional": false } },
-    "highlighted": { "type": { "returnType": "boolean", "optional": false } }
+    "highlighted": { "type": { "returnType": "boolean", "optional": false } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } }
   },
   "HistogramSeriesNodeTag": {},
   "HistogramNodeDatum": {
@@ -4598,6 +4640,7 @@
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": true } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "title": { "type": { "returnType": "string", "optional": true } },
     "color": { "type": { "returnType": "string", "optional": true } }
@@ -4726,6 +4769,7 @@
     },
     "sectorLabelKey": { "type": { "returnType": "string", "optional": true } },
     "sectorLabelName": { "type": { "returnType": "string", "optional": true } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
     "angleKey": { "type": { "returnType": "string", "optional": false } },
     "angleValue": { "type": { "returnType": "any", "optional": false } },
     "angleName": { "type": { "returnType": "string", "optional": true } },
@@ -4744,7 +4788,8 @@
     "strokeWidth": { "type": { "returnType": "number", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } },
     "angleKey": { "type": { "returnType": "string", "optional": false } },
-    "radiusKey": { "type": { "returnType": "string", "optional": true } }
+    "radiusKey": { "type": { "returnType": "string", "optional": true } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } }
   },
   "PieSeriesFormat": {
     "fill": { "type": { "returnType": "string", "optional": true } },
@@ -4784,23 +4829,14 @@
     "radiusKey": { "type": { "returnType": "string", "optional": true } },
     "radiusValue": { "type": { "returnType": "any", "optional": true } },
     "radiusName": { "type": { "returnType": "string", "optional": true } },
-    "value": { "type": { "returnType": "any", "optional": true } }
+    "value": { "type": { "returnType": "any", "optional": true } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } }
   },
   "SectorBoundaries": {
     "startAngle": { "type": { "returnType": "number", "optional": false } },
     "endAngle": { "type": { "returnType": "number", "optional": false } },
     "innerRadius": { "type": { "returnType": "number", "optional": false } },
     "outerRadius": { "type": { "returnType": "number", "optional": false } }
-  },
-  "PolarSeriesMarkerFormatterParams": {
-    "angleKey": { "type": { "returnType": "string", "optional": false } },
-    "radiusKey": { "type": { "returnType": "string", "optional": false } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
-    "size": { "type": { "returnType": "number", "optional": false } },
-    "highlighted": { "type": { "returnType": "boolean", "optional": false } }
   },
   "SeriesNodeDatum": {
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
@@ -4824,6 +4860,7 @@
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": true } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "title": { "type": { "returnType": "string", "optional": true } },
     "color": { "type": { "returnType": "string", "optional": true } }
@@ -4848,7 +4885,8 @@
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": false } },
     "size": { "type": { "returnType": "number", "optional": false } },
-    "highlighted": { "type": { "returnType": "boolean", "optional": false } }
+    "highlighted": { "type": { "returnType": "boolean", "optional": false } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } }
   },
   "TestCase": {
     "options": {

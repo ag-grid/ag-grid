@@ -59,6 +59,8 @@ export interface CartesianTooltipRendererParams extends TooltipRendererParams {
     readonly yKey: string;
     readonly yValue: any;
     readonly yName?: string;
+
+    readonly seriesId: string;
 }
 
 export interface PolarTooltipRendererParams extends TooltipRendererParams {
@@ -131,7 +133,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     protected static readonly highlightedZIndex = 1000000000000;
 
     @Validate(STRING)
-    id = createId(this);
+    readonly id = createId(this);
 
     get type(): string {
         return (this.constructor as any).type || '';
@@ -464,13 +466,12 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     /**
      * @private
-     * Populates the given {@param data} array with the items of this series
+     * Returns an array with the items of this series
      * that should be shown in the legend. It's up to the series to determine
      * what is considered an item. An item could be the series itself or some
      * part of the series.
-     * @param data
      */
-    abstract listSeriesItems(data: LegendDatum[]): void;
+    abstract getLegendData(): LegendDatum[];
 
     toggleSeriesItem(_itemId: any, enabled: boolean): void {
         this.visible = enabled;

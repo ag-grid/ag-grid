@@ -339,6 +339,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
             },
+            id: seriesId,
         } = this;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
         const { formatter } = marker;
@@ -371,6 +372,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                     strokeWidth,
                     size,
                     highlighted: isDatumHighlighted,
+                    seriesId,
                 });
             }
 
@@ -453,6 +455,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             sizeName,
             labelKey,
             labelName,
+            id: seriesId,
         } = this;
 
         const fill = marker.fill ?? seriesFill;
@@ -472,6 +475,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 strokeWidth,
                 size: nodeDatum.point?.size ?? 0,
                 highlighted: false,
+                seriesId,
             });
         }
 
@@ -519,6 +523,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                     labelName,
                     title,
                     color,
+                    seriesId,
                 }),
                 defaults
             );
@@ -527,13 +532,17 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         return toTooltipHtml(defaults);
     }
 
-    listSeriesItems(legendData: LegendDatum[]): void {
+    getLegendData(): LegendDatum[] {
         const { id, data, xKey, yKey, yName, title, visible, marker, fill, stroke, fillOpacity, strokeOpacity } = this;
 
-        if (data && data.length && xKey && yKey) {
-            legendData.push({
+        if (!(data && data.length && xKey && yKey)) {
+            return [];
+        }
+        return [
+            {
                 id,
                 itemId: yKey,
+                seriesId: id,
                 enabled: visible,
                 label: {
                     text: title || yName || yKey,
@@ -545,8 +554,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                     fillOpacity: marker.fillOpacity !== undefined ? marker.fillOpacity : fillOpacity,
                     strokeOpacity: marker.strokeOpacity !== undefined ? marker.strokeOpacity : strokeOpacity,
                 },
-            });
-        }
+            },
+        ];
     }
 
     protected isLabelEnabled() {

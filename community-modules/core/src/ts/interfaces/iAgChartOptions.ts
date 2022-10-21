@@ -312,6 +312,7 @@ export interface AgChartLegendLabelFormatterParams {
     id: string;
     itemId: any;
     value: string;
+    seriesId: string;
 }
 
 export interface AgChartLegendLabelOptions {
@@ -391,9 +392,17 @@ export interface AgChartBackground {
     fill?: CssColor;
 }
 
+export interface AgNodeClickEvent {
+    type: 'seriesNodeClick';
+    series: any;
+    datum: any;
+    xKey: string;
+    yKey: string;
+}
+
 export interface AgBaseChartListeners {
     /** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */
-    seriesNodeClick: (event: { type: 'seriesNodeClick'; series: any; datum: any; xKey: string; yKey: string }) => any;
+    seriesNodeClick: (event: AgNodeClickEvent) => any;
     /** Generic listeners. */
     [key: string]: Function;
 }
@@ -758,6 +767,9 @@ export interface AgCartesianSeriesTooltipRendererParams extends AgSeriesTooltipR
     readonly yValue?: any;
     /** yName as specified on series options. */
     readonly yName?: string;
+
+    /** The ID of the series. */
+    readonly seriesId: string;
 }
 
 export interface AgPolarSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
@@ -774,6 +786,9 @@ export interface AgPolarSeriesTooltipRendererParams extends AgSeriesTooltipRende
     readonly radiusValue?: any;
     /** radiusName as specified on series options. */
     readonly radiusName?: string;
+
+    /** The ID of the series. */
+    readonly seriesId: string;
 }
 
 export interface AgScatterSeriesTooltipRendererParams extends AgCartesianSeriesTooltipRendererParams {
@@ -816,6 +831,7 @@ export interface AgSeriesMarkerFormatterParams<DatumType> {
     strokeWidth: PixelSize;
     size: number;
     highlighted: boolean;
+    seriesId: string;
 }
 
 export interface AgCartesianSeriesMarkerFormatterParams<DatumType> extends AgSeriesMarkerFormatterParams<DatumType> {
@@ -1024,6 +1040,7 @@ export interface AgBarSeriesFormatterParams<DatumType> {
     readonly highlighted: boolean;
     readonly xKey: string;
     readonly yKey: string;
+    readonly seriesId: string;
 }
 
 export interface AgBarSeriesFormat {
@@ -1192,6 +1209,7 @@ export interface AgPieSeriesFormatterParams<DatumType> {
     readonly angleKey: string;
     readonly radiusKey?: string;
     readonly sectorLabelKey?: string;
+    readonly seriesId: string;
 }
 
 export interface AgPieSeriesFormat {
@@ -1416,6 +1434,9 @@ export interface AgPieSeriesLabelFormatterParams<DatumType> {
      * @deprecated Use item.datum instead.
      */
     readonly value?: any;
+
+    /** The ID of the series. */
+    readonly seriesId: string;
 }
 
 export interface AgTreemapSeriesLabelOptions extends AgChartLabelOptions {
@@ -1440,6 +1461,7 @@ export interface AgTreemapSeriesTooltipRendererParams<DatumType> {
     labelKey: string;
     valueKey: string;
     color: string;
+    seriesId: string;
 }
 
 export interface AgTreemapSeriesTooltip<DatumType> extends AgSeriesTooltip {
@@ -1513,6 +1535,8 @@ export interface AgTreemapSeriesFormatterParams<DataValue = any> {
     readonly gradient?: boolean;
     /** `true` if the tile is highlighted by hovering */
     readonly highlighted: boolean;
+    /** The ID of the series. */
+    readonly seriesId: string;
 }
 
 /** The formatted style of a treemap tile */

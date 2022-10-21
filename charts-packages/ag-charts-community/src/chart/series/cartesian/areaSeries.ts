@@ -717,6 +717,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }) {
         const { markerSelection, isHighlight: isDatumHighlighted } = opts;
         const {
+            id: seriesId,
             xKey,
             marker,
             seriesItemEnabled,
@@ -769,6 +770,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     strokeWidth,
                     size,
                     highlighted: isDatumHighlighted,
+                    seriesId,
                 });
             }
 
@@ -840,7 +842,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }
 
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {
-        const { xKey } = this;
+        const { xKey, id: seriesId } = this;
         const { yKey } = nodeDatum;
 
         if (!(xKey && yKey) || !this.seriesItemEnabled.get(yKey)) {
@@ -891,6 +893,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 strokeWidth,
                 size,
                 highlighted: false,
+                seriesId,
             });
         }
 
@@ -915,6 +918,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 yName,
                 color,
                 title,
+                seriesId,
             };
             if (tooltipFormat) {
                 return toTooltipHtml(
@@ -932,13 +936,15 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         return toTooltipHtml(defaults);
     }
 
-    listSeriesItems(legendData: LegendDatum[]): void {
+    getLegendData(): LegendDatum[] {
         const { data, id, xKey, yKeys, yNames, seriesItemEnabled, marker, fills, strokes, fillOpacity, strokeOpacity } =
             this;
 
         if (!data || !data.length || !xKey || !yKeys.length) {
-            return;
+            return [];
         }
+
+        const legendData: LegendDatum[] = [];
 
         // Area stacks should be listed in the legend in reverse order, for symmetry with the
         // vertical stack display order.
@@ -947,6 +953,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             legendData.push({
                 id,
                 itemId: yKey,
+                seriesId: id,
                 enabled: seriesItemEnabled.get(yKey) || false,
                 label: {
                     text: yNames[index] || yKeys[index],
@@ -960,6 +967,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 },
             });
         }
+
+        return legendData;
     }
 
     protected isLabelEnabled() {

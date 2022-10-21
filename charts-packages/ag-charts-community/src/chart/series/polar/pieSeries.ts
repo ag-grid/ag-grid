@@ -78,6 +78,7 @@ export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
     readonly calloutLabelName?: string;
     readonly sectorLabelKey?: string;
     readonly sectorLabelName?: string;
+    readonly seriesId: string;
 }
 
 class PieHighlightStyle extends HighlightStyle {
@@ -99,6 +100,7 @@ export interface PieSeriesFormatterParams {
     readonly highlighted: boolean;
     readonly angleKey: string;
     readonly radiusKey?: string;
+    readonly seriesId: string;
 }
 
 export interface PieSeriesFormat {
@@ -129,6 +131,7 @@ interface PieSeriesLabelFormatterParams {
     readonly radiusValue?: any;
     readonly radiusName?: string;
     readonly value?: any;
+    readonly seriesId: string;
 }
 
 class PieSeriesCalloutLabel extends Label {
@@ -451,8 +454,16 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     async processData() {
-        const { angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData, calloutLabel, sectorLabel } =
-            this;
+        const {
+            angleKey,
+            radiusKey,
+            seriesItemEnabled,
+            angleScale,
+            groupSelectionData,
+            calloutLabel,
+            sectorLabel,
+            id: seriesId,
+        } = this;
         const data = angleKey && this.data ? this.data : [];
 
         const angleData: number[] = data.map(
@@ -492,6 +503,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 sectorLabelKey,
                 sectorLabelValue: sectorLabelKey ? datum[sectorLabelKey] : undefined,
                 sectorLabelName: this.sectorLabelName,
+                seriesId,
             };
         };
 
@@ -624,7 +636,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private getSectorFormat(datum: any, itemId: any, index: number, highlight: any): PieSeriesFormat {
-        const { angleKey, radiusKey, fills, strokes, fillOpacity: seriesFillOpacity, formatter } = this;
+        const { angleKey, radiusKey, fills, strokes, fillOpacity: seriesFillOpacity, formatter, id: seriesId } = this;
 
         const highlightedDatum = this.chart!.highlightedDatum;
         const isDatumHighlighted = highlight && highlightedDatum?.series === this && itemId === highlightedDatum.itemId;
@@ -645,6 +657,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 stroke,
                 strokeWidth,
                 highlighted: isDatumHighlighted,
+                seriesId,
             });
         }
 
@@ -1016,6 +1029,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             sectorLabelKey,
             calloutLabelName,
             sectorLabelName,
+            id: seriesId,
         } = this;
 
         const { renderer: tooltipRenderer } = tooltip;
@@ -1050,6 +1064,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     sectorLabelName,
                     title,
                     color,
+                    seriesId,
                 }),
                 defaults
             );
@@ -1058,11 +1073,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return toTooltipHtml(defaults);
     }
 
-    listSeriesItems(legendData: LegendDatum[]): void {
+    getLegendData(): LegendDatum[] {
         const { calloutLabelKey, data } = this;
 
         if (data && data.length && calloutLabelKey) {
             const { id } = this;
+
+            const legendData: LegendDatum[] = [];
 
             const titleText = this.title && this.title.showInLegend && this.title.text;
             data.forEach((datum, index) => {
@@ -1073,6 +1090,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 legendData.push({
                     id,
                     itemId: index,
+                    seriesId: id,
                     enabled: this.seriesItemEnabled[index],
                     label: {
                         text: labelParts.join(' - '),
@@ -1085,7 +1103,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     },
                 });
             });
+
+            return legendData;
         }
+
+        return [];
     }
 
     toggleSeriesItem(itemId: number, enabled: boolean): void {

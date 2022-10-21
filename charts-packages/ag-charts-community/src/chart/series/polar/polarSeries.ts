@@ -1,7 +1,5 @@
 import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { ChartAxisDirection } from '../../chartAxis';
-import { SeriesMarker, SeriesMarkerFormatterParams } from '../seriesMarker';
-import { RedrawType, SceneChangeDetection } from '../../../scene/changeDetectable';
 import { PointLabelDatum } from '../../../util/labelPlacement';
 export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
     directionKeys = {
@@ -32,19 +30,4 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
     getLabelData(): PointLabelDatum[] {
         return [];
     }
-}
-
-export class PolarSeriesMarker extends SeriesMarker {
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
-    formatter?: (params: PolarSeriesMarkerFormatterParams) => {
-        fill?: string;
-        stroke?: string;
-        strokeWidth: number;
-        size: number;
-    };
-}
-
-export interface PolarSeriesMarkerFormatterParams extends SeriesMarkerFormatterParams {
-    angleKey: string;
-    radiusKey: string;
 }

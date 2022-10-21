@@ -570,7 +570,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             return '';
         }
 
-        const { xName, yName, fill: color, tooltip, aggregation } = this;
+        const { xName, yName, fill: color, tooltip, aggregation, id: seriesId } = this;
         const { renderer: tooltipRenderer } = tooltip;
         const bin: HistogramBin = nodeDatum.datum;
         const {
@@ -603,6 +603,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                     yName,
                     color,
                     title,
+                    seriesId,
                 }),
                 defaults
             );
@@ -611,13 +612,18 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         return toTooltipHtml(defaults);
     }
 
-    listSeriesItems(legendData: LegendDatum[]): void {
+    getLegendData(): LegendDatum[] {
         const { id, data, xKey, yName, visible, fill, stroke, fillOpacity, strokeOpacity } = this;
 
-        if (data && data.length) {
-            legendData.push({
+        if (!data || data.length === 0) {
+            return [];
+        }
+
+        return [
+            {
                 id,
                 itemId: xKey,
+                seriesId: id,
                 enabled: visible,
                 label: {
                     text: yName || xKey || 'Frequency',
@@ -628,8 +634,8 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                     fillOpacity: fillOpacity,
                     strokeOpacity: strokeOpacity,
                 },
-            });
-        }
+            },
+        ];
     }
 
     protected isLabelEnabled() {

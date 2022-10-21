@@ -636,7 +636,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         return toTooltipHtml(defaults);
     }
 
-    listSeriesItems(_legendData: LegendDatum[]): void {
+    getLegendData(): LegendDatum[] {
         // Override point for subclasses.
+        return [];
     }
 }

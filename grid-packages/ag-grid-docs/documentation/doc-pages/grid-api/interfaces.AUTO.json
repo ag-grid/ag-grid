@@ -7550,7 +7550,12 @@
   },
   "AgChartLegendLabelFormatterParams": {
     "meta": {},
-    "type": { "id": "string", "itemId": "any", "value": "string" }
+    "type": {
+      "id": "string",
+      "itemId": "any",
+      "value": "string",
+      "seriesId": "string"
+    }
   },
   "AgChartLegendLabelOptions": {
     "meta": {},
@@ -7648,10 +7653,20 @@
       "fill?": "/** Colour of the chart background. */"
     }
   },
+  "AgNodeClickEvent": {
+    "meta": {},
+    "type": {
+      "type": "'seriesNodeClick'",
+      "series": "any",
+      "datum": "any",
+      "xKey": "string",
+      "yKey": "string"
+    }
+  },
   "AgBaseChartListeners": {
     "meta": {},
     "type": {
-      "seriesNodeClick": "(event: { type: 'seriesNodeClick'; series: any; datum: any; xKey: string; yKey: string; }) => any",
+      "seriesNodeClick": "(event: AgNodeClickEvent) => any",
       "[key: string]": "Function"
     },
     "docs": {
@@ -8141,6 +8156,7 @@
       "yKey": "string",
       "yValue?": "any",
       "yName?": "string",
+      "seriesId": "string",
       "datum": "any",
       "title?": "string",
       "color?": "CssColor"
@@ -8152,6 +8168,7 @@
       "yKey": "/** yKey as specified on series options. */",
       "yValue?": "/** yValue as read from series data via the yKey property. */",
       "yName?": "/** yName as specified on series options. */",
+      "seriesId": "/** The ID of the series. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
       "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
@@ -8166,6 +8183,7 @@
       "radiusKey?": "string",
       "radiusValue?": "any",
       "radiusName?": "string",
+      "seriesId": "string",
       "datum": "any",
       "title?": "string",
       "color?": "CssColor"
@@ -8177,6 +8195,7 @@
       "radiusKey?": "/** radiusKey as specified on series options. */",
       "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
       "radiusName?": "/** radiusName as specified on series options. */",
+      "seriesId": "/** The ID of the series. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
       "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
@@ -8195,6 +8214,7 @@
       "yKey": "string",
       "yValue?": "any",
       "yName?": "string",
+      "seriesId": "string",
       "datum": "any",
       "title?": "string",
       "color?": "CssColor"
@@ -8210,6 +8230,7 @@
       "yKey": "/** yKey as specified on series options. */",
       "yValue?": "/** yValue as read from series data via the yKey property. */",
       "yName?": "/** yName as specified on series options. */",
+      "seriesId": "/** The ID of the series. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
       "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
@@ -8248,7 +8269,8 @@
       "stroke?": "CssColor",
       "strokeWidth": "PixelSize",
       "size": "number",
-      "highlighted": "boolean"
+      "highlighted": "boolean",
+      "seriesId": "string"
     }
   },
   "AgCartesianSeriesMarkerFormatterParams": {
@@ -8261,7 +8283,8 @@
       "stroke?": "CssColor",
       "strokeWidth": "PixelSize",
       "size": "number",
-      "highlighted": "boolean"
+      "highlighted": "boolean",
+      "seriesId": "string"
     }
   },
   "AgCartesianSeriesMarkerFormat": {
@@ -8669,7 +8692,8 @@
       "strokeWidth": "PixelSize",
       "highlighted": "boolean",
       "xKey": "string",
-      "yKey": "string"
+      "yKey": "string",
+      "seriesId": "string"
     }
   },
   "AgBarSeriesFormat": {
@@ -8922,7 +8946,8 @@
       "highlighted": "boolean",
       "angleKey": "string",
       "radiusKey?": "string",
-      "sectorLabelKey?": "string"
+      "sectorLabelKey?": "string",
+      "seriesId": "string"
     }
   },
   "AgPieSeriesFormat": {
@@ -9138,6 +9163,7 @@
       "radiusKey?": "string",
       "radiusValue?": "any",
       "radiusName?": "string",
+      "seriesId": "string",
       "datum": "any",
       "title?": "string",
       "color?": "CssColor"
@@ -9155,6 +9181,7 @@
       "radiusKey?": "/** radiusKey as specified on series options. */",
       "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
       "radiusName?": "/** radiusName as specified on series options. */",
+      "seriesId": "/** The ID of the series. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
       "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
@@ -9179,7 +9206,8 @@
       "radiusKey?": "string",
       "radiusValue?": "any",
       "radiusName?": "string",
-      "value?": "any"
+      "value?": "any",
+      "seriesId": "string"
     },
     "docs": {
       "datum": "/** Datum from the series data array that the label is being rendered for. */",
@@ -9198,7 +9226,8 @@
       "radiusKey?": "/** radiusKey as specified on series options. */",
       "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
       "radiusName?": "/** radiusName as specified on series options. */",
-      "value?": "/** The value of labelKey as specified on series options.\n * @deprecated Use item.datum instead.\n */"
+      "value?": "/** The value of labelKey as specified on series options.\n * @deprecated Use item.datum instead.\n */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgTreemapSeriesLabelOptions": {
@@ -9242,7 +9271,8 @@
       "sizeKey": "string",
       "labelKey": "string",
       "valueKey": "string",
-      "color": "string"
+      "color": "string",
+      "seriesId": "string"
     }
   },
   "AgTreemapSeriesTooltip": {
@@ -9338,7 +9368,8 @@
       "strokeOpacity?": "number",
       "strokeWidth?": "number",
       "gradient?": "boolean",
-      "highlighted": "boolean"
+      "highlighted": "boolean",
+      "seriesId": "string"
     },
     "docs": {
       "datum": "/** Datum from the series data array that the treemap tile is being rendered for. */",
@@ -9351,7 +9382,8 @@
       "strokeOpacity?": "/** The opacity of the stroke for the treemap tile. */",
       "strokeWidth?": "/** The width in pixels of the stroke for the treemap tile. */",
       "gradient?": "/** Whether or not the gradients are used for treemap tiles. */",
-      "highlighted": "/** `true` if the tile is highlighted by hovering */"
+      "highlighted": "/** `true` if the tile is highlighted by hovering */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgTreemapSeriesFormat": {

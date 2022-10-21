@@ -630,7 +630,12 @@ export abstract class Chart extends Observable {
     private async updateLegend() {
         const legendData: LegendDatum[] = [];
 
-        this.series.filter((s) => s.showInLegend).forEach((series) => series.listSeriesItems(legendData));
+        this.series
+            .filter((s) => s.showInLegend)
+            .forEach((series) => {
+                const seriesLegendData = series.getLegendData();
+                legendData.push(...seriesLegendData);
+            });
 
         const { formatter } = this.legend.item.label;
         if (formatter) {
@@ -640,6 +645,7 @@ export abstract class Chart extends Observable {
                         id: datum.id,
                         itemId: datum.itemId,
                         value: datum.label.text,
+                        seriesId: datum.seriesId,
                     }))
             );
         }
