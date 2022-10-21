@@ -2,6 +2,7 @@ import { Autowired, Bean } from "./context/context";
 import { GridOptions } from "./entities/gridOptions";
 import { AgEvent } from "./events";
 import { EventService } from "./eventService";
+import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
 import { ModuleNames } from "./modules/moduleNames";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { AnyGridOptions } from "./propertyKeys";
@@ -9,7 +10,6 @@ import { AnyGridOptions } from "./propertyKeys";
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never
 }[keyof T];
-
 
 /**
  * Get all the GridOptions properties of the provided type.
@@ -22,9 +22,12 @@ export type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
  */
 export type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 
-type OnlyBooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
-type OnlyNumberProps = Exclude<KeysOfType<number>, AnyGridOptions>;
-type NonPrimitiveProps = Exclude<keyof GridOptions, OnlyBooleanProps | OnlyNumberProps>;
+type BooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
+type NumberProps = Exclude<KeysOfType<number>, AnyGridOptions>;
+type NoArgFuncs = KeysOfType<() => any>;
+type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
+type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any>) => any>, NoArgFuncs | AnyArgFuncs>;
+type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps>;
 
 export interface PropertyChangedEvent extends AgEvent {
     type: keyof GridOptions,
@@ -58,11 +61,31 @@ export class GridOptionsService {
         return this.gridOptions[property];
     }
 
-    public getNum<K extends OnlyNumberProps>(property: K, defaultValue?: number): GridOptions[K] {
-        return toNumber(this.gridOptions[property]) || defaultValue;
+    public getNum<K extends NumberProps>(property: K): number | undefined {
+        return toNumber(this.gridOptions[property]);
     }
 
-    private isOverrides: Partial<Record<OnlyBooleanProps, () => boolean>> = {
+    public getCallback<K extends CallbackProps>(property: K) {
+        return this.mergeGridCommonParams(this.gridOptions[property]);
+    }
+    /**
+    * Wrap the user callback and attach the api, columnApi and context to the params object on the way through.
+    * @param callback User provided callback
+    * @returns Wrapped callback where the params object not require api, columnApi and context
+    */
+    public mergeGridCommonParams<P extends AgGridCommon<any>, T>(callback: ((params: P) => T) | undefined):
+        ((params: WithoutGridCommon<P>) => T) | undefined {
+        if (callback) {
+            const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
+                const mergedParams = { ...callbackParams, api: this.gridOptions.api!, columnApi: this.gridOptions.columnApi!, context: this.gridOptions.context() } as P;
+                return callback(mergedParams);
+            };
+            return wrapped;
+        }
+        return callback;
+    }
+
+    private isOverrides: Partial<Record<BooleanProps, () => boolean>> = {
         'embedFullWidthRows': () => {
             return isTrue(this.gridOptions.embedFullWidthRows) || isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
         },
@@ -76,7 +99,7 @@ export class GridOptionsService {
         }
     }
 
-    public is(property: OnlyBooleanProps): boolean {
+    public is(property: BooleanProps): boolean {
 
         // TODO
         // -- assertion of modules registered based on properties NO - should be part of validation
