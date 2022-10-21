@@ -132,6 +132,10 @@ export class ComponentUtil {
             api.paginationSetPageSize(ComponentUtil.toNumber(changesToApply.paginationPageSize.currentValue));
             delete changesToApply.paginationPageSize;
         }
+        if (changesToApply.rowGroupPanelShow) {
+            api.setRowGroupPanelShow(changesToApply.rowGroupPanelShow.currentValue);
+            delete changesToApply.rowGroupPanelShow;
+        }
         if (changesToApply.groupRemoveSingleChildren) {
             api.setGroupRemoveSingleChildren(ComponentUtil.toBoolean(changesToApply.groupRemoveSingleChildren.currentValue));
             delete changesToApply.groupRemoveSingleChildren;
