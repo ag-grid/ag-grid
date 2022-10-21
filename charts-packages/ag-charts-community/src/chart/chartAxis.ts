@@ -97,7 +97,7 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>, D = an
         return this._position;
     }
 
-    calculateDomain() {
+    protected calculateDomain() {
         const { direction, boundSeries, includeInvisibleDomains } = this;
 
         if (this.linkedTo) {

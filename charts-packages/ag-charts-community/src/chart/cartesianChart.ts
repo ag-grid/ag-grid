@@ -381,9 +381,8 @@ export class CartesianChart extends Chart {
         }
 
         let primaryTickCount = axis.nice ? primaryTickCounts[direction] : undefined;
-
-        axis.calculateDomain();
-        axis.update(primaryTickCount);
+        primaryTickCount = axis.update(primaryTickCount);
+        primaryTickCounts[direction] = primaryTickCounts[direction] ?? primaryTickCount;
 
         let axisThickness = 0;
         if (axis.thickness) {
@@ -415,8 +414,8 @@ export class CartesianChart extends Chart {
         axisOffset: number;
         axisThickness: number;
     }) {
-        const { axis, axisBound, axisWidths, seriesRect, axisOffset, axisThickness, primaryTickCounts } = opts;
-        const { position, direction } = axis;
+        const { axis, axisBound, axisWidths, seriesRect, axisOffset, axisThickness } = opts;
+        const { position } = axis;
 
         switch (position) {
             case ChartAxisPosition.Top:
@@ -457,7 +456,6 @@ export class CartesianChart extends Chart {
                 break;
         }
 
-        let primaryTickCount = axis.update(primaryTickCounts[direction]);
-        primaryTickCounts[direction] = primaryTickCount;
+        axis.updatePosition();
     }
 }
