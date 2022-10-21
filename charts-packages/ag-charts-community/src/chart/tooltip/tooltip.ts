@@ -4,9 +4,9 @@ export const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
-    transition: transform 0.05s ease;
+    transition: transform 0.1s ease;
     display: table;
-    position: absolute;
+    position: fixed;
     left: 0px;
     top: 0px;
     user-select: none;
