@@ -168,7 +168,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const column = cellCtrl.getColumn();
         const editing = cellCtrl.isEditing();
 
-        const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, keyboardEvent, rowNode, column, editing);
+        const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gridOptionsService, keyboardEvent, rowNode, column, editing);
 
         if (gridProcessingAllowed) {
             switch (eventName) {
@@ -206,7 +206,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const rowNode = rowComp.getRowNode();
         const focusedCell = this.focusService.getFocusedCell();
         const column = (focusedCell && focusedCell.column) as Column;
-        const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, keyboardEvent, rowNode, column, false);
+        const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gridOptionsService, keyboardEvent, rowNode, column, false);
 
         if (gridProcessingAllowed) {
             const key = keyboardEvent.key;

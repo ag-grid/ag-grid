@@ -2,6 +2,7 @@ import { exists } from "../../utils/generic";
 import { RowNode } from "../../entities/rowNode";
 import { pushAll } from "../../utils/array";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { GridOptionsService } from "../../gridOptionsService";
 import { Autowired, Bean } from "../../context/context";
 import { StylingService } from "../../styling/stylingService";
 import { RowClassParams } from "../../entities/gridOptions";
@@ -30,6 +31,7 @@ export class RowCssClassCalculator {
 
     @Autowired('stylingService') public stylingService: StylingService;
     @Autowired('gridOptionsWrapper') public gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') public gridOptionsService: GridOptionsService;
 
     public getInitialRowClasses(params: RowCssClassCalculatorParams): string[] {
 
@@ -117,7 +119,7 @@ export class RowCssClassCalculator {
         };
 
         // part 1 - rowClass
-        const rowClass = this.gridOptionsWrapper.getRowClass();
+        const rowClass = this.gridOptionsService.get('rowClass');
         if (rowClass) {
             if (typeof rowClass === 'function') {
                 console.warn('AG Grid: rowClass should not be a function, please use getRowClass instead');
@@ -168,7 +170,7 @@ export class RowCssClassCalculator {
         };
 
         this.stylingService.processClassRules(
-            this.gridOptionsWrapper.rowClassRules(),
+            this.gridOptionsService.get('rowClassRules'),
             rowClassParams,
             onApplicableClass,
             onNotApplicableClass

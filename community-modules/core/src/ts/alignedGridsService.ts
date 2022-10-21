@@ -58,7 +58,7 @@ export class AlignedGridsService extends BeanStub {
         }
 
         // iterate through the aligned grids, and pass each aligned grid service to the callback
-        const otherGrids = this.gridOptionsWrapper.getAlignedGrids();
+        const otherGrids = this.gridOptionsService.get('alignedGrids');
         if (otherGrids) {
             otherGrids.forEach((otherGridOptions) => {
                 if (otherGridOptions.api) {
@@ -243,7 +243,7 @@ export class AlignedGridsService extends BeanStub {
         }
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const isVerticalScrollShowing = gridBodyCon.isVerticalScrollShowing();
-        const alignedGrids = this.gridOptionsWrapper.getAlignedGrids();
+        const alignedGrids = this.gridOptionsService.get('alignedGrids');
 
         if (alignedGrids) {
             alignedGrids.forEach((grid) => {

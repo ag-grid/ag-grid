@@ -11144,7 +11144,8 @@
   "KeysLike": { "meta": { "typeParams": ["U"] } },
   "KeysOfType": { "meta": { "typeParams": ["U"] } },
   "OnlyBooleanProps": {},
-  "NonBooleanProps": {},
+  "OnlyNumberProps": {},
+  "NonPrimitiveProps": {},
   "PropertyChangedEvent": {
     "type": {
       "type": { "returnType": "keyof GridOptions", "optional": false }

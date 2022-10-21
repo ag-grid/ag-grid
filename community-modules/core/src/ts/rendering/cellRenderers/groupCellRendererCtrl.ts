@@ -204,7 +204,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
     private isEmbeddedRowMismatch(): boolean {
-        if (!this.params.fullWidth || !this.gridOptionsWrapper.isEmbedFullWidthRows()) { return false; }
+        if (!this.params.fullWidth || !this.gridOptionsService.is('embedFullWidthRows')) { return false; }
 
         const pinnedLeftCell = this.params.pinned === Constants.PINNED_LEFT;
         const pinnedRightCell = this.params.pinned === Constants.PINNED_RIGHT;
@@ -456,8 +456,8 @@ export class GroupCellRendererCtrl extends BeanStub {
 
     private addExpandAndContract(): void {
         const params = this.params;
-        const eExpandedIcon = createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
-        const eContractedIcon = createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
+        const eExpandedIcon = createIconNoSpan('groupExpanded', this.gridOptionsService, null);
+        const eContractedIcon = createIconNoSpan('groupContracted', this.gridOptionsService, null);
 
         if (eExpandedIcon) {
             this.eExpanded.appendChild(eExpandedIcon);

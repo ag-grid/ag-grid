@@ -338,7 +338,7 @@ export class MoveColumnFeature implements DropListener {
     }
 
     private calculateValidMoves(movingCols: Column[], draggingRight: boolean, mouseX: number): number[] {
-        const isMoveBlocked = this.gridOptionsWrapper.isSuppressMovableColumns() || movingCols.some(col => col.getColDef().suppressMovable);
+        const isMoveBlocked = this.gridOptionsService.is('suppressMovableColumns') || movingCols.some(col => col.getColDef().suppressMovable);
 
         if (isMoveBlocked) { return []; }
         // this is the list of cols on the screen, so it's these we use when comparing the x mouse position

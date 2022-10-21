@@ -20,9 +20,7 @@ export class NoRowsOverlayComponent extends Component implements INoRowsOverlayC
     }
 
     public init(params: INoRowsOverlayParams): void {
-        const template =
-            this.gridOptionsWrapper.getOverlayNoRowsTemplate() ?
-                this.gridOptionsWrapper.getOverlayNoRowsTemplate() : NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE;
+        const template = this.gridOptionsService.get('overlayNoRowsTemplate') ?? NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE;
 
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         const localisedTemplate = template!.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));

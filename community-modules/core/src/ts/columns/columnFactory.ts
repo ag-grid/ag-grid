@@ -258,7 +258,7 @@ export class ColumnFactory extends BeanStub {
 
     private createMergedColGroupDef(colGroupDef: ColGroupDef | null): ColGroupDef {
         const colGroupDefMerged: ColGroupDef = {} as ColGroupDef;
-        Object.assign(colGroupDefMerged, this.gridOptionsWrapper.getDefaultColGroupDef());
+        Object.assign(colGroupDefMerged, this.gridOptionsService.get('defaultColGroupDef'));
         Object.assign(colGroupDefMerged, colGroupDef);
         this.checkForDeprecatedItems(colGroupDefMerged);
 
@@ -391,7 +391,7 @@ export class ColumnFactory extends BeanStub {
         const colDefMerged: ColDef = {} as ColDef;
 
         // merge properties from default column definitions
-        const defaultColDef = this.gridOptionsWrapper.getDefaultColDef();
+        const defaultColDef = this.gridOptionsService.get('defaultColDef');
         mergeDeep(colDefMerged, defaultColDef, false, true);
 
         // merge properties from column type properties
@@ -409,7 +409,7 @@ export class ColumnFactory extends BeanStub {
         // merge properties from column definitions
         mergeDeep(colDefMerged, colDef, false, true);
 
-        const autoGroupColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
+        const autoGroupColDef = this.gridOptionsService.get('autoGroupColumnDef');
         const isSortingCoupled = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
         if (colDef.rowGroup && autoGroupColDef && isSortingCoupled) {
             // override the sort for row group columns where the autoGroupColDef defines these values.
@@ -438,7 +438,7 @@ export class ColumnFactory extends BeanStub {
 
         // merge user defined with default column types
         const allColumnTypes = Object.assign({}, DefaultColumnTypes);
-        const userTypes = this.gridOptionsWrapper.getColumnTypes() || {};
+        const userTypes = this.gridOptionsService.get('columnTypes') || {};
 
         iterateObject(userTypes, (key, value) => {
             if (key in allColumnTypes) {

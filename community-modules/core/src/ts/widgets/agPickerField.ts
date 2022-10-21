@@ -89,7 +89,7 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue> extend
         this.addManagedListener(this.eLabel, 'click', clickHandler);
 
         if (this.pickerIcon) {
-            const icon = createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper);
+            const icon = createIconNoSpan(this.pickerIcon, this.gridOptionsService);
             if (icon) {
                 this.eIcon.appendChild(icon);
             }

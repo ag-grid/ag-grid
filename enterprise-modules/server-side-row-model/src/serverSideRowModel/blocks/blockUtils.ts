@@ -32,7 +32,7 @@ export class BlockUtils extends BeanStub {
     private postConstruct(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.usingTreeData = this.gridOptionsService.is('treeData');
-        this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+        this.usingMasterDetail = this.gridOptionsService.is('masterDetail');
     }
 
     public createRowNode(params: {
@@ -170,7 +170,7 @@ export class BlockUtils extends BeanStub {
     }
 
     private setChildCountIntoRowNode(rowNode: RowNode): void {
-        const getChildCount = this.gridOptionsWrapper.getChildCountFunc();
+        const getChildCount = this.gridOptionsService.get('getChildCount');
         if (getChildCount) {
             rowNode.allChildrenCount = getChildCount(rowNode.data);
         }

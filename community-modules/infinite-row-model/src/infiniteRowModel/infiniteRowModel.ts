@@ -197,7 +197,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
             // used next time we create a new cache, which is generally after a filter or sort change,
             // or a new datasource is set
             initialRowCount: this.defaultIfInvalid(this.gridOptionsWrapper.getInfiniteInitialRowCount(), 1),
-            maxBlocksInCache: this.gridOptionsWrapper.getMaxBlocksInCache(),
+            maxBlocksInCache: this.gridOptionsService.getNum('maxBlocksInCache'),
             rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
 
             // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past

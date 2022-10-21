@@ -169,7 +169,7 @@ export class RowContainerCtrl extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         this.enableRtl = this.gridOptionsService.is('enableRtl');
-        this.embedFullWidthRows = this.gridOptionsWrapper.isEmbedFullWidthRows();
+        this.embedFullWidthRows = this.gridOptionsService.is('embedFullWidthRows');
 
         this.forContainers([RowContainerName.CENTER],
             () => this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)));

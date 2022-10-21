@@ -127,7 +127,7 @@ export class RowRenderer extends BeanStub {
 
         this.initialiseCache();
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
-        this.embedFullWidthRows = this.printLayout || this.gridOptionsWrapper.isEmbedFullWidthRows();
+        this.embedFullWidthRows = this.printLayout || this.gridOptionsService.is('embedFullWidthRows');
 
         this.redrawAfterModelUpdate();
     }
@@ -280,7 +280,7 @@ export class RowRenderer extends BeanStub {
 
     private onDomLayoutChanged(): void {
         const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
-        const embedFullWidthRows = printLayout || this.gridOptionsWrapper.isEmbedFullWidthRows();
+        const embedFullWidthRows = printLayout || this.gridOptionsService.is('embedFullWidthRows');
 
         // if moving towards or away from print layout, means we need to destroy all rows, as rows are not laid
         // out using absolute positioning when doing print layout
@@ -451,7 +451,7 @@ export class RowRenderer extends BeanStub {
         // never recycle rows when print layout, we draw each row again from scratch. this is because print layout
         // uses normal dom layout to put cells into dom - it doesn't allow reordering rows.
         const recycleRows = !this.printLayout && !!params.recycleRows;
-        const animate = params.animate && this.gridOptionsWrapper.isAnimateRows();
+        const animate = params.animate && this.gridOptionsService.is('animateRows');
 
         // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
         // however we can reuse the rows, so we keep them but index by rowNode.id

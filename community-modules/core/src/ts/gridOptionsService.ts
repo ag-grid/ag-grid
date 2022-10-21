@@ -2,6 +2,8 @@ import { Autowired, Bean } from "./context/context";
 import { GridOptions } from "./entities/gridOptions";
 import { AgEvent } from "./events";
 import { EventService } from "./eventService";
+import { ModuleNames } from "./modules/moduleNames";
+import { ModuleRegistry } from "./modules/moduleRegistry";
 import { AnyGridOptions } from "./propertyKeys";
 
 type GetKeys<T, U> = {
@@ -21,7 +23,8 @@ export type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
 export type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 
 type OnlyBooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
-type NonBooleanProps = Exclude<keyof GridOptions, OnlyBooleanProps>;
+type OnlyNumberProps = Exclude<KeysOfType<number>, AnyGridOptions>;
+type NonPrimitiveProps = Exclude<keyof GridOptions, OnlyBooleanProps | OnlyNumberProps>;
 
 export interface PropertyChangedEvent extends AgEvent {
     type: keyof GridOptions,
@@ -30,6 +33,16 @@ export interface PropertyChangedEvent extends AgEvent {
 }
 
 export type PropertyChangedListener = (event?: PropertyChangedEvent) => void
+
+export function toNumber(value: any): number | undefined {
+    if (typeof value == 'number') {
+        return value;
+    }
+
+    if (typeof value == 'string') {
+        return parseInt(value, 10);
+    }
+}
 
 export function isTrue(value: any): boolean {
     return value === true || value === 'true';
@@ -41,11 +54,41 @@ export class GridOptionsService {
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     private propertyEventService: EventService = new EventService();
 
-    public get<K extends NonBooleanProps>(property: K): GridOptions[K] {
+    public get<K extends NonPrimitiveProps>(property: K): GridOptions[K] {
         return this.gridOptions[property];
     }
 
+    public getNum<K extends OnlyNumberProps>(property: K, defaultValue?: number): GridOptions[K] {
+        return toNumber(this.gridOptions[property]) || defaultValue;
+    }
+
+    private isOverrides: Partial<Record<OnlyBooleanProps, () => boolean>> = {
+        'embedFullWidthRows': () => {
+            return isTrue(this.gridOptions.embedFullWidthRows) || isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
+        },
+        'animateRows': () => {
+            // never allow animating if enforcing the row order
+            return !isTrue(this.gridOptions.ensureDomOrder) && isTrue(this.gridOptions.animateRows);
+        },
+        'masterDetail': () => {
+            // The module assertion should be part of Validation really not here?
+            return isTrue(this.gridOptions.masterDetail) && ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail');
+        }
+    }
+
     public is(property: OnlyBooleanProps): boolean {
+
+        // TODO
+        // -- assertion of modules registered based on properties NO - should be part of validation
+        // -- cross referenced properties
+
+        // Do we need to think about performance of adding a lookup into every is method when before
+        // it was just a direct call to the property.
+        const overrideIsFunc = this.isOverrides[property];
+        if (overrideIsFunc !== undefined) {
+            return overrideIsFunc();
+        }
+
         return isTrue(this.gridOptions[property]);
     }
 

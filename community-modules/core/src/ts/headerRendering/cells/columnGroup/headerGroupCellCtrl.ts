@@ -299,7 +299,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
             }
         });
 
-        const result = childSuppressesMoving || this.gridOptionsWrapper.isSuppressMovableColumns();
+        const result = childSuppressesMoving || this.gridOptionsService.is('suppressMovableColumns');
 
         return result;
     }

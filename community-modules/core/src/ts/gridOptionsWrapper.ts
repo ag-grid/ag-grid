@@ -3,28 +3,22 @@ import { ColDefUtil } from './components/colDefUtil';
 import { ComponentUtil } from './components/componentUtil';
 import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
-import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
+import { Column } from './entities/column';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
 import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostSortRowsParams, RowHeightParams } from './entities/iCallbackParams';
 import { RowNode } from './entities/rowNode';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { Environment, SASS_PROPERTIES } from './environment';
 import { Events } from './eventKeys';
-import { AgEvent } from './events';
 import { EventService } from './eventService';
 import { GridApi } from './gridApi';
+import { GridOptionsService, isTrue, PropertyChangedEvent } from './gridOptionsService';
 import { CsvExportParams } from './interfaces/exportParams';
-import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
-import { IDatasource } from './interfaces/iDatasource';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
-import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
-import { IViewportDatasource } from './interfaces/iViewportDatasource';
-import { Column } from './entities/column';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
-import { _ } from './utils';
 import { getScrollbarWidth } from './utils/browser';
 import { doOnce } from './utils/function';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
@@ -32,24 +26,12 @@ import { exists, missing, values } from './utils/generic';
 import { isNumeric } from './utils/number';
 import { iterateObject } from './utils/object';
 import { capitalise } from './utils/string';
-import { ChartToolPanelsDef } from './interfaces/iChartOptions';
-import { GridOptionsService, isTrue, PropertyChangedEvent } from './gridOptionsService';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
 const DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 const DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
 const DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
-
-function toNumber(value: any): number | undefined {
-    if (typeof value == 'number') {
-        return value;
-    }
-
-    if (typeof value == 'string') {
-        return parseInt(value, 10);
-    }
-}
 
 function zeroOrGreater(value: any, defaultValue: number): number {
     if (value >= 0) { return value; }
@@ -382,14 +364,6 @@ export class GridOptionsWrapper {
         return this.gridOptions.context;
     }
 
-    public getPivotColumnGroupTotals() {
-        return this.gridOptions.pivotColumnGroupTotals;
-    }
-
-    public getPivotRowTotals() {
-        return this.gridOptions.pivotRowTotals;
-    }
-
     public isRowModelInfinite() {
         return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_INFINITE;
     }
@@ -423,20 +397,8 @@ export class GridOptionsWrapper {
         return !isTrue(this.gridOptions.suppressAsyncEvents);
     }
 
-    public getCellFlashDelay(): number {
-        return this.gridOptions.cellFlashDelay || 500;
-    }
-
-    public getCellFadeDelay(): number {
-        return this.gridOptions.cellFadeDelay || 1000;
-    }
-
-    public getAutoGroupColumnDef(): ColDef | undefined {
-        return this.gridOptions.autoGroupColumnDef;
-    }
-
     public isColumnsSortingCoupledToGroup(): boolean {
-        const autoGroupColumnDef = this.getAutoGroupColumnDef();
+        const autoGroupColumnDef = this.gridOptionsService.get('autoGroupColumnDef');
         const isClientSideRowModel = this.isRowModelDefault();
         return isClientSideRowModel && !autoGroupColumnDef?.comparator;
     }
@@ -504,40 +466,12 @@ export class GridOptionsWrapper {
         return domLayout;
     }
 
-    public getPinnedTopRowData(): any[] | undefined {
-        return this.gridOptions.pinnedTopRowData;
-    }
-
-    public getPinnedBottomRowData(): any[] | undefined {
-        return this.gridOptions.pinnedBottomRowData;
-    }
-
-    public getQuickFilterText(): string | undefined {
-        return this.gridOptions.quickFilterText;
-    }
-
-    public getUndoRedoCellEditingLimit(): number | undefined {
-        return toNumber(this.gridOptions.undoRedoCellEditingLimit);
-    }
-
-    public getRowStyle() {
-        return this.gridOptions.rowStyle;
-    }
-
-    public getRowClass() {
-        return this.gridOptions.rowClass;
-    }
-
     public getRowStyleFunc() {
         return this.mergeGridCommonParams(this.gridOptions.getRowStyle);
     }
 
     public getRowClassFunc() {
         return this.mergeGridCommonParams(this.gridOptions.getRowClass);
-    }
-
-    public rowClassRules() {
-        return this.gridOptions.rowClassRules;
     }
 
     public getServerSideGroupLevelParamsFunc() {
@@ -548,24 +482,12 @@ export class GridOptionsWrapper {
         return this.mergeGridCommonParams(this.gridOptions.createChartContainer);
     }
 
-    public getPopupParent() {
-        return this.gridOptions.popupParent;
-    }
-
-    public getBlockLoadDebounceMillis() {
-        return this.gridOptions.blockLoadDebounceMillis;
-    }
-
     public getPostProcessPopupFunc() {
         return this.mergeGridCommonParams(this.gridOptions.postProcessPopup);
     }
 
     public getPaginationNumberFormatterFunc() {
         return this.mergeGridCommonParams(this.gridOptions.paginationNumberFormatter);
-    }
-
-    public getChildCountFunc() {
-        return this.gridOptions.getChildCount;
     }
 
     public getIsApplyServerSideTransactionFunc() {
@@ -594,22 +516,6 @@ export class GridOptionsWrapper {
         }
     }
 
-    public getFullWidthCellRendererParams() {
-        return this.gridOptions.fullWidthCellRendererParams;
-    }
-
-    public isEmbedFullWidthRows() {
-        return isTrue(this.gridOptions.embedFullWidthRows) || isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
-    }
-
-    public getSuppressKeyboardEventFunc(): ((params: SuppressKeyboardEventParams) => boolean) | undefined {
-        return this.gridOptions.suppressKeyboardEvent;
-    }
-
-    public getBusinessKeyForNodeFunc() {
-        return this.gridOptions.getBusinessKeyForNode;
-    }
-
     public getApi(): GridApi | undefined | null {
         return this.gridOptions.api;
     }
@@ -618,65 +524,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.columnApi;
     }
 
-    public isImmutableData() {
-        // we used to have a property immutableData for this. however this was deprecated
-        // in favour of having Immutable Data on by default when getRowId is provided
-        const getRowIdProvided = this.gridOptions.getRowId != null;
-        const immutableData = isTrue(this.gridOptions.immutableData);
-        // this property is a backwards compatibility property, for those who want
-        // the old behaviour of Row ID's but NOT Immutable Data.
-        const resetRowDataOnUpdate = isTrue(this.gridOptions.resetRowDataOnUpdate);
-
-        if (resetRowDataOnUpdate) { return false; }
-        return getRowIdProvided || immutableData;
-    }
-
-    public isEnableCharts() {
-        if (isTrue(this.gridOptions.enableCharts)) {
-            return ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'enableCharts');
-        }
-        return false;
-    }
-
-    public getColResizeDefault() {
-        return this.gridOptions.colResizeDefault;
-    }
-
-    public getGroupDefaultExpanded(): number | undefined {
-        return this.gridOptions.groupDefaultExpanded;
-    }
-
-    public getMaxConcurrentDatasourceRequests(): number | undefined {
-        const res = toNumber(this.gridOptions.maxConcurrentDatasourceRequests);
-        if (res == null) { return 2; } // 2 is the default
-        if (res <= 0) { return; } // negative number, eg -1, means no max restriction
-        return res;
-    }
-
-    public getMaxBlocksInCache(): number | undefined {
-        return this.gridOptions.maxBlocksInCache;
-    }
-
-    public getCacheOverflowSize(): number | undefined {
-        return this.gridOptions.cacheOverflowSize;
-    }
-
-    public getPaginationPageSize(): number | undefined {
-        return toNumber(this.gridOptions.paginationPageSize);
-    }
-
-    public isPaginateChildRows(): boolean {
-        const shouldPaginate = this.gridOptionsService.is('groupRemoveSingleChildren') || this.gridOptionsService.is('groupRemoveLowestSingleChildren');
-        if (shouldPaginate) { return true; }
-        return isTrue(this.gridOptions.paginateChildRows);
-    }
-
     public getCacheBlockSize(): number | undefined {
         return oneOrGreater(this.gridOptions.cacheBlockSize);
-    }
-
-    public getInfiniteInitialRowCount(): number | undefined {
-        return this.gridOptions.infiniteInitialRowCount;
     }
 
     public getServerSideInitialRowCount(): number {
@@ -687,38 +536,6 @@ export class GridOptionsWrapper {
         return 1;
     }
 
-    public getRowData(): any[] | undefined | null {
-        return this.gridOptions.rowData;
-    }
-
-    public getRowGroupPanelShow() {
-        return this.gridOptions.rowGroupPanelShow;
-    }
-
-    public getPivotPanelShow() {
-        return this.gridOptions.pivotPanelShow;
-    }
-
-    public getColumnDefs() {
-        return this.gridOptions.columnDefs;
-    }
-
-    public getColumnTypes(): { [key: string]: ColDef; } | undefined {
-        return this.gridOptions.columnTypes;
-    }
-
-    public getDatasource(): IDatasource | undefined {
-        return this.gridOptions.datasource;
-    }
-
-    public getViewportDatasource(): IViewportDatasource | undefined {
-        return this.gridOptions.viewportDatasource;
-    }
-
-    public getServerSideDatasource(): IServerSideDatasource | undefined {
-        return this.gridOptions.serverSideDatasource;
-    }
-
     public getProcessDataFromClipboardFunc() {
         return this.mergeGridCommonParams(this.gridOptions.processDataFromClipboard);
     }
@@ -727,24 +544,13 @@ export class GridOptionsWrapper {
         return exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : Constants.BATCH_WAIT_MILLIS;
     }
 
-    public isSuppressMovableColumns() {
-        return isTrue(this.gridOptions.suppressMovableColumns);
-    }
-
-    public isAnimateRows() {
-        // never allow animating if enforcing the row order
-        if (this.gridOptionsService.is('ensureDomOrder')) { return false; }
-
-        return isTrue(this.gridOptions.animateRows);
-    }
-
     public isSuppressAggFilteredOnly() {
         const isGroupAggFiltering = this.getGroupAggFiltering() !== undefined;
         return isGroupAggFiltering || isTrue(this.gridOptions.suppressAggFilteredOnly);
     }
 
     public isEnableRangeSelection(): boolean {
-        return ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) && isTrue(this.gridOptions.enableRangeSelection);
+        return ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) && this.gridOptionsService.is('enableRangeSelection');
     }
 
     public getFillHandleDirection(): 'x' | 'y' | 'xy' {
@@ -764,10 +570,6 @@ export class GridOptionsWrapper {
         return this.mergeGridCommonParams(this.gridOptions.fillOperation);
     }
 
-    public getIcons() {
-        return this.gridOptions.icons;
-    }
-
     public getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined {
         const userValue = this.gridOptions.groupAggFiltering;
 
@@ -782,27 +584,6 @@ export class GridOptionsWrapper {
         return undefined;
     }
 
-    public getAggFuncs(): { [key: string]: IAggFunc; } | undefined {
-        return this.gridOptions.aggFuncs;
-    }
-
-    public getSortingOrder(): ('asc' | 'desc' | null)[] | undefined {
-        return this.gridOptions.sortingOrder;
-    }
-
-    public getAlignedGrids(): { api?: GridApi | null, columnApi?: ColumnApi | null }[] | undefined {
-        return this.gridOptions.alignedGrids;
-    }
-
-    public isMasterDetail() {
-        const masterDetail = isTrue(this.gridOptions.masterDetail);
-
-        if (masterDetail) {
-            return ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail');
-        } else {
-            return false;
-        }
-    }
 
     public getKeepDetailRowsCount(): number | undefined {
         const keepDetailRowsCount = this.gridOptions.keepDetailRowsCount;
@@ -811,34 +592,6 @@ export class GridOptionsWrapper {
         }
 
         return DEFAULT_KEEP_DETAIL_ROW_COUNT;
-    }
-
-    public getIsRowMasterFunc() {
-        return this.gridOptions.isRowMaster;
-    }
-
-    public getIsRowSelectableFunc() {
-        return this.gridOptions.isRowSelectable;
-    }
-
-    public getGroupRowRendererParams() {
-        return this.gridOptions.groupRowRendererParams;
-    }
-
-    public getOverlayLoadingTemplate() {
-        return this.gridOptions.overlayLoadingTemplate;
-    }
-
-    public getOverlayNoRowsTemplate() {
-        return this.gridOptions.overlayNoRowsTemplate;
-    }
-
-    public getDefaultColDef(): ColDef | undefined {
-        return this.gridOptions.defaultColDef;
-    }
-
-    public getDefaultColGroupDef(): Partial<ColGroupDef> | undefined {
-        return this.gridOptions.defaultColGroupDef;
     }
 
     public getDefaultExportParams(type: 'csv'): CsvExportParams | undefined;
@@ -861,24 +614,12 @@ export class GridOptionsWrapper {
         }
     }
 
-    public getDataPathFunc(): ((dataItem: any) => string[]) | undefined {
-        return this.gridOptions.getDataPath;
-    }
-
-    public getIsServerSideGroupFunc(): ((dataItem: any) => boolean) | undefined {
-        return this.gridOptions.isServerSideGroup;
-    }
-
     public getIsServerSideGroupOpenByDefaultFunc() {
         return this.mergeGridCommonParams(this.gridOptions.isServerSideGroupOpenByDefault);
     }
 
     public getIsGroupOpenByDefaultFunc() {
         return this.mergeGridCommonParams(this.gridOptions.isGroupOpenByDefault);
-    }
-
-    public getServerSideGroupKeyFunc(): ((dataItem: any) => string) | undefined {
-        return this.gridOptions.getServerSideGroupKey;
     }
 
     public getGroupRowAggFunc() {
@@ -1046,22 +787,11 @@ export class GridOptionsWrapper {
         return this.mergeGridCommonParams(this.gridOptions.getChartToolbarItems);
     }
 
-    public getChartThemeOverrides(): AgChartThemeOverrides | undefined {
-        return this.gridOptions.chartThemeOverrides;
-    }
-
-    public getCustomChartThemes(): { [name: string]: AgChartTheme; } | undefined {
-        return this.gridOptions.customChartThemes;
-    }
-
     public getChartThemes(): string[] {
         // return default themes if user hasn't supplied any
         return this.gridOptions.chartThemes || ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
     }
 
-    public getChartToolPanelsDef(): ChartToolPanelsDef | undefined {
-        return this.gridOptions.chartToolPanelsDef;
-    }
 
     public getClipboardDelimiter() {
         return exists(this.gridOptions.clipboardDelimiter) ? this.gridOptions.clipboardDelimiter : '\t';
@@ -1087,10 +817,6 @@ export class GridOptionsWrapper {
 
     public removeEventListener(key: string, listener: Function): void {
         this.propertyEventService.removeEventListener(key, listener);
-    }
-
-    public isSkipHeaderOnAutoSize(): boolean {
-        return !!this.gridOptions.skipHeaderOnAutoSize;
     }
 
     public getAutoSizePadding(): number {
@@ -1139,19 +865,17 @@ export class GridOptionsWrapper {
         return this.getGroupHeaderHeight();
     }
 
+    // Maybe should move to the FilterManager class?
     public isExternalFilterPresent() {
         if (typeof this.gridOptions.isExternalFilterPresent === 'function') {
             return this.gridOptions.isExternalFilterPresent({ api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() });
         }
-
         return false;
     }
-
     public doesExternalFilterPass(node: RowNode) {
         if (typeof this.gridOptions.doesExternalFilterPass === 'function') {
             return this.gridOptions.doesExternalFilterPass(node);
         }
-
         return false;
     }
 
@@ -1456,7 +1180,7 @@ export class GridOptionsWrapper {
 
     private treeDataViolations() {
         if (this.isRowModelDefault()) {
-            if (missing(this.getDataPathFunc())) {
+            if (missing(this.gridOptionsService.get('getDataPath'))) {
                 console.warn(
                     'AG Grid: property usingTreeData=true with rowModel=clientSide, but you did not ' +
                     'provide getDataPath function, please provide getDataPath function if using tree data.'
@@ -1464,13 +1188,13 @@ export class GridOptionsWrapper {
             }
         }
         if (this.isRowModelServerSide()) {
-            if (missing(this.getIsServerSideGroupFunc())) {
+            if (missing(this.gridOptionsService.get('isServerSideGroup'))) {
                 console.warn(
                     'AG Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
                     'provide isServerSideGroup function, please provide isServerSideGroup function if using tree data.'
                 );
             }
-            if (missing(this.getServerSideGroupKeyFunc())) {
+            if (missing(this.gridOptionsService.get('getServerSideGroupKey'))) {
                 console.warn(
                     'AG Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
                     'provide getServerSideGroupKey function, please provide getServerSideGroupKey function if using tree data.'

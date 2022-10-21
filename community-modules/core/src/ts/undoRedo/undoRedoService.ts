@@ -45,7 +45,7 @@ export class UndoRedoService extends BeanStub {
     public init(): void {
         if (!this.gridOptionsService.is('undoRedoCellEditing')) { return; }
 
-        const undoRedoLimit = this.gridOptionsWrapper.getUndoRedoCellEditingLimit();
+        const undoRedoLimit = this.gridOptionsService.getNum('undoRedoCellEditingLimit');
 
         if (undoRedoLimit! <= 0) { return; }
 

@@ -144,7 +144,7 @@ export class AgPanel extends Component {
             this.getContext().createBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();
-            const child = createIconNoSpan('close', this.gridOptionsWrapper)!;
+            const child = createIconNoSpan('close', this.gridOptionsService)!;
             child.classList.add('ag-panel-title-bar-button-icon');
             eGui.appendChild(child);
 

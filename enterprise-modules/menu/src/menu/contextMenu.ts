@@ -56,9 +56,9 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             }
         }
 
-        if (this.gridOptionsWrapper.isEnableCharts() &&
-            ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) &&
-            ModuleRegistry.isRegistered(ModuleNames.GridChartsModule)) {
+        if (this.gridOptionsService.is('enableCharts') &&
+            ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'enableCharts') &&
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'enableCharts')) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }

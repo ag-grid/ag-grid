@@ -1,4 +1,4 @@
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { GridOptionsService } from '../gridOptionsService';
 import { Column } from '../entities/column';
 import { loadTemplate, isNodeOrElement } from './dom';
 import { setAriaRole } from './aria';
@@ -124,12 +124,12 @@ export const iconNameClassMap: { [key: string]: string; } = {
  * If icon provided, use this (either a string, or a function callback).
  * if not, then use the default icon from the theme
  * @param {string} iconName
- * @param {GridOptionsWrapper} gridOptionsWrapper
+ * @param {GridOptionsService} gridOptionsService
  * @param {Column | null} [column]
  * @returns {HTMLElement}
  */
-export function createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement {
-    const iconContents = createIconNoSpan(iconName, gridOptionsWrapper, column);
+export function createIcon(iconName: string, gridOptionsService: GridOptionsService, column: Column | null): HTMLElement {
+    const iconContents = createIconNoSpan(iconName, gridOptionsService, column);
 
     if (iconContents && iconContents.className.indexOf('ag-icon') > -1) {
         return iconContents;
@@ -140,7 +140,7 @@ export function createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrap
     return eResult;
 }
 
-export function createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column | null, forceCreate?: boolean): HTMLElement | undefined {
+export function createIconNoSpan(iconName: string, gridOptionsService: GridOptionsService, column?: Column | null, forceCreate?: boolean): HTMLElement | undefined {
     let userProvidedIcon: Function | string | null = null;
 
     // check col for icon first
@@ -151,8 +151,8 @@ export function createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptio
     }
 
     // if not in col, try grid options
-    if (gridOptionsWrapper && !userProvidedIcon) {
-        const optionsIcons = gridOptionsWrapper.getIcons();
+    if (gridOptionsService && !userProvidedIcon) {
+        const optionsIcons = gridOptionsService.get('icons');
         if (optionsIcons) {
             userProvidedIcon = optionsIcons[iconName];
         }

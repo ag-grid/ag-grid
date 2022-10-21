@@ -379,7 +379,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private workOutDraggable(): boolean {
         const colDef = this.column.getColDef();
-        const isSuppressMovableColumns = this.gridOptionsWrapper.isSuppressMovableColumns();
+        const isSuppressMovableColumns = this.gridOptionsService.is('suppressMovableColumns');
 
         const colCanMove = !isSuppressMovableColumns && !colDef.suppressMovable && !colDef.lockPosition;
 

@@ -7,7 +7,7 @@ import { useEffectOnce } from "../useEffectOnce";
 
 const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
 
-    const {ctrlsFactory, context, gridOptionsWrapper, resizeObserverService, clientSideRowModel, serverSideRowModel} = useContext(BeansContext);
+    const { ctrlsFactory, context, gridOptionsService, resizeObserverService, clientSideRowModel, serverSideRowModel } = useContext(BeansContext);
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [gridCssClasses, setGridCssClasses] = useState<CssClasses>(new CssClasses());
@@ -51,7 +51,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
 
         let resizeObserverDestroyFunc: () => void;
 
-        if (gridOptionsWrapper.isDetailRowAutoHeight()) {
+        if (gridOptionsService.is('detailRowAutoHeight')) {
             const checkRowSizeFunc = () => {
                 // when disposed, current is null, so nothing to do, and the resize observer will
                 // be disposed of soon

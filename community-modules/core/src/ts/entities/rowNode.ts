@@ -358,7 +358,7 @@ export class RowNode<TData = any> implements IEventEmitter {
     }
 
     private checkRowSelectable() {
-        const isRowSelectableFunc = this.beans.gridOptionsWrapper.getIsRowSelectableFunc();
+        const isRowSelectableFunc = this.beans.gridOptionsService.get('isRowSelectable');
         this.setRowSelectable(isRowSelectableFunc ? isRowSelectableFunc!(this) : true);
     }
 

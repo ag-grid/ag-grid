@@ -225,7 +225,7 @@ export class AgMenuItemComponent extends Component {
         );
 
         if (this.params.checked) {
-            icon.appendChild(createIconNoSpan('check', this.gridOptionsWrapper)!);
+            icon.appendChild(createIconNoSpan('check', this.gridOptionsService)!);
         } else if (this.params.icon) {
             if (isNodeOrElement(this.params.icon)) {
                 icon.appendChild(this.params.icon as HTMLElement);
@@ -290,7 +290,7 @@ export class AgMenuItemComponent extends Component {
             const iconName = this.gridOptionsService.is('enableRtl') ? 'smallLeft' : 'smallRight';
             setAriaExpanded(eGui, false);
 
-            pointer.appendChild(createIconNoSpan(iconName, this.gridOptionsWrapper)!);
+            pointer.appendChild(createIconNoSpan(iconName, this.gridOptionsService)!);
         }
 
         eGui.appendChild(pointer);

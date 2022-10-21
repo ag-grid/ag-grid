@@ -61,7 +61,7 @@ export class ResizeFeature extends BeanStub {
             destroyResizeFuncs.push(finishedWithResizeFunc);
 
             if (canAutosize) {
-                const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
+                const skipHeaderOnAutoSize = this.gridOptionsService.is('skipHeaderOnAutoSize');
 
                 const autoSizeColListener = () => {
                     this.columnModel.autoSizeColumn(this.column, skipHeaderOnAutoSize, "uiColumnResized");

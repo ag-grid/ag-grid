@@ -21,9 +21,7 @@ export class LoadingOverlayComponent extends Component implements ILoadingOverla
     }
 
     public init(params: ILoadingOverlayParams): void {
-        const template =
-            this.gridOptionsWrapper.getOverlayLoadingTemplate() ?
-                this.gridOptionsWrapper.getOverlayLoadingTemplate() : LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE;
+        const template = this.gridOptionsService.get('overlayLoadingTemplate') ?? LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE;
 
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         const localisedTemplate = template!.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));

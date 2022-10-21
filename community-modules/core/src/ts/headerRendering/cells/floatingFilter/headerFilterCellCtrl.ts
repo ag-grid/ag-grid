@@ -83,7 +83,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-full-body', this.suppressFilterButton);
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-body', !this.suppressFilterButton);
 
-        const eMenuIcon = createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
+        const eMenuIcon = createIconNoSpan('filter', this.gridOptionsService, this.column);
 
         if (eMenuIcon) {
             this.eButtonShowMainFilter.appendChild(eMenuIcon);

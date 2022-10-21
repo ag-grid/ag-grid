@@ -550,7 +550,7 @@ export class ColumnModel extends BeanStub {
         // initialise with anything except 0 so that while loop executes at least once
         let changesThisTimeAround = -1;
 
-        const shouldSkipHeader = skipHeader != null ? skipHeader : this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
+        const shouldSkipHeader = skipHeader != null ? skipHeader : this.gridOptionsService.is('skipHeaderOnAutoSize');
         const shouldSkipHeaderGroups = skipHeaderGroups != null ? skipHeaderGroups : shouldSkipHeader;
 
         while (changesThisTimeAround !== 0) {
@@ -1094,7 +1094,7 @@ export class ColumnModel extends BeanStub {
             });
 
             // if user wants to do shift resize by default, then we invert the shift operation
-            const defaultIsShift = this.gridOptionsWrapper.getColResizeDefault() === 'shift';
+            const defaultIsShift = this.gridOptionsService.get('colResizeDefault') === 'shift';
 
             if (defaultIsShift) {
                 shiftKey = !shiftKey;

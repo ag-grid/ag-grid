@@ -113,8 +113,8 @@ export class SortController extends BeanStub {
 
         if (column.getColDef().sortingOrder) {
             sortingOrder = column.getColDef().sortingOrder;
-        } else if (this.gridOptionsWrapper.getSortingOrder()) {
-            sortingOrder = this.gridOptionsWrapper.getSortingOrder();
+        } else if (this.gridOptionsService.get('sortingOrder')) {
+            sortingOrder = this.gridOptionsService.get('sortingOrder');
         } else {
             sortingOrder = SortController.DEFAULT_SORTING_ORDER;
         }

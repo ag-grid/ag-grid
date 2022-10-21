@@ -203,6 +203,7 @@ export { Events } from "ag-grid-community";
 export { FocusService } from "ag-grid-community";
 export { defaultGroupComparator } from "ag-grid-community";
 export { GridOptionsWrapper } from "ag-grid-community";
+export { GridOptionsService } from "ag-grid-community";
 export { EventService } from "ag-grid-community";
 export { SelectableService } from "ag-grid-community";
 export { RowNodeSorter, SortedRowNode, SortOption } from "ag-grid-community";

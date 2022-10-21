@@ -254,7 +254,7 @@ export class GridBodyCtrl extends BeanStub {
         const listener = () => {
             // we don't want to use row animation if scaling, as rows jump strangely as you scroll,
             // when scaling and doing row animation.
-            const animateRows = this.gridOptionsWrapper.isAnimateRows() && !this.rowContainerHeightService.isStretching();
+            const animateRows = this.gridOptionsService.is('animateRows') && !this.rowContainerHeightService.isStretching();
             const animateRowsCssClass = animateRows ? RowAnimationCssClasses.ANIMATION_ON : RowAnimationCssClasses.ANIMATION_OFF;
             this.comp.setRowAnimationCssOnBodyViewport(animateRowsCssClass, animateRows);
         };

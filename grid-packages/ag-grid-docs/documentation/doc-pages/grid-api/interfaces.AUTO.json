@@ -6370,9 +6370,13 @@
     "meta": { "isTypeAlias": true },
     "type": "Exclude<KeysOfType<boolean>, AnyGridOptions>"
   },
-  "NonBooleanProps": {
+  "OnlyNumberProps": {
     "meta": { "isTypeAlias": true },
-    "type": "Exclude<keyof GridOptions, OnlyBooleanProps>"
+    "type": "Exclude<KeysOfType<number>, AnyGridOptions>"
+  },
+  "NonPrimitiveProps": {
+    "meta": { "isTypeAlias": true },
+    "type": "Exclude<keyof GridOptions, OnlyBooleanProps | OnlyNumberProps>"
   },
   "PropertyChangedEvent": {
     "meta": {},

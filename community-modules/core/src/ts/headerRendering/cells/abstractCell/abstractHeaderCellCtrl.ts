@@ -46,7 +46,7 @@ export class AbstractHeaderCellCtrl extends BeanStub {
         const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
 
         return isUserSuppressingHeaderKeyboardEvent(
-            this.gridOptionsWrapper,
+            this.gridOptionsService,
             e,
             headerRowIndex,
             column
