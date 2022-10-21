@@ -140,12 +140,13 @@ export function jsonDiff<T extends any>(source: T, target: T): Partial<T> | null
  */
 export const DELETE = Symbol('<delete-property>') as any;
 
-/**
- * Special value used by `jsonMerge` to signal that the last property value should be taken.
- */
-export const TAKE_LAST = Symbol('<take-last-property>') as any;
-
 const NOT_SPECIFIED = Symbol('<unspecified-property>') as any;
+
+/**
+ * A collection of objects or arrays for which the
+ * deep copying during the merge should be avoided.
+ */
+export const avoidJsonMergeCopy = new WeakSet();
 
 /**
  * Merge together the provide JSON object structures, with the precedence of application running
@@ -185,12 +186,9 @@ export function jsonMerge<T>(...json: T[]): T {
             continue;
         }
 
-        const firstValue = values[0];
         const lastValue = values[values.length - 1];
-        if (firstValue === TAKE_LAST) {
-            if (lastValue !== TAKE_LAST) {
-                result[nextProp] = lastValue;
-            }
+        if (avoidJsonMergeCopy.has(lastValue)) {
+            result[nextProp] = lastValue;
             continue;
         }
         if (lastValue === DELETE) {
