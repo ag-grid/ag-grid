@@ -72,6 +72,12 @@ export function dateRange(start: Date, end: Date, step = 24 * 60 * 60 * 1000): D
 }
 
 export async function waitForChartStability(chart: Chart, timeoutMs = 5000): Promise<void> {
+    const chartAny = chart as any;
+    if (chart.autoSize === true && !chartAny._lastAutoSize) {
+        // Bypass wait for SizeObservable callback - it's never going to be invoked.
+        chartAny._lastAutoSize = [chart.width, chart.height];
+        chartAny.resize(chart.width, chart.height);
+    }
     return chart.waitForUpdate(timeoutMs);
 }
 

@@ -71,6 +71,14 @@ export abstract class Chart extends Observable {
                 value.appendChild(this.element);
             }
 
+            // if (this._autoSize) {
+            //     const { width, height } = window.getComputedStyle(this.element);
+            //     this._lastAutoSize = [
+            //         Number(width),
+            //         Number(height),
+            //     ];
+            // }
+
             this._container = value;
         }
     }
@@ -107,7 +115,7 @@ export abstract class Chart extends Observable {
         return this.scene.height;
     }
 
-    private _lastAutoSize: [number, number];
+    private _lastAutoSize?: [number, number];
     @Validate(BOOLEAN)
     protected _autoSize = false;
     set autoSize(value: boolean) {
@@ -201,9 +209,12 @@ export abstract class Chart extends Observable {
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
-            this._lastAutoSize = [width, height];
 
             if (!this.autoSize) {
+                return;
+            }
+
+            if (width === 0 && height === 0) {
                 return;
             }
 
@@ -211,6 +222,7 @@ export abstract class Chart extends Observable {
                 return;
             }
 
+            this._lastAutoSize = [width, height];
             this.resize(width, height);
         });
 
@@ -297,7 +309,6 @@ export abstract class Chart extends Observable {
         return this._lastPerformUpdateError;
     }
 
-    private updateContext = { firstRenderComplete: false, firstResizeReceived: false };
     private seriesToUpdate: Set<Series> = new Set();
     private performUpdateTrigger = debouncedCallback(async ({ count }) => {
         try {
@@ -330,11 +341,7 @@ export abstract class Chart extends Observable {
         }
     }
     private async performUpdate(count: number) {
-        const {
-            _performUpdateType: performUpdateType,
-            extraDebugStats,
-            updateContext: { firstRenderComplete, firstResizeReceived },
-        } = this;
+        const { _performUpdateType: performUpdateType, extraDebugStats } = this;
         const splits = [performance.now()];
 
         switch (performUpdateType) {
@@ -347,8 +354,7 @@ export abstract class Chart extends Observable {
                 this.disableTooltip({ updateProcessing: false });
             // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
-                if (!firstRenderComplete && !firstResizeReceived) {
-                    this.log({ firstRenderComplete, firstResizeReceived });
+                if (this._autoSize && !this._lastAutoSize) {
                     // Reschedule if canvas size hasn't been set yet to avoid a race.
                     this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
                     this.performUpdateTrigger.schedule();
@@ -367,7 +373,6 @@ export abstract class Chart extends Observable {
             // Fall-through to next pipeline stage.
             case ChartUpdateType.SCENE_RENDER:
                 await this.scene.render({ debugSplitTimes: splits, extraDebugStats });
-                this.updateContext.firstRenderComplete = true;
                 this.extraDebugStats = {};
             // Fall-through to next pipeline stage.
             case ChartUpdateType.NONE:
@@ -580,8 +585,6 @@ export abstract class Chart extends Observable {
     }
 
     private resize(width: number, height: number) {
-        this.updateContext.firstResizeReceived = true;
-
         if (this.scene.resize(width, height)) {
             this.background.width = this.width;
             this.background.height = this.height;
