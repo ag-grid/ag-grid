@@ -71,14 +71,6 @@ export abstract class Chart extends Observable {
                 value.appendChild(this.element);
             }
 
-            // if (this._autoSize) {
-            //     const { width, height } = window.getComputedStyle(this.element);
-            //     this._lastAutoSize = [
-            //         Number(width),
-            //         Number(height),
-            //     ];
-            // }
-
             this._container = value;
         }
     }
