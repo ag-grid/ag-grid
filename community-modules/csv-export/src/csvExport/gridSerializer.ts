@@ -57,11 +57,10 @@ export class GridSerializer extends BeanStub {
 
     private processRow<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T>, columnsToExport: Column[], node: RowNode): void {
         const rowSkipper: (params: ShouldRowBeSkippedParams) => boolean = params.shouldRowBeSkipped || (() => false);
-        const gridOptionsWrapper = this.gridOptionsWrapper;
         const gridOptionsService = this.gridOptionsService;
-        const context = gridOptionsWrapper.getContext();
-        const api = gridOptionsWrapper.getApi()!;
-        const columnApi = gridOptionsWrapper.getColumnApi()!;
+        const context = gridOptionsService.get('context');
+        const api = gridOptionsService.get('api')!;
+        const columnApi = gridOptionsService.get('columnApi')!;
         const skipSingleChildrenGroup = gridOptionsService.is('groupRemoveSingleChildren');
         const skipLowestSingleChildrenGroup = gridOptionsService.is('groupRemoveLowestSingleChildren');
         // if onlySelected, we ignore groupHideOpenParents as the user has explicitly selected the rows they wish to export.

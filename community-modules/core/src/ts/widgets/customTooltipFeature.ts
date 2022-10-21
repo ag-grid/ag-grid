@@ -1,13 +1,13 @@
-import { Autowired, PostConstruct } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { ColumnApi } from "../columns/columnApi";
-import { GridApi } from "../gridApi";
-import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
-import { PopupService } from "./popupService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
-import { exists } from "../utils/generic";
-import { isIOSUserAgent } from "../utils/browser";
+import { BeanStub } from "../context/beanStub";
+import { Autowired, PostConstruct } from "../context/context";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
+import { isIOSUserAgent } from "../utils/browser";
+import { doOnce } from "../utils/function";
+import { exists } from "../utils/generic";
+import { capitalise } from '../utils/string';
+import { PopupService } from "./popupService";
 
 export interface TooltipParentComp {
     getTooltipParams(): WithoutGridCommon<ITooltipParams>;
@@ -29,8 +29,6 @@ export class CustomTooltipFeature extends BeanStub {
 
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     private tooltipShowDelay: number;
     private tooltipHideDelay: number;
@@ -60,8 +58,8 @@ export class CustomTooltipFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.tooltipShowDelay = this.gridOptionsWrapper.getTooltipDelay('show') || this.DEFAULT_SHOW_TOOLTIP_DELAY;
-        this.tooltipHideDelay = this.gridOptionsWrapper.getTooltipDelay('hide') || this.DEFAULT_HIDE_TOOLTIP_DELAY;
+        this.tooltipShowDelay = this.getTooltipDelay('show') || this.DEFAULT_SHOW_TOOLTIP_DELAY;
+        this.tooltipHideDelay = this.getTooltipDelay('hide') || this.DEFAULT_HIDE_TOOLTIP_DELAY;
         this.tooltipMouseTrack = this.gridOptionsService.is('tooltipMouseTrack');
 
         const el = this.parentComp.getGui();
@@ -242,5 +240,22 @@ export class CustomTooltipFeature extends BeanStub {
             window.clearTimeout(this.hideTooltipTimeoutId);
             this.hideTooltipTimeoutId = undefined;
         }
+    }
+
+    private getTooltipDelay(type: 'show' | 'hide'): number | null {
+        const tooltipShowDelay = this.gridOptionsService.getNum('tooltipShowDelay');
+        const tooltipHideDelay = this.gridOptionsService.getNum('tooltipHideDelay');
+        const delay = type === 'show' ? tooltipShowDelay : tooltipHideDelay;
+        const capitalisedType = capitalise(type);
+
+        if (exists(delay)) {
+            if (delay < 0) {
+                doOnce(() => console.warn(`AG Grid: tooltip${capitalisedType}Delay should not be lower than 0`), `tooltip${capitalisedType}DelayWarn`);
+            }
+
+            return Math.max(200, delay);
+        }
+
+        return null;
     }
 }

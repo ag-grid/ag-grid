@@ -3134,8 +3134,8 @@ export class ColumnModel extends BeanStub {
 
     private processSecondaryColumnDefinitions(colDefs: (ColDef | ColGroupDef)[] | null): (ColDef | ColGroupDef)[] | undefined {
 
-        const columnCallback = this.gridOptionsWrapper.getProcessPivotResultColDefFunc();
-        const groupCallback = this.gridOptionsWrapper.getProcessPivotResultColGroupDefFunc();
+        const columnCallback = this.getProcessPivotResultColDefFunc();
+        const groupCallback = this.getProcessPivotResultColGroupDefFunc();
 
         if (!columnCallback && !groupCallback) { return undefined; }
 
@@ -3160,6 +3160,14 @@ export class ColumnModel extends BeanStub {
         if (colDefs) {
             searchForColDefs(colDefs);
         }
+    }
+
+    private getProcessPivotResultColDefFunc() {
+        return this.gridOptionsService.get('processPivotResultColDef') || this.gridOptionsService.get('processSecondaryColDef');
+    }
+
+    private getProcessPivotResultColGroupDefFunc() {
+        return this.gridOptionsService.get('processPivotResultColGroupDef') || this.gridOptionsService.get('processSecondaryColGroupDef');
     }
 
     // called from: setColumnState, setColumnDefs, setSecondaryColumns

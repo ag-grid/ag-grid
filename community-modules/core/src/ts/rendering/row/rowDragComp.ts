@@ -90,11 +90,21 @@ export class RowDragComp extends Component {
         };
     }
 
+    private getRowDragText(column?: Column) {
+        if (column) {
+            const colDef = column.getColDef();
+            if (colDef.rowDragText) {
+                return colDef.rowDragText;
+            }
+        }
+        return this.gridOptionsService.get('rowDragText');
+    }
+
     private addDragSource(dragStartPixels: number = 4): void {
         // if this is changing the drag element, delete the previous dragSource
         if (this.dragSource) { this.removeDragSource(); }
 
-        const rowDragText = this.gridOptionsWrapper.getRowDragText(this.column);
+        const rowDragText = this.getRowDragText(this.column);
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.dragSource = {

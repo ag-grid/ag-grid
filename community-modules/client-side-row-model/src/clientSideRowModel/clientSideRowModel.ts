@@ -109,7 +109,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public start(): void {
-        const rowData = this.gridOptionsWrapper.getRowData();
+        const rowData = this.gridOptionsService.get('rowData');
         if (rowData) {
             this.setRowData(rowData);
         }

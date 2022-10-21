@@ -96,6 +96,14 @@ export class GridOptionsService {
         'masterDetail': () => {
             // The module assertion should be part of Validation really not here?
             return isTrue(this.gridOptions.masterDetail) && ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail');
+        },
+        'enableRangeSelection': () => {
+            // The module assertion should be part of Validation really not here?
+            return isTrue(this.gridOptions.enableRangeSelection) && ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'enableRangeSelection');
+        },
+        'treeData': () => {
+            // The module assertion should be part of Validation really not here?
+            return isTrue(this.gridOptions.treeData) && ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'treeData');
         }
     }
 

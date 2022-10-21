@@ -261,7 +261,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
             if (col) {
                 headerClasses = headerClasses.concat(CssClassApplier.getHeaderClassesFromColDef(
                     col.getDefinition(),
-                    this.gridOptionsWrapper,
+                    this.gridOptionsService,
                     column || null,
                     columnGroup || null
                 ));

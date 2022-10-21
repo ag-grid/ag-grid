@@ -64,7 +64,7 @@ export class ClientSideNodeManager {
     public postConstruct(): void {
         // func below doesn't have 'this' pointer, so need to pull out these bits
         this.suppressParentsInRowNodes = this.gridOptionsService.is('suppressParentsInRowNodes');
-        this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
+        this.isRowMasterFunc = this.gridOptionsService.get('isRowMaster');
         this.doingTreeData = this.gridOptionsService.is('treeData');
         this.doingMasterDetail = this.gridOptionsService.is('masterDetail');
     }

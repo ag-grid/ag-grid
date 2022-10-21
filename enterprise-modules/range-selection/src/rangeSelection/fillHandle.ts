@@ -57,7 +57,7 @@ export class FillHandle extends AbstractSelectionHandle {
         const { x: newX, y: newY } = this.mouseEventService.getNormalisedPosition(e);
         const diffX = Math.abs(x - newX);
         const diffY = Math.abs(y - newY);
-        const allowedDirection = this.gridOptionsWrapper.getFillHandleDirection();
+        const allowedDirection = this.getFillHandleDirection();
         let direction: Direction;
 
         if (allowedDirection === 'xy') {
@@ -130,6 +130,19 @@ export class FillHandle extends AbstractSelectionHandle {
 
             this.raiseFillEndEvent(initialRange, finalRange);
         }
+    }
+
+    private getFillHandleDirection(): 'x' | 'y' | 'xy' {
+        const direction = this.gridOptionsService.get('fillHandleDirection');
+
+        if (!direction) { return 'xy'; }
+
+        if (direction !== 'x' && direction !== 'y' && direction !== 'xy') {
+            _.doOnce(() => console.warn(`AG Grid: valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.`), 'warn invalid fill direction');
+            return 'xy';
+        }
+
+        return direction;
     }
 
     private raiseFillStartEvent() {
@@ -268,7 +281,7 @@ export class FillHandle extends AbstractSelectionHandle {
         rowNode: RowNode,
         idx: number
     ): { value: any, fromUserFunction: boolean } {
-        const userFillOperation = this.gridOptionsWrapper.getFillOperation();
+        const userFillOperation = this.gridOptionsService.getCallback('fillOperation');
         const isVertical = this.dragAxis === 'y';
         let direction: 'up' | 'down' | 'left' | 'right';
 

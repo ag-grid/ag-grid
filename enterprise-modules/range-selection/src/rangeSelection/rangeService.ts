@@ -171,7 +171,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
-        if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
+        if (!this.gridOptionsService.is('enableRangeSelection')) { return; }
 
         const columns = this.calculateColumnsBetween(cell.column, cell.column);
 
@@ -306,7 +306,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public setCellRange(params: CellRangeParams): void {
-        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.is('enableRangeSelection')) {
             return;
         }
 
@@ -398,7 +398,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public addCellRange(params: CellRangeParams): void {
-        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.is('enableRangeSelection')) {
             return;
         }
 
@@ -581,7 +581,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public onDragStart(mouseEvent: MouseEvent): void {
-        if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
+        if (!this.gridOptionsService.is('enableRangeSelection')) { return; }
 
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
 

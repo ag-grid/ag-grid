@@ -281,7 +281,7 @@ export class RowCtrl extends BeanStub {
     private addRowDraggerToRow(gui: RowGui) {
         const gow = this.beans.gridOptionsWrapper;
 
-        if (gow.isEnableRangeSelection()) {
+        if (this.beans.gridOptionsService.is('enableRangeSelection')) {
             doOnce(() => {
                 console.warn('AG Grid: Setting `rowDragEntireRow: true` in the gridOptions doesn\'t work with `enableRangeSelection: true`');
             }, 'rowDragAndRangeSelectionEnabled');
@@ -1237,7 +1237,7 @@ export class RowCtrl extends BeanStub {
         const rowHeight = this.rowNode.rowHeight;
 
         const defaultRowHeight = this.beans.gridOptionsWrapper.getDefaultRowHeight();
-        const isHeightFromFunc = this.beans.gridOptionsWrapper.isGetRowHeightFunction();
+        const isHeightFromFunc = typeof this.beans.gridOptionsService.getCallback('getRowHeight') === 'function';
         const heightFromFunc = isHeightFromFunc ? this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height : undefined;
         const lineHeight = heightFromFunc ? `${Math.min(defaultRowHeight, heightFromFunc) - 2}px` : undefined;
 

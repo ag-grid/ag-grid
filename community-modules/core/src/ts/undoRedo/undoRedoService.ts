@@ -296,7 +296,7 @@ export class UndoRedoService extends BeanStub {
 
         this.addManagedListener(this.eventService, Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END, () => {
             let action: UndoRedoAction;
-            if (this.rangeService && this.gridOptionsWrapper.isEnableRangeSelection()) {
+            if (this.rangeService && this.gridOptionsService.is('enableRangeSelection')) {
                 action = new RangeUndoRedoAction(this.cellValueChanges, undefined, undefined, [...this.rangeService.getCellRanges()]);
             } else {
                 action = new UndoRedoAction(this.cellValueChanges);

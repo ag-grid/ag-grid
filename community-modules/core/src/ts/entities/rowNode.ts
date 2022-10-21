@@ -12,6 +12,7 @@ import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { debounce} from "../utils/function";
 import { Beans } from "../rendering/beans";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { IsFullWidthRowParams } from "./iCallbackParams";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -1114,8 +1115,20 @@ export class RowNode<TData = any> implements IEventEmitter {
         return foundFirstChildPath ? nodeToSwapIn : null;
     }
 
+    private getIsFullWidthCellFunc() {
+        const isFullWidthRow = this.beans.gridOptionsService.getCallback('isFullWidthRow');
+        const isFullWidthCell = this.beans.gridOptionsService.get('isFullWidthCell');
+        if (isFullWidthRow) {
+            return this.beans.gridOptionsService.mergeGridCommonParams(isFullWidthRow);
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (isFullWidthCell) {
+            return (params: WithoutGridCommon<IsFullWidthRowParams>) => isFullWidthCell(params.rowNode);
+        }
+    }
+
     public isFullWidthCell(): boolean {
-        const isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
+        const isFullWidthCellFunc = this.getIsFullWidthCellFunc();
         return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
     }
 

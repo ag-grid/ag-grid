@@ -194,7 +194,7 @@ export class RowRenderer extends BeanStub {
             }
         });
 
-        const rangeSelectionEnabled = this.gridOptionsWrapper.isEnableRangeSelection();
+        const rangeSelectionEnabled = this.gridOptionsService.is('enableRangeSelection');
         if (rangeSelectionEnabled) {
 
             this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => {
