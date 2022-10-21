@@ -15,7 +15,7 @@ import {
     DEFAULT_BAR_CHART_OVERRIDES,
     DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES,
 } from './defaults';
-import { jsonMerge, DELETE, jsonWalk } from '../../util/json';
+import { jsonMerge, DELETE, jsonWalk, JsonMergeOptions } from '../../util/json';
 import { applySeriesTransform } from './transforms';
 import { getChartTheme } from './themes';
 import { processSeriesOptions, SeriesOptions } from './prepareSeries';
@@ -121,8 +121,12 @@ interface PreparationContext {
     palette: AgChartThemePalette;
 }
 
+export const noDataCloneMergeOptions: JsonMergeOptions = {
+    avoidDeepClone: ['data'],
+};
+
 export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallbackOptions: T[]): T {
-    let options: T = fallbackOptions == null ? newOptions : jsonMerge(...fallbackOptions, newOptions);
+    let options: T = jsonMerge([...fallbackOptions, newOptions], noDataCloneMergeOptions);
     sanityCheckOptions(options);
 
     // Determine type and ensure it's explicit in the options config.
@@ -162,7 +166,7 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
                 : isSeriesOptionType(userSuppliedOptionsType)
                 ? userSuppliedOptionsType
                 : defaultSeriesType;
-            const mergedSeries = jsonMerge(seriesThemes[type] || {}, { ...s, type });
+            const mergedSeries = jsonMerge([seriesThemes[type] || {}, { ...s, type }], noDataCloneMergeOptions);
             if (type === 'pie') {
                 preparePieOptions(seriesThemes.pie, s, mergedSeries);
             }
@@ -174,7 +178,7 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
         mergedOptions.axes = mergedOptions.axes?.map((a) => {
             const type = a.type ?? 'number';
             const axis = { ...a, type };
-            const axesTheme = jsonMerge(axesThemes[type], axesThemes[type][a.position || 'unknown'] || {});
+            const axesTheme = jsonMerge([axesThemes[type], axesThemes[type][a.position || 'unknown'] || {}]);
             return prepareAxis(axis as any, axesTheme);
         });
     }
@@ -204,7 +208,7 @@ function prepareMainOptions<T>(
 ): { context: PreparationContext; mergedOptions: T; axesThemes: any; seriesThemes: any } {
     const { theme, cleanedTheme, axesThemes, seriesThemes } = prepareTheme(options);
     const context: PreparationContext = { colourIndex: 0, palette: theme.palette };
-    const mergedOptions = jsonMerge(defaultOverrides, cleanedTheme, options);
+    const mergedOptions = jsonMerge([defaultOverrides, cleanedTheme, options], noDataCloneMergeOptions);
 
     return { context, mergedOptions, axesThemes, seriesThemes };
 }
@@ -216,7 +220,7 @@ function prepareTheme<T extends AgChartOptions>(options: T) {
         theme,
         axesThemes: themeConfig['axes'] || {},
         seriesThemes: themeConfig['series'] || {},
-        cleanedTheme: jsonMerge(themeConfig, { axes: DELETE, series: DELETE }),
+        cleanedTheme: jsonMerge([themeConfig, { axes: DELETE, series: DELETE }]),
     };
 }
 
@@ -225,7 +229,7 @@ function prepareSeries<T extends SeriesOptionsTypes>(context: PreparationContext
 
     // Part of the options interface, but not directly consumed by the series implementations.
     const removeOptions = { stacked: DELETE } as T;
-    const mergedResult = jsonMerge(...defaults, paletteOptions, input, removeOptions);
+    const mergedResult = jsonMerge([...defaults, paletteOptions, input, removeOptions], noDataCloneMergeOptions);
 
     return applySeriesTransform(mergedResult);
 }
@@ -298,12 +302,12 @@ function prepareAxis<T extends AxesOptionsTypes>(
         }
 
         const { crossLines: crossLinesTheme } = axisTheme;
-        axis.crossLines = axis.crossLines.map((crossLine) => jsonMerge(crossLinesTheme, crossLine));
+        axis.crossLines = axis.crossLines.map((crossLine) => jsonMerge([crossLinesTheme, crossLine]));
     }
 
     const cleanTheme = { crossLines: DELETE };
 
-    return jsonMerge(axisTheme, cleanTheme, axis, removeOptions);
+    return jsonMerge([axisTheme, cleanTheme, axis, removeOptions], noDataCloneMergeOptions);
 }
 
 function prepareEnabledOptions<T extends AgChartOptions>(options: T, mergedOptions: any) {
@@ -326,7 +330,7 @@ function prepareEnabledOptions<T extends AgChartOptions>(options: T, mergedOptio
 function preparePieOptions(pieSeriesTheme: any, seriesOptions: any, mergedSeries: any) {
     if (Array.isArray(seriesOptions.innerLabels)) {
         mergedSeries.innerLabels = seriesOptions.innerLabels.map((ln: any) => {
-            return jsonMerge(pieSeriesTheme.innerLabels, ln);
+            return jsonMerge([pieSeriesTheme.innerLabels, ln]);
         });
     } else {
         mergedSeries.innerLabels = DELETE;

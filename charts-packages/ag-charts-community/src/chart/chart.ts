@@ -255,33 +255,34 @@ export abstract class Chart extends Observable {
     }
 
     private _pendingFactoryUpdates: (() => Promise<void>)[] = [];
-    get pendingFactoryUpdates() {
-        return this._pendingFactoryUpdates.length;
-    }
+
     requestFactoryUpdate(cb: () => Promise<void>) {
-        this._pendingFactoryUpdates.push(cb);
-
-        if (this._pendingFactoryUpdates.length > 1) {
+        const callbacks = this._pendingFactoryUpdates;
+        const count = callbacks.length;
+        if (count === 0) {
+            callbacks.push(cb);
+            this._processCallbacks();
+        } else {
             // Factory callback process already running, the callback will be invoked asynchronously.
-            return;
+            // Clear the queue after the first callback to prevent unnecessary re-renderings.
+            callbacks.splice(1, count - 1, cb);
         }
+    }
 
-        const processCallbacks = async () => {
-            while (this._pendingFactoryUpdates.length > 0) {
-                while (this.updatePending) {
-                    await sleep(1);
-                }
-                try {
-                    await this._pendingFactoryUpdates[0]();
-                } catch (e) {
-                    console.error(e);
-                }
-
-                this._pendingFactoryUpdates.splice(0, 1);
+    private async _processCallbacks() {
+        const callbacks = this._pendingFactoryUpdates;
+        while (callbacks.length > 0) {
+            while (this.updatePending) {
+                await sleep(1);
             }
-        };
+            try {
+                await callbacks[0]();
+            } catch (e) {
+                console.error(e);
+            }
 
-        processCallbacks();
+            callbacks.shift();
+        }
     }
 
     private _performUpdateType: ChartUpdateType = ChartUpdateType.NONE;
@@ -1153,7 +1154,7 @@ export abstract class Chart extends Observable {
     async waitForUpdate(timeoutMs = 5000): Promise<void> {
         const start = performance.now();
 
-        while (this.pendingFactoryUpdates > 0 || this.updatePending) {
+        while (this._pendingFactoryUpdates.length > 0 || this.updatePending) {
             if (performance.now() - start > timeoutMs) {
                 throw new Error('waitForUpdate() timeout reached.');
             }
