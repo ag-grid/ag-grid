@@ -83,6 +83,8 @@ export class ClipRect extends Node {
                 ctx.save();
                 child.render(childRenderContext);
                 ctx.restore();
+            } else if (!child.visible) {
+                child.markClean();
             }
         }
 

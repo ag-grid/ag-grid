@@ -175,13 +175,16 @@ export class CartesianChart extends Chart {
         this.navigator.onDragStop();
     }
 
+    private _lastAxisWidths: Partial<Record<ChartAxisPosition, number>> = {
+        [ChartAxisPosition.Top]: 0,
+        [ChartAxisPosition.Bottom]: 0,
+        [ChartAxisPosition.Left]: 0,
+        [ChartAxisPosition.Right]: 0,
+    };
     updateAxes(inputShrinkRect: BBox) {
-        const axisWidths: Partial<Record<ChartAxisPosition, number>> = {
-            [ChartAxisPosition.Top]: 0,
-            [ChartAxisPosition.Bottom]: 0,
-            [ChartAxisPosition.Left]: 0,
-            [ChartAxisPosition.Right]: 0,
-        };
+        // Start with a good approximation from the last update - this should mean that in many resize
+        // cases that only a single pass is needed \o/.
+        const axisWidths = { ...this._lastAxisWidths };
 
         const stableWidths = <T extends typeof axisWidths>(other: T) => {
             return Object.entries(axisWidths).every(([p, w]) => {
@@ -207,7 +210,7 @@ export class CartesianChart extends Chart {
         // ticks/labels.
         let lastPass: typeof axisWidths = {};
         let clipSeries = false;
-        let seriesRect: BBox | undefined = undefined;
+        let seriesRect = this.seriesRect?.clone();
         let count = 0;
         do {
             Object.assign(axisWidths, lastPass);
@@ -223,6 +226,7 @@ export class CartesianChart extends Chart {
         } while (!stableWidths(lastPass));
 
         this.seriesRoot.enabled = clipSeries;
+        this._lastAxisWidths = axisWidths;
 
         return { seriesRect };
     }

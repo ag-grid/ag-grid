@@ -312,8 +312,13 @@ function applyChartOptions<T extends ChartType, O extends ChartOptionType<T>>(
     if (options.data) {
         chart.data = options.data;
         updateType = ChartUpdateType.PROCESS_DATA;
+        forceNodeDataRefresh = true;
     } else if (seriesOpts?.some((s) => s.data != null)) {
         updateType = ChartUpdateType.PROCESS_DATA;
+        forceNodeDataRefresh = true;
+    } else if (options.legend || options.title || options.subtitle) {
+        updateType = ChartUpdateType.PROCESS_DATA;
+        forceNodeDataRefresh = true;
     }
 
     // Needs to be done last to avoid overrides by width/height properties.
