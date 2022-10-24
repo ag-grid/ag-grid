@@ -12568,6 +12568,7 @@
     },
     "type": {
       "useFormatter": "boolean",
+      "maxLength?": "number",
       "value": "TValue",
       "key": "string | null",
       "eventKey": "string | null",

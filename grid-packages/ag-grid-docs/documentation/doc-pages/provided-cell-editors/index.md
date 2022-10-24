@@ -18,7 +18,8 @@ Simple text editor that uses the standard HTML `input`. This editor is the defau
 Specified with `agTextCellEditor`.
 
 Takes the following parameters:
-- `useFormatter`: If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.
+    - `useFormatter`: If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.
+    - `maxLength`: Max number of characters to allow. Default is 524288.
 
 ```js
 columnDefs: [
@@ -40,9 +41,9 @@ Simple editor that uses the standard HTML `textarea`. Best used in conjunction w
 Specified with `agLargeTextCellEditor`.
 
 Takes the following parameters:
-- `maxLength`: Max number of characters to allow. Default is 200.
-- `rows`: Number of character rows to display. Default is 10.
-- `cols`: Number of character columns to display. Default is 60.
+    - `maxLength`: Max number of characters to allow. Default is 200.
+    - `rows`: Number of character rows to display. Default is 10.
+    - `cols`: Number of character columns to display. Default is 60.
 
 ```js
 columnDefs: [

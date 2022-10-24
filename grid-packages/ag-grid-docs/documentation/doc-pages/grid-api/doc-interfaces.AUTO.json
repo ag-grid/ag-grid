@@ -22019,6 +22019,7 @@
   },
   "ITextCellEditorParams": {
     "useFormatter": { "type": { "returnType": "boolean", "optional": false } },
+    "maxLength": { "type": { "returnType": "number", "optional": true } },
     "value": {
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }

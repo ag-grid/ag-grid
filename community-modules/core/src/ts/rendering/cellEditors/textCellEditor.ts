@@ -12,11 +12,15 @@ import { KeyCode } from '../../constants/keyCode';
 */
 export interface ITextCellEditorParams extends ICellEditorParams {
     useFormatter: boolean;
+    maxLength?: number
 }
 
 export class TextCellEditor extends PopupComponent implements ICellEditorComp {
 
-    private static TEMPLATE = '<div class="ag-cell-edit-wrapper"><ag-input-text-field class="ag-cell-editor" ref="eInput"></ag-input-text-field></div>';
+    private static TEMPLATE = /* html */
+        `<div class="ag-cell-edit-wrapper">
+            <ag-input-text-field class="ag-cell-editor" ref="eInput"></ag-input-text-field>
+        </div>`;
 
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
@@ -56,6 +60,10 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
 
         if (startValue != null) {
             eInput.setValue(startValue, true);
+        }
+
+        if (params.maxLength != null) {
+            eInput.setMaxLength(params.maxLength);
         }
 
         this.addManagedListener(eInput.getGui(), 'keydown', (event: KeyboardEvent) => {
