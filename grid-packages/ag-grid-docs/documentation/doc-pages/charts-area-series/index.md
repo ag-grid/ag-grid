@@ -125,6 +125,27 @@ normalizedTo: 100
 
 <chart-example title='Normalized Stacked Area Series' name='normalized-area' type='generated'></chart-example>
 
+## Missing Data
+
+Sometimes data for certain items or time periods might be missing.
+
+If the `yKey` value of a data point is `+/-Infinity`, `null`, `undefined` or `NaN`, that data point will be rendered as a gap.
+
+If the bottom axis is also continuous, a `'time'` or `'number'` axis, rather than being rendered as a gap, invalid `xKey` values from the data will be skipped all together.
+
+[[note]]
+| For category X axes, the data can be any category value including number, object, `+/-Infinity`, `null`, `undefined` or `NaN`. In this case the data point will not be skipped, it will still be renered as a category along the X axis.
+
+The following example demonstrates how missing data is handled in Area Series:
+
+- Initially there is no missing data, all values are valid for their associated axes.
+- The first row of buttons at the top change the data to show the behaviour when Y values are missing compared to when X values are missing.
+- Missing Y values are rendered as a gap in the area whereas missing X values are skipped.
+- The second row of buttons allow switching between stacked and grouped area series.
+
+<chart-example title='Area Series with Incomplete Data' name='missing-data-area' type='generated'></chart-example>
+
+
 ## API Reference
 
 <interface-documentation interfaceName='AgAreaSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
