@@ -165,6 +165,9 @@ export class Tooltip {
     @Validate(BOOLEAN)
     tracking: boolean = true;
 
+    @Validate((v) => v === 'single' || v === 'multiple')
+    mode: 'single' | 'multiple' = 'single';
+
     constructor(canvasElement: () => HTMLCanvasElement, document: Document, container: () => OptionalHTMLElement) {
         const tooltipRoot = document.body;
         const element = document.createElement('div');

@@ -266,7 +266,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 series: this,
                 itemId: yKey,
                 datum: validData[i],
-                point: { x, y, size: markerSize },
+                point: { x, y, size: markerSize, xDatum: xy[0], yDatum: xy[1] },
                 label: {
                     text,
                     ...size,
@@ -405,6 +405,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             (v): ScatterNodeDatum => ({
                 ...(v.datum as ScatterNodeDatum),
                 point: {
+                    ...(v.datum as ScatterNodeDatum).point,
                     x: v.x,
                     y: v.y,
                     size: v.datum.point.size,

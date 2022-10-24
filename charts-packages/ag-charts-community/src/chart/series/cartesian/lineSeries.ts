@@ -280,7 +280,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 nodeData[actualLength++] = {
                     series: this,
                     datum,
-                    point: { x, y, moveTo, size },
+                    point: { x, y, moveTo, size, xDatum, yDatum },
                     label: labelText
                         ? {
                               text: labelText,

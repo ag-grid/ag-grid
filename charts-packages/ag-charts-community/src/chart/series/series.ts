@@ -12,6 +12,11 @@ import { PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
 import { SizedPoint, Point } from '../../scene/point';
 
+type DatumPoint = SizedPoint & {
+    readonly xDatum: any;
+    readonly yDatum: any;
+};
+
 /**
  * Processed series datum used in node selections,
  * contains information used to render pie sectors, bars, markers, etc.
@@ -25,7 +30,7 @@ export interface SeriesNodeDatum {
     readonly series: Series<any>;
     readonly itemId?: any;
     readonly datum: any;
-    readonly point?: Readonly<SizedPoint>;
+    readonly point?: Readonly<DatumPoint>;
 }
 
 /** Modes of matching user interactions to rendered nodes (e.g. hover or click) */

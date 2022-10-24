@@ -2729,6 +2729,14 @@
     ],
     "docs": [null, null, null, null, null, null]
   },
+  "PickedDatumNode": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ series: Series<any>; datum: SeriesNodeDatum; }"
+  },
+  "PickedDatumNodes": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ winner: PickedDatumNode; matches: PickedDatumNode[]; }"
+  },
   "OptionalHTMLElement": {
     "meta": { "isTypeAlias": true },
     "type": "HTMLElement | undefined | null"
@@ -2931,7 +2939,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<DatumPoint>"
     }
   },
   "LabelSelectionDatum": {
@@ -3002,7 +3010,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>",
+      "point?": "Readonly<DatumPoint>",
       "x": "number",
       "y": "number"
     }
@@ -3127,7 +3135,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<DatumPoint>"
     }
   },
   "HistogramSeriesNodeClickEvent": {
@@ -3156,7 +3164,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<DatumPoint>"
     }
   },
   "LineSeriesNodeClickEvent": {
@@ -3189,7 +3197,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<DatumPoint>"
     }
   },
   "ScatterSeriesNodeClickEvent": {
@@ -3240,7 +3248,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<DatumPoint>"
     }
   },
   "TreemapTooltipRendererParams": {
@@ -3331,7 +3339,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<DatumPoint>"
     }
   },
   "PieTooltipRendererParams": {
@@ -3433,6 +3441,10 @@
       "highlighted": "boolean"
     }
   },
+  "DatumPoint": {
+    "meta": { "isTypeAlias": true },
+    "type": "SizedPoint & { readonly xDatum: any; readonly yDatum: any; }"
+  },
   "SeriesNodeDatum": {
     "meta": {
       "doc": "/** Processed series datum used in node selections,\n * contains information used to render pie sectors, bars, markers, etc. */"
@@ -3441,7 +3453,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<DatumPoint>"
     }
   },
   "SeriesNodePickMode": {

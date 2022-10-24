@@ -35,6 +35,13 @@ export enum ChartUpdateType {
     NONE,
 }
 
+type PickedDatumNode = {
+    series: Series<any>;
+    datum: SeriesNodeDatum;
+};
+
+type PickedDatumNodes = { winner: PickedDatumNode; matches: PickedDatumNode[] };
+
 type OptionalHTMLElement = HTMLElement | undefined | null;
 export abstract class Chart extends Observable {
     readonly id = createId(this);
@@ -804,26 +811,24 @@ export abstract class Chart extends Observable {
     }
 
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
-    private pickSeriesNode(point: Point):
-        | {
-              series: Series<any>;
-              datum: SeriesNodeDatum;
-          }
-        | undefined {
+    private pickSeriesNode(point: Point): PickedDatumNodes | undefined {
         const {
-            tooltip: { tracking },
+            tooltip: { tracking, mode },
         } = this;
 
         const start = performance.now();
 
         // Disable 'nearest match' options if tooltip.tracking is enabled.
-        const pickModes = tracking ? undefined : [SeriesNodePickMode.EXACT_SHAPE_MATCH];
+        let pickModes: SeriesNodePickMode[] | undefined = undefined;
+        if (!tracking && mode === 'single') {
+            pickModes = [SeriesNodePickMode.EXACT_SHAPE_MATCH];
+        }
 
         // Iterate through series in reverse, as later declared series appears on top of earlier
         // declared series.
         const reverseSeries = [...this.series].reverse();
 
-        let result: { series: Series<any>; datum: SeriesNodeDatum; distance: number } | undefined = undefined;
+        let matches: { series: Series<any>; datum: SeriesNodeDatum; distance: number }[] = [];
         for (const series of reverseSeries) {
             if (!series.visible || !series.group.visible) {
                 continue;
@@ -832,19 +837,33 @@ export abstract class Chart extends Observable {
             if (!match || distance == null) {
                 continue;
             }
-            if (!result || result.distance > distance) {
-                result = { series, distance, datum: match };
-            }
-            if (distance === 0) {
-                break;
+            const newResult = { series, distance, datum: match };
+            if (mode === 'multiple') {
+                // Accumulate results for post-processing.
+                matches.push(newResult);
+            } else {
+                // Find a single good enough result.
+                if (!matches[0] || matches[0].distance > distance) {
+                    matches[0] = newResult;
+                }
+                if (matches[0]?.distance === 0) {
+                    break;
+                }
             }
         }
+
+        // Determine winning point.
+        const winner = [...matches].sort((r1, r2) => r2.distance - r1.distance)[0];
+        // @todo(AG-7126): Support y-axis as primary matching axis.
+        // @todo(AG-7126): Support population of xDatum and yDatum in all series types.
+        // Filter points not at same X tick/value.
+        matches = matches.filter((r) => r === winner || r.datum.point?.xDatum === winner.datum.point?.xDatum);
 
         this.extraDebugStats['pickSeriesNode'] = Math.round(
             (this.extraDebugStats['pickSeriesNode'] ?? 0) + (performance.now() - start)
         );
 
-        return result;
+        return winner ? { winner, matches } : undefined;
     }
 
     lastPick?: {
@@ -900,22 +919,22 @@ export abstract class Chart extends Observable {
             return;
         }
 
-        const pick = this.pickSeriesNode({ x: offsetX, y: offsetY });
+        const picks = this.pickSeriesNode({ x: offsetX, y: offsetY });
 
-        if (!pick) {
+        if (!picks) {
             disableTooltip();
             return;
         }
 
-        if (!lastPick || lastPick.datum !== pick.datum) {
-            this.onSeriesDatumPick(meta, pick.datum);
+        if (!lastPick || lastPick.datum !== picks.winner.datum) {
+            this.onSeriesDatumPick(meta, picks);
             return;
         }
 
         lastPick.event = meta.event;
 
-        if (pick.series.tooltip.enabled) {
-            this.tooltip.show(this.mergeTooltipDatum(meta, pick.datum));
+        if (picks.matches.some((m) => m.series.tooltip.enabled)) {
+            this.tooltip.show(this.mergeTooltipDatum(meta, picks.winner));
         }
     }
 
@@ -1070,25 +1089,19 @@ export abstract class Chart extends Observable {
         }
     }
 
-    private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum) {
-        const { lastPick } = this;
-        if (lastPick) {
-            if (lastPick.datum === datum) {
-                return;
-            }
-        }
-
+    private onSeriesDatumPick(meta: TooltipMeta, picks: PickedDatumNodes) {
         this.changeHighlightDatum({
-            datum,
+            datum: picks.winner,
             event: meta.event,
         });
 
-        if (datum) {
-            meta = this.mergeTooltipDatum(meta, datum);
-        }
+        meta = this.mergeTooltipDatum(meta, picks.winner);
 
-        const html = datum.series.tooltip.enabled && datum.series.getTooltipHtml(datum);
-        if (html) {
+        const tooltipsEnabled = picks.matches.some((m) => m.series.tooltip.enabled);
+        const html = tooltipsEnabled
+            ? picks.matches.map((datum) => datum.series.getTooltipHtml(datum)).join()
+            : undefined;
+        if ((html?.length ?? 0) > 0) {
             this.tooltip.show(meta, html);
         }
     }

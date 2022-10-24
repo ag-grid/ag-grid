@@ -445,7 +445,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             ];
         };
 
-        const createMarkerCoordinate = (xDatum: any, yDatum: number, idx: number, rawYDatum: any): SizedPoint => {
+        const createMarkerCoordinate = (xDatum: any, yDatum: number, idx: number, rawYDatum: any) => {
             let currY;
 
             // if not normalized, the invalid data points will be processed as `undefined` in processData()
@@ -463,7 +463,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const x = xScale.convert(xDatum) + xOffset;
             const y = yScale.convert(currY, continuousY ? clamper : undefined);
 
-            return { x, y, size: marker.size };
+            return { x, y, size: marker.size, xDatum, yDatum };
         };
 
         yData.forEach((seriesYs, seriesIdx) => {

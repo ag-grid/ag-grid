@@ -4193,6 +4193,8 @@
     "type": { "type": { "returnType": "string", "optional": false } }
   },
   "ChartUpdateType": {},
+  "PickedDatumNode": {},
+  "PickedDatumNodes": {},
   "OptionalHTMLElement": {},
   "ChartAxisDirection": {},
   "ChartAxisPosition": {},
@@ -4315,7 +4317,7 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
-      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+      "type": { "returnType": "Readonly<DatumPoint>", "optional": true }
     }
   },
   "LabelSelectionDatum": {
@@ -4373,7 +4375,7 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
-      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+      "type": { "returnType": "Readonly<DatumPoint>", "optional": true }
     },
     "x": { "type": { "returnType": "number", "optional": false } },
     "y": { "type": { "returnType": "number", "optional": false } }
@@ -4487,7 +4489,7 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
-      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+      "type": { "returnType": "Readonly<DatumPoint>", "optional": true }
     }
   },
   "HistogramSeriesNodeClickEvent": {
@@ -4539,7 +4541,7 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
-      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+      "type": { "returnType": "Readonly<DatumPoint>", "optional": true }
     }
   },
   "ScatterSeriesNodeClickEvent": {
@@ -4587,7 +4589,7 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
-      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+      "type": { "returnType": "Readonly<DatumPoint>", "optional": true }
     }
   },
   "TreemapTooltipRendererParams": {
@@ -4672,7 +4674,7 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
-      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+      "type": { "returnType": "Readonly<DatumPoint>", "optional": true }
     }
   },
   "PieTooltipRendererParams": {
@@ -4766,12 +4768,13 @@
     "size": { "type": { "returnType": "number", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } }
   },
+  "DatumPoint": {},
   "SeriesNodeDatum": {
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
-      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+      "type": { "returnType": "Readonly<DatumPoint>", "optional": true }
     }
   },
   "SeriesNodePickMode": {},
