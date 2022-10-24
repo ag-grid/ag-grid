@@ -283,7 +283,7 @@ export class Scene {
             return;
         }
 
-        if (!this.dirty) {
+        if (root && !this.dirty) {
             if (this.debug.consoleLog) {
                 console.log('no-op', {
                     redrawType: RedrawType[root.dirty],
