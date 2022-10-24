@@ -9689,6 +9689,13 @@
       "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "filterPlaceholder": {
+      "description": "/** Placeholder text for the filter textbox */",
+      "type": {
+        "returnType": "FilterPlaceholderFunction | string",
+        "optional": true
+      }
+    },
     "buttons": {
       "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
@@ -9832,6 +9839,13 @@
     "alwaysShowBothConditions": {
       "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "filterPlaceholder": {
+      "description": "/** Placeholder text for the filter textbox */",
+      "type": {
+        "returnType": "FilterPlaceholderFunction | string",
+        "optional": true
+      }
     },
     "buttons": {
       "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
@@ -10069,6 +10083,13 @@
       "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "filterPlaceholder": {
+      "description": "/** Placeholder text for the filter textbox */",
+      "type": {
+        "returnType": "FilterPlaceholderFunction | string",
+        "optional": true
+      }
+    },
     "buttons": {
       "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
@@ -10203,6 +10224,21 @@
       }
     }
   },
+  "IFilterPlaceholderFunctionParams": {
+    "filterOptionKey": {
+      "description": "/** The filter option key */",
+      "type": { "returnType": "ISimpleFilterModelType", "optional": false }
+    },
+    "filterOption": {
+      "description": "/** The filter option name as localised text */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "placeholder": {
+      "description": "/** The default placeholder text */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "FilterPlaceholderFunction": {},
   "ISimpleFilterParams": {
     "filterOptions": {
       "description": "/** Array of filter options to present to the user. */",
@@ -10226,6 +10262,13 @@
     "alwaysShowBothConditions": {
       "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "filterPlaceholder": {
+      "description": "/** Placeholder text for the filter textbox */",
+      "type": {
+        "returnType": "FilterPlaceholderFunction | string",
+        "optional": true
+      }
     },
     "buttons": {
       "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
@@ -10420,6 +10463,13 @@
     "alwaysShowBothConditions": {
       "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "filterPlaceholder": {
+      "description": "/** Placeholder text for the filter textbox */",
+      "type": {
+        "returnType": "FilterPlaceholderFunction | string",
+        "optional": true
+      }
     },
     "buttons": {
       "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
