@@ -80,7 +80,7 @@ In this simple example, it would be possible for the components to just update t
 
 <grid-example title='Custom Detail with Refresh' name='custom-detail-with-refresh' type='generated' options='{ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
-## Keyboard navigation
+## Keyboard Navigation
 
 To add keyboard navigation to custom detail panels, it must be implemented in the custom Detail Cell Renderer. There are several parts to this:
 
@@ -88,7 +88,10 @@ To add keyboard navigation to custom detail panels, it must be implemented in th
 2. Attach the above function to a `focus` listener on the `eParentOfValue` param value in the component initialisation
 3. Remove the above function from the `focus` listener in the component destroy or unmount method
 
-The following example shows an implementation of keyboard navigation in a custom detail panel where you can click on a cell on the `Mila Smith` row and <kbd>Tab</kbd> into the custom detail panel inputs of `Mila Smith`. You can also go backwards with <kbd>Shift</kbd>+<kbd>Tab</kbd> from the `Evelyn Taylor` row.
+The following example shows an implementation of keyboard navigation in a custom detail panel: 
+
+* Click a cell in the `Mila Smith` master row and press <kbd>Tab</kbd> key to move focus to the custom detail panel inputs of the `Mila Smith` master row.
+* Click a cell in the `Evelyn Taylor` master row and press <kbd>Shift</kbd>+<kbd>Tab</kbd> to focus the inputs in the custom detail panel of the `Mila Smith` master row.
 
 [[note]]
 | This example is illustrative of the main concepts, but the actual implementation of custom keyboard navigation will vary based on the specific custom detail panel.
