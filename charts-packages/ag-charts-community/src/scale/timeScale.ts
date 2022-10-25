@@ -84,7 +84,7 @@ export class TimeScale extends ContinuousScale {
         [this.year, 1, durationYear],
     ];
 
-    defaultTickFormat(ticks?: any[]) {
+    calculateDefaultTickFormat(ticks?: any[]) {
         let defaultTimeFormat = DefaultTimeFormats.YEAR as DefaultTimeFormats;
 
         const updateFormat = (format: DefaultTimeFormats) => {
@@ -164,8 +164,12 @@ export class TimeScale extends ContinuousScale {
                 formatStringArray.splice(timeEndIndex, 0, ' ');
             }
         }
-        const formatString = formatStringArray.join('');
 
+        return formatStringArray.join('');
+    }
+
+    defaultTickFormat(ticks?: any[]) {
+        const formatString = this.calculateDefaultTickFormat(ticks);
         return (date: Date) => this.format(formatString)(date);
     }
 
