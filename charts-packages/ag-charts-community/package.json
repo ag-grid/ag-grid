@@ -29,7 +29,7 @@
         "docker:test-watch": ".docker/run.sh run npm run test-watch",
         "docker:test-update": ".docker/run.sh run npm run test-update",
         "docker:clean": ".docker/run.sh clean",
-        "dev-server": "node ./tools/dev-server/index.js",
+        "dev-server": "node ./tools/dev-server/index.js --port=2020 --debounce=250 --es=2015 --sourcemap=true",
         "generate-chart-gallery": "npx ts-node -T tools/gallery-thumbnail-generator.ts"
     },
     "repository": {

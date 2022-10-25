@@ -16,10 +16,9 @@ export interface DevServer {
     httpServer: Server;
     addStaticFile(path: string, content: string | Buffer): void;
     start(): Promise<void>;
-    close(): void;
+    close(): Promise<void>;
 }
 
 export interface LiveReloadServer {
     sendMessage(message: any): void;
-    close(): void;
 }

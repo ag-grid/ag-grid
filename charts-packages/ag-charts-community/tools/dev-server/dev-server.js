@@ -66,6 +66,13 @@ function createDevServer(port) {
         res.end(content, content instanceof Buffer ? 'binary' : 'utf8');
     });
 
+    /** @type {Set<import('net').Socket>} */
+    const sockets = new Set();
+    server.on('connection', (socket) => {
+        sockets.add(socket);
+        socket.on('close', () => sockets.delete(socket));
+    });
+
     return {
         httpServer: server,
 
@@ -75,20 +82,17 @@ function createDevServer(port) {
 
         start() {
             return new Promise((resolve) => {
-                server.listen(port, () => {
-                    log.ok(`Dev Server started on port ${port}`);
-                    resolve();
-                });
+                server.listen(port, () => resolve());
             });
         },
 
         close() {
-            server.close((err) => {
-                if (err) {
-                    log.error(`Dev Server error: ${err}`);
-                } else {
-                    log.ok('Dev Server exit');
-                }
+            return new Promise((resolve, reject) => {
+                sockets.forEach((socket) => socket.destroy());
+                server.close((err) => {
+                    if (err) reject(err);
+                    else resolve();
+                });
             });
         },
     };

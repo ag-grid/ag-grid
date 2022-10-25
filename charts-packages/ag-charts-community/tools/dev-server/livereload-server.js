@@ -19,11 +19,6 @@ function createLivereloadServer(httpServer) {
             sockets.forEach((ws) => ws.send(JSON.stringify(message)));
             log.ok(message);
         },
-        close() {
-            server.close((err) => {
-                err && log.error(`Live Reload server error: ${err}`);
-            });
-        },
     };
 }
 
