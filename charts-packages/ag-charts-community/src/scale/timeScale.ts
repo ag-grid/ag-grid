@@ -84,7 +84,7 @@ export class TimeScale extends ContinuousScale {
         [this.year, 1, durationYear],
     ];
 
-    defaultTickFormat(ticks?: any[]) {
+    calculateDefaultTickFormat(ticks?: any[]) {
         let defaultTimeFormat = DefaultTimeFormats.YEAR as DefaultTimeFormats;
 
         const updateFormat = (format: DefaultTimeFormats) => {
@@ -115,6 +115,7 @@ export class TimeScale extends ContinuousScale {
         const extent = stop - start;
 
         let formatStringArray: string[] = [formatStrings[defaultTimeFormat]];
+        let timeEndIndex = 0;
 
         switch (defaultTimeFormat) {
             case DefaultTimeFormats.SECOND:
@@ -128,6 +129,7 @@ export class TimeScale extends ContinuousScale {
                 }
             // fall through deliberately
             case DefaultTimeFormats.HOUR:
+                timeEndIndex = formatStringArray.length;
                 if (extent / durationDay > 1) {
                     formatStringArray.push(formatStrings[DefaultTimeFormats.SHORT_MONTH]);
                 }
@@ -143,8 +145,31 @@ export class TimeScale extends ContinuousScale {
                 break;
         }
 
-        const formatString = formatStringArray.join(' ');
+        if (timeEndIndex < formatStringArray.length) {
+            // Insert a gap between all date components.
+            formatStringArray = [
+                ...formatStringArray.slice(0, timeEndIndex),
+                formatStringArray.slice(timeEndIndex).join(' '),
+            ];
+        }
+        if (timeEndIndex > 0) {
+            // Reverse order of time components, since they should be displayed in descending
+            // granularity.
+            formatStringArray = [
+                ...formatStringArray.slice(0, timeEndIndex).reverse(),
+                ...formatStringArray.slice(timeEndIndex),
+            ];
+            if (timeEndIndex < formatStringArray.length) {
+                // Insert a gap between time and date components.
+                formatStringArray.splice(timeEndIndex, 0, ' ');
+            }
+        }
 
+        return formatStringArray.join('');
+    }
+
+    defaultTickFormat(ticks?: any[]) {
+        const formatString = this.calculateDefaultTickFormat(ticks);
         return (date: Date) => this.format(formatString)(date);
     }
 
