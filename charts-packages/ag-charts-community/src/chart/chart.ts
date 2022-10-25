@@ -19,6 +19,7 @@ import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
 import { BOOLEAN, Validate } from '../util/validation';
 import { sleep } from '../util/async';
+import { doOnce } from '../util/function';
 import { Tooltip, TooltipMeta } from './tooltip/tooltip';
 
 export interface ChartClickEvent extends SourceEvent<Chart> {
@@ -633,8 +634,7 @@ export abstract class Chart extends Observable {
         this.series
             .filter((s) => s.showInLegend)
             .forEach((series) => {
-                const seriesLegendData = series.getLegendData();
-                legendData.push(...seriesLegendData);
+                legendData.push(...series.getLegendData());
             });
 
         const { formatter } = this.legend.item.label;
@@ -642,7 +642,17 @@ export abstract class Chart extends Observable {
             legendData.forEach(
                 (datum) =>
                     (datum.label.text = formatter({
-                        id: datum.id,
+                        get id() {
+                            doOnce(
+                                () =>
+                                    console.warn(
+                                        `AG Charts - LegendLabelFormatterParams.id is deprecated, use seriesId instead`,
+                                        datum
+                                    ),
+                                `LegendLabelFormatterParams.id deprecated`
+                            );
+                            return datum.seriesId;
+                        },
                         itemId: datum.itemId,
                         value: datum.label.text,
                         seriesId: datum.seriesId,

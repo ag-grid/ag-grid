@@ -598,7 +598,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     }
 
     getTooltipHtml(nodeDatum: TreemapNodeDatum): string {
-        const { tooltip, sizeKey, labelKey, colorKey, colorName, rootName } = this;
+        const { tooltip, sizeKey, labelKey, colorKey, colorName, rootName, id: seriesId } = this;
         const { datum } = nodeDatum;
         const { renderer: tooltipRenderer } = tooltip;
 
@@ -628,6 +628,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                     colorKey,
                     title,
                     color,
+                    seriesId,
                 }),
                 defaults
             );

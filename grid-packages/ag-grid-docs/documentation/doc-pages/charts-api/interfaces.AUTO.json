@@ -755,10 +755,11 @@
     "meta": {},
     "type": {
       "id": "string",
+      "seriesId": "string",
       "itemId": "any",
-      "value": "string",
-      "seriesId": "string"
-    }
+      "value": "string"
+    },
+    "docs": { "id": "/** @deprecated Use seriesId.\n */" }
   },
   "AgChartLegendLabelOptions": {
     "meta": {},
@@ -1343,11 +1344,17 @@
   },
   "AgSeriesTooltipRendererParams": {
     "meta": {},
-    "type": { "datum": "any", "title?": "string", "color?": "CssColor" },
+    "type": {
+      "datum": "any",
+      "title?": "string",
+      "color?": "CssColor",
+      "seriesId": "string"
+    },
     "docs": {
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgCartesianSeriesTooltipRendererParams": {
@@ -1359,10 +1366,10 @@
       "yKey": "string",
       "yValue?": "any",
       "yName?": "string",
-      "seriesId": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "seriesId": "string"
     },
     "docs": {
       "xKey": "/** xKey as specified on series options. */",
@@ -1371,10 +1378,10 @@
       "yKey": "/** yKey as specified on series options. */",
       "yValue?": "/** yValue as read from series data via the yKey property. */",
       "yName?": "/** yName as specified on series options. */",
-      "seriesId": "/** The ID of the series. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgPolarSeriesTooltipRendererParams": {
@@ -1386,10 +1393,10 @@
       "radiusKey?": "string",
       "radiusValue?": "any",
       "radiusName?": "string",
-      "seriesId": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "seriesId": "string"
     },
     "docs": {
       "angleKey": "/** angleKey as specified on series options. */",
@@ -1398,10 +1405,10 @@
       "radiusKey?": "/** radiusKey as specified on series options. */",
       "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
       "radiusName?": "/** radiusName as specified on series options. */",
-      "seriesId": "/** The ID of the series. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgScatterSeriesTooltipRendererParams": {
@@ -1417,10 +1424,10 @@
       "yKey": "string",
       "yValue?": "any",
       "yName?": "string",
-      "seriesId": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "seriesId": "string"
     },
     "docs": {
       "sizeKey?": "/** sizeKey as specified on series options. */",
@@ -1433,10 +1440,10 @@
       "yKey": "/** yKey as specified on series options. */",
       "yValue?": "/** yValue as read from series data via the yKey property. */",
       "yName?": "/** yName as specified on series options. */",
-      "seriesId": "/** The ID of the series. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgSeriesMarker": {
@@ -2366,10 +2373,10 @@
       "radiusKey?": "string",
       "radiusValue?": "any",
       "radiusName?": "string",
-      "seriesId": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "seriesId": "string"
     },
     "docs": {
       "labelKey?": "/** labelKey as specified on series options.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
@@ -2384,10 +2391,10 @@
       "radiusKey?": "/** radiusKey as specified on series options. */",
       "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
       "radiusName?": "/** radiusName as specified on series options. */",
-      "seriesId": "/** The ID of the series. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgPieSeriesLabelFormatterParams": {
@@ -3037,10 +3044,10 @@
       "yKey": "string",
       "yValue": "any",
       "yName?": "string",
-      "seriesId": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "string"
+      "color?": "string",
+      "seriesId": "string"
     }
   },
   "BarNodeDatum": {
@@ -3276,10 +3283,10 @@
       "yKey": "string",
       "yValue": "any",
       "yName?": "string",
-      "seriesId": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "string"
+      "color?": "string",
+      "seriesId": "string"
     }
   },
   "TreemapNodeDatum": {
@@ -3311,7 +3318,8 @@
       "sizeKey?": "string",
       "colorKey?": "string",
       "title?": "string",
-      "color?": "string"
+      "color?": "string",
+      "seriesId": "string"
     }
   },
   "TreemapSeriesNodeClickEvent": {
@@ -3403,7 +3411,6 @@
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
       "sectorLabelName?": "string",
-      "seriesId": "string",
       "angleKey": "string",
       "angleValue": "any",
       "angleName?": "string",
@@ -3412,7 +3419,8 @@
       "radiusName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "string"
+      "color?": "string",
+      "seriesId": "string"
     },
     "docs": {
       "labelKey?": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
@@ -3515,7 +3523,12 @@
   },
   "TooltipRendererParams": {
     "meta": {},
-    "type": { "datum": "any", "title?": "string", "color?": "string" }
+    "type": {
+      "datum": "any",
+      "title?": "string",
+      "color?": "string",
+      "seriesId": "string"
+    }
   },
   "CartesianTooltipRendererParams": {
     "meta": {},
@@ -3526,10 +3539,10 @@
       "yKey": "string",
       "yValue": "any",
       "yName?": "string",
-      "seriesId": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "string"
+      "color?": "string",
+      "seriesId": "string"
     }
   },
   "PolarTooltipRendererParams": {
@@ -3543,7 +3556,8 @@
       "radiusName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "string"
+      "color?": "string",
+      "seriesId": "string"
     }
   },
   "SeriesNodeDataContext": {

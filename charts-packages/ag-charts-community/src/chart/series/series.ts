@@ -49,6 +49,7 @@ export interface TooltipRendererParams {
     readonly datum: any;
     readonly title?: string;
     readonly color?: string;
+    readonly seriesId: string;
 }
 
 export interface CartesianTooltipRendererParams extends TooltipRendererParams {
@@ -59,8 +60,6 @@ export interface CartesianTooltipRendererParams extends TooltipRendererParams {
     readonly yKey: string;
     readonly yValue: any;
     readonly yName?: string;
-
-    readonly seriesId: string;
 }
 
 export interface PolarTooltipRendererParams extends TooltipRendererParams {

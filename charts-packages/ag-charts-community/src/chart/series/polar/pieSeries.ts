@@ -78,7 +78,6 @@ export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
     readonly calloutLabelName?: string;
     readonly sectorLabelKey?: string;
     readonly sectorLabelName?: string;
-    readonly seriesId: string;
 }
 
 class PieHighlightStyle extends HighlightStyle {
