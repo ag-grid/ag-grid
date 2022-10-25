@@ -18,6 +18,10 @@ form > div > p {
 
 form p { color: #0b0b18; }
 
+form input {
+    width: 100%;
+}
+
 label {
     display: block;
     margin: 0.75em 25%;
