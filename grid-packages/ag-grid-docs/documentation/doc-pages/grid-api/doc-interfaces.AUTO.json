@@ -13333,10 +13333,13 @@
     }
   },
   "AgChartLegendLabelFormatterParams": {
-    "id": { "type": { "returnType": "string", "optional": false } },
+    "id": {
+      "description": "/** @deprecated Use seriesId.\n */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },
-    "value": { "type": { "returnType": "string", "optional": false } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } }
+    "value": { "type": { "returnType": "string", "optional": false } }
   },
   "AgChartLegendLabelOptions": {
     "maxLength": {
@@ -14161,6 +14164,10 @@
     "color": {
       "description": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
     }
   },
   "AgCartesianSeriesTooltipRendererParams": {
@@ -14188,10 +14195,6 @@
       "description": "/** yName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "seriesId": {
-      "description": "/** The ID of the series. */",
-      "type": { "returnType": "string", "optional": false }
-    },
     "datum": {
       "description": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "type": { "returnType": "any", "optional": false }
@@ -14203,6 +14206,10 @@
     "color": {
       "description": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
     }
   },
   "AgPolarSeriesTooltipRendererParams": {
@@ -14230,10 +14237,6 @@
       "description": "/** radiusName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "seriesId": {
-      "description": "/** The ID of the series. */",
-      "type": { "returnType": "string", "optional": false }
-    },
     "datum": {
       "description": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "type": { "returnType": "any", "optional": false }
@@ -14245,6 +14248,10 @@
     "color": {
       "description": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
     }
   },
   "AgScatterSeriesTooltipRendererParams": {
@@ -14288,10 +14295,6 @@
       "description": "/** yName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "seriesId": {
-      "description": "/** The ID of the series. */",
-      "type": { "returnType": "string", "optional": false }
-    },
     "datum": {
       "description": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "type": { "returnType": "any", "optional": false }
@@ -14303,6 +14306,10 @@
     "color": {
       "description": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
     }
   },
   "AgSeriesMarker": {
@@ -15813,10 +15820,6 @@
       "description": "/** radiusName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "seriesId": {
-      "description": "/** The ID of the series. */",
-      "type": { "returnType": "string", "optional": false }
-    },
     "datum": {
       "description": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "type": { "returnType": "any", "optional": false }
@@ -15828,6 +15831,10 @@
     "color": {
       "description": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
     }
   },
   "AgPieSeriesLabelFormatterParams": {

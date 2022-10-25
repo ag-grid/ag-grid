@@ -309,10 +309,11 @@ export interface AgChartLegendMarkerOptions {
 }
 
 export interface AgChartLegendLabelFormatterParams {
+    /** @deprecated Use seriesId. */
     id: string;
+    seriesId: string;
     itemId: any;
     value: string;
-    seriesId: string;
 }
 
 export interface AgChartLegendLabelOptions {
@@ -751,6 +752,8 @@ export interface AgSeriesTooltipRendererParams {
     readonly title?: string;
     /** Series primary colour, as selected from the active theme, series options or formatter. */
     readonly color?: CssColor;
+    /** The ID of the series. */
+    readonly seriesId: string;
 }
 
 export interface AgCartesianSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
@@ -767,9 +770,6 @@ export interface AgCartesianSeriesTooltipRendererParams extends AgSeriesTooltipR
     readonly yValue?: any;
     /** yName as specified on series options. */
     readonly yName?: string;
-
-    /** The ID of the series. */
-    readonly seriesId: string;
 }
 
 export interface AgPolarSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
@@ -786,9 +786,6 @@ export interface AgPolarSeriesTooltipRendererParams extends AgSeriesTooltipRende
     readonly radiusValue?: any;
     /** radiusName as specified on series options. */
     readonly radiusName?: string;
-
-    /** The ID of the series. */
-    readonly seriesId: string;
 }
 
 export interface AgScatterSeriesTooltipRendererParams extends AgCartesianSeriesTooltipRendererParams {
