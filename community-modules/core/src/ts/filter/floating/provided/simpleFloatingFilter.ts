@@ -52,10 +52,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
                 combinedModel.operator,
                 customOption2,
             ].join(' ');
-        } else if (
-            model.filterType === 'text'
-            && (model.type === SimpleFilter.BLANK || model.type === SimpleFilter.NOT_BLANK)
-        ) {
+        } else if (model.type === SimpleFilter.BLANK || model.type === SimpleFilter.NOT_BLANK) {
             const translate = this.gridOptionsWrapper.getLocaleTextFunc();
             return translate(model.type, model.type);
         } else {
