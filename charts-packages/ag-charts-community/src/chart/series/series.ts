@@ -7,6 +7,7 @@ import { createId } from '../../util/id';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
 import { Deprecated } from '../../util/deprecation';
+import { TypedEvent } from '../../util/observable';
 import { BOOLEAN, OPT_BOOLEAN, OPT_NUMBER, OPT_COLOR_STRING, STRING, Validate } from '../../util/validation';
 import { PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
@@ -50,6 +51,23 @@ export interface TooltipRendererParams {
     readonly title?: string;
     readonly color?: string;
     readonly seriesId: string;
+}
+
+export class SeriesNodeClickEvent<Datum extends { datum: any }> implements TypedEvent {
+    readonly type = 'nodeClick';
+    readonly datum: any;
+    readonly event: MouseEvent;
+    readonly seriesId: string;
+
+    @Deprecated('Use seriesId to get series ID')
+    readonly series: Series;
+
+    constructor(nativeEvent: MouseEvent, datum: Datum, series: Series) {
+        this.event = nativeEvent;
+        this.datum = datum.datum;
+        this.seriesId = series.id;
+        this.series = series;
+    }
 }
 
 export interface CartesianTooltipRendererParams extends TooltipRendererParams {
@@ -460,7 +478,12 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     abstract getLabelData(): PointLabelDatum[];
 
     fireNodeClickEvent(_event: MouseEvent, _datum: C['nodeData'][number]): void {
-        // Override point for subclasses.
+        const eventObject = this.getNodeClickEvent(_event, _datum);
+        this.fireEvent(eventObject);
+    }
+
+    protected getNodeClickEvent(event: MouseEvent, datum: SeriesNodeDatum): SeriesNodeClickEvent<any> {
+        return new SeriesNodeClickEvent(event, datum, this);
     }
 
     /**

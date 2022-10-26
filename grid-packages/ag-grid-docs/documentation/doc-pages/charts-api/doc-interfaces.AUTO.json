@@ -978,8 +978,15 @@
         "optional": true
       }
     },
+    "listeners": {
+      "description": "/** A map of event names to event listeners. */",
+      "type": {
+        "returnType": "AgPieSeriesListeners<DatumType>",
+        "optional": true
+      }
+    },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -997,13 +1004,6 @@
     "cursor": {
       "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "listeners": {
-      "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
-        "optional": true
-      }
     },
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
@@ -1975,22 +1975,41 @@
       "type": { "returnType": "AgSeriesHighlightSeriesStyle", "optional": true }
     }
   },
+  "AgBaseSeriesNodeClickParams": {
+    "type": {
+      "description": "/** Event type. */",
+      "type": { "returnType": "'nodeClick'", "optional": false }
+    },
+    "series": {
+      "description": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "seriesId": {
+      "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "datum": {
+      "description": "/** Datum from the series data array. */",
+      "type": { "returnType": "DatumType", "optional": false }
+    },
+    "meta": { "typeParams": ["DatumType"] }
+  },
   "AgBaseSeriesListeners": {
     "nodeClick": {
       "description": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in the series is clicked. */",
       "type": {
-        "arguments": {
-          "params": "{ type: 'nodeClick'; series: any; datum: DatumType; xKey: string; yKey: string; }"
-        },
-        "returnType": "any",
+        "arguments": { "params": "EventParamsType" },
+        "returnType": "void",
         "optional": false
       }
     },
-    "meta": { "typeParams": ["DatumType"] }
+    "meta": {
+      "typeParams": ["EventParamsType extends AgBaseSeriesNodeClickParams<any>"]
+    }
   },
   "AgBaseSeriesOptions": {
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -2012,7 +2031,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
+        "returnType": "AgBaseSeriesListeners<AgBaseSeriesNodeClickParams<ListenerDatumType>>",
         "optional": true
       }
     },
@@ -2307,6 +2326,34 @@
       "type": { "returnType": "Opacity", "optional": true }
     }
   },
+  "AgCartesianSeriesNodeClickParams": {
+    "xKey": {
+      "description": "/** xKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "yKey": {
+      "description": "/** yKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "meta": { "typeParams": ["DatumType"] },
+    "type": {
+      "description": "/** Event type. */",
+      "type": { "returnType": "'nodeClick'", "optional": false }
+    },
+    "series": {
+      "description": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "seriesId": {
+      "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "datum": {
+      "description": "/** Datum from the series data array. */",
+      "type": { "returnType": "DatumType", "optional": false }
+    }
+  },
+  "AgCartesianSeriesListeners": { "meta": { "typeParams": ["DatumType"] } },
   "AgAreaSeriesMarker": {
     "meta": { "typeParams": ["DatumType"] },
     "formatter": {
@@ -2468,9 +2515,16 @@
       "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgLineSeriesTooltip", "optional": true }
     },
+    "listeners": {
+      "description": "/** A map of event names to event listeners. */",
+      "type": {
+        "returnType": "AgCartesianSeriesListeners<DatumType>",
+        "optional": true
+      }
+    },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -2488,13 +2542,6 @@
     "cursor": {
       "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "listeners": {
-      "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
-        "optional": true
-      }
     },
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
@@ -2591,6 +2638,38 @@
       "type": { "returnType": "Opacity", "optional": true }
     }
   },
+  "AgScatterSeriesNodeClickParams": {
+    "sizeKey": {
+      "description": "/** sizeKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "meta": { "typeParams": ["DatumType"] },
+    "xKey": {
+      "description": "/** xKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "yKey": {
+      "description": "/** yKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "type": {
+      "description": "/** Event type. */",
+      "type": { "returnType": "'nodeClick'", "optional": false }
+    },
+    "series": {
+      "description": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "seriesId": {
+      "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "datum": {
+      "description": "/** Datum from the series data array. */",
+      "type": { "returnType": "DatumType", "optional": false }
+    }
+  },
+  "AgScatterSeriesListeners": { "meta": { "typeParams": ["DatumType"] } },
   "AgScatterSeriesOptions": {
     "type": {
       "description": "/** Configuration for the treemap series. */",
@@ -2667,9 +2746,16 @@
       "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgScatterSeriesTooltip", "optional": true }
     },
+    "listeners": {
+      "description": "/** A map of event names to event listeners. */",
+      "type": {
+        "returnType": "AgScatterSeriesListeners<DatumType>",
+        "optional": true
+      }
+    },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -2687,13 +2773,6 @@
     "cursor": {
       "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "listeners": {
-      "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
-        "optional": true
-      }
     },
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
@@ -2837,7 +2916,7 @@
     "stacked": { "type": { "returnType": "boolean", "optional": true } },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -2859,7 +2938,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
+        "returnType": "AgBaseSeriesListeners<AgBaseSeriesNodeClickParams<ListenerDatumType>>",
         "optional": true
       }
     },
@@ -3031,9 +3110,16 @@
         "optional": true
       }
     },
+    "listeners": {
+      "description": "/** A map of event names to event listeners. */",
+      "type": {
+        "returnType": "AgCartesianSeriesListeners<DatumType>",
+        "optional": true
+      }
+    },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -3051,13 +3137,6 @@
     "cursor": {
       "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "listeners": {
-      "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
-        "optional": true
-      }
     },
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
@@ -3201,9 +3280,16 @@
       "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgHistogramSeriesTooltip", "optional": true }
     },
+    "listeners": {
+      "description": "/** A map of event names to event listeners. */",
+      "type": {
+        "returnType": "AgCartesianSeriesListeners<DatumType>",
+        "optional": true
+      }
+    },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -3221,13 +3307,6 @@
     "cursor": {
       "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "listeners": {
-      "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
-        "optional": true
-      }
     },
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
@@ -3463,6 +3542,42 @@
       "type": { "returnType": "Opacity", "optional": true }
     }
   },
+  "AgPieSeriesNodeClickParams": {
+    "angleKey": {
+      "description": "/** angleKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "calloutLabelKey": {
+      "description": "/** calloutLabelKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sectorLabelKey": {
+      "description": "/** sectorLabelKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "radiusKey": {
+      "description": "/** radiusKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "meta": { "typeParams": ["DatumType"] },
+    "type": {
+      "description": "/** Event type. */",
+      "type": { "returnType": "'nodeClick'", "optional": false }
+    },
+    "series": {
+      "description": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "seriesId": {
+      "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "datum": {
+      "description": "/** Datum from the series data array. */",
+      "type": { "returnType": "DatumType", "optional": false }
+    }
+  },
+  "AgPieSeriesListeners": { "meta": { "typeParams": ["DatumType"] } },
   "AgPieSeriesOptions": {
     "type": { "type": { "returnType": "'pie'", "optional": true } },
     "title": {
@@ -3618,9 +3733,16 @@
         "optional": true
       }
     },
+    "listeners": {
+      "description": "/** A map of event names to event listeners. */",
+      "type": {
+        "returnType": "AgPieSeriesListeners<DatumType>",
+        "optional": true
+      }
+    },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -3638,13 +3760,6 @@
     "cursor": {
       "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "listeners": {
-      "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
-        "optional": true
-      }
     },
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
@@ -3892,6 +4007,38 @@
       "type": { "returnType": "AgChartLabelOptions", "optional": true }
     }
   },
+  "AgTreemapSeriesNodeClickParams": {
+    "labelKey": {
+      "description": "/** labelKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sizeKey": {
+      "description": "/** sizeKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "colorKey": {
+      "description": "/** colorKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "meta": { "typeParams": ["DatumType"] },
+    "type": {
+      "description": "/** Event type. */",
+      "type": { "returnType": "'nodeClick'", "optional": false }
+    },
+    "series": {
+      "description": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "seriesId": {
+      "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "datum": {
+      "description": "/** Datum from the series data array. */",
+      "type": { "returnType": "DatumType", "optional": false }
+    }
+  },
+  "AgTreemapSeriesListeners": { "meta": { "typeParams": ["DatumType"] } },
   "AgTreemapSeriesOptions": {
     "type": { "type": { "returnType": "'treemap'", "optional": true } },
     "title": {
@@ -3953,9 +4100,16 @@
         "optional": true
       }
     },
+    "listeners": {
+      "description": "/** A map of event names to event listeners. */",
+      "type": {
+        "returnType": "AgTreemapSeriesListeners<DatumType>",
+        "optional": true
+      }
+    },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. */",
+      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -3973,13 +4127,6 @@
     "cursor": {
       "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "listeners": {
-      "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgBaseSeriesListeners<ListenerDatumType>",
-        "optional": true
-      }
     },
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
@@ -4379,14 +4526,6 @@
       "type": { "returnType": "{ x: number; y: number }[]", "optional": false }
     }
   },
-  "AreaSeriesNodeClickEvent": {
-    "type": { "type": { "returnType": "'nodeClick'", "optional": false } },
-    "event": { "type": { "returnType": "MouseEvent", "optional": false } },
-    "series": { "type": { "returnType": "AreaSeries", "optional": false } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } }
-  },
   "MarkerSelectionDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
     "fill": { "type": { "returnType": "string", "optional": true } },
@@ -4415,14 +4554,6 @@
   "ProcessedXDatum": {},
   "AreaSeriesTag": {},
   "AreaSeriesNodeDataContext": {},
-  "BarSeriesNodeClickEvent": {
-    "type": { "type": { "returnType": "'nodeClick'", "optional": false } },
-    "event": { "type": { "returnType": "MouseEvent", "optional": false } },
-    "series": { "type": { "returnType": "BarSeries", "optional": false } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } }
-  },
   "BarTooltipRendererParams": {
     "processedYValue": { "type": { "returnType": "any", "optional": false } },
     "xKey": { "type": { "returnType": "string", "optional": false } },
@@ -4603,14 +4734,6 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } }
   },
-  "LineSeriesNodeClickEvent": {
-    "type": { "type": { "returnType": "'nodeClick'", "optional": false } },
-    "event": { "type": { "returnType": "MouseEvent", "optional": false } },
-    "series": { "type": { "returnType": "LineSeries", "optional": false } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } }
-  },
   "LineTooltipRendererParams": {},
   "PointDatum": {
     "xDatum": { "type": { "returnType": "any", "optional": false } },
@@ -4626,15 +4749,6 @@
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
-  },
-  "ScatterSeriesNodeClickEvent": {
-    "type": { "type": { "returnType": "'nodeClick'", "optional": false } },
-    "event": { "type": { "returnType": "MouseEvent", "optional": false } },
-    "series": { "type": { "returnType": "ScatterSeries", "optional": false } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
-    "sizeKey": { "type": { "returnType": "string", "optional": true } }
   },
   "ScatterTooltipRendererParams": {
     "sizeKey": { "type": { "returnType": "string", "optional": true } },
@@ -4687,15 +4801,6 @@
     "color": { "type": { "returnType": "string", "optional": true } },
     "seriesId": { "type": { "returnType": "string", "optional": false } }
   },
-  "TreemapSeriesNodeClickEvent": {
-    "type": { "type": { "returnType": "'nodeClick'", "optional": false } },
-    "event": { "type": { "returnType": "MouseEvent", "optional": false } },
-    "series": { "type": { "returnType": "TreemapSeries", "optional": false } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "labelKey": { "type": { "returnType": "string", "optional": false } },
-    "sizeKey": { "type": { "returnType": "string", "optional": true } },
-    "colorKey": { "type": { "returnType": "string", "optional": true } }
-  },
   "TextNodeTag": {},
   "TreemapSeriesFormatterParams": {
     "datum": { "type": { "returnType": "any", "optional": false } },
@@ -4717,20 +4822,6 @@
     "strokeOpacity": { "type": { "returnType": "number", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } },
     "gradient": { "type": { "returnType": "boolean", "optional": true } }
-  },
-  "PieSeriesNodeClickEvent": {
-    "type": { "type": { "returnType": "'nodeClick'", "optional": false } },
-    "event": { "type": { "returnType": "MouseEvent", "optional": false } },
-    "series": { "type": { "returnType": "PieSeries", "optional": false } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "angleKey": { "type": { "returnType": "string", "optional": false } },
-    "labelKey": {
-      "description": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "calloutLabelKey": { "type": { "returnType": "string", "optional": true } },
-    "sectorLabelKey": { "type": { "returnType": "string", "optional": true } },
-    "radiusKey": { "type": { "returnType": "string", "optional": true } }
   },
   "PieNodeDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },

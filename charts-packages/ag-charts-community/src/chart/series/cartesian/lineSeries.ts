@@ -13,10 +13,14 @@ import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
 import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
 import { LegendDatum } from '../../legend';
-import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from './cartesianSeries';
+import {
+    CartesianSeries,
+    CartesianSeriesMarker,
+    CartesianSeriesMarkerFormat,
+    CartesianSeriesNodeClickEvent,
+} from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxis';
 import { getMarker } from '../../marker/util';
-import { TypedEvent } from '../../../util/observable';
 import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
 import { interpolate } from '../../../util/string';
 import { Label } from '../../label';
@@ -47,15 +51,6 @@ interface LineNodeDatum extends SeriesNodeDatum {
         readonly textBaseline: CanvasTextBaseline;
         readonly fill: string;
     };
-}
-
-export interface LineSeriesNodeClickEvent extends TypedEvent {
-    readonly type: 'nodeClick';
-    readonly event: MouseEvent;
-    readonly series: LineSeries;
-    readonly datum: any;
-    readonly xKey: string;
-    readonly yKey: string;
 }
 
 export type LineTooltipRendererParams = CartesianTooltipRendererParams;
@@ -474,15 +469,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
         });
     }
 
-    fireNodeClickEvent(event: MouseEvent, datum: LineNodeDatum): void {
-        this.fireEvent<LineSeriesNodeClickEvent>({
-            type: 'nodeClick',
-            event,
-            series: this,
-            datum: datum.datum,
-            xKey: this.xKey,
-            yKey: this.yKey,
-        });
+    protected getNodeClickEvent(event: MouseEvent, datum: LineNodeDatum): CartesianSeriesNodeClickEvent<any> {
+        return new CartesianSeriesNodeClickEvent(this.xKey, this.yKey, event, datum, this);
     }
 
     getTooltipHtml(nodeDatum: LineNodeDatum): string {

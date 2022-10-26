@@ -10,8 +10,12 @@ import {
 import { extent } from '../../../util/array';
 import { LegendDatum } from '../../legend';
 import { LinearScale } from '../../../scale/linearScale';
-import { TypedEvent } from '../../../util/observable';
-import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from './cartesianSeries';
+import {
+    CartesianSeries,
+    CartesianSeriesMarker,
+    CartesianSeriesMarkerFormat,
+    CartesianSeriesNodeClickEvent,
+} from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxis';
 import { getMarker } from '../../marker/util';
 import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
@@ -30,14 +34,20 @@ interface ScatterNodeDatum extends Required<SeriesNodeDatum> {
     readonly label: MeasuredLabel;
 }
 
-export interface ScatterSeriesNodeClickEvent extends TypedEvent {
-    readonly type: 'nodeClick';
-    readonly event: MouseEvent;
-    readonly series: ScatterSeries;
-    readonly datum: any;
-    readonly xKey: string;
-    readonly yKey: string;
+export class ScatterSeriesNodeClickEvent extends CartesianSeriesNodeClickEvent<any> {
     readonly sizeKey?: string;
+
+    constructor(
+        sizeKey: string | undefined,
+        xKey: string,
+        yKey: string,
+        nativeEvent: MouseEvent,
+        datum: ScatterNodeDatum,
+        series: ScatterSeries
+    ) {
+        super(xKey, yKey, nativeEvent, datum, series);
+        this.sizeKey = sizeKey;
+    }
 }
 
 export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
@@ -212,16 +222,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         }
     }
 
-    fireNodeClickEvent(event: MouseEvent, datum: ScatterNodeDatum): void {
-        this.fireEvent<ScatterSeriesNodeClickEvent>({
-            type: 'nodeClick',
-            event,
-            series: this,
-            datum: datum.datum,
-            xKey: this.xKey,
-            yKey: this.yKey,
-            sizeKey: this.sizeKey,
-        });
+    protected getNodeClickEvent(event: MouseEvent, datum: ScatterNodeDatum): CartesianSeriesNodeClickEvent<any> {
+        return new ScatterSeriesNodeClickEvent(this.sizeKey, this.xKey, this.yKey, event, datum, this);
     }
 
     async createNodeData() {

@@ -14,12 +14,11 @@ import {
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legend';
-import { CartesianSeries } from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesNodeClickEvent } from './cartesianSeries';
 import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from '../../chartAxis';
 import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
 import { findMinMax } from '../../../util/array';
 import { equal } from '../../../util/equal';
-import { TypedEvent } from '../../../util/observable';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { checkDatum, isNumber } from '../../../util/value';
@@ -44,15 +43,6 @@ import { CategoryAxis } from '../../axis/categoryAxis';
 const BAR_LABEL_PLACEMENTS = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
     OPTIONAL(v, ctx, (v: any) => BAR_LABEL_PLACEMENTS.includes(v));
-
-export interface BarSeriesNodeClickEvent extends TypedEvent {
-    readonly type: 'nodeClick';
-    readonly event: MouseEvent;
-    readonly series: BarSeries;
-    readonly datum: any;
-    readonly xKey: string;
-    readonly yKey: string;
-}
 
 export interface BarTooltipRendererParams extends CartesianTooltipRendererParams {
     readonly processedYValue: any;
@@ -486,15 +476,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
     }
 
-    fireNodeClickEvent(event: MouseEvent, datum: BarNodeDatum): void {
-        this.fireEvent<BarSeriesNodeClickEvent>({
-            type: 'nodeClick',
-            event,
-            series: this,
-            datum: datum.datum,
-            xKey: this.xKey,
-            yKey: datum.yKey,
-        });
+    protected getNodeClickEvent(event: MouseEvent, datum: BarNodeDatum): CartesianSeriesNodeClickEvent<any> {
+        return new CartesianSeriesNodeClickEvent(this.xKey, datum.yKey, event, datum, this);
     }
 
     private getCategoryAxis(): ChartAxis<Scale<any, number>> | undefined {

@@ -11,13 +11,17 @@ import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legend';
 import { Path } from '../../../scene/shape/path';
 import { Marker } from '../../marker/marker';
-import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from './cartesianSeries';
+import {
+    CartesianSeries,
+    CartesianSeriesMarker,
+    CartesianSeriesMarkerFormat,
+    CartesianSeriesNodeClickEvent,
+} from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxis';
 import { getMarker } from '../../marker/util';
 import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
 import { equal } from '../../../util/equal';
-import { TypedEvent } from '../../../util/observable';
 import { interpolate } from '../../../util/string';
 import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
 import { Label } from '../../label';
@@ -45,15 +49,6 @@ interface FillSelectionDatum {
 
 interface StrokeSelectionDatum extends FillSelectionDatum {
     readonly yValues: (number | undefined)[];
-}
-
-export interface AreaSeriesNodeClickEvent extends TypedEvent {
-    readonly type: 'nodeClick';
-    readonly event: MouseEvent;
-    readonly series: AreaSeries;
-    readonly datum: any;
-    readonly xKey: string;
-    readonly yKey: string;
 }
 
 interface MarkerSelectionDatum extends Required<SeriesNodeDatum> {
@@ -830,15 +825,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         });
     }
 
-    fireNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): void {
-        this.fireEvent<AreaSeriesNodeClickEvent>({
-            type: 'nodeClick',
-            event,
-            series: this,
-            datum: datum.datum,
-            xKey: this.xKey,
-            yKey: datum.yKey,
-        });
+    protected getNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): CartesianSeriesNodeClickEvent<any> {
+        return new CartesianSeriesNodeClickEvent(this.xKey, datum.yKey, event, datum, this);
     }
 
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {

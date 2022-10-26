@@ -14,7 +14,7 @@ import {
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legend';
-import { CartesianSeries } from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesNodeClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxis';
 import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
@@ -376,14 +376,8 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         }
     }
 
-    fireNodeClickEvent(event: MouseEvent, datum: HistogramNodeDatum): void {
-        this.fireEvent<HistogramSeriesNodeClickEvent>({
-            type: 'nodeClick',
-            event,
-            series: this,
-            datum: datum.datum,
-            xKey: this.xKey,
-        });
+    protected getNodeClickEvent(event: MouseEvent, datum: HistogramNodeDatum): CartesianSeriesNodeClickEvent<any> {
+        return new CartesianSeriesNodeClickEvent(this.xKey, this.yKey, event, datum, this);
     }
 
     async createNodeData() {
