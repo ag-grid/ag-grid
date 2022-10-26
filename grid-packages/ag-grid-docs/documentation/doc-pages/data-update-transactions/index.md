@@ -52,7 +52,7 @@ There are two approaches you can take: 1) Providing Row IDs, or 2) Using Object 
   newly provided data.
 
   For removing rows, the grid will find the row with the same key and remove it. For this reason, the
-  provided records within the `remove` array only need to have an key present.
+  provided records within the `remove` array only need to have a key present.
 
   <snippet>
   const gridOptions = {
@@ -126,7 +126,7 @@ Deciding what groups need to be operated on within the grid is called Changed Pa
 
 The example below demonstrates Changed Path Selection. The example is best viewed with the dev console open so log messages can be observed. Note the following:
 
-- The 'Linux Distro' column is sorted with a custom comparator. The comparator records how many times it is called.
+- The 'Distro' column is sorted with a custom comparator. The comparator records how many times it is called.
 
 - The Value column is aggregated with a custom aggregator. The aggregator records how many times it is called.
 
@@ -153,7 +153,7 @@ This is useful if the user is interacting with the data and you don't want the r
 To prevent sorting, filtering and grouping after an update transaction, set the grid property
 `suppressModelUpdateAfterUpdateTransaction=true`.
 
-Not that this property is only used when transactions are applied that only have updates. If the transaction
+Note that this property is only used when transactions are applied that only have updates. If the transaction
 contains any adds or removes, the sorting, filtering and grouping will always be applied.
 
 The example below is identical to the previous example except `suppressModelUpdateAfterUpdateTransaction=true`.
