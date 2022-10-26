@@ -7,13 +7,7 @@ const columnDefs: ColDef[] = [
   { field: 'b' },
   { field: 'c' },
   { field: 'd' },
-  { field: 'e' },
-  { field: 'f' },
-  { field: 'g' },
-  { field: 'h' },
-  { field: 'i' },
-  { field: 'j' },
-  { field: 'k' },
+  { field: 'e' }
 ]
 
 const gridOptions: GridOptions = {

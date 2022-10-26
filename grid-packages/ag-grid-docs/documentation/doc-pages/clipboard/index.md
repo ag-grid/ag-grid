@@ -137,16 +137,16 @@ These three callbacks above are demonstrated in the example below. Note the foll
 
 ### Processing Data from Clipboard
 
-To have complete control of processing clipboard data, you can use:
+To have complete control of processing clipboard data when pasting, you can use the callback below:
 
 <api-documentation source='grid-options/properties.json' section='clipboard' names='["processDataFromClipboard"]'  ></api-documentation>
 
-The following example shows custom code to process the data from the clipboard where:
+The following example shows custom code to process the data from the clipboard:
 
-* Pasting any cell that starts with `Red` will paste a 4x4 grid with the top row being `['Orange', 'Orange']` and the bottom row being `['Grey', 'Grey']`
-* If there aren't any cells that start with `Red` and there is a cell that starts with `Yellow`, it will cancel the paste action and not paste anything
-* Otherwise, it will paste the data as is
 * The cells are coloured based on the colour that the cell content starts with
+* Copy a cell range in the grid which includes a cell value that starts with `Red`. Pasting into the grid will paste a 4x4 cell grid with top row values `['Orange', 'Orange']` and bottom row values `['Grey', 'Grey']`
+* Copy a cell range in the grid which includes a cell value that starts with `Yellow` and no `Red` cell values. Pasting this copied cell range will cancel the paste action and not paste anything.
+* Any other copied cell data will be pasted as-is
 
 <grid-example title='Example Process Data' name='process-all' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
