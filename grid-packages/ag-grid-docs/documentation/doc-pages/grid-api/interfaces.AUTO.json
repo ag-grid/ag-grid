@@ -5494,6 +5494,7 @@
       "defaultJoinOperator?": "JoinOperator",
       "suppressAndOrCondition?": "boolean",
       "alwaysShowBothConditions?": "boolean",
+      "filterPlaceholder?": "FilterPlaceholderFunction | string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
       "debounceMs?": "number",
@@ -5525,6 +5526,7 @@
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "filterPlaceholder?": "/** Placeholder text for the filter textbox */",
       "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
       "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
@@ -5578,6 +5580,7 @@
       "defaultJoinOperator?": "JoinOperator",
       "suppressAndOrCondition?": "boolean",
       "alwaysShowBothConditions?": "boolean",
+      "filterPlaceholder?": "FilterPlaceholderFunction | string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
       "debounceMs?": "number",
@@ -5606,6 +5609,7 @@
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "filterPlaceholder?": "/** Placeholder text for the filter textbox */",
       "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
       "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
@@ -5703,6 +5707,7 @@
       "defaultJoinOperator?": "JoinOperator",
       "suppressAndOrCondition?": "boolean",
       "alwaysShowBothConditions?": "boolean",
+      "filterPlaceholder?": "FilterPlaceholderFunction | string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
       "debounceMs?": "number",
@@ -5729,6 +5734,7 @@
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "filterPlaceholder?": "/** Placeholder text for the filter textbox */",
       "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
       "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
@@ -5784,6 +5790,23 @@
       "onFloatingFilterChanged(type: string | null, value: any)": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */"
     }
   },
+  "IFilterPlaceholderFunctionParams": {
+    "meta": {},
+    "type": {
+      "filterOptionKey": "ISimpleFilterModelType",
+      "filterOption": "string",
+      "placeholder": "string"
+    },
+    "docs": {
+      "filterOptionKey": "/** The filter option key */",
+      "filterOption": "/** The filter option name as localised text */",
+      "placeholder": "/** The default placeholder text */"
+    }
+  },
+  "FilterPlaceholderFunction": {
+    "meta": { "isTypeAlias": true },
+    "type": "(params: IFilterPlaceholderFunctionParams) => string"
+  },
   "ISimpleFilterParams": {
     "meta": {},
     "type": {
@@ -5792,6 +5815,7 @@
       "defaultJoinOperator?": "JoinOperator",
       "suppressAndOrCondition?": "boolean",
       "alwaysShowBothConditions?": "boolean",
+      "filterPlaceholder?": "FilterPlaceholderFunction | string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
       "debounceMs?": "number",
@@ -5813,6 +5837,7 @@
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "filterPlaceholder?": "/** Placeholder text for the filter textbox */",
       "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
       "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
@@ -5925,6 +5950,7 @@
       "defaultJoinOperator?": "JoinOperator",
       "suppressAndOrCondition?": "boolean",
       "alwaysShowBothConditions?": "boolean",
+      "filterPlaceholder?": "FilterPlaceholderFunction | string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
       "debounceMs?": "number",
@@ -5950,6 +5976,7 @@
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "filterPlaceholder?": "/** Placeholder text for the filter textbox */",
       "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
       "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",

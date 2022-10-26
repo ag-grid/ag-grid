@@ -14,12 +14,29 @@ import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { ListOption } from '../../widgets/agList';
 import { IFloatingFilterParent } from '../floating/floatingFilter';
+import { isFunction } from '../../utils/function';
 
 export type JoinOperator = 'AND' | 'OR';
 
 /** Interface contract for the public aspects of the SimpleFilter implementation(s). */
 export interface ISimpleFilter extends IProvidedFilter, IFloatingFilterParent {
 }
+
+export interface IFilterPlaceholderFunctionParams {
+    /**
+     * The filter option key
+     */
+    filterOptionKey: ISimpleFilterModelType,
+    /**
+     * The filter option name as localised text
+     */
+    filterOption: string,
+    /**
+     * The default placeholder text
+     */
+    placeholder: string
+}
+export type FilterPlaceholderFunction = (params: IFilterPlaceholderFunctionParams) => string;
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     /**
@@ -46,6 +63,11 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
      * Default: `false`
      */
     alwaysShowBothConditions?: boolean;
+
+    /**
+     * Placeholder text for the filter textbox
+     */
+    filterPlaceholder?: FilterPlaceholderFunction | string;
 }
 
 export type ISimpleFilterModelType =
@@ -113,6 +135,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     private allowTwoConditions: boolean;
     private alwaysShowBothConditions: boolean;
     private defaultJoinOperator: JoinOperator | undefined;
+    private filterPlaceholder: ISimpleFilterParams['filterPlaceholder'];
 
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
@@ -298,6 +321,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         this.allowTwoConditions = !params.suppressAndOrCondition;
         this.alwaysShowBothConditions = !!params.alwaysShowBothConditions;
         this.defaultJoinOperator = this.getDefaultJoinOperator(params.defaultJoinOperator);
+        this.filterPlaceholder = params.filterPlaceholder;
 
         this.putOptionsIntoDropdown();
         this.addChangedListeners();
@@ -408,11 +432,29 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         }
     }
 
+    private getPlaceholderText(defaultPlaceholder: keyof IFilterLocaleText, position: number): string {
+        let placeholder = this.translate(defaultPlaceholder);
+        if (isFunction(this.filterPlaceholder)) {
+            const filterPlaceholderFn = this.filterPlaceholder as FilterPlaceholderFunction;
+            const filterOptionKey = (position === 0 ? this.eType1.getValue() : this.eType2.getValue()) as ISimpleFilterModelType;
+            const filterOption = this.translate(filterOptionKey);
+            placeholder = filterPlaceholderFn({
+                filterOptionKey,
+                filterOption,
+                placeholder
+            });
+        } else if (typeof this.filterPlaceholder === 'string') {
+            placeholder = this.filterPlaceholder;
+        }
+
+        return placeholder;
+    }
+
     // allow sub-classes to reset HTML placeholders after UI update.
     protected resetPlaceholder(): void {
         const globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        this.forEachInput((element, index, _, numberOfInputs) => {
+        this.forEachInput((element, index, position, numberOfInputs) => {
             if (!(element instanceof AgAbstractInputField)) {
                 return;
             }
@@ -426,7 +468,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 index === 0 ? globalTranslate('ariaFilterValue', 'Filter Value') :
                 globalTranslate('ariaFilterToValue', 'Filter to Value');
 
-            element.setInputPlaceholder(this.translate(placeholder));
+            element.setInputPlaceholder(this.getPlaceholderText(placeholder, position));
             element.setInputAriaLabel(ariaLabel);
         });
     }
