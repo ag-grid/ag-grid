@@ -17,12 +17,12 @@ import { LegendDatum } from '../../legend';
 import { CartesianSeries } from './cartesianSeries';
 import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from '../../chartAxis';
 import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
-import { findMinMax } from '../../../util/array';
+import { extent, findMinMax } from '../../../util/array';
 import { equal } from '../../../util/equal';
 import { TypedEvent } from '../../../util/observable';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { checkDatum, isNumber } from '../../../util/value';
+import { checkDatum, isContinuous, isNumber } from '../../../util/value';
 import { clamper, ContinuousScale } from '../../../scale/continuousScale';
 import { Point } from '../../../scene/point';
 import {
@@ -138,7 +138,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     static className = 'BarSeries';
     static type = 'bar' as const;
 
-    private xData: string[] = [];
+    private xData: any[] = [];
     private yData: number[][][] = [];
     private yDomain: number[] = [];
 
@@ -479,6 +479,13 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             direction = flipChartAxisDirection(direction);
         }
         if (direction === ChartAxisDirection.X) {
+            if (this.getCategoryAxis()?.scale instanceof ContinuousScale) {
+                // The last node will be clipped if the scale is not a band scale
+                // Extend the domain by the smallest data interval so that the last band is not clipped
+                const xDomain = extent(this.xData, isContinuous, Number) || [NaN, NaN];
+                xDomain[1] = xDomain[1] + (this.smallestDataInterval?.x ?? 0);
+                return xDomain;
+            }
             return this.xData;
         } else {
             return this.yDomain;
@@ -571,10 +578,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             const step = this.calculateStep(availableRange);
 
             xBandWidth = step;
-
-            // last node will be clipped if the scale is not a band scale
-            // subtract last band width from the range so that the last band is not clipped
-            xScale.range = this.flipXY ? [availableRange - (step ?? 0), 0] : [0, availableRange - (step ?? 0)];
         }
 
         groupScale.range = [0, xBandWidth!];
