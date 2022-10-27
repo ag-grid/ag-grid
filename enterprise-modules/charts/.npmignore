@@ -1,5 +1,6 @@
 node_modules
 src
+test
 .npmignore
 gulpfile.js
 jest.config.js

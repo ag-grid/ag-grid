@@ -1,0 +1,2486 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`chartModelMigration upgradeChartModel should upgrade 24.0.0 successfully 1`] = `
+Object {
+  "cellRange": Object {
+    "columns": Array [
+      "country",
+      "sugar",
+      "fat",
+      "weight",
+    ],
+    "rowEndIndex": 6,
+    "rowStartIndex": 0,
+  },
+  "chartId": "id-aozr6zz1t1r",
+  "chartOptions": Object {
+    "column": Object {
+      "autoSize": true,
+      "axes": Object {
+        "category": Object {
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "position": "bottom",
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+        },
+        "number": Object {
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "position": "left",
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+        },
+      },
+      "background": Object {
+        "fill": "white",
+        "visible": true,
+      },
+      "container": Object {},
+      "legend": Object {
+        "enabled": true,
+        "item": Object {
+          "label": Object {
+            "color": "black",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+          },
+          "marker": Object {
+            "padding": 8,
+            "size": 15,
+            "strokeWidth": 1,
+          },
+          "paddingX": 16,
+          "paddingY": 8,
+        },
+        "position": "right",
+        "spacing": 20,
+      },
+      "navigator": Object {
+        "enabled": false,
+        "height": 30,
+        "mask": Object {
+          "fill": "#999999",
+          "fillOpacity": 0.2,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+        },
+        "max": 1,
+        "maxHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+        "min": 0,
+        "minHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+      },
+      "padding": Object {
+        "bottom": 20,
+        "left": 20,
+        "right": 20,
+        "top": 20,
+      },
+      "series": Object {
+        "fill": Object {
+          "colors": Array [
+            "#f3622d",
+            "#fba71b",
+            "#57b757",
+            "#41a9c9",
+            "#4258c9",
+            "#9a42c8",
+            "#c84164",
+            "#888888",
+          ],
+          "opacity": 1,
+        },
+        "highlightStyle": Object {
+          "fill": "yellow",
+        },
+        "label": Object {
+          "color": "rgb(70, 70, 70)",
+          "enabled": false,
+          "fontFamily": "Verdana, sans-serif",
+          "fontSize": 12,
+        },
+        "shadow": Object {
+          "blur": 5,
+          "color": "rgba(0, 0, 0, 0.5)",
+          "enabled": false,
+          "xOffset": 3,
+          "yOffset": 3,
+        },
+        "stroke": Object {
+          "colors": Array [
+            "#aa4520",
+            "#b07513",
+            "#3d803d",
+            "#2d768d",
+            "#2e3e8d",
+            "#6c2e8c",
+            "#8c2d46",
+            "#5f5f5f",
+          ],
+          "opacity": 1,
+          "width": 1,
+        },
+        "tooltip": Object {
+          "enabled": true,
+        },
+      },
+      "subtitle": Object {
+        "color": "rgb(140, 140, 140)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "padding": Object {
+          "bottom": 10,
+          "left": 10,
+          "right": 10,
+          "top": 10,
+        },
+        "text": "Subtitle",
+      },
+      "title": Object {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "padding": Object {
+          "bottom": 10,
+          "left": 10,
+          "right": 10,
+          "top": 10,
+        },
+        "text": "Title",
+      },
+    },
+  },
+  "chartThemeName": "ag-default",
+  "chartType": "groupedColumn",
+  "version": "28.2.0",
+}
+`;
+
+exports[`chartModelMigration upgradeChartModel should upgrade 25.0.0 successfully 1`] = `
+Object {
+  "cellRange": Object {
+    "columns": Array [
+      "country",
+      "sugar",
+      "fat",
+      "weight",
+    ],
+    "rowEndIndex": 6,
+    "rowStartIndex": 0,
+  },
+  "chartId": "id-vqj6ysu3ded",
+  "chartOptions": Object {
+    "column": Object {
+      "autoSize": true,
+      "axes": Object {
+        "category": Object {
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "position": "bottom",
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+        },
+        "number": Object {
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "position": "left",
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+        },
+      },
+      "background": Object {
+        "fill": "white",
+        "visible": true,
+      },
+      "container": Object {},
+      "legend": Object {
+        "enabled": true,
+        "item": Object {
+          "label": Object {
+            "color": "black",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+          },
+          "marker": Object {
+            "padding": 8,
+            "size": 15,
+            "strokeWidth": 1,
+          },
+          "paddingX": 16,
+          "paddingY": 8,
+        },
+        "position": "right",
+        "spacing": 20,
+      },
+      "navigator": Object {
+        "enabled": false,
+        "height": 30,
+        "mask": Object {
+          "fill": "#999999",
+          "fillOpacity": 0.2,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+        },
+        "max": 1,
+        "maxHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+        "min": 0,
+        "minHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+      },
+      "padding": Object {
+        "bottom": 20,
+        "left": 20,
+        "right": 20,
+        "top": 20,
+      },
+      "series": Object {
+        "fill": Object {
+          "colors": Array [
+            "#f3622d",
+            "#fba71b",
+            "#57b757",
+            "#41a9c9",
+            "#4258c9",
+            "#9a42c8",
+            "#c84164",
+            "#888888",
+          ],
+          "opacity": 1,
+        },
+        "highlightStyle": Object {
+          "fill": "yellow",
+        },
+        "label": Object {
+          "color": "rgb(70, 70, 70)",
+          "enabled": false,
+          "fontFamily": "Verdana, sans-serif",
+          "fontSize": 12,
+        },
+        "lineDash": Array [
+          0,
+        ],
+        "lineDashOffset": 0,
+        "shadow": Object {
+          "blur": 5,
+          "color": "rgba(0, 0, 0, 0.5)",
+          "enabled": false,
+          "xOffset": 3,
+          "yOffset": 3,
+        },
+        "stroke": Object {
+          "colors": Array [
+            "#aa4520",
+            "#b07513",
+            "#3d803d",
+            "#2d768d",
+            "#2e3e8d",
+            "#6c2e8c",
+            "#8c2d46",
+            "#5f5f5f",
+          ],
+          "opacity": 1,
+          "width": 1,
+        },
+        "tooltip": Object {
+          "enabled": true,
+        },
+      },
+      "subtitle": Object {
+        "color": "rgb(140, 140, 140)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "padding": Object {
+          "bottom": 10,
+          "left": 10,
+          "right": 10,
+          "top": 10,
+        },
+        "text": "Subtitle",
+      },
+      "title": Object {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "padding": Object {
+          "bottom": 10,
+          "left": 10,
+          "right": 10,
+          "top": 10,
+        },
+        "text": "Title",
+      },
+      "tooltip": Object {
+        "class": "ag-chart-tooltip",
+        "delay": 0,
+        "enabled": true,
+        "tracking": true,
+      },
+    },
+  },
+  "chartThemeName": "ag-default",
+  "chartType": "groupedColumn",
+  "modelType": "range",
+  "suppressChartRanges": false,
+  "unlinkChart": false,
+  "version": "28.2.0",
+}
+`;
+
+exports[`chartModelMigration upgradeChartModel should upgrade 25.2.0 successfully 1`] = `
+Object {
+  "cellRange": Object {
+    "columns": Array [
+      "country",
+      "sugar",
+      "fat",
+      "weight",
+    ],
+    "rowEndIndex": 1000,
+    "rowEndPinned": null,
+    "rowStartIndex": 0,
+    "rowStartPinned": null,
+  },
+  "chartId": "id-0apvr5tp12kl",
+  "chartOptions": Object {
+    "line": Object {
+      "autoSize": true,
+      "axes": Object {
+        "groupedCategory": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+            "padding": 5,
+            "rotation": 0,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "position": "bottom",
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontStyle": "normal",
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "number": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+            "padding": 5,
+            "rotation": 0,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "position": "left",
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontStyle": "normal",
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+      },
+      "background": Object {
+        "fill": "white",
+        "visible": true,
+      },
+      "legend": Object {
+        "enabled": true,
+        "item": Object {
+          "label": Object {
+            "color": "black",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+          },
+          "marker": Object {
+            "padding": 8,
+            "size": 15,
+            "strokeWidth": 1,
+          },
+          "paddingX": 16,
+          "paddingY": 8,
+        },
+        "position": "bottom",
+        "spacing": 20,
+      },
+      "listeners": Object {},
+      "navigator": Object {
+        "enabled": false,
+        "height": 30,
+        "mask": Object {
+          "fill": "#999999",
+          "fillOpacity": 0.2,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+        },
+        "max": 1,
+        "maxHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+        "min": 0,
+        "minHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+      },
+      "padding": Object {
+        "bottom": 20,
+        "left": 20,
+        "right": 20,
+        "top": 20,
+      },
+      "series": Object {
+        "fill": Object {
+          "colors": Array [],
+          "opacity": 1,
+        },
+        "highlightStyle": Object {
+          "fill": "yellow",
+        },
+        "lineDash": Array [
+          0,
+        ],
+        "lineDashOffset": 0,
+        "marker": Object {
+          "enabled": true,
+          "shape": "circle",
+          "size": 6,
+          "strokeWidth": 1,
+        },
+        "stroke": Object {
+          "colors": Array [
+            "#aa4520",
+            "#b07513",
+            "#3d803d",
+            "#2d768d",
+            "#2e3e8d",
+            "#6c2e8c",
+            "#8c2d46",
+            "#5f5f5f",
+          ],
+          "opacity": 1,
+          "width": 2,
+        },
+        "tooltip": Object {
+          "enabled": true,
+        },
+      },
+      "subtitle": Object {
+        "color": "rgb(140, 140, 140)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "padding": Object {
+          "bottom": 10,
+          "left": 10,
+          "right": 10,
+          "top": 10,
+        },
+        "text": "Subtitle",
+      },
+      "title": Object {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "padding": Object {
+          "bottom": 10,
+          "left": 10,
+          "right": 10,
+          "top": 10,
+        },
+        "text": "Title",
+      },
+      "tooltip": Object {
+        "class": "ag-chart-tooltip",
+        "delay": 0,
+        "enabled": true,
+        "tracking": true,
+      },
+      "type": "groupedCategory",
+    },
+  },
+  "chartThemeName": "ag-default",
+  "chartType": "line",
+  "modelType": "line",
+  "suppressChartRanges": true,
+  "unlinkChart": false,
+  "version": "28.2.0",
+}
+`;
+
+exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0 successfully 1`] = `
+Object {
+  "cellRange": Object {
+    "columns": Array [
+      "country",
+      "sugar",
+      "fat",
+      "weight",
+    ],
+    "rowEndIndex": 5,
+    "rowStartIndex": 0,
+  },
+  "chartId": "id-703dtchjq3t",
+  "chartOptions": Object {
+    "column": Object {
+      "autoSize": true,
+      "axes": Object {
+        "category": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 335,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "position": "bottom",
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "number": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "position": "left",
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+      },
+      "background": Object {
+        "fill": "white",
+        "visible": true,
+      },
+      "container": Object {},
+      "legend": Object {
+        "enabled": true,
+        "item": Object {
+          "label": Object {
+            "color": "black",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+          },
+          "marker": Object {
+            "padding": 8,
+            "size": 15,
+            "strokeWidth": 1,
+          },
+          "paddingX": 16,
+          "paddingY": 8,
+        },
+        "position": "right",
+        "spacing": 20,
+      },
+      "navigator": Object {
+        "enabled": false,
+        "height": 30,
+        "mask": Object {
+          "fill": "#999999",
+          "fillOpacity": 0.2,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+        },
+        "max": 1,
+        "maxHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+        "min": 0,
+        "minHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+      },
+      "padding": Object {
+        "bottom": 20,
+        "left": 20,
+        "right": 20,
+        "top": 20,
+      },
+      "series": Object {
+        "fill": Object {
+          "colors": Array [
+            "#f3622d",
+            "#fba71b",
+            "#57b757",
+            "#41a9c9",
+            "#4258c9",
+            "#9a42c8",
+            "#c84164",
+            "#888888",
+          ],
+          "opacity": 1,
+        },
+        "highlightStyle": Object {
+          "fill": "yellow",
+          "series": Object {
+            "dimOpacity": 0.3,
+            "enabled": false,
+          },
+        },
+        "label": Object {
+          "color": "rgb(70, 70, 70)",
+          "enabled": false,
+          "fontFamily": "Verdana, sans-serif",
+          "fontSize": 12,
+          "placement": "inside",
+        },
+        "lineDash": Array [
+          0,
+        ],
+        "lineDashOffset": 0,
+        "shadow": Object {
+          "blur": 5,
+          "color": "rgba(0, 0, 0, 0.5)",
+          "enabled": false,
+          "xOffset": 3,
+          "yOffset": 3,
+        },
+        "stroke": Object {
+          "colors": Array [
+            "#aa4520",
+            "#b07513",
+            "#3d803d",
+            "#2d768d",
+            "#2e3e8d",
+            "#6c2e8c",
+            "#8c2d46",
+            "#5f5f5f",
+          ],
+          "opacity": 1,
+          "width": 1,
+        },
+        "tooltip": Object {
+          "enabled": true,
+        },
+      },
+      "subtitle": Object {
+        "color": "rgb(140, 140, 140)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "padding": Object {
+          "bottom": 10,
+          "left": 10,
+          "right": 10,
+          "top": 10,
+        },
+        "text": "Subtitle",
+      },
+      "title": Object {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "padding": Object {
+          "bottom": 10,
+          "left": 10,
+          "right": 10,
+          "top": 10,
+        },
+        "text": "Title",
+      },
+      "tooltip": Object {
+        "class": "ag-chart-tooltip",
+        "delay": 0,
+        "enabled": true,
+        "tracking": true,
+      },
+    },
+  },
+  "chartThemeName": "ag-default",
+  "chartType": "groupedColumn",
+  "modelType": "range",
+  "suppressChartRanges": false,
+  "unlinkChart": false,
+  "version": "28.2.0",
+}
+`;
+
+exports[`chartModelMigration upgradeChartModel should upgrade 26.1.0 successfully 1`] = `
+Object {
+  "cellRange": Object {
+    "columns": Array [
+      "country",
+      "sugar",
+      "fat",
+      "weight",
+    ],
+    "rowEndIndex": 11,
+    "rowStartIndex": 0,
+  },
+  "chartId": "id-l1f4fm2rj1h",
+  "chartOptions": Object {
+    "column": Object {
+      "autoSize": true,
+      "axes": Object {
+        "category": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 335,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "position": "bottom",
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "number": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "position": "left",
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+      },
+      "background": Object {
+        "fill": "white",
+        "visible": true,
+      },
+      "container": Object {},
+      "legend": Object {
+        "enabled": true,
+        "item": Object {
+          "label": Object {
+            "color": "black",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+          },
+          "marker": Object {
+            "padding": 8,
+            "size": 15,
+            "strokeWidth": 1,
+          },
+          "paddingX": 16,
+          "paddingY": 8,
+        },
+        "position": "right",
+        "spacing": 20,
+      },
+      "navigator": Object {
+        "enabled": false,
+        "height": 30,
+        "mask": Object {
+          "fill": "#999999",
+          "fillOpacity": 0.2,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+        },
+        "max": 1,
+        "maxHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+        "min": 0,
+        "minHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+      },
+      "padding": Object {
+        "bottom": 20,
+        "left": 20,
+        "right": 20,
+        "top": 20,
+      },
+      "series": Object {
+        "fill": Object {
+          "colors": Array [
+            "#f3622d",
+            "#fba71b",
+            "#57b757",
+            "#41a9c9",
+            "#4258c9",
+            "#9a42c8",
+            "#c84164",
+            "#888888",
+          ],
+          "opacity": 1,
+        },
+        "highlightStyle": Object {
+          "item": Object {
+            "fill": "yellow",
+          },
+          "series": Object {
+            "dimOpacity": 1,
+          },
+        },
+        "label": Object {
+          "color": "rgb(70, 70, 70)",
+          "enabled": false,
+          "fontFamily": "Verdana, sans-serif",
+          "fontSize": 12,
+          "placement": "inside",
+        },
+        "lineDash": Array [
+          0,
+        ],
+        "lineDashOffset": 0,
+        "shadow": Object {
+          "blur": 5,
+          "color": "rgba(0, 0, 0, 0.5)",
+          "enabled": false,
+          "xOffset": 3,
+          "yOffset": 3,
+        },
+        "stroke": Object {
+          "colors": Array [
+            "#aa4520",
+            "#b07513",
+            "#3d803d",
+            "#2d768d",
+            "#2e3e8d",
+            "#6c2e8c",
+            "#8c2d46",
+            "#5f5f5f",
+          ],
+          "opacity": 1,
+          "width": 1,
+        },
+        "tooltip": Object {
+          "enabled": true,
+        },
+      },
+      "subtitle": Object {
+        "color": "rgb(140, 140, 140)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "padding": Object {
+          "bottom": 10,
+          "left": 10,
+          "right": 10,
+          "top": 10,
+        },
+        "text": "Subtitle",
+      },
+      "title": Object {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "padding": Object {
+          "bottom": 10,
+          "left": 10,
+          "right": 10,
+          "top": 10,
+        },
+        "text": "Title",
+      },
+      "tooltip": Object {
+        "class": "ag-chart-tooltip",
+        "delay": 0,
+        "enabled": true,
+        "tracking": true,
+      },
+    },
+  },
+  "chartThemeName": "ag-default",
+  "chartType": "groupedColumn",
+  "modelType": "range",
+  "suppressChartRanges": false,
+  "unlinkChart": false,
+  "version": "28.2.0",
+}
+`;
+
+exports[`chartModelMigration upgradeChartModel should upgrade 26.2.0 successfully 1`] = `
+Object {
+  "cellRange": Object {
+    "columns": Array [
+      "country",
+      "sugar",
+      "fat",
+      "weight",
+    ],
+    "rowEndIndex": 7,
+    "rowStartIndex": 0,
+  },
+  "chartId": "id-l0fdjgo876e",
+  "chartOptions": Object {
+    "area": Object {
+      "autoSize": true,
+      "axes": Object {
+        "category": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "groupedCategory": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "log": Object {
+          "base": 10,
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "number": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "time": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+      },
+      "background": Object {
+        "fill": "white",
+        "visible": true,
+      },
+      "height": 300,
+      "legend": Object {
+        "enabled": true,
+        "item": Object {
+          "label": Object {
+            "color": "black",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+          },
+          "marker": Object {
+            "padding": 8,
+            "size": 15,
+            "strokeWidth": 1,
+          },
+          "paddingX": 16,
+          "paddingY": 8,
+        },
+        "position": "right",
+        "spacing": 20,
+      },
+      "navigator": Object {
+        "enabled": false,
+        "height": 30,
+        "mask": Object {
+          "fill": "#999999",
+          "fillOpacity": 0.2,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+        },
+        "max": 1,
+        "maxHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+        "min": 0,
+        "minHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+      },
+      "padding": Object {
+        "bottom": 20,
+        "left": 20,
+        "right": 20,
+        "top": 20,
+      },
+      "series": Object {
+        "cursor": "default",
+        "fillOpacity": 0.8,
+        "highlightStyle": Object {
+          "item": Object {
+            "fill": "yellow",
+          },
+          "series": Object {
+            "dimOpacity": 1,
+          },
+        },
+        "label": Object {
+          "color": "rgb(70, 70, 70)",
+          "enabled": false,
+          "fontFamily": "Verdana, sans-serif",
+          "fontSize": 12,
+        },
+        "lineDash": Array [
+          0,
+        ],
+        "lineDashOffset": 0,
+        "marker": Object {
+          "enabled": false,
+          "maxSize": 30,
+          "shape": "circle",
+          "size": 6,
+          "strokeWidth": 1,
+        },
+        "shadow": Object {
+          "blur": 5,
+          "color": "rgba(0, 0, 0, 0.5)",
+          "enabled": false,
+          "xOffset": 3,
+          "yOffset": 3,
+        },
+        "showInLegend": true,
+        "strokeOpacity": 1,
+        "strokeWidth": 2,
+        "tooltip": Object {
+          "enabled": true,
+        },
+        "visible": true,
+        "xKey": "",
+        "xName": "",
+        "yKeys": Array [],
+        "yNames": Array [],
+      },
+      "subtitle": Object {
+        "color": "rgb(140, 140, 140)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "padding": Object {
+          "bottom": 10,
+          "left": 10,
+          "right": 10,
+          "top": 10,
+        },
+        "text": "Subtitle",
+      },
+      "title": Object {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "padding": Object {
+          "bottom": 10,
+          "left": 10,
+          "right": 10,
+          "top": 10,
+        },
+        "text": "Title",
+      },
+      "tooltip": Object {
+        "class": "ag-chart-tooltip",
+        "delay": 0,
+        "enabled": true,
+        "tracking": true,
+      },
+      "width": 600,
+    },
+  },
+  "chartThemeName": "ag-default",
+  "chartType": "normalizedArea",
+  "modelType": "range",
+  "suppressChartRanges": false,
+  "unlinkChart": false,
+  "version": "28.2.0",
+}
+`;
+
+exports[`chartModelMigration upgradeChartModel should upgrade 27.0.0 successfully 1`] = `
+Object {
+  "cellRange": Object {
+    "columns": Array [
+      "country",
+      "sugar",
+      "fat",
+      "weight",
+    ],
+    "rowEndIndex": 6,
+    "rowStartIndex": 0,
+  },
+  "chartId": "id-euq7obqgu8i",
+  "chartOptions": Object {
+    "column": Object {
+      "autoSize": true,
+      "axes": Object {
+        "category": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "groupedCategory": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "log": Object {
+          "base": 10,
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "number": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "time": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "padding": Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 10,
+              "top": 10,
+            },
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+      },
+      "background": Object {
+        "fill": "white",
+        "visible": true,
+      },
+      "height": 300,
+      "legend": Object {
+        "enabled": true,
+        "item": Object {
+          "label": Object {
+            "color": "black",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+          },
+          "marker": Object {
+            "padding": 8,
+            "size": 15,
+            "strokeWidth": 1,
+          },
+          "paddingX": 16,
+          "paddingY": 8,
+        },
+        "position": "right",
+        "spacing": 20,
+      },
+      "navigator": Object {
+        "enabled": false,
+        "height": 30,
+        "mask": Object {
+          "fill": "#999999",
+          "fillOpacity": 0.2,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+        },
+        "maxHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+        "minHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+      },
+      "padding": Object {
+        "bottom": 20,
+        "left": 20,
+        "right": 20,
+        "top": 20,
+      },
+      "series": Object {
+        "cursor": "default",
+        "fillOpacity": 1,
+        "flipXY": false,
+        "grouped": false,
+        "highlightStyle": Object {
+          "item": Object {
+            "fill": "yellow",
+          },
+          "series": Object {
+            "dimOpacity": 1,
+          },
+        },
+        "label": Object {
+          "color": "rgb(70, 70, 70)",
+          "enabled": false,
+          "fontFamily": "Verdana, sans-serif",
+          "fontSize": 12,
+          "placement": "inside",
+        },
+        "lineDash": Array [
+          0,
+        ],
+        "lineDashOffset": 0,
+        "shadow": Object {
+          "blur": 5,
+          "color": "rgba(0, 0, 0, 0.5)",
+          "enabled": false,
+          "xOffset": 3,
+          "yOffset": 3,
+        },
+        "showInLegend": true,
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+        "tooltip": Object {
+          "enabled": true,
+        },
+        "visible": true,
+        "xKey": "",
+        "xName": "",
+        "yKeys": Array [],
+        "yNames": Array [],
+      },
+      "subtitle": Object {
+        "color": "rgb(140, 140, 140)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "padding": Object {
+          "bottom": 10,
+          "left": 10,
+          "right": 10,
+          "top": 10,
+        },
+        "text": "Subtitle",
+      },
+      "title": Object {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "padding": Object {
+          "bottom": 10,
+          "left": 10,
+          "right": 10,
+          "top": 10,
+        },
+        "text": "Title",
+      },
+      "tooltip": Object {
+        "class": "ag-chart-tooltip",
+        "delay": 0,
+        "enabled": true,
+        "tracking": true,
+      },
+      "width": 600,
+    },
+  },
+  "chartThemeName": "ag-default",
+  "chartType": "groupedColumn",
+  "modelType": "range",
+  "suppressChartRanges": false,
+  "unlinkChart": false,
+  "version": "28.2.0",
+}
+`;
+
+exports[`chartModelMigration upgradeChartModel should upgrade 28.0.0 successfully 1`] = `
+Object {
+  "cellRange": Object {
+    "columns": Array [
+      "country",
+      "sugar",
+      "fat",
+      "weight",
+    ],
+    "rowEndIndex": 11,
+    "rowEndPinned": null,
+    "rowStartIndex": 0,
+    "rowStartPinned": null,
+  },
+  "chartId": "id-uhym1f2yxi",
+  "chartOptions": Object {
+    "column": Object {
+      "axes": Object {
+        "category": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "autoRotate": true,
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "groupedCategory": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "autoRotate": false,
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "log": Object {
+          "base": 10,
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "autoRotate": false,
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "number": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "autoRotate": false,
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "time": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "autoRotate": false,
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+      },
+      "background": Object {
+        "fill": "white",
+        "visible": true,
+      },
+      "legend": Object {
+        "enabled": true,
+        "item": Object {
+          "label": Object {
+            "color": "black",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+          },
+          "marker": Object {
+            "padding": 8,
+            "size": 15,
+            "strokeWidth": 1,
+          },
+          "paddingX": 16,
+          "paddingY": 8,
+        },
+        "position": "right",
+        "spacing": 20,
+      },
+      "navigator": Object {
+        "enabled": false,
+        "height": 30,
+        "mask": Object {
+          "fill": "#999999",
+          "fillOpacity": 0.2,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+        },
+        "maxHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+        "minHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+      },
+      "padding": Object {
+        "bottom": 20,
+        "left": 20,
+        "right": 20,
+        "top": 20,
+      },
+      "series": Object {
+        "cursor": "default",
+        "fillOpacity": 1,
+        "flipXY": false,
+        "grouped": false,
+        "highlightStyle": Object {
+          "item": Object {
+            "fill": "yellow",
+          },
+          "series": Object {
+            "dimOpacity": 1,
+          },
+        },
+        "label": Object {
+          "color": "rgb(70, 70, 70)",
+          "enabled": false,
+          "fontFamily": "Verdana, sans-serif",
+          "fontSize": 12,
+          "placement": "inside",
+        },
+        "lineDash": Array [
+          0,
+        ],
+        "lineDashOffset": 0,
+        "shadow": Object {
+          "blur": 5,
+          "color": "rgba(0, 0, 0, 0.5)",
+          "enabled": false,
+          "xOffset": 3,
+          "yOffset": 3,
+        },
+        "showInLegend": true,
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+        "tooltip": Object {
+          "enabled": true,
+        },
+        "visible": true,
+        "xKey": "",
+        "xName": "",
+      },
+      "subtitle": Object {
+        "color": "rgb(140, 140, 140)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "text": "Subtitle",
+      },
+      "title": Object {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "text": "Title",
+      },
+      "tooltip": Object {
+        "class": "ag-chart-tooltip",
+        "delay": 0,
+        "enabled": true,
+        "tracking": true,
+      },
+    },
+  },
+  "chartPalette": Object {
+    "fills": Array [
+      "#f3622d",
+      "#fba71b",
+      "#57b757",
+      "#41a9c9",
+      "#4258c9",
+      "#9a42c8",
+      "#c84164",
+      "#888888",
+    ],
+    "strokes": Array [
+      "#aa4520",
+      "#b07513",
+      "#3d803d",
+      "#2d768d",
+      "#2e3e8d",
+      "#6c2e8c",
+      "#8c2d46",
+      "#5f5f5f",
+    ],
+  },
+  "chartThemeName": "ag-default",
+  "chartType": "groupedColumn",
+  "modelType": "range",
+  "suppressChartRanges": false,
+  "unlinkChart": false,
+  "version": "28.2.0",
+}
+`;

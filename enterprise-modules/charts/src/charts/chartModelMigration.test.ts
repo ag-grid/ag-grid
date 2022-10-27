@@ -1,0 +1,54 @@
+import { describe, it, expect } from '@jest/globals';
+import * as fs from 'fs';
+import { upgradeChartModel, CURRENT_VERSION, heuristicVersionDetection } from './chartModelMigration';
+
+import { ChartModel } from '@ag-grid-community/core';
+
+function loadChartModel(name: string): ChartModel {
+    return JSON.parse(
+        fs.readFileSync(`${__dirname}/../../test/chart-model-examples/${name}-chart-model.json`).toString()
+    );
+}
+
+describe('chartModelMigration', () => {
+    const SNAPSHOT_CASES = {
+        // '22.1.0': { detectedVersion: '22.1.0' },
+        // '23.0.0': { detectedVersion: '23.0.0' },
+        '24.0.0': { detectedVersion: '24.0.0' },
+        '25.0.0': { detectedVersion: '25.0.0' },
+        '25.2.0': { detectedVersion: '25.0.0' }, // Client-supplied example.
+        '26.0.0': { detectedVersion: '26.0.0' },
+        '26.1.0': { detectedVersion: '26.1.0' },
+        '26.2.0': { detectedVersion: '26.2.0' },
+        '27.0.0': { detectedVersion: '26.2.0' },
+        '28.0.0': { detectedVersion: '28.0.0' },
+    };
+    const SNAPSHOT_NAMES = Object.keys(SNAPSHOT_CASES);
+
+    describe('upgradeChartModel', () => {
+        it.each(SNAPSHOT_NAMES)('should upgrade %s successfully', (name) => {
+            const chartModel = loadChartModel(name);
+
+            const upgradedChartModel = upgradeChartModel(chartModel);
+            expect(upgradedChartModel).toMatchSnapshot();
+        });
+
+        it.each(SNAPSHOT_NAMES)(`should upgrade %s to ${CURRENT_VERSION}`, (name) => {
+            const chartModel = loadChartModel(name);
+
+            const upgradedChartModel = upgradeChartModel(chartModel);
+            expect(upgradedChartModel.version).toEqual(CURRENT_VERSION);
+        });
+    });
+
+    describe('heuristicVersionDetection', () => {
+        it.each(SNAPSHOT_NAMES)(`should detect best approximate version for %s ChartModel`, (name) => {
+            const { detectedVersion } = SNAPSHOT_CASES[name] ?? {};
+            const chartModel = loadChartModel(name);
+
+            const version = heuristicVersionDetection(chartModel);
+            expect(version).toBeDefined();
+            expect(version).toEqual(detectedVersion);
+        });
+    });
+});
