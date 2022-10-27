@@ -980,10 +980,7 @@
     },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgPieSeriesListeners<DatumType>",
-        "optional": true
-      }
+      "type": { "returnType": "AgSeriesListeners<DatumType>", "optional": true }
     },
     "id": {
       "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
@@ -2020,7 +2017,7 @@
       "type": { "returnType": "AgSeriesHighlightSeriesStyle", "optional": true }
     }
   },
-  "AgBaseSeriesNodeClickParams": {
+  "AgSeriesNodeClickParams": {
     "type": {
       "description": "/** Event type. */",
       "type": { "returnType": "'nodeClick'", "optional": false }
@@ -2037,20 +2034,54 @@
       "description": "/** Datum from the series data array. */",
       "type": { "returnType": "DatumType", "optional": false }
     },
+    "xKey": {
+      "description": "/** xKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** yKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sizeKey": {
+      "description": "/** sizeKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelKey": {
+      "description": "/** labelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "colorKey": {
+      "description": "/** colorKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "angleKey": {
+      "description": "/** angleKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "calloutLabelKey": {
+      "description": "/** calloutLabelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sectorLabelKey": {
+      "description": "/** sectorLabelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "radiusKey": {
+      "description": "/** radiusKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "meta": { "typeParams": ["DatumType"] }
   },
-  "AgBaseSeriesListeners": {
+  "AgSeriesListeners": {
     "nodeClick": {
       "description": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in the series is clicked. */",
       "type": {
-        "arguments": { "params": "EventParamsType" },
+        "arguments": { "params": "AgSeriesNodeClickParams<DatumType>" },
         "returnType": "void",
         "optional": false
       }
     },
-    "meta": {
-      "typeParams": ["EventParamsType extends AgBaseSeriesNodeClickParams<any>"]
-    }
+    "meta": { "typeParams": ["DatumType"] }
   },
   "AgBaseSeriesOptions": {
     "id": {
@@ -2075,16 +2106,13 @@
     },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgBaseSeriesListeners<AgBaseSeriesNodeClickParams<ListenerDatumType>>",
-        "optional": true
-      }
+      "type": { "returnType": "AgSeriesListeners<DatumType>", "optional": true }
     },
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
     },
-    "meta": { "typeParams": ["DatumType", "ListenerDatumType = DatumType"] }
+    "meta": { "typeParams": ["DatumType"] }
   },
   "AgTooltipRendererResult": {
     "title": {
@@ -2371,34 +2399,6 @@
       "type": { "returnType": "Opacity", "optional": true }
     }
   },
-  "AgCartesianSeriesNodeClickParams": {
-    "xKey": {
-      "description": "/** xKey as specified on series options. */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "yKey": {
-      "description": "/** yKey as specified on series options. */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "meta": { "typeParams": ["DatumType"] },
-    "type": {
-      "description": "/** Event type. */",
-      "type": { "returnType": "'nodeClick'", "optional": false }
-    },
-    "series": {
-      "description": "/** @deprecated Use seriesId to get the series ID.\n */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "seriesId": {
-      "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "datum": {
-      "description": "/** Datum from the series data array. */",
-      "type": { "returnType": "DatumType", "optional": false }
-    }
-  },
-  "AgCartesianSeriesListeners": { "meta": { "typeParams": ["DatumType"] } },
   "AgAreaSeriesMarker": {
     "meta": { "typeParams": ["DatumType"] },
     "formatter": {
@@ -2562,10 +2562,7 @@
     },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgCartesianSeriesListeners<DatumType>",
-        "optional": true
-      }
+      "type": { "returnType": "AgSeriesListeners<DatumType>", "optional": true }
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
@@ -2683,38 +2680,6 @@
       "type": { "returnType": "Opacity", "optional": true }
     }
   },
-  "AgScatterSeriesNodeClickParams": {
-    "sizeKey": {
-      "description": "/** sizeKey as specified on series options. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "meta": { "typeParams": ["DatumType"] },
-    "xKey": {
-      "description": "/** xKey as specified on series options. */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "yKey": {
-      "description": "/** yKey as specified on series options. */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "type": {
-      "description": "/** Event type. */",
-      "type": { "returnType": "'nodeClick'", "optional": false }
-    },
-    "series": {
-      "description": "/** @deprecated Use seriesId to get the series ID.\n */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "seriesId": {
-      "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "datum": {
-      "description": "/** Datum from the series data array. */",
-      "type": { "returnType": "DatumType", "optional": false }
-    }
-  },
-  "AgScatterSeriesListeners": { "meta": { "typeParams": ["DatumType"] } },
   "AgScatterSeriesOptions": {
     "type": {
       "description": "/** Configuration for the treemap series. */",
@@ -2793,10 +2758,7 @@
     },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgScatterSeriesListeners<DatumType>",
-        "optional": true
-      }
+      "type": { "returnType": "AgSeriesListeners<DatumType>", "optional": true }
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
@@ -2982,10 +2944,7 @@
     },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgBaseSeriesListeners<AgBaseSeriesNodeClickParams<ListenerDatumType>>",
-        "optional": true
-      }
+      "type": { "returnType": "AgSeriesListeners<DatumType>", "optional": true }
     },
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
@@ -3157,10 +3116,7 @@
     },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgCartesianSeriesListeners<DatumType>",
-        "optional": true
-      }
+      "type": { "returnType": "AgSeriesListeners<DatumType>", "optional": true }
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
@@ -3327,10 +3283,7 @@
     },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgCartesianSeriesListeners<DatumType>",
-        "optional": true
-      }
+      "type": { "returnType": "AgSeriesListeners<DatumType>", "optional": true }
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
@@ -3587,42 +3540,6 @@
       "type": { "returnType": "Opacity", "optional": true }
     }
   },
-  "AgPieSeriesNodeClickParams": {
-    "angleKey": {
-      "description": "/** angleKey as specified on series options. */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "calloutLabelKey": {
-      "description": "/** calloutLabelKey as specified on series options. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "sectorLabelKey": {
-      "description": "/** sectorLabelKey as specified on series options. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "radiusKey": {
-      "description": "/** radiusKey as specified on series options. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "meta": { "typeParams": ["DatumType"] },
-    "type": {
-      "description": "/** Event type. */",
-      "type": { "returnType": "'nodeClick'", "optional": false }
-    },
-    "series": {
-      "description": "/** @deprecated Use seriesId to get the series ID.\n */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "seriesId": {
-      "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "datum": {
-      "description": "/** Datum from the series data array. */",
-      "type": { "returnType": "DatumType", "optional": false }
-    }
-  },
-  "AgPieSeriesListeners": { "meta": { "typeParams": ["DatumType"] } },
   "AgPieSeriesOptions": {
     "type": { "type": { "returnType": "'pie'", "optional": true } },
     "title": {
@@ -3780,10 +3697,7 @@
     },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgPieSeriesListeners<DatumType>",
-        "optional": true
-      }
+      "type": { "returnType": "AgSeriesListeners<DatumType>", "optional": true }
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
@@ -4052,38 +3966,6 @@
       "type": { "returnType": "AgChartLabelOptions", "optional": true }
     }
   },
-  "AgTreemapSeriesNodeClickParams": {
-    "labelKey": {
-      "description": "/** labelKey as specified on series options. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "sizeKey": {
-      "description": "/** sizeKey as specified on series options. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "colorKey": {
-      "description": "/** colorKey as specified on series options. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "meta": { "typeParams": ["DatumType"] },
-    "type": {
-      "description": "/** Event type. */",
-      "type": { "returnType": "'nodeClick'", "optional": false }
-    },
-    "series": {
-      "description": "/** @deprecated Use seriesId to get the series ID.\n */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "seriesId": {
-      "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "datum": {
-      "description": "/** Datum from the series data array. */",
-      "type": { "returnType": "DatumType", "optional": false }
-    }
-  },
-  "AgTreemapSeriesListeners": { "meta": { "typeParams": ["DatumType"] } },
   "AgTreemapSeriesOptions": {
     "type": { "type": { "returnType": "'treemap'", "optional": true } },
     "title": {
@@ -4147,10 +4029,7 @@
     },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgTreemapSeriesListeners<DatumType>",
-        "optional": true
-      }
+      "type": { "returnType": "AgSeriesListeners<DatumType>", "optional": true }
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {

@@ -737,7 +737,7 @@ export interface AgSeriesHighlightStyle {
     series?: AgSeriesHighlightSeriesStyle;
 }
 
-export interface AgBaseSeriesNodeClickParams<DatumType> {
+export interface AgSeriesNodeClickParams<DatumType> {
     /** Event type. */
     type: 'nodeClick';
     /** @deprecated Use seriesId to get the series ID. */
@@ -746,14 +746,32 @@ export interface AgBaseSeriesNodeClickParams<DatumType> {
     seriesId: string;
     /** Datum from the series data array. */
     datum: DatumType;
+    /** xKey as specified on series options */
+    xKey?: string;
+    /** yKey as specified on series options */
+    yKey?: string;
+    /** sizeKey as specified on series options */
+    sizeKey?: string;
+    /** labelKey as specified on series options */
+    labelKey?: string;
+    /** colorKey as specified on series options */
+    colorKey?: string;
+    /** angleKey as specified on series options */
+    angleKey?: string;
+    /** calloutLabelKey as specified on series options */
+    calloutLabelKey?: string;
+    /** sectorLabelKey as specified on series options */
+    sectorLabelKey?: string;
+    /** radiusKey as specified on series options */
+    radiusKey?: string;
 }
 
-export interface AgBaseSeriesListeners<EventParamsType extends AgBaseSeriesNodeClickParams<any>> {
+export interface AgSeriesListeners<DatumType> {
     /** The listener to call when a node (marker, column, bar, tile or a pie sector) in the series is clicked. */
-    nodeClick: (params: EventParamsType) => void;
+    nodeClick: (params: AgSeriesNodeClickParams<DatumType>) => void;
 }
 
-export interface AgBaseSeriesOptions<DatumType, ListenerDatumType = DatumType> {
+export interface AgBaseSeriesOptions<DatumType> {
     /** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */
     id?: string;
     /** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */
@@ -765,7 +783,7 @@ export interface AgBaseSeriesOptions<DatumType, ListenerDatumType = DatumType> {
     /** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */
     cursor?: string;
     /** A map of event names to event listeners. */
-    listeners?: AgBaseSeriesListeners<AgBaseSeriesNodeClickParams<ListenerDatumType>>;
+    listeners?: AgSeriesListeners<DatumType>;
     /** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */
     highlightStyle?: AgSeriesHighlightStyle;
 }
@@ -884,15 +902,6 @@ export interface AgCartesianSeriesMarker<DatumType> extends AgSeriesMarker {
     formatter?: AgCartesianSeriesMarkerFormatter<DatumType>;
 }
 
-export interface AgCartesianSeriesNodeClickParams<DatumType> extends AgBaseSeriesNodeClickParams<DatumType> {
-    /** xKey as specified on series options. */
-    xKey: string;
-    /** yKey as specified on series options. */
-    yKey: string;
-}
-
-export type AgCartesianSeriesListeners<DatumType> = AgBaseSeriesListeners<AgCartesianSeriesNodeClickParams<DatumType>>;
-
 export interface AgAreaSeriesMarker<DatumType> extends AgCartesianSeriesMarker<DatumType> {}
 
 export interface AgSeriesTooltip {
@@ -940,7 +949,7 @@ export interface AgLineSeriesOptions<DatumType = any> extends AgBaseSeriesOption
     /** Series-specific tooltip configuration. */
     tooltip?: AgLineSeriesTooltip;
     /** A map of event names to event listeners. */
-    listeners?: AgCartesianSeriesListeners<DatumType>;
+    listeners?: AgSeriesListeners<DatumType>;
 }
 
 export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
@@ -954,13 +963,6 @@ export interface AgScatterSeriesMarker<DatumType> extends AgCartesianSeriesMarke
     /** If sizeKey is used, explicitly specifies the extent of the domain of it's values. */
     domain?: [number, number];
 }
-
-export interface AgScatterSeriesNodeClickParams<DatumType> extends AgCartesianSeriesNodeClickParams<DatumType> {
-    /** sizeKey as specified on series options. */
-    sizeKey?: string;
-}
-
-export type AgScatterSeriesListeners<DatumType> = AgBaseSeriesListeners<AgScatterSeriesNodeClickParams<DatumType>>;
 
 /** Configuration for scatter/bubble series. */
 export interface AgScatterSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
@@ -1001,7 +1003,7 @@ export interface AgScatterSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
     /** Series-specific tooltip configuration.  */
     tooltip?: AgScatterSeriesTooltip;
     /** A map of event names to event listeners. */
-    listeners?: AgScatterSeriesListeners<DatumType>;
+    listeners?: AgSeriesListeners<DatumType>;
 }
 
 export interface AgAreaSeriesTooltip extends AgSeriesTooltip {
@@ -1168,7 +1170,7 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     /** Function used to return formatting for individual bars/columns, based on the given parameters. If the current bar/column is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
     formatter?: (params: AgBarSeriesFormatterParams<DatumType>) => AgBarSeriesFormat;
     /** A map of event names to event listeners. */
-    listeners?: AgCartesianSeriesListeners<DatumType>;
+    listeners?: AgSeriesListeners<DatumType>;
 }
 
 export interface AgHistogramSeriesLabelOptions<DatumType> extends AgChartLabelOptions {
@@ -1228,7 +1230,7 @@ export interface AgHistogramSeriesOptions<DatumType = any> extends AgBaseSeriesO
     /** Series-specific tooltip configuration. */
     tooltip?: AgHistogramSeriesTooltip;
     /** A map of event names to event listeners. */
-    listeners?: AgCartesianSeriesListeners<DatumType>;
+    listeners?: AgSeriesListeners<DatumType>;
 }
 
 export interface AgPieSeriesLabelOptions<DatumType> extends AgChartLabelOptions {
@@ -1315,19 +1317,6 @@ export interface AgDoughnutInnerCircle {
     /** The opacity of the fill for the inner circle. */
     fillOpacity?: Opacity;
 }
-
-export interface AgPieSeriesNodeClickParams<DatumType> extends AgBaseSeriesNodeClickParams<DatumType> {
-    /** angleKey as specified on series options. */
-    angleKey: string;
-    /** calloutLabelKey as specified on series options. */
-    calloutLabelKey?: string;
-    /** sectorLabelKey as specified on series options. */
-    sectorLabelKey?: string;
-    /** radiusKey as specified on series options. */
-    radiusKey?: string;
-}
-
-export type AgPieSeriesListeners<DatumType> = AgBaseSeriesListeners<AgPieSeriesNodeClickParams<DatumType>>;
 
 /** Configuration for pie/doughnut series. */
 export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
@@ -1419,7 +1408,7 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     /** A formatter function for adjusting the styling of the pie sectors. */
     formatter?: (params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat;
     /** A map of event names to event listeners. */
-    listeners?: AgPieSeriesListeners<DatumType>;
+    listeners?: AgSeriesListeners<DatumType>;
 }
 
 export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRendererParams {
@@ -1548,17 +1537,6 @@ export interface AgTreemapSeriesLabelsOptions {
     color?: AgChartLabelOptions;
 }
 
-export interface AgTreemapSeriesNodeClickParams<DatumType> extends AgBaseSeriesNodeClickParams<DatumType> {
-    /** labelKey as specified on series options. */
-    labelKey?: string;
-    /** sizeKey as specified on series options. */
-    sizeKey?: string;
-    /** colorKey as specified on series options. */
-    colorKey?: string;
-}
-
-export type AgTreemapSeriesListeners<DatumType> = AgBaseSeriesListeners<AgTreemapSeriesNodeClickParams<DatumType>>;
-
 /** Configuration for the treemap series. */
 export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'treemap';
@@ -1589,7 +1567,7 @@ export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
     /** A callback function for adjusting the styles of a particular treemap tile based on the input parameters */
     formatter?: (params: AgTreemapSeriesFormatterParams<DataValue>) => AgTreemapSeriesFormat;
     /** A map of event names to event listeners. */
-    listeners?: AgTreemapSeriesListeners<DatumType>;
+    listeners?: AgSeriesListeners<DatumType>;
 }
 
 /** The parameters of the treemap series formatter function */
