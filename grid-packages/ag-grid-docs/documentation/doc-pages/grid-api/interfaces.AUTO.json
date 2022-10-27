@@ -7659,9 +7659,32 @@
     "type": {
       "type": "'seriesNodeClick'",
       "series": "any",
+      "seriesId": "string",
       "datum": "any",
-      "xKey": "string",
-      "yKey": "string"
+      "xKey?": "string",
+      "yKey?": "string",
+      "sizeKey?": "string",
+      "labelKey?": "string",
+      "colorKey?": "string",
+      "angleKey?": "string",
+      "calloutLabelKey?": "string",
+      "sectorLabelKey?": "string",
+      "radiusKey?": "string"
+    },
+    "docs": {
+      "type": "/** Event type. */",
+      "series": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "datum": "/** Datum from the chart or series data array. */",
+      "xKey?": "/** xKey as specified on series options */",
+      "yKey?": "/** yKey as specified on series options */",
+      "sizeKey?": "/** sizeKey as specified on series options */",
+      "labelKey?": "/** labelKey as specified on series options */",
+      "colorKey?": "/** colorKey as specified on series options */",
+      "angleKey?": "/** angleKey as specified on series options */",
+      "calloutLabelKey?": "/** calloutLabelKey as specified on series options */",
+      "sectorLabelKey?": "/** sectorLabelKey as specified on series options */",
+      "radiusKey?": "/** radiusKey as specified on series options */"
     }
   },
   "AgBaseChartListeners": {

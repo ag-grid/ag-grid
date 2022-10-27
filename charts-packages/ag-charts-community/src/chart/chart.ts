@@ -979,7 +979,9 @@ export abstract class Chart extends Observable {
     }
 
     private onSeriesNodeClick(event: SourceEvent<Series<any>>) {
-        this.fireEvent({ ...event, type: 'seriesNodeClick' });
+        // Use `Object.create` to preserve deprecation warnings
+        const seriesNodeClickEvent = Object.create(event, { type: { value: 'seriesNodeClick', enumerable: true } });
+        this.fireEvent(seriesNodeClickEvent);
     }
 
     private checkLegendClick(event: MouseEvent): boolean {

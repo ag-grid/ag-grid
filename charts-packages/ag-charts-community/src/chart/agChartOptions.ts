@@ -394,11 +394,32 @@ export interface AgChartBackground {
 }
 
 export interface AgNodeClickEvent {
+    /** Event type. */
     type: 'seriesNodeClick';
+    /** @deprecated Use seriesId to get the series ID. */
     series: any;
+    /** Series ID, as specified in series.id (or generated if not specified) */
+    seriesId: string;
+    /** Datum from the chart or series data array. */
     datum: any;
-    xKey: string;
-    yKey: string;
+    /** xKey as specified on series options */
+    xKey?: string;
+    /** yKey as specified on series options */
+    yKey?: string;
+    /** sizeKey as specified on series options */
+    sizeKey?: string;
+    /** labelKey as specified on series options */
+    labelKey?: string;
+    /** colorKey as specified on series options */
+    colorKey?: string;
+    /** angleKey as specified on series options */
+    angleKey?: string;
+    /** calloutLabelKey as specified on series options */
+    calloutLabelKey?: string;
+    /** sectorLabelKey as specified on series options */
+    sectorLabelKey?: string;
+    /** radiusKey as specified on series options */
+    radiusKey?: string;
 }
 
 export interface AgBaseChartListeners {

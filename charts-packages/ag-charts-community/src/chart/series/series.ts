@@ -6,7 +6,7 @@ import { Chart } from '../chart';
 import { createId } from '../../util/id';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
-import { Deprecated } from '../../util/deprecation';
+import { Deprecated, createDeprecationWarning } from '../../util/deprecation';
 import { TypedEvent } from '../../util/observable';
 import { BOOLEAN, OPT_BOOLEAN, OPT_NUMBER, OPT_COLOR_STRING, STRING, Validate } from '../../util/validation';
 import { PointLabelDatum } from '../../util/labelPlacement';
@@ -53,20 +53,27 @@ export interface TooltipRendererParams {
     readonly seriesId: string;
 }
 
+const warnDeprecated = createDeprecationWarning();
+const warnSeriesDeprecated = () => warnDeprecated('series', 'Use seriesId to get the series ID');
+
 export class SeriesNodeClickEvent<Datum extends { datum: any }> implements TypedEvent {
     readonly type = 'nodeClick';
     readonly datum: any;
     readonly event: MouseEvent;
     readonly seriesId: string;
 
-    @Deprecated('Use seriesId to get series ID')
-    readonly series: Series;
+    private readonly _series: Series;
+    /** @deprecated */
+    get series() {
+        warnSeriesDeprecated();
+        return this._series;
+    }
 
     constructor(nativeEvent: MouseEvent, datum: Datum, series: Series) {
         this.event = nativeEvent;
         this.datum = datum.datum;
         this.seriesId = series.id;
-        this.series = series;
+        this._series = series;
     }
 }
 

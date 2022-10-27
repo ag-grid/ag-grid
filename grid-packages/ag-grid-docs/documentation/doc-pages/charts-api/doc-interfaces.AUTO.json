@@ -1357,12 +1357,57 @@
   },
   "AgNodeClickEvent": {
     "type": {
+      "description": "/** Event type. */",
       "type": { "returnType": "'seriesNodeClick'", "optional": false }
     },
-    "series": { "type": { "returnType": "any", "optional": false } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } }
+    "series": {
+      "description": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "seriesId": {
+      "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "datum": {
+      "description": "/** Datum from the chart or series data array. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "xKey": {
+      "description": "/** xKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** yKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sizeKey": {
+      "description": "/** sizeKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelKey": {
+      "description": "/** labelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "colorKey": {
+      "description": "/** colorKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "angleKey": {
+      "description": "/** angleKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "calloutLabelKey": {
+      "description": "/** calloutLabelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sectorLabelKey": {
+      "description": "/** sectorLabelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "radiusKey": {
+      "description": "/** radiusKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "AgBaseChartListeners": {
     "seriesNodeClick": {
