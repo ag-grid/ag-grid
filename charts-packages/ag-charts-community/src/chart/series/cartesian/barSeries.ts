@@ -40,6 +40,7 @@ import {
     ValidatePredicate,
 } from '../../../util/validation';
 import { CategoryAxis } from '../../axis/categoryAxis';
+import { GroupedCategoryAxis } from '../../axis/groupedCategoryAxis';
 
 const BAR_LABEL_PLACEMENTS = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -589,8 +590,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         if (xAxis instanceof CategoryAxis) {
             groupScale.padding = xAxis.groupPaddingInner;
-        } else {
+        } else if (xAxis instanceof GroupedCategoryAxis) {
             groupScale.padding = 0.1;
+        } else {
+            // Number or Time axis
+            groupScale.padding = 0;
         }
 
         // To get exactly `0` padding we need to turn off rounding
