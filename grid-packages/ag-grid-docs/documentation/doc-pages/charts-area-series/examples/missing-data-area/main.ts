@@ -1,5 +1,8 @@
 import * as agCharts from "ag-charts-community"
-import { AgAreaSeriesOptions, AgChartOptions } from "ag-charts-community"
+import {
+  AgAreaSeriesOptions,
+  AgCartesianChartOptions,
+} from "ag-charts-community"
 import { getData } from "./data"
 
 function buildSeries(name: string): AgAreaSeriesOptions {
@@ -17,7 +20,7 @@ const series = [
   buildSeries("Firefox"),
 ]
 
-const options: AgChartOptions = {
+const options: AgCartesianChartOptions = {
   container: document.getElementById("myChart"),
   theme: {
     palette: {
@@ -84,12 +87,14 @@ function missingXValues() {
 
 function stack() {
   options.series = series.map(s => ({ ...s, stacked: true }))
-  agCharts.AgChart.update(chart, options)
+  chart.destroy()
+  chart = agCharts.AgChart.create(options)
 }
 
 function group() {
   options.series = series.map(s => ({ ...s, stacked: false }))
-  agCharts.AgChart.update(chart, options)
+  chart.destroy()
+  chart = agCharts.AgChart.create(options)
 }
 
 function reset() {
