@@ -289,6 +289,7 @@ export abstract class Chart extends Observable {
         }
     }
 
+    private _performUpdateNoRenderCount = 0;
     private _performUpdateType: ChartUpdateType = ChartUpdateType.NONE;
     get performUpdateType() {
         return this._performUpdateType;
@@ -347,11 +348,18 @@ export abstract class Chart extends Observable {
             // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (this._autoSize && !this._lastAutoSize) {
+                    const count = this._performUpdateNoRenderCount++;
+
+                    if (count >= 3) {
+                        break;
+                    }
+
                     // Reschedule if canvas size hasn't been set yet to avoid a race.
                     this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
                     this.performUpdateTrigger.schedule();
                     break;
                 }
+                this._performUpdateNoRenderCount = 0;
 
                 await this.performLayout();
                 splits.push(performance.now());
