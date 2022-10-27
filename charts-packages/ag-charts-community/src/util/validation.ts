@@ -16,7 +16,7 @@ export function Validate(predicate: ValidatePredicate) {
         const descriptor = Object.getOwnPropertyDescriptor(target, key);
         prevSet = descriptor?.set;
 
-        const setter = function (v: any) {
+        const setter = function (this: any, v: any) {
             if (predicate(v, { target: this })) {
                 if (prevSet) {
                     prevSet.call(this, v);
@@ -45,7 +45,7 @@ export function Validate(predicate: ValidatePredicate) {
                 );
             }
         };
-        const getter = function () {
+        const getter = function (this: any) {
             return this[privateKey];
         };
 

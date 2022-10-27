@@ -41,7 +41,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
         this.requestedRange = scale.range.slice();
-        this.scale = scale;
+        this.refreshScale();
 
         tickScale.paddingInner = 1;
         tickScale.paddingOuter = 0;

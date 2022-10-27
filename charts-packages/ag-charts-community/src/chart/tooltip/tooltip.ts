@@ -171,10 +171,10 @@ export class Tooltip {
         this.element = tooltipRoot.appendChild(element);
         this.element.classList.add(DEFAULT_TOOLTIP_CLASS);
         this.container = container;
+        this.observedElement = canvasElement;
 
         // Detect when the chart becomes invisible and hide the tooltip as well.
         if (window.IntersectionObserver) {
-            this.observedElement = canvasElement;
             const observer = new IntersectionObserver(
                 (entries) => {
                     for (const entry of entries) {

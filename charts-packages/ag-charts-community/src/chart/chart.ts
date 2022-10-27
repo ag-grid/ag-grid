@@ -40,8 +40,8 @@ type OptionalHTMLElement = HTMLElement | undefined | null;
 export abstract class Chart extends Observable {
     readonly id = createId(this);
 
-    options: AgChartOptions;
-    userOptions: AgChartOptions;
+    options: AgChartOptions = {};
+    userOptions: AgChartOptions = {};
     readonly scene: Scene;
     readonly background: Background = new Background();
     readonly legend = new Legend();

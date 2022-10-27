@@ -25,6 +25,7 @@ import {
     OPTIONAL,
     ARRAY,
     predicateWithMessage,
+    OPT_STRING,
 } from './util/validation';
 import { ChartAxisDirection } from './chart/chartAxis';
 import { Layers } from './chart/layers';
@@ -205,22 +206,8 @@ export class AxisLabel {
      */
     formatter?: (params: AxisLabelFormatterParams) => string = undefined;
 
-    onFormatChange?: (format?: string) => void = undefined;
-
-    @Validate(STRING)
-    private _format: string | undefined;
-    set format(value: string | undefined) {
-        // See `TimeLocaleObject` docs for the list of supported format directives.
-        if (this._format !== value) {
-            this._format = value;
-            if (this.onFormatChange) {
-                this.onFormatChange(value);
-            }
-        }
-    }
-    get format(): string | undefined {
-        return this._format;
-    }
+    @Validate(OPT_STRING)
+    format: string | undefined = undefined;
 }
 
 /**
@@ -238,16 +225,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
     @Validate(BOOLEAN)
     nice: boolean = true;
 
-    dataDomain: D[];
+    dataDomain: D[] = [];
 
     protected _scale: S;
-    set scale(value: S) {
-        this._scale = value;
-        this.requestedRange = value.range.slice();
-        this.crossLines?.forEach((crossLine) => {
-            this.initCrossLine(crossLine);
-        });
-    }
     get scale(): S {
         return this._scale;
     }
@@ -307,9 +287,15 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     constructor(scale: S) {
-        this.scale = scale;
+        this._scale = scale;
+        this.refreshScale();
+    }
 
-        this.label.onFormatChange = this.onLabelFormatChange.bind(this);
+    protected refreshScale() {
+        this.requestedRange = this.scale.range.slice();
+        this.crossLines?.forEach((crossLine) => {
+            this.initCrossLine(crossLine);
+        });
     }
 
     protected updateRange() {

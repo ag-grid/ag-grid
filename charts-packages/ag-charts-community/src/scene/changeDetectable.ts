@@ -107,7 +107,7 @@ export function SceneChangeDetection(opts?: SceneChangeDetectionOptions) {
             // Unoptimised but 'safe' code-path, for environments with CSP headers and no 'unsafe-eval'.
             // We deliberately do not support debug branches found in the optimised path above, since
             // for large data-set series performance deteriorates with every extra branch here.
-            const setter = function (value: any) {
+            const setter = function (this: any, value: any) {
                 const oldValue = this[privateKey];
                 value = convertor ? convertor(value) : value;
                 if (value !== oldValue) {
@@ -127,7 +127,7 @@ export function SceneChangeDetection(opts?: SceneChangeDetectionOptions) {
                 if (checkDirtyOnAssignment && value != null && value._dirty > RedrawType.NONE)
                     this.markDirty(value, value._dirty);
             };
-            const getter = function () {
+            const getter = function (this: any) {
                 return this[privateKey];
             };
             Object.defineProperty(target, key, {

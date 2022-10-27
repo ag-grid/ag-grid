@@ -39,7 +39,7 @@ describe('json module', () => {
                     foo: 'bar',
                     hello: 123,
                     alice: FIXED_DATE,
-                    func: (test) => test,
+                    func: (test: any) => test,
                 };
 
                 const diff = jsonDiff(source, target);
@@ -367,10 +367,10 @@ describe('json module', () => {
             expect(target.date).toEqual(json.date);
             expect(target.array).toEqual(json.array);
             expect(target.recurse).toBeInstanceOf(TestApply);
-            expect(target.recurse.str).toEqual(json.recurse.str);
-            expect(target.recurse.num).toEqual(json.recurse.num);
-            expect(target.recurse.date).toEqual(json.recurse.date);
-            expect(target.recurse.array).toEqual(json.recurse.array);
+            expect(target.recurse?.str).toEqual(json.recurse.str);
+            expect(target.recurse?.num).toEqual(json.recurse.num);
+            expect(target.recurse?.date).toEqual(json.recurse.date);
+            expect(target.recurse?.array).toEqual(json.recurse.array);
         });
 
         it('should be able to instantiate a new object graph', () => {
@@ -381,17 +381,17 @@ describe('json module', () => {
             expect(target.date).toEqual(json.date);
             expect(target.array).toEqual(json.array);
             expect(target.recurse).toBeInstanceOf(TestApply);
-            expect(target.recurse.str).toEqual(json.recurse.str);
-            expect(target.recurse.num).toEqual(json.recurse.num);
-            expect(target.recurse.date).toEqual(json.recurse.date);
-            expect(target.recurse.array).toEqual(json.recurse.array);
+            expect(target.recurse?.str).toEqual(json.recurse.str);
+            expect(target.recurse?.num).toEqual(json.recurse.num);
+            expect(target.recurse?.date).toEqual(json.recurse.date);
+            expect(target.recurse?.array).toEqual(json.recurse.array);
         });
 
         it('should skip specified properties', () => {
             const target = new TestApply();
             jsonApply(target, json, { skip: ['recurse.str', 'str'], constructors: { recurse: TestApply } });
             expect(target.str).toEqual(undefined);
-            expect(target.recurse.str).toEqual(undefined);
+            expect(target.recurse?.str).toEqual(undefined);
         });
 
         it('should error on unrecognised properties', () => {
@@ -424,7 +424,7 @@ describe('json module', () => {
             };
 
             jsonApply(target, json as any, opts);
-            expect(target.recurse.str).toEqual(json.recurse.str);
+            expect(target.recurse?.str).toEqual(json.recurse.str);
         });
 
         it('should instantiate complex types by path', () => {
@@ -442,10 +442,10 @@ describe('json module', () => {
             };
 
             jsonApply(target, json as any, opts);
-            expect(target.recurse.recurse.recurse.str).toEqual(testString);
+            expect(target.recurse?.recurse?.recurse?.str).toEqual(testString);
             expect(target.recurse).toBeInstanceOf(TestApply);
-            expect(target.recurse.recurse).toBeInstanceOf(TestApply);
-            expect(target.recurse.recurse.recurse).toBeInstanceOf(TestApply);
+            expect(target.recurse?.recurse).toBeInstanceOf(TestApply);
+            expect(target.recurse?.recurse?.recurse).toBeInstanceOf(TestApply);
         });
 
         it('should instantiate complex types by path with nested arrays', () => {
@@ -464,12 +464,12 @@ describe('json module', () => {
             };
 
             jsonApply(target, json as any, opts);
-            expect(target.recurseArray[0].recurse.str).toEqual(testString1);
-            expect(target.recurseArray[1].recurse.str).toEqual(testString2);
-            expect(target.recurseArray[0]).toBeInstanceOf(TestApply);
-            expect(target.recurseArray[0].recurse).toBeInstanceOf(TestApply);
-            expect(target.recurseArray[1]).toBeInstanceOf(TestApply);
-            expect(target.recurseArray[1].recurse).toBeInstanceOf(TestApply);
+            expect(target.recurseArray?.[0].recurse?.str).toEqual(testString1);
+            expect(target.recurseArray?.[1].recurse?.str).toEqual(testString2);
+            expect(target.recurseArray?.[0]).toBeInstanceOf(TestApply);
+            expect(target.recurseArray?.[0].recurse).toBeInstanceOf(TestApply);
+            expect(target.recurseArray?.[1]).toBeInstanceOf(TestApply);
+            expect(target.recurseArray?.[1].recurse).toBeInstanceOf(TestApply);
         });
     });
 });

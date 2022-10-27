@@ -192,7 +192,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }
 
     @Validate(BOOLEAN_ARRAY)
-    protected _visibles: boolean[];
+    protected _visibles: boolean[] = [];
     set visibles(visibles: boolean[]) {
         this._visibles = visibles;
         this.processSeriesItemEnabled();

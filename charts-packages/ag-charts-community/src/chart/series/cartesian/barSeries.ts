@@ -266,7 +266,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     @Validate(BOOLEAN_ARRAY)
-    protected _visibles: boolean[];
+    protected _visibles: boolean[] = [];
     set visibles(visibles: boolean[] | boolean[][]) {
         const flattenFn = (r: boolean[], n: boolean | boolean[]) => r.concat(...(Array.isArray(n) ? n : [n]));
         this._visibles = (visibles as any).reduce(flattenFn, []);
