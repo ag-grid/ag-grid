@@ -475,18 +475,23 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
+        const { flipXY } = this;
         if (this.flipXY) {
             direction = flipChartAxisDirection(direction);
         }
         if (direction === ChartAxisDirection.X) {
-            if (this.getCategoryAxis()?.scale instanceof ContinuousScale) {
-                // The last node will be clipped if the scale is not a band scale
-                // Extend the domain by the smallest data interval so that the last band is not clipped
-                const xDomain = extent(this.xData, isContinuous, Number) || [NaN, NaN];
-                xDomain[1] = xDomain[1] + (this.smallestDataInterval?.x ?? 0);
-                return xDomain;
+            if (!(this.getCategoryAxis()?.scale instanceof ContinuousScale)) {
+                return this.xData;
             }
-            return this.xData;
+            // The last node will be clipped if the scale is not a band scale
+            // Extend the domain by the smallest data interval so that the last band is not clipped
+            const xDomain = extent(this.xData, isContinuous, Number) || [NaN, NaN];
+            if (flipXY) {
+                xDomain[0] = xDomain[0] - (this.smallestDataInterval?.x ?? 0);
+            } else {
+                xDomain[1] = xDomain[1] + (this.smallestDataInterval?.x ?? 0);
+            }
+            return xDomain;
         } else {
             return this.yDomain;
         }
