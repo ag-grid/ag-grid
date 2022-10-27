@@ -544,11 +544,12 @@
       "tooltip?": "AgPieSeriesTooltip",
       "innerCircle?": "AgDoughnutInnerCircle",
       "formatter?": "(params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat",
+      "listeners?": "AgPieSeriesListeners<DatumType>",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -587,11 +588,12 @@
       "innerLabels?": "/** Configuration for the text lines to display inside the series, typically used when rendering a doughnut chart */",
       "innerCircle?": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset or innerRadiusRatio */",
       "formatter?": "/** A formatter function for adjusting the styling of the pie sectors. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "id?": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
@@ -751,7 +753,13 @@
   },
   "AgChartLegendLabelFormatterParams": {
     "meta": {},
-    "type": { "id": "string", "itemId": "any", "value": "string" }
+    "type": {
+      "id": "string",
+      "seriesId": "string",
+      "itemId": "any",
+      "value": "string"
+    },
+    "docs": { "id": "/** @deprecated Use seriesId.\n */" }
   },
   "AgChartLegendLabelOptions": {
     "meta": {},
@@ -849,10 +857,43 @@
       "fill?": "/** Colour of the chart background. */"
     }
   },
+  "AgNodeClickEvent": {
+    "meta": {},
+    "type": {
+      "type": "'seriesNodeClick'",
+      "series": "any",
+      "seriesId": "string",
+      "datum": "any",
+      "xKey?": "string",
+      "yKey?": "string",
+      "sizeKey?": "string",
+      "labelKey?": "string",
+      "colorKey?": "string",
+      "angleKey?": "string",
+      "calloutLabelKey?": "string",
+      "sectorLabelKey?": "string",
+      "radiusKey?": "string"
+    },
+    "docs": {
+      "type": "/** Event type. */",
+      "series": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "datum": "/** Datum from the chart or series data array. */",
+      "xKey?": "/** xKey as specified on series options */",
+      "yKey?": "/** yKey as specified on series options */",
+      "sizeKey?": "/** sizeKey as specified on series options */",
+      "labelKey?": "/** labelKey as specified on series options */",
+      "colorKey?": "/** colorKey as specified on series options */",
+      "angleKey?": "/** angleKey as specified on series options */",
+      "calloutLabelKey?": "/** calloutLabelKey as specified on series options */",
+      "sectorLabelKey?": "/** sectorLabelKey as specified on series options */",
+      "radiusKey?": "/** radiusKey as specified on series options */"
+    }
+  },
   "AgBaseChartListeners": {
     "meta": {},
     "type": {
-      "seriesNodeClick": "(event: { type: 'seriesNodeClick'; series: any; datum: any; xKey: string; yKey: string; }) => any",
+      "seriesNodeClick": "(event: AgNodeClickEvent) => any",
       "[key: string]": "Function"
     },
     "docs": {
@@ -1286,11 +1327,26 @@
       "series?": "/** Highlight style used for whole series when one of its markers is tapped or hovered over. */"
     }
   },
-  "AgBaseSeriesListeners": {
+  "AgBaseSeriesNodeClickParams": {
     "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "nodeClick": "(params: { type: 'nodeClick'; series: any; datum: DatumType; xKey: string; yKey: string; }) => any"
+      "type": "'nodeClick'",
+      "series": "any",
+      "seriesId": "string",
+      "datum": "DatumType"
     },
+    "docs": {
+      "type": "/** Event type. */",
+      "series": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "datum": "/** Datum from the series data array. */"
+    }
+  },
+  "AgBaseSeriesListeners": {
+    "meta": {
+      "typeParams": ["EventParamsType extends AgBaseSeriesNodeClickParams<any>"]
+    },
+    "type": { "nodeClick": "(params: EventParamsType) => void" },
     "docs": {
       "nodeClick": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in the series is clicked. */"
     }
@@ -1298,14 +1354,16 @@
   "AgBaseSeriesOptions": {
     "meta": { "typeParams": ["DatumType", "ListenerDatumType = DatumType"] },
     "type": {
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
+      "listeners?": "AgBaseSeriesListeners<AgBaseSeriesNodeClickParams<ListenerDatumType>>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
+      "id?": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
@@ -1324,11 +1382,17 @@
   },
   "AgSeriesTooltipRendererParams": {
     "meta": {},
-    "type": { "datum": "any", "title?": "string", "color?": "CssColor" },
+    "type": {
+      "datum": "any",
+      "title?": "string",
+      "color?": "CssColor",
+      "seriesId": "string"
+    },
     "docs": {
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgCartesianSeriesTooltipRendererParams": {
@@ -1342,7 +1406,8 @@
       "yName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "seriesId": "string"
     },
     "docs": {
       "xKey": "/** xKey as specified on series options. */",
@@ -1353,7 +1418,8 @@
       "yName?": "/** yName as specified on series options. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgPolarSeriesTooltipRendererParams": {
@@ -1367,7 +1433,8 @@
       "radiusName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "seriesId": "string"
     },
     "docs": {
       "angleKey": "/** angleKey as specified on series options. */",
@@ -1378,7 +1445,8 @@
       "radiusName?": "/** radiusName as specified on series options. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgScatterSeriesTooltipRendererParams": {
@@ -1396,7 +1464,8 @@
       "yName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "seriesId": "string"
     },
     "docs": {
       "sizeKey?": "/** sizeKey as specified on series options. */",
@@ -1411,7 +1480,8 @@
       "yName?": "/** yName as specified on series options. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgSeriesMarker": {
@@ -1447,7 +1517,8 @@
       "stroke?": "CssColor",
       "strokeWidth": "PixelSize",
       "size": "number",
-      "highlighted": "boolean"
+      "highlighted": "boolean",
+      "seriesId": "string"
     }
   },
   "AgCartesianSeriesMarkerFormatterParams": {
@@ -1460,7 +1531,8 @@
       "stroke?": "CssColor",
       "strokeWidth": "PixelSize",
       "size": "number",
-      "highlighted": "boolean"
+      "highlighted": "boolean",
+      "seriesId": "string"
     }
   },
   "AgCartesianSeriesMarkerFormat": {
@@ -1502,6 +1574,29 @@
       "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
       "strokeOpacity?": "/** Opacity of the marker strokes. */"
     }
+  },
+  "AgCartesianSeriesNodeClickParams": {
+    "meta": { "typeParams": ["DatumType"] },
+    "type": {
+      "xKey": "string",
+      "yKey": "string",
+      "type": "'nodeClick'",
+      "series": "any",
+      "seriesId": "string",
+      "datum": "DatumType"
+    },
+    "docs": {
+      "xKey": "/** xKey as specified on series options. */",
+      "yKey": "/** yKey as specified on series options. */",
+      "type": "/** Event type. */",
+      "series": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "datum": "/** Datum from the series data array. */"
+    }
+  },
+  "AgCartesianSeriesListeners": {
+    "meta": { "isTypeAlias": true, "typeParams": ["DatumType"] },
+    "type": "AgBaseSeriesListeners<AgCartesianSeriesNodeClickParams<DatumType>>"
   },
   "AgAreaSeriesMarker": {
     "meta": { "typeParams": ["DatumType"] },
@@ -1590,11 +1685,12 @@
       "lineDashOffset?": "PixelSize",
       "label?": "AgLineSeriesLabelOptions<DatumType>",
       "tooltip?": "AgLineSeriesTooltip",
+      "listeners?": "AgCartesianSeriesListeners<DatumType>",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -1610,11 +1706,12 @@
       "lineDashOffset?": "/** The initial offset of the dashed line in pixels. */",
       "label?": "/** Configuration for the labels shown on top of data points. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "id?": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
@@ -1677,6 +1774,31 @@
       "strokeOpacity?": "/** Opacity of the marker strokes. */"
     }
   },
+  "AgScatterSeriesNodeClickParams": {
+    "meta": { "typeParams": ["DatumType"] },
+    "type": {
+      "sizeKey?": "string",
+      "xKey": "string",
+      "yKey": "string",
+      "type": "'nodeClick'",
+      "series": "any",
+      "seriesId": "string",
+      "datum": "DatumType"
+    },
+    "docs": {
+      "sizeKey?": "/** sizeKey as specified on series options. */",
+      "xKey": "/** xKey as specified on series options. */",
+      "yKey": "/** yKey as specified on series options. */",
+      "type": "/** Event type. */",
+      "series": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "datum": "/** Datum from the series data array. */"
+    }
+  },
+  "AgScatterSeriesListeners": {
+    "meta": { "isTypeAlias": true, "typeParams": ["DatumType"] },
+    "type": "AgBaseSeriesListeners<AgScatterSeriesNodeClickParams<DatumType>>"
+  },
   "AgScatterSeriesOptions": {
     "meta": {
       "typeParams": ["DatumType = any"],
@@ -1701,11 +1823,12 @@
       "fillOpacity?": "Opacity",
       "strokeOpacity?": "Opacity",
       "tooltip?": "AgScatterSeriesTooltip",
+      "listeners?": "AgScatterSeriesListeners<DatumType>",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -1727,11 +1850,12 @@
       "fillOpacity?": "/** @deprecated Use {@link marker.fillOpacity} instead.\n */",
       "strokeOpacity?": "/** @deprecated Use {@link marker.strokeOpacity} instead.\n */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "id?": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
@@ -1795,11 +1919,12 @@
       "label?": "AgAreaSeriesLabelOptions<DatumType>",
       "tooltip?": "AgAreaSeriesTooltip",
       "stacked?": "boolean",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
+      "listeners?": "AgBaseSeriesListeners<AgBaseSeriesNodeClickParams<ListenerDatumType>>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -1822,6 +1947,7 @@
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
       "label?": "/** Configuration for the labels shown on top of data points. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
+      "id?": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
@@ -1862,7 +1988,8 @@
       "strokeWidth": "PixelSize",
       "highlighted": "boolean",
       "xKey": "string",
-      "yKey": "string"
+      "yKey": "string",
+      "seriesId": "string"
     }
   },
   "AgBarSeriesFormat": {
@@ -1914,11 +2041,12 @@
       "label?": "AgBarSeriesLabelOptions",
       "tooltip?": "AgBarSeriesTooltip",
       "formatter?": "(params: AgBarSeriesFormatterParams<DatumType>) => AgBarSeriesFormat",
+      "listeners?": "AgCartesianSeriesListeners<DatumType>",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -1943,11 +2071,12 @@
       "label?": "/** Configuration for the labels shown on bars. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
       "formatter?": "/** Function used to return formatting for individual bars/columns, based on the given parameters. If the current bar/column is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "id?": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
@@ -2017,11 +2146,12 @@
       "shadow?": "AgDropShadowOptions",
       "label?": "AgHistogramSeriesLabelOptions<DatumType>",
       "tooltip?": "AgHistogramSeriesTooltip",
+      "listeners?": "AgCartesianSeriesListeners<DatumType>",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -2043,11 +2173,12 @@
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
       "label?": "/** Configuration for the labels shown on bars. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "id?": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
@@ -2111,7 +2242,8 @@
       "highlighted": "boolean",
       "angleKey": "string",
       "radiusKey?": "string",
-      "sectorLabelKey?": "string"
+      "sectorLabelKey?": "string",
+      "seriesId": "string"
     }
   },
   "AgPieSeriesFormat": {
@@ -2217,6 +2349,33 @@
       "fillOpacity?": "/** The opacity of the fill for the inner circle. */"
     }
   },
+  "AgPieSeriesNodeClickParams": {
+    "meta": { "typeParams": ["DatumType"] },
+    "type": {
+      "angleKey": "string",
+      "calloutLabelKey?": "string",
+      "sectorLabelKey?": "string",
+      "radiusKey?": "string",
+      "type": "'nodeClick'",
+      "series": "any",
+      "seriesId": "string",
+      "datum": "DatumType"
+    },
+    "docs": {
+      "angleKey": "/** angleKey as specified on series options. */",
+      "calloutLabelKey?": "/** calloutLabelKey as specified on series options. */",
+      "sectorLabelKey?": "/** sectorLabelKey as specified on series options. */",
+      "radiusKey?": "/** radiusKey as specified on series options. */",
+      "type": "/** Event type. */",
+      "series": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "datum": "/** Datum from the series data array. */"
+    }
+  },
+  "AgPieSeriesListeners": {
+    "meta": { "isTypeAlias": true, "typeParams": ["DatumType"] },
+    "type": "AgBaseSeriesListeners<AgPieSeriesNodeClickParams<DatumType>>"
+  },
   "AgPieSeriesOptions": {
     "meta": {
       "typeParams": ["DatumType = any"],
@@ -2259,11 +2418,12 @@
       "innerLabels?": "AgDoughnutInnerLabel[]",
       "innerCircle?": "AgDoughnutInnerCircle",
       "formatter?": "(params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat",
+      "listeners?": "AgPieSeriesListeners<DatumType>",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -2302,11 +2462,12 @@
       "innerLabels?": "/** Configuration for the text lines to display inside the series, typically used when rendering a doughnut chart */",
       "innerCircle?": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset or innerRadiusRatio */",
       "formatter?": "/** A formatter function for adjusting the styling of the pie sectors. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "id?": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
@@ -2327,7 +2488,8 @@
       "radiusName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "seriesId": "string"
     },
     "docs": {
       "labelKey?": "/** labelKey as specified on series options.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
@@ -2344,7 +2506,8 @@
       "radiusName?": "/** radiusName as specified on series options. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgPieSeriesLabelFormatterParams": {
@@ -2366,7 +2529,8 @@
       "radiusKey?": "string",
       "radiusValue?": "any",
       "radiusName?": "string",
-      "value?": "any"
+      "value?": "any",
+      "seriesId": "string"
     },
     "docs": {
       "datum": "/** Datum from the series data array that the label is being rendered for. */",
@@ -2385,7 +2549,8 @@
       "radiusKey?": "/** radiusKey as specified on series options. */",
       "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
       "radiusName?": "/** radiusName as specified on series options. */",
-      "value?": "/** The value of labelKey as specified on series options.\n * @deprecated Use item.datum instead.\n */"
+      "value?": "/** The value of labelKey as specified on series options.\n * @deprecated Use item.datum instead.\n */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgTreemapSeriesLabelOptions": {
@@ -2429,7 +2594,8 @@
       "sizeKey": "string",
       "labelKey": "string",
       "valueKey": "string",
-      "color": "string"
+      "color": "string",
+      "seriesId": "string"
     }
   },
   "AgTreemapSeriesTooltip": {
@@ -2458,6 +2624,31 @@
       "color?": "/** The configuration for the labels showing the value of the 'colorKey'. */"
     }
   },
+  "AgTreemapSeriesNodeClickParams": {
+    "meta": { "typeParams": ["DatumType"] },
+    "type": {
+      "labelKey?": "string",
+      "sizeKey?": "string",
+      "colorKey?": "string",
+      "type": "'nodeClick'",
+      "series": "any",
+      "seriesId": "string",
+      "datum": "DatumType"
+    },
+    "docs": {
+      "labelKey?": "/** labelKey as specified on series options. */",
+      "sizeKey?": "/** sizeKey as specified on series options. */",
+      "colorKey?": "/** colorKey as specified on series options. */",
+      "type": "/** Event type. */",
+      "series": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "datum": "/** Datum from the series data array. */"
+    }
+  },
+  "AgTreemapSeriesListeners": {
+    "meta": { "isTypeAlias": true, "typeParams": ["DatumType"] },
+    "type": "AgBaseSeriesListeners<AgTreemapSeriesNodeClickParams<DatumType>>"
+  },
   "AgTreemapSeriesOptions": {
     "meta": {
       "typeParams": ["DatumType = any"],
@@ -2478,11 +2669,12 @@
       "nodePadding?": "PixelSize",
       "gradient?": "boolean",
       "formatter?": "(params: AgTreemapSeriesFormatterParams<DataValue>) => AgTreemapSeriesFormat",
+      "listeners?": "AgTreemapSeriesListeners<DatumType>",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -2499,11 +2691,12 @@
       "nodePadding?": "/** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */",
       "gradient?": "/** Whether or not to use gradients for treemap tiles. */",
       "formatter?": "/** A callback function for adjusting the styles of a particular treemap tile based on the input parameters */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "id?": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
@@ -2523,7 +2716,8 @@
       "strokeOpacity?": "number",
       "strokeWidth?": "number",
       "gradient?": "boolean",
-      "highlighted": "boolean"
+      "highlighted": "boolean",
+      "seriesId": "string"
     },
     "docs": {
       "datum": "/** Datum from the series data array that the treemap tile is being rendered for. */",
@@ -2536,7 +2730,8 @@
       "strokeOpacity?": "/** The opacity of the stroke for the treemap tile. */",
       "strokeWidth?": "/** The width in pixels of the stroke for the treemap tile. */",
       "gradient?": "/** Whether or not the gradients are used for treemap tiles. */",
-      "highlighted": "/** `true` if the tile is highlighted by hovering */"
+      "highlighted": "/** `true` if the tile is highlighted by hovering */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgTreemapSeriesFormat": {
@@ -2814,6 +3009,7 @@
     "type": {
       "id": "string",
       "itemId": "any",
+      "seriesId": "string",
       "enabled": "boolean",
       "marker": "{ shape?: string | (new () => Marker); fill: string; stroke: string; fillOpacity: number; strokeOpacity: number; }",
       "label": "{ text: string; }"
@@ -2836,7 +3032,12 @@
   },
   "LegendLabelFormatterParams": {
     "meta": {},
-    "type": { "id": "string", "itemId": "any", "value": "string" }
+    "type": {
+      "id": "string",
+      "itemId": "any",
+      "value": "string",
+      "seriesId": "string"
+    }
   },
   "SeriesOptionsTypes": {
     "meta": { "isTypeAlias": true },
@@ -2909,17 +3110,6 @@
       "points": "{ x: number; y: number; }[]"
     }
   },
-  "AreaSeriesNodeClickEvent": {
-    "meta": {},
-    "type": {
-      "type": "'nodeClick'",
-      "event": "MouseEvent",
-      "series": "AreaSeries",
-      "datum": "any",
-      "xKey": "string",
-      "yKey": "string"
-    }
-  },
   "MarkerSelectionDatum": {
     "meta": {},
     "type": {
@@ -2960,17 +3150,6 @@
     "meta": { "isTypeAlias": true },
     "type": "SeriesNodeDataContext<MarkerSelectionDatum, LabelSelectionDatum> & { fillSelectionData: FillSelectionDatum; strokeSelectionData: StrokeSelectionDatum; }"
   },
-  "BarSeriesNodeClickEvent": {
-    "meta": {},
-    "type": {
-      "type": "'nodeClick'",
-      "event": "MouseEvent",
-      "series": "BarSeries",
-      "datum": "any",
-      "xKey": "string",
-      "yKey": "string"
-    }
-  },
   "BarTooltipRendererParams": {
     "meta": {},
     "type": {
@@ -2983,7 +3162,8 @@
       "yName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "string"
+      "color?": "string",
+      "seriesId": "string"
     }
   },
   "BarNodeDatum": {
@@ -3026,7 +3206,8 @@
       "strokeWidth": "number",
       "highlighted": "boolean",
       "xKey": "string",
-      "yKey": "string"
+      "yKey": "string",
+      "seriesId": "string"
     }
   },
   "BarSeriesFormat": {
@@ -3105,7 +3286,8 @@
       "stroke?": "string",
       "strokeWidth": "number",
       "size": "number",
-      "highlighted": "boolean"
+      "highlighted": "boolean",
+      "seriesId": "string"
     }
   },
   "HistogramSeriesNodeTag": {
@@ -3159,17 +3341,6 @@
       "point?": "Readonly<SizedPoint>"
     }
   },
-  "LineSeriesNodeClickEvent": {
-    "meta": {},
-    "type": {
-      "type": "'nodeClick'",
-      "event": "MouseEvent",
-      "series": "LineSeries",
-      "datum": "any",
-      "xKey": "string",
-      "yKey": "string"
-    }
-  },
   "LineTooltipRendererParams": {
     "meta": { "isTypeAlias": true },
     "type": "CartesianTooltipRendererParams"
@@ -3192,18 +3363,6 @@
       "point?": "Readonly<SizedPoint>"
     }
   },
-  "ScatterSeriesNodeClickEvent": {
-    "meta": {},
-    "type": {
-      "type": "'nodeClick'",
-      "event": "MouseEvent",
-      "series": "ScatterSeries",
-      "datum": "any",
-      "xKey": "string",
-      "yKey": "string",
-      "sizeKey?": "string"
-    }
-  },
   "ScatterTooltipRendererParams": {
     "meta": {},
     "type": {
@@ -3219,7 +3378,8 @@
       "yName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "string"
+      "color?": "string",
+      "seriesId": "string"
     }
   },
   "TreemapNodeDatum": {
@@ -3251,19 +3411,8 @@
       "sizeKey?": "string",
       "colorKey?": "string",
       "title?": "string",
-      "color?": "string"
-    }
-  },
-  "TreemapSeriesNodeClickEvent": {
-    "meta": {},
-    "type": {
-      "type": "'nodeClick'",
-      "event": "MouseEvent",
-      "series": "TreemapSeries",
-      "datum": "any",
-      "labelKey": "string",
-      "sizeKey?": "string",
-      "colorKey?": "string"
+      "color?": "string",
+      "seriesId": "string"
     }
   },
   "TextNodeTag": {
@@ -3296,23 +3445,6 @@
       "strokeOpacity?": "number",
       "strokeWidth?": "number",
       "gradient?": "boolean"
-    }
-  },
-  "PieSeriesNodeClickEvent": {
-    "meta": {},
-    "type": {
-      "type": "'nodeClick'",
-      "event": "MouseEvent",
-      "series": "PieSeries",
-      "datum": "any",
-      "angleKey": "string",
-      "labelKey?": "string",
-      "calloutLabelKey?": "string",
-      "sectorLabelKey?": "string",
-      "radiusKey?": "string"
-    },
-    "docs": {
-      "labelKey?": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */"
     }
   },
   "PieNodeDatum": {
@@ -3351,7 +3483,8 @@
       "radiusName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "string"
+      "color?": "string",
+      "seriesId": "string"
     },
     "docs": {
       "labelKey?": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
@@ -3372,7 +3505,8 @@
       "strokeWidth": "number",
       "highlighted": "boolean",
       "angleKey": "string",
-      "radiusKey?": "string"
+      "radiusKey?": "string",
+      "seriesId": "string"
     }
   },
   "PieSeriesFormat": {
@@ -3403,7 +3537,8 @@
       "radiusKey?": "string",
       "radiusValue?": "any",
       "radiusName?": "string",
-      "value?": "any"
+      "value?": "any",
+      "seriesId": "string"
     },
     "docs": {
       "labelKey?": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
@@ -3418,19 +3553,6 @@
       "endAngle": "number",
       "innerRadius": "number",
       "outerRadius": "number"
-    }
-  },
-  "PolarSeriesMarkerFormatterParams": {
-    "meta": {},
-    "type": {
-      "angleKey": "string",
-      "radiusKey": "string",
-      "datum": "any",
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth": "number",
-      "size": "number",
-      "highlighted": "boolean"
     }
   },
   "SeriesNodeDatum": {
@@ -3465,7 +3587,12 @@
   },
   "TooltipRendererParams": {
     "meta": {},
-    "type": { "datum": "any", "title?": "string", "color?": "string" }
+    "type": {
+      "datum": "any",
+      "title?": "string",
+      "color?": "string",
+      "seriesId": "string"
+    }
   },
   "CartesianTooltipRendererParams": {
     "meta": {},
@@ -3478,7 +3605,8 @@
       "yName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "string"
+      "color?": "string",
+      "seriesId": "string"
     }
   },
   "PolarTooltipRendererParams": {
@@ -3492,7 +3620,8 @@
       "radiusName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "string"
+      "color?": "string",
+      "seriesId": "string"
     }
   },
   "SeriesNodeDataContext": {
@@ -3510,7 +3639,8 @@
       "stroke?": "string",
       "strokeWidth": "number",
       "size": "number",
-      "highlighted": "boolean"
+      "highlighted": "boolean",
+      "seriesId": "string"
     }
   },
   "TestCase": {

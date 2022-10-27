@@ -10,8 +10,12 @@ import {
 import { extent } from '../../../util/array';
 import { LegendDatum } from '../../legend';
 import { LinearScale } from '../../../scale/linearScale';
-import { TypedEvent } from '../../../util/observable';
-import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from './cartesianSeries';
+import {
+    CartesianSeries,
+    CartesianSeriesMarker,
+    CartesianSeriesMarkerFormat,
+    CartesianSeriesNodeClickEvent,
+} from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxis';
 import { getMarker } from '../../marker/util';
 import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
@@ -30,14 +34,20 @@ interface ScatterNodeDatum extends Required<SeriesNodeDatum> {
     readonly label: MeasuredLabel;
 }
 
-export interface ScatterSeriesNodeClickEvent extends TypedEvent {
-    readonly type: 'nodeClick';
-    readonly event: MouseEvent;
-    readonly series: ScatterSeries;
-    readonly datum: any;
-    readonly xKey: string;
-    readonly yKey: string;
+export class ScatterSeriesNodeClickEvent extends CartesianSeriesNodeClickEvent<any> {
     readonly sizeKey?: string;
+
+    constructor(
+        sizeKey: string | undefined,
+        xKey: string,
+        yKey: string,
+        nativeEvent: MouseEvent,
+        datum: ScatterNodeDatum,
+        series: ScatterSeries
+    ) {
+        super(xKey, yKey, nativeEvent, datum, series);
+        this.sizeKey = sizeKey;
+    }
 }
 
 export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
@@ -212,16 +222,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         }
     }
 
-    fireNodeClickEvent(event: MouseEvent, datum: ScatterNodeDatum): void {
-        this.fireEvent<ScatterSeriesNodeClickEvent>({
-            type: 'nodeClick',
-            event,
-            series: this,
-            datum: datum.datum,
-            xKey: this.xKey,
-            yKey: this.yKey,
-            sizeKey: this.sizeKey,
-        });
+    protected getNodeClickEvent(event: MouseEvent, datum: ScatterNodeDatum): CartesianSeriesNodeClickEvent<any> {
+        return new ScatterSeriesNodeClickEvent(this.sizeKey, this.xKey, this.yKey, event, datum, this);
     }
 
     async createNodeData() {
@@ -339,6 +341,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
             },
+            id: seriesId,
         } = this;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
         const { formatter } = marker;
@@ -371,6 +374,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                     strokeWidth,
                     size,
                     highlighted: isDatumHighlighted,
+                    seriesId,
                 });
             }
 
@@ -453,6 +457,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             sizeName,
             labelKey,
             labelName,
+            id: seriesId,
         } = this;
 
         const fill = marker.fill ?? seriesFill;
@@ -472,6 +477,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 strokeWidth,
                 size: nodeDatum.point?.size ?? 0,
                 highlighted: false,
+                seriesId,
             });
         }
 
@@ -519,6 +525,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                     labelName,
                     title,
                     color,
+                    seriesId,
                 }),
                 defaults
             );
@@ -527,13 +534,17 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         return toTooltipHtml(defaults);
     }
 
-    listSeriesItems(legendData: LegendDatum[]): void {
+    getLegendData(): LegendDatum[] {
         const { id, data, xKey, yKey, yName, title, visible, marker, fill, stroke, fillOpacity, strokeOpacity } = this;
 
-        if (data && data.length && xKey && yKey) {
-            legendData.push({
+        if (!(data && data.length && xKey && yKey)) {
+            return [];
+        }
+        return [
+            {
                 id,
                 itemId: yKey,
+                seriesId: id,
                 enabled: visible,
                 label: {
                     text: title || yName || yKey,
@@ -545,8 +556,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                     fillOpacity: marker.fillOpacity !== undefined ? marker.fillOpacity : fillOpacity,
                     strokeOpacity: marker.strokeOpacity !== undefined ? marker.strokeOpacity : strokeOpacity,
                 },
-            });
-        }
+            },
+        ];
     }
 
     protected isLabelEnabled() {

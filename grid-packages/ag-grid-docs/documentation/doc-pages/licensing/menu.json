@@ -1875,7 +1875,6 @@
           },
           {
             "title": "API",
-            "isCategory": true,
             "forceTopLevelSubItems": true,
             "items": [
               {
@@ -1897,7 +1896,7 @@
           },
           {
             "title": "Series",
-            "isCategory": true,
+            "url": "/charts-series/",
             "items": [
               {
                 "title": "Line",
@@ -1935,7 +1934,6 @@
           },
           {
             "title": "Features",
-            "isCategory": true,
             "items": [
               {
                 "title": "Layout",

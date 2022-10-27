@@ -43,15 +43,15 @@ const options: AgChartOptions = {
     tracking: false
   },
   listeners: {
-    seriesNodeClick: ({ datum, xKey, yKey, series }) => {
+    seriesNodeClick: ({ datum, xKey, yKey, seriesId }) => {
       window.alert(
         'Temperature in ' +
-        datum[xKey] +
+        datum[xKey!] +
         ': ' +
-        String(datum[yKey]) +
+        String(datum[yKey!]) +
         '°C' +
         '\nSeries: ' +
-        series.id
+        seriesId
       )
     },
   },

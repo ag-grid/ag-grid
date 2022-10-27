@@ -19,6 +19,7 @@ import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
 import { BOOLEAN, Validate } from '../util/validation';
 import { sleep } from '../util/async';
+import { doOnce } from '../util/function';
 import { Tooltip, TooltipMeta } from './tooltip/tooltip';
 
 export interface ChartClickEvent extends SourceEvent<Chart> {
@@ -633,16 +634,31 @@ export abstract class Chart extends Observable {
     private async updateLegend() {
         const legendData: LegendDatum[] = [];
 
-        this.series.filter((s) => s.showInLegend).forEach((series) => series.listSeriesItems(legendData));
+        this.series
+            .filter((s) => s.showInLegend)
+            .forEach((series) => {
+                legendData.push(...series.getLegendData());
+            });
 
         const { formatter } = this.legend.item.label;
         if (formatter) {
             legendData.forEach(
                 (datum) =>
                     (datum.label.text = formatter({
-                        id: datum.id,
+                        get id() {
+                            doOnce(
+                                () =>
+                                    console.warn(
+                                        `AG Charts - LegendLabelFormatterParams.id is deprecated, use seriesId instead`,
+                                        datum
+                                    ),
+                                `LegendLabelFormatterParams.id deprecated`
+                            );
+                            return datum.seriesId;
+                        },
                         itemId: datum.itemId,
                         value: datum.label.text,
+                        seriesId: datum.seriesId,
                     }))
             );
         }
@@ -966,7 +982,9 @@ export abstract class Chart extends Observable {
     }
 
     private onSeriesNodeClick(event: SourceEvent<Series<any>>) {
-        this.fireEvent({ ...event, type: 'seriesNodeClick' });
+        // Use `Object.create` to preserve deprecation warnings
+        const seriesNodeClickEvent = Object.create(event, { type: { value: 'seriesNodeClick', enumerable: true } });
+        this.fireEvent(seriesNodeClickEvent);
     }
 
     private checkLegendClick(event: MouseEvent): boolean {

@@ -1,4 +1,4 @@
-function createDeprecationWarning() {
+export function createDeprecationWarning() {
     let logged = false;
     return (key: string, message?: string) => {
         if (logged) {

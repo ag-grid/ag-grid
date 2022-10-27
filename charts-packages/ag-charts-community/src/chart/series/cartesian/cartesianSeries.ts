@@ -1,4 +1,11 @@
-import { Series, SeriesNodeDataContext, SeriesNodeDatum, SeriesNodePickMode, SeriesNodePickMatch } from '../series';
+import {
+    Series,
+    SeriesNodeDataContext,
+    SeriesNodeDatum,
+    SeriesNodePickMode,
+    SeriesNodePickMatch,
+    SeriesNodeClickEvent,
+} from '../series';
 import { ChartAxis, ChartAxisDirection } from '../../chartAxis';
 import { SeriesMarker, SeriesMarkerFormatterParams } from '../seriesMarker';
 import { isContinuous, isDiscrete } from '../../../util/value';
@@ -47,6 +54,17 @@ interface SeriesOpts {
     pathsZIndexSubOrderOffset: number[];
     features: SeriesFeature[];
     renderLayerPerSubSeries: boolean;
+}
+
+export class CartesianSeriesNodeClickEvent<Datum extends { datum: any }> extends SeriesNodeClickEvent<Datum> {
+    readonly xKey: string;
+    readonly yKey: string;
+
+    constructor(xKey: string, yKey: string, nativeEvent: MouseEvent, datum: Datum, series: Series<any>) {
+        super(nativeEvent, datum, series);
+        this.xKey = xKey;
+        this.yKey = yKey;
+    }
 }
 
 export abstract class CartesianSeries<

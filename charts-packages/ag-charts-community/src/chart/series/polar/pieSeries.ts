@@ -8,7 +8,13 @@ import { LinearScale } from '../../../scale/linearScale';
 import { clamper } from '../../../scale/continuousScale';
 import { Sector } from '../../../scene/shape/sector';
 import { BBox } from '../../../scene/bbox';
-import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle, SeriesTooltip } from './../series';
+import {
+    PolarTooltipRendererParams,
+    SeriesNodeDatum,
+    HighlightStyle,
+    SeriesTooltip,
+    SeriesNodeClickEvent,
+} from './../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
@@ -16,7 +22,7 @@ import { doOnce } from '../../../util/function';
 import { toFixed, mod } from '../../../util/number';
 import { LegendDatum } from '../../legend';
 import { Caption } from '../../../caption';
-import { Observable, TypedEvent } from '../../../util/observable';
+import { Observable } from '../../../util/observable';
 import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxis';
 import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
@@ -34,17 +40,29 @@ import {
     COLOR_STRING,
 } from '../../../util/validation';
 
-export interface PieSeriesNodeClickEvent extends TypedEvent {
-    readonly type: 'nodeClick';
-    readonly event: MouseEvent;
-    readonly series: PieSeries;
-    readonly datum: any;
+export class PieSeriesNodeClickEvent extends SeriesNodeClickEvent<any> {
     readonly angleKey: string;
-    /** @deprecated Use calloutLabelKey or sectorLabelKey */
+    @DeprecatedAndRenamedTo('calloutLabelKey')
     readonly labelKey?: string;
     readonly calloutLabelKey?: string;
     readonly sectorLabelKey?: string;
     readonly radiusKey?: string;
+
+    constructor(
+        angleKey: string,
+        calloutLabelKey: string | undefined,
+        sectorLabelKey: string | undefined,
+        radiusKey: string | undefined,
+        nativeEvent: MouseEvent,
+        datum: PieNodeDatum,
+        series: PieSeries
+    ) {
+        super(nativeEvent, datum, series);
+        this.angleKey = angleKey;
+        this.calloutLabelKey = calloutLabelKey;
+        this.sectorLabelKey = sectorLabelKey;
+        this.radiusKey = radiusKey;
+    }
 }
 
 interface PieNodeDatum extends SeriesNodeDatum {
@@ -99,6 +117,7 @@ export interface PieSeriesFormatterParams {
     readonly highlighted: boolean;
     readonly angleKey: string;
     readonly radiusKey?: string;
+    readonly seriesId: string;
 }
 
 export interface PieSeriesFormat {
@@ -129,6 +148,7 @@ interface PieSeriesLabelFormatterParams {
     readonly radiusValue?: any;
     readonly radiusName?: string;
     readonly value?: any;
+    readonly seriesId: string;
 }
 
 class PieSeriesCalloutLabel extends Label {
@@ -451,8 +471,16 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     async processData() {
-        const { angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData, calloutLabel, sectorLabel } =
-            this;
+        const {
+            angleKey,
+            radiusKey,
+            seriesItemEnabled,
+            angleScale,
+            groupSelectionData,
+            calloutLabel,
+            sectorLabel,
+            id: seriesId,
+        } = this;
         const data = angleKey && this.data ? this.data : [];
 
         const angleData: number[] = data.map(
@@ -492,6 +520,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 sectorLabelKey,
                 sectorLabelValue: sectorLabelKey ? datum[sectorLabelKey] : undefined,
                 sectorLabelName: this.sectorLabelName,
+                seriesId,
             };
         };
 
@@ -624,7 +653,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private getSectorFormat(datum: any, itemId: any, index: number, highlight: any): PieSeriesFormat {
-        const { angleKey, radiusKey, fills, strokes, fillOpacity: seriesFillOpacity, formatter } = this;
+        const { angleKey, radiusKey, fills, strokes, fillOpacity: seriesFillOpacity, formatter, id: seriesId } = this;
 
         const highlightedDatum = this.chart!.highlightedDatum;
         const isDatumHighlighted = highlight && highlightedDatum?.series === this && itemId === highlightedDatum.itemId;
@@ -645,6 +674,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 stroke,
                 strokeWidth,
                 highlighted: isDatumHighlighted,
+                seriesId,
             });
         }
 
@@ -987,17 +1017,16 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
     }
 
-    fireNodeClickEvent(event: MouseEvent, datum: PieNodeDatum): void {
-        this.fireEvent<PieSeriesNodeClickEvent>({
-            type: 'nodeClick',
+    protected getNodeClickEvent(event: MouseEvent, datum: PieNodeDatum): PieSeriesNodeClickEvent {
+        return new PieSeriesNodeClickEvent(
+            this.angleKey,
+            this.calloutLabelKey,
+            this.sectorLabelKey,
+            this.radiusKey,
             event,
-            series: this,
-            datum: datum.datum,
-            angleKey: this.angleKey,
-            labelKey: this.calloutLabelKey,
-            calloutLabelKey: this.calloutLabelKey,
-            radiusKey: this.radiusKey,
-        });
+            datum,
+            this
+        );
     }
 
     getTooltipHtml(nodeDatum: PieNodeDatum): string {
@@ -1016,6 +1045,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             sectorLabelKey,
             calloutLabelName,
             sectorLabelName,
+            id: seriesId,
         } = this;
 
         const { renderer: tooltipRenderer } = tooltip;
@@ -1050,6 +1080,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     sectorLabelName,
                     title,
                     color,
+                    seriesId,
                 }),
                 defaults
             );
@@ -1058,11 +1089,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return toTooltipHtml(defaults);
     }
 
-    listSeriesItems(legendData: LegendDatum[]): void {
+    getLegendData(): LegendDatum[] {
         const { calloutLabelKey, data } = this;
 
         if (data && data.length && calloutLabelKey) {
             const { id } = this;
+
+            const legendData: LegendDatum[] = [];
 
             const titleText = this.title && this.title.showInLegend && this.title.text;
             data.forEach((datum, index) => {
@@ -1073,6 +1106,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 legendData.push({
                     id,
                     itemId: index,
+                    seriesId: id,
                     enabled: this.seriesItemEnabled[index],
                     label: {
                         text: labelParts.join(' - '),
@@ -1085,7 +1119,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     },
                 });
             });
+
+            return legendData;
         }
+
+        return [];
     }
 
     toggleSeriesItem(itemId: number, enabled: boolean): void {
