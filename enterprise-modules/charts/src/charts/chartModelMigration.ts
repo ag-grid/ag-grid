@@ -1,11 +1,12 @@
-import { ChartModel } from '@ag-grid-community/core';
+import { ChartModel, AgChartThemeName } from '@ag-grid-community/core';
 import { getSeriesType } from './chartComp/utils/seriesTypeMapper';
+import { getLegacyAxisType, ALL_AXIS_TYPES } from './chartComp/utils/axisTypeMapper';
 
 // the line below is automatically modified during releases - do not modify
 // (see scripts/release/updateChartModel.js)
 export const CURRENT_VERSION = '28.2.0';
 
-const DEBUG = false;
+const DEBUG = (window as any)['agChartsDebug'] === true;
 
 export function upgradeChartModel(model: ChartModel): ChartModel {
     if (model.version == null) {
@@ -17,9 +18,10 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = migrateIfBefore('24.0.0', model, migrateV24);
     model = migrateIfBefore('25.1.0', model, migrateV25_1);
     model = migrateIfBefore('26.0.0', model, migrateV26);
-    model = migrateIfBefore('26.0.0', model, migrateV26_1);
+    model = migrateIfBefore('26.1.0', model, migrateV26_1);
     // Switch from iChartOptions to iAgChartOptions....
     model = migrateIfBefore('26.2.0', model, migrateV26_2);
+    model = migrateIfBefore('28.0.0', model, migrateV28);
     model = migrateIfBefore('28.2.0', model, migrateV28_2);
 
     // Bump version to latest.
@@ -30,30 +32,51 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
 
 function migrateV23(model: ChartModel) {
     // https://github.com/ag-grid/ag-grid/commit/76c6744ff2b732d298d1ade73c122188854b5bac
-    const markerUpdate = ({ type, ...marker }: any) => ({ shape: type, ...marker });
-    model = jsonMutate('chartOptions.legend.item.marker', model, markerUpdate);
-    model = jsonMutate('chartOptions.seriesDefaults.marker', model, markerUpdate);
+    model = jsonRename('chartOptions.legend.item.marker.type', 'shape', model);
+    model = jsonRename('chartOptions.seriesDefaults.marker.type', 'shape', model);
 
     // https://github.com/ag-grid/ag-grid/commit/7bdf2cfd666acda758a818733a9f9cb35ac1d7a7
-    const legendUpdate = ({ padding, ...legend }: any) => ({ spacing: padding, ...legend });
-    model = jsonMutate('chartOptions.legend', model, legendUpdate);
+    model = jsonRename('chartOptions.legend.padding', 'spacing', model);
+
+    // Remove fixed width/height.
+    model = jsonDelete('chartOptions.width', model);
+    model = jsonDelete('chartOptions.height', model);
 
     return model;
 }
 
 function migrateV24(model: ChartModel) {
     // https://github.com/ag-grid/ag-grid/commit/f4e854e3dc459400fa00e6da2873cb8e9cfff6fe#
-    const markerUpdate = ({ minSize, ...marker }: any) => ({ ...marker });
-    model = jsonMutate('chartOptions.seriesDefaults.marker', model, markerUpdate);
-    return model;
+    model = jsonDelete('chartOptions.seriesDefaults.marker.minSize', model);
+
+    const {
+        chartType,
+        chartPalette, // Migrate.
+        chartOptions: { xAxis, yAxis, ...chartOptions },
+        ...chartModel
+    } = model as any;
+    const axesTypes = getLegacyAxisType(chartType);
+    const axes = axesTypes?.map((type, i) => ({
+        type,
+        ...(i === 0 ? xAxis : yAxis),
+    }));
+
+    return {
+        chartType,
+        chartThemeName: LEGACY_PALETTES[chartPalette] ?? 'ag-default',
+        chartOptions: {
+            ...chartOptions,
+            axes,
+            xAxis,
+            yAxis,
+        },
+        ...chartModel,
+    } as ChartModel;
 }
 
 function migrateV25_1(model: ChartModel) {
     // https://github.com/ag-grid/ag-grid/commit/61943f9fecbfb5ac1b9a1fd93788f9fdd8687181
-    const pieLabelUpdate = ({ minRequiredAngle, ...label }: any) => ({ minAngle: minRequiredAngle, ...label });
-    if (model.chartType === 'pie') {
-        model = jsonMutate('chartOptions.seriesDefaults.label', model, pieLabelUpdate);
-    }
+    model = jsonRename('chartOptions.seriesDefaults.label.minRequiredAngle', 'minAngle', model);
     return model;
 }
 
@@ -66,49 +89,61 @@ function migrateV26(model: ChartModel) {
     model = jsonMutate('chartOptions.seriesDefaults.highlightStyle', model, highlightOptUpdate);
 
     // https://github.com/ag-grid/ag-grid/commit/f4e854e3dc459400fa00e6da2873cb8e9cfff6fe#
-    const {
-        chart,
-        chartOptions: {
-            seriesDefaults: { tooltipClass, tooltipTracking, ...sProps },
-            ...chartProps
-        },
-        ...props
-    } = model as any;
-    return { chartOptions: { seriesDefaults: sProps, ...chartProps }, ...props } as any;
+    model = jsonDelete('chart', model);
+    model = jsonDelete('chartOptions.seriesDefaults.tooltipClass', model);
+    model = jsonDelete('chartOptions.seriesDefaults.tooltipTracking', model);
+
+    return model;
 }
 
 function migrateV26_1(model: ChartModel) {
     // https://github.com/ag-grid/ag-grid/commit/df2445d88e64cb4e831d6163104a0fa60ccde3b5
     const highlightOptUpdate = ({ item, series, ...opts }: any) => ({
         item: { ...opts, ...item },
-        series,
+        ...(series ? { series } : {}),
     });
-    return jsonMutate('chartOptions.seriesDefaults.highlightStyle', model, highlightOptUpdate);
+    model = jsonMutate('chartOptions.seriesDefaults.highlightStyle', model, highlightOptUpdate);
+    model = jsonMutate('chartOptions.series[].highlightStyle', model, highlightOptUpdate);
+    return model;
 }
 
 function migrateV26_2(model: ChartModel) {
     // https://github.com/ag-grid/ag-grid/commit/8b2e223cb1a687cb6c1d70b9f75f52fa29d00341
-    const modelAny = model as any;
-
+    model = jsonDelete('chartOptions.seriesDefaults.fill', model);
+    model = jsonDelete('chartOptions.seriesDefaults.stroke', model);
+    model = jsonDelete('chartOptions.seriesDefaults.callout.colors', model);
+    model = jsonDelete('chartOptions.xAxis', model);
+    model = jsonDelete('chartOptions.yAxis', model);
     const {
         chartType,
-        chartOptions: { axes, series, seriesDefaults, xAxis, yAxis, ...otherChartOptions },
+        chartOptions: {
+            axes,
+            series,
+            seriesDefaults,
+            ...otherChartOptions
+        },
         ...otherModelProps
-    } = modelAny;
+    } = model as any;
     const seriesTypes = series?.map((s: any) => s.type) ?? [getSeriesType(chartType)];
 
-    const merge = (r: {}, n: {}) => ({ ...r, ...n });
-
-    const updatedAxes = axes
-        .map(({ type, ...axisProps }: any) => ({
-            [type]: { ...axisProps },
-        }))
-        .reduce(merge, {});
+    const chartTypeMixin: any = {};
+    if (!seriesTypes.includes('pie')) {
+        const minimalAxis = { top: {}, bottom: {}, left: {}, right: {} };
+        const updatedAxes = axes
+            .map(({ type, ...axisProps }: any) => ({
+                [type]: { ...minimalAxis, ...axisProps },
+            }))
+            .reduce(merge, {});
+        ALL_AXIS_TYPES.filter((v) => updatedAxes[v] == null).forEach((v) => {
+            updatedAxes[v] = { ...minimalAxis };
+        });
+        chartTypeMixin.axes = updatedAxes;
+    }
 
     const updatedChartOptions = seriesTypes
         .map((t: string) => ({
             [t]: {
-                axes: updatedAxes,
+                ...chartTypeMixin,
                 series: seriesDefaults,
                 ...otherChartOptions,
             },
@@ -124,7 +159,18 @@ function migrateV26_2(model: ChartModel) {
     return model;
 }
 
+function migrateV28(model: ChartModel) {
+    model = jsonDelete('chartOptions.*.title.padding', model);
+    model = jsonDelete('chartOptions.*.subtitle.padding', model);
+    model = jsonDelete('chartOptions.*.axes.*.title.padding', model);
+
+    return model;
+}
+
 function migrateV28_2(model: ChartModel) {
+    model = jsonRename('chartOptions.pie.series.callout', 'calloutLine', model);
+    model = jsonRename('chartOptions.pie.series.label', 'calloutLabel', model);
+
     // series.yKeys => yKey ?
     // series.yNames => yName ?
 
@@ -206,6 +252,40 @@ function versionNumber(version: string): number {
     return major * 10_000 + minor * 100 + patch;
 }
 
+function jsonRename(path: string | string[], renameTo: string, json: any): any {
+    const pathElements = path instanceof Array ? path : path.split('.');
+    const parentPathElements = pathElements.slice(0, pathElements.length - 1);
+    const targetName = pathElements[pathElements.length - 1];
+
+    return jsonMutate(parentPathElements, json, (parent) => {
+        const hasProperty = Object.keys(parent).includes(targetName);
+        if (!hasProperty) {
+            return parent;
+        }
+
+        const result = { ...parent, [renameTo]: parent[targetName] };
+        delete result[targetName];
+        return result;
+    });
+}
+
+function jsonDelete(path: string | string[], json: any): any {
+    const pathElements = path instanceof Array ? path : path.split('.');
+    const parentPathElements = pathElements.slice(0, pathElements.length - 1);
+    const targetName = pathElements[pathElements.length - 1];
+
+    return jsonMutate(parentPathElements, json, (parent) => {
+        const hasProperty = Object.keys(parent).includes(targetName);
+        if (!hasProperty) {
+            return parent;
+        }
+
+        const result = { ...parent };
+        delete result[targetName];
+        return result;
+    });
+}
+
 function jsonMutate(path: string | string[], json: any, mutator: (v: any) => any): any {
     const pathElements = path instanceof Array ? path : path.split('.');
 
@@ -226,9 +306,25 @@ function jsonMutate(path: string | string[], json: any, mutator: (v: any) => any
         if (json[arrayName] instanceof Array) {
             json[arrayName] = json[arrayName].map((v: any) => jsonMutate(pathElements.slice(1), v, mutator));
         }
+    } else if (pathElements[0] === '*') {
+        for (const jsonProp in json) {
+            json[jsonProp] = jsonMutate(pathElements.slice(1), json[jsonProp], mutator);
+        }
     } else if (json[pathElements[0]] != null) {
         json[pathElements[0]] = jsonMutate(pathElements.slice(1), json[pathElements[0]], mutator);
     }
 
     return json;
 }
+
+const merge = (r: {}, n: {}) => ({ ...r, ...n });
+
+// Precise legacy palette fills/strokes can be found here for future reference:
+// https://github.com/ag-grid/ag-grid/blob/b22.1.0/enterprise-modules/charts/src/charts/chart/palettes.ts
+const LEGACY_PALETTES: Record<string, AgChartThemeName> = {
+    borneo: 'ag-default',
+    material: 'ag-material',
+    pastel: 'ag-pastel',
+    bright: 'ag-vivid',
+    flat: 'ag-solar',
+};

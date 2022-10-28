@@ -10,18 +10,35 @@ function loadChartModel(name: string): ChartModel {
     );
 }
 
+function snapshotVersion(name: string): string {
+    const hyphenIndex = name.indexOf('-');
+    if (hyphenIndex >= 0) {
+        return name.substring(0, hyphenIndex);
+    }
+    return name;
+}
+
 describe('chartModelMigration', () => {
     const SNAPSHOT_CASES = {
-        // '22.1.0': { detectedVersion: '22.1.0' },
-        // '23.0.0': { detectedVersion: '23.0.0' },
-        '24.0.0': { detectedVersion: '24.0.0' },
-        '25.0.0': { detectedVersion: '25.0.0' },
-        '25.2.0': { detectedVersion: '25.0.0' }, // Client-supplied example.
-        '26.0.0': { detectedVersion: '26.0.0' },
-        '26.1.0': { detectedVersion: '26.1.0' },
-        '26.2.0': { detectedVersion: '26.2.0' },
-        '27.0.0': { detectedVersion: '26.2.0' },
-        '28.0.0': { detectedVersion: '28.0.0' },
+        '22.1.0': {},
+        '22.1.0-pie': {},
+        '22.1.0-doughnut': {},
+        '23.0.0': {},
+        '24.0.0': {},
+        '25.0.0': {},
+        // Client-supplied example.
+        '25.2.0': {
+              // Not enough markers to detect 25.2, overlap migrations are safe.
+           detectedVersion: '25.0.0',
+        },
+        '26.0.0': {},
+        '26.1.0': {},
+        '26.2.0': {},
+        '27.0.0': {
+            // Not enough markers to detect 27.0, overlap migrations are safe.
+            detectedVersion: '26.2.0',
+        },
+        '28.0.0': {},
     };
     const SNAPSHOT_NAMES = Object.keys(SNAPSHOT_CASES);
 
@@ -43,7 +60,7 @@ describe('chartModelMigration', () => {
 
     describe('heuristicVersionDetection', () => {
         it.each(SNAPSHOT_NAMES)(`should detect best approximate version for %s ChartModel`, (name) => {
-            const { detectedVersion } = SNAPSHOT_CASES[name] ?? {};
+            const { detectedVersion = snapshotVersion(name) } = SNAPSHOT_CASES[name] ?? {};
             const chartModel = loadChartModel(name);
 
             const version = heuristicVersionDetection(chartModel);
