@@ -1,0 +1,432 @@
+{
+    "modelType": "range",
+    "chartId": "id-nsogsnb8jor",
+    "chartType": "line",
+    "chartThemeName": "ag-default",
+    "chartOptions": {
+        "background": {
+            "visible": true,
+            "fill": "white"
+        },
+        "padding": {
+            "top": 20,
+            "right": 20,
+            "bottom": 20,
+            "left": 20
+        },
+        "title": {
+            "enabled": false,
+            "padding": {
+                "top": 10,
+                "right": 10,
+                "bottom": 10,
+                "left": 10
+            },
+            "text": "Title",
+            "fontWeight": "bold",
+            "fontSize": 16,
+            "fontFamily": "Verdana, sans-serif",
+            "color": "rgb(70, 70, 70)"
+        },
+        "subtitle": {
+            "enabled": false,
+            "padding": {
+                "top": 10,
+                "right": 10,
+                "bottom": 10,
+                "left": 10
+            },
+            "text": "Subtitle",
+            "fontSize": 12,
+            "fontFamily": "Verdana, sans-serif",
+            "color": "rgb(140, 140, 140)"
+        },
+        "legend": {
+            "enabled": true,
+            "position": "right",
+            "spacing": 20,
+            "item": {
+                "paddingX": 16,
+                "paddingY": 8,
+                "marker": {
+                    "size": 15,
+                    "strokeWidth": 1,
+                    "padding": 8
+                },
+                "label": {
+                    "color": "black",
+                    "fontSize": 12,
+                    "fontFamily": "Verdana, sans-serif"
+                }
+            }
+        },
+        "navigator": {
+            "enabled": false,
+            "height": 30,
+            "min": 0,
+            "max": 1,
+            "mask": {
+                "fill": "#999999",
+                "stroke": "#999999",
+                "strokeWidth": 1,
+                "fillOpacity": 0.2
+            },
+            "minHandle": {
+                "fill": "#f2f2f2",
+                "stroke": "#999999",
+                "strokeWidth": 1,
+                "width": 8,
+                "height": 16,
+                "gripLineGap": 2,
+                "gripLineLength": 8
+            },
+            "maxHandle": {
+                "fill": "#f2f2f2",
+                "stroke": "#999999",
+                "strokeWidth": 1,
+                "width": 8,
+                "height": 16,
+                "gripLineGap": 2,
+                "gripLineLength": 8
+            }
+        },
+        "seriesDefaults": {
+            "stroke": {
+                "width": 2,
+                "colors": [
+                    "#aa4520",
+                    "#b07513",
+                    "#3d803d",
+                    "#2d768d",
+                    "#2e3e8d",
+                    "#6c2e8c",
+                    "#8c2d46",
+                    "#5f5f5f"
+                ],
+                "opacity": 1
+            },
+            "marker": {
+                "enabled": false,
+                "shape": "circle",
+                "size": 6,
+                "strokeWidth": 1
+            },
+            "tooltip": {
+                "enabled": true
+            },
+            "shadow": {
+                "enabled": false,
+                "color": "rgba(0, 0, 0, 0.5)",
+                "xOffset": 3,
+                "yOffset": 3,
+                "blur": 5
+            },
+            "fill": {
+                "colors": [
+                    "#f3622d",
+                    "#fba71b",
+                    "#57b757",
+                    "#41a9c9",
+                    "#4258c9",
+                    "#9a42c8",
+                    "#c84164",
+                    "#888888"
+                ],
+                "opacity": 0.8
+            },
+            "lineDash": [
+                0
+            ],
+            "lineDashOffset": 0,
+            "highlightStyle": {
+                "fill": "yellow"
+            }
+        },
+        "listeners": {},
+        "xAxis": {
+            "title": {
+                "fontStyle": "normal",
+                "fontWeight": "bold",
+                "fontSize": 12,
+                "fontFamily": "Verdana, sans-serif",
+                "color": "rgb(70, 70, 70)",
+                "enabled": false,
+                "padding": {
+                    "top": 10,
+                    "right": 10,
+                    "bottom": 10,
+                    "left": 10
+                },
+                "text": "Axis Title"
+            },
+            "line": {
+                "color": "rgb(195, 195, 195)",
+                "width": 1
+            },
+            "tick": {
+                "color": "rgb(195, 195, 195)",
+                "size": 6,
+                "width": 1,
+                "count": 10
+            },
+            "label": {
+                "fontStyle": "normal",
+                "fontWeight": "normal",
+                "fontSize": 12,
+                "fontFamily": "Verdana, sans-serif",
+                "color": "rgb(87, 87, 87)",
+                "padding": 5,
+                "rotation": 0
+            },
+            "gridStyle": [
+                {
+                    "stroke": "rgb(219, 219, 219)",
+                    "lineDash": [
+                        4,
+                        2
+                    ]
+                }
+            ]
+        },
+        "yAxis": {
+            "title": {
+                "fontStyle": "normal",
+                "fontWeight": "bold",
+                "fontSize": 12,
+                "fontFamily": "Verdana, sans-serif",
+                "color": "rgb(70, 70, 70)",
+                "enabled": false,
+                "padding": {
+                    "top": 10,
+                    "right": 10,
+                    "bottom": 10,
+                    "left": 10
+                },
+                "text": "Axis Title"
+            },
+            "line": {
+                "color": "rgb(195, 195, 195)",
+                "width": 1
+            },
+            "tick": {
+                "color": "rgb(195, 195, 195)",
+                "size": 6,
+                "width": 1,
+                "count": 10
+            },
+            "label": {
+                "fontStyle": "normal",
+                "fontWeight": "normal",
+                "fontSize": 12,
+                "fontFamily": "Verdana, sans-serif",
+                "color": "rgb(87, 87, 87)",
+                "padding": 5,
+                "rotation": 0
+            },
+            "gridStyle": [
+                {
+                    "stroke": "rgb(219, 219, 219)",
+                    "lineDash": [
+                        4,
+                        2
+                    ]
+                }
+            ]
+        },
+        "tooltip": {
+            "enabled": true,
+            "tracking": true,
+            "class": "ag-chart-tooltip",
+            "delay": 0
+        },
+        "autoSize": true,
+        "axes": [
+            {
+                "type": "category",
+                "position": "bottom",
+                "title": {
+                    "fontStyle": "normal",
+                    "fontWeight": "bold",
+                    "fontSize": 12,
+                    "fontFamily": "Verdana, sans-serif",
+                    "color": "rgb(70, 70, 70)",
+                    "enabled": false,
+                    "padding": {
+                        "top": 10,
+                        "right": 10,
+                        "bottom": 10,
+                        "left": 10
+                    },
+                    "text": "Axis Title"
+                },
+                "line": {
+                    "color": "rgb(195, 195, 195)",
+                    "width": 1
+                },
+                "tick": {
+                    "color": "rgb(195, 195, 195)",
+                    "size": 6,
+                    "width": 1,
+                    "count": 10
+                },
+                "label": {
+                    "fontStyle": "normal",
+                    "fontWeight": "normal",
+                    "fontSize": 12,
+                    "fontFamily": "Verdana, sans-serif",
+                    "color": "rgb(87, 87, 87)",
+                    "padding": 5,
+                    "rotation": 0
+                },
+                "gridStyle": [
+                    {
+                        "stroke": "rgb(219, 219, 219)",
+                        "lineDash": [
+                            4,
+                            2
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "number",
+                "position": "left",
+                "title": {
+                    "fontStyle": "normal",
+                    "fontWeight": "bold",
+                    "fontSize": 12,
+                    "fontFamily": "Verdana, sans-serif",
+                    "color": "rgb(70, 70, 70)",
+                    "enabled": false,
+                    "padding": {
+                        "top": 10,
+                        "right": 10,
+                        "bottom": 10,
+                        "left": 10
+                    },
+                    "text": "Axis Title"
+                },
+                "line": {
+                    "color": "rgb(195, 195, 195)",
+                    "width": 1
+                },
+                "tick": {
+                    "color": "rgb(195, 195, 195)",
+                    "size": 6,
+                    "width": 1,
+                    "count": 10
+                },
+                "label": {
+                    "fontStyle": "normal",
+                    "fontWeight": "normal",
+                    "fontSize": 12,
+                    "fontFamily": "Verdana, sans-serif",
+                    "color": "rgb(87, 87, 87)",
+                    "padding": 5,
+                    "rotation": 0
+                },
+                "gridStyle": [
+                    {
+                        "stroke": "rgb(219, 219, 219)",
+                        "lineDash": [
+                            4,
+                            2
+                        ]
+                    }
+                ]
+            }
+        ],
+        "series": [
+            {
+                "shadow": {
+                    "enabled": false,
+                    "color": "rgba(0, 0, 0, 0.5)",
+                    "xOffset": 3,
+                    "yOffset": 3,
+                    "blur": 5
+                },
+                "tooltip": {
+                    "enabled": true
+                },
+                "fill": {
+                    "colors": [
+                        "#f3622d",
+                        "#fba71b",
+                        "#57b757",
+                        "#41a9c9",
+                        "#4258c9",
+                        "#9a42c8",
+                        "#c84164",
+                        "#888888"
+                    ],
+                    "opacity": 0.8
+                },
+                "stroke": {
+                    "colors": [
+                        "#aa4520",
+                        "#b07513",
+                        "#3d803d",
+                        "#2d768d",
+                        "#2e3e8d",
+                        "#6c2e8c",
+                        "#8c2d46",
+                        "#5f5f5f"
+                    ],
+                    "opacity": 1,
+                    "width": 2
+                },
+                "marker": {
+                    "enabled": false,
+                    "shape": "circle",
+                    "size": 6,
+                    "strokeWidth": 1
+                },
+                "lineDash": [
+                    0
+                ],
+                "lineDashOffset": 0,
+                "highlightStyle": {
+                    "fill": "yellow"
+                },
+                "type": "area",
+                "fills": [
+                    "#f3622d",
+                    "#fba71b",
+                    "#57b757",
+                    "#41a9c9",
+                    "#4258c9",
+                    "#9a42c8",
+                    "#c84164",
+                    "#888888"
+                ],
+                "fillOpacity": 0.8,
+                "strokes": [
+                    "#aa4520",
+                    "#b07513",
+                    "#3d803d",
+                    "#2d768d",
+                    "#2e3e8d",
+                    "#6c2e8c",
+                    "#8c2d46",
+                    "#5f5f5f"
+                ],
+                "strokeOpacity": 1,
+                "strokeWidth": 2
+            }
+        ]
+    },
+    "cellRange": {
+        "rowStartIndex": 0,
+        "rowStartPinned": null,
+        "rowEndIndex": 19,
+        "rowEndPinned": null,
+        "columns": [
+            "country",
+            "sugar",
+            "fat",
+            "weight"
+        ]
+    },
+    "suppressChartRanges": false,
+    "unlinkChart": false
+}

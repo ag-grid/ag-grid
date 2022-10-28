@@ -23,6 +23,7 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = migrateIfBefore('26.2.0', model, migrateV26_2);
     model = migrateIfBefore('28.0.0', model, migrateV28);
     model = migrateIfBefore('28.2.0', model, migrateV28_2);
+    model = cleanup(model);
 
     // Bump version to latest.
     model = migrateIfBefore(CURRENT_VERSION, model, (m) => m);
@@ -37,10 +38,6 @@ function migrateV23(model: ChartModel) {
 
     // https://github.com/ag-grid/ag-grid/commit/7bdf2cfd666acda758a818733a9f9cb35ac1d7a7
     model = jsonRename('chartOptions.legend.padding', 'spacing', model);
-
-    // Remove fixed width/height.
-    model = jsonDelete('chartOptions.width', model);
-    model = jsonDelete('chartOptions.height', model);
 
     return model;
 }
@@ -93,6 +90,9 @@ function migrateV26(model: ChartModel) {
     model = jsonDelete('chartOptions.seriesDefaults.tooltipClass', model);
     model = jsonDelete('chartOptions.seriesDefaults.tooltipTracking', model);
 
+    // Cleanup label.rotation === 0, which was treated as 'use the default' on reload prior to 26.
+    model = jsonDeleteDefault('chartOptions.axes[].label.rotation', 0, model);
+    model = jsonDeleteDefault('chartOptions.axes[].label.rotation', 335, model);
     return model;
 }
 
@@ -116,15 +116,14 @@ function migrateV26_2(model: ChartModel) {
     model = jsonDelete('chartOptions.yAxis', model);
     const {
         chartType,
-        chartOptions: {
-            axes,
-            series,
-            seriesDefaults,
-            ...otherChartOptions
-        },
+        chartOptions: { axes, series, seriesDefaults, ...otherChartOptions },
         ...otherModelProps
     } = model as any;
-    const seriesTypes = series?.map((s: any) => s.type) ?? [getSeriesType(chartType)];
+
+    // At 26.2.0 combination charts weren't supported, so we can safely assume a single series type.
+    // We can't rely on the `series.type` field as it was incorrect (in v25.0.0 line chart has an
+    // `area` series).
+    const seriesTypes = [getSeriesType(chartType)];
 
     const chartTypeMixin: any = {};
     if (!seriesTypes.includes('pie')) {
@@ -163,6 +162,7 @@ function migrateV28(model: ChartModel) {
     model = jsonDelete('chartOptions.*.title.padding', model);
     model = jsonDelete('chartOptions.*.subtitle.padding', model);
     model = jsonDelete('chartOptions.*.axes.*.title.padding', model);
+    model = jsonBackfill('chartOptions.*.axes.*.title.enabled', false, model);
 
     return model;
 }
@@ -173,6 +173,15 @@ function migrateV28_2(model: ChartModel) {
 
     // series.yKeys => yKey ?
     // series.yNames => yName ?
+
+    return model;
+}
+
+function cleanup(model: ChartModel) {
+    // Remove fixed width/height - this has never been supported via UI configuration.
+    model = jsonDelete('chartOptions.*.width', model);
+    model = jsonDelete('chartOptions.*.height', model);
+    model = jsonBackfill('chartOptions.*.axes.category.label.autoRotate', true, model);
 
     return model;
 }
@@ -252,36 +261,51 @@ function versionNumber(version: string): number {
     return major * 10_000 + minor * 100 + patch;
 }
 
-function jsonRename(path: string | string[], renameTo: string, json: any): any {
-    const pathElements = path instanceof Array ? path : path.split('.');
-    const parentPathElements = pathElements.slice(0, pathElements.length - 1);
-    const targetName = pathElements[pathElements.length - 1];
-
-    return jsonMutate(parentPathElements, json, (parent) => {
-        const hasProperty = Object.keys(parent).includes(targetName);
-        if (!hasProperty) {
-            return parent;
+function jsonDeleteDefault(path: string | string[], defaultValue: any, json: any): any {
+    return jsonMutateProperty(path, true, json, (parent, prop) => {
+        if (parent[prop] === defaultValue) {
+            delete parent[prop];
         }
+    });
+}
 
-        const result = { ...parent, [renameTo]: parent[targetName] };
-        delete result[targetName];
-        return result;
+function jsonBackfill(path: string | string[], defaultValue: any, json: any): any {
+    return jsonMutateProperty(path, false, json, (parent, prop) => {
+        if (parent[prop] == null) {
+            parent[prop] = defaultValue;
+        }
+    });
+}
+
+function jsonRename(path: string | string[], renameTo: string, json: any): any {
+    return jsonMutateProperty(path, true, json, (parent, prop) => {
+        parent[renameTo] = parent[prop];
+        delete parent[prop];
     });
 }
 
 function jsonDelete(path: string | string[], json: any): any {
+    return jsonMutateProperty(path, true, json, (parent, prop) => delete parent[prop]);
+}
+
+function jsonMutateProperty(
+    path: string | string[],
+    skipMissing: boolean,
+    json: any,
+    mutator: (parent: any, targetProp: string) => any
+): void {
     const pathElements = path instanceof Array ? path : path.split('.');
     const parentPathElements = pathElements.slice(0, pathElements.length - 1);
     const targetName = pathElements[pathElements.length - 1];
 
     return jsonMutate(parentPathElements, json, (parent) => {
         const hasProperty = Object.keys(parent).includes(targetName);
-        if (!hasProperty) {
+        if (skipMissing && !hasProperty) {
             return parent;
         }
 
         const result = { ...parent };
-        delete result[targetName];
+        mutator(result, targetName);
         return result;
     });
 }

@@ -26,12 +26,14 @@ describe('chartModelMigration', () => {
         '23.0.0': {},
         '24.0.0': {},
         '25.0.0': {},
+        '25.0.0-line': {},
         // Client-supplied example.
         '25.2.0': {
-              // Not enough markers to detect 25.2, overlap migrations are safe.
-           detectedVersion: '25.0.0',
+            // Not enough markers to detect 25.2, overlap migrations are safe.
+            detectedVersion: '25.0.0',
         },
         '26.0.0': {},
+        '26.0.0-scatter': {},
         '26.1.0': {},
         '26.2.0': {},
         '27.0.0': {

@@ -40,7 +40,6 @@ Object {
             "fontStyle": "normal",
             "fontWeight": "normal",
             "padding": 5,
-            "rotation": 335,
           },
           "left": Object {},
           "line": Object {
@@ -87,7 +86,6 @@ Object {
             "fontStyle": "normal",
             "fontWeight": "normal",
             "padding": 5,
-            "rotation": 0,
           },
           "left": Object {},
           "line": Object {
@@ -458,7 +456,6 @@ Object {
             "fontStyle": "normal",
             "fontWeight": "normal",
             "padding": 5,
-            "rotation": 335,
           },
           "left": Object {},
           "line": Object {
@@ -505,7 +502,6 @@ Object {
             "fontStyle": "normal",
             "fontWeight": "normal",
             "padding": 5,
-            "rotation": 0,
           },
           "left": Object {},
           "line": Object {
@@ -645,11 +641,11 @@ Object {
             },
           ],
           "label": Object {
+            "autoRotate": true,
             "color": "rgb(87, 87, 87)",
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "padding": 5,
-            "rotation": 0,
           },
           "left": Object {},
           "line": Object {
@@ -702,7 +698,6 @@ Object {
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "padding": 5,
-            "rotation": 0,
           },
           "left": Object {},
           "line": Object {
@@ -869,11 +864,11 @@ Object {
             },
           ],
           "label": Object {
+            "autoRotate": true,
             "color": "rgb(87, 87, 87)",
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "padding": 5,
-            "rotation": 0,
           },
           "left": Object {},
           "line": Object {
@@ -926,7 +921,6 @@ Object {
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "padding": 5,
-            "rotation": 0,
           },
           "left": Object {},
           "line": Object {
@@ -1077,6 +1071,250 @@ Object {
 }
 `;
 
+exports[`chartModelMigration upgradeChartModel should upgrade 25.0.0-line successfully 1`] = `
+Object {
+  "cellRange": Object {
+    "columns": Array [
+      "country",
+      "sugar",
+      "fat",
+      "weight",
+    ],
+    "rowEndIndex": 19,
+    "rowEndPinned": null,
+    "rowStartIndex": 0,
+    "rowStartPinned": null,
+  },
+  "chartId": "id-nsogsnb8jor",
+  "chartOptions": Object {
+    "line": Object {
+      "autoSize": true,
+      "axes": Object {
+        "category": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "autoRotate": true,
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+            "padding": 5,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "position": "bottom",
+          "right": Object {},
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontStyle": "normal",
+            "fontWeight": "bold",
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "groupedCategory": Object {
+          "bottom": Object {},
+          "left": Object {},
+          "right": Object {},
+          "top": Object {},
+        },
+        "log": Object {
+          "bottom": Object {},
+          "left": Object {},
+          "right": Object {},
+          "top": Object {},
+        },
+        "number": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+            "padding": 5,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "position": "left",
+          "right": Object {},
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontStyle": "normal",
+            "fontWeight": "bold",
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "time": Object {
+          "bottom": Object {},
+          "left": Object {},
+          "right": Object {},
+          "top": Object {},
+        },
+      },
+      "background": Object {
+        "fill": "white",
+        "visible": true,
+      },
+      "legend": Object {
+        "enabled": true,
+        "item": Object {
+          "label": Object {
+            "color": "black",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+          },
+          "marker": Object {
+            "padding": 8,
+            "size": 15,
+            "strokeWidth": 1,
+          },
+          "paddingX": 16,
+          "paddingY": 8,
+        },
+        "position": "right",
+        "spacing": 20,
+      },
+      "listeners": Object {},
+      "navigator": Object {
+        "enabled": false,
+        "height": 30,
+        "mask": Object {
+          "fill": "#999999",
+          "fillOpacity": 0.2,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+        },
+        "max": 1,
+        "maxHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+        "min": 0,
+        "minHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+      },
+      "padding": Object {
+        "bottom": 20,
+        "left": 20,
+        "right": 20,
+        "top": 20,
+      },
+      "series": Object {
+        "highlightStyle": Object {
+          "item": Object {
+            "fill": "yellow",
+          },
+        },
+        "lineDash": Array [
+          0,
+        ],
+        "lineDashOffset": 0,
+        "marker": Object {
+          "enabled": false,
+          "shape": "circle",
+          "size": 6,
+          "strokeWidth": 1,
+        },
+        "shadow": Object {
+          "blur": 5,
+          "color": "rgba(0, 0, 0, 0.5)",
+          "enabled": false,
+          "xOffset": 3,
+          "yOffset": 3,
+        },
+        "tooltip": Object {
+          "enabled": true,
+        },
+      },
+      "subtitle": Object {
+        "color": "rgb(140, 140, 140)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "text": "Subtitle",
+      },
+      "title": Object {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "text": "Title",
+      },
+      "tooltip": Object {
+        "class": "ag-chart-tooltip",
+        "delay": 0,
+        "enabled": true,
+        "tracking": true,
+      },
+    },
+  },
+  "chartThemeName": "ag-default",
+  "chartType": "line",
+  "modelType": "range",
+  "suppressChartRanges": false,
+  "unlinkChart": false,
+  "version": "28.2.0",
+}
+`;
+
 exports[`chartModelMigration upgradeChartModel should upgrade 25.2.0 successfully 1`] = `
 Object {
   "cellRange": Object {
@@ -1120,7 +1358,6 @@ Object {
             "fontStyle": "normal",
             "fontWeight": "normal",
             "padding": 5,
-            "rotation": 0,
           },
           "left": Object {},
           "line": Object {
@@ -1171,7 +1408,6 @@ Object {
             "fontStyle": "normal",
             "fontWeight": "normal",
             "padding": 5,
-            "rotation": 0,
           },
           "left": Object {},
           "line": Object {
@@ -1347,6 +1583,7 @@ Object {
             },
           ],
           "label": Object {
+            "autoRotate": true,
             "color": "rgb(87, 87, 87)",
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
@@ -1369,6 +1606,7 @@ Object {
           },
           "title": Object {
             "color": "rgb(70, 70, 70)",
+            "enabled": false,
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "fontWeight": "bold",
@@ -1422,6 +1660,7 @@ Object {
           },
           "title": Object {
             "color": "rgb(70, 70, 70)",
+            "enabled": false,
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "fontWeight": "bold",
@@ -1560,6 +1799,210 @@ Object {
 }
 `;
 
+exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0-scatter successfully 1`] = `
+Object {
+  "cellRange": Object {
+    "columns": Array [
+      "country",
+      "sugar",
+      "fat",
+      "weight",
+    ],
+    "rowEndIndex": 19,
+    "rowEndPinned": null,
+    "rowStartIndex": 0,
+    "rowStartPinned": null,
+  },
+  "chartId": "id-3iq3jaaivcd",
+  "chartOptions": Object {
+    "scatter": Object {
+      "autoSize": true,
+      "axes": Object {
+        "category": Object {
+          "bottom": Object {},
+          "left": Object {},
+          "right": Object {},
+          "top": Object {},
+        },
+        "groupedCategory": Object {
+          "bottom": Object {},
+          "left": Object {},
+          "right": Object {},
+          "top": Object {},
+        },
+        "log": Object {
+          "bottom": Object {},
+          "left": Object {},
+          "right": Object {},
+          "top": Object {},
+        },
+        "number": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "padding": 5,
+            "rotation": 0,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgb(195, 195, 195)",
+            "width": 1,
+          },
+          "position": "left",
+          "right": Object {},
+          "thickness": 0,
+          "tick": Object {
+            "color": "rgb(195, 195, 195)",
+            "count": 10,
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(70, 70, 70)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "text": "Axis Title",
+          },
+          "top": Object {},
+        },
+        "time": Object {
+          "bottom": Object {},
+          "left": Object {},
+          "right": Object {},
+          "top": Object {},
+        },
+      },
+      "background": Object {
+        "fill": "white",
+        "visible": true,
+      },
+      "legend": Object {
+        "enabled": true,
+        "item": Object {
+          "label": Object {
+            "color": "black",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+          },
+          "marker": Object {
+            "padding": 8,
+            "size": 15,
+            "strokeWidth": 1,
+          },
+          "paddingX": 16,
+          "paddingY": 8,
+        },
+        "position": "right",
+        "spacing": 20,
+      },
+      "navigator": Object {
+        "enabled": false,
+        "height": 30,
+        "mask": Object {
+          "fill": "#999999",
+          "fillOpacity": 0.2,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+        },
+        "max": 1,
+        "maxHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+        "min": 0,
+        "minHandle": Object {
+          "fill": "#f2f2f2",
+          "gripLineGap": 2,
+          "gripLineLength": 8,
+          "height": 16,
+          "stroke": "#999999",
+          "strokeWidth": 1,
+          "width": 8,
+        },
+      },
+      "padding": Object {
+        "bottom": 20,
+        "left": 20,
+        "right": 20,
+        "top": 20,
+      },
+      "series": Object {
+        "highlightStyle": Object {
+          "item": Object {
+            "fill": "yellow",
+          },
+          "series": Object {
+            "dimOpacity": 0.3,
+            "enabled": false,
+          },
+        },
+        "label": Object {
+          "color": "rgb(70, 70, 70)",
+          "enabled": false,
+          "fontFamily": "Verdana, sans-serif",
+          "fontSize": 12,
+        },
+        "marker": Object {
+          "enabled": true,
+          "shape": "circle",
+          "size": 6,
+          "strokeWidth": 1,
+        },
+        "paired": true,
+        "tooltip": Object {
+          "enabled": true,
+        },
+      },
+      "subtitle": Object {
+        "color": "rgb(140, 140, 140)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "text": "Subtitle",
+      },
+      "title": Object {
+        "color": "rgb(70, 70, 70)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "text": "Title",
+      },
+      "tooltip": Object {
+        "class": "ag-chart-tooltip",
+        "delay": 0,
+        "enabled": true,
+        "tracking": true,
+      },
+    },
+  },
+  "chartThemeName": "ag-default",
+  "chartType": "bubble",
+  "modelType": "range",
+  "suppressChartRanges": false,
+  "unlinkChart": false,
+  "version": "28.2.0",
+}
+`;
+
 exports[`chartModelMigration upgradeChartModel should upgrade 26.1.0 successfully 1`] = `
 Object {
   "cellRange": Object {
@@ -1589,6 +2032,7 @@ Object {
             },
           ],
           "label": Object {
+            "autoRotate": true,
             "color": "rgb(87, 87, 87)",
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
@@ -1611,6 +2055,7 @@ Object {
           },
           "title": Object {
             "color": "rgb(70, 70, 70)",
+            "enabled": false,
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "fontWeight": "bold",
@@ -1664,6 +2109,7 @@ Object {
           },
           "title": Object {
             "color": "rgb(70, 70, 70)",
+            "enabled": false,
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "fontWeight": "bold",
@@ -1830,6 +2276,7 @@ Object {
             },
           ],
           "label": Object {
+            "autoRotate": true,
             "color": "rgb(87, 87, 87)",
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
@@ -1851,6 +2298,7 @@ Object {
           },
           "title": Object {
             "color": "rgb(70, 70, 70)",
+            "enabled": false,
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "fontWeight": "bold",
@@ -1891,6 +2339,7 @@ Object {
           },
           "title": Object {
             "color": "rgb(70, 70, 70)",
+            "enabled": false,
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "fontWeight": "bold",
@@ -1932,6 +2381,7 @@ Object {
           },
           "title": Object {
             "color": "rgb(70, 70, 70)",
+            "enabled": false,
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "fontWeight": "bold",
@@ -1972,6 +2422,7 @@ Object {
           },
           "title": Object {
             "color": "rgb(70, 70, 70)",
+            "enabled": false,
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "fontWeight": "bold",
@@ -2012,6 +2463,7 @@ Object {
           },
           "title": Object {
             "color": "rgb(70, 70, 70)",
+            "enabled": false,
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "fontWeight": "bold",
@@ -2024,7 +2476,6 @@ Object {
         "fill": "white",
         "visible": true,
       },
-      "height": 300,
       "legend": Object {
         "enabled": true,
         "item": Object {
@@ -2148,7 +2599,6 @@ Object {
         "enabled": true,
         "tracking": true,
       },
-      "width": 600,
     },
   },
   "chartThemeName": "ag-default",
@@ -2189,6 +2639,7 @@ Object {
             },
           ],
           "label": Object {
+            "autoRotate": true,
             "color": "rgb(87, 87, 87)",
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
@@ -2210,6 +2661,7 @@ Object {
           },
           "title": Object {
             "color": "rgb(70, 70, 70)",
+            "enabled": false,
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "fontWeight": "bold",
@@ -2250,6 +2702,7 @@ Object {
           },
           "title": Object {
             "color": "rgb(70, 70, 70)",
+            "enabled": false,
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "fontWeight": "bold",
@@ -2291,6 +2744,7 @@ Object {
           },
           "title": Object {
             "color": "rgb(70, 70, 70)",
+            "enabled": false,
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "fontWeight": "bold",
@@ -2331,6 +2785,7 @@ Object {
           },
           "title": Object {
             "color": "rgb(70, 70, 70)",
+            "enabled": false,
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "fontWeight": "bold",
@@ -2371,6 +2826,7 @@ Object {
           },
           "title": Object {
             "color": "rgb(70, 70, 70)",
+            "enabled": false,
             "fontFamily": "Verdana, sans-serif",
             "fontSize": 12,
             "fontWeight": "bold",
@@ -2383,7 +2839,6 @@ Object {
         "fill": "white",
         "visible": true,
       },
-      "height": 300,
       "legend": Object {
         "enabled": true,
         "item": Object {
@@ -2501,7 +2956,6 @@ Object {
         "enabled": true,
         "tracking": true,
       },
-      "width": 600,
     },
   },
   "chartThemeName": "ag-default",
