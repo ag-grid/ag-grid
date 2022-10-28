@@ -9,6 +9,7 @@ export const CURRENT_VERSION = '28.2.0';
 const DEBUG = (window as any)['agChartsDebug'] === true;
 
 export function upgradeChartModel(model: ChartModel): ChartModel {
+    const originalVersion = model.version;
     if (model.version == null) {
         // Try to guess the version so we can apply the right subset of migrations.
         model.version = heuristicVersionDetection(model);
@@ -27,6 +28,10 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
 
     // Bump version to latest.
     model = migrateIfBefore(CURRENT_VERSION, model, (m) => m);
+
+    if (DEBUG && originalVersion !== model.version) {
+        console.log('AG Grid: ChartModel migration complete', { model });
+    }
 
     return model;
 }
@@ -109,6 +114,9 @@ function migrateV26_1(model: ChartModel) {
 
 function migrateV26_2(model: ChartModel) {
     // https://github.com/ag-grid/ag-grid/commit/8b2e223cb1a687cb6c1d70b9f75f52fa29d00341
+    model = jsonMove('chartOptions.seriesDefaults.fill.opacity', 'chartOptions.seriesDefaults.fillOpacity', model);
+    model = jsonMove('chartOptions.seriesDefaults.stroke.opacity', 'chartOptions.seriesDefaults.strokeOpacity', model);
+    model = jsonMove('chartOptions.seriesDefaults.stroke.width', 'chartOptions.seriesDefaults.strokeWidth', model);
     model = jsonDelete('chartOptions.seriesDefaults.fill', model);
     model = jsonDelete('chartOptions.seriesDefaults.stroke', model);
     model = jsonDelete('chartOptions.seriesDefaults.callout.colors', model);
@@ -274,6 +282,24 @@ function jsonBackfill(path: string | string[], defaultValue: any, json: any): an
         if (parent[prop] == null) {
             parent[prop] = defaultValue;
         }
+    });
+}
+
+function jsonMove(from: string, to: string, json: any): any {
+    let valueToMove: any = undefined;
+    let valueFound = false;
+    json = jsonMutateProperty(from, true, json, (parent, prop) => {
+        valueFound = true;
+        valueToMove = parent[prop];
+        delete parent[prop];
+    });
+
+    if (!valueFound) {
+        return json;
+    }
+
+    return jsonMutateProperty(to, false, json, (parent, prop) => {
+        parent[prop] = valueToMove;
     });
 }
 

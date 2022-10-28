@@ -148,6 +148,7 @@ Object {
         "top": 20,
       },
       "series": Object {
+        "fillOpacity": 1,
         "highlightStyle": Object {
           "item": Object {
             "fill": "yellow",
@@ -168,6 +169,209 @@ Object {
           "xOffset": 3,
           "yOffset": 3,
         },
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+        "tooltip": Object {
+          "enabled": true,
+        },
+      },
+      "subtitle": Object {
+        "color": "rgb(87, 87, 87)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+      },
+      "title": Object {
+        "color": "rgb(87, 87, 87)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 16,
+        "fontStyle": "normal",
+        "fontWeight": "bold",
+      },
+    },
+  },
+  "chartThemeName": "ag-default",
+  "chartType": "groupedColumn",
+  "version": "28.2.0",
+}
+`;
+
+exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-bar successfully 1`] = `
+Object {
+  "cellRange": Object {
+    "columns": Array [
+      "country",
+      "sugar",
+      "fat",
+      "weight",
+    ],
+    "rowEndIndex": 19,
+    "rowEndPinned": null,
+    "rowStartIndex": 0,
+    "rowStartPinned": null,
+  },
+  "chartId": "id-f4hx4t276m",
+  "chartOptions": Object {
+    "column": Object {
+      "axes": Object {
+        "category": Object {
+          "bottom": Object {},
+          "left": Object {},
+          "right": Object {},
+          "top": Object {},
+        },
+        "groupedCategory": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+            "padding": 5,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgba(195, 195, 195, 1)",
+            "width": 1,
+          },
+          "right": Object {},
+          "tick": Object {
+            "color": "rgba(195, 195, 195, 1)",
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(87, 87, 87)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 14,
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+          },
+          "top": Object {},
+        },
+        "log": Object {
+          "bottom": Object {},
+          "left": Object {},
+          "right": Object {},
+          "top": Object {},
+        },
+        "number": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+            "padding": 5,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgba(195, 195, 195, 1)",
+            "width": 1,
+          },
+          "right": Object {},
+          "tick": Object {
+            "color": "rgba(195, 195, 195, 1)",
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(87, 87, 87)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 14,
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+          },
+          "top": Object {},
+        },
+        "time": Object {
+          "bottom": Object {},
+          "left": Object {},
+          "right": Object {},
+          "top": Object {},
+        },
+      },
+      "background": Object {
+        "fill": "white",
+        "visible": true,
+      },
+      "legend": Object {
+        "enabled": true,
+        "item": Object {
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+          },
+          "marker": Object {
+            "padding": 8,
+            "shape": "square",
+            "size": 15,
+            "strokeWidth": 1,
+          },
+          "paddingX": 16,
+          "paddingY": 8,
+        },
+        "position": "right",
+        "spacing": 20,
+      },
+      "padding": Object {
+        "bottom": 20,
+        "left": 20,
+        "right": 20,
+        "top": 20,
+      },
+      "series": Object {
+        "fillOpacity": 0.4,
+        "highlightStyle": Object {
+          "item": Object {
+            "fill": "yellow",
+          },
+        },
+        "label": Object {
+          "color": "rgb(87, 87, 87)",
+          "enabled": false,
+          "fontFamily": "Verdana, sans-serif",
+          "fontSize": 12,
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+        },
+        "shadow": Object {
+          "blur": 5,
+          "color": "rgba(0, 0, 0, 0.5)",
+          "enabled": false,
+          "xOffset": 3,
+          "yOffset": 3,
+        },
+        "strokeOpacity": 0.7,
+        "strokeWidth": 5,
         "tooltip": Object {
           "enabled": true,
         },
@@ -258,6 +462,7 @@ Object {
           "length": 10,
           "strokeWidth": 2,
         },
+        "fillOpacity": 1,
         "highlightStyle": Object {
           "item": Object {
             "fill": "yellow",
@@ -270,6 +475,8 @@ Object {
           "xOffset": 3,
           "yOffset": 3,
         },
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
         "title": Object {
           "color": "rgb(87, 87, 87)",
           "enabled": true,
@@ -368,6 +575,7 @@ Object {
           "length": 10,
           "strokeWidth": 2,
         },
+        "fillOpacity": 1,
         "highlightStyle": Object {
           "item": Object {
             "fill": "yellow",
@@ -380,6 +588,8 @@ Object {
           "xOffset": 3,
           "yOffset": 3,
         },
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
         "title": Object {
           "color": "rgb(87, 87, 87)",
           "enabled": false,
@@ -564,6 +774,7 @@ Object {
         "top": 20,
       },
       "series": Object {
+        "fillOpacity": 1,
         "highlightStyle": Object {
           "item": Object {
             "fill": "yellow",
@@ -584,6 +795,8 @@ Object {
           "xOffset": 3,
           "yOffset": 3,
         },
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
         "tooltip": Object {
           "enabled": true,
         },
@@ -790,6 +1003,7 @@ Object {
         "top": 20,
       },
       "series": Object {
+        "fillOpacity": 1,
         "highlightStyle": Object {
           "item": Object {
             "fill": "yellow",
@@ -808,6 +1022,8 @@ Object {
           "xOffset": 3,
           "yOffset": 3,
         },
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
         "tooltip": Object {
           "enabled": true,
         },
@@ -1013,6 +1229,7 @@ Object {
         "top": 20,
       },
       "series": Object {
+        "fillOpacity": 1,
         "highlightStyle": Object {
           "item": Object {
             "fill": "yellow",
@@ -1035,6 +1252,8 @@ Object {
           "xOffset": 3,
           "yOffset": 3,
         },
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
         "tooltip": Object {
           "enabled": true,
         },
@@ -1257,6 +1476,7 @@ Object {
         "top": 20,
       },
       "series": Object {
+        "fillOpacity": 0.8,
         "highlightStyle": Object {
           "item": Object {
             "fill": "yellow",
@@ -1279,6 +1499,8 @@ Object {
           "xOffset": 3,
           "yOffset": 3,
         },
+        "strokeOpacity": 1,
+        "strokeWidth": 2,
         "tooltip": Object {
           "enabled": true,
         },
@@ -1502,6 +1724,7 @@ Object {
         "top": 20,
       },
       "series": Object {
+        "fillOpacity": 1,
         "highlightStyle": Object {
           "item": Object {
             "fill": "yellow",
@@ -1517,6 +1740,8 @@ Object {
           "size": 6,
           "strokeWidth": 1,
         },
+        "strokeOpacity": 1,
+        "strokeWidth": 2,
         "tooltip": Object {
           "enabled": true,
         },
@@ -1736,6 +1961,7 @@ Object {
         "top": 20,
       },
       "series": Object {
+        "fillOpacity": 1,
         "highlightStyle": Object {
           "item": Object {
             "fill": "yellow",
@@ -1763,6 +1989,8 @@ Object {
           "xOffset": 3,
           "yOffset": 3,
         },
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
         "tooltip": Object {
           "enabled": true,
         },
@@ -1945,6 +2173,7 @@ Object {
         "top": 20,
       },
       "series": Object {
+        "fillOpacity": 1,
         "highlightStyle": Object {
           "item": Object {
             "fill": "yellow",
@@ -1967,6 +2196,8 @@ Object {
           "strokeWidth": 1,
         },
         "paired": true,
+        "strokeOpacity": 1,
+        "strokeWidth": 2,
         "tooltip": Object {
           "enabled": true,
         },
@@ -2185,6 +2416,7 @@ Object {
         "top": 20,
       },
       "series": Object {
+        "fillOpacity": 1,
         "highlightStyle": Object {
           "item": Object {
             "fill": "yellow",
@@ -2211,6 +2443,8 @@ Object {
           "xOffset": 3,
           "yOffset": 3,
         },
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
         "tooltip": Object {
           "enabled": true,
         },

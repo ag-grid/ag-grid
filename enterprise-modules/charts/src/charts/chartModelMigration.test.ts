@@ -21,6 +21,7 @@ function snapshotVersion(name: string): string {
 describe('chartModelMigration', () => {
     const SNAPSHOT_CASES = {
         '22.1.0': {},
+        '22.1.0-bar': {},
         '22.1.0-pie': {},
         '22.1.0-doughnut': {},
         '23.0.0': {},
