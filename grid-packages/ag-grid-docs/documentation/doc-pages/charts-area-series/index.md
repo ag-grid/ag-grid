@@ -139,9 +139,8 @@ If the bottom axis is also continuous, a `'time'` or `'number'` axis, rather tha
 The following example demonstrates how missing data is handled in Area Series:
 
 - Initially there is no missing data, all values are valid for their associated axes.
-- The first row of buttons at the top change the data to show the behaviour when Y values are missing compared to when X values are missing.
+- The buttons at the top change the data to show the behaviour when Y values are missing from the data compared to when X values are missing.
 - Missing Y values are rendered as a gap in the area whereas missing X values are skipped.
-- The second row of buttons allow switching between stacked and grouped area series.
 
 <chart-example title='Area Series with Incomplete Data' name='missing-data-area' type='generated'></chart-example>
 

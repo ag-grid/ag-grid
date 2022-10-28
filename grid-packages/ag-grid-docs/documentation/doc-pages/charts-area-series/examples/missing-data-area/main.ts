@@ -85,18 +85,6 @@ function missingXValues() {
   agCharts.AgChart.update(chart, options)
 }
 
-function stack() {
-  options.series = series.map(s => ({ ...s, stacked: true }))
-  chart.destroy()
-  chart = agCharts.AgChart.create(options)
-}
-
-function group() {
-  options.series = series.map(s => ({ ...s, stacked: false }))
-  chart.destroy()
-  chart = agCharts.AgChart.create(options)
-}
-
 function reset() {
   options.data = getData()
   options.series = series
