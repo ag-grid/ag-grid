@@ -277,8 +277,9 @@ export abstract class Chart extends Observable {
     private async _processCallbacks() {
         const callbacks = this._pendingFactoryUpdates;
         while (callbacks.length > 0) {
-            while (this.updatePending) {
+            if (this.updatePending) {
                 await sleep(1);
+                continue; // Make sure to check queue has an item before continuing.
             }
             try {
                 await callbacks[0]();
@@ -351,14 +352,16 @@ export abstract class Chart extends Observable {
                 if (this._autoSize && !this._lastAutoSize) {
                     const count = this._performUpdateNoRenderCount++;
 
-                    if (count >= 3) {
+                    if (count < 5) {
+                        // Reschedule if canvas size hasn't been set yet to avoid a race.
+                        this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
+                        this.performUpdateTrigger.schedule();
                         break;
                     }
 
-                    // Reschedule if canvas size hasn't been set yet to avoid a race.
-                    this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
-                    this.performUpdateTrigger.schedule();
-                    break;
+                    // After several failed passes, continue and accept there maybe a redundant
+                    // render. Sometimes this case happens when we already have the correct
+                    // width/height, and we end up never rendering the chart in that scenario.
                 }
                 this._performUpdateNoRenderCount = 0;
 
