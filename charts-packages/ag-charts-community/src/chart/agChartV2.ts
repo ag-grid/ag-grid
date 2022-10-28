@@ -295,30 +295,24 @@ function applyChartOptions<T extends ChartType, O extends ChartOptionType<T>>(
         );
     }
 
-    let updateType = ChartUpdateType.PERFORM_LAYOUT;
     let forceNodeDataRefresh = false;
     if (options.series && options.series.length > 0) {
         applySeries<T, O>(chart, options);
+        forceNodeDataRefresh = true;
     }
     if (isAgCartesianChartOptions(options) && options.axes) {
         const axesPresent = applyAxes<T, O>(chart, options);
         if (axesPresent) {
-            updateType = ChartUpdateType.PROCESS_DATA;
             forceNodeDataRefresh = true;
         }
     }
 
     const seriesOpts = options.series as any[];
+    const seriesDataUpdate = !!options.data || seriesOpts?.some((s) => s.data != null);
+    const otherRefreshUpdate = options.legend || options.title || options.subtitle;
+    forceNodeDataRefresh = forceNodeDataRefresh || seriesDataUpdate || !!otherRefreshUpdate;
     if (options.data) {
         chart.data = options.data;
-        updateType = ChartUpdateType.PROCESS_DATA;
-        forceNodeDataRefresh = true;
-    } else if (seriesOpts?.some((s) => s.data != null)) {
-        updateType = ChartUpdateType.PROCESS_DATA;
-        forceNodeDataRefresh = true;
-    } else if (options.legend || options.title || options.subtitle) {
-        updateType = ChartUpdateType.PROCESS_DATA;
-        forceNodeDataRefresh = true;
     }
 
     // Needs to be done last to avoid overrides by width/height properties.
@@ -335,6 +329,7 @@ function applyChartOptions<T extends ChartType, O extends ChartOptionType<T>>(
     chart.options = jsonMerge([chart.options || {}, options], noDataCloneMergeOptions);
     chart.userOptions = jsonMerge([chart.userOptions || {}, userOptions], noDataCloneMergeOptions);
 
+    const updateType = forceNodeDataRefresh ? ChartUpdateType.PROCESS_DATA : ChartUpdateType.PERFORM_LAYOUT;
     chart.update(updateType, { forceNodeDataRefresh });
 }
 
