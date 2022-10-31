@@ -6,7 +6,7 @@ import { getLegacyAxisType, ALL_AXIS_TYPES } from './chartComp/utils/axisTypeMap
 // (see scripts/release/updateChartModel.js)
 export const CURRENT_VERSION = '28.2.0';
 
-const DEBUG = (window as any)['agChartsDebug'] === true;
+const DEBUG = false;
 
 export function upgradeChartModel(model: ChartModel): ChartModel {
     const originalVersion = model.version;
