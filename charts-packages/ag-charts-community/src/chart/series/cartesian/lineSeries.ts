@@ -57,7 +57,7 @@ export type LineTooltipRendererParams = CartesianTooltipRendererParams;
 
 class LineSeriesLabel extends Label {
     @Validate(OPT_FUNCTION)
-    formatter?: (params: { value: any }) => string = undefined;
+    formatter?: (params: { value: number; seriesId: string }) => string = undefined;
 }
 
 export class LineSeriesTooltip extends SeriesTooltip {
@@ -215,7 +215,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             return [];
         }
 
-        const { pointsData, label, yKey } = this;
+        const { pointsData, label, yKey, id: seriesId } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
@@ -262,7 +262,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 let labelText: string;
 
                 if (label.formatter) {
-                    labelText = label.formatter({ value: yDatum });
+                    labelText = label.formatter({ value: yDatum, seriesId });
                 } else {
                     labelText =
                         typeof yDatum === 'number' && isFinite(yDatum)

@@ -1627,10 +1627,18 @@
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
-  "AgLineSeriesLabelOptions": {
-    "meta": { "typeParams": ["DatumType"] },
+  "AgCartesianSeriesLabelFormatterParams": {
+    "meta": {},
+    "type": { "seriesId": "string", "value": "number" },
+    "docs": {
+      "seriesId": "/** The ID of the series. */",
+      "value": "/** The value of yKey as specified on series options. */"
+    }
+  },
+  "AgCartesianSeriesLabelOptions": {
+    "meta": {},
     "type": {
-      "formatter?": "(params: { value: DatumType; }) => string",
+      "formatter?": "(params: AgCartesianSeriesLabelFormatterParams) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -1678,7 +1686,7 @@
       "strokeOpacity?": "Opacity",
       "lineDash?": "PixelSize[]",
       "lineDashOffset?": "PixelSize",
-      "label?": "AgLineSeriesLabelOptions<DatumType>",
+      "label?": "AgCartesianSeriesLabelOptions",
       "tooltip?": "AgLineSeriesTooltip",
       "listeners?": "AgSeriesListeners<DatumType>",
       "id?": "string",
@@ -1840,27 +1848,6 @@
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
-  "AgAreaSeriesLabelOptions": {
-    "meta": { "typeParams": ["DatumType"] },
-    "type": {
-      "formatter?": "(params: { value: DatumType; }) => string",
-      "enabled?": "boolean",
-      "fontStyle?": "FontStyle",
-      "fontWeight?": "FontWeight",
-      "fontSize?": "FontSize",
-      "fontFamily?": "FontFamily",
-      "color?": "CssColor"
-    },
-    "docs": {
-      "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
-      "enabled?": "/** Whether or not the labels should be shown. */",
-      "fontStyle?": "/** The font style to use for the labels. */",
-      "fontWeight?": "/** The font weight to use for the labels. */",
-      "fontSize?": "/** The font size in pixels to use for the labels. */",
-      "fontFamily?": "/** The font family to use for the labels. */",
-      "color?": "/** The colour to use for the labels. */"
-    }
-  },
   "AgAreaSeriesOptions": {
     "meta": {
       "typeParams": ["DatumType = any"],
@@ -1886,7 +1873,7 @@
       "lineDash?": "PixelSize[]",
       "lineDashOffset?": "PixelSize",
       "shadow?": "AgDropShadowOptions",
-      "label?": "AgAreaSeriesLabelOptions<DatumType>",
+      "label?": "AgCartesianSeriesLabelOptions",
       "tooltip?": "AgAreaSeriesTooltip",
       "stacked?": "boolean",
       "id?": "string",
@@ -1929,8 +1916,8 @@
   "AgBarSeriesLabelOptions": {
     "meta": {},
     "type": {
-      "formatter?": "(params: { value: number; }) => string",
       "placement?": "'inside' | 'outside'",
+      "formatter?": "(params: AgCartesianSeriesLabelFormatterParams) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -1939,8 +1926,8 @@
       "color?": "CssColor"
     },
     "docs": {
-      "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "placement?": "/** Where to render series labels relative to the segments. */",
+      "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "enabled?": "/** Whether or not the labels should be shown. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",
@@ -2051,9 +2038,9 @@
     }
   },
   "AgHistogramSeriesLabelOptions": {
-    "meta": { "typeParams": ["DatumType"] },
+    "meta": {},
     "type": {
-      "formatter?": "(params: { value: DatumType; }) => string",
+      "formatter?": "(params: { value: number; seriesId: string; }) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -2114,7 +2101,7 @@
       "binCount?": "number",
       "aggregation?": "'count' | 'sum' | 'mean'",
       "shadow?": "AgDropShadowOptions",
-      "label?": "AgHistogramSeriesLabelOptions<DatumType>",
+      "label?": "AgHistogramSeriesLabelOptions",
       "tooltip?": "AgHistogramSeriesTooltip",
       "listeners?": "AgSeriesListeners<DatumType>",
       "id?": "string",
@@ -3058,6 +3045,10 @@
   "ProcessedXDatum": {
     "meta": { "isTypeAlias": true },
     "type": "{ xDatum: any; seriesDatum: any; }"
+  },
+  "AreaSeriesLabelFormatterParams": {
+    "meta": {},
+    "type": { "seriesId": "string", "value?": "number" }
   },
   "AreaSeriesTag": {
     "meta": { "isEnum": true },

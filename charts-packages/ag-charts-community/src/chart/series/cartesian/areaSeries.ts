@@ -83,9 +83,14 @@ type ProcessedXDatum = {
     seriesDatum: any;
 };
 
+interface AreaSeriesLabelFormatterParams {
+    seriesId: string;
+    value?: number;
+}
+
 class AreaSeriesLabel extends Label {
     @Validate(OPT_FUNCTION)
-    formatter?: (params: { value: any }) => string = undefined;
+    formatter?: (params: AreaSeriesLabelFormatterParams) => string = undefined;
 }
 
 export class AreaSeriesTooltip extends SeriesTooltip {
@@ -405,7 +410,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         }
 
         const contexts: AreaSeriesNodeDataContext[] = [];
-        const { yKeys, marker, label, fills, strokes } = this;
+        const { yKeys, marker, label, fills, strokes, id: seriesId } = this;
         const { scale: xScale } = xAxis;
         const { scale: yScale } = yAxis;
 
@@ -515,7 +520,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 let labelText: string;
 
                 if (label.formatter) {
-                    labelText = label.formatter({ value: yDatum });
+                    labelText = label.formatter({ value: yDatum, seriesId });
                 } else {
                     labelText = isNumber(yDatum) ? Number(yDatum).toFixed(2) : String(yDatum);
                 }
