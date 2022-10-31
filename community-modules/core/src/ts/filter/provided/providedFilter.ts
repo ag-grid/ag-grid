@@ -136,11 +136,11 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     protected resetTemplate(paramsMap?: any) {
         const templateString = /* html */`
-            <div class="ag-filter-wrapper">
+            <form class="ag-filter-wrapper">
                 <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper">
                     ${this.createBodyTemplate()}
                 </div>
-            </div>`;
+            </form>`;
 
         this.setTemplate(templateString, paramsMap);
     }
@@ -203,10 +203,11 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                     return;
             }
 
+            const buttonType = type === 'apply' ? 'submit' : 'button';
             const button = loadTemplate(
                 /* html */
                 `<button
-                    type="button"
+                    type="${buttonType}"
                     ref="${type}FilterButton"
                     class="ag-standard-button ag-filter-apply-panel-button"
                 >${text}
@@ -298,6 +299,8 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     protected onBtApply(afterFloatingFilter = false, afterDataChange = false, e?: Event): void {
+        e?.preventDefault(); // Prevent form submission
+
         if (this.applyModel()) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
