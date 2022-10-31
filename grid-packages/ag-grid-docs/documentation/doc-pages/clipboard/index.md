@@ -145,7 +145,7 @@ The following example shows custom code to process the data from the clipboard:
 
 * The cells are coloured based on the colour that the cell content starts with
 * Copy a cell range in the grid which includes a cell value that starts with `Red`. Pasting into the grid will paste a 4x4 cell grid with top row values `['Orange', 'Orange']` and bottom row values `['Grey', 'Grey']`
-* Copy a cell range in the grid which includes a cell value that starts with `Yellow` and no `Red` cell values. Pasting this copied cell range will cancel the paste action and not paste anything.
+* Copy a cell range in the grid which includes a cell value that starts with `Yellow` and **doesn’t** include any `Red` cell values. Pasting this copied cell range will cancel the paste action and not paste anything
 * Any other copied cell data will be pasted as-is
 
 <grid-example title='Example Process Data' name='process-all' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
