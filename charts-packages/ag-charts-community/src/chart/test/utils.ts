@@ -183,7 +183,7 @@ export function setupMockCanvas(): { nodeCanvas?: Canvas } {
     return mockCtx.ctx;
 }
 
-export function toMatchImage(actual, expected) {
+export function toMatchImage(actual, expected, { writeDiff = true } = {}) {
     // Grab values from enclosing Jest scope.
     const { testPath, currentTestName } = this;
 
@@ -199,7 +199,7 @@ export function toMatchImage(actual, expected) {
     const diffPercentage = (result * 100) / (width * height);
     const pass = diffPercentage <= 0.05;
 
-    if (!pass) {
+    if (!pass && writeDiff) {
         fs.writeFileSync(diffOutputFilename, (PNG as any).sync.write(diff));
     } else if (fs.existsSync(diffOutputFilename)) {
         fs.unlinkSync(diffOutputFilename);
