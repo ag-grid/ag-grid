@@ -772,7 +772,13 @@ export interface AgSeriesListeners<DatumType> {
 }
 
 export interface AgBaseSeriesOptions<DatumType> {
-    /** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */
+    /**
+     * Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple
+     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour
+     * by series please supply your own unique `id` value.
+     *
+     * Default: auto-generated value
+     */
     id?: string;
     /** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */
     data?: DatumType[];

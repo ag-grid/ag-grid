@@ -2,27 +2,26 @@
 title: "Series"
 ---
 
-**Chart Series** represent a single or multiple data sets to be plotted on a chart.
-Each chart type ([Line](/charts-line-series/), [Bar](/charts-bar-series/), [Pie](/charts-pie-series/) etc.) can have its own series' options, but there are a few common properties.
+Chart series represent data sets to be plotted on a chart. Each series type
+([Line](/charts-line-series/), [Bar](/charts-bar-series/), [Pie](/charts-pie-series/) etc.) have
+series-specific options, but there are some common options between them.
 
 ## Type
 
-AG Charts supports many chart types, like [Line](/charts-line-series/), [Bar](/charts-bar-series/), [Pie](/charts-pie-series/) and many others.
-
+Every series configuration requires a `type` to declare how the data set should be rendered:
 ```js
 series: [{
     type: 'pie',
 }]
 ```
 
-Some series types can be [combined on the same chart](/charts-combination-series/).
-Please see the [Options Reference](/charts-api/) for the most up to date list of available chart types.
+Cartesian series types can be [combined on the same chart](/charts-combination-series/).
+See the [Options Reference](/charts-api/) for the complete list of available series types.
 
 ## Data
 
-By default the series is using the data from `chart.data` property.
-But `series.data` property lets series to have its own data.
-
+By default each series is based on data from the root-level `data` option. It is also possible for
+each series to declare its own data:
 ```js
 series: [{
     data: [
@@ -32,11 +31,10 @@ series: [{
 }]
 ```
 
-The data should be an array of objects.
-Properties like `xKey`, `yKey`, `angleKey` and others specify the data items' properties to be used as values for chart's dimensions.
+The data should be an array of objects. Common options like `xKey`, `yKey`, `angleKey` specify
+the properties to use to read the data-set for the series.
 
-See the list of other available properties in the [API reference](#reference-AgBaseSeriesOptions-title).
-To learn more about constructing charts, please read the documentation for other chart types.
+See other available options in the [API reference](#reference-AgBaseSeriesOptions-title).
 
 ## API Reference
 

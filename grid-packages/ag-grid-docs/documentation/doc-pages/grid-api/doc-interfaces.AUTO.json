@@ -13153,7 +13153,7 @@
       "type": { "returnType": "AgSeriesListeners<DatumType>", "optional": true }
     },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -14255,7 +14255,7 @@
   },
   "AgBaseSeriesOptions": {
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -14736,7 +14736,7 @@
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -14932,7 +14932,7 @@
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -15093,7 +15093,7 @@
     "stacked": { "type": { "returnType": "boolean", "optional": true } },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -15290,7 +15290,7 @@
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -15457,7 +15457,7 @@
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -15871,7 +15871,7 @@
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -16203,7 +16203,7 @@
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** An identifier for the series. If not specified, it will be generated. This ID can be accessed in a tooltip renderer, event listeners, a legend formatter and other formatters. */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
