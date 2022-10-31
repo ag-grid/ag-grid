@@ -282,10 +282,6 @@ export class GridOptionsWrapper {
         return this.gridOptions.editType === 'fullRow';
     }
 
-    public isShowToolPanel() {
-        return isTrue(this.gridOptions.sideBar && Array.isArray(this.getSideBar().toolPanels));
-    }
-
     public getSideBar(): SideBarDef {
         return this.gridOptions.sideBar as SideBarDef;
     }
