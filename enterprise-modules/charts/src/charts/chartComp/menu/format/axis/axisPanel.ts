@@ -5,7 +5,6 @@ import {
     AgColorPicker,
     AgGroupComponent,
     AgGroupComponentParams,
-    AgSelect,
     AgSlider,
     Autowired,
     Component,
@@ -26,14 +25,12 @@ export class AxisPanel extends Component {
             <ag-group-component ref="axisGroup">
                 <ag-color-picker ref="axisColorInput"></ag-color-picker>
                 <ag-slider ref="axisLineWidthSlider"></ag-slider>
-                <ag-select ref="xAxisTypeSelect"></ag-select>
             </ag-group-component>
         </div>`;
 
     @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
     @RefSelector('axisColorInput') private axisColorInput: AgColorPicker;
     @RefSelector('axisLineWidthSlider') private axisLineWidthSlider: AgSlider;
-    @RefSelector('xAxisTypeSelect') private xAxisTypeSelect: AgSelect;
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
@@ -91,28 +88,6 @@ export class AxisPanel extends Component {
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
             .onValueChange(newValue => this.chartOptionsService.setAxisProperty("line.width", newValue));
-
-        if (_.includes(['line', 'scatter', 'bubble'], this.chartController.getChartType()) && !this.chartController.isGrouping()) {
-            const options: { value: any | '', text: string }[] = [
-                { value: '', text: this.translate('automatic') }
-            ];
-
-            ['category', 'time', 'number'].forEach((type: any) => {
-                options.push({ value: type, text: this.translate(type) });
-            });
-
-            this.xAxisTypeSelect
-                .setLabel(this.translate('xType'))
-                .setLabelWidth('flex')
-                .addOptions(options)
-                .setValue(this.chartOptionsService.getChartOption('xAxis.type') || '')
-                .onValueChange(newValue => {
-                    this.chartOptionsService.setChartOption('xAxis.type', typeof newValue === 'string' && newValue.length && newValue);
-                    this.chartController.updateForDataChange();
-                });
-        } else {
-            this.xAxisTypeSelect.setDisplayed(false);
-        }
     }
 
     private initAxisTicks() {
