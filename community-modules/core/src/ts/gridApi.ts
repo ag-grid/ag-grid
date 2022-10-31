@@ -17,6 +17,7 @@ import {
     GetRowIdFunc,
     GetRowNodeIdFunc,
     GetServerSideGroupKey,
+    GridOptions,
     IsApplyServerSideTransaction,
     IsRowMaster,
     IsRowSelectable,
@@ -322,6 +323,14 @@ export class GridApi<TData = any> {
     public __getContext(): Context {
         return this.context;
     }
+
+    public setProperty<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]): void {
+        // Match existing behaviour for these two setters
+        const force = propertyName === 'autoGroupColumnDef' || propertyName === 'defaultColDef';
+
+        this.gridOptionsService.set(propertyName, value, force);
+    }
+
 
     /** Register a detail grid with the master grid when it is created. */
     public addDetailGridInfo(id: string, gridInfo: DetailGridInfo): void {

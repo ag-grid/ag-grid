@@ -1,3 +1,4 @@
+import { ComponentUtil } from "./components/componentUtil";
 import { Autowired, Bean } from "./context/context";
 import { GridOptions } from "./entities/gridOptions";
 import { AgEvent } from "./events";
@@ -6,6 +7,7 @@ import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
 import { ModuleNames } from "./modules/moduleNames";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { AnyGridOptions } from "./propertyKeys";
+import { doOnce } from "./utils/function";
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never
@@ -60,6 +62,21 @@ export class GridOptionsService {
 
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     private propertyEventService: EventService = new EventService();
+    private coercionLookup: Record<keyof GridOptions, 'number' | 'boolean' | 'none'>;
+
+    private agWire(): void {
+        [
+            ...ComponentUtil.ARRAY_PROPERTIES,
+            ...ComponentUtil.OBJECT_PROPERTIES,
+            ...ComponentUtil.STRING_PROPERTIES,
+            ...ComponentUtil.getEventCallbacks(),
+        ]
+            .forEach((key: keyof GridOptions) => this.coercionLookup[key] = 'none');
+        ComponentUtil.BOOLEAN_PROPERTIES
+            .forEach(key => this.coercionLookup[key] = 'boolean');
+        ComponentUtil.NUMBER_PROPERTIES
+            .forEach(key => this.coercionLookup[key] = 'number');
+    }
 
     public get<K extends NonPrimitiveProps>(property: K): GridOptions[K] {
         return this.gridOptions[property];
@@ -130,15 +147,40 @@ export class GridOptionsService {
     public set<K extends keyof GridOptions>(key: K, value: GridOptions[K], force = false): void {
         const previousValue = this.gridOptions[key];
 
-        if (force || previousValue !== value) {
-            this.gridOptions[key] = value;
-            const event: PropertyChangedEvent = {
-                type: key,
-                currentValue: value,
-                previousValue: previousValue
-            };
-            this.propertyEventService.dispatchEvent(event);
+        const coercionStep = this.coercionLookup[key];
+
+        if (coercionStep) {
+            let newValue = value;
+            switch (coercionStep) {
+                case 'number':
+                    // local toNumber is using parseInt whereas the ComponentUtils version using Number() which can behave differently.  
+                    // GridOptionsWrapper used the local toNumber so was different to ComponentUtils
+                    newValue = ComponentUtil.toNumber(value);
+                case 'boolean':
+                    // This toBoolean converts empty string '' to true to handle component attributes. 
+                    // We might not want that within this function???
+                    // However, using the same means that we will get consistent change detection in the following diff
+                    // because we are using the same coercion as applied when copy attributes to gridOptions in setup.
+                    newValue = ComponentUtil.toBoolean(value);
+            }
+
+
+            if (force || previousValue !== value) {
+                this.gridOptions[key] = value;
+                const event: PropertyChangedEvent = {
+                    type: key,
+                    currentValue: value,
+                    previousValue: previousValue
+                };
+                this.propertyEventService.dispatchEvent(event);
+            }
+
+        } else {
+            doOnce(() => {
+                console.warn(`You tried to set the property "${key}" on GridOptions but this is not a valid property name.`)
+            }, key)
         }
+
     }
 
     addEventListener(key: keyof GridOptions, listener: PropertyChangedListener): void {

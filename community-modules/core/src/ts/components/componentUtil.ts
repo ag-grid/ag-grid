@@ -205,6 +205,14 @@ export class ComponentUtil {
             .forEach(key => pGridOptions[key] = ComponentUtil.toNumber(changesToApply[key].currentValue));
 
 
+        // All of the above could be replaced with the following once using the GridOptionsService which has a set method
+        // that takes care of the coercion as part of the set method.
+        /* const changeKeys = Object.keys(changesToApply);
+        changeKeys.forEach(key => {
+            const gridKey = key as keyof GridOptions;
+            api.setProperty(gridKey, changesToApply[gridKey].currentValue);
+        }); */
+
         // *********  CODE ORDER TO AVOID BUGS *************** //
         // The following manual updates call directly into code models and rely on the simple copy being made by the
         // code above to keep gridOptions in sync with the change.

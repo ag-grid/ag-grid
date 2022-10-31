@@ -29,8 +29,6 @@ import { capitalise } from './utils/string';
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
 
-const DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
-
 @Bean('gridOptionsWrapper')
 export class GridOptionsWrapper {
     private static MIN_COL_WIDTH = 10;
@@ -395,14 +393,6 @@ export class GridOptionsWrapper {
         return undefined;
     }
 
-    public getKeepDetailRowsCount(): number | undefined {
-        const keepDetailRowsCount = this.gridOptions.keepDetailRowsCount;
-        if (exists(keepDetailRowsCount) && keepDetailRowsCount > 0) {
-            return this.gridOptions.keepDetailRowsCount;
-        }
-
-        return DEFAULT_KEEP_DETAIL_ROW_COUNT;
-    }
 
     public getDefaultExportParams(type: 'csv'): CsvExportParams | undefined;
     public getDefaultExportParams(type: 'excel'): ExcelExportParams | undefined;
