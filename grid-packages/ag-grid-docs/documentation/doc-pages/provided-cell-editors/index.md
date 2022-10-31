@@ -18,8 +18,9 @@ Simple text editor that uses the standard HTML `input`. This editor is the defau
 Specified with `agTextCellEditor`.
 
 Takes the following parameters:
-    - `useFormatter`: If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.
-    - `maxLength`: Max number of characters to allow. Default is 524288.
+
+- `useFormatter`: If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.
+- `maxLength`: Max number of characters to allow. Default is 524288.
 
 ```js
 columnDefs: [
@@ -27,7 +28,8 @@ columnDefs: [
         cellEditor: 'agTextCellEditor',
         valueFormatter: (params) => '£' + params.value,
         cellEditorParams: {
-            useFormatter: true
+            useFormatter: true,
+            maxLength: 200
         }
         // ...other props
     }
@@ -41,9 +43,10 @@ Simple editor that uses the standard HTML `textarea`. Best used in conjunction w
 Specified with `agLargeTextCellEditor`.
 
 Takes the following parameters:
-    - `maxLength`: Max number of characters to allow. Default is 200.
-    - `rows`: Number of character rows to display. Default is 10.
-    - `cols`: Number of character columns to display. Default is 60.
+
+- `maxLength`: Max number of characters to allow. Default is 200.
+- `rows`: Number of character rows to display. Default is 10.
+- `cols`: Number of character columns to display. Default is 60.
 
 ```js
 columnDefs: [
@@ -67,6 +70,7 @@ Simple editor that uses HTML `select`.
 Specified with `agSelectCellEditor`.
 
 Takes the following parameter:
+
 - `values`: List of values to display.
 
 ```js
@@ -84,18 +88,17 @@ columnDefs: [
 Note there is no need to specify `cellEditorPopup=true` for Select Cell Editor as the browsers Select widget will appear on top of the grid.
 
 [[note]]
-|
 | We have found the standard HTML Select doesn't have an API that's rich enough to play
 | properly with the grid. When a cell is double clicked to start editing, it is desired that
 | the Select is a) shown and b) opened ready for selection. There is no API to open a browsers
 | Select. For this reason to edit there are two interactions needed 1) double click to start
 | editing and 2) single click to open the Select.
-| <br />
+|
 | We also observed different results while using keyboard navigation to control editing, e.g.
 | while using <kbd>Enter</kbd> to start editing. Some browsers would open the Select, others would not.
 | This is down to the browser implementation and given there is no API for opening the
 | Select, there is nothing the grid can do.
-| <br />
+|
 | If you are unhappy with the additional click required, we advise you don't depend on the
 | browsers standard Select (ie avoid `agSelectCellEditor`) and instead use `agRichSelectCellEditor` or
 | create your own using a [Cell Editor Component](/component-cell-editor/).
@@ -105,6 +108,7 @@ Note there is no need to specify `cellEditorPopup=true` for Select Cell Editor a
 An alternative to using the browser's `select` popup for dropdowns inside the grid. Available in AG Grid Enterprise only. 
 
 Benefits over browser's `select` are as follows:
+
 - Uses DOM row visualisation so very large lists can be displayed.
 - Integrates with the grid perfectly, avoiding glitches seen with the standard select.
 - Uses HTML to render the values: you can provide cell renderers to customise what each value looks like.
@@ -116,6 +120,7 @@ Specified with `agRichSelectCellEditor`.
 |Should always set `cellEditorPopup=true`. Otherwise the editor will be clipped to the cell contents.
 
 Takes the following parameters:
+
 - `values`: List of values to be selected from.
 - `cellHeight`: The row height, in pixels, of each value.
 - `formatValue`: A callback function that allows you to change the displayed value for simple data.
