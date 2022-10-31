@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/angular-legacy",
-  "version": "28.2.0",
+  "version": "28.2.1",
   "scripts": {
     "clean": "rimraf dist .hash",
     "ng": "./node_modules/.bin/ng",
@@ -39,7 +39,7 @@
     "@types/node": "12.20.20",
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
-    "@ag-grid-community/core": "~28.2.0",
+    "@ag-grid-community/core": "~28.2.1",
     "codelyzer": "^5.1.2",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~4.2.1",

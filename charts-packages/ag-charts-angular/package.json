@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-angular",
-  "version": "6.2.0",
+  "version": "6.2.1",
   "scripts": {
     "clean": "rimraf dist .hash",
     "ng": "ng",
@@ -40,7 +40,7 @@
     "@angular/platform-browser": "~12.2.0",
     "@angular/platform-browser-dynamic": "~12.2.0",
     "@angular/router": "~12.2.0",
-    "ag-charts-community": "~6.2.0",
+    "ag-charts-community": "~6.2.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

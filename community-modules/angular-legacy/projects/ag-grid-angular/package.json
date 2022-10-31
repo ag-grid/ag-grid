@@ -1,9 +1,9 @@
 {
   "name": "@ag-grid-community/angular-legacy",
-  "version": "28.2.0",
+  "version": "28.2.1",
   "license": "MIT",
   "peerDependencies": {
-    "@ag-grid-community/core": "~28.2.0",
+    "@ag-grid-community/core": "~28.2.1",
     "@angular/common": ">= 8.0.0",
     "@angular/core": ">= 8.0.0",
     "tslib": "^1.10.0"

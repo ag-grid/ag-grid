@@ -1,4 +1,4 @@
-import { ChartModel, AgChartThemeName } from '@ag-grid-community/core';
+28.2.1import { ChartModel, AgChartThemeName } from '@ag-grid-community/core';
 import { getSeriesType } from './chartComp/utils/seriesTypeMapper';
 import { getLegacyAxisType, ALL_AXIS_TYPES } from './chartComp/utils/axisTypeMapper';
 
