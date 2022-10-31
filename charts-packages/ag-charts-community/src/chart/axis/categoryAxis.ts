@@ -38,7 +38,7 @@ export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
         return new Array(...valuesSet.values());
     }
 
-    calculateDomain() {
+    protected calculateDomain() {
         if (!this._paddingOverrideEnabled) {
             const { boundSeries } = this;
 

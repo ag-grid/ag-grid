@@ -41,7 +41,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
         this.requestedRange = scale.range.slice();
-        this.scale = scale;
+        this.refreshScale();
 
         tickScale.paddingInner = 1;
         tickScale.paddingOuter = 0;
@@ -122,7 +122,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         return this._gridLength;
     }
 
-    calculateDomain() {
+    protected calculateDomain() {
         const { direction, boundSeries } = this;
         const domains: any[][] = [];
         let isNumericX: boolean | undefined = undefined;
@@ -181,7 +181,9 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
      * it will also make it harder to reason about the program.
      */
     update(primaryTickCount?: number): number | undefined {
-        const { axisGroup, gridlineGroup, scale, label, tickScale, requestedRange } = this;
+        this.calculateDomain();
+
+        const { scale, label, tickScale, requestedRange } = this;
 
         scale.domain = this.dataDomain;
 
@@ -194,13 +196,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8;
         const labelRotation = this.label.rotation ? normalizeAngle360(toRadians(this.label.rotation)) : 0;
 
-        axisGroup.translationX = this.translation.x;
-        axisGroup.translationY = this.translation.y;
-        axisGroup.rotation = rotation;
-
-        gridlineGroup.translationX = this.translation.x;
-        gridlineGroup.translationY = this.translation.y;
-        gridlineGroup.rotation = rotation;
+        this.updatePosition();
 
         const title = this.title;
         // The Text `node` of the Caption is not used to render the title of the grouped category axis.

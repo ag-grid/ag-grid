@@ -25,6 +25,7 @@ import {
     OPTIONAL,
     ARRAY,
     predicateWithMessage,
+    OPT_STRING,
 } from './util/validation';
 import { ChartAxisDirection } from './chart/chartAxis';
 import { Layers } from './chart/layers';
@@ -205,22 +206,8 @@ export class AxisLabel {
      */
     formatter?: (params: AxisLabelFormatterParams) => string = undefined;
 
-    onFormatChange?: (format?: string) => void = undefined;
-
-    @Validate(STRING)
-    private _format: string | undefined;
-    set format(value: string | undefined) {
-        // See `TimeLocaleObject` docs for the list of supported format directives.
-        if (this._format !== value) {
-            this._format = value;
-            if (this.onFormatChange) {
-                this.onFormatChange(value);
-            }
-        }
-    }
-    get format(): string | undefined {
-        return this._format;
-    }
+    @Validate(OPT_STRING)
+    format: string | undefined = undefined;
 }
 
 /**
@@ -236,18 +223,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
     readonly id = createId(this);
 
     @Validate(BOOLEAN)
-    protected nice: boolean = true;
+    nice: boolean = true;
 
-    dataDomain: D[];
+    dataDomain: D[] = [];
 
     protected _scale: S;
-    set scale(value: S) {
-        this._scale = value;
-        this.requestedRange = value.range.slice();
-        this.crossLines?.forEach((crossLine) => {
-            this.initCrossLine(crossLine);
-        });
-    }
     get scale(): S {
         return this._scale;
     }
@@ -307,9 +287,15 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     constructor(scale: S) {
-        this.scale = scale;
+        this._scale = scale;
+        this.refreshScale();
+    }
 
-        this.label.onFormatChange = this.onLabelFormatChange.bind(this);
+    protected refreshScale() {
+        this.requestedRange = this.scale.range.slice();
+        this.crossLines?.forEach((crossLine) => {
+            this.initCrossLine(crossLine);
+        });
     }
 
     protected updateRange() {
@@ -476,42 +462,22 @@ export class Axis<S extends Scale<D, number>, D = any> {
     private fractionDigits = 0;
 
     /**
+     * The distance between the grid ticks and the axis ticks.
+     */
+    gridPadding = 0;
+
+    /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined {
-        const {
-            axisGroup,
-            gridlineGroup,
-            crossLineGroup,
-            scale,
-            gridLength,
-            tick,
-            label,
-            requestedRange,
-            translation,
-        } = this;
+        this.calculateDomain();
+
+        const { scale, gridLength, tick, label, requestedRange } = this;
         const requestedRangeMin = Math.min(...requestedRange);
         const requestedRangeMax = Math.max(...requestedRange);
         const rotation = toRadians(this.rotation);
         const parallelLabels = label.parallel;
         const anySeriesActive = this.isAnySeriesActive();
-
-        const translationX = Math.floor(translation.x);
-        const translationY = Math.floor(translation.y);
-
-        crossLineGroup.translationX = translationX;
-        crossLineGroup.translationY = translationY;
-        crossLineGroup.rotation = rotation;
-
-        axisGroup.translationX = translationX;
-        axisGroup.translationY = translationY;
-        axisGroup.rotation = rotation;
-
-        gridlineGroup.translationX = translationX;
-        gridlineGroup.translationY = translationY;
-        gridlineGroup.rotation = rotation;
-
-        this.updateLine();
 
         // The side of the axis line to position the labels on.
         // -1 = left (default)
@@ -529,6 +495,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const parallelFlipRotation = normalizeAngle360(rotation);
         const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
         const halfBandwidth = (scale.bandwidth || 0) / 2;
+
+        this.updatePosition();
+        this.updateLine();
 
         let i = 0;
         let labelOverlap = true;
@@ -658,6 +627,47 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return primaryTickCount;
     }
 
+    protected calculateDomain() {
+        // Placeholder for subclasses to override.
+    }
+
+    updatePosition() {
+        const {
+            label,
+            axisGroup,
+            gridlineGroup,
+            crossLineGroup,
+            translation,
+            gridlineGroupSelection,
+            gridPadding,
+            gridLength,
+        } = this;
+        const rotation = toRadians(this.rotation);
+        const sideFlag = label.mirrored ? 1 : -1;
+
+        const translationX = Math.floor(translation.x);
+        const translationY = Math.floor(translation.y);
+
+        crossLineGroup.translationX = translationX;
+        crossLineGroup.translationY = translationY;
+        crossLineGroup.rotation = rotation;
+
+        axisGroup.translationX = translationX;
+        axisGroup.translationY = translationY;
+        axisGroup.rotation = rotation;
+
+        gridlineGroup.translationX = translationX;
+        gridlineGroup.translationY = translationY;
+        gridlineGroup.rotation = rotation;
+
+        gridlineGroupSelection.selectByTag<Line>(Tags.GridLine).each((line) => {
+            line.x1 = gridPadding;
+            line.x2 = -sideFlag * gridLength + gridPadding;
+            line.y1 = 0;
+            line.y2 = 0;
+        });
+    }
+
     updateSecondaryAxisTicks(_primaryTickCount: number | undefined): any[] {
         throw new Error('AG Charts - unexpected call to updateSecondaryAxisTicks() - check axes configuration.');
     }
@@ -702,12 +712,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
         gridLength: number;
     }) {
         const { scale } = this;
-        const data = ticks.map((t) => ({ tick: t, translationY: Math.round(scale.convert(t) + halfBandwidth) }));
+        const data = ticks.map((t) => ({ tick: t, translationY: scale.convert(t) + halfBandwidth }));
         const gridlineGroupSelection = this.updateGridLineGroupSelection({ gridLength, data });
         const tickGroupSelection = this.updateTickGroupSelection({ data });
 
-        gridlineGroupSelection.attrFn('translationY', (_, datum: any) => datum.translationY);
-        tickGroupSelection.attrFn('translationY', (_, datum: any) => datum.translationY);
+        // We need raw `translationY` values on `datum` for accurate label collision detection in axes.update()
+        // But node `translationY` values must be rounded to get pixel grid alignment
+        gridlineGroupSelection.attrFn('translationY', (_, datum: any) => Math.round(datum.translationY));
+        tickGroupSelection.attrFn('translationY', (_, datum: any) => Math.round(datum.translationY));
 
         this.tickGroupSelection = tickGroupSelection;
         this.gridlineGroupSelection = gridlineGroupSelection;
@@ -722,7 +734,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         halfBandwidth: number;
         sideFlag: -1 | 1;
     }) {
-        const { gridStyle, scale, tick } = this;
+        const { gridStyle, scale, tick, gridPadding } = this;
         if (gridLength && gridStyle.length) {
             const styleCount = gridStyle.length;
             let gridLines: Selection<Shape, Group, D, D>;
@@ -741,8 +753,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 });
             } else {
                 gridLines = this.gridlineGroupSelection.selectByTag<Line>(Tags.GridLine).each((line) => {
-                    line.x1 = 0;
-                    line.x2 = -sideFlag * gridLength;
+                    line.x1 = gridPadding;
+                    line.x2 = -sideFlag * gridLength + gridPadding;
                     line.y1 = 0;
                     line.y2 = 0;
                     line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1;

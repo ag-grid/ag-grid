@@ -15,9 +15,10 @@ import {
     CANVAS_WIDTH,
     CANVAS_HEIGHT,
     TestCase,
+    toMatchImage,
 } from './test/utils';
 
-expect.extend({ toMatchImageSnapshot });
+expect.extend({ toMatchImageSnapshot, toMatchImage });
 
 function consoleWarnAssertions(options: AgCartesianChartOptions) {
     return async (chart: Chart) => {
@@ -75,19 +76,32 @@ describe('AgChartV2', () => {
     let ctx = setupMockCanvas();
     let chart: Chart;
 
+    beforeEach(() => {
+        console.warn = jest.fn();
+    });
+
+    afterEach(() => {
+        if (chart) {
+            chart.destroy();
+            (chart as unknown) = undefined;
+        }
+        expect(console.warn).not.toBeCalled();
+    });
+
+    const compare = async () => {
+        await waitForChartStability(chart);
+
+        const imageData = extractImageData(ctx);
+        (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+    };
+
+    const snapshot = async () => {
+        await waitForChartStability(chart);
+
+        return ctx.nodeCanvas?.toBuffer('raw');
+    };
+
     describe('#create', () => {
-        beforeEach(() => {
-            console.warn = jest.fn();
-        });
-
-        afterEach(() => {
-            if (chart) {
-                chart.destroy();
-                (chart as unknown) = undefined;
-            }
-            expect(console.warn).not.toBeCalled();
-        });
-
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = { ...example.options };
@@ -101,13 +115,6 @@ describe('AgChartV2', () => {
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const imageData = extractImageData(ctx);
-                    (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 options.autoSize = false;
                 options.width = CANVAS_WIDTH;
@@ -122,5 +129,78 @@ describe('AgChartV2', () => {
                 }
             });
         }
+    });
+
+    describe('#update', () => {
+        it('should allow switching between grouped and stacked types of chart', async () => {
+            const exampleCycle = [
+                { ...examples.GROUPED_BAR_CHART_EXAMPLE },
+                { ...examples.GROUPED_BAR_CHART_EXAMPLE },
+            ].map(({ series, ...opts }, idx) => ({
+                ...opts,
+                series: series?.map((s) => ({ ...s, grouped: idx === 0, stacked: idx !== 0 })),
+                autoSize: false,
+                width: CANVAS_WIDTH,
+                height: CANVAS_HEIGHT,
+            }));
+            const snapshots: any[] = exampleCycle.map(() => undefined);
+
+            // Create initial chart instance.
+            chart = AgChartV2.create<any>(exampleCycle[0]) as Chart;
+            snapshots[0] = await snapshot();
+
+            // Execute 2 rounds of comparisons to try and catch any issues. On first round, just
+            // make sure that the chart changes; on second+ round check the same chart image is
+            // generated.
+            let previousSnapshot: any = undefined;
+            for (let round = 0; round <= 1; round++) {
+                for (let index = 0; index < exampleCycle.length; index++) {
+                    AgChartV2.update<any>(chart, exampleCycle[index]);
+
+                    const exampleSnapshot = await snapshot();
+                    if (snapshots[index] != null) {
+                        (expect(exampleSnapshot) as any).toMatchImage(snapshots[index], { writeDiff: false });
+                    }
+
+                    if (previousSnapshot != null) {
+                        (expect(exampleSnapshot) as any).not.toMatchImage(previousSnapshot, { writeDiff: false });
+                    }
+
+                    snapshots[index] = exampleSnapshot;
+                    previousSnapshot = exampleSnapshot;
+                }
+            }
+        });
+
+        it('should allow switching positions of axes', async () => {
+            const exampleCycle: AgCartesianChartOptions[] = [
+                { ...examples.GROUPED_BAR_CHART_EXAMPLE },
+                { ...examples.GROUPED_BAR_CHART_EXAMPLE },
+            ].map(({ axes, ...opts }, idx) => ({
+                ...opts,
+                axes: axes?.map((a) => ({
+                    ...a,
+                    position: a.type === 'category' ? (idx === 0 ? 'left' : 'right') : idx === 0 ? 'bottom' : 'top',
+                })),
+                autoSize: false,
+                width: CANVAS_WIDTH,
+                height: CANVAS_HEIGHT,
+            }));
+
+            // Create initial chart instance.
+            chart = AgChartV2.create<any>(exampleCycle[0]) as Chart;
+            await waitForChartStability(chart);
+
+            // Execute 2 rounds of comparisons to try and catch any issues. On first round, just
+            // make sure that the chart changes; on second+ round check the same chart image is
+            // generated.
+            for (let round = 0; round <= 1; round++) {
+                for (let index = 0; index < exampleCycle.length; index++) {
+                    AgChartV2.update<any>(chart, exampleCycle[index]);
+
+                    await waitForChartStability(chart);
+                }
+            }
+        });
     });
 });

@@ -5494,6 +5494,7 @@
       "defaultJoinOperator?": "JoinOperator",
       "suppressAndOrCondition?": "boolean",
       "alwaysShowBothConditions?": "boolean",
+      "filterPlaceholder?": "FilterPlaceholderFunction | string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
       "debounceMs?": "number",
@@ -5525,6 +5526,7 @@
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "filterPlaceholder?": "/** Placeholder text for the filter textbox */",
       "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
       "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
@@ -5578,6 +5580,7 @@
       "defaultJoinOperator?": "JoinOperator",
       "suppressAndOrCondition?": "boolean",
       "alwaysShowBothConditions?": "boolean",
+      "filterPlaceholder?": "FilterPlaceholderFunction | string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
       "debounceMs?": "number",
@@ -5606,6 +5609,7 @@
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "filterPlaceholder?": "/** Placeholder text for the filter textbox */",
       "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
       "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
@@ -5703,6 +5707,7 @@
       "defaultJoinOperator?": "JoinOperator",
       "suppressAndOrCondition?": "boolean",
       "alwaysShowBothConditions?": "boolean",
+      "filterPlaceholder?": "FilterPlaceholderFunction | string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
       "debounceMs?": "number",
@@ -5729,6 +5734,7 @@
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "filterPlaceholder?": "/** Placeholder text for the filter textbox */",
       "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
       "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
@@ -5784,6 +5790,23 @@
       "onFloatingFilterChanged(type: string | null, value: any)": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */"
     }
   },
+  "IFilterPlaceholderFunctionParams": {
+    "meta": {},
+    "type": {
+      "filterOptionKey": "ISimpleFilterModelType",
+      "filterOption": "string",
+      "placeholder": "string"
+    },
+    "docs": {
+      "filterOptionKey": "/** The filter option key */",
+      "filterOption": "/** The filter option name as localised text */",
+      "placeholder": "/** The default placeholder text */"
+    }
+  },
+  "FilterPlaceholderFunction": {
+    "meta": { "isTypeAlias": true },
+    "type": "(params: IFilterPlaceholderFunctionParams) => string"
+  },
   "ISimpleFilterParams": {
     "meta": {},
     "type": {
@@ -5792,6 +5815,7 @@
       "defaultJoinOperator?": "JoinOperator",
       "suppressAndOrCondition?": "boolean",
       "alwaysShowBothConditions?": "boolean",
+      "filterPlaceholder?": "FilterPlaceholderFunction | string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
       "debounceMs?": "number",
@@ -5813,6 +5837,7 @@
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "filterPlaceholder?": "/** Placeholder text for the filter textbox */",
       "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
       "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
@@ -5925,6 +5950,7 @@
       "defaultJoinOperator?": "JoinOperator",
       "suppressAndOrCondition?": "boolean",
       "alwaysShowBothConditions?": "boolean",
+      "filterPlaceholder?": "FilterPlaceholderFunction | string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
       "debounceMs?": "number",
@@ -5950,6 +5976,7 @@
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "filterPlaceholder?": "/** Placeholder text for the filter textbox */",
       "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
       "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
@@ -7403,11 +7430,12 @@
       "tooltip?": "AgPieSeriesTooltip",
       "innerCircle?": "AgDoughnutInnerCircle",
       "formatter?": "(params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat",
+      "listeners?": "AgSeriesListeners<DatumType>",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -7446,11 +7474,12 @@
       "innerLabels?": "/** Configuration for the text lines to display inside the series, typically used when rendering a doughnut chart */",
       "innerCircle?": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset or innerRadiusRatio */",
       "formatter?": "/** A formatter function for adjusting the styling of the pie sectors. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "id?": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
@@ -7610,7 +7639,13 @@
   },
   "AgChartLegendLabelFormatterParams": {
     "meta": {},
-    "type": { "id": "string", "itemId": "any", "value": "string" }
+    "type": {
+      "id": "string",
+      "seriesId": "string",
+      "itemId": "any",
+      "value": "string"
+    },
+    "docs": { "id": "/** @deprecated Use seriesId.\n */" }
   },
   "AgChartLegendLabelOptions": {
     "meta": {},
@@ -7708,10 +7743,43 @@
       "fill?": "/** Colour of the chart background. */"
     }
   },
+  "AgNodeClickEvent": {
+    "meta": {},
+    "type": {
+      "type": "'seriesNodeClick'",
+      "series": "any",
+      "seriesId": "string",
+      "datum": "any",
+      "xKey?": "string",
+      "yKey?": "string",
+      "sizeKey?": "string",
+      "labelKey?": "string",
+      "colorKey?": "string",
+      "angleKey?": "string",
+      "calloutLabelKey?": "string",
+      "sectorLabelKey?": "string",
+      "radiusKey?": "string"
+    },
+    "docs": {
+      "type": "/** Event type. */",
+      "series": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "datum": "/** Datum from the chart or series data array. */",
+      "xKey?": "/** xKey as specified on series options */",
+      "yKey?": "/** yKey as specified on series options */",
+      "sizeKey?": "/** sizeKey as specified on series options */",
+      "labelKey?": "/** labelKey as specified on series options */",
+      "colorKey?": "/** colorKey as specified on series options */",
+      "angleKey?": "/** angleKey as specified on series options */",
+      "calloutLabelKey?": "/** calloutLabelKey as specified on series options */",
+      "sectorLabelKey?": "/** sectorLabelKey as specified on series options */",
+      "radiusKey?": "/** radiusKey as specified on series options */"
+    }
+  },
   "AgBaseChartListeners": {
     "meta": {},
     "type": {
-      "seriesNodeClick": "(event: { type: 'seriesNodeClick'; series: any; datum: any; xKey: string; yKey: string; }) => any",
+      "seriesNodeClick": "(event: AgNodeClickEvent) => any",
       "[key: string]": "Function"
     },
     "docs": {
@@ -8145,26 +8213,61 @@
       "series?": "/** Highlight style used for whole series when one of its markers is tapped or hovered over. */"
     }
   },
-  "AgBaseSeriesListeners": {
+  "AgSeriesNodeClickParams": {
     "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "nodeClick": "(params: { type: 'nodeClick'; series: any; datum: DatumType; xKey: string; yKey: string; }) => any"
+      "type": "'nodeClick'",
+      "series": "any",
+      "seriesId": "string",
+      "datum": "DatumType",
+      "xKey?": "string",
+      "yKey?": "string",
+      "sizeKey?": "string",
+      "labelKey?": "string",
+      "colorKey?": "string",
+      "angleKey?": "string",
+      "calloutLabelKey?": "string",
+      "sectorLabelKey?": "string",
+      "radiusKey?": "string"
+    },
+    "docs": {
+      "type": "/** Event type. */",
+      "series": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "datum": "/** Datum from the series data array. */",
+      "xKey?": "/** xKey as specified on series options */",
+      "yKey?": "/** yKey as specified on series options */",
+      "sizeKey?": "/** sizeKey as specified on series options */",
+      "labelKey?": "/** labelKey as specified on series options */",
+      "colorKey?": "/** colorKey as specified on series options */",
+      "angleKey?": "/** angleKey as specified on series options */",
+      "calloutLabelKey?": "/** calloutLabelKey as specified on series options */",
+      "sectorLabelKey?": "/** sectorLabelKey as specified on series options */",
+      "radiusKey?": "/** radiusKey as specified on series options */"
+    }
+  },
+  "AgSeriesListeners": {
+    "meta": { "typeParams": ["DatumType"] },
+    "type": {
+      "nodeClick": "(params: AgSeriesNodeClickParams<DatumType>) => void"
     },
     "docs": {
       "nodeClick": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in the series is clicked. */"
     }
   },
   "AgBaseSeriesOptions": {
-    "meta": { "typeParams": ["DatumType", "ListenerDatumType = DatumType"] },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
+      "listeners?": "AgSeriesListeners<DatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
+      "id?": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
@@ -8183,11 +8286,17 @@
   },
   "AgSeriesTooltipRendererParams": {
     "meta": {},
-    "type": { "datum": "any", "title?": "string", "color?": "CssColor" },
+    "type": {
+      "datum": "any",
+      "title?": "string",
+      "color?": "CssColor",
+      "seriesId": "string"
+    },
     "docs": {
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgCartesianSeriesTooltipRendererParams": {
@@ -8201,7 +8310,8 @@
       "yName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "seriesId": "string"
     },
     "docs": {
       "xKey": "/** xKey as specified on series options. */",
@@ -8212,7 +8322,8 @@
       "yName?": "/** yName as specified on series options. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgPolarSeriesTooltipRendererParams": {
@@ -8226,7 +8337,8 @@
       "radiusName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "seriesId": "string"
     },
     "docs": {
       "angleKey": "/** angleKey as specified on series options. */",
@@ -8237,7 +8349,8 @@
       "radiusName?": "/** radiusName as specified on series options. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgScatterSeriesTooltipRendererParams": {
@@ -8255,7 +8368,8 @@
       "yName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "seriesId": "string"
     },
     "docs": {
       "sizeKey?": "/** sizeKey as specified on series options. */",
@@ -8270,7 +8384,8 @@
       "yName?": "/** yName as specified on series options. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgSeriesMarker": {
@@ -8306,7 +8421,8 @@
       "stroke?": "CssColor",
       "strokeWidth": "PixelSize",
       "size": "number",
-      "highlighted": "boolean"
+      "highlighted": "boolean",
+      "seriesId": "string"
     }
   },
   "AgCartesianSeriesMarkerFormatterParams": {
@@ -8319,7 +8435,8 @@
       "stroke?": "CssColor",
       "strokeWidth": "PixelSize",
       "size": "number",
-      "highlighted": "boolean"
+      "highlighted": "boolean",
+      "seriesId": "string"
     }
   },
   "AgCartesianSeriesMarkerFormat": {
@@ -8449,11 +8566,12 @@
       "lineDashOffset?": "PixelSize",
       "label?": "AgLineSeriesLabelOptions<DatumType>",
       "tooltip?": "AgLineSeriesTooltip",
+      "listeners?": "AgSeriesListeners<DatumType>",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -8469,11 +8587,12 @@
       "lineDashOffset?": "/** The initial offset of the dashed line in pixels. */",
       "label?": "/** Configuration for the labels shown on top of data points. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "id?": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
@@ -8560,11 +8679,12 @@
       "fillOpacity?": "Opacity",
       "strokeOpacity?": "Opacity",
       "tooltip?": "AgScatterSeriesTooltip",
+      "listeners?": "AgSeriesListeners<DatumType>",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -8586,11 +8706,12 @@
       "fillOpacity?": "/** @deprecated Use {@link marker.fillOpacity} instead.\n */",
       "strokeOpacity?": "/** @deprecated Use {@link marker.strokeOpacity} instead.\n */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "id?": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
@@ -8654,11 +8775,12 @@
       "label?": "AgAreaSeriesLabelOptions<DatumType>",
       "tooltip?": "AgAreaSeriesTooltip",
       "stacked?": "boolean",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
+      "listeners?": "AgSeriesListeners<DatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -8681,6 +8803,7 @@
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
       "label?": "/** Configuration for the labels shown on top of data points. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
+      "id?": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
@@ -8721,7 +8844,8 @@
       "strokeWidth": "PixelSize",
       "highlighted": "boolean",
       "xKey": "string",
-      "yKey": "string"
+      "yKey": "string",
+      "seriesId": "string"
     }
   },
   "AgBarSeriesFormat": {
@@ -8773,11 +8897,12 @@
       "label?": "AgBarSeriesLabelOptions",
       "tooltip?": "AgBarSeriesTooltip",
       "formatter?": "(params: AgBarSeriesFormatterParams<DatumType>) => AgBarSeriesFormat",
+      "listeners?": "AgSeriesListeners<DatumType>",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -8802,11 +8927,12 @@
       "label?": "/** Configuration for the labels shown on bars. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
       "formatter?": "/** Function used to return formatting for individual bars/columns, based on the given parameters. If the current bar/column is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "id?": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
@@ -8876,11 +9002,12 @@
       "shadow?": "AgDropShadowOptions",
       "label?": "AgHistogramSeriesLabelOptions<DatumType>",
       "tooltip?": "AgHistogramSeriesTooltip",
+      "listeners?": "AgSeriesListeners<DatumType>",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -8902,11 +9029,12 @@
       "shadow?": "/** Configuration for the shadow used behind the chart series. */",
       "label?": "/** Configuration for the labels shown on bars. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "id?": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
@@ -8970,7 +9098,8 @@
       "highlighted": "boolean",
       "angleKey": "string",
       "radiusKey?": "string",
-      "sectorLabelKey?": "string"
+      "sectorLabelKey?": "string",
+      "seriesId": "string"
     }
   },
   "AgPieSeriesFormat": {
@@ -9118,11 +9247,12 @@
       "innerLabels?": "AgDoughnutInnerLabel[]",
       "innerCircle?": "AgDoughnutInnerCircle",
       "formatter?": "(params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat",
+      "listeners?": "AgSeriesListeners<DatumType>",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -9161,11 +9291,12 @@
       "innerLabels?": "/** Configuration for the text lines to display inside the series, typically used when rendering a doughnut chart */",
       "innerCircle?": "/** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset or innerRadiusRatio */",
       "formatter?": "/** A formatter function for adjusting the styling of the pie sectors. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "id?": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
@@ -9186,7 +9317,8 @@
       "radiusName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "seriesId": "string"
     },
     "docs": {
       "labelKey?": "/** labelKey as specified on series options.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
@@ -9203,7 +9335,8 @@
       "radiusName?": "/** radiusName as specified on series options. */",
       "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
       "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */"
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgPieSeriesLabelFormatterParams": {
@@ -9225,7 +9358,8 @@
       "radiusKey?": "string",
       "radiusValue?": "any",
       "radiusName?": "string",
-      "value?": "any"
+      "value?": "any",
+      "seriesId": "string"
     },
     "docs": {
       "datum": "/** Datum from the series data array that the label is being rendered for. */",
@@ -9244,7 +9378,8 @@
       "radiusKey?": "/** radiusKey as specified on series options. */",
       "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
       "radiusName?": "/** radiusName as specified on series options. */",
-      "value?": "/** The value of labelKey as specified on series options.\n * @deprecated Use item.datum instead.\n */"
+      "value?": "/** The value of labelKey as specified on series options.\n * @deprecated Use item.datum instead.\n */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgTreemapSeriesLabelOptions": {
@@ -9288,7 +9423,8 @@
       "sizeKey": "string",
       "labelKey": "string",
       "valueKey": "string",
-      "color": "string"
+      "color": "string",
+      "seriesId": "string"
     }
   },
   "AgTreemapSeriesTooltip": {
@@ -9337,11 +9473,12 @@
       "nodePadding?": "PixelSize",
       "gradient?": "boolean",
       "formatter?": "(params: AgTreemapSeriesFormatterParams<DataValue>) => AgTreemapSeriesFormat",
+      "listeners?": "AgSeriesListeners<DatumType>",
+      "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners<ListenerDatumType>",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -9358,11 +9495,12 @@
       "nodePadding?": "/** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */",
       "gradient?": "/** Whether or not to use gradients for treemap tiles. */",
       "formatter?": "/** A callback function for adjusting the styles of a particular treemap tile based on the input parameters */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "id?": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
@@ -9382,7 +9520,8 @@
       "strokeOpacity?": "number",
       "strokeWidth?": "number",
       "gradient?": "boolean",
-      "highlighted": "boolean"
+      "highlighted": "boolean",
+      "seriesId": "string"
     },
     "docs": {
       "datum": "/** Datum from the series data array that the treemap tile is being rendered for. */",
@@ -9395,7 +9534,8 @@
       "strokeOpacity?": "/** The opacity of the stroke for the treemap tile. */",
       "strokeWidth?": "/** The width in pixels of the stroke for the treemap tile. */",
       "gradient?": "/** Whether or not the gradients are used for treemap tiles. */",
-      "highlighted": "/** `true` if the tile is highlighted by hovering */"
+      "highlighted": "/** `true` if the tile is highlighted by hovering */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgTreemapSeriesFormat": {
@@ -12618,6 +12758,7 @@
     },
     "type": {
       "useFormatter": "boolean",
+      "maxLength?": "number",
       "value": "TValue",
       "key": "string | null",
       "eventKey": "string | null",

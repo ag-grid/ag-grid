@@ -686,6 +686,14 @@
       "returnType": "void"
     }
   },
+  "setRowGroupPanelShow": {
+    "type": {
+      "arguments": {
+        "rowGroupPanelShow": "'always' | 'onlyWhenGrouping' | 'never'"
+      },
+      "returnType": "void"
+    }
+  },
   "setGroupRowAggNodes": {
     "type": {
       "arguments": { "groupRowAggNodesFunc": "(nodes: RowNode[]) => any" },

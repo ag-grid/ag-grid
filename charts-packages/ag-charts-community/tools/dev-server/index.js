@@ -8,8 +8,14 @@ const { getFiles, log, openURLInBrowser } = require('./utils.js');
 
 /** @typedef {import('./types').Transpiler} Transpiler */
 
-const PORT = 2020;
-const DEBOUNCE = 250;
+/** @type {(name: string) => string} */
+const arg = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`)).split('=')[1];
+
+const PORT = Number(arg('port'));
+const DEBOUNCE = Number(arg('debounce'));
+const USE_SOURCEMAPS = arg('sourcemap') === 'true';
+const ES_VERSION = arg('es') === '2015' ? 'ES2015' : arg('es') === 'next' ? 'ESNext' : null;
+
 const ROOT_DIR = '../..';
 const SRC_ENTRY = '../ag-charts-community/src/main.ts';
 const DOC_PAGES_DIR = '../../grid-packages/ag-grid-docs/documentation/doc-pages';
@@ -117,15 +123,16 @@ async function run() {
             downlevelIteration: true,
             experimentalDecorators: true,
             emitDecoratorMetadata: false,
-            module: ts.ModuleKind.ES2015,
+            module: ts.ModuleKind[ES_VERSION],
             moduleResolution: ts.ModuleResolutionKind.NodeJs,
-            inlineSourceMap: true,
+            inlineSourceMap: USE_SOURCEMAPS,
+            inlineSources: USE_SOURCEMAPS,
             lib: ['lib.es2017.d.ts', 'lib.dom.d.ts'],
             baseUrl: ROOT_DIR,
             paths: {
-                'ag-grid-community': [SRC_ENTRY, path.join('../..', SRC_ENTRY)],
+                'ag-charts-community': [path.relative(ROOT_DIR, SRC_ENTRY)],
             },
-            target: ts.ScriptTarget.ES2015,
+            target: ts.ScriptTarget[ES_VERSION],
         },
         debounce: DEBOUNCE,
         emit: ($file, $content) => {
@@ -147,29 +154,32 @@ async function run() {
         },
     });
 
-    let isStopped = false;
+    let isStopping = false;
 
-    function stop() {
-        if (isStopped) return;
+    async function stop() {
+        if (isStopping) return;
+        isStopping = true;
 
         log.warn('Dev Server stop requested');
-        livereloadServer.close();
-        devServer.close();
-        transpiler.stop();
-        isStopped = true;
 
-        setTimeout(() => {
+        const forcedStopTimeout = setTimeout(() => {
             log.warn('Dev Server took too long to exit');
             process.exit();
         }, 1000);
+
+        transpiler.stop();
+        await devServer.close();
+        clearTimeout(forcedStopTimeout);
+        log.ok('Dev Server stopped');
     }
 
     process.on('exit', stop);
     process.on('SIGINT', stop);
 
     await devServer.start();
-    transpiler.onChange(() => livereloadServer.sendMessage('LiveReload:full'));
+    log.ok(`Dev Server started on port ${PORT}`);
 
+    transpiler.onChange(() => livereloadServer.sendMessage('LiveReload:full'));
     log.ok('watching...');
     openURLInBrowser(`http://localhost:${PORT}/`);
 }

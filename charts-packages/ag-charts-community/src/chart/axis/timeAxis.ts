@@ -18,7 +18,7 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         const { scale } = this;
         scale.clamp = true;
         scale.clamper = filter;
-        this.scale = scale;
+        this.refreshScale();
 
         this.datumFormatter = scale.tickFormat({
             specifier: this.datumFormat,

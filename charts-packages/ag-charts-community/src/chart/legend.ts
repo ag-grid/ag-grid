@@ -28,6 +28,7 @@ import { Layers } from './layers';
 export interface LegendDatum {
     id: string; // component ID
     itemId: any; // sub-component ID
+    seriesId: string;
     enabled: boolean; // the current state of the sub-component
     marker: {
         shape?: string | (new () => Marker);
@@ -57,6 +58,7 @@ interface LegendLabelFormatterParams {
     id: string;
     itemId: any;
     value: string;
+    seriesId: string;
 }
 
 export class LegendLabel {

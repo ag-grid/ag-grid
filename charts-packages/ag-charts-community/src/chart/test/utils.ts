@@ -72,6 +72,12 @@ export function dateRange(start: Date, end: Date, step = 24 * 60 * 60 * 1000): D
 }
 
 export async function waitForChartStability(chart: Chart, timeoutMs = 5000): Promise<void> {
+    const chartAny = chart as any;
+    if (chart.autoSize === true && !chartAny._lastAutoSize) {
+        // Bypass wait for SizeObservable callback - it's never going to be invoked.
+        chartAny._lastAutoSize = [chart.width, chart.height];
+        chartAny.resize(chart.width, chart.height);
+    }
     return chart.waitForUpdate(timeoutMs);
 }
 
@@ -177,7 +183,7 @@ export function setupMockCanvas(): { nodeCanvas?: Canvas } {
     return mockCtx.ctx;
 }
 
-export function toMatchImage(actual, expected) {
+export function toMatchImage(actual, expected, { writeDiff = true } = {}) {
     // Grab values from enclosing Jest scope.
     const { testPath, currentTestName } = this;
 
@@ -193,7 +199,7 @@ export function toMatchImage(actual, expected) {
     const diffPercentage = (result * 100) / (width * height);
     const pass = diffPercentage <= 0.05;
 
-    if (!pass) {
+    if (!pass && writeDiff) {
         fs.writeFileSync(diffOutputFilename, (PNG as any).sync.write(diff));
     } else if (fs.existsSync(diffOutputFilename)) {
         fs.unlinkSync(diffOutputFilename);

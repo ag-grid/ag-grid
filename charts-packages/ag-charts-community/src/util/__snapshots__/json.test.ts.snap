@@ -40,6 +40,41 @@ Object {
 }
 `;
 
+exports[`json module #jsonMerge for objects and arrays should create deep clones for arrays 1`] = `
+Object {
+  "a": Array [
+    Object {
+      "y": 1,
+    },
+  ],
+}
+`;
+
+exports[`json module #jsonMerge for objects and arrays should create deep clones for objects 1`] = `
+Object {
+  "a": Object {
+    "x": 1,
+    "y": 2,
+    "z": 3,
+  },
+}
+`;
+
+exports[`json module #jsonMerge for objects and arrays should honour \`avoidDeepClone 1`] = `
+Object {
+  "a": Array [
+    Object {
+      "x": 1,
+    },
+  ],
+  "b": Array [
+    Object {
+      "y": 2,
+    },
+  ],
+}
+`;
+
 exports[`json module #jsonMerge for trivial cases should honour DELETE value 1`] = `
 Object {
   "a": 1,

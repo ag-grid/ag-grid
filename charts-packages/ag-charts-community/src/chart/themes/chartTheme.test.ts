@@ -112,7 +112,10 @@ describe('ChartTheme', () => {
         let chart: CartesianChart;
 
         beforeEach(() => (chart = AgChartV2.create(cartesianChartOptions)));
-        afterEach(() => (chart = null));
+        afterEach(() => {
+            chart.destroy();
+            (chart as any) = null;
+        });
 
         test('Options are not mutated after AgChart.create', () => {
             expect(JSON.stringify(cartesianChartOptions)).toBe(serializedOptions);
@@ -204,7 +207,10 @@ describe('ChartTheme', () => {
         let chart: PolarChart;
 
         beforeEach(() => (chart = AgChartV2.create(polarChartOptions)));
-        afterEach(() => (chart = null));
+        afterEach(() => {
+            chart.destroy();
+            (chart as any) = null;
+        });
 
         test('Options are not mutated after AgChart.create', () => {
             expect(JSON.stringify(polarChartOptions)).toBe(serializedOptions);
@@ -420,7 +426,7 @@ describe('ChartTheme', () => {
             defaultTheme = new ChartTheme();
         });
         afterEach(() => {
-            defaultTheme = null;
+            (defaultTheme as any) = null;
         });
 
         test('Themed bottom category, unthemed left number', async () => {

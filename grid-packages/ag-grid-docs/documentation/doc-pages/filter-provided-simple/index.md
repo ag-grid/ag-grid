@@ -241,7 +241,7 @@ Custom `FilterOptionDef`s can be supplied alongside the built-in filter option `
 |                        displayKey: 'betweenExclusive',
 |                        displayName: 'Between (Exclusive)',
 |                        predicate: ([fv1, fv2], cellValue) => cellValue == null || fv1 < cellValue && fv2 > cellValue,
-                         numberOfInputs: 2,
+|                        numberOfInputs: 2,
 |                    }
 |                ]
 |            }
@@ -318,3 +318,44 @@ Each time a filter is applied to a column the CSS class `ag-header-cell-filtered
 In the example below, we've added some styling to `ag-header-cell-filtered`, so when you filter a column you will notice the column header change.
 
 <grid-example title='Style Header' name='style-header-on-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
+
+## Customising filter placeholder text
+
+Filter placeholder text can be customised on a per column basis using `filterParams.filterPlaceholder` within the grid option `columnDefs`. The placeholder can be either a string or a function as shown in the snippet below:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'age',
+            filter: 'agNumberColumnFilter',
+            filterParams: {
+                filterPlaceholder: 'Age...'
+            }
+        },
+        {
+            field: 'total',
+            filter: 'agNumberColumnFilter',
+            filterParams: {
+                filterPlaceholder: (params) => {
+                    const { filterOption, placeholder } = params;
+                    return `${filterOption} ${placeholder}`;
+                }
+            }
+        }
+    ]
+}
+</snippet>
+
+When `filterPlaceholder` is a function, the parameters are made up of the following:
+
+<interface-documentation interfaceName='IFilterPlaceholderFunctionParams' config='{"hideHeader":false, "headerLevel": 3, "description":""}'></interface-documentation>
+
+The following example shows the various ways of specifying filter placeholders. Click on the filter menu for the different columns in the header row to see the following:
+
+* `Athlete` column shows the default placeholder of `Filter...` with no configuration
+* `Country` column shows the string `Country...` for all filter options
+* `Sport` column shows the filter option key with the default placeholder eg, for the `Contains` filter option, it shows `contains - Filter...`. The [filter option keys](#simple-filter-options) are listed in the table above.
+* `Total` column shows the filter option name with the suffix `total` eg, for the `Equals` filter option, it shows `Equals total`. The [filter option names](#simple-filter-options) are listed in the table above.
+
+<grid-example title='Filter placeholder text' name='filter-placeholder-text' type='generated' options='{ "exampleHeight": 560 }'></grid-example>

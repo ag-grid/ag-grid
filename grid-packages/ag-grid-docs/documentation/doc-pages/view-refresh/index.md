@@ -4,9 +4,9 @@ title: "View Refresh"
 
 The grid has change detection. So as long as you are updating the data via the grid's API, the values displayed should be the most recent up to date values.
 
-However sometimes you may be updating the data outside of the grids control. When you give data to the grid, the grid will not make a copy. Thus if you change the valu of the data outside of the grid, the grid will also be impacted by that data change.
+However sometimes you may be updating the data outside of the grids control. When you give data to the grid, the grid will not make a copy. Thus if you change the value of the data outside of the grid, the grid will also be impacted by that data change.
 
-To deal with the scenario where the row data is changed without the grid been aware, the grid provides the following methods:
+To deal with the scenario where the row data is changed without the grid being aware, the grid provides the following methods:
 
 
 - **Refresh Cells**: `api.refreshCells(cellRefreshParams)` - Gets the grid to refresh all cells. Change detection will be used to refresh only cells whose display cell values are out of sync with the actual value. If using a [cellRenderer](/component-cell-renderer/) with a refresh method, the refresh method will get called.
@@ -42,7 +42,7 @@ Below shows calling `api.refreshCells()` with different scenarios using a mixtur
 
 - The **Scramble & Refresh Top to Bottom** button will scramble as before, then call `api.refreshCells({rowNodes})` 20 times, 100ms apart, once for each row (including pinned rows). This will show the grid refreshing one row at a time from top to bottom.
 
-- The checkbox **Force Refresh** impacts how the above three refreshes work. If checked, all the cells will get refreshed regardless of whether they have changes. In other words, change detection will not but used as part of the refresh.
+- The checkbox **Force Refresh** impacts how the above three refreshes work. If checked, all the cells will get refreshed regardless of whether they have changes. In other words, change detection will not be used as part of the refresh.
 
 - The checkbox **Suppress Flash** impacts how the above three refreshes work. If checked, flashing will not occur on any cell.
 

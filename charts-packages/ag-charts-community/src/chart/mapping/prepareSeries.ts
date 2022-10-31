@@ -89,7 +89,7 @@ interface ReduceConfig<T> {
     start: T;
     seriesType?: string[];
 }
-const REDUCE_CONFIG: Record<string, ReduceConfig<unknown>> = {
+const REDUCE_CONFIG: Record<string, ReduceConfig<any>> = {
     yKeys: { outputProp: 'yKeys', reducer: ARRAY_REDUCER('yKeys'), start: [] },
     fills: { outputProp: 'fills', reducer: ARRAY_REDUCER('fills'), start: [] },
     strokes: { outputProp: 'strokes', reducer: ARRAY_REDUCER('strokes'), start: [] },

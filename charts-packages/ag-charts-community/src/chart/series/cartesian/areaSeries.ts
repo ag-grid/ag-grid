@@ -11,13 +11,17 @@ import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legend';
 import { Path } from '../../../scene/shape/path';
 import { Marker } from '../../marker/marker';
-import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from './cartesianSeries';
+import {
+    CartesianSeries,
+    CartesianSeriesMarker,
+    CartesianSeriesMarkerFormat,
+    CartesianSeriesNodeClickEvent,
+} from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxis';
 import { getMarker } from '../../marker/util';
 import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
 import { equal } from '../../../util/equal';
-import { TypedEvent } from '../../../util/observable';
 import { interpolate } from '../../../util/string';
 import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
 import { Label } from '../../label';
@@ -45,15 +49,6 @@ interface FillSelectionDatum {
 
 interface StrokeSelectionDatum extends FillSelectionDatum {
     readonly yValues: (number | undefined)[];
-}
-
-export interface AreaSeriesNodeClickEvent extends TypedEvent {
-    readonly type: 'nodeClick';
-    readonly event: MouseEvent;
-    readonly series: AreaSeries;
-    readonly datum: any;
-    readonly xKey: string;
-    readonly yKey: string;
 }
 
 interface MarkerSelectionDatum extends Required<SeriesNodeDatum> {
@@ -197,7 +192,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }
 
     @Validate(BOOLEAN_ARRAY)
-    protected _visibles: boolean[];
+    protected _visibles: boolean[] = [];
     set visibles(visibles: boolean[]) {
         this._visibles = visibles;
         this.processSeriesItemEnabled();
@@ -717,6 +712,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }) {
         const { markerSelection, isHighlight: isDatumHighlighted } = opts;
         const {
+            id: seriesId,
             xKey,
             marker,
             seriesItemEnabled,
@@ -769,6 +765,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     strokeWidth,
                     size,
                     highlighted: isDatumHighlighted,
+                    seriesId,
                 });
             }
 
@@ -828,19 +825,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         });
     }
 
-    fireNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): void {
-        this.fireEvent<AreaSeriesNodeClickEvent>({
-            type: 'nodeClick',
-            event,
-            series: this,
-            datum: datum.datum,
-            xKey: this.xKey,
-            yKey: datum.yKey,
-        });
+    protected getNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): CartesianSeriesNodeClickEvent<any> {
+        return new CartesianSeriesNodeClickEvent(this.xKey, datum.yKey, event, datum, this);
     }
 
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {
-        const { xKey } = this;
+        const { xKey, id: seriesId } = this;
         const { yKey } = nodeDatum;
 
         if (!(xKey && yKey) || !this.seriesItemEnabled.get(yKey)) {
@@ -891,6 +881,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 strokeWidth,
                 size,
                 highlighted: false,
+                seriesId,
             });
         }
 
@@ -915,6 +906,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 yName,
                 color,
                 title,
+                seriesId,
             };
             if (tooltipFormat) {
                 return toTooltipHtml(
@@ -932,13 +924,15 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         return toTooltipHtml(defaults);
     }
 
-    listSeriesItems(legendData: LegendDatum[]): void {
+    getLegendData(): LegendDatum[] {
         const { data, id, xKey, yKeys, yNames, seriesItemEnabled, marker, fills, strokes, fillOpacity, strokeOpacity } =
             this;
 
         if (!data || !data.length || !xKey || !yKeys.length) {
-            return;
+            return [];
         }
+
+        const legendData: LegendDatum[] = [];
 
         // Area stacks should be listed in the legend in reverse order, for symmetry with the
         // vertical stack display order.
@@ -947,6 +941,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             legendData.push({
                 id,
                 itemId: yKey,
+                seriesId: id,
                 enabled: seriesItemEnabled.get(yKey) || false,
                 label: {
                     text: yNames[index] || yKeys[index],
@@ -960,6 +955,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 },
             });
         }
+
+        return legendData;
     }
 
     protected isLabelEnabled() {

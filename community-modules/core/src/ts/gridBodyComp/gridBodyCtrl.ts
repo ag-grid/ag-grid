@@ -13,13 +13,14 @@ import { HeaderNavigationService } from "../headerRendering/common/headerNavigat
 import { RowDragFeature } from "./rowDragFeature";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { getTabIndex } from "../utils/browser";
+import { getTabIndex, isIOSUserAgent } from "../utils/browser";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { PopupService } from "../widgets/popupService";
 import { MouseEventService } from "./mouseEventService";
 import { IRowModel } from "../interfaces/iRowModel";
 import { Constants } from "../constants/constants";
 import { ISizeColumnsToFitParams } from "../gridApi";
+import { TouchListener, LongTapEvent } from "../widgets/touchListener";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -271,22 +272,45 @@ export class GridBodyCtrl extends BeanStub {
     private addBodyViewportListener(): void {
         // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
-        const listener = (mouseEvent: MouseEvent) => {
+        const listener = (mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => {
+            if (!mouseEvent && !touchEvent) { return; }
+
             if (this.gridOptionsService.is('preventDefaultOnContextMenu')) {
-                mouseEvent.preventDefault();
+                const event = (mouseEvent || touchEvent)!;
+                event.preventDefault();
             }
-            const { target } = mouseEvent;
+
+            const { target } = (mouseEvent || touch)!;
+
             if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
                 // show it
                 if (this.contextMenuFactory) {
-                    this.contextMenuFactory.onContextMenu(mouseEvent, null, null, null, null, this.eGridBody);
+                    if (mouseEvent) {
+                        this.contextMenuFactory.onContextMenu(mouseEvent, null, null, null, null, this.eGridBody);
+                    } else if (touchEvent) {
+                        this.contextMenuFactory.onContextMenu(null, touchEvent, null, null, null, this.eGridBody);
+                    }
                 }
             }
         };
 
         this.addManagedListener(this.eBodyViewport, 'contextmenu', listener);
+        this.mockContextMenuForIPad(listener);
         this.addManagedListener(this.eBodyViewport, 'wheel', this.onBodyViewportWheel.bind(this));
         this.addManagedListener(this.eStickyTop, 'wheel', this.onStickyTopWheel.bind(this));
+    }
+
+    private mockContextMenuForIPad(listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void): void {
+        // we do NOT want this when not in iPad
+        if (!isIOSUserAgent()) { return; }
+
+        const touchListener = new TouchListener(this.eBodyViewport);
+        const longTapListener = (event: LongTapEvent) => {
+            listener(undefined, event.touchStart, event.touchEvent);
+        };
+
+        this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
+        this.addDestroyFunc(() => touchListener.destroy());
     }
 
     private onBodyViewportWheel(e: WheelEvent): void {

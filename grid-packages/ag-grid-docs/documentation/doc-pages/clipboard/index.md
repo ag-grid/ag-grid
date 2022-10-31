@@ -135,6 +135,33 @@ These three callbacks above are demonstrated in the example below. Note the foll
 
 <grid-example title='Example Process' name='process' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
+### Processing Data from Clipboard
+
+To have complete control of processing clipboard data when pasting, you can use the callback below:
+
+<api-documentation source='grid-options/properties.json' section='clipboard' names='["processDataFromClipboard"]'  ></api-documentation>
+
+The following example shows custom code to process the data from the clipboard:
+
+* The cells are coloured based on the colour that the cell content starts with
+* Copy a cell range in the grid which includes a cell value that starts with `Red`. Pasting into the grid will paste a 4x4 cell grid with top row values `['Orange', 'Orange']` and bottom row values `['Grey', 'Grey']`
+* Copy a cell range in the grid which includes a cell value that starts with `Yellow` and **doesn’t** include any `Red` cell values. Pasting this copied cell range will cancel the paste action and not paste anything
+* Any other copied cell data will be pasted as-is
+
+<grid-example title='Example Process Data' name='process-all' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
+
+### Pasting new rows at the bottom of the Grid
+
+When pasting multiple rows at the bottom of the grid, extra rows will be cut off by default. This can be fixed by writing a `processDataFromClipboard` function to add appropriate rows using the [Transaction Update API](/data-update-transactions/#transaction-update-api).
+
+You can see this in the following example where a custom `processDataFromClipboard` function has been added:
+
+* Copy multiple rows from the grid using <kbd>Shift</kbd> + click
+* Select the `Ryan Lochte` cell on the last row and paste the copied rows
+* Notice that extra rows are created at the bottom
+
+<grid-example title='Paste New Rows' name='pasting-extra-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
+
 ## Changing the Delimiter for Copy & Paste
 
 By default, the grid will use `\t` (tab) as the field delimiter. This is to keep the copy / paste compatible with Excel. If you want another delimiter then you can set the property `gridOptions.clipboardDelimiter` to a value of your choosing.

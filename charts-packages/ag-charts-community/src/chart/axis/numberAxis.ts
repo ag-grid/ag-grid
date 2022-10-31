@@ -29,8 +29,8 @@ export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
     static className = 'NumberAxis';
     static type = 'number' as 'number' | 'log';
 
-    constructor() {
-        super(new LinearScale());
+    constructor(scale = new LinearScale() as LinearScale | LogScale) {
+        super(scale);
         (this.scale as ContinuousScale).clamper = filter;
     }
 

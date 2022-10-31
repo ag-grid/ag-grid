@@ -105,7 +105,7 @@ export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filt
 export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
 
 export { ProvidedFilter, IProvidedFilter, IProvidedFilterParams } from "./filter/provided/providedFilter";
-export { ISimpleFilter, SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator } from "./filter/provided/simpleFilter";
+export { ISimpleFilter, SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator, IFilterPlaceholderFunctionParams, FilterPlaceholderFunction } from "./filter/provided/simpleFilter";
 export { ScalarFilter, IScalarFilterParams } from "./filter/provided/scalarFilter";
 
 export { NumberFilter, INumberFilterParams, NumberFilterModel } from "./filter/provided/number/numberFilter";

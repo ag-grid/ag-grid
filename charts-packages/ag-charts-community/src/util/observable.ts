@@ -153,8 +153,10 @@ export class Observable {
         );
 
         if (listeners) {
+            // Use `Object.create` to preserve deprecation warnings
+            const eventWithSource = Object.create(event, { source: { value: this, enumerable: true } });
             listeners.forEach((scopes, listener) => {
-                scopes.forEach((scope) => listener.call(scope, { ...event, source: this }));
+                scopes.forEach((scope) => listener.call(scope, eventWithSource));
             });
         }
     }

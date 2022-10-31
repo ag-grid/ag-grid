@@ -19,6 +19,7 @@ import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
 import { BOOLEAN, Validate } from '../util/validation';
 import { sleep } from '../util/async';
+import { doOnce } from '../util/function';
 import { Tooltip, TooltipMeta } from './tooltip/tooltip';
 
 export interface ChartClickEvent extends SourceEvent<Chart> {
@@ -39,8 +40,8 @@ type OptionalHTMLElement = HTMLElement | undefined | null;
 export abstract class Chart extends Observable {
     readonly id = createId(this);
 
-    options: AgChartOptions;
-    userOptions: AgChartOptions;
+    options: AgChartOptions = {};
+    userOptions: AgChartOptions = {};
     readonly scene: Scene;
     readonly background: Background = new Background();
     readonly legend = new Legend();
@@ -107,7 +108,7 @@ export abstract class Chart extends Observable {
         return this.scene.height;
     }
 
-    private _lastAutoSize: [number, number];
+    private _lastAutoSize?: [number, number];
     @Validate(BOOLEAN)
     protected _autoSize = false;
     set autoSize(value: boolean) {
@@ -201,9 +202,12 @@ export abstract class Chart extends Observable {
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
-            this._lastAutoSize = [width, height];
 
             if (!this.autoSize) {
+                return;
+            }
+
+            if (width === 0 && height === 0) {
                 return;
             }
 
@@ -211,6 +215,7 @@ export abstract class Chart extends Observable {
                 return;
             }
 
+            this._lastAutoSize = [width, height];
             this.resize(width, height);
         });
 
@@ -255,35 +260,38 @@ export abstract class Chart extends Observable {
     }
 
     private _pendingFactoryUpdates: (() => Promise<void>)[] = [];
-    get pendingFactoryUpdates() {
-        return this._pendingFactoryUpdates.length;
-    }
+
     requestFactoryUpdate(cb: () => Promise<void>) {
-        this._pendingFactoryUpdates.push(cb);
-
-        if (this._pendingFactoryUpdates.length > 1) {
+        const callbacks = this._pendingFactoryUpdates;
+        const count = callbacks.length;
+        if (count === 0) {
+            callbacks.push(cb);
+            this._processCallbacks();
+        } else {
             // Factory callback process already running, the callback will be invoked asynchronously.
-            return;
+            // Clear the queue after the first callback to prevent unnecessary re-renderings.
+            callbacks.splice(1, count - 1, cb);
         }
-
-        const processCallbacks = async () => {
-            while (this._pendingFactoryUpdates.length > 0) {
-                while (this.updatePending) {
-                    await sleep(1);
-                }
-                try {
-                    await this._pendingFactoryUpdates[0]();
-                } catch (e) {
-                    console.error(e);
-                }
-
-                this._pendingFactoryUpdates.splice(0, 1);
-            }
-        };
-
-        processCallbacks();
     }
 
+    private async _processCallbacks() {
+        const callbacks = this._pendingFactoryUpdates;
+        while (callbacks.length > 0) {
+            if (this.updatePending) {
+                await sleep(1);
+                continue; // Make sure to check queue has an item before continuing.
+            }
+            try {
+                await callbacks[0]();
+            } catch (e) {
+                console.error(e);
+            }
+
+            callbacks.shift();
+        }
+    }
+
+    private _performUpdateNoRenderCount = 0;
     private _performUpdateType: ChartUpdateType = ChartUpdateType.NONE;
     get performUpdateType() {
         return this._performUpdateType;
@@ -296,7 +304,6 @@ export abstract class Chart extends Observable {
         return this._lastPerformUpdateError;
     }
 
-    private updateContext = { firstRenderComplete: false, firstResizeReceived: false };
     private seriesToUpdate: Set<Series> = new Set();
     private performUpdateTrigger = debouncedCallback(async ({ count }) => {
         try {
@@ -329,11 +336,7 @@ export abstract class Chart extends Observable {
         }
     }
     private async performUpdate(count: number) {
-        const {
-            _performUpdateType: performUpdateType,
-            extraDebugStats,
-            updateContext: { firstRenderComplete, firstResizeReceived },
-        } = this;
+        const { _performUpdateType: performUpdateType, extraDebugStats } = this;
         const splits = [performance.now()];
 
         switch (performUpdateType) {
@@ -346,13 +349,21 @@ export abstract class Chart extends Observable {
                 this.disableTooltip({ updateProcessing: false });
             // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
-                if (!firstRenderComplete && !firstResizeReceived) {
-                    this.log({ firstRenderComplete, firstResizeReceived });
-                    // Reschedule if canvas size hasn't been set yet to avoid a race.
-                    this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
-                    this.performUpdateTrigger.schedule();
-                    break;
+                if (this._autoSize && !this._lastAutoSize) {
+                    const count = this._performUpdateNoRenderCount++;
+
+                    if (count < 5) {
+                        // Reschedule if canvas size hasn't been set yet to avoid a race.
+                        this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
+                        this.performUpdateTrigger.schedule();
+                        break;
+                    }
+
+                    // After several failed passes, continue and accept there maybe a redundant
+                    // render. Sometimes this case happens when we already have the correct
+                    // width/height, and we end up never rendering the chart in that scenario.
                 }
+                this._performUpdateNoRenderCount = 0;
 
                 await this.performLayout();
                 splits.push(performance.now());
@@ -366,7 +377,6 @@ export abstract class Chart extends Observable {
             // Fall-through to next pipeline stage.
             case ChartUpdateType.SCENE_RENDER:
                 await this.scene.render({ debugSplitTimes: splits, extraDebugStats });
-                this.updateContext.firstRenderComplete = true;
                 this.extraDebugStats = {};
             // Fall-through to next pipeline stage.
             case ChartUpdateType.NONE:
@@ -579,8 +589,6 @@ export abstract class Chart extends Observable {
     }
 
     private resize(width: number, height: number) {
-        this.updateContext.firstResizeReceived = true;
-
         if (this.scene.resize(width, height)) {
             this.background.width = this.width;
             this.background.height = this.height;
@@ -629,16 +637,31 @@ export abstract class Chart extends Observable {
     private async updateLegend() {
         const legendData: LegendDatum[] = [];
 
-        this.series.filter((s) => s.showInLegend).forEach((series) => series.listSeriesItems(legendData));
+        this.series
+            .filter((s) => s.showInLegend)
+            .forEach((series) => {
+                legendData.push(...series.getLegendData());
+            });
 
         const { formatter } = this.legend.item.label;
         if (formatter) {
             legendData.forEach(
                 (datum) =>
                     (datum.label.text = formatter({
-                        id: datum.id,
+                        get id() {
+                            doOnce(
+                                () =>
+                                    console.warn(
+                                        `AG Charts - LegendLabelFormatterParams.id is deprecated, use seriesId instead`,
+                                        datum
+                                    ),
+                                `LegendLabelFormatterParams.id deprecated`
+                            );
+                            return datum.seriesId;
+                        },
                         itemId: datum.itemId,
                         value: datum.label.text,
+                        seriesId: datum.seriesId,
                     }))
             );
         }
@@ -962,7 +985,9 @@ export abstract class Chart extends Observable {
     }
 
     private onSeriesNodeClick(event: SourceEvent<Series<any>>) {
-        this.fireEvent({ ...event, type: 'seriesNodeClick' });
+        // Use `Object.create` to preserve deprecation warnings
+        const seriesNodeClickEvent = Object.create(event, { type: { value: 'seriesNodeClick', enumerable: true } });
+        this.fireEvent(seriesNodeClickEvent);
     }
 
     private checkLegendClick(event: MouseEvent): boolean {
@@ -1153,7 +1178,7 @@ export abstract class Chart extends Observable {
     async waitForUpdate(timeoutMs = 5000): Promise<void> {
         const start = performance.now();
 
-        while (this.pendingFactoryUpdates > 0 || this.updatePending) {
+        while (this._pendingFactoryUpdates.length > 0 || this.updatePending) {
             if (performance.now() - start > timeoutMs) {
                 throw new Error('waitForUpdate() timeout reached.');
             }

@@ -41,6 +41,7 @@ import {
     isAgHierarchyChartOptions,
     isAgPolarChartOptions,
     optionsType,
+    noDataCloneMergeOptions,
 } from './mapping/prepare';
 import { SeriesOptionsTypes } from './mapping/defaults';
 import { CrossLine } from './crossline/crossLine';
@@ -206,9 +207,7 @@ export abstract class AgChartV2 {
                 return;
             }
 
-            const deltaOptions = jsonDiff<ChartOptionType<T>>(chart.options as ChartOptionType<T>, mergedOptions, {
-                stringify: ['data'],
-            });
+            const deltaOptions = jsonDiff<ChartOptionType<T>>(chart.options as ChartOptionType<T>, mergedOptions);
             if (deltaOptions == null) {
                 return;
             }
@@ -296,25 +295,24 @@ function applyChartOptions<T extends ChartType, O extends ChartOptionType<T>>(
         );
     }
 
-    let updateType = ChartUpdateType.PERFORM_LAYOUT;
     let forceNodeDataRefresh = false;
     if (options.series && options.series.length > 0) {
         applySeries<T, O>(chart, options);
+        forceNodeDataRefresh = true;
     }
     if (isAgCartesianChartOptions(options) && options.axes) {
         const axesPresent = applyAxes<T, O>(chart, options);
         if (axesPresent) {
-            updateType = ChartUpdateType.PROCESS_DATA;
             forceNodeDataRefresh = true;
         }
     }
 
     const seriesOpts = options.series as any[];
+    const seriesDataUpdate = !!options.data || seriesOpts?.some((s) => s.data != null);
+    const otherRefreshUpdate = options.legend || options.title || options.subtitle;
+    forceNodeDataRefresh = forceNodeDataRefresh || seriesDataUpdate || !!otherRefreshUpdate;
     if (options.data) {
         chart.data = options.data;
-        updateType = ChartUpdateType.PROCESS_DATA;
-    } else if (seriesOpts?.some((s) => s.data != null)) {
-        updateType = ChartUpdateType.PROCESS_DATA;
     }
 
     // Needs to be done last to avoid overrides by width/height properties.
@@ -328,9 +326,10 @@ function applyChartOptions<T extends ChartType, O extends ChartOptionType<T>>(
         Object.assign(chart.legend.listeners, options.legend.listeners);
     }
 
-    chart.options = jsonMerge(chart.options || {}, options);
-    chart.userOptions = jsonMerge(chart.userOptions || {}, userOptions);
+    chart.options = jsonMerge([chart.options || {}, options], noDataCloneMergeOptions);
+    chart.userOptions = jsonMerge([chart.userOptions || {}, userOptions], noDataCloneMergeOptions);
 
+    const updateType = forceNodeDataRefresh ? ChartUpdateType.PROCESS_DATA : ChartUpdateType.PERFORM_LAYOUT;
     chart.update(updateType, { forceNodeDataRefresh });
 }
 

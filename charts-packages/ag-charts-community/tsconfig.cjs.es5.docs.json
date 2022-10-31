@@ -9,7 +9,8 @@
             "@ag-*": ["node_modules/@ag-*/dist/cjs/es5/main"]
         },
         "noUnusedParameters": true,
-        "noUnusedLocals": true
+        "noUnusedLocals": true,
+        "strict": true
     },
     "include": ["src/**/*"],
     "exclude": ["**/*.test.ts", "**/test/*.ts"]

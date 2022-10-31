@@ -71,7 +71,7 @@ export { ISetFilter, SetFilterModel, ISetFilterParams, SetFilterValues, SetFilte
 export { FilterManager, FilterWrapper, FilterRequestSource } from "ag-grid-community";
 export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, IMultiFilterDef } from "ag-grid-community";
 export { ProvidedFilter, IProvidedFilter, IProvidedFilterParams } from "ag-grid-community";
-export { ISimpleFilter, SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator } from "ag-grid-community";
+export { ISimpleFilter, SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator, IFilterPlaceholderFunctionParams, FilterPlaceholderFunction } from "ag-grid-community";
 export { ScalarFilter, IScalarFilterParams } from "ag-grid-community";
 export { NumberFilter, INumberFilterParams, NumberFilterModel } from "ag-grid-community";
 export { TextFilter, ITextFilterParams, TextFilterModel, TextFormatter } from "ag-grid-community";

@@ -6,7 +6,8 @@ import { Chart } from '../chart';
 import { createId } from '../../util/id';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
-import { Deprecated } from '../../util/deprecation';
+import { Deprecated, createDeprecationWarning } from '../../util/deprecation';
+import { TypedEvent } from '../../util/observable';
 import { BOOLEAN, OPT_BOOLEAN, OPT_NUMBER, OPT_COLOR_STRING, STRING, Validate } from '../../util/validation';
 import { PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
@@ -49,6 +50,31 @@ export interface TooltipRendererParams {
     readonly datum: any;
     readonly title?: string;
     readonly color?: string;
+    readonly seriesId: string;
+}
+
+const warnDeprecated = createDeprecationWarning();
+const warnSeriesDeprecated = () => warnDeprecated('series', 'Use seriesId to get the series ID');
+
+export class SeriesNodeClickEvent<Datum extends { datum: any }> implements TypedEvent {
+    readonly type = 'nodeClick';
+    readonly datum: any;
+    readonly event: MouseEvent;
+    readonly seriesId: string;
+
+    private readonly _series: Series;
+    /** @deprecated */
+    get series() {
+        warnSeriesDeprecated();
+        return this._series;
+    }
+
+    constructor(nativeEvent: MouseEvent, datum: Datum, series: Series) {
+        this.event = nativeEvent;
+        this.datum = datum.datum;
+        this.seriesId = series.id;
+        this._series = series;
+    }
 }
 
 export interface CartesianTooltipRendererParams extends TooltipRendererParams {
@@ -130,6 +156,7 @@ export type SeriesNodeDataContext<S = SeriesNodeDatum, L = S> = {
 export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataContext> extends Observable {
     protected static readonly highlightedZIndex = 1000000000000;
 
+    @Validate(STRING)
     readonly id = createId(this);
 
     get type(): string {
@@ -458,18 +485,22 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     abstract getLabelData(): PointLabelDatum[];
 
     fireNodeClickEvent(_event: MouseEvent, _datum: C['nodeData'][number]): void {
-        // Override point for subclasses.
+        const eventObject = this.getNodeClickEvent(_event, _datum);
+        this.fireEvent(eventObject);
+    }
+
+    protected getNodeClickEvent(event: MouseEvent, datum: SeriesNodeDatum): SeriesNodeClickEvent<any> {
+        return new SeriesNodeClickEvent(event, datum, this);
     }
 
     /**
      * @private
-     * Populates the given {@param data} array with the items of this series
+     * Returns an array with the items of this series
      * that should be shown in the legend. It's up to the series to determine
      * what is considered an item. An item could be the series itself or some
      * part of the series.
-     * @param data
      */
-    abstract listSeriesItems(data: LegendDatum[]): void;
+    abstract getLegendData(): LegendDatum[];
 
     toggleSeriesItem(_itemId: any, enabled: boolean): void {
         this.visible = enabled;

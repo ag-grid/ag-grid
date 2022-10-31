@@ -14,9 +14,8 @@ export class LogAxis extends NumberAxis {
     }
 
     constructor() {
-        super();
+        super(new LogScale());
 
-        this.scale = new LogScale();
         (this.scale as ContinuousScale).clamper = filter;
     }
 }

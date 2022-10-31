@@ -283,7 +283,14 @@ export class Scene {
             return;
         }
 
-        if (!this.dirty) {
+        if (root && !this.dirty) {
+            if (this.debug.consoleLog) {
+                console.log('no-op', {
+                    redrawType: RedrawType[root.dirty],
+                    tree: this.buildTree(root),
+                });
+            }
+
             this.debugStats(debugSplitTimes, ctx, undefined, extraDebugStats);
             return;
         }
@@ -412,7 +419,7 @@ export class Scene {
                         node: { visible, opacity, zIndex, zIndexSubOrder },
                     } = childTree;
                     if (!visible || opacity <= 0) {
-                        treeNodeName = `* ${treeNodeName}`;
+                        treeNodeName = `( ${treeNodeName} )`;
                     }
                     if (node instanceof Group && node.isLayer()) {
                         treeNodeName = `[ ${treeNodeName} ]`;

@@ -1236,6 +1236,9 @@ export class GridApi<TData = any> {
         this.gridOptionsWrapper.setProperty('navigateToNextHeader', navigateToNextHeaderFunc);
     }
 
+    public setRowGroupPanelShow(rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never'): void {
+        this.gridOptionsWrapper.setProperty('rowGroupPanelShow', rowGroupPanelShow);
+    }
     public setGroupRowAggNodes(groupRowAggNodesFunc: (nodes: RowNode[]) => any): void {
         this.gridOptionsWrapper.setProperty('groupRowAggNodes', groupRowAggNodesFunc);
     }

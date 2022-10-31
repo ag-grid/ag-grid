@@ -14,15 +14,14 @@ import {
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legend';
-import { CartesianSeries } from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesNodeClickEvent } from './cartesianSeries';
 import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from '../../chartAxis';
 import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
-import { findMinMax } from '../../../util/array';
+import { extent, findMinMax } from '../../../util/array';
 import { equal } from '../../../util/equal';
-import { TypedEvent } from '../../../util/observable';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { checkDatum, isNumber } from '../../../util/value';
+import { checkDatum, isContinuous, isNumber } from '../../../util/value';
 import { clamper, ContinuousScale } from '../../../scale/continuousScale';
 import { Point } from '../../../scene/point';
 import {
@@ -40,19 +39,11 @@ import {
     ValidatePredicate,
 } from '../../../util/validation';
 import { CategoryAxis } from '../../axis/categoryAxis';
+import { GroupedCategoryAxis } from '../../axis/groupedCategoryAxis';
 
 const BAR_LABEL_PLACEMENTS = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
     OPTIONAL(v, ctx, (v: any) => BAR_LABEL_PLACEMENTS.includes(v));
-
-export interface BarSeriesNodeClickEvent extends TypedEvent {
-    readonly type: 'nodeClick';
-    readonly event: MouseEvent;
-    readonly series: BarSeries;
-    readonly datum: any;
-    readonly xKey: string;
-    readonly yKey: string;
-}
 
 export interface BarTooltipRendererParams extends CartesianTooltipRendererParams {
     readonly processedYValue: any;
@@ -106,6 +97,7 @@ export interface BarSeriesFormatterParams {
     readonly highlighted: boolean;
     readonly xKey: string;
     readonly yKey: string;
+    readonly seriesId: string;
 }
 
 export interface BarSeriesFormat {
@@ -138,7 +130,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     static className = 'BarSeries';
     static type = 'bar' as const;
 
-    private xData: string[] = [];
+    private xData: any[] = [];
     private yData: number[][][] = [];
     private yDomain: number[] = [];
 
@@ -274,7 +266,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     @Validate(BOOLEAN_ARRAY)
-    protected _visibles: boolean[];
+    protected _visibles: boolean[] = [];
     set visibles(visibles: boolean[] | boolean[][]) {
         const flattenFn = (r: boolean[], n: boolean | boolean[]) => r.concat(...(Array.isArray(n) ? n : [n]));
         this._visibles = (visibles as any).reduce(flattenFn, []);
@@ -475,25 +467,30 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
+        const { flipXY } = this;
         if (this.flipXY) {
             direction = flipChartAxisDirection(direction);
         }
         if (direction === ChartAxisDirection.X) {
-            return this.xData;
+            if (!(this.getCategoryAxis()?.scale instanceof ContinuousScale)) {
+                return this.xData;
+            }
+            // The last node will be clipped if the scale is not a band scale
+            // Extend the domain by the smallest data interval so that the last band is not clipped
+            const xDomain = extent(this.xData, isContinuous, Number) || [NaN, NaN];
+            if (flipXY) {
+                xDomain[0] = xDomain[0] - (this.smallestDataInterval?.x ?? 0);
+            } else {
+                xDomain[1] = xDomain[1] + (this.smallestDataInterval?.x ?? 0);
+            }
+            return xDomain;
         } else {
             return this.yDomain;
         }
     }
 
-    fireNodeClickEvent(event: MouseEvent, datum: BarNodeDatum): void {
-        this.fireEvent<BarSeriesNodeClickEvent>({
-            type: 'nodeClick',
-            event,
-            series: this,
-            datum: datum.datum,
-            xKey: this.xKey,
-            yKey: datum.yKey,
-        });
+    protected getNodeClickEvent(event: MouseEvent, datum: BarNodeDatum): CartesianSeriesNodeClickEvent<any> {
+        return new CartesianSeriesNodeClickEvent(this.xKey, datum.yKey, event, datum, this);
     }
 
     private getCategoryAxis(): ChartAxis<Scale<any, number>> | undefined {
@@ -571,18 +568,17 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             const step = this.calculateStep(availableRange);
 
             xBandWidth = step;
-
-            // last node will be clipped if the scale is not a band scale
-            // subtract last band width from the range so that the last band is not clipped
-            xScale.range = this.flipXY ? [availableRange - (step ?? 0), 0] : [0, availableRange - (step ?? 0)];
         }
 
         groupScale.range = [0, xBandWidth!];
 
         if (xAxis instanceof CategoryAxis) {
             groupScale.padding = xAxis.groupPaddingInner;
-        } else {
+        } else if (xAxis instanceof GroupedCategoryAxis) {
             groupScale.padding = 0.1;
+        } else {
+            // Number or Time axis
+            groupScale.padding = 0;
         }
 
         // To get exactly `0` padding we need to turn off rounding
@@ -760,6 +756,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 },
             },
+            id: seriesId,
         } = this;
 
         const [visibleMin, visibleMax] = this.xAxis?.visibleRange ?? [];
@@ -791,6 +788,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     highlighted: isDatumHighlighted,
                     xKey,
                     yKey: datum.yKey,
+                    seriesId,
                 });
             }
             rect.crisp = crisp;
@@ -880,7 +878,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             fillIndex += stack.length;
         }
 
-        const { xName, yNames, fills, strokes, tooltip, formatter } = this;
+        const { xName, yNames, fills, strokes, tooltip, formatter, id: seriesId } = this;
         const { renderer: tooltipRenderer } = tooltip;
         const datum = nodeDatum.datum;
         const yName = yNames[yKey];
@@ -906,6 +904,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 highlighted: false,
                 xKey,
                 yKey,
+                seriesId,
             });
         }
 
@@ -930,6 +929,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     yName,
                     color,
                     title,
+                    seriesId,
                 }),
                 defaults
             );
@@ -938,7 +938,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return toTooltipHtml(defaults);
     }
 
-    listSeriesItems(legendData: LegendDatum[]): void {
+    getLegendData(): LegendDatum[] {
         const {
             id,
             data,
@@ -956,8 +956,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         } = this;
 
         if (!data || !data.length || !xKey || !yKeys.length) {
-            return;
+            return [];
         }
+
+        const legendData: LegendDatum[] = [];
 
         this.yKeys.forEach((stack, stackIndex) => {
             // Column stacks should be listed in the legend in reverse order, for symmetry with the
@@ -975,6 +977,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 legendData.push({
                     id,
                     itemId: yKey,
+                    seriesId: id,
                     enabled: seriesItemEnabled.get(yKey) || false,
                     label: {
                         text: yNames[yKey] || yKey,
@@ -988,6 +991,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 });
             }
         });
+
+        return legendData;
     }
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {

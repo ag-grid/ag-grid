@@ -37,5 +37,15 @@
     },
     "sonarlint.connectedMode.project": {
         "projectKey": "ag-grid-community"
-    }
+    },
+    "gitlens.autolinks": [
+        {
+            "prefix": "AG-",
+            "url": "https://ag-grid.atlassian.net/browse/AG-<num>"
+        },
+        {
+            "prefix": "RTI-",
+            "url": "https://ag-grid.atlassian.net/browse/RTI-<num>"
+        }
+    ]
 }

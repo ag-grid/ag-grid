@@ -1,8 +1,7 @@
 import { Selection } from '../../../scene/selection';
 import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
-import { TypedEvent } from '../../../util/observable';
 import { Label } from '../../label';
-import { SeriesNodeDatum, SeriesTooltip, TooltipRendererParams } from '../series';
+import { SeriesNodeDatum, SeriesTooltip, TooltipRendererParams, SeriesNodeClickEvent } from '../series';
 import { HierarchySeries } from './hierarchySeries';
 import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
 import { Group } from '../../../scene/group';
@@ -55,14 +54,24 @@ export class TreemapSeriesTooltip extends SeriesTooltip {
     renderer?: (params: TreemapTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
-export interface TreemapSeriesNodeClickEvent extends TypedEvent {
-    readonly type: 'nodeClick';
-    readonly event: MouseEvent;
-    readonly series: TreemapSeries;
-    readonly datum: any;
+export class TreemapSeriesNodeClickEvent extends SeriesNodeClickEvent<any> {
     readonly labelKey: string;
     readonly sizeKey?: string;
     readonly colorKey?: string;
+
+    constructor(
+        labelKey: string,
+        sizeKey: string | undefined,
+        colorKey: string | undefined,
+        nativeEvent: MouseEvent,
+        datum: TreemapNodeDatum,
+        series: TreemapSeries
+    ) {
+        super(nativeEvent, datum, series);
+        this.labelKey = labelKey;
+        this.sizeKey = sizeKey;
+        this.colorKey = colorKey;
+    }
 }
 
 export class TreemapSeriesLabel extends Label {
@@ -585,20 +594,12 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         return [0, 1];
     }
 
-    fireNodeClickEvent(event: MouseEvent, datum: TreemapNodeDatum): void {
-        this.fireEvent<TreemapSeriesNodeClickEvent>({
-            type: 'nodeClick',
-            event,
-            series: this,
-            datum: datum.datum,
-            labelKey: this.labelKey,
-            sizeKey: this.sizeKey,
-            colorKey: this.colorKey,
-        });
+    protected getNodeClickEvent(event: MouseEvent, datum: TreemapNodeDatum): TreemapSeriesNodeClickEvent {
+        return new TreemapSeriesNodeClickEvent(this.labelKey, this.sizeKey, this.colorKey, event, datum, this);
     }
 
     getTooltipHtml(nodeDatum: TreemapNodeDatum): string {
-        const { tooltip, sizeKey, labelKey, colorKey, colorName, rootName } = this;
+        const { tooltip, sizeKey, labelKey, colorKey, colorName, rootName, id: seriesId } = this;
         const { datum } = nodeDatum;
         const { renderer: tooltipRenderer } = tooltip;
 
@@ -628,6 +629,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                     colorKey,
                     title,
                     color,
+                    seriesId,
                 }),
                 defaults
             );
@@ -636,7 +638,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         return toTooltipHtml(defaults);
     }
 
-    listSeriesItems(_legendData: LegendDatum[]): void {
+    getLegendData(): LegendDatum[] {
         // Override point for subclasses.
+        return [];
     }
 }
