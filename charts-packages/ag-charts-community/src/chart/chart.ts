@@ -20,7 +20,7 @@ import { Point } from '../scene/point';
 import { BOOLEAN, Validate } from '../util/validation';
 import { sleep } from '../util/async';
 import { doOnce } from '../util/function';
-import { Tooltip, TooltipMeta } from './tooltip/tooltip';
+import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
 
 export interface ChartClickEvent extends SourceEvent<Chart> {
     event: MouseEvent;
@@ -251,10 +251,10 @@ export abstract class Chart extends Observable {
         }
     }
 
-    private tooltipToggle(visible?: boolean) {
-        this.tooltip.toggle(visible);
-
-        if (this.lastPick && !this.tooltip.delay) {
+    private togglePointer(visible?: boolean) {
+        if (this.tooltip.enabled) {
+            this.tooltip.toggle(visible);
+        } else if (this.lastPick) {
             this.changeHighlightDatum();
         }
     }
@@ -297,7 +297,7 @@ export abstract class Chart extends Observable {
         return this._performUpdateType;
     }
     get updatePending(): boolean {
-        return this._performUpdateType !== ChartUpdateType.NONE || this.lastTooltipMeta != null;
+        return this._performUpdateType !== ChartUpdateType.NONE || this.lastPointerMeta != null;
     }
     private _lastPerformUpdateError?: Error;
     get lastPerformUpdateError() {
@@ -346,7 +346,7 @@ export abstract class Chart extends Observable {
                 splits.push(performance.now());
 
                 // Disable tooltip/highlight if the data fundamentally shifted.
-                this.disableTooltip({ updateProcessing: false });
+                this.disablePointer({ updateProcessing: false });
             // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (this._autoSize && !this._lastAutoSize) {
@@ -884,53 +884,54 @@ export abstract class Chart extends Observable {
 
         if (this.tooltip.enabled) {
             if (this.tooltip.delay > 0) {
-                this.tooltipToggle(false);
+                this.togglePointer(false);
             }
-            this.lastTooltipMeta = {
-                pageX: event.pageX,
-                pageY: event.pageY,
-                offsetX: event.offsetX,
-                offsetY: event.offsetY,
-                event,
-            };
-            this.handleTooltipTrigger.schedule();
         }
+
+        this.lastPointerMeta = {
+            pageX: event.pageX,
+            pageY: event.pageY,
+            offsetX: event.offsetX,
+            offsetY: event.offsetY,
+            event,
+        };
+        this.pointerScheduler.schedule();
 
         this.extraDebugStats['mouseX'] = event.offsetX;
         this.extraDebugStats['mouseY'] = event.offsetY;
         this.update(ChartUpdateType.SCENE_RENDER);
     }
 
-    private disableTooltip({ updateProcessing = true } = {}) {
+    private disablePointer({ updateProcessing = true } = {}) {
         this.changeHighlightDatum(undefined, { updateProcessing });
-        this.tooltipToggle(false);
+        this.togglePointer(false);
     }
 
-    private lastTooltipMeta?: TooltipMeta = undefined;
-    private handleTooltipTrigger = debouncedAnimationFrame(() => {
-        this.handleTooltip(this.lastTooltipMeta!);
-        this.lastTooltipMeta = undefined;
+    private lastPointerMeta?: PointerMeta = undefined;
+    private pointerScheduler = debouncedAnimationFrame(() => {
+        this.handlePointer(this.lastPointerMeta!);
+        this.lastPointerMeta = undefined;
     });
-    protected handleTooltip(meta: TooltipMeta) {
+    protected handlePointer(meta: PointerMeta) {
         const { lastPick } = this;
         const { offsetX, offsetY } = meta;
 
-        const disableTooltip = () => {
+        const disablePointer = () => {
             if (lastPick) {
                 // Cursor moved from a non-marker node to empty space.
-                this.disableTooltip();
+                this.disablePointer();
             }
         };
 
         if (!(this.seriesRect && this.seriesRect.containsPoint(offsetX, offsetY))) {
-            disableTooltip();
+            disablePointer();
             return;
         }
 
         const pick = this.pickSeriesNode({ x: offsetX, y: offsetY });
 
         if (!pick) {
-            disableTooltip();
+            disablePointer();
             return;
         }
 
@@ -941,8 +942,8 @@ export abstract class Chart extends Observable {
 
         lastPick.event = meta.event;
 
-        if (pick.series.tooltip.enabled) {
-            this.tooltip.show(this.mergeTooltipDatum(meta, pick.datum));
+        if (this.tooltip.enabled && pick.series.tooltip.enabled) {
+            this.tooltip.show(this.mergePointerDatum(meta, pick.datum));
         }
     }
 
@@ -954,7 +955,7 @@ export abstract class Chart extends Observable {
     }
 
     protected onMouseOut(_event: MouseEvent) {
-        this.tooltipToggle(false);
+        this.togglePointer(false);
     }
 
     protected onClick(event: MouseEvent) {
@@ -1010,7 +1011,7 @@ export abstract class Chart extends Observable {
 
         series.toggleSeriesItem(itemId, !enabled);
         if (enabled) {
-            this.tooltipToggle(false);
+            this.togglePointer(false);
         }
 
         if (enabled && this.highlightedDatum?.series === series) {
@@ -1099,7 +1100,7 @@ export abstract class Chart extends Observable {
         }
     }
 
-    private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum) {
+    private onSeriesDatumPick(meta: PointerMeta, datum: SeriesNodeDatum) {
         const { lastPick } = this;
         if (lastPick) {
             if (lastPick.datum === datum) {
@@ -1113,16 +1114,17 @@ export abstract class Chart extends Observable {
         });
 
         if (datum) {
-            meta = this.mergeTooltipDatum(meta, datum);
+            meta = this.mergePointerDatum(meta, datum);
         }
 
-        const html = datum.series.tooltip.enabled && datum.series.getTooltipHtml(datum);
+        const tooltipEnabled = this.tooltip.enabled && datum.series.tooltip.enabled;
+        const html = tooltipEnabled && datum.series.getTooltipHtml(datum);
         if (html) {
             this.tooltip.show(meta, html);
         }
     }
 
-    private mergeTooltipDatum(meta: TooltipMeta, datum: SeriesNodeDatum): TooltipMeta {
+    private mergePointerDatum(meta: PointerMeta, datum: SeriesNodeDatum): PointerMeta {
         if (datum.point) {
             const { x, y } = datum.point;
             const { canvas } = this.scene;
