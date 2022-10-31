@@ -21,8 +21,6 @@ export class ComboChartProxy extends CartesianChartProxy {
     }
 
     public getAxes(params: UpdateChartParams): AgCartesianAxisOptions[] {
-        this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
-
         const fields = params ? params.fields : [];
         const fieldsMap = new Map(fields.map(f => [f.colId, f]));
 

@@ -56,6 +56,14 @@ the `chartDataType='time'` property on the 'timestamp' column definition:
 
 <grid-example title='Time Axis Configuration' name='time-axis-config' type='generated' options='{ "exampleHeight": 740, "enterprise": true, "modules": ["clientside", "menu", "charts"], "extras": ["momentjs"] }'></grid-example>
 
+## Time Axis Combination Chart
+
+A time axis can also be used in combination charts as shown in the following example.
+
+For more details on how to configure a combination chart, see the [Range Chart API example](/integrated-charts-api-range-chart/#combination-charts).
+
+<grid-example title='Time Axis Combination Chart' name='time-combination-chart' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"], "exampleHeight": 790 }'></grid-example>
+
 ## Next Up
 
 Continue to the next section to learn about: [Save / Restore Charts](/integrated-charts-api-save-restore-charts/).
