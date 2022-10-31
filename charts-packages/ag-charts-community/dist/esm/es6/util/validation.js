@@ -1,0 +1,153 @@
+import { Color } from './color';
+import { SceneChangeDetection } from '../scene/changeDetectable';
+export function Validate(predicate) {
+    return function (target, key) {
+        var _a;
+        // `target` is either a constructor (static member) or prototype (instance member)
+        const privateKey = `__${key}`;
+        let prevSet;
+        const descriptor = Object.getOwnPropertyDescriptor(target, key);
+        prevSet = (_a = descriptor) === null || _a === void 0 ? void 0 : _a.set;
+        const setter = function (v) {
+            var _a, _b, _c, _d;
+            if (predicate(v, { target: this })) {
+                if (prevSet) {
+                    prevSet.call(this, v);
+                }
+                else {
+                    this[privateKey] = v;
+                }
+                return;
+            }
+            const cleanKey = key.replace(/^_*/, '');
+            let targetClass = (_b = (_a = target.constructor) === null || _a === void 0 ? void 0 : _a.className, (_b !== null && _b !== void 0 ? _b : (_c = target.constructor) === null || _c === void 0 ? void 0 : _c.name));
+            if (((_d = targetClass) === null || _d === void 0 ? void 0 : _d.length) < 3) {
+                targetClass = null;
+            }
+            if (predicate.message) {
+                console.warn(`AG Charts - Property [${cleanKey}] ${targetClass ? `of [${targetClass}] ` : ''}cannot be set to [${JSON.stringify(v)}]; ${predicate.message}, ignoring.`);
+            }
+            else {
+                console.warn(`AG Charts - Property [${cleanKey}] ${targetClass ? `of [${targetClass}] ` : ''}cannot be set to [${JSON.stringify(v)}], ignoring.`);
+            }
+        };
+        const getter = function () {
+            return this[privateKey];
+        };
+        Object.defineProperty(target, key, {
+            set: setter,
+            get: getter,
+            enumerable: true,
+            configurable: false,
+        });
+    };
+}
+export function predicateWithMessage(predicate, message) {
+    predicate.message = message;
+    return predicate;
+}
+export const OPTIONAL = (v, ctx, predicate) => v === undefined || predicate(v, ctx);
+export const ARRAY = (length, predicate) => {
+    return predicateWithMessage((v, ctx) => Array.isArray(v) &&
+        (length ? v.length === length : true) &&
+        (predicate ? v.every((e) => predicate(e, ctx)) : true), `expecting an Array`);
+};
+export const OPT_ARRAY = (length) => {
+    return predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, ARRAY(length)), 'expecting an optional Array');
+};
+export const AND = (...predicates) => {
+    return predicateWithMessage((v, ctx) => predicates.every((p) => p(v, ctx)), predicates
+        .map((p) => p.message)
+        .filter((m) => m != null)
+        .join(' AND '));
+};
+export const OR = (...predicates) => {
+    return predicateWithMessage((v, ctx) => predicates.some((p) => p(v, ctx)), predicates
+        .map((p) => p.message)
+        .filter((m) => m != null)
+        .join(' OR '));
+};
+const isComparable = (v) => {
+    return v != null && !isNaN(v);
+};
+export const LESS_THAN = (otherField) => predicateWithMessage((v, ctx) => !isComparable(v) || !isComparable(ctx.target[otherField]) || v < ctx.target[otherField], `expected to be less than ${otherField}`);
+export const GREATER_THAN = (otherField) => predicateWithMessage((v, ctx) => !isComparable(v) || !isComparable(ctx.target[otherField]) || v > ctx.target[otherField], `expected to be greater than ${otherField}`);
+export const FUNCTION = predicateWithMessage((v) => typeof v === 'function', 'expecting a Function');
+export const OPT_FUNCTION = predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, FUNCTION), `expecting an optional Function`);
+export const BOOLEAN = predicateWithMessage((v) => v === true || v === false, 'expecting a Boolean');
+export const OPT_BOOLEAN = predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, BOOLEAN), 'expecting an optional Boolean');
+export const STRING = predicateWithMessage((v) => typeof v === 'string', 'expecting a String');
+export const OPT_STRING = predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, STRING), 'expecting an optional String');
+export const DATE = predicateWithMessage((v) => v instanceof Date && !isNaN(+v), 'expecting a Date object');
+export const OPT_DATE = predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, DATE), 'expecting an optional Date');
+export const DATE_ARRAY = predicateWithMessage(ARRAY(undefined, DATE), 'expecting an Array of Date objects');
+export const DATETIME_MS = NUMBER(0);
+export const OPT_DATETIME_MS = predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, DATETIME_MS), 'expecting an optional number');
+export const OPT_DATE_OR_DATETIME_MS = OR(OPT_DATE, OPT_DATETIME_MS);
+const colorMessage = `A color string can be in one of the following formats to be valid: #rgb, #rrggbb, rgb(r, g, b), rgba(r, g, b, a) or a CSS color name such as 'white', 'orange', 'cyan', etc`;
+export const COLOR_STRING = predicateWithMessage((v) => {
+    if (typeof v !== 'string') {
+        return false;
+    }
+    return Color.validColorString(v);
+}, `expecting a color String. ${colorMessage}`);
+export const OPT_COLOR_STRING = predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, COLOR_STRING), `expecting an optional color String. ${colorMessage}`);
+export const COLOR_STRING_ARRAY = predicateWithMessage(ARRAY(undefined, COLOR_STRING), `expecting an Array of color strings. ${colorMessage}`);
+export const OPT_COLOR_STRING_ARRAY = predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, COLOR_STRING_ARRAY), `expecting an optional Array of color strings. ${colorMessage}`);
+export function NUMBER(min, max) {
+    const message = `expecting a finite Number${(min !== undefined ? ', more than or equal to ' + min : '') +
+        (max !== undefined ? ', less than or equal to ' + max : '')}`;
+    return predicateWithMessage((v) => typeof v === 'number' &&
+        Number.isFinite(v) &&
+        (min !== undefined ? v >= min : true) &&
+        (max !== undefined ? v <= max : true), message);
+}
+export function OPT_NUMBER(min, max) {
+    const message = `expecting an optional finite Number${(min !== undefined ? ', more than or equal to ' + min : '') +
+        (max !== undefined ? ', less than or equal to ' + max : '')}`;
+    return predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, NUMBER(min, max)), message);
+}
+export const NUMBER_ARRAY = predicateWithMessage(ARRAY(undefined, NUMBER()), 'expecting an Array of numbers');
+export const OPT_NUMBER_ARRAY = predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, NUMBER_ARRAY), 'expecting an optional Array of numbers');
+export const STRING_ARRAY = predicateWithMessage(ARRAY(undefined, STRING), 'expecting an Array of strings');
+export const OPT_STRING_ARRAY = predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, STRING_ARRAY), 'expecting an optional Array of strings');
+export const BOOLEAN_ARRAY = predicateWithMessage(ARRAY(undefined, BOOLEAN), 'expecting an Array of boolean values');
+export const OPT_BOOLEAN_ARRAY = predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, BOOLEAN_ARRAY), 'expecting an optional Array of boolean values');
+const FONT_WEIGHTS = [
+    'normal',
+    'bold',
+    'bolder',
+    'lighter',
+    '100',
+    '200',
+    '300',
+    '400',
+    '500',
+    '600',
+    '700',
+    '800',
+    '900',
+];
+export const FONT_STYLE = predicateWithMessage((v) => v === 'normal' || v === 'italic' || v === 'oblique', `expecting a font style keyword such as 'normal', 'italic' or 'oblique'`);
+export const OPT_FONT_STYLE = predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, FONT_STYLE), `expecting an optional font style keyword such as 'normal', 'italic' or 'oblique'`);
+export const FONT_WEIGHT = predicateWithMessage((v) => FONT_WEIGHTS.includes(v), `expecting a font weight keyword such as 'normal', 'bold' or 'bolder' or a numeric value such as 100, 300 or 600`);
+export const OPT_FONT_WEIGHT = predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, FONT_WEIGHT), `expecting an optional font weight keyword such as 'normal', 'bold' or 'bolder' or a numeric value such as 100, 300 or 600`);
+export const LINE_DASH = predicateWithMessage(ARRAY(undefined, NUMBER(0)), 'expecting an Array of numbers specifying the length in pixels of alternating dashes and gaps, for example, [6, 3] means dashes with a length of 6 pixels with gaps between of 3 pixels.');
+export const OPT_LINE_DASH = predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, LINE_DASH), 'expecting an optional Array of numbers specifying the length in pixels of alternating dashes and gaps, for example, [6, 3] means dashes with a length of 6 pixels with gaps between of 3 pixels.');
+const LINE_CAPS = ['butt', 'round', 'square'];
+export const LINE_CAP = predicateWithMessage((v) => LINE_CAPS.includes(v), `expecting a line cap keyword such as 'butt', 'round' or 'square'`);
+export const OPT_LINE_CAP = predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, LINE_CAP), `expecting an optional line cap keyword such as 'butt', 'round' or 'square'`);
+const LINE_JOINS = ['round', 'bevel', 'miter'];
+export const LINE_JOIN = predicateWithMessage((v) => LINE_JOINS.includes(v), `expecting a line join keyword such as 'round', 'bevel' or 'miter'`);
+export const OPT_LINE_JOIN = predicateWithMessage((v, ctx) => OPTIONAL(v, ctx, LINE_JOIN), `expecting an optional line join keyword such as 'round', 'bevel' or 'miter'`);
+const POSITIONS = ['top', 'right', 'bottom', 'left'];
+export const POSITION = predicateWithMessage((v) => POSITIONS.includes(v), `expecting a position keyword such as 'top', 'right', 'bottom' or 'left`);
+export const ValidateAndChangeDetection = (opts) => {
+    const { sceneChangeDetectionOpts, validatePredicate } = opts;
+    const sceneChangeDetectionFn = SceneChangeDetection(sceneChangeDetectionOpts);
+    const validateFn = Validate(validatePredicate);
+    return function (target, key) {
+        sceneChangeDetectionFn(target, key);
+        validateFn(target, key);
+    };
+};

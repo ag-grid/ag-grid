@@ -1,0 +1,205 @@
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
+ * @version v28.2.1
+ * @link https://www.ag-grid.com/
+ * @license MIT
+ */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+import { Constants } from "../../constants/constants";
+import { BeanStub } from "../../context/beanStub";
+import { Autowired } from "../../context/context";
+import { Column } from "../../entities/column";
+import { Events } from "../../eventKeys";
+import { CenterWidthFeature } from "../../gridBodyComp/centerWidthFeature";
+import { NumberSequence } from "../../utils";
+import { BodyDropTarget } from "../columnDrag/bodyDropTarget";
+import { HeaderRowType } from "../row/headerRowComp";
+import { HeaderRowCtrl } from "../row/headerRowCtrl";
+export class HeaderRowContainerCtrl extends BeanStub {
+    constructor(pinned) {
+        super();
+        this.groupsRowCtrls = [];
+        this.pinned = pinned;
+    }
+    setComp(comp, eGui) {
+        this.comp = comp;
+        this.eViewport = eGui;
+        this.setupCenterWidth();
+        this.setupPinnedWidth();
+        this.setupDragAndDrop(this.eViewport);
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.addManagedListener(this.eViewport, 'scroll', this.resetScrollLeft.bind(this));
+        this.ctrlsService.registerHeaderContainer(this, this.pinned);
+        if (this.columnModel.isReady()) {
+            this.refresh();
+        }
+    }
+    setupDragAndDrop(dropContainer) {
+        const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
+        this.createManagedBean(bodyDropTarget);
+    }
+    refresh(keepColumns = false) {
+        const sequence = new NumberSequence();
+        const focusedHeaderPosition = this.focusService.getFocusHeaderToUseAfterRefresh();
+        const refreshColumnGroups = () => {
+            const groupRowCount = this.columnModel.getHeaderRowCount() - 1;
+            this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
+            for (let i = 0; i < groupRowCount; i++) {
+                const ctrl = this.createBean(new HeaderRowCtrl(sequence.next(), this.pinned, HeaderRowType.COLUMN_GROUP));
+                this.groupsRowCtrls.push(ctrl);
+            }
+        };
+        const refreshColumns = () => {
+            const rowIndex = sequence.next();
+            const needNewInstance = this.columnsRowCtrl == null || !keepColumns || this.columnsRowCtrl.getRowIndex() !== rowIndex;
+            if (needNewInstance) {
+                this.destroyBean(this.columnsRowCtrl);
+                this.columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.COLUMN));
+            }
+        };
+        const refreshFilters = () => {
+            const includeFloatingFilter = this.columnModel.hasFloatingFilters();
+            const destroyPreviousComp = () => {
+                this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
+            };
+            if (!includeFloatingFilter) {
+                destroyPreviousComp();
+                return;
+            }
+            const rowIndex = sequence.next();
+            if (this.filtersRowCtrl) {
+                const rowIndexMismatch = this.filtersRowCtrl.getRowIndex() !== rowIndex;
+                if (!keepColumns || rowIndexMismatch) {
+                    destroyPreviousComp();
+                }
+            }
+            if (!this.filtersRowCtrl) {
+                this.filtersRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.FLOATING_FILTER));
+            }
+        };
+        refreshColumnGroups();
+        refreshColumns();
+        refreshFilters();
+        const allCtrls = this.getAllCtrls();
+        this.comp.setCtrls(allCtrls);
+        this.restoreFocusOnHeader(focusedHeaderPosition);
+    }
+    restoreFocusOnHeader(position) {
+        if (position == null || position.column.getPinned() != this.pinned) {
+            return;
+        }
+        this.focusService.focusHeaderPosition({ headerPosition: position });
+    }
+    getAllCtrls() {
+        const res = [...this.groupsRowCtrls, this.columnsRowCtrl];
+        if (this.filtersRowCtrl) {
+            res.push(this.filtersRowCtrl);
+        }
+        return res;
+    }
+    // grid cols have changed - this also means the number of rows in the header can have
+    // changed. so we remove all the old rows and insert new ones for a complete refresh
+    onGridColumnsChanged() {
+        this.refresh(true);
+    }
+    setupCenterWidth() {
+        if (this.pinned != null) {
+            return;
+        }
+        this.createManagedBean(new CenterWidthFeature(width => this.comp.setCenterWidth(`${width}px`)));
+    }
+    setHorizontalScroll(offset) {
+        this.comp.setContainerTransform(`translateX(${offset}px)`);
+    }
+    resetScrollLeft() {
+        this.eViewport.scrollLeft = 0;
+    }
+    setupPinnedWidth() {
+        if (this.pinned == null) {
+            return;
+        }
+        const pinningLeft = this.pinned === Constants.PINNED_LEFT;
+        const pinningRight = this.pinned === Constants.PINNED_RIGHT;
+        const listener = () => {
+            const width = pinningLeft ? this.pinnedWidthService.getPinnedLeftWidth() : this.pinnedWidthService.getPinnedRightWidth();
+            if (width == null) {
+                return;
+            } // can happen at initialisation, width not yet set
+            const hidden = width == 0;
+            const isRtl = this.gridOptionsWrapper.isEnableRtl();
+            const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
+            // if there is a scroll showing (and taking up space, so Windows, and not iOS)
+            // in the body, then we add extra space to keep header aligned with the body,
+            // as body width fits the cols and the scrollbar
+            const addPaddingForScrollbar = this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
+            const widthWithPadding = addPaddingForScrollbar ? width + scrollbarWidth : width;
+            this.comp.setPinnedContainerWidth(widthWithPadding + 'px');
+            this.comp.addOrRemoveCssClass('ag-hidden', hidden);
+        };
+        this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);
+        this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, listener);
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, listener);
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
+    }
+    getHeaderCtrlForColumn(column) {
+        if (column instanceof Column) {
+            if (!this.columnsRowCtrl) {
+                return;
+            }
+            return this.columnsRowCtrl.getHeaderCellCtrl(column);
+        }
+        if (this.groupsRowCtrls.length === 0) {
+            return;
+        }
+        for (let i = 0; i < this.groupsRowCtrls.length; i++) {
+            const ctrl = this.groupsRowCtrls[i].getHeaderCellCtrl(column);
+            if (ctrl) {
+                return ctrl;
+            }
+        }
+    }
+    getHtmlElementForColumnHeader(column) {
+        /* tslint:enable */
+        const cellCtrl = this.getHeaderCtrlForColumn(column);
+        if (!cellCtrl) {
+            return null;
+        }
+        return cellCtrl.getGui();
+    }
+    getRowType(rowIndex) {
+        const allCtrls = this.getAllCtrls();
+        const ctrl = allCtrls[rowIndex];
+        return ctrl ? ctrl.getType() : undefined;
+    }
+    focusHeader(rowIndex, column, event) {
+        const allCtrls = this.getAllCtrls();
+        const ctrl = allCtrls[rowIndex];
+        if (!ctrl) {
+            return false;
+        }
+        return ctrl.focusHeader(column, event);
+    }
+    getRowCount() {
+        return this.getAllCtrls().length;
+    }
+}
+__decorate([
+    Autowired('ctrlsService')
+], HeaderRowContainerCtrl.prototype, "ctrlsService", void 0);
+__decorate([
+    Autowired('scrollVisibleService')
+], HeaderRowContainerCtrl.prototype, "scrollVisibleService", void 0);
+__decorate([
+    Autowired('pinnedWidthService')
+], HeaderRowContainerCtrl.prototype, "pinnedWidthService", void 0);
+__decorate([
+    Autowired('columnModel')
+], HeaderRowContainerCtrl.prototype, "columnModel", void 0);
+__decorate([
+    Autowired('focusService')
+], HeaderRowContainerCtrl.prototype, "focusService", void 0);

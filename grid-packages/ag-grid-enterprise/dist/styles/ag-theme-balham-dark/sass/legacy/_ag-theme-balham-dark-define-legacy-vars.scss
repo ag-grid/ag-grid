@@ -1,0 +1,87 @@
+@import "../../../ag-theme-base/sass/legacy/ag-theme-base-rename-legacy-vars";
+
+
+// In v23 we moved from using global variables to maps of parameters to configure Grid themes.
+// This file is part of a backwards-compatibility layer designed to emulate the pre-v23 behaviour
+// and so should not be modified.
+ 
+// DO NOT EDIT (see note above)
+$ag-foreground-opacity: 0.87 !default;
+// DO NOT EDIT (see note above)
+$ag-secondary-foreground-color-opacity: 0.87 !default;
+// DO NOT EDIT (see note above)
+$ag-disabled-foreground-color-opacity: 0.38 !default;
+// DO NOT EDIT (see note above)
+$ag-default-background: #2d3436 !default;
+// DO NOT EDIT (see note above)
+$ag-foreground-color: #F5F5F5 !default;
+// DO NOT EDIT (see note above)
+$ag-chrome-background: darken(#636e72, 30) !default;
+// DO NOT EDIT (see note above)
+$ag-active: #00B0FF !default;
+// DO NOT EDIT (see note above)
+$ag-border-color: #424242 !default;
+// DO NOT EDIT (see note above)
+$ag-icon-color: #ecf0f1 !default;
+// DO NOT EDIT (see note above)
+$ag-alt-background: darken(#2d3436, 3) !default;
+// DO NOT EDIT (see note above)
+$ag-odd-row-background-color: $ag-alt-background !default;
+// DO NOT EDIT (see note above)
+$ag-foreground-color: rgba($ag-foreground-color, $ag-foreground-opacity) !default; // foreground
+// DO NOT EDIT (see note above)
+$ag-secondary-foreground-color: rgba($ag-foreground-color, $ag-secondary-foreground-color-opacity) !default; // foreground-secondary
+// DO NOT EDIT (see note above)
+$ag-disabled-foreground-color: rgba($ag-foreground-color, $ag-disabled-foreground-color-opacity) !default; // foreground-disabled
+// DO NOT EDIT (see note above)
+$ag-input-border-color: #ecf0f1 !default;
+// DO NOT EDIT (see note above)
+$ag-input-disabled-background-color: rgba(48, 46, 46, 0.3) !default;
+// DO NOT EDIT (see note above)
+$ag-primary-color: $ag-active !default;
+// DO NOT EDIT (see note above)
+$ag-accent-color: $ag-active !default;
+// DO NOT EDIT (see note above)
+$ag-range-selection-background-color: transparentize($ag-active, 0.8) !default;
+// DO NOT EDIT (see note above)
+$ag-range-selection-highlight-color: $ag-active !default;
+// DO NOT EDIT (see note above)
+$ag-selected-color: darken($ag-active, 25) !default;
+// DO NOT EDIT (see note above)
+$ag-background-color: $ag-default-background !default;
+// DO NOT EDIT (see note above)
+$ag-editor-background-color: $ag-chrome-background !default;
+// DO NOT EDIT (see note above)
+$ag-panel-background-color: $ag-chrome-background !default;
+// DO NOT EDIT (see note above)
+$ag-tool-panel-background-color: $ag-chrome-background !default;
+// DO NOT EDIT (see note above)
+$ag-header-background-color: $ag-chrome-background !default;
+// DO NOT EDIT (see note above)
+$ag-header-foreground-color: rgba($ag-secondary-foreground-color, 0.64) !default;
+// DO NOT EDIT (see note above)
+$ag-hover-color: lighten($ag-alt-background, 10) !default;
+// DO NOT EDIT (see note above)
+$ag-chip-background-color: lighten($ag-alt-background, 5) !default;
+// DO NOT EDIT (see note above)
+$ag-cell-data-changed-color: #fce4ec !default;
+// DO NOT EDIT (see note above)
+$ag-value-change-delta-up-color: #43a047 !default;
+// DO NOT EDIT (see note above)
+$ag-value-change-delta-down-color: #e53935 !default;
+// DO NOT EDIT (see note above)
+$ag-value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;
+// DO NOT EDIT (see note above)
+$ag-tooltip-background-color: $ag-header-background-color !default;
+// DO NOT EDIT (see note above)
+$ag-tooltip-border-color: lighten($ag-header-background-color, 10%) !default;
+// DO NOT EDIT (see note above)
+$ag-range-selection-chart-background-color: rgba(45, 166, 255, 0.5) !default;
+// DO NOT EDIT (see note above)
+$ag-range-selection-chart-category-background-color: rgba(26, 177, 74, 0.5) !default;
+// DO NOT EDIT (see note above)
+$ag-group-component-background-color: $ag-background-color !default;
+// DO NOT EDIT (see note above)
+$ag-group-component-title-background-color: $ag-header-background-color !default;
+
+@import "../../../ag-theme-balham/sass/legacy/ag-theme-balham-define-legacy-vars";

@@ -1,0 +1,39 @@
+{
+  "name": "ag-charts-angular-legacy",
+  "version": "6.2.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "angular-component",
+    "charts",
+    "data",
+    "chart",
+    "angular"
+  ],
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "homepage": "https://www.ag-grid.com/",
+  "peerDependencies": {
+    "@angular/common": ">=8.0.0",
+    "@angular/core": ">=8.0.0",
+    "ag-charts-community": "~6.2.1"
+  },
+  "main": "bundles/ag-charts-angular-legacy.umd.js",
+  "module": "fesm5/ag-charts-angular-legacy.js",
+  "es2015": "fesm2015/ag-charts-angular-legacy.js",
+  "esm5": "esm5/ag-charts-angular-legacy.js",
+  "esm2015": "esm2015/ag-charts-angular-legacy.js",
+  "fesm5": "fesm5/ag-charts-angular-legacy.js",
+  "fesm2015": "fesm2015/ag-charts-angular-legacy.js",
+  "typings": "ag-charts-angular-legacy.d.ts",
+  "metadata": "ag-charts-angular-legacy.metadata.json",
+  "sideEffects": false,
+  "dependencies": {
+    "tslib": "^1.10.0"
+  }
+}

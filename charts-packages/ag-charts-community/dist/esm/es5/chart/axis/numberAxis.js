@@ -1,0 +1,111 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+import { filter } from '../../scale/continuousScale';
+import { LinearScale } from '../../scale/linearScale';
+import { extent } from '../../util/array';
+import { isContinuous } from '../../util/value';
+import { ChartAxis } from '../chartAxis';
+import { doOnce } from '../../util/function';
+import { predicateWithMessage, Validate, GREATER_THAN, AND, LESS_THAN } from '../../util/validation';
+import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
+function NUMBER_OR_NAN(min, max) {
+    // Can be NaN or finite number
+    var message = "expecting a finite Number" + ((min !== undefined ? ', more than or equal to ' + min : '') +
+        (max !== undefined ? ', less than or equal to ' + max : ''));
+    return predicateWithMessage(function (v) {
+        return typeof v === 'number' &&
+            (isNaN(v) || Number.isFinite(v)) &&
+            (min !== undefined ? v >= min : true) &&
+            (max !== undefined ? v <= max : true);
+    }, message);
+}
+var NumberAxis = /** @class */ (function (_super) {
+    __extends(NumberAxis, _super);
+    function NumberAxis(scale) {
+        if (scale === void 0) { scale = new LinearScale(); }
+        var _this = _super.call(this, scale) || this;
+        _this.min = NaN;
+        _this.max = NaN;
+        _this.scale.clamper = filter;
+        return _this;
+    }
+    NumberAxis.prototype.normaliseDataDomain = function (d) {
+        var _a = this, min = _a.min, max = _a.max;
+        if (d.length > 2) {
+            d = extent(d, isContinuous, Number) || [NaN, NaN];
+        }
+        if (!isNaN(min)) {
+            d = [min, d[1]];
+        }
+        if (!isNaN(max)) {
+            d = [d[0], max];
+        }
+        if (d[0] > d[1]) {
+            d = [];
+        }
+        this.scale.clamp = true;
+        return d;
+    };
+    NumberAxis.prototype.formatDatum = function (datum) {
+        if (typeof datum === 'number') {
+            return datum.toFixed(2);
+        }
+        else {
+            doOnce(function () {
+                return console.warn('AG Charts - Data contains Date objects which are being plotted against a number axis, please only use a number axis for numbers.');
+            }, "number axis config used with Date objects");
+            return String(datum);
+        }
+    };
+    NumberAxis.prototype.updateSecondaryAxisTicks = function (primaryTickCount) {
+        if (this.dataDomain == null) {
+            throw new Error('AG Charts - dataDomain not calculated, cannot perform tick calculation.');
+        }
+        var _a = __read(calculateNiceSecondaryAxis(this.dataDomain, (primaryTickCount !== null && primaryTickCount !== void 0 ? primaryTickCount : 0)), 2), d = _a[0], ticks = _a[1];
+        this.scale.domain = d;
+        return ticks;
+    };
+    NumberAxis.className = 'NumberAxis';
+    NumberAxis.type = 'number';
+    __decorate([
+        Validate(AND(NUMBER_OR_NAN(), LESS_THAN('max')))
+    ], NumberAxis.prototype, "min", void 0);
+    __decorate([
+        Validate(AND(NUMBER_OR_NAN(), GREATER_THAN('min')))
+    ], NumberAxis.prototype, "max", void 0);
+    return NumberAxis;
+}(ChartAxis));
+export { NumberAxis };

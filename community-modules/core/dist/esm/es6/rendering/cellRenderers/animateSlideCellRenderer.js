@@ -1,0 +1,88 @@
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
+ * @version v28.2.1
+ * @link https://www.ag-grid.com/
+ * @license MIT
+ */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+import { Autowired } from "../../context/context";
+import { Component } from "../../widgets/component";
+import { loadTemplate, clearElement } from "../../utils/dom";
+import { missing, exists } from "../../utils/generic";
+export class AnimateSlideCellRenderer extends Component {
+    constructor() {
+        super(AnimateSlideCellRenderer.TEMPLATE);
+        this.refreshCount = 0;
+        this.eCurrent = this.queryForHtmlElement('.ag-value-slide-current');
+    }
+    init(params) {
+        this.refresh(params);
+    }
+    addSlideAnimation() {
+        this.refreshCount++;
+        // below we keep checking this, and stop working on the animation
+        // if it no longer matches - this means another animation has started
+        // and this one is stale.
+        const refreshCountCopy = this.refreshCount;
+        // if old animation, remove it
+        if (this.ePrevious) {
+            this.getGui().removeChild(this.ePrevious);
+        }
+        this.ePrevious = loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
+        this.ePrevious.innerHTML = this.eCurrent.innerHTML;
+        this.getGui().insertBefore(this.ePrevious, this.eCurrent);
+        // having timeout of 0 allows use to skip to the next css turn,
+        // so we know the previous css classes have been applied. so the
+        // complex set of setTimeout below creates the animation
+        window.setTimeout(() => {
+            if (refreshCountCopy !== this.refreshCount) {
+                return;
+            }
+            this.ePrevious.classList.add('ag-value-slide-out-end');
+        }, 50);
+        window.setTimeout(() => {
+            if (refreshCountCopy !== this.refreshCount) {
+                return;
+            }
+            this.getGui().removeChild(this.ePrevious);
+            this.ePrevious = null;
+        }, 3000);
+    }
+    refresh(params) {
+        let value = params.value;
+        if (missing(value)) {
+            value = '';
+        }
+        if (value === this.lastValue) {
+            return false;
+        }
+        // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
+        // with regards processingFilterChange
+        if (this.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
+            return false;
+        }
+        this.addSlideAnimation();
+        this.lastValue = value;
+        if (exists(params.valueFormatted)) {
+            this.eCurrent.innerHTML = params.valueFormatted;
+        }
+        else if (exists(params.value)) {
+            this.eCurrent.innerHTML = value;
+        }
+        else {
+            clearElement(this.eCurrent);
+        }
+        return true;
+    }
+}
+AnimateSlideCellRenderer.TEMPLATE = `<span>
+            <span class="ag-value-slide-current"></span>
+        </span>`;
+__decorate([
+    Autowired('filterManager')
+], AnimateSlideCellRenderer.prototype, "filterManager", void 0);
