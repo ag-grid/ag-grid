@@ -37,7 +37,7 @@ state in combination with a `series[].marker.formatter`:
 
 All series event options have the same interface contract.
 
-<interface-documentation interfaceName='AgBaseSeriesListeners' names='["nodeClick"]'></interface-documentation>
+<interface-documentation interfaceName='AgSeriesListeners' names='["nodeClick"]'></interface-documentation>
 
 #### Histogram series
 
