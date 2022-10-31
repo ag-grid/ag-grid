@@ -59,7 +59,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         icon!.classList.add('ag-rich-select-value-icon');
         this.eValue.appendChild(icon!);
 
-        this.virtualList = this.getContext().createBean(new VirtualList('rich-select'));
+        this.virtualList = this.createManagedBean(new VirtualList('rich-select'));
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
         this.eList.appendChild(this.virtualList.getGui());
 
