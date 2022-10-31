@@ -228,7 +228,7 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
     }
 
     // the previous aggregation data
-    const existingAggData = params.rowNode.aggData?.[params.column.getColId()];
+    const existingAggData = params.rowNode?.aggData?.[params.column?.getColId()];
     if (existingAggData && existingAggData.count === count && existingAggData.value === value) {
         // the underlying values haven't changed, return the old object to avoid triggering change detection
         return existingAggData;
