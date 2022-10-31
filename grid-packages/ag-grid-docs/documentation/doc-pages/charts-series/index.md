@@ -9,6 +9,7 @@ series-specific options, but there are some common options between them.
 ## Type
 
 Every series configuration requires a `type` to declare how the data set should be rendered:
+
 ```js
 series: [{
     type: 'pie',
@@ -22,6 +23,7 @@ See the [Options Reference](/charts-api/) for the complete list of available ser
 
 By default each series is based on data from the root-level `data` option. It is also possible for
 each series to declare its own data:
+
 ```js
 series: [{
     data: [
