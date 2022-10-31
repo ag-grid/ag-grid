@@ -3,8 +3,6 @@ import { TimeScale } from './timeScale';
 
 describe('TimeScale', () => {
     describe('#calculateDefaultTickFormat', () => {
-        const scale = new TimeScale();
-
         const TEST_CASES: { name: string; ticks: Date[]; expectedFormat: string }[] = [
             {
                 name: 'several seconds',
@@ -111,6 +109,7 @@ describe('TimeScale', () => {
         it.each(TEST_CASES.map((c) => c.name))(`for %s case`, (caseName) => {
             const next = TEST_CASES.find((c) => c.name === caseName)!;
 
+            const scale = new TimeScale();
             scale.domain = [next.ticks[0], next.ticks[next.ticks.length - 1]];
 
             expect(scale.calculateDefaultTickFormat(next.ticks)).toEqual(next.expectedFormat);
