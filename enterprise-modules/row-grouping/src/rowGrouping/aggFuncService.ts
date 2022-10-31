@@ -164,7 +164,7 @@ function aggMax(params: IAggFuncParams): number | bigint | null {
     return result;
 }
 
-function aggCount(params: IAggFuncParams): { value: number; toString(): string; toNumber(): number; } {
+function aggCount(params: IAggFuncParams): number {
     const { values } = params;
     let result = 0;
 
@@ -176,16 +176,7 @@ function aggCount(params: IAggFuncParams): { value: number; toString(): string; 
         result += value != null && typeof value.value === 'number' ? value.value : 1;
     }
 
-    return {
-        value: result,
-        toString: function() {
-            return this.value.toString();
-        },
-        // used for sorting
-        toNumber: function() {
-            return this.value;
-        }
-    };
+    return result;
 }
 
 // the average function is tricky as the multiple levels require weighted averages
@@ -234,6 +225,13 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
             value = sum / count;
         }
 
+    }
+
+    // the previous aggregation data
+    const existingAggData = params.rowNode.aggData?.[params.column.getColId()];
+    if (existingAggData && existingAggData.count === count && existingAggData.value === value) {
+        // the underlying values haven't changed, return the old object to avoid triggering change detection
+        return existingAggData;
     }
 
     // the result will be an object. when this cell is rendered, only the avg is shown.

@@ -812,7 +812,7 @@ export class CellCtrl extends BeanStub {
         return this.beans.valueFormatterService.formatValue(this.column, this.rowNode, value);
     }
 
-    public updateAndFormatValue(force = false): boolean {
+    private updateAndFormatValue(force = false): boolean {
         const oldValue = this.value;
         const oldValueFormatted = this.valueFormatted;
 
