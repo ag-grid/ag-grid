@@ -48,7 +48,7 @@ enum HistogramSeriesNodeTag {
 
 class HistogramSeriesLabel extends Label {
     @Validate(OPT_FUNCTION)
-    formatter?: (params: { value: number }) => string = undefined;
+    formatter?: (params: { value: number; seriesId: string }) => string = undefined;
 }
 
 const defaultBinCount = 10;
@@ -389,7 +389,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
         const { scale: xScale } = xAxis;
         const { scale: yScale } = yAxis;
-        const { fill, stroke, strokeWidth } = this;
+        const { fill, stroke, strokeWidth, id: seriesId } = this;
 
         const nodeData: HistogramNodeDatum[] = [];
 
@@ -425,7 +425,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             const selectionDatumLabel =
                 y !== 0
                     ? {
-                          text: labelFormatter({ value: binOfData.aggregatedValue }),
+                          text: labelFormatter({ value: binOfData.aggregatedValue, seriesId }),
                           fontStyle: labelFontStyle,
                           fontWeight: labelFontWeight,
                           fontSize: labelFontSize,

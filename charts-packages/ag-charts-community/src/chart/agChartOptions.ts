@@ -915,9 +915,15 @@ export interface AgSeriesTooltip {
     enabled?: boolean;
 }
 
-export interface AgLineSeriesLabelOptions<DatumType> extends AgChartLabelOptions {
+export interface AgCartesianSeriesLabelFormatterParams {
+    /** The ID of the series. */
+    readonly seriesId: string;
+    /** The value of yKey as specified on series options. */
+    readonly value: number;
+}
+export interface AgCartesianSeriesLabelOptions extends AgChartLabelOptions {
     /** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */
-    formatter?: (params: { value: DatumType }) => string;
+    formatter?: (params: AgCartesianSeriesLabelFormatterParams) => string;
 }
 
 export interface AgLineSeriesTooltip extends AgSeriesTooltip {
@@ -951,7 +957,7 @@ export interface AgLineSeriesOptions<DatumType = any> extends AgBaseSeriesOption
     /** The initial offset of the dashed line in pixels. */
     lineDashOffset?: PixelSize;
     /** Configuration for the labels shown on top of data points. */
-    label?: AgLineSeriesLabelOptions<DatumType>;
+    label?: AgCartesianSeriesLabelOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgLineSeriesTooltip;
     /** A map of event names to event listeners. */
@@ -1017,11 +1023,6 @@ export interface AgAreaSeriesTooltip extends AgSeriesTooltip {
     format?: string;
 }
 
-export interface AgAreaSeriesLabelOptions<DatumType> extends AgChartLabelOptions {
-    /** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */
-    formatter?: (params: { value: DatumType }) => string;
-}
-
 /** Configuration for area series. */
 export interface AgAreaSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'area';
@@ -1077,15 +1078,13 @@ export interface AgAreaSeriesOptions<DatumType = any> extends AgBaseSeriesOption
     /** Configuration for the shadow used behind the chart series. */
     shadow?: AgDropShadowOptions;
     /** Configuration for the labels shown on top of data points. */
-    label?: AgAreaSeriesLabelOptions<DatumType>;
+    label?: AgCartesianSeriesLabelOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgAreaSeriesTooltip;
     stacked?: boolean;
 }
 
-export interface AgBarSeriesLabelOptions extends AgChartLabelOptions {
-    /** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */
-    formatter?: (params: { value: number }) => string;
+export interface AgBarSeriesLabelOptions extends AgCartesianSeriesLabelOptions {
     /** Where to render series labels relative to the segments. */
     placement?: 'inside' | 'outside';
 }
@@ -1179,9 +1178,9 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     listeners?: AgSeriesListeners<DatumType>;
 }
 
-export interface AgHistogramSeriesLabelOptions<DatumType> extends AgChartLabelOptions {
+export interface AgHistogramSeriesLabelOptions extends AgChartLabelOptions {
     /** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */
-    formatter?: (params: { value: DatumType }) => string;
+    formatter?: (params: { value: number; seriesId: string }) => string;
 }
 
 export interface AgHistogramSeriesTooltip extends AgSeriesTooltip {
@@ -1232,7 +1231,7 @@ export interface AgHistogramSeriesOptions<DatumType = any> extends AgBaseSeriesO
     /** Configuration for the shadow used behind the chart series. */
     shadow?: AgDropShadowOptions;
     /** Configuration for the labels shown on bars. */
-    label?: AgHistogramSeriesLabelOptions<DatumType>;
+    label?: AgHistogramSeriesLabelOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgHistogramSeriesTooltip;
     /** A map of event names to event listeners. */

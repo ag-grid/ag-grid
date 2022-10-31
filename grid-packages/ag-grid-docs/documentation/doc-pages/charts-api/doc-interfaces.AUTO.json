@@ -2451,16 +2451,25 @@
       "type": { "returnType": "boolean", "optional": true }
     }
   },
-  "AgLineSeriesLabelOptions": {
+  "AgCartesianSeriesLabelFormatterParams": {
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "value": {
+      "description": "/** The value of yKey as specified on series options. */",
+      "type": { "returnType": "number", "optional": false }
+    }
+  },
+  "AgCartesianSeriesLabelOptions": {
     "formatter": {
       "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "type": {
-        "arguments": { "params": "{ value: DatumType; }" },
+        "arguments": { "params": "AgCartesianSeriesLabelFormatterParams" },
         "returnType": "string",
         "optional": true
       }
     },
-    "meta": { "typeParams": ["DatumType"] },
     "enabled": {
       "description": "/** Whether or not the labels should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -2552,7 +2561,7 @@
     "label": {
       "description": "/** Configuration for the labels shown on top of data points. */",
       "type": {
-        "returnType": "AgLineSeriesLabelOptions<DatumType>",
+        "returnType": "AgCartesianSeriesLabelOptions",
         "optional": true
       }
     },
@@ -2800,41 +2809,6 @@
       "type": { "returnType": "boolean", "optional": true }
     }
   },
-  "AgAreaSeriesLabelOptions": {
-    "formatter": {
-      "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
-      "type": {
-        "arguments": { "params": "{ value: DatumType; }" },
-        "returnType": "string",
-        "optional": true
-      }
-    },
-    "meta": { "typeParams": ["DatumType"] },
-    "enabled": {
-      "description": "/** Whether or not the labels should be shown. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "fontStyle": {
-      "description": "/** The font style to use for the labels. */",
-      "type": { "returnType": "FontStyle", "optional": true }
-    },
-    "fontWeight": {
-      "description": "/** The font weight to use for the labels. */",
-      "type": { "returnType": "FontWeight", "optional": true }
-    },
-    "fontSize": {
-      "description": "/** The font size in pixels to use for the labels. */",
-      "type": { "returnType": "FontSize", "optional": true }
-    },
-    "fontFamily": {
-      "description": "/** The font family to use for the labels. */",
-      "type": { "returnType": "FontFamily", "optional": true }
-    },
-    "color": {
-      "description": "/** The colour to use for the labels. */",
-      "type": { "returnType": "CssColor", "optional": true }
-    }
-  },
   "AgAreaSeriesOptions": {
     "type": { "type": { "returnType": "'area'", "optional": true } },
     "marker": {
@@ -2912,7 +2886,7 @@
     "label": {
       "description": "/** Configuration for the labels shown on top of data points. */",
       "type": {
-        "returnType": "AgAreaSeriesLabelOptions<DatumType>",
+        "returnType": "AgCartesianSeriesLabelOptions",
         "optional": true
       }
     },
@@ -2952,17 +2926,17 @@
     }
   },
   "AgBarSeriesLabelOptions": {
-    "formatter": {
-      "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
-      "type": {
-        "arguments": { "params": "{ value: number; }" },
-        "returnType": "string",
-        "optional": true
-      }
-    },
     "placement": {
       "description": "/** Where to render series labels relative to the segments. */",
       "type": { "returnType": "'inside' | 'outside'", "optional": true }
+    },
+    "formatter": {
+      "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
+      "type": {
+        "arguments": { "params": "AgCartesianSeriesLabelFormatterParams" },
+        "returnType": "string",
+        "optional": true
+      }
     },
     "enabled": {
       "description": "/** Whether or not the labels should be shown. */",
@@ -3148,12 +3122,11 @@
     "formatter": {
       "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "type": {
-        "arguments": { "params": "{ value: DatumType; }" },
+        "arguments": { "params": "{ value: number; seriesId: string; }" },
         "returnType": "string",
         "optional": true
       }
     },
-    "meta": { "typeParams": ["DatumType"] },
     "enabled": {
       "description": "/** Whether or not the labels should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -3273,7 +3246,7 @@
     "label": {
       "description": "/** Configuration for the labels shown on bars. */",
       "type": {
-        "returnType": "AgHistogramSeriesLabelOptions<DatumType>",
+        "returnType": "AgHistogramSeriesLabelOptions",
         "optional": true
       }
     },
@@ -4476,6 +4449,10 @@
   },
   "CumulativeValue": {},
   "ProcessedXDatum": {},
+  "AreaSeriesLabelFormatterParams": {
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
+    "value": { "type": { "returnType": "number", "optional": true } }
+  },
   "AreaSeriesTag": {},
   "AreaSeriesNodeDataContext": {},
   "BarTooltipRendererParams": {
