@@ -142,7 +142,7 @@ The following example demonstrates how missing data is handled for a continuous 
 
 - Initially there is no missing data, all values are valid for their associated axes.
 - Click the Missing Y values button and note that missing Y values are rendered as gaps in the area chart.
-- Click the Missing Y values button and note that missing X values causes no data point to be displayed (hence fewer data points shown in the area chart).
+- Click the Missing X values button and note that missing X values causes no data point to be displayed (hence fewer data points shown in the area chart).
 - The second row of buttons allow switching between stacked and grouped area series.
 
 <chart-example title='Area Series with Incomplete Data' name='missing-data-area' type='generated'></chart-example>
