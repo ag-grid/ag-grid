@@ -186,10 +186,21 @@ export class CartesianChart extends Chart {
         // cases that only a single pass is needed \o/.
         const axisWidths = { ...this._lastAxisWidths };
 
+        // Clean any positions which aren't valid with the current axis status (otherwise we end up
+        // never being able to find a stable result).
+        const liveAxisWidths = this._axes
+            .map((a) => a.position)
+            .reduce((r, n) => r.add(n), new Set<ChartAxisPosition>());
+        for (const position of Object.keys(axisWidths) as ChartAxisPosition[]) {
+            if (!liveAxisWidths.has(position)) {
+                delete axisWidths[position];
+            }
+        }
+
         const stableWidths = <T extends typeof axisWidths>(other: T) => {
             return Object.entries(axisWidths).every(([p, w]) => {
                 const otherW = (other as any)[p];
-                if (w || otherW) {
+                if (w != null || otherW != null) {
                     return w === otherW;
                 }
                 return true;
@@ -221,7 +232,8 @@ export class CartesianChart extends Chart {
             seriesRect = result.seriesRect;
 
             if (count++ > 10) {
-                throw new Error('AG Charts - unable to find stable axis layout.');
+                console.warn('AG Charts - unable to find stable axis layout.');
+                break;
             }
         } while (!stableWidths(lastPass));
 
