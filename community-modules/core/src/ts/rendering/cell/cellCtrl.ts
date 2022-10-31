@@ -828,7 +828,7 @@ export class CellCtrl extends BeanStub {
     private valuesAreEqual(val1: any, val2: any): boolean {
         // if the user provided an equals method, use that, otherwise do simple comparison
         const colDef = this.column.getColDef();
-        return colDef.equals ? colDef.equals(val1, val2) : typeof val1 === typeof val2 && val1?.toString() === val2?.toString();
+        return colDef.equals ? colDef.equals(val1, val2) : val1 === val2;
     }
 
     public getComp(): ICellComp {
