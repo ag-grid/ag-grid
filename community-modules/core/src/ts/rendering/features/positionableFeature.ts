@@ -244,6 +244,7 @@ export class PositionableFeature extends BeanStub {
                 } else {
                     resizerEl!.style.pointerEvents = 'none';
                 }
+                this.resizable[side] = val;
             }
         });
     }
@@ -360,7 +361,7 @@ export class PositionableFeature extends BeanStub {
             x,
             y,
             keepWithinBounds: true,
-            skipObserver: this.movable
+            skipObserver: this.movable || this.isResizable()
         });
 
         this.setPosition(
@@ -621,6 +622,10 @@ export class PositionableFeature extends BeanStub {
             containerToFlex.style.removeProperty('max-height');
             containerToFlex.style.flex = '1 1 auto';
         }
+    }
+
+    public isResizable(): boolean {
+        return Object.values(this.resizable).some(value => value);
     }
 
     private onResize(e: MouseEvent) {
