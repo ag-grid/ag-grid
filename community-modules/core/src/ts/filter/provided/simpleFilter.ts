@@ -136,6 +136,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     private alwaysShowBothConditions: boolean;
     private defaultJoinOperator: JoinOperator | undefined;
     private filterPlaceholder: ISimpleFilterParams['filterPlaceholder'];
+    private placeholderFuncCache: Record<string, string> = {};
 
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
@@ -431,17 +432,65 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             }
         }
     }
+    
+    private getPlaceholderFuncCacheKey({
+        filterOptionKey,
+        filterOption,
+        placeholder
+    }: {
+        filterOptionKey: string,
+        filterOption: string,
+        placeholder: string
+    }): string {
+        return `${filterOptionKey}-${filterOption}-${placeholder}`;
+    }
+
+    /**
+     * Get placeholder from cache
+     * 
+     * If it doesn't exist in the cache, generate placeholder and store it in cache
+     */
+    private placeholderFromCache({
+        filterOptionKey,
+        filterOption,
+        placeholder,
+        filterPlaceholderFunc
+    }: {
+        filterOptionKey: ISimpleFilterModelType,
+        filterOption: string,
+        placeholder: string,
+        filterPlaceholderFunc: FilterPlaceholderFunction
+    }): string {
+        const cacheKey = this.getPlaceholderFuncCacheKey({
+            filterOptionKey,
+            filterOption,
+            placeholder
+        });
+        let result = this.placeholderFuncCache[cacheKey];
+        if (!result) {
+            result = filterPlaceholderFunc({
+                filterOptionKey,
+                filterOption,
+                placeholder
+            });
+            this.placeholderFuncCache[cacheKey] = result;
+        }
+
+        return result;
+    }
 
     private getPlaceholderText(defaultPlaceholder: keyof IFilterLocaleText, position: number): string {
         let placeholder = this.translate(defaultPlaceholder);
         if (isFunction(this.filterPlaceholder)) {
-            const filterPlaceholderFn = this.filterPlaceholder as FilterPlaceholderFunction;
+            const filterPlaceholderFunc = this.filterPlaceholder as FilterPlaceholderFunction;
             const filterOptionKey = (position === 0 ? this.eType1.getValue() : this.eType2.getValue()) as ISimpleFilterModelType;
             const filterOption = this.translate(filterOptionKey);
-            placeholder = filterPlaceholderFn({
+
+            placeholder = this.placeholderFromCache({
                 filterOptionKey,
                 filterOption,
-                placeholder
+                placeholder,
+                filterPlaceholderFunc
             });
         } else if (typeof this.filterPlaceholder === 'string') {
             placeholder = this.filterPlaceholder;
