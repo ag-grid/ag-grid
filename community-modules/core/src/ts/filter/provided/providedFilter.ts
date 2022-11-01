@@ -305,7 +305,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         return true;
     }
 
-    private onFormSubmit(e: FormDataEvent): void {
+    private onFormSubmit(e: Event): void {
         e.preventDefault();
     }
 
