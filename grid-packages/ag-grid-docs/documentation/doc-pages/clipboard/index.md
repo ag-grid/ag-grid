@@ -152,13 +152,16 @@ The following example shows custom code to process the data from the clipboard:
 
 ### Pasting new rows at the bottom of the Grid
 
-When pasting multiple rows at the bottom of the grid, extra rows will be cut off by default. This can be fixed by writing a `processDataFromClipboard` function to add appropriate rows using the [Transaction Update API](/data-update-transactions/#transaction-update-api).
+By default, when pasting multiple rows near the last record shown in the grid, any rows exceeding the total number of rows shown in the grid will not be pasted. 
 
-You can see this in the following example where a custom `processDataFromClipboard` function has been added:
+In order to insert all the copied rows in the grid, a custom `processDataFromClipboard` function is needed to add the necessary number of new rows using the [Transaction Update API](/data-update-transactions/#transaction-update-api).
 
-* Copy multiple rows from the grid using <kbd>Shift</kbd> + click
-* Select the `Ryan Lochte` cell on the last row and paste the copied rows
-* Notice that extra rows are created at the bottom
+The example below uses a custom `processDataFromClipboard` function to add new rows to the grid, to fit all the copied rows:
+
+* Select the top 3 rows in the grid using <kbd>Shift</kbd> + click
+* Press <kbd>Ctrl</kbd>+<kbd>C</kbd> to copy the selected rows
+* Select the `Ryan Lochte` cell on the last row and press <kbd>Ctrl</kbd>+<kbd>V</kbd> to paste the copied rows
+* Notice that the `Ryan Lochte` row has been overwritten and 2 extra rows are created at the bottom of the grid to accommodate the additional 2 rows pasted
 
 <grid-example title='Paste New Rows' name='pasting-extra-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
