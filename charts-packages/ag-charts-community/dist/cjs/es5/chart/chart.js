@@ -489,7 +489,7 @@ var Chart = /** @class */ (function (_super) {
     };
     Chart.prototype.performUpdate = function (count) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, performUpdateType, extraDebugStats, splits, _b, count_1, seriesUpdates, end;
+            var _a, performUpdateType, extraDebugStats, splits, _b, count_1, seriesRect_1, seriesUpdates, end;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -532,7 +532,8 @@ var Chart = /** @class */ (function (_super) {
                         splits.push(performance.now());
                         _c.label = 5;
                     case 5:
-                        seriesUpdates = __spread(this.seriesToUpdate).map(function (series) { return series.update(); });
+                        seriesRect_1 = this.seriesRect;
+                        seriesUpdates = __spread(this.seriesToUpdate).map(function (series) { return series.update({ seriesRect: seriesRect_1 }); });
                         this.seriesToUpdate.clear();
                         return [4 /*yield*/, Promise.all(seriesUpdates)];
                     case 6:

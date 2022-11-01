@@ -250,7 +250,7 @@ let PivotColDefService = PivotColDefService_1 = class PivotColDefService extends
         colDef.field = colDef.colId;
         // this is to support using pinned rows, normally the data will be extracted from the aggData object using the colId
         // however pinned rows still access the data object by field, this prevents values with dots from being treated as complex objects
-        colDef.valueGetter = (params) => params.data[params.colDef.field];
+        colDef.valueGetter = (params) => { var _a; return (_a = params.data) === null || _a === void 0 ? void 0 : _a[params.colDef.field]; };
         colDef.pivotKeys = pivotKeys;
         colDef.pivotValueColumn = valueColumn;
         if (colDef.filter === true) {

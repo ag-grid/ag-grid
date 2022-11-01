@@ -126,7 +126,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         var icon = core._.createIconNoSpan('smallDown', this.gridOptionsWrapper);
         icon.classList.add('ag-rich-select-value-icon');
         this.eValue.appendChild(icon);
-        this.virtualList = this.getContext().createBean(new core.VirtualList('rich-select'));
+        this.virtualList = this.createManagedBean(new core.VirtualList('rich-select'));
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
         this.eList.appendChild(this.virtualList.getGui());
         if (core._.exists(this.params.cellHeight)) {

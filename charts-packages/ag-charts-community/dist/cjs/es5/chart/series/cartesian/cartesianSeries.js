@@ -97,6 +97,7 @@ var changeDetectable_1 = require("../../../scene/changeDetectable");
 var categoryAxis_1 = require("../../axis/categoryAxis");
 var layers_1 = require("../../layers");
 var validation_1 = require("../../../util/validation");
+var json_1 = require("../../../util/json");
 var CartesianSeriesNodeClickEvent = /** @class */ (function (_super) {
     __extends(CartesianSeriesNodeClickEvent, _super);
     function CartesianSeriesNodeClickEvent(xKey, yKey, nativeEvent, datum, series) {
@@ -115,6 +116,7 @@ var CartesianSeries = /** @class */ (function (_super) {
         if (opts === void 0) { opts = {}; }
         var _this = _super.call(this, { useSeriesGroupLayer: true, pickModes: opts.pickModes }) || this;
         _this._contextNodeData = [];
+        _this.nodeDataDependencies = {};
         _this.highlightSelection = selection_1.Selection.select(_this.highlightNode).selectAll();
         _this.highlightLabelSelection = selection_1.Selection.select(_this.highlightLabel).selectAll();
         _this.subGroups = [];
@@ -172,21 +174,31 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.checkRangeXY = function (x, y, xAxis, yAxis) {
         return !isNaN(x) && !isNaN(y) && xAxis.inRange(x) && yAxis.inRange(y);
     };
-    CartesianSeries.prototype.update = function () {
+    CartesianSeries.prototype.update = function (_a) {
+        var seriesRect = _a.seriesRect;
+        var _b, _c;
         return __awaiter(this, void 0, void 0, function () {
-            var _a, seriesItemEnabled, visible, _b, _c, _d, series, seriesHighlighted, anySeriesItemEnabled;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
+            var _d, seriesItemEnabled, visible, _e, _f, _g, series, seriesHighlighted, anySeriesItemEnabled, newNodeDataDependencies;
+            return __generator(this, function (_h) {
+                switch (_h.label) {
                     case 0:
-                        _a = this, seriesItemEnabled = _a.seriesItemEnabled, visible = _a.visible, _b = _a.chart, _c = (_b === void 0 ? {} : _b).highlightedDatum, _d = (_c === void 0 ? {} : _c).series, series = _d === void 0 ? undefined : _d;
+                        _d = this, seriesItemEnabled = _d.seriesItemEnabled, visible = _d.visible, _e = _d.chart, _f = (_e === void 0 ? {} : _e).highlightedDatum, _g = (_f === void 0 ? {} : _f).series, series = _g === void 0 ? undefined : _g;
                         seriesHighlighted = series ? series === this : undefined;
                         anySeriesItemEnabled = (visible && seriesItemEnabled.size === 0) || __spread(seriesItemEnabled.values()).some(function (v) { return v === true; });
+                        newNodeDataDependencies = {
+                            seriesRectWidth: (_b = seriesRect) === null || _b === void 0 ? void 0 : _b.width,
+                            seriesRectHeight: (_c = seriesRect) === null || _c === void 0 ? void 0 : _c.height,
+                        };
+                        if (json_1.jsonDiff(this.nodeDataDependencies, newNodeDataDependencies) != null) {
+                            this.nodeDataDependencies = newNodeDataDependencies;
+                            this.markNodeDataDirty();
+                        }
                         return [4 /*yield*/, this.updateSelections(seriesHighlighted, anySeriesItemEnabled)];
                     case 1:
-                        _e.sent();
+                        _h.sent();
                         return [4 /*yield*/, this.updateNodes(seriesHighlighted, anySeriesItemEnabled)];
                     case 2:
-                        _e.sent();
+                        _h.sent();
                         return [2 /*return*/];
                 }
             });

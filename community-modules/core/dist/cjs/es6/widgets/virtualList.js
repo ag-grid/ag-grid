@@ -26,7 +26,6 @@ class VirtualList extends tabGuardComp_1.TabGuardComp {
         this.listName = listName;
         this.renderedRows = new Map();
         this.rowHeight = 20;
-        this.isDestroyed = false;
     }
     postConstruct() {
         this.addScrollListener();
@@ -105,6 +104,9 @@ class VirtualList extends tabGuardComp_1.TabGuardComp {
     focusRow(rowNumber) {
         this.ensureIndexVisible(rowNumber);
         window.setTimeout(() => {
+            if (!this.isAlive()) {
+                return;
+            }
             const renderedRow = this.renderedRows.get(rowNumber);
             if (renderedRow) {
                 renderedRow.eDiv.focus();
@@ -165,14 +167,14 @@ class VirtualList extends tabGuardComp_1.TabGuardComp {
         this.refresh();
     }
     refresh() {
-        if (this.model == null || this.isDestroyed) {
+        if (this.model == null || !this.isAlive()) {
             return;
         }
         const rowCount = this.model.getRowCount();
         this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
         // ensure height is applied before attempting to redraw rows
         function_1.waitUntil(() => this.eContainer.clientHeight >= rowCount * this.rowHeight, () => {
-            if (this.isDestroyed) {
+            if (!this.isAlive()) {
                 return;
             }
             this.clearVirtualRows();
@@ -254,11 +256,10 @@ class VirtualList extends tabGuardComp_1.TabGuardComp {
         this.model = model;
     }
     destroy() {
-        if (this.isDestroyed) {
+        if (!this.isAlive()) {
             return;
         }
         this.clearVirtualRows();
-        this.isDestroyed = true;
         super.destroy();
     }
 }

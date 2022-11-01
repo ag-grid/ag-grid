@@ -681,6 +681,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 
 .ag-header-cell:not(.ag-header-cell-auto-height) .ag-header-cell-comp-wrapper {
   height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .ag-header-cell-comp-wrapper {

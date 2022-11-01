@@ -9,6 +9,7 @@ import { Text } from '../../../scene/shape/text';
 import { Node } from '../../../scene/node';
 import { PointLabelDatum } from '../../../util/labelPlacement';
 import { Point } from '../../../scene/point';
+import { BBox } from '../../../scene/bbox';
 declare type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<N, Group, ContextType['nodeData'][number], any>;
 declare type LabelDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<N, Group, ContextType['labelData'][number], any>;
 declare type PickGroupInclude = 'mainPath' | 'datumNodes' | 'markers';
@@ -30,6 +31,7 @@ export declare class CartesianSeriesNodeClickEvent<Datum extends {
 export declare abstract class CartesianSeries<C extends SeriesNodeDataContext<any, any>, N extends Node = Marker> extends Series<C> {
     private _contextNodeData;
     get contextNodeData(): C[];
+    private nodeDataDependencies;
     private highlightSelection;
     private highlightLabelSelection;
     private subGroups;
@@ -68,7 +70,9 @@ export declare abstract class CartesianSeries<C extends SeriesNodeDataContext<an
      * @returns
      */
     protected checkRangeXY(x: number, y: number, xAxis: ChartAxis, yAxis: ChartAxis): boolean;
-    update(): Promise<void>;
+    update({ seriesRect }: {
+        seriesRect?: BBox;
+    }): Promise<void>;
     protected updateSelections(seriesHighlighted: boolean | undefined, anySeriesItemEnabled: boolean): Promise<void>;
     private updateSeriesGroupSelections;
     private updateSeriesGroups;

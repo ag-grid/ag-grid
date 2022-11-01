@@ -6,6 +6,7 @@ import { Chart } from '../chart';
 import { TypedEvent } from '../../util/observable';
 import { PointLabelDatum } from '../../util/labelPlacement';
 import { SizedPoint, Point } from '../../scene/point';
+import { BBox } from '../../scene/bbox';
 /**
  * Processed series datum used in node selections,
  * contains information used to render pie sectors, bars, markers, etc.
@@ -144,7 +145,9 @@ export declare abstract class Series<C extends SeriesNodeDataContext = SeriesNod
     abstract createNodeData(): Promise<C[]>;
     markNodeDataDirty(): void;
     visibleChanged(): void;
-    abstract update(): Promise<void>;
+    abstract update(opts: {
+        seriesRect?: BBox;
+    }): Promise<void>;
     protected getOpacity(datum?: {
         itemId?: any;
     }): number;

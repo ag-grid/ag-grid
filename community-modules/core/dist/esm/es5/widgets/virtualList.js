@@ -40,7 +40,6 @@ var VirtualList = /** @class */ (function (_super) {
         _this.listName = listName;
         _this.renderedRows = new Map();
         _this.rowHeight = 20;
-        _this.isDestroyed = false;
         return _this;
     }
     VirtualList.prototype.postConstruct = function () {
@@ -122,6 +121,9 @@ var VirtualList = /** @class */ (function (_super) {
         var _this = this;
         this.ensureIndexVisible(rowNumber);
         window.setTimeout(function () {
+            if (!_this.isAlive()) {
+                return;
+            }
             var renderedRow = _this.renderedRows.get(rowNumber);
             if (renderedRow) {
                 renderedRow.eDiv.focus();
@@ -180,14 +182,14 @@ var VirtualList = /** @class */ (function (_super) {
     };
     VirtualList.prototype.refresh = function () {
         var _this = this;
-        if (this.model == null || this.isDestroyed) {
+        if (this.model == null || !this.isAlive()) {
             return;
         }
         var rowCount = this.model.getRowCount();
         this.eContainer.style.height = rowCount * this.rowHeight + "px";
         // ensure height is applied before attempting to redraw rows
         waitUntil(function () { return _this.eContainer.clientHeight >= rowCount * _this.rowHeight; }, function () {
-            if (_this.isDestroyed) {
+            if (!_this.isAlive()) {
                 return;
             }
             _this.clearVirtualRows();
@@ -273,11 +275,10 @@ var VirtualList = /** @class */ (function (_super) {
         this.model = model;
     };
     VirtualList.prototype.destroy = function () {
-        if (this.isDestroyed) {
+        if (!this.isAlive()) {
             return;
         }
         this.clearVirtualRows();
-        this.isDestroyed = true;
         _super.prototype.destroy.call(this);
     };
     __decorate([

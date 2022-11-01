@@ -17,7 +17,6 @@ export declare class VirtualList extends TabGuardComp {
     private componentCreator;
     private rowHeight;
     private lastFocusedRowIndex;
-    private isDestroyed;
     private readonly resizeObserverService;
     private readonly focusService;
     private readonly eContainer;

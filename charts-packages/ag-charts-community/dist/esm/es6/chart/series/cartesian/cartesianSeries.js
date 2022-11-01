@@ -24,6 +24,7 @@ import { RedrawType } from '../../../scene/changeDetectable';
 import { CategoryAxis } from '../../axis/categoryAxis';
 import { Layers } from '../../layers';
 import { OPT_FUNCTION, ValidateAndChangeDetection } from '../../../util/validation';
+import { jsonDiff } from '../../../util/json';
 export class CartesianSeriesNodeClickEvent extends SeriesNodeClickEvent {
     constructor(xKey, yKey, nativeEvent, datum, series) {
         super(nativeEvent, datum, series);
@@ -35,6 +36,7 @@ export class CartesianSeries extends Series {
     constructor(opts = {}) {
         super({ useSeriesGroupLayer: true, pickModes: opts.pickModes });
         this._contextNodeData = [];
+        this.nodeDataDependencies = {};
         this.highlightSelection = Selection.select(this.highlightNode).selectAll();
         this.highlightLabelSelection = Selection.select(this.highlightLabel).selectAll();
         this.subGroups = [];
@@ -87,11 +89,20 @@ export class CartesianSeries extends Series {
     checkRangeXY(x, y, xAxis, yAxis) {
         return !isNaN(x) && !isNaN(y) && xAxis.inRange(x) && yAxis.inRange(y);
     }
-    update() {
+    update({ seriesRect }) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             const { seriesItemEnabled, visible, chart: { highlightedDatum: { series = undefined } = {} } = {} } = this;
             const seriesHighlighted = series ? series === this : undefined;
             const anySeriesItemEnabled = (visible && seriesItemEnabled.size === 0) || [...seriesItemEnabled.values()].some((v) => v === true);
+            const newNodeDataDependencies = {
+                seriesRectWidth: (_a = seriesRect) === null || _a === void 0 ? void 0 : _a.width,
+                seriesRectHeight: (_b = seriesRect) === null || _b === void 0 ? void 0 : _b.height,
+            };
+            if (jsonDiff(this.nodeDataDependencies, newNodeDataDependencies) != null) {
+                this.nodeDataDependencies = newNodeDataDependencies;
+                this.markNodeDataDirty();
+            }
             yield this.updateSelections(seriesHighlighted, anySeriesItemEnabled);
             yield this.updateNodes(seriesHighlighted, anySeriesItemEnabled);
         });

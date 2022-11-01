@@ -13708,6 +13708,389 @@ var SeriesMarker = /** @class */ (function (_super) {
     return SeriesMarker;
 }(ChangeDetectable));
 
+var __assign$r = (undefined && undefined.__assign) || function () {
+    __assign$r = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign$r.apply(this, arguments);
+};
+var __read$o = (undefined && undefined.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread$d = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$o(arguments[i]));
+    return ar;
+};
+var __values$g = (undefined && undefined.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+/**
+ * Performs a JSON-diff between a source and target JSON structure.
+ *
+ * On a per property basis, takes the target property value where:
+ * - types are different.
+ * - type is primitive.
+ * - type is array and length or content have changed.
+ *
+ * Recurses for object types.
+ *
+ * @param source starting point for diff
+ * @param target target for diff vs. source
+ *
+ * @returns `null` if no differences, or an object with the subset of properties that have changed.
+ */
+function jsonDiff(source, target) {
+    var e_1, _a;
+    var sourceType = classify(source);
+    var targetType = classify(target);
+    if (targetType === 'array') {
+        if (sourceType !== 'array' || source.length !== target.length) {
+            return __spread$d(target);
+        }
+        if (target.some(function (targetElement, i) { var _a; return jsonDiff((_a = source) === null || _a === void 0 ? void 0 : _a[i], targetElement) != null; })) {
+            return __spread$d(target);
+        }
+        return null;
+    }
+    if (targetType === 'primitive') {
+        if (sourceType !== 'primitive') {
+            return __assign$r({}, target);
+        }
+        if (source !== target) {
+            return target;
+        }
+        return null;
+    }
+    var lhs = source || {};
+    var rhs = target || {};
+    var allProps = new Set(__spread$d(Object.keys(lhs), Object.keys(rhs)));
+    var propsChangedCount = 0;
+    var result = {};
+    var _loop_1 = function (prop) {
+        // Cheap-and-easy equality check.
+        if (lhs[prop] === rhs[prop]) {
+            return "continue";
+        }
+        var take = function (v) {
+            result[prop] = v;
+            propsChangedCount++;
+        };
+        var lhsType = classify(lhs[prop]);
+        var rhsType = classify(rhs[prop]);
+        if (lhsType !== rhsType) {
+            // Types changed, just take RHS.
+            take(rhs[prop]);
+            return "continue";
+        }
+        if (rhsType === 'primitive' || rhsType === null) {
+            take(rhs[prop]);
+            return "continue";
+        }
+        if (rhsType === 'array' && lhs[prop].length !== rhs[prop].length) {
+            // Arrays are different sizes, so just take target array.
+            take(rhs[prop]);
+            return "continue";
+        }
+        if (rhsType === 'class-instance') {
+            // Don't try to do anything tricky with array diffs!
+            take(rhs[prop]);
+            return "continue";
+        }
+        if (rhsType === 'function' && lhs[prop] !== rhs[prop]) {
+            take(rhs[prop]);
+            return "continue";
+        }
+        var diff = jsonDiff(lhs[prop], rhs[prop]);
+        if (diff !== null) {
+            take(diff);
+        }
+    };
+    try {
+        for (var allProps_1 = __values$g(allProps), allProps_1_1 = allProps_1.next(); !allProps_1_1.done; allProps_1_1 = allProps_1.next()) {
+            var prop = allProps_1_1.value;
+            _loop_1(prop);
+        }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (allProps_1_1 && !allProps_1_1.done && (_a = allProps_1.return)) _a.call(allProps_1);
+        }
+        finally { if (e_1) throw e_1.error; }
+    }
+    return propsChangedCount === 0 ? null : result;
+}
+/**
+ * Special value used by `jsonMerge` to signal that a property should be removed from the merged
+ * output.
+ */
+var DELETE = Symbol('<delete-property>');
+var NOT_SPECIFIED = Symbol('<unspecified-property>');
+/**
+ * Merge together the provide JSON object structures, with the precedence of application running
+ * from higher indexes to lower indexes.
+ *
+ * Deep-clones all objects to avoid mutation of the inputs changing the output object. For arrays,
+ * just performs a deep-clone of the entire array, no merging of elements attempted.
+ *
+ * @param json all json objects to merge
+ * @param opts merge options
+ * @param opts.avoidDeepClone contains a list of properties where deep clones should be avoided
+ *
+ * @returns the combination of all of the json inputs
+ */
+function jsonMerge(json, opts) {
+    var e_2, _a;
+    var _b;
+    var avoidDeepClone = ((_b = opts) === null || _b === void 0 ? void 0 : _b.avoidDeepClone) || [];
+    var jsonTypes = json.map(function (v) { return classify(v); });
+    if (jsonTypes.some(function (v) { return v === 'array'; })) {
+        // Clone final array.
+        var finalValue = json[json.length - 1];
+        if (finalValue instanceof Array) {
+            return finalValue.map(function (v) {
+                var type = classify(v);
+                return type === 'array' ? jsonMerge([[], v], opts) : type === 'object' ? jsonMerge([{}, v], opts) : v;
+            });
+        }
+        return finalValue;
+    }
+    var result = {};
+    var props = new Set(json.map(function (v) { return (v != null ? Object.keys(v) : []); }).reduce(function (r, n) { return r.concat(n); }, []));
+    var _loop_2 = function (nextProp) {
+        var values = json
+            .map(function (j) { return (j != null && nextProp in j ? j[nextProp] : NOT_SPECIFIED); })
+            .filter(function (v) { return v !== NOT_SPECIFIED; });
+        if (values.length === 0) {
+            return "continue";
+        }
+        var lastValue = values[values.length - 1];
+        if (lastValue === DELETE) {
+            return "continue";
+        }
+        var types = values.map(function (v) { return classify(v); });
+        var type = types[0];
+        if (types.some(function (t) { return t !== type && t !== null; })) {
+            // Short-circuit if mismatching types.
+            result[nextProp] = lastValue;
+            return "continue";
+        }
+        if ((type === 'array' || type === 'object') && !avoidDeepClone.includes(nextProp)) {
+            result[nextProp] = jsonMerge(values, opts);
+        }
+        else if (type === 'array') {
+            // Arrays need to be shallow copied to avoid external mutation and allow jsonDiff to
+            // detect changes.
+            result[nextProp] = __spread$d(lastValue);
+        }
+        else {
+            // Just directly assign/overwrite.
+            result[nextProp] = lastValue;
+        }
+    };
+    try {
+        for (var props_1 = __values$g(props), props_1_1 = props_1.next(); !props_1_1.done; props_1_1 = props_1.next()) {
+            var nextProp = props_1_1.value;
+            _loop_2(nextProp);
+        }
+    }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    finally {
+        try {
+            if (props_1_1 && !props_1_1.done && (_a = props_1.return)) _a.call(props_1);
+        }
+        finally { if (e_2) throw e_2.error; }
+    }
+    return result;
+}
+/**
+ * Recursively apply a JSON object into a class-hierarchy, optionally instantiating certain classes
+ * by property name.
+ *
+ * @param target to apply source JSON properties into
+ * @param source to be applied
+ * @param params.path path for logging/error purposes, to aid with pinpointing problems
+ * @param params.matcherPath path for pattern matching, to lookup allowedTypes override.
+ * @param params.skip property names to skip from the source
+ * @param params.constructors dictionary of property name to class constructors for properties that
+ *                            require object construction
+ * @param params.allowedTypes overrides by path for allowed property types
+ */
+function jsonApply(target, source, params) {
+    if (params === void 0) { params = {}; }
+    var _a, _b, _c, _d;
+    var _e = params.path, path = _e === void 0 ? undefined : _e, _f = params.matcherPath, matcherPath = _f === void 0 ? path ? path.replace(/(\[[0-9+]+\])/i, '[]') : undefined : _f, _g = params.skip, skip = _g === void 0 ? [] : _g, _h = params.constructors, constructors = _h === void 0 ? {} : _h, _j = params.allowedTypes, allowedTypes = _j === void 0 ? {} : _j;
+    if (target == null) {
+        throw new Error("AG Charts - target is uninitialised: " + (path || '<root>'));
+    }
+    if (source == null) {
+        return target;
+    }
+    var targetType = classify(target);
+    var _loop_3 = function (property) {
+        var propertyMatcherPath = "" + (matcherPath ? matcherPath + '.' : '') + property;
+        if (skip.indexOf(propertyMatcherPath) >= 0) {
+            return "continue";
+        }
+        var newValue = source[property];
+        var propertyPath = "" + (path ? path + '.' : '') + property;
+        var targetAny = target;
+        var targetClass = targetAny.constructor;
+        var currentValue = targetAny[property];
+        var ctr = (_a = constructors[property], (_a !== null && _a !== void 0 ? _a : constructors[propertyMatcherPath]));
+        try {
+            var currentValueType = classify(currentValue);
+            var newValueType = classify(newValue);
+            if (targetType === 'class-instance' && !(property in target || targetAny.hasOwnProperty(property))) {
+                console.warn("AG Charts - unable to set [" + propertyPath + "] in " + ((_b = targetClass) === null || _b === void 0 ? void 0 : _b.name) + " - property is unknown");
+                return "continue";
+            }
+            var allowableTypes = allowedTypes[propertyMatcherPath] || [currentValueType];
+            if (currentValueType === 'class-instance' && newValueType === 'object') {
+                // Allowed, this is the common case! - do not error.
+            }
+            else if (currentValueType != null && newValueType != null && !allowableTypes.includes(newValueType)) {
+                console.warn("AG Charts - unable to set [" + propertyPath + "] in " + ((_c = targetClass) === null || _c === void 0 ? void 0 : _c.name) + " - can't apply type of [" + newValueType + "], allowed types are: [" + allowableTypes + "]");
+                return "continue";
+            }
+            if (newValueType === 'array') {
+                ctr = (ctr !== null && ctr !== void 0 ? ctr : constructors[propertyMatcherPath + "[]"]);
+                if (ctr != null) {
+                    var newValueArray = newValue;
+                    targetAny[property] = newValueArray.map(function (v) {
+                        return jsonApply(new ctr(), v, __assign$r(__assign$r({}, params), { path: propertyPath, matcherPath: propertyMatcherPath + '[]' }));
+                    });
+                }
+                else {
+                    targetAny[property] = newValue;
+                }
+            }
+            else if (newValueType === 'class-instance') {
+                targetAny[property] = newValue;
+            }
+            else if (newValueType === 'object') {
+                if (currentValue != null) {
+                    jsonApply(currentValue, newValue, __assign$r(__assign$r({}, params), { path: propertyPath, matcherPath: propertyMatcherPath }));
+                }
+                else if (ctr != null) {
+                    targetAny[property] = jsonApply(new ctr(), newValue, __assign$r(__assign$r({}, params), { path: propertyPath, matcherPath: propertyMatcherPath }));
+                }
+                else {
+                    targetAny[property] = newValue;
+                }
+            }
+            else {
+                targetAny[property] = newValue;
+            }
+        }
+        catch (error) {
+            console.warn("AG Charts - unable to set [" + propertyPath + "] in [" + ((_d = targetClass) === null || _d === void 0 ? void 0 : _d.name) + "]; nested error is: " + error.message);
+            return "continue";
+        }
+    };
+    for (var property in source) {
+        _loop_3(property);
+    }
+    return target;
+}
+/**
+ * Walk the given JSON object graphs, invoking the visit() callback for every object encountered.
+ * Arrays are descended into without a callback, however their elements will have the visit()
+ * callback invoked if they are objects.
+ *
+ * @param json to traverse
+ * @param visit callback for each non-primitive and non-array object found
+ * @param opts.skip property names to skip when walking
+ * @param jsons to traverse in parallel
+ */
+function jsonWalk(json, visit, opts) {
+    var jsons = [];
+    for (var _i = 3; _i < arguments.length; _i++) {
+        jsons[_i - 3] = arguments[_i];
+    }
+    var _a;
+    var jsonType = classify(json);
+    var skip = opts.skip || [];
+    if (jsonType === 'array') {
+        json.forEach(function (element, index) {
+            var _a;
+            jsonWalk.apply(void 0, __spread$d([element, visit, opts], (_a = jsons) === null || _a === void 0 ? void 0 : _a.map(function (o) { var _a; return (_a = o) === null || _a === void 0 ? void 0 : _a[index]; })));
+        });
+        return;
+    }
+    else if (jsonType !== 'object') {
+        return;
+    }
+    visit.apply(void 0, __spread$d([jsonType, json], jsons));
+    var _loop_4 = function (property) {
+        if (skip.indexOf(property) >= 0) {
+            return "continue";
+        }
+        var value = json[property];
+        var otherValues = (_a = jsons) === null || _a === void 0 ? void 0 : _a.map(function (o) { var _a; return (_a = o) === null || _a === void 0 ? void 0 : _a[property]; });
+        var valueType = classify(value);
+        if (valueType === 'object' || valueType === 'array') {
+            jsonWalk.apply(void 0, __spread$d([value, visit, opts], otherValues));
+        }
+    };
+    for (var property in json) {
+        _loop_4(property);
+    }
+}
+/**
+ * Classify the type of a value to assist with handling for merge purposes.
+ */
+function classify(value) {
+    if (value == null) {
+        return null;
+    }
+    else if (value instanceof HTMLElement) {
+        return 'primitive';
+    }
+    else if (value instanceof Array) {
+        return 'array';
+    }
+    else if (value instanceof Date) {
+        return 'primitive';
+    }
+    else if (typeof value === 'object' && value.constructor === Object) {
+        return 'object';
+    }
+    else if (typeof value === 'function') {
+        return 'function';
+    }
+    else if (typeof value === 'object' && value.constructor != null) {
+        return 'class-instance';
+    }
+    return 'primitive';
+}
+
 var __extends$1m = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -13763,7 +14146,7 @@ var __generator$c = (undefined && undefined.__generator) || function (thisArg, b
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read$o = (undefined && undefined.__read) || function (o, n) {
+var __read$n = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -13779,11 +14162,11 @@ var __read$o = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$d = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$o(arguments[i]));
+var __spread$c = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$n(arguments[i]));
     return ar;
 };
-var __values$g = (undefined && undefined.__values) || function(o) {
+var __values$f = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -13811,6 +14194,7 @@ var CartesianSeries = /** @class */ (function (_super) {
         if (opts === void 0) { opts = {}; }
         var _this = _super.call(this, { useSeriesGroupLayer: true, pickModes: opts.pickModes }) || this;
         _this._contextNodeData = [];
+        _this.nodeDataDependencies = {};
         _this.highlightSelection = Selection.select(_this.highlightNode).selectAll();
         _this.highlightLabelSelection = Selection.select(_this.highlightLabel).selectAll();
         _this.subGroups = [];
@@ -13868,21 +14252,31 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.checkRangeXY = function (x, y, xAxis, yAxis) {
         return !isNaN(x) && !isNaN(y) && xAxis.inRange(x) && yAxis.inRange(y);
     };
-    CartesianSeries.prototype.update = function () {
+    CartesianSeries.prototype.update = function (_a) {
+        var seriesRect = _a.seriesRect;
+        var _b, _c;
         return __awaiter$c(this, void 0, void 0, function () {
-            var _a, seriesItemEnabled, visible, _b, _c, _d, series, seriesHighlighted, anySeriesItemEnabled;
-            return __generator$c(this, function (_e) {
-                switch (_e.label) {
+            var _d, seriesItemEnabled, visible, _e, _f, _g, series, seriesHighlighted, anySeriesItemEnabled, newNodeDataDependencies;
+            return __generator$c(this, function (_h) {
+                switch (_h.label) {
                     case 0:
-                        _a = this, seriesItemEnabled = _a.seriesItemEnabled, visible = _a.visible, _b = _a.chart, _c = (_b === void 0 ? {} : _b).highlightedDatum, _d = (_c === void 0 ? {} : _c).series, series = _d === void 0 ? undefined : _d;
+                        _d = this, seriesItemEnabled = _d.seriesItemEnabled, visible = _d.visible, _e = _d.chart, _f = (_e === void 0 ? {} : _e).highlightedDatum, _g = (_f === void 0 ? {} : _f).series, series = _g === void 0 ? undefined : _g;
                         seriesHighlighted = series ? series === this : undefined;
-                        anySeriesItemEnabled = (visible && seriesItemEnabled.size === 0) || __spread$d(seriesItemEnabled.values()).some(function (v) { return v === true; });
+                        anySeriesItemEnabled = (visible && seriesItemEnabled.size === 0) || __spread$c(seriesItemEnabled.values()).some(function (v) { return v === true; });
+                        newNodeDataDependencies = {
+                            seriesRectWidth: (_b = seriesRect) === null || _b === void 0 ? void 0 : _b.width,
+                            seriesRectHeight: (_c = seriesRect) === null || _c === void 0 ? void 0 : _c.height,
+                        };
+                        if (jsonDiff(this.nodeDataDependencies, newNodeDataDependencies) != null) {
+                            this.nodeDataDependencies = newNodeDataDependencies;
+                            this.markNodeDataDirty();
+                        }
                         return [4 /*yield*/, this.updateSelections(seriesHighlighted, anySeriesItemEnabled)];
                     case 1:
-                        _e.sent();
+                        _h.sent();
                         return [4 /*yield*/, this.updateNodes(seriesHighlighted, anySeriesItemEnabled)];
                     case 2:
-                        _e.sent();
+                        _h.sent();
                         return [2 /*return*/];
                 }
             });
@@ -13975,7 +14369,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                         }
                         if (!pickGroupIncludes.includes('mainPath')) {
                             try {
-                                for (var paths_1 = __values$g(paths), paths_1_1 = paths_1.next(); !paths_1_1.done; paths_1_1 = paths_1.next()) {
+                                for (var paths_1 = __values$f(paths), paths_1_1 = paths_1.next(); !paths_1_1.done; paths_1_1 = paths_1.next()) {
                                     var path = paths_1_1.value;
                                     seriesGroup.removeChild(path);
                                 }
@@ -14106,7 +14500,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                                                 markerGroup.visible = subGroupVisible;
                                             }
                                             try {
-                                                for (paths_2 = __values$g(paths), paths_2_1 = paths_2.next(); !paths_2_1.done; paths_2_1 = paths_2.next()) {
+                                                for (paths_2 = __values$f(paths), paths_2_1 = paths_2.next(); !paths_2_1.done; paths_2_1 = paths_2.next()) {
                                                     path = paths_2_1.value;
                                                     if (path.parent !== group) {
                                                         path.opacity = subGroupOpacity;
@@ -14165,7 +14559,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                         if (this.isLabelEnabled() && item != null) {
                             _h = item.itemId, itemId_1 = _h === void 0 ? undefined : _h;
                             try {
-                                for (contextNodeData_1 = __values$g(contextNodeData), contextNodeData_1_1 = contextNodeData_1.next(); !contextNodeData_1_1.done; contextNodeData_1_1 = contextNodeData_1.next()) {
+                                for (contextNodeData_1 = __values$f(contextNodeData), contextNodeData_1_1 = contextNodeData_1.next(); !contextNodeData_1_1.done; contextNodeData_1_1 = contextNodeData_1.next()) {
                                     labelData = contextNodeData_1_1.value.labelData;
                                     labelItem = labelData.find(function (ld) { return ld.datum === item.datum && ld.itemId === itemId_1; });
                                     if (labelItem != null) {
@@ -14204,7 +14598,7 @@ var CartesianSeries = /** @class */ (function (_super) {
         var pickGroupIncludes = this.opts.pickGroupIncludes;
         var markerGroupIncluded = pickGroupIncludes.includes('markers');
         try {
-            for (var _c = __values$g(this.subGroups), _d = _c.next(); !_d.done; _d = _c.next()) {
+            for (var _c = __values$f(this.subGroups), _d = _c.next(); !_d.done; _d = _c.next()) {
                 var _e = _d.value, pickGroup = _e.pickGroup, markerGroup = _e.markerGroup;
                 var match = pickGroup.pickNode(x, y);
                 if (!match && markerGroupIncluded) {
@@ -14232,10 +14626,10 @@ var CartesianSeries = /** @class */ (function (_super) {
         var minDistance = Infinity;
         var closestDatum;
         try {
-            for (var contextNodeData_2 = __values$g(contextNodeData), contextNodeData_2_1 = contextNodeData_2.next(); !contextNodeData_2_1.done; contextNodeData_2_1 = contextNodeData_2.next()) {
+            for (var contextNodeData_2 = __values$f(contextNodeData), contextNodeData_2_1 = contextNodeData_2.next(); !contextNodeData_2_1.done; contextNodeData_2_1 = contextNodeData_2.next()) {
                 var context = contextNodeData_2_1.value;
                 try {
-                    for (var _h = (e_6 = void 0, __values$g(context.nodeData)), _j = _h.next(); !_j.done; _j = _h.next()) {
+                    for (var _h = (e_6 = void 0, __values$f(context.nodeData)), _j = _h.next(); !_j.done; _j = _h.next()) {
                         var datum = _j.value;
                         var _k = datum.point, _l = _k === void 0 ? {} : _k, _m = _l.x, datumX = _m === void 0 ? NaN : _m, _o = _l.y, datumY = _o === void 0 ? NaN : _o;
                         if (isNaN(datumX) || isNaN(datumY)) {
@@ -14288,16 +14682,16 @@ var CartesianSeries = /** @class */ (function (_super) {
             return;
         }
         // Default to X-axis unless we found a suitable category axis.
-        var _h = __read$o(directions, 1), _j = _h[0], primaryDirection = _j === void 0 ? ChartAxisDirection.X : _j;
+        var _h = __read$n(directions, 1), _j = _h[0], primaryDirection = _j === void 0 ? ChartAxisDirection.X : _j;
         var hitPoint = group.transformPoint(x, y);
         var hitPointCoords = primaryDirection === ChartAxisDirection.X ? [hitPoint.x, hitPoint.y] : [hitPoint.y, hitPoint.x];
         var minDistance = [Infinity, Infinity];
         var closestDatum = undefined;
         try {
-            for (var contextNodeData_3 = __values$g(contextNodeData), contextNodeData_3_1 = contextNodeData_3.next(); !contextNodeData_3_1.done; contextNodeData_3_1 = contextNodeData_3.next()) {
+            for (var contextNodeData_3 = __values$f(contextNodeData), contextNodeData_3_1 = contextNodeData_3.next(); !contextNodeData_3_1.done; contextNodeData_3_1 = contextNodeData_3.next()) {
                 var context = contextNodeData_3_1.value;
                 try {
-                    for (var _k = (e_8 = void 0, __values$g(context.nodeData)), _l = _k.next(); !_l.done; _l = _k.next()) {
+                    for (var _k = (e_8 = void 0, __values$f(context.nodeData)), _l = _k.next(); !_l.done; _l = _k.next()) {
                         var datum = _l.value;
                         var _m = datum.point, _o = _m === void 0 ? {} : _m, _p = _o.x, datumX = _p === void 0 ? NaN : _p, _q = _o.y, datumY = _q === void 0 ? NaN : _q;
                         if (isNaN(datumX) || isNaN(datumY)) {
@@ -14360,8 +14754,8 @@ var CartesianSeries = /** @class */ (function (_super) {
         var e_9, _a;
         if (this.seriesItemEnabled.size > 0) {
             try {
-                for (var _b = __values$g(this.seriesItemEnabled), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var _d = __read$o(_c.value, 2), enabled = _d[1];
+                for (var _b = __values$f(this.seriesItemEnabled), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var _d = __read$n(_c.value, 2), enabled = _d[1];
                     if (enabled) {
                         return true;
                     }
@@ -14489,7 +14883,7 @@ var __decorate$K = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __values$f = (undefined && undefined.__values) || function(o) {
+var __values$e = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -14538,7 +14932,7 @@ var Tooltip = /** @class */ (function () {
             var observer = new IntersectionObserver(function (entries) {
                 var e_1, _a;
                 try {
-                    for (var entries_1 = __values$f(entries), entries_1_1 = entries_1.next(); !entries_1_1.done; entries_1_1 = entries_1.next()) {
+                    for (var entries_1 = __values$e(entries), entries_1_1 = entries_1.next(); !entries_1_1.done; entries_1_1 = entries_1.next()) {
                         var entry = entries_1_1.value;
                         if (entry.target === _this.observedElement() && entry.intersectionRatio === 0) {
                             _this.toggle(false);
@@ -14681,8 +15075,8 @@ var __extends$1l = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$r = (undefined && undefined.__assign) || function () {
-    __assign$r = Object.assign || function(t) {
+var __assign$q = (undefined && undefined.__assign) || function () {
+    __assign$q = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -14690,7 +15084,7 @@ var __assign$r = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$r.apply(this, arguments);
+    return __assign$q.apply(this, arguments);
 };
 var __decorate$J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -14734,7 +15128,7 @@ var __generator$b = (undefined && undefined.__generator) || function (thisArg, b
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __values$e = (undefined && undefined.__values) || function(o) {
+var __values$d = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -14745,7 +15139,7 @@ var __values$e = (undefined && undefined.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read$n = (undefined && undefined.__read) || function (o, n) {
+var __read$m = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -14761,8 +15155,8 @@ var __read$n = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$c = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$n(arguments[i]));
+var __spread$b = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$m(arguments[i]));
     return ar;
 };
 /** Types of chart-update, in pipeline execution order. */
@@ -15119,7 +15513,7 @@ var Chart = /** @class */ (function (_super) {
             this.series.forEach(function (series) { return series.markNodeDataDirty(); });
         }
         try {
-            for (var seriesToUpdate_1 = __values$e(seriesToUpdate), seriesToUpdate_1_1 = seriesToUpdate_1.next(); !seriesToUpdate_1_1.done; seriesToUpdate_1_1 = seriesToUpdate_1.next()) {
+            for (var seriesToUpdate_1 = __values$d(seriesToUpdate), seriesToUpdate_1_1 = seriesToUpdate_1.next(); !seriesToUpdate_1_1.done; seriesToUpdate_1_1 = seriesToUpdate_1.next()) {
                 var series = seriesToUpdate_1_1.value;
                 this.seriesToUpdate.add(series);
             }
@@ -15138,7 +15532,7 @@ var Chart = /** @class */ (function (_super) {
     };
     Chart.prototype.performUpdate = function (count) {
         return __awaiter$b(this, void 0, void 0, function () {
-            var _a, performUpdateType, extraDebugStats, splits, _b, count_1, seriesUpdates, end;
+            var _a, performUpdateType, extraDebugStats, splits, _b, count_1, seriesRect_1, seriesUpdates, end;
             return __generator$b(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -15181,7 +15575,8 @@ var Chart = /** @class */ (function (_super) {
                         splits.push(performance.now());
                         _c.label = 5;
                     case 5:
-                        seriesUpdates = __spread$c(this.seriesToUpdate).map(function (series) { return series.update(); });
+                        seriesRect_1 = this.seriesRect;
+                        seriesUpdates = __spread$b(this.seriesToUpdate).map(function (series) { return series.update({ seriesRect: seriesRect_1 }); });
                         this.seriesToUpdate.clear();
                         return [4 /*yield*/, Promise.all(seriesUpdates)];
                     case 6:
@@ -15369,7 +15764,7 @@ var Chart = /** @class */ (function (_super) {
     Chart.prototype.findMatchingAxis = function (directionAxes, directionKeys) {
         var e_3, _a, e_4, _b;
         try {
-            for (var directionAxes_1 = __values$e(directionAxes), directionAxes_1_1 = directionAxes_1.next(); !directionAxes_1_1.done; directionAxes_1_1 = directionAxes_1.next()) {
+            for (var directionAxes_1 = __values$d(directionAxes), directionAxes_1_1 = directionAxes_1.next(); !directionAxes_1_1.done; directionAxes_1_1 = directionAxes_1.next()) {
                 var axis = directionAxes_1_1.value;
                 var axisKeys = axis.keys;
                 if (!axisKeys.length) {
@@ -15379,7 +15774,7 @@ var Chart = /** @class */ (function (_super) {
                     continue;
                 }
                 try {
-                    for (var directionKeys_1 = (e_4 = void 0, __values$e(directionKeys)), directionKeys_1_1 = directionKeys_1.next(); !directionKeys_1_1.done; directionKeys_1_1 = directionKeys_1.next()) {
+                    for (var directionKeys_1 = (e_4 = void 0, __values$d(directionKeys)), directionKeys_1_1 = directionKeys_1.next(); !directionKeys_1_1.done; directionKeys_1_1 = directionKeys_1.next()) {
                         var directionKey = directionKeys_1_1.value;
                         if (axisKeys.indexOf(directionKey) >= 0) {
                             return axis;
@@ -15435,7 +15830,7 @@ var Chart = /** @class */ (function (_super) {
         var visibleSeries = [];
         var data = [];
         try {
-            for (var _b = __values$e(this.series), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values$d(this.series), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var series = _c.value;
                 if (!series.visible) {
                     continue;
@@ -15469,7 +15864,7 @@ var Chart = /** @class */ (function (_super) {
                 this.series
                     .filter(function (s) { return s.showInLegend; })
                     .forEach(function (series) {
-                    legendData.push.apply(legendData, __spread$c(series.getLegendData()));
+                    legendData.push.apply(legendData, __spread$b(series.getLegendData()));
                 });
                 formatter = this.legend.item.label.formatter;
                 if (formatter) {
@@ -15623,10 +16018,10 @@ var Chart = /** @class */ (function (_super) {
         var pickModes = tracking ? undefined : [SeriesNodePickMode.EXACT_SHAPE_MATCH];
         // Iterate through series in reverse, as later declared series appears on top of earlier
         // declared series.
-        var reverseSeries = __spread$c(this.series).reverse();
+        var reverseSeries = __spread$b(this.series).reverse();
         var result = undefined;
         try {
-            for (var reverseSeries_1 = __values$e(reverseSeries), reverseSeries_1_1 = reverseSeries_1.next(); !reverseSeries_1_1.done; reverseSeries_1_1 = reverseSeries_1.next()) {
+            for (var reverseSeries_1 = __values$d(reverseSeries), reverseSeries_1_1 = reverseSeries_1.next(); !reverseSeries_1_1.done; reverseSeries_1_1 = reverseSeries_1.next()) {
                 var series = reverseSeries_1_1.value;
                 if (!series.visible || !series.group.visible) {
                     continue;
@@ -15853,7 +16248,7 @@ var Chart = /** @class */ (function (_super) {
             var canvas = this.scene.canvas;
             var point = datum.series.group.inverseTransformPoint(x, y);
             var canvasRect = canvas.element.getBoundingClientRect();
-            return __assign$r(__assign$r({}, meta), { pageX: Math.round(canvasRect.left + window.scrollX + point.x), pageY: Math.round(canvasRect.top + window.scrollY + point.y), offsetX: Math.round(canvasRect.left + point.y), offsetY: Math.round(canvasRect.top + point.y) });
+            return __assign$q(__assign$q({}, meta), { pageX: Math.round(canvasRect.left + window.scrollX + point.x), pageY: Math.round(canvasRect.top + window.scrollY + point.y), offsetX: Math.round(canvasRect.left + point.y), offsetY: Math.round(canvasRect.top + point.y) });
         }
         return meta;
     };
@@ -15927,8 +16322,8 @@ var __extends$1k = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$q = (undefined && undefined.__assign) || function () {
-    __assign$q = Object.assign || function(t) {
+var __assign$p = (undefined && undefined.__assign) || function () {
+    __assign$p = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -15936,7 +16331,7 @@ var __assign$q = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$q.apply(this, arguments);
+    return __assign$p.apply(this, arguments);
 };
 var __decorate$I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -15944,7 +16339,7 @@ var __decorate$I = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __values$d = (undefined && undefined.__values) || function(o) {
+var __values$c = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -16006,9 +16401,9 @@ var ClipRect = /** @class */ (function (_super) {
             ctx.clip();
         }
         var clipBBox = enabled ? this.computeBBox() : undefined;
-        var childRenderContext = __assign$q(__assign$q({}, renderCtx), { clipBBox: clipBBox });
+        var childRenderContext = __assign$p(__assign$p({}, renderCtx), { clipBBox: clipBBox });
         try {
-            for (var children_1 = __values$d(children), children_1_1 = children_1.next(); !children_1_1.done; children_1_1 = children_1.next()) {
+            for (var children_1 = __values$c(children), children_1_1 = children_1.next(); !children_1_1.done; children_1_1 = children_1.next()) {
                 var child = children_1_1.value;
                 if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
                     ctx.save();
@@ -16432,8 +16827,8 @@ var __extends$1h = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$p = (undefined && undefined.__assign) || function () {
-    __assign$p = Object.assign || function(t) {
+var __assign$o = (undefined && undefined.__assign) || function () {
+    __assign$o = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -16441,7 +16836,7 @@ var __assign$p = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$p.apply(this, arguments);
+    return __assign$o.apply(this, arguments);
 };
 var RangeSelector = /** @class */ (function (_super) {
     __extends$1h(RangeSelector, _super);
@@ -16568,7 +16963,7 @@ var RangeSelector = /** @class */ (function (_super) {
         [mask, minHandle, maxHandle].forEach(function (child) {
             if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
                 ctx.save();
-                child.render(__assign$p(__assign$p({}, renderCtx), { ctx: ctx, forceRender: forceRender }));
+                child.render(__assign$o(__assign$o({}, renderCtx), { ctx: ctx, forceRender: forceRender }));
                 ctx.restore();
             }
         });
@@ -16906,8 +17301,8 @@ var __extends$1g = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$o = (undefined && undefined.__assign) || function () {
-    __assign$o = Object.assign || function(t) {
+var __assign$n = (undefined && undefined.__assign) || function () {
+    __assign$n = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -16915,7 +17310,7 @@ var __assign$o = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$o.apply(this, arguments);
+    return __assign$n.apply(this, arguments);
 };
 var __awaiter$a = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -16953,7 +17348,7 @@ var __generator$a = (undefined && undefined.__generator) || function (thisArg, b
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __values$c = (undefined && undefined.__values) || function(o) {
+var __values$b = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -16964,7 +17359,7 @@ var __values$c = (undefined && undefined.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read$m = (undefined && undefined.__read) || function (o, n) {
+var __read$l = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -17130,14 +17525,14 @@ var CartesianChart = /** @class */ (function (_super) {
         var _b;
         // Start with a good approximation from the last update - this should mean that in many resize
         // cases that only a single pass is needed \o/.
-        var axisWidths = __assign$o({}, this._lastAxisWidths);
+        var axisWidths = __assign$n({}, this._lastAxisWidths);
         // Clean any positions which aren't valid with the current axis status (otherwise we end up
         // never being able to find a stable result).
         var liveAxisWidths = this._axes
             .map(function (a) { return a.position; })
             .reduce(function (r, n) { return r.add(n); }, new Set());
         try {
-            for (var _c = __values$c(Object.keys(axisWidths)), _d = _c.next(); !_d.done; _d = _c.next()) {
+            for (var _c = __values$b(Object.keys(axisWidths)), _d = _c.next(); !_d.done; _d = _c.next()) {
                 var position = _d.value;
                 if (!liveAxisWidths.has(position)) {
                     delete axisWidths[position];
@@ -17153,7 +17548,7 @@ var CartesianChart = /** @class */ (function (_super) {
         }
         var stableWidths = function (other) {
             return Object.entries(axisWidths).every(function (_a) {
-                var _b = __read$m(_a, 2), p = _b[0], w = _b[1];
+                var _b = __read$l(_a, 2), p = _b[0], w = _b[1];
                 var otherW = other[p];
                 if (w != null || otherW != null) {
                     return w === otherW;
@@ -17163,7 +17558,7 @@ var CartesianChart = /** @class */ (function (_super) {
         };
         var ceilValues = function (records) {
             return Object.entries(records).reduce(function (out, _a) {
-                var _b = __read$m(_a, 2), key = _b[0], value = _b[1];
+                var _b = __read$l(_a, 2), key = _b[0], value = _b[1];
                 if (value && Math.abs(value) === Infinity) {
                     value = 0;
                 }
@@ -17244,8 +17639,8 @@ var CartesianChart = /** @class */ (function (_super) {
         });
         try {
             // Reduce cross-line padding to account for overlap with axes.
-            for (var _c = __values$c(Object.entries(crossLinePadding)), _d = _c.next(); !_d.done; _d = _c.next()) {
-                var _e = __read$m(_d.value, 2), side = _e[0], _f = _e[1], padding = _f === void 0 ? 0 : _f;
+            for (var _c = __values$b(Object.entries(crossLinePadding)), _d = _c.next(); !_d.done; _d = _c.next()) {
+                var _e = __read$l(_d.value, 2), side = _e[0], _f = _e[1], padding = _f === void 0 ? 0 : _f;
                 crossLinePadding[side] = Math.max(padding - (_b = axisWidths[side], (_b !== null && _b !== void 0 ? _b : 0)), 0);
             }
         }
@@ -17487,7 +17882,7 @@ var HierarchyChart = /** @class */ (function (_super) {
                 this.series.forEach(function (series) {
                     series.group.translationX = Math.floor(shrinkRect.x);
                     series.group.translationY = Math.floor(shrinkRect.y);
-                    series.update(); // this has to happen after the `updateAxes` call
+                    series.update({ seriesRect: shrinkRect }); // this has to happen after the `updateAxes` call
                 });
                 seriesRoot = this.seriesRoot;
                 seriesRoot.x = shrinkRect.x;
@@ -17734,7 +18129,7 @@ function equal(a, b) {
     return a !== a && b !== b;
 }
 
-var __read$l = (undefined && undefined.__read) || function (o, n) {
+var __read$k = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -17754,7 +18149,7 @@ var interpolatePattern = /(#\{(.*?)\})/g;
 function interpolate(input, values, formats) {
     return input.replace(interpolatePattern, function () {
         var name = arguments[2];
-        var _a = __read$l(name.split(':'), 2), valueName = _a[0], formatName = _a[1];
+        var _a = __read$k(name.split(':'), 2), valueName = _a[0], formatName = _a[1];
         var value = values[valueName];
         if (typeof value === 'number') {
             var format = formatName && formats && formats[formatName];
@@ -17883,7 +18278,7 @@ var __generator$7 = (undefined && undefined.__generator) || function (thisArg, b
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __values$b = (undefined && undefined.__values) || function(o) {
+var __values$a = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -17894,7 +18289,7 @@ var __values$b = (undefined && undefined.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read$k = (undefined && undefined.__read) || function (o, n) {
+var __read$j = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -17910,8 +18305,8 @@ var __read$k = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$b = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$k(arguments[i]));
+var __spread$a = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$j(arguments[i]));
     return ar;
 };
 var AreaSeriesLabel = /** @class */ (function (_super) {
@@ -18096,7 +18491,7 @@ var AreaSeries = /** @class */ (function (_super) {
                     });
                 };
                 try {
-                    for (data_1 = __values$b(data), data_1_1 = data_1.next(); !data_1_1.done; data_1_1 = data_1.next()) {
+                    for (data_1 = __values$a(data), data_1_1 = data_1.next(); !data_1_1.done; data_1_1 = data_1.next()) {
                         datum = data_1_1.value;
                         _loop_1(datum);
                     }
@@ -18109,7 +18504,7 @@ var AreaSeries = /** @class */ (function (_super) {
                     finally { if (e_1) throw e_1.error; }
                 }
                 if (missingYKeys.size > 0) {
-                    missingYKeysString_1 = JSON.stringify(__spread$b(missingYKeys));
+                    missingYKeysString_1 = JSON.stringify(__spread$a(missingYKeys));
                     doOnce(function () { return console.log("AG Charts - yKeys " + missingYKeysString_1 + " were not found in the data."); }, missingYKeysString_1 + " not found in data.");
                 }
                 this.yData = yData;
@@ -18120,7 +18515,7 @@ var AreaSeries = /** @class */ (function (_super) {
                 for (i = 0; i < xData.length; i++) {
                     total = { sum: 0, absSum: 0 };
                     try {
-                        for (yData_1 = (e_2 = void 0, __values$b(yData)), yData_1_1 = yData_1.next(); !yData_1_1.done; yData_1_1 = yData_1.next()) {
+                        for (yData_1 = (e_2 = void 0, __values$a(yData)), yData_1_1 = yData_1.next(); !yData_1_1.done; yData_1_1 = yData_1.next()) {
                             seriesYs = yData_1_1.value;
                             if (seriesYs[i] === undefined || isNaN(seriesYs[i])) {
                                 continue;
@@ -18149,7 +18544,7 @@ var AreaSeries = /** @class */ (function (_super) {
                     normalizedTotal = undefined;
                     try {
                         // normalize y values using the absolute sum of y values in the stack
-                        for (yData_2 = (e_3 = void 0, __values$b(yData)), yData_2_1 = yData_2.next(); !yData_2_1.done; yData_2_1 = yData_2.next()) {
+                        for (yData_2 = (e_3 = void 0, __values$a(yData)), yData_2_1 = yData_2.next(); !yData_2_1.done; yData_2_1 = yData_2.next()) {
                             seriesYs = yData_2_1.value;
                             normalizedY = (+seriesYs[i] / total.absSum) * normalizedTo;
                             seriesYs[i] = normalizedY;
@@ -18352,7 +18747,7 @@ var AreaSeries = /** @class */ (function (_super) {
         return __awaiter$7(this, void 0, void 0, function () {
             var _a, fillSelectionData, strokeSelectionData, _b, fill, stroke;
             return __generator$7(this, function (_c) {
-                _a = opts.contextData, fillSelectionData = _a.fillSelectionData, strokeSelectionData = _a.strokeSelectionData, _b = __read$k(opts.paths, 2), fill = _b[0], stroke = _b[1];
+                _a = opts.contextData, fillSelectionData = _a.fillSelectionData, strokeSelectionData = _a.strokeSelectionData, _b = __read$j(opts.paths, 2), fill = _b[0], stroke = _b[1];
                 fill.datum = fillSelectionData;
                 fill.tag = AreaSeriesTag.Fill;
                 fill.lineJoin = 'round';
@@ -18372,7 +18767,7 @@ var AreaSeries = /** @class */ (function (_super) {
             var _a, fill, stroke, seriesIdx, itemId, _b, strokes, fills, fillOpacity, strokeOpacity, strokeWidth, shadow, points, path, i, points_1, points_1_1, p, _c, points, yValues, moveTo_1, path, i, points_2, points_2_1, p;
             var e_4, _d, e_5, _e;
             return __generator$7(this, function (_f) {
-                _a = __read$k(opts.paths, 2), fill = _a[0], stroke = _a[1], seriesIdx = opts.seriesIdx, itemId = opts.itemId;
+                _a = __read$j(opts.paths, 2), fill = _a[0], stroke = _a[1], seriesIdx = opts.seriesIdx, itemId = opts.itemId;
                 _b = this, strokes = _b.strokes, fills = _b.fills, fillOpacity = _b.fillOpacity, strokeOpacity = _b.strokeOpacity, strokeWidth = _b.strokeWidth, shadow = _b.shadow;
                 {
                     points = fill.datum.points;
@@ -18387,7 +18782,7 @@ var AreaSeries = /** @class */ (function (_super) {
                     path.clear({ trackChanges: true });
                     i = 0;
                     try {
-                        for (points_1 = __values$b(points), points_1_1 = points_1.next(); !points_1_1.done; points_1_1 = points_1.next()) {
+                        for (points_1 = __values$a(points), points_1_1 = points_1.next(); !points_1_1.done; points_1_1 = points_1.next()) {
                             p = points_1_1.value;
                             if (i++ > 0) {
                                 path.lineTo(p.x, p.y);
@@ -18419,7 +18814,7 @@ var AreaSeries = /** @class */ (function (_super) {
                     path.clear({ trackChanges: true });
                     i = 0;
                     try {
-                        for (points_2 = __values$b(points), points_2_1 = points_2.next(); !points_2_1.done; points_2_1 = points_2.next()) {
+                        for (points_2 = __values$a(points), points_2_1 = points_2.next(); !points_2_1.done; points_2_1 = points_2.next()) {
                             p = points_2_1.value;
                             if (yValues[i++] === undefined) {
                                 moveTo_1 = true;
@@ -18770,7 +19165,7 @@ var __generator$6 = (undefined && undefined.__generator) || function (thisArg, b
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read$j = (undefined && undefined.__read) || function (o, n) {
+var __read$i = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -18786,11 +19181,11 @@ var __read$j = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$a = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$j(arguments[i]));
+var __spread$9 = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$i(arguments[i]));
     return ar;
 };
-var __values$a = (undefined && undefined.__values) || function(o) {
+var __values$9 = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -18984,7 +19379,7 @@ var BarSeries = /** @class */ (function (_super) {
             return this._visibles;
         },
         set: function (visibles) {
-            var flattenFn = function (r, n) { return r.concat.apply(r, __spread$a((Array.isArray(n) ? n : [n]))); };
+            var flattenFn = function (r, n) { return r.concat.apply(r, __spread$9((Array.isArray(n) ? n : [n]))); };
             this._visibles = visibles.reduce(flattenFn, []);
             this.processSeriesItemEnabled();
         },
@@ -19136,10 +19531,10 @@ var BarSeries = /** @class */ (function (_super) {
         var tallestStackMin = Infinity;
         var tallestStackMax = -Infinity;
         try {
-            for (var groups_1 = __values$a(groups), groups_1_1 = groups_1.next(); !groups_1_1.done; groups_1_1 = groups_1.next()) {
+            for (var groups_1 = __values$9(groups), groups_1_1 = groups_1.next(); !groups_1_1.done; groups_1_1 = groups_1.next()) {
                 var group = groups_1_1.value;
                 try {
-                    for (var group_1 = (e_2 = void 0, __values$a(group)), group_1_1 = group_1.next(); !group_1_1.done; group_1_1 = group_1.next()) {
+                    for (var group_1 = (e_2 = void 0, __values$9(group)), group_1_1 = group_1.next(); !group_1_1.done; group_1_1 = group_1.next()) {
                         var stack = group_1_1.value;
                         var _c = stack.min, min = _c === void 0 ? Infinity : _c, _d = stack.max, max = _d === void 0 ? -Infinity : _d;
                         if (min < tallestStackMin) {
@@ -19379,7 +19774,7 @@ var BarSeries = /** @class */ (function (_super) {
                         }
                     }
                 });
-                return [2 /*return*/, contexts.reduce(function (r, n) { return r.concat.apply(r, __spread$a(n)); }, [])];
+                return [2 /*return*/, contexts.reduce(function (r, n) { return r.concat.apply(r, __spread$9(n)); }, [])];
             });
         });
     };
@@ -19405,7 +19800,7 @@ var BarSeries = /** @class */ (function (_super) {
             return __generator$6(this, function (_l) {
                 datumSelection = opts.datumSelection, isDatumHighlighted = opts.isHighlight;
                 _c = this, fills = _c.fills, strokes = _c.strokes, seriesFillOpacity = _c.fillOpacity, strokeOpacity = _c.strokeOpacity, shadow = _c.shadow, formatter = _c.formatter, xKey = _c.xKey, flipXY = _c.flipXY, _d = _c.highlightStyle, deprecatedFill = _d.fill, deprecatedStroke = _d.stroke, deprecatedStrokeWidth = _d.strokeWidth, _e = _d.item, _f = _e.fill, highlightedFill = _f === void 0 ? deprecatedFill : _f, _g = _e.fillOpacity, highlightFillOpacity = _g === void 0 ? seriesFillOpacity : _g, _h = _e.stroke, highlightedStroke = _h === void 0 ? deprecatedStroke : _h, _j = _e.strokeWidth, highlightedDatumStrokeWidth = _j === void 0 ? deprecatedStrokeWidth : _j, seriesId = _c.id;
-                _k = __read$j((_b = (_a = this.xAxis) === null || _a === void 0 ? void 0 : _a.visibleRange, (_b !== null && _b !== void 0 ? _b : [])), 2), visibleMin = _k[0], visibleMax = _k[1];
+                _k = __read$i((_b = (_a = this.xAxis) === null || _a === void 0 ? void 0 : _a.visibleRange, (_b !== null && _b !== void 0 ? _b : [])), 2), visibleMin = _k[0], visibleMax = _k[1];
                 isZoomed = visibleMin !== 0 || visibleMax !== 1;
                 crisp = !isZoomed;
                 datumSelection.each(function (rect, datum) {
@@ -19737,7 +20132,7 @@ var __generator$5 = (undefined && undefined.__generator) || function (thisArg, b
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __values$9 = (undefined && undefined.__values) || function(o) {
+var __values$8 = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -19748,7 +20143,7 @@ var __values$9 = (undefined && undefined.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read$i = (undefined && undefined.__read) || function (o, n) {
+var __read$h = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -19875,7 +20270,7 @@ var LineSeries = /** @class */ (function (_super) {
                 yData = [];
                 pointsData.splice(0);
                 try {
-                    for (data_1 = __values$9(data), data_1_1 = data_1.next(); !data_1_1.done; data_1_1 = data_1.next()) {
+                    for (data_1 = __values$8(data), data_1_1 = data_1.next(); !data_1_1.done; data_1_1 = data_1.next()) {
                         datum = data_1_1.value;
                         x = datum[xKey];
                         y = datum[yKey];
@@ -19999,14 +20394,14 @@ var LineSeries = /** @class */ (function (_super) {
             var nodeData, _a, lineNode, linePath, nodeData_1, nodeData_1_1, data;
             var e_2, _b;
             return __generator$5(this, function (_c) {
-                nodeData = opts.contextData.nodeData, _a = __read$i(opts.paths, 1), lineNode = _a[0];
+                nodeData = opts.contextData.nodeData, _a = __read$h(opts.paths, 1), lineNode = _a[0];
                 linePath = lineNode.path;
                 lineNode.fill = undefined;
                 lineNode.lineJoin = 'round';
                 lineNode.pointerEvents = PointerEvents.None;
                 linePath.clear({ trackChanges: true });
                 try {
-                    for (nodeData_1 = __values$9(nodeData), nodeData_1_1 = nodeData_1.next(); !nodeData_1_1.done; nodeData_1_1 = nodeData_1.next()) {
+                    for (nodeData_1 = __values$8(nodeData), nodeData_1_1 = nodeData_1.next(); !nodeData_1_1.done; nodeData_1_1 = nodeData_1.next()) {
                         data = nodeData_1_1.value;
                         if (data.point.moveTo) {
                             linePath.moveTo(data.point.x, data.point.y);
@@ -20032,7 +20427,7 @@ var LineSeries = /** @class */ (function (_super) {
         return __awaiter$5(this, void 0, void 0, function () {
             var _a, lineNode;
             return __generator$5(this, function (_b) {
-                _a = __read$i(opts.paths, 1), lineNode = _a[0];
+                _a = __read$h(opts.paths, 1), lineNode = _a[0];
                 lineNode.stroke = this.stroke;
                 lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
                 lineNode.strokeOpacity = this.strokeOpacity;
@@ -20290,8 +20685,8 @@ var __extends$18 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$n = (undefined && undefined.__assign) || function () {
-    __assign$n = Object.assign || function(t) {
+var __assign$m = (undefined && undefined.__assign) || function () {
+    __assign$m = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -20299,7 +20694,7 @@ var __assign$n = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$n.apply(this, arguments);
+    return __assign$m.apply(this, arguments);
 };
 var __decorate$A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -20539,7 +20934,7 @@ var ScatterSeries = /** @class */ (function (_super) {
                         itemId: yKey,
                         datum: validData[i],
                         point: { x: x, y: y, size: markerSize },
-                        label: __assign$n({ text: text }, size),
+                        label: __assign$m({ text: text }, size),
                     };
                 }
                 nodeData.length = actualLength;
@@ -20633,7 +21028,7 @@ var ScatterSeries = /** @class */ (function (_super) {
                 labelSelection = opts.labelSelection;
                 enabled = this.label.enabled;
                 placedLabels = enabled ? (_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.placeLabels().get(this), (_b !== null && _b !== void 0 ? _b : [])) : [];
-                placedNodeDatum = placedLabels.map(function (v) { return (__assign$n(__assign$n({}, v.datum), { point: {
+                placedNodeDatum = placedLabels.map(function (v) { return (__assign$m(__assign$m({}, v.datum), { point: {
                         x: v.x,
                         y: v.y,
                         size: v.datum.point.size,
@@ -20863,7 +21258,7 @@ var __generator$3 = (undefined && undefined.__generator) || function (thisArg, b
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read$h = (undefined && undefined.__read) || function (o, n) {
+var __read$g = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -20879,8 +21274,8 @@ var __read$h = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$9 = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$h(arguments[i]));
+var __spread$8 = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$g(arguments[i]));
     return ar;
 };
 var HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
@@ -20910,7 +21305,7 @@ var aggregationFunctions = {
 };
 var HistogramBin = /** @class */ (function () {
     function HistogramBin(_a) {
-        var _b = __read$h(_a, 2), domainMin = _b[0], domainMax = _b[1];
+        var _b = __read$g(_a, 2), domainMin = _b[0], domainMax = _b[1];
         this.data = [];
         this.aggregatedValue = 0;
         this.frequency = 0;
@@ -20922,7 +21317,7 @@ var HistogramBin = /** @class */ (function () {
     };
     Object.defineProperty(HistogramBin.prototype, "domainWidth", {
         get: function () {
-            var _a = __read$h(this.domain, 2), domainMin = _a[0], domainMax = _a[1];
+            var _a = __read$g(this.domain, 2), domainMin = _a[0], domainMax = _a[1];
             return domainMax - domainMin;
         },
         enumerable: true,
@@ -21003,7 +21398,7 @@ var HistogramSeries = /** @class */ (function (_super) {
                 var value = _this[key];
                 if (value) {
                     if (Array.isArray(value)) {
-                        values.push.apply(values, __spread$9(value));
+                        values.push.apply(values, __spread$8(value));
                     }
                     else {
                         values.push(value);
@@ -21035,7 +21430,7 @@ var HistogramSeries = /** @class */ (function (_super) {
             var binSize_1 = tickStep(xDomain[0], xDomain[1], defaultBinCount);
             var firstBinEnd = binStarts[0];
             var expandStartToBin = function (n) { return [n, n + binSize_1]; };
-            return __spread$9([[firstBinEnd - binSize_1, firstBinEnd]], binStarts.map(expandStartToBin));
+            return __spread$8([[firstBinEnd - binSize_1, firstBinEnd]], binStarts.map(expandStartToBin));
         }
         else {
             return this.calculateNiceBins(xDomain, this.binCount);
@@ -21160,7 +21555,7 @@ var HistogramSeries = /** @class */ (function (_super) {
                 defaultLabelFormatter = function (params) { return String(params.value); };
                 _c = this.label, _d = _c.formatter, labelFormatter = _d === void 0 ? defaultLabelFormatter : _d, labelFontStyle = _c.fontStyle, labelFontWeight = _c.fontWeight, labelFontSize = _c.fontSize, labelFontFamily = _c.fontFamily, labelColor = _c.color;
                 this.binnedData.forEach(function (binOfData) {
-                    var total = binOfData.aggregatedValue, frequency = binOfData.frequency, _a = __read$h(binOfData.domain, 2), xDomainMin = _a[0], xDomainMax = _a[1], relativeHeight = binOfData.relativeHeight;
+                    var total = binOfData.aggregatedValue, frequency = binOfData.frequency, _a = __read$g(binOfData.domain, 2), xDomainMin = _a[0], xDomainMax = _a[1], relativeHeight = binOfData.relativeHeight;
                     var xMinPx = xScale.convert(xDomainMin), xMaxPx = xScale.convert(xDomainMax), 
                     // note: assuming can't be negative:
                     y = _this.areaPlot ? relativeHeight : _this.yKey ? total : frequency, yZeroPx = yScale.convert(0), yMaxPx = yScale.convert(y), w = xMaxPx - xMinPx, h = Math.abs(yMaxPx - yZeroPx);
@@ -21292,7 +21687,7 @@ var HistogramSeries = /** @class */ (function (_super) {
         var _b = this, xName = _b.xName, yName = _b.yName, color = _b.fill, tooltip = _b.tooltip, aggregation = _b.aggregation, seriesId = _b.id;
         var tooltipRenderer = tooltip.renderer;
         var bin = nodeDatum.datum;
-        var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _c = __read$h(bin.domain, 2), rangeMin = _c[0], rangeMax = _c[1];
+        var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _c = __read$g(bin.domain, 2), rangeMin = _c[0], rangeMax = _c[1];
         var title = sanitizeHtml(xName || xKey) + ": " + xAxis.formatDatum(rangeMin) + " - " + xAxis.formatDatum(rangeMax);
         var content = yKey
             ? "<b>" + sanitizeHtml(yName || yKey) + " (" + aggregation + ")</b>: " + yAxis.formatDatum(aggregatedValue) + "<br>"
@@ -21662,7 +22057,7 @@ var Treemap = /** @class */ (function () {
     return Treemap;
 }());
 
-var __values$8 = (undefined && undefined.__values) || function(o) {
+var __values$7 = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -21673,7 +22068,7 @@ var __values$8 = (undefined && undefined.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read$g = (undefined && undefined.__read) || function (o, n) {
+var __read$f = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -21689,8 +22084,8 @@ var __read$g = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$8 = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$g(arguments[i]));
+var __spread$7 = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$f(arguments[i]));
     return ar;
 };
 var HierarchyNode = /** @class */ (function () {
@@ -21858,7 +22253,7 @@ var HierarchyNode = /** @class */ (function () {
             return false;
         }
         try {
-            for (var children_1 = __values$8(children), children_1_1 = children_1.next(); !children_1_1.done; children_1_1 = children_1.next()) {
+            for (var children_1 = __values$7(children), children_1_1 = children_1.next(); !children_1_1.done; children_1_1 = children_1.next()) {
                 var child = children_1_1.value;
                 if (child.iterator(callback) === false) {
                     return false;
@@ -21900,7 +22295,7 @@ function hierarchy(data, children) {
             child.depth = node.depth + 1;
         });
         node.children = newNodes;
-        nodes.push.apply(nodes, __spread$8(newNodes));
+        nodes.push.apply(nodes, __spread$7(newNodes));
     };
     while (nodes.length > 0) {
         _loop_1();
@@ -21995,7 +22390,7 @@ var __generator$2 = (undefined && undefined.__generator) || function (thisArg, b
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __values$7 = (undefined && undefined.__values) || function(o) {
+var __values$6 = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -22409,7 +22804,7 @@ var TreemapSeries = /** @class */ (function (_super) {
         var text = new Text();
         var index = 0;
         try {
-            for (var data_1 = __values$7(data), data_1_1 = data_1.next(); !data_1_1.done; data_1_1 = data_1.next()) {
+            for (var data_1 = __values$6(data), data_1_1 = data_1.next(); !data_1_1.done; data_1_1 = data_1.next()) {
                 var datum = data_1_1.value;
                 var value = datum.value;
                 var isLeaf = !datum.children;
@@ -22663,8 +23058,8 @@ var __extends$12 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$m = (undefined && undefined.__assign) || function () {
-    __assign$m = Object.assign || function(t) {
+var __assign$l = (undefined && undefined.__assign) || function () {
+    __assign$l = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -22672,7 +23067,7 @@ var __assign$m = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$m.apply(this, arguments);
+    return __assign$l.apply(this, arguments);
 };
 var __decorate$v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -22716,7 +23111,7 @@ var __generator$1 = (undefined && undefined.__generator) || function (thisArg, b
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read$f = (undefined && undefined.__read) || function (o, n) {
+var __read$e = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -22732,8 +23127,8 @@ var __read$f = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread$7 = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$f(arguments[i]));
+var __spread$6 = (undefined && undefined.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$e(arguments[i]));
     return ar;
 };
 var PieSeriesNodeClickEvent = /** @class */ (function (_super) {
@@ -23109,7 +23504,7 @@ var PieSeries = /** @class */ (function (_super) {
                         };
                         labelData = data.map(function (datum) {
                             var deprecatedValue = datum[labelKey];
-                            var formatterParams = __assign$m(__assign$m({}, getLabelFormatterParams(datum)), { get value() {
+                            var formatterParams = __assign$l(__assign$l({}, getLabelFormatterParams(datum)), { get value() {
                                     showValueDeprecationWarning_1();
                                     return deprecatedValue;
                                 },
@@ -23140,7 +23535,7 @@ var PieSeries = /** @class */ (function (_super) {
                     _b = this, radiusMin = _b.radiusMin, radiusMax = _b.radiusMax;
                     radii = data.map(function (datum) { return Math.abs(datum[radiusKey]); });
                     min_1 = (radiusMin !== null && radiusMin !== void 0 ? radiusMin : 0);
-                    max = radiusMax ? radiusMax : Math.max.apply(Math, __spread$7(radii));
+                    max = radiusMax ? radiusMax : Math.max.apply(Math, __spread$6(radii));
                     delta_1 = max - min_1;
                     radiusData = radii.map(function (value) { return (delta_1 ? (value - min_1) / delta_1 : 1); });
                 }
@@ -23500,7 +23895,7 @@ var PieSeries = /** @class */ (function (_super) {
                     var startAngle = datum.startAngle, endAngle = datum.endAngle;
                     var sectorBounds_1 = { startAngle: startAngle, endAngle: endAngle, innerRadius: innerRadius, outerRadius: outerRadius };
                     if (corners.every(function (_a) {
-                        var _b = __read$f(_a, 2), x = _b[0], y = _b[1];
+                        var _b = __read$e(_a, 2), x = _b[0], y = _b[1];
                         return isPointInArc(x, y, sectorBounds_1);
                     })) {
                         isTextVisible = true;
@@ -23548,7 +23943,7 @@ var PieSeries = /** @class */ (function (_super) {
         var totalHeight = textBBoxes.reduce(function (sum, bbox, i) {
             return sum + bbox.height + getMarginTop(i) + getMarginBottom(i);
         }, 0);
-        var totalWidth = Math.max.apply(Math, __spread$7(textBBoxes.map(function (bbox) { return bbox.width; })));
+        var totalWidth = Math.max.apply(Math, __spread$6(textBBoxes.map(function (bbox) { return bbox.width; })));
         var innerRadius = this.getInnerRadius();
         var labelRadius = Math.sqrt(Math.pow(totalWidth / 2, 2) + Math.pow(totalHeight / 2, 2));
         var labelsVisible = labelRadius <= (innerRadius > 0 ? innerRadius : this.getOuterRadius());
@@ -23772,8 +24167,8 @@ function field(date) {
 }
 var utcMonth = new CountableTimeInterval(floor, offset, count, field);
 
-var __assign$l = (undefined && undefined.__assign) || function () {
-    __assign$l = Object.assign || function(t) {
+var __assign$k = (undefined && undefined.__assign) || function () {
+    __assign$k = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -23781,9 +24176,9 @@ var __assign$l = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$l.apply(this, arguments);
+    return __assign$k.apply(this, arguments);
 };
-var __read$e = (undefined && undefined.__read) || function (o, n) {
+var __read$d = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -23931,7 +24326,7 @@ var ChartTheme = /** @class */ (function () {
         };
     };
     ChartTheme.getBarSeriesDefaults = function () {
-        return __assign$l(__assign$l({}, this.getSeriesDefaults()), { flipXY: false, fillOpacity: 1, strokeOpacity: 1, xKey: '', xName: '', normalizedTo: undefined, strokeWidth: 1, lineDash: [0], lineDashOffset: 0, label: {
+        return __assign$k(__assign$k({}, this.getSeriesDefaults()), { flipXY: false, fillOpacity: 1, strokeOpacity: 1, xKey: '', xName: '', normalizedTo: undefined, strokeWidth: 1, lineDash: [0], lineDashOffset: 0, label: {
                 enabled: false,
                 fontStyle: undefined,
                 fontWeight: undefined,
@@ -23950,7 +24345,7 @@ var ChartTheme = /** @class */ (function () {
     };
     ChartTheme.getLineSeriesDefaults = function () {
         var seriesDefaults = this.getSeriesDefaults();
-        return __assign$l(__assign$l({}, seriesDefaults), { tooltip: __assign$l(__assign$l({}, seriesDefaults.tooltip), { format: undefined }) });
+        return __assign$k(__assign$k({}, seriesDefaults), { tooltip: __assign$k(__assign$k({}, seriesDefaults.tooltip), { format: undefined }) });
     };
     ChartTheme.getCartesianSeriesMarkerDefaults = function () {
         return {
@@ -24032,7 +24427,7 @@ var ChartTheme = /** @class */ (function () {
             groupedCategory: [],
         };
         Object.entries(typeToAliases).forEach(function (_a) {
-            var _b = __read$e(_a, 2), type = _b[0], aliases = _b[1];
+            var _b = __read$d(_a, 2), type = _b[0], aliases = _b[1];
             aliases.forEach(function (alias) {
                 if (!config[alias]) {
                     config[alias] = deepMerge$1({}, config[type], mergeOptions);
@@ -24067,16 +24462,16 @@ var ChartTheme = /** @class */ (function () {
         return deepMerge$1(parentDefaults, defaults, mergeOptions);
     };
     ChartTheme.fontFamily = 'Verdana, sans-serif';
-    ChartTheme.cartesianDefaults = __assign$l(__assign$l({}, ChartTheme.getChartDefaults()), { axes: {
-            number: __assign$l({}, ChartTheme.getAxisDefaults()),
-            log: __assign$l(__assign$l({}, ChartTheme.getAxisDefaults()), { base: 10 }),
-            category: __assign$l(__assign$l({}, ChartTheme.getAxisDefaults()), { groupPaddingInner: 0.1, label: __assign$l(__assign$l({}, ChartTheme.getAxisDefaults().label), { autoRotate: true }) }),
-            groupedCategory: __assign$l({}, ChartTheme.getAxisDefaults()),
-            time: __assign$l({}, ChartTheme.getAxisDefaults()),
+    ChartTheme.cartesianDefaults = __assign$k(__assign$k({}, ChartTheme.getChartDefaults()), { axes: {
+            number: __assign$k({}, ChartTheme.getAxisDefaults()),
+            log: __assign$k(__assign$k({}, ChartTheme.getAxisDefaults()), { base: 10 }),
+            category: __assign$k(__assign$k({}, ChartTheme.getAxisDefaults()), { groupPaddingInner: 0.1, label: __assign$k(__assign$k({}, ChartTheme.getAxisDefaults().label), { autoRotate: true }) }),
+            groupedCategory: __assign$k({}, ChartTheme.getAxisDefaults()),
+            time: __assign$k({}, ChartTheme.getAxisDefaults()),
         }, series: {
-            column: __assign$l(__assign$l({}, ChartTheme.getBarSeriesDefaults()), { flipXY: false }),
-            bar: __assign$l(__assign$l({}, ChartTheme.getBarSeriesDefaults()), { flipXY: true }),
-            line: __assign$l(__assign$l({}, ChartTheme.getLineSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, marker: __assign$l(__assign$l({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1 }), label: {
+            column: __assign$k(__assign$k({}, ChartTheme.getBarSeriesDefaults()), { flipXY: false }),
+            bar: __assign$k(__assign$k({}, ChartTheme.getBarSeriesDefaults()), { flipXY: true }),
+            line: __assign$k(__assign$k({}, ChartTheme.getLineSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, marker: __assign$k(__assign$k({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1 }), label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -24085,7 +24480,7 @@ var ChartTheme = /** @class */ (function () {
                     color: 'rgb(70, 70, 70)',
                     formatter: undefined,
                 } }),
-            scatter: __assign$l(__assign$l({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, marker: __assign$l({}, ChartTheme.getCartesianSeriesMarkerDefaults()), label: {
+            scatter: __assign$k(__assign$k({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, marker: __assign$k({}, ChartTheme.getCartesianSeriesMarkerDefaults()), label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -24093,13 +24488,13 @@ var ChartTheme = /** @class */ (function () {
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
                 } }),
-            area: __assign$l(__assign$l({}, ChartTheme.getSeriesDefaults()), { xKey: '', xName: '', normalizedTo: undefined, fillOpacity: 0.8, strokeOpacity: 1, strokeWidth: 2, lineDash: [0], lineDashOffset: 0, shadow: {
+            area: __assign$k(__assign$k({}, ChartTheme.getSeriesDefaults()), { xKey: '', xName: '', normalizedTo: undefined, fillOpacity: 0.8, strokeOpacity: 1, strokeWidth: 2, lineDash: [0], lineDashOffset: 0, shadow: {
                     enabled: false,
                     color: 'rgba(0, 0, 0, 0.5)',
                     xOffset: 3,
                     yOffset: 3,
                     blur: 5,
-                }, marker: __assign$l(__assign$l({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1, enabled: false }), label: {
+                }, marker: __assign$k(__assign$k({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1, enabled: false }), label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -24108,7 +24503,7 @@ var ChartTheme = /** @class */ (function () {
                     color: 'rgb(70, 70, 70)',
                     formatter: undefined,
                 } }),
-            histogram: __assign$l(__assign$l({}, ChartTheme.getSeriesDefaults()), { xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, areaPlot: false, bins: undefined, aggregation: 'sum', label: {
+            histogram: __assign$k(__assign$k({}, ChartTheme.getSeriesDefaults()), { xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, areaPlot: false, bins: undefined, aggregation: 'sum', label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -24151,8 +24546,8 @@ var ChartTheme = /** @class */ (function () {
                 gripLineLength: 8,
             },
         } });
-    ChartTheme.polarDefaults = __assign$l(__assign$l({}, ChartTheme.getChartDefaults()), { series: {
-            pie: __assign$l(__assign$l({}, ChartTheme.getSeriesDefaults()), { title: {
+    ChartTheme.polarDefaults = __assign$k(__assign$k({}, ChartTheme.getChartDefaults()), { series: {
+            pie: __assign$k(__assign$k({}, ChartTheme.getSeriesDefaults()), { title: {
                     enabled: true,
                     text: '',
                     fontStyle: undefined,
@@ -24196,8 +24591,8 @@ var ChartTheme = /** @class */ (function () {
                     margin: 2,
                 } }),
         } });
-    ChartTheme.hierarchyDefaults = __assign$l(__assign$l({}, ChartTheme.getChartDefaults()), { series: {
-            treemap: __assign$l(__assign$l({}, ChartTheme.getSeriesDefaults()), { showInLegend: false, labelKey: 'label', sizeKey: 'size', colorKey: 'color', colorDomain: [-5, 5], colorRange: ['#cb4b3f', '#6acb64'], colorParents: false, gradient: true, nodePadding: 2, title: {
+    ChartTheme.hierarchyDefaults = __assign$k(__assign$k({}, ChartTheme.getChartDefaults()), { series: {
+            treemap: __assign$k(__assign$k({}, ChartTheme.getSeriesDefaults()), { showInLegend: false, labelKey: 'label', sizeKey: 'size', colorKey: 'color', colorDomain: [-5, 5], colorRange: ['#cb4b3f', '#6acb64'], colorParents: false, gradient: true, nodePadding: 2, title: {
                     enabled: true,
                     color: 'white',
                     fontStyle: undefined,
@@ -24283,8 +24678,8 @@ var __extends$11 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$k = (undefined && undefined.__assign) || function () {
-    __assign$k = Object.assign || function(t) {
+var __assign$j = (undefined && undefined.__assign) || function () {
+    __assign$j = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -24292,7 +24687,7 @@ var __assign$k = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$k.apply(this, arguments);
+    return __assign$j.apply(this, arguments);
 };
 var DarkTheme = /** @class */ (function (_super) {
     __extends$11(DarkTheme, _super);
@@ -24323,9 +24718,9 @@ var DarkTheme = /** @class */ (function (_super) {
         };
         var chartAxesDefaults = {
             axes: {
-                number: __assign$k({}, axisDefaults),
-                category: __assign$k({}, axisDefaults),
-                time: __assign$k({}, axisDefaults),
+                number: __assign$j({}, axisDefaults),
+                category: __assign$j({}, axisDefaults),
+                time: __assign$j({}, axisDefaults),
             },
         };
         var chartDefaults = {
@@ -24347,17 +24742,17 @@ var DarkTheme = /** @class */ (function (_super) {
             },
         };
         return this.mergeWithParentDefaults(_super.prototype.getDefaults.call(this), {
-            cartesian: __assign$k(__assign$k(__assign$k({}, chartDefaults), chartAxesDefaults), { series: {
-                    bar: __assign$k({}, seriesLabelDefaults),
-                    column: __assign$k({}, seriesLabelDefaults),
-                    histogram: __assign$k({}, seriesLabelDefaults),
+            cartesian: __assign$j(__assign$j(__assign$j({}, chartDefaults), chartAxesDefaults), { series: {
+                    bar: __assign$j({}, seriesLabelDefaults),
+                    column: __assign$j({}, seriesLabelDefaults),
+                    histogram: __assign$j({}, seriesLabelDefaults),
                 } }),
-            groupedCategory: __assign$k(__assign$k(__assign$k({}, chartDefaults), chartAxesDefaults), { series: {
-                    bar: __assign$k({}, seriesLabelDefaults),
-                    column: __assign$k({}, seriesLabelDefaults),
-                    histogram: __assign$k({}, seriesLabelDefaults),
+            groupedCategory: __assign$j(__assign$j(__assign$j({}, chartDefaults), chartAxesDefaults), { series: {
+                    bar: __assign$j({}, seriesLabelDefaults),
+                    column: __assign$j({}, seriesLabelDefaults),
+                    histogram: __assign$j({}, seriesLabelDefaults),
                 } }),
-            polar: __assign$k(__assign$k({}, chartDefaults), { series: {
+            polar: __assign$j(__assign$j({}, chartDefaults), { series: {
                     pie: {
                         calloutLabel: {
                             color: fontColor,
@@ -24373,7 +24768,7 @@ var DarkTheme = /** @class */ (function (_super) {
                         },
                     },
                 } }),
-            hierarchy: __assign$k(__assign$k({}, chartDefaults), { series: {
+            hierarchy: __assign$j(__assign$j({}, chartDefaults), { series: {
                     treemap: {
                         title: {
                             color: fontColor,
@@ -24738,8 +25133,8 @@ var VividDark = /** @class */ (function (_super) {
     return VividDark;
 }(DarkTheme));
 
-var __assign$j = (undefined && undefined.__assign) || function () {
-    __assign$j = Object.assign || function(t) {
+var __assign$i = (undefined && undefined.__assign) || function () {
+    __assign$i = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -24747,7 +25142,7 @@ var __assign$j = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$j.apply(this, arguments);
+    return __assign$i.apply(this, arguments);
 };
 var lightTheme = new ChartTheme();
 var darkTheme = new DarkTheme();
@@ -24769,7 +25164,7 @@ var darkThemes = {
     'ag-solar-dark': new SolarDark(),
     'ag-vivid-dark': new VividDark(),
 };
-var themes = __assign$j(__assign$j({}, darkThemes), lightThemes);
+var themes = __assign$i(__assign$i({}, darkThemes), lightThemes);
 function getChartTheme(value) {
     if (value instanceof ChartTheme) {
         return value;
@@ -24816,7 +25211,7 @@ var __decorate$u = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$d = (undefined && undefined.__read) || function (o, n) {
+var __read$c = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -24932,8 +25327,8 @@ var LogScale = /** @class */ (function (_super) {
         var x0 = domain[i0];
         var x1 = domain[i1];
         if (x1 < x0) {
-            _a = __read$d([i1, i0], 2), i0 = _a[0], i1 = _a[1];
-            _b = __read$d([x1, x0], 2), x0 = _b[0], x1 = _b[1];
+            _a = __read$c([i1, i0], 2), i0 = _a[0], i1 = _a[1];
+            _b = __read$c([x1, x0], 2), x0 = _b[0], x1 = _b[1];
         }
         // For example, for base == 10:
         // [ 50, 900] becomes [ 10, 1000 ]
@@ -24981,7 +25376,7 @@ var LogScale = /** @class */ (function (_super) {
         var d1 = domain[domain.length - 1];
         var isReversed = d1 < d0;
         if (isReversed) {
-            _a = __read$d([d1, d0], 2), d0 = _a[0], d1 = _a[1];
+            _a = __read$c([d1, d0], 2), d0 = _a[0], d1 = _a[1];
         }
         var p0 = this.baseLog(d0);
         var p1 = this.baseLog(d1);
@@ -25094,384 +25489,6 @@ var LogAxis = /** @class */ (function (_super) {
     LogAxis.type = 'log';
     return LogAxis;
 }(NumberAxis));
-
-var __assign$i = (undefined && undefined.__assign) || function () {
-    __assign$i = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign$i.apply(this, arguments);
-};
-var __read$c = (undefined && undefined.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread$6 = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$c(arguments[i]));
-    return ar;
-};
-var __values$6 = (undefined && undefined.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
-/**
- * Performs a JSON-diff between a source and target JSON structure.
- *
- * On a per property basis, takes the target property value where:
- * - types are different.
- * - type is primitive.
- * - type is array and length or content have changed.
- *
- * Recurses for object types.
- *
- * @param source starting point for diff
- * @param target target for diff vs. source
- *
- * @returns `null` if no differences, or an object with the subset of properties that have changed.
- */
-function jsonDiff(source, target) {
-    var e_1, _a;
-    var sourceType = classify(source);
-    var targetType = classify(target);
-    if (targetType === 'array') {
-        if (sourceType !== 'array' || source.length !== target.length) {
-            return __spread$6(target);
-        }
-        if (target.some(function (targetElement, i) { var _a; return jsonDiff((_a = source) === null || _a === void 0 ? void 0 : _a[i], targetElement) != null; })) {
-            return __spread$6(target);
-        }
-        return null;
-    }
-    if (targetType === 'primitive') {
-        if (sourceType !== 'primitive') {
-            return __assign$i({}, target);
-        }
-        if (source !== target) {
-            return target;
-        }
-        return null;
-    }
-    var lhs = source || {};
-    var rhs = target || {};
-    var allProps = new Set(__spread$6(Object.keys(lhs), Object.keys(rhs)));
-    var propsChangedCount = 0;
-    var result = {};
-    var _loop_1 = function (prop) {
-        // Cheap-and-easy equality check.
-        if (lhs[prop] === rhs[prop]) {
-            return "continue";
-        }
-        var take = function (v) {
-            result[prop] = v;
-            propsChangedCount++;
-        };
-        var lhsType = classify(lhs[prop]);
-        var rhsType = classify(rhs[prop]);
-        if (lhsType !== rhsType) {
-            // Types changed, just take RHS.
-            take(rhs[prop]);
-            return "continue";
-        }
-        if (rhsType === 'primitive' || rhsType === null) {
-            take(rhs[prop]);
-            return "continue";
-        }
-        if (rhsType === 'array' && lhs[prop].length !== rhs[prop].length) {
-            // Arrays are different sizes, so just take target array.
-            take(rhs[prop]);
-            return "continue";
-        }
-        if (rhsType === 'class-instance') {
-            // Don't try to do anything tricky with array diffs!
-            take(rhs[prop]);
-            return "continue";
-        }
-        if (rhsType === 'function' && lhs[prop] !== rhs[prop]) {
-            take(rhs[prop]);
-            return "continue";
-        }
-        var diff = jsonDiff(lhs[prop], rhs[prop]);
-        if (diff !== null) {
-            take(diff);
-        }
-    };
-    try {
-        for (var allProps_1 = __values$6(allProps), allProps_1_1 = allProps_1.next(); !allProps_1_1.done; allProps_1_1 = allProps_1.next()) {
-            var prop = allProps_1_1.value;
-            _loop_1(prop);
-        }
-    }
-    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-    finally {
-        try {
-            if (allProps_1_1 && !allProps_1_1.done && (_a = allProps_1.return)) _a.call(allProps_1);
-        }
-        finally { if (e_1) throw e_1.error; }
-    }
-    return propsChangedCount === 0 ? null : result;
-}
-/**
- * Special value used by `jsonMerge` to signal that a property should be removed from the merged
- * output.
- */
-var DELETE = Symbol('<delete-property>');
-var NOT_SPECIFIED = Symbol('<unspecified-property>');
-/**
- * Merge together the provide JSON object structures, with the precedence of application running
- * from higher indexes to lower indexes.
- *
- * Deep-clones all objects to avoid mutation of the inputs changing the output object. For arrays,
- * just performs a deep-clone of the entire array, no merging of elements attempted.
- *
- * @param json all json objects to merge
- * @param opts merge options
- * @param opts.avoidDeepClone contains a list of properties where deep clones should be avoided
- *
- * @returns the combination of all of the json inputs
- */
-function jsonMerge(json, opts) {
-    var e_2, _a;
-    var _b;
-    var avoidDeepClone = ((_b = opts) === null || _b === void 0 ? void 0 : _b.avoidDeepClone) || [];
-    var jsonTypes = json.map(function (v) { return classify(v); });
-    if (jsonTypes.some(function (v) { return v === 'array'; })) {
-        // Clone final array.
-        var finalValue = json[json.length - 1];
-        if (finalValue instanceof Array) {
-            return finalValue.map(function (v) {
-                var type = classify(v);
-                return type === 'array' ? jsonMerge([[], v], opts) : type === 'object' ? jsonMerge([{}, v], opts) : v;
-            });
-        }
-        return finalValue;
-    }
-    var result = {};
-    var props = new Set(json.map(function (v) { return (v != null ? Object.keys(v) : []); }).reduce(function (r, n) { return r.concat(n); }, []));
-    var _loop_2 = function (nextProp) {
-        var values = json
-            .map(function (j) { return (j != null && nextProp in j ? j[nextProp] : NOT_SPECIFIED); })
-            .filter(function (v) { return v !== NOT_SPECIFIED; });
-        if (values.length === 0) {
-            return "continue";
-        }
-        var lastValue = values[values.length - 1];
-        if (lastValue === DELETE) {
-            return "continue";
-        }
-        var types = values.map(function (v) { return classify(v); });
-        var type = types[0];
-        if (types.some(function (t) { return t !== type && t !== null; })) {
-            // Short-circuit if mismatching types.
-            result[nextProp] = lastValue;
-            return "continue";
-        }
-        if ((type === 'array' || type === 'object') && !avoidDeepClone.includes(nextProp)) {
-            result[nextProp] = jsonMerge(values, opts);
-        }
-        else {
-            // Just directly assign/overwrite.
-            result[nextProp] = lastValue;
-        }
-    };
-    try {
-        for (var props_1 = __values$6(props), props_1_1 = props_1.next(); !props_1_1.done; props_1_1 = props_1.next()) {
-            var nextProp = props_1_1.value;
-            _loop_2(nextProp);
-        }
-    }
-    catch (e_2_1) { e_2 = { error: e_2_1 }; }
-    finally {
-        try {
-            if (props_1_1 && !props_1_1.done && (_a = props_1.return)) _a.call(props_1);
-        }
-        finally { if (e_2) throw e_2.error; }
-    }
-    return result;
-}
-/**
- * Recursively apply a JSON object into a class-hierarchy, optionally instantiating certain classes
- * by property name.
- *
- * @param target to apply source JSON properties into
- * @param source to be applied
- * @param params.path path for logging/error purposes, to aid with pinpointing problems
- * @param params.matcherPath path for pattern matching, to lookup allowedTypes override.
- * @param params.skip property names to skip from the source
- * @param params.constructors dictionary of property name to class constructors for properties that
- *                            require object construction
- * @param params.allowedTypes overrides by path for allowed property types
- */
-function jsonApply(target, source, params) {
-    if (params === void 0) { params = {}; }
-    var _a, _b, _c, _d;
-    var _e = params.path, path = _e === void 0 ? undefined : _e, _f = params.matcherPath, matcherPath = _f === void 0 ? path ? path.replace(/(\[[0-9+]+\])/i, '[]') : undefined : _f, _g = params.skip, skip = _g === void 0 ? [] : _g, _h = params.constructors, constructors = _h === void 0 ? {} : _h, _j = params.allowedTypes, allowedTypes = _j === void 0 ? {} : _j;
-    if (target == null) {
-        throw new Error("AG Charts - target is uninitialised: " + (path || '<root>'));
-    }
-    if (source == null) {
-        return target;
-    }
-    var targetType = classify(target);
-    var _loop_3 = function (property) {
-        var propertyMatcherPath = "" + (matcherPath ? matcherPath + '.' : '') + property;
-        if (skip.indexOf(propertyMatcherPath) >= 0) {
-            return "continue";
-        }
-        var newValue = source[property];
-        var propertyPath = "" + (path ? path + '.' : '') + property;
-        var targetAny = target;
-        var targetClass = targetAny.constructor;
-        var currentValue = targetAny[property];
-        var ctr = (_a = constructors[property], (_a !== null && _a !== void 0 ? _a : constructors[propertyMatcherPath]));
-        try {
-            var currentValueType = classify(currentValue);
-            var newValueType = classify(newValue);
-            if (targetType === 'class-instance' && !(property in target || targetAny.hasOwnProperty(property))) {
-                console.warn("AG Charts - unable to set [" + propertyPath + "] in " + ((_b = targetClass) === null || _b === void 0 ? void 0 : _b.name) + " - property is unknown");
-                return "continue";
-            }
-            var allowableTypes = allowedTypes[propertyMatcherPath] || [currentValueType];
-            if (currentValueType === 'class-instance' && newValueType === 'object') {
-                // Allowed, this is the common case! - do not error.
-            }
-            else if (currentValueType != null && newValueType != null && !allowableTypes.includes(newValueType)) {
-                console.warn("AG Charts - unable to set [" + propertyPath + "] in " + ((_c = targetClass) === null || _c === void 0 ? void 0 : _c.name) + " - can't apply type of [" + newValueType + "], allowed types are: [" + allowableTypes + "]");
-                return "continue";
-            }
-            if (newValueType === 'array') {
-                ctr = (ctr !== null && ctr !== void 0 ? ctr : constructors[propertyMatcherPath + "[]"]);
-                if (ctr != null) {
-                    var newValueArray = newValue;
-                    targetAny[property] = newValueArray.map(function (v) {
-                        return jsonApply(new ctr(), v, __assign$i(__assign$i({}, params), { path: propertyPath, matcherPath: propertyMatcherPath + '[]' }));
-                    });
-                }
-                else {
-                    targetAny[property] = newValue;
-                }
-            }
-            else if (newValueType === 'class-instance') {
-                targetAny[property] = newValue;
-            }
-            else if (newValueType === 'object') {
-                if (currentValue != null) {
-                    jsonApply(currentValue, newValue, __assign$i(__assign$i({}, params), { path: propertyPath, matcherPath: propertyMatcherPath }));
-                }
-                else if (ctr != null) {
-                    targetAny[property] = jsonApply(new ctr(), newValue, __assign$i(__assign$i({}, params), { path: propertyPath, matcherPath: propertyMatcherPath }));
-                }
-                else {
-                    targetAny[property] = newValue;
-                }
-            }
-            else {
-                targetAny[property] = newValue;
-            }
-        }
-        catch (error) {
-            console.warn("AG Charts - unable to set [" + propertyPath + "] in [" + ((_d = targetClass) === null || _d === void 0 ? void 0 : _d.name) + "]; nested error is: " + error.message);
-            return "continue";
-        }
-    };
-    for (var property in source) {
-        _loop_3(property);
-    }
-    return target;
-}
-/**
- * Walk the given JSON object graphs, invoking the visit() callback for every object encountered.
- * Arrays are descended into without a callback, however their elements will have the visit()
- * callback invoked if they are objects.
- *
- * @param json to traverse
- * @param visit callback for each non-primitive and non-array object found
- * @param opts.skip property names to skip when walking
- * @param jsons to traverse in parallel
- */
-function jsonWalk(json, visit, opts) {
-    var jsons = [];
-    for (var _i = 3; _i < arguments.length; _i++) {
-        jsons[_i - 3] = arguments[_i];
-    }
-    var _a;
-    var jsonType = classify(json);
-    var skip = opts.skip || [];
-    if (jsonType === 'array') {
-        json.forEach(function (element, index) {
-            var _a;
-            jsonWalk.apply(void 0, __spread$6([element, visit, opts], (_a = jsons) === null || _a === void 0 ? void 0 : _a.map(function (o) { var _a; return (_a = o) === null || _a === void 0 ? void 0 : _a[index]; })));
-        });
-        return;
-    }
-    else if (jsonType !== 'object') {
-        return;
-    }
-    visit.apply(void 0, __spread$6([jsonType, json], jsons));
-    var _loop_4 = function (property) {
-        if (skip.indexOf(property) >= 0) {
-            return "continue";
-        }
-        var value = json[property];
-        var otherValues = (_a = jsons) === null || _a === void 0 ? void 0 : _a.map(function (o) { var _a; return (_a = o) === null || _a === void 0 ? void 0 : _a[property]; });
-        var valueType = classify(value);
-        if (valueType === 'object' || valueType === 'array') {
-            jsonWalk.apply(void 0, __spread$6([value, visit, opts], otherValues));
-        }
-    };
-    for (var property in json) {
-        _loop_4(property);
-    }
-}
-/**
- * Classify the type of a value to assist with handling for merge purposes.
- */
-function classify(value) {
-    if (value == null) {
-        return null;
-    }
-    else if (value instanceof HTMLElement) {
-        return 'primitive';
-    }
-    else if (value instanceof Array) {
-        return 'array';
-    }
-    else if (value instanceof Date) {
-        return 'primitive';
-    }
-    else if (typeof value === 'object' && value.constructor === Object) {
-        return 'object';
-    }
-    else if (typeof value === 'function') {
-        return 'function';
-    }
-    else if (typeof value === 'object' && value.constructor != null) {
-        return 'class-instance';
-    }
-    return 'primitive';
-}
 
 var DEFAULT_CARTESIAN_CHART_OVERRIDES = {
     type: 'cartesian',

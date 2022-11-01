@@ -335,7 +335,8 @@ export class Chart extends Observable {
                     splits.push(performance.now());
                 // Fall-through to next pipeline stage.
                 case ChartUpdateType.SERIES_UPDATE:
-                    const seriesUpdates = [...this.seriesToUpdate].map((series) => series.update());
+                    const { seriesRect } = this;
+                    const seriesUpdates = [...this.seriesToUpdate].map((series) => series.update({ seriesRect }));
                     this.seriesToUpdate.clear();
                     yield Promise.all(seriesUpdates);
                     splits.push(performance.now());
