@@ -550,7 +550,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     ticks,
                 });
 
-                if (!secondaryAxis) {
+                if (!secondaryAxis && ticks.length > 0) {
                     primaryTickCount = ticks.length;
                 }
 
