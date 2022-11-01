@@ -377,7 +377,7 @@ export function convertDefaultColDef(defaultColDef, vueComponents, componentFile
         if (line.includes('tooltipComponent') ||
             (line.includes('cellRenderer') && !line.includes("'ag")) ||
             (line.includes('headerComponent') && !line.includes('headerComponentParams')) ||
-            (line.includes('filter') && !line.includes("'ag") && !line.trim().startsWith("//") && !line.includes("true")) && !line.includes('filterMenuTab')) {
+            (line.includes('filter') && line.includes(":") && !line.includes("'ag") && !line.trim().startsWith("//") && !line.includes("true")) && !line.includes('filterMenuTab')) {
 
             const component = line.match(/.*:\s*(.*),/) ? line.match(/.*:\s*(.*),/)[1] : line.match(/.*:\s*(.*)$/)[1]
             if (isExternalVueFile(componentFileNames, component)) {

@@ -338,12 +338,6 @@ ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   
 render(<GridExample></GridExample>, document.querySelector('#root'))
 `;
 
-        for (const [componentName, component] of Object.entries(components)) {
-            let regex = new RegExp(`'${componentName}'`, "g");
-            generatedOutput = generatedOutput.replace(regex, component);
-            regex = new RegExp(`"${componentName}"`, "g");
-            generatedOutput = generatedOutput.replace(regex, component);
-        }
 
         if ((generatedOutput.match(/gridRef\.current/g) || []).length === 0) {
             generatedOutput = generatedOutput.replace(gridRefHook, "")
