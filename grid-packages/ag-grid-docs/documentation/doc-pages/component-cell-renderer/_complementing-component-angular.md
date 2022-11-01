@@ -9,11 +9,11 @@
 |class ColourCellRenderer implements ICellRendererAngularComp {
 |    params!: ICellRendererParams;
 |
-|    agInit(ICellRendererParams) {
+|    agInit(params: ICellRendererParams) {
 |        this.params = params;
 |    }
 |
-|    refresh(ICellRendererParams) {
+|    refresh(params: ICellRendererParams) {
 |        this.params = params;
 |        // As we have updated the params we return true to let AG Grid know we have handled the refresh.
 |        // So AG Grid will not recreate the cell renderer from scratch.
