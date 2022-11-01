@@ -987,8 +987,15 @@ export abstract class Chart extends Observable {
     }
 
     private onSeriesNodeClick(event: SourceEvent<Series<any>>) {
-        // Use `Object.create` to preserve deprecation warnings
-        const seriesNodeClickEvent = Object.create(event, { type: { value: 'seriesNodeClick', enumerable: true } });
+        const seriesNodeClickEvent = {
+            ...event,
+            type: 'seriesNodeClick',
+        };
+        Object.defineProperty(seriesNodeClickEvent, 'series', {
+            enumerable: false,
+            // Should display the deprecation warning
+            get: () => (event as any).series,
+        });
         this.fireEvent(seriesNodeClickEvent);
     }
 
