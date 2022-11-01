@@ -316,7 +316,6 @@ export abstract class CartesianSeries<
         this.group.visible = visible;
         this.seriesGroup.visible = visible;
         this.highlightGroup.visible = visible && !!seriesHighlighted;
-        this.seriesGroup.opacity = this.getOpacity();
 
         if (markersEnabled) {
             await this.updateMarkerNodes({
