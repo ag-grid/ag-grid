@@ -355,6 +355,10 @@ export abstract class CartesianSeries<
                     markerGroup.visible = subGroupVisible;
                 }
 
+                if (labelGroup) {
+                    labelGroup.opacity = subGroupOpacity;
+                }
+
                 for (const path of paths) {
                     if (path.parent !== group) {
                         path.opacity = subGroupOpacity;
