@@ -102,7 +102,7 @@ const toLowerWithoutAccents = value =>
 ## Example: Text Filter
 
 - The **Athlete** column has only two filter options: `filterOptions = ['contains', 'notContains']`
-- The **Athlete** column has a text formatter, so if you search for 'o' it will find '&oslash;'. You can try this by searching the string `'Bjo'`.
+- The **Athlete** column has a text formatter, so if you search for 'o' it will find '&ouml;'. You can try this by searching the string `'Bjo'`.
 - The **Athlete** column has a debounce of 200ms (`debounceMs = 200`).
 - The **Athlete** column filter has the AND/OR additional filter suppressed (`suppressAndOrCondition = true`)
 - The **Country** column has only one filter option: `filterOptions = ['contains']`
