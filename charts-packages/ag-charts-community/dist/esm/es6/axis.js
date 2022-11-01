@@ -475,7 +475,7 @@ export class Axis {
                     gridLength,
                     ticks,
                 });
-                if (!secondaryAxis) {
+                if (!secondaryAxis && ticks.length > 0) {
                     primaryTickCount = ticks.length;
                 }
                 unchanged = ticks.every((t, i) => t === prevTicks[i]);
@@ -662,10 +662,6 @@ export class Axis {
             node.fontFamily = label.fontFamily;
             node.fill = label.color;
             node.text = this.formatTickDatum(tick, index);
-            node.visible = node.parent.visible;
-            if (node.visible !== true) {
-                return;
-            }
             const userHidden = node.text === '' || node.text == undefined;
             labelBboxes.set(index, userHidden ? null : node.computeBBox());
             if (userHidden) {

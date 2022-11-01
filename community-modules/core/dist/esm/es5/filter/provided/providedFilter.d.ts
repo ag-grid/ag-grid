@@ -70,7 +70,6 @@ export declare abstract class ProvidedFilter<M, V> extends Component implements 
     private onBtApplyDebounce;
     private appliedModel;
     protected readonly rowModel: IRowModel;
-    private valueService;
     constructor(filterNameKey: keyof IFilterTitleLocaleText);
     abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
     protected abstract updateUiVisibility(): void;
@@ -103,6 +102,7 @@ export declare abstract class ProvidedFilter<M, V> extends Component implements 
      */
     applyModel(): boolean;
     protected isModelValid(model: M): boolean;
+    private onFormSubmit;
     protected onBtApply(afterFloatingFilter?: boolean, afterDataChange?: boolean, e?: Event): void;
     onNewRowsLoaded(): void;
     close(e?: Event): void;

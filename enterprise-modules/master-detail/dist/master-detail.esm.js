@@ -13484,8 +13484,16 @@ var ProvidedFilter = /** @class */ (function (_super) {
         return !!this.appliedModel;
     };
     ProvidedFilter.prototype.resetTemplate = function (paramsMap) {
+        var eGui = this.getGui();
+        if (eGui) {
+            eGui.removeEventListener('submit', this.onFormSubmit);
+        }
         var templateString = /* html */ "\n            <form class=\"ag-filter-wrapper\">\n                <div class=\"ag-filter-body-wrapper ag-" + this.getCssIdentifier() + "-body-wrapper\">\n                    " + this.createBodyTemplate() + "\n                </div>\n            </form>";
         this.setTemplate(templateString, paramsMap);
+        eGui = this.getGui();
+        if (eGui) {
+            eGui.addEventListener('submit', this.onFormSubmit);
+        }
     };
     ProvidedFilter.prototype.isReadOnly = function () {
         return !!this.providedFilterParams.readOnly;
@@ -13608,11 +13616,16 @@ var ProvidedFilter = /** @class */ (function (_super) {
     ProvidedFilter.prototype.isModelValid = function (model) {
         return true;
     };
+    ProvidedFilter.prototype.onFormSubmit = function (e) {
+        e.preventDefault();
+    };
     ProvidedFilter.prototype.onBtApply = function (afterFloatingFilter, afterDataChange, e) {
         if (afterFloatingFilter === void 0) { afterFloatingFilter = false; }
         if (afterDataChange === void 0) { afterDataChange = false; }
-        var _a;
-        (_a = e) === null || _a === void 0 ? void 0 : _a.preventDefault(); // Prevent form submission
+        // Prevent form submission
+        if (e) {
+            e.preventDefault();
+        }
         if (this.applyModel()) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
@@ -13680,6 +13693,10 @@ var ProvidedFilter = /** @class */ (function (_super) {
         return !!params.buttons && params.buttons.indexOf('apply') >= 0;
     };
     ProvidedFilter.prototype.destroy = function () {
+        var eGui = this.getGui();
+        if (eGui) {
+            eGui.removeEventListener('submit', this.onFormSubmit);
+        }
         this.hidePopup = null;
         _super.prototype.destroy.call(this);
     };
@@ -13703,9 +13720,6 @@ var ProvidedFilter = /** @class */ (function (_super) {
     __decorate$2f([
         Autowired('rowModel')
     ], ProvidedFilter.prototype, "rowModel", void 0);
-    __decorate$2f([
-        Autowired('valueService')
-    ], ProvidedFilter.prototype, "valueService", void 0);
     __decorate$2f([
         PostConstruct
     ], ProvidedFilter.prototype, "postConstruct", null);

@@ -55,6 +55,10 @@ export class ProvidedFilter extends Component {
         return !!this.appliedModel;
     }
     resetTemplate(paramsMap) {
+        let eGui = this.getGui();
+        if (eGui) {
+            eGui.removeEventListener('submit', this.onFormSubmit);
+        }
         const templateString = /* html */ `
             <form class="ag-filter-wrapper">
                 <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper">
@@ -62,6 +66,10 @@ export class ProvidedFilter extends Component {
                 </div>
             </form>`;
         this.setTemplate(templateString, paramsMap);
+        eGui = this.getGui();
+        if (eGui) {
+            eGui.addEventListener('submit', this.onFormSubmit);
+        }
     }
     isReadOnly() {
         return !!this.providedFilterParams.readOnly;
@@ -184,9 +192,14 @@ export class ProvidedFilter extends Component {
     isModelValid(model) {
         return true;
     }
+    onFormSubmit(e) {
+        e.preventDefault();
+    }
     onBtApply(afterFloatingFilter = false, afterDataChange = false, e) {
-        var _a;
-        (_a = e) === null || _a === void 0 ? void 0 : _a.preventDefault(); // Prevent form submission
+        // Prevent form submission
+        if (e) {
+            e.preventDefault();
+        }
         if (this.applyModel()) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
@@ -253,6 +266,10 @@ export class ProvidedFilter extends Component {
         return !!params.buttons && params.buttons.indexOf('apply') >= 0;
     }
     destroy() {
+        const eGui = this.getGui();
+        if (eGui) {
+            eGui.removeEventListener('submit', this.onFormSubmit);
+        }
         this.hidePopup = null;
         super.destroy();
     }
@@ -277,9 +294,6 @@ export class ProvidedFilter extends Component {
 __decorate([
     Autowired('rowModel')
 ], ProvidedFilter.prototype, "rowModel", void 0);
-__decorate([
-    Autowired('valueService')
-], ProvidedFilter.prototype, "valueService", void 0);
 __decorate([
     PostConstruct
 ], ProvidedFilter.prototype, "postConstruct", null);

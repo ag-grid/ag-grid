@@ -183,6 +183,7 @@ export class PieSeries extends PolarSeries {
          * The processed data that gets visualized.
          */
         this.groupSelectionData = [];
+        this.sectorFormatData = [];
         this.angleScale = (() => {
             const scale = new LinearScale();
             // Each sector is a ratio of the whole, where all ratios add up to 1.
@@ -319,7 +320,7 @@ export class PieSeries extends PolarSeries {
     }
     processData() {
         return __awaiter(this, void 0, void 0, function* () {
-            const { angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData, calloutLabel, sectorLabel, id: seriesId, } = this;
+            const { angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData, sectorFormatData, calloutLabel, sectorLabel, id: seriesId, } = this;
             const data = angleKey && this.data ? this.data : [];
             const angleData = data.map((datum, index) => (seriesItemEnabled[index] && Math.abs(+datum[angleKey])) || 0);
             const angleDataTotal = angleData.reduce((a, b) => a + b, 0);
@@ -397,6 +398,8 @@ export class PieSeries extends PolarSeries {
                 radiusData = radii.map((value) => (delta ? (value - min) / delta : 1));
             }
             groupSelectionData.length = 0;
+            sectorFormatData.length = 0;
+            sectorFormatData.push(...data.map((datum, datumIdx) => this.getSectorFormat(datum, datumIdx, datumIdx, false)));
             const rotation = toRadians(this.rotation);
             const halfPi = Math.PI / 2;
             let datumIndex = 0;
@@ -453,7 +456,7 @@ export class PieSeries extends PolarSeries {
                             text: sectorLabelData[datumIndex],
                         }
                         : undefined,
-                    sectorFormat: this.getSectorFormat(datum, itemId, datumIndex, false),
+                    sectorFormat: sectorFormatData[datumIndex],
                 });
                 datumIndex++;
                 end = start; // Update for next iteration.
@@ -826,7 +829,7 @@ export class PieSeries extends PolarSeries {
         return toTooltipHtml(defaults);
     }
     getLegendData() {
-        const { calloutLabelKey, data } = this;
+        const { calloutLabelKey, data, sectorFormatData } = this;
         if (data && data.length && calloutLabelKey) {
             const { id } = this;
             const legendData = [];
@@ -844,8 +847,8 @@ export class PieSeries extends PolarSeries {
                         text: labelParts.join(' - '),
                     },
                     marker: {
-                        fill: this.groupSelectionData[index].sectorFormat.fill,
-                        stroke: this.groupSelectionData[index].sectorFormat.stroke,
+                        fill: sectorFormatData[index].fill,
+                        stroke: sectorFormatData[index].stroke,
                         fillOpacity: this.fillOpacity,
                         strokeOpacity: this.strokeOpacity,
                     },

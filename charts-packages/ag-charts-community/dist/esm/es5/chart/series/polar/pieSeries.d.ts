@@ -127,6 +127,7 @@ export declare class PieSeries extends PolarSeries<PieNodeDatum> {
      * The processed data that gets visualized.
      */
     private groupSelectionData;
+    private sectorFormatData;
     private angleScale;
     seriesItemEnabled: boolean[];
     private _title?;

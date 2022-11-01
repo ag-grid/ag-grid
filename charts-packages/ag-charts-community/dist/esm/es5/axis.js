@@ -546,7 +546,7 @@ var Axis = /** @class */ (function () {
                     gridLength: gridLength,
                     ticks: ticks,
                 });
-                if (!secondaryAxis) {
+                if (!secondaryAxis && ticks.length > 0) {
                     primaryTickCount = ticks.length;
                 }
                 unchanged = ticks.every(function (t, i) { return t === prevTicks[i]; });
@@ -745,10 +745,6 @@ var Axis = /** @class */ (function () {
             node.fontFamily = label.fontFamily;
             node.fill = label.color;
             node.text = _this.formatTickDatum(tick, index);
-            node.visible = node.parent.visible;
-            if (node.visible !== true) {
-                return;
-            }
             var userHidden = node.text === '' || node.text == undefined;
             labelBboxes.set(index, userHidden ? null : node.computeBBox());
             if (userHidden) {

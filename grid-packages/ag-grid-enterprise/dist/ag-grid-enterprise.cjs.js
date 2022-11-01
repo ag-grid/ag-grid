@@ -29844,7 +29844,7 @@ var Axis = /** @class */ (function () {
                     gridLength: gridLength,
                     ticks: ticks,
                 });
-                if (!secondaryAxis) {
+                if (!secondaryAxis && ticks.length > 0) {
                     primaryTickCount = ticks.length;
                 }
                 unchanged = ticks.every(function (t, i) { return t === prevTicks[i]; });
@@ -30043,10 +30043,6 @@ var Axis = /** @class */ (function () {
             node.fontFamily = label.fontFamily;
             node.fill = label.color;
             node.text = _this.formatTickDatum(tick, index);
-            node.visible = node.parent.visible;
-            if (node.visible !== true) {
-                return;
-            }
             var userHidden = node.text === '' || node.text == undefined;
             labelBboxes.set(index, userHidden ? null : node.computeBBox());
             if (userHidden) {
@@ -45272,6 +45268,7 @@ var PieSeries = /** @class */ (function (_super) {
          * The processed data that gets visualized.
          */
         _this.groupSelectionData = [];
+        _this.sectorFormatData = [];
         _this.angleScale = (function () {
             var scale = new LinearScale$1();
             // Each sector is a ratio of the whole, where all ratios add up to 1.
@@ -45421,10 +45418,10 @@ var PieSeries = /** @class */ (function (_super) {
     };
     PieSeries.prototype.processData = function () {
         return __awaiter$d(this, void 0, void 0, function () {
-            var _a, angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData, calloutLabel, sectorLabel, seriesId, data, angleData, angleDataTotal, angleDataRatios, labelFormatter, labelKey, sectorLabelKey, labelData, sectorLabelData, radiusData, getLabelFormatterParams, showValueDeprecationWarning_1, sectorLabelFormatter, _b, radiusMin, radiusMax, radii, min_1, max, delta_1, rotation, halfPi, datumIndex, quadrantTextOpts, end;
+            var _a, angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData, sectorFormatData, calloutLabel, sectorLabel, seriesId, data, angleData, angleDataTotal, angleDataRatios, labelFormatter, labelKey, sectorLabelKey, labelData, sectorLabelData, radiusData, getLabelFormatterParams, showValueDeprecationWarning_1, sectorLabelFormatter, _b, radiusMin, radiusMax, radii, min_1, max, delta_1, rotation, halfPi, datumIndex, quadrantTextOpts, end;
             var _this = this;
             return __generator$d(this, function (_c) {
-                _a = this, angleKey = _a.angleKey, radiusKey = _a.radiusKey, seriesItemEnabled = _a.seriesItemEnabled, angleScale = _a.angleScale, groupSelectionData = _a.groupSelectionData, calloutLabel = _a.calloutLabel, sectorLabel = _a.sectorLabel, seriesId = _a.id;
+                _a = this, angleKey = _a.angleKey, radiusKey = _a.radiusKey, seriesItemEnabled = _a.seriesItemEnabled, angleScale = _a.angleScale, groupSelectionData = _a.groupSelectionData, sectorFormatData = _a.sectorFormatData, calloutLabel = _a.calloutLabel, sectorLabel = _a.sectorLabel, seriesId = _a.id;
                 data = angleKey && this.data ? this.data : [];
                 angleData = data.map(function (datum, index) { return (seriesItemEnabled[index] && Math.abs(+datum[angleKey])) || 0; });
                 angleDataTotal = angleData.reduce(function (a, b) { return a + b; }, 0);
@@ -45504,6 +45501,8 @@ var PieSeries = /** @class */ (function (_super) {
                     radiusData = radii.map(function (value) { return (delta_1 ? (value - min_1) / delta_1 : 1); });
                 }
                 groupSelectionData.length = 0;
+                sectorFormatData.length = 0;
+                sectorFormatData.push.apply(sectorFormatData, __spread$q(data.map(function (datum, datumIdx) { return _this.getSectorFormat(datum, datumIdx, datumIdx, false); })));
                 rotation = toRadians(this.rotation);
                 halfPi = Math.PI / 2;
                 datumIndex = 0;
@@ -45559,7 +45558,7 @@ var PieSeries = /** @class */ (function (_super) {
                                 text: sectorLabelData[datumIndex],
                             }
                             : undefined,
-                        sectorFormat: _this.getSectorFormat(datum, itemId, datumIndex, false),
+                        sectorFormat: sectorFormatData[datumIndex],
                     });
                     datumIndex++;
                     end = start; // Update for next iteration.
@@ -45969,7 +45968,7 @@ var PieSeries = /** @class */ (function (_super) {
     };
     PieSeries.prototype.getLegendData = function () {
         var _this = this;
-        var _a = this, calloutLabelKey = _a.calloutLabelKey, data = _a.data;
+        var _a = this, calloutLabelKey = _a.calloutLabelKey, data = _a.data, sectorFormatData = _a.sectorFormatData;
         if (data && data.length && calloutLabelKey) {
             var id_1 = this.id;
             var legendData_1 = [];
@@ -45987,8 +45986,8 @@ var PieSeries = /** @class */ (function (_super) {
                         text: labelParts.join(' - '),
                     },
                     marker: {
-                        fill: _this.groupSelectionData[index].sectorFormat.fill,
-                        stroke: _this.groupSelectionData[index].sectorFormat.stroke,
+                        fill: sectorFormatData[index].fill,
+                        stroke: sectorFormatData[index].stroke,
                         fillOpacity: _this.fillOpacity,
                         strokeOpacity: _this.strokeOpacity,
                     },
