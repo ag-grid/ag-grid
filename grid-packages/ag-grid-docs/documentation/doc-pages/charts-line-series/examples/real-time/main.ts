@@ -31,6 +31,7 @@ const options: AgChartOptions = {
     {
       type: 'time',
       position: 'bottom',
+      nice: false,
       tick: {
         count: agCharts.time.second.every(5),
       },
