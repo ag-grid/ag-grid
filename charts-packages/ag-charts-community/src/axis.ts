@@ -821,11 +821,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
             node.fill = label.color;
             node.text = this.formatTickDatum(tick, index);
 
-            node.visible = node.parent!.visible;
-            if (node.visible !== true) {
-                return;
-            }
-
             const userHidden = node.text === '' || node.text == undefined;
             labelBboxes.set(index, userHidden ? null : node.computeBBox());
 
