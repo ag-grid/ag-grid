@@ -3,7 +3,7 @@
         "release version": "<p><b>2nd Nov 2022 - Grid v28.2.1 (Charts v6.2.1)</b></p>",
         "feature highlights": "",
         "breaking changes": "",
-        "deprecations": "<p><strong>Deprecations:</strong></p><ul><li>AG-7290: <code>pieSeries.label</code> property is now deprecated - please use <code>pieSeries.calloutLabel</code> instead.</li></ul>"
+        "deprecations": "<p><strong>Deprecations:</strong></p><ul><li>AG-7290: <code>pieSeries.label</code> is now deprecated (use <code>pieSeries.calloutLabel</code> instead)</li><li>AG-7290: <code>pieSeries.labelKey</code> is deprecated (use <code>pieSeries.calloutLabelKey</code> instead)</li><li>AG-7290: <code>pieSeries.labelName</code> is deprecated (use <code>pieSeries.calloutLabelName</code> instead)</li><li>AG-7290: <code>pieSeries.callout</code> is deprecated (use <code>pieSeries.calloutLine</code> instead)</li><li>AG-7152: <code>AgChartLegendLabelFormatterParams.id</code> is deprecated (use <code>AgChartLegendLabelFormatterParams.seriesId</code> instead)</li><li>AG-7152: <code>AgNodeClickEvent.series</code> is deprecated (use <code>AgNodeClickEvent.seriesId</code> instead)</li><li>AG-7152: <code>AgSeriesNodeClickParams.series</code> is deprecated (use <code>AgSeriesNodeClickParams.seriesId</code> instead)</li></ul>"
     },
     {
         "release version": "<p><b>4th Oct 2022 - Grid v28.2.0 (Charts v6.2.0)</b></p>",
