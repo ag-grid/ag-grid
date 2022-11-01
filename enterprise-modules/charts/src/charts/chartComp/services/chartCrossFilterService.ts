@@ -98,7 +98,7 @@ export class ChartCrossFilterService extends BeanStub {
     }
 
     private static extractFilterColId(event: any): string {
-        return event.xKey ? event.xKey : event.labelKey;
+        return event.xKey || event.calloutLabelKey;
     }
 
     private isValidColumnFilter(colId: any) {
