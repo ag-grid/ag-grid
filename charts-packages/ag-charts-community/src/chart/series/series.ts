@@ -12,6 +12,7 @@ import { BOOLEAN, OPT_BOOLEAN, OPT_NUMBER, OPT_COLOR_STRING, STRING, Validate } 
 import { PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
 import { SizedPoint, Point } from '../../scene/point';
+import { BBox } from '../../scene/bbox';
 
 /**
  * Processed series datum used in node selections,
@@ -334,7 +335,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     }
 
     // Produce data joins and update selection's nodes using node data.
-    abstract update(): Promise<void>;
+    abstract update(opts: { seriesRect?: BBox }): Promise<void>;
 
     protected getOpacity(datum?: { itemId?: any }): number {
         const {

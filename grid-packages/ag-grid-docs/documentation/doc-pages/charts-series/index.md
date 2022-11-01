@@ -36,7 +36,7 @@ series: [{
 The data should be an array of objects. Common options like `xKey`, `yKey`, `angleKey` specify
 the properties to use to read the data-set for the series.
 
-See other available options in the [API reference](#reference-AgBaseSeriesOptions-title).
+See other available options in the [API reference](#api-reference).
 
 ## API Reference
 

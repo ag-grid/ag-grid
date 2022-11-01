@@ -21,6 +21,8 @@ import { PointLabelDatum } from '../../../util/labelPlacement';
 import { Layers } from '../../layers';
 import { Point } from '../../../scene/point';
 import { OPT_FUNCTION, ValidateAndChangeDetection } from '../../../util/validation';
+import { jsonDiff } from '../../../util/json';
+import { BBox } from '../../../scene/bbox';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
@@ -75,6 +77,8 @@ export abstract class CartesianSeries<
     get contextNodeData(): C[] {
         return this._contextNodeData?.slice();
     }
+
+    private nodeDataDependencies: { seriesRectWidth?: number; seriesRectHeight?: number } = {};
 
     private highlightSelection: NodeDataSelection<N, C> = Selection.select(this.highlightNode).selectAll<N>();
     private highlightLabelSelection: LabelDataSelection<Text, C> = Selection.select(
@@ -147,12 +151,21 @@ export abstract class CartesianSeries<
         return !isNaN(x) && !isNaN(y) && xAxis.inRange(x) && yAxis.inRange(y);
     }
 
-    async update() {
+    async update({ seriesRect }: { seriesRect?: BBox }) {
         const { seriesItemEnabled, visible, chart: { highlightedDatum: { series = undefined } = {} } = {} } = this;
         const seriesHighlighted = series ? series === this : undefined;
 
         const anySeriesItemEnabled =
             (visible && seriesItemEnabled.size === 0) || [...seriesItemEnabled.values()].some((v) => v === true);
+
+        const newNodeDataDependencies = {
+            seriesRectWidth: seriesRect?.width,
+            seriesRectHeight: seriesRect?.height,
+        };
+        if (jsonDiff(this.nodeDataDependencies, newNodeDataDependencies) != null) {
+            this.nodeDataDependencies = newNodeDataDependencies;
+            this.markNodeDataDirty();
+        }
 
         await this.updateSelections(seriesHighlighted, anySeriesItemEnabled);
         await this.updateNodes(seriesHighlighted, anySeriesItemEnabled);
