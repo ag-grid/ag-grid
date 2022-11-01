@@ -73,7 +73,7 @@ export class HierarchyChart extends Chart {
         this.series.forEach((series) => {
             series.group.translationX = Math.floor(shrinkRect.x);
             series.group.translationY = Math.floor(shrinkRect.y);
-            series.update(); // this has to happen after the `updateAxes` call
+            series.update({ seriesRect: shrinkRect }); // this has to happen after the `updateAxes` call
         });
 
         const { seriesRoot } = this;
