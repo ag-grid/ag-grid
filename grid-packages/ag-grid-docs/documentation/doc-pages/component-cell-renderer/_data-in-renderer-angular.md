@@ -11,7 +11,7 @@
 |class CellRendererComponent implements ICellRendererAngularComp {
 |    params!: ICellRendererParams;
 |
-|    agInit(ICellRendererParams) {
+|    agInit(params: ICellRendererParams) {
 |        this.params = params;
 |    }
 |

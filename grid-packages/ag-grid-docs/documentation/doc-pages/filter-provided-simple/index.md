@@ -319,7 +319,7 @@ In the example below, we've added some styling to `ag-header-cell-filtered`, so 
 
 <grid-example title='Style Header' name='style-header-on-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
 
-## Customising filter placeholder text
+## Customising Filter Placeholder Text
 
 Filter placeholder text can be customised on a per column basis using `filterParams.filterPlaceholder` within the grid option `columnDefs`. The placeholder can be either a string or a function as shown in the snippet below:
 
@@ -349,7 +349,7 @@ const gridOptions = {
 
 When `filterPlaceholder` is a function, the parameters are made up of the following:
 
-<interface-documentation interfaceName='IFilterPlaceholderFunctionParams' config='{"hideHeader":false, "headerLevel": 3, "description":""}'></interface-documentation>
+<interface-documentation interfaceName='IFilterPlaceholderFunctionParams' config='{"description":""}'></interface-documentation>
 
 The following example shows the various ways of specifying filter placeholders. Click on the filter menu for the different columns in the header row to see the following:
 

@@ -25,7 +25,7 @@ The following example demonstrates these properties. Note the following:
 
 - Expanding groups reveals subtotal footers as `groupIncludeFooter = true`.
 - A grand total footer is shown as the `groupIncludeTotalFooter = true`.
-- The medal totals are [aggregated](/aggregation/) via the `aggFunc: true` column property.
+- The medal totals are [aggregated](/aggregation/) via the `aggFunc: 'sum'` column property.
 
 <grid-example title='Enabling Group Footers' name='enabling-group-footers' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 

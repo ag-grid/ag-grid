@@ -6,7 +6,7 @@ By default, each cell will take up the width of one column. You can change this 
 
 ## Configuring Column Spanning
 
-Column spanning is set configured at the column definition level. To have a cell span more than one column, return how many columns to span in the callback `colDef.colSpan`.
+Column spanning is configured at the column definition level. To have a cell span more than one column, return how many columns to span in the callback `colDef.colSpan`.
 
 <snippet>
 const gridOptions = {

@@ -5,7 +5,8 @@ import { AgChartOptions, AgCartesianAxisType } from '../agChartOptions';
 import { AgChartV2 } from '../agChartV2';
 import { Chart, ChartUpdateType } from '../chart';
 import { ChartAxis, ChartAxisPosition, ChartAxisDirection } from '../chartAxis';
-import * as examples from '../test/examples-axes';
+import * as axesExamples from '../test/examples-axes';
+import * as examples from '../test/examples';
 import {
     waitForChartStability,
     cartesianChartAssertions,
@@ -56,83 +57,83 @@ type TestCase = {
 };
 const EXAMPLES = mixinDerivedCases({
     BASIC_CATEGORY_AXIS: {
-        options: examples.CATEGORY_AXIS_BASIC_EXAMPLE,
+        options: axesExamples.CATEGORY_AXIS_BASIC_EXAMPLE,
         assertions: cartesianChartAssertions(),
     },
     BASIC_CATEGORY_UNIFORM_AXIS: {
-        options: examples.CATEGORY_AXIS_UNIFORM_BASIC_EXAMPLE,
+        options: axesExamples.CATEGORY_AXIS_UNIFORM_BASIC_EXAMPLE,
         assertions: cartesianChartAssertions(),
     },
     GROUPED_CATEGORY_AXIS: {
-        options: examples.GROUPED_CATEGORY_AXIS_EXAMPLE,
+        options: axesExamples.GROUPED_CATEGORY_AXIS_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['groupedCategory', 'number'] }),
     },
     BASIC_TIME_AXIS: {
-        options: examples.TIME_AXIS_BASIC_EXAMPLE,
+        options: axesExamples.TIME_AXIS_BASIC_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
     },
     BASIC_TIME_MIN_MAX_DATE_AXIS: {
-        options: examples.TIME_AXIS_MIN_MAX_DATE_EXAMPLE,
+        options: axesExamples.TIME_AXIS_MIN_MAX_DATE_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
         compare: ['time'],
     },
     BASIC_TIME_MIN_MAX_NUMBER_AXIS: {
-        options: examples.TIME_AXIS_MIN_MAX_NUMBER_EXAMPLE,
+        options: axesExamples.TIME_AXIS_MIN_MAX_NUMBER_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
         compare: ['time'],
     },
     NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE: {
-        options: examples.NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE,
+        options: axesExamples.NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['line'] }),
     },
 });
 
 const EXAMPLES_NO_SERIES: Record<string, TestCase> = {
     NUMBER_AXIS_NO_SERIES: {
-        options: examples.NUMBER_AXIS_NO_SERIES,
+        options: axesExamples.NUMBER_AXIS_NO_SERIES,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['scatter'] }),
     },
     NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN: {
-        options: examples.NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN,
+        options: axesExamples.NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['scatter'] }),
     },
     TIME_AXIS_NO_SERIES: {
-        options: examples.TIME_AXIS_NO_SERIES,
+        options: axesExamples.TIME_AXIS_NO_SERIES,
         assertions: cartesianChartAssertions({
             axisTypes: ['time', 'number'],
             seriesTypes: ['line', 'line', 'line', 'line'],
         }),
     },
     TIME_AXIS_NO_SERIES_FIXED_DOMAIN: {
-        options: examples.TIME_AXIS_NO_SERIES_FIXED_DOMAIN,
+        options: axesExamples.TIME_AXIS_NO_SERIES_FIXED_DOMAIN,
         assertions: cartesianChartAssertions({
             axisTypes: ['time', 'number'],
             seriesTypes: ['line', 'line', 'line', 'line'],
         }),
     },
     COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES: {
-        options: examples.COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES,
+        options: axesExamples.COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES,
         assertions: cartesianChartAssertions({
             axisTypes: ['category', 'number', 'number'],
             seriesTypes: ['bar', 'line'],
         }),
     },
     COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN: {
-        options: examples.COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN,
+        options: axesExamples.COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN,
         assertions: cartesianChartAssertions({
             axisTypes: ['category', 'number', 'number'],
             seriesTypes: ['bar', 'line'],
         }),
     },
     AREA_CHART_NO_SERIES: {
-        options: examples.AREA_CHART_NO_SERIES,
+        options: axesExamples.AREA_CHART_NO_SERIES,
         assertions: cartesianChartAssertions({
             axisTypes: ['time', 'number'],
             seriesTypes: ['area'],
         }),
     },
     AREA_CHART_STACKED_NORMALISED_NO_SERIES: {
-        options: examples.AREA_CHART_STACKED_NORMALISED_NO_SERIES,
+        options: axesExamples.AREA_CHART_STACKED_NORMALISED_NO_SERIES,
         assertions: cartesianChartAssertions({
             axisTypes: ['category', 'number'],
             seriesTypes: ['area'],
@@ -296,5 +297,38 @@ describe('Axis Examples', () => {
                 (expect(afterFinalUpdate) as any).toMatchImage(reference);
             });
         }
+    });
+
+    describe('toggle secondary axis series', () => {
+        it(`for ADV_COMBINATION_SERIES_CHART_EXAMPLE it should render identically after legend toggle`, async () => {
+            const snapshot = async () => {
+                await waitForChartStability(chart);
+
+                return ctx.nodeCanvas?.toBuffer('raw');
+            };
+
+            const options: AgChartOptions = { ...examples.ADV_COMBINATION_SERIES_CHART_EXAMPLE };
+            options.autoSize = false;
+            options.width = CANVAS_WIDTH;
+            options.height = CANVAS_HEIGHT;
+
+            chart = AgChartV2.create<any>(options) as Chart;
+            const reference = await snapshot();
+            expect(chart.series[1].getKeys(ChartAxisDirection.Y)).toEqual(['exportedTonnes']);
+
+            // Hide series bound to secondary axis.
+            chart.series[1].toggleSeriesItem('exportedTonnes', false);
+            chart.update(ChartUpdateType.FULL);
+
+            const afterUpdate = await snapshot();
+            (expect(afterUpdate) as any).not.toMatchImage(reference);
+
+            // Show series bound to secondary axis.
+            chart.series[1].toggleSeriesItem('exportedTonnes', true);
+            chart.update(ChartUpdateType.FULL);
+
+            const afterFinalUpdate = await snapshot();
+            (expect(afterFinalUpdate) as any).toMatchImage(reference);
+        });
     });
 });
