@@ -188,9 +188,7 @@ export class CartesianChart extends Chart {
 
         // Clean any positions which aren't valid with the current axis status (otherwise we end up
         // never being able to find a stable result).
-        const liveAxisWidths = this._axes
-            .map((a) => a.position)
-            .reduce((r, n) => r.add(n), new Set<ChartAxisPosition>());
+        const liveAxisWidths = new Set(this._axes.map((a) => a.position));
         for (const position of Object.keys(axisWidths) as ChartAxisPosition[]) {
             if (!liveAxisWidths.has(position)) {
                 delete axisWidths[position];
