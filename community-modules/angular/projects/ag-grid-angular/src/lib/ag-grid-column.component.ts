@@ -204,7 +204,7 @@ export class AgGridColumn<TData = any> {
     @Input() public cellEditorSelector: CellEditorSelectorFunc<TData> | undefined;
     /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false`     */
     @Input() public singleClickEdit: boolean | undefined;
-    /** @deprecated use `valueSetter` instead     */
+    /** @deprecated v26 use `valueSetter` instead     */
     @Input() public newValueHandler: ((params: NewValueParams<TData>) => boolean) | undefined;
     /** Set to `true`, to have the cell editor appear in a popup.     */
     @Input() public cellEditorPopup: boolean | undefined;
@@ -260,13 +260,13 @@ export class AgGridColumn<TData = any> {
     @Input() public initialPinned: boolean | 'left' | 'right' | undefined;
     /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false`     */
     @Input() public lockPinned: boolean | undefined;
-    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.     */
+    /** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.     */
     @Input() public pinnedRowCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined;
-    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.     */
+    /** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.     */
     @Input() public pinnedRowCellRendererFramework: any;
-    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.     */
+    /** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.     */
     @Input() public pinnedRowCellRendererParams: any;
-    /** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned.     */
+    /** @deprecated v26 Use valueFormatter for pinned rows, and check params.node.rowPinned.     */
     @Input() public pinnedRowValueFormatter: string | ValueFormatterFunc<TData> | undefined;
     /** Set to true to pivot by this column.     */
     @Input() public pivot: boolean | undefined;
