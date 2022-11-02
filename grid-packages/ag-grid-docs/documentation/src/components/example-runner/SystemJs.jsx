@@ -85,7 +85,7 @@ const NPM_CDN = 'https://cdn.jsdelivr.net/npm';
 
 const publishedConfiguration = {
     gridMap: {
-        "@ag-grid-community/styles": `${NPM_CDN}/@ag-grid-community/styles@${agGridVersion}/`,
+        "@ag-grid-community/styles": `${NPM_CDN}/@ag-grid-community/styles@${agGridVersion}`,
         "@ag-grid-community/react": `${NPM_CDN}/@ag-grid-community/react@${agGridReactVersion}/`,
         "@ag-grid-community/angular": `${NPM_CDN}/@ag-grid-community/angular@${agGridAngularVersion}/`,
         "@ag-grid-community/vue": `${NPM_CDN}/@ag-grid-community/vue@${agGridVueVersion}/`,
