@@ -5,8 +5,6 @@ import { MoodEditor } from './moodEditor_typescript';
 import { MoodRenderer } from './moodRenderer_typescript';
 import { NumericEditor } from './numericEditor_typescript';
 
-
-
 class CountryCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
 
@@ -23,7 +21,6 @@ class CountryCellRenderer implements ICellRendererComp {
         return false;
     }
 }
-
 
 const columnDefs: ColDef[] = [
     { field: 'first_name', headerName: 'First Name', width: 120, editable: true },
@@ -45,7 +42,6 @@ const columnDefs: ColDef[] = [
         width: 80,
         editable: true,
         cellEditor: NumericEditor,
-        cellEditorPopup: true
     },
     {
         field: 'mood',

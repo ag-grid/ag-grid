@@ -30,7 +30,7 @@ export default class NumericEditor extends Component {
                 value={this.state.value}
                 onKeyDown={this.onKeyDown}
                 onChange={this.handleChange}
-                style={{ width: "100%" }}
+                className='numeric-input'
             />
         );
     }

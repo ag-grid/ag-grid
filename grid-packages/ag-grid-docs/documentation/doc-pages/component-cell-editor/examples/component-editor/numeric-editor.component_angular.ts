@@ -11,7 +11,7 @@ const KEY_TAB = 'Tab';
 
 @Component({
     selector: 'numeric-cell',
-    template: `<input #input (keydown)="onKeyDown($event)" [(ngModel)]="value" style="width: 100%">`
+    template: `<input #input (keydown)="onKeyDown($event)" [(ngModel)]="value" class="numeric-input">`
 })
 export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
     private params: any;

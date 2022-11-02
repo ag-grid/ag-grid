@@ -8,6 +8,7 @@ export class NumericEditor implements ICellEditorComp {
     init(params: ICellEditorParams) {
         // create the cell
         this.eInput = document.createElement('input');
+        this.eInput.classList.add('numeric-input');
 
         if (this.isCharNumeric(params.charPress)) {
             this.eInput.value = params.charPress!;

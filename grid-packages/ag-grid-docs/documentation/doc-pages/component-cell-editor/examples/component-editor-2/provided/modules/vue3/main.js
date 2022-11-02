@@ -81,7 +81,6 @@ const VueExample = {
                     width: 80,
                     editable: true,
                     cellEditor: 'NumericEditor',
-                    cellEditorPopup: true,
                 },
                 {
                     field: 'mood',

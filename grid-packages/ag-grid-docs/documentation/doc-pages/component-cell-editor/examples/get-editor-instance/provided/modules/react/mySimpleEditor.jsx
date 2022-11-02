@@ -49,7 +49,8 @@ export default class MySimpleEditor extends Component {
     render() {
         return (
             <input value={this.state.value} ref={this.inputRef}
-                   onChange={event => this.setState({value: event.target.value})}/>
+                   onChange={event => this.setState({value: event.target.value})}
+                   className="my-simple-editor" />
         );
     }
 }

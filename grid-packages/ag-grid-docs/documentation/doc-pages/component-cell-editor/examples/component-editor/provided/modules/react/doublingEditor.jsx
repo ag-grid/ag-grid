@@ -41,7 +41,8 @@ export default class DoublingEditor extends Component {
             <input ref={this.inputRef}
                    value={this.state.value}
                    onChange={event => this.setState({value: event.target.value})}
-                   style={{width: "100%"}}
+                   type="number"
+                   className="doubling-input"
             />
         );
     }

@@ -8,6 +8,7 @@ export class DoublingEditor implements ICellEditorComp {
         this.value = params.value;
 
         this.input = document.createElement('input');
+        this.input.classList.add('doubling-input');
         this.input.id = 'input';
         this.input.type = 'number';
         this.input.value = this.value;
