@@ -316,7 +316,6 @@ export abstract class CartesianSeries<
         this.group.visible = visible;
         this.seriesGroup.visible = visible;
         this.highlightGroup.visible = visible && !!seriesHighlighted;
-        this.seriesGroup.opacity = this.getOpacity();
 
         if (markersEnabled) {
             await this.updateMarkerNodes({
@@ -354,6 +353,10 @@ export abstract class CartesianSeries<
                     markerGroup.opacity = subGroupOpacity;
                     markerGroup.zIndex = group.zIndex >= Layers.SERIES_LAYER_ZINDEX ? group.zIndex : group.zIndex + 1;
                     markerGroup.visible = subGroupVisible;
+                }
+
+                if (labelGroup) {
+                    labelGroup.opacity = subGroupOpacity;
                 }
 
                 for (const path of paths) {
