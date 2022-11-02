@@ -7,15 +7,14 @@ import { ColumnGroup } from "../../entities/columnGroup";
 import { IHeaderColumn } from "../../entities/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { FocusService } from "../../focusService";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { isBrowserSafari } from "../../utils/browser";
+import { values } from "../../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../../utils/object";
 import { AbstractHeaderCellCtrl } from "../cells/abstractCell/abstractHeaderCellCtrl";
-import { HeaderFilterCellCtrl } from "../cells/floatingFilter/headerFilterCellCtrl";
 import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
 import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
+import { HeaderFilterCellCtrl } from "../cells/floatingFilter/headerFilterCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
-import { values } from "../../utils/generic";
 
 export interface IHeaderRowComp {
     setTransform(transform: string): void;
@@ -75,7 +74,7 @@ export class HeaderRowCtrl extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
 
         // when print layout changes, it changes what columns are in what section
-        this.addManagedPropertyListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
 

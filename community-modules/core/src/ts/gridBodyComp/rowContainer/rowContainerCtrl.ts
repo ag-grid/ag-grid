@@ -1,25 +1,24 @@
+import { ColumnModel } from "../../columns/columnModel";
+import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, PostConstruct } from "../../context/context";
-import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
-import { Events } from "../../eventKeys";
-import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
-import { DragService } from "../../dragAndDrop/dragService";
 import { CtrlsService } from "../../ctrlsService";
-import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isVisible, setScrollLeft } from "../../utils/dom";
-import { ColumnModel } from "../../columns/columnModel";
+import { DragService } from "../../dragAndDrop/dragService";
+import { ColumnPinnedType } from "../../entities/column";
+import { Events } from "../../eventKeys";
+import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
-import { ViewportSizeFeature } from "../viewportSizeFeature";
+import { RowCtrl } from "../../rendering/row/rowCtrl";
+import { RowRenderer } from "../../rendering/rowRenderer";
+import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isVisible, setScrollLeft } from "../../utils/dom";
 import { convertToMap } from "../../utils/map";
+import { CenterWidthFeature } from "../centerWidthFeature";
+import { ViewportSizeFeature } from "../viewportSizeFeature";
+import { DragListenerFeature } from "./dragListenerFeature";
+import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
+import { SetHeightFeature } from "./setHeightFeature";
 import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
 import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature";
-import { SetHeightFeature } from "./setHeightFeature";
-import { DragListenerFeature } from "./dragListenerFeature";
-import { CenterWidthFeature } from "../centerWidthFeature";
-import { RowCtrl } from "../../rendering/row/rowCtrl";
-import { Constants } from "../../constants/constants";
-import { RowRenderer } from "../../rendering/rowRenderer";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { ColumnPinnedType } from "../../entities/column";
 
 export enum RowContainerName {
     LEFT = 'left',
@@ -264,7 +263,7 @@ export class RowContainerCtrl extends BeanStub {
         }
 
         const listener = () => this.comp.setDomOrder(this.gridOptionsService.is('ensureDomOrder'));
-        this.addManagedPropertyListener(GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
+        this.addManagedPropertyListener('domLayout', listener);
         listener();
     }
 

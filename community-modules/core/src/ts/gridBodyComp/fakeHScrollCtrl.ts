@@ -1,13 +1,12 @@
-import { BeanStub } from "../context/beanStub";
-import { isInvisibleScrollbar, isIOSUserAgent, isMacOsUserAgent } from "../utils/browser";
-import { Autowired } from "../context/context";
-import { ScrollVisibleService } from "./scrollVisibleService";
-import { Events } from "../eventKeys";
 import { ColumnModel } from "../columns/columnModel";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { BeanStub } from "../context/beanStub";
+import { Autowired } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
+import { Events } from "../eventKeys";
 import { BodyScrollEvent } from "../events";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
+import { isInvisibleScrollbar, isIOSUserAgent, isMacOsUserAgent } from "../utils/browser";
+import { ScrollVisibleService } from "./scrollVisibleService";
 
 export interface IFakeHScrollComp {
     setHeight(height: number): void;
@@ -49,7 +48,7 @@ export class FakeHScrollCtrl extends BeanStub {
         const spacerWidthsListener = this.setFakeHScrollSpacerWidths.bind(this);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, spacerWidthsListener);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, spacerWidthsListener);
-        this.addManagedPropertyListener(GridOptionsWrapper.PROP_DOM_LAYOUT, spacerWidthsListener);
+        this.addManagedPropertyListener('domLayout', spacerWidthsListener);
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.onScrollVisibilityChanged();
 

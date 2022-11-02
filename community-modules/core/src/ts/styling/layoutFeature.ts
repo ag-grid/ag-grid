@@ -1,7 +1,7 @@
 import { Constants } from "../constants/constants";
+import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { BeanStub } from "../context/beanStub";
 
 export interface LayoutView {
     updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams): void;
@@ -32,7 +32,7 @@ export class LayoutFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedPropertyListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClasses.bind(this));
+        this.addManagedPropertyListener('domLayout', this.updateLayoutClasses.bind(this));
         this.updateLayoutClasses();
     }
 

@@ -33,19 +33,6 @@ const DEFAULT_DETAIL_ROW_HEIGHT = 300;
 export class GridOptionsWrapper {
     private static MIN_COL_WIDTH = 10;
 
-    public static PROP_HEADER_HEIGHT: 'headerHeight' = 'headerHeight';
-    public static PROP_PIVOT_HEADER_HEIGHT: 'pivotHeaderHeight' = 'pivotHeaderHeight';    
-    public static PROP_GROUP_HEADER_HEIGHT: 'groupHeaderHeight' = 'groupHeaderHeight';
-    public static PROP_PIVOT_GROUP_HEADER_HEIGHT: 'pivotGroupHeaderHeight' = 'pivotGroupHeaderHeight';
-    public static PROP_FLOATING_FILTERS_HEIGHT: 'floatingFiltersHeight' = 'floatingFiltersHeight';
-
-    public static PROP_GROUP_REMOVE_SINGLE_CHILDREN: 'groupRemoveSingleChildren' = 'groupRemoveSingleChildren';
-    public static PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN: 'groupRemoveLowestSingleChildren' = 'groupRemoveLowestSingleChildren';
-    public static PROP_GROUP_DISPLAY_TYPE: 'groupDisplayType' = 'groupDisplayType';
-
-    public static PROP_DOM_LAYOUT: 'domLayout' = 'domLayout';
-    public static PROP_ROW_CLASS: 'rowClass' = 'rowClass';
-
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('gridOptionsService') private readonly gridOptionsService: GridOptionsService;
     @Autowired('eventService') private readonly eventService: EventService;
@@ -333,7 +320,7 @@ export class GridOptionsWrapper {
     }
 
     // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
-    public getDomLayout(): string {
+    public getDomLayout(): "autoHeight" | "normal" | "print" {
         const domLayout = this.gridOptions.domLayout || Constants.DOM_LAYOUT_NORMAL;
         const validLayouts = [
             Constants.DOM_LAYOUT_PRINT,
