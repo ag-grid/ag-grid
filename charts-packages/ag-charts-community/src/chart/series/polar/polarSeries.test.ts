@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgPolarChartOptions } from '../../agChartOptions';
 import { AgChartV2 } from '../../agChartV2';
-import { Chart } from '../../chart';
+import { Chart, ChartUpdateType } from '../../chart';
 import { PolarChart } from '../../polarChart';
 import * as examples from './test/examples';
 import {
@@ -14,10 +14,11 @@ import {
     CANVAS_WIDTH,
     CANVAS_HEIGHT,
     PolarTestCase,
+    toMatchImage,
     repeat,
 } from '../../test/utils';
 
-expect.extend({ toMatchImageSnapshot });
+expect.extend({ toMatchImageSnapshot, toMatchImage });
 
 const EXAMPLES: Record<string, PolarTestCase> = {
     PIE_SERIES: {
@@ -129,5 +130,45 @@ describe('PolarSeries', () => {
                 }
             });
         }
+    });
+
+    describe('no series cases', () => {
+        beforeEach(() => {
+            // Increase timeout for legend toggle case.
+            jest.setTimeout(10_000);
+        });
+
+        it(`for PIE_SERIES it should render identically after legend toggle`, async () => {
+            const snapshot = async () => {
+                await waitForChartStability(chart);
+
+                return ctx.nodeCanvas?.toBuffer('raw');
+            };
+
+            const options: AgPolarChartOptions = { ...examples.PIE_SERIES };
+            options.autoSize = false;
+            options.width = CANVAS_WIDTH;
+            options.height = CANVAS_HEIGHT;
+            options.legend = { enabled: true };
+
+            chart = AgChartV2.create<any>(options) as Chart;
+            const reference = await snapshot();
+
+            options.data?.forEach((_, idx) => {
+                chart.series[0].toggleSeriesItem(idx, false);
+            });
+            chart.update(ChartUpdateType.FULL);
+
+            const afterUpdate = await snapshot();
+            (expect(afterUpdate) as any).not.toMatchImage(reference);
+
+            options.data?.forEach((_, idx) => {
+                chart.series[0].toggleSeriesItem(idx, true);
+            });
+            chart.update(ChartUpdateType.FULL);
+
+            const afterFinalUpdate = await snapshot();
+            (expect(afterFinalUpdate) as any).toMatchImage(reference);
+        });
     });
 });

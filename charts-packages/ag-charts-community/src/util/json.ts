@@ -205,6 +205,10 @@ export function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T {
 
         if ((type === 'array' || type === 'object') && !avoidDeepClone.includes(nextProp)) {
             result[nextProp] = jsonMerge(values, opts);
+        } else if (type === 'array') {
+            // Arrays need to be shallow copied to avoid external mutation and allow jsonDiff to
+            // detect changes.
+            result[nextProp] = [...lastValue];
         } else {
             // Just directly assign/overwrite.
             result[nextProp] = lastValue;

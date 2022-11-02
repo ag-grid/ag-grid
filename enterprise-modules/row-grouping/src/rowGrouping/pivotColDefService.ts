@@ -352,7 +352,7 @@ export class PivotColDefService extends BeanStub {
         colDef.field = colDef.colId;
         // this is to support using pinned rows, normally the data will be extracted from the aggData object using the colId
         // however pinned rows still access the data object by field, this prevents values with dots from being treated as complex objects
-        colDef.valueGetter = (params) => params.data[params.colDef.field!];
+        colDef.valueGetter = (params) => params.data?.[params.colDef.field!];
 
         colDef.pivotKeys = pivotKeys;
         colDef.pivotValueColumn = valueColumn;

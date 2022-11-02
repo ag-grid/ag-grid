@@ -83,7 +83,7 @@ export enum BarLabelPlacement {
 
 export class BarSeriesLabel extends Label {
     @Validate(OPT_FUNCTION)
-    formatter?: (params: { value: number }) => string = undefined;
+    formatter?: (params: { value: number; seriesId: string }) => string = undefined;
 
     @Validate(OPT_BAR_LABEL_PLACEMENT)
     placement = BarLabelPlacement.Inside;
@@ -549,6 +549,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             yData,
             label,
             flipXY,
+            id: seriesId,
         } = this;
 
         const {
@@ -635,7 +636,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
                     let labelText: string;
                     if (labelFormatter) {
-                        labelText = labelFormatter({ value: isNumber(yValue) ? yValue : undefined });
+                        labelText = labelFormatter({
+                            value: isNumber(yValue) ? yValue : undefined,
+                            seriesId,
+                        });
                     } else {
                         labelText = isNumber(yValue) ? yValue.toFixed(2) : '';
                     }

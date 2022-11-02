@@ -5,6 +5,6 @@ export function sanitizeHtml(text?: string): string {
     if (!text) {
         return '';
     }
-    element.innerText = text;
+    element.textContent = text;
     return element.innerHTML;
 }

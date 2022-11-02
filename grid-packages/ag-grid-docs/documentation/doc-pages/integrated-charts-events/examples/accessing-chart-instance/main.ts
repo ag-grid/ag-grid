@@ -61,6 +61,8 @@ function updateTitle(api: GridApi, chart: any) {
     ' column(s) and ' +
     rowCount +
     ' row(s)'
+
+  chart.update(0)
 }
 
 // setup the grid after the page has finished loading

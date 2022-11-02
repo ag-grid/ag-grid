@@ -36,7 +36,6 @@ This is the simplest way to supply custom functions, however it has limitations 
 
 The example below uses the direct `aggFunc` approach shown in the above snippet. Note the following:
 - Rows are grouped by the **Country** and **Year** columns by enabling the `rowGroup` column definition property.
-- The **Gold**, **Silver** and **Bronze** value columns have different agg functions applied via `colDef.aggFunc`.
 - `func(Total)` is displayed in the column header by default as it's a direct function.
 - `agg(Total)` appears in the Columns Tool Panel, but it's omitted from the drop-down list as it's not registered with the grid.   
 
@@ -76,7 +75,6 @@ Note that custom aggregation functions can also be registered using `gridApi.add
 
 The example below uses the `aggFuncs` approach shown in the snippet above. Note the following:
 - Rows are grouped by the **Country** and **Year** columns by enabling the `rowGroup` column definition property.
-- The **Gold**, **Silver** and **Bronze** value columns have different agg functions applied via `colDef.aggFunc`.
 - `mySum(Total)` is displayed in the column header by default as it uses the registered function name.
 - `mySum(Total)` appears in the Columns Tool Panel and appears in the drop-down list just like a built-in function.
 

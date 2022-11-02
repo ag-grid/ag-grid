@@ -172,27 +172,13 @@ const AboutPage = () => {
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='../images/team/marats.jpeg' alt="Marats Stelihs, Developer"/>
-                                    </div>
-                                    <h3>Marats Stelihs</h3>
-                                    <h4>Developer</h4>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-md-4">
-                                    <div>
-                                        <img src='../images/team/abs.jpeg' alt="AbdiWali Jama, Developer"/>
-                                    </div>
-                                    <h3>AbdiWali Jama</h3>
-                                    <h4>Developer</h4>
-                                </div>
-                                <div className="col-md-4">
-                                    <div>
                                         <img src='../images/team/kiril.png' alt="Kiril Matev, Developer"/>
                                     </div>
                                     <h3>Kiril Matev</h3>
                                     <h4>Technical Product Manager</h4>
                                 </div>
+                            </div>
+                            <div className="row">
                                 <div className="col-md-4">
                                     <div>
                                         <img src='../images/team/viqas.jpg' alt="Viqas Hussain, Lead Developer"/>
@@ -276,22 +262,14 @@ const AboutPage = () => {
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='../images/team/ryan.png'
-                                             alt="Ryan Short, Customer Experience Manager"/>
-                                    </div>
-                                    <h3>Ryan Short</h3>
-                                    <h4>Customer Experience Manager</h4>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-md-4">
-                                    <div>
                                         <img src='../images/team/seweety.jpeg'
                                              alt="Seweety Kumar, Customer Experience Manager"/>
                                     </div>
                                     <h3>Seweety Kumar</h3>
                                     <h4>Customer Experience Manager</h4>
                                 </div>
+                            </div>
+                            <div className="row">
                                 <div className="col-md-4">
                                     <div>
                                         <img src='../images/team/laiyan.jpeg'
@@ -308,8 +286,6 @@ const AboutPage = () => {
                                     <h3>Amir Hussain</h3>
                                     <h4>Customer Experience Manager</h4>
                                 </div>
-                            </div>
-                            <div className="row">
                                 <div className="col-md-4">
                                     <div>
                                         <img src='../images/team/jordan.jpeg'
@@ -318,6 +294,8 @@ const AboutPage = () => {
                                     <h3>Jordan Shekoni</h3>
                                     <h4>Customer Experience Manager</h4>
                                 </div>
+                            </div>
+                            <div className="row">
                                 <div className="col-md-4">
                                     <div>
                                         <img src='../images/team/kathryn.png'

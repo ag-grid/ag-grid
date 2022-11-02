@@ -138,7 +138,7 @@ export class ScatterChartProxy extends CartesianChartProxy {
                 listeners: {
                     ...series.listeners,
                     nodeClick: (e: any) => {
-                        const value = e.datum[e.series.xKey!];
+                        const value = e.datum[filteredOutKey(xKey!)];
 
                         // Need to remove the `-filtered-out` suffixes from the event so that
                         // upstream processing maps the event correctly onto grid column ids.

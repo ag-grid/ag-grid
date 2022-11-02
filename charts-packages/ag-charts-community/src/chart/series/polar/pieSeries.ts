@@ -257,6 +257,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
      * The processed data that gets visualized.
      */
     private groupSelectionData: PieNodeDatum[] = [];
+    private sectorFormatData: PieSeriesFormat[] = [];
 
     private angleScale: LinearScale = (() => {
         const scale = new LinearScale();
@@ -477,6 +478,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             seriesItemEnabled,
             angleScale,
             groupSelectionData,
+            sectorFormatData,
             calloutLabel,
             sectorLabel,
             id: seriesId,
@@ -578,6 +580,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
 
         groupSelectionData.length = 0;
+        sectorFormatData.length = 0;
+        sectorFormatData.push(...data.map((datum, datumIdx) => this.getSectorFormat(datum, datumIdx, datumIdx, false)));
 
         const rotation = toRadians(this.rotation);
         const halfPi = Math.PI / 2;
@@ -644,7 +648,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                           text: sectorLabelData[datumIndex],
                       }
                     : undefined,
-                sectorFormat: this.getSectorFormat(datum, itemId, datumIndex, false),
+                sectorFormat: sectorFormatData[datumIndex],
             });
 
             datumIndex++;
@@ -1090,7 +1094,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     getLegendData(): LegendDatum[] {
-        const { calloutLabelKey, data } = this;
+        const { calloutLabelKey, data, sectorFormatData } = this;
 
         if (data && data.length && calloutLabelKey) {
             const { id } = this;
@@ -1112,8 +1116,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                         text: labelParts.join(' - '),
                     },
                     marker: {
-                        fill: this.groupSelectionData[index].sectorFormat.fill!,
-                        stroke: this.groupSelectionData[index].sectorFormat.stroke!,
+                        fill: sectorFormatData[index].fill!,
+                        stroke: sectorFormatData[index].stroke!,
                         fillOpacity: this.fillOpacity,
                         strokeOpacity: this.strokeOpacity,
                     },

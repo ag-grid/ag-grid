@@ -87,6 +87,12 @@ export function mouseMoveEvent({ offsetX, offsetY }: { offsetX: number; offsetY:
     return event;
 }
 
+export function clickEvent({ offsetX, offsetY }: { offsetX: number; offsetY: number }): MouseEvent {
+    const event = new MouseEvent('click');
+    Object.assign(event, { offsetX, offsetY, pageX: offsetX, pageY: offsetY });
+    return event;
+}
+
 export function cartesianChartAssertions(params?: { type?: string; axisTypes?: string[]; seriesTypes?: string[] }) {
     const { axisTypes = ['category', 'number'], seriesTypes = ['bar'] } = params || {};
 
@@ -124,6 +130,15 @@ export function hoverAction(x: number, y: number): (chart: Chart) => Promise<voi
         chart.scene.canvas.element.dispatchEvent(mouseMoveEvent({ offsetX: x - 1, offsetY: y - 1 }));
         chart.scene.canvas.element.dispatchEvent(mouseMoveEvent({ offsetX: x, offsetY: y }));
 
+        return new Promise((resolve) => {
+            setTimeout(resolve, 50);
+        });
+    };
+}
+
+export function clickAction(x: number, y: number): (chart: Chart) => Promise<void> {
+    return async (chart) => {
+        chart.scene.canvas.element.dispatchEvent(clickEvent({ offsetX: x, offsetY: y }));
         return new Promise((resolve) => {
             setTimeout(resolve, 50);
         });

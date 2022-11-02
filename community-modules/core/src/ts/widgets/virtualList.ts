@@ -21,7 +21,6 @@ export class VirtualList extends TabGuardComp {
     private componentCreator: (value: any, listItemElement: HTMLElement) => Component;
     private rowHeight = 20;
     private lastFocusedRowIndex: number | null;
-    private isDestroyed = false;
 
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @Autowired('focusService') private readonly focusService: FocusService;
@@ -130,6 +129,7 @@ export class VirtualList extends TabGuardComp {
         this.ensureIndexVisible(rowNumber);
 
         window.setTimeout(() => {
+            if (!this.isAlive()) { return; }
             const renderedRow = this.renderedRows.get(rowNumber);
 
             if (renderedRow) {
@@ -206,7 +206,7 @@ export class VirtualList extends TabGuardComp {
     }
 
     public refresh(): void {
-        if (this.model == null || this.isDestroyed) { return; }
+        if (this.model == null || !this.isAlive()) { return; }
 
         const rowCount = this.model.getRowCount();
         this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
@@ -214,7 +214,7 @@ export class VirtualList extends TabGuardComp {
         // ensure height is applied before attempting to redraw rows
         waitUntil(() => this.eContainer.clientHeight >= rowCount * this.rowHeight,
             () => {
-                if (this.isDestroyed) { return; }
+                if (!this.isAlive()) { return; }
 
                 this.clearVirtualRows();
                 this.drawVirtualRows();
@@ -228,6 +228,7 @@ export class VirtualList extends TabGuardComp {
 
     private drawVirtualRows() {
         if (!this.isAlive()) { return; }
+
         const gui = this.getGui();
         const topPixel = gui.scrollTop;
         const bottomPixel = topPixel + gui.offsetHeight;
@@ -311,11 +312,9 @@ export class VirtualList extends TabGuardComp {
     }
 
     public destroy(): void {
-        if (this.isDestroyed) { return; }
+        if (!this.isAlive()) { return; }
 
         this.clearVirtualRows();
-        this.isDestroyed = true;
-
         super.destroy();
     }
 }

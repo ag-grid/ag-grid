@@ -243,7 +243,8 @@ describe('json module', () => {
                 expect(merge.a).toBeInstanceOf(Array);
                 expect(merge.b).toBeInstanceOf(Array);
                 expect(merge.a).not.toBe(mergee.a);
-                expect(merge.b).toBe(mergee.b);
+                expect(merge.b).not.toBe(mergee.b);
+                expect(merge.b).toStrictEqual(mergee.b);
                 expect(merge.a.length).toEqual(mergee.a.length);
                 expect(merge.b.length).toEqual(mergee.b.length);
                 expect(merge.a[0]).not.toBe(mergee.a[0]);

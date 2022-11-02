@@ -135,7 +135,7 @@ You can provide a tooltip to the header using `colDef.headerTooltip`.
 
 The example below shows header tooltips. Note the following:
 
-- All the columns, apart from (**Country** and **Year**), have a header tooltip set.
+- All the columns, apart from **Country** and **Year**, have a header tooltip set.
 - We have set the Grid `tooltipShowDelay` property to 500ms to make the tooltips appear quicker.
 
 <grid-example title='Header Tooltip' name='header-tooltip' type='generated'></grid-example>
@@ -210,7 +210,7 @@ Note that specifying your own templates is compatible with other configurations:
 - `sortable=false` is specified in: **Age**, **Year**, **Sport**, **Silver** and **Total** columns
 - **Gold** is the only column that doesn't have `sortable=false` or `suppressMenu`
 
-<grid-example title='Header template' name='header-template' type='typescript' options='{ "extras": ["fontawesome"] }'></grid-example>
+<grid-example title='Header template' name='header-template' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>
 
 ## Custom Header
 

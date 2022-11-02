@@ -11,7 +11,6 @@ import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
 import { RowNode } from '../../entities/rowNode';
-import { ValueService } from '../../valueService/valueService';
 import { getLocaleTextFunc } from '../../localeFunctions';
 import { _ } from '../../utils';
 
@@ -90,7 +89,6 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     private appliedModel: M | null = null;
 
     @Autowired('rowModel') protected readonly rowModel: IRowModel;
-    @Autowired('valueService') private valueService: ValueService;
 
     constructor(private readonly filterNameKey: keyof IFilterTitleLocaleText) {
         super();
@@ -136,14 +134,23 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     protected resetTemplate(paramsMap?: any) {
+        let eGui = this.getGui();
+        if (eGui) {
+            eGui.removeEventListener('submit', this.onFormSubmit);
+        }
         const templateString = /* html */`
-            <div class="ag-filter-wrapper">
+            <form class="ag-filter-wrapper">
                 <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper">
                     ${this.createBodyTemplate()}
                 </div>
-            </div>`;
+            </form>`;
 
         this.setTemplate(templateString, paramsMap);
+
+        eGui = this.getGui();
+        if (eGui) {
+            eGui.addEventListener('submit', this.onFormSubmit);
+        }
     }
 
     protected isReadOnly(): boolean {
@@ -204,10 +211,11 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                     return;
             }
 
+            const buttonType = type === 'apply' ? 'submit' : 'button';
             const button = loadTemplate(
                 /* html */
                 `<button
-                    type="button"
+                    type="${buttonType}"
                     ref="${type}FilterButton"
                     class="ag-standard-button ag-filter-apply-panel-button"
                 >${text}
@@ -298,7 +306,13 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         return true;
     }
 
+    private onFormSubmit(e: Event): void {
+        e.preventDefault();
+    }
+
     protected onBtApply(afterFloatingFilter = false, afterDataChange = false, e?: Event): void {
+        // Prevent form submission
+        if (e) { e.preventDefault(); }
         if (this.applyModel()) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
@@ -378,6 +392,10 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     public destroy(): void {
+        const eGui = this.getGui();
+        if (eGui) {
+            eGui.removeEventListener('submit', this.onFormSubmit);
+        }
         this.hidePopup = null;
 
         super.destroy();

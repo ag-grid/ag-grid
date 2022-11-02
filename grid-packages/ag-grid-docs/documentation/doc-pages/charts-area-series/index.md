@@ -129,18 +129,20 @@ normalizedTo: 100
 
 Sometimes data for certain items or time periods might be missing.
 
-If the `yKey` value of a data point is `+/-Infinity`, `null`, `undefined` or `NaN`, that data point will be rendered as a gap.
+The chart handles such cases based on whether the `xKey`  or `yKey` value of a data point is invalid.
 
-If the bottom axis is also continuous, a `'time'` or `'number'` axis, rather than being rendered as a gap, invalid `xKey` values from the data will be skipped all together.
+The `yKey` value of a data point is invalid if it’s `+/-Infinity`, `null`, `undefined` or `NaN`. A data point with an invalid `yKey` value will be rendered as a gap in the series.
 
-[[note]]
-| For category X axes, the data can be any category value including number, object, `+/-Infinity`, `null`, `undefined` or `NaN`. In this case the data point will not be skipped, it will still be renered as a category along the X axis.
+The `xKey` value of a data point is invalid if it’s a number, object, `+/-Infinity`, `null`, `undefined` or `NaN`. The chart handles this depending on the X-axis type:
 
-The following example demonstrates how missing data is handled in Area Series:
+- For continuous X axes (either a `'time'` or `'number'` axis), the data point will be skipped altogether.
+- For category X axes the data point will not be skipped. It will be rendered as a category along the X axis.
+
+The following example demonstrates how missing data is handled for a continuous X-axis type (time axis) in Area Series:
 
 - Initially there is no missing data, all values are valid for their associated axes.
-- The first row of buttons at the top change the data to show the behaviour when Y values are missing from the data compared to when X values are missing.
-- Missing Y values are rendered as a gap in the area whereas missing X values are skipped.
+- Click the Missing Y values button and note that missing Y values are rendered as gaps in the area chart.
+- Click the Missing X values button and note that missing X values causes no data point to be displayed (hence fewer data points shown in the area chart).
 - The second row of buttons allow switching between stacked and grouped area series.
 
 <chart-example title='Area Series with Incomplete Data' name='missing-data-area' type='generated'></chart-example>

@@ -44,7 +44,14 @@ function getRowData() {
 }
 
 function clearData() {
-  gridOptions.api!.setRowData([])
+  const rowData: any[] = [];
+  gridOptions.api!.forEachNode(function (node) {
+    rowData.push(node.data);
+  });
+  const res = gridOptions.api!.applyTransaction({
+    remove: rowData,
+  })!;
+  printResult(res)
 }
 
 function addItems(addIndex: number | undefined) {
