@@ -90,7 +90,7 @@ const publishedConfiguration = {
         "@ag-grid-community/angular": `${NPM_CDN}/@ag-grid-community/angular@${agGridAngularVersion}/`,
         "@ag-grid-community/vue": `${NPM_CDN}/@ag-grid-community/vue@${agGridVueVersion}/`,
         "@ag-grid-community/vue3": `${NPM_CDN}/@ag-grid-community/vue3@${agGridVue3Version}/`,
-        "ag-grid-community": `${NPM_CDN}/ag-grid-community@${agGridVersion}/`,
+        "ag-grid-community": `${NPM_CDN}/ag-grid-community@${agGridVersion}`,
         "ag-grid-enterprise": `${NPM_CDN}/ag-grid-enterprise@${agGridEnterpriseVersion}/`,
         "ag-grid-angular": `${NPM_CDN}/ag-grid-angular@${agGridAngularVersion}/`,
         "ag-grid-react": `${NPM_CDN}/ag-grid-react@${agGridReactVersion}/`,
