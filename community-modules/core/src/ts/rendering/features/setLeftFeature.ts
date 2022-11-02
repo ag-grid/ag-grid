@@ -56,7 +56,7 @@ export class SetLeftFeature extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onLeftChanged.bind(this));
 
         // setting left has a dependency on print layout
-        this.addManagedListener(this.beans.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onLeftChanged.bind(this));
+        this.addManagedPropertyListener('domLayout', this.onLeftChanged.bind(this));
     }
 
     private setLeftFirstTime(): void {

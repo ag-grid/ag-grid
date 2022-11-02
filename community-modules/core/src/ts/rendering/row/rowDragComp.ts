@@ -186,7 +186,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.beans.gridOptionsWrapper, 'suppressRowDrag', this.onSuppressRowDrag.bind(this));
+        this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
 
         // in case data changes, then we need to update visibility of drag item
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
@@ -231,7 +231,7 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
 
-        this.addManagedListener(this.beans.gridOptionsWrapper, 'suppressRowDrag', this.onSuppressRowDrag.bind(this));
+        this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
 
         this.workOutVisibility();
     }

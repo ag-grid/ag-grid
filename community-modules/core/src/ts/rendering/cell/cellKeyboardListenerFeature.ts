@@ -87,7 +87,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
     private onBackspaceOrDeleteKeyPressed(key: string, event: KeyboardEvent): void {
         const { cellCtrl, beans, rowNode } = this;
-        const { gridOptionsWrapper, gridOptionsService, rangeService, eventService } = beans;
+        const { gridOptionsService, rangeService, eventService } = beans;
 
         if (cellCtrl.isEditing()) { return; }
 

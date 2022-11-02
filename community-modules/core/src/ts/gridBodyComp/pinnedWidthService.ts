@@ -18,7 +18,7 @@ export class PinnedWidthService extends BeanStub {
         const listener = this.checkContainerWidths.bind(this);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, listener);
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
+        this.addManagedPropertyListener(GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
     }
 
     private checkContainerWidths() {

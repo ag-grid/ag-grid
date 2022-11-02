@@ -99,9 +99,9 @@ export class ComponentUtil {
         // if groupAggFiltering exists and isn't a function, handle as a boolean.
         if (keyExists('groupAggFiltering')) {
             if (typeof changesToApply.groupAggFiltering === 'function') {
-                pGridOptions.groupAggFiltering = changesToApply.groupAggFiltering;
+                api.setProperty('groupAggFiltering', changesToApply.groupAggFiltering);
             } else {
-                pGridOptions.groupAggFiltering = ComponentUtil.toBoolean(changesToApply.groupAggFiltering);
+                api.setProperty('groupAggFiltering', ComponentUtil.toBoolean(changesToApply.groupAggFiltering));
             }
             delete changesToApply.groupAggFiltering;
         }
@@ -112,106 +112,13 @@ export class ComponentUtil {
                 delete changesToApply.groupDisplayType;
             }
         }
-        // *********  CODE ORDER TO AVOID BUGS *************** //
-        // If you want to call an update method that just calls through to gridOptionsWrapper.setProperty then it needs to be
-        // called before the values get copied across otherwise the change will not fire an event because the method
-        // gridOptionsWrapper.setProperty does a diff check first.
-
-        // All these manual calls are required in the current setup as changes to these properties are being listened to in the 
-        // rest of the code base which can be found by searching for: "addManagedListener(this.gridOptionsWrapper"
-
-        if (changesToApply.domLayout) {
-            api.setDomLayout(changesToApply.domLayout.currentValue);
-            delete changesToApply.domLayout;
-        }
-        if (changesToApply.rowClass) {
-            api.setRowClass(changesToApply.rowClass.currentValue);
-            delete changesToApply.rowClass;
-        }
-        if (changesToApply.paginationPageSize) {
-            api.paginationSetPageSize(ComponentUtil.toNumber(changesToApply.paginationPageSize.currentValue));
-            delete changesToApply.paginationPageSize;
-        }
-        if (changesToApply.rowGroupPanelShow) {
-            api.setRowGroupPanelShow(changesToApply.rowGroupPanelShow.currentValue);
-            delete changesToApply.rowGroupPanelShow;
-        }
-        if (changesToApply.groupRemoveSingleChildren) {
-            api.setGroupRemoveSingleChildren(ComponentUtil.toBoolean(changesToApply.groupRemoveSingleChildren.currentValue));
-            delete changesToApply.groupRemoveSingleChildren;
-        }
-        if (changesToApply.groupRemoveLowestSingleChildren) {
-            api.setGroupRemoveLowestSingleChildren(ComponentUtil.toBoolean(changesToApply.groupRemoveLowestSingleChildren.currentValue));
-            delete changesToApply.groupRemoveLowestSingleChildren;
-        }
-        if (changesToApply.suppressRowDrag) {
-            api.setSuppressRowDrag(ComponentUtil.toBoolean(changesToApply.suppressRowDrag.currentValue));
-            delete changesToApply.suppressRowDrag;
-        }
-        if (changesToApply.suppressMoveWhenRowDragging) {
-            api.setSuppressMoveWhenRowDragging(ComponentUtil.toBoolean(changesToApply.suppressMoveWhenRowDragging.currentValue));
-            delete changesToApply.suppressMoveWhenRowDragging;
-        }
-        if (changesToApply.suppressRowClickSelection) {
-            api.setSuppressRowClickSelection(ComponentUtil.toBoolean(changesToApply.suppressRowClickSelection.currentValue));
-            delete changesToApply.suppressRowClickSelection;
-        }
-        if (changesToApply.suppressClipboardPaste) {
-            api.setSuppressClipboardPaste(ComponentUtil.toBoolean(changesToApply.suppressClipboardPaste.currentValue));
-            delete changesToApply.suppressClipboardPaste;
-        }
-        if (changesToApply.headerHeight) {
-            api.setHeaderHeight(ComponentUtil.toNumber(changesToApply.headerHeight.currentValue));
-            delete changesToApply.headerHeight;
-        }
-        if (changesToApply.pivotHeaderHeight) {
-            api.setPivotHeaderHeight(ComponentUtil.toNumber(changesToApply.pivotHeaderHeight.currentValue));
-            delete changesToApply.pivotHeaderHeight;
-        }
-        if (changesToApply.groupHeaderHeight) {
-            api.setGroupHeaderHeight(ComponentUtil.toNumber(changesToApply.groupHeaderHeight.currentValue));
-            delete changesToApply.groupHeaderHeight;
-        }
-        if (changesToApply.pivotGroupHeaderHeight) {
-            api.setPivotGroupHeaderHeight(ComponentUtil.toNumber(changesToApply.pivotGroupHeaderHeight.currentValue));
-            delete changesToApply.pivotGroupHeaderHeight;
-        }
-        if (changesToApply.floatingFiltersHeight) {
-            api.setFloatingFiltersHeight(ComponentUtil.toNumber(changesToApply.floatingFiltersHeight.currentValue));
-            delete changesToApply.floatingFiltersHeight;
-        }
-        if (changesToApply.functionsReadOnly) {
-            api.setFunctionsReadOnly(ComponentUtil.toBoolean(changesToApply.functionsReadOnly.currentValue));
-            delete changesToApply.functionsReadOnly;
-        }
-        // *********  CODE ORDER TO AVOID BUGS *************** //
-
-        // check if any change for the simple types, and if so, then just copy in the new value
-        [
-            ...ComponentUtil.ARRAY_PROPERTIES,
-            ...ComponentUtil.OBJECT_PROPERTIES,
-            ...ComponentUtil.STRING_PROPERTIES,
-            ...ComponentUtil.getEventCallbacks(),
-        ]
-            .filter(keyExists)
-            .forEach(key => pGridOptions[key] = changesToApply[key].currentValue);
-
-        ComponentUtil.BOOLEAN_PROPERTIES
-            .filter(keyExists)
-            .forEach(key => pGridOptions[key] = ComponentUtil.toBoolean(changesToApply[key].currentValue));
-
-        ComponentUtil.NUMBER_PROPERTIES
-            .filter(keyExists)
-            .forEach(key => pGridOptions[key] = ComponentUtil.toNumber(changesToApply[key].currentValue));
-
-
         // All of the above could be replaced with the following once using the GridOptionsService which has a set method
         // that takes care of the coercion as part of the set method.
-        /* const changeKeys = Object.keys(changesToApply);
+        const changeKeys = Object.keys(changesToApply);
         changeKeys.forEach(key => {
             const gridKey = key as keyof GridOptions;
             api.setProperty(gridKey, changesToApply[gridKey].currentValue);
-        }); */
+        });
 
         // *********  CODE ORDER TO AVOID BUGS *************** //
         // The following manual updates call directly into code models and rely on the simple copy being made by the

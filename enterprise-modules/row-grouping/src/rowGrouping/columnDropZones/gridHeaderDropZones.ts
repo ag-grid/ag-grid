@@ -27,7 +27,7 @@ export class GridHeaderDropZones extends Component {
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onRowGroupChanged.bind(this));
-        this.addManagedListener(this.gridOptionsWrapper, 'rowGroupPanelShow', this.onRowGroupChanged.bind(this));
+        this.addManagedPropertyListener('rowGroupPanelShow', this.onRowGroupChanged.bind(this));
 
         this.onRowGroupChanged();
     }

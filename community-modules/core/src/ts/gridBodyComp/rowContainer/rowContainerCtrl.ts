@@ -264,7 +264,7 @@ export class RowContainerCtrl extends BeanStub {
         }
 
         const listener = () => this.comp.setDomOrder(this.gridOptionsService.is('ensureDomOrder'));
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
+        this.addManagedPropertyListener(GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
         listener();
     }
 
