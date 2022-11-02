@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-angular-legacy",
-  "version": "6.2.0",
+  "version": "6.2.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
@@ -21,6 +21,6 @@
   "peerDependencies": {
     "@angular/common": ">=8.0.0",
     "@angular/core": ">=8.0.0",
-    "ag-charts-community": "~6.2.0"
+    "ag-charts-community": "~6.2.1"
   }
 }
