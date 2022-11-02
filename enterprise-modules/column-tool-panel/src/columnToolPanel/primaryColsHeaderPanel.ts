@@ -9,7 +9,8 @@ import {
     AgInputTextField,
     KeyCode,
     PostConstruct,
-    Component
+    Component,
+    getLocaleTextFunc
 } from "@ag-grid-community/core";
 
 export enum ExpandState { EXPANDED, COLLAPSED, INDETERMINATE }
@@ -69,7 +70,7 @@ export class PrimaryColsHeaderPanel extends Component {
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle Select All Columns'));
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
@@ -105,7 +106,7 @@ export class PrimaryColsHeaderPanel extends Component {
         const showSelect = !this.params.suppressColumnSelectAll;
         const showExpand = !this.params.suppressColumnExpandAll;
         const groupsPresent = this.columnModel.isPrimaryColumnGroupsPresent();
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 

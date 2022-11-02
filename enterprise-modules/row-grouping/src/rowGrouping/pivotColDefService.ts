@@ -6,6 +6,7 @@ import {
     ColGroupDef,
     Column,
     ColumnModel,
+    getLocaleTextFunc,
     _
 } from "@ag-grid-community/core";
 
@@ -240,7 +241,7 @@ export class PivotColDefService extends BeanStub {
         // only add total colDef if there is more than 1 child node
         if (group.children.length > 1) {
 
-            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
             const headerName = localeTextFunc('pivotColumnGroupTotals', 'Total');
 
             //create total colDef using an arbitrary value column as a template

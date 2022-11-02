@@ -16,7 +16,8 @@ import {
     KeyCode,
     PostConstruct,
     RefSelector,
-    WithoutGridCommon
+    WithoutGridCommon,
+    getLocaleTextFunc
 } from "@ag-grid-community/core";
 import { ModelItemUtils } from "./modelItemUtils";
 import { ToolPanelContextMenu } from "./toolPanelContextMenu";
@@ -171,7 +172,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private refreshAriaLabel(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
         const columnLabel = translate('ariaColumn', 'Column');
         const state = this.cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
         const visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');

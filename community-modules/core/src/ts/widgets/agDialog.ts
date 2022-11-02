@@ -5,6 +5,7 @@ import { setDisplayed } from "../utils/dom";
 import { createIconNoSpan } from "../utils/icon";
 import { PopupService } from "./popupService";
 import { ResizableStructure } from "../rendering/features/positionableFeature";
+import { getLocaleTextFunc } from '../localeFunctions';
 
 export type ResizableSides = 'topLeft' |
     'top' |
@@ -69,7 +70,7 @@ export class AgDialog extends AgPanel {
     protected renderComponent() {
         const eGui = this.getGui();
         const { alwaysOnTop, modal, title } = this.config as DialogOptions;
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         const addPopupRes = this.popupService.addPopup({
             modal,

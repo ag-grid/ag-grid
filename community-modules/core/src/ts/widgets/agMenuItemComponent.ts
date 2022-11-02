@@ -16,6 +16,7 @@ import { CustomTooltipFeature } from './customTooltipFeature';
 import { getAriaLevel, setAriaDisabled, setAriaExpanded } from '../utils/aria';
 import { IComponent } from '../interfaces/iComponent';
 import { WithoutGridCommon } from '../interfaces/iCommon';
+import { getLocaleTextFunc } from '../localeFunctions';
 
 interface MenuItemComponentParams extends MenuItemLeafDef {
     isCompact?: boolean;
@@ -153,7 +154,7 @@ export class AgMenuItemComponent extends Component {
         const positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService,
             { eventSource: eGui, ePopup });
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,

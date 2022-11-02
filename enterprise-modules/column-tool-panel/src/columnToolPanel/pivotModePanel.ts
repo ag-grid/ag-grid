@@ -5,7 +5,8 @@ import {
     Component,
     Events,
     PreConstruct,
-    RefSelector
+    RefSelector,
+    getLocaleTextFunc
 } from "@ag-grid-community/core";
 
 export class PivotModePanel extends Component {
@@ -25,7 +26,7 @@ export class PivotModePanel extends Component {
         this.setTemplate(this.createTemplate());
 
         this.cbPivotMode.setValue(this.columnModel.isPivotMode());
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
 
         this.addManagedListener(this.cbPivotMode, AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));

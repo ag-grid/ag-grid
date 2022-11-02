@@ -1,4 +1,4 @@
-import { CellCtrl, PopupEditorWrapper } from '@ag-grid-community/core';
+import { CellCtrl, PopupEditorWrapper, getLocaleTextFunc } from '@ag-grid-community/core';
 import React, { useEffect, useState, memo, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { EditDetails } from './cellComp';
@@ -46,7 +46,7 @@ const PopupEditorComp = (props: {
             popupService.positionPopupUnderComponent.bind(popupService, positionParams)
             : popupService.positionPopupOverComponent.bind(popupService, positionParams);
 
-        const translate = gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(gridOptionsService);
     
         const addPopupRes = popupService.addPopup({
             modal: useModelPopup,

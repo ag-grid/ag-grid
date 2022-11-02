@@ -9,6 +9,7 @@ import {
     _,
     ColumnModel,
     ISetFilterParams,
+    getLocaleTextFunc,
     SetFilterModel,
 } from '@ag-grid-community/core';
 
@@ -40,7 +41,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
 
     public init(params: IFloatingFilterParams): void {
         const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         this.eFloatingFilterText
             .setDisabled(true)
@@ -96,7 +97,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
                 return;
             }
 
-            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
             const availableValues = values.filter(v => valueModel.isValueAvailable(v))!;
 
             // format all the values, if a formatter is provided

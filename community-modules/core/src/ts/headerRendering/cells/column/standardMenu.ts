@@ -10,6 +10,7 @@ import { KeyCode } from '../../../constants/keyCode';
 import { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
 import { CtrlsService } from '../../../ctrlsService';
 import { setAriaRole } from '../../../utils/aria';
+import { getLocaleTextFunc } from '../../../localeFunctions';
 
 @Bean('menuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
@@ -84,7 +85,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             }
         };
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,

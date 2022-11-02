@@ -1,4 +1,4 @@
-import { Autowired, Events, GridApi, IStatusPanelComp, PostConstruct, _ } from '@ag-grid-community/core';
+import { Autowired, Events, GridApi, IStatusPanelComp, PostConstruct, _, getLocaleTextFunc } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
 export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
@@ -25,7 +25,7 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
     }
 
     private onDataChanged() {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
         this.setValue(_.formatNumberCommas(this.getRowCountValue(), thousandSeparator, decimalSeparator));

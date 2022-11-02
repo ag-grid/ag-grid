@@ -6,6 +6,7 @@ import { createIcon } from '../utils/icon';
 import { setDisplayed } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
 import { setAriaExpanded } from '../utils/aria';
+import { getLocaleTextFunc } from '../localeFunctions';
 
 type GroupItem = Component | HTMLElement;
 type Align = 'start' | 'end' | 'center' | 'stretch';
@@ -90,7 +91,7 @@ export class AgGroupComponent extends Component {
             this.addItems(initialItems);
         }
 
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         this.cbGroupEnabled.setLabel(localeTextFunc('enabled', 'Enabled'));
 
         if (this.title) {

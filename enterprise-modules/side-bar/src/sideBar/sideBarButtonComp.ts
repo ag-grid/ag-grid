@@ -4,6 +4,7 @@ import {
     RefSelector,
     ToolPanelDef,
     _,
+    getLocaleTextFunc
 } from "@ag-grid-community/core";
 
 export class SideBarButtonComp extends Component {
@@ -46,7 +47,7 @@ export class SideBarButtonComp extends Component {
     }
 
     private setLabel(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
         const def = this.toolPanelDef;
         const label = translate(def.labelKey, def.labelDefault);
 

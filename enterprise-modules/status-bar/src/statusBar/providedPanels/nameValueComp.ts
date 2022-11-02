@@ -1,4 +1,4 @@
-import { Component, RefSelector } from '@ag-grid-community/core';
+import { Component, RefSelector, getLocaleTextFunc } from '@ag-grid-community/core';
 
 export class NameValueComp extends Component {
 
@@ -19,7 +19,7 @@ export class NameValueComp extends Component {
         // we want to hide until the first value comes in
         this.setDisplayed(false);
 
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         this.eLabel.innerHTML = localeTextFunc(key, defaultValue);
     }
 

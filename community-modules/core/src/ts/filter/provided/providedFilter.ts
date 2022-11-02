@@ -12,6 +12,7 @@ import { convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
 import { RowNode } from '../../entities/rowNode';
 import { ValueService } from '../../valueService/valueService';
+import { getLocaleTextFunc } from '../../localeFunctions';
 import { _ } from '../../utils';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
@@ -383,7 +384,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     protected translate(key: keyof IFilterLocaleText | keyof IFilterTitleLocaleText): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);
     }

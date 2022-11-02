@@ -6,6 +6,7 @@ import { PopupService } from "./popupService";
 import { setElementWidth, getAbsoluteWidth, getInnerHeight } from "../utils/dom";
 import { IAgLabel } from './agAbstractLabel';
 import { setAriaExpanded } from "../utils/aria";
+import { getLocaleTextFunc } from '../localeFunctions';
 
 export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     protected listComponent: AgList;
@@ -56,7 +57,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
             }
         });
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,

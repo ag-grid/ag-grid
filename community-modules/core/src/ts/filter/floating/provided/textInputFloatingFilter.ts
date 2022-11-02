@@ -12,6 +12,7 @@ import { ColumnModel } from '../../../columns/columnModel';
 import { KeyCode } from '../../../constants/keyCode';
 import { ITextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
 import { NumberFilterModel, INumberFilterParams } from '../../provided/number/numberFilter';
+import { getLocaleTextFunc } from '../../../localeFunctions';
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
@@ -82,7 +83,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         }
 
         const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
         this.eFloatingFilterInput.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
 

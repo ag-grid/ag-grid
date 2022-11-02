@@ -5,6 +5,7 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { Autowired } from '../../../context/context';
 import { ColumnModel } from '../../../columns/columnModel';
 import { IFilter } from '../../../interfaces/iFilter';
+import { getLocaleTextFunc } from '../../../localeFunctions';
 
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays
@@ -32,7 +33,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
     public init(params: IFloatingFilterParams): void {
         this.params = params;
         const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
         this.eFloatingFilterText
             .setDisabled(true)
             .setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);

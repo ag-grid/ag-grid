@@ -25,7 +25,8 @@ import {
     PostConstruct,
     RowNode,
     CtrlsService,
-    WithoutGridCommon
+    WithoutGridCommon,
+    getLocaleTextFunc
 } from "@ag-grid-community/core";
 import { MenuItemMapper } from "./menuItemMapper";
 
@@ -154,7 +155,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             nudgeY: 1
         };
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,

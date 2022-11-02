@@ -4,6 +4,7 @@ import {
     GridApi,
     IStatusPanelComp,
     PostConstruct,
+    getLocaleTextFunc,
     _
 } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
@@ -32,7 +33,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
     }
 
     private onDataChanged() {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 
@@ -42,7 +43,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
         if (rowCount === totalRowCount) {
             this.setValue(rowCount);
         } else {
-            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
             this.setValue(`${rowCount} ${localeTextFunc('of', 'of')} ${totalRowCount}`);
         }
     }

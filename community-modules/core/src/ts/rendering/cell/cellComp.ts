@@ -17,6 +17,7 @@ import { addStylesToElement, clearElement, loadTemplate, removeFromParent } from
 import { CellCtrl, ICellComp } from "./cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { browserSupportsPreventScroll } from "../../utils/browser";
+import { getLocaleTextFunc } from '../../localeFunctions';
 
 export class CellComp extends Component implements TooltipParentComp {
 
@@ -490,7 +491,7 @@ export class CellComp extends Component implements TooltipParentComp {
             popupService.positionPopupUnderComponent.bind(popupService, positionParams)
             : popupService.positionPopupOverComponent.bind(popupService, positionParams);
 
-        const translate = this.beans.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.beans.gridOptionsService);
 
         const addPopupRes = popupService.addPopup({
             modal: useModelPopup,

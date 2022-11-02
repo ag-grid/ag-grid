@@ -12,6 +12,7 @@ import { SelectionService } from "../../../selectionService";
 import { HeaderCellCtrl } from "./headerCellCtrl";
 import { setAriaHidden, setAriaRole } from "../../../utils/aria";
 import { HeaderCheckboxSelectionCallbackParams } from "../../../entities/colDef";
+import { getLocaleTextFunc } from '../../../localeFunctions';
 
 export class SelectAllFeature extends BeanStub {
 
@@ -129,7 +130,7 @@ export class SelectAllFeature extends BeanStub {
             this.headerCellCtrl.setAriaDescriptionProperty('selectAll', null);
             this.cbSelectAll.setInputAriaLabel(null);
         } else {
-            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            const translate = getLocaleTextFunc(this.gridOptionsService);
             const checked = this.cbSelectAll.getValue();
             const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
             const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');

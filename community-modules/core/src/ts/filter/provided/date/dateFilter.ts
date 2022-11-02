@@ -6,6 +6,7 @@ import { ConditionPosition, ISimpleFilterModel, Tuple } from '../simpleFilter';
 import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
 import { serialiseDate, parseDateTimeFromString } from '../../../utils/date';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import { getLocaleTextFunc } from '../../../localeFunctions';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
@@ -246,7 +247,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected resetPlaceholder(): void {
-        const globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const globalTranslate = getLocaleTextFunc(this.gridOptionsService);
         const placeholder = this.translate('dateFormatOoo');
         const ariaLabel = globalTranslate('ariaFilterValue', 'Filter Value');
 

@@ -5,6 +5,7 @@ import { RefSelector } from "../../widgets/componentAnnotations";
 import { exists } from "../../utils/generic";
 import { isBrowserSafari } from "../../utils/browser";
 import { KeyCode } from '../../constants/keyCode';
+import { getLocaleTextFunc } from '../../localeFunctions';
 
 /**
  * useFormatter: used when the cell value needs formatting prior to editing, such as when using reference data and you
@@ -76,7 +77,7 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
     }
 
     public afterGuiAttached(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
         const eInput = this.eInput;
 
         eInput.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));

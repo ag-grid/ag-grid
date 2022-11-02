@@ -6,6 +6,7 @@ import { OptionsFactory } from '../../provided/optionsFactory';
 import { IScalarFilterParams } from '../../provided/scalarFilter';
 import { FilterChangedEvent } from '../../../events';
 import { IProvidedFilterParams } from '../../provided/providedFilter';
+import { getLocaleTextFunc } from '../../../localeFunctions';
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp<ISimpleFilter> {
 
@@ -53,7 +54,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
                 customOption2,
             ].join(' ');
         } else if (model.type === SimpleFilter.BLANK || model.type === SimpleFilter.NOT_BLANK) {
-            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            const translate = getLocaleTextFunc(this.gridOptionsService);
             return translate(model.type, model.type);
         } else {
             const condition = model as ISimpleFilterModel;
@@ -63,7 +64,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
             // of displaying the `from` value, as it wouldn't be relevant
             const { displayKey, displayName, numberOfInputs } = customOption || {};
             if (displayKey && displayName && numberOfInputs === 0) {
-                this.gridOptionsWrapper.getLocaleTextFunc()(displayKey, displayName);
+                getLocaleTextFunc(this.gridOptionsService)(displayKey, displayName);
                 return displayName;
             }
             return this.conditionToString(condition, customOption);

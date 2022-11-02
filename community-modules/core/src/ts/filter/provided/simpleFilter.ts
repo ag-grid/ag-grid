@@ -15,6 +15,7 @@ import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParam
 import { ListOption } from '../../widgets/agList';
 import { IFloatingFilterParent } from '../floating/floatingFilter';
 import { isFunction } from '../../utils/function';
+import { getLocaleTextFunc } from '../../localeFunctions';
 
 export type JoinOperator = 'AND' | 'OR';
 
@@ -359,7 +360,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return {
             value: displayKey,
             text: customOption ?
-                this.gridOptionsWrapper.getLocaleTextFunc()(customOption.displayKey, customOption.displayName) :
+                getLocaleTextFunc(this.gridOptionsService)(customOption.displayKey, customOption.displayName) :
                 this.translate(displayKey as keyof IFilterLocaleText),
         };
     }
@@ -501,7 +502,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     // allow sub-classes to reset HTML placeholders after UI update.
     protected resetPlaceholder(): void {
-        const globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const globalTranslate = getLocaleTextFunc(this.gridOptionsService);
 
         this.forEachInput((element, index, position, numberOfInputs) => {
             if (!(element instanceof AgAbstractInputField)) {
@@ -607,7 +608,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
         const filteringLabel = translate('ariaFilteringOperator', 'Filtering operator');
         const uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
         const defaultOption = this.optionsFactory.getDefaultOption();

@@ -7,6 +7,7 @@ import { Constants } from "../constants/constants";
 import { BeanStub } from "../context/beanStub";
 import { mergeDeep } from "../utils/object";
 import { missing } from "../utils/generic";
+import { getLocaleTextFunc } from '../localeFunctions';
 
 @Bean('autoGroupColService')
 export class AutoGroupColService extends BeanStub {
@@ -89,7 +90,7 @@ export class AutoGroupColService extends BeanStub {
 
     private generateDefaultColDef(rowGroupCol?: Column): ColDef {
         const userDef = this.gridOptionsService.get('autoGroupColumnDef');
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
 
         const res: ColDef = {
             headerName: localeTextFunc('group', 'Group')

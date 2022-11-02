@@ -4,7 +4,7 @@ import { ComponentUtil } from './components/componentUtil';
 import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
-import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, PostSortRowsParams, RowHeightParams } from './entities/iCallbackParams';
+import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetRowIdParams, InitialGroupOrderComparatorParams, PostSortRowsParams, RowHeightParams } from './entities/iCallbackParams';
 import { RowNode } from './entities/rowNode';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { Environment, SASS_PROPERTIES } from './environment';
@@ -134,6 +134,14 @@ export class GridOptionsWrapper {
             ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'enableRangeSelection');
         } else if (this.gridOptionsService.is('enableRangeHandle') || this.gridOptionsService.is('enableFillHandle')) {
             console.warn("AG Grid: 'enableRangeHandle' or 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
+        }
+
+        if (this.gridOptionsService.is('treeData')) {
+            ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'treeData')
+        }
+
+        if (this.gridOptionsService.is('masterDetail')) {
+            ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail')
         }
 
         if (this.gridOptionsService.is('groupRowsSticky')) {
@@ -845,46 +853,6 @@ export class GridOptionsWrapper {
                 );
             }
         }
-    }
-
-    public getLocaleTextFunc(): (key: string, defaultValue: string, variableValues?: string[]) => string {
-        const { localeText, getLocaleText, localeTextFunc } = this.gridOptions;
-
-        if (getLocaleText) {
-            //key: string, defaultValue: string, variableValues?: string[]
-            return (key: string, defaultValue: string, variableValues?: string[]) => {
-                const params: GetLocaleTextParams = {
-                    key,
-                    defaultValue,
-                    variableValues,
-                    api: this.gridOptionsService.get('api')!,
-                    columnApi: this.gridOptionsService.get('columnApi')!,
-                    context: this.gridOptionsService.get('context')
-                };
-                return getLocaleText(params);
-            };
-        }
-
-        if (localeTextFunc) {
-            return localeTextFunc;
-        }
-
-        return (key: string, defaultValue: string, variableValues?: string[]) => {
-            let localisedText = localeText && localeText[key];
-
-            if (localisedText && variableValues && variableValues.length) {
-                let found = 0;
-                while (true) {
-                    if (found >= variableValues.length) { break; }
-                    const idx = localisedText.indexOf('${variable}');
-                    if (idx === -1) { break; }
-
-                    localisedText = localisedText.replace('${variable}', variableValues[found++]);
-                }
-            }
-
-            return localisedText ?? defaultValue;
-        };
     }
 
     // responsible for calling the onXXX functions on gridOptions

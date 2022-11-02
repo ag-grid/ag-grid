@@ -23,7 +23,7 @@ import { ResizeFeature } from "./resizeFeature";
 import { SelectAllFeature } from "./selectAllFeature";
 import { getElementSize } from "../../../utils/dom";
 import { ResizeObserverService } from "../../../misc/resizeObserverService";
-import { noop } from "../../../utils/function";
+import { getLocaleTextFunc } from '../../../localeFunctions';
 export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -524,7 +524,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private refreshAriaSort(): void {
         if (this.sortable) {
-            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            const translate = getLocaleTextFunc(this.gridOptionsService);
             this.comp.setAriaSort(getAriaSortState(this.column));
             this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort.'));
         } else {
@@ -535,7 +535,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private refreshAriaMenu(): void {
         if (this.menuEnabled) {
-            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            const translate = getLocaleTextFunc(this.gridOptionsService);
             this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
         } else {
             this.setAriaDescriptionProperty('menu', null);

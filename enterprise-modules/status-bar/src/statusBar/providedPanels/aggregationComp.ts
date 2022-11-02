@@ -13,7 +13,8 @@ import {
     ValueService,
     _, CellPositionUtils,
     RowPositionUtils,
-    RowRenderer, Optional
+    RowRenderer, Optional,
+    getLocaleTextFunc
 } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
@@ -82,7 +83,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     private setAggregationComponentValue(aggFuncName: string, value: number | null, visible: boolean) {
         const statusBarValueComponent = this.getAggregationValueComponent(aggFuncName);
         if (_.exists(statusBarValueComponent) && statusBarValueComponent) {
-            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
             const thousandSeparator = localeTextFunc('thousandSeparator', ',');
             const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 

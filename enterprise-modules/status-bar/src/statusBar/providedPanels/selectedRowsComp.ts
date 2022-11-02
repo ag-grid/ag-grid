@@ -1,4 +1,4 @@
-import { Autowired, Events, GridApi, PostConstruct, IStatusPanelComp, _ } from '@ag-grid-community/core';
+import { Autowired, Events, GridApi, PostConstruct, IStatusPanelComp, _, getLocaleTextFunc } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
 export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp {
@@ -19,7 +19,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
         this.addCssClass('ag-status-panel-selected-row-count');
 
         const selectedRowCount = this.gridApi.getSelectedRows().length;
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 
@@ -39,7 +39,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
 
     private onRowSelectionChanged() {
         const selectedRowCount = this.gridApi.getSelectedRows().length;
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
         this.setValue(_.formatNumberCommas(selectedRowCount, thousandSeparator, decimalSeparator));

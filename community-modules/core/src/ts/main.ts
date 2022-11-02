@@ -311,6 +311,7 @@ export { ColumnSortState } from "./utils/aria";
 export { ValueService } from "./valueService/valueService";
 export { ValueCache } from "./valueService/valueCache";
 export { ExpressionService } from "./valueService/expressionService";
+export { getLocaleTextFunc } from "./localeFunctions"
 
 // uncatalogued
 export { IRowModel, RowBounds, RowModelType } from "./interfaces/iRowModel";

@@ -1,6 +1,7 @@
 import { IComponent } from "../../interfaces/iComponent";
 import { AgGridCommon } from "../../interfaces/iCommon";
 import { Component } from "../../widgets/component";
+import { getLocaleTextFunc } from '../../localeFunctions';
 
 export interface ILoadingOverlayParams<TData = any> extends AgGridCommon<TData> { }
 
@@ -23,7 +24,7 @@ export class LoadingOverlayComponent extends Component implements ILoadingOverla
     public init(params: ILoadingOverlayParams): void {
         const template = this.gridOptionsService.get('overlayLoadingTemplate') ?? LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE;
 
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         const localisedTemplate = template!.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
 
         this.setTemplate(localisedTemplate);

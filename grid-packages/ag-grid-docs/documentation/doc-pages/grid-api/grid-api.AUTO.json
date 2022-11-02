@@ -16,6 +16,12 @@
     "description": "/** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */",
     "type": { "arguments": {}, "returnType": "Context" }
   },
+  "setProperty": {
+    "type": {
+      "arguments": { "propertyName": "K", "value": "GridOptions[K]" },
+      "returnType": "void"
+    }
+  },
   "addDetailGridInfo": {
     "description": "/** Register a detail grid with the master grid when it is created. */",
     "type": {

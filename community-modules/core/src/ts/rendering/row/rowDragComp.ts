@@ -8,6 +8,7 @@ import { BeanStub } from "../../context/beanStub";
 import { Column } from "../../entities/column";
 import { createIconNoSpan } from "../../utils/icon";
 import { doOnce, isFunction } from "../../utils/function";
+import { getLocaleTextFunc } from '../../localeFunctions';
 
 export interface IRowDragItem extends DragItem {
     /** The default text that would be applied to this Drag Element */
@@ -105,7 +106,7 @@ export class RowDragComp extends Component {
         if (this.dragSource) { this.removeDragSource(); }
 
         const rowDragText = this.getRowDragText(this.column);
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         this.dragSource = {
             type: DragSourceType.RowDrag,

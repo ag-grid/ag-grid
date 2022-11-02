@@ -15,6 +15,7 @@ import { dateToFormattedString, parseDateTimeFromString, serialiseDate } from '.
 import { debounce } from '../../../utils/function';
 import { IFilterOptionDef } from '../../../interfaces/iFilter';
 import { WithoutGridCommon } from '../../../interfaces/iCommon';
+import { getLocaleTextFunc } from '../../../localeFunctions';
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
@@ -66,7 +67,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         this.params = params;
         this.filterParams = params.filterParams;
         this.createDateComponent();
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
         this.eReadOnlyText
             .setDisabled(true)
             .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));

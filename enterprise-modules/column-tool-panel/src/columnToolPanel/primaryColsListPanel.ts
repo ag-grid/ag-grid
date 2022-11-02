@@ -13,7 +13,8 @@ import {
     ToolPanelColumnCompParams,
     VirtualList,
     VirtualListModel,
-    PreDestroy
+    PreDestroy,
+    getLocaleTextFunc
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanelItemDragFeature } from './primaryColsListPanelItemDragFeature';
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
@@ -106,7 +107,7 @@ export class PrimaryColsListPanel extends Component {
 
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
         const columnListName = translate('ariaColumnList', 'Column List');
 
         this.virtualList = this.createManagedBean(new VirtualList('column-select', 'tree', columnListName));

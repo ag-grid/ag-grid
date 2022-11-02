@@ -30,8 +30,8 @@ import {
     AgMenuList,
     AgMenuItemComponent,
     MenuItemSelectedEvent,
-    HeaderNavigationService
-
+    HeaderNavigationService,
+    getLocaleTextFunc
 } from '@ag-grid-community/core';
 
 import { MenuItemMapper } from './menuItemMapper';
@@ -155,7 +155,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             }
         });
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is

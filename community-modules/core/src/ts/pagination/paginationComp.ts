@@ -10,6 +10,7 @@ import { KeyCode } from '../constants/keyCode';
 import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
 import { PaginationNumberFormatterParams } from "../entities/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { getLocaleTextFunc } from '../localeFunctions';
 
 export class PaginationComp extends Component {
 
@@ -102,7 +103,7 @@ export class PaginationComp extends Component {
             return userFunc(params);
         }
 
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 
@@ -110,7 +111,7 @@ export class PaginationComp extends Component {
     }
 
     private getTemplate(): string {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
 
         const strPage = localeTextFunc('page', 'Page');
         const strTo = localeTextFunc('to', 'to');
@@ -249,7 +250,7 @@ export class PaginationComp extends Component {
             this.lbTotal.innerHTML = this.formatNumber(totalPages);
             this.lbRecordCount.innerHTML = this.formatNumber(rowCount!);
         } else {
-            const moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');
+            const moreText = getLocaleTextFunc(this.gridOptionsService)('more', 'more');
             this.lbTotal.innerHTML = moreText;
             this.lbRecordCount.innerHTML = moreText;
         }

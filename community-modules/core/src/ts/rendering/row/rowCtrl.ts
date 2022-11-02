@@ -24,6 +24,7 @@ import { CellCtrl } from "../cell/cellCtrl";
 import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRenderer";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { RowDragComp } from "./rowDragComp";
+import { getLocaleTextFunc } from '../../localeFunctions';
 
 export enum RowType {
     Normal = 'Normal',
@@ -287,7 +288,7 @@ export class RowCtrl extends BeanStub {
             }, 'rowDragAndRangeSelectionEnabled');
             return;
         }
-        const translate = gow.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.beans.gridOptionsService);
         const rowDragComp = new RowDragComp(
             () => `1 ${translate('rowDragRow', 'row')}`,
             this.rowNode,
@@ -1166,7 +1167,7 @@ export class RowCtrl extends BeanStub {
             return undefined;
         }
 
-        const translate = this.beans.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.beans.gridOptionsService);
         const label = translate(
             selected ? 'ariaRowDeselect' : 'ariaRowSelect',
             `Press SPACE to ${selected ? 'deselect' : 'select'} this row.`

@@ -13,7 +13,8 @@ import {
     IClipboardService,
     MenuItemDef,
     ModuleNames, ModuleRegistry,
-    Optional
+    Optional,
+    getLocaleTextFunc
 } from '@ag-grid-community/core';
 
 @Bean('menuItemMapper')
@@ -59,7 +60,7 @@ export class MenuItemMapper extends BeanStub {
     }
 
     private getStockMenuItem(key: string, column: Column | null): MenuItemDef | string | null {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         const skipHeaderOnAutoSize = this.gridOptionsService.is('skipHeaderOnAutoSize');
 
         switch (key) {
@@ -222,7 +223,7 @@ export class MenuItemMapper extends BeanStub {
     }
 
     private getChartItems(key: string) {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
 
         const pivotChartMenuItem = (localeKey: string, defaultText: string, chartType: ChartType) => {
             return {
@@ -427,7 +428,7 @@ export class MenuItemMapper extends BeanStub {
     }
 
     private createAggregationSubMenu(column: Column): MenuItemDef[] {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
 
         let columnToUse: Column | undefined;
         if (column.isPrimary()) {

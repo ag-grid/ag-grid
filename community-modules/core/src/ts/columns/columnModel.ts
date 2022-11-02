@@ -53,6 +53,7 @@ import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { getLocaleTextFunc } from '../localeFunctions';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -2690,7 +2691,7 @@ export class ColumnModel extends BeanStub {
 
         if (aggFuncFound) {
             const aggFuncString = (typeof aggFunc === 'string') ? aggFunc : 'func';
-            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
             const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
             return `${aggFuncStringTranslated}(${headerName})`;
         }

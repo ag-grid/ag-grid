@@ -8,6 +8,7 @@ import { doOnce } from "../utils/function";
 import { exists } from "../utils/generic";
 import { capitalise } from '../utils/string';
 import { PopupService } from "./popupService";
+import { getLocaleTextFunc } from '../localeFunctions';
 
 export interface TooltipParentComp {
     getTooltipParams(): WithoutGridCommon<ITooltipParams>;
@@ -206,7 +207,7 @@ export class CustomTooltipFeature extends BeanStub {
             eGui.classList.add('ag-tooltip-custom');
         }
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         const addPopupRes = this.popupService.addPopup({
             eChild: eGui,

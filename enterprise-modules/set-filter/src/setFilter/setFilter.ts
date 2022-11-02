@@ -3,7 +3,6 @@ import {
     Autowired,
     CellValueChangedEvent,
     Component,
-    Constants,
     Events,
     IDoesFilterPassParams,
     ISetFilterParams,
@@ -22,6 +21,7 @@ import {
     ISetFilter,
     SetFilterModel,
     SetFilterModelValue,
+    getLocaleTextFunc
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
@@ -251,7 +251,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> implements I
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
         const filterListName = translate('ariaFilterList', 'Filter List');
 
         const virtualList = this.virtualList = this.createBean(new VirtualList('filter', 'listbox', filterListName));
@@ -326,8 +326,8 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> implements I
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        const { eMiniFilter, gridOptionsWrapper } = this;
-        const translate = gridOptionsWrapper.getLocaleTextFunc();
+        const { eMiniFilter } = this;
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         eMiniFilter.setDisplayed(!this.setFilterParams.suppressMiniFilter);
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
@@ -654,7 +654,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> implements I
     }
 
     private translateForSetFilter(key: keyof ISetFilterLocaleText): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         return translate(key, DEFAULT_LOCALE_TEXT[key]);
     }

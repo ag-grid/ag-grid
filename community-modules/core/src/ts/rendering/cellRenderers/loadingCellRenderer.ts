@@ -3,6 +3,7 @@ import { ICellRendererParams } from "./iCellRenderer";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { createIconNoSpan } from "../../utils/icon";
 import { IComponent } from "../../interfaces/iComponent";
+import { getLocaleTextFunc } from '../../localeFunctions';
 
 export interface ILoadingCellRendererParams<TData = any> extends ICellRendererParams<TData> { }
 export interface ILoadingCellRenderer { }
@@ -28,7 +29,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
     }
 
     private setupFailed(): void {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         this.eLoadingText.innerText = localeTextFunc('loadingError', 'ERR');
     }
 
@@ -38,7 +39,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
             this.eLoadingIcon.appendChild(eLoadingIcon);
         }
 
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
     }
 

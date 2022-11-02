@@ -4,6 +4,7 @@ import {
     GridApi,
     PostConstruct,
     IStatusPanelComp,
+    getLocaleTextFunc,
     _
 } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
@@ -35,7 +36,7 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
     private onDataChanged() {
         const totalRowCountValue = this.getTotalRowCountValue();
         const filteredRowCountValue = this.getFilteredRowCountValue();
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 

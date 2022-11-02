@@ -1,6 +1,7 @@
 import { AgGridCommon } from "../../interfaces/iCommon";
 import { IComponent } from "../../interfaces/iComponent";
 import { Component } from "../../widgets/component";
+import { getLocaleTextFunc } from '../../localeFunctions';
 
 export interface INoRowsOverlayParams<TData = any> extends AgGridCommon<TData> { }
 
@@ -22,7 +23,7 @@ export class NoRowsOverlayComponent extends Component implements INoRowsOverlayC
     public init(params: INoRowsOverlayParams): void {
         const template = this.gridOptionsService.get('overlayNoRowsTemplate') ?? NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE;
 
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         const localisedTemplate = template!.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
         this.setTemplate(localisedTemplate);
     }

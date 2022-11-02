@@ -7,7 +7,8 @@ import {
     PostConstruct,
     PreConstruct,
     RefSelector,
-    AgInputTextField
+    AgInputTextField,
+    getLocaleTextFunc
 } from "@ag-grid-community/core";
 import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
 
@@ -42,7 +43,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
     @PostConstruct
     public postConstruct(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         this.eFilterTextField.onValueChange(this.onSearchTextChanged.bind(this));
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
@@ -71,7 +72,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
     private showOrHideOptions(): void {
         const showFilterSearch = !this.params.suppressFilterSearch;
         const showExpand = !this.params.suppressExpandAll;
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 

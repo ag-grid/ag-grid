@@ -4,6 +4,7 @@ import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { exists } from "../../utils/generic";
 import { KeyCode } from '../../constants/keyCode';
+import { getLocaleTextFunc } from '../../localeFunctions';
 
 export interface ILargeTextEditorParams extends ICellEditorParams {
     maxLength: number;
@@ -55,7 +56,7 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
     }
 
     public afterGuiAttached(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
 
         this.eTextArea.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
 

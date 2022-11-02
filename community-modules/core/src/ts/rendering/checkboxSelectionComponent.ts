@@ -7,6 +7,7 @@ import { RefSelector } from '../widgets/componentAnnotations';
 import { RowNode } from '../entities/rowNode';
 import { stopPropagationForAgGrid } from '../utils/event';
 import { CheckboxSelectionCallback } from '../entities/colDef';
+import { getLocaleTextFunc } from '../localeFunctions';
 
 export class CheckboxSelectionComponent extends Component {
 
@@ -48,7 +49,7 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private onSelectionChanged(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
         const state = this.rowNode.isSelected();
         const stateName = state === undefined
             ? translate('ariaIndeterminate', 'indeterminate')

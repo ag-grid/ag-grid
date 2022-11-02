@@ -1,4 +1,4 @@
-import { Bean, BeanStub } from "@ag-grid-community/core";
+import { Bean, BeanStub, getLocaleTextFunc } from "@ag-grid-community/core";
 
 @Bean("chartTranslationService")
 export class ChartTranslationService extends BeanStub {
@@ -115,7 +115,7 @@ export class ChartTranslationService extends BeanStub {
     };
 
     public translate(toTranslate: string, defaultText?: string): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
         const defaultTranslation = ChartTranslationService.DEFAULT_TRANSLATIONS[toTranslate] || defaultText;
         return translate(toTranslate, defaultTranslation as string);
     }

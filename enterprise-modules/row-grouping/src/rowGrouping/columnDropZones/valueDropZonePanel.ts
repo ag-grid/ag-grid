@@ -9,7 +9,8 @@ import {
     ITooltipParams,
     LoggerFactory,
     PostConstruct,
-    WithoutGridCommon
+    WithoutGridCommon,
+    getLocaleTextFunc
 } from "@ag-grid-community/core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 
@@ -35,7 +36,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
             dragAndDropService: this.dragAndDropService
         });
 
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         const emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag here to aggregate');
         const title = localeTextFunc('values', 'Values');
 
@@ -50,7 +51,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getAriaLabel(): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
         const label = translate('ariaValuesDropZonePanelLabel', 'Values');
 
         return label;

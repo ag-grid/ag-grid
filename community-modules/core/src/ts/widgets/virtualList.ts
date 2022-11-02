@@ -7,6 +7,7 @@ import { ResizeObserverService } from "../misc/resizeObserverService";
 import { waitUntil } from '../utils/function';
 import { TabGuardComp } from './tabGuardComp';
 import { FocusService } from '../focusService';
+import { getLocaleTextFunc } from '../localeFunctions';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -52,7 +53,7 @@ export class VirtualList extends TabGuardComp {
     }
 
     private setAriaProperties(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
         const listName = translate('ariaDefaultListName', this.listName || 'List');
         const ariaEl = this.eContainer;
 

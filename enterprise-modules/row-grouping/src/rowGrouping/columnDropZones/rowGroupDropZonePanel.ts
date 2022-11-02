@@ -9,7 +9,8 @@ import {
     ITooltipParams,
     LoggerFactory,
     PostConstruct,
-    WithoutGridCommon
+    WithoutGridCommon,
+    getLocaleTextFunc
 } from "@ag-grid-community/core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 
@@ -34,7 +35,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
             dragAndDropService: this.dragAndDropService
         });
 
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = getLocaleTextFunc(this.gridOptionsService);
         const emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to set row groups');
         const title = localeTextFunc('groups', 'Row Groups');
 
@@ -49,7 +50,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getAriaLabel(): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = getLocaleTextFunc(this.gridOptionsService);
         const label = translate('ariaRowGroupDropZonePanelLabel', 'Row Groups');
 
         return label;
