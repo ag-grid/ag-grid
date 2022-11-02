@@ -133,7 +133,7 @@ export interface GridOptions<TData = any> {
     copyHeadersToClipboard?: boolean;
     /** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */
     copyGroupHeadersToClipboard?: boolean;
-    /** @deprecated Use `clipboardDelimiter` */
+    /** @deprecated v27.1 Use `clipboardDelimiter` */
     clipboardDeliminator?: string;
     /**
      * Specify the delimiter to use when copying to clipboard.
@@ -165,15 +165,15 @@ export interface GridOptions<TData = any> {
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */
     suppressFieldDotNotation?: boolean;
 
-    /** @deprecated */
+    /** @deprecated v24 */
     deltaColumnMode?: boolean;
-    /** @deprecated */
+    /** @deprecated v26 */
     applyColumnDefOrder?: boolean; // is now the default, to turn off, set maintainColumnOrder
-    /** @deprecated */
+    /** @deprecated v24 */
     immutableColumns?: boolean;
-    /** @deprecated */
+    /** @deprecated v24 */
     suppressSetColumnStateEvents?: boolean;
-    /** @deprecated */
+    /** @deprecated v24 */
     suppressColumnStateEvents?: boolean;
 
     /** @deprecated Set via `defaultColDef.width` */
@@ -270,7 +270,7 @@ export interface GridOptions<TData = any> {
     /** Set the size of the undo / redo stack. Default: `10` */
     undoRedoCellEditingLimit?: number;
 
-    /** @deprecated Use stopEditingWhenCellsLoseFocus instead */
+    /** @deprecated v25 Use stopEditingWhenCellsLoseFocus instead */
     stopEditingWhenGridLosesFocus?: boolean;
 
     // *** Export *** //
@@ -284,7 +284,7 @@ export interface GridOptions<TData = any> {
     suppressExcelExport?: boolean;
     /** A list (array) of Excel styles to be used when exporting to Excel with styles. */
     excelStyles?: ExcelStyle[];
-    /** @deprecated Use defaultCsvExportParams or defaultExcelExportParams */
+    /** @deprecated v25 Use defaultCsvExportParams or defaultExcelExportParams */
     defaultExportParams?: CsvExportParams | ExcelExportParams;
 
     // *** Filter *** //
@@ -536,7 +536,7 @@ export interface GridOptions<TData = any> {
 
     /** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */
     embedFullWidthRows?: boolean;
-    /** @deprecated */
+    /** @deprecated v21 */
     deprecatedEmbedFullWidthRows?: boolean;
 
     // *** Row Grouping *** //
@@ -607,17 +607,17 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/
     groupRowsSticky?: boolean;
 
-    /** @deprecated - this is now groupRowRendererParams.innerRenderer */
+    /** @deprecated v24 - this is now groupRowRendererParams.innerRenderer */
     groupRowInnerRenderer?: any;
-    /** @deprecated - this is now groupRowRendererParams.innerRenderer */
+    /** @deprecated v24 - this is now groupRowRendererParams.innerRenderer */
     groupRowInnerRendererFramework?: any;
-    /** @deprecated - Use groupDisplayType = 'multipleColumns' instead */
+    /** @deprecated v26 - Use groupDisplayType = 'multipleColumns' instead */
     groupMultiAutoColumn?: boolean;
-    /** @deprecated - Use groupDisplayType = 'groupRows' instead */
+    /** @deprecated v26 - Use groupDisplayType = 'groupRows' instead */
     groupUseEntireRow?: boolean;
-    /** @deprecated - Use groupDisplayType = 'custom' instead */
+    /** @deprecated v26 - Use groupDisplayType = 'custom' instead */
     groupSuppressAutoColumn?: boolean;
-    /** @deprecated - no longer needed, transaction updates keep group state */
+    /** @deprecated v24 - no longer needed, transaction updates keep group state */
     rememberGroupStateWhenNewData?: boolean;
 
     // *** Row Pinning *** //
@@ -635,16 +635,16 @@ export interface GridOptions<TData = any> {
     /** Set the data to be displayed as rows in the grid. */
     rowData?: TData[] | null;
     /**
-     * @deprecated Immutable Data is on by default when grid callback getRowId() is implemented
+     * @deprecated 27.1 Immutable Data is on by default when grid callback getRowId() is implemented
      * Enables Immutable Data mode, for compatibility with immutable stores. Default: `false` */
     immutableData?: boolean;
     /** How many milliseconds to wait before executing a batch of async transactions. */
     asyncTransactionWaitMillis?: number;
     /** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false` */
     suppressModelUpdateAfterUpdateTransaction?: boolean;
-    /** @deprecated */
+    /** @deprecated v23 */
     deltaRowDataMode?: boolean;
-    /** @deprecated use asyncTransactionWaitMillis instead */
+    /** @deprecated v23 use asyncTransactionWaitMillis instead */
     batchUpdateWaitMillis?: number;
 
     // *** Row Model: Infinite / Server-side *** //
@@ -665,7 +665,8 @@ export interface GridOptions<TData = any> {
      * Default: `1`
      */
     serverSideInitialRowCount?: number;
-    /** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.
+    /**
+     * @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.
      * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,
      * Full Store is used.
      */
@@ -710,12 +711,12 @@ export interface GridOptions<TData = any> {
       * Default: `false`
       */
      serverSideFilterOnServer?: boolean;
-    /** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead. */
+    /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */
     serverSideSortingAlwaysResets?: boolean;
-    /** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead. */
+    /** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */
     serverSideFilteringAlwaysResets?: boolean;
 
-    /** @deprecated */
+    /** @deprecated v25 */
     suppressEnterpriseResetOnNewColumns?: boolean;
 
     // *** Row Model: Viewport *** //
@@ -758,7 +759,7 @@ export interface GridOptions<TData = any> {
     /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. Default: `false` */
     suppressRowClickSelection?: boolean;
     /**
-     * @deprecated This property has been deprecated. Use `suppressCellFocus` instead.
+     * @deprecated v27 This property has been deprecated. Use `suppressCellFocus` instead.
      */
     suppressCellSelection?: boolean;
     /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. Default: `false` */
@@ -783,7 +784,7 @@ export interface GridOptions<TData = any> {
     /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`*/
     suppressClearOnFillReduction?: boolean;
 
-    /** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */
+    /** @deprecated v24 - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */
     rowDeselection?: boolean;
 
     // *** Sorting *** //
@@ -822,9 +823,9 @@ export interface GridOptions<TData = any> {
 
     deltaSort?: boolean;
     treeDataDisplayType?: TreeDataDisplayType;
-    /** @deprecated  */
+    /** @deprecated v26 */
     angularCompileRows?: boolean;
-    /** @deprecated  */
+    /** @deprecated v26 */
     angularCompileFilters?: boolean;
     functionsPassive?: boolean;
     enableGroupEdit?: boolean;
@@ -876,11 +877,11 @@ export interface GridOptions<TData = any> {
     navigateToNextCell?: (params: NavigateToNextCellParams<TData>) => (CellPosition | null);
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.  */
     tabToNextCell?: (params: TabToNextCellParams<TData>) => (CellPosition | null);
-    /** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property. */
+    /** @deprecated v24 - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property. */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams<TData>) => boolean;
 
     // *** Localisation *** //
-    /** @deprecated - Use `getLocaleText` instead. */
+    /** @deprecated v27.2 - Use `getLocaleText` instead. */
     localeTextFunc?: (key: string, defaultValue: string, variableValues?: string[]) => string;
     /** A callback for localising text within the grid. */
     getLocaleText?: (params: GetLocaleTextParams<TData>) => string;
@@ -894,7 +895,7 @@ export interface GridOptions<TData = any> {
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams<TData>) => string;
 
     // *** Row Grouping and Pivoting *** //
-    /** @deprecated - Use `getGroupRowAgg` instead. */
+    /** @deprecated v27.2 - Use `getGroupRowAgg` instead. */
     groupRowAggNodes?: (nodes: RowNode[]) => any;
     /** Callback to use when you need access to more then the current column for aggregation. */
     getGroupRowAgg?: (params: GetGroupRowAggParams<TData>) => any;
@@ -902,11 +903,11 @@ export interface GridOptions<TData = any> {
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams<TData>) => boolean;
     /** Allows default sorting of groups. */
     initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams<TData>) => number;
-    /** @deprecated - Use `initialGroupOrderComparator` instead */
+    /** @deprecated v27.2 - Use `initialGroupOrderComparator` instead */
     defaultGroupOrderComparator?: (nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number;
-    /** @deprecated - Use `processPivotResultColDef` instead */
+    /** @deprecated v28 - Use `processPivotResultColDef` instead */
     processSecondaryColDef?: (colDef: ColDef<TData>) => void;
-    /** @deprecated - Use `processPivotResultColGroupDef` instead */
+    /** @deprecated v28 - Use `processPivotResultColGroupDef` instead */
     processSecondaryColGroupDef?: (colGroupDef: ColGroupDef<TData>) => void;
     /** Callback to be used with pivoting, to allow changing the second column definition. */
     processPivotResultColDef?: (colDef: ColDef<TData>) => void;
@@ -914,7 +915,7 @@ export interface GridOptions<TData = any> {
     processPivotResultColGroupDef?: (colGroupDef: ColGroupDef<TData>) => void;
     /** Callback to be used when working with Tree Data when `treeData = true`. */
     getDataPath?: GetDataPath<TData>;
-    /** @deprecated - Use initialGroupOrderComparator instead */
+    /** @deprecated v26 - Use initialGroupOrderComparator instead */
     defaultGroupSortComparator?: (nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number;
 
     // *** Row Model: Server Side *** //
@@ -922,7 +923,7 @@ export interface GridOptions<TData = any> {
     getChildCount?: (dataItem: any) => number;
     /** Allows providing different params for different levels of grouping. */
     getServerSideGroupLevelParams?: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams;
-    /** @deprecated use `getServerSideGroupLevelParams` instead. */
+    /** @deprecated v28 Use `getServerSideGroupLevelParams` instead. */
     getServerSideStoreParams?: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams;
     /** Allows groups to be open by default. */
     isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
@@ -940,7 +941,7 @@ export interface GridOptions<TData = any> {
      */
     getBusinessKeyForNode?: (node: RowNode<TData>) => string;
     /**
-     * @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
+     * @deprecated v27.1 Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
      * Allows you to set the ID for a particular row node based on the data. */
     getRowNodeId?: GetRowNodeIdFunc<TData>;
     /** Allows setting the ID for a particular row node based on the data. */
@@ -957,7 +958,7 @@ export interface GridOptions<TData = any> {
     fillOperation?: (params: FillOperationParams<TData>) => any;
 
     // *** Sorting *** //
-    /** @deprecated Use `postSortRows` instead */
+    /** @deprecated v27.2 Use `postSortRows` instead */
     postSort?: (nodes: RowNode<TData>[]) => void;
     /** Callback to perform additional sorting after the grid has sorted the rows. */
     postSortRows?: (params: PostSortRowsParams<TData>) => void;
@@ -969,7 +970,7 @@ export interface GridOptions<TData = any> {
     getRowClass?: (params: RowClassParams<TData>) => string | string[] | undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */
     getRowHeight?: (params: RowHeightParams<TData>) => number | undefined | null;
-    /** @deprecated Use `isFullWidthRow` instead. */
+    /** @deprecated v27.2 Use `isFullWidthRow` instead. */
     isFullWidthCell?: (rowNode: RowNode<TData>) => boolean;
     /** Tells the grid if this row should be rendered as full width. */
     isFullWidthRow?: (params: IsFullWidthRowParams<TData>) => boolean;
@@ -1124,7 +1125,7 @@ export interface GridOptions<TData = any> {
     onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent<TData>): void;
 
     // *** Row Model: Client Side *** //
-    /** @deprecated No longer fired, use onRowDataUpdated instead */
+    /** @deprecated v28 No longer fired, use onRowDataUpdated instead */
     onRowDataChanged?(event: RowDataChangedEvent<TData>): void;
     /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */
     onRowDataUpdated?(event: RowDataUpdatedEvent<TData>): void;
