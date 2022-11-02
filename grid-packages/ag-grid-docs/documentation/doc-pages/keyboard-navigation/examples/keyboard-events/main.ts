@@ -17,7 +17,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowData: null,
   columnDefs: columnDefs,
   defaultColDef: {
-    editable: true,
     sortable: true,
     flex: 1,
     minWidth: 100,

@@ -163,7 +163,7 @@ export class UndoRedoService extends BeanStub {
             const extractedValue = valueExtractor(cellValueChange);
 
             // when values are 'complex objects' we need to invoke their `toString()` to obtain value
-            const value = (typeof extractedValue.toString === 'function') ? extractedValue.toString() : extractedValue;
+            const value = (typeof extractedValue?.toString === 'function') ? extractedValue.toString() : extractedValue;
 
             currentRow!.setDataValue(columnId, value);
         });
