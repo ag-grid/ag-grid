@@ -192,7 +192,7 @@ const processIndexForFramework = async framework => {
     const exclusions = ["charts-api-themes", "charts-api", "charts-api-explorer"];
 
     const browser = await puppeteer.launch({
-        executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+        executablePath: indexNamePrefix === 'ag-grid-dev' ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : '/usr/bin/google-chrome',
         ignoreHTTPSErrors: true
     });
 
