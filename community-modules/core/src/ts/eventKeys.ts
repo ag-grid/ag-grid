@@ -52,7 +52,7 @@ export class Events {
     /** A row group was opened / closed */
     public static EVENT_ROW_GROUP_OPENED: 'rowGroupOpened' = 'rowGroupOpened';
 
-    /** @deprecated use EVENT_ROW_DATA_UPDATED instead */
+    /** @deprecated v28 use EVENT_ROW_DATA_UPDATED instead */
     public static EVENT_ROW_DATA_CHANGED: 'rowDataChanged' = 'rowDataChanged';
 
     /** The client has updated data for the grid */
