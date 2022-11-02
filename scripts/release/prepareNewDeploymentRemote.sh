@@ -39,7 +39,7 @@ cp -R ./public_html/ecommerce public_html_tmp/
 cp -R ./public_html/ecommerce-uat public_html_tmp/
 cp -R ./public_html/zendesk public_html_tmp/
 cp -R ./public_html/services public_html_tmp/
-cd cp -R ./public_html/robots.txt public_html_tmp/
+cp -R ./public_html/robots.txt public_html_tmp/
 cp -R ./public_html/__shared public_html_tmp/
 
 #update folder permissions (default is 777 - change to 755)
