@@ -33,10 +33,6 @@ export var ConditionPosition;
  * @param E type of UI element used for collecting user-input
  */
 export class SimpleFilter extends ProvidedFilter {
-    constructor() {
-        super(...arguments);
-        this.placeholderFuncCache = {};
-    }
     getNumberOfInputs(type) {
         const customOpts = this.optionsFactory.getCustomOption(type);
         if (customOpts) {
@@ -259,42 +255,16 @@ export class SimpleFilter extends ProvidedFilter {
             }
         }
     }
-    getPlaceholderFuncCacheKey({ filterOptionKey, filterOption, placeholder }) {
-        return `${filterOptionKey}-${filterOption}-${placeholder}`;
-    }
-    /**
-     * Get placeholder from cache
-     *
-     * If it doesn't exist in the cache, generate placeholder and store it in cache
-     */
-    placeholderFromCache({ filterOptionKey, filterOption, placeholder, filterPlaceholderFunc }) {
-        const cacheKey = this.getPlaceholderFuncCacheKey({
-            filterOptionKey,
-            filterOption,
-            placeholder
-        });
-        let result = this.placeholderFuncCache[cacheKey];
-        if (!result) {
-            result = filterPlaceholderFunc({
-                filterOptionKey,
-                filterOption,
-                placeholder
-            });
-            this.placeholderFuncCache[cacheKey] = result;
-        }
-        return result;
-    }
     getPlaceholderText(defaultPlaceholder, position) {
         let placeholder = this.translate(defaultPlaceholder);
         if (isFunction(this.filterPlaceholder)) {
-            const filterPlaceholderFunc = this.filterPlaceholder;
+            const filterPlaceholderFn = this.filterPlaceholder;
             const filterOptionKey = (position === 0 ? this.eType1.getValue() : this.eType2.getValue());
             const filterOption = this.translate(filterOptionKey);
-            placeholder = this.placeholderFromCache({
+            placeholder = filterPlaceholderFn({
                 filterOptionKey,
                 filterOption,
-                placeholder,
-                filterPlaceholderFunc
+                placeholder
             });
         }
         else if (typeof this.filterPlaceholder === 'string') {

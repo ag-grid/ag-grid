@@ -2931,8 +2931,7 @@ var Observable = /** @class */ (function () {
     Observable.prototype.fireEvent = function (event) {
         var listeners = this.allEventListeners.get(event.type);
         if (listeners) {
-            // Use `Object.create` to preserve deprecation warnings
-            var eventWithSource_1 = Object.create(event, { source: { value: this, enumerable: true } });
+            var eventWithSource_1 = Object.assign(event, { source: this });
             listeners.forEach(function (scopes, listener) {
                 scopes.forEach(function (scope) { return listener.call(scope, eventWithSource_1); });
             });
@@ -14891,7 +14890,7 @@ var __values$e = (undefined && undefined.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
-var defaultTooltipCss = "\n.ag-chart-tooltip {\n    transition: transform 0.1s ease;\n    display: table;\n    position: fixed;\n    left: 0px;\n    top: 0px;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-no-animation {\n    transition: none !important;\n}\n\n.ag-chart-tooltip-hidden {\n    visibility: hidden;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n    overflow: hidden;\n}\n\n.ag-chart-tooltip-content:empty {\n    padding: 0;\n    height: 7px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
+var defaultTooltipCss = "\n.ag-chart-tooltip {\n    transition: transform 0.1s ease;\n    display: table;\n    position: absolute;\n    left: 0px;\n    top: 0px;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-no-animation {\n    transition: none !important;\n}\n\n.ag-chart-tooltip-hidden {\n    visibility: hidden;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n    overflow: hidden;\n}\n\n.ag-chart-tooltip-content:empty {\n    padding: 0;\n    height: 7px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
 function toTooltipHtml(input, defaults) {
     if (typeof input === 'string') {
         return input;
@@ -16129,8 +16128,12 @@ var Chart = /** @class */ (function (_super) {
         return false;
     };
     Chart.prototype.onSeriesNodeClick = function (event) {
-        // Use `Object.create` to preserve deprecation warnings
-        var seriesNodeClickEvent = Object.create(event, { type: { value: 'seriesNodeClick', enumerable: true } });
+        var seriesNodeClickEvent = __assign$q(__assign$q({}, event), { type: 'seriesNodeClick' });
+        Object.defineProperty(seriesNodeClickEvent, 'series', {
+            enumerable: false,
+            // Should display the deprecation warning
+            get: function () { return event.series; },
+        });
         this.fireEvent(seriesNodeClickEvent);
     };
     Chart.prototype.checkLegendClick = function (event) {
@@ -20490,7 +20493,7 @@ var LineSeries = /** @class */ (function (_super) {
                     node.size = format && format.size !== undefined ? format.size : size;
                     node.translationX = datum.point.x;
                     node.translationY = datum.point.y;
-                    node.visible = node.size > 0;
+                    node.visible = node.size > 0 && !isNaN(datum.point.x) && !isNaN(datum.point.y);
                 });
                 if (!isDatumHighlighted) {
                     this.marker.markClean();
@@ -32837,7 +32840,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             }
             return __assign$4(__assign$4({}, series), { yKey: filteredOutKey(yKey), xKey: filteredOutKey(xKey), marker: __assign$4(__assign$4({}, series.marker), { fillOpacity: 0.3, strokeOpacity: 0.3 }), sizeKey: sizeKey, showInLegend: false, listeners: __assign$4(__assign$4({}, series.listeners), { nodeClick: function (e) {
                         var _a;
-                        var value = e.datum[e.series.xKey];
+                        var value = e.datum[filteredOutKey(xKey)];
                         // Need to remove the `-filtered-out` suffixes from the event so that
                         // upstream processing maps the event correctly onto grid column ids.
                         var filterableEvent = __assign$4(__assign$4({}, e), { xKey: xKey, datum: __assign$4(__assign$4({}, e.datum), (_a = {}, _a[xKey] = value, _a)) });
@@ -34499,7 +34502,7 @@ var ChartCrossFilterService = /** @class */ (function (_super) {
         return filteredValues;
     };
     ChartCrossFilterService.extractFilterColId = function (event) {
-        return event.xKey ? event.xKey : event.labelKey;
+        return event.xKey || event.calloutLabelKey;
     };
     ChartCrossFilterService.prototype.isValidColumnFilter = function (colId) {
         if (colId.indexOf('-filtered-out')) {

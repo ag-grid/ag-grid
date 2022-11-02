@@ -67,7 +67,7 @@ class ScatterChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
                 sizeKey = filteredOutKey(sizeKey);
             }
             return Object.assign(Object.assign({}, series), { yKey: filteredOutKey(yKey), xKey: filteredOutKey(xKey), marker: Object.assign(Object.assign({}, series.marker), { fillOpacity: 0.3, strokeOpacity: 0.3 }), sizeKey, showInLegend: false, listeners: Object.assign(Object.assign({}, series.listeners), { nodeClick: (e) => {
-                        const value = e.datum[e.series.xKey];
+                        const value = e.datum[filteredOutKey(xKey)];
                         // Need to remove the `-filtered-out` suffixes from the event so that
                         // upstream processing maps the event correctly onto grid column ids.
                         const filterableEvent = Object.assign(Object.assign({}, e), { xKey, datum: Object.assign(Object.assign({}, e.datum), { [xKey]: value }) });

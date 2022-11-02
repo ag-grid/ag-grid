@@ -138,7 +138,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             }
             return __assign(__assign({}, series), { yKey: filteredOutKey(yKey), xKey: filteredOutKey(xKey), marker: __assign(__assign({}, series.marker), { fillOpacity: 0.3, strokeOpacity: 0.3 }), sizeKey: sizeKey, showInLegend: false, listeners: __assign(__assign({}, series.listeners), { nodeClick: function (e) {
                         var _a;
-                        var value = e.datum[e.series.xKey];
+                        var value = e.datum[filteredOutKey(xKey)];
                         // Need to remove the `-filtered-out` suffixes from the event so that
                         // upstream processing maps the event correctly onto grid column ids.
                         var filterableEvent = __assign(__assign({}, e), { xKey: xKey, datum: __assign(__assign({}, e.datum), (_a = {}, _a[xKey] = value, _a)) });

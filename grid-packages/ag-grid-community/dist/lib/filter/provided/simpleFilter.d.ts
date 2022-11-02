@@ -104,7 +104,6 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = 
     private alwaysShowBothConditions;
     private defaultJoinOperator;
     private filterPlaceholder;
-    private placeholderFuncCache;
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
     protected abstract createValueTemplate(position: ConditionPosition): string;
@@ -134,13 +133,6 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = 
     protected getCssIdentifier(): string;
     protected updateUiVisibility(): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
-    private getPlaceholderFuncCacheKey;
-    /**
-     * Get placeholder from cache
-     *
-     * If it doesn't exist in the cache, generate placeholder and store it in cache
-     */
-    private placeholderFromCache;
     private getPlaceholderText;
     protected resetPlaceholder(): void;
     protected setElementValue(element: E, value: V | null, silent?: boolean): void;

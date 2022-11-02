@@ -101,7 +101,7 @@ var ChartCrossFilterService = /** @class */ (function (_super) {
         return filteredValues;
     };
     ChartCrossFilterService.extractFilterColId = function (event) {
-        return event.xKey ? event.xKey : event.labelKey;
+        return event.xKey || event.calloutLabelKey;
     };
     ChartCrossFilterService.prototype.isValidColumnFilter = function (colId) {
         if (colId.indexOf('-filtered-out')) {

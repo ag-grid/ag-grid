@@ -81,7 +81,7 @@ let ChartCrossFilterService = ChartCrossFilterService_1 = class ChartCrossFilter
         return filteredValues;
     }
     static extractFilterColId(event) {
-        return event.xKey ? event.xKey : event.labelKey;
+        return event.xKey || event.calloutLabelKey;
     }
     isValidColumnFilter(colId) {
         if (colId.indexOf('-filtered-out')) {

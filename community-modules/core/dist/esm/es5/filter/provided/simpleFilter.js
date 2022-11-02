@@ -48,9 +48,7 @@ export var ConditionPosition;
 var SimpleFilter = /** @class */ (function (_super) {
     __extends(SimpleFilter, _super);
     function SimpleFilter() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.placeholderFuncCache = {};
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     SimpleFilter.prototype.getNumberOfInputs = function (type) {
         var customOpts = this.optionsFactory.getCustomOption(type);
@@ -269,44 +267,16 @@ var SimpleFilter = /** @class */ (function (_super) {
             }
         }
     };
-    SimpleFilter.prototype.getPlaceholderFuncCacheKey = function (_a) {
-        var filterOptionKey = _a.filterOptionKey, filterOption = _a.filterOption, placeholder = _a.placeholder;
-        return filterOptionKey + "-" + filterOption + "-" + placeholder;
-    };
-    /**
-     * Get placeholder from cache
-     *
-     * If it doesn't exist in the cache, generate placeholder and store it in cache
-     */
-    SimpleFilter.prototype.placeholderFromCache = function (_a) {
-        var filterOptionKey = _a.filterOptionKey, filterOption = _a.filterOption, placeholder = _a.placeholder, filterPlaceholderFunc = _a.filterPlaceholderFunc;
-        var cacheKey = this.getPlaceholderFuncCacheKey({
-            filterOptionKey: filterOptionKey,
-            filterOption: filterOption,
-            placeholder: placeholder
-        });
-        var result = this.placeholderFuncCache[cacheKey];
-        if (!result) {
-            result = filterPlaceholderFunc({
-                filterOptionKey: filterOptionKey,
-                filterOption: filterOption,
-                placeholder: placeholder
-            });
-            this.placeholderFuncCache[cacheKey] = result;
-        }
-        return result;
-    };
     SimpleFilter.prototype.getPlaceholderText = function (defaultPlaceholder, position) {
         var placeholder = this.translate(defaultPlaceholder);
         if (isFunction(this.filterPlaceholder)) {
-            var filterPlaceholderFunc = this.filterPlaceholder;
+            var filterPlaceholderFn = this.filterPlaceholder;
             var filterOptionKey = (position === 0 ? this.eType1.getValue() : this.eType2.getValue());
             var filterOption = this.translate(filterOptionKey);
-            placeholder = this.placeholderFromCache({
+            placeholder = filterPlaceholderFn({
                 filterOptionKey: filterOptionKey,
                 filterOption: filterOption,
-                placeholder: placeholder,
-                filterPlaceholderFunc: filterPlaceholderFunc
+                placeholder: placeholder
             });
         }
         else if (typeof this.filterPlaceholder === 'string') {

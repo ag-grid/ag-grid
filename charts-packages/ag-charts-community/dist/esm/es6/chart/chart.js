@@ -809,8 +809,12 @@ export class Chart extends Observable {
         return false;
     }
     onSeriesNodeClick(event) {
-        // Use `Object.create` to preserve deprecation warnings
-        const seriesNodeClickEvent = Object.create(event, { type: { value: 'seriesNodeClick', enumerable: true } });
+        const seriesNodeClickEvent = Object.assign(Object.assign({}, event), { type: 'seriesNodeClick' });
+        Object.defineProperty(seriesNodeClickEvent, 'series', {
+            enumerable: false,
+            // Should display the deprecation warning
+            get: () => event.series,
+        });
         this.fireEvent(seriesNodeClickEvent);
     }
     checkLegendClick(event) {

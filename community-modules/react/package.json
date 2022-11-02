@@ -76,7 +76,7 @@
     "prop-types": "^15.8.1"
   },
   "peerDependencies": {
-    "@ag-grid-community/core": "28.2.0",
+    "@ag-grid-community/core": "~28.2.1",
     "react": "^16.3.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.3.0 || ^17.0.0 || ^18.0.0"
   },

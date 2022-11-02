@@ -10,7 +10,7 @@ const defaultTooltipCss = `
 .ag-chart-tooltip {
     transition: transform 0.1s ease;
     display: table;
-    position: fixed;
+    position: absolute;
     left: 0px;
     top: 0px;
     user-select: none;

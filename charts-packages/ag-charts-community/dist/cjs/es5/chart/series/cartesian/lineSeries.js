@@ -432,7 +432,7 @@ var LineSeries = /** @class */ (function (_super) {
                     node.size = format && format.size !== undefined ? format.size : size;
                     node.translationX = datum.point.x;
                     node.translationY = datum.point.y;
-                    node.visible = node.size > 0;
+                    node.visible = node.size > 0 && !isNaN(datum.point.x) && !isNaN(datum.point.y);
                 });
                 if (!isDatumHighlighted) {
                     this.marker.markClean();

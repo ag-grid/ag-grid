@@ -14528,9 +14528,7 @@ var ConditionPosition;
 var SimpleFilter = /** @class */ (function (_super) {
     __extends$2r(SimpleFilter, _super);
     function SimpleFilter() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.placeholderFuncCache = {};
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     SimpleFilter.prototype.getNumberOfInputs = function (type) {
         var customOpts = this.optionsFactory.getCustomOption(type);
@@ -14749,44 +14747,16 @@ var SimpleFilter = /** @class */ (function (_super) {
             }
         }
     };
-    SimpleFilter.prototype.getPlaceholderFuncCacheKey = function (_a) {
-        var filterOptionKey = _a.filterOptionKey, filterOption = _a.filterOption, placeholder = _a.placeholder;
-        return filterOptionKey + "-" + filterOption + "-" + placeholder;
-    };
-    /**
-     * Get placeholder from cache
-     *
-     * If it doesn't exist in the cache, generate placeholder and store it in cache
-     */
-    SimpleFilter.prototype.placeholderFromCache = function (_a) {
-        var filterOptionKey = _a.filterOptionKey, filterOption = _a.filterOption, placeholder = _a.placeholder, filterPlaceholderFunc = _a.filterPlaceholderFunc;
-        var cacheKey = this.getPlaceholderFuncCacheKey({
-            filterOptionKey: filterOptionKey,
-            filterOption: filterOption,
-            placeholder: placeholder
-        });
-        var result = this.placeholderFuncCache[cacheKey];
-        if (!result) {
-            result = filterPlaceholderFunc({
-                filterOptionKey: filterOptionKey,
-                filterOption: filterOption,
-                placeholder: placeholder
-            });
-            this.placeholderFuncCache[cacheKey] = result;
-        }
-        return result;
-    };
     SimpleFilter.prototype.getPlaceholderText = function (defaultPlaceholder, position) {
         var placeholder = this.translate(defaultPlaceholder);
         if (isFunction(this.filterPlaceholder)) {
-            var filterPlaceholderFunc = this.filterPlaceholder;
+            var filterPlaceholderFn = this.filterPlaceholder;
             var filterOptionKey = (position === 0 ? this.eType1.getValue() : this.eType2.getValue());
             var filterOption = this.translate(filterOptionKey);
-            placeholder = this.placeholderFromCache({
+            placeholder = filterPlaceholderFn({
                 filterOptionKey: filterOptionKey,
                 filterOption: filterOption,
-                placeholder: placeholder,
-                filterPlaceholderFunc: filterPlaceholderFunc
+                placeholder: placeholder
             });
         }
         else if (typeof this.filterPlaceholder === 'string') {
@@ -47968,6 +47938,7 @@ var UndoRedoService = /** @class */ (function (_super) {
     UndoRedoService.prototype.processAction = function (action, valueExtractor) {
         var _this = this;
         action.cellValueChanges.forEach(function (cellValueChange) {
+            var _a;
             var rowIndex = cellValueChange.rowIndex, rowPinned = cellValueChange.rowPinned, columnId = cellValueChange.columnId;
             var rowPosition = { rowIndex: rowIndex, rowPinned: rowPinned };
             var currentRow = _this.getRowNode(rowPosition);
@@ -47977,7 +47948,7 @@ var UndoRedoService = /** @class */ (function (_super) {
             }
             var extractedValue = valueExtractor(cellValueChange);
             // when values are 'complex objects' we need to invoke their `toString()` to obtain value
-            var value = (typeof extractedValue.toString === 'function') ? extractedValue.toString() : extractedValue;
+            var value = (typeof ((_a = extractedValue) === null || _a === void 0 ? void 0 : _a.toString) === 'function') ? extractedValue.toString() : extractedValue;
             currentRow.setDataValue(columnId, value);
         });
     };

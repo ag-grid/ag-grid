@@ -1090,8 +1090,12 @@ var Chart = /** @class */ (function (_super) {
         return false;
     };
     Chart.prototype.onSeriesNodeClick = function (event) {
-        // Use `Object.create` to preserve deprecation warnings
-        var seriesNodeClickEvent = Object.create(event, { type: { value: 'seriesNodeClick', enumerable: true } });
+        var seriesNodeClickEvent = __assign(__assign({}, event), { type: 'seriesNodeClick' });
+        Object.defineProperty(seriesNodeClickEvent, 'series', {
+            enumerable: false,
+            // Should display the deprecation warning
+            get: function () { return event.series; },
+        });
         this.fireEvent(seriesNodeClickEvent);
     };
     Chart.prototype.checkLegendClick = function (event) {

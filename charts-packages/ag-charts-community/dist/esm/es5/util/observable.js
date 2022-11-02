@@ -109,8 +109,7 @@ var Observable = /** @class */ (function () {
     Observable.prototype.fireEvent = function (event) {
         var listeners = this.allEventListeners.get(event.type);
         if (listeners) {
-            // Use `Object.create` to preserve deprecation warnings
-            var eventWithSource_1 = Object.create(event, { source: { value: this, enumerable: true } });
+            var eventWithSource_1 = Object.assign(event, { source: this });
             listeners.forEach(function (scopes, listener) {
                 scopes.forEach(function (scope) { return listener.call(scope, eventWithSource_1); });
             });
