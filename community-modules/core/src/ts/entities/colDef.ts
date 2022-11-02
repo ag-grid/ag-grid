@@ -207,7 +207,7 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
 
     /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */
     singleClickEdit?: boolean;
-    /** @deprecated use `valueSetter` instead */
+    /** @deprecated v26 use `valueSetter` instead */
     newValueHandler?: (params: NewValueParams<TData>) => boolean;
 
     /**
@@ -290,13 +290,13 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
     /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false`  */
     lockPinned?: boolean;
 
-    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
+    /** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
+    /** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRendererFramework?: any;
-    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
+    /** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRendererParams?: any;
-    /** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned. */
+    /** @deprecated v26 Use valueFormatter for pinned rows, and check params.node.rowPinned. */
     pinnedRowValueFormatter?: string | ValueFormatterFunc<TData>;
 
     // *** Columns: Pivoting *** //
