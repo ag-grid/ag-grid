@@ -136,7 +136,8 @@ export const SIMPLE_AREA_GRAPH_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-a
 export const STACKED_AREA_GRAPH_EXAMPLE: AgCartesianChartOptions = DOCS_EXAMPLES['stacked-area'];
 export const ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE: AgCartesianChartOptions =
     DOCS_EXAMPLES['100--stacked-area'];
-export const AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['area-with-negative-values'];
+export const AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgCartesianChartOptions =
+    DOCS_EXAMPLES['area-with-negative-values'];
 export const MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['market-index-treemap'];
 export const SIMPLE_HISTOGRAM_CHART_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['simple-histogram'];
 export const HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE: AgChartOptions = DOCS_EXAMPLES['histogram-with-specified-bins'];
