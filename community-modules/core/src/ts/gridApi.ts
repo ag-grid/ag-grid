@@ -890,7 +890,7 @@ export class GridApi<TData = any> {
         this.selectionService.deselectAllRowNodes(true);
     }
 
-    /** @deprecated recomputeAggregates is deprecated, please call api.refreshClientSideRowModel('aggregate') instead */
+    /** @deprecated v16 recomputeAggregates is deprecated, please call api.refreshClientSideRowModel('aggregate') instead */
     public recomputeAggregates(): void {
         if (missing(this.clientSideRowModel)) { console.warn('cannot call recomputeAggregates unless using normal row model'); }
         console.warn(`recomputeAggregates is deprecated, please call api.refreshClientSideRowModel('aggregate') instead`);
@@ -924,7 +924,7 @@ export class GridApi<TData = any> {
         return node.isSelected();
     }
 
-    /** @deprecated Use getSelectedNodesById no longer exists, use getSelectedNodes(). */
+    /** @deprecated v3.4 Use getSelectedNodesById no longer exists, use getSelectedNodes(). */
     public getSelectedNodesById(): { [nodeId: number]: RowNode<TData>; } | null {
         console.error('AG Grid: since version 3.4, getSelectedNodesById no longer exists, use getSelectedNodes() instead');
         return null;

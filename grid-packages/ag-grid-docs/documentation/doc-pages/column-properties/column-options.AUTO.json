@@ -215,7 +215,7 @@
     "type": { "returnType": "boolean" }
   },
   "newValueHandler": {
-    "description": "/** @deprecated use `valueSetter` instead\n */",
+    "description": "/** @deprecated v26 use `valueSetter` instead\n */",
     "type": {
       "arguments": { "params": "NewValueParams<TData>" },
       "returnType": "boolean"
@@ -329,21 +329,21 @@
     "type": { "returnType": "boolean" }
   },
   "pinnedRowCellRenderer": {
-    "description": "/** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.\n */",
+    "description": "/** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.\n */",
     "type": {
       "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
     }
   },
   "pinnedRowCellRendererFramework": {
-    "description": "/** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.\n */",
+    "description": "/** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.\n */",
     "type": { "returnType": "any" }
   },
   "pinnedRowCellRendererParams": {
-    "description": "/** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.\n */",
+    "description": "/** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.\n */",
     "type": { "returnType": "any" }
   },
   "pinnedRowValueFormatter": {
-    "description": "/** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned.\n */",
+    "description": "/** @deprecated v26 Use valueFormatter for pinned rows, and check params.node.rowPinned.\n */",
     "type": { "returnType": "string | ValueFormatterFunc<TData>" }
   },
   "pivot": {

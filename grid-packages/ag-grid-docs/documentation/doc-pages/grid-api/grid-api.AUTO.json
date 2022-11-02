@@ -403,7 +403,7 @@
     "type": { "arguments": {} }
   },
   "recomputeAggregates": {
-    "description": "/** @deprecated recomputeAggregates is deprecated, please call api.refreshClientSideRowModel('aggregate') instead\n */",
+    "description": "/** @deprecated v16 recomputeAggregates is deprecated, please call api.refreshClientSideRowModel('aggregate') instead\n */",
     "type": { "arguments": {}, "returnType": "void" }
   },
   "sizeColumnsToFit": {
@@ -424,7 +424,7 @@
   },
   "isNodeSelected": { "type": { "arguments": { "node": "any" } } },
   "getSelectedNodesById": {
-    "description": "/** @deprecated Use getSelectedNodesById no longer exists, use getSelectedNodes().\n */",
+    "description": "/** @deprecated v3.4 Use getSelectedNodesById no longer exists, use getSelectedNodes().\n */",
     "type": {
       "arguments": {},
       "returnType": "{ [nodeId: number]: RowNode<TData>; } | null"

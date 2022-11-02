@@ -52,7 +52,7 @@
     "type": { "returnType": "boolean" }
   },
   "clipboardDeliminator": {
-    "description": "/** @deprecated Use `clipboardDelimiter`\n */",
+    "description": "/** @deprecated v27.1 Use `clipboardDelimiter`\n */",
     "type": { "returnType": "string" }
   },
   "clipboardDelimiter": {
@@ -104,23 +104,23 @@
     "type": { "returnType": "boolean" }
   },
   "deltaColumnMode": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v24\n */",
     "type": { "returnType": "boolean" }
   },
   "applyColumnDefOrder": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v26\n */",
     "type": { "returnType": "boolean" }
   },
   "immutableColumns": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v24\n */",
     "type": { "returnType": "boolean" }
   },
   "suppressSetColumnStateEvents": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v24\n */",
     "type": { "returnType": "boolean" }
   },
   "suppressColumnStateEvents": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v24\n */",
     "type": { "returnType": "boolean" }
   },
   "colWidth": {
@@ -248,7 +248,7 @@
     "type": { "returnType": "number" }
   },
   "stopEditingWhenGridLosesFocus": {
-    "description": "/** @deprecated Use stopEditingWhenCellsLoseFocus instead\n */",
+    "description": "/** @deprecated v25 Use stopEditingWhenCellsLoseFocus instead\n */",
     "type": { "returnType": "boolean" }
   },
   "defaultCsvExportParams": {
@@ -272,7 +272,7 @@
     "type": { "returnType": "ExcelStyle[]" }
   },
   "defaultExportParams": {
-    "description": "/** @deprecated Use defaultCsvExportParams or defaultExcelExportParams\n */",
+    "description": "/** @deprecated v25 Use defaultCsvExportParams or defaultExcelExportParams\n */",
     "type": { "returnType": "CsvExportParams | ExcelExportParams" }
   },
   "quickFilterText": {
@@ -625,7 +625,7 @@
     "type": { "returnType": "boolean" }
   },
   "deprecatedEmbedFullWidthRows": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v21\n */",
     "type": { "returnType": "boolean" }
   },
   "groupDisplayType": {
@@ -717,27 +717,27 @@
     "type": { "returnType": "boolean" }
   },
   "groupRowInnerRenderer": {
-    "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
+    "description": "/** @deprecated v24 - this is now groupRowRendererParams.innerRenderer\n */",
     "type": { "returnType": "any" }
   },
   "groupRowInnerRendererFramework": {
-    "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
+    "description": "/** @deprecated v24 - this is now groupRowRendererParams.innerRenderer\n */",
     "type": { "returnType": "any" }
   },
   "groupMultiAutoColumn": {
-    "description": "/** @deprecated - Use groupDisplayType = 'multipleColumns' instead\n */",
+    "description": "/** @deprecated v26 - Use groupDisplayType = 'multipleColumns' instead\n */",
     "type": { "returnType": "boolean" }
   },
   "groupUseEntireRow": {
-    "description": "/** @deprecated - Use groupDisplayType = 'groupRows' instead\n */",
+    "description": "/** @deprecated v26 - Use groupDisplayType = 'groupRows' instead\n */",
     "type": { "returnType": "boolean" }
   },
   "groupSuppressAutoColumn": {
-    "description": "/** @deprecated - Use groupDisplayType = 'custom' instead\n */",
+    "description": "/** @deprecated v26 - Use groupDisplayType = 'custom' instead\n */",
     "type": { "returnType": "boolean" }
   },
   "rememberGroupStateWhenNewData": {
-    "description": "/** @deprecated - no longer needed, transaction updates keep group state\n */",
+    "description": "/** @deprecated v24 - no longer needed, transaction updates keep group state\n */",
     "type": { "returnType": "boolean" }
   },
   "pinnedTopRowData": {
@@ -757,7 +757,7 @@
     "type": { "returnType": "TData[] | null" }
   },
   "immutableData": {
-    "description": "/** @deprecated Immutable Data is on by default when grid callback getRowId() is implemented\nEnables Immutable Data mode, for compatibility with immutable stores. Default: `false`\n */",
+    "description": "/** @deprecated 27.1 Immutable Data is on by default when grid callback getRowId() is implemented\nEnables Immutable Data mode, for compatibility with immutable stores. Default: `false`\n */",
     "type": { "returnType": "boolean" }
   },
   "asyncTransactionWaitMillis": {
@@ -769,11 +769,11 @@
     "type": { "returnType": "boolean" }
   },
   "deltaRowDataMode": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v23\n */",
     "type": { "returnType": "boolean" }
   },
   "batchUpdateWaitMillis": {
-    "description": "/** @deprecated use asyncTransactionWaitMillis instead\n */",
+    "description": "/** @deprecated v23 use asyncTransactionWaitMillis instead\n */",
     "type": { "returnType": "number" }
   },
   "datasource": {
@@ -793,7 +793,7 @@
     "type": { "returnType": "number" }
   },
   "serverSideStoreType": {
-    "description": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
+    "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
     "type": { "returnType": "ServerSideStoreType" }
   },
   "serverSideInfiniteScroll": {
@@ -841,15 +841,15 @@
     "type": { "returnType": "boolean" }
   },
   "serverSideSortingAlwaysResets": {
-    "description": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
+    "description": "/** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
     "type": { "returnType": "boolean" }
   },
   "serverSideFilteringAlwaysResets": {
-    "description": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
+    "description": "/** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
     "type": { "returnType": "boolean" }
   },
   "suppressEnterpriseResetOnNewColumns": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v25\n */",
     "type": { "returnType": "boolean" }
   },
   "viewportDatasource": {
@@ -921,7 +921,7 @@
     "type": { "returnType": "boolean" }
   },
   "suppressCellSelection": {
-    "description": "/** @deprecated This property has been deprecated. Use `suppressCellFocus` instead.\n */",
+    "description": "/** @deprecated v27 This property has been deprecated. Use `suppressCellFocus` instead.\n */",
     "type": { "returnType": "boolean" }
   },
   "suppressCellFocus": {
@@ -957,7 +957,7 @@
     "type": { "returnType": "boolean" }
   },
   "rowDeselection": {
-    "description": "/** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection\n */",
+    "description": "/** @deprecated v24 - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection\n */",
     "type": { "returnType": "boolean" }
   },
   "sortingOrder": {
@@ -1023,11 +1023,11 @@
   "deltaSort": { "type": { "returnType": "boolean" } },
   "treeDataDisplayType": { "type": { "returnType": "TreeDataDisplayType" } },
   "angularCompileRows": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v26\n */",
     "type": { "returnType": "boolean" }
   },
   "angularCompileFilters": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v26\n */",
     "type": { "returnType": "boolean" }
   },
   "functionsPassive": { "type": { "returnType": "boolean" } },
@@ -1143,14 +1143,14 @@
     }
   },
   "suppressKeyboardEvent": {
-    "description": "/** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.\n */",
+    "description": "/** @deprecated v24 - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.\n */",
     "type": {
       "arguments": { "params": "SuppressKeyboardEventParams<TData>" },
       "returnType": "boolean"
     }
   },
   "localeTextFunc": {
-    "description": "/** @deprecated - Use `getLocaleText` instead.\n */",
+    "description": "/** @deprecated v27.2 - Use `getLocaleText` instead.\n */",
     "type": {
       "arguments": {
         "key": "string",
@@ -1179,7 +1179,7 @@
     }
   },
   "groupRowAggNodes": {
-    "description": "/** @deprecated - Use `getGroupRowAgg` instead.\n */",
+    "description": "/** @deprecated v27.2 - Use `getGroupRowAgg` instead.\n */",
     "type": { "arguments": { "nodes": "RowNode[]" }, "returnType": "any" }
   },
   "getGroupRowAgg": {
@@ -1204,18 +1204,18 @@
     }
   },
   "defaultGroupOrderComparator": {
-    "description": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
+    "description": "/** @deprecated v27.2 - Use `initialGroupOrderComparator` instead\n */",
     "type": {
       "arguments": { "nodeA": "RowNode<TData>", "nodeB": "RowNode<TData>" },
       "returnType": "number"
     }
   },
   "processSecondaryColDef": {
-    "description": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
+    "description": "/** @deprecated v28 - Use `processPivotResultColDef` instead\n */",
     "type": { "arguments": { "colDef": "ColDef<TData>" }, "returnType": "void" }
   },
   "processSecondaryColGroupDef": {
-    "description": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+    "description": "/** @deprecated v28 - Use `processPivotResultColGroupDef` instead\n */",
     "type": {
       "arguments": { "colGroupDef": "ColGroupDef<TData>" },
       "returnType": "void"
@@ -1237,7 +1237,7 @@
     "type": { "returnType": "GetDataPath<TData>" }
   },
   "defaultGroupSortComparator": {
-    "description": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
+    "description": "/** @deprecated v26 - Use initialGroupOrderComparator instead\n */",
     "type": {
       "arguments": { "nodeA": "RowNode<TData>", "nodeB": "RowNode<TData>" },
       "returnType": "number"
@@ -1255,7 +1255,7 @@
     }
   },
   "getServerSideStoreParams": {
-    "description": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
+    "description": "/** @deprecated v28 Use `getServerSideGroupLevelParams` instead.\n */",
     "type": {
       "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
       "returnType": "ServerSideGroupLevelParams"
@@ -1288,7 +1288,7 @@
     }
   },
   "getRowNodeId": {
-    "description": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\nAllows you to set the ID for a particular row node based on the data.\n */",
+    "description": "/** @deprecated v27.1 Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\nAllows you to set the ID for a particular row node based on the data.\n */",
     "type": { "returnType": "GetRowNodeIdFunc<TData>" }
   },
   "getRowId": {
@@ -1322,7 +1322,7 @@
     }
   },
   "postSort": {
-    "description": "/** @deprecated Use `postSortRows` instead\n */",
+    "description": "/** @deprecated v27.2 Use `postSortRows` instead\n */",
     "type": {
       "arguments": { "nodes": "RowNode<TData>[]" },
       "returnType": "void"
@@ -1357,7 +1357,7 @@
     }
   },
   "isFullWidthCell": {
-    "description": "/** @deprecated Use `isFullWidthRow` instead.\n */",
+    "description": "/** @deprecated v27.2 Use `isFullWidthRow` instead.\n */",
     "type": {
       "arguments": { "rowNode": "RowNode<TData>" },
       "returnType": "boolean"
@@ -2227,7 +2227,7 @@
     "meta": { "isEvent": true, "name": "onPinnedRowDataChanged" }
   },
   "onRowDataChanged": {
-    "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
+    "description": "/** @deprecated v28 No longer fired, use onRowDataUpdated instead\n */",
     "type": {
       "arguments": { "event": "RowDataChangedEvent<TData>" },
       "returnType": "void"
@@ -2235,7 +2235,7 @@
     "meta": { "isEvent": true, "name": "onRowDataChanged" }
   },
   "rowDataChanged": {
-    "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
+    "description": "/** @deprecated v28 No longer fired, use onRowDataUpdated instead\n */",
     "type": {
       "arguments": { "event": "RowDataChangedEvent<TData>" },
       "returnType": "void"
