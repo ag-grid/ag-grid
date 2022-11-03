@@ -1281,17 +1281,8 @@ export interface AgPieSeriesFormatterParams<DatumType> {
     readonly strokeWidth: PixelSize;
     readonly highlighted: boolean;
     readonly angleKey: string;
-    readonly angleValue: any;
-    readonly angleName: string;
     readonly radiusKey?: string;
-    readonly radiusValue?: any;
-    readonly radiusName?: string;
-    readonly calloutLabelKey?: string;
-    readonly calloutLabelValue?: any;
-    readonly calloutLabelName?: string;
     readonly sectorLabelKey?: string;
-    readonly sectorLabelValue?: any;
-    readonly sectorLabelName?: string;
     readonly seriesId: string;
 }
 

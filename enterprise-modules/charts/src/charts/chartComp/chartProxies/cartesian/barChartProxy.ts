@@ -1,5 +1,5 @@
 import { _ } from "@ag-grid-community/core";
-import { AgBarSeriesOptions, ChartAxisPosition, AgCartesianAxisOptions } from "ag-charts-community";
+import { AgBarSeriesOptions, AgCartesianAxisOptions } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
@@ -29,12 +29,12 @@ export class BarChartProxy extends CartesianChartProxy {
             {
                 ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
                 type: this.xAxisType,
-                position: isBar ? ChartAxisPosition.Left : ChartAxisPosition.Bottom,
+                position: isBar ? 'left' : 'bottom',
             },
             {
                 ...deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left),
                 type: this.yAxisType,
-                position: isBar ? ChartAxisPosition.Bottom : ChartAxisPosition.Left,
+                position: isBar ? 'bottom' : 'left',
             },
         ];
         // special handling to add a default label formatter to show '%' for normalized charts if none is provided

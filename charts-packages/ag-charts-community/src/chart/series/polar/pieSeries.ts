@@ -451,7 +451,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         let sectorLabelData: string[] = [];
         let radiusData: number[] = [];
 
-        const getLabelFormatterParams = (datum: any): AgPieSeriesFormatterParams<any> => {
+        const getLabelFormatterParams = (datum: any): AgPieSeriesLabelFormatterParams<any> => {
             return {
                 datum,
                 angleKey,
@@ -460,17 +460,15 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 radiusKey,
                 radiusValue: radiusKey ? datum[radiusKey] : undefined,
                 radiusName: this.radiusName,
-                // labelKey,
-                // labelValue: labelKey ? datum[labelKey] : undefined,
-                // labelName: this.calloutLabelName,
+                labelKey,
+                labelValue: labelKey ? datum[labelKey] : undefined,
+                labelName: this.calloutLabelName,
                 calloutLabelKey: labelKey,
                 calloutLabelValue: labelKey ? datum[labelKey] : undefined,
                 calloutLabelName: this.calloutLabelName,
                 sectorLabelKey,
                 sectorLabelValue: sectorLabelKey ? datum[sectorLabelKey] : undefined,
                 sectorLabelName: this.sectorLabelName,
-                strokeWidth: this.strokeWidth,
-                highlighted: false,
                 seriesId,
             };
         };
@@ -628,7 +626,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 strokeWidth,
                 highlighted: isDatumHighlighted,
                 seriesId,
-            } as any);
+            });
         }
 
         return {

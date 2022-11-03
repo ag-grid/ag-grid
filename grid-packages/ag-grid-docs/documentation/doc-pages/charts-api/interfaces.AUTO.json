@@ -2283,17 +2283,8 @@
       "strokeWidth": "PixelSize",
       "highlighted": "boolean",
       "angleKey": "string",
-      "angleValue": "any",
-      "angleName": "string",
       "radiusKey?": "string",
-      "radiusValue?": "any",
-      "radiusName?": "string",
-      "calloutLabelKey?": "string",
-      "calloutLabelValue?": "any",
-      "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
-      "sectorLabelValue?": "any",
-      "sectorLabelName?": "string",
       "seriesId": "string"
     }
   },

@@ -3420,19 +3420,8 @@
     "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } },
     "angleKey": { "type": { "returnType": "string", "optional": false } },
-    "angleValue": { "type": { "returnType": "any", "optional": false } },
-    "angleName": { "type": { "returnType": "string", "optional": false } },
     "radiusKey": { "type": { "returnType": "string", "optional": true } },
-    "radiusValue": { "type": { "returnType": "any", "optional": true } },
-    "radiusName": { "type": { "returnType": "string", "optional": true } },
-    "calloutLabelKey": { "type": { "returnType": "string", "optional": true } },
-    "calloutLabelValue": { "type": { "returnType": "any", "optional": true } },
-    "calloutLabelName": {
-      "type": { "returnType": "string", "optional": true }
-    },
     "sectorLabelKey": { "type": { "returnType": "string", "optional": true } },
-    "sectorLabelValue": { "type": { "returnType": "any", "optional": true } },
-    "sectorLabelName": { "type": { "returnType": "string", "optional": true } },
     "seriesId": { "type": { "returnType": "string", "optional": false } },
     "meta": { "typeParams": ["DatumType"] }
   },

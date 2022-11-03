@@ -1,4 +1,4 @@
-import { AgCartesianAxisOptions, ChartAxisPosition } from "ag-charts-community";
+import { AgCartesianAxisOptions } from "ag-charts-community";
 import { ChartType, SeriesChartType } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
@@ -31,7 +31,7 @@ export class ComboChartProxy extends CartesianChartProxy {
             {
                 ...bottomOptions,
                 type: this.xAxisType,
-                position: ChartAxisPosition.Bottom,
+                position: 'bottom',
                 gridStyle: [{ stroke: undefined }],
             },
         ];
@@ -41,7 +41,7 @@ export class ComboChartProxy extends CartesianChartProxy {
                 ...leftOptions,
                 type: this.yAxisType,
                 keys: primaryYKeys,
-                position: ChartAxisPosition.Left,
+                position: 'left',
                 title: {
                     ...deepMerge(leftOptions.title, {
                         enabled: leftOptions.title?.enabled,
@@ -66,7 +66,7 @@ export class ComboChartProxy extends CartesianChartProxy {
                     ...rightOptions,
                     type: this.yAxisType,
                     keys: [secondaryYKey],
-                    position: ChartAxisPosition.Right,
+                    position: 'right',
                     title: {
                         ...deepMerge(rightOptions.title, {
                             enabled: rightOptions.title?.enabled,
