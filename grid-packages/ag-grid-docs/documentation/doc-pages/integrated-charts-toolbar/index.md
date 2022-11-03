@@ -201,22 +201,6 @@ The following example shows the format panel with:
 
 <grid-example title='Customising format panel groups' name='customise-format-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
-## Chart Tool Panels Button
-
-The Chart Tool Panels Button offers an alternative way to access the Chart Tool Panels and is enabled as shown below:
-
-<snippet>
-const gridOptions = {
-    enableChartToolPanelsButton: true
-}
-</snippet>
-
-When enabled, a button will appear on the right-hand-side (left-hand-side when `enableRtl=true`) of the chart. Note that the Toolbar icons will be permanently shown, except the ‘hamburger' icon which isn’t shown.
-
-The following example demonstrates the results of enabling `enableChartToolPanelsButton`:
-
-<grid-example title='Chart Tool Panels button' name='chart-tool-panels-button' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
-
 ## Next Up
 
 Continue to the next section to learn about the: [Chart Container](/integrated-charts-container/).

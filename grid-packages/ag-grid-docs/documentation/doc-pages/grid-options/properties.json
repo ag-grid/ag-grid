@@ -354,6 +354,12 @@
                 "url": "/integrated-charts-toolbar/#chart-tool-panels-button"
             }
         },
+        "suppressChartToolPanelsButton": {
+            "more": {
+                "name": "Suppress Chart Tool Panels Button",
+                "url": "/integrated-charts-toolbar/#chart-tool-panels-button"
+            }
+        },
         "getChartToolbarItems": {
             "more": {
                 "name": "Configuring Toolbar Items",

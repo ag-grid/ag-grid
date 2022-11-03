@@ -458,8 +458,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public customChartThemes: { [name: string]: AgChartTheme } | undefined = undefined;
     /** Chart theme overrides applied to all themes.     */
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
-    /** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false`     */
+    /** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`.     */
     @Input() public enableChartToolPanelsButton: boolean | undefined = undefined;
+    /** Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Default: `false`     */
+    @Input() public suppressChartToolPanelsButton: boolean | undefined = undefined;
     /** Allows customisation of the Chart Tool Panels, such as changing the tool panels visibility and order, as well as choosing which charts should be displayed in the settings panel.     */
     @Input() public chartToolPanelsDef: ChartToolPanelsDef | undefined = undefined;
     /** Provide your own loading cell renderer to use when data is loading via a DataSource.
@@ -1244,6 +1246,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressColumnStateEvents: boolean | null | '';
     static ngAcceptInputType_enableCharts: boolean | null | '';
     static ngAcceptInputType_enableChartToolPanelsButton: boolean | null | '';
+    static ngAcceptInputType_suppressChartToolPanelsButton: boolean | null | '';
     static ngAcceptInputType_deltaColumnMode: boolean | null | '';
     static ngAcceptInputType_suppressMaintainUnsortedOrder: boolean | null | '';
     static ngAcceptInputType_enableCellTextSelection: boolean | null | '';
