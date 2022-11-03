@@ -220,8 +220,11 @@ export class SeriesPanel extends Component {
 
     private initLabels() {
         const seriesOptionLabelProperty = this.seriesType === 'pie' ? 'calloutLabel' : 'label';
+        const labelName = this.seriesType === 'pie'
+            ? this.chartTranslationService.translate('calloutLabels')
+            : this.chartTranslationService.translate('labels');
         const labelParams = initFontPanelParams({
-            labelName: this.chartTranslationService.translate('labels'),
+            labelName,
             chartOptionsService: this.chartOptionsService,
             getSelectedSeries: () => this.seriesType,
             seriesOptionLabelProperty
@@ -235,6 +238,17 @@ export class SeriesPanel extends Component {
         }
 
         this.addWidget(labelPanelComp);
+
+        if (this.seriesType === 'pie') {
+            const sectorParams = initFontPanelParams({
+                labelName: this.chartTranslationService.translate('sectorLabels'),
+                chartOptionsService: this.chartOptionsService,
+                getSelectedSeries: () => this.seriesType,
+                seriesOptionLabelProperty: 'sectorLabel'
+            });
+            const sectorPanelComp = this.createBean(new FontPanel(sectorParams));
+            this.addWidget(sectorPanelComp);
+        }
     }
 
     private initShadow() {

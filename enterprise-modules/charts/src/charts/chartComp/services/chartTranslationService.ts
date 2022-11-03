@@ -42,6 +42,8 @@ export class ChartTranslationService extends BeanStub {
         bottom: 'Bottom',
         left: 'Left',
         labels: 'Labels',
+        calloutLabels: 'Callout Labels',
+        sectorLabels: 'Sector Labels',
         size: 'Size',
         shape: 'Shape',
         minSize: 'Minimum Size',
