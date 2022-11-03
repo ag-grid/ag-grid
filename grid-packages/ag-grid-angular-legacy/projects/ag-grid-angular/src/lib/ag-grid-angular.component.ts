@@ -354,29 +354,21 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public maintainColumnOrder: boolean | undefined = undefined;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
     @Input() public suppressFieldDotNotation: boolean | undefined = undefined;
-    /** @deprecated v24
-     */
+    /** @deprecated v24*/
     @Input() public deltaColumnMode: boolean | undefined = undefined;
-    /** @deprecated v26
-     */
+    /** @deprecated v26*/
     @Input() public applyColumnDefOrder: boolean | undefined = undefined;
-    /** @deprecated v24
-     */
+    /** @deprecated v24*/
     @Input() public immutableColumns: boolean | undefined = undefined;
-    /** @deprecated v24
-     */
+    /** @deprecated v24*/
     @Input() public suppressSetColumnStateEvents: boolean | undefined = undefined;
-    /** @deprecated v24
-     */
+    /** @deprecated v24*/
     @Input() public suppressColumnStateEvents: boolean | undefined = undefined;
-    /** @deprecated Set via `defaultColDef.width`
-     */
+    /** @deprecated Set via `defaultColDef.width`*/
     @Input() public colWidth: number | undefined = undefined;
-    /** @deprecated Set via `defaultColDef.minWidth`
-     */
+    /** @deprecated Set via `defaultColDef.minWidth`*/
     @Input() public minColWidth: number | undefined = undefined;
-    /** @deprecated Set via `defaultColDef.maxWidth`
-     */
+    /** @deprecated Set via `defaultColDef.maxWidth`*/
     @Input() public maxColWidth: number | undefined = undefined;
     /** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`.     */
     @Input() public headerHeight: number | undefined = undefined;
@@ -410,8 +402,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public skipHeaderOnAutoSize: boolean | undefined = undefined;
     /** A map of component names to components.     */
     @Input() public components: { [p: string]: any; } | undefined = undefined;
-    /** @deprecated As of v27, use `components` for framework components too.
-     */
+    /** @deprecated As of v27, use `components` for framework components too.*/
     @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.     */
     @Input() public editType: 'fullRow' | undefined = undefined;
@@ -439,8 +430,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public undoRedoCellEditing: boolean | undefined = undefined;
     /** Set the size of the undo / redo stack. Default: `10`     */
     @Input() public undoRedoCellEditingLimit: number | undefined = undefined;
-    /** @deprecated v25 Use stopEditingWhenCellsLoseFocus instead
-     */
+    /** @deprecated v25 Use stopEditingWhenCellsLoseFocus instead*/
     @Input() public stopEditingWhenGridLosesFocus: boolean | undefined = undefined;
     /** A default configuration object used to export to CSV.     */
     @Input() public defaultCsvExportParams: CsvExportParams | undefined = undefined;
@@ -452,8 +442,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressExcelExport: boolean | undefined = undefined;
     /** A list (array) of Excel styles to be used when exporting to Excel with styles.     */
     @Input() public excelStyles: ExcelStyle[] | undefined = undefined;
-    /** @deprecated v25 Use defaultCsvExportParams or defaultExcelExportParams
-     */
+    /** @deprecated v25 Use defaultCsvExportParams or defaultExcelExportParams*/
     @Input() public defaultExportParams: CsvExportParams | ExcelExportParams | undefined = undefined;
     /** Rows are filtered using this text as a quick filter.     */
     @Input() public quickFilterText: string | undefined = undefined;
@@ -476,8 +465,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Provide your own loading cell renderer to use when data is loading via a DataSource.
      * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.     */
     @Input() public loadingCellRenderer: any = undefined;
-    /** @deprecated As of v27, use `loadingCellRenderer` for framework components too.
-     */
+    /** @deprecated As of v27, use `loadingCellRenderer` for framework components too.*/
     @Input() public loadingCellRendererFramework: any = undefined;
     /** Params to be passed to the `loadingCellRenderer` component.     */
     @Input() public loadingCellRendererParams: any = undefined;
@@ -494,8 +482,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Provide a custom `detailCellRenderer` to use when a master row is expanded.
      * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.     */
     @Input() public detailCellRenderer: any = undefined;
-    /** @deprecated As of v27, use `detailCellRenderer` for framework components too.
-     */
+    /** @deprecated As of v27, use `detailCellRenderer` for framework components too.*/
     @Input() public detailCellRendererFramework: any = undefined;
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params.     */
     @Input() public detailCellRendererParams: any = undefined;
@@ -543,8 +530,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Provide a custom loading overlay component.
      * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.     */
     @Input() public loadingOverlayComponent: any = undefined;
-    /** @deprecated As of v27, use `loadingOverlayComponent` for framework components too.
-     */
+    /** @deprecated As of v27, use `loadingOverlayComponent` for framework components too.*/
     @Input() public loadingOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the loading overlay component.     */
     @Input() public loadingOverlayComponentParams: any = undefined;
@@ -555,8 +541,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Provide a custom no rows overlay component.
      * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.     */
     @Input() public noRowsOverlayComponent: any = undefined;
-    /** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too.
-     */
+    /** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too.*/
     @Input() public noRowsOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the no rows overlay component.     */
     @Input() public noRowsOverlayComponentParams: any = undefined;
@@ -646,15 +631,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Provide your own cell renderer component to use for full width rows.
      * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.     */
     @Input() public fullWidthCellRenderer: any = undefined;
-    /** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too.
-     */
+    /** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too.*/
     @Input() public fullWidthCellRendererFramework: any = undefined;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component.     */
     @Input() public fullWidthCellRendererParams: any = undefined;
     /** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling.     */
     @Input() public embedFullWidthRows: boolean | undefined = undefined;
-    /** @deprecated v21
-     */
+    /** @deprecated v21*/
     @Input() public deprecatedEmbedFullWidthRows: boolean | undefined = undefined;
     /** Specifies how the results of row grouping should be displayed.
      * 
@@ -700,8 +683,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
      * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.     */
     @Input() public groupRowRenderer: any = undefined;
-    /** @deprecated As of v27, use `groupRowRenderer` for framework components too.
-     */
+    /** @deprecated As of v27, use `groupRowRenderer` for framework components too.*/
     @Input() public groupRowRendererFramework: any = undefined;
     /** Customise the parameters provided to the `groupRowRenderer` component.     */
     @Input() public groupRowRendererParams: any = undefined;
@@ -713,23 +695,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public rowGroupPanelSuppressSort: boolean | undefined = undefined;
     /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.     */
     @Input() public groupRowsSticky: boolean | undefined = undefined;
-    /** @deprecated v24 - this is now groupRowRendererParams.innerRenderer
-     */
+    /** @deprecated v24 - this is now groupRowRendererParams.innerRenderer*/
     @Input() public groupRowInnerRenderer: any = undefined;
-    /** @deprecated v24 - this is now groupRowRendererParams.innerRenderer
-     */
+    /** @deprecated v24 - this is now groupRowRendererParams.innerRenderer*/
     @Input() public groupRowInnerRendererFramework: any = undefined;
-    /** @deprecated v26 - Use groupDisplayType = 'multipleColumns' instead
-     */
+    /** @deprecated v26 - Use groupDisplayType = 'multipleColumns' instead*/
     @Input() public groupMultiAutoColumn: boolean | undefined = undefined;
-    /** @deprecated v26 - Use groupDisplayType = 'groupRows' instead
-     */
+    /** @deprecated v26 - Use groupDisplayType = 'groupRows' instead*/
     @Input() public groupUseEntireRow: boolean | undefined = undefined;
-    /** @deprecated v26 - Use groupDisplayType = 'custom' instead
-     */
+    /** @deprecated v26 - Use groupDisplayType = 'custom' instead*/
     @Input() public groupSuppressAutoColumn: boolean | undefined = undefined;
-    /** @deprecated v24 - no longer needed, transaction updates keep group state
-     */
+    /** @deprecated v24 - no longer needed, transaction updates keep group state*/
     @Input() public rememberGroupStateWhenNewData: boolean | undefined = undefined;
     /** Data to be displayed as pinned top rows in the grid.     */
     @Input() public pinnedTopRowData: any[] | undefined = undefined;
@@ -740,18 +716,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set the data to be displayed as rows in the grid.     */
     @Input() public rowData: TData[] | null | undefined = undefined;
     /** @deprecated 27.1 Immutable Data is on by default when grid callback getRowId() is implemented
-Enables Immutable Data mode, for compatibility with immutable stores. Default: `false`
-     */
+Enables Immutable Data mode, for compatibility with immutable stores. Default: `false`*/
     @Input() public immutableData: boolean | undefined = undefined;
     /** How many milliseconds to wait before executing a batch of async transactions.     */
     @Input() public asyncTransactionWaitMillis: number | undefined = undefined;
     /** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false`     */
     @Input() public suppressModelUpdateAfterUpdateTransaction: boolean | undefined = undefined;
-    /** @deprecated v23
-     */
+    /** @deprecated v23*/
     @Input() public deltaRowDataMode: boolean | undefined = undefined;
-    /** @deprecated v23 use asyncTransactionWaitMillis instead
-     */
+    /** @deprecated v23 use asyncTransactionWaitMillis instead*/
     @Input() public batchUpdateWaitMillis: number | undefined = undefined;
     /** Provide the datasource for infinite scrolling.     */
     @Input() public datasource: IDatasource | undefined = undefined;
@@ -766,8 +739,7 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     @Input() public serverSideInitialRowCount: number | undefined = undefined;
     /** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.
 Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,
-Full Store is used.
-     */
+Full Store is used.*/
     @Input() public serverSideStoreType: ServerSideStoreType | undefined = undefined;
     /** Set whether Server-side Row Model will use Infinite Scrolling
      * Default: `false`     */
@@ -799,14 +771,11 @@ Full Store is used.
      * as Filtering is always server side when Infinite Scroll is active.
      * Default: `false`     */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
-    /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead.
-     */
+    /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead.*/
     @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
-    /** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead.
-     */
+    /** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead.*/
     @Input() public serverSideFilteringAlwaysResets: boolean | undefined = undefined;
-    /** @deprecated v25
-     */
+    /** @deprecated v25*/
     @Input() public suppressEnterpriseResetOnNewColumns: boolean | undefined = undefined;
     /** To use the viewport row model you need to provide the grid with a `viewportDatasource`.     */
     @Input() public viewportDatasource: IViewportDatasource | undefined = undefined;
@@ -842,8 +811,7 @@ Full Store is used.
     @Input() public suppressRowDeselection: boolean | undefined = undefined;
     /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. Default: `false`     */
     @Input() public suppressRowClickSelection: boolean | undefined = undefined;
-    /** @deprecated v27 This property has been deprecated. Use `suppressCellFocus` instead.
-     */
+    /** @deprecated v27 This property has been deprecated. Use `suppressCellFocus` instead.*/
     @Input() public suppressCellSelection: boolean | undefined = undefined;
     /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. Default: `false`     */
     @Input() public suppressCellFocus: boolean | undefined = undefined;
@@ -896,11 +864,9 @@ Full Store is used.
     @Input() public columnHoverHighlight: boolean | undefined = undefined;
     @Input() public deltaSort: boolean | undefined = undefined;
     @Input() public treeDataDisplayType: TreeDataDisplayType | undefined = undefined;
-    /** @deprecated v26
-     */
+    /** @deprecated v26*/
     @Input() public angularCompileRows: boolean | undefined = undefined;
-    /** @deprecated v26
-     */
+    /** @deprecated v26*/
     @Input() public angularCompileFilters: boolean | undefined = undefined;
     @Input() public functionsPassive: boolean | undefined = undefined;
     @Input() public enableGroupEdit: boolean | undefined = undefined;
@@ -938,11 +904,9 @@ Full Store is used.
     @Input() public navigateToNextCell: ((params: NavigateToNextCellParams<TData>) => (CellPosition | null)) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.     */
     @Input() public tabToNextCell: ((params: TabToNextCellParams<TData>) => (CellPosition | null)) | undefined = undefined;
-    /** @deprecated v24 - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.
-     */
+    /** @deprecated v24 - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.*/
     @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams<TData>) => boolean) | undefined = undefined;
-    /** @deprecated v27.2 - Use `getLocaleText` instead.
-     */
+    /** @deprecated v27.2 - Use `getLocaleText` instead.*/
     @Input() public localeTextFunc: ((key: string, defaultValue: string, variableValues?: string[]) => string) | undefined = undefined;
     /** A callback for localising text within the grid.     */
     @Input() public getLocaleText: ((params: GetLocaleTextParams<TData>) => string) | undefined = undefined;
@@ -950,8 +914,7 @@ Full Store is used.
     @Input() public getDocument: (() => Document) | undefined = undefined;
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.     */
     @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams<TData>) => string) | undefined = undefined;
-    /** @deprecated v27.2 - Use `getGroupRowAgg` instead.
-     */
+    /** @deprecated v27.2 - Use `getGroupRowAgg` instead.*/
     @Input() public groupRowAggNodes: ((nodes: RowNode[]) => any) | undefined = undefined;
     /** Callback to use when you need access to more then the current column for aggregation.     */
     @Input() public getGroupRowAgg: ((params: GetGroupRowAggParams<TData>) => any) | undefined = undefined;
@@ -959,14 +922,11 @@ Full Store is used.
     @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams<TData>) => boolean) | undefined = undefined;
     /** Allows default sorting of groups.     */
     @Input() public initialGroupOrderComparator: ((params: InitialGroupOrderComparatorParams<TData>) => number) | undefined = undefined;
-    /** @deprecated v27.2 - Use `initialGroupOrderComparator` instead
-     */
+    /** @deprecated v27.2 - Use `initialGroupOrderComparator` instead*/
     @Input() public defaultGroupOrderComparator: ((nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number) | undefined = undefined;
-    /** @deprecated v28 - Use `processPivotResultColDef` instead
-     */
+    /** @deprecated v28 - Use `processPivotResultColDef` instead*/
     @Input() public processSecondaryColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
-    /** @deprecated v28 - Use `processPivotResultColGroupDef` instead
-     */
+    /** @deprecated v28 - Use `processPivotResultColGroupDef` instead*/
     @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column definition.     */
     @Input() public processPivotResultColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
@@ -974,15 +934,13 @@ Full Store is used.
     @Input() public processPivotResultColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.     */
     @Input() public getDataPath: GetDataPath<TData> | undefined = undefined;
-    /** @deprecated v26 - Use initialGroupOrderComparator instead
-     */
+    /** @deprecated v26 - Use initialGroupOrderComparator instead*/
     @Input() public defaultGroupSortComparator: ((nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number) | undefined = undefined;
     /** Allows setting the child count for a group row.     */
     @Input() public getChildCount: ((dataItem: any) => number) | undefined = undefined;
     /** Allows providing different params for different levels of grouping.     */
     @Input() public getServerSideGroupLevelParams: ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams) | undefined = undefined;
-    /** @deprecated v28 Use `getServerSideGroupLevelParams` instead.
-     */
+    /** @deprecated v28 Use `getServerSideGroupLevelParams` instead.*/
     @Input() public getServerSideStoreParams: ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams) | undefined = undefined;
     /** Allows groups to be open by default.     */
     @Input() public isServerSideGroupOpenByDefault: ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined = undefined;
@@ -996,8 +954,7 @@ Full Store is used.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.     */
     @Input() public getBusinessKeyForNode: ((node: RowNode<TData>) => string) | undefined = undefined;
     /** @deprecated v27.1 Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
-Allows you to set the ID for a particular row node based on the data.
-     */
+Allows you to set the ID for a particular row node based on the data.*/
     @Input() public getRowNodeId: GetRowNodeIdFunc<TData> | undefined = undefined;
     /** Allows setting the ID for a particular row node based on the data.     */
     @Input() public getRowId: GetRowIdFunc<TData> | undefined = undefined;
@@ -1011,8 +968,7 @@ Allows you to set the ID for a particular row node based on the data.
     @Input() public isRowMaster: IsRowMaster<TData> | undefined = undefined;
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.     */
     @Input() public fillOperation: ((params: FillOperationParams<TData>) => any) | undefined = undefined;
-    /** @deprecated v27.2 Use `postSortRows` instead
-     */
+    /** @deprecated v27.2 Use `postSortRows` instead*/
     @Input() public postSort: ((nodes: RowNode<TData>[]) => void) | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.     */
     @Input() public postSortRows: ((params: PostSortRowsParams<TData>) => void) | undefined = undefined;
@@ -1022,8 +978,7 @@ Allows you to set the ID for a particular row node based on the data.
     @Input() public getRowClass: ((params: RowClassParams<TData>) => string | string[] | undefined) | undefined = undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.     */
     @Input() public getRowHeight: ((params: RowHeightParams<TData>) => number | undefined | null) | undefined = undefined;
-    /** @deprecated v27.2 Use `isFullWidthRow` instead.
-     */
+    /** @deprecated v27.2 Use `isFullWidthRow` instead.*/
     @Input() public isFullWidthCell: ((rowNode: RowNode<TData>) => boolean) | undefined = undefined;
     /** Tells the grid if this row should be rendered as full width.     */
     @Input() public isFullWidthRow: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined = undefined;
@@ -1140,8 +1095,7 @@ Allows you to set the ID for a particular row node based on the data.
     @Output() public expandOrCollapseAll: EventEmitter<ExpandCollapseAllEvent<TData>> = new EventEmitter<ExpandCollapseAllEvent<TData>>();
     /** The client has set new pinned row data into the grid.     */
     @Output() public pinnedRowDataChanged: EventEmitter<PinnedRowDataChangedEvent<TData>> = new EventEmitter<PinnedRowDataChangedEvent<TData>>();
-    /** @deprecated v28 No longer fired, use onRowDataUpdated instead
-     */
+    /** @deprecated v28 No longer fired, use onRowDataUpdated instead*/
     @Output() public rowDataChanged: EventEmitter<RowDataChangedEvent<TData>> = new EventEmitter<RowDataChangedEvent<TData>>();
     /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction.     */
     @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent<TData>> = new EventEmitter<RowDataUpdatedEvent<TData>>();
