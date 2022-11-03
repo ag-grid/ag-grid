@@ -26,7 +26,7 @@ function extractTypesFromNode(srcFile, node, { typeLookup, eventTypeLookup, publ
     const kind = ts.SyntaxKind[node.kind];
     const name = node && node.name && node.name.escapedText;
     const returnType = node && node.type && node.type.getFullText();
-    docLookup[name] = getJsDoc(node);
+    docLookup[name] = getJsDoc(node, true);
     if (kind == 'PropertySignature') {
         typeLookup[name] = returnType;
     } else if (kind == 'MethodSignature') {
