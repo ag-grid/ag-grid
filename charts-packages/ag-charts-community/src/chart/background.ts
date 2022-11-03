@@ -1,8 +1,7 @@
 import { Rect } from '../scene/shape/rect';
-import { Observable } from '../util/observable';
 import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../util/validation';
 
-export class Background extends Observable {
+export class Background {
     readonly node: Rect = new Rect();
 
     set width(value: number) {

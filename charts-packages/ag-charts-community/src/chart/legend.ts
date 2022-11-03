@@ -2,9 +2,16 @@ import { Group } from '../scene/group';
 import { Selection } from '../scene/selection';
 import { MarkerLabel } from './markerLabel';
 import { BBox } from '../scene/bbox';
-import { FontStyle, FontWeight, getFont } from '../scene/shape/text';
+import { getFont } from '../scene/shape/text';
 import { Marker } from './marker/marker';
-import { AgChartLegendClickEvent, AgChartLegendListeners } from './agChartOptions';
+import {
+    AgChartLegendClickEvent,
+    AgChartLegendListeners,
+    AgChartLegendLabelFormatterParams,
+    AgChartLegendPosition,
+    FontStyle,
+    FontWeight,
+} from './agChartOptions';
 import { getMarker } from './marker/util';
 import { createId } from '../util/id';
 import { RedrawType } from '../scene/node';
@@ -42,26 +49,12 @@ export interface LegendDatum {
     };
 }
 
-export enum LegendOrientation {
+enum LegendOrientation {
     Vertical,
     Horizontal,
 }
 
-export enum LegendPosition {
-    Top = 'top',
-    Right = 'right',
-    Bottom = 'bottom',
-    Left = 'left',
-}
-
-interface LegendLabelFormatterParams {
-    id: string;
-    itemId: any;
-    value: string;
-    seriesId: string;
-}
-
-export class LegendLabel {
+class LegendLabel {
     @Validate(OPT_NUMBER(0))
     maxLength?: number = undefined;
 
@@ -81,14 +74,14 @@ export class LegendLabel {
     fontFamily: string = 'Verdana, sans-serif';
 
     @Validate(OPT_FUNCTION)
-    formatter?: (params: LegendLabelFormatterParams) => string = undefined;
+    formatter?: (params: AgChartLegendLabelFormatterParams) => string = undefined;
 
     getFont(): string {
         return getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
     }
 }
 
-export class LegendMarker {
+class LegendMarker {
     @Validate(NUMBER(0))
     size = 15;
     /**
@@ -116,7 +109,7 @@ export class LegendMarker {
     parent?: { onMarkerShapeChange(): void };
 }
 
-export class LegendItem {
+class LegendItem {
     readonly marker = new LegendMarker();
     readonly label = new LegendLabel();
     /** Used to constrain the width of legend items. */
@@ -142,7 +135,7 @@ const NO_OP_LISTENER = () => {
     // Default listener that does nothing.
 };
 
-export class LegendListeners implements Required<AgChartLegendListeners> {
+class LegendListeners implements Required<AgChartLegendListeners> {
     @Validate(FUNCTION)
     legendItemClick: (event: AgChartLegendClickEvent) => void = NO_OP_LISTENER;
 }
@@ -190,8 +183,8 @@ export class Legend {
 
     orientation: LegendOrientation = LegendOrientation.Vertical;
     @Validate(POSITION)
-    private _position: LegendPosition = LegendPosition.Right;
-    set position(value: LegendPosition) {
+    private _position: AgChartLegendPosition = 'right';
+    set position(value: AgChartLegendPosition) {
         this._position = value;
 
         switch (value) {

@@ -1,7 +1,6 @@
-import { Observable } from './observable';
 import { NUMBER, Validate } from './validation';
 
-export class Padding extends Observable {
+export class Padding {
     @Validate(NUMBER(0))
     top: number;
 
@@ -15,7 +14,6 @@ export class Padding extends Observable {
     left: number;
 
     constructor(top: number = 0, right: number = top, bottom: number = top, left: number = right) {
-        super();
         this.top = top;
         this.right = right;
         this.bottom = bottom;

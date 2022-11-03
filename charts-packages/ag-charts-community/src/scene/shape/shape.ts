@@ -3,7 +3,7 @@ import { chainObjects } from '../../util/object';
 import { DropShadow } from '../dropShadow';
 
 export type ShapeLineCap = 'butt' | 'round' | 'square';
-export type ShapeLineJoin = 'round' | 'bevel' | 'miter';
+type ShapeLineJoin = 'round' | 'bevel' | 'miter';
 
 export abstract class Shape extends Node {
     /**

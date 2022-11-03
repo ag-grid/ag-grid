@@ -3,22 +3,7 @@ import { chainObjects } from '../../util/object';
 import { BBox } from '../bbox';
 import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
-
-export type FontStyle = 'normal' | 'italic' | 'oblique';
-export type FontWeight =
-    | 'normal'
-    | 'bold'
-    | 'bolder'
-    | 'lighter'
-    | '100'
-    | '200'
-    | '300'
-    | '400'
-    | '500'
-    | '600'
-    | '700'
-    | '800'
-    | '900';
+import { FontStyle, FontWeight } from '../../chart/agChartOptions';
 
 export function SceneFontChangeDetection(opts?: { redraw?: RedrawType; changeCb?: (t: any) => any }) {
     const { redraw = RedrawType.MAJOR, changeCb } = opts || {};

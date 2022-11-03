@@ -8,13 +8,7 @@ import { LinearScale } from '../../../scale/linearScale';
 import { clamper } from '../../../scale/continuousScale';
 import { Sector } from '../../../scene/shape/sector';
 import { BBox } from '../../../scene/bbox';
-import {
-    PolarTooltipRendererParams,
-    SeriesNodeDatum,
-    HighlightStyle,
-    SeriesTooltip,
-    SeriesNodeClickEvent,
-} from './../series';
+import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeClickEvent } from './../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
@@ -22,10 +16,9 @@ import { doOnce } from '../../../util/function';
 import { toFixed, mod } from '../../../util/number';
 import { LegendDatum } from '../../legend';
 import { Caption } from '../../../caption';
-import { Observable } from '../../../util/observable';
 import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxis';
-import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
+import { toTooltipHtml } from '../../tooltip/tooltip';
 import { DeprecatedAndRenamedTo } from '../../../util/deprecation';
 import {
     BOOLEAN,
@@ -39,8 +32,15 @@ import {
     Validate,
     COLOR_STRING,
 } from '../../../util/validation';
+import {
+    AgPieSeriesLabelFormatterParams,
+    AgPieSeriesTooltipRendererParams,
+    AgTooltipRendererResult,
+    AgPieSeriesFormat,
+    AgPieSeriesFormatterParams,
+} from '../../agChartOptions';
 
-export class PieSeriesNodeClickEvent extends SeriesNodeClickEvent<any> {
+class PieSeriesNodeClickEvent extends SeriesNodeClickEvent<any> {
     readonly angleKey: string;
     @DeprecatedAndRenamedTo('calloutLabelKey')
     readonly labelKey?: string;
@@ -84,18 +84,7 @@ interface PieNodeDatum extends SeriesNodeDatum {
         readonly text: string;
     };
 
-    readonly sectorFormat: PieSeriesFormat;
-}
-
-export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
-    /** @deprecated Use calloutLabelKey or sectorLabelKey */
-    readonly labelKey?: string;
-    /** @deprecated Use calloutLabelName or sectorLabelName */
-    readonly labelName?: string;
-    readonly calloutLabelKey?: string;
-    readonly calloutLabelName?: string;
-    readonly sectorLabelKey?: string;
-    readonly sectorLabelName?: string;
+    readonly sectorFormat: AgPieSeriesFormat;
 }
 
 class PieHighlightStyle extends HighlightStyle {
@@ -109,48 +98,6 @@ enum PieNodeTag {
     Label,
 }
 
-export interface PieSeriesFormatterParams {
-    readonly datum: any;
-    readonly fill?: string;
-    readonly stroke?: string;
-    readonly strokeWidth: number;
-    readonly highlighted: boolean;
-    readonly angleKey: string;
-    readonly radiusKey?: string;
-    readonly seriesId: string;
-}
-
-export interface PieSeriesFormat {
-    fill?: string;
-    fillOpacity?: number;
-    stroke?: string;
-    strokeWidth?: number;
-}
-
-interface PieSeriesLabelFormatterParams {
-    readonly datum: any;
-    /** @deprecated Use calloutLabelKey or sectorLabelKey */
-    readonly labelKey?: string;
-    /** @deprecated Use calloutLabelValue or sectorLabelValue */
-    readonly labelValue?: string;
-    /** @deprecated Use calloutLabelName or sectorLabelName */
-    readonly labelName?: string;
-    readonly calloutLabelKey?: string;
-    readonly calloutLabelValue?: string;
-    readonly calloutLabelName?: string;
-    readonly sectorLabelKey?: string;
-    readonly sectorLabelValue?: string;
-    readonly sectorLabelName?: string;
-    readonly angleKey: string;
-    readonly angleValue?: any;
-    readonly angleName?: string;
-    readonly radiusKey?: string;
-    readonly radiusValue?: any;
-    readonly radiusName?: string;
-    readonly value?: any;
-    readonly seriesId: string;
-}
-
 class PieSeriesCalloutLabel extends Label {
     @Validate(NUMBER(0))
     offset = 3; // from the callout line
@@ -159,7 +106,7 @@ class PieSeriesCalloutLabel extends Label {
     minAngle = 20; // in degrees
 
     @Validate(OPT_FUNCTION)
-    formatter?: (params: PieSeriesLabelFormatterParams) => string = undefined;
+    formatter?: (params: AgPieSeriesLabelFormatterParams<any>) => string = undefined;
 }
 
 class PieSeriesSectorLabel extends Label {
@@ -170,10 +117,10 @@ class PieSeriesSectorLabel extends Label {
     positionRatio = 0.5;
 
     @Validate(OPT_FUNCTION)
-    formatter?: (params: PieSeriesLabelFormatterParams) => string = undefined;
+    formatter?: (params: AgPieSeriesLabelFormatterParams<any>) => string = undefined;
 }
 
-class PieSeriesCalloutLine extends Observable {
+class PieSeriesCalloutLine {
     @Validate(COLOR_STRING_ARRAY)
     colors: string[] = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
 
@@ -184,9 +131,9 @@ class PieSeriesCalloutLine extends Observable {
     strokeWidth: number = 1;
 }
 
-export class PieSeriesTooltip extends SeriesTooltip {
+class PieSeriesTooltip extends SeriesTooltip {
     @Validate(OPT_FUNCTION)
-    renderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult = undefined;
+    renderer?: (params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult = undefined;
 }
 
 export class PieTitle extends Caption {
@@ -257,7 +204,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
      * The processed data that gets visualized.
      */
     private groupSelectionData: PieNodeDatum[] = [];
-    private sectorFormatData: PieSeriesFormat[] = [];
+    private sectorFormatData: AgPieSeriesFormat[] = [];
 
     private angleScale: LinearScale = (() => {
         const scale = new LinearScale();
@@ -407,7 +354,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     lineDashOffset: number = 0;
 
     @Validate(OPT_FUNCTION)
-    formatter?: (params: PieSeriesFormatterParams) => PieSeriesFormat = undefined;
+    formatter?: (params: AgPieSeriesFormatterParams<any>) => AgPieSeriesFormat = undefined;
 
     /**
      * The series rotation in degrees.
@@ -504,7 +451,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         let sectorLabelData: string[] = [];
         let radiusData: number[] = [];
 
-        const getLabelFormatterParams = (datum: any): PieSeriesLabelFormatterParams => {
+        const getLabelFormatterParams = (datum: any): AgPieSeriesFormatterParams<any> => {
             return {
                 datum,
                 angleKey,
@@ -513,15 +460,17 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 radiusKey,
                 radiusValue: radiusKey ? datum[radiusKey] : undefined,
                 radiusName: this.radiusName,
-                labelKey,
-                labelValue: labelKey ? datum[labelKey] : undefined,
-                labelName: this.calloutLabelName,
+                // labelKey,
+                // labelValue: labelKey ? datum[labelKey] : undefined,
+                // labelName: this.calloutLabelName,
                 calloutLabelKey: labelKey,
                 calloutLabelValue: labelKey ? datum[labelKey] : undefined,
                 calloutLabelName: this.calloutLabelName,
                 sectorLabelKey,
                 sectorLabelValue: sectorLabelKey ? datum[sectorLabelKey] : undefined,
                 sectorLabelName: this.sectorLabelName,
+                strokeWidth: this.strokeWidth,
+                highlighted: false,
                 seriesId,
             };
         };
@@ -538,7 +487,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     );
                 labelData = data.map((datum) => {
                     let deprecatedValue = datum[labelKey];
-                    const formatterParams: PieSeriesLabelFormatterParams = {
+                    const formatterParams: AgPieSeriesLabelFormatterParams<any> = {
                         ...getLabelFormatterParams(datum),
                         get value() {
                             showValueDeprecationWarning();
@@ -656,7 +605,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
     }
 
-    private getSectorFormat(datum: any, itemId: any, index: number, highlight: any): PieSeriesFormat {
+    private getSectorFormat(datum: any, itemId: any, index: number, highlight: any): AgPieSeriesFormat {
         const { angleKey, radiusKey, fills, strokes, fillOpacity: seriesFillOpacity, formatter, id: seriesId } = this;
 
         const highlightedDatum = this.chart!.highlightedDatum;
@@ -668,7 +617,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const stroke = highlightedStyle?.stroke || strokes[index % strokes.length];
         const strokeWidth = highlightedStyle?.strokeWidth ?? this.getStrokeWidth(this.strokeWidth);
 
-        let format: PieSeriesFormat | undefined;
+        let format: AgPieSeriesFormat | undefined;
         if (formatter) {
             format = formatter({
                 datum,
@@ -679,7 +628,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 strokeWidth,
                 highlighted: isDatumHighlighted,
                 seriesId,
-            });
+            } as any);
         }
 
         return {
@@ -1060,7 +1009,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const formattedAngleValue = typeof angleValue === 'number' ? toFixed(angleValue) : angleValue.toString();
         const title = this.title ? this.title.text : undefined;
         const content = label + formattedAngleValue;
-        const defaults: TooltipRendererResult = {
+        const defaults: AgTooltipRendererResult = {
             title,
             backgroundColor: color,
             content,

@@ -88,13 +88,3 @@ export class SeriesMarker extends ChangeDetectable {
     })
     strokeOpacity?: number = undefined;
 }
-
-export interface SeriesMarkerFormatterParams {
-    datum: any;
-    fill?: string;
-    stroke?: string;
-    strokeWidth: number;
-    size: number;
-    highlighted: boolean;
-    seriesId: string;
-}

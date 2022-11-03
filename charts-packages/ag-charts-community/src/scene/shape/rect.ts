@@ -5,11 +5,6 @@ import { Color } from '../../util/color';
 import { Shape } from './shape';
 import { Path2D } from '../path2D';
 
-export enum RectSizing {
-    Content,
-    Border,
-}
-
 export class Rect extends Path {
     static className = 'Rect';
 

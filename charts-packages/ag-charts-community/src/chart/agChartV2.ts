@@ -49,7 +49,7 @@ import { windowValue } from '../util/window';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
 
-export type AgChartType<T> = T extends AgCartesianChartOptions
+type AgChartType<T> = T extends AgCartesianChartOptions
     ? CartesianChart
     : T extends AgPolarChartOptions
     ? PolarChart
@@ -468,10 +468,10 @@ type ObservableLike = {
     addEventListener(key: string, cb: SourceEventListener<any>): void;
     clearEventListeners(): void;
 };
-function registerListeners<T extends ObservableLike>(source: T, listeners?: { [K: string]: Function }) {
+function registerListeners<T extends ObservableLike>(source: T, listeners?: {}) {
     source.clearEventListeners();
     for (const property in listeners) {
-        source.addEventListener(property, listeners[property] as SourceEventListener<any>);
+        source.addEventListener(property, (listeners as any)[property] as SourceEventListener<any>);
     }
 }
 

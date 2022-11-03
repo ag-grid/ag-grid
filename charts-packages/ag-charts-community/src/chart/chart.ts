@@ -13,7 +13,7 @@ import { Observable, SourceEvent } from '../util/observable';
 import { ChartAxis, ChartAxisDirection } from './chartAxis';
 import { createId } from '../util/id';
 import { isPointLabelDatum, PlacedLabel, placeLabels, PointLabelDatum } from '../util/labelPlacement';
-import { AgChartOptions } from './agChartOptions';
+import { AgChartOptions, AgChartClickEvent } from './agChartOptions';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
@@ -21,10 +21,6 @@ import { BOOLEAN, Validate } from '../util/validation';
 import { sleep } from '../util/async';
 import { doOnce } from '../util/function';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
-
-export interface ChartClickEvent extends SourceEvent<Chart> {
-    event: MouseEvent;
-}
 
 /** Types of chart-update, in pipeline execution order. */
 export enum ChartUpdateType {
@@ -968,7 +964,7 @@ export abstract class Chart extends Observable {
             this.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
             return;
         }
-        this.fireEvent<ChartClickEvent>({
+        this.fireEvent<AgChartClickEvent>({
             type: 'click',
             event,
         });

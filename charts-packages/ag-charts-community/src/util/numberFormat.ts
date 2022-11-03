@@ -78,7 +78,7 @@ interface FormatSpecifierOptions {
 /**
  * [[fill]align][sign][#][0][width][grouping_option][.precision][type]
  */
-export class FormatSpecifier {
+class FormatSpecifier {
     /**
      * Can be any character.
      */
@@ -460,7 +460,7 @@ interface FormatLocaleOptions {
     nan?: string;
 }
 
-export interface FormatLocale {
+interface FormatLocale {
     /**
      * Returns a new format function for the given string specifier. The returned function
      * takes a number as the only argument, and returns a string representing the formatted number.

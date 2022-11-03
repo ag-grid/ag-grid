@@ -8,7 +8,7 @@ type IsLiteralProperty<T, K extends keyof T> = K extends LiteralProperties
 type IsSkippableProperty<T, K extends keyof T> = K extends SkippableProperties ? true : false;
 
 // Needs to be recursive when we move to TS 4.x+; only supports a maximum level of nesting right now.
-export type DeepPartial<T> = {
+type DeepPartial<T> = {
     [P1 in keyof T]?: IsSkippableProperty<T, P1> extends true
         ? any
         : IsLiteralProperty<T, P1> extends true
