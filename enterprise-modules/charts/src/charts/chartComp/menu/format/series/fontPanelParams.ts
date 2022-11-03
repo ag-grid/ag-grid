@@ -1,16 +1,23 @@
-import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { Font, FontPanelParams } from "../fontPanel";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
 
-export function initFontPanelParams(
-    chartTranslationService: ChartTranslationService,
+interface InitFontPanelParams {
+    labelName: string,
     chartOptionsService: ChartOptionsService,
-    getSelectedSeries: () => ChartSeriesType) {
+    getSelectedSeries: () => ChartSeriesType,
+    seriesOptionLabelProperty: 'calloutLabel' | 'label'
+}
+
+export function initFontPanelParams({
+    labelName,
+    chartOptionsService,
+    getSelectedSeries,
+    seriesOptionLabelProperty
+}: InitFontPanelParams) {
 
     const getFontOptionExpression = (fontOption: string) => {
-        const labelProperty = getSelectedSeries() === 'pie' ? 'calloutLabel' : 'label';
-        return `${labelProperty}.${fontOption}`;
+        return `${seriesOptionLabelProperty}.${fontOption}`;
     };
     const getFontOption = <T = string>(fontOption: string) => {
         const expression = getFontOptionExpression(fontOption);
@@ -47,10 +54,8 @@ export function initFontPanelParams(
         }
     };
 
-
-
     const params: FontPanelParams = {
-        name: chartTranslationService.translate('labels'),
+        name: labelName,
         enabled: getFontOption('enabled') || false,
         setEnabled: (enabled: boolean) => setFontOption('enabled', enabled),
         suppressEnabledCheckbox: false,

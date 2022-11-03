@@ -219,8 +219,14 @@ export class SeriesPanel extends Component {
     }
 
     private initLabels() {
-        const params = initFontPanelParams(this.chartTranslationService, this.chartOptionsService, () => this.seriesType);
-        const labelPanelComp = this.createBean(new FontPanel(params));
+        const seriesOptionLabelProperty = this.seriesType === 'pie' ? 'calloutLabel' : 'label';
+        const labelParams = initFontPanelParams({
+            labelName: this.chartTranslationService.translate('labels'),
+            chartOptionsService: this.chartOptionsService,
+            getSelectedSeries: () => this.seriesType,
+            seriesOptionLabelProperty
+        });
+        const labelPanelComp = this.createBean(new FontPanel(labelParams));
 
         if (this.seriesType === 'pie') {
             const calloutPanelComp = this.createBean(new CalloutPanel(this.chartOptionsService, () => this.seriesType));
