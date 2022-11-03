@@ -43,7 +43,7 @@ function getJsDoc(ts) {
                 let doc = printer(ts).printNode(ts.EmitHint.Unspecified, j);
                 if (includeTags && j.tags) {
                     let tt = j.tags.map(t => {
-                        return t.getText();
+                        return t.getText() + (ts.versionMajorMinor == '4.0' ? t.comment : '');
                     })
                     doc = doc.replace('*/', tt.join('') + '*/');
                 }
