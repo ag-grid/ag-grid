@@ -659,7 +659,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     // it's possible to recompute the aggregate without doing the other parts
-    // + gridApi.recomputeAggregates()
+    // + api.refreshClientSideRowModel('aggregate')
     public doAggregate(changedPath?: ChangedPath): void {
         if (this.aggregationStage) {
             this.aggregationStage.execute({ rowNode: this.rootNode, changedPath: changedPath });

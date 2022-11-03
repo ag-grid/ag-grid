@@ -1669,7 +1669,7 @@ export class GridApi<TData = any> {
     /** Update row data. Pass a transaction object with lists for `add`, `remove` and `update`. */
     public applyTransaction(rowDataTransaction: RowDataTransaction<TData>): RowNodeTransaction<TData> | null | undefined {
         if (!this.clientSideRowModel) {
-            console.error('AG Grid: updateRowData() only works with ClientSideRowModel. Working with InfiniteRowModel was deprecated in v23.1 and removed in v24.1');
+            console.error('AG Grid: applyTransaction() only works with ClientSideRowModel. Working with InfiniteRowModel was deprecated in v23.1 and removed in v24.1');
             return;
         }
 
@@ -1777,7 +1777,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             return this.infiniteRowModel.getRowCount();
         } else {
-            console.warn(`AG Grid: api.getVirtualRowCount is only available when rowModelType='virtual'.`);
+            console.warn(`AG Grid: api.getInfiniteRowCount is only available when rowModelType='infinite'.`);
         }
     }
 
@@ -1786,7 +1786,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             return this.infiniteRowModel.isLastRowIndexKnown();
         } else {
-            console.warn(`AG Grid: api.isMaxRowFound is only available when rowModelType='virtual'.`);
+            console.warn(`AG Grid: api.isLastRowIndexKnown is only available when rowModelType='infinite'.`);
         }
     }
 

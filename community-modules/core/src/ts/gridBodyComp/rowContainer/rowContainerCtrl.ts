@@ -310,7 +310,7 @@ export class RowContainerCtrl extends BeanStub {
 
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work
     // out the virtual columns again. gets called from following locations:
-    // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged, API (doLayout)
+    // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged
     public onHorizontalViewportChanged(): void {
         const scrollWidth = this.getCenterWidth();
         const scrollPosition = this.getCenterViewportScrollLeft();

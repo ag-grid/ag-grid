@@ -39,7 +39,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     private filteredOnly: boolean;
 
     // it's possible to recompute the aggregate without doing the other parts
-    // + gridApi.recomputeAggregates()
+    // + api.refreshClientSideRowModel('aggregate')
     public execute(params: StageExecuteParams): any {
         // if changed path is active, it means we came from a) change detection or b) transaction update.
         // for both of these, if no value columns are present, it means there is nothing to aggregate now

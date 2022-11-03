@@ -469,18 +469,6 @@ export function iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, v
     }
 }
 
-/** @deprecated */
-export function setCheckboxState(eCheckbox: HTMLInputElement, state: any) {
-    if (typeof state === 'boolean') {
-        eCheckbox.checked = state;
-        eCheckbox.indeterminate = false;
-    } else {
-        // isNodeSelected returns back undefined if it's a group and the children
-        // are a mix of selected and unselected
-        eCheckbox.indeterminate = true;
-    }
-}
-
 export function addOrRemoveAttribute(element: HTMLElement, name: string, value: any) {
     if (value == null) {
         element.removeAttribute(name);

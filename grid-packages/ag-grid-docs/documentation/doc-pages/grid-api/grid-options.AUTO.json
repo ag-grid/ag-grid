@@ -1627,7 +1627,7 @@
     "meta": { "isEvent": true, "name": "onVirtualColumnsChanged" }
   },
   "onColumnEverythingChanged": {
-    "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
+    "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */",
     "type": {
       "arguments": { "event": "ColumnEverythingChangedEvent<TData>" },
       "returnType": "void"
@@ -1635,7 +1635,7 @@
     "meta": { "isEvent": true, "name": "onColumnEverythingChanged" }
   },
   "columnEverythingChanged": {
-    "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
+    "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */",
     "type": {
       "arguments": { "event": "ColumnEverythingChangedEvent<TData>" },
       "returnType": "void"
