@@ -76,6 +76,32 @@
       "defaultState?": "/** State to apply to columns where state is missing for those columns */"
     }
   },
+  "ISizeColumnsToFitParams": {
+    "meta": {},
+    "type": {
+      "defaultMinWidth?": "number",
+      "defaultMaxWidth?": "number",
+      "columnLimits?": "IColumnLimit[]"
+    },
+    "docs": {
+      "defaultMinWidth?": "/** Defines a default minimum width for every column (does not override the column minimum width) */",
+      "defaultMaxWidth?": "/** Defines a default maximum width for every column (does not override the column maximum width) */",
+      "columnLimits?": "/** Provides a minimum and/or maximum width to specific columns */"
+    }
+  },
+  "IColumnLimit": {
+    "meta": {},
+    "type": {
+      "key": "Column | string",
+      "minWidth?": "number",
+      "maxWidth?": "number"
+    },
+    "docs": {
+      "key": "/** Selector for the column to which these dimension limits will apply */",
+      "minWidth?": "/** Defines a minimum width for this column (does not override the column minimum width) */",
+      "maxWidth?": "/** Defines a maximum width for this column (does not override the column maximum width) */"
+    }
+  },
   "ColKey": {
     "meta": { "isTypeAlias": true },
     "type": "keyof (ColDef) | (keyof ColGroupDef)"
@@ -6002,6 +6028,32 @@
       "modules?": "Module[]"
     }
   },
+  "DetailGridInfo": {
+    "meta": {},
+    "type": { "id": "string", "api?": "GridApi", "columnApi?": "ColumnApi" },
+    "docs": {
+      "id": "/** Id of the detail grid, the format is `detail_<ROW_ID>`,\n * where ROW_ID is the `id` of the parent row. */",
+      "api?": "/** Grid api of the detail grid. */",
+      "columnApi?": "/** Column api of the detail grid. */"
+    }
+  },
+  "StartEditingCellParams": {
+    "meta": {},
+    "type": {
+      "rowIndex": "number",
+      "colKey": "string | Column",
+      "rowPinned?": "RowPinnedType",
+      "key?": "string",
+      "charPress?": "string"
+    },
+    "docs": {
+      "rowIndex": "/** The row index of the row to start editing */",
+      "colKey": "/** The column key of the row to start editing */",
+      "rowPinned?": "/** Set to `'top'` or `'bottom'` to start editing a pinned row */",
+      "key?": "/** The key to pass to the cell editor */",
+      "charPress?": "/** The charPress to pass to the cell editor */"
+    }
+  },
   "IFakeHScrollComp": {
     "meta": {},
     "type": {
@@ -6378,210 +6430,6 @@
       "setPinnedContainerWidth(width: string)": "void",
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "setCtrls(ctrls: HeaderRowCtrl[])": "void"
-    }
-  },
-  "StartEditingCellParams": {
-    "meta": {},
-    "type": {
-      "rowIndex": "number",
-      "colKey": "string | Column",
-      "rowPinned?": "RowPinnedType",
-      "key?": "string",
-      "charPress?": "string"
-    },
-    "docs": {
-      "rowIndex": "/** The row index of the row to start editing */",
-      "colKey": "/** The column key of the row to start editing */",
-      "rowPinned?": "/** Set to `'top'` or `'bottom'` to start editing a pinned row */",
-      "key?": "/** The key to pass to the cell editor */",
-      "charPress?": "/** The charPress to pass to the cell editor */"
-    }
-  },
-  "GetCellsParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "rowNodes?": "RowNode<TData>[]",
-      "columns?": "(string | Column)[]"
-    },
-    "docs": {
-      "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
-      "columns?": "/** Optional list of columns to restrict operation to */"
-    }
-  },
-  "RefreshCellsParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "force?": "boolean",
-      "suppressFlash?": "boolean",
-      "rowNodes?": "RowNode<TData>[]",
-      "columns?": "(string | Column)[]"
-    },
-    "docs": {
-      "force?": "/** Skip change detection, refresh everything. */",
-      "suppressFlash?": "/** Skip cell flashing, if cell flashing is enabled. */",
-      "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
-      "columns?": "/** Optional list of columns to restrict operation to */"
-    }
-  },
-  "FlashCellsParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "flashDelay?": "number",
-      "fadeDelay?": "number",
-      "rowNodes?": "RowNode<TData>[]",
-      "columns?": "(string | Column)[]"
-    },
-    "docs": {
-      "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
-      "columns?": "/** Optional list of columns to restrict operation to */"
-    }
-  },
-  "GetCellRendererInstancesParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "rowNodes?": "RowNode<TData>[]",
-      "columns?": "(string | Column)[]"
-    },
-    "docs": {
-      "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
-      "columns?": "/** Optional list of columns to restrict operation to */"
-    }
-  },
-  "GetCellEditorInstancesParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "rowNodes?": "RowNode<TData>[]",
-      "columns?": "(string | Column)[]"
-    },
-    "docs": {
-      "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
-      "columns?": "/** Optional list of columns to restrict operation to */"
-    }
-  },
-  "RedrawRowsParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": { "rowNodes?": "RowNode<TData>[]" },
-    "docs": { "rowNodes?": "/** Row nodes to redraw */" }
-  },
-  "CreateChartParams": {
-    "meta": {},
-    "type": {
-      "chartType": "ChartType",
-      "chartThemeName?": "string",
-      "chartContainer?": "HTMLElement",
-      "chartThemeOverrides?": "AgChartThemeOverrides",
-      "unlinkChart?": "boolean"
-    },
-    "docs": {
-      "chartType": "/** The type of chart to create. */",
-      "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
-      "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
-      "chartThemeOverrides?": "/** Allows specific chart options in the current theme to be overridden. */",
-      "unlinkChart?": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */"
-    }
-  },
-  "ChartParamsCellRange": {
-    "meta": { "isTypeAlias": true },
-    "type": "Partial<Omit<CellRangeParams, 'rowStartPinned' | 'rowEndPinned'>>"
-  },
-  "CreateRangeChartParams": {
-    "meta": {},
-    "type": {
-      "cellRange": "ChartParamsCellRange",
-      "suppressChartRanges?": "boolean",
-      "aggFunc?": "string | IAggFunc",
-      "seriesChartTypes?": "SeriesChartType[]",
-      "chartType": "ChartType",
-      "chartThemeName?": "string",
-      "chartContainer?": "HTMLElement",
-      "chartThemeOverrides?": "AgChartThemeOverrides",
-      "unlinkChart?": "boolean"
-    },
-    "docs": {
-      "cellRange": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
-      "suppressChartRanges?": "/** Suppress highlighting the selected range in the grid. */",
-      "aggFunc?": "/** The aggregation function that should be applied to all series data. */",
-      "seriesChartTypes?": "/** The series chart type configurations used in combination charts */",
-      "chartType": "/** The type of chart to create. */",
-      "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
-      "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
-      "chartThemeOverrides?": "/** Allows specific chart options in the current theme to be overridden. */",
-      "unlinkChart?": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */"
-    }
-  },
-  "CreateCrossFilterChartParams": {
-    "meta": {},
-    "type": {
-      "chartType": "CrossFilterChartType",
-      "cellRange": "ChartParamsCellRange",
-      "suppressChartRanges?": "boolean",
-      "aggFunc?": "string | IAggFunc",
-      "chartThemeName?": "string",
-      "chartContainer?": "HTMLElement",
-      "chartThemeOverrides?": "AgChartThemeOverrides",
-      "unlinkChart?": "boolean"
-    },
-    "docs": {
-      "chartType": "/** The type of cross-filter chart to create. */",
-      "cellRange": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
-      "suppressChartRanges?": "/** Suppress highlighting the selected range in the grid. */",
-      "aggFunc?": "/** The aggregation function that should be applied to all series data. */",
-      "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
-      "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
-      "chartThemeOverrides?": "/** Allows specific chart options in the current theme to be overridden. */",
-      "unlinkChart?": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */"
-    }
-  },
-  "CreatePivotChartParams": {
-    "meta": {},
-    "type": {
-      "chartType": "ChartType",
-      "chartThemeName?": "string",
-      "chartContainer?": "HTMLElement",
-      "chartThemeOverrides?": "AgChartThemeOverrides",
-      "unlinkChart?": "boolean"
-    },
-    "docs": {
-      "chartType": "/** The type of chart to create. */",
-      "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
-      "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
-      "chartThemeOverrides?": "/** Allows specific chart options in the current theme to be overridden. */",
-      "unlinkChart?": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */"
-    }
-  },
-  "DetailGridInfo": {
-    "meta": {},
-    "type": { "id": "string", "api?": "GridApi", "columnApi?": "ColumnApi" },
-    "docs": {
-      "id": "/** Id of the detail grid, the format is `detail_<ROW_ID>`,\n * where ROW_ID is the `id` of the parent row. */",
-      "api?": "/** Grid api of the detail grid. */",
-      "columnApi?": "/** Column api of the detail grid. */"
-    }
-  },
-  "ISizeColumnsToFitParams": {
-    "meta": {},
-    "type": {
-      "defaultMinWidth?": "number",
-      "defaultMaxWidth?": "number",
-      "columnLimits?": "IColumnLimit[]"
-    },
-    "docs": {
-      "defaultMinWidth?": "/** Defines a default minimum width for every column (does not override the column minimum width) */",
-      "defaultMaxWidth?": "/** Defines a default maximum width for every column (does not override the column maximum width) */",
-      "columnLimits?": "/** Provides a minimum and/or maximum width to specific columns */"
-    }
-  },
-  "IColumnLimit": {
-    "meta": {},
-    "type": {
-      "key": "Column | string",
-      "minWidth?": "number",
-      "maxWidth?": "number"
-    },
-    "docs": {
-      "key": "/** Selector for the column to which these dimension limits will apply */",
-      "minWidth?": "/** Defines a minimum width for this column (does not override the column minimum width) */",
-      "maxWidth?": "/** Defines a maximum width for this column (does not override the column maximum width) */"
     }
   },
   "ILogger": { "meta": {}, "type": { "log(message: string)": "void" } },
@@ -9881,6 +9729,92 @@
       "downloadChart(params: ChartDownloadParams)": "void",
       "openChartToolPanel(params: OpenChartToolPanelParams)": "void",
       "closeChartToolPanel(chartId: string)": "void"
+    }
+  },
+  "CreateChartParams": {
+    "meta": {},
+    "type": {
+      "chartType": "ChartType",
+      "chartThemeName?": "string",
+      "chartContainer?": "HTMLElement",
+      "chartThemeOverrides?": "AgChartThemeOverrides",
+      "unlinkChart?": "boolean"
+    },
+    "docs": {
+      "chartType": "/** The type of chart to create. */",
+      "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
+      "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
+      "chartThemeOverrides?": "/** Allows specific chart options in the current theme to be overridden. */",
+      "unlinkChart?": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */"
+    }
+  },
+  "ChartParamsCellRange": {
+    "meta": { "isTypeAlias": true },
+    "type": "Partial<Omit<CellRangeParams, 'rowStartPinned' | 'rowEndPinned'>>"
+  },
+  "CreateRangeChartParams": {
+    "meta": {},
+    "type": {
+      "cellRange": "ChartParamsCellRange",
+      "suppressChartRanges?": "boolean",
+      "aggFunc?": "string | IAggFunc",
+      "seriesChartTypes?": "SeriesChartType[]",
+      "chartType": "ChartType",
+      "chartThemeName?": "string",
+      "chartContainer?": "HTMLElement",
+      "chartThemeOverrides?": "AgChartThemeOverrides",
+      "unlinkChart?": "boolean"
+    },
+    "docs": {
+      "cellRange": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
+      "suppressChartRanges?": "/** Suppress highlighting the selected range in the grid. */",
+      "aggFunc?": "/** The aggregation function that should be applied to all series data. */",
+      "seriesChartTypes?": "/** The series chart type configurations used in combination charts */",
+      "chartType": "/** The type of chart to create. */",
+      "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
+      "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
+      "chartThemeOverrides?": "/** Allows specific chart options in the current theme to be overridden. */",
+      "unlinkChart?": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */"
+    }
+  },
+  "CreateCrossFilterChartParams": {
+    "meta": {},
+    "type": {
+      "chartType": "CrossFilterChartType",
+      "cellRange": "ChartParamsCellRange",
+      "suppressChartRanges?": "boolean",
+      "aggFunc?": "string | IAggFunc",
+      "chartThemeName?": "string",
+      "chartContainer?": "HTMLElement",
+      "chartThemeOverrides?": "AgChartThemeOverrides",
+      "unlinkChart?": "boolean"
+    },
+    "docs": {
+      "chartType": "/** The type of cross-filter chart to create. */",
+      "cellRange": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
+      "suppressChartRanges?": "/** Suppress highlighting the selected range in the grid. */",
+      "aggFunc?": "/** The aggregation function that should be applied to all series data. */",
+      "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
+      "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
+      "chartThemeOverrides?": "/** Allows specific chart options in the current theme to be overridden. */",
+      "unlinkChart?": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */"
+    }
+  },
+  "CreatePivotChartParams": {
+    "meta": {},
+    "type": {
+      "chartType": "ChartType",
+      "chartThemeName?": "string",
+      "chartContainer?": "HTMLElement",
+      "chartThemeOverrides?": "AgChartThemeOverrides",
+      "unlinkChart?": "boolean"
+    },
+    "docs": {
+      "chartType": "/** The type of chart to create. */",
+      "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
+      "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
+      "chartThemeOverrides?": "/** Allows specific chart options in the current theme to be overridden. */",
+      "unlinkChart?": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */"
     }
   },
   "ClientSideRowModelSteps": {
@@ -13200,6 +13134,72 @@
   },
   "RowCtrlMap": { "meta": {}, "type": { "[key: string]": "RowCtrl" } },
   "RowNodeMap": { "meta": {}, "type": { "[id: string]": "RowNode" } },
+  "GetCellsParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "rowNodes?": "RowNode<TData>[]",
+      "columns?": "(string | Column)[]"
+    },
+    "docs": {
+      "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
+      "columns?": "/** Optional list of columns to restrict operation to */"
+    }
+  },
+  "RefreshCellsParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "force?": "boolean",
+      "suppressFlash?": "boolean",
+      "rowNodes?": "RowNode<TData>[]",
+      "columns?": "(string | Column)[]"
+    },
+    "docs": {
+      "force?": "/** Skip change detection, refresh everything. */",
+      "suppressFlash?": "/** Skip cell flashing, if cell flashing is enabled. */",
+      "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
+      "columns?": "/** Optional list of columns to restrict operation to */"
+    }
+  },
+  "FlashCellsParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "flashDelay?": "number",
+      "fadeDelay?": "number",
+      "rowNodes?": "RowNode<TData>[]",
+      "columns?": "(string | Column)[]"
+    },
+    "docs": {
+      "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
+      "columns?": "/** Optional list of columns to restrict operation to */"
+    }
+  },
+  "GetCellRendererInstancesParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "rowNodes?": "RowNode<TData>[]",
+      "columns?": "(string | Column)[]"
+    },
+    "docs": {
+      "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
+      "columns?": "/** Optional list of columns to restrict operation to */"
+    }
+  },
+  "GetCellEditorInstancesParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "rowNodes?": "RowNode<TData>[]",
+      "columns?": "(string | Column)[]"
+    },
+    "docs": {
+      "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
+      "columns?": "/** Optional list of columns to restrict operation to */"
+    }
+  },
+  "RedrawRowsParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": { "rowNodes?": "RowNode<TData>[]" },
+    "docs": { "rowNodes?": "/** Row nodes to redraw */" }
+  },
   "RefreshViewParams": {
     "meta": {},
     "type": {

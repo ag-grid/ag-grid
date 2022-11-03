@@ -114,6 +114,34 @@
       "type": { "returnType": "ColumnStateParams", "optional": true }
     }
   },
+  "ISizeColumnsToFitParams": {
+    "defaultMinWidth": {
+      "description": "/** Defines a default minimum width for every column (does not override the column minimum width) */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "defaultMaxWidth": {
+      "description": "/** Defines a default maximum width for every column (does not override the column maximum width) */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "columnLimits": {
+      "description": "/** Provides a minimum and/or maximum width to specific columns */",
+      "type": { "returnType": "IColumnLimit[]", "optional": true }
+    }
+  },
+  "IColumnLimit": {
+    "key": {
+      "description": "/** Selector for the column to which these dimension limits will apply */",
+      "type": { "returnType": "Column | string", "optional": false }
+    },
+    "minWidth": {
+      "description": "/** Defines a minimum width for this column (does not override the column minimum width) */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Defines a maximum width for this column (does not override the column maximum width) */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
   "ColKey": {},
   "ComponentMetadata": {
     "mandatoryMethodList": {
@@ -10549,6 +10577,42 @@
     },
     "modules": { "type": { "returnType": "Module[]", "optional": true } }
   },
+  "DetailGridInfo": {
+    "id": {
+      "description": "/** Id of the detail grid, the format is `detail_<ROW_ID>`,\n * where ROW_ID is the `id` of the parent row. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "api": {
+      "description": "/** Grid api of the detail grid. */",
+      "type": { "returnType": "GridApi", "optional": true }
+    },
+    "columnApi": {
+      "description": "/** Column api of the detail grid. */",
+      "type": { "returnType": "ColumnApi", "optional": true }
+    }
+  },
+  "StartEditingCellParams": {
+    "rowIndex": {
+      "description": "/** The row index of the row to start editing */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "colKey": {
+      "description": "/** The column key of the row to start editing */",
+      "type": { "returnType": "string | Column", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** Set to `'top'` or `'bottom'` to start editing a pinned row */",
+      "type": { "returnType": "RowPinnedType", "optional": true }
+    },
+    "key": {
+      "description": "/** The key to pass to the cell editor */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "charPress": {
+      "description": "/** The charPress to pass to the cell editor */",
+      "type": { "returnType": "string", "optional": true }
+    }
+  },
   "IFakeHScrollComp": {
     "setHeight": {
       "type": {
@@ -11441,259 +11505,6 @@
         "returnType": "void",
         "optional": false
       }
-    }
-  },
-  "StartEditingCellParams": {
-    "rowIndex": {
-      "description": "/** The row index of the row to start editing */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "colKey": {
-      "description": "/** The column key of the row to start editing */",
-      "type": { "returnType": "string | Column", "optional": false }
-    },
-    "rowPinned": {
-      "description": "/** Set to `'top'` or `'bottom'` to start editing a pinned row */",
-      "type": { "returnType": "RowPinnedType", "optional": true }
-    },
-    "key": {
-      "description": "/** The key to pass to the cell editor */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "charPress": {
-      "description": "/** The charPress to pass to the cell editor */",
-      "type": { "returnType": "string", "optional": true }
-    }
-  },
-  "GetCellsParams": {
-    "rowNodes": {
-      "description": "/** Optional list of row nodes to restrict operation to */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": true }
-    },
-    "columns": {
-      "description": "/** Optional list of columns to restrict operation to */",
-      "type": { "returnType": "(string | Column)[]", "optional": true }
-    },
-    "meta": { "typeParams": ["TData = any"] }
-  },
-  "RefreshCellsParams": {
-    "force": {
-      "description": "/** Skip change detection, refresh everything. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressFlash": {
-      "description": "/** Skip cell flashing, if cell flashing is enabled. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "rowNodes": {
-      "description": "/** Optional list of row nodes to restrict operation to */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": true }
-    },
-    "columns": {
-      "description": "/** Optional list of columns to restrict operation to */",
-      "type": { "returnType": "(string | Column)[]", "optional": true }
-    }
-  },
-  "FlashCellsParams": {
-    "flashDelay": { "type": { "returnType": "number", "optional": true } },
-    "fadeDelay": { "type": { "returnType": "number", "optional": true } },
-    "meta": { "typeParams": ["TData = any"] },
-    "rowNodes": {
-      "description": "/** Optional list of row nodes to restrict operation to */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": true }
-    },
-    "columns": {
-      "description": "/** Optional list of columns to restrict operation to */",
-      "type": { "returnType": "(string | Column)[]", "optional": true }
-    }
-  },
-  "GetCellRendererInstancesParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "rowNodes": {
-      "description": "/** Optional list of row nodes to restrict operation to */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": true }
-    },
-    "columns": {
-      "description": "/** Optional list of columns to restrict operation to */",
-      "type": { "returnType": "(string | Column)[]", "optional": true }
-    }
-  },
-  "GetCellEditorInstancesParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "rowNodes": {
-      "description": "/** Optional list of row nodes to restrict operation to */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": true }
-    },
-    "columns": {
-      "description": "/** Optional list of columns to restrict operation to */",
-      "type": { "returnType": "(string | Column)[]", "optional": true }
-    }
-  },
-  "RedrawRowsParams": {
-    "rowNodes": {
-      "description": "/** Row nodes to redraw */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": true }
-    },
-    "meta": { "typeParams": ["TData = any"] }
-  },
-  "CreateChartParams": {
-    "chartType": {
-      "description": "/** The type of chart to create. */",
-      "type": { "returnType": "ChartType", "optional": false }
-    },
-    "chartThemeName": {
-      "description": "/** The default theme to use, either a default option or your own custom theme. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "chartContainer": {
-      "description": "/** Provide to display the chart outside of the grid in your own container. */",
-      "type": { "returnType": "HTMLElement", "optional": true }
-    },
-    "chartThemeOverrides": {
-      "description": "/** Allows specific chart options in the current theme to be overridden. */",
-      "type": { "returnType": "AgChartThemeOverrides", "optional": true }
-    },
-    "unlinkChart": {
-      "description": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */",
-      "type": { "returnType": "boolean", "optional": true }
-    }
-  },
-  "ChartParamsCellRange": {},
-  "CreateRangeChartParams": {
-    "cellRange": {
-      "description": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
-      "type": { "returnType": "ChartParamsCellRange", "optional": false }
-    },
-    "suppressChartRanges": {
-      "description": "/** Suppress highlighting the selected range in the grid. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "aggFunc": {
-      "description": "/** The aggregation function that should be applied to all series data. */",
-      "type": { "returnType": "string | IAggFunc", "optional": true }
-    },
-    "seriesChartTypes": {
-      "description": "/** The series chart type configurations used in combination charts */",
-      "type": { "returnType": "SeriesChartType[]", "optional": true }
-    },
-    "chartType": {
-      "description": "/** The type of chart to create. */",
-      "type": { "returnType": "ChartType", "optional": false }
-    },
-    "chartThemeName": {
-      "description": "/** The default theme to use, either a default option or your own custom theme. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "chartContainer": {
-      "description": "/** Provide to display the chart outside of the grid in your own container. */",
-      "type": { "returnType": "HTMLElement", "optional": true }
-    },
-    "chartThemeOverrides": {
-      "description": "/** Allows specific chart options in the current theme to be overridden. */",
-      "type": { "returnType": "AgChartThemeOverrides", "optional": true }
-    },
-    "unlinkChart": {
-      "description": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */",
-      "type": { "returnType": "boolean", "optional": true }
-    }
-  },
-  "CreateCrossFilterChartParams": {
-    "chartType": {
-      "description": "/** The type of cross-filter chart to create. */",
-      "type": { "returnType": "CrossFilterChartType", "optional": false }
-    },
-    "cellRange": {
-      "description": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
-      "type": { "returnType": "ChartParamsCellRange", "optional": false }
-    },
-    "suppressChartRanges": {
-      "description": "/** Suppress highlighting the selected range in the grid. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "aggFunc": {
-      "description": "/** The aggregation function that should be applied to all series data. */",
-      "type": { "returnType": "string | IAggFunc", "optional": true }
-    },
-    "chartThemeName": {
-      "description": "/** The default theme to use, either a default option or your own custom theme. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "chartContainer": {
-      "description": "/** Provide to display the chart outside of the grid in your own container. */",
-      "type": { "returnType": "HTMLElement", "optional": true }
-    },
-    "chartThemeOverrides": {
-      "description": "/** Allows specific chart options in the current theme to be overridden. */",
-      "type": { "returnType": "AgChartThemeOverrides", "optional": true }
-    },
-    "unlinkChart": {
-      "description": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */",
-      "type": { "returnType": "boolean", "optional": true }
-    }
-  },
-  "CreatePivotChartParams": {
-    "chartType": {
-      "description": "/** The type of chart to create. */",
-      "type": { "returnType": "ChartType", "optional": false }
-    },
-    "chartThemeName": {
-      "description": "/** The default theme to use, either a default option or your own custom theme. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "chartContainer": {
-      "description": "/** Provide to display the chart outside of the grid in your own container. */",
-      "type": { "returnType": "HTMLElement", "optional": true }
-    },
-    "chartThemeOverrides": {
-      "description": "/** Allows specific chart options in the current theme to be overridden. */",
-      "type": { "returnType": "AgChartThemeOverrides", "optional": true }
-    },
-    "unlinkChart": {
-      "description": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */",
-      "type": { "returnType": "boolean", "optional": true }
-    }
-  },
-  "DetailGridInfo": {
-    "id": {
-      "description": "/** Id of the detail grid, the format is `detail_<ROW_ID>`,\n * where ROW_ID is the `id` of the parent row. */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "api": {
-      "description": "/** Grid api of the detail grid. */",
-      "type": { "returnType": "GridApi", "optional": true }
-    },
-    "columnApi": {
-      "description": "/** Column api of the detail grid. */",
-      "type": { "returnType": "ColumnApi", "optional": true }
-    }
-  },
-  "ISizeColumnsToFitParams": {
-    "defaultMinWidth": {
-      "description": "/** Defines a default minimum width for every column (does not override the column minimum width) */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "defaultMaxWidth": {
-      "description": "/** Defines a default maximum width for every column (does not override the column maximum width) */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "columnLimits": {
-      "description": "/** Provides a minimum and/or maximum width to specific columns */",
-      "type": { "returnType": "IColumnLimit[]", "optional": true }
-    }
-  },
-  "IColumnLimit": {
-    "key": {
-      "description": "/** Selector for the column to which these dimension limits will apply */",
-      "type": { "returnType": "Column | string", "optional": false }
-    },
-    "minWidth": {
-      "description": "/** Defines a minimum width for this column (does not override the column minimum width) */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "maxWidth": {
-      "description": "/** Defines a maximum width for this column (does not override the column maximum width) */",
-      "type": { "returnType": "number", "optional": true }
     }
   },
   "ILogger": {
@@ -16952,6 +16763,123 @@
         "returnType": "void",
         "optional": false
       }
+    }
+  },
+  "CreateChartParams": {
+    "chartType": {
+      "description": "/** The type of chart to create. */",
+      "type": { "returnType": "ChartType", "optional": false }
+    },
+    "chartThemeName": {
+      "description": "/** The default theme to use, either a default option or your own custom theme. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "chartContainer": {
+      "description": "/** Provide to display the chart outside of the grid in your own container. */",
+      "type": { "returnType": "HTMLElement", "optional": true }
+    },
+    "chartThemeOverrides": {
+      "description": "/** Allows specific chart options in the current theme to be overridden. */",
+      "type": { "returnType": "AgChartThemeOverrides", "optional": true }
+    },
+    "unlinkChart": {
+      "description": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "ChartParamsCellRange": {},
+  "CreateRangeChartParams": {
+    "cellRange": {
+      "description": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
+      "type": { "returnType": "ChartParamsCellRange", "optional": false }
+    },
+    "suppressChartRanges": {
+      "description": "/** Suppress highlighting the selected range in the grid. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "aggFunc": {
+      "description": "/** The aggregation function that should be applied to all series data. */",
+      "type": { "returnType": "string | IAggFunc", "optional": true }
+    },
+    "seriesChartTypes": {
+      "description": "/** The series chart type configurations used in combination charts */",
+      "type": { "returnType": "SeriesChartType[]", "optional": true }
+    },
+    "chartType": {
+      "description": "/** The type of chart to create. */",
+      "type": { "returnType": "ChartType", "optional": false }
+    },
+    "chartThemeName": {
+      "description": "/** The default theme to use, either a default option or your own custom theme. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "chartContainer": {
+      "description": "/** Provide to display the chart outside of the grid in your own container. */",
+      "type": { "returnType": "HTMLElement", "optional": true }
+    },
+    "chartThemeOverrides": {
+      "description": "/** Allows specific chart options in the current theme to be overridden. */",
+      "type": { "returnType": "AgChartThemeOverrides", "optional": true }
+    },
+    "unlinkChart": {
+      "description": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "CreateCrossFilterChartParams": {
+    "chartType": {
+      "description": "/** The type of cross-filter chart to create. */",
+      "type": { "returnType": "CrossFilterChartType", "optional": false }
+    },
+    "cellRange": {
+      "description": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
+      "type": { "returnType": "ChartParamsCellRange", "optional": false }
+    },
+    "suppressChartRanges": {
+      "description": "/** Suppress highlighting the selected range in the grid. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "aggFunc": {
+      "description": "/** The aggregation function that should be applied to all series data. */",
+      "type": { "returnType": "string | IAggFunc", "optional": true }
+    },
+    "chartThemeName": {
+      "description": "/** The default theme to use, either a default option or your own custom theme. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "chartContainer": {
+      "description": "/** Provide to display the chart outside of the grid in your own container. */",
+      "type": { "returnType": "HTMLElement", "optional": true }
+    },
+    "chartThemeOverrides": {
+      "description": "/** Allows specific chart options in the current theme to be overridden. */",
+      "type": { "returnType": "AgChartThemeOverrides", "optional": true }
+    },
+    "unlinkChart": {
+      "description": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "CreatePivotChartParams": {
+    "chartType": {
+      "description": "/** The type of chart to create. */",
+      "type": { "returnType": "ChartType", "optional": false }
+    },
+    "chartThemeName": {
+      "description": "/** The default theme to use, either a default option or your own custom theme. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "chartContainer": {
+      "description": "/** Provide to display the chart outside of the grid in your own container. */",
+      "type": { "returnType": "HTMLElement", "optional": true }
+    },
+    "chartThemeOverrides": {
+      "description": "/** Allows specific chart options in the current theme to be overridden. */",
+      "type": { "returnType": "AgChartThemeOverrides", "optional": true }
+    },
+    "unlinkChart": {
+      "description": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "ClientSideRowModelSteps": {},
@@ -23163,6 +23091,78 @@
   },
   "RowCtrlMap": {},
   "RowNodeMap": {},
+  "GetCellsParams": {
+    "rowNodes": {
+      "description": "/** Optional list of row nodes to restrict operation to */",
+      "type": { "returnType": "RowNode<TData>[]", "optional": true }
+    },
+    "columns": {
+      "description": "/** Optional list of columns to restrict operation to */",
+      "type": { "returnType": "(string | Column)[]", "optional": true }
+    },
+    "meta": { "typeParams": ["TData = any"] }
+  },
+  "RefreshCellsParams": {
+    "force": {
+      "description": "/** Skip change detection, refresh everything. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressFlash": {
+      "description": "/** Skip cell flashing, if cell flashing is enabled. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "rowNodes": {
+      "description": "/** Optional list of row nodes to restrict operation to */",
+      "type": { "returnType": "RowNode<TData>[]", "optional": true }
+    },
+    "columns": {
+      "description": "/** Optional list of columns to restrict operation to */",
+      "type": { "returnType": "(string | Column)[]", "optional": true }
+    }
+  },
+  "FlashCellsParams": {
+    "flashDelay": { "type": { "returnType": "number", "optional": true } },
+    "fadeDelay": { "type": { "returnType": "number", "optional": true } },
+    "meta": { "typeParams": ["TData = any"] },
+    "rowNodes": {
+      "description": "/** Optional list of row nodes to restrict operation to */",
+      "type": { "returnType": "RowNode<TData>[]", "optional": true }
+    },
+    "columns": {
+      "description": "/** Optional list of columns to restrict operation to */",
+      "type": { "returnType": "(string | Column)[]", "optional": true }
+    }
+  },
+  "GetCellRendererInstancesParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "rowNodes": {
+      "description": "/** Optional list of row nodes to restrict operation to */",
+      "type": { "returnType": "RowNode<TData>[]", "optional": true }
+    },
+    "columns": {
+      "description": "/** Optional list of columns to restrict operation to */",
+      "type": { "returnType": "(string | Column)[]", "optional": true }
+    }
+  },
+  "GetCellEditorInstancesParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "rowNodes": {
+      "description": "/** Optional list of row nodes to restrict operation to */",
+      "type": { "returnType": "RowNode<TData>[]", "optional": true }
+    },
+    "columns": {
+      "description": "/** Optional list of columns to restrict operation to */",
+      "type": { "returnType": "(string | Column)[]", "optional": true }
+    }
+  },
+  "RedrawRowsParams": {
+    "rowNodes": {
+      "description": "/** Row nodes to redraw */",
+      "type": { "returnType": "RowNode<TData>[]", "optional": true }
+    },
+    "meta": { "typeParams": ["TData = any"] }
+  },
   "RefreshViewParams": {
     "recycleRows": { "type": { "returnType": "boolean", "optional": true } },
     "animate": { "type": { "returnType": "boolean", "optional": true } },
