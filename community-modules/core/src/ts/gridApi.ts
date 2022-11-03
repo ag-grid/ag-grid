@@ -413,12 +413,6 @@ export class GridApi<TData = any> {
         }
     }
 
-    /** @deprecated AG Grid: since version 18.x, api.setEnterpriseDatasource() should be replaced with api.setServerSideDatasource() */
-    public setEnterpriseDatasource(datasource: IServerSideDatasource) {
-        console.warn(`AG Grid: since version 18.x, api.setEnterpriseDatasource() should be replaced with api.setServerSideDatasource()`);
-        this.setServerSideDatasource(datasource);
-    }
-
     /**
      * Sets an ARIA property in the grid panel (element with `role=\"grid\"`), and removes an ARIA property when the value is null.
      *
@@ -501,42 +495,6 @@ export class GridApi<TData = any> {
             this.selectionService.reset();
             this.clientSideRowModel.setRowData(rowData);
         }
-    }
-
-    /** @deprecated AG Grid: since v12, api.setFloatingTopRowData() is now api.setPinnedTopRowData() */
-    public setFloatingTopRowData(rows: any[]): void {
-        console.warn('AG Grid: since v12, api.setFloatingTopRowData() is now api.setPinnedTopRowData()');
-        this.setPinnedTopRowData(rows);
-    }
-
-    /** @deprecated AG Grid: since v12, api.setFloatingBottomRowData() is now api.setPinnedBottomRowData() */
-    public setFloatingBottomRowData(rows: any[]): void {
-        console.warn('AG Grid: since v12, api.setFloatingBottomRowData() is now api.setPinnedBottomRowData()');
-        this.setPinnedBottomRowData(rows);
-    }
-
-    /** @deprecated AG Grid: since v12, api.getFloatingTopRowCount() is now api.getPinnedTopRowCount() */
-    public getFloatingTopRowCount(): number {
-        console.warn('AG Grid: since v12, api.getFloatingTopRowCount() is now api.getPinnedTopRowCount()');
-        return this.getPinnedTopRowCount();
-    }
-
-    /** @deprecated AG Grid: since v12, api.getFloatingBottomRowCount() is now api.getPinnedBottomRowCount() */
-    public getFloatingBottomRowCount(): number {
-        console.warn('AG Grid: since v12, api.getFloatingBottomRowCount() is now api.getPinnedBottomRowCount()');
-        return this.getPinnedBottomRowCount();
-    }
-
-    /** @deprecated AG Grid: since v12, api.getFloatingTopRow() is now api.getPinnedTopRow() */
-    public getFloatingTopRow(index: number): RowNode | undefined {
-        console.warn('AG Grid: since v12, api.getFloatingTopRow() is now api.getPinnedTopRow()');
-        return this.getPinnedTopRow(index);
-    }
-
-    /** @deprecated AG Grid: since v12, api.getFloatingBottomRow() is now api.getPinnedBottomRow() */
-    public getFloatingBottomRow(index: number): RowNode | undefined {
-        console.warn('AG Grid: since v12, api.getFloatingBottomRow() is now api.getPinnedBottomRow()');
-        return this.getPinnedBottomRow(index);
     }
 
     /** Set the top pinned rows. Call with no rows / undefined to clear top pinned rows. */
@@ -699,12 +657,6 @@ export class GridApi<TData = any> {
         this.clientSideRowModel.refreshModel({ step: ClientSideRowModelSteps.MAP });
     }
 
-    /** @deprecated AG Grid: since version 18.x, api.refreshInMemoryRowModel() should be replaced with api.refreshClientSideRowModel() */
-    public refreshInMemoryRowModel(step?: string): any {
-        console.warn(`AG Grid: since version 18.x, api.refreshInMemoryRowModel() should be replaced with api.refreshClientSideRowModel()`);
-        this.refreshClientSideRowModel(step as any);
-    }
-
     /**
      * Refresh the Client-Side Row Model, executing the grouping, filtering and sorting again.
      * Optionally provide the step you wish the refresh to apply from. Defaults to `everything`.
@@ -834,42 +786,6 @@ export class GridApi<TData = any> {
         this.filterManager.setQuickFilter(newFilter);
     }
 
-    /** @deprecated AG Grid: do not use api for selection, call rowNode.setSelected(value) instead */
-    public selectIndex(index: any, tryMulti: any, suppressEvents: any) {
-        console.warn('AG Grid: do not use api for selection, call rowNode.setSelected(value) instead');
-        if (suppressEvents) {
-            console.warn('AG Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
-        }
-        this.selectionService.selectIndex(index, tryMulti);
-    }
-
-    /** @deprecated AG Grid: do not use api for selection, call rowNode.setSelected(value) instead. */
-    public deselectIndex(index: number, suppressEvents: boolean = false) {
-        console.warn('AG Grid: do not use api for selection, call rowNode.setSelected(value) instead');
-        if (suppressEvents) {
-            console.warn('AG Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
-        }
-        this.selectionService.deselectIndex(index);
-    }
-
-    /** @deprecated AG Grid: API for selection is deprecated, call rowNode.setSelected(value) instead. */
-    public selectNode(node: RowNode, tryMulti: boolean = false, suppressEvents: boolean = false) {
-        console.warn('AG Grid: API for selection is deprecated, call rowNode.setSelected(value) instead');
-        if (suppressEvents) {
-            console.warn('AG Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
-        }
-        node.setSelectedParams({ newValue: true, clearSelection: !tryMulti });
-    }
-
-    /** @deprecated AG Grid: API for selection is deprecated, call rowNode.setSelected(value) instead. */
-    public deselectNode(node: RowNode, suppressEvents: boolean = false) {
-        console.warn('AG Grid: API for selection is deprecated, call rowNode.setSelected(value) instead');
-        if (suppressEvents) {
-            console.warn('AG Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
-        }
-        node.setSelectedParams({ newValue: false });
-    }
-
     /** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded. */
     public selectAll() {
         this.selectionService.selectAllRowNodes();
@@ -888,13 +804,6 @@ export class GridApi<TData = any> {
     /** Clear all filtered selections. */
     public deselectAllFiltered() {
         this.selectionService.deselectAllRowNodes(true);
-    }
-
-    /** @deprecated v16 recomputeAggregates is deprecated, please call api.refreshClientSideRowModel('aggregate') instead */
-    public recomputeAggregates(): void {
-        if (missing(this.clientSideRowModel)) { console.warn('cannot call recomputeAggregates unless using normal row model'); }
-        console.warn(`recomputeAggregates is deprecated, please call api.refreshClientSideRowModel('aggregate') instead`);
-        this.clientSideRowModel.refreshModel({ step: ClientSideRowModelSteps.AGGREGATE });
     }
 
     /**
@@ -917,17 +826,6 @@ export class GridApi<TData = any> {
     /** Hides the overlay if showing. */
     public hideOverlay(): void {
         this.overlayWrapperComp.hideOverlay();
-    }
-
-    public isNodeSelected(node: any) {
-        console.warn('AG Grid: no need to call api.isNodeSelected(), just call node.isSelected() instead');
-        return node.isSelected();
-    }
-
-    /** @deprecated v3.4 Use getSelectedNodesById no longer exists, use getSelectedNodes(). */
-    public getSelectedNodesById(): { [nodeId: number]: RowNode<TData>; } | null {
-        console.error('AG Grid: since version 3.4, getSelectedNodesById no longer exists, use getSelectedNodes() instead');
-        return null;
     }
 
     /**
@@ -955,11 +853,6 @@ export class GridApi<TData = any> {
     /** Retrieve rendered nodes. Due to virtualisation this will contain only the current visible rows and those in the buffer. */
     public getRenderedNodes(): RowNode<TData>[] {
         return this.rowRenderer.getRenderedNodes();
-    }
-
-    /** @deprecated ensureColIndexVisible(index) no longer supported, use ensureColumnVisible(colKey) instead. */
-    public ensureColIndexVisible(index: any) {
-        console.warn('AG Grid: ensureColIndexVisible(index) no longer supported, use ensureColumnVisible(colKey) instead.');
     }
 
     /**
@@ -1313,13 +1206,13 @@ export class GridApi<TData = any> {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_CELL_FROM_CLIPBOARD, processCellFromClipboardFunc);
     }
 
-    /** @deprecated use `setProcessPivotResultColDef` instead */
+    /** @deprecated v28 use `setProcessPivotResultColDef` instead */
     public setProcessSecondaryColDef(processSecondaryColDefFunc: (colDef: ColDef) => void): void {
         console.warn('AG Grid: since version 28.0.x setProcessSecondaryColDef has been renamed, please use setProcessPivotResultColDef instead');
         this.setProcessPivotResultColDef(processSecondaryColDefFunc);
     }
 
-    /** @deprecated use `setProcessPivotResultColGroupDef` instead */
+    /** @deprecated v28 use `setProcessPivotResultColGroupDef` instead */
     public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void): void {
         console.warn('AG Grid: since version 28.0.x setProcessSecondaryColGroupDef has been renamed, please use setProcessPivotResultColGroupDef instead');
         this.setProcessPivotResultColGroupDef(processSecondaryColGroupDefFunc);
@@ -1352,7 +1245,7 @@ export class GridApi<TData = any> {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PAGINATION_NUMBER_FORMATTER, paginationNumberFormatterFunc);
     }
 
-    /** @deprecated use setGetServerSideGroupLevelParams instead */
+    /** @deprecated v28 use setGetServerSideGroupLevelParams instead */
     public setGetServerSideStoreParams(getServerSideStoreParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void {
         this.setGetServerSideGroupLevelParams(getServerSideStoreParamsFunc);
     }
@@ -1450,12 +1343,6 @@ export class GridApi<TData = any> {
     /** Returns `true` if the tool panel is showing, otherwise `false`. */
     public isToolPanelShowing(): boolean {
         return this.sideBarComp.isToolPanelShowing();
-    }
-
-    /** @deprecated AG Grid - since version 25.1, doLayout was taken out, as it's not needed. The grid responds to grid size changes automatically. */
-    public doLayout() {
-        const message = `AG Grid - since version 25.1, doLayout was taken out, as it's not needed. The grid responds to grid size changes automatically`;
-        doOnce(() => console.warn(message), 'doLayoutDeprecated');
     }
 
     /** Tells the grid to recalculate the row heights. */
@@ -1575,14 +1462,6 @@ export class GridApi<TData = any> {
         this.rowModel.forEachNode(node => node.quickFilterAggregateText = null);
     }
 
-    /** @deprecated AG Grid: in v20.1.x, api.getRangeSelections() is gone, please use getCellRanges() instead. */
-    public getRangeSelections(): any {
-        console.warn(`AG Grid: in v20.1.x, api.getRangeSelections() is gone, please use getCellRanges() instead.
-        We had to change how cell selections works a small bit to allow charting to integrate. The return type of
-        getCellRanges() is a bit different, please check the AG Grid documentation.`);
-        return null;
-    }
-
     /** Returns the list of selected cell ranges. */
     public getCellRanges(): CellRange[] | null {
         if (this.rangeService) {
@@ -1597,10 +1476,6 @@ export class GridApi<TData = any> {
         return camelCaseToHumanText(camelCase);
     }
 
-    /** @deprecated AG Grid: As of version 21.x, range selection changed slightly to allow charting integration. Please call api.addCellRange() instead of api.addRangeSelection() */
-    public addRangeSelection(deprecatedNoLongerUsed: any): void {
-        console.warn('AG Grid: As of version 21.x, range selection changed slightly to allow charting integration. Please call api.addCellRange() instead of api.addRangeSelection()');
-    }
     /** Adds the provided cell range to the selected ranges. */
     public addCellRange(params: CellRangeParams): void {
         if (!this.rangeService) { console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise'); }
@@ -1905,14 +1780,6 @@ export class GridApi<TData = any> {
         this.gridOptionsWrapper.setProperty('deltaSort', enable);
     }
 
-    /** @deprecated AG Grid: as of v23.1, grid API updateRowData(transaction) is now called applyTransaction(transaction). */
-    public updateRowData(rowDataTransaction: RowDataTransaction<TData>): RowNodeTransaction<TData> | null | undefined {
-        const message = 'AG Grid: as of v23.1, grid API updateRowData(transaction) is now called applyTransaction(transaction). updateRowData is deprecated and will be removed in a future major release.';
-        doOnce(() => console.warn(message), 'updateRowData deprecated');
-
-        return this.applyTransaction(rowDataTransaction);
-    }
-
     /** Same as `applyTransaction` except executes asynchronously for efficiency. */
     public applyTransactionAsync(rowDataTransaction: RowDataTransaction<TData>, callback?: (res: RowNodeTransaction<TData>) => void): void {
         if (!this.clientSideRowModel) {
@@ -1925,49 +1792,10 @@ export class GridApi<TData = any> {
     /** Executes any remaining asynchronous grid transactions, if any are waiting to be executed. */
     public flushAsyncTransactions(): void {
         if (!this.clientSideRowModel) {
-            console.error('AG Grid: api.applyTransactionAsync() only works with ClientSideRowModel.');
+            console.error('AG Grid: api.flushAsyncTransactions() only works with ClientSideRowModel.');
             return;
         }
         this.clientSideRowModel.flushAsyncTransactions();
-    }
-
-    /** @deprecated AG Grid: as of v23.1, grid API batchUpdateRowData(transaction, callback) is now called applyTransactionAsync(transaction, callback). */
-    public batchUpdateRowData(rowDataTransaction: RowDataTransaction<TData>, callback?: (res: RowNodeTransaction<TData>) => void): void {
-        const message = 'AG Grid: as of v23.1, grid API batchUpdateRowData(transaction, callback) is now called applyTransactionAsync(transaction, callback). batchUpdateRowData is deprecated and will be removed in a future major release.';
-        doOnce(() => console.warn(message), 'batchUpdateRowData deprecated');
-
-        this.applyTransactionAsync(rowDataTransaction, callback);
-    }
-
-    /** @deprecated AG Grid: insertItemsAtIndex() is deprecated, use updateRowData(transaction) instead.*/
-    public insertItemsAtIndex(index: number, items: any[], skipRefresh = false): void {
-        console.warn('AG Grid: insertItemsAtIndex() is deprecated, use updateRowData(transaction) instead.');
-        this.updateRowData({ add: items, addIndex: index, update: null, remove: null });
-    }
-
-    /** @deprecated AG Grid: removeItems() is deprecated, use updateRowData(transaction) instead. */
-    public removeItems(rowNodes: RowNode[], skipRefresh = false): void {
-        console.warn('AG Grid: removeItems() is deprecated, use updateRowData(transaction) instead.');
-        const dataToRemove: any[] = rowNodes.map(rowNode => rowNode.data);
-        this.updateRowData({ add: null, addIndex: null, update: null, remove: dataToRemove });
-    }
-
-    /** @deprecated AG Grid: addItems() is deprecated, use updateRowData(transaction) instead. */
-    public addItems(items: any[], skipRefresh = false): void {
-        console.warn('AG Grid: addItems() is deprecated, use updateRowData(transaction) instead.');
-        this.updateRowData({ add: items, addIndex: null, update: null, remove: null });
-    }
-
-    /** @deprecated AG Grid: refreshVirtualPageCache() is now called refreshInfiniteCache(), please call refreshInfiniteCache() instead */
-    public refreshVirtualPageCache(): void {
-        console.warn('AG Grid: refreshVirtualPageCache() is now called refreshInfiniteCache(), please call refreshInfiniteCache() instead');
-        this.refreshInfiniteCache();
-    }
-
-    /** @deprecated AG Grid: refreshInfinitePageCache() is now called refreshInfiniteCache(), please call refreshInfiniteCache() instead */
-    public refreshInfinitePageCache(): void {
-        console.warn('AG Grid: refreshInfinitePageCache() is now called refreshInfiniteCache(), please call refreshInfiniteCache() instead');
-        this.refreshInfiniteCache();
     }
 
     /**
@@ -1981,18 +1809,6 @@ export class GridApi<TData = any> {
         } else {
             console.warn(`AG Grid: api.refreshInfiniteCache is only available when rowModelType='infinite'.`);
         }
-    }
-
-    /** @deprecated AG Grid: purgeVirtualPageCache() is now called purgeInfiniteCache(), please call purgeInfiniteCache() instead */
-    public purgeVirtualPageCache(): void {
-        console.warn('AG Grid: purgeVirtualPageCache() is now called purgeInfiniteCache(), please call purgeInfiniteCache() instead');
-        this.purgeInfinitePageCache();
-    }
-
-    /** @deprecated AG Grid: purgeInfinitePageCache() is now called purgeInfiniteCache(), please call purgeInfiniteCache() instead */
-    public purgeInfinitePageCache(): void {
-        console.warn('AG Grid: purgeInfinitePageCache() is now called purgeInfiniteCache(), please call purgeInfiniteCache() instead');
-        this.purgeInfiniteCache();
     }
 
     /**
@@ -2009,25 +1825,6 @@ export class GridApi<TData = any> {
         }
     }
 
-    /** @deprecated AG Grid: since version 18.x, api.purgeEnterpriseCache() should be replaced with api.refreshServerSide({purge: true}) */
-    public purgeEnterpriseCache(route?: string[]): void {
-        console.warn(`AG Grid: since version 18.x, api.purgeEnterpriseCache() should be replaced with api.refreshServerSide({purge: true})`);
-        this.purgeServerSideCache(route);
-    }
-
-    /** @deprecated AG Grid: since v25.0, api.purgeServerSideCache is deprecated. Please use api.refreshServerSide({purge: true}) instead. */
-    public purgeServerSideCache(route: string[] = []): void {
-        if (this.serverSideRowModel) {
-            console.warn(`AG Grid: since v25.0, api.purgeServerSideCache is deprecated. Please use api.refreshServerSide({purge: true}) instead.`);
-            this.refreshServerSide({
-                route: route,
-                purge: true
-            });
-        } else {
-            console.warn(`AG Grid: api.purgeServerSideCache is only available when rowModelType='serverSide'.`);
-        }
-    }
-
     /**
      * Refresh a server-side level.
      * If you pass no parameters, then the top level store is purged.
@@ -2041,14 +1838,14 @@ export class GridApi<TData = any> {
         this.serverSideRowModel.refreshStore(params);
     }
 
-    /** @deprecated use `refreshServerSide` instead */
+    /** @deprecated v28 use `refreshServerSide` instead */
     public refreshServerSideStore(params?: RefreshServerSideParams): void {
         const message = `AG Grid: Grid API refreshServerSideStore() was renamed to refreshServerSide() in v28.0`;
         doOnce(() => console.warn(message), 'refreshServerSideStore-renamed');
         return this.refreshServerSide(params);
     }
 
-    /** @deprecated use `getServerSideGroupLevelState` instead */
+    /** @deprecated v28 use `getServerSideGroupLevelState` instead */
     public getServerSideStoreState(): ServerSideGroupLevelState[] {
         const message = `AG Grid: Grid API getServerSideStoreState() was renamed to getServerSideGroupLevelState() in v28.0`;
         doOnce(() => console.warn(message), 'getServerSideStoreState-renamed');
@@ -2064,12 +1861,6 @@ export class GridApi<TData = any> {
         return this.serverSideRowModel.getStoreState();
     }
 
-    /** @deprecated AG Grid: getVirtualRowCount() is now called getInfiniteRowCount(), please call getInfiniteRowCount() instead */
-    public getVirtualRowCount(): number | null | undefined {
-        console.warn('AG Grid: getVirtualRowCount() is now called getInfiniteRowCount(), please call getInfiniteRowCount() instead');
-        return this.getInfiniteRowCount();
-    }
-
     /** The row count defines how many rows the grid allows scrolling to. */
     public getInfiniteRowCount(): number | undefined {
         if (this.infiniteRowModel) {
@@ -2079,12 +1870,6 @@ export class GridApi<TData = any> {
         }
     }
 
-    /** @deprecated AG Grid: api.isMaxRowFound is deprecated, please use api.isLastRowIndexKnown() */
-    public isMaxRowFound(): boolean | undefined {
-        console.warn(`AG Grid: api.isMaxRowFound is deprecated, please use api.isLastRowIndexKnown()`);
-        return this.isLastRowIndexKnown();
-    }
-
     /** Returns `true` if grid allows for scrolling past the last row to load more rows, thus providing infinite scroll. */
     public isLastRowIndexKnown(): boolean | undefined {
         if (this.infiniteRowModel) {
@@ -2092,18 +1877,6 @@ export class GridApi<TData = any> {
         } else {
             console.warn(`AG Grid: api.isMaxRowFound is only available when rowModelType='virtual'.`);
         }
-    }
-
-    /** @deprecated AG Grid: setVirtualRowCount() is now called setInfiniteRowCount(), please call setInfiniteRowCount() instead */
-    public setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void {
-        console.warn('AG Grid: setVirtualRowCount() is now called setInfiniteRowCount(), please call setInfiniteRowCount() instead');
-        this.setRowCount(rowCount, maxRowFound);
-    }
-
-    /** @deprecated AG Grid: setInfiniteRowCount() is now called setRowCount(), please call setRowCount() instead */
-    public setInfiniteRowCount(rowCount: number, maxRowFound?: boolean): void {
-        console.warn('AG Grid: setInfiniteRowCount() is now called setRowCount(), please call setRowCount() instead');
-        this.setRowCount(rowCount, maxRowFound);
     }
 
     /**
@@ -2121,18 +1894,6 @@ export class GridApi<TData = any> {
         }
     }
 
-    /** @deprecated AG Grid: getVirtualPageState() is now called getCacheBlockState(), please call getCacheBlockState() instead */
-    public getVirtualPageState(): any {
-        console.warn('AG Grid: getVirtualPageState() is now called getCacheBlockState(), please call getCacheBlockState() instead');
-        return this.getCacheBlockState();
-    }
-
-    /** @deprecated getInfinitePageState() is now called getCacheBlockState(), please call getCacheBlockState() instead */
-    public getInfinitePageState(): any {
-        console.warn('AG Grid: getInfinitePageState() is now called getCacheBlockState(), please call getCacheBlockState() instead');
-        return this.getCacheBlockState();
-    }
-
     /**
      * Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.
      */
@@ -2140,26 +1901,9 @@ export class GridApi<TData = any> {
         return this.rowNodeBlockLoader.getBlockState();
     }
 
-    /** @deprecated  In AG Grid v25.2.0, checkGridSize() was removed, as it was legacy and didn't do anything useful. */
-    public checkGridSize(): void {
-        console.warn(`In AG Grid v25.2.0, checkGridSize() was removed, as it was legacy and didn't do anything useful.`);
-    }
-
-    /** @deprecated  In AG Grid v12, getFirstRenderedRow() was renamed to getFirstDisplayedRow() */
-    public getFirstRenderedRow(): number {
-        console.warn('In AG Grid v12, getFirstRenderedRow() was renamed to getFirstDisplayedRow()');
-        return this.getFirstDisplayedRow();
-    }
-
     /** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */
     public getFirstDisplayedRow(): number {
         return this.rowRenderer.getFirstVirtualRenderedRow();
-    }
-
-    /** @deprecated In AG Grid v12, getLastRenderedRow() was renamed to getLastDisplayedRow() */
-    public getLastRenderedRow(): number {
-        console.warn('in AG Grid v12, getLastRenderedRow() was renamed to getLastDisplayedRow()');
-        return this.getLastDisplayedRow();
     }
 
     /** Get the index of the last displayed row due to scrolling (includes invisible rendered rows in the buffer). */

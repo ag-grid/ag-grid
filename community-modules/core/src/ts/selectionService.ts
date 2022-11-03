@@ -310,43 +310,4 @@ export class SelectionService extends BeanStub {
         };
         this.eventService.dispatchEvent(event);
     }
-
-    /**
-     * @method
-     * @deprecated
-     */
-    public selectNode(rowNode: RowNode | undefined, tryMulti: boolean) {
-        if (rowNode) {
-            rowNode.setSelectedParams({ newValue: true, clearSelection: !tryMulti });
-        }
-    }
-
-    /**
-     * @method
-     * @deprecated
-     */
-    public deselectIndex(rowIndex: number) {
-        const node = this.rowModel.getRow(rowIndex);
-        this.deselectNode(node);
-    }
-
-    /**
-     * @method
-     * @deprecated
-     */
-    public deselectNode(rowNode: RowNode | undefined) {
-        if (rowNode) {
-            rowNode.setSelectedParams({ newValue: false, clearSelection: false });
-        }
-    }
-
-    /**
-     * @method
-     * @deprecated
-     */
-    public selectIndex(index: any, tryMulti: boolean) {
-        const node = this.rowModel.getRow(index);
-        this.selectNode(node, tryMulti);
-    }
-
 }

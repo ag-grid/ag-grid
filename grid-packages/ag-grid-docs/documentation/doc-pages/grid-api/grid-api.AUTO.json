@@ -91,10 +91,6 @@
       "returnType": "void"
     }
   },
-  "setEnterpriseDatasource": {
-    "description": "/** @deprecated AG Grid: since version 18.x, api.setEnterpriseDatasource() should be replaced with api.setServerSideDatasource()\n */",
-    "type": { "arguments": { "datasource": "IServerSideDatasource" } }
-  },
   "setGridAriaProperty": {
     "description": "/** Sets an ARIA property in the grid panel (element with `role=\\\"grid\\\"`), and removes an ARIA property when the value is null.\n * \n * Example: `api.setGridAriaProperty('label', 'my grid')` will set `aria-label=\\\"my grid\\\"`.\n * \n * `api.setGridAriaProperty('label', null)` will remove the `aria-label` attribute from the grid element. */",
     "type": {
@@ -121,36 +117,6 @@
   "setRowData": {
     "description": "/** Set the row data. */",
     "type": { "arguments": { "rowData": "TData[]" } }
-  },
-  "setFloatingTopRowData": {
-    "description": "/** @deprecated AG Grid: since v12, api.setFloatingTopRowData() is now api.setPinnedTopRowData()\n */",
-    "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
-  },
-  "setFloatingBottomRowData": {
-    "description": "/** @deprecated AG Grid: since v12, api.setFloatingBottomRowData() is now api.setPinnedBottomRowData()\n */",
-    "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
-  },
-  "getFloatingTopRowCount": {
-    "description": "/** @deprecated AG Grid: since v12, api.getFloatingTopRowCount() is now api.getPinnedTopRowCount()\n */",
-    "type": { "arguments": {}, "returnType": "number" }
-  },
-  "getFloatingBottomRowCount": {
-    "description": "/** @deprecated AG Grid: since v12, api.getFloatingBottomRowCount() is now api.getPinnedBottomRowCount()\n */",
-    "type": { "arguments": {}, "returnType": "number" }
-  },
-  "getFloatingTopRow": {
-    "description": "/** @deprecated AG Grid: since v12, api.getFloatingTopRow() is now api.getPinnedTopRow()\n */",
-    "type": {
-      "arguments": { "index": "number" },
-      "returnType": "RowNode | undefined"
-    }
-  },
-  "getFloatingBottomRow": {
-    "description": "/** @deprecated AG Grid: since v12, api.getFloatingBottomRow() is now api.getPinnedBottomRow()\n */",
-    "type": {
-      "arguments": { "index": "number" },
-      "returnType": "RowNode | undefined"
-    }
   },
   "setPinnedTopRowData": {
     "description": "/** Set the top pinned rows. Call with no rows / undefined to clear top pinned rows. */",
@@ -285,10 +251,6 @@
     "description": "/** If after getting the model, you expand or collapse a group, call this method to inform the grid.\n * It will work out the final set of 'to be displayed' rows again (i.e. expand or collapse the group visually). */",
     "type": { "arguments": { "deprecated_refreshFromIndex?": "any" } }
   },
-  "refreshInMemoryRowModel": {
-    "description": "/** @deprecated AG Grid: since version 18.x, api.refreshInMemoryRowModel() should be replaced with api.refreshClientSideRowModel()\n */",
-    "type": { "arguments": { "step?": "string" }, "returnType": "any" }
-  },
   "refreshClientSideRowModel": {
     "description": "/** Refresh the Client-Side Row Model, executing the grouping, filtering and sorting again.\n * Optionally provide the step you wish the refresh to apply from. Defaults to `everything`. */",
     "type": {
@@ -354,38 +316,6 @@
     "description": "/** Pass a quick filter text into the grid for filtering. */",
     "type": { "arguments": { "newFilter": "string" }, "returnType": "void" }
   },
-  "selectIndex": {
-    "description": "/** @deprecated AG Grid: do not use api for selection, call rowNode.setSelected(value) instead\n */",
-    "type": {
-      "arguments": {
-        "index": "any",
-        "tryMulti": "any",
-        "suppressEvents": "any"
-      }
-    }
-  },
-  "deselectIndex": {
-    "description": "/** @deprecated AG Grid: do not use api for selection, call rowNode.setSelected(value) instead.\n */",
-    "type": {
-      "arguments": { "index": "number", "suppressEvents": "boolean = false" }
-    }
-  },
-  "selectNode": {
-    "description": "/** @deprecated AG Grid: API for selection is deprecated, call rowNode.setSelected(value) instead.\n */",
-    "type": {
-      "arguments": {
-        "node": "RowNode",
-        "tryMulti": "boolean = false",
-        "suppressEvents": "boolean = false"
-      }
-    }
-  },
-  "deselectNode": {
-    "description": "/** @deprecated AG Grid: API for selection is deprecated, call rowNode.setSelected(value) instead.\n */",
-    "type": {
-      "arguments": { "node": "RowNode", "suppressEvents": "boolean = false" }
-    }
-  },
   "selectAll": {
     "description": "/** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded. */",
     "type": { "arguments": {} }
@@ -401,10 +331,6 @@
   "deselectAllFiltered": {
     "description": "/** Clear all filtered selections. */",
     "type": { "arguments": {} }
-  },
-  "recomputeAggregates": {
-    "description": "/** @deprecated v16 recomputeAggregates is deprecated, please call api.refreshClientSideRowModel('aggregate') instead\n */",
-    "type": { "arguments": {}, "returnType": "void" }
   },
   "sizeColumnsToFit": {
     "description": "/** Sets columns to adjust in size to fit the grid horizontally. */",
@@ -422,14 +348,6 @@
     "description": "/** Hides the overlay if showing. */",
     "type": { "arguments": {}, "returnType": "void" }
   },
-  "isNodeSelected": { "type": { "arguments": { "node": "any" } } },
-  "getSelectedNodesById": {
-    "description": "/** @deprecated v3.4 Use getSelectedNodesById no longer exists, use getSelectedNodes().\n */",
-    "type": {
-      "arguments": {},
-      "returnType": "{ [nodeId: number]: RowNode<TData>; } | null"
-    }
-  },
   "getSelectedNodes": {
     "description": "/** Returns an unsorted list of selected nodes.\n * Getting the underlying node (rather than the data) is useful when working with tree / aggregated data,\n * as the node can be traversed. */",
     "type": { "arguments": {}, "returnType": "RowNode<TData>[]" }
@@ -445,10 +363,6 @@
   "getRenderedNodes": {
     "description": "/** Retrieve rendered nodes. Due to virtualisation this will contain only the current visible rows and those in the buffer. */",
     "type": { "arguments": {}, "returnType": "RowNode<TData>[]" }
-  },
-  "ensureColIndexVisible": {
-    "description": "/** @deprecated ensureColIndexVisible(index) no longer supported, use ensureColumnVisible(colKey) instead.\n */",
-    "type": { "arguments": { "index": "any" } }
   },
   "ensureColumnVisible": {
     "description": "/** Ensures the column is visible by scrolling the table if needed.\n * \n * This will have no effect before the firstDataRendered event has fired.\n * @param key - The column to ensure visible\n * @param position - Where the column will be positioned.\n- `auto` - Scrolls the minimum amount to make sure the column is visible.\n- `start` - Scrolls the column to the start of the viewport.\n- `middle` - Scrolls the column to the middle of the viewport.\n- `end` - Scrolls the column to the end of the viewport.\n */",
@@ -833,14 +747,14 @@
     }
   },
   "setProcessSecondaryColDef": {
-    "description": "/** @deprecated use `setProcessPivotResultColDef` instead\n */",
+    "description": "/** @deprecated v28 use `setProcessPivotResultColDef` instead\n */",
     "type": {
       "arguments": { "processSecondaryColDefFunc": "(colDef: ColDef) => void" },
       "returnType": "void"
     }
   },
   "setProcessSecondaryColGroupDef": {
-    "description": "/** @deprecated use `setProcessPivotResultColGroupDef` instead\n */",
+    "description": "/** @deprecated v28 use `setProcessPivotResultColGroupDef` instead\n */",
     "type": {
       "arguments": {
         "processSecondaryColGroupDefFunc": "(colDef: ColDef) => void"
@@ -903,7 +817,7 @@
     }
   },
   "setGetServerSideStoreParams": {
-    "description": "/** @deprecated use setGetServerSideGroupLevelParams instead\n */",
+    "description": "/** @deprecated v28 use setGetServerSideGroupLevelParams instead\n */",
     "type": {
       "arguments": {
         "getServerSideStoreParamsFunc": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams"
@@ -1001,10 +915,6 @@
     "description": "/** Returns `true` if the tool panel is showing, otherwise `false`. */",
     "type": { "arguments": {}, "returnType": "boolean" }
   },
-  "doLayout": {
-    "description": "/** @deprecated AG Grid - since version 25.1, doLayout was taken out, as it's not needed. The grid responds to grid size changes automatically.\n */",
-    "type": { "arguments": {} }
-  },
   "resetRowHeights": {
     "description": "/** Tells the grid to recalculate the row heights. */",
     "type": { "arguments": {} }
@@ -1062,10 +972,6 @@
     "description": "/** Reset the quick filter cache text on every rowNode. */",
     "type": { "arguments": {}, "returnType": "void" }
   },
-  "getRangeSelections": {
-    "description": "/** @deprecated AG Grid: in v20.1.x, api.getRangeSelections() is gone, please use getCellRanges() instead.\n */",
-    "type": { "arguments": {}, "returnType": "any" }
-  },
   "getCellRanges": {
     "description": "/** Returns the list of selected cell ranges. */",
     "type": { "arguments": {}, "returnType": "CellRange[] | null" }
@@ -1074,13 +980,6 @@
     "type": {
       "arguments": { "camelCase": "string" },
       "returnType": "string | null"
-    }
-  },
-  "addRangeSelection": {
-    "description": "/** @deprecated AG Grid: As of version 21.x, range selection changed slightly to allow charting integration. Please call api.addCellRange() instead of api.addRangeSelection()\n */",
-    "type": {
-      "arguments": { "deprecatedNoLongerUsed": "any" },
-      "returnType": "void"
     }
   },
   "addCellRange": {
@@ -1322,13 +1221,6 @@
     "description": "/** Sets the `deltaSort` property */",
     "type": { "arguments": { "enable": "boolean" }, "returnType": "void" }
   },
-  "updateRowData": {
-    "description": "/** @deprecated AG Grid: as of v23.1, grid API updateRowData(transaction) is now called applyTransaction(transaction).\n */",
-    "type": {
-      "arguments": { "rowDataTransaction": "RowDataTransaction<TData>" },
-      "returnType": "RowNodeTransaction<TData> | null | undefined"
-    }
-  },
   "applyTransactionAsync": {
     "description": "/** Same as `applyTransaction` except executes asynchronously for efficiency. */",
     "type": {
@@ -1343,75 +1235,13 @@
     "description": "/** Executes any remaining asynchronous grid transactions, if any are waiting to be executed. */",
     "type": { "arguments": {}, "returnType": "void" }
   },
-  "batchUpdateRowData": {
-    "description": "/** @deprecated AG Grid: as of v23.1, grid API batchUpdateRowData(transaction, callback) is now called applyTransactionAsync(transaction, callback).\n */",
-    "type": {
-      "arguments": {
-        "rowDataTransaction": "RowDataTransaction<TData>",
-        "callback?": "(res: RowNodeTransaction<TData>) => void"
-      },
-      "returnType": "void"
-    }
-  },
-  "insertItemsAtIndex": {
-    "description": "/** @deprecated AG Grid: insertItemsAtIndex() is deprecated, use updateRowData(transaction) instead.\n */",
-    "type": {
-      "arguments": {
-        "index": "number",
-        "items": "any[]",
-        "skipRefresh": "undefined = false"
-      },
-      "returnType": "void"
-    }
-  },
-  "removeItems": {
-    "description": "/** @deprecated AG Grid: removeItems() is deprecated, use updateRowData(transaction) instead.\n */",
-    "type": {
-      "arguments": {
-        "rowNodes": "RowNode[]",
-        "skipRefresh": "undefined = false"
-      },
-      "returnType": "void"
-    }
-  },
-  "addItems": {
-    "description": "/** @deprecated AG Grid: addItems() is deprecated, use updateRowData(transaction) instead.\n */",
-    "type": {
-      "arguments": { "items": "any[]", "skipRefresh": "undefined = false" },
-      "returnType": "void"
-    }
-  },
-  "refreshVirtualPageCache": {
-    "description": "/** @deprecated AG Grid: refreshVirtualPageCache() is now called refreshInfiniteCache(), please call refreshInfiniteCache() instead\n */",
-    "type": { "arguments": {}, "returnType": "void" }
-  },
-  "refreshInfinitePageCache": {
-    "description": "/** @deprecated AG Grid: refreshInfinitePageCache() is now called refreshInfiniteCache(), please call refreshInfiniteCache() instead\n */",
-    "type": { "arguments": {}, "returnType": "void" }
-  },
   "refreshInfiniteCache": {
     "description": "/** Marks all the currently loaded blocks in the cache for reload.\n * If you have 10 blocks in the cache, all 10 will be marked for reload.\n * The old data will continue to be displayed until the new data is loaded. */",
-    "type": { "arguments": {}, "returnType": "void" }
-  },
-  "purgeVirtualPageCache": {
-    "description": "/** @deprecated AG Grid: purgeVirtualPageCache() is now called purgeInfiniteCache(), please call purgeInfiniteCache() instead\n */",
-    "type": { "arguments": {}, "returnType": "void" }
-  },
-  "purgeInfinitePageCache": {
-    "description": "/** @deprecated AG Grid: purgeInfinitePageCache() is now called purgeInfiniteCache(), please call purgeInfiniteCache() instead\n */",
     "type": { "arguments": {}, "returnType": "void" }
   },
   "purgeInfiniteCache": {
     "description": "/** Purges the cache.\n * The grid is then told to refresh. Only the blocks required to display the current data on screen are fetched (typically no more than 2).\n * The grid will display nothing while the new blocks are loaded.\n * Use this to immediately remove the old data from the user. */",
     "type": { "arguments": {}, "returnType": "void" }
-  },
-  "purgeEnterpriseCache": {
-    "description": "/** @deprecated AG Grid: since version 18.x, api.purgeEnterpriseCache() should be replaced with api.refreshServerSide({purge: true})\n */",
-    "type": { "arguments": { "route?": "string[]" }, "returnType": "void" }
-  },
-  "purgeServerSideCache": {
-    "description": "/** @deprecated AG Grid: since v25.0, api.purgeServerSideCache is deprecated. Please use api.refreshServerSide({purge: true}) instead.\n */",
-    "type": { "arguments": { "route": "string[] = []" }, "returnType": "void" }
   },
   "refreshServerSide": {
     "description": "/** Refresh a server-side level.\n * If you pass no parameters, then the top level store is purged.\n * To purge a child level, pass in the string of keys to get to the desired level. */",
@@ -1421,49 +1251,27 @@
     }
   },
   "refreshServerSideStore": {
-    "description": "/** @deprecated use `refreshServerSide` instead\n */",
+    "description": "/** @deprecated v28 use `refreshServerSide` instead\n */",
     "type": {
       "arguments": { "params?": "RefreshServerSideParams" },
       "returnType": "void"
     }
   },
   "getServerSideStoreState": {
-    "description": "/** @deprecated use `getServerSideGroupLevelState` instead\n */",
+    "description": "/** @deprecated v28 use `getServerSideGroupLevelState` instead\n */",
     "type": { "arguments": {}, "returnType": "ServerSideGroupLevelState[]" }
   },
   "getServerSideGroupLevelState": {
     "description": "/** Returns info on all server side group levels. */",
     "type": { "arguments": {}, "returnType": "ServerSideGroupLevelState[]" }
   },
-  "getVirtualRowCount": {
-    "description": "/** @deprecated AG Grid: getVirtualRowCount() is now called getInfiniteRowCount(), please call getInfiniteRowCount() instead\n */",
-    "type": { "arguments": {}, "returnType": "number | null | undefined" }
-  },
   "getInfiniteRowCount": {
     "description": "/** The row count defines how many rows the grid allows scrolling to. */",
     "type": { "arguments": {}, "returnType": "number | undefined" }
   },
-  "isMaxRowFound": {
-    "description": "/** @deprecated AG Grid: api.isMaxRowFound is deprecated, please use api.isLastRowIndexKnown()\n */",
-    "type": { "arguments": {}, "returnType": "boolean | undefined" }
-  },
   "isLastRowIndexKnown": {
     "description": "/** Returns `true` if grid allows for scrolling past the last row to load more rows, thus providing infinite scroll. */",
     "type": { "arguments": {}, "returnType": "boolean | undefined" }
-  },
-  "setVirtualRowCount": {
-    "description": "/** @deprecated AG Grid: setVirtualRowCount() is now called setInfiniteRowCount(), please call setInfiniteRowCount() instead\n */",
-    "type": {
-      "arguments": { "rowCount": "number", "maxRowFound?": "boolean" },
-      "returnType": "void"
-    }
-  },
-  "setInfiniteRowCount": {
-    "description": "/** @deprecated AG Grid: setInfiniteRowCount() is now called setRowCount(), please call setRowCount() instead\n */",
-    "type": {
-      "arguments": { "rowCount": "number", "maxRowFound?": "boolean" },
-      "returnType": "void"
-    }
   },
   "setRowCount": {
     "description": "/** Sets the `rowCount` and `lastRowIndexKnown` properties.\n * The second parameter, `lastRowIndexKnown`, is optional and if left out, only `rowCount` is set.\n * Set `rowCount` to adjust the height of the vertical scroll.\n * Set `lastRowIndexKnown` to enable / disable searching for more rows.\n * Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode. */",
@@ -1472,32 +1280,12 @@
       "returnType": "void"
     }
   },
-  "getVirtualPageState": {
-    "description": "/** @deprecated AG Grid: getVirtualPageState() is now called getCacheBlockState(), please call getCacheBlockState() instead\n */",
-    "type": { "arguments": {}, "returnType": "any" }
-  },
-  "getInfinitePageState": {
-    "description": "/** @deprecated getInfinitePageState() is now called getCacheBlockState(), please call getCacheBlockState() instead\n */",
-    "type": { "arguments": {}, "returnType": "any" }
-  },
   "getCacheBlockState": {
     "description": "/** Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working. */",
     "type": { "arguments": {}, "returnType": "any" }
   },
-  "checkGridSize": {
-    "description": "/** @deprecated In AG Grid v25.2.0, checkGridSize() was removed, as it was legacy and didn't do anything useful.\n */",
-    "type": { "arguments": {}, "returnType": "void" }
-  },
-  "getFirstRenderedRow": {
-    "description": "/** @deprecated In AG Grid v12, getFirstRenderedRow() was renamed to getFirstDisplayedRow()\n */",
-    "type": { "arguments": {}, "returnType": "number" }
-  },
   "getFirstDisplayedRow": {
     "description": "/** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */",
-    "type": { "arguments": {}, "returnType": "number" }
-  },
-  "getLastRenderedRow": {
-    "description": "/** @deprecated In AG Grid v12, getLastRenderedRow() was renamed to getLastDisplayedRow()\n */",
     "type": { "arguments": {}, "returnType": "number" }
   },
   "getLastDisplayedRow": {
