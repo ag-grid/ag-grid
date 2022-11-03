@@ -788,12 +788,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const {
             label,
             label: { parallel: parallelLabels },
-            scale,
             tick,
-            requestedRange,
         } = this;
-        const requestedRangeMin = Math.min(...requestedRange);
-        const requestedRangeMax = Math.max(...requestedRange);
         let labelAutoRotation = 0;
 
         const labelRotation = label.rotation ? normalizeAngle360(toRadians(label.rotation)) : 0;
@@ -802,18 +798,23 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // Flip if the axis rotation angle is in the top hemisphere.
         const regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
 
+        const autoRotation = parallelLabels ? (parallelFlipFlag * Math.PI) / 2 : regularFlipFlag === -1 ? Math.PI : 0;
+
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         this.fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
 
         // Update properties that affect the size of the axis labels and measure the labels
         const labelBboxes: Map<number, BBox | null> = new Map();
-        let labelCount = 0;
 
-        let halfFirstLabelLength = false;
-        let halfLastLabelLength = false;
-        const availableRange = requestedRangeMax - requestedRangeMin;
+        const labelX = sideFlag * (tick.size + label.padding);
+
+        const labelMatrix = new Matrix();
+        Matrix.updateTransformMatrix(labelMatrix, 1, 1, autoRotation, 0, 0);
+
+        let labelData: PointLabelDatum[] = [];
+
         const labelSelection = tickLineGroupSelection.selectByClass(Text).each((node, datum, index) => {
-            const { tick } = datum;
+            const { tick, translationY } = datum;
             node.fontStyle = label.fontStyle;
             node.fontWeight = label.fontWeight;
             node.fontSize = label.fontSize;
@@ -822,54 +823,44 @@ export class Axis<S extends Scale<D, number>, D = any> {
             node.text = this.formatTickDatum(tick, index);
 
             const userHidden = node.text === '' || node.text == undefined;
-            labelBboxes.set(index, userHidden ? null : node.computeBBox());
+
+            const bbox = node.computeBBox();
+            const { width, height } = bbox;
+
+            const translatedBBox = new BBox(labelX, translationY, 0, 0);
+            labelMatrix.transformBBox(translatedBBox, 0, bbox);
+
+            const { x = 0, y = 0 } = bbox;
+            bbox.width = width;
+            bbox.height = height;
+
+            labelBboxes.set(index, userHidden ? null : bbox);
 
             if (userHidden) {
                 return;
             }
-            labelCount++;
 
-            if (index === 0 && node.translationY === scale.range[0]) {
-                halfFirstLabelLength = true; // first label protrudes axis line
-            } else if (index === ticks.length - 1 && node.translationY === scale.range[1]) {
-                halfLastLabelLength = true; // last label protrudes axis line
-            }
+            labelData.push({
+                point: {
+                    x,
+                    y,
+                    size: 0,
+                },
+                label: {
+                    width,
+                    height,
+                    text: '',
+                },
+            });
         });
 
-        const labelX = sideFlag * (tick.size + label.padding);
-
-        const step = availableRange / labelCount;
-
-        const rotateLabels = (bboxes: Map<number, BBox | null>, parallelLabels: boolean) => {
-            let rotate = false;
-            const lastIdx = bboxes.size - 1;
-            const padding = 12;
-            for (let [i, bbox] of bboxes.entries()) {
-                if (bbox == null) {
-                    continue;
-                }
-
-                const divideBy = (i === 0 && halfFirstLabelLength) || (i === lastIdx && halfLastLabelLength) ? 2 : 1;
-                // When the labels are parallel to the axis line, use the width of the text to calculate the total length of all labels
-                const length = parallelLabels ? bbox.width / divideBy : bbox.height / divideBy;
-                const lengthWithPadding = length <= 0 ? 0 : length + padding;
-
-                if (lengthWithPadding > step) {
-                    rotate = true;
-                }
-            }
-            return rotate;
-        };
-
-        const rotate = rotateLabels(labelBboxes, parallelLabels);
+        const rotate = axisLabelsOverlap(labelData, 10);
 
         if (label.rotation === undefined && label.autoRotate === true && rotate) {
             // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`rotate` is `true`),
             // automatically rotate the labels
             labelAutoRotation = normalizeAngle360(toRadians(label.autoRotateAngle));
         }
-
-        const autoRotation = parallelLabels ? (parallelFlipFlag * Math.PI) / 2 : regularFlipFlag === -1 ? Math.PI : 0;
 
         const labelTextBaseline =
             parallelLabels && !labelRotation ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom') : 'middle';
@@ -889,15 +880,13 @@ export class Axis<S extends Scale<D, number>, D = any> {
             ? 'end'
             : 'start';
 
-        const labelData: PointLabelDatum[] = [];
-
         const combinedRotation = autoRotation + labelRotation + labelAutoRotation;
-        const labelRotationMatrix = new Matrix();
         if (combinedRotation) {
-            Matrix.updateTransformMatrix(labelRotationMatrix, 1, 1, combinedRotation, 0, 0);
+            Matrix.updateTransformMatrix(labelMatrix, 1, 1, combinedRotation, 0, 0);
         }
 
-        labelSelection.each((label, datum) => {
+        labelData = [];
+        labelSelection.each((label, datum, index) => {
             if (label.text === '' || label.text == undefined) {
                 label.visible = false; // hide empty labels
                 return;
@@ -920,12 +909,17 @@ export class Axis<S extends Scale<D, number>, D = any> {
             // take into account only the rotation and translation applied to individual label nodes to get the x y coordinates of the labels relative to each other
             // this makes label collision detection a lot simpler
 
-            const bbox: BBox = label.computeBBox();
+            const bbox = labelBboxes.get(index);
+            if (!bbox) {
+                return;
+            }
+
             const { width = 0, height = 0 } = bbox;
 
             const { translationY } = datum;
             const translatedBBox = new BBox(labelX, translationY, 0, 0);
-            labelRotationMatrix.transformBBox(translatedBBox, 0, bbox);
+            labelMatrix.transformBBox(translatedBBox, 0, bbox);
+
             const { x = 0, y = 0 } = bbox;
 
             labelData.push({
