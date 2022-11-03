@@ -65,11 +65,11 @@ export class ToolPanelFilterComp extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
         this.addInIcon('filter', this.eFilterIcon, this.column);
 
-        this.eFilterIcon.classList.toggle('ag-hidden', !this.isFilterActive());
-        this.eExpandChecked.classList.add('ag-hidden');
+        _.setDisplayed(this.eFilterIcon, this.isFilterActive());
+        _.setDisplayed(this.eExpandChecked, false);
 
         if (this.hideHeader) {
-            this.eFilterToolPanelHeader.classList.toggle('ag-hidden', true);
+            _.setDisplayed(this.eFilterToolPanelHeader, false);
             this.eFilterToolPanelHeader.removeAttribute('tabindex');
         } else {
             this.eFilterToolPanelHeader.setAttribute('tabindex', '0');
@@ -102,8 +102,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     private onFilterChanged(): void {
-        this.eFilterIcon.classList.toggle('ag-hidden', !this.isFilterActive());
-
+        _.setDisplayed(this.eFilterIcon, this.isFilterActive());
         this.dispatchEvent({ type: Column.EVENT_FILTER_CHANGED });
     }
 

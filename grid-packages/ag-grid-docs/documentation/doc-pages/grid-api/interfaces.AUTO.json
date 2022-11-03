@@ -6063,6 +6063,7 @@
       "setContainerHeight(height: number)": "void",
       "setRightSpacerFixedWidth(width: number)": "void",
       "setLeftSpacerFixedWidth(width: number)": "void",
+      "setDisplayed(displayed: boolean)": "void",
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "includeLeftSpacerScrollerCss(cssClass: string, include: boolean)": "void",
       "includeRightSpacerScrollerCss(cssClass: string, include: boolean)": "void"
@@ -6309,7 +6310,7 @@
     "meta": {},
     "type": {
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "addOrRemoveResizableCssClass(cssClassName: string, on: boolean)": "void",
+      "setResizableDisplayed(displayed: boolean)": "void",
       "setWidth(width: string)": "void",
       "setColId(id: string)": "void",
       "setAriaExpanded(expanded: 'true' | 'false' | undefined)": "void",
@@ -6355,7 +6356,7 @@
     "type": {
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "addOrRemoveBodyCssClass(cssClassName: string, on: boolean)": "void",
-      "addOrRemoveButtonWrapperCssClass(cssClassName: string, on: boolean)": "void",
+      "setButtonWrapperDisplayed(displayed: boolean)": "void",
       "setCompDetails(compDetails: UserCompDetails)": "void",
       "getFloatingFilterComp()": "AgPromise<IFloatingFilter> | null",
       "setWidth(width: string)": "void",

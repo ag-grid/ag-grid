@@ -3,6 +3,7 @@ import { exists } from './generic';
 import { isNonNullObject } from './object';
 import { hyphenToCamelCase } from './string';
 import { Constants } from '../constants/constants';
+import { setAriaHidden } from './aria';
 
 let rtlNegativeScroll: boolean;
 
@@ -41,12 +42,18 @@ export function isFocusableFormField(element: HTMLElement): boolean {
     return focusable;
 }
 
-export function setDisplayed(element: HTMLElement, displayed: boolean) {
+export function setDisplayed(element: HTMLElement, displayed: boolean, skipAriaHidden = false) {
     element.classList.toggle('ag-hidden', !displayed);
+    if (!skipAriaHidden) {
+        setAriaHidden(element, !displayed);
+    }
 }
 
-export function setVisible(element: HTMLElement, visible: boolean) {
+export function setVisible(element: HTMLElement, visible: boolean, skipAriaHidden = false) {
     element.classList.toggle('ag-invisible', !visible);
+    if (!skipAriaHidden) {
+        setAriaHidden(element, !visible);
+    }
 }
 
 export function setDisabled(element: HTMLElement, disabled: boolean) {

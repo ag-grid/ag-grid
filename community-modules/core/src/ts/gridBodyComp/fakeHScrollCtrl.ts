@@ -16,6 +16,7 @@ export interface IFakeHScrollComp {
     setContainerHeight(height: number): void;
     setRightSpacerFixedWidth(width: number): void;
     setLeftSpacerFixedWidth(width: number): void;
+    setDisplayed(displayed: boolean): void;
 
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     includeLeftSpacerScrollerCss(cssClass: string, include: boolean): void;
@@ -157,7 +158,7 @@ export class FakeHScrollCtrl extends BeanStub {
         this.view.setHeight(scrollContainerSize);
         this.view.setViewportHeight(scrollContainerSize);
         this.view.setContainerHeight(scrollContainerSize);
-        this.view.addOrRemoveCssClass('ag-hidden', !hScrollShowing);
+        this.view.setDisplayed(hScrollShowing);
     }
 
     public getViewport(): HTMLElement {

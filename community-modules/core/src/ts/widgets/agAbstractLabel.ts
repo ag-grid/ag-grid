@@ -1,6 +1,6 @@
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
-import { clearElement, setDisabled, setElementWidth } from "../utils/dom";
+import { clearElement, setDisabled, setDisplayed, setElementWidth } from "../utils/dom";
 import { setAriaRole } from "../utils/aria";
 
 export type LabelAlignment = 'left' | 'right' | 'top';
@@ -60,10 +60,10 @@ export abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabel> exten
         }
 
         if (this.label === '') {
-            this.eLabel.classList.add('ag-hidden');
+            setDisplayed(this.eLabel, false);
             setAriaRole(this.eLabel, 'presentation');
         } else {
-            this.eLabel.classList.remove('ag-hidden');
+            setDisplayed(this.eLabel, true);
             setAriaRole(this.eLabel, null);
         }
     }

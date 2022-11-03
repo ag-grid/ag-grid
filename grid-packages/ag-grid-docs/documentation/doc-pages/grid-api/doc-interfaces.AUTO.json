@@ -10656,6 +10656,13 @@
         "optional": false
       }
     },
+    "setDisplayed": {
+      "type": {
+        "arguments": { "displayed": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "addOrRemoveCssClass": {
       "type": {
         "arguments": { "cssClassName": "string", "on": "boolean" },
@@ -11186,9 +11193,9 @@
         "optional": false
       }
     },
-    "addOrRemoveResizableCssClass": {
+    "setResizableDisplayed": {
       "type": {
-        "arguments": { "cssClassName": "string", "on": "boolean" },
+        "arguments": { "displayed": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -11298,9 +11305,9 @@
         "optional": false
       }
     },
-    "addOrRemoveButtonWrapperCssClass": {
+    "setButtonWrapperDisplayed": {
       "type": {
-        "arguments": { "cssClassName": "string", "on": "boolean" },
+        "arguments": { "displayed": "boolean" },
         "returnType": "void",
         "optional": false
       }

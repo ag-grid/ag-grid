@@ -30,7 +30,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
             setColId: id => setColId(id),
             setTitle: title => setTitle(title),
             setUserCompDetails: compDetails => setUserCompDetails(compDetails),
-            addOrRemoveResizableCssClass: (name, on) => setResizableCssClasses(prev => prev.setClass(name, on)),
+            setResizableDisplayed: (displayed) => setResizableCssClasses(prev => prev.setClass('ag-hidden', !displayed)),
             setAriaExpanded: expanded => setAriaExpanded(expanded)
         };
 

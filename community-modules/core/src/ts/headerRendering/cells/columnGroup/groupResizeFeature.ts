@@ -40,7 +40,7 @@ export class GroupResizeFeature extends BeanStub {
     private postConstruct(): void {
 
         if (!this.columnGroup.isResizable()) {
-            this.comp.addOrRemoveResizableCssClass('ag-hidden', true);
+            this.comp.setResizableDisplayed(false);
             return;
         }
 

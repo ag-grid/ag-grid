@@ -308,19 +308,19 @@ export class Component extends BeanStub {
         return this.displayed;
     }
 
-    public setVisible(visible: boolean): void {
+    public setVisible(visible: boolean, skipAriaHidden = false): void {
         if (visible !== this.visible) {
             this.visible = visible;
 
-            setVisible(this.eGui, visible);
+            setVisible(this.eGui, visible, skipAriaHidden);
         }
     }
 
-    public setDisplayed(displayed: boolean): void {
+    public setDisplayed(displayed: boolean, skipAriaHidden = false): void {
         if (displayed !== this.displayed) {
             this.displayed = displayed;
 
-            setDisplayed(this.eGui, displayed);
+            setDisplayed(this.eGui, displayed, skipAriaHidden);
 
             const event: VisibleChangedEvent = {
                 type: Component.EVENT_DISPLAYED_CHANGED,

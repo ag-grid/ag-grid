@@ -97,18 +97,18 @@ export class SortIndicatorComp extends Component {
 
         if (this.eSortAsc) {
             const isAscending = sortDirection === 'asc';
-            this.eSortAsc.classList.toggle('ag-hidden', !isAscending);
+            setDisplayed(this.eSortAsc, isAscending);
         }
 
         if (this.eSortDesc) {
             const isDescending = sortDirection === 'desc';
-            this.eSortDesc.classList.toggle('ag-hidden', !isDescending);
+            setDisplayed(this.eSortDesc, isDescending);
         }
 
         if (this.eSortNone) {
             const alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
             const isNone = sortDirection === null || sortDirection === undefined;
-            this.eSortNone.classList.toggle('ag-hidden', (alwaysHideNoSort || !isNone));
+            setDisplayed(this.eSortNone, !alwaysHideNoSort && isNone);
         }
     }
 
@@ -129,7 +129,7 @@ export class SortIndicatorComp extends Component {
     private updateMultiSortIndicator() {
         if (this.eSortMixed) {
             const isMixedSort = this.sortController.getDisplaySortForColumn(this.column) === 'mixed';
-            this.eSortMixed.classList.toggle('ag-hidden', !isMixedSort);
+            setDisplayed(this.eSortMixed, isMixedSort);
         }
     }
 

@@ -1,6 +1,5 @@
 import { HeaderGroupCellCtrl, IHeaderGroupCellComp, UserCompDetails } from 'ag-grid-community';
-import { createEffect, createMemo, createSignal, onMount, useContext } from 'solid-js';
-import { BeansContext } from '../core/beansContext';
+import { createEffect, createMemo, createSignal, onMount } from 'solid-js';
 import { CssClasses } from '../core/utils';
 import UserComp from '../userComps/userComp';
 
@@ -27,7 +26,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
             setColId: id => setColId(id),
             setTitle: title => setTitle(title),
             setUserCompDetails: compDetails => setUserCompDetails(compDetails),
-            addOrRemoveResizableCssClass: (name, on) => setResizableCssClasses(prev => prev.setClass(name, on)),
+            setResizableDisplayed: (displayed) => setResizableCssClasses(prev => prev.setClass('ag-hidden', !displayed)),
             setAriaExpanded: expanded => setAriaExpanded(expanded)
         };
 

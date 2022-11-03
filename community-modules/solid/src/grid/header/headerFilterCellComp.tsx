@@ -45,7 +45,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
         const compProxy: IHeaderFilterCellComp = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             addOrRemoveBodyCssClass: (name, on) => setBodyCssClasses(prev => prev.setClass(name, on)),
-            addOrRemoveButtonWrapperCssClass: (name, on) => setButtonWrapperCssClasses(prev => prev.setClass(name, on)),
+            setButtonWrapperDisplayed: (displayed) => setButtonWrapperCssClasses(prev => prev.setClass('ag-hidden', !displayed)),
             setWidth: width => setWidth(width),
             setCompDetails: compDetails => setUserCompDetails(compDetails),
             getFloatingFilterComp: ()=> userCompPromise,
