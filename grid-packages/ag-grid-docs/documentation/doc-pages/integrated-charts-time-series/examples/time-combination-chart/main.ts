@@ -1,10 +1,13 @@
 import {
   FirstDataRenderedEvent,
   Grid,
-  GridOptions, ValueParserParams
+  GridOptions,
+  ValueParserParams,
+  AgCartesianSeriesTooltipRendererParams,
+  AgAxisLabelFormatterParams,
 } from '@ag-grid-community/core';
 import { getData } from "./data";
-
+declare var moment: any;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -40,19 +43,33 @@ const gridOptions: GridOptions = {
           title: {
             enabled: true
           }
-        }
-      }
+        },
+        time: {
+          label: {
+            rotation: 45,
+            formatter: (params: AgAxisLabelFormatterParams) => {
+              return moment(new Date(params.value)).format('DD MMM')
+            },
+          },
+        },
+      },
     },
     column: {
       series: {
         strokeWidth: 2,
         fillOpacity: 0.8,
+        tooltip: {
+          renderer: chartTooltipRenderer,
+        },
       },
     },
     line: {
       series: {
         strokeWidth: 5,
         strokeOpacity: 0.8,
+        tooltip: {
+          renderer: chartTooltipRenderer,
+        },
       },
     },
   },
@@ -83,6 +100,12 @@ function numberParser(params: ValueParserParams) {
   return parseFloat(value);
 }
 
+function chartTooltipRenderer({ xValue, yValue }: AgCartesianSeriesTooltipRendererParams) {
+  xValue = xValue instanceof Date ? xValue : new Date(xValue);
+  return {
+    content: `${moment(xValue).format('DD MMM')}: ${yValue}`,
+  };
+}
 
 // set up the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

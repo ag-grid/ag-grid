@@ -59,6 +59,16 @@ const gridOptions: GridOptions = {
           },
         },
       },
+      series: {
+        tooltip: {
+          renderer: ({ xValue, yValue }) => {
+            xValue = xValue instanceof Date ? xValue : new Date(xValue);
+            return {
+              content: `${moment(xValue).format('DD MMM')}: ${Math.round(yValue)}°C`,
+            };
+          },
+        },
+      },
     },
   },
   getChartToolbarItems: getChartToolbarItems,
