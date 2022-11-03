@@ -65,7 +65,7 @@ export class ToolPanelFilterComp extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
         this.addInIcon('filter', this.eFilterIcon, this.column);
 
-        _.setDisplayed(this.eFilterIcon, this.isFilterActive());
+        _.setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
         _.setDisplayed(this.eExpandChecked, false);
 
         if (this.hideHeader) {
@@ -102,7 +102,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     private onFilterChanged(): void {
-        _.setDisplayed(this.eFilterIcon, this.isFilterActive());
+        _.setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
         this.dispatchEvent({ type: Column.EVENT_FILTER_CHANGED });
     }
 

@@ -521,7 +521,7 @@ export abstract class BaseDropZonePanel extends Component {
     private addIconAndTitleToGui(): void {
         const eGroupIcon = this.params.icon;
         const eTitleBar = document.createElement('div');
-        eTitleBar.setAttribute('aria-hidden', 'true');
+        _.setAriaHidden(eTitleBar, true);
         this.addElementClasses(eTitleBar, 'title-bar');
         this.addElementClasses(eGroupIcon, 'icon');
         this.addOrRemoveCssClass('ag-column-drop-empty', this.isExistingColumnsEmpty());

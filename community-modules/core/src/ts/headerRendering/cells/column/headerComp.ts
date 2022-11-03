@@ -344,6 +344,6 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private onFilterChanged(): void {
         const filterPresent = this.params.column.isFilterActive();
-        setDisplayed(this.eFilter, filterPresent);
+        setDisplayed(this.eFilter, filterPresent, { skipAriaHidden: true });
     }
 }

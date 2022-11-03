@@ -1,12 +1,13 @@
-import { Constants, HeaderRowContainerCtrl, HeaderRowCtrl, IHeaderRowContainerComp } from '@ag-grid-community/core';
+import { ColumnPinnedType, Constants, HeaderRowContainerCtrl, HeaderRowCtrl, IHeaderRowContainerComp } from '@ag-grid-community/core';
 import { createMemo, createSignal, For, onCleanup, onMount, useContext } from 'solid-js';
 import { BeansContext } from '../core/beansContext';
 import { CssClasses } from '../core/utils';
 import HeaderRowComp from './headerRowComp';
 
-const HeaderRowContainerComp = (props: {pinned: string | null})=> {
+const HeaderRowContainerComp = (props: {pinned: ColumnPinnedType | null})=> {
 
     const [getCssClasses, setCssClasses] = createSignal<CssClasses>(new CssClasses());
+    const [getAriaHidden, setAriaHidden] = createSignal<"true" | "false">("false");
     const [getCenterContainerWidth, setCenterContainerWidth] = createSignal<string>();
     const [getCenterContainerTransform, setCenterContainerTransform] = createSignal<string>();
     const [getPinnedContainerWidth, setPinnedContainerWidth] = createSignal<string>();
@@ -28,7 +29,10 @@ const HeaderRowContainerComp = (props: {pinned: string | null})=> {
     onMount(() => {
 
         const compProxy: IHeaderRowContainerComp = {
-            addOrRemoveCssClass: (name, on) => setCssClasses(getCssClasses().setClass(name, on)),
+            setDisplayed: (displayed) => {
+                setCssClasses(getCssClasses().setClass('ag-hidden', !displayed));
+                setAriaHidden(!displayed ? 'true' : 'false')
+            },
             setCtrls: ctrls => setHeaderRowCtrls(ctrls),
 
             // centre only
@@ -67,13 +71,13 @@ const HeaderRowContainerComp = (props: {pinned: string | null})=> {
         <>
             { 
                 pinnedLeft && 
-                <div ref={eGui!} class={"ag-pinned-left-header " + getClassName()} role="presentation" style={ePinnedStyle()}>
+                <div ref={eGui!} class={"ag-pinned-left-header " + getClassName()} aria-hidden={getAriaHidden()} role="presentation" style={ePinnedStyle()}>
                     { insertRowsJsx() }
                 </div>
             }
             { 
                 pinnedRight && 
-                <div ref={eGui!} class={"ag-pinned-right-header " + getClassName()} role="presentation" style={ePinnedStyle()}>
+                <div ref={eGui!} class={"ag-pinned-right-header " + getClassName()} aria-hidden={getAriaHidden()} role="presentation" style={ePinnedStyle()}>
                 { insertRowsJsx() }
             </div>
             }

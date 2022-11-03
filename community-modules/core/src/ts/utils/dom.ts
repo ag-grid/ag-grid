@@ -42,14 +42,16 @@ export function isFocusableFormField(element: HTMLElement): boolean {
     return focusable;
 }
 
-export function setDisplayed(element: HTMLElement, displayed: boolean, skipAriaHidden = false) {
+export function setDisplayed(element: HTMLElement, displayed: boolean, options: { skipAriaHidden?: boolean } = {}) {
+    const  { skipAriaHidden } = options;
     element.classList.toggle('ag-hidden', !displayed);
     if (!skipAriaHidden) {
         setAriaHidden(element, !displayed);
     }
 }
 
-export function setVisible(element: HTMLElement, visible: boolean, skipAriaHidden = false) {
+export function setVisible(element: HTMLElement, visible: boolean, options: { skipAriaHidden?: boolean } = {}) {
+    const  { skipAriaHidden } = options;
     element.classList.toggle('ag-invisible', !visible);
     if (!skipAriaHidden) {
         setAriaHidden(element, !visible);

@@ -7,6 +7,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
 
     const [getCssClasses, setCssClasses] = createSignal<CssClasses>(new CssClasses());
     const [getCssResizableClasses, setResizableCssClasses] = createSignal<CssClasses>(new CssClasses());
+    const [getResizableAriaHidden, setResizableAriaHidden] = createSignal<"true" | "false">("false");
     const [getWidth, setWidth] = createSignal<string>();
     const [getTitle, setTitle] = createSignal<string>();
     const [getColId, setColId] = createSignal<string>();
@@ -26,7 +27,10 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
             setColId: id => setColId(id),
             setTitle: title => setTitle(title),
             setUserCompDetails: compDetails => setUserCompDetails(compDetails),
-            setResizableDisplayed: (displayed) => setResizableCssClasses(prev => prev.setClass('ag-hidden', !displayed)),
+            setResizableDisplayed: (displayed) => {
+                setResizableCssClasses(prev => prev.setClass('ag-hidden', !displayed));
+                setResizableAriaHidden(!displayed ? "true" : "false");
+            },
             setAriaExpanded: expanded => setAriaExpanded(expanded)
         };
 
@@ -62,7 +66,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
             { getUserCompDetails() 
                 && <UserComp compDetails={getUserCompDetails()!} /> }
 
-            <div ref={eResize!} class={getResizableClassName()}></div>
+            <div ref={eResize!} aria-hidden={getResizableAriaHidden()} class={getResizableClassName()}></div>
         </div>
     );
 };

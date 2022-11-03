@@ -69,7 +69,7 @@ export class SelectAllFeature extends BeanStub {
 
     private showOrHideSelectAll(): void {
         this.cbSelectAllVisible = this.isCheckboxSelection();
-        this.cbSelectAll.setDisplayed(this.cbSelectAllVisible);
+        this.cbSelectAll.setDisplayed(this.cbSelectAllVisible, { skipAriaHidden: true });
 
         if (this.cbSelectAllVisible) {
             // in case user is trying this feature with the wrong model type

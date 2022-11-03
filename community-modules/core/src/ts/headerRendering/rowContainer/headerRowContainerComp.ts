@@ -11,9 +11,9 @@ import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowCont
 
 export class HeaderRowContainerComp extends Component {
 
-    private static PINNED_LEFT_TEMPLATE =  /* html */ `<div class="ag-pinned-left-header" role="presentation"/>`;
+    private static PINNED_LEFT_TEMPLATE =  /* html */ `<div class="ag-pinned-left-header" role="presentation"></div>`;
 
-    private static PINNED_RIGHT_TEMPLATE =  /* html */ `<div class="ag-pinned-right-header" role="presentation"/>`;
+    private static PINNED_RIGHT_TEMPLATE =  /* html */ `<div class="ag-pinned-right-header" role="presentation"></div>`;
 
     private static CENTER_TEMPLATE =  /* html */
         `<div class="ag-header-viewport" role="presentation">
@@ -39,7 +39,7 @@ export class HeaderRowContainerComp extends Component {
         this.selectAndSetTemplate();
 
         const compProxy: IHeaderRowContainerComp = {
-            addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
+            setDisplayed: displayed => this.setDisplayed(displayed),
             setCtrls: ctrls => this.setCtrls(ctrls),
 
             // only gets called for center section

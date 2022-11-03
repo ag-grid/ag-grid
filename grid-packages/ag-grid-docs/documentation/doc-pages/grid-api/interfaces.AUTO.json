@@ -6429,7 +6429,7 @@
       "setCenterWidth(width: string)": "void",
       "setContainerTransform(transform: string)": "void",
       "setPinnedContainerWidth(width: string)": "void",
-      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
+      "setDisplayed(displayed: boolean)": "void",
       "setCtrls(ctrls: HeaderRowCtrl[])": "void"
     }
   },

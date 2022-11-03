@@ -11499,9 +11499,9 @@
         "optional": false
       }
     },
-    "addOrRemoveCssClass": {
+    "setDisplayed": {
       "type": {
-        "arguments": { "cssClassName": "string", "on": "boolean" },
+        "arguments": { "displayed": "boolean" },
         "returnType": "void",
         "optional": false
       }
