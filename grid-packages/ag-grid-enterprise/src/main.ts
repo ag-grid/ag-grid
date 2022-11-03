@@ -42,7 +42,7 @@ export { getMultipleSheetsAsExcel, exportMultipleSheetsAsExcel } from '@ag-grid-
 
 /* COMMUNITY_EXPORTS_START_DO_NOT_DELETE */
 export { ColumnFactory } from "ag-grid-community";
-export { ColumnModel, ColumnState, ColumnStateParams, ApplyColumnStateParams } from "ag-grid-community";
+export { ColumnModel, ColumnState, ColumnStateParams, ApplyColumnStateParams, ISizeColumnsToFitParams, IColumnLimit } from "ag-grid-community";
 export { ColumnKeyCreator } from "ag-grid-community";
 export { ColumnUtils } from "ag-grid-community";
 export { DisplayedGroupCreator } from "ag-grid-community";
@@ -136,7 +136,7 @@ export { CheckboxSelectionComponent } from "ag-grid-community";
 export { CellComp } from "ag-grid-community";
 export { CellCtrl, ICellComp } from "ag-grid-community";
 export { RowCtrl, IRowComp } from "ag-grid-community";
-export { RowRenderer } from "ag-grid-community";
+export { RowRenderer, FlashCellsParams, GetCellRendererInstancesParams, RefreshCellsParams } from "ag-grid-community";
 export { ValueFormatterService } from "ag-grid-community";
 export { ILoadingCellRenderer, ILoadingCellRendererComp, ILoadingCellRendererParams } from "ag-grid-community";
 export { CssClassManager } from "ag-grid-community";
@@ -186,7 +186,7 @@ export { PopupService, AgPopup } from "ag-grid-community";
 export { TouchListener, TapEvent, LongTapEvent } from "ag-grid-community";
 export { VirtualList, VirtualListModel } from "ag-grid-community";
 export { CellRange, CellRangeParams, CellRangeType, RangeSelection, AddRangeSelectionParams, IRangeService, ISelectionHandle, SelectionHandleType, ISelectionHandleFactory } from "ag-grid-community";
-export { IChartService, ChartDownloadParams, OpenChartToolPanelParams, CloseChartToolPanelParams, ChartModel, GetChartImageDataUrlParams, ChartModelType, } from "ag-grid-community";
+export { IChartService, ChartDownloadParams, OpenChartToolPanelParams, CloseChartToolPanelParams, ChartModel, GetChartImageDataUrlParams, ChartModelType, CreateRangeChartParams, ChartParamsCellRange, CreatePivotChartParams, CreateCrossFilterChartParams } from "ag-grid-community";
 export { IDetailCellRendererParams, GetDetailRowData, GetDetailRowDataParams, IDetailCellRenderer, IDetailCellRendererCtrl } from "ag-grid-community";
 export { CsvExportParams, CsvCell, CsvCellData, CsvCustomContent, ExportParams, PackageFileParams, ProcessCellForExportParams, ProcessHeaderForExportParams, ProcessGroupHeaderForExportParams, ProcessRowGroupForExportParams, ShouldRowBeSkippedParams, BaseExportParams } from "ag-grid-community";
 export { HeaderElement, PrefixedXmlAttributes, XmlElement } from "ag-grid-community";
@@ -198,7 +198,7 @@ export { AlignedGridsService } from "ag-grid-community";
 export { Constants } from "ag-grid-community";
 export { KeyCode } from "ag-grid-community";
 export { Grid, GridParams, GridCoreCreator } from "ag-grid-community";
-export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, ChartParamsCellRange, CreatePivotChartParams, CreateCrossFilterChartParams } from "ag-grid-community";
+export { GridApi, DetailGridInfo, StartEditingCellParams } from "ag-grid-community";
 export { Events } from "ag-grid-community";
 export { FocusService } from "ag-grid-community";
 export { defaultGroupComparator } from "ag-grid-community";
