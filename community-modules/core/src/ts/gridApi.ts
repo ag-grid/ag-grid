@@ -1,5 +1,6 @@
 import { AlignedGridsService } from "./alignedGridsService";
-import { ColumnModel } from "./columns/columnModel";
+import { ColumnApi } from "./columns/columnApi";
+import { ColumnModel, ISizeColumnsToFitParams } from "./columns/columnModel";
 import { FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 import { Constants } from "./constants/constants";
 import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
@@ -51,13 +52,13 @@ import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
-import { CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams, DetailGridInfo, FlashCellsParams, GetCellEditorInstancesParams, GetCellRendererInstancesParams, ISizeColumnsToFitParams, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams } from "./iGridApi";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { ICellEditor } from "./interfaces/iCellEditor";
 import {
     ChartDownloadParams, ChartModel, CloseChartToolPanelParams, GetChartImageDataUrlParams,
-    IChartService, OpenChartToolPanelParams
+    IChartService, OpenChartToolPanelParams,
+    CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams,
 } from './interfaces/IChartService';
 import { ClientSideRowModelSteps, IClientSideRowModel, RefreshModelParams } from "./interfaces/iClientSideRowModel";
 import { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from "./interfaces/iClipboardService";
@@ -100,7 +101,7 @@ import { PaginationProxy } from "./pagination/paginationProxy";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
-import { RowRenderer } from "./rendering/rowRenderer";
+import { FlashCellsParams, GetCellEditorInstancesParams, GetCellRendererInstancesParams, RedrawRowsParams, RefreshCellsParams, RowRenderer } from "./rendering/rowRenderer";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { SelectionService } from "./selectionService";
 import { SortController } from "./sortController";
@@ -112,7 +113,30 @@ import { camelCaseToHumanText } from "./utils/string";
 import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
 
+export interface DetailGridInfo {
+    /**
+     * Id of the detail grid, the format is `detail_<ROW_ID>`,
+     * where ROW_ID is the `id` of the parent row.
+     */
+    id: string;
+    /** Grid api of the detail grid. */
+    api?: GridApi;
+    /** Column api of the detail grid. */
+    columnApi?: ColumnApi;
+}
 
+export interface StartEditingCellParams {
+    /** The row index of the row to start editing */
+    rowIndex: number;
+    /** The column key of the row to start editing */
+    colKey: string | Column;
+    /** Set to `'top'` or `'bottom'` to start editing a pinned row */
+    rowPinned?: RowPinnedType;
+    /** The key to pass to the cell editor */
+    key?: string;
+    /** The charPress to pass to the cell editor */
+    charPress?: string;
+}
 
 export function unwrapUserComp<T>(comp: T): T {
     const compAsAny = comp as any;

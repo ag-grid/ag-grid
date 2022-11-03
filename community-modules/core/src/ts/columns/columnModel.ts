@@ -37,7 +37,6 @@ import { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { AutoGroupColService } from './autoGroupColService';
 import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
-import { IColumnLimit, ISizeColumnsToFitParams } from '../gridApi';
 import { Constants } from '../constants/constants';
 import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
@@ -97,6 +96,24 @@ export interface ApplyColumnStateParams {
     applyOrder?: boolean;
     /** State to apply to columns where state is missing for those columns */
     defaultState?: ColumnStateParams;
+}
+
+export interface ISizeColumnsToFitParams {
+    /** Defines a default minimum width for every column (does not override the column minimum width) */
+    defaultMinWidth?: number,
+    /** Defines a default maximum width for every column (does not override the column maximum width) */
+    defaultMaxWidth?: number,
+    /** Provides a minimum and/or maximum width to specific columns */
+    columnLimits?: IColumnLimit[]
+}
+
+export interface IColumnLimit {
+    /** Selector for the column to which these dimension limits will apply */
+    key: Column | string,
+    /** Defines a minimum width for this column (does not override the column minimum width) */
+    minWidth?: number,
+    /** Defines a maximum width for this column (does not override the column maximum width) */
+    maxWidth?: number
 }
 
 @Bean('columnModel')

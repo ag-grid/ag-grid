@@ -4,7 +4,7 @@ import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Events } from "../eventKeys";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
 import { CtrlsService } from "../ctrlsService";
-import { ColumnModel } from "../columns/columnModel";
+import { ColumnModel, ISizeColumnsToFitParams } from "../columns/columnModel";
 import { ScrollVisibleService } from "./scrollVisibleService";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
@@ -19,7 +19,6 @@ import { PopupService } from "../widgets/popupService";
 import { MouseEventService } from "./mouseEventService";
 import { IRowModel } from "../interfaces/iRowModel";
 import { Constants } from "../constants/constants";
-import { ISizeColumnsToFitParams } from "../gridApi";
 import { TouchListener, LongTapEvent } from "../widgets/touchListener";
 
 export enum RowAnimationCssClasses {

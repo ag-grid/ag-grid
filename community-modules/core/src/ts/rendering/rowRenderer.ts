@@ -17,7 +17,6 @@ import { FocusService } from "../focusService";
 import { CellPosition } from "../entities/cellPosition";
 import { BeanStub } from "../context/beanStub";
 import { PaginationProxy } from "../pagination/paginationProxy";
-import { FlashCellsParams, GetCellRendererInstancesParams, RefreshCellsParams } from "../gridApi";
 import { Beans } from "./beans";
 import { RowContainerHeightService } from "./rowContainerHeightService";
 import { ICellRenderer } from "./cellRenderers/iCellRenderer";
@@ -44,6 +43,34 @@ export interface RowCtrlMap {
 
 interface RowNodeMap {
     [id: string]: RowNode;
+}
+
+export interface GetCellsParams<TData = any> {
+    /** Optional list of row nodes to restrict operation to */
+    rowNodes?: RowNode<TData>[];
+    /** Optional list of columns to restrict operation to */
+    columns?: (string | Column)[];
+}
+
+export interface RefreshCellsParams<TData = any> extends GetCellsParams<TData> {
+    /** Skip change detection, refresh everything. */
+    force?: boolean;
+    /** Skip cell flashing, if cell flashing is enabled. */
+    suppressFlash?: boolean;
+}
+
+export interface FlashCellsParams<TData = any> extends GetCellsParams<TData> {
+    flashDelay?: number;
+    fadeDelay?: number;
+}
+
+export interface GetCellRendererInstancesParams<TData = any> extends GetCellsParams<TData> { }
+
+export interface GetCellEditorInstancesParams<TData = any> extends GetCellsParams<TData> { }
+
+export interface RedrawRowsParams<TData = any> {
+    /** Row nodes to redraw */
+    rowNodes?: RowNode<TData>[];
 }
 
 @Bean("rowRenderer")
