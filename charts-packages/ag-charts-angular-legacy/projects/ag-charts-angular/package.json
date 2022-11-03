@@ -19,8 +19,8 @@
   },
   "homepage": "https://www.ag-grid.com/",
   "peerDependencies": {
-    "@angular/common": ">=8.0.0",
-    "@angular/core": ">=8.0.0",
+    "@angular/common": ">=10.0.0",
+    "@angular/core": ">=10.0.0",
     "ag-charts-community": "~6.2.1"
   }
 }
