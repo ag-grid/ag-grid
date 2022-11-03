@@ -14,7 +14,11 @@ const arg = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`)).s
 const PORT = Number(arg('port'));
 const DEBOUNCE = Number(arg('debounce'));
 const USE_SOURCEMAPS = arg('sourcemap') === 'true';
-const ES_VERSION = arg('es') === '2015' ? 'ES2015' : arg('es') === 'next' ? 'ESNext' : null;
+const ES_VERSION_MAP = {
+    2015: 'ES2015',
+    next: 'ESNext',
+};
+const ES_VERSION = ES_VERSION_MAP[arg('es')] ?? null;
 
 const ROOT_DIR = '../..';
 const SRC_ENTRY = '../ag-charts-community/src/main.ts';

@@ -3,7 +3,11 @@ const glob = require('glob');
 
 function openURLInBrowser(url) {
     const { platform } = process;
-    const start = platform == 'darwin' ? 'open' : platform == 'win32' ? 'start' : 'xdg-open';
+    const mappings = {
+        darwin: 'open',
+        win32: 'start',
+    };
+    const start = mappings[platform] ?? 'xdg-open';
     exec(`${start} ${url}`);
 }
 

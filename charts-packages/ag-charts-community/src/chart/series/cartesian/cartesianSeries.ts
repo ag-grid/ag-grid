@@ -267,11 +267,12 @@ export abstract class CartesianSeries<
                 zIndexSubOrder: [this.id, 10000 + subGroupId],
             });
 
-            const pathParentGroup = pickGroupIncludes.includes('mainPath')
-                ? pickGroup
-                : renderLayerPerSubSeries
-                ? group
-                : seriesGroup;
+            let pathParentGroup = seriesGroup; // Default group for paths.
+            if (pickGroupIncludes.includes('mainPath')) {
+                pathParentGroup = pickGroup;
+            } else if (renderLayerPerSubSeries) {
+                pathParentGroup = group;
+            }
             const datumParentGroup = pickGroupIncludes.includes('datumNodes') ? pickGroup : group;
 
             seriesGroup.appendChild(group);

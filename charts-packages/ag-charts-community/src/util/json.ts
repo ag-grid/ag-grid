@@ -171,7 +171,11 @@ export function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T {
         if (finalValue instanceof Array) {
             return finalValue.map((v) => {
                 const type = classify(v);
-                return type === 'array' ? jsonMerge([[], v], opts) : type === 'object' ? jsonMerge([{}, v], opts) : v;
+
+                if (type === 'array') return jsonMerge([[], v], opts);
+                if (type === 'object') return jsonMerge([{}, v], opts);
+
+                return v;
             }) as any;
         }
 

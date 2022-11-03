@@ -1,13 +1,12 @@
 import { Group } from '../../scene/group';
 import { LegendDatum } from '../legend';
-import { Observable } from '../../util/observable';
+import { Observable, TypedEvent } from '../../util/observable';
 import { ChartAxis, ChartAxisDirection } from '../chartAxis';
 import { Chart } from '../chart';
 import { createId } from '../../util/id';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
 import { Deprecated, createDeprecationWarning } from '../../util/deprecation';
-import { TypedEvent } from '../../util/observable';
 import { BOOLEAN, OPT_BOOLEAN, OPT_NUMBER, OPT_COLOR_STRING, STRING, Validate } from '../../util/validation';
 import { PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
