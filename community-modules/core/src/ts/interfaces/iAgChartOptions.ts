@@ -393,10 +393,10 @@ export interface AgChartBackground {
     fill?: CssColor;
 }
 
-type AgChartEvent<T extends string> = {
+interface AgChartEvent<T extends string> {
     type: T;
     event: Event;
-}
+};
 
 export interface AgNodeClickEvent extends AgChartEvent<'seriesNodeClick'> {
     /** Event type. */
@@ -1095,7 +1095,7 @@ export interface AgAreaSeriesOptions<DatumType = any> extends AgBaseSeriesOption
     stacked?: boolean;
 }
 
-export type AgBarSeriesLabelPlacement =  'inside' | 'outside';
+export type AgBarSeriesLabelPlacement = 'inside' | 'outside';
 
 export interface AgBarSeriesLabelOptions extends AgCartesianSeriesLabelOptions {
     /** Where to render series labels relative to the segments. */
@@ -1281,17 +1281,8 @@ export interface AgPieSeriesFormatterParams<DatumType> {
     readonly strokeWidth: PixelSize;
     readonly highlighted: boolean;
     readonly angleKey: string;
-    readonly angleValue: any;
-    readonly angleName: string;
     readonly radiusKey?: string;
-    readonly radiusValue?: any;
-    readonly radiusName?: string;
-    readonly calloutLabelKey?: string;
-    readonly calloutLabelValue?: any;
-    readonly calloutLabelName?: string;
     readonly sectorLabelKey?: string;
-    readonly sectorLabelValue?: any;
-    readonly sectorLabelName?: string;
     readonly seriesId: string;
 }
 

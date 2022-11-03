@@ -393,10 +393,10 @@ export interface AgChartBackground {
     fill?: CssColor;
 }
 
-type AgChartEvent<T extends string> = {
+interface AgChartEvent<T extends string> {
     type: T;
     event: Event;
-};
+}
 
 export interface AgNodeClickEvent extends AgChartEvent<'seriesNodeClick'> {
     /** Event type. */

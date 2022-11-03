@@ -7530,38 +7530,12 @@
     }
   },
   "AgChartEvent": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T extends string"] },
-    "type": "{ type: T; event: Event; }"
+    "meta": { "typeParams": ["T extends string"] },
+    "type": { "type": "T", "event": "Event" }
   },
   "AgNodeClickEvent": {
     "meta": {},
     "type": {
-      "0": "{",
-      "1": " ",
-      "2": "t",
-      "3": "y",
-      "4": "p",
-      "5": "e",
-      "6": ":",
-      "7": " ",
-      "8": "T",
-      "9": ";",
-      "10": " ",
-      "11": "e",
-      "12": "v",
-      "13": "e",
-      "14": "n",
-      "15": "t",
-      "16": ":",
-      "17": " ",
-      "18": "E",
-      "19": "v",
-      "20": "e",
-      "21": "n",
-      "22": "t",
-      "23": ";",
-      "24": " ",
-      "25": "}",
       "type": "'seriesNodeClick'",
       "series": "any",
       "seriesId": "string",
@@ -7574,7 +7548,8 @@
       "angleKey?": "string",
       "calloutLabelKey?": "string",
       "sectorLabelKey?": "string",
-      "radiusKey?": "string"
+      "radiusKey?": "string",
+      "event": "Event"
     },
     "docs": {
       "type": "/** Event type. */",
@@ -7594,34 +7569,7 @@
   },
   "AgChartClickEvent": {
     "meta": {},
-    "type": {
-      "0": "{",
-      "1": " ",
-      "2": "t",
-      "3": "y",
-      "4": "p",
-      "5": "e",
-      "6": ":",
-      "7": " ",
-      "8": "T",
-      "9": ";",
-      "10": " ",
-      "11": "e",
-      "12": "v",
-      "13": "e",
-      "14": "n",
-      "15": "t",
-      "16": ":",
-      "17": " ",
-      "18": "E",
-      "19": "v",
-      "20": "e",
-      "21": "n",
-      "22": "t",
-      "23": ";",
-      "24": " ",
-      "25": "}"
-    }
+    "type": { "type": "T", "event": "Event" }
   },
   "AgBaseChartListeners": {
     "meta": {},
@@ -8969,17 +8917,8 @@
       "strokeWidth": "PixelSize",
       "highlighted": "boolean",
       "angleKey": "string",
-      "angleValue": "any",
-      "angleName": "string",
       "radiusKey?": "string",
-      "radiusValue?": "any",
-      "radiusName?": "string",
-      "calloutLabelKey?": "string",
-      "calloutLabelValue?": "any",
-      "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
-      "sectorLabelValue?": "any",
-      "sectorLabelName?": "string",
       "seriesId": "string"
     }
   },

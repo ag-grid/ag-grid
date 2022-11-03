@@ -13333,7 +13333,11 @@
       "type": { "returnType": "CssColor", "optional": true }
     }
   },
-  "AgChartEvent": { "meta": { "typeParams": ["T extends string"] } },
+  "AgChartEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
+    "event": { "type": { "returnType": "Event", "optional": false } },
+    "meta": { "typeParams": ["T extends string"] }
+  },
   "AgNodeClickEvent": {
     "type": {
       "description": "/** Event type. */",
@@ -13386,9 +13390,13 @@
     "radiusKey": {
       "description": "/** radiusKey as specified on series options */",
       "type": { "returnType": "string", "optional": true }
-    }
+    },
+    "event": { "type": { "returnType": "Event", "optional": false } }
   },
-  "AgChartClickEvent": {},
+  "AgChartClickEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
+    "event": { "type": { "returnType": "Event", "optional": false } }
+  },
   "AgBaseChartListeners": {
     "seriesNodeClick": {
       "description": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
@@ -15418,19 +15426,8 @@
     "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } },
     "angleKey": { "type": { "returnType": "string", "optional": false } },
-    "angleValue": { "type": { "returnType": "any", "optional": false } },
-    "angleName": { "type": { "returnType": "string", "optional": false } },
     "radiusKey": { "type": { "returnType": "string", "optional": true } },
-    "radiusValue": { "type": { "returnType": "any", "optional": true } },
-    "radiusName": { "type": { "returnType": "string", "optional": true } },
-    "calloutLabelKey": { "type": { "returnType": "string", "optional": true } },
-    "calloutLabelValue": { "type": { "returnType": "any", "optional": true } },
-    "calloutLabelName": {
-      "type": { "returnType": "string", "optional": true }
-    },
     "sectorLabelKey": { "type": { "returnType": "string", "optional": true } },
-    "sectorLabelValue": { "type": { "returnType": "any", "optional": true } },
-    "sectorLabelName": { "type": { "returnType": "string", "optional": true } },
     "seriesId": { "type": { "returnType": "string", "optional": false } },
     "meta": { "typeParams": ["DatumType"] }
   },
