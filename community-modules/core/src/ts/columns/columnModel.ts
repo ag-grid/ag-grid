@@ -3179,7 +3179,7 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    // called from: setColumnState, setColumnDefs, setSecondaryColumns
+    // called from: applyColumnState, setColumnDefs, setSecondaryColumns
     private updateGridColumns(): void {
         const prevGridCols = this.gridBalancedTree;
         if (this.gridColsArePrimary) {

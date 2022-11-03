@@ -1,6 +1,6 @@
 export class Events {
 
-    /** Everything has changed with the columns. Either complete new set of columns set, or user called setState() */
+    /** Everything has changed with the columns. Either complete new set of columns set, or user called applyColumnState() */
     /** @deprecated - grid no longer uses this, and setSate() also fires individual events */
     public static EVENT_COLUMN_EVERYTHING_CHANGED: 'columnEverythingChanged' = 'columnEverythingChanged';
 

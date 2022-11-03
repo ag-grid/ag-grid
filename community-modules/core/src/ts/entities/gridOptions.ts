@@ -1017,7 +1017,7 @@ export interface GridOptions<TData = any> {
     onDisplayedColumnsChanged?(event: DisplayedColumnsChangedEvent<TData>): void;
     /** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */
     onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>): void;
-    /** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */
+    /** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>): void;
 
     // *** Components *** //

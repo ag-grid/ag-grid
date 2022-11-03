@@ -1017,7 +1017,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public displayedColumnsChanged: EventEmitter<DisplayedColumnsChangedEvent<TData>> = new EventEmitter<DisplayedColumnsChangedEvent<TData>>();
     /** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default).     */
     @Output() public virtualColumnsChanged: EventEmitter<VirtualColumnsChangedEvent<TData>> = new EventEmitter<VirtualColumnsChangedEvent<TData>>();
-    /** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed.     */
+    /** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed.     */
     @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent<TData>> = new EventEmitter<ColumnEverythingChangedEvent<TData>>();
     /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
      * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.     */
