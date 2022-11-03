@@ -44,14 +44,6 @@ const gridOptions: GridOptions = {
             enabled: true
           }
         },
-        time: {
-          label: {
-            rotation: 45,
-            formatter: (params: AgAxisLabelFormatterParams) => {
-              return moment(new Date(params.value)).format('DD MMM')
-            },
-          },
-        },
       },
     },
     column: {
