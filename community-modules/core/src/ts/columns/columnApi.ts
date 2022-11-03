@@ -120,12 +120,6 @@ export class ColumnApi {
     /** Get the pivot mode. */
     public isPivotMode(): boolean { return this.columnModel.isPivotMode(); }
 
-    /** @deprecated Use `getPivotResultColumn` instead */
-    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column | null {
-        console.warn('AG Grid: since version 28.0.x getSecondaryPivotColumn has been renamed, please use getPivotResultColumn instead');
-        return this.getPivotResultColumn(pivotKeys, valueColKey);
-    }
-
     /** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
     public getPivotResultColumn(pivotKeys: string[], valueColKey: string | Column): Column | null { return this.columnModel.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 
@@ -187,27 +181,11 @@ export class ColumnApi {
     /** Calls `autoSizeColumns` on all displayed columns. */
     public autoSizeAllColumns(skipHeader?: boolean): void { this.columnModel.autoSizeAllColumns(skipHeader, 'api'); }
 
-    /** @deprecated Use `setPivotResultColumns` instead. */
-    public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void {
-        console.warn('AG Grid: since version 28.0.x setSecondaryColumns has been renamed, please use setPivotResultColumns instead');
-        this.setPivotResultColumns(colDefs);
-    }
     /** Set the pivot result columns. */
     public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }
 
-    /** @deprecated Use `getPivotResultColumns` instead. */
-    public getSecondaryColumns(): Column[] | null {
-        console.warn('AG Grid: since version 28.0.x getSecondaryColumns has been renamed, please use getPivotResultColumns instead');
-        return this.getPivotResultColumns();
-    }
     /** Returns the grid's pivot result columns. */
     public getPivotResultColumns(): Column[] | null { return this.columnModel.getSecondaryColumns(); }
-
-    /** @deprecated Use `getColumns` instead. */
-    public getPrimaryColumns(): Column[] | null {
-        console.warn('AG Grid: since version 28.0.x getPrimaryColumns has been renamed, please use getColumns instead');
-        return this.getColumns();
-    }
 
     @PreDestroy
     private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid(): void {
@@ -220,98 +198,36 @@ export class ColumnApi {
         setTimeout(_.removeAllReferences.bind(window, this, 'Column API'), 100);
     }
 
-    // below goes through deprecated items, prints message to user, then calls the new version of the same method
-
-    // public getColumnDefs(): (ColDef | ColGroupDef)[] {
-    //     this.setColumnGroupOpened(group, newValue);
-    //     return null;
-    // }
-
-    /** @deprecated Use `getColumns` instead */
+    /** @deprecated v28 Use `getColumns` instead */
     public getAllColumns(): Column[] | null {
         console.warn('AG Grid: since version 28.0.x getAllColumns has been renamed, please use getColumns instead');
         return this.getColumns();
     }
-    /** @deprecated columnGroupOpened no longer exists, use setColumnGroupOpened */
-    public columnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void {
-        console.error('AG Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');
-        this.setColumnGroupOpened(group, newValue);
-    }
-    /** @deprecated hideColumns is deprecated, use setColumnsVisible */
-    public hideColumns(colIds: any, hide: any): void {
-        console.error('AG Grid: hideColumns is deprecated, use setColumnsVisible');
-        this.columnModel.setColumnsVisible(colIds, !hide, 'api');
-    }
-    /** @deprecated hideColumn is deprecated, use setColumnVisible */
-    public hideColumn(colId: any, hide: any): void {
-        console.error('AG Grid: hideColumn is deprecated, use setColumnVisible');
-        this.columnModel.setColumnVisible(colId, !hide, 'api');
-    }
-    /** @deprecated setState is deprecated, use setColumnState */
-    public setState(columnState: ColumnState[]): boolean {
-        console.error('AG Grid: setState is deprecated, use setColumnState');
-        return this.setColumnState(columnState);
-    }
-    /** @deprecated getState is deprecated, use getColumnState */
-    public getState(): ColumnState[] {
-        console.error('AG Grid: getState is deprecated, use getColumnState');
-        return this.getColumnState();
-    }
-    /** @deprecated resetState is deprecated, use resetColumnState */
-    public resetState(): void {
-        console.error('AG Grid: resetState is deprecated, use resetColumnState');
-        this.resetColumnState();
-    }
-
-    /** @deprecated getAggregationColumns is deprecated, use getValueColumns */
-    public getAggregationColumns(): Column[] {
-        console.error('AG Grid: getAggregationColumns is deprecated, use getValueColumns');
-        return this.columnModel.getValueColumns();
-    }
-
-    /** @deprecated removeAggregationColumn is deprecated, use removeValueColumn */
-    public removeAggregationColumn(colKey: (string | Column)): void {
-        console.error('AG Grid: removeAggregationColumn is deprecated, use removeValueColumn');
-        this.columnModel.removeValueColumn(colKey, 'api');
-    }
-    /** @deprecated removeAggregationColumns is deprecated, use removeValueColumns */
-    public removeAggregationColumns(colKeys: (string | Column)[]): void {
-        console.error('AG Grid: removeAggregationColumns is deprecated, use removeValueColumns');
-        this.columnModel.removeValueColumns(colKeys, 'api');
-    }
-    /** @deprecated addAggregationColumn is deprecated, use addValueColumn */
-    public addAggregationColumn(colKey: (string | Column)): void {
-        console.error('AG Grid: addAggregationColumn is deprecated, use addValueColumn');
-        this.columnModel.addValueColumn(colKey, 'api');
-    }
-    /** @deprecated addAggregationColumns is deprecated, use addValueColumns */
-    public addAggregationColumns(colKeys: (string | Column)[]): void {
-        console.error('AG Grid: addAggregationColumns is deprecated, use addValueColumns');
-        this.columnModel.addValueColumns(colKeys, 'api');
-    }
-    /** @deprecated setColumnAggFunction is deprecated, use setColumnAggFunc */
-    public setColumnAggFunction(column: Column, aggFunc: string): void {
-        console.error('AG Grid: setColumnAggFunction is deprecated, use setColumnAggFunc');
-        this.columnModel.setColumnAggFunc(column, aggFunc, 'api');
-    }
-    /** @deprecated getDisplayNameForCol is deprecated, use getDisplayNameForColumn */
-    public getDisplayNameForCol(column: any): string {
-        console.error('AG Grid: getDisplayNameForCol is deprecated, use getDisplayNameForColumn');
-        return this.getDisplayNameForColumn(column, null);
-    }
-
-    /** @deprecated setColumnState is deprecated, use applyColumnState. */
-    public setColumnState(columnState: ColumnState[]): boolean {
-        console.error('AG Grid: setColumnState is deprecated, use applyColumnState');
-        return this.columnModel.applyColumnState({ state: columnState, applyOrder: true }, 'api');
-    }
-
-    /** @deprecated getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
+    /** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
     public getOriginalColumnGroup(name: string): ProvidedColumnGroup | null {
         console.error('AG Grid: getOriginalColumnGroup is deprecated, use getProvidedColumnGroup');
         return this.columnModel.getProvidedColumnGroup(name);
     }
-
+    /** @deprecated v28 Use `getColumns` instead. */
+    public getPrimaryColumns(): Column[] | null {
+        console.warn('AG Grid: since version 28.0.x getPrimaryColumns has been renamed, please use getColumns instead');
+        return this.getColumns();
+    }
+    /** @deprecated v28 Use `getPivotResultColumns` instead. */
+    public getSecondaryColumns(): Column[] | null {
+        console.warn('AG Grid: since version 28.0.x getSecondaryColumns has been renamed, please use getPivotResultColumns instead');
+        return this.getPivotResultColumns();
+    }
+    /** @deprecated v28 Use `setPivotResultColumns` instead. */
+    public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void {
+        console.warn('AG Grid: since version 28.0.x setSecondaryColumns has been renamed, please use setPivotResultColumns instead');
+        this.setPivotResultColumns(colDefs);
+    }
+    /** @deprecated v28 Use `getPivotResultColumn` instead */
+    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column | null {
+        console.warn('AG Grid: since version 28.0.x getSecondaryPivotColumn has been renamed, please use getPivotResultColumn instead');
+        return this.getPivotResultColumn(pivotKeys, valueColKey);
+    }
 }
 
 
