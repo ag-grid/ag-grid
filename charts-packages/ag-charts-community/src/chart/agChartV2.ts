@@ -34,7 +34,6 @@ import { Chart, ChartUpdateType } from './chart';
 import { SourceEventListener } from '../util/observable';
 import { DropShadow } from '../scene/dropShadow';
 import { jsonDiff, jsonMerge, jsonApply } from '../util/json';
-import { GroupedCategoryChart } from './groupedCategoryChart';
 import {
     prepareOptions,
     isAgCartesianChartOptions,
@@ -57,9 +56,7 @@ type AgChartType<T> = T extends AgCartesianChartOptions
     ? HierarchyChart
     : never;
 
-type ChartOptionType<T extends ChartType> = T extends GroupedCategoryChart
-    ? AgCartesianChartOptions
-    : T extends CartesianChart
+type ChartOptionType<T extends ChartType> = T extends CartesianChart
     ? AgCartesianChartOptions
     : T extends PolarChart
     ? AgPolarChartOptions
@@ -157,22 +154,22 @@ export abstract class AgChartV2 {
 
         const mergedOptions = prepareOptions(userOptions, mixinOpts);
 
-        const chart = isAgCartesianChartOptions(mergedOptions)
-            ? mergedOptions.type === 'groupedCategory'
-                ? new GroupedCategoryChart(document, overrideDevicePixelRatio)
-                : new CartesianChart(document, overrideDevicePixelRatio)
-            : isAgHierarchyChartOptions(mergedOptions)
-            ? new HierarchyChart(document, overrideDevicePixelRatio)
-            : isAgPolarChartOptions(mergedOptions)
-            ? new PolarChart(document, overrideDevicePixelRatio)
-            : undefined;
+        let maybeChart: ChartType | undefined = undefined;
+        if (isAgCartesianChartOptions(mergedOptions)) {
+            maybeChart = new CartesianChart(document, overrideDevicePixelRatio);
+        } else if (isAgHierarchyChartOptions(mergedOptions)) {
+            maybeChart = new HierarchyChart(document, overrideDevicePixelRatio);
+        } else if (isAgPolarChartOptions(mergedOptions)) {
+            maybeChart = new PolarChart(document, overrideDevicePixelRatio);
+        }
 
-        if (!chart) {
+        if (!maybeChart) {
             throw new Error(
                 `AG Charts - couldn\'t apply configuration, check type of options: ${mergedOptions['type']}`
             );
         }
 
+        const chart = maybeChart;
         chart.requestFactoryUpdate(async () => {
             if (chart.destroyed) {
                 // Chart destroyed, skip processing.
