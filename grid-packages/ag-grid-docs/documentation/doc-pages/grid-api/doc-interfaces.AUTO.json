@@ -2697,7 +2697,7 @@
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
     "enableChartToolPanelsButton": {
-      "description": "/** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`.\n */",
+      "description": "/** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressChartToolPanelsButton": {
@@ -25527,7 +25527,7 @@
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
     "enableChartToolPanelsButton": {
-      "description": "/** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`.\n */",
+      "description": "/** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressChartToolPanelsButton": {
@@ -28350,7 +28350,7 @@
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
     "enableChartToolPanelsButton": {
-      "description": "/** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`.\n */",
+      "description": "/** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressChartToolPanelsButton": {
@@ -31183,7 +31183,7 @@
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
     "enableChartToolPanelsButton": {
-      "description": "/** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`.\n */",
+      "description": "/** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressChartToolPanelsButton": {

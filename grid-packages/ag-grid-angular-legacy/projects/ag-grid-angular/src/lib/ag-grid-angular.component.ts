@@ -466,8 +466,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public customChartThemes: { [name: string]: AgChartTheme } | undefined = undefined;
     /** Chart theme overrides applied to all themes.     */
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
-    /** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`.
-     */
+    /** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`.     */
     @Input() public enableChartToolPanelsButton: boolean | undefined = undefined;
     /** Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Default: `false`     */
     @Input() public suppressChartToolPanelsButton: boolean | undefined = undefined;
