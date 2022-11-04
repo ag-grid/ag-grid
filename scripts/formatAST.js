@@ -37,17 +37,12 @@ function findInNodeTree(ts) {
 const printer = (ts) => ts.createPrinter({ removeComments: true, omitTrailingSemicolon: true });
 
 function getJsDoc(ts) {
-    return function (node, includeTags = false) {
+    return function (node) {
         if (node.jsDoc) {
             const result = node.jsDoc.map(j => {
-                let doc = printer(ts).printNode(ts.EmitHint.Unspecified, j);
-                if (includeTags && j.tags) {
-                    let tt = j.tags.map(t => {
-                        return t.getText() + (ts.versionMajorMinor == '4.0' ? t.comment : '');
-                    })
-                    doc = doc.replace('*/', tt.join('') + '*/');
-                }
-                return doc.replace('/**\n *', '/**').replace('@deprecated\n', '@deprecated').replace('/** \n @deprecated', '/** @deprecated');
+                let doc = j.getFullText();
+                return doc
+                    .replace(/\/\*\*\n\s*\*/g, '/**');
             });
             return result.join('\n');
         }
