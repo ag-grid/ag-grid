@@ -1,10 +1,10 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
-import { AgChartOptions, AgCartesianAxisType } from '../agChartOptions';
+import { AgChartOptions, AgCartesianAxisType, AgCartesianAxisPosition } from '../agChartOptions';
 import { AgChartV2 } from '../agChartV2';
 import { Chart, ChartUpdateType } from '../chart';
-import { ChartAxis, ChartAxisPosition, ChartAxisDirection } from '../chartAxis';
+import { ChartAxis, ChartAxisDirection } from '../chartAxis';
 import * as axesExamples from '../test/examples-axes';
 import * as examples from '../test/examples';
 import {
@@ -28,7 +28,7 @@ function applyRotation<T>(opts: T, rotation: number): T {
 }
 
 function applyAxesFlip<T>(opts: T): T {
-    const positionFlip = (position: ChartAxisPosition) => {
+    const positionFlip = (position: AgCartesianAxisPosition) => {
         switch (position) {
             case 'top':
                 return 'bottom';

@@ -52,7 +52,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     @PostConstruct
     private postConstruct(): void {
         this.createManagedBean(new LayoutFeature(this));
-        this.setDisplayed(false);
+        this.setDisplayed(false, { skipAriaHidden: true });
 
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataUpdated.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
@@ -117,7 +117,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         }
 
         this.manuallyDisplayed = this.columnModel.isReady() && !this.paginationProxy.isEmpty();
-        this.setDisplayed(true);
+        this.setDisplayed(true, { skipAriaHidden: true });
     }
 
     private destroyActiveOverlay(): void {
@@ -138,7 +138,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     public hideOverlay(): void {
         this.manuallyDisplayed = false;
         this.destroyActiveOverlay();
-        this.setDisplayed(false);
+        this.setDisplayed(false, { skipAriaHidden: true });
     }
 
     public destroy(): void {

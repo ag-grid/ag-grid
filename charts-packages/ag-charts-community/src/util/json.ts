@@ -8,7 +8,7 @@ type IsLiteralProperty<T, K extends keyof T> = K extends LiteralProperties
 type IsSkippableProperty<T, K extends keyof T> = K extends SkippableProperties ? true : false;
 
 // Needs to be recursive when we move to TS 4.x+; only supports a maximum level of nesting right now.
-export type DeepPartial<T> = {
+type DeepPartial<T> = {
     [P1 in keyof T]?: IsSkippableProperty<T, P1> extends true
         ? any
         : IsLiteralProperty<T, P1> extends true
@@ -393,7 +393,7 @@ type Classification = 'array' | 'object' | 'primitive';
 /**
  * Classify the type of a value to assist with handling for merge purposes.
  */
-export function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | 'class-instance' | null {
+function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | 'class-instance' | null {
     if (value == null) {
         return null;
     } else if (value instanceof HTMLElement) {

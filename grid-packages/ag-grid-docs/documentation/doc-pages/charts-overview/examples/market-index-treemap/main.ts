@@ -31,7 +31,7 @@ function tooltipRenderer(params: AgTreemapSeriesTooltipRendererParams<any>) {
   const customRootText = 'Custom Root Text'
   const title = datum.parent
     ? datum.parent.depth
-      ? datum.parent.datum[params.labelKey]
+      ? datum.parent.datum[params.labelKey!]
       : customRootText
     : customRootText
   let content = '<div>'

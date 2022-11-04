@@ -2,7 +2,7 @@ import { Scale } from './scale/scale';
 import { Group } from './scene/group';
 import { Selection } from './scene/selection';
 import { Line } from './scene/shape/line';
-import { Text, FontStyle, FontWeight } from './scene/shape/text';
+import { Text } from './scene/shape/text';
 import { Arc } from './scene/shape/arc';
 import { Shape } from './scene/shape/shape';
 import { BBox } from './scene/bbox';
@@ -33,6 +33,7 @@ import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
 import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
+import { AgAxisGridStyle, AgAxisLabelFormatterParams, FontStyle, FontWeight } from './chart/agChartOptions';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -61,14 +62,9 @@ enum Tags {
     GridLine,
 }
 
-export interface AxisNodeDatum {
+interface AxisNodeDatum {
     readonly tick: any;
     readonly translationY: number;
-}
-
-export interface GridStyle {
-    stroke?: string;
-    lineDash?: number[];
 }
 
 type TimeTickCount = number | CountableTimeInterval;
@@ -84,7 +80,7 @@ export class AxisLine {
     color?: string = 'rgba(195, 195, 195, 1)';
 }
 
-export class AxisTick<S extends Scale<D, number>, D = any> {
+class AxisTick<S extends Scale<D, number>, D = any> {
     /**
      * The line width to be used by axis ticks.
      */
@@ -115,14 +111,6 @@ export class AxisTick<S extends Scale<D, number>, D = any> {
      */
     @Validate(OPT_TICK_COUNT)
     count?: TickCountType<S> = undefined;
-}
-
-export interface AxisLabelFormatterParams {
-    value: any;
-    index: number;
-    fractionDigits?: number;
-    formatter?: (x: any) => string;
-    axis?: any;
 }
 
 export class AxisLabel {
@@ -204,7 +192,7 @@ export class AxisLabel {
      * digits used by the tick step. For example, if the tick step is `0.0005`,
      * the `fractionDigits` is 4.
      */
-    formatter?: (params: AxisLabelFormatterParams) => string = undefined;
+    formatter?: (params: AgAxisLabelFormatterParams) => string = undefined;
 
     @Validate(OPT_STRING)
     format: string | undefined = undefined;
@@ -276,14 +264,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     private detachCrossLine(crossLine: CrossLine) {
         this.crossLineGroup.removeChild(crossLine.group);
-    }
-
-    /**
-     * Meant to be overridden in subclasses to provide extra context the the label formatter.
-     * The return value of this function will be passed to the laber.formatter as the `axis` parameter.
-     */
-    getMeta(): any {
-        // Override point for subclasses.
     }
 
     constructor(scale: S) {
@@ -436,7 +416,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
      * have the same style.
      */
     @Validate(GRID_STYLE)
-    gridStyle: GridStyle[] = [
+    gridStyle: AgAxisGridStyle[] = [
         {
             stroke: 'rgba(219, 219, 219, 1)',
             lineDash: [4, 2],
@@ -996,7 +976,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
     // For formatting (nice rounded) tick values.
     formatTickDatum(datum: any, index: number): string {
         const { label, labelFormatter, fractionDigits } = this;
-        const meta = this.getMeta();
 
         return label.formatter
             ? label.formatter({
@@ -1004,7 +983,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
                   index,
                   fractionDigits,
                   formatter: labelFormatter,
-                  axis: meta,
               })
             : labelFormatter
             ? labelFormatter(datum)

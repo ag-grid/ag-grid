@@ -33,7 +33,7 @@ export class FakeHScrollComp extends Component {
             setHeight: height => setFixedHeight(this.getGui(), height),
             setBottom: bottom => this.getGui().style.bottom = `${bottom}px`,
             setContainerHeight: height => setFixedHeight(this.eContainer, height),
-            setDisplayed: displayed => this.setDisplayed(displayed),
+            setDisplayed: displayed => this.setDisplayed(displayed, { skipAriaHidden: true }),
             setViewportHeight: height => setFixedHeight(this.eViewport, height),
             setRightSpacerFixedWidth: width => setFixedWidth(this.eRightSpacer, width),
             setLeftSpacerFixedWidth: width => setFixedWidth(this.eLeftSpacer, width),

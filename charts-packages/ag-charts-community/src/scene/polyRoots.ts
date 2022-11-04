@@ -15,7 +15,7 @@ const sign: (x: number) => number = Math.sign
  * Finds the roots of a parametric linear equation in `t`,
  * where `t` lies in the interval of `[0,1]`.
  */
-export function linearRoot(a: number, b: number): number[] {
+function linearRoot(a: number, b: number): number[] {
     const t = -b / a;
     return a !== 0 && t >= 0 && t <= 1 ? [t] : [];
 }
@@ -24,7 +24,7 @@ export function linearRoot(a: number, b: number): number[] {
  * Finds the roots of a parametric quadratic equation in `t`,
  * where `t` lies in the interval of `[0,1]`.
  */
-export function quadraticRoots(a: number, b: number, c: number): number[] {
+function quadraticRoots(a: number, b: number, c: number): number[] {
     if (a === 0) {
         return linearRoot(b, c);
     }

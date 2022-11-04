@@ -6,9 +6,6 @@ import {
     AgChartThemePalette,
     AgCrossLineOptions,
 } from '../agChartOptions';
-import { CartesianChart } from '../cartesianChart';
-import { PolarChart } from '../polarChart';
-import { HierarchyChart } from '../hierarchyChart';
 import {
     SeriesOptionsTypes,
     DEFAULT_CARTESIAN_CHART_OVERRIDES,
@@ -20,8 +17,7 @@ import { applySeriesTransform } from './transforms';
 import { getChartTheme } from './themes';
 import { processSeriesOptions, SeriesOptions } from './prepareSeries';
 
-export type ChartType = CartesianChart | PolarChart | HierarchyChart;
-export type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
+type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
 
 export function optionsType(input: {
     type?: AgChartOptions['type'];
@@ -86,7 +82,7 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
     }
 }
 
-export function isSeriesOptionType(input?: string): input is NonNullable<SeriesOptionsTypes['type']> {
+function isSeriesOptionType(input?: string): input is NonNullable<SeriesOptionsTypes['type']> {
     if (input == null) {
         return false;
     }

@@ -4,7 +4,7 @@ import { Scene } from './scene';
 type ValueFn<P, GDatum, PDatum> = (parent: P, data: PDatum, index: number, groups: (P | undefined)[]) => GDatum[];
 type KeyFn<N, G, GDatum> = (node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string;
 
-export class EnterNode {
+class EnterNode {
     constructor(parent: Node | EnterNode, datum: any) {
         this.scene = parent.scene;
         this.parent = parent;

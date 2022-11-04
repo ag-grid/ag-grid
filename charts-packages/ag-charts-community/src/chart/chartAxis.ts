@@ -3,6 +3,7 @@ import { Axis } from '../axis';
 import { Series } from './series/series';
 import { LinearScale } from '../scale/linearScale';
 import { POSITION, STRING_ARRAY, Validate } from '../util/validation';
+import { AgCartesianAxisPosition } from './agChartOptions';
 
 export enum ChartAxisDirection {
     X = 'x', // means 'angle' in polar charts
@@ -15,21 +16,6 @@ export function flipChartAxisDirection(direction: ChartAxisDirection): ChartAxis
     } else {
         return ChartAxisDirection.X;
     }
-}
-
-export enum ChartAxisPosition {
-    Top = 'top',
-    Right = 'right',
-    Bottom = 'bottom',
-    Left = 'left',
-    Angle = 'angle',
-    Radius = 'radius',
-}
-
-interface ChartAxisMeta {
-    id: string;
-    direction: ChartAxisDirection;
-    boundSeries: Series[];
 }
 
 export class ChartAxis<S extends Scale<any, number> = Scale<any, number>, D = any> extends Axis<S, D> {
@@ -45,14 +31,6 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>, D = an
         return (this.constructor as any).type || '';
     }
 
-    getMeta(): ChartAxisMeta {
-        return {
-            id: this.id,
-            direction: this.direction,
-            boundSeries: this.boundSeries,
-        };
-    }
-
     protected useCalculatedTickCount() {
         // We only want to use the new algorithm for number axes. Category axes don't use a
         // calculated or user-supplied tick-count, and time axes need special handling depending on
@@ -61,30 +39,30 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>, D = an
     }
 
     @Validate(POSITION)
-    protected _position: ChartAxisPosition = ChartAxisPosition.Left;
-    set position(value: ChartAxisPosition) {
+    protected _position: AgCartesianAxisPosition = 'left';
+    set position(value: AgCartesianAxisPosition) {
         if (this._position !== value) {
             this._position = value;
             switch (value) {
-                case ChartAxisPosition.Top:
+                case 'top':
                     this.direction = ChartAxisDirection.X;
                     this.rotation = -90;
                     this.label.mirrored = true;
                     this.label.parallel = true;
                     break;
-                case ChartAxisPosition.Right:
+                case 'right':
                     this.direction = ChartAxisDirection.Y;
                     this.rotation = 0;
                     this.label.mirrored = true;
                     this.label.parallel = false;
                     break;
-                case ChartAxisPosition.Bottom:
+                case 'bottom':
                     this.direction = ChartAxisDirection.X;
                     this.rotation = -90;
                     this.label.mirrored = false;
                     this.label.parallel = true;
                     break;
-                case ChartAxisPosition.Left:
+                case 'left':
                     this.direction = ChartAxisDirection.Y;
                     this.rotation = 0;
                     this.label.mirrored = false;
@@ -93,7 +71,7 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>, D = an
             }
         }
     }
-    get position(): ChartAxisPosition {
+    get position(): AgCartesianAxisPosition {
         return this._position;
     }
 

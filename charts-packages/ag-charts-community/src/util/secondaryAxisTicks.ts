@@ -29,7 +29,7 @@ function calculateNiceStart(a: number, b: number, count: number): number {
     return Math.floor(a / magnitude) * magnitude;
 }
 
-export function getTicks(start: number, step: number, count: number): NumericTicks {
+function getTicks(start: number, step: number, count: number): NumericTicks {
     // power of the step will be negative if the step is a fraction (between 0 and 1)
     const stepPower = Math.floor(Math.log10(step));
     const fractionDigits = step > 0 && step < 1 ? Math.abs(stepPower) : 0;
@@ -46,7 +46,7 @@ export function getTicks(start: number, step: number, count: number): NumericTic
     return ticks;
 }
 
-export function getTickStep(start: number, stop: number, count: number): number {
+function getTickStep(start: number, stop: number, count: number): number {
     const segments = count - 1;
     const rawStep = (stop - start) / segments;
     return calculateNextNiceStep(rawStep);

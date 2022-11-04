@@ -1,24 +1,16 @@
 import { Group } from '../../../scene/group';
 import { Selection } from '../../../scene/selection';
 import { Rect } from '../../../scene/shape/rect';
-import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
+import { Text } from '../../../scene/shape/text';
 import { DropShadow } from '../../../scene/dropShadow';
-import {
-    SeriesNodeDatum,
-    CartesianTooltipRendererParams as HistogramTooltipRendererParams,
-    SeriesTooltip,
-    Series,
-    SeriesNodeDataContext,
-    SeriesNodePickMode,
-} from '../series';
+import { SeriesNodeDatum, SeriesTooltip, Series, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legend';
 import { CartesianSeries, CartesianSeriesNodeClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxis';
-import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
+import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
-import { TypedEvent } from '../../../util/observable';
 import ticks, { tickStep } from '../../../util/ticks';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { isContinuous } from '../../../util/value';
@@ -34,6 +26,14 @@ import {
     Validate,
     predicateWithMessage,
 } from '../../../util/validation';
+import {
+    AgCartesianSeriesLabelFormatterParams,
+    AgTooltipRendererResult,
+    AgHistogramSeriesOptions,
+    FontStyle,
+    FontWeight,
+    AgHistogramSeriesTooltipRendererParams,
+} from '../../agChartOptions';
 
 const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
 const HISTOGRAM_AGGREGATION = predicateWithMessage(
@@ -48,12 +48,10 @@ enum HistogramSeriesNodeTag {
 
 class HistogramSeriesLabel extends Label {
     @Validate(OPT_FUNCTION)
-    formatter?: (params: { value: number; seriesId: string }) => string = undefined;
+    formatter?: (params: AgCartesianSeriesLabelFormatterParams) => string = undefined;
 }
 
 const defaultBinCount = 10;
-
-export { HistogramTooltipRendererParams };
 
 interface HistogramNodeDatum extends SeriesNodeDatum {
     readonly x: number;
@@ -75,15 +73,7 @@ interface HistogramNodeDatum extends SeriesNodeDatum {
     };
 }
 
-export interface HistogramSeriesNodeClickEvent extends TypedEvent {
-    readonly type: 'nodeClick';
-    readonly event: MouseEvent;
-    readonly series: HistogramSeries;
-    readonly datum: any;
-    readonly xKey: string;
-}
-
-export type HistogramAggregation = 'count' | 'sum' | 'mean';
+type HistogramAggregation = NonNullable<AgHistogramSeriesOptions['aggregation']>;
 type AggregationFunction = (bin: HistogramBin, yKey: string) => number;
 
 const aggregationFunctions: { [key in HistogramAggregation]: AggregationFunction } = {
@@ -92,7 +82,7 @@ const aggregationFunctions: { [key in HistogramAggregation]: AggregationFunction
     mean: (bin, yKey) => aggregationFunctions.sum(bin, yKey) / aggregationFunctions.count(bin, yKey),
 };
 
-export class HistogramBin {
+class HistogramBin {
     data: any[] = [];
     aggregatedValue: number = 0;
     frequency: number = 0;
@@ -132,9 +122,9 @@ export class HistogramBin {
     }
 }
 
-export class HistogramSeriesTooltip extends SeriesTooltip {
+class HistogramSeriesTooltip extends SeriesTooltip {
     @Validate(OPT_FUNCTION)
-    renderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult = undefined;
+    renderer?: (params: AgHistogramSeriesTooltipRendererParams) => string | AgTooltipRendererResult = undefined;
 }
 
 export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<HistogramNodeDatum>, Rect> {
@@ -579,7 +569,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
         content += `<b>Frequency</b>: ${frequency}`;
 
-        const defaults: TooltipRendererResult = {
+        const defaults: AgTooltipRendererResult = {
             title,
             backgroundColor: color,
             content,

@@ -23,10 +23,4 @@ function weekday(n: number): CountableTimeInterval {
 
 export const utcSunday = weekday(0);
 export const utcMonday = weekday(1);
-export const utcTuesday = weekday(2);
-export const utcWednesday = weekday(3);
 export const utcThursday = weekday(4);
-export const utcFriday = weekday(5);
-export const utcSaturday = weekday(6);
-
-export default utcSunday;

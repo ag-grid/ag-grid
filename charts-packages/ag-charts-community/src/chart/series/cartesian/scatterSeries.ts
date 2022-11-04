@@ -1,24 +1,13 @@
 import { Selection } from '../../../scene/selection';
 import { Group } from '../../../scene/group';
-import {
-    SeriesNodeDatum,
-    CartesianTooltipRendererParams,
-    SeriesTooltip,
-    SeriesNodeDataContext,
-    SeriesNodePickMode,
-} from '../series';
+import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { extent } from '../../../util/array';
 import { LegendDatum } from '../../legend';
 import { LinearScale } from '../../../scale/linearScale';
-import {
-    CartesianSeries,
-    CartesianSeriesMarker,
-    CartesianSeriesMarkerFormat,
-    CartesianSeriesNodeClickEvent,
-} from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxis';
 import { getMarker } from '../../marker/util';
-import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
+import { toTooltipHtml } from '../../tooltip/tooltip';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { Label } from '../../label';
@@ -29,12 +18,17 @@ import { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
 import { checkDatum, isContinuous } from '../../../util/value';
 import { Deprecated } from '../../../util/deprecation';
 import { OPT_FUNCTION, OPT_STRING, STRING, Validate } from '../../../util/validation';
+import {
+    AgScatterSeriesTooltipRendererParams,
+    AgTooltipRendererResult,
+    AgCartesianSeriesMarkerFormat,
+} from '../../agChartOptions';
 
 interface ScatterNodeDatum extends Required<SeriesNodeDatum> {
     readonly label: MeasuredLabel;
 }
 
-export class ScatterSeriesNodeClickEvent extends CartesianSeriesNodeClickEvent<any> {
+class ScatterSeriesNodeClickEvent extends CartesianSeriesNodeClickEvent<any> {
     readonly sizeKey?: string;
 
     constructor(
@@ -50,17 +44,9 @@ export class ScatterSeriesNodeClickEvent extends CartesianSeriesNodeClickEvent<a
     }
 }
 
-export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
-    readonly sizeKey?: string;
-    readonly sizeName?: string;
-
-    readonly labelKey?: string;
-    readonly labelName?: string;
-}
-
-export class ScatterSeriesTooltip extends SeriesTooltip {
+class ScatterSeriesTooltip extends SeriesTooltip {
     @Validate(OPT_FUNCTION)
-    renderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult = undefined;
+    renderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult = undefined;
 }
 
 export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<ScatterNodeDatum>> {
@@ -363,7 +349,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                     : markerStrokeWidth;
             const size = datum.point?.size ?? 0;
 
-            let format: CartesianSeriesMarkerFormat | undefined = undefined;
+            let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
             if (formatter) {
                 format = formatter({
                     datum: datum.datum,
@@ -465,7 +451,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         const strokeWidth = this.getStrokeWidth(marker.strokeWidth || this.strokeWidth);
 
         const { formatter } = this.marker;
-        let format: CartesianSeriesMarkerFormat | undefined = undefined;
+        let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
 
         if (formatter) {
             format = formatter({
@@ -501,7 +487,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             content = `<b>${sanitizeHtml(labelName || labelKey)}</b>: ${sanitizeHtml(datum[labelKey])}<br>` + content;
         }
 
-        const defaults: TooltipRendererResult = {
+        const defaults: AgTooltipRendererResult = {
             title,
             backgroundColor: color,
             content,

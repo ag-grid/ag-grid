@@ -133,7 +133,7 @@ const GridBodyComp = ()=> {
     }));
 
     return (
-        <div ref={ eRoot! } class={ getRootClasses() } role="grid" aria-colcount={ getAriaColCount() } aria-rowcount={ getAriaRowCount() }>
+        <div ref={ eRoot! } class={ getRootClasses() } role="treegrid" aria-colcount={ getAriaColCount() } aria-rowcount={ getAriaRowCount() }>
             <GridHeaderComp/>
             <div ref={ eTop! } class={ getTopClasses() } role="presentation" style={ getTopStyle() }>
                 <RowContainerComp name={ RowContainerName.TOP_LEFT } />

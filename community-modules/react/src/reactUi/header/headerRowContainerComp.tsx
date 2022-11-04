@@ -11,6 +11,7 @@ import { useEffectOnce } from '../useEffectOnce';
 const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
+    const [ariaHidden, setAriaHidden] = useState<"true" | "false">("false");
     const [centerContainerWidth, setCenterContainerWidth] = useState<string>();
     const [centerContainerTransform, setCenterContainerTransform] = useState<string>();
     const [pinnedContainerWidth, setPinnedContainerWidth] = useState<string>();
@@ -24,9 +25,11 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
     const centre = !pinnedLeft && !pinnedRight;
 
     useEffectOnce(() => {
-
         const compProxy: IHeaderRowContainerComp = {
-            addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
+            setDisplayed: displayed => {
+                setCssClasses(prev => prev.setClass('ag-hidden', !displayed));
+                setAriaHidden(!displayed ? "true" : "false");
+            },
             setCtrls: ctrls => setHeaderRowCtrls(ctrls),
 
             // centre only
@@ -48,14 +51,14 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
 
     const className = useMemo(() => cssClasses.toString(), [cssClasses]);
 
-    const insertRowsJsx = ()=> headerRowCtrls.map( ctrl => <HeaderRowComp ctrl={ctrl} key={ctrl.getInstanceId()} /> );
+    const insertRowsJsx = () => headerRowCtrls.map( ctrl => <HeaderRowComp ctrl={ctrl} key={ctrl.getInstanceId()} /> );
 
-    const eCenterContainerStyle = useMemo( ()=> ({
+    const eCenterContainerStyle = useMemo(() => ({
         width: centerContainerWidth,
         transform: centerContainerTransform
     }), [centerContainerWidth, centerContainerTransform]);
 
-    const ePinnedStyle = useMemo( ()=> ({
+    const ePinnedStyle = useMemo(() => ({
         width: pinnedContainerWidth,
         minWidth: pinnedContainerWidth,
         maxWidth: pinnedContainerWidth,
@@ -63,15 +66,15 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
 
     return (
         <>
-            { 
+            {
                 pinnedLeft && 
-                <div ref={eGui} className={"ag-pinned-left-header " + className} role="presentation" style={ePinnedStyle}>
+                <div ref={eGui} className={"ag-pinned-left-header " + className} aria-hidden={ariaHidden} role="presentation" style={ePinnedStyle}>
                     { insertRowsJsx() }
                 </div>
             }
             { 
                 pinnedRight && 
-                <div ref={eGui} className={"ag-pinned-right-header " + className} role="presentation" style={ePinnedStyle}>
+                <div ref={eGui} className={"ag-pinned-right-header " + className} aria-hidden={ariaHidden} role="presentation" style={ePinnedStyle}>
                 { insertRowsJsx() }
             </div>
             }

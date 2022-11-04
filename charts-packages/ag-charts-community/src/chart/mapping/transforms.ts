@@ -1,6 +1,5 @@
 import {
     AgBarSeriesOptions,
-    AgBarSeriesLabelOptions,
     AgChartOptions,
     AgAreaSeriesOptions,
     AgHistogramSeriesOptions,
@@ -9,7 +8,6 @@ import {
     AgScatterSeriesOptions,
     AgTreemapSeriesOptions,
 } from '../agChartOptions';
-import { BarLabelPlacement } from '../series/cartesian/barSeries';
 
 type Transforms<
     Source,
@@ -19,7 +17,7 @@ type Transforms<
     [Property in Keys]: (p: Source[Property], src: Source) => Result[Property];
 };
 
-export function transform<
+function transform<
     I,
     R extends { [RKey in keyof I]: O[RKey] },
     T extends Transforms<I, R>,
@@ -76,26 +74,7 @@ function yKeysMapping(p: string[] | string[][] | undefined, src: AgBarSeriesOpti
     return src.grouped ? p.map((v) => [v]) : [p];
 }
 
-function labelMapping(
-    p: AgBarSeriesLabelOptions | undefined
-): (Omit<AgBarSeriesLabelOptions, 'placement'> & { placement?: BarLabelPlacement }) | undefined {
-    if (p == null) {
-        return undefined;
-    }
-
-    const { placement } = p;
-    return {
-        ...p,
-        placement:
-            placement === 'inside'
-                ? BarLabelPlacement.Inside
-                : placement === 'outside'
-                ? BarLabelPlacement.Outside
-                : undefined,
-    };
-}
-
-export function barSeriesTransform<T extends AgBarSeriesOptions>(options: T): T {
+function barSeriesTransform<T extends AgBarSeriesOptions>(options: T): T {
     let result = {
         ...options,
         yKeys: options.yKeys || [options.yKey],
@@ -105,7 +84,6 @@ export function barSeriesTransform<T extends AgBarSeriesOptions>(options: T): T 
     return transform(result, {
         yNames: yNamesMapping,
         yKeys: yKeysMapping,
-        label: labelMapping,
     }) as T;
 }
 

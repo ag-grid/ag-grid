@@ -12,8 +12,8 @@ import {
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { LegendPosition } from "ag-charts-community";
 import { FormatPanelOptions, getMaxValue } from "../formatPanel";
+import { AgChartLegendPosition } from "ag-charts-community/src/chart/agChartOptions";
 
 export class LegendPanel extends Component {
 
@@ -81,7 +81,7 @@ export class LegendPanel extends Component {
     }
 
     private initLegendPosition() {
-        const positions = [LegendPosition.Top, LegendPosition.Right, LegendPosition.Bottom, LegendPosition.Left];
+        const positions: AgChartLegendPosition[] = ['top', 'right', 'bottom', 'left'];
 
         this.legendPositionSelect
             .setLabel(this.chartTranslationService.translate("position"))

@@ -31,22 +31,6 @@ export function filter(domain: number[]): (x: number) => number {
     return (x) => (x >= a && x <= b ? x : NaN);
 }
 
-/**
- * An Interpolator factory returns an interpolator function.
- *
- * The first generic corresponds to the data type of the interpolation boundaries.
- * The second generic corresponds to the data type of the return type of the interpolator.
- */
-export interface InterpolatorFactory<T, U> {
-    /**
-     * Construct a new interpolator function, based on the provided interpolation boundaries.
-     *
-     * @param a Start boundary of the interpolation interval.
-     * @param b End boundary of the interpolation interval.
-     */
-    (a: T, b: T): (t: number) => U;
-}
-
 export abstract class ContinuousScale implements Scale<any, any> {
     /**
      * The output value of the scale for `undefined` or `NaN` input values.

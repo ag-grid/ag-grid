@@ -1,6 +1,5 @@
-import { Text, FontStyle, FontWeight } from './scene/shape/text';
+import { Text } from './scene/shape/text';
 import { PointerEvents } from './scene/node';
-import { Observable } from './util/observable';
 import {
     BOOLEAN,
     NUMBER,
@@ -10,8 +9,9 @@ import {
     STRING,
     Validate,
 } from './util/validation';
+import { FontStyle, FontWeight } from './chart/agChartOptions';
 
-export class Caption extends Observable {
+export class Caption {
     static readonly PADDING = 10;
 
     readonly node: Text = new Text();
@@ -80,8 +80,6 @@ export class Caption extends Observable {
     }
 
     constructor() {
-        super();
-
         const node = this.node;
         node.textAlign = 'center';
         node.textBaseline = 'top';

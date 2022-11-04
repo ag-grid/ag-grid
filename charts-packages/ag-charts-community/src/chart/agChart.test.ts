@@ -1,10 +1,8 @@
 import { describe, expect, test, jest, beforeEach, afterEach } from '@jest/globals';
 import 'jest-canvas-mock';
-import { LegendPosition } from './legend';
 import { AreaSeries } from './series/cartesian/areaSeries';
 import { BarSeries } from './series/cartesian/barSeries';
 import { LineSeries } from './series/cartesian/lineSeries';
-import { ChartAxisPosition } from './chartAxis';
 import { NumberAxis } from './axis/numberAxis';
 import { ChartTheme } from './themes/chartTheme';
 import { AgChartV2 } from './agChartV2';
@@ -113,7 +111,7 @@ describe('update', () => {
             ],
             legend: {
                 spacing: 50,
-                position: LegendPosition.Bottom,
+                position: 'bottom',
             },
         });
         await waitForChartStability(chart);
@@ -399,8 +397,8 @@ describe('update', () => {
         expect(axes.length).toBe(2);
         expect(axes[0] instanceof NumberAxis).toBe(true);
         expect(axes[1] instanceof NumberAxis).toBe(true);
-        let leftAxis = axes.find((axis) => axis.position === ChartAxisPosition.Left);
-        expect(axes.find((axis) => axis.position === ChartAxisPosition.Bottom)).toBeDefined();
+        let leftAxis = axes.find((axis) => axis.position === 'left');
+        expect(axes.find((axis) => axis.position === 'bottom')).toBeDefined();
         expect(leftAxis).toBeDefined();
         expect(leftAxis!.title!.text).toBe('Hello');
 
@@ -444,7 +442,7 @@ describe('update', () => {
         });
         await waitForChartStability(chart);
 
-        leftAxis = chart.axes.find((axis) => axis.position === ChartAxisPosition.Left);
+        leftAxis = chart.axes.find((axis) => axis.position === 'left');
         expect(leftAxis!.gridStyle).toEqual([
             {
                 stroke: 'red',
