@@ -7,7 +7,7 @@ import HeaderRowComp from './headerRowComp';
 const HeaderRowContainerComp = (props: {pinned: ColumnPinnedType | null})=> {
 
     const [getCssClasses, setCssClasses] = createSignal<CssClasses>(new CssClasses());
-    const [getAriaHidden, setAriaHidden] = createSignal<"true" | "false">("false");
+    const [getAriaHidden, setAriaHidden] = createSignal<true | false>(false);
     const [getCenterContainerWidth, setCenterContainerWidth] = createSignal<string>();
     const [getCenterContainerTransform, setCenterContainerTransform] = createSignal<string>();
     const [getPinnedContainerWidth, setPinnedContainerWidth] = createSignal<string>();
@@ -31,7 +31,7 @@ const HeaderRowContainerComp = (props: {pinned: ColumnPinnedType | null})=> {
         const compProxy: IHeaderRowContainerComp = {
             setDisplayed: (displayed) => {
                 setCssClasses(getCssClasses().setClass('ag-hidden', !displayed));
-                setAriaHidden(!displayed ? 'true' : 'false')
+                setAriaHidden(!displayed)
             },
             setCtrls: ctrls => setHeaderRowCtrls(ctrls),
 

@@ -11,7 +11,7 @@ import { useEffectOnce } from '../useEffectOnce';
 const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
-    const [ariaHidden, setAriaHidden] = useState<"true" | "false">("false");
+    const [ariaHidden, setAriaHidden] = useState<true | false>(false);
     const [centerContainerWidth, setCenterContainerWidth] = useState<string>();
     const [centerContainerTransform, setCenterContainerTransform] = useState<string>();
     const [pinnedContainerWidth, setPinnedContainerWidth] = useState<string>();
@@ -28,7 +28,7 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
         const compProxy: IHeaderRowContainerComp = {
             setDisplayed: displayed => {
                 setCssClasses(prev => prev.setClass('ag-hidden', !displayed));
-                setAriaHidden(!displayed ? "true" : "false");
+                setAriaHidden(!displayed);
             },
             setCtrls: ctrls => setHeaderRowCtrls(ctrls),
 
