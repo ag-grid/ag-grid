@@ -3,7 +3,7 @@ import year from '../year';
 import { sunday as timeSunday, monday as timeMonday, thursday as timeThursday } from '../week';
 import utcDay from '../utcDay';
 import utcYear from '../utcYear';
-import utcSunday, { utcMonday, utcThursday } from '../utcWeek';
+import { utcSunday, utcMonday, utcThursday } from '../utcWeek';
 
 type FormatKeys =
     | 'a'
@@ -265,7 +265,7 @@ export function pad(value: number, fill: string, width: number): string {
  *
  * @param timeLocale A time locale definition.
  */
-export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLocaleObject {
+export function formatLocale(timeLocale: TimeLocaleDefinition): TimeLocaleObject {
     const lDateTime = timeLocale.dateTime;
     const lDate = timeLocale.date;
     const lTime = timeLocale.time;

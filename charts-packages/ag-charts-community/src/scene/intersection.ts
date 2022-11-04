@@ -102,7 +102,7 @@ export function cubicSegmentIntersections(
  * Returns the given coordinates vector multiplied by the coefficient matrix
  * of the parametric cubic Bézier equation.
  */
-export function bezierCoefficients(P1: number, P2: number, P3: number, P4: number) {
+function bezierCoefficients(P1: number, P2: number, P3: number, P4: number) {
     return [
         // Bézier expressed as matrix operations:
         -P1 + 3 * P2 - 3 * P3 + P4, //                 |-1  3 -3  1| |P1|

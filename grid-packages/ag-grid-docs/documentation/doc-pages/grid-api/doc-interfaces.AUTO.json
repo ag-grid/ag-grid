@@ -13340,6 +13340,11 @@
       "type": { "returnType": "CssColor", "optional": true }
     }
   },
+  "AgChartEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
+    "event": { "type": { "returnType": "Event", "optional": false } },
+    "meta": { "typeParams": ["T extends string"] }
+  },
   "AgNodeClickEvent": {
     "type": {
       "description": "/** Event type. */",
@@ -13392,7 +13397,12 @@
     "radiusKey": {
       "description": "/** radiusKey as specified on series options */",
       "type": { "returnType": "string", "optional": true }
-    }
+    },
+    "event": { "type": { "returnType": "Event", "optional": false } }
+  },
+  "AgChartClickEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
+    "event": { "type": { "returnType": "Event", "optional": false } }
   },
   "AgBaseChartListeners": {
     "seriesNodeClick": {
@@ -13400,7 +13410,15 @@
       "type": {
         "arguments": { "event": "AgNodeClickEvent" },
         "returnType": "any",
-        "optional": false
+        "optional": true
+      }
+    },
+    "click": {
+      "description": "/** The listener to call to signify a general click on the chart by the user. */",
+      "type": {
+        "arguments": { "event": "AgChartClickEvent" },
+        "returnType": "any",
+        "optional": true
       }
     }
   },
@@ -14109,6 +14127,14 @@
     },
     "content": {
       "description": "/** Content text for the tooltip body. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** Tooltip title text color. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "backgroundColor": {
+      "description": "/** Tooltip title background color. */",
       "type": { "returnType": "string", "optional": true }
     }
   },
@@ -14913,10 +14939,11 @@
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
     }
   },
+  "AgBarSeriesLabelPlacement": {},
   "AgBarSeriesLabelOptions": {
     "placement": {
       "description": "/** Where to render series labels relative to the segments. */",
-      "type": { "returnType": "'inside' | 'outside'", "optional": true }
+      "type": { "returnType": "AgBarSeriesLabelPlacement", "optional": true }
     },
     "formatter": {
       "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
@@ -15110,7 +15137,7 @@
     "formatter": {
       "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "type": {
-        "arguments": { "params": "{ value: number; seriesId: string; }" },
+        "arguments": { "params": "AgCartesianSeriesLabelFormatterParams" },
         "returnType": "string",
         "optional": true
       }
@@ -15140,11 +15167,52 @@
       "type": { "returnType": "CssColor", "optional": true }
     }
   },
+  "AgHistogramSeriesTooltipRendererParams": {
+    "datum": {
+      "type": { "returnType": "AgHistogramBinDatum<any>", "optional": false }
+    },
+    "xKey": {
+      "description": "/** xKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "xValue": {
+      "description": "/** xValue as read from series data via the xKey property. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "xName": {
+      "description": "/** xName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** yKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "yValue": {
+      "description": "/** yValue as read from series data via the yKey property. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "yName": {
+      "description": "/** yName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "title": {
+      "description": "/** Series title or yName depending on series configuration. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
   "AgHistogramSeriesTooltip": {
     "renderer": {
       "description": "/** Function used to create the content for tooltips. */",
       "type": {
-        "arguments": { "params": "AgCartesianSeriesTooltipRendererParams" },
+        "arguments": { "params": "AgHistogramSeriesTooltipRendererParams" },
         "returnType": "string | AgTooltipRendererResult",
         "optional": true
       }
@@ -15885,10 +15953,12 @@
         "optional": false
       }
     },
-    "sizeKey": { "type": { "returnType": "string", "optional": false } },
-    "labelKey": { "type": { "returnType": "string", "optional": false } },
-    "valueKey": { "type": { "returnType": "string", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } },
+    "sizeKey": { "type": { "returnType": "string", "optional": true } },
+    "labelKey": { "type": { "returnType": "string", "optional": true } },
+    "valueKey": { "type": { "returnType": "string", "optional": true } },
+    "colorKey": { "type": { "returnType": "string", "optional": true } },
+    "color": { "type": { "returnType": "string", "optional": true } },
+    "title": { "type": { "returnType": "string", "optional": true } },
     "seriesId": { "type": { "returnType": "string", "optional": false } },
     "meta": { "typeParams": ["DatumType"] }
   },
@@ -16037,23 +16107,23 @@
     },
     "fill": {
       "description": "/** The colour of the fill for the treemap tile. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "fillOpacity": {
       "description": "/** The opacity of the fill for the treemap tile. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "stroke": {
       "description": "/** The colour of the stroke for the treemap tile. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** The opacity of the stroke for the treemap tile. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the stroke for the treemap tile. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "gradient": {
       "description": "/** Whether or not the gradients are used for treemap tiles. */",
@@ -16072,23 +16142,23 @@
   "AgTreemapSeriesFormat": {
     "fill": {
       "description": "/** The colour of the fill for the treemap tile. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "fillOpacity": {
       "description": "/** The opacity of the fill for the treemap tile. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "stroke": {
       "description": "/** The colour of the stroke for the treemap tile. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** The opacity of the stroke for the treemap tile. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the stroke for the treemap tile. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "gradient": {
       "description": "/** Whether or not the gradient is used for the treemap tile. */",

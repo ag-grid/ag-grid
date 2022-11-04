@@ -15,7 +15,7 @@ type ThemeMap = { [key in AgChartThemeName | 'undefined' | 'null']?: ChartTheme 
 const lightTheme = new ChartTheme();
 const darkTheme = new DarkTheme();
 
-export const lightThemes: ThemeMap = {
+const lightThemes: ThemeMap = {
     undefined: lightTheme,
     null: lightTheme,
     'ag-default': lightTheme,
@@ -25,7 +25,7 @@ export const lightThemes: ThemeMap = {
     'ag-vivid': new VividLight(),
 };
 
-export const darkThemes: ThemeMap = {
+const darkThemes: ThemeMap = {
     undefined: darkTheme,
     null: darkTheme,
     'ag-default-dark': darkTheme,

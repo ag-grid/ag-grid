@@ -4,26 +4,9 @@
     "tick": { "type": { "returnType": "any", "optional": false } },
     "translationY": { "type": { "returnType": "number", "optional": false } }
   },
-  "GridStyle": {
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "lineDash": { "type": { "returnType": "number[]", "optional": true } }
-  },
   "TimeTickCount": {},
   "NumberTickCount": {},
   "TickCountType": { "meta": { "typeParams": ["S"] } },
-  "AxisLabelFormatterParams": {
-    "value": { "type": { "returnType": "any", "optional": false } },
-    "index": { "type": { "returnType": "number", "optional": false } },
-    "fractionDigits": { "type": { "returnType": "number", "optional": true } },
-    "formatter": {
-      "type": {
-        "arguments": { "x": "any" },
-        "returnType": "string",
-        "optional": true
-      }
-    },
-    "axis": { "type": { "returnType": "any", "optional": true } }
-  },
   "Size": {},
   "OffscreenCanvasRenderingContext2D": {},
   "OffscreenCanvas": {},
@@ -1352,6 +1335,11 @@
       "type": { "returnType": "CssColor", "optional": true }
     }
   },
+  "AgChartEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
+    "event": { "type": { "returnType": "Event", "optional": false } },
+    "meta": { "typeParams": ["T extends string"] }
+  },
   "AgNodeClickEvent": {
     "type": {
       "description": "/** Event type. */",
@@ -1404,7 +1392,12 @@
     "radiusKey": {
       "description": "/** radiusKey as specified on series options */",
       "type": { "returnType": "string", "optional": true }
-    }
+    },
+    "event": { "type": { "returnType": "Event", "optional": false } }
+  },
+  "AgChartClickEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
+    "event": { "type": { "returnType": "Event", "optional": false } }
   },
   "AgBaseChartListeners": {
     "seriesNodeClick": {
@@ -1412,7 +1405,15 @@
       "type": {
         "arguments": { "event": "AgNodeClickEvent" },
         "returnType": "any",
-        "optional": false
+        "optional": true
+      }
+    },
+    "click": {
+      "description": "/** The listener to call to signify a general click on the chart by the user. */",
+      "type": {
+        "arguments": { "event": "AgChartClickEvent" },
+        "returnType": "any",
+        "optional": true
       }
     }
   },
@@ -2121,6 +2122,14 @@
     },
     "content": {
       "description": "/** Content text for the tooltip body. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** Tooltip title text color. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "backgroundColor": {
+      "description": "/** Tooltip title background color. */",
       "type": { "returnType": "string", "optional": true }
     }
   },
@@ -2925,10 +2934,11 @@
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
     }
   },
+  "AgBarSeriesLabelPlacement": {},
   "AgBarSeriesLabelOptions": {
     "placement": {
       "description": "/** Where to render series labels relative to the segments. */",
-      "type": { "returnType": "'inside' | 'outside'", "optional": true }
+      "type": { "returnType": "AgBarSeriesLabelPlacement", "optional": true }
     },
     "formatter": {
       "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
@@ -3122,7 +3132,7 @@
     "formatter": {
       "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "type": {
-        "arguments": { "params": "{ value: number; seriesId: string; }" },
+        "arguments": { "params": "AgCartesianSeriesLabelFormatterParams" },
         "returnType": "string",
         "optional": true
       }
@@ -3152,11 +3162,52 @@
       "type": { "returnType": "CssColor", "optional": true }
     }
   },
+  "AgHistogramSeriesTooltipRendererParams": {
+    "datum": {
+      "type": { "returnType": "AgHistogramBinDatum<any>", "optional": false }
+    },
+    "xKey": {
+      "description": "/** xKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "xValue": {
+      "description": "/** xValue as read from series data via the xKey property. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "xName": {
+      "description": "/** xName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** yKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "yValue": {
+      "description": "/** yValue as read from series data via the yKey property. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "yName": {
+      "description": "/** yName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "title": {
+      "description": "/** Series title or yName depending on series configuration. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
   "AgHistogramSeriesTooltip": {
     "renderer": {
       "description": "/** Function used to create the content for tooltips. */",
       "type": {
-        "arguments": { "params": "AgCartesianSeriesTooltipRendererParams" },
+        "arguments": { "params": "AgHistogramSeriesTooltipRendererParams" },
         "returnType": "string | AgTooltipRendererResult",
         "optional": true
       }
@@ -3897,10 +3948,12 @@
         "optional": false
       }
     },
-    "sizeKey": { "type": { "returnType": "string", "optional": false } },
-    "labelKey": { "type": { "returnType": "string", "optional": false } },
-    "valueKey": { "type": { "returnType": "string", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } },
+    "sizeKey": { "type": { "returnType": "string", "optional": true } },
+    "labelKey": { "type": { "returnType": "string", "optional": true } },
+    "valueKey": { "type": { "returnType": "string", "optional": true } },
+    "colorKey": { "type": { "returnType": "string", "optional": true } },
+    "color": { "type": { "returnType": "string", "optional": true } },
+    "title": { "type": { "returnType": "string", "optional": true } },
     "seriesId": { "type": { "returnType": "string", "optional": false } },
     "meta": { "typeParams": ["DatumType"] }
   },
@@ -4049,23 +4102,23 @@
     },
     "fill": {
       "description": "/** The colour of the fill for the treemap tile. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "fillOpacity": {
       "description": "/** The opacity of the fill for the treemap tile. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "stroke": {
       "description": "/** The colour of the stroke for the treemap tile. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** The opacity of the stroke for the treemap tile. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the stroke for the treemap tile. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "gradient": {
       "description": "/** Whether or not the gradients are used for treemap tiles. */",
@@ -4084,23 +4137,23 @@
   "AgTreemapSeriesFormat": {
     "fill": {
       "description": "/** The colour of the fill for the treemap tile. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "fillOpacity": {
       "description": "/** The opacity of the fill for the treemap tile. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "stroke": {
       "description": "/** The colour of the stroke for the treemap tile. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** The opacity of the stroke for the treemap tile. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the stroke for the treemap tile. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "gradient": {
       "description": "/** Whether or not the gradient is used for the treemap tile. */",
@@ -4311,22 +4364,9 @@
   "SeriesOptionType": { "meta": { "typeParams": ["T extends Series"] } },
   "DownloadOptions": {},
   "ObservableLike": {},
-  "ChartClickEvent": {
-    "event": { "type": { "returnType": "MouseEvent", "optional": false } },
-    "source": { "type": { "returnType": "Chart", "optional": false } },
-    "type": { "type": { "returnType": "string", "optional": false } }
-  },
   "ChartUpdateType": {},
   "OptionalHTMLElement": {},
   "ChartAxisDirection": {},
-  "ChartAxisPosition": {},
-  "ChartAxisMeta": {
-    "id": { "type": { "returnType": "string", "optional": false } },
-    "direction": {
-      "type": { "returnType": "ChartAxisDirection", "optional": false }
-    },
-    "boundSeries": { "type": { "returnType": "Series[]", "optional": false } }
-  },
   "NodeData": {},
   "CrossLineType": {},
   "CrossLineLabelPosition": {},
@@ -4336,7 +4376,6 @@
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
-  "GroupedCategoryChartAxis": {},
   "Layers": {},
   "LegendDatum": {
     "id": { "type": { "returnType": "string", "optional": false } },
@@ -4357,13 +4396,6 @@
     }
   },
   "LegendOrientation": {},
-  "LegendPosition": {},
-  "LegendLabelFormatterParams": {
-    "id": { "type": { "returnType": "string", "optional": false } },
-    "itemId": { "type": { "returnType": "any", "optional": false } },
-    "value": { "type": { "returnType": "string", "optional": false } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } }
-  },
   "SeriesOptionsTypes": {},
   "AxesOptionsTypes": {},
   "PreparationContext": {
@@ -4449,25 +4481,8 @@
   },
   "CumulativeValue": {},
   "ProcessedXDatum": {},
-  "AreaSeriesLabelFormatterParams": {
-    "seriesId": { "type": { "returnType": "string", "optional": false } },
-    "value": { "type": { "returnType": "number", "optional": true } }
-  },
   "AreaSeriesTag": {},
   "AreaSeriesNodeDataContext": {},
-  "BarTooltipRendererParams": {
-    "processedYValue": { "type": { "returnType": "any", "optional": false } },
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "xValue": { "type": { "returnType": "any", "optional": false } },
-    "xName": { "type": { "returnType": "string", "optional": true } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
-    "yValue": { "type": { "returnType": "any", "optional": false } },
-    "yName": { "type": { "returnType": "string", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } }
-  },
   "BarNodeDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
     "yKey": { "type": { "returnType": "string", "optional": false } },
@@ -4494,22 +4509,6 @@
     "y": { "type": { "returnType": "number", "optional": false } }
   },
   "BarSeriesNodeTag": {},
-  "BarLabelPlacement": {},
-  "BarSeriesFormatterParams": {
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
-    "highlighted": { "type": { "returnType": "boolean", "optional": false } },
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } }
-  },
-  "BarSeriesFormat": {
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } }
-  },
   "NodeDataSelection": {
     "meta": {
       "typeParams": [
@@ -4568,23 +4567,6 @@
       "type": { "returnType": "boolean", "optional": false }
     }
   },
-  "CartesianSeriesMarkerFormat": {
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "size": { "type": { "returnType": "number", "optional": true } }
-  },
-  "CartesianSeriesMarkerFormatterParams": {
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
-    "size": { "type": { "returnType": "number", "optional": false } },
-    "highlighted": { "type": { "returnType": "boolean", "optional": false } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } }
-  },
   "HistogramSeriesNodeTag": {},
   "HistogramNodeDatum": {
     "x": { "type": { "returnType": "number", "optional": false } },
@@ -4607,15 +4589,6 @@
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
   },
-  "HistogramSeriesNodeClickEvent": {
-    "type": { "type": { "returnType": "'nodeClick'", "optional": false } },
-    "event": { "type": { "returnType": "MouseEvent", "optional": false } },
-    "series": {
-      "type": { "returnType": "HistogramSeries", "optional": false }
-    },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "xKey": { "type": { "returnType": "string", "optional": false } }
-  },
   "HistogramAggregation": {},
   "AggregationFunction": {},
   "LineNodeDatum": {
@@ -4635,7 +4608,6 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } }
   },
-  "LineTooltipRendererParams": {},
   "PointDatum": {
     "xDatum": { "type": { "returnType": "any", "optional": false } },
     "yDatum": { "type": { "returnType": "any", "optional": false } },
@@ -4650,22 +4622,6 @@
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
-  },
-  "ScatterTooltipRendererParams": {
-    "sizeKey": { "type": { "returnType": "string", "optional": true } },
-    "sizeName": { "type": { "returnType": "string", "optional": true } },
-    "labelKey": { "type": { "returnType": "string", "optional": true } },
-    "labelName": { "type": { "returnType": "string", "optional": true } },
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "xValue": { "type": { "returnType": "any", "optional": false } },
-    "xName": { "type": { "returnType": "string", "optional": true } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
-    "yValue": { "type": { "returnType": "any", "optional": false } },
-    "yName": { "type": { "returnType": "string", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } }
   },
   "TreemapNodeDatum": {
     "parent": {
@@ -4691,39 +4647,7 @@
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
   },
-  "TreemapTooltipRendererParams": {
-    "datum": {
-      "type": { "returnType": "TreemapNodeDatum", "optional": false }
-    },
-    "labelKey": { "type": { "returnType": "string", "optional": false } },
-    "sizeKey": { "type": { "returnType": "string", "optional": true } },
-    "colorKey": { "type": { "returnType": "string", "optional": true } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } }
-  },
   "TextNodeTag": {},
-  "TreemapSeriesFormatterParams": {
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "labelKey": { "type": { "returnType": "string", "optional": false } },
-    "sizeKey": { "type": { "returnType": "string", "optional": true } },
-    "colorKey": { "type": { "returnType": "string", "optional": true } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "fillOpacity": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeOpacity": { "type": { "returnType": "number", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "gradient": { "type": { "returnType": "boolean", "optional": true } },
-    "highlighted": { "type": { "returnType": "boolean", "optional": false } }
-  },
-  "TreemapSeriesFormat": {
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "fillOpacity": { "type": { "returnType": "number", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeOpacity": { "type": { "returnType": "number", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "gradient": { "type": { "returnType": "boolean", "optional": true } }
-  },
   "PieNodeDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
     "radius": { "type": { "returnType": "number", "optional": false } },
@@ -4745,7 +4669,7 @@
       }
     },
     "sectorFormat": {
-      "type": { "returnType": "PieSeriesFormat", "optional": false }
+      "type": { "returnType": "AgPieSeriesFormat", "optional": false }
     },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
@@ -4754,84 +4678,7 @@
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
   },
-  "PieTooltipRendererParams": {
-    "labelKey": {
-      "description": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelName": {
-      "description": "/** @deprecated Use calloutLabelName or sectorLabelName\n */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "calloutLabelKey": { "type": { "returnType": "string", "optional": true } },
-    "calloutLabelName": {
-      "type": { "returnType": "string", "optional": true }
-    },
-    "sectorLabelKey": { "type": { "returnType": "string", "optional": true } },
-    "sectorLabelName": { "type": { "returnType": "string", "optional": true } },
-    "angleKey": { "type": { "returnType": "string", "optional": false } },
-    "angleValue": { "type": { "returnType": "any", "optional": false } },
-    "angleName": { "type": { "returnType": "string", "optional": true } },
-    "radiusKey": { "type": { "returnType": "string", "optional": true } },
-    "radiusValue": { "type": { "returnType": "any", "optional": true } },
-    "radiusName": { "type": { "returnType": "string", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } }
-  },
   "PieNodeTag": {},
-  "PieSeriesFormatterParams": {
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
-    "highlighted": { "type": { "returnType": "boolean", "optional": false } },
-    "angleKey": { "type": { "returnType": "string", "optional": false } },
-    "radiusKey": { "type": { "returnType": "string", "optional": true } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } }
-  },
-  "PieSeriesFormat": {
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "fillOpacity": { "type": { "returnType": "number", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } }
-  },
-  "PieSeriesLabelFormatterParams": {
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "labelKey": {
-      "description": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelValue": {
-      "description": "/** @deprecated Use calloutLabelValue or sectorLabelValue\n */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelName": {
-      "description": "/** @deprecated Use calloutLabelName or sectorLabelName\n */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "calloutLabelKey": { "type": { "returnType": "string", "optional": true } },
-    "calloutLabelValue": {
-      "type": { "returnType": "string", "optional": true }
-    },
-    "calloutLabelName": {
-      "type": { "returnType": "string", "optional": true }
-    },
-    "sectorLabelKey": { "type": { "returnType": "string", "optional": true } },
-    "sectorLabelValue": {
-      "type": { "returnType": "string", "optional": true }
-    },
-    "sectorLabelName": { "type": { "returnType": "string", "optional": true } },
-    "angleKey": { "type": { "returnType": "string", "optional": false } },
-    "angleValue": { "type": { "returnType": "any", "optional": true } },
-    "angleName": { "type": { "returnType": "string", "optional": true } },
-    "radiusKey": { "type": { "returnType": "string", "optional": true } },
-    "radiusValue": { "type": { "returnType": "any", "optional": true } },
-    "radiusName": { "type": { "returnType": "string", "optional": true } },
-    "value": { "type": { "returnType": "any", "optional": true } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } }
-  },
   "SectorBoundaries": {
     "startAngle": { "type": { "returnType": "number", "optional": false } },
     "endAngle": { "type": { "returnType": "number", "optional": false } },
@@ -4848,47 +4695,8 @@
   },
   "SeriesNodePickMode": {},
   "SeriesNodePickMatch": {},
-  "TooltipRendererParams": {
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } }
-  },
-  "CartesianTooltipRendererParams": {
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "xValue": { "type": { "returnType": "any", "optional": false } },
-    "xName": { "type": { "returnType": "string", "optional": true } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
-    "yValue": { "type": { "returnType": "any", "optional": false } },
-    "yName": { "type": { "returnType": "string", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } }
-  },
-  "PolarTooltipRendererParams": {
-    "angleKey": { "type": { "returnType": "string", "optional": false } },
-    "angleValue": { "type": { "returnType": "any", "optional": false } },
-    "angleName": { "type": { "returnType": "string", "optional": true } },
-    "radiusKey": { "type": { "returnType": "string", "optional": true } },
-    "radiusValue": { "type": { "returnType": "any", "optional": true } },
-    "radiusName": { "type": { "returnType": "string", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } }
-  },
   "SeriesNodeDataContext": {
     "meta": { "typeParams": ["S = SeriesNodeDatum", "L = S"] }
-  },
-  "SeriesMarkerFormatterParams": {
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
-    "size": { "type": { "returnType": "number", "optional": false } },
-    "highlighted": { "type": { "returnType": "boolean", "optional": false } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } }
   },
   "TestCase": {
     "options": {
@@ -4955,12 +4763,6 @@
     "offsetY": { "type": { "returnType": "number", "optional": false } },
     "event": { "type": { "returnType": "MouseEvent", "optional": false } }
   },
-  "TooltipRendererResult": {
-    "content": { "type": { "returnType": "string", "optional": true } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "backgroundColor": { "type": { "returnType": "string", "optional": true } }
-  },
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }
   },
@@ -4972,7 +4774,6 @@
     "y0": { "type": { "returnType": "number", "optional": false } },
     "y1": { "type": { "returnType": "number", "optional": false } }
   },
-  "InterpolatorFactory": { "meta": { "typeParams": ["T", "U"] } },
   "Scale": {
     "domain": { "type": { "returnType": "D[]", "optional": false } },
     "range": { "type": { "returnType": "R[]", "optional": false } },
@@ -5078,7 +4879,6 @@
   "ValueFn": { "meta": { "typeParams": ["P", "GDatum", "PDatum"] } },
   "KeyFn": { "meta": { "typeParams": ["N", "G", "GDatum"] } },
   "ArcType": {},
-  "RectSizing": {},
   "ShapeLineCap": {},
   "ShapeLineJoin": {},
   "Comparator": { "meta": { "typeParams": ["T"] } },
@@ -5200,15 +5000,7 @@
     "meta": { "typeParams": ["S"] },
     "type": { "type": { "returnType": "string", "optional": false } }
   },
-  "PropertyChangeEvent": {
-    "value": { "type": { "returnType": "V", "optional": false } },
-    "oldValue": { "type": { "returnType": "V", "optional": false } },
-    "meta": { "typeParams": ["S", "V"] },
-    "source": { "type": { "returnType": "S", "optional": false } },
-    "type": { "type": { "returnType": "string", "optional": false } }
-  },
   "SourceEventListener": { "meta": { "typeParams": ["S"] } },
-  "PropertyChangeEventListener": { "meta": { "typeParams": ["S", "V"] } },
   "Callback": {},
   "OnSizeChange": {},
   "Entry": {},

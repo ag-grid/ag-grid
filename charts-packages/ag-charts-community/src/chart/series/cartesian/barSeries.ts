@@ -1,22 +1,16 @@
 import { Group } from '../../../scene/group';
 import { Selection } from '../../../scene/selection';
 import { Rect } from '../../../scene/shape/rect';
-import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
+import { Text } from '../../../scene/shape/text';
 import { BandScale } from '../../../scale/bandScale';
 import { DropShadow } from '../../../scene/dropShadow';
-import {
-    SeriesNodeDatum,
-    SeriesNodeDataContext,
-    CartesianTooltipRendererParams,
-    SeriesTooltip,
-    SeriesNodePickMode,
-} from '../series';
+import { SeriesNodeDatum, SeriesNodeDataContext, SeriesTooltip, SeriesNodePickMode } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legend';
 import { CartesianSeries, CartesianSeriesNodeClickEvent } from './cartesianSeries';
 import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from '../../chartAxis';
-import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
+import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent, findMinMax } from '../../../util/array';
 import { equal } from '../../../util/equal';
 import { Scale } from '../../../scale/scale';
@@ -40,14 +34,20 @@ import {
 } from '../../../util/validation';
 import { CategoryAxis } from '../../axis/categoryAxis';
 import { GroupedCategoryAxis } from '../../axis/groupedCategoryAxis';
+import {
+    AgCartesianSeriesLabelFormatterParams,
+    AgCartesianSeriesTooltipRendererParams,
+    AgTooltipRendererResult,
+    AgBarSeriesFormatterParams,
+    AgBarSeriesFormat,
+    AgBarSeriesLabelPlacement,
+    FontStyle,
+    FontWeight,
+} from '../../agChartOptions';
 
-const BAR_LABEL_PLACEMENTS = ['inside', 'outside'];
+const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
     OPTIONAL(v, ctx, (v: any) => BAR_LABEL_PLACEMENTS.includes(v));
-
-export interface BarTooltipRendererParams extends CartesianTooltipRendererParams {
-    readonly processedYValue: any;
-}
 
 interface BarNodeDatum extends SeriesNodeDatum, Readonly<Point> {
     readonly index: number;
@@ -76,39 +76,17 @@ enum BarSeriesNodeTag {
     Label,
 }
 
-export enum BarLabelPlacement {
-    Inside = 'inside',
-    Outside = 'outside',
-}
-
-export class BarSeriesLabel extends Label {
+class BarSeriesLabel extends Label {
     @Validate(OPT_FUNCTION)
-    formatter?: (params: { value: number; seriesId: string }) => string = undefined;
+    formatter?: (params: AgCartesianSeriesLabelFormatterParams) => string = undefined;
 
     @Validate(OPT_BAR_LABEL_PLACEMENT)
-    placement = BarLabelPlacement.Inside;
+    placement: AgBarSeriesLabelPlacement = 'inside';
 }
 
-export interface BarSeriesFormatterParams {
-    readonly datum: any;
-    readonly fill?: string;
-    readonly stroke?: string;
-    readonly strokeWidth: number;
-    readonly highlighted: boolean;
-    readonly xKey: string;
-    readonly yKey: string;
-    readonly seriesId: string;
-}
-
-export interface BarSeriesFormat {
-    fill?: string;
-    stroke?: string;
-    strokeWidth?: number;
-}
-
-export class BarSeriesTooltip extends SeriesTooltip {
+class BarSeriesTooltip extends SeriesTooltip {
     @Validate(OPT_FUNCTION)
-    renderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult = undefined;
+    renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult = undefined;
 }
 
 function flat(arr: any[], target: any[] = []): any[] {
@@ -160,7 +138,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     lineDashOffset: number = 0;
 
     @Validate(OPT_FUNCTION)
-    formatter?: (params: BarSeriesFormatterParams) => BarSeriesFormat = undefined;
+    formatter?: (params: AgBarSeriesFormatterParams<any>) => AgBarSeriesFormat = undefined;
 
     constructor() {
         super({
@@ -649,14 +627,14 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
                     if (flipXY) {
                         labelY = barX + barWidth / 2;
-                        if (labelPlacement === BarLabelPlacement.Inside) {
+                        if (labelPlacement === 'inside') {
                             labelX = y + ((yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y)) / 2;
                         } else {
                             labelX = y + (yValue >= 0 ? 1 : -1) * 4;
                         }
                     } else {
                         labelX = barX + barWidth / 2;
-                        if (labelPlacement === BarLabelPlacement.Inside) {
+                        if (labelPlacement === 'inside') {
                             labelY = y + ((yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y)) / 2;
                         } else {
                             labelY = y + (yValue >= 0 ? -3 : 4);
@@ -666,7 +644,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     let labelTextAlign: CanvasTextAlign;
                     let labelTextBaseline: CanvasTextBaseline;
 
-                    if (labelPlacement === BarLabelPlacement.Inside) {
+                    if (labelPlacement === 'inside') {
                         labelTextAlign = 'center';
                         labelTextBaseline = 'middle';
                     } else {
@@ -782,7 +760,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     : this.getStrokeWidth(this.strokeWidth, datum);
             const fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
 
-            let format: BarSeriesFormat | undefined = undefined;
+            let format: AgBarSeriesFormat | undefined = undefined;
             if (formatter) {
                 format = formatter({
                     datum: datum.datum,
@@ -868,7 +846,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             return '';
         }
 
-        const yGroup = yData[nodeDatum.index];
         let fillIndex = 0;
         let i = 0;
         let j = 0;
@@ -891,13 +868,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const strokeWidth = this.getStrokeWidth(this.strokeWidth);
         const xValue = datum[xKey];
         const yValue = datum[yKey];
-        const processedYValue = yGroup[j][i];
         const xString = sanitizeHtml(xAxis.formatDatum(xValue));
         const yString = sanitizeHtml(yAxis.formatDatum(yValue));
         const title = sanitizeHtml(yName);
         const content = xString + ': ' + yString;
 
-        let format: BarSeriesFormat | undefined = undefined;
+        let format: AgBarSeriesFormat | undefined = undefined;
 
         if (formatter) {
             format = formatter({
@@ -914,7 +890,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         const color = (format && format.fill) || fill;
 
-        const defaults: TooltipRendererResult = {
+        const defaults: AgTooltipRendererResult = {
             title,
             backgroundColor: color,
             content,
@@ -929,7 +905,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     xName,
                     yKey,
                     yValue,
-                    processedYValue,
                     yName,
                     color,
                     title,

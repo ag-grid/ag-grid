@@ -7530,6 +7530,10 @@
       "fill?": "/** Colour of the chart background. */"
     }
   },
+  "AgChartEvent": {
+    "meta": { "typeParams": ["T extends string"] },
+    "type": { "type": "T", "event": "Event" }
+  },
   "AgNodeClickEvent": {
     "meta": {},
     "type": {
@@ -7545,7 +7549,8 @@
       "angleKey?": "string",
       "calloutLabelKey?": "string",
       "sectorLabelKey?": "string",
-      "radiusKey?": "string"
+      "radiusKey?": "string",
+      "event": "Event"
     },
     "docs": {
       "type": "/** Event type. */",
@@ -7563,15 +7568,19 @@
       "radiusKey?": "/** radiusKey as specified on series options */"
     }
   },
+  "AgChartClickEvent": {
+    "meta": {},
+    "type": { "type": "T", "event": "Event" }
+  },
   "AgBaseChartListeners": {
     "meta": {},
     "type": {
-      "seriesNodeClick": "(event: AgNodeClickEvent) => any",
-      "[key: string]": "Function"
+      "seriesNodeClick?": "(event: AgNodeClickEvent) => any",
+      "click?": "(event: AgChartClickEvent) => any"
     },
     "docs": {
-      "seriesNodeClick": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
-      "[key: string]": "/** Generic listeners. */"
+      "seriesNodeClick?": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
+      "click?": "/** The listener to call to signify a general click on the chart by the user. */"
     }
   },
   "AgBaseChartOptions": {
@@ -8065,10 +8074,17 @@
   },
   "AgTooltipRendererResult": {
     "meta": {},
-    "type": { "title?": "string", "content?": "string" },
+    "type": {
+      "title?": "string",
+      "content?": "string",
+      "color?": "string",
+      "backgroundColor?": "string"
+    },
     "docs": {
       "title?": "/** Title text for the tooltip header. */",
-      "content?": "/** Content text for the tooltip body. */"
+      "content?": "/** Content text for the tooltip body. */",
+      "color?": "/** Tooltip title text color. */",
+      "backgroundColor?": "/** Tooltip title background color. */"
     }
   },
   "AgSeriesTooltipRendererParams": {
@@ -8586,10 +8602,14 @@
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
+  "AgBarSeriesLabelPlacement": {
+    "meta": { "isTypeAlias": true },
+    "type": "'inside' | 'outside'"
+  },
   "AgBarSeriesLabelOptions": {
     "meta": {},
     "type": {
-      "placement?": "'inside' | 'outside'",
+      "placement?": "AgBarSeriesLabelPlacement",
       "formatter?": "(params: AgCartesianSeriesLabelFormatterParams) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
@@ -8713,7 +8733,7 @@
   "AgHistogramSeriesLabelOptions": {
     "meta": {},
     "type": {
-      "formatter?": "(params: { value: number; seriesId: string; }) => string",
+      "formatter?": "(params: AgCartesianSeriesLabelFormatterParams) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -8731,10 +8751,37 @@
       "color?": "/** The colour to use for the labels. */"
     }
   },
+  "AgHistogramSeriesTooltipRendererParams": {
+    "meta": {},
+    "type": {
+      "datum": "AgHistogramBinDatum<any>",
+      "xKey": "string",
+      "xValue?": "any",
+      "xName?": "string",
+      "yKey": "string",
+      "yValue?": "any",
+      "yName?": "string",
+      "title?": "string",
+      "color?": "CssColor",
+      "seriesId": "string"
+    },
+    "docs": {
+      "xKey": "/** xKey as specified on series options. */",
+      "xValue?": "/** xValue as read from series data via the xKey property. */",
+      "xName?": "/** xName as specified on series options. */",
+      "yKey": "/** yKey as specified on series options. */",
+      "yValue?": "/** yValue as read from series data via the yKey property. */",
+      "yName?": "/** yName as specified on series options. */",
+      "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "title?": "/** Series title or yName depending on series configuration. */",
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
+    }
+  },
   "AgHistogramSeriesTooltip": {
     "meta": {},
     "type": {
-      "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "renderer?": "(params: AgHistogramSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean"
     },
     "docs": {
@@ -9194,10 +9241,12 @@
     "meta": { "typeParams": ["DatumType"] },
     "type": {
       "datum": "AgTreemapNodeDatum<DatumType>",
-      "sizeKey": "string",
-      "labelKey": "string",
-      "valueKey": "string",
-      "color": "string",
+      "sizeKey?": "string",
+      "labelKey?": "string",
+      "valueKey?": "string",
+      "colorKey?": "string",
+      "color?": "string",
+      "title?": "string",
       "seriesId": "string"
     }
   },
@@ -9288,11 +9337,11 @@
       "labelKey": "string",
       "sizeKey?": "string",
       "colorKey?": "string",
-      "fill?": "string",
-      "fillOpacity?": "string",
-      "stroke?": "string",
-      "strokeOpacity?": "number",
-      "strokeWidth?": "number",
+      "fill?": "CssColor",
+      "fillOpacity?": "Opacity",
+      "stroke?": "CssColor",
+      "strokeOpacity?": "Opacity",
+      "strokeWidth?": "PixelSize",
       "gradient?": "boolean",
       "highlighted": "boolean",
       "seriesId": "string"
@@ -9315,11 +9364,11 @@
   "AgTreemapSeriesFormat": {
     "meta": { "doc": "/** The formatted style of a treemap tile */" },
     "type": {
-      "fill?": "string",
-      "fillOpacity?": "string",
-      "stroke?": "string",
-      "strokeOpacity?": "number",
-      "strokeWidth?": "number",
+      "fill?": "CssColor",
+      "fillOpacity?": "Opacity",
+      "stroke?": "CssColor",
+      "strokeOpacity?": "Opacity",
+      "strokeWidth?": "PixelSize",
       "gradient?": "boolean"
     },
     "docs": {

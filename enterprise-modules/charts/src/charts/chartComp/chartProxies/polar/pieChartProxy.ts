@@ -1,12 +1,15 @@
-import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
-import { AgChart, PieTooltipRendererParams, PolarChart, AgChartLegendClickEvent } from "ag-charts-community";
+import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateChartParams } from '../chartProxy';
 import {
+    AgChart,
+    PolarChart,
+    AgChartLegendClickEvent,
     AgPieSeriesOptions,
     AgPolarChartOptions,
-    AgPolarSeriesOptions
-} from "ag-charts-community/src/chart/agChartOptions";
-import { changeOpacity } from "../../utils/color";
-import { deepMerge } from "../../utils/object";
+    AgPolarSeriesOptions,
+    AgPieSeriesTooltipRendererParams,
+} from 'ag-charts-community';
+import { changeOpacity } from '../../utils/color';
+import { deepMerge } from '../../utils/object';
 
 interface DoughnutOffset {
     offsetAmount: number;
@@ -190,7 +193,7 @@ export class PieChartProxy extends ChartProxy {
     }
 
     private getCrossFilterTooltipRenderer(title: string) {
-        return (params: PieTooltipRendererParams) => {
+        return (params: AgPieSeriesTooltipRendererParams) => {
             const label = params.datum[params.calloutLabelKey as string];
             const ratio = params.datum[params.radiusKey as string];
             const totalValue = params.angleValue;

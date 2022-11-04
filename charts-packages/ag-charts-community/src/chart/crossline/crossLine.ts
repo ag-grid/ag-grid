@@ -1,12 +1,12 @@
 import { PointerEvents } from '../../scene/node';
 import { Group } from '../../scene/group';
-import { Text, FontStyle, FontWeight } from '../../scene/shape/text';
+import { Text } from '../../scene/shape/text';
 import { BBox } from '../../scene/bbox';
 import { Scale } from '../../scale/scale';
 import { clamper, ContinuousScale } from '../../scale/continuousScale';
 import { createId } from '../../util/id';
 import { normalizeAngle360, toRadians } from '../../util/angle';
-import { ChartAxisDirection, ChartAxisPosition } from '../chartAxis';
+import { ChartAxisDirection } from '../chartAxis';
 import {
     CrossLineLabelPosition,
     labeldDirectionHandling,
@@ -32,6 +32,7 @@ import {
     OPTIONAL,
     predicateWithMessage,
 } from '../../util/validation';
+import { FontStyle, FontWeight, AgCrossLineLabelPosition } from '../agChartOptions';
 
 const CROSSLINE_LABEL_POSITIONS = [
     'top',
@@ -63,7 +64,7 @@ const OPT_CROSSLINE_TYPE = predicateWithMessage(
     `expecting a crossLine type keyword such as 'range' or 'line'`
 );
 
-export class CrossLineLabel {
+class CrossLineLabel {
     @Validate(OPT_BOOLEAN)
     enabled?: boolean = undefined;
 
@@ -403,7 +404,7 @@ export class CrossLine {
         return this.crossLineLabel.computeTransformedBBox();
     }
 
-    calculatePadding(padding: Partial<Record<ChartAxisPosition, number>>, seriesRect: BBox) {
+    calculatePadding(padding: Partial<Record<AgCrossLineLabelPosition, number>>, seriesRect: BBox) {
         const { isRange, startLine, endLine } = this;
         if (!isRange && !startLine && !endLine) {
             return;

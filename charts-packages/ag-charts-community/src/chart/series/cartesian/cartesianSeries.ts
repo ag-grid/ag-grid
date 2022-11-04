@@ -7,7 +7,7 @@ import {
     SeriesNodeClickEvent,
 } from '../series';
 import { ChartAxis, ChartAxisDirection } from '../../chartAxis';
-import { SeriesMarker, SeriesMarkerFormatterParams } from '../seriesMarker';
+import { SeriesMarker } from '../seriesMarker';
 import { isContinuous, isDiscrete } from '../../../util/value';
 import { Path } from '../../../scene/shape/path';
 import { Selection } from '../../../scene/selection';
@@ -23,6 +23,7 @@ import { Point } from '../../../scene/point';
 import { OPT_FUNCTION, ValidateAndChangeDetection } from '../../../util/validation';
 import { jsonDiff } from '../../../util/json';
 import { BBox } from '../../../scene/bbox';
+import { AgCartesianSeriesMarkerFormatterParams, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
@@ -668,22 +669,10 @@ export abstract class CartesianSeries<
     protected abstract isLabelEnabled(): boolean;
 }
 
-export interface CartesianSeriesMarkerFormat {
-    fill?: string;
-    stroke?: string;
-    strokeWidth?: number;
-    size?: number;
-}
-
 export class CartesianSeriesMarker extends SeriesMarker {
     @ValidateAndChangeDetection({
         validatePredicate: OPT_FUNCTION,
         sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
     })
-    formatter?: (params: CartesianSeriesMarkerFormatterParams) => CartesianSeriesMarkerFormat = undefined;
-}
-
-export interface CartesianSeriesMarkerFormatterParams extends SeriesMarkerFormatterParams {
-    xKey: string;
-    yKey: string;
+    formatter?: (params: AgCartesianSeriesMarkerFormatterParams<any>) => AgCartesianSeriesMarkerFormat = undefined;
 }

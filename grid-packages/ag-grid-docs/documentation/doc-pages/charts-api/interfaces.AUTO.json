@@ -8,10 +8,6 @@
     "meta": {},
     "type": { "tick": "any", "translationY": "number" }
   },
-  "GridStyle": {
-    "meta": {},
-    "type": { "stroke?": "string", "lineDash?": "number[]" }
-  },
   "TimeTickCount": {
     "meta": { "isTypeAlias": true },
     "type": "number | CountableTimeInterval"
@@ -20,16 +16,6 @@
   "TickCountType": {
     "meta": { "isTypeAlias": true, "typeParams": ["S"] },
     "type": "S extends TimeScale ? TimeTickCount : NumberTickCount"
-  },
-  "AxisLabelFormatterParams": {
-    "meta": {},
-    "type": {
-      "value": "any",
-      "index": "number",
-      "fractionDigits?": "number",
-      "formatter?": "(x: any) => string",
-      "axis?": "any"
-    }
   },
   "Size": {
     "meta": { "isTypeAlias": true },
@@ -857,6 +843,10 @@
       "fill?": "/** Colour of the chart background. */"
     }
   },
+  "AgChartEvent": {
+    "meta": { "typeParams": ["T extends string"] },
+    "type": { "type": "T", "event": "Event" }
+  },
   "AgNodeClickEvent": {
     "meta": {},
     "type": {
@@ -872,7 +862,8 @@
       "angleKey?": "string",
       "calloutLabelKey?": "string",
       "sectorLabelKey?": "string",
-      "radiusKey?": "string"
+      "radiusKey?": "string",
+      "event": "Event"
     },
     "docs": {
       "type": "/** Event type. */",
@@ -890,15 +881,19 @@
       "radiusKey?": "/** radiusKey as specified on series options */"
     }
   },
+  "AgChartClickEvent": {
+    "meta": {},
+    "type": { "type": "T", "event": "Event" }
+  },
   "AgBaseChartListeners": {
     "meta": {},
     "type": {
-      "seriesNodeClick": "(event: AgNodeClickEvent) => any",
-      "[key: string]": "Function"
+      "seriesNodeClick?": "(event: AgNodeClickEvent) => any",
+      "click?": "(event: AgChartClickEvent) => any"
     },
     "docs": {
-      "seriesNodeClick": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
-      "[key: string]": "/** Generic listeners. */"
+      "seriesNodeClick?": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
+      "click?": "/** The listener to call to signify a general click on the chart by the user. */"
     }
   },
   "AgBaseChartOptions": {
@@ -1392,10 +1387,17 @@
   },
   "AgTooltipRendererResult": {
     "meta": {},
-    "type": { "title?": "string", "content?": "string" },
+    "type": {
+      "title?": "string",
+      "content?": "string",
+      "color?": "string",
+      "backgroundColor?": "string"
+    },
     "docs": {
       "title?": "/** Title text for the tooltip header. */",
-      "content?": "/** Content text for the tooltip body. */"
+      "content?": "/** Content text for the tooltip body. */",
+      "color?": "/** Tooltip title text color. */",
+      "backgroundColor?": "/** Tooltip title background color. */"
     }
   },
   "AgSeriesTooltipRendererParams": {
@@ -1913,10 +1915,14 @@
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
+  "AgBarSeriesLabelPlacement": {
+    "meta": { "isTypeAlias": true },
+    "type": "'inside' | 'outside'"
+  },
   "AgBarSeriesLabelOptions": {
     "meta": {},
     "type": {
-      "placement?": "'inside' | 'outside'",
+      "placement?": "AgBarSeriesLabelPlacement",
       "formatter?": "(params: AgCartesianSeriesLabelFormatterParams) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
@@ -2040,7 +2046,7 @@
   "AgHistogramSeriesLabelOptions": {
     "meta": {},
     "type": {
-      "formatter?": "(params: { value: number; seriesId: string; }) => string",
+      "formatter?": "(params: AgCartesianSeriesLabelFormatterParams) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -2058,10 +2064,37 @@
       "color?": "/** The colour to use for the labels. */"
     }
   },
+  "AgHistogramSeriesTooltipRendererParams": {
+    "meta": {},
+    "type": {
+      "datum": "AgHistogramBinDatum<any>",
+      "xKey": "string",
+      "xValue?": "any",
+      "xName?": "string",
+      "yKey": "string",
+      "yValue?": "any",
+      "yName?": "string",
+      "title?": "string",
+      "color?": "CssColor",
+      "seriesId": "string"
+    },
+    "docs": {
+      "xKey": "/** xKey as specified on series options. */",
+      "xValue?": "/** xValue as read from series data via the xKey property. */",
+      "xName?": "/** xName as specified on series options. */",
+      "yKey": "/** yKey as specified on series options. */",
+      "yValue?": "/** yValue as read from series data via the yKey property. */",
+      "yName?": "/** yName as specified on series options. */",
+      "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "title?": "/** Series title or yName depending on series configuration. */",
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
+    }
+  },
   "AgHistogramSeriesTooltip": {
     "meta": {},
     "type": {
-      "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "renderer?": "(params: AgHistogramSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean"
     },
     "docs": {
@@ -2521,10 +2554,12 @@
     "meta": { "typeParams": ["DatumType"] },
     "type": {
       "datum": "AgTreemapNodeDatum<DatumType>",
-      "sizeKey": "string",
-      "labelKey": "string",
-      "valueKey": "string",
-      "color": "string",
+      "sizeKey?": "string",
+      "labelKey?": "string",
+      "valueKey?": "string",
+      "colorKey?": "string",
+      "color?": "string",
+      "title?": "string",
       "seriesId": "string"
     }
   },
@@ -2615,11 +2650,11 @@
       "labelKey": "string",
       "sizeKey?": "string",
       "colorKey?": "string",
-      "fill?": "string",
-      "fillOpacity?": "string",
-      "stroke?": "string",
-      "strokeOpacity?": "number",
-      "strokeWidth?": "number",
+      "fill?": "CssColor",
+      "fillOpacity?": "Opacity",
+      "stroke?": "CssColor",
+      "strokeOpacity?": "Opacity",
+      "strokeWidth?": "PixelSize",
       "gradient?": "boolean",
       "highlighted": "boolean",
       "seriesId": "string"
@@ -2642,11 +2677,11 @@
   "AgTreemapSeriesFormat": {
     "meta": { "doc": "/** The formatted style of a treemap tile */" },
     "type": {
-      "fill?": "string",
-      "fillOpacity?": "string",
-      "stroke?": "string",
-      "strokeOpacity?": "number",
-      "strokeWidth?": "number",
+      "fill?": "CssColor",
+      "fillOpacity?": "Opacity",
+      "stroke?": "CssColor",
+      "strokeOpacity?": "Opacity",
+      "strokeWidth?": "PixelSize",
       "gradient?": "boolean"
     },
     "docs": {
@@ -2799,7 +2834,7 @@
   },
   "ChartOptionType": {
     "meta": { "isTypeAlias": true, "typeParams": ["T extends ChartType"] },
-    "type": "T extends GroupedCategoryChart ? AgCartesianChartOptions : T extends CartesianChart ? AgCartesianChartOptions : T extends PolarChart ? AgPolarChartOptions : T extends HierarchyChart ? AgHierarchyChartOptions : never"
+    "type": "T extends CartesianChart ? AgCartesianChartOptions : T extends PolarChart ? AgPolarChartOptions : T extends HierarchyChart ? AgHierarchyChartOptions : never"
   },
   "SeriesOptionType": {
     "meta": { "isTypeAlias": true, "typeParams": ["T extends Series"] },
@@ -2812,10 +2847,6 @@
   "ObservableLike": {
     "meta": { "isTypeAlias": true },
     "type": "{ addEventListener(key: string, cb: SourceEventListener<any>): void; clearEventListeners(): void; }"
-  },
-  "ChartClickEvent": {
-    "meta": {},
-    "type": { "event": "MouseEvent", "source": "Chart", "type": "string" }
   },
   "ChartUpdateType": {
     "meta": { "isEnum": true },
@@ -2837,26 +2868,6 @@
     "meta": { "isEnum": true },
     "type": ["X = 'x'", "Y = 'y'"],
     "docs": [null, null]
-  },
-  "ChartAxisPosition": {
-    "meta": { "isEnum": true },
-    "type": [
-      "Top = 'top'",
-      "Right = 'right'",
-      "Bottom = 'bottom'",
-      "Left = 'left'",
-      "Angle = 'angle'",
-      "Radius = 'radius'"
-    ],
-    "docs": [null, null, null, null, null, null]
-  },
-  "ChartAxisMeta": {
-    "meta": {},
-    "type": {
-      "id": "string",
-      "direction": "ChartAxisDirection",
-      "boundSeries": "Series[]"
-    }
   },
   "NodeData": { "meta": { "isTypeAlias": true }, "type": "number[]" },
   "CrossLineType": {
@@ -2891,10 +2902,6 @@
     "meta": { "isTypeAlias": true },
     "type": "Record<string, { vertical: [Date, Date]; horizontal: [number, number]; }>"
   },
-  "GroupedCategoryChartAxis": {
-    "meta": { "isTypeAlias": true },
-    "type": "GroupedCategoryAxis | ChartAxis"
-  },
   "Layers": {
     "meta": { "isEnum": true },
     "type": [
@@ -2924,25 +2931,6 @@
     "meta": { "isEnum": true },
     "type": ["Vertical", "Horizontal"],
     "docs": [null, null]
-  },
-  "LegendPosition": {
-    "meta": { "isEnum": true },
-    "type": [
-      "Top = 'top'",
-      "Right = 'right'",
-      "Bottom = 'bottom'",
-      "Left = 'left'"
-    ],
-    "docs": [null, null, null, null]
-  },
-  "LegendLabelFormatterParams": {
-    "meta": {},
-    "type": {
-      "id": "string",
-      "itemId": "any",
-      "value": "string",
-      "seriesId": "string"
-    }
   },
   "SeriesOptionsTypes": {
     "meta": { "isTypeAlias": true },
@@ -3046,10 +3034,6 @@
     "meta": { "isTypeAlias": true },
     "type": "{ xDatum: any; seriesDatum: any; }"
   },
-  "AreaSeriesLabelFormatterParams": {
-    "meta": {},
-    "type": { "seriesId": "string", "value?": "number" }
-  },
   "AreaSeriesTag": {
     "meta": { "isEnum": true },
     "type": ["Fill", "Stroke", "Marker", "Label"],
@@ -3058,22 +3042,6 @@
   "AreaSeriesNodeDataContext": {
     "meta": { "isTypeAlias": true },
     "type": "SeriesNodeDataContext<MarkerSelectionDatum, LabelSelectionDatum> & { fillSelectionData: FillSelectionDatum; strokeSelectionData: StrokeSelectionDatum; }"
-  },
-  "BarTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "processedYValue": "any",
-      "xKey": "string",
-      "xValue": "any",
-      "xName?": "string",
-      "yKey": "string",
-      "yValue": "any",
-      "yName?": "string",
-      "datum": "any",
-      "title?": "string",
-      "color?": "string",
-      "seriesId": "string"
-    }
   },
   "BarNodeDatum": {
     "meta": {},
@@ -3100,28 +3068,6 @@
     "meta": { "isEnum": true },
     "type": ["Bar", "Label"],
     "docs": [null, null]
-  },
-  "BarLabelPlacement": {
-    "meta": { "isEnum": true },
-    "type": ["Inside = 'inside'", "Outside = 'outside'"],
-    "docs": [null, null]
-  },
-  "BarSeriesFormatterParams": {
-    "meta": {},
-    "type": {
-      "datum": "any",
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth": "number",
-      "highlighted": "boolean",
-      "xKey": "string",
-      "yKey": "string",
-      "seriesId": "string"
-    }
-  },
-  "BarSeriesFormat": {
-    "meta": {},
-    "type": { "fill?": "string", "stroke?": "string", "strokeWidth?": "number" }
   },
   "NodeDataSelection": {
     "meta": {
@@ -3176,29 +3122,6 @@
       "renderLayerPerSubSeries": "boolean"
     }
   },
-  "CartesianSeriesMarkerFormat": {
-    "meta": {},
-    "type": {
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth?": "number",
-      "size?": "number"
-    }
-  },
-  "CartesianSeriesMarkerFormatterParams": {
-    "meta": {},
-    "type": {
-      "xKey": "string",
-      "yKey": "string",
-      "datum": "any",
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth": "number",
-      "size": "number",
-      "highlighted": "boolean",
-      "seriesId": "string"
-    }
-  },
   "HistogramSeriesNodeTag": {
     "meta": { "isEnum": true },
     "type": ["Bin", "Label"],
@@ -3221,19 +3144,9 @@
       "point?": "Readonly<SizedPoint>"
     }
   },
-  "HistogramSeriesNodeClickEvent": {
-    "meta": {},
-    "type": {
-      "type": "'nodeClick'",
-      "event": "MouseEvent",
-      "series": "HistogramSeries",
-      "datum": "any",
-      "xKey": "string"
-    }
-  },
   "HistogramAggregation": {
     "meta": { "isTypeAlias": true },
-    "type": "'count' | 'sum' | 'mean'"
+    "type": "NonNullable<AgHistogramSeriesOptions['aggregation']>"
   },
   "AggregationFunction": {
     "meta": { "isTypeAlias": true },
@@ -3249,10 +3162,6 @@
       "datum": "any",
       "point?": "Readonly<SizedPoint>"
     }
-  },
-  "LineTooltipRendererParams": {
-    "meta": { "isTypeAlias": true },
-    "type": "CartesianTooltipRendererParams"
   },
   "PointDatum": {
     "meta": {},
@@ -3270,25 +3179,6 @@
       "itemId?": "any",
       "datum": "any",
       "point?": "Readonly<SizedPoint>"
-    }
-  },
-  "ScatterTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "sizeKey?": "string",
-      "sizeName?": "string",
-      "labelKey?": "string",
-      "labelName?": "string",
-      "xKey": "string",
-      "xValue": "any",
-      "xName?": "string",
-      "yKey": "string",
-      "yValue": "any",
-      "yName?": "string",
-      "datum": "any",
-      "title?": "string",
-      "color?": "string",
-      "seriesId": "string"
     }
   },
   "TreemapNodeDatum": {
@@ -3312,49 +3202,10 @@
       "point?": "Readonly<SizedPoint>"
     }
   },
-  "TreemapTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "datum": "TreemapNodeDatum",
-      "labelKey": "string",
-      "sizeKey?": "string",
-      "colorKey?": "string",
-      "title?": "string",
-      "color?": "string",
-      "seriesId": "string"
-    }
-  },
   "TextNodeTag": {
     "meta": { "isEnum": true },
     "type": ["Name", "Value"],
     "docs": [null, null]
-  },
-  "TreemapSeriesFormatterParams": {
-    "meta": {},
-    "type": {
-      "datum": "any",
-      "labelKey": "string",
-      "sizeKey?": "string",
-      "colorKey?": "string",
-      "fill?": "string",
-      "fillOpacity?": "string",
-      "stroke?": "string",
-      "strokeOpacity?": "number",
-      "strokeWidth?": "number",
-      "gradient?": "boolean",
-      "highlighted": "boolean"
-    }
-  },
-  "TreemapSeriesFormat": {
-    "meta": {},
-    "type": {
-      "fill?": "string",
-      "fillOpacity?": "number",
-      "stroke?": "string",
-      "strokeOpacity?": "number",
-      "strokeWidth?": "number",
-      "gradient?": "boolean"
-    }
   },
   "PieNodeDatum": {
     "meta": {},
@@ -3368,92 +3219,17 @@
       "midSin": "number",
       "calloutLabel?": "{ readonly text: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; }",
       "sectorLabel?": "{ readonly text: string; }",
-      "sectorFormat": "PieSeriesFormat",
+      "sectorFormat": "AgPieSeriesFormat",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
       "point?": "Readonly<SizedPoint>"
     }
   },
-  "PieTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "labelKey?": "string",
-      "labelName?": "string",
-      "calloutLabelKey?": "string",
-      "calloutLabelName?": "string",
-      "sectorLabelKey?": "string",
-      "sectorLabelName?": "string",
-      "angleKey": "string",
-      "angleValue": "any",
-      "angleName?": "string",
-      "radiusKey?": "string",
-      "radiusValue?": "any",
-      "radiusName?": "string",
-      "datum": "any",
-      "title?": "string",
-      "color?": "string",
-      "seriesId": "string"
-    },
-    "docs": {
-      "labelKey?": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
-      "labelName?": "/** @deprecated Use calloutLabelName or sectorLabelName\n */"
-    }
-  },
   "PieNodeTag": {
     "meta": { "isEnum": true },
     "type": ["Sector", "Callout", "Label"],
     "docs": [null, null, null]
-  },
-  "PieSeriesFormatterParams": {
-    "meta": {},
-    "type": {
-      "datum": "any",
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth": "number",
-      "highlighted": "boolean",
-      "angleKey": "string",
-      "radiusKey?": "string",
-      "seriesId": "string"
-    }
-  },
-  "PieSeriesFormat": {
-    "meta": {},
-    "type": {
-      "fill?": "string",
-      "fillOpacity?": "number",
-      "stroke?": "string",
-      "strokeWidth?": "number"
-    }
-  },
-  "PieSeriesLabelFormatterParams": {
-    "meta": {},
-    "type": {
-      "datum": "any",
-      "labelKey?": "string",
-      "labelValue?": "string",
-      "labelName?": "string",
-      "calloutLabelKey?": "string",
-      "calloutLabelValue?": "string",
-      "calloutLabelName?": "string",
-      "sectorLabelKey?": "string",
-      "sectorLabelValue?": "string",
-      "sectorLabelName?": "string",
-      "angleKey": "string",
-      "angleValue?": "any",
-      "angleName?": "string",
-      "radiusKey?": "string",
-      "radiusValue?": "any",
-      "radiusName?": "string",
-      "value?": "any",
-      "seriesId": "string"
-    },
-    "docs": {
-      "labelKey?": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
-      "labelValue?": "/** @deprecated Use calloutLabelValue or sectorLabelValue\n */",
-      "labelName?": "/** @deprecated Use calloutLabelName or sectorLabelName\n */"
-    }
   },
   "SectorBoundaries": {
     "meta": {},
@@ -3494,63 +3270,12 @@
     "meta": { "isTypeAlias": true },
     "type": "{ datum: SeriesNodeDatum; distance: number; }"
   },
-  "TooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "datum": "any",
-      "title?": "string",
-      "color?": "string",
-      "seriesId": "string"
-    }
-  },
-  "CartesianTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "xKey": "string",
-      "xValue": "any",
-      "xName?": "string",
-      "yKey": "string",
-      "yValue": "any",
-      "yName?": "string",
-      "datum": "any",
-      "title?": "string",
-      "color?": "string",
-      "seriesId": "string"
-    }
-  },
-  "PolarTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "angleKey": "string",
-      "angleValue": "any",
-      "angleName?": "string",
-      "radiusKey?": "string",
-      "radiusValue?": "any",
-      "radiusName?": "string",
-      "datum": "any",
-      "title?": "string",
-      "color?": "string",
-      "seriesId": "string"
-    }
-  },
   "SeriesNodeDataContext": {
     "meta": {
       "isTypeAlias": true,
       "typeParams": ["S = SeriesNodeDatum", "L = S"]
     },
     "type": "{ itemId: string; nodeData: S[]; labelData: L[]; }"
-  },
-  "SeriesMarkerFormatterParams": {
-    "meta": {},
-    "type": {
-      "datum": "any",
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth": "number",
-      "size": "number",
-      "highlighted": "boolean",
-      "seriesId": "string"
-    }
   },
   "TestCase": {
     "meta": {},
@@ -3590,15 +3315,6 @@
       "event": "MouseEvent"
     }
   },
-  "TooltipRendererResult": {
-    "meta": {},
-    "type": {
-      "content?": "string",
-      "title?": "string",
-      "color?": "string",
-      "backgroundColor?": "string"
-    }
-  },
   "Tick": { "meta": {}, "type": { "labels": "string[]" } },
   "Node": {
     "meta": {},
@@ -3609,17 +3325,6 @@
       "x1": "number",
       "y0": "number",
       "y1": "number"
-    }
-  },
-  "InterpolatorFactory": {
-    "meta": {
-      "isCallSignature": true,
-      "typeParams": ["T", "U"],
-      "doc": "/** An Interpolator factory returns an interpolator function.\n * \n * The first generic corresponds to the data type of the interpolation boundaries.\n * The second generic corresponds to the data type of the return type of the interpolator. */"
-    },
-    "type": {
-      "arguments": { "a": "T", "b": "T" },
-      "returnType": "(t: number) => U"
     }
   },
   "Scale": {
@@ -3721,11 +3426,6 @@
     "meta": { "isEnum": true },
     "type": ["Open", "Chord", "Round"],
     "docs": [null, null, null]
-  },
-  "RectSizing": {
-    "meta": { "isEnum": true },
-    "type": ["Content", "Border"],
-    "docs": [null, null]
   },
   "ShapeLineCap": {
     "meta": { "isTypeAlias": true },
@@ -3858,17 +3558,9 @@
     "meta": { "typeParams": ["S"] },
     "type": { "source": "S", "type": "string" }
   },
-  "PropertyChangeEvent": {
-    "meta": { "typeParams": ["S", "V"] },
-    "type": { "value": "V", "oldValue": "V", "source": "S", "type": "string" }
-  },
   "SourceEventListener": {
     "meta": { "isTypeAlias": true, "typeParams": ["S"] },
     "type": "(event: SourceEvent<S>) => any"
-  },
-  "PropertyChangeEventListener": {
-    "meta": { "isTypeAlias": true, "typeParams": ["S", "V"] },
-    "type": "(event: PropertyChangeEvent<S, V>) => any"
   },
   "Callback": {
     "meta": { "isTypeAlias": true },

@@ -1,4 +1,4 @@
-import formatLocale, { TimeLocaleDefinition, TimeLocaleObject } from './locale';
+import { formatLocale, TimeLocaleDefinition, TimeLocaleObject } from './locale';
 
 export let locale: TimeLocaleObject;
 
@@ -26,7 +26,7 @@ setDefaultLocale({
     shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 });
 
-export default function setDefaultLocale(definition: TimeLocaleDefinition): TimeLocaleObject {
+function setDefaultLocale(definition: TimeLocaleDefinition): TimeLocaleObject {
     locale = formatLocale(definition);
     return locale;
 }
