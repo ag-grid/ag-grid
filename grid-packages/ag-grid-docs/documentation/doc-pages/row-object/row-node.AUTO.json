@@ -36,7 +36,7 @@
     "type": { "returnType": "any" }
   },
   "data": {
-    "description": "/** The data as provided by the application.\n * Can be `undefined` when using row grouping or during grid initialisation. */",
+    "description": "/** The data as provided by the application.\n     * Can be `undefined` when using row grouping or during grid initialisation.\n     */",
     "type": { "returnType": "TData | undefined" }
   },
   "parent": {
@@ -48,11 +48,11 @@
     "type": { "returnType": "number" }
   },
   "uiLevel": {
-    "description": "/** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`) */",
+    "description": "/** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`)*/",
     "type": { "returnType": "number" }
   },
   "rowGroupIndex": {
-    "description": "/** If doing in-memory (client-side) grouping, this is the index of the group column this cell is for.\n * This will always be the same as the level, unless we are collapsing groups, i.e. `groupRemoveSingleChildren=true`. */",
+    "description": "/** If doing in-memory (client-side) grouping, this is the index of the group column this cell is for.\n     * This will always be the same as the level, unless we are collapsing groups, i.e. `groupRemoveSingleChildren=true`.\n     */",
     "type": { "returnType": "number | null" }
   },
   "group": {
@@ -68,7 +68,7 @@
     "type": { "returnType": "boolean" }
   },
   "detail": {
-    "description": "/** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row) */",
+    "description": "/** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/",
     "type": { "returnType": "boolean" }
   },
   "detailNode": {
@@ -184,11 +184,11 @@
     "type": { "returnType": "number | null | undefined" }
   },
   "rowHeightEstimated": {
-    "description": "/** Dynamic row heights are done on demand, only when row is visible. However for row virtualisation\n * we need a row height to do the 'what rows are in viewport' maths. So we assign a row height to each\n * row based on defaults and rowHeightEstimated=true, then when the row is needed for drawing we do\n * the row height calculation and set rowHeightEstimated=false. */",
+    "description": "/** Dynamic row heights are done on demand, only when row is visible. However for row virtualisation\n     * we need a row height to do the 'what rows are in viewport' maths. So we assign a row height to each\n     * row based on defaults and rowHeightEstimated=true, then when the row is needed for drawing we do\n     * the row height calculation and set rowHeightEstimated=false.*/",
     "type": { "returnType": "boolean" }
   },
   "displayed": {
-    "description": "/** This will be `true` if it has a rowIndex assigned, otherwise `false`. */",
+    "description": "/** This will be `true` if it has a rowIndex assigned, otherwise `false`.\n     */",
     "type": { "returnType": "boolean" }
   },
   "rowTop": {
@@ -196,11 +196,11 @@
     "type": { "returnType": "number | null" }
   },
   "oldRowTop": {
-    "description": "/** The top pixel for this row last time, makes sense if data set was ordered or filtered,\n * it is used so new rows can animate in from their old position. */",
+    "description": "/** The top pixel for this row last time, makes sense if data set was ordered or filtered,\n     * it is used so new rows can animate in from their old position. */",
     "type": { "returnType": "number | null" }
   },
   "daemon": {
-    "description": "/** `true` if this node is a daemon. This means row is not part of the model. Can happen when then\n * the row is selected and then the user sets a different ID onto the node. The nodes is then\n * representing a different entity, so the selection controller, if the node is selected, takes\n * a copy where daemon=true. */",
+    "description": "/** `true` if this node is a daemon. This means row is not part of the model. Can happen when then\n     * the row is selected and then the user sets a different ID onto the node. The nodes is then\n     * representing a different entity, so the selection controller, if the node is selected, takes\n     * a copy where daemon=true. */",
     "type": { "returnType": "boolean" }
   },
   "selectable": {
@@ -213,7 +213,7 @@
   },
   "___cacheVersion": { "type": { "returnType": "number" } },
   "___objectId": {
-    "description": "/** Used by sorting service - to give deterministic sort to groups. Previously we\n * just id for this, however id is a string and had slower sorting compared to numbers. */",
+    "description": "/** Used by sorting service - to give deterministic sort to groups. Previously we\n     * just id for this, however id is a string and had slower sorting compared to numbers. */",
     "type": { "returnType": "number" }
   },
   "alreadyRendered": {
@@ -285,7 +285,7 @@
     "type": { "arguments": { "group": "boolean" }, "returnType": "void" }
   },
   "setRowHeight": {
-    "description": "/** Sets the row height.\n * Call if you want to change the height initially assigned to the row.\n * After calling, you must call `api.onRowHeightChanged()` so the grid knows it needs to work out the placement of the rows. */",
+    "description": "/** Sets the row height.\n     * Call if you want to change the height initially assigned to the row.\n     * After calling, you must call `api.onRowHeightChanged()` so the grid knows it needs to work out the placement of the rows. */",
     "type": {
       "arguments": {
         "rowHeight": "number | undefined | null",
@@ -311,7 +311,7 @@
     "type": { "arguments": { "uiLevel": "number" }, "returnType": "void" }
   },
   "setExpanded": {
-    "description": "/** Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse. */",
+    "description": "/** Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse.\n     */",
     "type": {
       "arguments": {
         "expanded": "boolean",
@@ -321,7 +321,7 @@
     }
   },
   "setDataValue": {
-    "description": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n * the grid will refresh the rendered cell on the required row only.\n * @param colKey The column where the value should be updated\n * @param newValue The new value\n * @param eventSource The source of the event\n * @returns `True` if the value was changed, otherwise `False`.\n */",
+    "description": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     *\n     * @param colKey The column where the value should be updated\n     * @param newValue The new value\n     * @param eventSource The source of the event\n     * @returns `True` if the value was changed, otherwise `False`.\n     */",
     "type": {
       "arguments": {
         "colKey": "string | Column",
@@ -346,12 +346,12 @@
     "type": { "arguments": {}, "returnType": "boolean | undefined" }
   },
   "resetQuickFilterAggregateText": {
-    "description": "/** The first time `quickFilter` runs, the grid creates a one-off string representation of the row.\n * This string is then used for the quick filter instead of hitting each column separately.\n * When you edit, using grid editing, this string gets cleared down.\n * However if you edit without using grid editing, you will need to clear this string down for the row to be updated with the new values.\n * Otherwise new values will not work with the `quickFilter`. */",
+    "description": "/** The first time `quickFilter` runs, the grid creates a one-off string representation of the row.\n     * This string is then used for the quick filter instead of hitting each column separately.\n     * When you edit, using grid editing, this string gets cleared down.\n     * However if you edit without using grid editing, you will need to clear this string down for the row to be updated with the new values.\n     * Otherwise new values will not work with the `quickFilter`. */",
     "type": { "arguments": {}, "returnType": "void" }
   },
   "isExpandable": { "type": { "arguments": {}, "returnType": "boolean" } },
   "isSelected": {
-    "description": "/** Returns:\n * - `true` if node is selected,\n * - `false` if the node isn't selected\n * - `undefined` if it's partially selected (group where not all children are selected). */",
+    "description": "/** Returns:\n     * - `true` if node is selected,\n     * - `false` if the node isn't selected\n     * - `undefined` if it's partially selected (group where not all children are selected). */",
     "type": { "arguments": {}, "returnType": "boolean | undefined" }
   },
   "depthFirstSearch": {
@@ -368,7 +368,7 @@
     "type": { "arguments": { "selected": "boolean" }, "returnType": "void" }
   },
   "setSelected": {
-    "description": "/** Select (or deselect) the node.\n * @param newValue -`true` for selection, `false` for deselection.\n * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.\n * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired.\n */",
+    "description": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.\n     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired.\n     */",
     "type": {
       "arguments": {
         "newValue": "boolean",
@@ -420,7 +420,7 @@
   },
   "isFullWidthCell": { "type": { "arguments": {}, "returnType": "boolean" } },
   "getRoute": {
-    "description": "/** Returns the route of the row node. If the Row Node is a group, it returns the route to that Row Node.\n * If the Row Node is not a group, it returns `undefined`. */",
+    "description": "/** Returns the route of the row node. If the Row Node is a group, it returns the route to that Row Node.\n     * If the Row Node is not a group, it returns `undefined`.\n     */",
     "type": { "arguments": {}, "returnType": "string[] | undefined" }
   }
 }

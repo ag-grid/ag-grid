@@ -137,7 +137,7 @@
     }
   },
   "getAllGridColumns": {
-    "description": "/** Returns all the grid columns, same as `getColumns()`, except\n * \n *   a) it has the order of the columns that are presented in the grid\n * \n *   b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot. */",
+    "description": "/** Returns all the grid columns, same as `getColumns()`, except\n     *\n     *  a) it has the order of the columns that are presented in the grid\n     *\n     *  b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot.\n     */",
     "type": { "arguments": {}, "returnType": "Column[]" }
   },
   "getDisplayedLeftColumns": {
@@ -404,33 +404,33 @@
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
   "getAllColumns": {
-    "description": "/** @deprecated v28 Use `getColumns` instead\n */",
+    "description": "/** @deprecated v28 Use `getColumns` instead */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
   "getOriginalColumnGroup": {
-    "description": "/** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup.\n */",
+    "description": "/** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */",
     "type": {
       "arguments": { "name": "string" },
       "returnType": "ProvidedColumnGroup | null"
     }
   },
   "getPrimaryColumns": {
-    "description": "/** @deprecated v28 Use `getColumns` instead.\n */",
+    "description": "/** @deprecated v28 Use `getColumns` instead. */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
   "getSecondaryColumns": {
-    "description": "/** @deprecated v28 Use `getPivotResultColumns` instead.\n */",
+    "description": "/** @deprecated v28 Use `getPivotResultColumns` instead. */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
   "setSecondaryColumns": {
-    "description": "/** @deprecated v28 Use `setPivotResultColumns` instead.\n */",
+    "description": "/** @deprecated v28 Use `setPivotResultColumns` instead. */",
     "type": {
       "arguments": { "colDefs": "(ColDef | ColGroupDef)[]" },
       "returnType": "void"
     }
   },
   "getSecondaryPivotColumn": {
-    "description": "/** @deprecated v28 Use `getPivotResultColumn` instead\n */",
+    "description": "/** @deprecated v28 Use `getPivotResultColumn` instead */",
     "type": {
       "arguments": {
         "pivotKeys": "string[]",

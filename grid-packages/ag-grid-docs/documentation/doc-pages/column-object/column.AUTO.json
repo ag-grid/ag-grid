@@ -24,7 +24,7 @@
     }
   },
   "getUserProvidedColDef": {
-    "description": "/** Returns the column definition provided by the application.\n * This may not be correct, as items can be superseded by default column options.\n * However it's useful for comparison, eg to know which application column definition matches that column. */",
+    "description": "/** Returns the column definition provided by the application.\n     * This may not be correct, as items can be superseded by default column options.\n     * However it's useful for comparison, eg to know which application column definition matches that column.\n     */",
     "type": { "arguments": {}, "returnType": "ColDef | null" }
   },
   "setParent": {
@@ -245,22 +245,22 @@
   },
   "isVisible": { "type": { "arguments": {}, "returnType": "boolean" } },
   "getColDef": {
-    "description": "/** Returns the column definition for this column.\n * The column definition will be the result of merging the application provided column definition with any provided defaults\n * (e.g. `defaultColDef` grid option, or column types.\n * \n * Equivalent: `getDefinition` */",
+    "description": "/** Returns the column definition for this column.\n     * The column definition will be the result of merging the application provided column definition with any provided defaults\n     * (e.g. `defaultColDef` grid option, or column types.\n     *\n     * Equivalent: `getDefinition` */",
     "type": { "arguments": {}, "returnType": "ColDef" }
   },
   "getColumnGroupShow": {
     "type": { "arguments": {}, "returnType": "string | undefined" }
   },
   "getColId": {
-    "description": "/** Returns the unique ID for the column.\n * \n * Equivalent: `getId`, `getUniqueId` */",
+    "description": "/** Returns the unique ID for the column.\n     *\n     * Equivalent: `getId`, `getUniqueId` */",
     "type": { "arguments": {}, "returnType": "string" }
   },
   "getId": {
-    "description": "/** Returns the unique ID for the column.\n * \n * Equivalent: `getColId`, `getUniqueId` */",
+    "description": "/** Returns the unique ID for the column.\n     *\n     * Equivalent: `getColId`, `getUniqueId` */",
     "type": { "arguments": {}, "returnType": "string" }
   },
   "getUniqueId": {
-    "description": "/** Returns the unique ID for the column.\n * \n * Equivalent: `getColId`, `getId` */",
+    "description": "/** Returns the unique ID for the column.\n     *\n     * Equivalent: `getColId`, `getId` */",
     "type": { "arguments": {}, "returnType": "string" }
   },
   "getDefinition": {

@@ -60,7 +60,7 @@
   },
   "AgChartTheme": {
     "baseTheme": {
-      "description": "/** The name of the theme to base your theme on. Your custom theme will inherit all of the configuration from\n * the base theme, allowing you to override just the settings you wish to change using the `overrides` config (see\n * below). */",
+      "description": "/** The name of the theme to base your theme on. Your custom theme will inherit all of the configuration from\n     * the base theme, allowing you to override just the settings you wish to change using the `overrides` config (see\n     * below).\n     */",
       "type": { "returnType": "AgChartThemeName", "optional": true }
     },
     "palette": {
@@ -573,15 +573,15 @@
   },
   "AgCategoryAxisThemeOptions": {
     "paddingInner": {
-      "description": "/** The size of the gap between the categories as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.2` */",
+      "description": "/** The size of the gap between the categories as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n     * Default: `0.2`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "paddingOuter": {
-      "description": "/** The padding on the outside i.e. left and right of the first and last category. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.3` */",
+      "description": "/** The padding on the outside i.e. left and right of the first and last category. In association with `paddingInner`, this value can be between 0 and 1.\n     * Default: `0.3`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "groupPaddingInner": {
-      "description": "/** This property is for grouped column/bar series plotted on a category axis. It is a proportion between 0 and 1 which determines the size of the gap between the bars or columns within a single group along the axis.\n * Default: `0.2` */",
+      "description": "/** This property is for grouped column/bar series plotted on a category axis. It is a proportion between 0 and 1 which determines the size of the gap between the bars or columns within a single group along the axis.\n     * Default: `0.2`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "tick": {
@@ -834,7 +834,7 @@
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
     "label": {
-      "description": "/** Configuration for the labels used outside of the sectors.\n * @deprecated Use series.calloutLabel instead.\n */",
+      "description": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated Use series.calloutLabel instead.\n     */",
       "type": {
         "returnType": "AgPieSeriesLabelOptions<DatumType>",
         "optional": true
@@ -855,7 +855,7 @@
       }
     },
     "callout": {
-      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n * @deprecated Use series.calloutLine instead.\n */",
+      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated Use series.calloutLine instead.\n     */",
       "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "calloutLine": {
@@ -879,11 +879,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
+      "description": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n */",
+      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -983,7 +983,7 @@
       "type": { "returnType": "AgSeriesListeners<DatumType>", "optional": true }
     },
     "id": {
-      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n     * by series please supply your own unique `id` value.\n     *\n     * Default: auto-generated value\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -1211,7 +1211,7 @@
   },
   "AgChartLegendLabelFormatterParams": {
     "id": {
-      "description": "/** @deprecated Use seriesId.\n */",
+      "description": "/** @deprecated Use seriesId. */",
       "type": { "returnType": "string", "optional": false }
     },
     "seriesId": { "type": { "returnType": "string", "optional": false } },
@@ -1358,7 +1358,7 @@
       "type": { "returnType": "'seriesNodeClick'", "optional": false }
     },
     "series": {
-      "description": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "description": "/** @deprecated Use seriesId to get the series ID. */",
       "type": { "returnType": "any", "optional": false }
     },
     "seriesId": {
@@ -1504,7 +1504,7 @@
   },
   "AgAxisNumberTickOptions": {
     "count": {
-      "description": "/** A hint of how many ticks to use across an axis.\n * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given. */",
+      "description": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "width": {
@@ -1522,7 +1522,7 @@
   },
   "AgAxisTimeTickOptions": {
     "count": {
-      "description": "/** A hint of how many ticks to use across an axis.\n * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n * The following intervals from the `agCharts.time` namespace can be used:\n * `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`.\n * Derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month. */",
+      "description": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * The following intervals from the `agCharts.time` namespace can be used:\n     * `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`.\n     * Derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month. */",
       "type": { "returnType": "any", "optional": true }
     },
     "width": {
@@ -1834,15 +1834,15 @@
   "AgCategoryAxisOptions": {
     "type": { "type": { "returnType": "'category'", "optional": false } },
     "paddingInner": {
-      "description": "/** The size of the gap between the categories as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.2` */",
+      "description": "/** The size of the gap between the categories as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n     * Default: `0.2`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "paddingOuter": {
-      "description": "/** The padding on the outside i.e. left and right of the first and last category. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.3` */",
+      "description": "/** The padding on the outside i.e. left and right of the first and last category. In association with `paddingInner`, this value can be between 0 and 1.\n     * Default: `0.3`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "groupPaddingInner": {
-      "description": "/** This property is for grouped column/bar series plotted on a category axis. It is a proportion between 0 and 1 which determines the size of the gap between the bars or columns within a single group along the axis.\n * Default: `0.2` */",
+      "description": "/** This property is for grouped column/bar series plotted on a category axis. It is a proportion between 0 and 1 which determines the size of the gap between the bars or columns within a single group along the axis.\n     * Default: `0.2`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "tick": {
@@ -1997,15 +1997,15 @@
   },
   "AgSeriesHighlightStyle": {
     "fill": {
-      "description": "/** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n * @deprecated Use item.fill instead.\n */",
+      "description": "/** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated Use item.fill instead.\n     */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {
-      "description": "/** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n * @deprecated Use item.stroke instead.\n */",
+      "description": "/** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated Use item.stroke instead.\n     */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n * @deprecated Use item.strokeWidth instead.\n */",
+      "description": "/** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated Use item.strokeWidth instead.\n     */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "item": {
@@ -2023,7 +2023,7 @@
       "type": { "returnType": "'nodeClick'", "optional": false }
     },
     "series": {
-      "description": "/** @deprecated Use seriesId to get the series ID.\n */",
+      "description": "/** @deprecated Use seriesId to get the series ID. */",
       "type": { "returnType": "any", "optional": false }
     },
     "seriesId": {
@@ -2085,7 +2085,7 @@
   },
   "AgBaseSeriesOptions": {
     "id": {
-      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n     * by series please supply your own unique `id` value.\n     *\n     * Default: auto-generated value\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -2575,7 +2575,7 @@
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n     * by series please supply your own unique `id` value.\n     *\n     * Default: auto-generated value\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -2691,78 +2691,78 @@
   },
   "AgScatterSeriesOptions": {
     "type": {
-      "description": "/** Configuration for the treemap series. */",
+      "description": "/** Configuration for the treemap series.  */",
       "type": { "returnType": "'scatter'", "optional": true }
     },
     "marker": {
-      "description": "/** Configuration for the markers used in the series. */",
+      "description": "/** Configuration for the markers used in the series.  */",
       "type": {
         "returnType": "AgScatterSeriesMarker<DatumType>",
         "optional": true
       }
     },
     "label": {
-      "description": "/** Configuration for the labels shown on top of data points. */",
+      "description": "/** Configuration for the labels shown on top of data points.  */",
       "type": { "returnType": "AgScatterSeriesLabelOptions", "optional": true }
     },
     "xKey": {
-      "description": "/** The key to use to retrieve x-values from the data. */",
+      "description": "/** The key to use to retrieve x-values from the data.  */",
       "type": { "returnType": "string", "optional": true }
     },
     "yKey": {
-      "description": "/** The key to use to retrieve y-values from the data. */",
+      "description": "/** The key to use to retrieve y-values from the data.  */",
       "type": { "returnType": "string", "optional": true }
     },
     "xName": {
-      "description": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "description": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.  */",
       "type": { "returnType": "string", "optional": true }
     },
     "yName": {
-      "description": "/** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "description": "/** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.  */",
       "type": { "returnType": "string", "optional": true }
     },
     "sizeKey": {
-      "description": "/** The key to use to retrieve size values from the data, used to control the size of the markers in bubble charts. */",
+      "description": "/** The key to use to retrieve size values from the data, used to control the size of the markers in bubble charts.  */",
       "type": { "returnType": "string", "optional": true }
     },
     "sizeName": {
-      "description": "/** A human-readable description of the size values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "description": "/** A human-readable description of the size values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.  */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelKey": {
-      "description": "/** The key to use to retrieve values from the data to use as labels for the markers. */",
+      "description": "/** The key to use to retrieve values from the data to use as labels for the markers.  */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** A human-readable description of the label values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "description": "/** A human-readable description of the label values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.  */",
       "type": { "returnType": "string", "optional": true }
     },
     "title": {
-      "description": "/** The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not. */",
+      "description": "/** The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not.  */",
       "type": { "returnType": "string", "optional": true }
     },
     "fill": {
-      "description": "/** @deprecated Use {@link marker.fill} instead.\n */",
+      "description": "/** @deprecated Use {@link marker.fill} instead. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {
-      "description": "/** @deprecated Use {@link marker.stroke} instead.\n */",
+      "description": "/** @deprecated Use {@link marker.stroke} instead. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** @deprecated Use {@link marker.strokeWidth} instead.\n */",
+      "description": "/** @deprecated Use {@link marker.strokeWidth} instead. */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "fillOpacity": {
-      "description": "/** @deprecated Use {@link marker.fillOpacity} instead.\n */",
+      "description": "/** @deprecated Use {@link marker.fillOpacity} instead. */",
       "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
-      "description": "/** @deprecated Use {@link marker.strokeOpacity} instead.\n */",
+      "description": "/** @deprecated Use {@link marker.strokeOpacity} instead. */",
       "type": { "returnType": "Opacity", "optional": true }
     },
     "tooltip": {
-      "description": "/** Series-specific tooltip configuration. */",
+      "description": "/** Series-specific tooltip configuration.  */",
       "type": { "returnType": "AgScatterSeriesTooltip", "optional": true }
     },
     "listeners": {
@@ -2771,7 +2771,7 @@
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n     * by series please supply your own unique `id` value.\n     *\n     * Default: auto-generated value\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -2827,7 +2827,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "yKeys": {
-      "description": "/** The keys to use to retrieve y-values from the data.\n * @deprecated use yKey and multiple series instead\n */",
+      "description": "/** The keys to use to retrieve y-values from the data.\n     *\n     * @deprecated use yKey and multiple series instead\n     */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "yKey": {
@@ -2839,12 +2839,12 @@
       "type": { "returnType": "string", "optional": true }
     },
     "yNames": {
-      "description": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n * @deprecated use yName and multiple series instead\n */",
+      "description": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated use yName and multiple series instead\n     */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "yName": { "type": { "returnType": "string", "optional": true } },
     "fills": {
-      "description": "/** The colours to cycle through for the fills of the areas.\n * @deprecated use fill and multiple series instead\n */",
+      "description": "/** The colours to cycle through for the fills of the areas.\n     *\n     * @deprecated use fill and multiple series instead\n     */",
       "type": { "returnType": "CssColor[]", "optional": true }
     },
     "fill": {
@@ -2852,7 +2852,7 @@
       "type": { "returnType": "CssColor", "optional": true }
     },
     "strokes": {
-      "description": "/** The colours to cycle through for the strokes of the areas.\n * @deprecated use stroke and multiple series instead\n */",
+      "description": "/** The colours to cycle through for the strokes of the areas.\n     *\n     * @deprecated use stroke and multiple series instead\n     */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "stroke": {
@@ -2897,7 +2897,7 @@
     "stacked": { "type": { "returnType": "boolean", "optional": true } },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n     * by series please supply your own unique `id` value.\n     *\n     * Default: auto-generated value\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -3013,7 +3013,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "yKeys": {
-      "description": "/** The keys to use to retrieve y-values from the data.\n * @deprecated use yKey and multiple series instead\n */",
+      "description": "/** The keys to use to retrieve y-values from the data.\n     *\n     * @deprecated use yKey and multiple series instead\n     */",
       "type": { "returnType": "string[] | string[][]", "optional": true }
     },
     "xName": {
@@ -3025,7 +3025,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "yNames": {
-      "description": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n * @deprecated use yName and multiple series instead\n */",
+      "description": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated use yName and multiple series instead\n     */",
       "type": {
         "returnType": "string[] | { [key in string]: string }",
         "optional": true
@@ -3033,7 +3033,7 @@
     },
     "flipXY": { "type": { "returnType": "boolean", "optional": true } },
     "fills": {
-      "description": "/** The colours to cycle through for the fills of the bars.\n * @deprecated use fill and multiple series instead\n */",
+      "description": "/** The colours to cycle through for the fills of the bars.\n     *\n     * @deprecated use fill and multiple series instead\n     */",
       "type": { "returnType": "CssColor[]", "optional": true }
     },
     "fill": {
@@ -3041,7 +3041,7 @@
       "type": { "returnType": "CssColor", "optional": true }
     },
     "strokes": {
-      "description": "/** The colours to cycle through for the strokes of the bars.\n * @deprecated use stroke and multiple series instead\n */",
+      "description": "/** The colours to cycle through for the strokes of the bars.\n     *\n     * @deprecated use stroke and multiple series instead\n     */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "stroke": {
@@ -3094,7 +3094,7 @@
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n     * by series please supply your own unique `id` value.\n     *\n     * Default: auto-generated value\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -3260,7 +3260,7 @@
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n     * by series please supply your own unique `id` value.\n     *\n     * Default: auto-generated value\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -3329,11 +3329,11 @@
   },
   "AgPieSeriesSectorLabelOptions": {
     "positionOffset": {
-      "description": "/** Distance in pixels, used to make the label text closer to or further from the center. This offset is applied after positionRatio.\n * Default: `0` */",
+      "description": "/** Distance in pixels, used to make the label text closer to or further from the center. This offset is applied after positionRatio.\n     * Default: `0`\n     */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "positionRatio": {
-      "description": "/** Position of labels as a ratio proportional to pie radius (or doughnut thickness). Additional offset in pixels can be applied by using positionOffset.\n * Default: `0.5` */",
+      "description": "/** Position of labels as a ratio proportional to pie radius (or doughnut thickness). Additional offset in pixels can be applied by using positionOffset.\n     * Default: `0.5`\n     */",
       "type": { "returnType": "Ratio", "optional": true }
     },
     "formatter": {
@@ -3520,7 +3520,7 @@
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
     "label": {
-      "description": "/** Configuration for the labels used outside of the sectors.\n * @deprecated Use series.calloutLabel instead.\n */",
+      "description": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated Use series.calloutLabel instead.\n     */",
       "type": {
         "returnType": "AgPieSeriesLabelOptions<DatumType>",
         "optional": true
@@ -3541,7 +3541,7 @@
       }
     },
     "callout": {
-      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n * @deprecated Use series.calloutLine instead.\n */",
+      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated Use series.calloutLine instead.\n     */",
       "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "calloutLine": {
@@ -3565,11 +3565,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
+      "description": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n */",
+      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -3674,7 +3674,7 @@
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n     * by series please supply your own unique `id` value.\n     *\n     * Default: auto-generated value\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -3700,11 +3700,11 @@
   },
   "AgPieSeriesTooltipRendererParams": {
     "labelKey": {
-      "description": "/** labelKey as specified on series options.\n * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n */",
+      "description": "/** labelKey as specified on series options.\n     *\n     * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** labelName as specified on series options.\n * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n */",
+      "description": "/** labelName as specified on series options.\n     *\n     * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -3770,15 +3770,15 @@
       "type": { "returnType": "DatumType", "optional": false }
     },
     "labelKey": {
-      "description": "/** labelKey as specified on series options.\n * @deprecated Use calloutLabelKey instead.\n */",
+      "description": "/** labelKey as specified on series options.\n     *\n     * @deprecated Use calloutLabelKey instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelValue": {
-      "description": "/** labelValue as read from series data via the labelKey property.\n * @deprecated Use calloutLabelValue instead.\n */",
+      "description": "/** labelValue as read from series data via the labelKey property.\n     *\n     * @deprecated Use calloutLabelValue instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** labelName as specified on series options.\n * @deprecated Use calloutLabelName instead.\n */",
+      "description": "/** labelName as specified on series options.\n     *\n     * @deprecated Use calloutLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -3830,7 +3830,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "value": {
-      "description": "/** The value of labelKey as specified on series options.\n * @deprecated Use item.datum instead.\n */",
+      "description": "/** The value of labelKey as specified on series options.\n     *\n     * @deprecated Use item.datum instead.\n     */",
       "type": { "returnType": "any", "optional": true }
     },
     "seriesId": {
@@ -4006,7 +4006,7 @@
     },
     "meta": { "typeParams": ["DatumType = any"] },
     "id": {
-      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n * by series please supply your own unique `id` value.\n * \n * Default: auto-generated value */",
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n     * by series please supply your own unique `id` value.\n     *\n     * Default: auto-generated value\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "data": {
@@ -4756,11 +4756,11 @@
   },
   "PieTooltipRendererParams": {
     "labelKey": {
-      "description": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
+      "description": "/** @deprecated Use calloutLabelKey or sectorLabelKey */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** @deprecated Use calloutLabelName or sectorLabelName\n */",
+      "description": "/** @deprecated Use calloutLabelName or sectorLabelName */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": { "type": { "returnType": "string", "optional": true } },
@@ -4800,15 +4800,15 @@
   "PieSeriesLabelFormatterParams": {
     "datum": { "type": { "returnType": "any", "optional": false } },
     "labelKey": {
-      "description": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
+      "description": "/** @deprecated Use calloutLabelKey or sectorLabelKey */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelValue": {
-      "description": "/** @deprecated Use calloutLabelValue or sectorLabelValue\n */",
+      "description": "/** @deprecated Use calloutLabelValue or sectorLabelValue */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** @deprecated Use calloutLabelName or sectorLabelName\n */",
+      "description": "/** @deprecated Use calloutLabelName or sectorLabelName */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": { "type": { "returnType": "string", "optional": true } },
@@ -5091,7 +5091,7 @@
   "DeepPartial": { "meta": { "typeParams": ["T"] } },
   "JsonMergeOptions": {
     "avoidDeepClone": {
-      "description": "/** Contains a list of properties where deep clones should be avoided */",
+      "description": "/** Contains a list of properties where deep clones should be avoided\n     */",
       "type": { "returnType": "string[]", "optional": false }
     }
   },
@@ -5139,41 +5139,41 @@
   },
   "FormatLocaleOptions": {
     "decimal": {
-      "description": "/** The decimal point (e.g., '.') */",
+      "description": "/** The decimal point (e.g., '.')\n     */",
       "type": { "returnType": "string", "optional": false }
     },
     "thousands": {
-      "description": "/** The group separator (e.g., ','). Note that the thousands property is a misnomer,\n * as the grouping definition allows groups other than thousands. */",
+      "description": "/** The group separator (e.g., ','). Note that the thousands property is a misnomer,\n     * as the grouping definition allows groups other than thousands.\n     */",
       "type": { "returnType": "string", "optional": false }
     },
     "grouping": {
-      "description": "/** The array of group sizes (e.g., [3]), cycled as needed. */",
+      "description": "/** The array of group sizes (e.g., [3]), cycled as needed.\n     */",
       "type": { "returnType": "number[]", "optional": false }
     },
     "currency": {
-      "description": "/** The currency prefix and suffix (e.g., ['$', '']). */",
+      "description": "/** The currency prefix and suffix (e.g., ['$', '']).\n     */",
       "type": { "returnType": "[string, string]", "optional": false }
     },
     "numerals": {
-      "description": "/** Array of ten strings to replace the numerals 0-9. */",
+      "description": "/** Array of ten strings to replace the numerals 0-9.\n     */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "percent": {
-      "description": "/** Symbol to replace the `percent` suffix; the percent suffix (defaults to '%'). */",
+      "description": "/** Symbol to replace the `percent` suffix; the percent suffix (defaults to '%').\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "minus": {
-      "description": "/** The minus sign (defaults to '−'). */",
+      "description": "/** The minus sign (defaults to '−').\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "nan": {
-      "description": "/** The not-a-number value (defaults 'NaN'). */",
+      "description": "/** The not-a-number value (defaults 'NaN').\n     */",
       "type": { "returnType": "string", "optional": true }
     }
   },
   "FormatLocale": {
     "format": {
-      "description": "/** Returns a new format function for the given string specifier. The returned function\n * takes a number as the only argument, and returns a string representing the formatted number.\n * @param specifier A Specifier string.\n * @throws Error on invalid format specifier.\n */",
+      "description": "/** Returns a new format function for the given string specifier. The returned function\n     * takes a number as the only argument, and returns a string representing the formatted number.\n     *\n     * @param specifier A Specifier string.\n     * @throws Error on invalid format specifier.\n     */",
       "type": {
         "arguments": { "specifier": "string | FormatSpecifier" },
         "returnType": "(n: number | { valueOf(): number }) => string",
@@ -5181,7 +5181,7 @@
       }
     },
     "formatPrefix": {
-      "description": "/** Returns a new format function for the given string specifier. The returned function\n * takes a number as the only argument, and returns a string representing the formatted number.\n * The returned function will convert values to the units of the appropriate SI prefix for the\n * specified numeric reference value before formatting in fixed point notation.\n * @param specifier A Specifier string.\n * @param value The reference value to determine the appropriate SI prefix.\n * @throws Error on invalid format specifier.\n */",
+      "description": "/** Returns a new format function for the given string specifier. The returned function\n     * takes a number as the only argument, and returns a string representing the formatted number.\n     * The returned function will convert values to the units of the appropriate SI prefix for the\n     * specified numeric reference value before formatting in fixed point notation.\n     *\n     * @param specifier A Specifier string.\n     * @param value The reference value to determine the appropriate SI prefix.\n     * @throws Error on invalid format specifier.\n     */",
       "type": {
         "arguments": {
           "specifier": "string | FormatSpecifier",
@@ -5222,44 +5222,44 @@
   "FormatMap": {},
   "TimeLocaleDefinition": {
     "dateTime": {
-      "description": "/** The date and time (%c) format specifier (e.g., \"%a %b %e %X %Y\"). */",
+      "description": "/** The date and time (%c) format specifier (e.g., \"%a %b %e %X %Y\").\n     */",
       "type": { "returnType": "string", "optional": false }
     },
     "date": {
-      "description": "/** The date (%x) format specifier (e.g., \"%m/%d/%Y\"). */",
+      "description": "/** The date (%x) format specifier (e.g., \"%m/%d/%Y\").\n     */",
       "type": { "returnType": "string", "optional": false }
     },
     "time": {
-      "description": "/** The time (%X) format specifier (e.g., \"%H:%M:%S\"). */",
+      "description": "/**  The time (%X) format specifier (e.g., \"%H:%M:%S\").\n     */",
       "type": { "returnType": "string", "optional": false }
     },
     "periods": {
-      "description": "/** The A.M. and P.M. equivalents (e.g., [\"AM\", \"PM\"]). */",
+      "description": "/** The A.M. and P.M. equivalents (e.g., [\"AM\", \"PM\"]).\n     */",
       "type": { "returnType": "[string, string]", "optional": false }
     },
     "days": {
-      "description": "/** The full names of the weekdays, starting with Sunday. */",
+      "description": "/** The full names of the weekdays, starting with Sunday.\n     */",
       "type": {
         "returnType": "[string, string, string, string, string, string, string]",
         "optional": false
       }
     },
     "shortDays": {
-      "description": "/** The abbreviated names of the weekdays, starting with Sunday. */",
+      "description": "/** The abbreviated names of the weekdays, starting with Sunday.\n     */",
       "type": {
         "returnType": "[string, string, string, string, string, string, string]",
         "optional": false
       }
     },
     "months": {
-      "description": "/** The full names of the months (starting with January). */",
+      "description": "/** The full names of the months (starting with January).\n     */",
       "type": {
         "returnType": "[string, string, string, string, string, string, string, string, string, string, string, string]",
         "optional": false
       }
     },
     "shortMonths": {
-      "description": "/** The abbreviated names of the months (starting with January). */",
+      "description": "/** The abbreviated names of the months (starting with January).\n     */",
       "type": {
         "returnType": "[string, string, string, string, string, string, string, string, string, string, string, string]",
         "optional": false
@@ -5268,7 +5268,7 @@
   },
   "TimeLocaleObject": {
     "format": {
-      "description": "/** Returns a new formatter for the given string specifier. The specifier string may contain the following directives:\n * - %a - abbreviated weekday name.*\n * - %A - full weekday name.*\n * - %b - abbreviated month name.*\n * - %B - full month name.*\n * - %c - the locale’s date and time, such as %x, %X.*\n * - %d - zero-padded day of the month as a decimal number [01,31].\n * - %e - space-padded day of the month as a decimal number [ 1,31]; equivalent to %_d.\n * - %f - microseconds as a decimal number [000000, 999999].\n * - %H - hour (24-hour clock) as a decimal number [00,23].\n * - %I - hour (12-hour clock) as a decimal number [01,12].\n * - %j - day of the year as a decimal number [001,366].\n * - %m - month as a decimal number [01,12].\n * - %M - minute as a decimal number [00,59].\n * - %L - milliseconds as a decimal number [000, 999].\n * - %p - either AM or PM.*\n * - %Q - milliseconds since UNIX epoch.\n * - %s - seconds since UNIX epoch.\n * - %S - second as a decimal number [00,61].\n * - %u - Monday-based (ISO) weekday as a decimal number [1,7].\n * - %U - Sunday-based week of the year as a decimal number [00,53].\n * - %V - ISO 8601 week number of the year as a decimal number [01, 53].\n * - %w - Sunday-based weekday as a decimal number [0,6].\n * - %W - Monday-based week of the year as a decimal number [00,53].\n * - %x - the locale’s date, such as %-m/%-d/%Y.*\n * - %X - the locale’s time, such as %-I:%M:%S %p.*\n * - %y - year without century as a decimal number [00,99].\n * - %Y - year with century as a decimal number.\n * - %Z - time zone offset, such as -0700, -07:00, -07, or Z.\n * - %% - a literal percent sign (%).\n * \n * Directives marked with an asterisk (*) may be affected by the locale definition.\n * \n * For %U, all days in a new year preceding the first Sunday are considered to be in week 0.\n * For %W, all days in a new year preceding the first Monday are considered to be in week 0.\n * Week numbers are computed using interval.count. For example, 2015-52 and 2016-00 represent\n * Monday, December 28, 2015, while 2015-53 and 2016-01 represent Monday, January 4, 2016.\n * This differs from the ISO week date specification (%V), which uses a more complicated definition!\n * \n * For %V, per the strftime man page:\n * \n * In this system, weeks start on a Monday, and are numbered from 01, for the first week, up to 52 or 53, for the last week.\n * Week 1 is the first week where four or more days fall within the new year (or, synonymously,\n * week 01 is: the first week of the year that contains a Thursday; or, the week that has 4 January in it).\n * \n * The % sign indicating a directive may be immediately followed by a padding modifier:\n * \n * 1) 0 - zero-padding\n * 2) _ - space-padding\n * 3) - disable padding\n * \n * If no padding modifier is specified, the default is 0 for all directives except %e, which defaults to _.\n * (In some implementations of strftime and strptime, a directive may include an optional field width or precision;\n * this feature is not yet implemented.)\n * \n * The returned function formats a specified date, returning the corresponding string.\n * @param specifier A specifier string for the date format.\n */",
+      "description": "/** Returns a new formatter for the given string specifier. The specifier string may contain the following directives:\n     * - %a - abbreviated weekday name.*\n     * - %A - full weekday name.*\n     * - %b - abbreviated month name.*\n     * - %B - full month name.*\n     * - %c - the locale’s date and time, such as %x, %X.*\n     * - %d - zero-padded day of the month as a decimal number [01,31].\n     * - %e - space-padded day of the month as a decimal number [ 1,31]; equivalent to %_d.\n     * - %f - microseconds as a decimal number [000000, 999999].\n     * - %H - hour (24-hour clock) as a decimal number [00,23].\n     * - %I - hour (12-hour clock) as a decimal number [01,12].\n     * - %j - day of the year as a decimal number [001,366].\n     * - %m - month as a decimal number [01,12].\n     * - %M - minute as a decimal number [00,59].\n     * - %L - milliseconds as a decimal number [000, 999].\n     * - %p - either AM or PM.*\n     * - %Q - milliseconds since UNIX epoch.\n     * - %s - seconds since UNIX epoch.\n     * - %S - second as a decimal number [00,61].\n     * - %u - Monday-based (ISO) weekday as a decimal number [1,7].\n     * - %U - Sunday-based week of the year as a decimal number [00,53].\n     * - %V - ISO 8601 week number of the year as a decimal number [01, 53].\n     * - %w - Sunday-based weekday as a decimal number [0,6].\n     * - %W - Monday-based week of the year as a decimal number [00,53].\n     * - %x - the locale’s date, such as %-m/%-d/%Y.*\n     * - %X - the locale’s time, such as %-I:%M:%S %p.*\n     * - %y - year without century as a decimal number [00,99].\n     * - %Y - year with century as a decimal number.\n     * - %Z - time zone offset, such as -0700, -07:00, -07, or Z.\n     * - %% - a literal percent sign (%).\n     *\n     * Directives marked with an asterisk (*) may be affected by the locale definition.\n     *\n     * For %U, all days in a new year preceding the first Sunday are considered to be in week 0.\n     * For %W, all days in a new year preceding the first Monday are considered to be in week 0.\n     * Week numbers are computed using interval.count. For example, 2015-52 and 2016-00 represent\n     * Monday, December 28, 2015, while 2015-53 and 2016-01 represent Monday, January 4, 2016.\n     * This differs from the ISO week date specification (%V), which uses a more complicated definition!\n     *\n     * For %V, per the strftime man page:\n     *\n     * In this system, weeks start on a Monday, and are numbered from 01, for the first week, up to 52 or 53, for the last week.\n     * Week 1 is the first week where four or more days fall within the new year (or, synonymously,\n     * week 01 is: the first week of the year that contains a Thursday; or, the week that has 4 January in it).\n     *\n     * The % sign indicating a directive may be immediately followed by a padding modifier:\n     *\n     * 1) 0 - zero-padding\n     * 2) _ - space-padding\n     * 3) - disable padding\n     *\n     * If no padding modifier is specified, the default is 0 for all directives except %e, which defaults to _.\n     * (In some implementations of strftime and strptime, a directive may include an optional field width or precision;\n     * this feature is not yet implemented.)\n     *\n     * The returned function formats a specified date, returning the corresponding string.\n     *\n     * @param specifier A specifier string for the date format.\n     */",
       "type": {
         "arguments": { "specifier": "string" },
         "returnType": "(date: Date | number) => string",
@@ -5276,7 +5276,7 @@
       }
     },
     "parse": {
-      "description": "/** Returns a new parser for the given string specifier.\n * The specifier string may contain the same directives as locale.format (TimeLocaleObject.format).\n * The %d and %e directives are considered equivalent for parsing.\n * \n * The returned function parses a specified string, returning the corresponding date or undefined\n * if the string could not be parsed according to this format’s specifier.\n * Parsing is strict: if the specified string does not exactly match the associated specifier, this method returns undefined.\n * \n * For example, if the associated specifier is %Y-%m-%dT%H:%M:%SZ, then the string \"2011-07-01T19:15:28Z\"\n * will be parsed as expected, but \"2011-07-01T19:15:28\", \"2011-07-01 19:15:28\" and \"2011-07-01\" will return undefined.\n * (Note that the literal Z here is different from the time zone offset directive %Z.)\n * If a more flexible parser is desired, try multiple formats sequentially until one returns non-undefined.\n * @param specifier A specifier string for the date format.\n */",
+      "description": "/** Returns a new parser for the given string specifier.\n     * The specifier string may contain the same directives as locale.format (TimeLocaleObject.format).\n     * The %d and %e directives are considered equivalent for parsing.\n     *\n     * The returned function parses a specified string, returning the corresponding date or undefined\n     * if the string could not be parsed according to this format’s specifier.\n     * Parsing is strict: if the specified string does not exactly match the associated specifier, this method returns undefined.\n     *\n     * For example, if the associated specifier is %Y-%m-%dT%H:%M:%SZ, then the string \"2011-07-01T19:15:28Z\"\n     * will be parsed as expected, but \"2011-07-01T19:15:28\", \"2011-07-01 19:15:28\" and \"2011-07-01\" will return undefined.\n     * (Note that the literal Z here is different from the time zone offset directive %Z.)\n     * If a more flexible parser is desired, try multiple formats sequentially until one returns non-undefined.\n     *\n     * @param specifier A specifier string for the date format.\n     */",
       "type": {
         "arguments": { "specifier": "string" },
         "returnType": "(dateString: string) => Date | undefined",
@@ -5284,7 +5284,7 @@
       }
     },
     "utcFormat": {
-      "description": "/** Equivalent to locale.format (TimeLocaleObject.format),\n * except all directives are interpreted as Coordinated Universal Time (UTC) rather than local time.\n * @param specifier A specifier string for the date format.\n */",
+      "description": "/** Equivalent to locale.format (TimeLocaleObject.format),\n     * except all directives are interpreted as Coordinated Universal Time (UTC) rather than local time.\n     *\n     * @param specifier A specifier string for the date format.\n     */",
       "type": {
         "arguments": { "specifier": "string" },
         "returnType": "(date: Date | number) => string",
@@ -5292,7 +5292,7 @@
       }
     },
     "utcParse": {
-      "description": "/** Equivalent to locale.parse (TimeLocaleObject.parse),\n * except all directives are interpreted as Coordinated Universal Time (UTC) rather than local time.\n * @param specifier A specifier string for the date format.\n */",
+      "description": "/** Equivalent to locale.parse (TimeLocaleObject.parse),\n     * except all directives are interpreted as Coordinated Universal Time (UTC) rather than local time.\n     *\n     * @param specifier A specifier string for the date format.\n     */",
       "type": {
         "arguments": { "specifier": "string" },
         "returnType": "(dateString: string) => Date | undefined",
