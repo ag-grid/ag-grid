@@ -255,7 +255,7 @@ export class Scene {
         const { layers } = this;
         for (const layer of layers) {
             layer.canvas.destroy();
-            delete layer['canvas'];
+            delete (layer as any)['canvas'];
         }
         layers.splice(0, layers.length);
     }

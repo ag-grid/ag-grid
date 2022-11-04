@@ -54,12 +54,13 @@ export function jsonDiff<T extends any>(source: T, target: T): Partial<T> | null
     const targetType = classify(target);
 
     if (targetType === 'array') {
-        if (sourceType !== 'array' || source.length !== target.length) {
-            return [...(target as any)];
+        const targetArray = target as any;
+        if (sourceType !== 'array' || (source as any).length !== targetArray.length) {
+            return [...(targetArray)] as any;
         }
 
-        if (target.some((targetElement: any, i: number) => jsonDiff(source?.[i], targetElement) != null)) {
-            return [...(target as any)];
+        if (targetArray.some((targetElement: any, i: number) => jsonDiff((source as any)?.[i], targetElement) != null)) {
+            return [...(targetArray)] as any;
         }
 
         return null;
@@ -67,7 +68,7 @@ export function jsonDiff<T extends any>(source: T, target: T): Partial<T> | null
 
     if (targetType === 'primitive') {
         if (sourceType !== 'primitive') {
-            return { ...target };
+            return { ...(target as any) };
         }
 
         if (source !== target) {
@@ -331,8 +332,9 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
                 targetAny[property] = newValue;
             }
         } catch (error) {
+            const err = error as any;
             console.warn(
-                `AG Charts - unable to set [${propertyPath}] in [${targetClass?.name}]; nested error is: ${error.message}`
+                `AG Charts - unable to set [${propertyPath}] in [${targetClass?.name}]; nested error is: ${err.message}`
             );
             continue;
         }
