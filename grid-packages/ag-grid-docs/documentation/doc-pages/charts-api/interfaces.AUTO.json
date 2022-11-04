@@ -1,135 +1,57 @@
 {
   "Tags": {
-    "meta": {
-      "isEnum": true
-    },
-    "type": [
-      "Tick",
-      "GridLine"
-    ],
-    "docs": [
-      null,
-      null
-    ]
+    "meta": { "isEnum": true },
+    "type": ["Tick", "GridLine"],
+    "docs": [null, null]
   },
   "AxisNodeDatum": {
     "meta": {},
-    "type": {
-      "tick": "any",
-      "translationY": "number"
-    }
+    "type": { "tick": "any", "translationY": "number" }
   },
   "TimeTickCount": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "number | CountableTimeInterval"
   },
-  "NumberTickCount": {
-    "meta": {
-      "isTypeAlias": true
-    },
-    "type": "number"
-  },
+  "NumberTickCount": { "meta": { "isTypeAlias": true }, "type": "number" },
   "TickCountType": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": [
-        "S"
-      ]
-    },
+    "meta": { "isTypeAlias": true, "typeParams": ["S"] },
     "type": "S extends TimeScale ? TimeTickCount : NumberTickCount"
   },
   "Size": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ width: number; height: number; }"
   },
   "OffscreenCanvasRenderingContext2D": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "any"
   },
-  "OffscreenCanvas": {
-    "meta": {
-      "isTypeAlias": true
-    },
-    "type": "any"
-  },
+  "OffscreenCanvas": { "meta": { "isTypeAlias": true }, "type": "any" },
   "FontStyle": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'normal' | 'italic' | 'oblique'"
   },
   "FontWeight": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'"
   },
-  "FontFamily": {
-    "meta": {
-      "isTypeAlias": true
-    },
-    "type": "string"
-  },
-  "FontSize": {
-    "meta": {
-      "isTypeAlias": true
-    },
-    "type": "number"
-  },
+  "FontFamily": { "meta": { "isTypeAlias": true }, "type": "string" },
+  "FontSize": { "meta": { "isTypeAlias": true }, "type": "number" },
   "AgChartThemeName": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'ag-default' | 'ag-default-dark' | 'ag-material' | 'ag-material-dark' | 'ag-pastel' | 'ag-pastel-dark' | 'ag-solar' | 'ag-solar-dark' | 'ag-vivid' | 'ag-vivid-dark'"
   },
   "MarkerShape": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'circle' | 'cross' | 'diamond' | 'heart' | 'plus' | 'triangle' | any"
   },
-  "CssColor": {
-    "meta": {
-      "isTypeAlias": true
-    },
-    "type": "string"
-  },
-  "Opacity": {
-    "meta": {
-      "isTypeAlias": true
-    },
-    "type": "number"
-  },
-  "PixelSize": {
-    "meta": {
-      "isTypeAlias": true
-    },
-    "type": "number"
-  },
-  "Ratio": {
-    "meta": {
-      "isTypeAlias": true
-    },
-    "type": "number"
-  },
-  "DataValue": {
-    "meta": {
-      "isTypeAlias": true
-    },
-    "type": "any"
-  },
+  "CssColor": { "meta": { "isTypeAlias": true }, "type": "string" },
+  "Opacity": { "meta": { "isTypeAlias": true }, "type": "number" },
+  "PixelSize": { "meta": { "isTypeAlias": true }, "type": "number" },
+  "Ratio": { "meta": { "isTypeAlias": true }, "type": "number" },
+  "DataValue": { "meta": { "isTypeAlias": true }, "type": "any" },
   "AgChartThemePalette": {
     "meta": {},
-    "type": {
-      "fills": "string[]",
-      "strokes": "string[]"
-    },
+    "type": { "fills": "string[]", "strokes": "string[]" },
     "docs": {
       "fills": "/** The array of fills to be used. */",
       "strokes": "/** The array of strokes to be used. */"
@@ -193,16 +115,12 @@
     }
   },
   "AgCartesianAxisThemeSpecialOptions": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'position' | 'type' | 'crossLines'"
   },
   "AgCartesianAxisThemeOptions": {
     "meta": {
-      "typeParams": [
-        "T"
-      ],
+      "typeParams": ["T"],
       "doc": "/** This is the configuration shared by all types of axis. */"
     },
     "type": {
@@ -219,11 +137,7 @@
     }
   },
   "AgCartesianThemeOptions": {
-    "meta": {
-      "typeParams": [
-        "S = AgCartesianSeriesTheme"
-      ]
-    },
+    "meta": { "typeParams": ["S = AgCartesianSeriesTheme"] },
     "type": {
       "axes?": "AgCartesianAxesTheme",
       "series?": "S",
@@ -262,11 +176,7 @@
     }
   },
   "AgPolarThemeOptions": {
-    "meta": {
-      "typeParams": [
-        "S = AgPolarSeriesTheme"
-      ]
-    },
+    "meta": { "typeParams": ["S = AgPolarSeriesTheme"] },
     "type": {
       "series?": "S",
       "data?": "any[]",
@@ -301,11 +211,7 @@
     }
   },
   "AgHierarchyThemeOptions": {
-    "meta": {
-      "typeParams": [
-        "S = AgHierarchySeriesTheme"
-      ]
-    },
+    "meta": { "typeParams": ["S = AgHierarchySeriesTheme"] },
     "type": {
       "series?": "S",
       "data?": "any[]",
@@ -368,9 +274,7 @@
   },
   "AgCartesianAxesCrossLineThemeOptions": {
     "meta": {},
-    "type": {
-      "crossLines?": "AgCrossLineThemeOptions"
-    }
+    "type": { "crossLines?": "AgCrossLineThemeOptions" }
   },
   "AgNumberAxisThemeOptions": {
     "meta": {},
@@ -586,12 +490,7 @@
       "histogram?": "AgHistogramSeriesOptions"
     }
   },
-  "AgPolarSeriesTheme": {
-    "meta": {},
-    "type": {
-      "pie?": "AgPieSeriesTheme"
-    }
-  },
+  "AgPolarSeriesTheme": { "meta": {}, "type": { "pie?": "AgPieSeriesTheme" } },
   "AgPieSeriesTheme": {
     "meta": {},
     "type": {
@@ -686,9 +585,7 @@
   },
   "AgHierarchySeriesTheme": {
     "meta": {},
-    "type": {
-      "treemap?": "AgTreemapSeriesOptions"
-    }
+    "type": { "treemap?": "AgTreemapSeriesOptions" }
   },
   "AgChartPaddingOptions": {
     "meta": {},
@@ -822,9 +719,7 @@
     }
   },
   "AgChartLegendPosition": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'top' | 'right' | 'bottom' | 'left'"
   },
   "AgChartLegendMarkerOptions": {
@@ -850,9 +745,7 @@
       "itemId": "any",
       "value": "string"
     },
-    "docs": {
-      "id": "/** @deprecated Use seriesId. */"
-    }
+    "docs": { "id": "/** @deprecated Use seriesId. */" }
   },
   "AgChartLegendLabelOptions": {
     "meta": {},
@@ -894,11 +787,7 @@
   },
   "AgChartLegendClickEvent": {
     "meta": {},
-    "type": {
-      "seriesId": "string",
-      "itemId": "string",
-      "enabled": "boolean"
-    },
+    "type": { "seriesId": "string", "itemId": "string", "enabled": "boolean" },
     "docs": {
       "seriesId": "/** Series id */",
       "itemId": "/** Legend item id - usually yKey value for cartesian series. */",
@@ -907,9 +796,7 @@
   },
   "AgChartLegendListeners": {
     "meta": {},
-    "type": {
-      "legendItemClick?": "(event: AgChartLegendClickEvent) => void"
-    },
+    "type": { "legendItemClick?": "(event: AgChartLegendClickEvent) => void" },
     "docs": {
       "legendItemClick?": "/** The listener to call when a legend item is clicked. */"
     }
@@ -950,25 +837,15 @@
   },
   "AgChartBackground": {
     "meta": {},
-    "type": {
-      "visible?": "boolean",
-      "fill?": "CssColor"
-    },
+    "type": { "visible?": "boolean", "fill?": "CssColor" },
     "docs": {
       "visible?": "/** Whether or not the background should be visible. */",
       "fill?": "/** Colour of the chart background. */"
     }
   },
   "AgChartEvent": {
-    "meta": {
-      "typeParams": [
-        "T extends string"
-      ]
-    },
-    "type": {
-      "type": "T",
-      "event": "Event"
-    }
+    "meta": { "typeParams": ["T extends string"] },
+    "type": { "type": "T", "event": "Event" }
   },
   "AgNodeClickEvent": {
     "meta": {},
@@ -1006,10 +883,7 @@
   },
   "AgChartClickEvent": {
     "meta": {},
-    "type": {
-      "type": "T",
-      "event": "Event"
-    }
+    "type": { "type": "T", "event": "Event" }
   },
   "AgBaseChartListeners": {
     "meta": {},
@@ -1023,9 +897,7 @@
     }
   },
   "AgBaseChartOptions": {
-    "meta": {
-      "doc": "/** Configuration common to all charts.  */"
-    },
+    "meta": { "doc": "/** Configuration common to all charts.  */" },
     "type": {
       "data?": "any[]",
       "container?": "HTMLElement | null",
@@ -1059,26 +931,18 @@
   },
   "AgBaseAxisOptions": {
     "meta": {},
-    "type": {
-      "keys?": "string[]",
-      "thickness?": "PixelSize"
-    },
+    "type": { "keys?": "string[]", "thickness?": "PixelSize" },
     "docs": {
       "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
     }
   },
   "AgCartesianAxisPosition": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'top' | 'right' | 'bottom' | 'left'"
   },
   "AgAxisLineOptions": {
     "meta": {},
-    "type": {
-      "width?": "PixelSize",
-      "color?": "CssColor"
-    },
+    "type": { "width?": "PixelSize", "color?": "CssColor" },
     "docs": {
       "width?": "/** The width in pixels of the axis line. */",
       "color?": "/** The colour of the axis line. */"
@@ -1167,25 +1031,18 @@
   },
   "AgAxisGridStyle": {
     "meta": {},
-    "type": {
-      "stroke?": "CssColor",
-      "lineDash?": "PixelSize[]"
-    },
+    "type": { "stroke?": "CssColor", "lineDash?": "PixelSize[]" },
     "docs": {
       "stroke?": "/** The colour of the grid line. */",
       "lineDash?": "/** Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */"
     }
   },
   "AgCartesianAxisType": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'category' | 'groupedCategory' | 'number' | 'log' | 'time'"
   },
   "AgBaseCartesianAxisOptions": {
-    "meta": {
-      "doc": "/** Configuration for axes in cartesian charts. */"
-    },
+    "meta": { "doc": "/** Configuration for axes in cartesian charts. */" },
     "type": {
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
@@ -1263,9 +1120,7 @@
     }
   },
   "AgCrossLineLabelPosition": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'top' | 'left' | 'right' | 'bottom' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'inside' | 'insideLeft' | 'insideRight' | 'insideTop' | 'insideBottom' | 'insideTopLeft' | 'insideBottomLeft' | 'insideTopRight' | 'insideBottomRight'"
   },
   "AgNumberAxisOptions": {
@@ -1420,9 +1275,7 @@
     }
   },
   "AgCartesianAxisOptions": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "AgNumberAxisOptions | AgLogAxisOptions | AgCategoryAxisOptions | AgGroupedCategoryAxisOptions | AgTimeAxisOptions"
   },
   "AgSeriesHighlightMarkerStyle": {
@@ -1470,11 +1323,7 @@
     }
   },
   "AgSeriesNodeClickParams": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "type": "'nodeClick'",
       "series": "any",
@@ -1507,11 +1356,7 @@
     }
   },
   "AgSeriesListeners": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "nodeClick": "(params: AgSeriesNodeClickParams<DatumType>) => void"
     },
@@ -1520,11 +1365,7 @@
     }
   },
   "AgBaseSeriesOptions": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "id?": "string",
       "data?": "DatumType[]",
@@ -1689,11 +1530,7 @@
     }
   },
   "AgSeriesMarkerFormatterParams": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "datum": "DatumType",
       "fill?": "CssColor",
@@ -1705,11 +1542,7 @@
     }
   },
   "AgCartesianSeriesMarkerFormatterParams": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "xKey": "string",
       "yKey": "string",
@@ -1732,20 +1565,11 @@
     }
   },
   "AgCartesianSeriesMarkerFormatter": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "isTypeAlias": true, "typeParams": ["DatumType"] },
     "type": "(params: AgCartesianSeriesMarkerFormatterParams<DatumType>) => AgCartesianSeriesMarkerFormat | undefined"
   },
   "AgCartesianSeriesMarker": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "formatter?": "AgCartesianSeriesMarkerFormatter<DatumType>",
       "enabled?": "boolean",
@@ -1772,11 +1596,7 @@
     }
   },
   "AgAreaSeriesMarker": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "formatter?": "AgCartesianSeriesMarkerFormatter<DatumType>",
       "enabled?": "boolean",
@@ -1804,19 +1624,14 @@
   },
   "AgSeriesTooltip": {
     "meta": {},
-    "type": {
-      "enabled?": "boolean"
-    },
+    "type": { "enabled?": "boolean" },
     "docs": {
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
   "AgCartesianSeriesLabelFormatterParams": {
     "meta": {},
-    "type": {
-      "seriesId": "string",
-      "value": "number"
-    },
+    "type": { "seriesId": "string", "value": "number" },
     "docs": {
       "seriesId": "/** The ID of the series. */",
       "value": "/** The value of yKey as specified on series options. */"
@@ -1857,9 +1672,7 @@
   },
   "AgLineSeriesOptions": {
     "meta": {
-      "typeParams": [
-        "DatumType = any"
-      ],
+      "typeParams": ["DatumType = any"],
       "doc": "/** Configuration for line series. */"
     },
     "type": {
@@ -1938,11 +1751,7 @@
     }
   },
   "AgScatterSeriesMarker": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "domain?": "[ number, number ]",
       "formatter?": "AgCartesianSeriesMarkerFormatter<DatumType>",
@@ -1972,9 +1781,7 @@
   },
   "AgScatterSeriesOptions": {
     "meta": {
-      "typeParams": [
-        "DatumType = any"
-      ],
+      "typeParams": ["DatumType = any"],
       "doc": "/** Configuration for scatter/bubble series. */"
     },
     "type": {
@@ -2045,9 +1852,7 @@
   },
   "AgAreaSeriesOptions": {
     "meta": {
-      "typeParams": [
-        "DatumType = any"
-      ],
+      "typeParams": ["DatumType = any"],
       "doc": "/** Configuration for area series. */"
     },
     "type": {
@@ -2111,9 +1916,7 @@
     }
   },
   "AgBarSeriesLabelPlacement": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'inside' | 'outside'"
   },
   "AgBarSeriesLabelOptions": {
@@ -2140,11 +1943,7 @@
     }
   },
   "AgBarSeriesFormatterParams": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "datum": "DatumType",
       "fill?": "CssColor",
@@ -2177,9 +1976,7 @@
   },
   "AgBarSeriesOptions": {
     "meta": {
-      "typeParams": [
-        "DatumType = any"
-      ],
+      "typeParams": ["DatumType = any"],
       "doc": "/** Configuration for bar/column series. */"
     },
     "type": {
@@ -2306,11 +2103,7 @@
     }
   },
   "AgHistogramBinDatum": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "data": "DatumType[]",
       "aggregatedValue": "number",
@@ -2320,9 +2113,7 @@
   },
   "AgHistogramSeriesOptions": {
     "meta": {
-      "typeParams": [
-        "DatumType = any"
-      ],
+      "typeParams": ["DatumType = any"],
       "doc": "/** Configuration for histogram series. */"
     },
     "type": {
@@ -2382,11 +2173,7 @@
     }
   },
   "AgPieSeriesLabelOptions": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "offset?": "PixelSize",
       "minAngle?": "number",
@@ -2411,11 +2198,7 @@
     }
   },
   "AgPieSeriesSectorLabelOptions": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "positionOffset?": "PixelSize",
       "positionRatio?": "Ratio",
@@ -2440,11 +2223,7 @@
     }
   },
   "AgPieSeriesFormatterParams": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "datum": "DatumType",
       "fill?": "CssColor",
@@ -2554,10 +2333,7 @@
   },
   "AgDoughnutInnerCircle": {
     "meta": {},
-    "type": {
-      "fill": "CssColor",
-      "fillOpacity?": "Opacity"
-    },
+    "type": { "fill": "CssColor", "fillOpacity?": "Opacity" },
     "docs": {
       "fill": "/** The colour of the fill for the inner circle. */",
       "fillOpacity?": "/** The opacity of the fill for the inner circle. */"
@@ -2565,9 +2341,7 @@
   },
   "AgPieSeriesOptions": {
     "meta": {
-      "typeParams": [
-        "DatumType = any"
-      ],
+      "typeParams": ["DatumType = any"],
       "doc": "/** Configuration for pie/doughnut series. */"
     },
     "type": {
@@ -2700,11 +2474,7 @@
     }
   },
   "AgPieSeriesLabelFormatterParams": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "datum": "DatumType",
       "labelKey?": "string",
@@ -2768,11 +2538,7 @@
     }
   },
   "AgTreemapNodeDatum": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "datum": "DatumType",
       "parent?": "AgTreemapNodeDatum<DatumType>",
@@ -2785,11 +2551,7 @@
     }
   },
   "AgTreemapSeriesTooltipRendererParams": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "datum": "AgTreemapNodeDatum<DatumType>",
       "sizeKey?": "string",
@@ -2802,11 +2564,7 @@
     }
   },
   "AgTreemapSeriesTooltip": {
-    "meta": {
-      "typeParams": [
-        "DatumType"
-      ]
-    },
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "renderer?": "(params: AgTreemapSeriesTooltipRendererParams<DatumType>) => string | AgTooltipRendererResult",
       "enabled?": "boolean"
@@ -2833,9 +2591,7 @@
   },
   "AgTreemapSeriesOptions": {
     "meta": {
-      "typeParams": [
-        "DatumType = any"
-      ],
+      "typeParams": ["DatumType = any"],
       "doc": "/** Configuration for the treemap series. */"
     },
     "type": {
@@ -2886,9 +2642,7 @@
   },
   "AgTreemapSeriesFormatterParams": {
     "meta": {
-      "typeParams": [
-        "DataValue = any"
-      ],
+      "typeParams": ["DataValue = any"],
       "doc": "/** The parameters of the treemap series formatter function */"
     },
     "type": {
@@ -2921,9 +2675,7 @@
     }
   },
   "AgTreemapSeriesFormat": {
-    "meta": {
-      "doc": "/** The formatted style of a treemap tile */"
-    },
+    "meta": { "doc": "/** The formatted style of a treemap tile */" },
     "type": {
       "fill?": "CssColor",
       "fillOpacity?": "Opacity",
@@ -2942,21 +2694,15 @@
     }
   },
   "AgCartesianSeriesOptions": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions"
   },
   "AgPolarSeriesOptions": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "AgPieSeriesOptions"
   },
   "AgHierarchySeriesOptions": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "AgTreemapSeriesOptions"
   },
   "AgCartesianChartOptions": {
@@ -3075,60 +2821,35 @@
     }
   },
   "AgChartOptions": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions"
   },
   "ChartType": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "CartesianChart | PolarChart | HierarchyChart"
   },
   "AgChartType": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": [
-        "T"
-      ]
-    },
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "T extends AgCartesianChartOptions ? CartesianChart : T extends AgPolarChartOptions ? PolarChart : T extends AgHierarchyChartOptions ? HierarchyChart : never"
   },
   "ChartOptionType": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": [
-        "T extends ChartType"
-      ]
-    },
+    "meta": { "isTypeAlias": true, "typeParams": ["T extends ChartType"] },
     "type": "T extends CartesianChart ? AgCartesianChartOptions : T extends PolarChart ? AgPolarChartOptions : T extends HierarchyChart ? AgHierarchyChartOptions : never"
   },
   "SeriesOptionType": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": [
-        "T extends Series"
-      ]
-    },
+    "meta": { "isTypeAlias": true, "typeParams": ["T extends Series"] },
     "type": "T extends LineSeries ? AgLineSeriesOptions : T extends BarSeries ? AgBarSeriesOptions : T extends AreaSeries ? AgAreaSeriesOptions : T extends ScatterSeries ? AgScatterSeriesOptions : T extends HistogramSeries ? AgHistogramSeriesOptions : T extends PieSeries ? AgPieSeriesOptions : T extends TreemapSeries ? AgTreemapSeriesOptions : never"
   },
   "DownloadOptions": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ width?: number; height?: number; fileName?: string; fileFormat?: string; }"
   },
   "ObservableLike": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ addEventListener(key: string, cb: SourceEventListener<any>): void; clearEventListeners(): void; }"
   },
   "ChartUpdateType": {
-    "meta": {
-      "isEnum": true
-    },
+    "meta": { "isEnum": true },
     "type": [
       "FULL",
       "PROCESS_DATA",
@@ -3137,92 +2858,52 @@
       "SCENE_RENDER",
       "NONE"
     ],
-    "docs": [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ]
+    "docs": [null, null, null, null, null, null]
   },
   "OptionalHTMLElement": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "HTMLElement | undefined | null"
   },
   "ChartAxisDirection": {
-    "meta": {
-      "isEnum": true
-    },
-    "type": [
-      "X = 'x'",
-      "Y = 'y'"
-    ],
-    "docs": [
-      null,
-      null
-    ]
+    "meta": { "isEnum": true },
+    "type": ["X = 'x'", "Y = 'y'"],
+    "docs": [null, null]
   },
-  "NodeData": {
-    "meta": {
-      "isTypeAlias": true
-    },
-    "type": "number[]"
-  },
+  "NodeData": { "meta": { "isTypeAlias": true }, "type": "number[]" },
   "CrossLineType": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'line' | 'range'"
   },
   "CrossLineLabelPosition": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'top' | 'left' | 'right' | 'bottom' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'inside' | 'insideLeft' | 'insideRight' | 'insideTop' | 'insideBottom' | 'insideTopLeft' | 'insideBottomLeft' | 'insideTopRight' | 'insideBottomRight'"
   },
   "CoordinatesFnOpts": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ yDirection: boolean; xStart: number; xEnd: number; yStart: number; yEnd: number; }"
   },
   "CoordinatesFn": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "({ yDirection, xStart, xEnd, yStart, yEnd }: CoordinatesFnOpts) => Point"
   },
   "PositionCalcFns": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ c: CoordinatesFn; }"
   },
   "LabelTranslationDirection": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "1 | -1 | 0"
   },
   "CrossLineTranslationDirection": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ xTranslationDirection: LabelTranslationDirection; yTranslationDirection: LabelTranslationDirection; }"
   },
   "CrossLinesRangeConfig": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "Record<string, { vertical: [ Date, Date ]; horizontal: [ number, number ]; }>"
   },
   "Layers": {
-    "meta": {
-      "isEnum": true
-    },
+    "meta": { "isEnum": true },
     "type": [
       "SERIES_BACKGROUND_ZINDEX = -10",
       "AXIS_GRIDLINES_ZINDEX = 0",
@@ -3233,16 +2914,7 @@
       "SERIES_CROSSLINE_LINE_ZINDEX = 2500",
       "LEGEND_ZINDEX = 3000"
     ],
-    "docs": [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ]
+    "docs": [null, null, null, null, null, null, null, null]
   },
   "LegendDatum": {
     "meta": {},
@@ -3256,49 +2928,28 @@
     }
   },
   "LegendOrientation": {
-    "meta": {
-      "isEnum": true
-    },
-    "type": [
-      "Vertical",
-      "Horizontal"
-    ],
-    "docs": [
-      null,
-      null
-    ]
+    "meta": { "isEnum": true },
+    "type": ["Vertical", "Horizontal"],
+    "docs": [null, null]
   },
   "SeriesOptionsTypes": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "NonNullable<AgChartOptions['series']>[number]"
   },
   "AxesOptionsTypes": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "NonNullable<AgCartesianChartOptions['axes']>[number]"
   },
   "PreparationContext": {
     "meta": {},
-    "type": {
-      "colourIndex": "number",
-      "palette": "AgChartThemePalette"
-    }
+    "type": { "colourIndex": "number", "palette": "AgChartThemePalette" }
   },
   "SeriesOptions": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "AgCartesianSeriesOptions | AgPolarSeriesOptions | AgHierarchySeriesOptions"
   },
   "ReduceConfig": {
-    "meta": {
-      "typeParams": [
-        "T"
-      ]
-    },
+    "meta": { "typeParams": ["T"] },
     "type": {
       "outputProp": "string",
       "reducer": "(r: T, n: any, idx: number, length: number) => T",
@@ -3307,9 +2958,7 @@
     }
   },
   "ThemeMap": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{[key in AgChartThemeName | 'undefined' | 'null']?: ChartTheme}"
   },
   "Transforms": {
@@ -3324,39 +2973,27 @@
     "type": "{[Property in Keys]: (p: Source[Property], src: Source) => Result[Property]}"
   },
   "SeriesTypes": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "NonNullable<AgChartOptions['series']>[number]"
   },
   "SeriesType": {
     "meta": {
       "isTypeAlias": true,
-      "typeParams": [
-        "T extends SeriesTypes['type']"
-      ]
+      "typeParams": ["T extends SeriesTypes['type']"]
     },
     "type": "T extends 'area' ? AgAreaSeriesOptions : T extends 'bar' ? AgBarSeriesOptions : T extends 'column' ? AgBarSeriesOptions : T extends 'histogram' ? AgHistogramSeriesOptions : T extends 'line' ? AgLineSeriesOptions : T extends 'pie' ? AgPieSeriesOptions : T extends 'scatter' ? AgScatterSeriesOptions : T extends 'treemap' ? AgTreemapSeriesOptions : never"
   },
   "MarkerPathMove": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ x: number; y: number; t?: 'move'; }"
   },
   "Offset": {
     "meta": {},
-    "type": {
-      "offsetX": "number",
-      "offsetY": "number"
-    }
+    "type": { "offsetX": "number", "offsetY": "number" }
   },
   "FillSelectionDatum": {
     "meta": {},
-    "type": {
-      "itemId": "string",
-      "points": "{ x: number; y: number; }[]"
-    }
+    "type": { "itemId": "string", "points": "{ x: number; y: number; }[]" }
   },
   "StrokeSelectionDatum": {
     "meta": {},
@@ -3390,38 +3027,20 @@
     }
   },
   "CumulativeValue": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ left: number; right: number; }"
   },
   "ProcessedXDatum": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ xDatum: any; seriesDatum: any; }"
   },
   "AreaSeriesTag": {
-    "meta": {
-      "isEnum": true
-    },
-    "type": [
-      "Fill",
-      "Stroke",
-      "Marker",
-      "Label"
-    ],
-    "docs": [
-      null,
-      null,
-      null,
-      null
-    ]
+    "meta": { "isEnum": true },
+    "type": ["Fill", "Stroke", "Marker", "Label"],
+    "docs": [null, null, null, null]
   },
   "AreaSeriesNodeDataContext": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "SeriesNodeDataContext<MarkerSelectionDatum, LabelSelectionDatum> & { fillSelectionData: FillSelectionDatum; strokeSelectionData: StrokeSelectionDatum; }"
   },
   "BarNodeDatum": {
@@ -3446,17 +3065,9 @@
     }
   },
   "BarSeriesNodeTag": {
-    "meta": {
-      "isEnum": true
-    },
-    "type": [
-      "Bar",
-      "Label"
-    ],
-    "docs": [
-      null,
-      null
-    ]
+    "meta": { "isEnum": true },
+    "type": ["Bar", "Label"],
+    "docs": [null, null]
   },
   "NodeDataSelection": {
     "meta": {
@@ -3497,17 +3108,10 @@
     }
   },
   "PickGroupInclude": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'mainPath' | 'datumNodes' | 'markers'"
   },
-  "SeriesFeature": {
-    "meta": {
-      "isTypeAlias": true
-    },
-    "type": "'markers'"
-  },
+  "SeriesFeature": { "meta": { "isTypeAlias": true }, "type": "'markers'" },
   "SeriesOpts": {
     "meta": {},
     "type": {
@@ -3519,17 +3123,9 @@
     }
   },
   "HistogramSeriesNodeTag": {
-    "meta": {
-      "isEnum": true
-    },
-    "type": [
-      "Bin",
-      "Label"
-    ],
-    "docs": [
-      null,
-      null
-    ]
+    "meta": { "isEnum": true },
+    "type": ["Bin", "Label"],
+    "docs": [null, null]
   },
   "HistogramNodeDatum": {
     "meta": {},
@@ -3549,15 +3145,11 @@
     }
   },
   "HistogramAggregation": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "NonNullable<AgHistogramSeriesOptions['aggregation']>"
   },
   "AggregationFunction": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "(bin: HistogramBin, yKey: string) => number"
   },
   "LineNodeDatum": {
@@ -3573,16 +3165,10 @@
   },
   "PointDatum": {
     "meta": {},
-    "type": {
-      "xDatum": "any",
-      "yDatum": "any",
-      "datum": "any"
-    }
+    "type": { "xDatum": "any", "yDatum": "any", "datum": "any" }
   },
   "LineContext": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "SeriesNodeDataContext<LineNodeDatum>"
   },
   "ScatterNodeDatum": {
@@ -3617,17 +3203,9 @@
     }
   },
   "TextNodeTag": {
-    "meta": {
-      "isEnum": true
-    },
-    "type": [
-      "Name",
-      "Value"
-    ],
-    "docs": [
-      null,
-      null
-    ]
+    "meta": { "isEnum": true },
+    "type": ["Name", "Value"],
+    "docs": [null, null]
   },
   "PieNodeDatum": {
     "meta": {},
@@ -3648,95 +3226,10 @@
       "point?": "Readonly<SizedPoint>"
     }
   },
-  "PieTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "labelKey?": "string",
-      "labelName?": "string",
-      "calloutLabelKey?": "string",
-      "calloutLabelName?": "string",
-      "sectorLabelKey?": "string",
-      "sectorLabelName?": "string",
-      "angleKey": "string",
-      "angleValue": "any",
-      "angleName?": "string",
-      "radiusKey?": "string",
-      "radiusValue?": "any",
-      "radiusName?": "string",
-      "datum": "any",
-      "title?": "string",
-      "color?": "string",
-      "seriesId": "string"
-    },
-    "docs": {
-      "labelKey?": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
-      "labelName?": "/** @deprecated Use calloutLabelName or sectorLabelName\n */"
-    }
-  },
   "PieNodeTag": {
-    "meta": {
-      "isEnum": true
-    },
-    "type": [
-      "Sector",
-      "Callout",
-      "Label"
-    ],
-    "docs": [
-      null,
-      null,
-      null
-    ]
-  },
-  "PieSeriesFormatterParams": {
-    "meta": {},
-    "type": {
-      "datum": "any",
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth": "number",
-      "highlighted": "boolean",
-      "angleKey": "string",
-      "radiusKey?": "string",
-      "seriesId": "string"
-    }
-  },
-  "PieSeriesFormat": {
-    "meta": {},
-    "type": {
-      "fill?": "string",
-      "fillOpacity?": "number",
-      "stroke?": "string",
-      "strokeWidth?": "number"
-    }
-  },
-  "PieSeriesLabelFormatterParams": {
-    "meta": {},
-    "type": {
-      "datum": "any",
-      "labelKey?": "string",
-      "labelValue?": "string",
-      "labelName?": "string",
-      "calloutLabelKey?": "string",
-      "calloutLabelValue?": "string",
-      "calloutLabelName?": "string",
-      "sectorLabelKey?": "string",
-      "sectorLabelValue?": "string",
-      "sectorLabelName?": "string",
-      "angleKey": "string",
-      "angleValue?": "any",
-      "angleName?": "string",
-      "radiusKey?": "string",
-      "radiusValue?": "any",
-      "radiusName?": "string",
-      "value?": "any",
-      "seriesId": "string"
-    },
-    "docs": {
-      "labelKey?": "/** @deprecated Use calloutLabelKey or sectorLabelKey\n */",
-      "labelValue?": "/** @deprecated Use calloutLabelValue or sectorLabelValue\n */",
-      "labelName?": "/** @deprecated Use calloutLabelName or sectorLabelName\n */"
-    }
+    "meta": { "isEnum": true },
+    "type": ["Sector", "Callout", "Label"],
+    "docs": [null, null, null]
   },
   "SectorBoundaries": {
     "meta": {},
@@ -3759,9 +3252,7 @@
     }
   },
   "SeriesNodePickMode": {
-    "meta": {
-      "isEnum": true
-    },
+    "meta": { "isEnum": true },
     "type": [
       "EXACT_SHAPE_MATCH",
       "NEAREST_BY_MAIN_AXIS_FIRST",
@@ -3776,18 +3267,13 @@
     ]
   },
   "SeriesNodePickMatch": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ datum: SeriesNodeDatum; distance: number; }"
   },
   "SeriesNodeDataContext": {
     "meta": {
       "isTypeAlias": true,
-      "typeParams": [
-        "S = SeriesNodeDatum",
-        "L = S"
-      ]
+      "typeParams": ["S = SeriesNodeDatum", "L = S"]
     },
     "type": "{ itemId: string; nodeData: S[]; labelData: L[]; }"
   },
@@ -3816,9 +3302,7 @@
     }
   },
   "ChartThemeDefaults": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ cartesian: AgCartesianThemeOptions; groupedCategory: AgCartesianThemeOptions; polar: AgPolarThemeOptions; hierarchy: AgHierarchyThemeOptions; } & { [key in keyof AgCartesianSeriesTheme]?: AgCartesianThemeOptions; } & { [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions; } & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions; }"
   },
   "TooltipMeta": {
@@ -3831,12 +3315,7 @@
       "event": "MouseEvent"
     }
   },
-  "Tick": {
-    "meta": {},
-    "type": {
-      "labels": "string[]"
-    }
-  },
+  "Tick": { "meta": {}, "type": { "labels": "string[]" } },
   "Node": {
     "meta": {},
     "type": {
@@ -3848,30 +3327,8 @@
       "y1": "number"
     }
   },
-  "InterpolatorFactory": {
-    "meta": {
-      "isCallSignature": true,
-      "typeParams": [
-        "T",
-        "U"
-      ],
-      "doc": "/** An Interpolator factory returns an interpolator function.\n * \n * The first generic corresponds to the data type of the interpolation boundaries.\n * The second generic corresponds to the data type of the return type of the interpolator. */"
-    },
-    "type": {
-      "arguments": {
-        "a": "T",
-        "b": "T"
-      },
-      "returnType": "(t: number) => U"
-    }
-  },
   "Scale": {
-    "meta": {
-      "typeParams": [
-        "D",
-        "R"
-      ]
-    },
+    "meta": { "typeParams": ["D", "R"] },
     "type": {
       "domain": "D[]",
       "range": "R[]",
@@ -3884,27 +3341,15 @@
     }
   },
   "Reinterpolator": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": [
-        "T"
-      ]
-    },
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(t: number) => T"
   },
   "Deinterpolator": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": [
-        "T"
-      ]
-    },
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(v: T) => number"
   },
   "DefaultTimeFormats": {
-    "meta": {
-      "isEnum": true
-    },
+    "meta": { "isEnum": true },
     "type": [
       "MILLISECOND",
       "SECOND",
@@ -3914,79 +3359,34 @@
       "MONTH",
       "YEAR"
     ],
-    "docs": [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ]
+    "docs": [null, null, null, null, null, null, null]
   },
   "RedrawType": {
-    "meta": {
-      "isEnum": true
-    },
-    "type": [
-      "NONE",
-      "TRIVIAL",
-      "MINOR",
-      "MAJOR"
-    ],
-    "docs": [
-      null,
-      null,
-      null,
-      null
-    ]
+    "meta": { "isEnum": true },
+    "type": ["NONE", "TRIVIAL", "MINOR", "MAJOR"],
+    "docs": [null, null, null, null]
   },
   "SceneChangeDetectionOptions": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ redraw?: RedrawType; type?: 'normal' | 'transform' | 'path' | 'font'; convertor?: (o: any) => any; changeCb?: (o: any) => any; checkDirtyOnAssignment?: boolean; }"
   },
   "GradientColorStop": {
     "meta": {},
-    "type": {
-      "offset": "number",
-      "color": "string"
-    }
+    "type": { "offset": "number", "color": "string" }
   },
   "PointerEvents": {
-    "meta": {
-      "isEnum": true
-    },
-    "type": [
-      "All",
-      "None"
-    ],
-    "docs": [
-      null,
-      null
-    ]
+    "meta": { "isEnum": true },
+    "type": ["All", "None"],
+    "docs": [null, null]
   },
   "RenderContext": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D; forceRender: boolean; resized: boolean; clipBBox?: BBox; stats?: { nodesRendered: number; nodesSkipped: number; layersRendered: number; layersSkipped: number; }; }"
   },
-  "Point": {
-    "meta": {},
-    "type": {
-      "x": "number",
-      "y": "number"
-    }
-  },
+  "Point": { "meta": {}, "type": { "x": "number", "y": "number" } },
   "SizedPoint": {
     "meta": {},
-    "type": {
-      "size": "number",
-      "x": "number",
-      "y": "number"
-    }
+    "type": { "size": "number", "x": "number", "y": "number" }
   },
   "DebugOptions": {
     "meta": {},
@@ -4015,133 +3415,67 @@
     }
   },
   "ValueFn": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": [
-        "P",
-        "GDatum",
-        "PDatum"
-      ]
-    },
+    "meta": { "isTypeAlias": true, "typeParams": ["P", "GDatum", "PDatum"] },
     "type": "(parent: P, data: PDatum, index: number, groups: (P | undefined)[]) => GDatum[]"
   },
   "KeyFn": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": [
-        "N",
-        "G",
-        "GDatum"
-      ]
-    },
+    "meta": { "isTypeAlias": true, "typeParams": ["N", "G", "GDatum"] },
     "type": "(node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string"
   },
   "ArcType": {
-    "meta": {
-      "isEnum": true
-    },
-    "type": [
-      "Open",
-      "Chord",
-      "Round"
-    ],
-    "docs": [
-      null,
-      null,
-      null
-    ]
+    "meta": { "isEnum": true },
+    "type": ["Open", "Chord", "Round"],
+    "docs": [null, null, null]
   },
   "ShapeLineCap": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'butt' | 'round' | 'square'"
   },
   "ShapeLineJoin": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'round' | 'bevel' | 'miter'"
   },
   "Comparator": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": [
-        "T"
-      ]
-    },
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(a: T, b: T) => number"
   },
   "LiteralProperties": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'shape' | 'data'"
   },
   "SkippableProperties": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'axes' | 'series' | 'container' | 'customChartThemes'"
   },
   "IsLiteralProperty": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": [
-        "T",
-        "K extends keyof T"
-      ]
-    },
+    "meta": { "isTypeAlias": true, "typeParams": ["T", "K extends keyof T"] },
     "type": "K extends LiteralProperties ? true : T[K] extends Array<any> ? true : false"
   },
   "IsSkippableProperty": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": [
-        "T",
-        "K extends keyof T"
-      ]
-    },
+    "meta": { "isTypeAlias": true, "typeParams": ["T", "K extends keyof T"] },
     "type": "K extends SkippableProperties ? true : false"
   },
   "DeepPartial": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": [
-        "T"
-      ]
-    },
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "{[P1 in keyof T]?: IsSkippableProperty<T, P1> extends true ? any : IsLiteralProperty<T, P1> extends true ? T[P1] : { [P2 in keyof T[P1]]?: IsSkippableProperty<T[P1], P2> extends true ? any : IsLiteralProperty<T[P1], P2> extends true ? T[P1][P2] : { [P3 in keyof T[P1][P2]]?: IsSkippableProperty<T[P1][P2], P3> extends true ? any : IsLiteralProperty<T[P1][P2], P3> extends true ? T[P1][P2][P3] : { [P4 in keyof T[P1][P2][P3]]?: IsSkippableProperty<T[P1][P2][P3], P4> extends true ? any : IsLiteralProperty<T[P1][P2][P3], P4> extends true ? T[P1][P2][P3][P4] : Partial<T[P1][P2][P3][P4]>; }; }; }}"
   },
   "JsonMergeOptions": {
     "meta": {},
-    "type": {
-      "avoidDeepClone": "string[]"
-    },
+    "type": { "avoidDeepClone": "string[]" },
     "docs": {
       "avoidDeepClone": "/** Contains a list of properties where deep clones should be avoided\n     */"
     }
   },
   "Classification": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'array' | 'object' | 'primitive'"
   },
   "MeasuredLabel": {
     "meta": {},
-    "type": {
-      "text": "string",
-      "width": "number",
-      "height": "number"
-    }
+    "type": { "text": "string", "width": "number", "height": "number" }
   },
   "PlacedLabel": {
-    "meta": {
-      "typeParams": [
-        "PLD = PointLabelDatum"
-      ]
-    },
+    "meta": { "typeParams": ["PLD = PointLabelDatum"] },
     "type": {
       "index": "number",
       "datum": "PLD",
@@ -4154,10 +3488,7 @@
   },
   "PointLabelDatum": {
     "meta": {},
-    "type": {
-      "point": "Readonly<SizedPoint>",
-      "label": "MeasuredLabel"
-    }
+    "type": { "point": "Readonly<SizedPoint>", "label": "MeasuredLabel" }
   },
   "Bounds": {
     "meta": {},
@@ -4169,9 +3500,7 @@
     }
   },
   "FormatType": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'' | '%' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'o' | 'p' | 'r' | 's' | 'X' | 'x'"
   },
   "FormatSpecifierOptions": {
@@ -4224,96 +3553,54 @@
       "formatPrefix(specifier: string | FormatSpecifier, value: number)": "/** Returns a new format function for the given string specifier. The returned function\n     * takes a number as the only argument, and returns a string representing the formatted number.\n     * The returned function will convert values to the units of the appropriate SI prefix for the\n     * specified numeric reference value before formatting in fixed point notation.\n     *\n     * @param specifier A Specifier string.\n     * @param value The reference value to determine the appropriate SI prefix.\n     * @throws Error on invalid format specifier.\n     */"
     }
   },
-  "TypedEvent": {
-    "meta": {},
-    "type": {
-      "type": "string"
-    }
-  },
+  "TypedEvent": { "meta": {}, "type": { "type": "string" } },
   "SourceEvent": {
-    "meta": {
-      "typeParams": [
-        "S"
-      ]
-    },
-    "type": {
-      "source": "S",
-      "type": "string"
-    }
+    "meta": { "typeParams": ["S"] },
+    "type": { "source": "S", "type": "string" }
   },
   "SourceEventListener": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": [
-        "S"
-      ]
-    },
+    "meta": { "isTypeAlias": true, "typeParams": ["S"] },
     "type": "(event: SourceEvent<S>) => any"
   },
   "Callback": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "(params: { count: number; }) => Promise<void> | void"
   },
   "OnSizeChange": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "(size: Size, element: HTMLElement) => void"
   },
   "Entry": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ cb: OnSizeChange; size?: Size; }"
   },
   "NumberFormat": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "(date: Date) => number"
   },
-  "DateFormat": {
-    "meta": {
-      "isTypeAlias": true
-    },
-    "type": "string"
-  },
+  "DateFormat": { "meta": { "isTypeAlias": true }, "type": "string" },
   "ValueFormat": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "NumberFormat | DateFormat"
   },
   "FormatKeys": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "'a' | 'A' | 'b' | 'B' | 'c' | 'd' | 'e' | 'f' | 'H' | 'I' | 'j' | 'L' | 'm' | 'M' | 'p' | 'Q' | 's' | 'S' | 'u' | 'U' | 'V' | 'w' | 'W' | 'x' | 'X' | 'y' | 'Y' | 'Z' | '%'"
   },
   "ParsedDate": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{[key in string]: number}"
   },
   "Parse": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "(d: ParsedDate, string: string, i: number) => number"
   },
   "StringFormat": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "(date: Date, fill: string) => string"
   },
   "FormatMap": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{[key in FormatKeys]?: StringFormat | NumberFormat}"
   },
   "TimeLocaleDefinition": {
@@ -4359,39 +3646,27 @@
     }
   },
   "FloorFn": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "(date: Date) => void"
   },
   "OffsetFn": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "(date: Date, step: number) => void"
   },
   "CountFn": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "(start: Date, end: Date) => number"
   },
   "FieldFn": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "(date: Date) => number"
   },
   "ValidationContext": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ target: any; }"
   },
   "ValidatePredicate": {
-    "meta": {
-      "isTypeAlias": true
-    },
+    "meta": { "isTypeAlias": true },
     "type": "{ (v: any, ctx: ValidationContext): boolean; message?: string; }"
   }
 }
