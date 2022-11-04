@@ -52,7 +52,7 @@
     "@ag-grid-enterprise/column-tool-panel": "~28.2.1"
   },
   "devDependencies": {
-    "typescript": "~3.7.7",
+    "typescript": "~4.0.8",
     "rimraf": "3.0.2"
   },
   "publishConfig": {

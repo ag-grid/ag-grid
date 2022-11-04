@@ -37,7 +37,7 @@
     "@vue/cli-plugin-typescript": "3.11.0",
     "@vue/cli-plugin-unit-jest": "3.11.0",
     "@vue/cli-service": "3.11.0",
-    "typescript": "3.6.5",
+    "typescript": "~4.0.8",
     "vue": "2.6.10",
     "vue-class-component": "7.0.0",
     "vue-property-decorator": "9.1.2",
