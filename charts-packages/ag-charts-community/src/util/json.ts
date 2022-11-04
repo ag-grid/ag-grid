@@ -391,7 +391,7 @@ type Classification = 'array' | 'object' | 'primitive';
 /**
  * Classify the type of a value to assist with handling for merge purposes.
  */
-export function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | 'class-instance' | null {
+function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | 'class-instance' | null {
     if (value == null) {
         return null;
     } else if (value instanceof HTMLElement) {

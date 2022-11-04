@@ -5,7 +5,7 @@ import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
 import { FontStyle, FontWeight } from '../../chart/agChartOptions';
 
-export function SceneFontChangeDetection(opts?: { redraw?: RedrawType; changeCb?: (t: any) => any }) {
+function SceneFontChangeDetection(opts?: { redraw?: RedrawType; changeCb?: (t: any) => any }) {
     const { redraw = RedrawType.MAJOR, changeCb } = opts || {};
 
     return SceneChangeDetection({ redraw, type: 'font', changeCb });

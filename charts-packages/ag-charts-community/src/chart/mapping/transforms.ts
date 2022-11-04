@@ -17,7 +17,7 @@ type Transforms<
     [Property in Keys]: (p: Source[Property], src: Source) => Result[Property];
 };
 
-export function transform<
+function transform<
     I,
     R extends { [RKey in keyof I]: O[RKey] },
     T extends Transforms<I, R>,
@@ -74,7 +74,7 @@ function yKeysMapping(p: string[] | string[][] | undefined, src: AgBarSeriesOpti
     return src.grouped ? p.map((v) => [v]) : [p];
 }
 
-export function barSeriesTransform<T extends AgBarSeriesOptions>(options: T): T {
+function barSeriesTransform<T extends AgBarSeriesOptions>(options: T): T {
     let result = {
         ...options,
         yKeys: options.yKeys || [options.yKey],

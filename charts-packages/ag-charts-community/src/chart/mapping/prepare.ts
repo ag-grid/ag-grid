@@ -82,7 +82,7 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
     }
 }
 
-export function isSeriesOptionType(input?: string): input is NonNullable<SeriesOptionsTypes['type']> {
+function isSeriesOptionType(input?: string): input is NonNullable<SeriesOptionsTypes['type']> {
     if (input == null) {
         return false;
     }

@@ -169,7 +169,7 @@ class FormatSpecifier {
 const formatRegEx = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
 const interpolateRegEx = /(#\{(.*?)\})/g;
 
-export function makeFormatSpecifier(specifier: string | FormatSpecifier): FormatSpecifier {
+function makeFormatSpecifier(specifier: string | FormatSpecifier): FormatSpecifier {
     if (specifier instanceof FormatSpecifier) {
         return new FormatSpecifier(specifier);
     }
@@ -308,7 +308,7 @@ function formatGroup(grouping: number[], thousands: string): (value: string, wid
     };
 }
 
-export function formatNumerals(numerals: string[]): (value: string) => string {
+function formatNumerals(numerals: string[]): (value: string) => string {
     return (value) => value.replace(/\d/g, (i) => numerals[+i]);
 }
 
@@ -361,7 +361,7 @@ function formatRounded(x: number, p?: number) {
 // Computes the decimal coefficient and exponent of the specified number x with
 // significant digits p, where x is positive and p is in [1, 21] or undefined.
 // For example, formatDecimalParts(1.23) returns ['123', 0].
-export function formatDecimalParts(x: number, p?: number): [string, number] | undefined {
+function formatDecimalParts(x: number, p?: number): [string, number] | undefined {
     const sx = p ? x.toExponential(p - 1) : x.toExponential();
     const i = sx.indexOf('e');
 
@@ -380,12 +380,9 @@ function identity<T>(x: T): T {
     return x;
 }
 
-export let formatDefaultLocale: FormatLocale;
+let formatDefaultLocale: FormatLocale;
 export let format: (specifier: string | FormatSpecifier) => (n: number | { valueOf(): number }) => string;
-export let formatPrefix: (
-    specifier: string | FormatSpecifier,
-    value: number
-) => (n: number | { valueOf(): number }) => string;
+let formatPrefix: (specifier: string | FormatSpecifier, value: number) => (n: number | { valueOf(): number }) => string;
 
 defaultLocale({
     thousands: ',',
@@ -483,7 +480,7 @@ interface FormatLocale {
     formatPrefix(specifier: string | FormatSpecifier, value: number): (n: number | { valueOf(): number }) => string;
 }
 
-export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
+function formatLocale(locale: FormatLocaleOptions): FormatLocale {
     const group =
         locale.grouping === undefined || locale.thousands === undefined
             ? identity
