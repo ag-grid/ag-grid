@@ -905,6 +905,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.enableChartToolPanelsButton);
     }
 
+    public isSuppressChartToolPanelsButton() {
+        return isTrue(this.gridOptions.suppressChartToolPanelsButton);
+    }
+
     public getColResizeDefault() {
         return this.gridOptions.colResizeDefault;
     }
