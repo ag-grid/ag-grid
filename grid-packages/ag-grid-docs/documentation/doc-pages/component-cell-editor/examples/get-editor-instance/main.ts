@@ -47,8 +47,8 @@ const gridOptions: GridOptions = {
     setInterval(() => {
       const instances = gridOptions.api!.getCellEditorInstances()
       if (instances.length > 0) {
-        const instance = instances[0] as any;
-        if ((instance as MySimpleEditor).myCustomFunction) {
+        const instance = instances[0] as Partial<MySimpleEditor>;
+        if (instance.myCustomFunction) {
           const result = instance.myCustomFunction()
           console.log(
             `found editing cell: row index = ${result.rowIndex}, column = ${result.colId}.`
