@@ -1673,3 +1673,6 @@ export interface AgHierarchyChartOptions extends AgBaseChartOptions {
 }
 
 export type AgChartOptions = AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions;
+
+// Prevent empty and broken module being output!
+export const dont_break_the_ts_modules_build = 0;
