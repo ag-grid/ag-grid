@@ -37,9 +37,10 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     private pinned: ColumnPinnedType;
     private comp: IHeaderRowContainerComp;
+    private hidden: boolean = false;
 
     private filtersRowCtrl: HeaderRowCtrl | undefined;
-    private columnsRowCtrl: HeaderRowCtrl;
+    private columnsRowCtrl: HeaderRowCtrl | undefined;
     private groupsRowCtrls: HeaderRowCtrl[] = [];
     private eViewport: HTMLElement;
 
@@ -93,8 +94,10 @@ export class HeaderRowContainerCtrl extends BeanStub {
             const needNewInstance = this.columnsRowCtrl == null || !keepColumns || this.columnsRowCtrl.getRowIndex() !== rowIndex;
 
             if (needNewInstance) {
-                this.destroyBean(this.columnsRowCtrl);
-                this.columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.COLUMN));
+                this.columnsRowCtrl = this.destroyBean(this.columnsRowCtrl);
+                if (!this.hidden) {
+                    this.columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.COLUMN));
+                }
             }
         };
 
@@ -121,7 +124,9 @@ export class HeaderRowContainerCtrl extends BeanStub {
             }
 
             if (!this.filtersRowCtrl) {
-                this.filtersRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.FLOATING_FILTER));
+                if (!this.hidden) {
+                    this.filtersRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.FLOATING_FILTER));
+                }
             }
         };
 
@@ -142,10 +147,16 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     private getAllCtrls(): HeaderRowCtrl[] {
-        const res = [...this.groupsRowCtrls, this.columnsRowCtrl];
-        if (this.filtersRowCtrl) {
-            res.push(this.filtersRowCtrl!);
+        const res: HeaderRowCtrl[] = [...this.groupsRowCtrls];
+
+        if (this.columnsRowCtrl) {
+            res.push(this.columnsRowCtrl);
         }
+
+        if (this.filtersRowCtrl) {
+            res.push(this.filtersRowCtrl);
+        }
+
         return res;
     }
 
@@ -175,11 +186,14 @@ export class HeaderRowContainerCtrl extends BeanStub {
         const pinningLeft = this.pinned === Constants.PINNED_LEFT;
         const pinningRight = this.pinned === Constants.PINNED_RIGHT;
 
+        this.hidden = true;
+
         const listener = () => {
             const width = pinningLeft ? this.pinnedWidthService.getPinnedLeftWidth() : this.pinnedWidthService.getPinnedRightWidth();
             if (width == null) { return; } // can happen at initialisation, width not yet set
 
-            const hidden = width == 0;
+            const hidden = (width == 0);
+            const hiddenChanged = this.hidden !== hidden;
             const isRtl = this.gridOptionsWrapper.isEnableRtl();
             const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
 
@@ -191,6 +205,11 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
             this.comp.setPinnedContainerWidth(widthWithPadding + 'px');
             this.comp.setDisplayed(!hidden);
+
+            if (hiddenChanged) {
+                this.hidden = hidden;
+                this.refresh();
+            }
         };
 
         this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);

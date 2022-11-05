@@ -2,7 +2,7 @@ import { Component } from "../../widgets/component";
 import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
 import { Beans } from "../beans";
 import { addStylesToElement, setDomChildOrder } from "../../utils/dom";
-import { IRowComp, RowCtrl, RowType } from "./rowCtrl";
+import { IRowComp, RowCtrl } from "./rowCtrl";
 import { CellComp } from "../cell/cellComp";
 import { getAllValuesInObject } from "../../utils/object";
 import { setAriaRole } from "../../utils/aria";

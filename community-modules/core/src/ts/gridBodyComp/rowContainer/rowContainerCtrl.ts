@@ -160,6 +160,7 @@ export class RowContainerCtrl extends BeanStub {
     private embedFullWidthRows: boolean;
 
     private viewportSizeFeature: ViewportSizeFeature; // only center has this
+    private pinnedWidthFeature: SetPinnedLeftWidthFeature | SetPinnedRightWidthFeature;
 
     constructor(name: RowContainerName) {
         super();
@@ -229,8 +230,14 @@ export class RowContainerCtrl extends BeanStub {
         const allLeft = [RowContainerName.LEFT, RowContainerName.BOTTOM_LEFT, RowContainerName.TOP_LEFT, RowContainerName.STICKY_TOP_LEFT];
         const allRight = [RowContainerName.RIGHT, RowContainerName.BOTTOM_RIGHT, RowContainerName.TOP_RIGHT, RowContainerName.STICKY_TOP_RIGHT];
 
-        this.forContainers(allLeft, () => this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer)));
-        this.forContainers(allRight, () => this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer)));
+        this.forContainers(allLeft, () => {
+            this.pinnedWidthFeature = this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer))
+            this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, () => this.onLeftPinnedWidthChanged());
+        });
+        this.forContainers(allRight, () => {
+            this.pinnedWidthFeature = this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer))
+            this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, () => this.onRightPinnedWidthChanged());
+        });
         this.forContainers(allMiddle, () => this.createManagedBean(new SetHeightFeature(this.eContainer, this.eWrapper)));
         this.forContainers(allNoFW, () => this.createManagedBean(new DragListenerFeature(this.eContainer)));
 
@@ -368,6 +375,19 @@ export class RowContainerCtrl extends BeanStub {
     public setCenterViewportScrollLeft(value: number): void {
         // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
         setScrollLeft(this.eViewport, value, this.enableRtl);
+    }
+
+    public isContainerVisible(): boolean {
+        const pinned = RowContainerCtrl.getPinned(this.name);
+        return !pinned || this.pinnedWidthFeature.getWidth() > 0;
+    }
+
+    private onLeftPinnedWidthChanged(): void {
+        this.onDisplayedRowsChanged();
+    }
+
+    private onRightPinnedWidthChanged(): void {
+        this.onDisplayedRowsChanged();
     }
 
     private onDisplayedRowsChanged(): void {

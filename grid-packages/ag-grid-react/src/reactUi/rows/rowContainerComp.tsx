@@ -11,6 +11,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const {context} = useContext(BeansContext);
 
     const [viewportHeight, setViewportHeight] = useState<string>('');
+    const [rowContainerCtrl, setRowContainerCtrl] = useState<RowContainerCtrl>();
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>([]);
     const [rowCtrls, setRowCtrls] = useState<RowCtrl[]>([]);
     const [domOrder, setDomOrder] = useState<boolean>(false);
@@ -67,6 +68,8 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
         const ctrl = context.createBean(new RowContainerCtrl(name));
         beansToDestroy.push(ctrl);
+        setRowContainerCtrl(ctrl);
+
         ctrl.setComp(compProxy, eContainer.current!, eViewport.current!, eWrapper.current!);
 
         return () => {
@@ -83,14 +86,22 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         width: containerWidth
     }), [containerWidth]);
 
+    const isContainerVisible = rowContainerCtrl?.isContainerVisible();
+
     const buildContainer = () => (
         <div
             className={ containerClasses }
             ref={ eContainer }
-            role={ rowCtrls.length ? "rowgroup" : "presentation" }
+            role={ isContainerVisible && rowCtrls.length ? "rowgroup" : "presentation" }
             style={ containerStyle }>
             {
-                rowCtrlsOrdered.map(rowCtrl => <RowComp rowCtrl={ rowCtrl } containerType={ containerType } key={ rowCtrl.getInstanceId() }></RowComp>)
+                rowCtrlsOrdered.map(rowCtrl => {
+                    if (!isContainerVisible) {
+                        rowCtrl.setComp(undefined, undefined, containerType);
+                        return null;
+                    }
+                    return <RowComp rowCtrl={ rowCtrl } containerType={ containerType } key={ rowCtrl.getInstanceId() }></RowComp>
+                })
             }
         </div>
     );

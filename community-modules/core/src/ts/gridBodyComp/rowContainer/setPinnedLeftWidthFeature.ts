@@ -28,4 +28,9 @@ export class SetPinnedLeftWidthFeature extends BeanStub {
             setFixedWidth(this.element, leftWidth);
         }
     }
+
+    public getWidth(): number {
+        return this.pinnedWidthService.getPinnedLeftWidth();
+    }
+
 }

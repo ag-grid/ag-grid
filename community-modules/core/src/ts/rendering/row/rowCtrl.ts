@@ -9,7 +9,7 @@ import { RowClassParams } from "../../entities/gridOptions";
 import { DataChangedEvent, RowHighlightPosition, RowNode } from "../../entities/rowNode";
 import { RowPosition } from "../../entities/rowPosition";
 import { CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent, VirtualRowRemovedEvent } from "../../events";
-import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
+import { RowContainerCtrl, RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { ModuleNames } from "../../modules/moduleNames";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
@@ -90,6 +90,8 @@ export class RowCtrl extends BeanStub {
     private editingRow: boolean;
     private rowFocused: boolean;
 
+    private rowContainerCtrls: { [key in RowContainerType]?: RowContainerCtrl; } = {};
+
     private centerCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
     private leftCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
     private rightCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
@@ -146,7 +148,18 @@ export class RowCtrl extends BeanStub {
         return this.instanceId;
     }
 
-    public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType): void {
+    public setRowContainerCtrl(rowContainerCtrl: RowContainerCtrl, containerType: RowContainerType): void {
+        this.rowContainerCtrls[containerType] = rowContainerCtrl;
+    }
+
+    public setComp(rowComp?: IRowComp, element?: HTMLElement, containerType?: RowContainerType): void {
+        if (containerType) {
+            this.allRowGuis = this.allRowGuis
+            .filter(rowGui => rowGui.containerType !== containerType)
+        }
+
+        if (!rowComp || !element || !containerType) { return; }
+
         const gui: RowGui = { rowComp, element, containerType };
         this.allRowGuis.push(gui);
 
@@ -160,8 +173,9 @@ export class RowCtrl extends BeanStub {
             this.centerGui = gui;
         }
 
-        const allNormalPresent = this.leftGui != null && this.rightGui != null && this.centerGui != null;
+        const allNormalPresent = this.isLeftContainerReady() && this.isRightContainerReady() && this.isCenterContainerReady();
         const fullWidthPresent = this.fullWidthGui != null;
+
         if (allNormalPresent || fullWidthPresent) {
             this.initialiseRowComps();
         }
@@ -172,6 +186,18 @@ export class RowCtrl extends BeanStub {
             // us to be certain that all rendering is done by the time the event fires.
             this.beans.rowRenderer.dispatchFirstDataRenderedEvent();
         }
+    }
+
+    private isLeftContainerReady(): boolean {
+        return this.leftGui != null || !this.rowContainerCtrls.left?.isContainerVisible();
+    }
+
+    private isCenterContainerReady(): boolean {
+        return this.centerGui != null;
+    }
+
+    private isRightContainerReady(): boolean {
+        return this.rightGui != null || !this.rowContainerCtrls.right?.isContainerVisible();
     }
 
     public isCacheable(): boolean {

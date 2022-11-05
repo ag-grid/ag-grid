@@ -9,6 +9,7 @@ const RowContainerComp = (props: {name: RowContainerName})=> {
     const {context} = useContext(BeansContext);
 
     const [viewportHeight, setViewportHeight] = createSignal<string>('');
+    const [rowContainerCtrl, setRowContainerCtrl] = createSignal<RowContainerCtrl>();
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = createSignal<RowCtrl[]>([]);
     const [rowCtrls, setRowCtrls] = createSignal<RowCtrl[]>([]);
     const [domOrder, setDomOrder] = createSignal<boolean>(false);
@@ -63,7 +64,8 @@ const RowContainerComp = (props: {name: RowContainerName})=> {
         };
 
         const ctrl = context.createBean(new RowContainerCtrl(name));
-        onCleanup( ()=> context.destroyBean(ctrl));
+        setRowContainerCtrl(ctrl);
+        onCleanup(() => context.destroyBean(ctrl));
 
         ctrl.setComp(compProxy, eContainer, eViewport, eWrapper);
     });
@@ -76,14 +78,21 @@ const RowContainerComp = (props: {name: RowContainerName})=> {
         width: containerWidth()
     }));
 
+    const isContainerVisible = rowContainerCtrl()?.isContainerVisible();
+
     const buildContainer = () => (
         <div
             class={ containerClasses() }
             ref={ eContainer }
-            role={ rowCtrls().length ? "rowgroup" : "presentation" }
+            role={ isContainerVisible && rowCtrls().length ? "rowgroup" : "presentation" }
             style={ containerStyle() }>
-                <For each={rowCtrlsOrdered()}>{(rowCtrl, i) =>
-                    <RowComp rowCtrl={ rowCtrl } containerType={ containerType() }></RowComp>
+                <For each={rowCtrlsOrdered()}>{(rowCtrl, i) => {
+                    if (!isContainerVisible) {
+                        rowCtrl.setComp(undefined, undefined, containerType());
+                        return null;
+                    }
+                    return <RowComp rowCtrl={ rowCtrl } containerType={ containerType() }></RowComp>
+                }
                 }</For>
         </div>
     );
