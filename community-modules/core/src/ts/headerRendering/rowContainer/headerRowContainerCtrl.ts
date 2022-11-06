@@ -75,7 +75,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     public refresh(keepColumns = false): void {
         const sequence = new NumberSequence();
-
         const focusedHeaderPosition = this.focusService.getFocusHeaderToUseAfterRefresh();
 
         const refreshColumnGroups = () => {
@@ -102,7 +101,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
         };
 
         const refreshFilters = () => {
-
             const includeFloatingFilter = this.columnModel.hasFloatingFilters();
 
             const destroyPreviousComp = () => {
@@ -123,10 +121,8 @@ export class HeaderRowContainerCtrl extends BeanStub {
                 }
             }
 
-            if (!this.filtersRowCtrl) {
-                if (!this.hidden) {
-                    this.filtersRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.FLOATING_FILTER));
-                }
+            if (!this.filtersRowCtrl && !this.hidden) {
+                this.filtersRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.FLOATING_FILTER));
             }
         };
 
@@ -203,7 +199,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
             const addPaddingForScrollbar = this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
             const widthWithPadding = addPaddingForScrollbar ? width + scrollbarWidth : width;
 
-            this.comp.setPinnedContainerWidth(widthWithPadding + 'px');
+            this.comp.setPinnedContainerWidth(`${widthWithPadding}px`);
             this.comp.setDisplayed(!hidden);
 
             if (hiddenChanged) {
