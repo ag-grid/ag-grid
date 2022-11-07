@@ -1,28 +1,31 @@
 import { IClientSideRowModel, ISetFilterParams, KeyCreatorParams, RowNode, _ } from '@ag-grid-community/core';
 
-const NULL_SUBSTITUTE = '__<ag-grid-pseudo-null>__';
 export class ClientSideValuesExtractor {
-    private readonly caseSensitive: boolean;
-
     constructor(
         private readonly rowModel: IClientSideRowModel,
         private readonly filterParams: ISetFilterParams,
-        private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
+        private readonly uniqueKey: (v: string | null) => string,
     ) {
     }
 
-    public extractUniqueValues(predicate: (node: RowNode) => boolean): (string | null)[] {
+    public extractUniqueValues(predicate: (node: RowNode) => boolean, uniqueValues?: { [key: string]: string | null }): (string | null)[] {
         const values: {[key: string]: string | null} = {};
         const { keyCreator } = this.filterParams.colDef;
 
         const addValue = (value: string | null) => {
-            // NOTE: We don't care about the keys later on (only values in the dictionary are
-            // returned), so as long as we use a non-conflicting key for the `null` value this
-            // will behave correctly.
-            const valueKey = value != null ? this.caseFormat(value) : NULL_SUBSTITUTE;
+            const valueKey = this.uniqueKey(value);
 
             if (valueKey && values[valueKey] == null) {
-                values[valueKey] = value;
+                let valueToAdd = value;
+                if (uniqueValues) {
+                    // when case insensitive, we pick the first value to use. if this is later filtered out,
+                    // we still want to use the original value and not one with a different case
+                    const uniqueValue = uniqueValues[valueKey];
+                    if (uniqueValue != null) {
+                        valueToAdd = uniqueValue;
+                    }
+                }
+                values[valueKey] = valueToAdd;
             }
         };
 
