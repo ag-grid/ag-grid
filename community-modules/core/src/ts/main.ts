@@ -20,7 +20,6 @@ export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";
 export { ComponentUtil } from "./components/componentUtil";
 export { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
 
-export { ColDefUtil } from "./components/colDefUtil";
 export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 export { UserComponentFactory, UserCompDetails } from "./components/framework/userComponentFactory";
 export { ComponentType } from "./components/framework/componentTypes";
@@ -464,11 +463,11 @@ export { CustomTooltipFeature } from "./widgets/customTooltipFeature";
 export { IAggregationStage } from "./interfaces/iAggregationStage";
 
 // charts
-export * from "./interfaces/iChartOptions";
-export * from "./interfaces/iAgChartOptions";
+export { ChartGroupsDef } from "./interfaces/iChartOptions";
+export { AgAreaSeriesMarker } from "./interfaces/iAgChartOptions";
 
 // sparklines
-export * from "./interfaces/iSparklineCellRendererParams";
+export { AreaSparklineOptions } from "./interfaces/iSparklineCellRendererParams";
 
 // modules
 export { Module } from "./interfaces/iModule";

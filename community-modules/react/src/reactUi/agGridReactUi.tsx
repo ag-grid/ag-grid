@@ -1,6 +1,5 @@
 import { BaseComponentWrapper, CtrlsService, ColumnApi, ComponentType, ComponentUtil, Context, FrameworkComponentWrapper, GridApi, GridCoreCreator, GridOptions, GridParams, WrappableInterface, _ } from '@ag-grid-community/core';
 import React, { Component } from 'react';
-import { AgGridColumn } from '../shared/agGridColumn';
 import { ChangeDetectionService, ChangeDetectionStrategyType } from '../shared/changeDetectionService';
 import { AgReactUiProps } from '../shared/interfaces';
 import { NewReactComponent } from '../shared/newReactComponent';
@@ -79,12 +78,6 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
         };
 
         this.gridOptions = this.props.gridOptions || {};
-        const {children} = this.props;
-
-        if (AgGridColumn.hasChildColumns(children)) {
-            this.gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(children);
-        }
-
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this.props);
 
         const createUiCallback = (context: Context) => {
@@ -138,44 +131,8 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
         const changes = {};
 
         this.extractGridPropertyChanges(prevProps, nextProps, changes);
-        this.extractDeclarativeColDefChanges(nextProps, changes);
 
         this.processChanges(changes);
-    }
-
-    private extractDeclarativeColDefChanges(nextProps: any, changes: any) {
-        // if columnDefs are provided on gridOptions we use those - you can't combine both
-        // we also skip if columnDefs are provided as a prop directly on AgGridReact
-        if ((this.props.gridOptions && this.props.gridOptions.columnDefs) || this.props.columnDefs) {
-            return;
-        }
-
-        const debugLogging = !!nextProps.debug;
-        const propKey = 'columnDefs';
-        const currentColDefs = this.gridOptions.columnDefs;
-
-        if (AgGridColumn.hasChildColumns(nextProps.children)) {
-            const detectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp(propKey));
-            const newColDefs = AgGridColumn.mapChildColumnDefs(nextProps.children);
-
-            if (!detectionStrategy.areEqual(currentColDefs, newColDefs)) {
-                if (debugLogging) {
-                    console.log(`agGridReact: colDefs definitions changed`);
-                }
-
-                changes[propKey] =
-                    {
-                        previousValue: currentColDefs,
-                        currentValue: newColDefs
-                    };
-            }
-        } else if (currentColDefs && currentColDefs.length > 0) {
-            changes[propKey] =
-                {
-                    previousValue: currentColDefs,
-                    currentValue: []
-                };
-        }
     }
 
     private extractGridPropertyChanges(prevProps: any, nextProps: any, changes: any) {

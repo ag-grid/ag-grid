@@ -183,7 +183,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
 
 function format(source, parser, destination) {
     const formatted = source;
-    if (process.env.AG_EXAMPLE_DISABLE_FORMATTING === 'true') {
+    if (process.env.AG_EXAMPLE_DISABLE_FORMATTING === 'true' || true) {
         return formatted;
     }
     try {

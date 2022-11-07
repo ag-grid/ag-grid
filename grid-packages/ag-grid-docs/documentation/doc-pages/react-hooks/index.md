@@ -67,30 +67,6 @@ const App = () => {
 All examples in the documentation use `useState` for Column Definitions. However all code snippets in the documentation
 leave these hooks out for easier reading.
 
-It is also possible to define Columns using HTML Markup. We do not recommend this. This is for the same reason as above,
-in that each time the parent component is rendered, a new set of Column Definitions is created and passed to the grid,
-potentially resetting state of the Columns. By providing Column Definitions via JavaScript and via a grid property and
-using React Hooks `useState` and / or `useMemo`), provides control on when new Column Definitions are provided to the grid.
-
-```jsx
-// do NOT define Columns in HTML like this
-const App = () => {
-    return (
-        <AgGridReact>
-            <AgGridColumn field="make"></AgGridColumn>
-            <AgGridColumn field="model"></AgGridColumn>
-        </AgGridReact>
-    );
-};
-```
-
-Recommending JavaScript instead of HTML for Column Definitions follows our rewrite of the Rendering Engine into React 
-and our improved understanding of how React works.
-
-If you are currently using HTML Column Definitions, it's fine to continue if you are not experiencing any unexpected 
-Column State changes. We do not intend dropping support for HTML Column Definitions. However, going forward, you should 
-prefer JavaScript Definitions and `useState`.
-
 ## Object Properties vs Simple Properties
 
 For all other properties that are Objects, e.g. `sideBar` and `statusBar`, we also recommend `useState` or `useMemo`. If
