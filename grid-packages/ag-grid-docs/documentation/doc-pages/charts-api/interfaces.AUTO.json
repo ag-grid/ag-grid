@@ -3109,7 +3109,7 @@
   },
   "PickGroupInclude": {
     "meta": { "isTypeAlias": true },
-    "type": "'mainPath' | 'datumNodes' | 'markers'"
+    "type": "'datumNodes' | 'markers'"
   },
   "SeriesFeature": { "meta": { "isTypeAlias": true }, "type": "'markers'" },
   "SeriesOpts": {

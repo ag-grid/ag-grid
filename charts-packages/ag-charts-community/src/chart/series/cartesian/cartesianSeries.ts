@@ -49,7 +49,7 @@ interface SubGroup<C extends SeriesNodeDataContext, SceneNodeType extends Node> 
     markerSelection?: NodeDataSelection<Marker, C>;
 }
 
-type PickGroupInclude = 'mainPath' | 'datumNodes' | 'markers';
+type PickGroupInclude = 'datumNodes' | 'markers';
 type SeriesFeature = 'markers';
 interface SeriesOpts {
     pickGroupIncludes: PickGroupInclude[];
@@ -229,10 +229,8 @@ export abstract class CartesianSeries<
                 if (markerGroup) {
                     shapesGroup.removeChild(markerGroup);
                 }
-                if (!pickGroupIncludes.includes('mainPath')) {
-                    for (const path of paths) {
-                        shapesGroup.removeChild(path);
-                    }
+                for (const path of paths) {
+                    shapesGroup.removeChild(path);
                 }
             });
         }
@@ -269,9 +267,7 @@ export abstract class CartesianSeries<
             });
 
             let pathParentGroup = shapesGroup; // Default group for paths.
-            if (pickGroupIncludes.includes('mainPath')) {
-                pathParentGroup = pickGroup;
-            } else if (renderLayerPerSubSeries) {
+            if (renderLayerPerSubSeries) {
                 pathParentGroup = group;
             }
             const datumParentGroup = pickGroupIncludes.includes('datumNodes') ? pickGroup : group;
