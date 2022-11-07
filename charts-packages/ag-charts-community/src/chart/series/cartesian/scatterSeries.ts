@@ -152,7 +152,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 SeriesNodePickMode.EXACT_SHAPE_MATCH,
             ],
             pathsPerSeries: 0,
-            features: ['markers'],
+            hasMarkers: true,
         });
 
         const { label } = this;

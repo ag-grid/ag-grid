@@ -47,12 +47,10 @@ interface SubGroup<C extends SeriesNodeDataContext, SceneNodeType extends Node> 
     labelSelection: LabelDataSelection<Text, C>;
     markerSelection?: NodeDataSelection<Marker, C>;
 }
-
-type SeriesFeature = 'markers';
 interface SeriesOpts {
     pathsPerSeries: number;
     pathsZIndexSubOrderOffset: number[];
-    features: SeriesFeature[];
+    hasMarkers: boolean;
     renderLayerPerSubSeries: boolean;
 }
 
@@ -99,11 +97,11 @@ export abstract class CartesianSeries<
 
         const {
             pathsPerSeries = 1,
-            features = [],
+            hasMarkers = false,
             pathsZIndexSubOrderOffset = [],
             renderLayerPerSubSeries = true,
         } = opts;
-        this.opts = { pathsPerSeries, features, pathsZIndexSubOrderOffset, renderLayerPerSubSeries };
+        this.opts = { pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset, renderLayerPerSubSeries };
     }
 
     destroy() {
@@ -213,7 +211,7 @@ export abstract class CartesianSeries<
             _contextNodeData: contextNodeData,
             contentGroup,
             subGroups,
-            opts: { pathsPerSeries, features, pathsZIndexSubOrderOffset, renderLayerPerSubSeries },
+            opts: { pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset, renderLayerPerSubSeries },
         } = this;
         if (contextNodeData.length === subGroups.length) {
             return;
@@ -242,7 +240,7 @@ export abstract class CartesianSeries<
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
                 zIndexSubOrder: [this.id, subGroupZOffset],
             });
-            const markerGroup = features.includes('markers')
+            const markerGroup = hasMarkers
                 ? new Group({
                       name: `${this.id}-series-sub${this.subGroupId++}-markers`,
                       layer,
@@ -290,16 +288,15 @@ export abstract class CartesianSeries<
             highlightLabelSelection,
             _contextNodeData: contextNodeData,
             seriesItemEnabled,
-            opts: { features, renderLayerPerSubSeries },
+            opts: { hasMarkers, renderLayerPerSubSeries },
         } = this;
-        const markersEnabled = features.includes('markers');
 
         const visible = this.visible && this._contextNodeData?.length > 0 && anySeriesItemEnabled;
         this.rootGroup.visible = visible;
         this.contentGroup.visible = visible;
         this.highlightGroup.visible = visible && !!seriesHighlighted;
 
-        if (markersEnabled) {
+        if (hasMarkers) {
             await this.updateMarkerNodes({
                 markerSelection: highlightSelection as any,
                 isHighlight: true,
@@ -356,7 +353,7 @@ export abstract class CartesianSeries<
                 await this.updatePathNodes({ seriesHighlighted, itemId, paths, seriesIdx });
                 await this.updateDatumNodes({ datumSelection, isHighlight: false, seriesIdx });
                 await this.updateLabelNodes({ labelSelection, seriesIdx });
-                if (markersEnabled && markerSelection) {
+                if (hasMarkers && markerSelection) {
                     await this.updateMarkerNodes({ markerSelection, isHighlight: false, seriesIdx });
                 }
             })
@@ -403,13 +400,13 @@ export abstract class CartesianSeries<
 
         const { x, y } = point;
         const {
-            opts: { features },
+            opts: { hasMarkers },
         } = this;
 
         for (const { dataNodeGroup, markerGroup } of this.subGroups) {
             let match = dataNodeGroup.pickNode(x, y);
 
-            if (!match && features.includes('markers')) {
+            if (!match && hasMarkers) {
                 match = markerGroup?.pickNode(x, y);
             }
 
@@ -579,14 +576,13 @@ export abstract class CartesianSeries<
         highlightSelection: NodeDataSelection<N, C>;
     }): Promise<NodeDataSelection<N, C>> {
         const {
-            opts: { features },
+            opts: { hasMarkers },
         } = this;
-        const markersEnabled = features.includes('markers');
 
         const { item, highlightSelection } = opts;
         const nodeData = item ? [item] : [];
 
-        if (markersEnabled) {
+        if (hasMarkers) {
             const markerSelection = highlightSelection as any;
             return this.updateMarkerSelection({ nodeData, markerSelection, seriesIdx: -1 }) as any;
         } else {

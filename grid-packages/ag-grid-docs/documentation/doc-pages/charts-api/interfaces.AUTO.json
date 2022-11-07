@@ -3106,13 +3106,12 @@
       "markerSelection?": "NodeDataSelection<Marker, C>"
     }
   },
-  "SeriesFeature": { "meta": { "isTypeAlias": true }, "type": "'markers'" },
   "SeriesOpts": {
     "meta": {},
     "type": {
       "pathsPerSeries": "number",
       "pathsZIndexSubOrderOffset": "number[]",
-      "features": "SeriesFeature[]",
+      "hasMarkers": "boolean",
       "renderLayerPerSubSeries": "boolean"
     }
   },

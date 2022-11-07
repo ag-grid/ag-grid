@@ -4549,15 +4549,12 @@
       ]
     }
   },
-  "SeriesFeature": {},
   "SeriesOpts": {
     "pathsPerSeries": { "type": { "returnType": "number", "optional": false } },
     "pathsZIndexSubOrderOffset": {
       "type": { "returnType": "number[]", "optional": false }
     },
-    "features": {
-      "type": { "returnType": "SeriesFeature[]", "optional": false }
-    },
+    "hasMarkers": { "type": { "returnType": "boolean", "optional": false } },
     "renderLayerPerSubSeries": {
       "type": { "returnType": "boolean", "optional": false }
     }
