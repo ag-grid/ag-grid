@@ -64,6 +64,7 @@ export class PieChartProxy extends ChartProxy {
                 type: this.standaloneChartType,
                 angleKey: f.colId,
                 angleName: f.displayName!,
+                sectorLabelKey: f.colId,
                 calloutLabelKey: params.category.id,
                 calloutLabelName: params.category.name,
             }

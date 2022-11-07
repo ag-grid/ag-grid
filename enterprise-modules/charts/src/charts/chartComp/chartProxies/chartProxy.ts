@@ -238,6 +238,13 @@ export abstract class ChartProxy {
                         bottom: 20,
                         left: 20,
                     }
+                },
+                pie: {
+                    series: {
+                        sectorLabel: {
+                            enabled: false,
+                        }
+                    }
                 }
             }
         };
