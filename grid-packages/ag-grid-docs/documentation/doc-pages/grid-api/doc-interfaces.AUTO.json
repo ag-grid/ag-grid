@@ -2697,7 +2697,11 @@
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
     "enableChartToolPanelsButton": {
-      "description": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
+      "description": "/** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressChartToolPanelsButton": {
+      "description": "/** Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "chartToolPanelsDef": {
@@ -25523,7 +25527,11 @@
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
     "enableChartToolPanelsButton": {
-      "description": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
+      "description": "/** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressChartToolPanelsButton": {
+      "description": "/** Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "chartToolPanelsDef": {
@@ -28342,7 +28350,11 @@
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
     "enableChartToolPanelsButton": {
-      "description": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
+      "description": "/** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressChartToolPanelsButton": {
+      "description": "/** Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "chartToolPanelsDef": {
@@ -31171,7 +31183,11 @@
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
     "enableChartToolPanelsButton": {
-      "description": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
+      "description": "/** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressChartToolPanelsButton": {
+      "description": "/** Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "chartToolPanelsDef": {
