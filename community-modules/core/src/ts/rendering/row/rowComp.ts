@@ -49,6 +49,9 @@ export class RowComp extends Component {
         };
 
         ctrl.setComp(compProxy, this.getGui(), containerType);
+        this.addDestroyFunc(() => {
+            ctrl.unsetComp(containerType);
+        });
     }
 
     private getInitialStyle(): string {

@@ -58,7 +58,6 @@ export class RowContainerComp extends Component {
     // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.
     private domOrder: boolean;
     private lastPlacedElement: HTMLElement | null;
-    private rowContainerCtrl: RowContainerCtrl;
 
     constructor() {
         super(templateFactory());
@@ -77,7 +76,7 @@ export class RowContainerComp extends Component {
             setContainerWidth: width => this.eContainer.style.width = width
         };
 
-        const ctrl = this.rowContainerCtrl = this.createManagedBean(new RowContainerCtrl(this.name));
+        const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));
         ctrl.setComp(compProxy, this.eContainer, this.eViewport, this.eWrapper);
     }
 
@@ -92,20 +91,10 @@ export class RowContainerComp extends Component {
         this.rowComps = {};
 
         this.lastPlacedElement = null;
-        const isContainerVisible = this.rowContainerCtrl.isContainerVisible();
 
         const processRow = (rowCon: RowCtrl) => {
             const instanceId = rowCon.getInstanceId();
             const existingRowComp = oldRows[instanceId];
-
-            rowCon.setRowContainerCtrl(this.rowContainerCtrl, this.type);
-
-            if (!isContainerVisible) {
-                if (existingRowComp) {
-                    rowCon.setComp(undefined, undefined, this.type);
-                }
-                return;
-            }
 
             if (existingRowComp) {
                 this.rowComps[instanceId] = existingRowComp;
@@ -124,9 +113,7 @@ export class RowContainerComp extends Component {
             oldRowComp.destroy();
         });
 
-        const isAriaRowGroup = (isContainerVisible && rowCtrls.length);
-
-        setAriaRole(this.eContainer, isAriaRowGroup ? "rowgroup" :  "presentation");
+        setAriaRole(this.eContainer, rowCtrls.length ? "rowgroup" :  "presentation");
     }
 
     public appendRow(element: HTMLElement) {

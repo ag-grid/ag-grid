@@ -159,8 +159,9 @@ export class RowContainerCtrl extends BeanStub {
     private enableRtl: boolean;
     private embedFullWidthRows: boolean;
 
-    private viewportSizeFeature: ViewportSizeFeature; // only center has this
-    private pinnedWidthFeature: SetPinnedLeftWidthFeature | SetPinnedRightWidthFeature;
+    private viewportSizeFeature: ViewportSizeFeature | undefined; // only center has this
+    private pinnedWidthFeature: SetPinnedLeftWidthFeature | SetPinnedRightWidthFeature | undefined;
+    private visible: boolean = true;
 
     constructor(name: RowContainerName) {
         super();
@@ -203,7 +204,7 @@ export class RowContainerCtrl extends BeanStub {
         return this.eContainer;
     }
 
-    public getViewportSizeFeature(): ViewportSizeFeature {
+    public getViewportSizeFeature(): ViewportSizeFeature | undefined {
         return this.viewportSizeFeature;
     }
 
@@ -232,11 +233,11 @@ export class RowContainerCtrl extends BeanStub {
 
         this.forContainers(allLeft, () => {
             this.pinnedWidthFeature = this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer))
-            this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, () => this.onLeftPinnedWidthChanged());
+            this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, () => this.onPinnedWidthChanged());
         });
         this.forContainers(allRight, () => {
             this.pinnedWidthFeature = this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer))
-            this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, () => this.onRightPinnedWidthChanged());
+            this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, () => this.onPinnedWidthChanged());
         });
         this.forContainers(allMiddle, () => this.createManagedBean(new SetHeightFeature(this.eContainer, this.eWrapper)));
         this.forContainers(allNoFW, () => this.createManagedBean(new DragListenerFeature(this.eContainer)));
@@ -379,15 +380,15 @@ export class RowContainerCtrl extends BeanStub {
 
     public isContainerVisible(): boolean {
         const pinned = RowContainerCtrl.getPinned(this.name);
-        return !pinned || this.pinnedWidthFeature.getWidth() > 0;
+        return !pinned || (!!this.pinnedWidthFeature && this.pinnedWidthFeature.getWidth() > 0);
     }
 
-    private onLeftPinnedWidthChanged(): void {
-        this.onDisplayedRowsChanged();
-    }
-
-    private onRightPinnedWidthChanged(): void {
-        this.onDisplayedRowsChanged();
+    private onPinnedWidthChanged(): void {
+        const visible = this.isContainerVisible();
+        if (this.visible != visible) {
+            this.visible = visible;
+            this.onDisplayedRowsChanged();
+        }
     }
 
     private onDisplayedRowsChanged(): void {
@@ -412,10 +413,13 @@ export class RowContainerCtrl extends BeanStub {
         };
 
         // this list contains either all pinned top, center or pinned bottom rows
-        const allRowsRegardlessOfFullWidth = this.getRowCtrls();
+        const allRowsRegardlessOfFullWidth = this.visible ? this.getRowCtrls() : [];
         // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
         const rowsThisContainer = allRowsRegardlessOfFullWidth.filter(doesRowMatch);
 
+        const type = getRowContainerTypeForName(this.name);
+
+        rowsThisContainer.forEach(rowCtrl => rowCtrl.setRowContainerCtrl(this, type));
         this.comp.setRowCtrls(rowsThisContainer);
     }
 

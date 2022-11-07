@@ -92,7 +92,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
             const rowIndex = sequence.next();
             const needNewInstance = this.columnsRowCtrl == null || !keepColumns || this.columnsRowCtrl.getRowIndex() !== rowIndex;
 
-            if (needNewInstance) {
+            if (needNewInstance || this.hidden) {
                 this.columnsRowCtrl = this.destroyBean(this.columnsRowCtrl);
                 if (!this.hidden) {
                     this.columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.COLUMN));
@@ -116,7 +116,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
             if (this.filtersRowCtrl) {
                 const rowIndexMismatch = this.filtersRowCtrl.getRowIndex() !== rowIndex;
-                if (!keepColumns || rowIndexMismatch) {
+                if (!keepColumns || rowIndexMismatch || this.hidden) {
                     destroyPreviousComp();
                 }
             }

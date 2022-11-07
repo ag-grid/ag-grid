@@ -74,10 +74,10 @@ export class RowCtrl extends BeanStub {
 
     private rowType: RowType;
 
-    private leftGui: RowGui;
+    private leftGui: RowGui | undefined;
     private centerGui: RowGui;
-    private rightGui: RowGui;
-    private fullWidthGui: RowGui;
+    private rightGui: RowGui | undefined;
+    private fullWidthGui: RowGui | undefined;
 
     private allRowGuis: RowGui[] = [];
 
@@ -152,14 +152,7 @@ export class RowCtrl extends BeanStub {
         this.rowContainerCtrls[containerType] = rowContainerCtrl;
     }
 
-    public setComp(rowComp?: IRowComp, element?: HTMLElement, containerType?: RowContainerType): void {
-        if (containerType) {
-            this.allRowGuis = this.allRowGuis
-            .filter(rowGui => rowGui.containerType !== containerType)
-        }
-
-        if (!rowComp || !element || !containerType) { return; }
-
+    public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType): void {
         const gui: RowGui = { rowComp, element, containerType };
         this.allRowGuis.push(gui);
 
@@ -185,6 +178,19 @@ export class RowCtrl extends BeanStub {
             // linked with the fact the function implementation queues behind requestAnimationFrame should allow
             // us to be certain that all rendering is done by the time the event fires.
             this.beans.rowRenderer.dispatchFirstDataRenderedEvent();
+        }
+    }
+
+    public unsetComp(containerType: RowContainerType): void {
+        this.allRowGuis = this.allRowGuis
+            .filter(rowGui => rowGui.containerType !== containerType);
+
+        if (containerType === RowContainerType.LEFT) {
+            this.leftGui = undefined;
+        } else if (containerType === RowContainerType.RIGHT) {
+            this.rightGui = undefined;
+        } else if (containerType === RowContainerType.FULL_WIDTH) {
+            this.fullWidthGui = undefined;
         }
     }
 
@@ -551,7 +557,7 @@ export class RowCtrl extends BeanStub {
 
     public refreshFullWidth(): boolean {
         // returns 'true' if refresh succeeded
-        const tryRefresh = (gui: RowGui, pinned: ColumnPinnedType): boolean => {
+        const tryRefresh = (gui: RowGui | undefined, pinned: ColumnPinnedType): boolean => {
             if (!gui) { return true; } // no refresh needed
 
             const cellRenderer = gui.rowComp.getFullWidthCellRenderer();
