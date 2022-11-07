@@ -143,7 +143,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     readonly backgroundGroup: Group;
 
     // The group node that contains the series rendering in it's default (non-highlighted) state.
-    readonly shapesGroup: Group;
+    readonly contentGroup: Group;
 
     // The group node that contains all highlighted series items. This is a performance optimisation
     // for large-scale data-sets, where the only thing that routinely varies is the currently
@@ -212,9 +212,9 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
             })
         );
 
-        this.shapesGroup = rootGroup.appendChild(
+        this.contentGroup = rootGroup.appendChild(
             new Group({
-                name: `${this.id}-series`,
+                name: `${this.id}-content`,
                 layer: useSeriesGroupLayer,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
             })
@@ -428,7 +428,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     }
 
     protected pickNodeExactShape(point: Point): SeriesNodePickMatch | undefined {
-        const match = this.shapesGroup.pickNode(point.x, point.y);
+        const match = this.contentGroup.pickNode(point.x, point.y);
 
         if (match) {
             return {

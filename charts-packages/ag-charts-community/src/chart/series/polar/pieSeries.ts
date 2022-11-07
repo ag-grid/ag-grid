@@ -191,7 +191,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     private radiusScale: LinearScale = new LinearScale();
     private groupSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(
-        this.shapesGroup
+        this.contentGroup
     ).selectAll<Group>();
     private highlightSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(
         this.highlightGroup
@@ -752,11 +752,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
         this.rootGroup.visible = isVisible;
         this.backgroundGroup.visible = isVisible;
-        this.shapesGroup.visible = isVisible;
+        this.contentGroup.visible = isVisible;
         this.highlightGroup.visible = isVisible && this.chart?.highlightedDatum?.series === this;
         this.labelGroup!.visible = isVisible;
 
-        this.shapesGroup.opacity = this.getOpacity();
+        this.contentGroup.opacity = this.getOpacity();
 
         this.updateInnerCircle();
 

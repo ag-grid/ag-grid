@@ -215,7 +215,7 @@ export abstract class CartesianSeries<
     private async updateSeriesGroups() {
         const {
             _contextNodeData: contextNodeData,
-            shapesGroup,
+            contentGroup,
             subGroups,
             opts: { pickGroupIncludes, pathsPerSeries, features, pathsZIndexSubOrderOffset, renderLayerPerSubSeries },
         } = this;
@@ -225,12 +225,12 @@ export abstract class CartesianSeries<
 
         if (contextNodeData.length < subGroups.length) {
             subGroups.splice(contextNodeData.length).forEach(({ group, markerGroup, paths }) => {
-                shapesGroup.removeChild(group);
+                contentGroup.removeChild(group);
                 if (markerGroup) {
-                    shapesGroup.removeChild(markerGroup);
+                    contentGroup.removeChild(markerGroup);
                 }
                 for (const path of paths) {
-                    shapesGroup.removeChild(path);
+                    contentGroup.removeChild(path);
                 }
             });
         }
@@ -266,16 +266,16 @@ export abstract class CartesianSeries<
                 zIndexSubOrder: [this.id, 10000 + subGroupId],
             });
 
-            let pathParentGroup = shapesGroup; // Default group for paths.
+            let pathParentGroup = contentGroup; // Default group for paths.
             if (renderLayerPerSubSeries) {
                 pathParentGroup = group;
             }
             const datumParentGroup = pickGroupIncludes.includes('datumNodes') ? pickGroup : group;
 
-            shapesGroup.appendChild(group);
-            shapesGroup.appendChild(labelGroup);
+            contentGroup.appendChild(group);
+            contentGroup.appendChild(labelGroup);
             if (markerGroup) {
-                shapesGroup.appendChild(markerGroup);
+                contentGroup.appendChild(markerGroup);
             }
 
             const paths: Path[] = [];
@@ -312,7 +312,7 @@ export abstract class CartesianSeries<
 
         const visible = this.visible && this._contextNodeData?.length > 0 && anySeriesItemEnabled;
         this.rootGroup.visible = visible;
-        this.shapesGroup.visible = visible;
+        this.contentGroup.visible = visible;
         this.highlightGroup.visible = visible && !!seriesHighlighted;
 
         if (markersEnabled) {

@@ -339,7 +339,7 @@ describe('Chart', () => {
                 data: datasets.food.data,
             },
             getNodeData: (series) => {
-                const nodes = series.shapesGroup.children.map((group) => group.children[0]);
+                const nodes = series.contentGroup.children.map((group) => group.children[0]);
                 const maxDepth = Math.max(...nodes.map((n) => n.datum.depth));
                 return nodes.filter((node) => node.datum.depth === maxDepth);
             },
