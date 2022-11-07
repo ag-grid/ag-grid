@@ -291,6 +291,8 @@ If case differences need to be normalised to remove redundant values from the da
 
 If there are missing / empty values in the row data of the grid, or missing values in the list of [Supplied Values](#supplying-filter-values), the Filter List will contain an entry called `(Blanks)` which can be used to select / deselect all of these values. If this not the desired behaviour, provide a [Formatter](#value-formatter) to present blank values in a different way.
 
+`undefined`, `null` and `''` are all treated as missing values. These will appear within the [Set Filter model](/filter-set-api/#set-filter-model) as a single entry of `null`. This also applies to supplied Filter List values (e.g. if you supply `''` it will appear in the filter model as `null`).
+
 ## Complex Objects
 
 If you are providing complex objects as values, then you need to provide a Key Creator function (`colDef.keyCreator`) to convert the objects to strings when using the Set Filter. Note the string is used to compare objects when filtering and to render a label in the filter UI.
