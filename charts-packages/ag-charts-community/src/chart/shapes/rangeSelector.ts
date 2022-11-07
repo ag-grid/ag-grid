@@ -97,7 +97,7 @@ export class RangeSelector extends Group {
     }
 
     constructor() {
-        super();
+        super({ name: 'rangeSelectorGroup' });
 
         this.isContainerNode = true;
     }

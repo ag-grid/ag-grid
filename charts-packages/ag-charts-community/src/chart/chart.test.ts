@@ -134,7 +134,7 @@ describe('Chart', () => {
                 expect(nodeData.length).toBeGreaterThan(0);
                 for (const item of nodeData) {
                     const itemPoint = testParams.getNodePoint!(item);
-                    const { x, y } = series!.group.inverseTransformPoint(itemPoint[0], itemPoint[1]);
+                    const { x, y } = series!.rootGroup.inverseTransformPoint(itemPoint[0], itemPoint[1]);
                     await hoverAction(x, y)(chart);
                     await waitForChartStability(chart);
                     await iterator({ series, item, x, y });
@@ -339,7 +339,7 @@ describe('Chart', () => {
                 data: datasets.food.data,
             },
             getNodeData: (series) => {
-                const nodes = series.seriesGroup.children[0].children.map((group) => group.children[0]);
+                const nodes = series.shapesGroup.children.map((group) => group.children[0]);
                 const maxDepth = Math.max(...nodes.map((n) => n.datum.depth));
                 return nodes.filter((node) => node.datum.depth === maxDepth);
             },

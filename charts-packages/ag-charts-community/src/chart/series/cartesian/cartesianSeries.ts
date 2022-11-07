@@ -215,7 +215,7 @@ export abstract class CartesianSeries<
     private async updateSeriesGroups() {
         const {
             _contextNodeData: contextNodeData,
-            seriesGroup,
+            shapesGroup,
             subGroups,
             opts: { pickGroupIncludes, pathsPerSeries, features, pathsZIndexSubOrderOffset, renderLayerPerSubSeries },
         } = this;
@@ -225,13 +225,13 @@ export abstract class CartesianSeries<
 
         if (contextNodeData.length < subGroups.length) {
             subGroups.splice(contextNodeData.length).forEach(({ group, markerGroup, paths }) => {
-                seriesGroup.removeChild(group);
+                shapesGroup.removeChild(group);
                 if (markerGroup) {
-                    seriesGroup.removeChild(markerGroup);
+                    shapesGroup.removeChild(markerGroup);
                 }
                 if (!pickGroupIncludes.includes('mainPath')) {
                     for (const path of paths) {
-                        seriesGroup.removeChild(path);
+                        shapesGroup.removeChild(path);
                     }
                 }
             });
@@ -268,7 +268,7 @@ export abstract class CartesianSeries<
                 zIndexSubOrder: [this.id, 10000 + subGroupId],
             });
 
-            let pathParentGroup = seriesGroup; // Default group for paths.
+            let pathParentGroup = shapesGroup; // Default group for paths.
             if (pickGroupIncludes.includes('mainPath')) {
                 pathParentGroup = pickGroup;
             } else if (renderLayerPerSubSeries) {
@@ -276,10 +276,10 @@ export abstract class CartesianSeries<
             }
             const datumParentGroup = pickGroupIncludes.includes('datumNodes') ? pickGroup : group;
 
-            seriesGroup.appendChild(group);
-            seriesGroup.appendChild(labelGroup);
+            shapesGroup.appendChild(group);
+            shapesGroup.appendChild(labelGroup);
             if (markerGroup) {
-                seriesGroup.appendChild(markerGroup);
+                shapesGroup.appendChild(markerGroup);
             }
 
             const paths: Path[] = [];
@@ -315,8 +315,8 @@ export abstract class CartesianSeries<
         const markersEnabled = features.includes('markers');
 
         const visible = this.visible && this._contextNodeData?.length > 0 && anySeriesItemEnabled;
-        this.group.visible = visible;
-        this.seriesGroup.visible = visible;
+        this.rootGroup.visible = visible;
+        this.shapesGroup.visible = visible;
         this.highlightGroup.visible = visible && !!seriesHighlighted;
 
         if (markersEnabled) {
@@ -441,8 +441,8 @@ export abstract class CartesianSeries<
 
     protected pickNodeClosestDatum(point: Point): SeriesNodePickMatch | undefined {
         const { x, y } = point;
-        const { xAxis, yAxis, group, _contextNodeData: contextNodeData } = this;
-        const hitPoint = group.transformPoint(x, y);
+        const { xAxis, yAxis, rootGroup, _contextNodeData: contextNodeData } = this;
+        const hitPoint = rootGroup.transformPoint(x, y);
 
         let minDistance = Infinity;
         let closestDatum: SeriesNodeDatum | undefined;
@@ -480,7 +480,7 @@ export abstract class CartesianSeries<
         requireCategoryAxis: boolean
     ): { datum: SeriesNodeDatum; distance: number } | undefined {
         const { x, y } = point;
-        const { xAxis, yAxis, group, _contextNodeData: contextNodeData } = this;
+        const { xAxis, yAxis, rootGroup, _contextNodeData: contextNodeData } = this;
 
         // Prefer to start search with any available category axis.
         const directions = [xAxis, yAxis]
@@ -493,7 +493,7 @@ export abstract class CartesianSeries<
         // Default to X-axis unless we found a suitable category axis.
         const [primaryDirection = ChartAxisDirection.X] = directions;
 
-        const hitPoint = group.transformPoint(x, y);
+        const hitPoint = rootGroup.transformPoint(x, y);
         const hitPointCoords =
             primaryDirection === ChartAxisDirection.X ? [hitPoint.x, hitPoint.y] : [hitPoint.y, hitPoint.x];
 
