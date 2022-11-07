@@ -142,7 +142,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
     constructor() {
         super({
-            pickGroupIncludes: ['datumNodes'],
             pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 0,
         });

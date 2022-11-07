@@ -40,8 +40,7 @@ type LabelDataSelection<N extends Node, ContextType extends SeriesNodeDataContex
 
 interface SubGroup<C extends SeriesNodeDataContext, SceneNodeType extends Node> {
     paths: Path[];
-    group: Group;
-    pickGroup: Group;
+    dataNodeGroup: Group;
     labelGroup: Group;
     markerGroup?: Group;
     datumSelection: NodeDataSelection<SceneNodeType, C>;
@@ -49,10 +48,8 @@ interface SubGroup<C extends SeriesNodeDataContext, SceneNodeType extends Node> 
     markerSelection?: NodeDataSelection<Marker, C>;
 }
 
-type PickGroupInclude = 'datumNodes' | 'markers';
 type SeriesFeature = 'markers';
 interface SeriesOpts {
-    pickGroupIncludes: PickGroupInclude[];
     pathsPerSeries: number;
     pathsZIndexSubOrderOffset: number[];
     features: SeriesFeature[];
@@ -101,13 +98,12 @@ export abstract class CartesianSeries<
         super({ useSeriesGroupLayer: true, pickModes: opts.pickModes });
 
         const {
-            pickGroupIncludes = ['datumNodes'] as PickGroupInclude[],
             pathsPerSeries = 1,
             features = [],
             pathsZIndexSubOrderOffset = [],
             renderLayerPerSubSeries = true,
         } = opts;
-        this.opts = { pickGroupIncludes, pathsPerSeries, features, pathsZIndexSubOrderOffset, renderLayerPerSubSeries };
+        this.opts = { pathsPerSeries, features, pathsZIndexSubOrderOffset, renderLayerPerSubSeries };
     }
 
     destroy() {
@@ -217,15 +213,15 @@ export abstract class CartesianSeries<
             _contextNodeData: contextNodeData,
             contentGroup,
             subGroups,
-            opts: { pickGroupIncludes, pathsPerSeries, features, pathsZIndexSubOrderOffset, renderLayerPerSubSeries },
+            opts: { pathsPerSeries, features, pathsZIndexSubOrderOffset, renderLayerPerSubSeries },
         } = this;
         if (contextNodeData.length === subGroups.length) {
             return;
         }
 
         if (contextNodeData.length < subGroups.length) {
-            subGroups.splice(contextNodeData.length).forEach(({ group, markerGroup, paths }) => {
-                contentGroup.removeChild(group);
+            subGroups.splice(contextNodeData.length).forEach(({ dataNodeGroup, markerGroup, paths }) => {
+                contentGroup.removeChild(dataNodeGroup);
                 if (markerGroup) {
                     contentGroup.removeChild(markerGroup);
                 }
@@ -240,8 +236,8 @@ export abstract class CartesianSeries<
             const layer = renderLayerPerSubSeries;
             const subGroupId = this.subGroupId++;
             const subGroupZOffset = subGroupId;
-            const group = new Group({
-                name: `${this.id}-series-sub${subGroupId}`,
+            const dataNodeGroup = new Group({
+                name: `${this.id}-series-sub${subGroupId}-dataNodes`,
                 layer,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
                 zIndexSubOrder: [this.id, subGroupZOffset],
@@ -260,24 +256,14 @@ export abstract class CartesianSeries<
                 zIndex: Layers.SERIES_LABEL_ZINDEX,
                 zIndexSubOrder: [this.id, subGroupId],
             });
-            const pickGroup = new Group({
-                name: `${this.id}-series-sub${this.subGroupId++}-pickGroup`,
-                zIndex: Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [this.id, 10000 + subGroupId],
-            });
 
-            let pathParentGroup = contentGroup; // Default group for paths.
-            if (renderLayerPerSubSeries) {
-                pathParentGroup = group;
-            }
-            const datumParentGroup = pickGroupIncludes.includes('datumNodes') ? pickGroup : group;
-
-            contentGroup.appendChild(group);
+            contentGroup.appendChild(dataNodeGroup);
             contentGroup.appendChild(labelGroup);
             if (markerGroup) {
                 contentGroup.appendChild(markerGroup);
             }
 
+            const pathParentGroup = renderLayerPerSubSeries ? dataNodeGroup : contentGroup;
             const paths: Path[] = [];
             for (let index = 0; index < pathsPerSeries; index++) {
                 paths[index] = new Path();
@@ -285,16 +271,14 @@ export abstract class CartesianSeries<
                 paths[index].zIndexSubOrder = [this.id, (pathsZIndexSubOrderOffset[index] ?? 0) + subGroupZOffset];
                 pathParentGroup.appendChild(paths[index]);
             }
-            group.appendChild(pickGroup);
 
             subGroups.push({
                 paths,
-                group,
-                pickGroup,
+                dataNodeGroup,
                 markerGroup,
                 labelGroup,
                 labelSelection: Selection.select(labelGroup).selectAll<Text>(),
-                datumSelection: Selection.select(datumParentGroup).selectAll<N>(),
+                datumSelection: Selection.select(dataNodeGroup).selectAll<N>(),
                 markerSelection: markerGroup ? Selection.select(markerGroup).selectAll<Marker>() : undefined,
             });
         }
@@ -306,7 +290,7 @@ export abstract class CartesianSeries<
             highlightLabelSelection,
             _contextNodeData: contextNodeData,
             seriesItemEnabled,
-            opts: { features },
+            opts: { features, renderLayerPerSubSeries },
         } = this;
         const markersEnabled = features.includes('markers');
 
@@ -329,27 +313,28 @@ export abstract class CartesianSeries<
         await Promise.all(
             this.subGroups.map(async (subGroup, seriesIdx) => {
                 const {
-                    group,
+                    dataNodeGroup,
                     markerGroup,
                     datumSelection,
                     labelSelection,
                     markerSelection,
                     paths,
                     labelGroup,
-                    pickGroup,
                 } = subGroup;
                 const { itemId } = contextNodeData[seriesIdx];
 
                 const subGroupVisible = visible && (seriesItemEnabled.get(itemId) ?? true);
                 const subGroupOpacity = this.getOpacity({ itemId });
-                group.opacity = subGroupOpacity;
-                group.visible = subGroupVisible;
-                pickGroup.visible = subGroupVisible;
+                dataNodeGroup.opacity = subGroupOpacity;
+                dataNodeGroup.visible = subGroupVisible;
                 labelGroup.visible = subGroupVisible;
 
                 if (markerGroup) {
                     markerGroup.opacity = subGroupOpacity;
-                    markerGroup.zIndex = group.zIndex >= Layers.SERIES_LAYER_ZINDEX ? group.zIndex : group.zIndex + 1;
+                    markerGroup.zIndex =
+                        dataNodeGroup.zIndex >= Layers.SERIES_LAYER_ZINDEX
+                            ? dataNodeGroup.zIndex
+                            : dataNodeGroup.zIndex + 1;
                     markerGroup.visible = subGroupVisible;
                 }
 
@@ -358,13 +343,13 @@ export abstract class CartesianSeries<
                 }
 
                 for (const path of paths) {
-                    if (path.parent !== group) {
+                    if (!renderLayerPerSubSeries) {
                         path.opacity = subGroupOpacity;
                         path.visible = subGroupVisible;
                     }
                 }
 
-                if (!group.visible) {
+                if (!dataNodeGroup.visible) {
                     return;
                 }
 
@@ -418,14 +403,13 @@ export abstract class CartesianSeries<
 
         const { x, y } = point;
         const {
-            opts: { pickGroupIncludes },
+            opts: { features },
         } = this;
-        const markerGroupIncluded = pickGroupIncludes.includes('markers');
 
-        for (const { pickGroup, markerGroup } of this.subGroups) {
-            let match = pickGroup.pickNode(x, y);
+        for (const { dataNodeGroup, markerGroup } of this.subGroups) {
+            let match = dataNodeGroup.pickNode(x, y);
 
-            if (!match && markerGroupIncluded) {
+            if (!match && features.includes('markers')) {
                 match = markerGroup?.pickNode(x, y);
             }
 

@@ -3098,8 +3098,7 @@
     },
     "type": {
       "paths": "Path[]",
-      "group": "Group",
-      "pickGroup": "Group",
+      "dataNodeGroup": "Group",
       "labelGroup": "Group",
       "markerGroup?": "Group",
       "datumSelection": "NodeDataSelection<SceneNodeType, C>",
@@ -3107,15 +3106,10 @@
       "markerSelection?": "NodeDataSelection<Marker, C>"
     }
   },
-  "PickGroupInclude": {
-    "meta": { "isTypeAlias": true },
-    "type": "'datumNodes' | 'markers'"
-  },
   "SeriesFeature": { "meta": { "isTypeAlias": true }, "type": "'markers'" },
   "SeriesOpts": {
     "meta": {},
     "type": {
-      "pickGroupIncludes": "PickGroupInclude[]",
       "pathsPerSeries": "number",
       "pathsZIndexSubOrderOffset": "number[]",
       "features": "SeriesFeature[]",
