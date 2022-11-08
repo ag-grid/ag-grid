@@ -23,16 +23,10 @@ export class CartesianChart extends Chart {
         root.append(this.legend.group);
 
         this.navigator.enabled = false;
-
-        this.interactionManager.addListener('drag-start', (event) => this.navigator.onDragStart(event));
-        this.interactionManager.addListener('drag', (event) => this.navigator.onDrag(event));
-        this.interactionManager.addListener('hover', (event) => this.navigator.onDrag(event));
-        this.interactionManager.addListener('drag-end', () => this.navigator.onDragStop());
-        this.interactionManager.addListener('exit', () => this.navigator.onDragStop());
     }
 
     readonly seriesRoot = new ClipRect();
-    readonly navigator = new Navigator(this);
+    readonly navigator = new Navigator(this, this.interactionManager);
 
     async performLayout() {
         this.scene.root!.visible = true;
