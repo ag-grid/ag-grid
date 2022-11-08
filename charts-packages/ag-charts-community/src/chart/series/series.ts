@@ -139,9 +139,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     // The group node that contains all the nodes used to render this series.
     readonly rootGroup: Group = new Group({ name: 'seriesRoot' });
 
-    // The group node that contains the background graphics.
-    readonly backgroundGroup: Group;
-
     // The group node that contains the series rendering in it's default (non-highlighted) state.
     readonly contentGroup: Group;
 
@@ -203,14 +200,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         super();
 
         const { rootGroup } = this;
-
-        this.backgroundGroup = rootGroup.appendChild(
-            new Group({
-                name: `${this.id}-background`,
-                layer: useSeriesGroupLayer,
-                zIndex: Layers.SERIES_BACKGROUND_ZINDEX,
-            })
-        );
 
         this.contentGroup = rootGroup.appendChild(
             new Group({

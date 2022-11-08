@@ -14,6 +14,7 @@ import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
 import { doOnce } from '../../../util/function';
 import { toFixed, mod } from '../../../util/number';
+import { Layers } from '../../layers';
 import { LegendDatum } from '../../legend';
 import { Caption } from '../../../caption';
 import { PolarSeries } from './polarSeries';
@@ -200,6 +201,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private sectorLabelSelection: Selection<Text, Group, PieNodeDatum, any>;
     private innerLabelsSelection: Selection<Text, Group, DoughnutInnerLabel, any>;
 
+    // The group node that contains the background graphics.
+    readonly backgroundGroup: Group;
+
     /**
      * The processed data that gets visualized.
      */
@@ -383,6 +387,14 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     constructor() {
         super({ useLabelLayer: true });
+
+        this.backgroundGroup = this.rootGroup.appendChild(
+            new Group({
+                name: `${this.id}-background`,
+                layer: true,
+                zIndex: Layers.SERIES_BACKGROUND_ZINDEX,
+            })
+        );
 
         const pieCalloutLabels = new Group({ name: 'pieCalloutLabels' });
         const pieSectorLabels = new Group({ name: 'pieSectorLabels' });
