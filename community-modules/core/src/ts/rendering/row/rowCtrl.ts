@@ -121,7 +121,6 @@ export class RowCtrl extends BeanStub {
     private updateColumnListsPending = false;
 
     private businessKeySanitised: string | null = null;
-    private processRowPostCreateExecuted = false;
 
     constructor(
         rowNode: RowNode,
@@ -382,7 +381,7 @@ export class RowCtrl extends BeanStub {
 
     public executeProcessRowPostCreateFunc(): void {
         const func = this.beans.gridOptionsWrapper.getProcessRowPostCreateFunc();
-        if (!func || !this.areAllContainersReady() || this.processRowPostCreateExecuted) { return; }
+        if (!func || !this.areAllContainersReady()) { return; }
 
         const params: WithoutGridCommon<ProcessRowParams> = {
             eRow: this.centerGui?.element,
@@ -393,7 +392,6 @@ export class RowCtrl extends BeanStub {
             addRenderedRowListener: this.addEventListener.bind(this),
         };
         func(params);
-        this.processRowPostCreateExecuted = true;
     }
 
     private areAllContainersReady(): boolean {
@@ -611,8 +609,9 @@ export class RowCtrl extends BeanStub {
     }
 
     private addListeners(): void {
-        this.addManagedListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, () => this.onRowHeightChanged());
+        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, () => this.onRowSelected());
+
         this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.updateExpandedCss.bind(this));
