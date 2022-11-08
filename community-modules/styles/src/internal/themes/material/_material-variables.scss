@@ -11,6 +11,7 @@
     --ag-disabled-foreground-color: rgba(0, 0, 0, 0.38);
     --ag-background-color: #fff;
     --ag-header-background-color: #fff;
+    --ag-tooltip-background-color: #fff;
     --ag-subheader-background-color: #eee;
     --ag-subheader-toolbar-background-color: rgba(238, 238, 238, 0.5);
     --ag-header-cell-hover-background-color: #f2f2f2;
@@ -24,11 +25,13 @@
     --ag-column-hover-color: #fafafa;
     --ag-control-panel-background-color: #fafafa;
     --ag-selected-row-background-color: #eee;
-    --ag-range-selection-border-color: var(--ag-material-primary-color);
-    --ag-checkbox-checked-color: var(--ag-material-accent-color);
     --ag-checkbox-unchecked-color: #333;
     --ag-value-change-value-highlight-background-color: #00acc1;
     --ag-side-button-selected-background-color: transparent;
+
+    // derived colours (no color blending)
+    --ag-range-selection-border-color: var(--ag-material-primary-color);
+    --ag-checkbox-checked-color: var(--ag-material-accent-color);
 
     // Borders
     --ag-borders: none;

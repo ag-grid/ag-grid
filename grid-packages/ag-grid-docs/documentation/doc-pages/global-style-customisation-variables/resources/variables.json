@@ -41,6 +41,10 @@
       "description": "Background colour for all headers, including the grid header, panels etc",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
+    "--ag-tooltip-background-color": {
+      "description": "Background colour for all tooltips",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
     "--ag-disabled-foreground-color": {
       "description": "Color of elements that can't be interacted with because they are in a disabled state",
       "type": "CSS color (e.g. `red` or `#fff`)"

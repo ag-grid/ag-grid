@@ -20,6 +20,7 @@
     --ag-border-color: #babfc7;
     --ag-secondary-border-color: #dde2eb;
     --ag-header-background-color: #f8f8f8;
+    --ag-tooltip-background-color: #f8f8f8;
     --ag-odd-row-background-color: #fcfcfc;
     --ag-control-panel-background-color: #f8f8f8;
     --ag-subheader-background-color: #fff;
@@ -34,6 +35,7 @@
     --ag-input-border-color: var(--ag-border-color);
     --ag-input-border-color-invalid: var(--ag-invalid-color);
     --ag-input-focus-box-shadow: 0 0 2px 0.1rem var(--ag-input-focus-border-color);
+    
 
     // derived and blended colours (these are static versions of the dynamic colour blends
     // applied by the Sass API and must be overridden in alpine-dark)
@@ -91,6 +93,7 @@
     --ag-secondary-border-color: #{color.change(#585652, $alpha: 0.5)};
     --ag-modal-overlay-background-color: rgba(24, 29, 31, 0.66);
     --ag-header-background-color: #222628;
+    --ag-tooltip-background-color: #222628;
     --ag-odd-row-background-color: #222628;
     --ag-control-panel-background-color: #222628;
     --ag-subheader-background-color: #000;
