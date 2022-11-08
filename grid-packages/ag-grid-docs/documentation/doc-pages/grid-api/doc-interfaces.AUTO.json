@@ -5857,10 +5857,10 @@
   "ProcessRowParams": {
     "eRow": { "type": { "returnType": "HTMLElement", "optional": false } },
     "ePinnedLeftRow": {
-      "type": { "returnType": "HTMLElement", "optional": false }
+      "type": { "returnType": "HTMLElement", "optional": true }
     },
     "ePinnedRightRow": {
-      "type": { "returnType": "HTMLElement", "optional": false }
+      "type": { "returnType": "HTMLElement", "optional": true }
     },
     "rowIndex": { "type": { "returnType": "number", "optional": false } },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },

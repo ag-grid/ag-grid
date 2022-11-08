@@ -2878,8 +2878,8 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "eRow": "HTMLElement",
-      "ePinnedLeftRow": "HTMLElement",
-      "ePinnedRightRow": "HTMLElement",
+      "ePinnedLeftRow?": "HTMLElement",
+      "ePinnedRightRow?": "HTMLElement",
       "rowIndex": "number",
       "node": "RowNode<TData>",
       "addRenderedRowListener": "(eventType: string, listener: Function) => void",
