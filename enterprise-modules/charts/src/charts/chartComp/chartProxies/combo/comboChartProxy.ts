@@ -113,10 +113,14 @@ export class ComboChartProxy extends CartesianChartProxy {
 
     private getAxisOptions() {
         const axisOptions = this.getAxesOptions('cartesian');
-        return {
+        return axisOptions ? {
             bottomOptions: deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
             leftOptions: deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left),
             rightOptions: deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].right),
+        } : {
+            bottomOptions: {},
+            leftOptions: {},
+            rightOptions: {},
         };
     }
 

@@ -26,7 +26,8 @@ export class PieChartProxy extends ChartProxy {
     protected createChart(): AgChartInstance {
         return AgChart.create({
             type: 'pie',
-            container: this.chartProxyParams.parentElement
+            container: this.chartProxyParams.parentElement,
+            theme: this.agChartTheme
         });
     }
 
@@ -77,12 +78,12 @@ export class PieChartProxy extends ChartProxy {
                     outerRadiusOffset,
                     innerRadiusOffset,
                     title: {
-                        ...seriesDefaults.title,
-                        text: seriesDefaults.title.text || f.displayName,
+                        ...seriesDefaults?.title,
+                        text: seriesDefaults?.title?.text || f.displayName,
                         showInLegend: numFields > 1,
                     },
                     calloutLine: {
-                        ...seriesDefaults.calloutLine,
+                        ...seriesDefaults?.calloutLine,
                         colors: this.chartPalette?.strokes,
                     }
                 }
@@ -202,7 +203,7 @@ export class PieChartProxy extends ChartProxy {
     }
 
     protected extractSeriesOverrides() {
-        return this.chartOptions[this.standaloneChartType].series;
+        return this.chartOptions[this.standaloneChartType]?.series || {};
     }
 
     public crossFilteringReset() {

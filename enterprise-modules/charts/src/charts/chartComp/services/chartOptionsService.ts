@@ -40,9 +40,7 @@ export class ChartOptionsService extends BeanStub {
 
         // we need to update chart options on each series type for combo charts
         chartSeriesTypes.forEach(optionsType => {
-            // update options
-            const options = _.get(this.getChartOptions(), `${optionsType}`, undefined);
-            _.set(options, expression, value);
+            _.set(this.getChartOptions(), `${optionsType}.${expression}`, value);
         });
 
         // update chart
@@ -88,12 +86,7 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public setSeriesOption<T = string>(expression: string, value: T, seriesType: ChartSeriesType): void {
-        // update series options
-        const options = this.getChartOptions();
-        if (!options[seriesType]) {
-            options[seriesType] = {};
-        }
-        _.set(options[seriesType].series, expression, value);
+        _.set(this.getChartOptions(), `${seriesType}.series.${expression}`, value);
 
         // update chart
         this.updateChart();
@@ -108,8 +101,7 @@ export class ChartOptionsService extends BeanStub {
 
     public setPairedMode(paired: boolean): void {
         const optionsType = getSeriesType(this.getChartType());
-        const options = _.get(this.getChartOptions(), `${optionsType}`, undefined);
-        _.set(options, 'paired', paired);
+        _.set(this.getChartOptions(), `${optionsType}.paired`, paired);
     }
 
     private getAxis(axisType: string): ChartAxis | undefined {

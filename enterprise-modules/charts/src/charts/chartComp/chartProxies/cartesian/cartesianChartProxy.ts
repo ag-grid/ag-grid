@@ -30,7 +30,8 @@ export abstract class CartesianChartProxy extends ChartProxy {
 
     protected createChart(): AgChartInstance {
         return AgChart.create({
-            container: this.chartProxyParams.parentElement
+            container: this.chartProxyParams.parentElement,
+            theme: this.agChartTheme
         });
     }
 
@@ -83,7 +84,9 @@ export abstract class CartesianChartProxy extends ChartProxy {
     }
 
     protected extractSeriesOverrides(chartSeriesType?: ChartSeriesType) {
-        const seriesOverrides = this.chartOptions[chartSeriesType ? chartSeriesType : this.standaloneChartType].series;
+        const seriesOverrides = this.chartOptions[chartSeriesType ? chartSeriesType : this.standaloneChartType]?.series;
+
+        if (!seriesOverrides) { return {}; }
 
         // TODO: remove once `yKeys` and `yNames` have been removed from the options
         delete seriesOverrides.yKeys;
@@ -111,7 +114,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
     }
 
     protected getAxesOptions(chartSeriesType: ChartSeriesType = this.standaloneChartType) {
-        return this.chartOptions[chartSeriesType].axes;
+        return this.chartOptions[chartSeriesType]?.axes;
     }
 
     private static isTimeAxis(params: UpdateChartParams): boolean {
