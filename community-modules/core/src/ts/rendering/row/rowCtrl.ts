@@ -90,14 +90,19 @@ export class RowCtrl extends BeanStub {
     private editingRow: boolean;
     private rowFocused: boolean;
 
-    private rowContainerCtrls: { [key in RowContainerType]?: RowContainerCtrl; } = {};
+    // private rowContainerCtrls: { [key in RowContainerType]?: RowContainerCtrl; } = {};
 
     private centerCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
     private leftCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
     private rightCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
 
-    private fadeRowIn: boolean;
-    private slideRowIn: boolean;
+    private slideLeftIn = false;
+    private slideRightIn = false;
+    private slideCentreIn = false;
+    private fadeLeftIn = false;
+    private fadeRightIn = false;
+    private fadeCentreIn = false;
+
     private readonly useAnimationFrameForCreate: boolean;
 
     private paginationPage: number;
@@ -109,6 +114,8 @@ export class RowCtrl extends BeanStub {
     private readonly printLayout: boolean;
 
     private updateColumnListsPending = false;
+
+    private businessKeySanitised: string | null = null;
 
     constructor(
         rowNode: RowNode,
@@ -127,6 +134,7 @@ export class RowCtrl extends BeanStub {
         this.instanceId = rowNode.id + '-' + instanceIdSequence++;
 
         this.setAnimateFlags(animateIn);
+        this.initRowBusinessKey();
 
         this.rowFocused = this.beans.focusService.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
         this.rowLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
@@ -134,6 +142,13 @@ export class RowCtrl extends BeanStub {
         this.setRowType();
 
         this.addListeners();
+    }
+
+    private initRowBusinessKey(): void {
+        const businessKeyForNodeFunc = this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc();
+        if (typeof businessKeyForNodeFunc !== 'function') { return; }
+        const businessKey = businessKeyForNodeFunc(this.rowNode);
+        this.businessKeySanitised = escapeString(businessKey!);
     }
 
     public isSticky(): boolean {
@@ -148,9 +163,9 @@ export class RowCtrl extends BeanStub {
         return this.instanceId;
     }
 
-    public setRowContainerCtrl(rowContainerCtrl: RowContainerCtrl, containerType: RowContainerType): void {
-        this.rowContainerCtrls[containerType] = rowContainerCtrl;
-    }
+    // public setRowContainerCtrl(rowContainerCtrl: RowContainerCtrl, containerType: RowContainerType): void {
+    //     this.rowContainerCtrls[containerType] = rowContainerCtrl;
+    // }
 
     public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType): void {
         const gui: RowGui = { rowComp, element, containerType };
@@ -166,12 +181,12 @@ export class RowCtrl extends BeanStub {
             this.centerGui = gui;
         }
 
-        const allNormalPresent = this.isLeftContainerReady() && this.isRightContainerReady() && this.isCenterContainerReady();
-        const fullWidthPresent = this.fullWidthGui != null;
+        // const allNormalPresent = this.isLeftContainerReady() && this.isRightContainerReady() && this.isCenterContainerReady();
+        // const fullWidthPresent = this.fullWidthGui != null;
 
-        if (allNormalPresent || fullWidthPresent) {
-            this.initialiseRowComps();
-        }
+        // if (allNormalPresent || fullWidthPresent) {
+            this.initialiseRowComp(gui);
+        // }
 
         if (this.rowType !== 'FullWidthLoading') {
             // this is fired within setComp as we know that the component renderer is now trying to render.
@@ -194,17 +209,17 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    private isLeftContainerReady(): boolean {
-        return this.leftGui != null || !this.rowContainerCtrls.left?.isContainerVisible();
-    }
+    // private isLeftContainerReady(): boolean {
+    //     return this.leftGui != null || !this.rowContainerCtrls.left?.isContainerVisible();
+    // }
 
-    private isCenterContainerReady(): boolean {
-        return this.centerGui != null;
-    }
+    // private isCenterContainerReady(): boolean {
+    //     return this.centerGui != null;
+    // }
 
-    private isRightContainerReady(): boolean {
-        return this.rightGui != null || !this.rowContainerCtrls.right?.isContainerVisible();
-    }
+    // private isRightContainerReady(): boolean {
+    //     return this.rightGui != null || !this.rowContainerCtrls.right?.isContainerVisible();
+    // }
 
     public isCacheable(): boolean {
         return this.rowType === RowType.FullWidthDetail
@@ -216,96 +231,112 @@ export class RowCtrl extends BeanStub {
         this.allRowGuis.forEach(rg => rg.element.style.display = displayValue);
     }
 
-    private initialiseRowComps(): void {
+    private initialiseRowComp(gui: RowGui): void {
         const gow = this.beans.gridOptionsWrapper;
 
-        this.onRowHeightChanged();
-        this.updateRowIndexes();
-        this.setFocusedClasses();
-        this.setStylesFromGridOptions();
+        this.onRowHeightChanged(gui);
+        this.updateRowIndexes(gui);
+        this.setFocusedClasses(gui);
+        this.setStylesFromGridOptions(gui);
 
         if (gow.isRowSelection() && this.rowNode.selectable) {
-            this.onRowSelected();
+            this.onRowSelected(gui);
         }
 
         this.updateColumnLists(!this.useAnimationFrameForCreate);
 
-        if (this.slideRowIn) {
+        // NOT DONE
+        const pinned = this.getPinnedForContainer(gui.containerType);
+
+        if (this.slideCentreIn && pinned==null) {
             executeNextVMTurn(this.onTopChanged.bind(this));
+            this.slideCentreIn = false;
         }
+        if (this.slideLeftIn && pinned==Constants.PINNED_LEFT) {
+            executeNextVMTurn(this.onTopChanged.bind(this));
+            this.slideLeftIn = false;
+        }
+        if (this.slideRightIn && pinned==Constants.PINNED_RIGHT) {
+            executeNextVMTurn(this.onTopChanged.bind(this));
+            this.slideRightIn = false;
+        }
+
+
         if (this.fadeRowIn) {
             executeNextVMTurn(() => {
                 this.allRowGuis.forEach(gui => gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', false));
             });
         }
+        
 
-        const businessKey = this.getRowBusinessKey();
         const rowIdSanitised = escapeString(this.rowNode.id!);
-        const businessKeySanitised = escapeString(businessKey!);
 
-        this.allRowGuis.forEach(gui => {
-            const comp = gui.rowComp;
+        const comp = gui.rowComp;
 
-            comp.setRole('row');
+        comp.setRole('row');
 
-            const initialRowClasses = this.getInitialRowClasses(gui.containerType);
-            initialRowClasses.forEach(name => comp.addOrRemoveCssClass(name, true));
+        const initialRowClasses = this.getInitialRowClasses(gui.containerType);
+        initialRowClasses.forEach(name => comp.addOrRemoveCssClass(name, true));
 
-            if (this.rowNode.group) {
-                setAriaExpanded(gui.element, this.rowNode.expanded == true);
-            }
+        if (this.rowNode.group) {
+            setAriaExpanded(gui.element, this.rowNode.expanded == true);
+        }
 
-            if (rowIdSanitised != null) {
-                comp.setRowId(rowIdSanitised);
-            }
-            if (businessKeySanitised != null) {
-                comp.setRowBusinessKey(businessKeySanitised);
-            }
+        if (rowIdSanitised != null) {
+            comp.setRowId(rowIdSanitised);
+        }
+        if (this.businessKeySanitised != null) {
+            comp.setRowBusinessKey(this.businessKeySanitised);
+        }
 
-            if (this.isFullWidth() && !this.beans.gridOptionsWrapper.isSuppressCellFocus()) {
-                comp.setTabIndex(-1);
-            }
+        if (this.isFullWidth() && !this.beans.gridOptionsWrapper.isSuppressCellFocus()) {
+            comp.setTabIndex(-1);
+        }
 
-            // DOM DATA
-            gow.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
-            this.addDestroyFunc(
-                () => gow.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null)
+        // DOM DATA
+        gow.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
+        this.addDestroyFunc(
+            () => gow.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null)
+        );
+
+        // adding hover functionality adds listener to this row, so we
+        // do it lazily in an animation frame
+        if (this.useAnimationFrameForCreate) {
+            this.beans.animationFrameService.createTask(
+                this.addHoverFunctionality.bind(this, gui.element),
+                this.rowNode.rowIndex!,
+                'createTasksP2'
             );
+        } else {
+            this.addHoverFunctionality(gui.element);
+        }
 
-            // adding hover functionality adds listener to this row, so we
-            // do it lazily in an animation frame
-            if (this.useAnimationFrameForCreate) {
-                this.beans.animationFrameService.createTask(
-                    this.addHoverFunctionality.bind(this, gui.element),
-                    this.rowNode.rowIndex!,
-                    'createTasksP2'
-                );
-            } else {
-                this.addHoverFunctionality(gui.element);
-            }
+        if (this.isFullWidth()) {
+            this.setupFullWidth(gui);
+        }
 
-            if (this.isFullWidth()) {
-                this.setupFullWidth(gui);
-            }
+        if (gow.isRowDragEntireRow()) {
+            this.addRowDraggerToRow(gui);
+        }
 
-            if (gow.isRowDragEntireRow()) {
-                this.addRowDraggerToRow(gui);
-            }
+        if (this.useAnimationFrameForCreate) {
+            // the height animation we only want active after the row is alive for 1 second.
+            // this stops the row animation working when rows are initially created. otherwise
+            // auto-height rows get inserted into the dom and resized immediately, which gives
+            // very bad UX (eg 10 rows get inserted, then all 10 expand, look particularly bad
+            // when scrolling). so this makes sure when rows are shown for the first time, they
+            // are resized immediately without animation.
+            this.beans.animationFrameService.addDestroyTask(() => {
+                if (!this.isAlive()) { return; }
+                gui.rowComp.addOrRemoveCssClass('ag-after-created', true);
+            });
+        }
 
-            if (this.useAnimationFrameForCreate) {
-                // the height animation we only want active after the row is alive for 1 second.
-                // this stops the row animation working when rows are initially crated. otherwise
-                // auto-height rows get inserted into the dom and resized immediately, which gives
-                // very bad UX (eg 10 rows get inserted, then all 10 expand, look particularly bad
-                // when scrolling). so this makes sure when rows are shown for the first time, they
-                // are resized immediately without animation.
-                this.beans.animationFrameService.addDestroyTask(() => {
-                    if (!this.isAlive()) { return; }
-                    gui.rowComp.addOrRemoveCssClass('ag-after-created', true);
-                });
-            }
-        });
 
+        /////////////// FIXME
+        /////////////// FIXME
+        /////////////// FIXME
+        // what to do here, how do we know when all rowComps are ready???
         this.executeProcessRowPostCreateFunc();
     }
 
@@ -525,10 +556,33 @@ export class RowCtrl extends BeanStub {
 
         return REMOVE_CELL;
     }
+    
+    private setAnimateFlagsNew(animateIn: boolean): void {
+
+        if (this.isSticky() || !animateIn) { return; }
+
+        const oldRowTopExists = exists(this.rowNode.oldRowTop);
+        const pinningLeft = this.beans.columnModel.isPinningLeft();
+        const pinningRight = this.beans.columnModel.isPinningRight();
+
+        if (oldRowTopExists) {
+            // if the row had a previous position, we slide it in (animate row top)
+            this.slideCentreIn = true;
+            this.slideLeftIn = pinningLeft; 
+            this.slideRightIn = pinningRight; 
+        } else {
+            // if the row had no previous position, we fade it in (animate
+            this.fadeCentreIn = true;
+            this.fadeLeftIn = pinningLeft;
+            this.fadeRightIn = pinningRight;            
+        }
+    }
 
     private setAnimateFlags(animateIn: boolean): void {
+
+        const oldRowTopExists = exists(this.rowNode.oldRowTop);
+
         if (!this.isSticky() && animateIn) {
-            const oldRowTopExists = exists(this.rowNode.oldRowTop);
             // if the row had a previous position, we slide it in (animate row top)
             this.slideRowIn = oldRowTopExists;
             // if the row had no previous position, we fade it in (animate
@@ -1113,16 +1167,9 @@ export class RowCtrl extends BeanStub {
         );
     }
 
-    private setStylesFromGridOptions(): void {
+    private setStylesFromGridOptions(gui?: RowGui): void {
         const rowStyles = this.processStylesFromGridOptions();
-        this.allRowGuis.forEach(gui => gui.rowComp.setUserStyles(rowStyles));
-    }
-
-    public getRowBusinessKey(): string | undefined {
-        const businessKeyForNodeFunc = this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc();
-        if (typeof businessKeyForNodeFunc !== 'function') { return; }
-
-        return businessKeyForNodeFunc(this.rowNode);
+        this.forEachGui(gui, gui => gui.rowComp.setUserStyles(rowStyles));
     }
 
     private getPinnedForContainer(rowContainerType: RowContainerType): ColumnPinnedType {
@@ -1178,11 +1225,11 @@ export class RowCtrl extends BeanStub {
         return Object.assign({}, rowStyle, rowStyleFuncResult);
     }
 
-    private onRowSelected(): void {
+    private onRowSelected(gui?: RowGui): void {
         // Treat undefined as false, if we pass undefined down it gets treated as toggle class, rather than explicitly
         // setting the required value
         const selected = !!this.rowNode.isSelected();
-        this.allRowGuis.forEach(gui => {
+        this.forEachGui(gui, gui => {
             gui.rowComp.addOrRemoveCssClass('ag-row-selected', selected);
             setAriaSelected(gui.element, selected ? true : undefined);
 
@@ -1259,7 +1306,12 @@ export class RowCtrl extends BeanStub {
         return this.beans.frameworkOverrides;
     }
 
-    private onRowHeightChanged(): void {
+    private forEachGui(gui: RowGui | undefined, callback: (gui: RowGui)=>void): void {
+        const list = gui ? [gui] : this.allRowGuis;
+        list.forEach(callback);
+    }
+
+    private onRowHeightChanged(gui?: RowGui): void {
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten
         // stage is called where the row will then update again with a new height
@@ -1272,7 +1324,7 @@ export class RowCtrl extends BeanStub {
         const heightFromFunc = isHeightFromFunc ? this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height : undefined;
         const lineHeight = heightFromFunc ? `${Math.min(defaultRowHeight, heightFromFunc) - 2}px` : undefined;
 
-        this.allRowGuis.forEach(gui => {
+        this.forEachGui(gui, gui => {
             gui.element.style.height = `${rowHeight}px`;
 
             // If the row height is coming from a function, this means some rows can
@@ -1353,8 +1405,8 @@ export class RowCtrl extends BeanStub {
         this.rightCellCtrls = destroyCellCtrls(this.rightCellCtrls);
     }
 
-    private setFocusedClasses(): void {
-        this.allRowGuis.forEach(gui => {
+    private setFocusedClasses(gui?: RowGui): void {
+        this.forEachGui(gui, gui => {
             gui.rowComp.addOrRemoveCssClass('ag-row-focus', this.rowFocused);
             gui.rowComp.addOrRemoveCssClass('ag-row-no-focus', !this.rowFocused);
         });
@@ -1505,13 +1557,13 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    private updateRowIndexes(): void {
+    private updateRowIndexes(gui?: RowGui): void {
         const rowIndexStr = this.rowNode.getRowIndexString();
         const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
         const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         const ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1;
 
-        this.allRowGuis.forEach(c => {
+        this.forEachGui(gui, c => {
             c.rowComp.setRowIndex(rowIndexStr);
             c.rowComp.addOrRemoveCssClass('ag-row-even', rowIsEven);
             c.rowComp.addOrRemoveCssClass('ag-row-odd', !rowIsEven);
