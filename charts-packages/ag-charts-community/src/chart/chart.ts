@@ -929,7 +929,7 @@ export abstract class Chart extends Observable {
     }
 
     protected onClick(event: InteractionEvent<'click'>) {
-        if (this.checkSeriesNodeClick()) {
+        if (this.checkSeriesNodeClick(event)) {
             this.update(ChartUpdateType.SERIES_UPDATE);
             return;
         }
@@ -943,13 +943,20 @@ export abstract class Chart extends Observable {
         });
     }
 
-    private checkSeriesNodeClick(): boolean {
+    private checkSeriesNodeClick(event: InteractionEvent<'click'>): boolean {
         const { lastPick } = this;
 
         if (lastPick && lastPick.event) {
             const { event, datum } = lastPick;
             datum.series.fireNodeClickEvent(event, datum);
             return true;
+        } else if (event.sourceEvent.type.startsWith('touch')) {
+            const pick = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY });
+
+            if (pick) {
+                pick.series.fireNodeClickEvent(event.sourceEvent, pick.datum);
+                return true;
+            }
         }
 
         return false;
