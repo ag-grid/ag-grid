@@ -302,15 +302,17 @@ export class RowCtrl extends BeanStub {
         [RowContainerType.LEFT, RowContainerType.CENTER, RowContainerType.RIGHT].forEach((side: RowContainerType) => {
             if (side !== pinned && (pinned || side !== 'center')) { return; }
             if (this.slideInAnimation[side]) {
-                executeNextVMTurn(this.onTopChanged.bind(this));
-                this.slideInAnimation[side] = false;
+                executeNextVMTurn(() => {
+                    this.onTopChanged();
+                    this.slideInAnimation[side] = false;
+                });
             }
 
             if (this.fadeInAnimation[side]) {
                 executeNextVMTurn(() => {
-                    this.allRowGuis.forEach(gui => gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', false));
+                    gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', false);
+                    this.fadeInAnimation[side] = false;
                 });
-                this.fadeInAnimation[side] = false;
             }
         });
     }
