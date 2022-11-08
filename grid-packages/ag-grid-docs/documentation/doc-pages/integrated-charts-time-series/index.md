@@ -62,7 +62,7 @@ A time axis can also be used in combination charts as shown in the following exa
 
 For more details on how to configure a combination chart, see the [Range Chart API example](/integrated-charts-api-range-chart/#combination-charts).
 
-<grid-example title='Time Axis Combination Chart' name='time-combination-chart' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"], "exampleHeight": 790 }'></grid-example>
+<grid-example title='Time Axis Combination Chart' name='time-combination-chart' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"], "exampleHeight": 790, "extras": ["momentjs"] }'></grid-example>
 
 ## Next Up
 
