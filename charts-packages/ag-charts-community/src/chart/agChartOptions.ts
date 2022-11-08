@@ -1262,13 +1262,9 @@ export interface AgPieSeriesLabelOptions<DatumType> extends AgChartLabelOptions 
 }
 
 export interface AgPieSeriesSectorLabelOptions<DatumType> extends AgChartLabelOptions {
-    /** Distance in pixels, used to make the label text closer to or further from the center. This offset is applied after positionRatio.
-     * Default: `0`
-     */
+    /** Distance in pixels, used to make the label text closer to or further from the center. This offset is applied after positionRatio. */
     positionOffset?: PixelSize;
-    /** Position of labels as a ratio proportional to pie radius (or doughnut thickness). Additional offset in pixels can be applied by using positionOffset.
-     * Default: `0.5`
-     */
+    /** Position of labels as a ratio proportional to pie radius (or doughnut thickness). Additional offset in pixels can be applied by using positionOffset. */
     positionRatio?: Ratio;
     /** A function that allows the modification of the label text based on input parameters. */
     formatter?: (params: AgPieSeriesLabelFormatterParams<DatumType>) => string;
@@ -1674,5 +1670,7 @@ export interface AgHierarchyChartOptions extends AgBaseChartOptions {
 
 export type AgChartOptions = AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions;
 
-// Prevent empty and broken module being output!
-export const dont_break_the_ts_modules_build = 0;
+/**
+ * Internal Use Only: Used to ensure this file is treated as a module until we can use moduleDetection flag in Ts v4.7
+ */
+export const __FORCE_MODULE_DETECTION = 0;

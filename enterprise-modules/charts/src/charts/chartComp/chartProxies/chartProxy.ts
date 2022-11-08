@@ -105,8 +105,9 @@ export abstract class ChartProxy {
             const themeOverrides = {
                 overrides: ChartProxy.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides)
             };
-            const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);
-            return getIntegratedChartTheme(stockTheme ? {baseTheme: themeName, ...themeOverrides} : getCustomTheme());
+            const mergedThemeOverrides = deepMerge(this.getIntegratedThemeOverrides(), themeOverrides);
+            const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), mergedThemeOverrides);
+            return getIntegratedChartTheme(stockTheme ? {baseTheme: themeName, ...mergedThemeOverrides} : getCustomTheme());
         }
         return getIntegratedChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
     }
@@ -225,5 +226,27 @@ export abstract class ChartProxy {
             this.chart.destroy();
             (this.chart as any) = undefined;
         }
+    }
+
+    private getIntegratedThemeOverrides() {
+        return {
+            overrides: {
+                common: {
+                    padding: {
+                        top: 25,
+                        right: 20,
+                        bottom: 20,
+                        left: 20,
+                    }
+                },
+                pie: {
+                    series: {
+                        sectorLabel: {
+                            enabled: false,
+                        }
+                    }
+                }
+            }
+        };
     }
 }
