@@ -161,7 +161,6 @@ import {
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
 import { AngularFrameworkComponentWrapper } from "./angularFrameworkComponentWrapper";
-import { AgGridColumn } from "./ag-grid-column.component";
 
 @Component({
     selector: 'ag-grid-angular',
@@ -189,8 +188,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     public api: GridApi<TData>;
     public columnApi: ColumnApi;
 
-    @ContentChildren(AgGridColumn) public columns: QueryList<AgGridColumn>;
-
     constructor(elementDef: ElementRef,
         private viewContainerRef: ViewContainerRef,
         private angularFrameworkOverrides: AngularFrameworkOverrides,
@@ -215,13 +212,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             },
             modules: (this.modules || []) as any
         };
-
-        if (this.columns && this.columns.length > 0) {
-            this.gridOptions.columnDefs = this.columns
-                .map((column: AgGridColumn): ColDef => {
-                    return column.toColDef();
-                });
-        }
 
         new Grid(this._nativeElement, this.gridOptions, this.gridParams);
 

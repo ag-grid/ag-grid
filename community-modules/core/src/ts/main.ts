@@ -20,7 +20,6 @@ export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";
 export { ComponentUtil } from "./components/componentUtil";
 export { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
 
-export { ColDefUtil } from "./components/colDefUtil";
 export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 export { UserComponentFactory, UserCompDetails } from "./components/framework/userComponentFactory";
 export { ComponentType } from "./components/framework/componentTypes";
