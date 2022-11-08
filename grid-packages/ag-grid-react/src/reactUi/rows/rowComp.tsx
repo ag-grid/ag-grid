@@ -69,8 +69,8 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
 
     // these styles have initial values, so element is placed into the DOM with them,
     // rather than an transition getting applied.
-    const [top, setTop] = useState<string | undefined>(rowCtrl.getInitialRowTop());
-    const [transform, setTransform] = useState<string | undefined>(rowCtrl.getInitialTransform());
+    const [top, setTop] = useState<string | undefined>(rowCtrl.getInitialRowTop(containerType));
+    const [transform, setTransform] = useState<string | undefined>(rowCtrl.getInitialTransform(containerType));
 
     const eGui = useRef<HTMLDivElement>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();

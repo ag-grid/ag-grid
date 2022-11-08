@@ -27,7 +27,7 @@ export class RowComp extends Component {
         this.beans = beans;
         this.rowCtrl = ctrl;
 
-        this.setTemplate(/* html */`<div comp-id="${this.getCompId()}" style="${this.getInitialStyle()}"/>`);
+        this.setTemplate(/* html */`<div comp-id="${this.getCompId()}" style="${this.getInitialStyle(containerType)}"/>`);
 
         const eGui = this.getGui();
         const style = eGui.style;
@@ -54,9 +54,9 @@ export class RowComp extends Component {
         });
     }
 
-    private getInitialStyle(): string {
-        const transform = this.rowCtrl.getInitialTransform();
-        const top = this.rowCtrl.getInitialRowTop();
+    private getInitialStyle(containerType: RowContainerType): string {
+        const transform = this.rowCtrl.getInitialTransform(containerType);
+        const top = this.rowCtrl.getInitialRowTop(containerType);
         return transform ? `transform: ${transform}` : `top: ${top}`;
     }
 

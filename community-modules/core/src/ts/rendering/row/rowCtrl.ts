@@ -9,7 +9,7 @@ import { RowClassParams } from "../../entities/gridOptions";
 import { DataChangedEvent, RowHighlightPosition, RowNode } from "../../entities/rowNode";
 import { RowPosition } from "../../entities/rowPosition";
 import { CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent, VirtualRowRemovedEvent } from "../../events";
-import { RowContainerCtrl, RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
+import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { ModuleNames } from "../../modules/moduleNames";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
@@ -90,18 +90,23 @@ export class RowCtrl extends BeanStub {
     private editingRow: boolean;
     private rowFocused: boolean;
 
-    // private rowContainerCtrls: { [key in RowContainerType]?: RowContainerCtrl; } = {};
-
     private centerCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
     private leftCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
     private rightCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
 
-    private slideLeftIn = false;
-    private slideRightIn = false;
-    private slideCentreIn = false;
-    private fadeLeftIn = false;
-    private fadeRightIn = false;
-    private fadeCentreIn = false;
+    private slideInAnimation: { [key in RowContainerType]: boolean } = {
+        left: false,
+        center: false,
+        right: false,
+        fullWidth: false
+    };
+
+    private fadeInAnimation: { [key in RowContainerType]: boolean } = {
+        left: false,
+        center: false,
+        right: false,
+        fullWidth: false
+    };
 
     private readonly useAnimationFrameForCreate: boolean;
 
@@ -163,10 +168,6 @@ export class RowCtrl extends BeanStub {
         return this.instanceId;
     }
 
-    // public setRowContainerCtrl(rowContainerCtrl: RowContainerCtrl, containerType: RowContainerType): void {
-    //     this.rowContainerCtrls[containerType] = rowContainerCtrl;
-    // }
-
     public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType): void {
         const gui: RowGui = { rowComp, element, containerType };
         this.allRowGuis.push(gui);
@@ -181,12 +182,7 @@ export class RowCtrl extends BeanStub {
             this.centerGui = gui;
         }
 
-        // const allNormalPresent = this.isLeftContainerReady() && this.isRightContainerReady() && this.isCenterContainerReady();
-        // const fullWidthPresent = this.fullWidthGui != null;
-
-        // if (allNormalPresent || fullWidthPresent) {
-            this.initialiseRowComp(gui);
-        // }
+        this.initialiseRowComp(gui);
 
         if (this.rowType !== 'FullWidthLoading') {
             // this is fired within setComp as we know that the component renderer is now trying to render.
@@ -208,18 +204,6 @@ export class RowCtrl extends BeanStub {
             this.fullWidthGui = undefined;
         }
     }
-
-    // private isLeftContainerReady(): boolean {
-    //     return this.leftGui != null || !this.rowContainerCtrls.left?.isContainerVisible();
-    // }
-
-    // private isCenterContainerReady(): boolean {
-    //     return this.centerGui != null;
-    // }
-
-    // private isRightContainerReady(): boolean {
-    //     return this.rightGui != null || !this.rowContainerCtrls.right?.isContainerVisible();
-    // }
 
     public isCacheable(): boolean {
         return this.rowType === RowType.FullWidthDetail
@@ -245,34 +229,9 @@ export class RowCtrl extends BeanStub {
 
         this.updateColumnLists(!this.useAnimationFrameForCreate);
 
-        // NOT DONE
-        const pinned = this.getPinnedForContainer(gui.containerType);
-
-        if (this.slideCentreIn && pinned==null) {
-            executeNextVMTurn(this.onTopChanged.bind(this));
-            this.slideCentreIn = false;
-        }
-        if (this.slideLeftIn && pinned==Constants.PINNED_LEFT) {
-            executeNextVMTurn(this.onTopChanged.bind(this));
-            this.slideLeftIn = false;
-        }
-        if (this.slideRightIn && pinned==Constants.PINNED_RIGHT) {
-            executeNextVMTurn(this.onTopChanged.bind(this));
-            this.slideRightIn = false;
-        }
-
-
-        if (this.fadeRowIn) {
-            executeNextVMTurn(() => {
-                this.allRowGuis.forEach(gui => gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', false));
-            });
-        }
-        
-
-        const rowIdSanitised = escapeString(this.rowNode.id!);
+        this.executeSlideAndFadeAnimations(gui);
 
         const comp = gui.rowComp;
-
         comp.setRole('row');
 
         const initialRowClasses = this.getInitialRowClasses(gui.containerType);
@@ -281,6 +240,8 @@ export class RowCtrl extends BeanStub {
         if (this.rowNode.group) {
             setAriaExpanded(gui.element, this.rowNode.expanded == true);
         }
+
+        const rowIdSanitised = escapeString(this.rowNode.id!);
 
         if (rowIdSanitised != null) {
             comp.setRowId(rowIdSanitised);
@@ -338,6 +299,25 @@ export class RowCtrl extends BeanStub {
         /////////////// FIXME
         // what to do here, how do we know when all rowComps are ready???
         this.executeProcessRowPostCreateFunc();
+    }
+
+    private executeSlideAndFadeAnimations(gui: RowGui): void {
+        const pinned = this.getPinnedForContainer(gui.containerType);
+
+        [RowContainerType.LEFT, RowContainerType.CENTER, RowContainerType.RIGHT].forEach((side: RowContainerType) => {
+            if (side !== pinned && (pinned || side !== 'center')) { return; }
+            if (this.slideInAnimation[side]) {
+                executeNextVMTurn(this.onTopChanged.bind(this));
+                this.slideInAnimation[side] = false;
+            }
+
+            if (this.fadeInAnimation[side]) {
+                executeNextVMTurn(() => {
+                    this.allRowGuis.forEach(gui => gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', false));
+                });
+                this.fadeInAnimation[side] = false;
+            }
+        });
     }
 
     private addRowDraggerToRow(gui: RowGui) {
@@ -556,9 +536,8 @@ export class RowCtrl extends BeanStub {
 
         return REMOVE_CELL;
     }
-    
-    private setAnimateFlagsNew(animateIn: boolean): void {
 
+    private setAnimateFlags(animateIn: boolean): void {
         if (this.isSticky() || !animateIn) { return; }
 
         const oldRowTopExists = exists(this.rowNode.oldRowTop);
@@ -566,30 +545,15 @@ export class RowCtrl extends BeanStub {
         const pinningRight = this.beans.columnModel.isPinningRight();
 
         if (oldRowTopExists) {
-            // if the row had a previous position, we slide it in (animate row top)
-            this.slideCentreIn = true;
-            this.slideLeftIn = pinningLeft; 
-            this.slideRightIn = pinningRight; 
+            // if the row had a previous position, we slide it in
+            this.slideInAnimation.center = true;
+            this.slideInAnimation.left = pinningLeft;
+            this.slideInAnimation.right = pinningRight;
         } else {
-            // if the row had no previous position, we fade it in (animate
-            this.fadeCentreIn = true;
-            this.fadeLeftIn = pinningLeft;
-            this.fadeRightIn = pinningRight;            
-        }
-    }
-
-    private setAnimateFlags(animateIn: boolean): void {
-
-        const oldRowTopExists = exists(this.rowNode.oldRowTop);
-
-        if (!this.isSticky() && animateIn) {
-            // if the row had a previous position, we slide it in (animate row top)
-            this.slideRowIn = oldRowTopExists;
-            // if the row had no previous position, we fade it in (animate
-            this.fadeRowIn = !oldRowTopExists;
-        } else {
-            this.slideRowIn = false;
-            this.fadeRowIn = false;
+            // if the row had no previous position, we fade it in
+            this.fadeInAnimation.center = true;
+            this.fadeInAnimation.left = pinningLeft;
+            this.fadeInAnimation.right = pinningRight;
         }
     }
 
@@ -1181,13 +1145,13 @@ export class RowCtrl extends BeanStub {
         return pinned;
     }
 
-    public getInitialRowClasses(rowContainerType: RowContainerType): string[] {
+    private getInitialRowClasses(rowContainerType: RowContainerType): string[] {
         const pinned = this.getPinnedForContainer(rowContainerType);
 
         const params: RowCssClassCalculatorParams = {
             rowNode: this.rowNode,
             rowFocused: this.rowFocused,
-            fadeRowIn: this.fadeRowIn,
+            fadeRowIn: this.fadeInAnimation[rowContainerType],
             rowIsEven: this.rowNode.rowIndex! % 2 === 0,
             rowLevel: this.rowLevel,
             fullWidthRow: this.isFullWidth(),
@@ -1482,15 +1446,15 @@ export class RowCtrl extends BeanStub {
     // but now is in the viewport) then a new RowComp is created, however it should have it's position initialised
     // to below the viewport, so the row will appear to animate up. if we didn't set the initial position at creation
     // time, the row would animate down (ie from position zero).
-    public getInitialRowTop(): string | undefined {
+    public getInitialRowTop(rowContainerType: RowContainerType): string | undefined {
         const suppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
-        return suppressRowTransform ? this.getInitialRowTopShared() : undefined;
+        return suppressRowTransform ? this.getInitialRowTopShared(rowContainerType) : undefined;
     }
-    public getInitialTransform(): string | undefined {
+    public getInitialTransform(rowContainerType: RowContainerType): string | undefined {
         const suppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
-        return suppressRowTransform ? undefined : `translateY(${this.getInitialRowTopShared()})`;
+        return suppressRowTransform ? undefined : `translateY(${this.getInitialRowTopShared(rowContainerType)})`;
     }
-    private getInitialRowTopShared(): string {
+    private getInitialRowTopShared(rowContainerType: RowContainerType): string {
         // print layout uses normal flow layout for row positioning
         if (this.printLayout) { return ''; }
 
@@ -1499,7 +1463,7 @@ export class RowCtrl extends BeanStub {
             rowTop = this.rowNode.stickyRowTop;
         } else {
             // if sliding in, we take the old row top. otherwise we just set the current row top.
-            const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop!) : this.rowNode.rowTop;
+            const pixels = this.slideInAnimation[rowContainerType] ? this.roundRowTopToBounds(this.rowNode.oldRowTop!) : this.rowNode.rowTop;
             const afterPaginationPixels = this.applyPaginationOffset(pixels!);
             // we don't apply scaling if row is pinned
             rowTop = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
