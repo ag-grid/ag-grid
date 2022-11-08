@@ -145,8 +145,7 @@ export class ColDefUtil {
         cellEditorSelector: undefined,
     };
 
-
-    public static ALL_PROPERTIES: ColKey[] = Object.keys(ColDefUtil.ColDefPropertyMap) as ColKey[]
+    public static ALL_PROPERTIES: ColKey[] = Object.keys(ColDefUtil.ColDefPropertyMap) as ColKey[];
 
     // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
     // properties to colDefs, gridOptions etc
