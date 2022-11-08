@@ -11,10 +11,6 @@ import { RowClassParams } from "./gridOptions";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { RowNode } from "./rowNode";
 
-// ***********************************************************************
-// * Don't forget to update ColDefUtil if changing this class. PLEASE! *
-// ***********************************************************************/
-
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef<TData = any> {
     /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */
@@ -103,10 +99,6 @@ export interface ToolPanelClassParams<TData = any> extends AgGridCommon<TData> {
     columnGroup?: ProvidedColumnGroup | null;
 }
 export type ToolPanelClass<TData = any> = string | string[] | ((params: ToolPanelClassParams<TData>) => string | string[] | undefined);
-
-// ***********************************************************************
-// * Don't forget to update ColDefUtil if changing this class. PLEASE! *
-// ***********************************************************************/
 
 /** Configuration options for columns in AG Grid. */
 export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
