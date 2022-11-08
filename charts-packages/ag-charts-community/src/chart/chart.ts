@@ -256,8 +256,12 @@ export abstract class Chart extends Observable {
     private togglePointer(visible?: boolean) {
         if (this.tooltip.enabled) {
             this.tooltip.toggle(visible);
-        } else if (this.lastPick) {
+        }
+        if (!visible && this.lastPick) {
             this.changeHighlightDatum();
+        }
+        if (!visible && this.lastPointerMeta) {
+            this.lastPointerMeta = undefined;
         }
     }
 
@@ -890,10 +894,14 @@ export abstract class Chart extends Observable {
 
     private lastPointerMeta?: PointerMeta = undefined;
     private pointerScheduler = debouncedAnimationFrame(() => {
-        this.handlePointer(this.lastPointerMeta!);
+        this.handlePointer(this.lastPointerMeta);
         this.lastPointerMeta = undefined;
     });
-    protected handlePointer(meta: PointerMeta) {
+    protected handlePointer(meta?: PointerMeta) {
+        if (!meta) {
+            return;
+        }
+
         const { lastPick } = this;
         const { offsetX, offsetY } = meta;
 
