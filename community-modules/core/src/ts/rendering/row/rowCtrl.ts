@@ -121,6 +121,7 @@ export class RowCtrl extends BeanStub {
     private updateColumnListsPending = false;
 
     private businessKeySanitised: string | null = null;
+    private processRowPostCreateExecuted = false;
 
     constructor(
         rowNode: RowNode,
@@ -293,11 +294,6 @@ export class RowCtrl extends BeanStub {
             });
         }
 
-
-        /////////////// FIXME
-        /////////////// FIXME
-        /////////////// FIXME
-        // what to do here, how do we know when all rowComps are ready???
         this.executeProcessRowPostCreateFunc();
     }
 
@@ -386,17 +382,26 @@ export class RowCtrl extends BeanStub {
 
     public executeProcessRowPostCreateFunc(): void {
         const func = this.beans.gridOptionsWrapper.getProcessRowPostCreateFunc();
-        if (!func) { return; }
+        if (!func || !this.areAllContainersReady() || this.processRowPostCreateExecuted) { return; }
 
         const params: WithoutGridCommon<ProcessRowParams> = {
-            eRow: this.centerGui ? this.centerGui.element : undefined!,
-            ePinnedLeftRow: this.leftGui ? this.leftGui.element : undefined!,
-            ePinnedRightRow: this.rightGui ? this.rightGui.element : undefined!,
+            eRow: this.centerGui?.element,
+            ePinnedLeftRow: this.leftGui ? this.leftGui.element : undefined,
+            ePinnedRightRow: this.rightGui ? this.rightGui.element : undefined,
             node: this.rowNode,
             rowIndex: this.rowNode.rowIndex!,
             addRenderedRowListener: this.addEventListener.bind(this),
         };
         func(params);
+        this.processRowPostCreateExecuted = true;
+    }
+
+    private areAllContainersReady(): boolean {
+        const isLeftReady = !!this.leftGui || !this.beans.columnModel.isPinningLeft();
+        const isCenterReady = !!this.centerGui;
+        const isRightReady = !!this.rightGui || !this.beans.columnModel.isPinningRight();
+
+        return isLeftReady && isCenterReady && isRightReady;
     }
 
     private setRowType(): void {
