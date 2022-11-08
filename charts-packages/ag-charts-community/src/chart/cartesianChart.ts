@@ -23,6 +23,12 @@ export class CartesianChart extends Chart {
         root.append(this.legend.group);
 
         this.navigator.enabled = false;
+
+        this.interactionManager.addListener('drag-start', (event) => this.navigator.onDragStart(event));
+        this.interactionManager.addListener('drag', (event) => this.navigator.onDrag(event));
+        this.interactionManager.addListener('hover', (event) => this.navigator.onDrag(event));
+        this.interactionManager.addListener('drag-end', () => this.navigator.onDragStop());
+        this.interactionManager.addListener('exit', () => this.navigator.onDragStop());
     }
 
     readonly seriesRoot = new ClipRect();
@@ -93,87 +99,6 @@ export class CartesianChart extends Chart {
         seriesRoot.y = seriesRect.y;
         seriesRoot.width = seriesRect.width;
         seriesRoot.height = seriesRect.height;
-    }
-
-    private _onTouchStart: any;
-    private _onTouchMove: any;
-    private _onTouchEnd: any;
-    private _onTouchCancel: any;
-
-    protected setupDomListeners(chartElement: HTMLCanvasElement) {
-        super.setupDomListeners(chartElement);
-
-        this._onTouchStart = this.onTouchStart.bind(this);
-        this._onTouchMove = this.onTouchMove.bind(this);
-        this._onTouchEnd = this.onTouchEnd.bind(this);
-        this._onTouchCancel = this.onTouchCancel.bind(this);
-
-        chartElement.addEventListener('touchstart', this._onTouchStart, { passive: true });
-        chartElement.addEventListener('touchmove', this._onTouchMove, { passive: true });
-        chartElement.addEventListener('touchend', this._onTouchEnd, { passive: true });
-        chartElement.addEventListener('touchcancel', this._onTouchCancel, { passive: true });
-    }
-
-    protected cleanupDomListeners(chartElement: HTMLCanvasElement) {
-        super.cleanupDomListeners(chartElement);
-
-        chartElement.removeEventListener('touchstart', this._onTouchStart);
-        chartElement.removeEventListener('touchmove', this._onTouchMove);
-        chartElement.removeEventListener('touchend', this._onTouchEnd);
-        chartElement.removeEventListener('touchcancel', this._onTouchCancel);
-    }
-
-    private getTouchOffset(event: TouchEvent): { offsetX: number; offsetY: number } | undefined {
-        const rect = this.scene.canvas.element.getBoundingClientRect();
-        const touch = event.touches[0];
-        return touch
-            ? {
-                  offsetX: touch.clientX - rect.left,
-                  offsetY: touch.clientY - rect.top,
-              }
-            : undefined;
-    }
-
-    protected onTouchStart(event: TouchEvent) {
-        const offset = this.getTouchOffset(event);
-        if (offset) {
-            this.navigator.onDragStart(offset);
-        }
-    }
-
-    protected onTouchMove(event: TouchEvent) {
-        const offset = this.getTouchOffset(event);
-        if (offset) {
-            this.navigator.onDrag(offset);
-        }
-    }
-
-    protected onTouchEnd(_event: TouchEvent) {
-        this.navigator.onDragStop();
-    }
-
-    protected onTouchCancel(_event: TouchEvent) {
-        this.navigator.onDragStop();
-    }
-
-    protected onMouseDown(event: MouseEvent) {
-        super.onMouseDown(event);
-        this.navigator.onDragStart(event);
-    }
-
-    protected onMouseMove(event: MouseEvent) {
-        super.onMouseMove(event);
-        this.navigator.onDrag(event);
-    }
-
-    protected onMouseUp(event: MouseEvent) {
-        super.onMouseUp(event);
-        this.navigator.onDragStop();
-    }
-
-    protected onMouseOut(event: MouseEvent) {
-        super.onMouseOut(event);
-        this.navigator.onDragStop();
     }
 
     private _lastAxisWidths: Partial<Record<AgCartesianAxisPosition, number>> = {

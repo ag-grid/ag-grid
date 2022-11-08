@@ -2902,6 +2902,28 @@
     "meta": { "isTypeAlias": true },
     "type": "Record<string, { vertical: [ Date, Date ]; horizontal: [ number, number ]; }>"
   },
+  "InteractionTypes": {
+    "meta": { "isTypeAlias": true },
+    "type": "'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'exit'"
+  },
+  "Listener": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["T extends InteractionTypes"]
+    },
+    "type": "{ symbol?: Symbol; handler: (event: InteractionEvent<T>) => void; }"
+  },
+  "SUPPORTED_EVENTS": {
+    "meta": { "isTypeAlias": true },
+    "type": "'click' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel'"
+  },
+  "InteractionEvent": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["T extends InteractionTypes"]
+    },
+    "type": "{ type: T; offsetX: number; offsetY: number; pageX?: number; pageY?: number; sourceEvent: Event; } & (T extends 'drag' ? { startX: number; startY: number; } : {})"
+  },
   "Layers": {
     "meta": { "isEnum": true },
     "type": [

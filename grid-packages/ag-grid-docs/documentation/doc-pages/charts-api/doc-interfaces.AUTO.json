@@ -4376,6 +4376,12 @@
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
+  "InteractionTypes": {},
+  "Listener": { "meta": { "typeParams": ["T extends InteractionTypes"] } },
+  "SUPPORTED_EVENTS": {},
+  "InteractionEvent": {
+    "meta": { "typeParams": ["T extends InteractionTypes"] }
+  },
   "Layers": {},
   "LegendDatum": {
     "id": { "type": { "returnType": "string", "optional": false } },

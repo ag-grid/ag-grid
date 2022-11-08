@@ -21,6 +21,7 @@ import { BOOLEAN, Validate } from '../util/validation';
 import { sleep } from '../util/async';
 import { doOnce } from '../util/function';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
+import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 
 /** Types of chart-update, in pipeline execution order. */
 export enum ChartUpdateType {
@@ -177,6 +178,8 @@ export abstract class Chart extends Observable {
         return this._destroyed;
     }
 
+    protected readonly interactionManager: InteractionManager;
+
     protected constructor(document = window.document, overrideDevicePixelRatio?: number) {
         super();
 
@@ -195,6 +198,11 @@ export abstract class Chart extends Observable {
         this.scene.root = root;
         this.scene.container = element;
         this.autoSize = true;
+
+        this.interactionManager = new InteractionManager(element);
+        this.interactionManager.addListener('click', (event) => this.onClick(event));
+        this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
+        this.interactionManager.addListener('exit', () => this.togglePointer(false));
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
@@ -220,8 +228,6 @@ export abstract class Chart extends Observable {
             document,
             () => this.container
         );
-
-        this.setupDomListeners(this.scene.canvas.element);
     }
 
     destroy() {
@@ -232,7 +238,7 @@ export abstract class Chart extends Observable {
         SizeMonitor.unobserve(this.element);
         this.container = undefined;
 
-        this.cleanupDomListeners(this.scene.canvas.element);
+        this.interactionManager.destroy();
 
         this.scene.destroy();
         this.series.forEach((s) => s.destroy());
@@ -799,28 +805,6 @@ export abstract class Chart extends Observable {
         }
     }
 
-    private _onMouseDown = this.onMouseDown.bind(this);
-    private _onMouseMove = this.onMouseMove.bind(this);
-    private _onMouseUp = this.onMouseUp.bind(this);
-    private _onMouseOut = this.onMouseOut.bind(this);
-    private _onClick = this.onClick.bind(this);
-
-    protected setupDomListeners(chartElement: HTMLCanvasElement) {
-        chartElement.addEventListener('mousedown', this._onMouseDown);
-        chartElement.addEventListener('mousemove', this._onMouseMove);
-        chartElement.addEventListener('mouseup', this._onMouseUp);
-        chartElement.addEventListener('mouseout', this._onMouseOut);
-        chartElement.addEventListener('click', this._onClick);
-    }
-
-    protected cleanupDomListeners(chartElement: HTMLCanvasElement) {
-        chartElement.removeEventListener('mousedown', this._onMouseDown);
-        chartElement.removeEventListener('mousemove', this._onMouseMove);
-        chartElement.removeEventListener('mouseup', this._onMouseUp);
-        chartElement.removeEventListener('mouseout', this._onMouseOut);
-        chartElement.removeEventListener('click', this._onClick);
-    }
-
     // Should be available after the first layout.
     protected seriesRect?: BBox;
     getSeriesRect(): Readonly<BBox | undefined> {
@@ -876,7 +860,7 @@ export abstract class Chart extends Observable {
         event?: MouseEvent;
     };
 
-    protected onMouseMove(event: MouseEvent): void {
+    protected onMouseMove(event: InteractionEvent<'hover'>): void {
         this.handleLegendMouseMove(event);
 
         if (this.tooltip.enabled) {
@@ -886,11 +870,11 @@ export abstract class Chart extends Observable {
         }
 
         this.lastPointerMeta = {
-            pageX: event.pageX,
-            pageY: event.pageY,
+            pageX: event.pageX ?? 0,
+            pageY: event.pageY ?? 0,
             offsetX: event.offsetX,
             offsetY: event.offsetY,
-            event,
+            event: event.sourceEvent as MouseEvent,
         };
         this.pointerScheduler.schedule();
 
@@ -944,18 +928,7 @@ export abstract class Chart extends Observable {
         }
     }
 
-    protected onMouseDown(_event: MouseEvent) {
-        // Override point for subclasses.
-    }
-    protected onMouseUp(_event: MouseEvent) {
-        // Override point for subclasses.
-    }
-
-    protected onMouseOut(_event: MouseEvent) {
-        this.togglePointer(false);
-    }
-
-    protected onClick(event: MouseEvent) {
+    protected onClick(event: InteractionEvent<'click'>) {
         if (this.checkSeriesNodeClick()) {
             this.update(ChartUpdateType.SERIES_UPDATE);
             return;
@@ -966,7 +939,7 @@ export abstract class Chart extends Observable {
         }
         this.fireEvent<AgChartClickEvent>({
             type: 'click',
-            event,
+            event: event.sourceEvent,
         });
     }
 
@@ -995,7 +968,7 @@ export abstract class Chart extends Observable {
         this.fireEvent(seriesNodeClickEvent);
     }
 
-    private checkLegendClick(event: MouseEvent): boolean {
+    private checkLegendClick(event: InteractionEvent<'click'>): boolean {
         const {
             legend,
             legend: {
@@ -1037,7 +1010,7 @@ export abstract class Chart extends Observable {
 
     private pointerInsideLegend = false;
     private pointerOverLegendDatum = false;
-    private handleLegendMouseMove(event: MouseEvent) {
+    private handleLegendMouseMove(event: InteractionEvent<'hover'>) {
         if (!this.legend.enabled) {
             return;
         }
