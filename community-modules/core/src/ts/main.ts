@@ -463,11 +463,11 @@ export { CustomTooltipFeature } from "./widgets/customTooltipFeature";
 export { IAggregationStage } from "./interfaces/iAggregationStage";
 
 // charts
-export { ChartGroupsDef } from "./interfaces/iChartOptions";
-export { AgAreaSeriesMarker } from "./interfaces/iAgChartOptions";
+export * from "./interfaces/iChartOptions";
+export * from "./interfaces/iAgChartOptions";
 
 // sparklines
-export { AreaSparklineOptions } from "./interfaces/iSparklineCellRendererParams";
+export * from "./interfaces/iSparklineCellRendererParams";
 
 // modules
 export { Module } from "./interfaces/iModule";
