@@ -247,8 +247,25 @@ export class SeriesPanel extends Component {
                 seriesOptionLabelProperty: 'sectorLabel'
             });
             const sectorPanelComp = this.createBean(new FontPanel(sectorParams));
+            const positionRatioComp = this.getSectorLabelPositionRatio();
+            sectorPanelComp.addCompToPanel(positionRatioComp);
+
             this.addWidget(sectorPanelComp);
         }
+    }
+
+    private getSectorLabelPositionRatio(): AgSlider {
+        const expression = 'sectorLabel.positionRatio';
+        const currentValue = this.chartOptionsService.getSeriesOption<number>(expression, this.seriesType);
+
+        const sectorLabelPositionRatioSlider = this.createBean(new AgSlider());
+        return sectorLabelPositionRatioSlider
+            .setLabel(this.translate("positionRatio"))
+            .setStep(0.05)
+            .setMaxValue(getMaxValue(currentValue, 1))
+            .setTextFieldWidth(45)
+            .setValue(`${currentValue}`)
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.seriesType));
     }
 
     private initShadow() {
