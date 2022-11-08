@@ -39,19 +39,21 @@ const gridOptions: GridOptions = {
             format: '%H:%M',
           },
         },
-        category: {
-          label: {
-            rotation: 0,
-            formatter: (params) => {
-              return moment(new Date(params.value)).format('DD MMM')
-            },
-          },
-        },
         number: {
           label: {
             formatter: (params) => {
               return params.value + '%'
             },
+          },
+        },
+      },
+      series: {
+        tooltip: {
+          renderer: ({ xValue, yValue }) => {
+            xValue = xValue instanceof Date ? xValue : new Date(xValue);
+            return {
+              content: `${moment(xValue).format('HH:mm:ss')}: ${yValue}%`,
+            };
           },
         },
       },
