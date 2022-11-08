@@ -417,9 +417,8 @@ export class RowContainerCtrl extends BeanStub {
         // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
         const rowsThisContainer = allRowsRegardlessOfFullWidth.filter(doesRowMatch);
 
-        const type = getRowContainerTypeForName(this.name);
-
-        rowsThisContainer.forEach(rowCtrl => rowCtrl.setRowContainerCtrl(this, type));
+        // const type = getRowContainerTypeForName(this.name);
+        // rowsThisContainer.forEach(rowCtrl => rowCtrl.setRowContainerCtrl(this, type));
         this.comp.setRowCtrls(rowsThisContainer);
     }
 
