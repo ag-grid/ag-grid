@@ -235,7 +235,7 @@ export class SetValueModel implements IEventEmitter {
         const uniqueValues = this.caseSensitive ? undefined : this.uniqueValues(allValues);
         const availableValues = this.showAvailableOnly() ? this.sortValues(this.getValuesFromRows(true, uniqueValues)) : allValues;
 
-        this.availableValues = _.convertToSet(availableValues);
+        this.availableValues = new Set(availableValues);
         this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED });
 
         this.updateDisplayedValues();
@@ -338,7 +338,7 @@ export class SetValueModel implements IEventEmitter {
     public selectAllMatchingMiniFilter(clearExistingSelection = false): void {
         if (this.miniFilterText == null) {
             // ensure everything is selected
-            this.selectedValues = _.convertToSet(this.allValues);
+            this.selectedValues = new Set(this.allValues);
         } else {
             // ensure everything that matches the mini filter is selected
             if (clearExistingSelection) { this.selectedValues.clear(); }
@@ -375,11 +375,11 @@ export class SetValueModel implements IEventEmitter {
     }
 
     public isEverythingVisibleSelected(): boolean {
-        return this.displayedValues.filter(it => this.isValueSelected(it))!.length === this.displayedValues.length;
+        return !this.displayedValues.some(it => !this.isValueSelected(it));
     }
 
     public isNothingVisibleSelected(): boolean {
-        return this.displayedValues.filter(it => this.isValueSelected(it))!.length === 0;
+        return !this.displayedValues.some(it => this.isValueSelected(it));
     }
 
     public getModel(): (string | null)[] | null {
@@ -451,7 +451,7 @@ export class SetValueModel implements IEventEmitter {
         if (this.filterParams.defaultToNothingSelected) {
             this.selectedValues.clear();
         } else {
-            this.selectedValues = _.convertToSet(values || []);
+            this.selectedValues = new Set(values);
         }
     }
 }
