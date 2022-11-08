@@ -71,7 +71,7 @@ export class ScatterChartProxy extends CartesianChartProxy {
         params: UpdateChartParams,
     ): AgScatterSeriesOptions[] {
         const { data } = params;
-        const { chartTheme: { palette } } = this;
+        const palette = this.chartPalette;
 
         const filteredOutKey = (key: string) => `${key}-filtered-out`;
 
@@ -96,8 +96,8 @@ export class ScatterChartProxy extends CartesianChartProxy {
 
         const updatePrimarySeries = (series: AgScatterSeriesOptions, idx: number): AgScatterSeriesOptions => {
             const { sizeKey } = series;
-            const fill = palette.fills[idx];
-            const stroke = palette.strokes[idx];
+            const fill = palette?.fills[idx];
+            const stroke = palette?.strokes[idx];
 
             let markerDomain = calcMarkerDomain(data, sizeKey);
             const marker: AgScatterSeriesMarker<any> = {

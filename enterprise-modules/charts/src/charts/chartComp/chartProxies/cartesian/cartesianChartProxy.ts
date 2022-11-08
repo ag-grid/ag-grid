@@ -30,8 +30,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
 
     protected createChart(): AgChartInstance {
         return AgChart.create({
-            container: this.chartProxyParams.parentElement,
-            theme: this.chartTheme,
+            container: this.chartProxyParams.parentElement
         });
     }
 

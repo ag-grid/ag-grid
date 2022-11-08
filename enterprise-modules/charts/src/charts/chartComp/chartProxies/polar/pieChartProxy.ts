@@ -26,8 +26,7 @@ export class PieChartProxy extends ChartProxy {
     protected createChart(): AgChartInstance {
         return AgChart.create({
             type: 'pie',
-            container: this.chartProxyParams.parentElement,
-            theme: this.chartTheme,
+            container: this.chartProxyParams.parentElement
         });
     }
 
@@ -84,7 +83,7 @@ export class PieChartProxy extends ChartProxy {
                     },
                     calloutLine: {
                         ...seriesDefaults.calloutLine,
-                        colors: this.chartTheme.palette.strokes,
+                        colors: this.chartPalette?.strokes,
                     }
                 }
             }
@@ -128,7 +127,7 @@ export class PieChartProxy extends ChartProxy {
     }
 
     private extractCrossFilterSeries(series: AgPieSeriesOptions[]) {
-        const palette = this.chartTheme.palette;
+        const palette = this.chartPalette;
         const seriesOverrides = this.extractSeriesOverrides();
 
         const primaryOptions = (seriesOptions: AgPieSeriesOptions) => {
@@ -158,10 +157,10 @@ export class PieChartProxy extends ChartProxy {
                 calloutLabel: seriesOverrides.calloutLabel, // labels can be shown on the 'filtered-out' series
                 calloutLine: seriesOverrides.calloutLine && {
                     ...seriesOverrides.calloutLine,
-                    colors: seriesOverrides.calloutLine.colors ?? palette.strokes,
+                    colors: seriesOverrides.calloutLine.colors ?? palette!.strokes,
                 },
-                fills: changeOpacity(seriesOptions.fills ?? palette.fills, 0.3),
-                strokes: changeOpacity(seriesOptions.strokes ?? palette.strokes, 0.3),
+                fills: changeOpacity(seriesOptions.fills ?? palette!.fills, 0.3),
+                strokes: changeOpacity(seriesOptions.strokes ?? palette!.strokes, 0.3),
                 showInLegend: false,
             };
         }
