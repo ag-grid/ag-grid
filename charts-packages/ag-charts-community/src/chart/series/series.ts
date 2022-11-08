@@ -215,7 +215,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 layer: true,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
                 zIndexSubOrder: [this.id, 15000],
-                optimiseDirtyTracking: true,
             })
         );
         this.highlightNode = this.highlightGroup.appendChild(new Group({ name: 'highlightNode' }));
