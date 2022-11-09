@@ -6,8 +6,8 @@ import { useExampleFileNodes } from 'components/example-runner/use-example-file-
 import { getExampleInfo } from 'components/example-runner/helpers';
 
 /* eslint-disable limited-exports-page-templates */
-const ExampleRunnerPage = ({ query: { pageName, library, framework, useFunctionalReact, useVue3, importType, name, title, type, options, exampleIndexData } }) => {
-    const nodes = exampleIndexData || useExampleFileNodes();
+const ExampleRunnerPage = ({ query: { pageName, library, framework, useFunctionalReact, useVue3, importType, name, title, type, options } }) => {
+    const nodes = useExampleFileNodes();
     const exampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, importType);
 
     return <div style={{ height: '100vh', width: '100%' }}>

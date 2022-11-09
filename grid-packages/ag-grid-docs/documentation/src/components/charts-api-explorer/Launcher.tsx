@@ -7,6 +7,7 @@ import { AgChartOptions } from "ag-charts-community";
 import styles from './Launcher.module.scss';
 import { openPlunker, getExampleInfo } from "../example-runner/helpers";
 import { doOnEnter } from "../key-handlers";
+import { useExampleFileNodes } from '../example-runner/use-example-file-nodes';
 
 interface LauncherProps {
     framework: string;
@@ -17,12 +18,10 @@ interface LauncherProps {
 
     fullScreenGraph: boolean;
     setFullScreenGraph(fullScreenGraph: boolean): void;
-
-    exampleIndexData: {};
 }
 
-export const Launcher = ({ framework, options, fullScreen, setFullScreen, fullScreenGraph, setFullScreenGraph, exampleIndexData }: LauncherProps) => {
-    const exampleInfo = buildExampleInfo(framework, options, exampleIndexData);
+export const Launcher = ({ framework, options, fullScreen, setFullScreen, fullScreenGraph, setFullScreenGraph }: LauncherProps) => {
+    const exampleInfo = buildExampleInfo(framework, options);
 
     return (
         <div className={styles['launcher']}>
@@ -147,7 +146,7 @@ const mutateExampleInfo = (exampleInfo: ExampleInfo, mainFile: string, options: 
     }
 };
 
-const buildExampleInfo = (providedFramework: string, options: AgChartOptions, exampleIndexData: {}): ExampleInfo => {
+const buildExampleInfo = (providedFramework: string, options: AgChartOptions): ExampleInfo => {
     const { framework, useFunctionalReact, useVue3, useTypescript, mainFile } = determineFrameworks(providedFramework);
     const library = 'charts';
     const pageName = 'charts-api-explorer';
@@ -158,7 +157,7 @@ const buildExampleInfo = (providedFramework: string, options: AgChartOptions, ex
     const exampleImportType = 'modules';
 
     const exampleInfo: ExampleInfo = getExampleInfo(
-        exampleIndexData,
+        useExampleFileNodes(),
         library,
         pageName,
         exampleName,

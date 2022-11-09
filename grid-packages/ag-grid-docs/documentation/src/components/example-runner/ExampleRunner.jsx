@@ -31,7 +31,7 @@ export const ExampleRunner = props => {
                 enableVue3,
                 useVue3: enableVue3 ? useVue3 : false,
                 useTypescript,
-                set
+                set,
             };
 
             return <ExampleRunnerInner {...innerProps} />;
@@ -150,8 +150,8 @@ const saveChartIndexHtmlPermutations = (nodes, library, pageName, name, title, t
     }
 };
 
-const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, library, exampleImportType, useFunctionalReact, enableVue3, useVue3, useTypescript, set, exampleIndexData }) => {
-    const nodes = exampleIndexData || useExampleFileNodes();
+const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, library, exampleImportType, useFunctionalReact, enableVue3, useVue3, useTypescript, set }) => {
+    const nodes = useExampleFileNodes();
     const [showCode, setShowCode] = useState(!!(options && options.showCode));
     const exampleInfo = useMemo(
         () => getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, useTypescript, exampleImportType),

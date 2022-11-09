@@ -242,7 +242,7 @@ const CACHED_MODELS: Record<string, JsonModel> = {};
 /**
  * This displays the list of options in the Standalone Charts API Explorer.
  */
-export const Options = ({ jsonData, chartType, axisType, updateOption }) => {
+export const Options = ({ chartType, axisType, updateOption }) => {
     const [searchText, setSearchText] = useState('');
     const getTrimmedSearchText = () => searchText.trim();
     const matchesSearch = (name: string) => name.toLowerCase().indexOf(getTrimmedSearchText().toLowerCase()) >= 0;
@@ -269,7 +269,7 @@ export const Options = ({ jsonData, chartType, axisType, updateOption }) => {
 
     const optionsType = chartType === 'pie' ? 'AgPolarChartOptions' : 'AgCartesianChartOptions';
     if (CACHED_MODELS[chartType] == null) {
-        const { interfaceLookup, codeLookup } = loadLookups('charts-api', jsonData, 'charts-api/api.json');
+        const { interfaceLookup, codeLookup } = loadLookups('charts-api', 'charts-api/api.json');
         const model = CACHED_MODELS[chartType] = buildModel(optionsType, interfaceLookup, codeLookup);
         const seriesModelDesc = model.properties['series']?.desc;
         if (seriesModelDesc.type === 'array' && seriesModelDesc.elements.type === 'union') {

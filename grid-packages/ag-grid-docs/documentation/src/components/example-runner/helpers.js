@@ -1,9 +1,9 @@
-import {withPrefix} from 'gatsby';
-import {encodeQueryParams} from 'use-query-params';
-import {stringify} from 'query-string';
-import {agGridVersion, localPrefix} from 'utils/consts';
-import {getIndexHtml} from './index-html-helper';
-import {ParameterConfig} from '../../pages/example-runner';
+import { withPrefix } from 'gatsby';
+import { encodeQueryParams } from 'use-query-params';
+import { stringify } from 'query-string';
+import { agGridVersion, localPrefix } from 'utils/consts';
+import { getIndexHtml } from './index-html-helper';
+import { ParameterConfig } from '../../pages/example-runner';
 import isDevelopment from 'utils/is-development';
 
 /**
@@ -33,7 +33,7 @@ const getInternalFramework = (framework, useFunctionalReact, useVue3, useTypescr
 };
 
 export const getExampleInfo = (
-    exampleIndexData,
+    nodes,
     library,
     pageName,
     name,
@@ -114,9 +114,9 @@ export const getExampleInfo = (
         sourcePath,
         boilerplatePath,
         appLocation,
-        getFile: name => exampleIndexData.filter(file => file.relativePath === sourcePath + name)[0],
+        getFile: name => nodes.filter(file => file.relativePath === sourcePath + name)[0],
         getFiles: (extension, exclude = () => false) =>
-            exampleIndexData.filter(file => file.relativePath.startsWith(sourcePath) &&
+            nodes.filter(file => file.relativePath.startsWith(sourcePath) &&
                 (!extension || file.base.endsWith(`.${extension}`)) &&
                 !exclude(file)
             )
@@ -124,9 +124,7 @@ export const getExampleInfo = (
 };
 
 const getFrameworkFiles = (framework, internalFramework) => {
-    if (framework === 'javascript' && internalFramework !== 'typescript') {
-        return [];
-    }
+    if (framework === 'javascript' && internalFramework !== 'typescript') { return []; }
 
     // spl temporary css loader
     let files = ['systemjs.config.js', 'css.js'];
@@ -143,7 +141,7 @@ const getFrameworkFiles = (framework, internalFramework) => {
 };
 
 export const getExampleFiles = (exampleInfo, includePackageFile = false) => {
-    const {sourcePath, framework, internalFramework, boilerplatePath} = exampleInfo;
+    const { sourcePath, framework, internalFramework, boilerplatePath } = exampleInfo;
 
     const filesForExample = exampleInfo
         .getFiles()
@@ -179,7 +177,7 @@ export const getExampleFiles = (exampleInfo, includePackageFile = false) => {
         const sourcePromise = (f.content ?? fetch(f.publicURL).then(response => response.text()));
         const promise = sourcePromise
             .then(source => {
-                files[f.path] = {source, isFramework: f.isFramework}
+                files[f.path] = { source, isFramework: f.isFramework }
             });
 
         promises.push(promise);
@@ -194,7 +192,7 @@ export const getExampleFiles = (exampleInfo, includePackageFile = false) => {
 };
 
 export const openPlunker = exampleInfo => {
-    const {title, framework, internalFramework} = exampleInfo;
+    const { title, framework, internalFramework } = exampleInfo;
 
     getExampleFiles(exampleInfo, true).then(files => {
 

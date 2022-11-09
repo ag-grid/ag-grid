@@ -500,26 +500,20 @@ function typeWrapping(type: string): Wrapping {
     return "none";
 }
 
-export function loadLookups(lookupRoot: string, jsonData: {}, overridesrc?: string): { interfaceLookup; codeLookup } {
-    const nodes = jsonData ? null : useJsonFileNodes();
+export function loadLookups(lookupRoot: string, overridesrc?: string): { interfaceLookup; codeLookup } {
     const interfaceLookup: InterfaceLookup = getJsonFromFile(
-        jsonData,
-        nodes,
+        useJsonFileNodes(),
         undefined,
         `${lookupRoot}/interfaces.AUTO.json`
     );
     const codeLookup: CodeLookup = getJsonFromFile(
-        jsonData,
-        nodes,
+        useJsonFileNodes(),
         undefined,
         `${lookupRoot}/doc-interfaces.AUTO.json`
     );
 
     if (overridesrc) {
-        const overrides: Overrides = getJsonFromFile(jsonData,
-            nodes,
-            undefined,
-            overridesrc);
+        const overrides: Overrides = getJsonFromFile(useJsonFileNodes(), undefined, overridesrc);
 
         Object.entries(overrides)
             .filter(([type]) => type !== '_config_')
