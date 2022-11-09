@@ -161,7 +161,6 @@ import {
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
 import { AngularFrameworkComponentWrapper } from "./angularFrameworkComponentWrapper";
-import { AgGridColumn } from "./ag-grid-column.component";
 
 @Component({
     selector: 'ag-grid-angular',
@@ -189,8 +188,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     public api: GridApi<TData>;
     public columnApi: ColumnApi;
 
-    @ContentChildren(AgGridColumn) public columns: QueryList<AgGridColumn>;
-
     constructor(elementDef: ElementRef,
         private viewContainerRef: ViewContainerRef,
         private angularFrameworkOverrides: AngularFrameworkOverrides,
@@ -215,13 +212,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             },
             modules: (this.modules || []) as any
         };
-
-        if (this.columns && this.columns.length > 0) {
-            this.gridOptions.columnDefs = this.columns
-                .map((column: AgGridColumn): ColDef => {
-                    return column.toColDef();
-                });
-        }
 
         new Grid(this._nativeElement, this.gridOptions, this.gridParams);
 
@@ -301,27 +291,30 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public statusBar: { statusPanels: StatusPanelDef[]; } | undefined = undefined;
     /** Specifies the side bar components.     */
     @Input() public sideBar: SideBarDef | string | string[] | boolean | null | undefined = undefined;
-    /** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false`     */
+    /** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false`      */
     @Input() public suppressContextMenu: boolean | undefined = undefined;
     /** When using `suppressContextMenu`, you can use the `onCellContextMenu` function to provide your own code to handle cell `contextmenu` events.
-     * This flag is useful to prevent the browser from showing its default context menu.
-     * Default: `false`     */
+         * This flag is useful to prevent the browser from showing its default context menu.
+         * Default: `false`
+         */
     @Input() public preventDefaultOnContextMenu: boolean | undefined = undefined;
-    /** Allows context menu to show, even when `Ctrl` key is held down. Default: `false`     */
+    /** Allows context menu to show, even when `Ctrl` key is held down. Default: `false`      */
     @Input() public allowContextMenuWithControlKey: boolean | undefined = undefined;
     /** Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header. Default: `false`     */
     @Input() public suppressMenuHide: boolean | undefined = undefined;
-    /** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component. Default: `false`     */
+    /** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component. Default: `false`      */
     @Input() public enableBrowserTooltips: boolean | undefined = undefined;
     /** The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.
-     *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
-     * Default: `2000`     */
+         *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
+         * Default: `2000`
+         */
     @Input() public tooltipShowDelay: number | undefined = undefined;
     /** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
-     *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
-     * Default: `10000`     */
+         *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
+         * Default: `10000`
+         */
     @Input() public tooltipHideDelay: number | undefined = undefined;
-    /** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false`     */
+    /** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false`      */
     @Input() public tooltipMouseTrack: boolean | undefined = undefined;
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc).     */
     @Input() public popupParent: HTMLElement | null | undefined = undefined;
@@ -330,7 +323,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false`     */
     @Input() public copyGroupHeadersToClipboard: boolean | undefined = undefined;
     /** Specify the delimiter to use when copying to clipboard.
-     * Default: `\t`     */
+         * Default: `\t`
+        */
     @Input() public clipboardDelimiter: string | undefined = undefined;
     /** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false`     */
     @Input() public suppressCopyRowsToClipboard: boolean | undefined = undefined;
@@ -354,15 +348,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public maintainColumnOrder: boolean | undefined = undefined;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
     @Input() public suppressFieldDotNotation: boolean | undefined = undefined;
-    /** @deprecated     */
+    /** @deprecated v24     */
     @Input() public deltaColumnMode: boolean | undefined = undefined;
-    /** @deprecated     */
+    /** @deprecated v26     */
     @Input() public applyColumnDefOrder: boolean | undefined = undefined;
-    /** @deprecated     */
+    /** @deprecated v24     */
     @Input() public immutableColumns: boolean | undefined = undefined;
-    /** @deprecated     */
+    /** @deprecated v24     */
     @Input() public suppressSetColumnStateEvents: boolean | undefined = undefined;
-    /** @deprecated     */
+    /** @deprecated v24     */
     @Input() public suppressColumnStateEvents: boolean | undefined = undefined;
     /** @deprecated Set via `defaultColDef.width`     */
     @Input() public colWidth: number | undefined = undefined;
@@ -395,8 +389,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false`     */
     @Input() public suppressAutoSize: boolean | undefined = undefined;
     /** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.
-     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.
-     * Default: `4`     */
+         * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.
+         * Default: `4`
+         */
     @Input() public autoSizePadding: number | undefined = undefined;
     /** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false`     */
     @Input() public skipHeaderOnAutoSize: boolean | undefined = undefined;
@@ -413,16 +408,19 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid.     */
     @Input() public readOnlyEdit: boolean | undefined = undefined;
     /** Set this to `true` to stop cell editing when grid loses focus.
-     * The default is that the grid stays editing until focus goes onto another cell.
-     * Default: `false`     */
+         * The default is that the grid stays editing until focus goes onto another cell.
+         * Default: `false`
+         */
     @Input() public stopEditingWhenCellsLoseFocus: boolean | undefined = undefined;
     /** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.
-     * i.e. pressing the `Enter` key will move down to the cell beneath.
-     * Default: `false`     */
+         * i.e. pressing the `Enter` key will move down to the cell beneath.
+         * Default: `false`
+         */
     @Input() public enterMovesDown: boolean | undefined = undefined;
     /** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.
-     * i.e. pressing the Enter key will move down to the cell beneath.
-     * Default: `false`     */
+         * i.e. pressing the Enter key will move down to the cell beneath.
+         * Default: `false`
+         */
     @Input() public enterMovesDownAfterEdit: boolean | undefined = undefined;
     /** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users.     */
     @Input() public enableCellEditingOnBackspace: boolean | undefined = undefined;
@@ -430,7 +428,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public undoRedoCellEditing: boolean | undefined = undefined;
     /** Set the size of the undo / redo stack. Default: `10`     */
     @Input() public undoRedoCellEditingLimit: number | undefined = undefined;
-    /** @deprecated Use stopEditingWhenCellsLoseFocus instead     */
+    /** @deprecated v25 Use stopEditingWhenCellsLoseFocus instead     */
     @Input() public stopEditingWhenGridLosesFocus: boolean | undefined = undefined;
     /** A default configuration object used to export to CSV.     */
     @Input() public defaultCsvExportParams: CsvExportParams | undefined = undefined;
@@ -442,7 +440,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressExcelExport: boolean | undefined = undefined;
     /** A list (array) of Excel styles to be used when exporting to Excel with styles.     */
     @Input() public excelStyles: ExcelStyle[] | undefined = undefined;
-    /** @deprecated Use defaultCsvExportParams or defaultExcelExportParams     */
+    /** @deprecated v25 Use defaultCsvExportParams or defaultExcelExportParams     */
     @Input() public defaultExportParams: CsvExportParams | ExcelExportParams | undefined = undefined;
     /** Rows are filtered using this text as a quick filter.     */
     @Input() public quickFilterText: string | undefined = undefined;
@@ -458,12 +456,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public customChartThemes: { [name: string]: AgChartTheme } | undefined = undefined;
     /** Chart theme overrides applied to all themes.     */
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
-    /** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false`     */
+    /** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`.     */
     @Input() public enableChartToolPanelsButton: boolean | undefined = undefined;
+    /** Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Default: `false`     */
+    @Input() public suppressChartToolPanelsButton: boolean | undefined = undefined;
     /** Allows customisation of the Chart Tool Panels, such as changing the tool panels visibility and order, as well as choosing which charts should be displayed in the settings panel.     */
     @Input() public chartToolPanelsDef: ChartToolPanelsDef | undefined = undefined;
     /** Provide your own loading cell renderer to use when data is loading via a DataSource.
-     * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.     */
+        * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
+        */
     @Input() public loadingCellRenderer: any = undefined;
     /** @deprecated As of v27, use `loadingCellRenderer` for framework components too.     */
     @Input() public loadingCellRendererFramework: any = undefined;
@@ -480,7 +481,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Sets the number of details rows to keep. Default: `10`     */
     @Input() public keepDetailRowsCount: number | undefined = undefined;
     /** Provide a custom `detailCellRenderer` to use when a master row is expanded.
-     * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.     */
+        * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.
+        */
     @Input() public detailCellRenderer: any = undefined;
     /** @deprecated As of v27, use `detailCellRenderer` for framework components too.     */
     @Input() public detailCellRendererFramework: any = undefined;
@@ -497,8 +499,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Change this value to set the tabIndex order of the Grid within your application. Default: `0`     */
     @Input() public tabIndex: number | undefined = undefined;
     /** The number of rows rendered outside the viewable area the grid renders.
-     * Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.
-     * Default: `10`     */
+         * Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.
+         * Default: `10`
+         */
     @Input() public rowBuffer: number | undefined = undefined;
     /** Set to `true` to turn on the value cache. Default: `false`     */
     @Input() public valueCache: boolean | undefined = undefined;
@@ -507,9 +510,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `true` to allow cell expressions. Default: `false`     */
     @Input() public enableCellExpressions: boolean | undefined = undefined;
     /** If `true`, row nodes do not have their parents set.
-     * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.
-     * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.
-     * Default: `false`     */
+         * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.
+         * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.
+         * Default: `false`
+         */
     @Input() public suppressParentsInRowNodes: boolean | undefined = undefined;
     /** Disables touch support (but does not remove the browser's efforts to simulate mouse events on touch). Default: `false`     */
     @Input() public suppressTouch: boolean | undefined = undefined;
@@ -528,7 +532,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Provide a template for 'loading' overlay.     */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
     /** Provide a custom loading overlay component.
-     * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.     */
+        * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.
+        */
     @Input() public loadingOverlayComponent: any = undefined;
     /** @deprecated As of v27, use `loadingOverlayComponent` for framework components too.     */
     @Input() public loadingOverlayComponentFramework: any = undefined;
@@ -539,7 +544,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Provide a template for 'no rows' overlay.     */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
     /** Provide a custom no rows overlay component.
-     * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.     */
+        * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.
+        */
     @Input() public noRowsOverlayComponent: any = undefined;
     /** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too.     */
     @Input() public noRowsOverlayComponentFramework: any = undefined;
@@ -556,9 +562,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail. Default: `false`     */
     @Input() public paginateChildRows: boolean | undefined = undefined;
     /** If `true`, the default grid controls for navigation are hidden.
-     * This is useful if `pagination=true` and you want to provide your own pagination controls.
-     * Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages.
-     * Default: `false`     */
+         * This is useful if `pagination=true` and you want to provide your own pagination controls.
+         * Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages.
+         * Default: `false`
+         */
     @Input() public suppressPaginationPanel: boolean | undefined = undefined;
     /** Set to `true` to enable pivot mode. Default: `false`     */
     @Input() public pivotMode: boolean | undefined = undefined;
@@ -591,15 +598,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `true` to have cells flash after data changes. Default: `false`     */
     @Input() public enableCellChangeFlash: boolean | undefined = undefined;
     /** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its "flashed" state.
-     * Default: `500`     */
+         * Default: `500`
+         */
     @Input() public cellFlashDelay: number | undefined = undefined;
     /** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.
-     * Default: `1000`     */
+         * Default: `1000`
+         */
     @Input() public cellFadeDelay: number | undefined = undefined;
     /** Set to `true` to have cells flash after data changes even when the change is due to filtering. Default: `false`     */
     @Input() public allowShowChangeAfterFilter: boolean | undefined = undefined;
     /** Switch between layout options: `normal`, `autoHeight`, `print`.
-     * Default: `normal`     */
+         * Default: `normal`
+         */
     @Input() public domLayout: 'normal' | 'autoHeight' | 'print' | undefined = undefined;
     /** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false`     */
     @Input() public ensureDomOrder: boolean | undefined = undefined;
@@ -608,8 +618,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered. Default: `false`     */
     @Input() public suppressColumnVirtualisation: boolean | undefined = undefined;
     /** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).
-     * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen), or `suppressRowVirtualisation` is true, or if your grid height is able to display more than 500 rows at once.**
-     * Default: `false`     */
+         * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen), or `suppressRowVirtualisation` is true, or if your grid height is able to display more than 500 rows at once.**
+         * Default: `false`
+         */
     @Input() public suppressMaxRenderedRowRestriction: boolean | undefined = undefined;
     /** Set to `true` so that the grid doesn't virtualise the rows. For example, if you have 100 rows, but only 10 visible due to scrolling, all 100 will always be rendered. Default: `false`     */
     @Input() public suppressRowVirtualisation: boolean | undefined = undefined;
@@ -624,12 +635,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `true` to enable dragging multiple rows at the same time. Default: `false`     */
     @Input() public rowDragMultiRow: boolean | undefined = undefined;
     /** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.
-     * If this callback is not set, the current cell value will be used.
-     * If the `rowDragText` callback is set in the ColDef it will take precedence over this, except when
-     * `rowDragEntireRow=true`.     */
+         * If this callback is not set, the current cell value will be used.
+         * If the `rowDragText` callback is set in the ColDef it will take precedence over this, except when
+         * `rowDragEntireRow=true`.
+         */
     @Input() public rowDragText: ((params: IRowDragItem, dragItemCount: number) => string) | undefined = undefined;
     /** Provide your own cell renderer component to use for full width rows.
-     * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.     */
+        * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.
+        */
     @Input() public fullWidthCellRenderer: any = undefined;
     /** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too.     */
     @Input() public fullWidthCellRendererFramework: any = undefined;
@@ -637,16 +650,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public fullWidthCellRendererParams: any = undefined;
     /** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling.     */
     @Input() public embedFullWidthRows: boolean | undefined = undefined;
-    /** @deprecated     */
+    /** @deprecated v21     */
     @Input() public deprecatedEmbedFullWidthRows: boolean | undefined = undefined;
     /** Specifies how the results of row grouping should be displayed.
-     * 
-     *  The options are:
-     * 
-     * - `'singleColumn'`: single group column automatically added by the grid.
-     * - `'multipleColumns'`: a group column per row group is added automatically.
-     * - `'groupRows'`: group rows are automatically added instead of group columns.
-     * - `'custom'`: informs the grid that group columns will be provided.     */
+         *
+         *  The options are:
+         *
+         * - `'singleColumn'`: single group column automatically added by the grid.
+         * - `'multipleColumns'`: a group column per row group is added automatically.
+         * - `'groupRows'`: group rows are automatically added instead of group columns.
+         * - `'custom'`: informs the grid that group columns will be provided.
+         */
     @Input() public groupDisplayType: RowGroupingDisplayType | undefined = undefined;
     /** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. Default: `0`     */
     @Input() public groupDefaultExpanded: number | undefined = undefined;
@@ -659,10 +673,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to determine whether filters should be applied on aggregated group values. Default: `false`     */
     @Input() public groupAggFiltering: boolean | IsRowFilterable<TData> | undefined = undefined;
     /** If grouping, this controls whether to show a group footer when the group is expanded.
-     * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.
-     * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).
-     * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.
-     * Default: `false`     */
+         * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.
+         * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).
+         * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.
+         * Default: `false`
+         */
     @Input() public groupIncludeFooter: boolean | undefined = undefined;
     /** Set to `true` to show a 'grand total' group footer across all groups. Default: `false`     */
     @Input() public groupIncludeTotalFooter: boolean | undefined = undefined;
@@ -681,7 +696,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never`     */
     @Input() public rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never' | undefined = undefined;
     /** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
-     * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.     */
+        * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.
+        */
     @Input() public groupRowRenderer: any = undefined;
     /** @deprecated As of v27, use `groupRowRenderer` for framework components too.     */
     @Input() public groupRowRendererFramework: any = undefined;
@@ -693,19 +709,19 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public treeData: boolean | undefined = undefined;
     /** Set to `true` to suppress sort indicators and actions from the row group panel. Default: `false`.     */
     @Input() public rowGroupPanelSuppressSort: boolean | undefined = undefined;
-    /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.     */
+    /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/
     @Input() public groupRowsSticky: boolean | undefined = undefined;
-    /** @deprecated - this is now groupRowRendererParams.innerRenderer     */
+    /** @deprecated v24 - this is now groupRowRendererParams.innerRenderer     */
     @Input() public groupRowInnerRenderer: any = undefined;
-    /** @deprecated - this is now groupRowRendererParams.innerRenderer     */
+    /** @deprecated v24 - this is now groupRowRendererParams.innerRenderer     */
     @Input() public groupRowInnerRendererFramework: any = undefined;
-    /** @deprecated - Use groupDisplayType = 'multipleColumns' instead     */
+    /** @deprecated v26 - Use groupDisplayType = 'multipleColumns' instead     */
     @Input() public groupMultiAutoColumn: boolean | undefined = undefined;
-    /** @deprecated - Use groupDisplayType = 'groupRows' instead     */
+    /** @deprecated v26 - Use groupDisplayType = 'groupRows' instead     */
     @Input() public groupUseEntireRow: boolean | undefined = undefined;
-    /** @deprecated - Use groupDisplayType = 'custom' instead     */
+    /** @deprecated v26 - Use groupDisplayType = 'custom' instead     */
     @Input() public groupSuppressAutoColumn: boolean | undefined = undefined;
-    /** @deprecated - no longer needed, transaction updates keep group state     */
+    /** @deprecated v24 - no longer needed, transaction updates keep group state     */
     @Input() public rememberGroupStateWhenNewData: boolean | undefined = undefined;
     /** Data to be displayed as pinned top rows in the grid.     */
     @Input() public pinnedTopRowData: any[] | undefined = undefined;
@@ -715,48 +731,54 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public rowModelType: RowModelType | undefined = undefined;
     /** Set the data to be displayed as rows in the grid.     */
     @Input() public rowData: TData[] | null | undefined = undefined;
-    /** @deprecated Immutable Data is on by default when grid callback getRowId() is implemented
+    /** @deprecated 27.1 Immutable Data is on by default when grid callback getRowId() is implemented
          * Enables Immutable Data mode, for compatibility with immutable stores. Default: `false`     */
     @Input() public immutableData: boolean | undefined = undefined;
     /** How many milliseconds to wait before executing a batch of async transactions.     */
     @Input() public asyncTransactionWaitMillis: number | undefined = undefined;
     /** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false`     */
     @Input() public suppressModelUpdateAfterUpdateTransaction: boolean | undefined = undefined;
-    /** @deprecated     */
+    /** @deprecated v23     */
     @Input() public deltaRowDataMode: boolean | undefined = undefined;
-    /** @deprecated use asyncTransactionWaitMillis instead     */
+    /** @deprecated v23 use asyncTransactionWaitMillis instead     */
     @Input() public batchUpdateWaitMillis: number | undefined = undefined;
     /** Provide the datasource for infinite scrolling.     */
     @Input() public datasource: IDatasource | undefined = undefined;
     /** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.
-     * Default: `1`     */
+         * Default: `1`
+         */
     @Input() public cacheOverflowSize: number | undefined = undefined;
     /** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.
-     * Default: `1`     */
+         * Default: `1`
+         */
     @Input() public infiniteInitialRowCount: number | undefined = undefined;
     /** Set how many loading rows to display to the user for the root level group.
-     * Default: `1`     */
+         * Default: `1`
+         */
     @Input() public serverSideInitialRowCount: number | undefined = undefined;
-    /** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.
+    /** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.
          * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,
          * Full Store is used.
          */
     @Input() public serverSideStoreType: ServerSideStoreType | undefined = undefined;
     /** Set whether Server-side Row Model will use Infinite Scrolling
-     * Default: `false`     */
+         * Default: `false`
+         */
     @Input() public serverSideInfiniteScroll: boolean | undefined = undefined;
     /** How many rows for each block in the store, i.e. how many rows returned from the server at a time.
-     * Default: `100`     */
+         * Default: `100`
+         */
     @Input() public cacheBlockSize: number | undefined = undefined;
     /** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value.     */
     @Input() public maxBlocksInCache: number | undefined = undefined;
     /** How many requests to hit the server with concurrently. If the max is reached, requests are queued.
-     * Set to `-1` for no maximum restriction on requests.
-     * Default: `2`     */
+         * Set to `-1` for no maximum restriction on requests.
+         * Default: `2`
+         */
     @Input() public maxConcurrentDatasourceRequests: number | undefined = undefined;
     /** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled.     */
     @Input() public blockLoadDebounceMillis: number | undefined = undefined;
-    /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false`     */
+    /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false`      */
     @Input() public purgeClosedRowNodes: boolean | undefined = undefined;
     /** Provide the `serverSideDatasource` for server side row model.     */
     @Input() public serverSideDatasource: IServerSideDatasource | undefined = undefined;
@@ -765,18 +787,20 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
     @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
     /** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
-     * as Sorting is always server side when Infinite Scroll is active.
-     * Default: `false`     */
+         * as Sorting is always server side when Infinite Scroll is active.
+         * Default: `false`
+         */
     @Input() public serverSideSortOnServer: boolean | undefined = undefined;
     /** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
-     * as Filtering is always server side when Infinite Scroll is active.
-     * Default: `false`     */
+          * as Filtering is always server side when Infinite Scroll is active.
+          * Default: `false`
+          */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
-    /** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.     */
+    /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead.     */
     @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
-    /** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.     */
+    /** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead.     */
     @Input() public serverSideFilteringAlwaysResets: boolean | undefined = undefined;
-    /** @deprecated     */
+    /** @deprecated v25     */
     @Input() public suppressEnterpriseResetOnNewColumns: boolean | undefined = undefined;
     /** To use the viewport row model you need to provide the grid with a `viewportDatasource`.     */
     @Input() public viewportDatasource: IViewportDatasource | undefined = undefined;
@@ -812,7 +836,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressRowDeselection: boolean | undefined = undefined;
     /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. Default: `false`     */
     @Input() public suppressRowClickSelection: boolean | undefined = undefined;
-    /** @deprecated This property has been deprecated. Use `suppressCellFocus` instead.
+    /** @deprecated v27 This property has been deprecated. Use `suppressCellFocus` instead.
          */
     @Input() public suppressCellSelection: boolean | undefined = undefined;
     /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. Default: `false`     */
@@ -820,9 +844,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** If `true`, only a single range can be selected. Default: `false`     */
     @Input() public suppressMultiRangeSelection: boolean | undefined = undefined;
     /** Set to `true` to be able to select the text within cells.
-     * 
-     *     **Note:** When this is set to `true`, the clipboard service is disabled.
-     * Default: `false`     */
+         *
+         *     **Note:** When this is set to `true`, the clipboard service is disabled.
+         * Default: `false`
+         */
     @Input() public enableCellTextSelection: boolean | undefined = undefined;
     /** Set to `true` to enable Range Selection. Default: `false`     */
     @Input() public enableRangeSelection: boolean | undefined = undefined;
@@ -832,9 +857,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public enableFillHandle: boolean | undefined = undefined;
     /** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. Default: `xy`     */
     @Input() public fillHandleDirection: 'x' | 'y' | 'xy' | undefined = undefined;
-    /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`     */
+    /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`*/
     @Input() public suppressClearOnFillReduction: boolean | undefined = undefined;
-    /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`     */
+    /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`      */
     @Input() public sortingOrder: ('asc' | 'desc' | null)[] | undefined = undefined;
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false`     */
     @Input() public accentedSort: boolean | undefined = undefined;
@@ -866,9 +891,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public columnHoverHighlight: boolean | undefined = undefined;
     @Input() public deltaSort: boolean | undefined = undefined;
     @Input() public treeDataDisplayType: TreeDataDisplayType | undefined = undefined;
-    /** @deprecated      */
+    /** @deprecated v26     */
     @Input() public angularCompileRows: boolean | undefined = undefined;
-    /** @deprecated      */
+    /** @deprecated v26     */
     @Input() public angularCompileFilters: boolean | undefined = undefined;
     @Input() public functionsPassive: boolean | undefined = undefined;
     @Input() public enableGroupEdit: boolean | undefined = undefined;
@@ -880,9 +905,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public postProcessPopup: ((params: PostProcessPopupParams<TData>) => void) | undefined = undefined;
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.     */
     @Input() public processCellForClipboard: ((params: ProcessCellForExportParams<TData>) => any) | undefined = undefined;
-    /** Allows you to process header values for the clipboard.     */
+    /** Allows you to process header values for the clipboard.      */
     @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams<TData>) => any) | undefined = undefined;
-    /** Allows you to process group header values for the clipboard.     */
+    /** Allows you to process group header values for the clipboard.      */
     @Input() public processGroupHeaderForClipboard: ((params: ProcessGroupHeaderForExportParams<TData>) => any) | undefined = undefined;
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid.     */
     @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams<TData>) => any) | undefined = undefined;
@@ -900,15 +925,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public createChartContainer: ((params: ChartRefParams<TData>) => void) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.     */
     @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null)) | undefined = undefined;
-    /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.     */
+    /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.      */
     @Input() public tabToNextHeader: ((params: TabToNextHeaderParams<TData>) => (HeaderPosition | null)) | undefined = undefined;
-    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.     */
+    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.      */
     @Input() public navigateToNextCell: ((params: NavigateToNextCellParams<TData>) => (CellPosition | null)) | undefined = undefined;
-    /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.     */
+    /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.      */
     @Input() public tabToNextCell: ((params: TabToNextCellParams<TData>) => (CellPosition | null)) | undefined = undefined;
-    /** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.     */
+    /** @deprecated v24 - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.     */
     @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams<TData>) => boolean) | undefined = undefined;
-    /** @deprecated - Use `getLocaleText` instead.     */
+    /** @deprecated v27.2 - Use `getLocaleText` instead.     */
     @Input() public localeTextFunc: ((key: string, defaultValue: string, variableValues?: string[]) => string) | undefined = undefined;
     /** A callback for localising text within the grid.     */
     @Input() public getLocaleText: ((params: GetLocaleTextParams<TData>) => string) | undefined = undefined;
@@ -916,7 +941,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public getDocument: (() => Document) | undefined = undefined;
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.     */
     @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams<TData>) => string) | undefined = undefined;
-    /** @deprecated - Use `getGroupRowAgg` instead.     */
+    /** @deprecated v27.2 - Use `getGroupRowAgg` instead.     */
     @Input() public groupRowAggNodes: ((nodes: RowNode[]) => any) | undefined = undefined;
     /** Callback to use when you need access to more then the current column for aggregation.     */
     @Input() public getGroupRowAgg: ((params: GetGroupRowAggParams<TData>) => any) | undefined = undefined;
@@ -924,11 +949,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams<TData>) => boolean) | undefined = undefined;
     /** Allows default sorting of groups.     */
     @Input() public initialGroupOrderComparator: ((params: InitialGroupOrderComparatorParams<TData>) => number) | undefined = undefined;
-    /** @deprecated - Use `initialGroupOrderComparator` instead     */
+    /** @deprecated v27.2 - Use `initialGroupOrderComparator` instead     */
     @Input() public defaultGroupOrderComparator: ((nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number) | undefined = undefined;
-    /** @deprecated - Use `processPivotResultColDef` instead     */
+    /** @deprecated v28 - Use `processPivotResultColDef` instead     */
     @Input() public processSecondaryColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
-    /** @deprecated - Use `processPivotResultColGroupDef` instead     */
+    /** @deprecated v28 - Use `processPivotResultColGroupDef` instead     */
     @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column definition.     */
     @Input() public processPivotResultColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
@@ -936,13 +961,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public processPivotResultColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.     */
     @Input() public getDataPath: GetDataPath<TData> | undefined = undefined;
-    /** @deprecated - Use initialGroupOrderComparator instead     */
+    /** @deprecated v26 - Use initialGroupOrderComparator instead     */
     @Input() public defaultGroupSortComparator: ((nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number) | undefined = undefined;
     /** Allows setting the child count for a group row.     */
     @Input() public getChildCount: ((dataItem: any) => number) | undefined = undefined;
     /** Allows providing different params for different levels of grouping.     */
     @Input() public getServerSideGroupLevelParams: ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams) | undefined = undefined;
-    /** @deprecated use `getServerSideGroupLevelParams` instead.     */
+    /** @deprecated v28 Use `getServerSideGroupLevelParams` instead.     */
     @Input() public getServerSideStoreParams: ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams) | undefined = undefined;
     /** Allows groups to be open by default.     */
     @Input() public isServerSideGroupOpenByDefault: ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined = undefined;
@@ -953,9 +978,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** SSRM Tree Data: Allows specifying group keys.     */
     @Input() public getServerSideGroupKey: GetServerSideGroupKey | undefined = undefined;
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
-     * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.     */
+         * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
+         */
     @Input() public getBusinessKeyForNode: ((node: RowNode<TData>) => string) | undefined = undefined;
-    /** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
+    /** @deprecated v27.1 Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
          * Allows you to set the ID for a particular row node based on the data.     */
     @Input() public getRowNodeId: GetRowNodeIdFunc<TData> | undefined = undefined;
     /** Allows setting the ID for a particular row node based on the data.     */
@@ -970,7 +996,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public isRowMaster: IsRowMaster<TData> | undefined = undefined;
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.     */
     @Input() public fillOperation: ((params: FillOperationParams<TData>) => any) | undefined = undefined;
-    /** @deprecated Use `postSortRows` instead     */
+    /** @deprecated v27.2 Use `postSortRows` instead     */
     @Input() public postSort: ((nodes: RowNode<TData>[]) => void) | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.     */
     @Input() public postSortRows: ((params: PostSortRowsParams<TData>) => void) | undefined = undefined;
@@ -980,7 +1006,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public getRowClass: ((params: RowClassParams<TData>) => string | string[] | undefined) | undefined = undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.     */
     @Input() public getRowHeight: ((params: RowHeightParams<TData>) => number | undefined | null) | undefined = undefined;
-    /** @deprecated Use `isFullWidthRow` instead.     */
+    /** @deprecated v27.2 Use `isFullWidthRow` instead.     */
     @Input() public isFullWidthCell: ((rowNode: RowNode<TData>) => boolean) | undefined = undefined;
     /** Tells the grid if this row should be rendered as full width.     */
     @Input() public isFullWidthRow: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined = undefined;
@@ -1017,13 +1043,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public displayedColumnsChanged: EventEmitter<DisplayedColumnsChangedEvent<TData>> = new EventEmitter<DisplayedColumnsChangedEvent<TData>>();
     /** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default).     */
     @Output() public virtualColumnsChanged: EventEmitter<VirtualColumnsChangedEvent<TData>> = new EventEmitter<VirtualColumnsChangedEvent<TData>>();
-    /** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed.     */
+    /** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed.     */
     @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent<TData>> = new EventEmitter<ColumnEverythingChangedEvent<TData>>();
     /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
-     * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.     */
+         * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.
+         */
     @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent<TData>> = new EventEmitter<ComponentStateChangedEvent<TData>>();
     /** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or
-     *  if cell value has changed as a result of paste operation.     */
+         *  if cell value has changed as a result of paste operation.
+        */
     @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent<TData>> = new EventEmitter<CellValueChangedEvent<TData>>();
     /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`.     */
     @Output() public cellEditRequest: EventEmitter<CellEditRequestEvent<TData>> = new EventEmitter<CellEditRequestEvent<TData>>();
@@ -1055,7 +1083,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>> = new EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>>();
     /** DOM event `keyPress` happened on a cell.     */
     @Output() public cellKeyPress: EventEmitter<CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>> = new EventEmitter<CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>>();
-    /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet     */
+    /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet      */
     @Output() public gridReady: EventEmitter<GridReadyEvent<TData>> = new EventEmitter<GridReadyEvent<TData>>();
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents     */
     @Output() public firstDataRendered: EventEmitter<FirstDataRenderedEvent<TData>> = new EventEmitter<FirstDataRenderedEvent<TData>>();
@@ -1076,10 +1104,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc.     */
     @Output() public dragStopped: EventEmitter<DragStoppedEvent<TData>> = new EventEmitter<DragStoppedEvent<TData>>();
     /** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:
-     * 
-     *  - The page size changes.
-     *  - The current shown page is changed.
-     *  - New data is loaded onto the grid.     */
+         *
+         *  - The page size changes.
+         *  - The current shown page is changed.
+         *  - New data is loaded onto the grid.
+         */
     @Output() public paginationChanged: EventEmitter<PaginationChangedEvent<TData>> = new EventEmitter<PaginationChangedEvent<TData>>();
     /** A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid.     */
     @Output() public rowDragEnter: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
@@ -1097,7 +1126,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public expandOrCollapseAll: EventEmitter<ExpandCollapseAllEvent<TData>> = new EventEmitter<ExpandCollapseAllEvent<TData>>();
     /** The client has set new pinned row data into the grid.     */
     @Output() public pinnedRowDataChanged: EventEmitter<PinnedRowDataChangedEvent<TData>> = new EventEmitter<PinnedRowDataChangedEvent<TData>>();
-    /** @deprecated No longer fired, use onRowDataUpdated instead     */
+    /** @deprecated v28 No longer fired, use onRowDataUpdated instead     */
     @Output() public rowDataChanged: EventEmitter<RowDataChangedEvent<TData>> = new EventEmitter<RowDataChangedEvent<TData>>();
     /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction.     */
     @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent<TData>> = new EventEmitter<RowDataUpdatedEvent<TData>>();
@@ -1244,6 +1273,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressColumnStateEvents: boolean | null | '';
     static ngAcceptInputType_enableCharts: boolean | null | '';
     static ngAcceptInputType_enableChartToolPanelsButton: boolean | null | '';
+    static ngAcceptInputType_suppressChartToolPanelsButton: boolean | null | '';
     static ngAcceptInputType_deltaColumnMode: boolean | null | '';
     static ngAcceptInputType_suppressMaintainUnsortedOrder: boolean | null | '';
     static ngAcceptInputType_enableCellTextSelection: boolean | null | '';

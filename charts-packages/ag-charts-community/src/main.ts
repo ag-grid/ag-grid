@@ -7,7 +7,6 @@ export * from './chart/cartesianChart';
 export * from './chart/hierarchyChart';
 export * from './chart/chart';
 export * from './chart/chartAxis';
-export * from './chart/groupedCategoryChart';
 export * from './chart/polarChart';
 export * from './chart/marker/marker';
 export * from './chart/legend';

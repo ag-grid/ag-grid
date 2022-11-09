@@ -108,7 +108,7 @@ export const POSITION_TOP_COORDINATES: CoordinatesFn = ({ yDirection, xEnd, ySta
     }
 };
 
-export const POSITION_LEFT_COORDINATES: CoordinatesFn = ({ yDirection, xStart, xEnd, yStart, yEnd }) => {
+const POSITION_LEFT_COORDINATES: CoordinatesFn = ({ yDirection, xStart, xEnd, yStart, yEnd }) => {
     if (yDirection) {
         return { x: xStart, y: !isNaN(yEnd) ? (yStart + yEnd) / 2 : yStart };
     } else {
@@ -116,7 +116,7 @@ export const POSITION_LEFT_COORDINATES: CoordinatesFn = ({ yDirection, xStart, x
     }
 };
 
-export const POSITION_RIGHT_COORDINATES: CoordinatesFn = ({ yDirection, xEnd, yStart, yEnd }) => {
+const POSITION_RIGHT_COORDINATES: CoordinatesFn = ({ yDirection, xEnd, yStart, yEnd }) => {
     if (yDirection) {
         return { x: xEnd, y: !isNaN(yEnd) ? (yStart + yEnd) / 2 : yStart };
     } else {
@@ -124,7 +124,7 @@ export const POSITION_RIGHT_COORDINATES: CoordinatesFn = ({ yDirection, xEnd, yS
     }
 };
 
-export const POSITION_BOTTOM_COORDINATES: CoordinatesFn = ({ yDirection, xStart, xEnd, yStart, yEnd }) => {
+const POSITION_BOTTOM_COORDINATES: CoordinatesFn = ({ yDirection, xStart, xEnd, yStart, yEnd }) => {
     if (yDirection) {
         return { x: xEnd / 2, y: !isNaN(yEnd) ? yEnd : yStart };
     } else {
@@ -132,11 +132,11 @@ export const POSITION_BOTTOM_COORDINATES: CoordinatesFn = ({ yDirection, xStart,
     }
 };
 
-export const POSITION_INSIDE_COORDINATES: CoordinatesFn = ({ xEnd, yStart, yEnd }) => {
+const POSITION_INSIDE_COORDINATES: CoordinatesFn = ({ xEnd, yStart, yEnd }) => {
     return { x: xEnd / 2, y: !isNaN(yEnd) ? (yStart + yEnd) / 2 : yStart };
 };
 
-export const POSITION_TOP_LEFT_COORDINATES: CoordinatesFn = ({ yDirection, xStart, xEnd, yStart }) => {
+const POSITION_TOP_LEFT_COORDINATES: CoordinatesFn = ({ yDirection, xStart, xEnd, yStart }) => {
     if (yDirection) {
         return { x: xStart / 2, y: yStart };
     } else {
@@ -144,7 +144,7 @@ export const POSITION_TOP_LEFT_COORDINATES: CoordinatesFn = ({ yDirection, xStar
     }
 };
 
-export const POSITION_BOTTOM_LEFT_COORDINATES: CoordinatesFn = ({ yDirection, xStart, yStart, yEnd }) => {
+const POSITION_BOTTOM_LEFT_COORDINATES: CoordinatesFn = ({ yDirection, xStart, yStart, yEnd }) => {
     if (yDirection) {
         return { x: xStart, y: !isNaN(yEnd) ? yEnd : yStart };
     } else {
@@ -152,7 +152,7 @@ export const POSITION_BOTTOM_LEFT_COORDINATES: CoordinatesFn = ({ yDirection, xS
     }
 };
 
-export const POSITION_TOP_RIGHT_COORDINATES: CoordinatesFn = ({ yDirection, xEnd, yStart, yEnd }) => {
+const POSITION_TOP_RIGHT_COORDINATES: CoordinatesFn = ({ yDirection, xEnd, yStart, yEnd }) => {
     if (yDirection) {
         return { x: xEnd, y: yStart };
     } else {
@@ -160,7 +160,7 @@ export const POSITION_TOP_RIGHT_COORDINATES: CoordinatesFn = ({ yDirection, xEnd
     }
 };
 
-export const POSITION_BOTTOM_RIGHT_COORDINATES: CoordinatesFn = ({ yDirection, xStart, xEnd, yStart, yEnd }) => {
+const POSITION_BOTTOM_RIGHT_COORDINATES: CoordinatesFn = ({ yDirection, xStart, xEnd, yStart, yEnd }) => {
     if (yDirection) {
         return { x: xEnd, y: !isNaN(yEnd) ? yEnd : yStart };
     } else {

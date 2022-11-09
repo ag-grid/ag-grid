@@ -1,9 +1,9 @@
 import { Selection } from '../../../scene/selection';
 import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Label } from '../../label';
-import { SeriesNodeDatum, SeriesTooltip, TooltipRendererParams, SeriesNodeClickEvent } from '../series';
+import { SeriesNodeDatum, SeriesTooltip, SeriesNodeClickEvent } from '../series';
 import { HierarchySeries } from './hierarchySeries';
-import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
+import { toTooltipHtml } from '../../tooltip/tooltip';
 import { Group } from '../../../scene/group';
 import { Text } from '../../../scene/shape/text';
 import { Rect } from '../../../scene/shape/rect';
@@ -25,6 +25,12 @@ import {
     COLOR_STRING_ARRAY,
     Validate,
 } from '../../../util/validation';
+import {
+    AgTreemapSeriesTooltipRendererParams,
+    AgTooltipRendererResult,
+    AgTreemapSeriesFormatterParams,
+    AgTreemapSeriesFormat,
+} from '../../agChartOptions';
 
 interface TreemapNodeDatum extends SeriesNodeDatum {
     parent?: TreemapNodeDatum;
@@ -42,19 +48,12 @@ interface TreemapNodeDatum extends SeriesNodeDatum {
     colorValue: number;
 }
 
-export interface TreemapTooltipRendererParams extends TooltipRendererParams {
-    datum: TreemapNodeDatum;
-    labelKey: string;
-    sizeKey?: string;
-    colorKey?: string;
-}
-
-export class TreemapSeriesTooltip extends SeriesTooltip {
+class TreemapSeriesTooltip extends SeriesTooltip {
     @Validate(OPT_FUNCTION)
-    renderer?: (params: TreemapTooltipRendererParams) => string | TooltipRendererResult = undefined;
+    renderer?: (params: AgTreemapSeriesTooltipRendererParams<any>) => string | AgTooltipRendererResult = undefined;
 }
 
-export class TreemapSeriesNodeClickEvent extends SeriesNodeClickEvent<any> {
+class TreemapSeriesNodeClickEvent extends SeriesNodeClickEvent<any> {
     readonly labelKey: string;
     readonly sizeKey?: string;
     readonly colorKey?: string;
@@ -74,7 +73,7 @@ export class TreemapSeriesNodeClickEvent extends SeriesNodeClickEvent<any> {
     }
 }
 
-export class TreemapSeriesLabel extends Label {
+class TreemapSeriesLabel extends Label {
     @Validate(NUMBER(0))
     padding = 10;
 }
@@ -82,29 +81,6 @@ export class TreemapSeriesLabel extends Label {
 enum TextNodeTag {
     Name,
     Value,
-}
-
-export interface TreemapSeriesFormatterParams {
-    readonly datum: any;
-    readonly labelKey: string;
-    readonly sizeKey?: string;
-    readonly colorKey?: string;
-    readonly fill?: string;
-    readonly fillOpacity?: string;
-    readonly stroke?: string;
-    readonly strokeOpacity?: number;
-    readonly strokeWidth?: number;
-    readonly gradient?: boolean;
-    readonly highlighted: boolean;
-}
-
-export interface TreemapSeriesFormat {
-    fill?: string;
-    fillOpacity?: number;
-    stroke?: string;
-    strokeOpacity?: number;
-    strokeWidth?: number;
-    gradient?: boolean;
 }
 
 export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
@@ -202,7 +178,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     gradient: boolean = true;
 
     @Validate(OPT_FUNCTION)
-    formatter?: (params: TreemapSeriesFormatterParams) => TreemapSeriesFormat = undefined;
+    formatter?: (params: AgTreemapSeriesFormatterParams) => AgTreemapSeriesFormat = undefined;
 
     @Validate(STRING)
     colorName: string = 'Change';
@@ -384,9 +360,10 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             const strokeWidth =
                 isDatumHighlighted && highlightedDatumStrokeWidth !== undefined ? highlightedDatumStrokeWidth : 1;
 
-            let format: TreemapSeriesFormat | undefined;
+            let format: AgTreemapSeriesFormat | undefined;
             if (formatter) {
                 format = formatter({
+                    seriesId: this.id,
                     datum: datum.datum,
                     colorKey,
                     sizeKey,
@@ -614,7 +591,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             }
         }
 
-        const defaults: TooltipRendererResult = {
+        const defaults: AgTooltipRendererResult = {
             title,
             backgroundColor: color,
             content,

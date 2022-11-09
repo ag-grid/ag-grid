@@ -8,6 +8,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const [getCssClasses, setCssClasses] = createSignal<CssClasses>(new CssClasses());
     const [getCssBodyClasses, setBodyCssClasses] = createSignal<CssClasses>(new CssClasses());
     const [getCssButtonWrapperClasses, setButtonWrapperCssClasses] = createSignal<CssClasses>(new CssClasses());
+    const [getButtonWrapperAriaHidden, setButtonWrapperAriaHidden] = createSignal<"true" | "false">("false");
     const [getWidth, setWidth] = createSignal<string>();
     const [getUserCompDetails, setUserCompDetails] = createSignal<UserCompDetails>();
 
@@ -45,7 +46,10 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
         const compProxy: IHeaderFilterCellComp = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             addOrRemoveBodyCssClass: (name, on) => setBodyCssClasses(prev => prev.setClass(name, on)),
-            addOrRemoveButtonWrapperCssClass: (name, on) => setButtonWrapperCssClasses(prev => prev.setClass(name, on)),
+            setButtonWrapperDisplayed: (displayed) => {
+                setButtonWrapperCssClasses(prev => prev.setClass('ag-hidden', !displayed));
+                setButtonWrapperAriaHidden(!displayed ? "true" : "false");
+            },
             setWidth: width => setWidth(width),
             setCompDetails: compDetails => setUserCompDetails(compDetails),
             getFloatingFilterComp: ()=> userCompPromise,
@@ -69,7 +73,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
             <div ref={eFloatingFilterBody!} class={getBodyCssClassesString()} role="presentation">
                 { getUserCompDetails() && <UserComp compDetails={getUserCompDetails()!} ref={setRef}/> }
             </div>
-            <div ref={eButtonWrapper!} class={getButtonWrapperCssClassesString()} role="presentation">
+            <div ref={eButtonWrapper!} aria-hidden={getButtonWrapperAriaHidden()} class={getButtonWrapperCssClassesString()} role="presentation">
                 <button ref={eButtonShowMainFilter!} type="button" aria-label="Open Filter Menu" class="ag-floating-filter-button-button" tabIndex={-1}></button>
             </div>
         </div>

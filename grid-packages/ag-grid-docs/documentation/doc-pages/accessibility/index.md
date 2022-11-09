@@ -53,8 +53,8 @@ In order to give screen readers the contextual information they require to inter
 
 When inspecting the DOM you'll notice the following roles and properties have been added:
 
-- **role="grid"** - marks the enclosing element of the grid.<br>
-    **Note:** You can set any aria property in the panel (role="grid") by using the `setGridAriaProperty` method in the [Grid Api](/grid-api/).
+- **role="treegrid"** - marks the enclosing element of the grid.<br>
+    **Note:** You can set any aria property in the panel (role="treegrid") by using the `setGridAriaProperty` method in the [Grid Api](/grid-api/).
     - **aria-rowcount** - announces the number of rows.
     - **aria-colcount** - announces the number of rows.
     - **aria-multiselectable="true"** - marks the grid as being able to select multiple rows.

@@ -151,8 +151,9 @@ class VisibilityStrategy extends BeanStub {
     }
 
     protected setDisplayedOrVisible(neverDisplayed: boolean): void {
+        const displayedOptions = { skipAriaHidden: true };
         if (neverDisplayed) {
-            this.parent.setDisplayed(false);
+            this.parent.setDisplayed(false, displayedOptions);
         } else {
             let shown: boolean = true;
             let isShownSometimes: boolean = false;
@@ -166,11 +167,11 @@ class VisibilityStrategy extends BeanStub {
             // so we use setVisible to keep the handles horizontally aligned (as setVisible
             // keeps the empty space, whereas setDisplayed looses the space)
             if (isShownSometimes) {
-                this.parent.setDisplayed(true);
-                this.parent.setVisible(shown);
+                this.parent.setDisplayed(true, displayedOptions);
+                this.parent.setVisible(shown, displayedOptions);
             } else {
-                this.parent.setDisplayed(shown);
-                this.parent.setVisible(true);
+                this.parent.setDisplayed(shown, displayedOptions);
+                this.parent.setVisible(true, displayedOptions);
             }
         }
     }

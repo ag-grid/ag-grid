@@ -8,15 +8,15 @@
     "type": { "returnType": "SideBarDef | string | string[] | boolean | null" }
   },
   "suppressContextMenu": {
-    "description": "/** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false` */",
+    "description": "/** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false`  */",
     "type": { "returnType": "boolean" }
   },
   "preventDefaultOnContextMenu": {
-    "description": "/** When using `suppressContextMenu`, you can use the `onCellContextMenu` function to provide your own code to handle cell `contextmenu` events.\n * This flag is useful to prevent the browser from showing its default context menu.\n * Default: `false` */",
+    "description": "/** When using `suppressContextMenu`, you can use the `onCellContextMenu` function to provide your own code to handle cell `contextmenu` events.\n     * This flag is useful to prevent the browser from showing its default context menu.\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
   "allowContextMenuWithControlKey": {
-    "description": "/** Allows context menu to show, even when `Ctrl` key is held down. Default: `false` */",
+    "description": "/** Allows context menu to show, even when `Ctrl` key is held down. Default: `false`  */",
     "type": { "returnType": "boolean" }
   },
   "suppressMenuHide": {
@@ -24,19 +24,19 @@
     "type": { "returnType": "boolean" }
   },
   "enableBrowserTooltips": {
-    "description": "/** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component. Default: `false` */",
+    "description": "/** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component. Default: `false`  */",
     "type": { "returnType": "boolean" }
   },
   "tooltipShowDelay": {
-    "description": "/** The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.\n * **Note:** This property does not work if `enableBrowserTooltips` is `true`.\n * Default: `2000` */",
+    "description": "/** The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.\n     * **Note:** This property does not work if `enableBrowserTooltips` is `true`.\n     * Default: `2000`\n     */",
     "type": { "returnType": "number" }
   },
   "tooltipHideDelay": {
-    "description": "/** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.\n * **Note:** This property does not work if `enableBrowserTooltips` is `true`.\n * Default: `10000` */",
+    "description": "/** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.\n     * **Note:** This property does not work if `enableBrowserTooltips` is `true`.\n     * Default: `10000`\n     */",
     "type": { "returnType": "number" }
   },
   "tooltipMouseTrack": {
-    "description": "/** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false` */",
+    "description": "/** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false`  */",
     "type": { "returnType": "boolean" }
   },
   "popupParent": {
@@ -52,11 +52,11 @@
     "type": { "returnType": "boolean" }
   },
   "clipboardDeliminator": {
-    "description": "/** @deprecated Use `clipboardDelimiter`\n */",
+    "description": "/** @deprecated v27.1 Use `clipboardDelimiter` */",
     "type": { "returnType": "string" }
   },
   "clipboardDelimiter": {
-    "description": "/** Specify the delimiter to use when copying to clipboard.\n * Default: `\\t` */",
+    "description": "/** Specify the delimiter to use when copying to clipboard.\n     * Default: `\\t`\n    */",
     "type": { "returnType": "string" }
   },
   "suppressCopyRowsToClipboard": {
@@ -104,35 +104,35 @@
     "type": { "returnType": "boolean" }
   },
   "deltaColumnMode": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v24 */",
     "type": { "returnType": "boolean" }
   },
   "applyColumnDefOrder": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v26 */",
     "type": { "returnType": "boolean" }
   },
   "immutableColumns": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v24 */",
     "type": { "returnType": "boolean" }
   },
   "suppressSetColumnStateEvents": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v24 */",
     "type": { "returnType": "boolean" }
   },
   "suppressColumnStateEvents": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v24 */",
     "type": { "returnType": "boolean" }
   },
   "colWidth": {
-    "description": "/** @deprecated Set via `defaultColDef.width`\n */",
+    "description": "/** @deprecated Set via `defaultColDef.width` */",
     "type": { "returnType": "number" }
   },
   "minColWidth": {
-    "description": "/** @deprecated Set via `defaultColDef.minWidth`\n */",
+    "description": "/** @deprecated Set via `defaultColDef.minWidth` */",
     "type": { "returnType": "number" }
   },
   "maxColWidth": {
-    "description": "/** @deprecated Set via `defaultColDef.maxWidth`\n */",
+    "description": "/** @deprecated Set via `defaultColDef.maxWidth` */",
     "type": { "returnType": "number" }
   },
   "headerHeight": {
@@ -184,7 +184,7 @@
     "type": { "returnType": "boolean" }
   },
   "autoSizePadding": {
-    "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n * Default: `4` */",
+    "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
     "type": { "returnType": "number" }
   },
   "skipHeaderOnAutoSize": {
@@ -196,15 +196,15 @@
     "type": { "returnType": "{ [p: string]: any; }" }
   },
   "frameworkComponents": {
-    "description": "/** @deprecated As of v27, use `components` for framework components too.\n */",
+    "description": "/** @deprecated As of v27, use `components` for framework components too. */",
     "type": { "returnType": "{ [p: string]: { new(): any; }; } | any" }
   },
   "reactUi": {
-    "description": "/** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.\n */",
+    "description": "/** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off. */",
     "type": { "returnType": "boolean" }
   },
   "suppressReactUi": {
-    "description": "/** @deprecated Set to true to enable the experimental React UI. Works with React framework only.\nIt is planned the next major release of the grid will drop support of the legacy React engine,\nhence this property is deprecated as will be removed in the next major release.\n */",
+    "description": "/** @deprecated Set to true to enable the experimental React UI. Works with React framework only.\n     * It is planned the next major release of the grid will drop support of the legacy React engine,\n     * hence this property is deprecated as will be removed in the next major release. */",
     "type": { "returnType": "boolean" }
   },
   "editType": {
@@ -224,15 +224,15 @@
     "type": { "returnType": "boolean" }
   },
   "stopEditingWhenCellsLoseFocus": {
-    "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell.\n * Default: `false` */",
+    "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n     * The default is that the grid stays editing until focus goes onto another cell.\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
   "enterMovesDown": {
-    "description": "/** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.\n * i.e. pressing the `Enter` key will move down to the cell beneath.\n * Default: `false` */",
+    "description": "/** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.\n     * i.e. pressing the `Enter` key will move down to the cell beneath.\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
   "enterMovesDownAfterEdit": {
-    "description": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath.\n * Default: `false` */",
+    "description": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n     * i.e. pressing the Enter key will move down to the cell beneath.\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
   "enableCellEditingOnBackspace": {
@@ -248,7 +248,7 @@
     "type": { "returnType": "number" }
   },
   "stopEditingWhenGridLosesFocus": {
-    "description": "/** @deprecated Use stopEditingWhenCellsLoseFocus instead\n */",
+    "description": "/** @deprecated v25 Use stopEditingWhenCellsLoseFocus instead */",
     "type": { "returnType": "boolean" }
   },
   "defaultCsvExportParams": {
@@ -272,7 +272,7 @@
     "type": { "returnType": "ExcelStyle[]" }
   },
   "defaultExportParams": {
-    "description": "/** @deprecated Use defaultCsvExportParams or defaultExcelExportParams\n */",
+    "description": "/** @deprecated v25 Use defaultCsvExportParams or defaultExcelExportParams */",
     "type": { "returnType": "CsvExportParams | ExcelExportParams" }
   },
   "quickFilterText": {
@@ -304,7 +304,11 @@
     "type": { "returnType": "AgChartThemeOverrides" }
   },
   "enableChartToolPanelsButton": {
-    "description": "/** Set to `true` to show the Chart Tool Panels button. Note this will also remove the 'hamburger' menu option from the Chart Toolbar and always display the remaining toolbar buttons. Default: `false` */",
+    "description": "/** @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`. */",
+    "type": { "returnType": "boolean" }
+  },
+  "suppressChartToolPanelsButton": {
+    "description": "/** Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "chartToolPanelsDef": {
@@ -312,11 +316,11 @@
     "type": { "returnType": "ChartToolPanelsDef" }
   },
   "loadingCellRenderer": {
-    "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
+    "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n    * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.\n    */",
     "type": { "returnType": "any" }
   },
   "loadingCellRendererFramework": {
-    "description": "/** @deprecated As of v27, use `loadingCellRenderer` for framework components too.\n */",
+    "description": "/** @deprecated As of v27, use `loadingCellRenderer` for framework components too. */",
     "type": { "returnType": "any" }
   },
   "loadingCellRendererParams": {
@@ -344,11 +348,11 @@
     "type": { "returnType": "number" }
   },
   "detailCellRenderer": {
-    "description": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded.\n * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details. */",
+    "description": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded.\n    * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.\n    */",
     "type": { "returnType": "any" }
   },
   "detailCellRendererFramework": {
-    "description": "/** @deprecated As of v27, use `detailCellRenderer` for framework components too.\n */",
+    "description": "/** @deprecated As of v27, use `detailCellRenderer` for framework components too. */",
     "type": { "returnType": "any" }
   },
   "detailCellRendererParams": {
@@ -378,7 +382,7 @@
     "type": { "returnType": "number" }
   },
   "rowBuffer": {
-    "description": "/** The number of rows rendered outside the viewable area the grid renders.\n * Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.\n * Default: `10` */",
+    "description": "/** The number of rows rendered outside the viewable area the grid renders.\n     * Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.\n     * Default: `10`\n     */",
     "type": { "returnType": "number" }
   },
   "valueCache": {
@@ -394,7 +398,7 @@
     "type": { "returnType": "boolean" }
   },
   "suppressParentsInRowNodes": {
-    "description": "/** If `true`, row nodes do not have their parents set.\n * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.\n * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.\n * Default: `false` */",
+    "description": "/** If `true`, row nodes do not have their parents set.\n     * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.\n     * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
   "suppressTouch": {
@@ -430,11 +434,11 @@
     "type": { "returnType": "string" }
   },
   "loadingOverlayComponent": {
-    "description": "/** Provide a custom loading overlay component.\n * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details. */",
+    "description": "/** Provide a custom loading overlay component.\n    * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.\n    */",
     "type": { "returnType": "any" }
   },
   "loadingOverlayComponentFramework": {
-    "description": "/** @deprecated As of v27, use `loadingOverlayComponent` for framework components too.\n */",
+    "description": "/** @deprecated As of v27, use `loadingOverlayComponent` for framework components too. */",
     "type": { "returnType": "any" }
   },
   "loadingOverlayComponentParams": {
@@ -450,11 +454,11 @@
     "type": { "returnType": "string" }
   },
   "noRowsOverlayComponent": {
-    "description": "/** Provide a custom no rows overlay component.\n * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details. */",
+    "description": "/** Provide a custom no rows overlay component.\n    * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.\n    */",
     "type": { "returnType": "any" }
   },
   "noRowsOverlayComponentFramework": {
-    "description": "/** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too.\n */",
+    "description": "/** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too. */",
     "type": { "returnType": "any" }
   },
   "noRowsOverlayComponentParams": {
@@ -482,7 +486,7 @@
     "type": { "returnType": "boolean" }
   },
   "suppressPaginationPanel": {
-    "description": "/** If `true`, the default grid controls for navigation are hidden.\n * This is useful if `pagination=true` and you want to provide your own pagination controls.\n * Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages.\n * Default: `false` */",
+    "description": "/** If `true`, the default grid controls for navigation are hidden.\n     * This is useful if `pagination=true` and you want to provide your own pagination controls.\n     * Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages.\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
   "pivotMode": {
@@ -546,11 +550,11 @@
     "type": { "returnType": "boolean" }
   },
   "cellFlashDelay": {
-    "description": "/** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its \"flashed\" state.\n * Default: `500` */",
+    "description": "/** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its \"flashed\" state.\n     * Default: `500`\n     */",
     "type": { "returnType": "number" }
   },
   "cellFadeDelay": {
-    "description": "/** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the \"flashed\" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.\n * Default: `1000` */",
+    "description": "/** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the \"flashed\" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.\n     * Default: `1000`\n     */",
     "type": { "returnType": "number" }
   },
   "allowShowChangeAfterFilter": {
@@ -558,7 +562,7 @@
     "type": { "returnType": "boolean" }
   },
   "domLayout": {
-    "description": "/** Switch between layout options: `normal`, `autoHeight`, `print`.\n * Default: `normal` */",
+    "description": "/** Switch between layout options: `normal`, `autoHeight`, `print`.\n     * Default: `normal`\n     */",
     "type": { "returnType": "'normal' | 'autoHeight' | 'print'" }
   },
   "ensureDomOrder": {
@@ -574,7 +578,7 @@
     "type": { "returnType": "boolean" }
   },
   "suppressMaxRenderedRowRestriction": {
-    "description": "/** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).\n * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen), or `suppressRowVirtualisation` is true, or if your grid height is able to display more than 500 rows at once.**\n * Default: `false` */",
+    "description": "/** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).\n     * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen), or `suppressRowVirtualisation` is true, or if your grid height is able to display more than 500 rows at once.**\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
   "suppressRowVirtualisation": {
@@ -602,18 +606,18 @@
     "type": { "returnType": "boolean" }
   },
   "rowDragText": {
-    "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the current cell value will be used.\n * If the `rowDragText` callback is set in the ColDef it will take precedence over this, except when\n * `rowDragEntireRow=true`. */",
+    "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n     * If this callback is not set, the current cell value will be used.\n     * If the `rowDragText` callback is set in the ColDef it will take precedence over this, except when\n     * `rowDragEntireRow=true`.\n     */",
     "type": {
       "arguments": { "params": "IRowDragItem", "dragItemCount": "number" },
       "returnType": "string"
     }
   },
   "fullWidthCellRenderer": {
-    "description": "/** Provide your own cell renderer component to use for full width rows.\n * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details. */",
+    "description": "/** Provide your own cell renderer component to use for full width rows.\n    * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.\n    */",
     "type": { "returnType": "any" }
   },
   "fullWidthCellRendererFramework": {
-    "description": "/** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too.\n */",
+    "description": "/** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too. */",
     "type": { "returnType": "any" }
   },
   "fullWidthCellRendererParams": {
@@ -625,11 +629,11 @@
     "type": { "returnType": "boolean" }
   },
   "deprecatedEmbedFullWidthRows": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v21 */",
     "type": { "returnType": "boolean" }
   },
   "groupDisplayType": {
-    "description": "/** Specifies how the results of row grouping should be displayed.\n * \n *   The options are:\n * \n * - `'singleColumn'`: single group column automatically added by the grid.\n * - `'multipleColumns'`: a group column per row group is added automatically.\n * - `'groupRows'`: group rows are automatically added instead of group columns.\n * - `'custom'`: informs the grid that group columns will be provided. */",
+    "description": "/** Specifies how the results of row grouping should be displayed.\n     *\n     *  The options are:\n     *\n     * - `'singleColumn'`: single group column automatically added by the grid.\n     * - `'multipleColumns'`: a group column per row group is added automatically.\n     * - `'groupRows'`: group rows are automatically added instead of group columns.\n     * - `'custom'`: informs the grid that group columns will be provided.\n     */",
     "type": { "returnType": "RowGroupingDisplayType" }
   },
   "groupDefaultExpanded": {
@@ -653,7 +657,7 @@
     "type": { "returnType": "boolean | IsRowFilterable<TData>" }
   },
   "groupIncludeFooter": {
-    "description": "/** If grouping, this controls whether to show a group footer when the group is expanded.\n * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.\n * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).\n * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.\n * Default: `false` */",
+    "description": "/** If grouping, this controls whether to show a group footer when the group is expanded.\n     * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.\n     * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).\n     * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
   "groupIncludeTotalFooter": {
@@ -689,11 +693,11 @@
     "type": { "returnType": "'always' | 'onlyWhenGrouping' | 'never'" }
   },
   "groupRowRenderer": {
-    "description": "/** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.\n * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details. */",
+    "description": "/** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.\n    * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.\n    */",
     "type": { "returnType": "any" }
   },
   "groupRowRendererFramework": {
-    "description": "/** @deprecated As of v27, use `groupRowRenderer` for framework components too.\n */",
+    "description": "/** @deprecated As of v27, use `groupRowRenderer` for framework components too. */",
     "type": { "returnType": "any" }
   },
   "groupRowRendererParams": {
@@ -713,31 +717,31 @@
     "type": { "returnType": "boolean" }
   },
   "groupRowsSticky": {
-    "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`. */",
+    "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/",
     "type": { "returnType": "boolean" }
   },
   "groupRowInnerRenderer": {
-    "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
+    "description": "/** @deprecated v24 - this is now groupRowRendererParams.innerRenderer */",
     "type": { "returnType": "any" }
   },
   "groupRowInnerRendererFramework": {
-    "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
+    "description": "/** @deprecated v24 - this is now groupRowRendererParams.innerRenderer */",
     "type": { "returnType": "any" }
   },
   "groupMultiAutoColumn": {
-    "description": "/** @deprecated - Use groupDisplayType = 'multipleColumns' instead\n */",
+    "description": "/** @deprecated v26 - Use groupDisplayType = 'multipleColumns' instead */",
     "type": { "returnType": "boolean" }
   },
   "groupUseEntireRow": {
-    "description": "/** @deprecated - Use groupDisplayType = 'groupRows' instead\n */",
+    "description": "/** @deprecated v26 - Use groupDisplayType = 'groupRows' instead */",
     "type": { "returnType": "boolean" }
   },
   "groupSuppressAutoColumn": {
-    "description": "/** @deprecated - Use groupDisplayType = 'custom' instead\n */",
+    "description": "/** @deprecated v26 - Use groupDisplayType = 'custom' instead */",
     "type": { "returnType": "boolean" }
   },
   "rememberGroupStateWhenNewData": {
-    "description": "/** @deprecated - no longer needed, transaction updates keep group state\n */",
+    "description": "/** @deprecated v24 - no longer needed, transaction updates keep group state */",
     "type": { "returnType": "boolean" }
   },
   "pinnedTopRowData": {
@@ -757,7 +761,7 @@
     "type": { "returnType": "TData[] | null" }
   },
   "immutableData": {
-    "description": "/** @deprecated Immutable Data is on by default when grid callback getRowId() is implemented\nEnables Immutable Data mode, for compatibility with immutable stores. Default: `false`\n */",
+    "description": "/** @deprecated 27.1 Immutable Data is on by default when grid callback getRowId() is implemented\n     * Enables Immutable Data mode, for compatibility with immutable stores. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "asyncTransactionWaitMillis": {
@@ -769,11 +773,11 @@
     "type": { "returnType": "boolean" }
   },
   "deltaRowDataMode": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v23 */",
     "type": { "returnType": "boolean" }
   },
   "batchUpdateWaitMillis": {
-    "description": "/** @deprecated use asyncTransactionWaitMillis instead\n */",
+    "description": "/** @deprecated v23 use asyncTransactionWaitMillis instead */",
     "type": { "returnType": "number" }
   },
   "datasource": {
@@ -781,27 +785,27 @@
     "type": { "returnType": "IDatasource" }
   },
   "cacheOverflowSize": {
-    "description": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
+    "description": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n     * Default: `1`\n     */",
     "type": { "returnType": "number" }
   },
   "infiniteInitialRowCount": {
-    "description": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
+    "description": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n     * Default: `1`\n     */",
     "type": { "returnType": "number" }
   },
   "serverSideInitialRowCount": {
-    "description": "/** Set how many loading rows to display to the user for the root level group.\n * Default: `1` */",
+    "description": "/** Set how many loading rows to display to the user for the root level group.\n     * Default: `1`\n     */",
     "type": { "returnType": "number" }
   },
   "serverSideStoreType": {
-    "description": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
+    "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.\n     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\n     * Full Store is used.\n     */",
     "type": { "returnType": "ServerSideStoreType" }
   },
   "serverSideInfiniteScroll": {
-    "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n * Default: `false` */",
+    "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
   "cacheBlockSize": {
-    "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
+    "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
     "type": { "returnType": "number" }
   },
   "maxBlocksInCache": {
@@ -809,7 +813,7 @@
     "type": { "returnType": "number" }
   },
   "maxConcurrentDatasourceRequests": {
-    "description": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
+    "description": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n     * Set to `-1` for no maximum restriction on requests.\n     * Default: `2`\n     */",
     "type": { "returnType": "number" }
   },
   "blockLoadDebounceMillis": {
@@ -817,7 +821,7 @@
     "type": { "returnType": "number" }
   },
   "purgeClosedRowNodes": {
-    "description": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
+    "description": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false`  */",
     "type": { "returnType": "boolean" }
   },
   "serverSideDatasource": {
@@ -833,23 +837,23 @@
     "type": { "returnType": "boolean" }
   },
   "serverSideSortOnServer": {
-    "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n * as Sorting is always server side when Infinite Scroll is active.\n * Default: `false` */",
+    "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
   "serverSideFilterOnServer": {
-    "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n * as Filtering is always server side when Infinite Scroll is active.\n * Default: `false` */",
+    "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
     "type": { "returnType": "boolean" }
   },
   "serverSideSortingAlwaysResets": {
-    "description": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
+    "description": "/** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */",
     "type": { "returnType": "boolean" }
   },
   "serverSideFilteringAlwaysResets": {
-    "description": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
+    "description": "/** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */",
     "type": { "returnType": "boolean" }
   },
   "suppressEnterpriseResetOnNewColumns": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v25 */",
     "type": { "returnType": "boolean" }
   },
   "viewportDatasource": {
@@ -921,7 +925,7 @@
     "type": { "returnType": "boolean" }
   },
   "suppressCellSelection": {
-    "description": "/** @deprecated This property has been deprecated. Use `suppressCellFocus` instead.\n */",
+    "description": "/** @deprecated v27 This property has been deprecated. Use `suppressCellFocus` instead.\n     */",
     "type": { "returnType": "boolean" }
   },
   "suppressCellFocus": {
@@ -933,7 +937,7 @@
     "type": { "returnType": "boolean" }
   },
   "enableCellTextSelection": {
-    "description": "/** Set to `true` to be able to select the text within cells.\n * \n * **Note:** When this is set to `true`, the clipboard service is disabled.\n * Default: `false` */",
+    "description": "/** Set to `true` to be able to select the text within cells.\n     *\n     * **Note:** When this is set to `true`, the clipboard service is disabled.\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
   "enableRangeSelection": {
@@ -953,15 +957,15 @@
     "type": { "returnType": "'x' | 'y' | 'xy'" }
   },
   "suppressClearOnFillReduction": {
-    "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false` */",
+    "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`*/",
     "type": { "returnType": "boolean" }
   },
   "rowDeselection": {
-    "description": "/** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection\n */",
+    "description": "/** @deprecated v24 - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */",
     "type": { "returnType": "boolean" }
   },
   "sortingOrder": {
-    "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']` */",
+    "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`  */",
     "type": { "returnType": "('asc' | 'desc' | null)[]" }
   },
   "accentedSort": {
@@ -1023,11 +1027,11 @@
   "deltaSort": { "type": { "returnType": "boolean" } },
   "treeDataDisplayType": { "type": { "returnType": "TreeDataDisplayType" } },
   "angularCompileRows": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v26 */",
     "type": { "returnType": "boolean" }
   },
   "angularCompileFilters": {
-    "description": "/** @deprecated */",
+    "description": "/** @deprecated v26 */",
     "type": { "returnType": "boolean" }
   },
   "functionsPassive": { "type": { "returnType": "boolean" } },
@@ -1055,14 +1059,14 @@
     }
   },
   "processHeaderForClipboard": {
-    "description": "/** Allows you to process header values for the clipboard. */",
+    "description": "/** Allows you to process header values for the clipboard.  */",
     "type": {
       "arguments": { "params": "ProcessHeaderForExportParams<TData>" },
       "returnType": "any"
     }
   },
   "processGroupHeaderForClipboard": {
-    "description": "/** Allows you to process group header values for the clipboard. */",
+    "description": "/** Allows you to process group header values for the clipboard.  */",
     "type": {
       "arguments": { "params": "ProcessGroupHeaderForExportParams<TData>" },
       "returnType": "any"
@@ -1122,35 +1126,35 @@
     }
   },
   "tabToNextHeader": {
-    "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
+    "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.  */",
     "type": {
       "arguments": { "params": "TabToNextHeaderParams<TData>" },
       "returnType": "(HeaderPosition | null)"
     }
   },
   "navigateToNextCell": {
-    "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
+    "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.  */",
     "type": {
       "arguments": { "params": "NavigateToNextCellParams<TData>" },
       "returnType": "(CellPosition | null)"
     }
   },
   "tabToNextCell": {
-    "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
+    "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.  */",
     "type": {
       "arguments": { "params": "TabToNextCellParams<TData>" },
       "returnType": "(CellPosition | null)"
     }
   },
   "suppressKeyboardEvent": {
-    "description": "/** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.\n */",
+    "description": "/** @deprecated v24 - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property. */",
     "type": {
       "arguments": { "params": "SuppressKeyboardEventParams<TData>" },
       "returnType": "boolean"
     }
   },
   "localeTextFunc": {
-    "description": "/** @deprecated - Use `getLocaleText` instead.\n */",
+    "description": "/** @deprecated v27.2 - Use `getLocaleText` instead. */",
     "type": {
       "arguments": {
         "key": "string",
@@ -1179,7 +1183,7 @@
     }
   },
   "groupRowAggNodes": {
-    "description": "/** @deprecated - Use `getGroupRowAgg` instead.\n */",
+    "description": "/** @deprecated v27.2 - Use `getGroupRowAgg` instead. */",
     "type": { "arguments": { "nodes": "RowNode[]" }, "returnType": "any" }
   },
   "getGroupRowAgg": {
@@ -1204,18 +1208,18 @@
     }
   },
   "defaultGroupOrderComparator": {
-    "description": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
+    "description": "/** @deprecated v27.2 - Use `initialGroupOrderComparator` instead */",
     "type": {
       "arguments": { "nodeA": "RowNode<TData>", "nodeB": "RowNode<TData>" },
       "returnType": "number"
     }
   },
   "processSecondaryColDef": {
-    "description": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
+    "description": "/** @deprecated v28 - Use `processPivotResultColDef` instead */",
     "type": { "arguments": { "colDef": "ColDef<TData>" }, "returnType": "void" }
   },
   "processSecondaryColGroupDef": {
-    "description": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+    "description": "/** @deprecated v28 - Use `processPivotResultColGroupDef` instead */",
     "type": {
       "arguments": { "colGroupDef": "ColGroupDef<TData>" },
       "returnType": "void"
@@ -1237,7 +1241,7 @@
     "type": { "returnType": "GetDataPath<TData>" }
   },
   "defaultGroupSortComparator": {
-    "description": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
+    "description": "/** @deprecated v26 - Use initialGroupOrderComparator instead */",
     "type": {
       "arguments": { "nodeA": "RowNode<TData>", "nodeB": "RowNode<TData>" },
       "returnType": "number"
@@ -1255,7 +1259,7 @@
     }
   },
   "getServerSideStoreParams": {
-    "description": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
+    "description": "/** @deprecated v28 Use `getServerSideGroupLevelParams` instead. */",
     "type": {
       "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
       "returnType": "ServerSideGroupLevelParams"
@@ -1281,14 +1285,14 @@
     "type": { "returnType": "GetServerSideGroupKey" }
   },
   "getBusinessKeyForNode": {
-    "description": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
+    "description": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n     * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.\n     */",
     "type": {
       "arguments": { "node": "RowNode<TData>" },
       "returnType": "string"
     }
   },
   "getRowNodeId": {
-    "description": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\nAllows you to set the ID for a particular row node based on the data.\n */",
+    "description": "/** @deprecated v27.1 Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\n     * Allows you to set the ID for a particular row node based on the data. */",
     "type": { "returnType": "GetRowNodeIdFunc<TData>" }
   },
   "getRowId": {
@@ -1322,7 +1326,7 @@
     }
   },
   "postSort": {
-    "description": "/** @deprecated Use `postSortRows` instead\n */",
+    "description": "/** @deprecated v27.2 Use `postSortRows` instead */",
     "type": {
       "arguments": { "nodes": "RowNode<TData>[]" },
       "returnType": "void"
@@ -1357,7 +1361,7 @@
     }
   },
   "isFullWidthCell": {
-    "description": "/** @deprecated Use `isFullWidthRow` instead.\n */",
+    "description": "/** @deprecated v27.2 Use `isFullWidthRow` instead. */",
     "type": {
       "arguments": { "rowNode": "RowNode<TData>" },
       "returnType": "boolean"
@@ -1627,7 +1631,7 @@
     "meta": { "isEvent": true, "name": "onVirtualColumnsChanged" }
   },
   "onColumnEverythingChanged": {
-    "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
+    "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */",
     "type": {
       "arguments": { "event": "ColumnEverythingChangedEvent<TData>" },
       "returnType": "void"
@@ -1635,7 +1639,7 @@
     "meta": { "isEvent": true, "name": "onColumnEverythingChanged" }
   },
   "columnEverythingChanged": {
-    "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
+    "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */",
     "type": {
       "arguments": { "event": "ColumnEverythingChangedEvent<TData>" },
       "returnType": "void"
@@ -1643,7 +1647,7 @@
     "meta": { "isEvent": true, "name": "onColumnEverythingChanged" }
   },
   "onComponentStateChanged": {
-    "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
+    "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n     * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.\n     */",
     "type": {
       "arguments": { "event": "ComponentStateChangedEvent<TData>" },
       "returnType": "void"
@@ -1651,7 +1655,7 @@
     "meta": { "isEvent": true, "name": "onComponentStateChanged" }
   },
   "componentStateChanged": {
-    "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
+    "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n     * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.\n     */",
     "type": {
       "arguments": { "event": "ComponentStateChangedEvent<TData>" },
       "returnType": "void"
@@ -1659,7 +1663,7 @@
     "meta": { "isEvent": true, "name": "onComponentStateChanged" }
   },
   "onCellValueChanged": {
-    "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n *   if cell value has changed as a result of paste operation. */",
+    "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
     "type": {
       "arguments": { "event": "CellValueChangedEvent<TData>" },
       "returnType": "void"
@@ -1667,7 +1671,7 @@
     "meta": { "isEvent": true, "name": "onCellValueChanged" }
   },
   "cellValueChanged": {
-    "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n *   if cell value has changed as a result of paste operation. */",
+    "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
     "type": {
       "arguments": { "event": "CellValueChangedEvent<TData>" },
       "returnType": "void"
@@ -1923,7 +1927,7 @@
     "meta": { "isEvent": true, "name": "onCellKeyPress" }
   },
   "onGridReady": {
-    "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
+    "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet  */",
     "type": {
       "arguments": { "event": "GridReadyEvent<TData>" },
       "returnType": "void"
@@ -1931,7 +1935,7 @@
     "meta": { "isEvent": true, "name": "onGridReady" }
   },
   "gridReady": {
-    "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
+    "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet  */",
     "type": {
       "arguments": { "event": "GridReadyEvent<TData>" },
       "returnType": "void"
@@ -2083,7 +2087,7 @@
     "meta": { "isEvent": true, "name": "onDragStopped" }
   },
   "onPaginationChanged": {
-    "description": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n * \n *   - The page size changes.\n *   - The current shown page is changed.\n *   - New data is loaded onto the grid. */",
+    "description": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n     *\n     *  - The page size changes.\n     *  - The current shown page is changed.\n     *  - New data is loaded onto the grid.\n     */",
     "type": {
       "arguments": { "event": "PaginationChangedEvent<TData>" },
       "returnType": "void"
@@ -2091,7 +2095,7 @@
     "meta": { "isEvent": true, "name": "onPaginationChanged" }
   },
   "paginationChanged": {
-    "description": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n * \n *   - The page size changes.\n *   - The current shown page is changed.\n *   - New data is loaded onto the grid. */",
+    "description": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n     *\n     *  - The page size changes.\n     *  - The current shown page is changed.\n     *  - New data is loaded onto the grid.\n     */",
     "type": {
       "arguments": { "event": "PaginationChangedEvent<TData>" },
       "returnType": "void"
@@ -2227,7 +2231,7 @@
     "meta": { "isEvent": true, "name": "onPinnedRowDataChanged" }
   },
   "onRowDataChanged": {
-    "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
+    "description": "/** @deprecated v28 No longer fired, use onRowDataUpdated instead */",
     "type": {
       "arguments": { "event": "RowDataChangedEvent<TData>" },
       "returnType": "void"
@@ -2235,7 +2239,7 @@
     "meta": { "isEvent": true, "name": "onRowDataChanged" }
   },
   "rowDataChanged": {
-    "description": "/** @deprecated No longer fired, use onRowDataUpdated instead\n */",
+    "description": "/** @deprecated v28 No longer fired, use onRowDataUpdated instead */",
     "type": {
       "arguments": { "event": "RowDataChangedEvent<TData>" },
       "returnType": "void"
@@ -2539,11 +2543,11 @@
     "meta": { "isEvent": true, "name": "onColumnAggFuncChangeRequest" }
   },
   "api": {
-    "description": "/** The Grid Api for interacting with the grid.\n * Set by the grid on init, set to null on destroy. */",
+    "description": "/** The Grid Api for interacting with the grid.\n     * Set by the grid on init, set to null on destroy.\n     */",
     "type": { "returnType": "GridApi<TData> | null" }
   },
   "columnApi": {
-    "description": "/** The Column Api for interacting with the grid columns.\n * Set by the grid on init, set to null on destroy. */",
+    "description": "/** The Column Api for interacting with the grid columns.\n     * Set by the grid on init, set to null on destroy.\n     */",
     "type": { "returnType": "ColumnApi | null" }
   }
 }

@@ -23,7 +23,7 @@ export interface IHeaderRowContainerComp {
     setCenterWidth(width: string): void;
     setContainerTransform(transform: string): void;
     setPinnedContainerWidth(width: string): void;
-    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
+    setDisplayed(displayed: boolean): void;
     setCtrls(ctrls: HeaderRowCtrl[]): void;
 }
 
@@ -190,7 +190,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
             const widthWithPadding = addPaddingForScrollbar ? width + scrollbarWidth : width;
 
             this.comp.setPinnedContainerWidth(widthWithPadding + 'px');
-            this.comp.addOrRemoveCssClass('ag-hidden', hidden);
+            this.comp.setDisplayed(!hidden);
         };
 
         this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);

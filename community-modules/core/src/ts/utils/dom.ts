@@ -3,6 +3,7 @@ import { exists } from './generic';
 import { isNonNullObject } from './object';
 import { hyphenToCamelCase } from './string';
 import { Constants } from '../constants/constants';
+import { setAriaHidden } from './aria';
 
 let rtlNegativeScroll: boolean;
 
@@ -41,12 +42,20 @@ export function isFocusableFormField(element: HTMLElement): boolean {
     return focusable;
 }
 
-export function setDisplayed(element: HTMLElement, displayed: boolean) {
+export function setDisplayed(element: HTMLElement, displayed: boolean, options: { skipAriaHidden?: boolean } = {}) {
+    const  { skipAriaHidden } = options;
     element.classList.toggle('ag-hidden', !displayed);
+    if (!skipAriaHidden) {
+        setAriaHidden(element, !displayed);
+    }
 }
 
-export function setVisible(element: HTMLElement, visible: boolean) {
+export function setVisible(element: HTMLElement, visible: boolean, options: { skipAriaHidden?: boolean } = {}) {
+    const  { skipAriaHidden } = options;
     element.classList.toggle('ag-invisible', !visible);
+    if (!skipAriaHidden) {
+        setAriaHidden(element, !visible);
+    }
 }
 
 export function setDisabled(element: HTMLElement, disabled: boolean) {
@@ -466,18 +475,6 @@ export function iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, v
     for (let i = 0; i < map.length; i++) {
         const attr = map[i];
         callback(attr.name, attr.value);
-    }
-}
-
-/** @deprecated */
-export function setCheckboxState(eCheckbox: HTMLInputElement, state: any) {
-    if (typeof state === 'boolean') {
-        eCheckbox.checked = state;
-        eCheckbox.indeterminate = false;
-    } else {
-        // isNodeSelected returns back undefined if it's a group and the children
-        // are a mix of selected and unselected
-        eCheckbox.indeterminate = true;
     }
 }
 

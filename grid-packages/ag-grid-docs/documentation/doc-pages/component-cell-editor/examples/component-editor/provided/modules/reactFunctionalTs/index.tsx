@@ -56,7 +56,7 @@ const DoublingEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
             ref={refInput}
             value={value}
             onChange={(event: any) => setValue(parseInt(event.target.value))}
-            style={{ width: "100%" }}
+            className="doubling-input"
         />
     );
 }));
@@ -280,7 +280,7 @@ const NumericEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
             value={value}
             onChange={(event: any) => setValue(event.target.value)}
             onKeyDown={(event: any) => onKeyDown(event)}
-            style={{ width: "100%" }}
+            className="numeric-input"
         />
     );
 }));
@@ -307,7 +307,6 @@ const GridExample = () => {
             headerName: 'Doubling',
             field: 'number',
             cellEditor: DoublingEditor,
-            cellEditorPopup: true,
             editable: true,
             width: 300,
         },
@@ -323,7 +322,6 @@ const GridExample = () => {
             headerName: 'Numeric',
             field: 'number',
             cellEditor: NumericEditor,
-            cellEditorPopup: true,
             editable: true,
             width: 280,
         },

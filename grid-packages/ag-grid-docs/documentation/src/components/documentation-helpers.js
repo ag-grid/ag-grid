@@ -205,9 +205,9 @@ export function formatJsDocString(docString) {
     }
     const paramReg = /\* @param (\w+) (.*)\n/g;
     const returnsReg = /\* (@returns) (.*)\n/g;
-    const newLineReg = /\n \* /g;
+    const newLineReg = /\n\s+\*(?!\*)/g;
     // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
-    const defaultReg = /(\n \*)?(<br>)? Default:/g;
+    const defaultReg = /(\n\s+\*)?(<br>)? Default:/g;
 
     // Turn option list, new line starting with - into bullet points
     // eslint-disable-next-line

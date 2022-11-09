@@ -4,7 +4,7 @@ const KEY_BACKSPACE = 'Backspace';
 const KEY_DELETE = 'Delete';
 
 export default {
-    template: `<input v-model="value" :ref="'input'"/>`,
+    template: `<input v-model="value" :ref="'input'" class="my-simple-editor" />`,
     data() {
         return {
             value: null

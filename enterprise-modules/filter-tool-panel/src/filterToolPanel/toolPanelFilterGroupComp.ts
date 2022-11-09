@@ -137,7 +137,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     public hideGroup(hide: boolean) {
-        this.addOrRemoveCssClass('ag-hidden', hide);
+        this.setDisplayed(!hide);
     }
 
     private forEachToolPanelFilterChild(action: (filterComp: ToolPanelFilterItem) => void) {

@@ -53,6 +53,7 @@ export default forwardRef((props: ICellEditorParams, ref) => {
     return (
         <input value={value}
             ref={refInput}
-            onChange={event => setValue(event.target.value)} />
+            onChange={event => setValue(event.target.value)}
+            className="my-simple-editor" />
     );
 })

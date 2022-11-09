@@ -139,7 +139,7 @@ function insertItemsAt2AndRefresh(count: number) {
     // to the last row. eg if we have 1000 rows, scroll all the way to the bottom (so
     // maxRowFound=true), and then add 5 rows, the rowCount needs to be adjusted
     // to 1005, so grid can scroll to the end. the grid does NOT do this for you in the
-    // refreshVirtualPageCache() method, as this would be assuming you want to do it which
+    // refreshInfiniteCache() method, as this would be assuming you want to do it which
     // is not true, maybe the row count is constant and you just want to refresh the details.
     const maxRowFound = gridOptions.api!.isLastRowIndexKnown();
     if (maxRowFound) {

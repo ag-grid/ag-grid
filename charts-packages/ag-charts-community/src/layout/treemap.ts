@@ -38,7 +38,7 @@ function roundNode(node: Node) {
     node.y1 = Math.round(node.y1);
 }
 
-export function squarifyRatio(ratio: number, parent: any, x0: number, y0: number, x1: number, y1: number) {
+function squarifyRatio(ratio: number, parent: any, x0: number, y0: number, x1: number, y1: number) {
     const rows: any[] = [];
     const nodes = parent.children;
     const n = nodes.length;

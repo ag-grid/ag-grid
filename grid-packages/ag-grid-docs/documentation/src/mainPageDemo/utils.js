@@ -24,36 +24,9 @@ export const booleanCleaner = (value) => {
 
 export const axisLabelFormatter = (params) => {
     const value = params.value;
-    let isNormalized = false;
-    let hasBarSeries = false;
-    let hasScatterSeries = false;
-    let hasHistogramSeries = false;
-    let hasAreaSeries = false;
-    let hasLineSeries = false;
-    let flipXY = false;
-    params.axis.boundSeries.forEach(series => {
-        if (series.normalizedTo) {
-            isNormalized = true;
-        }
-        if (series.type === 'bar') {
-            hasBarSeries = true;
-            flipXY = series.flipXY;
-        } else if (series.type === 'scatter') {
-            hasScatterSeries = true;
-        } else if (series.type === 'histogram') {
-            hasHistogramSeries = true;
-        } else if (series.type === 'area') {
-            hasAreaSeries = true;
-        } else if (series.type === 'line') {
-            hasLineSeries = true;
-        }
-    });
 
     if (isNaN(value)) {
         return value;
-    }
-    if (isNormalized) {
-        return value + '%';
     }
 
     const absolute = Math.abs(value);
@@ -73,12 +46,7 @@ export const axisLabelFormatter = (params) => {
     }
     if (absolute >= 1e12) standardised = '$' + +(absolute / 1e12).toFixed(1) + 'T';
 
-    /* eslint-disable no-mixed-operators */
-    if (hasScatterSeries || (hasAreaSeries || hasLineSeries) && params.axis.direction === 'y' || hasHistogramSeries && params.axis.direction === 'x' || hasBarSeries && (flipXY && params.axis.direction === 'x' || !flipXY && params.axis.direction === 'y')) {
-        return value < 0 ? '-' + standardised : standardised;
-    } else {
-        return value;
-    }
+    return value < 0 ? '-' + standardised : standardised;
 };
 export const formatThousands = value => value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 

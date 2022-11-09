@@ -29,9 +29,9 @@ function isMergeableObject(value: any): boolean {
     return defaultIsMergeableObject(value) && !(value instanceof TimeInterval);
 }
 
-export const mergeOptions = { arrayMerge, isMergeableObject };
+const mergeOptions = { arrayMerge, isMergeableObject };
 
-export type ChartThemeDefaults = {
+type ChartThemeDefaults = {
     cartesian: AgCartesianThemeOptions;
     groupedCategory: AgCartesianThemeOptions;
     polar: AgPolarThemeOptions;

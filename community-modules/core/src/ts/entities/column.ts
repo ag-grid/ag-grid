@@ -754,7 +754,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     // this method should only be used by the columnModel to
-    // change flex when required by the setColumnState method.
+    // change flex when required by the applyColumnState method.
     public setFlex(flex: number | null) {
         if (this.flex !== flex) { this.flex = flex; }
     }

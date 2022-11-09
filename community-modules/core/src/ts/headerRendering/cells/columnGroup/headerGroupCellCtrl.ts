@@ -27,7 +27,7 @@ import { IHeaderGroupParams } from "./headerGroupComp";
 
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    addOrRemoveResizableCssClass(cssClassName: string, on: boolean): void;
+    setResizableDisplayed(displayed: boolean): void;
     setWidth(width: string): void;
     setColId(id: string): void;
     setAriaExpanded(expanded: 'true' | 'false' | undefined): void;

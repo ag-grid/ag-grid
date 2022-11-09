@@ -17,7 +17,6 @@ import { FocusService } from "../focusService";
 import { CellPosition } from "../entities/cellPosition";
 import { BeanStub } from "../context/beanStub";
 import { PaginationProxy } from "../pagination/paginationProxy";
-import { FlashCellsParams, GetCellRendererInstancesParams, RefreshCellsParams } from "../gridApi";
 import { Beans } from "./beans";
 import { RowContainerHeightService } from "./rowContainerHeightService";
 import { ICellRenderer } from "./cellRenderers/iCellRenderer";
@@ -47,6 +46,33 @@ interface RowNodeMap {
 }
 
 const DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
+export interface GetCellsParams<TData = any> {
+    /** Optional list of row nodes to restrict operation to */
+    rowNodes?: RowNode<TData>[];
+    /** Optional list of columns to restrict operation to */
+    columns?: (string | Column)[];
+}
+
+export interface RefreshCellsParams<TData = any> extends GetCellsParams<TData> {
+    /** Skip change detection, refresh everything. */
+    force?: boolean;
+    /** Skip cell flashing, if cell flashing is enabled. */
+    suppressFlash?: boolean;
+}
+
+export interface FlashCellsParams<TData = any> extends GetCellsParams<TData> {
+    flashDelay?: number;
+    fadeDelay?: number;
+}
+
+export interface GetCellRendererInstancesParams<TData = any> extends GetCellsParams<TData> { }
+
+export interface GetCellEditorInstancesParams<TData = any> extends GetCellsParams<TData> { }
+
+export interface RedrawRowsParams<TData = any> {
+    /** Row nodes to redraw */
+    rowNodes?: RowNode<TData>[];
+}
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
@@ -117,7 +143,7 @@ export class RowRenderer extends BeanStub {
                 doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
             } else if (this.gridOptionsService.is('treeData')) {
                 doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups does not work with Tree Data.'), 'rowRenderer.stickyDoesNotWorkWithTreeData');
-            }  else {
+            } else {
                 this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
                     this.createRowCon.bind(this),
                     this.destroyRowCtrls.bind(this)
@@ -665,10 +691,10 @@ export class RowRenderer extends BeanStub {
         return res;
     }
 
-    private mapRowNodes(rowNodes?: RowNode[] | null): {top: RowNodeMap, bottom: RowNodeMap, normal: RowNodeMap} | undefined {
+    private mapRowNodes(rowNodes?: RowNode[] | null): { top: RowNodeMap, bottom: RowNodeMap, normal: RowNodeMap } | undefined {
         if (!rowNodes) { return; }
 
-        const res: {top: RowNodeMap, bottom: RowNodeMap, normal: RowNodeMap} = {
+        const res: { top: RowNodeMap, bottom: RowNodeMap, normal: RowNodeMap } = {
             top: {},
             bottom: {},
             normal: {}
@@ -688,7 +714,7 @@ export class RowRenderer extends BeanStub {
         return res;
     }
 
-    private isRowInMap(rowNode: RowNode, rowIdsMap: {top: RowNodeMap, bottom: RowNodeMap, normal: RowNodeMap}): boolean {
+    private isRowInMap(rowNode: RowNode, rowIdsMap: { top: RowNodeMap, bottom: RowNodeMap, normal: RowNodeMap }): boolean {
         // skip this row if it is missing from the provided list
         const id = rowNode.id!;
         const floating = rowNode.rowPinned;
@@ -1104,7 +1130,7 @@ export class RowRenderer extends BeanStub {
             let lastPixel: number;
             do {
                 const paginationOffset = this.paginationProxy.getPixelOffset();
-                const {pageFirstPixel, pageLastPixel} = this.paginationProxy.getCurrentPagePixelRange();
+                const { pageFirstPixel, pageLastPixel } = this.paginationProxy.getCurrentPagePixelRange();
                 const divStretchOffset = this.rowContainerHeightService.getDivStretchOffset();
 
                 const bodyVRange = gridBodyCtrl.getScrollFeature().getVScrollPosition();
@@ -1289,7 +1315,7 @@ export class RowRenderer extends BeanStub {
 
     public getRowByPosition(rowPosition: RowPosition): RowCtrl | null {
         let rowCtrl: RowCtrl | null;
-        const {rowIndex} = rowPosition;
+        const { rowIndex } = rowPosition;
         switch (rowPosition.rowPinned) {
             case Constants.PINNED_TOP:
                 rowCtrl = this.topRowCtrls[rowIndex];

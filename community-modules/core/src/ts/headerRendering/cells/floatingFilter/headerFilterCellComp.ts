@@ -2,6 +2,7 @@ import { UserCompDetails } from "../../../components/framework/userComponentFact
 import { PostConstruct } from '../../../context/context';
 import { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';
 import { AgPromise } from '../../../utils';
+import { setDisplayed } from "../../../utils/dom";
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import { HeaderFilterCellCtrl, IHeaderFilterCellComp } from './headerFilterCellCtrl';
@@ -34,7 +35,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         const compProxy: IHeaderFilterCellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             addOrRemoveBodyCssClass: (cssClassName, on) => this.eFloatingFilterBody.classList.toggle(cssClassName, on),
-            addOrRemoveButtonWrapperCssClass: (cssClassName, on) => this.eButtonWrapper.classList.toggle(cssClassName, on),
+            setButtonWrapperDisplayed: (displayed) => setDisplayed(this.eButtonWrapper, displayed),
             setCompDetails: compDetails => this.setCompDetails(compDetails),
             getFloatingFilterComp: () => this.compPromise,
             setWidth: width => eGui.style.width = width,

@@ -6,7 +6,7 @@ import { AgGridCommon } from "../../../interfaces/iCommon";
 import { SortController } from "../../../sortController";
 import { firstExistingValue } from "../../../utils/array";
 import { isIOSUserAgent } from "../../../utils/browser";
-import { removeFromParent } from "../../../utils/dom";
+import { removeFromParent, setDisplayed } from "../../../utils/dom";
 import { exists } from "../../../utils/generic";
 import { createIconNoSpan } from "../../../utils/icon";
 import { escapeString } from "../../../utils/string";
@@ -344,6 +344,6 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private onFilterChanged(): void {
         const filterPresent = this.params.column.isFilterActive();
-        this.eFilter.classList.toggle('ag-hidden', !filterPresent);
+        setDisplayed(this.eFilter, filterPresent, { skipAriaHidden: true });
     }
 }

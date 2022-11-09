@@ -1,12 +1,12 @@
 {
   "name": "ag-grid-angular-legacy",
-  "version": "28.2.0",
+  "version": "28.2.1",
   "license": "MIT",
   "peerDependencies": {
-    "ag-grid-community": "~28.2.0",
-    "@angular/common": ">= 8.0.0",
-    "@angular/core": ">= 8.0.0",
-    "tslib": "^1.10.0"
+    "ag-grid-community": "~28.2.1",
+    "@angular/common": ">= 10.0.0",
+    "@angular/core": ">= 10.0.0",
+    "tslib": "^2.0.0"
   },
   "repository": {
     "type": "git",

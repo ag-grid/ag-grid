@@ -129,7 +129,7 @@ export default memo(forwardRef((props: ICellEditorParams, ref) => {
             value={value}
             onChange={event => setValue(event.target.value)}
             onKeyDown={event => onKeyDown(event)}
-            style={{ width: "100%" }}
+            className='numeric-input'
         />
     );
 }));

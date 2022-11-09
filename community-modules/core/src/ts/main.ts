@@ -10,7 +10,7 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 // columns
 export { ColumnFactory } from "./columns/columnFactory";
-export { ColumnModel, ColumnState, ColumnStateParams, ApplyColumnStateParams } from "./columns/columnModel";
+export { ColumnModel, ColumnState, ColumnStateParams, ApplyColumnStateParams, ISizeColumnsToFitParams, IColumnLimit } from "./columns/columnModel";
 export { ColumnKeyCreator } from "./columns/columnKeyCreator";
 export { ColumnUtils } from "./columns/columnUtils";
 export { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
@@ -20,7 +20,6 @@ export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";
 export { ComponentUtil } from "./components/componentUtil";
 export { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
 
-export { ColDefUtil } from "./components/colDefUtil";
 export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 export { UserComponentFactory, UserCompDetails } from "./components/framework/userComponentFactory";
 export { ComponentType } from "./components/framework/componentTypes";
@@ -196,7 +195,7 @@ export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionCompone
 export { CellComp } from "./rendering/cell/cellComp";
 export { CellCtrl, ICellComp } from "./rendering/cell/cellCtrl";
 export { RowCtrl, IRowComp } from "./rendering/row/rowCtrl";
-export { RowRenderer } from "./rendering/rowRenderer";
+export { RowRenderer, FlashCellsParams, GetCellRendererInstancesParams, RefreshCellsParams } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { ILoadingCellRenderer, ILoadingCellRendererComp, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
 export { CssClassManager } from "./rendering/cssClassManager";
@@ -268,6 +267,7 @@ export {
     ChartModel,
     GetChartImageDataUrlParams,
     ChartModelType,
+    CreateRangeChartParams, ChartParamsCellRange, CreatePivotChartParams, CreateCrossFilterChartParams
 } from './interfaces/IChartService';
 
 // master detail
@@ -290,7 +290,7 @@ export { AlignedGridsService } from "./alignedGridsService";
 export { Constants } from "./constants/constants";
 export { KeyCode } from "./constants/keyCode";
 export { Grid, GridParams, GridCoreCreator } from "./grid";
-export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, ChartParamsCellRange, CreatePivotChartParams, CreateCrossFilterChartParams } from "./gridApi";
+export { GridApi, DetailGridInfo, StartEditingCellParams } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusService } from "./focusService";
 export { defaultGroupComparator } from "./functions";

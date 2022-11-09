@@ -1,13 +1,12 @@
 import { Group } from '../../scene/group';
 import { LegendDatum } from '../legend';
-import { Observable } from '../../util/observable';
+import { Observable, TypedEvent } from '../../util/observable';
 import { ChartAxis, ChartAxisDirection } from '../chartAxis';
 import { Chart } from '../chart';
 import { createId } from '../../util/id';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
 import { Deprecated, createDeprecationWarning } from '../../util/deprecation';
-import { TypedEvent } from '../../util/observable';
 import { BOOLEAN, OPT_BOOLEAN, OPT_NUMBER, OPT_COLOR_STRING, STRING, Validate } from '../../util/validation';
 import { PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
@@ -47,13 +46,6 @@ export type SeriesNodePickMatch = {
     distance: number;
 };
 
-export interface TooltipRendererParams {
-    readonly datum: any;
-    readonly title?: string;
-    readonly color?: string;
-    readonly seriesId: string;
-}
-
 const warnDeprecated = createDeprecationWarning();
 const warnSeriesDeprecated = () => warnDeprecated('series', 'Use seriesId to get the series ID');
 
@@ -78,27 +70,7 @@ export class SeriesNodeClickEvent<Datum extends { datum: any }> implements Typed
     }
 }
 
-export interface CartesianTooltipRendererParams extends TooltipRendererParams {
-    readonly xKey: string;
-    readonly xValue: any;
-    readonly xName?: string;
-
-    readonly yKey: string;
-    readonly yValue: any;
-    readonly yName?: string;
-}
-
-export interface PolarTooltipRendererParams extends TooltipRendererParams {
-    readonly angleKey: string;
-    readonly angleValue: any;
-    readonly angleName?: string;
-
-    readonly radiusKey?: string;
-    readonly radiusValue?: any;
-    readonly radiusName?: string;
-}
-
-export class SeriesItemHighlightStyle {
+class SeriesItemHighlightStyle {
     @Validate(OPT_COLOR_STRING)
     fill?: string = 'yellow';
 
@@ -112,7 +84,7 @@ export class SeriesItemHighlightStyle {
     strokeWidth?: number = undefined;
 }
 
-export class SeriesHighlightStyle {
+class SeriesHighlightStyle {
     @Validate(OPT_NUMBER(0))
     strokeWidth?: number = undefined;
 

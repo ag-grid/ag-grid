@@ -1,4 +1,4 @@
-import { AgAreaSeriesOptions, AgCartesianAxisOptions, ChartAxisPosition } from "ag-charts-community";
+import { AgAreaSeriesOptions, AgCartesianAxisOptions } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
@@ -24,12 +24,12 @@ export class AreaChartProxy extends CartesianChartProxy {
             {
                 ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
                 type: this.xAxisType,
-                position: ChartAxisPosition.Bottom,
+                position: 'bottom',
             },
             {
                 ...deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left),
                 type: this.yAxisType,
-                position: ChartAxisPosition.Left
+                position: 'left'
             },
         ];
     }

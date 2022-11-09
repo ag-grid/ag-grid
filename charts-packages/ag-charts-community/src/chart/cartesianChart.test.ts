@@ -228,7 +228,8 @@ describe('CartesianChart', () => {
     seriesHighlightingTestCases('Line', examples.SIMPLE_LINE_CHART_EXAMPLE);
     seriesHighlightingTestCases('Grouped Bar', examples.GROUPED_BAR_CHART_EXAMPLE);
     seriesHighlightingTestCases('Stacked Bar', examples.STACKED_BAR_CHART_EXAMPLE);
-    seriesHighlightingTestCases('Area', examples.STACKED_AREA_GRAPH_EXAMPLE);
+    seriesHighlightingTestCases('Stacked Area', examples.STACKED_AREA_GRAPH_EXAMPLE);
+    seriesHighlightingTestCases('Area', examples.AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE);
 
     describe('Histogram & Scatter Series Highlighting', () => {
         it('should highlight scatter datum when overlapping histogram', async () => {

@@ -1,7 +1,7 @@
 // noinspection ES6UnusedImports
 import React, {useState} from 'react'
 import {mount} from 'cypress-react-unit-test'
-import {AgGridColumn, AgGridReact} from "../..";
+import { AgGridReact } from "../..";
 import {cssProperty, ensureGridApiHasBeenSet, getTextWidth} from "./utils";
 
 class CRF extends React.Component {
@@ -20,6 +20,9 @@ const App = () => {
         {value: "Porsche"}
     ]);
 
+    const [colDefs, setColDefs] = useState([
+        { field: 'value', cellRenderer: 'crf', cellStyle={ "white-space": "normal" }, autoHeight: true }
+    ]);
     function onGridReady(params) {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
@@ -34,15 +37,10 @@ const App = () => {
                 suppressReactUi={true}
                 onGridReady={onGridReady}
                 rowData={rowData}
+                columnDefs={colDefs}
                 frameworkComponents={{
                     crf: CRF
-                }}>
-                <AgGridColumn
-                    field="value"
-                    cellRenderer='crf'
-                    cellStyle={{"white-space": "normal"}}
-                    autoHeight
-                ></AgGridColumn>
+                }}>                
             </AgGridReact>
         </div>
     );

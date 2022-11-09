@@ -47,5 +47,6 @@
             "prefix": "RTI-",
             "url": "https://ag-grid.atlassian.net/browse/RTI-<num>"
         }
-    ]
+    ],
+    "peacock.color": "#f9e64f"
 }

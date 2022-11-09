@@ -97,18 +97,18 @@ export class SortIndicatorComp extends Component {
 
         if (this.eSortAsc) {
             const isAscending = sortDirection === 'asc';
-            this.eSortAsc.classList.toggle('ag-hidden', !isAscending);
+            setDisplayed(this.eSortAsc, isAscending, { skipAriaHidden: true });
         }
 
         if (this.eSortDesc) {
             const isDescending = sortDirection === 'desc';
-            this.eSortDesc.classList.toggle('ag-hidden', !isDescending);
+            setDisplayed(this.eSortDesc, isDescending, { skipAriaHidden: true });
         }
 
         if (this.eSortNone) {
             const alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsService.is('unSortIcon');
             const isNone = sortDirection === null || sortDirection === undefined;
-            this.eSortNone.classList.toggle('ag-hidden', (alwaysHideNoSort || !isNone));
+            setDisplayed(this.eSortNone, !alwaysHideNoSort && isNone, { skipAriaHidden: true });
         }
     }
 
@@ -129,7 +129,7 @@ export class SortIndicatorComp extends Component {
     private updateMultiSortIndicator() {
         if (this.eSortMixed) {
             const isMixedSort = this.sortController.getDisplaySortForColumn(this.column) === 'mixed';
-            this.eSortMixed.classList.toggle('ag-hidden', !isMixedSort);
+            setDisplayed(this.eSortMixed, isMixedSort, { skipAriaHidden: true });
         }
     }
 
@@ -144,7 +144,7 @@ export class SortIndicatorComp extends Component {
         const indexThisCol = this.sortController.getDisplaySortIndexForColumn(this.column) ?? -1;
         const moreThanOneColSorting = allColumnsWithSorting.some(col => this.sortController.getDisplaySortIndexForColumn(col) ?? -1 >= 1);
         const showIndex = indexThisCol >= 0 && moreThanOneColSorting;
-        setDisplayed(this.eSortOrder, showIndex);
+        setDisplayed(this.eSortOrder, showIndex, { skipAriaHidden: true });
 
         if (indexThisCol >= 0) {
             this.eSortOrder.innerHTML = (indexThisCol + 1).toString();

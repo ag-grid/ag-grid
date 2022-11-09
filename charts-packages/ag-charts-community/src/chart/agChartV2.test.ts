@@ -143,7 +143,7 @@ describe('AgChartV2', () => {
                 width: CANVAS_WIDTH,
                 height: CANVAS_HEIGHT,
             }));
-            const snapshots: any[] = exampleCycle.map(() => undefined);
+            const snapshots: any[] = [];
 
             // Create initial chart instance.
             chart = AgChartV2.create<any>(exampleCycle[0]) as Chart;

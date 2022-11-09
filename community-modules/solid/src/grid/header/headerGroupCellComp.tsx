@@ -1,6 +1,5 @@
 import { HeaderGroupCellCtrl, IHeaderGroupCellComp, UserCompDetails } from '@ag-grid-community/core';
-import { createEffect, createMemo, createSignal, onMount, useContext } from 'solid-js';
-import { BeansContext } from '../core/beansContext';
+import { createEffect, createMemo, createSignal, onMount } from 'solid-js';
 import { CssClasses } from '../core/utils';
 import UserComp from '../userComps/userComp';
 
@@ -8,6 +7,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
 
     const [getCssClasses, setCssClasses] = createSignal<CssClasses>(new CssClasses());
     const [getCssResizableClasses, setResizableCssClasses] = createSignal<CssClasses>(new CssClasses());
+    const [getResizableAriaHidden, setResizableAriaHidden] = createSignal<"true" | "false">("false");
     const [getWidth, setWidth] = createSignal<string>();
     const [getTitle, setTitle] = createSignal<string>();
     const [getColId, setColId] = createSignal<string>();
@@ -27,7 +27,10 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
             setColId: id => setColId(id),
             setTitle: title => setTitle(title),
             setUserCompDetails: compDetails => setUserCompDetails(compDetails),
-            addOrRemoveResizableCssClass: (name, on) => setResizableCssClasses(prev => prev.setClass(name, on)),
+            setResizableDisplayed: (displayed) => {
+                setResizableCssClasses(prev => prev.setClass('ag-hidden', !displayed));
+                setResizableAriaHidden(!displayed ? "true" : "false");
+            },
             setAriaExpanded: expanded => setAriaExpanded(expanded)
         };
 
@@ -63,7 +66,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
             { getUserCompDetails() 
                 && <UserComp compDetails={getUserCompDetails()!} /> }
 
-            <div ref={eResize!} class={getResizableClassName()}></div>
+            <div ref={eResize!} aria-hidden={getResizableAriaHidden()} class={getResizableClassName()}></div>
         </div>
     );
 };

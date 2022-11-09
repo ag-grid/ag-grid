@@ -25,7 +25,6 @@ const gridOptions: GridOptions = {
       headerName: 'Numeric',
       field: 'number',
       cellEditor: NumericEditor,
-      cellEditorPopup: true,
       editable: true,
       width: 280,
     },

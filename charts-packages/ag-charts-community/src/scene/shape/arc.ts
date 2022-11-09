@@ -5,7 +5,7 @@ import { normalizeAngle360 } from '../../util/angle';
 import { chainObjects } from '../../util/object';
 import { isEqual } from '../../util/number';
 
-export enum ArcType {
+enum ArcType {
     Open,
     Chord,
     Round,

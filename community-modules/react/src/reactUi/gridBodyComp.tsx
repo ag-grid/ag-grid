@@ -166,7 +166,7 @@ const GridBodyComp = () => {
     );
 
     return (
-        <div ref={ eRoot } className={ rootClasses } role="grid" aria-colcount={ ariaColCount } aria-rowcount={ ariaRowCount }>
+        <div ref={ eRoot } className={ rootClasses } role="treegrid" aria-colcount={ ariaColCount } aria-rowcount={ ariaRowCount }>
             <GridHeaderComp/>
             { createSection({ section: eTop, className: topClasses, style: topStyle, children: [
                 RowContainerName.TOP_LEFT,

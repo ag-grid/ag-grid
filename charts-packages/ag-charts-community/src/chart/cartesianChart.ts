@@ -1,10 +1,11 @@
 import { Chart } from './chart';
 import { CategoryAxis } from './axis/categoryAxis';
 import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
-import { ChartAxis, ChartAxisPosition, ChartAxisDirection } from './chartAxis';
+import { ChartAxis, ChartAxisDirection } from './chartAxis';
 import { BBox } from '../scene/bbox';
 import { ClipRect } from '../scene/clipRect';
 import { Navigator } from './navigator/navigator';
+import { AgCartesianAxisPosition } from './agChartOptions';
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
@@ -175,11 +176,11 @@ export class CartesianChart extends Chart {
         this.navigator.onDragStop();
     }
 
-    private _lastAxisWidths: Partial<Record<ChartAxisPosition, number>> = {
-        [ChartAxisPosition.Top]: 0,
-        [ChartAxisPosition.Bottom]: 0,
-        [ChartAxisPosition.Left]: 0,
-        [ChartAxisPosition.Right]: 0,
+    private _lastAxisWidths: Partial<Record<AgCartesianAxisPosition, number>> = {
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
     };
     updateAxes(inputShrinkRect: BBox) {
         // Start with a good approximation from the last update - this should mean that in many resize
@@ -188,10 +189,8 @@ export class CartesianChart extends Chart {
 
         // Clean any positions which aren't valid with the current axis status (otherwise we end up
         // never being able to find a stable result).
-        const liveAxisWidths = this._axes
-            .map((a) => a.position)
-            .reduce((r, n) => r.add(n), new Set<ChartAxisPosition>());
-        for (const position of Object.keys(axisWidths) as ChartAxisPosition[]) {
+        const liveAxisWidths = new Set(this._axes.map((a) => a.position));
+        for (const position of Object.keys(axisWidths) as AgCartesianAxisPosition[]) {
             if (!liveAxisWidths.has(position)) {
                 delete axisWidths[position];
             }
@@ -244,13 +243,13 @@ export class CartesianChart extends Chart {
     }
 
     private updateAxesPass(
-        axisWidths: Partial<Record<ChartAxisPosition, number>>,
+        axisWidths: Partial<Record<AgCartesianAxisPosition, number>>,
         bounds: BBox,
         lastPassSeriesRect?: BBox
     ) {
         const { axes } = this;
-        const visited: Partial<Record<ChartAxisPosition, number>> = {};
-        const newAxisWidths: Partial<Record<ChartAxisPosition, number>> = {};
+        const visited: Partial<Record<AgCartesianAxisPosition, number>> = {};
+        const newAxisWidths: Partial<Record<AgCartesianAxisPosition, number>> = {};
 
         let clipSeries = false;
         let primaryTickCounts: Partial<Record<ChartAxisDirection, number>> = {};
@@ -295,8 +294,11 @@ export class CartesianChart extends Chart {
         return { clipSeries, seriesRect, axisWidths: newAxisWidths };
     }
 
-    private buildCrossLinePadding(lastPassSeriesRect: BBox, axisWidths: Partial<Record<ChartAxisPosition, number>>) {
-        const crossLinePadding: Partial<Record<ChartAxisPosition, number>> = {};
+    private buildCrossLinePadding(
+        lastPassSeriesRect: BBox,
+        axisWidths: Partial<Record<AgCartesianAxisPosition, number>>
+    ) {
+        const crossLinePadding: Partial<Record<AgCartesianAxisPosition, number>> = {};
 
         this.axes.forEach((axis) => {
             if (axis.crossLines) {
@@ -306,14 +308,14 @@ export class CartesianChart extends Chart {
             }
         });
         // Reduce cross-line padding to account for overlap with axes.
-        for (const [side, padding = 0] of Object.entries(crossLinePadding) as [ChartAxisPosition, number][]) {
+        for (const [side, padding = 0] of Object.entries(crossLinePadding) as [AgCartesianAxisPosition, number][]) {
             crossLinePadding[side] = Math.max(padding - (axisWidths[side] ?? 0), 0);
         }
 
         return crossLinePadding;
     }
 
-    private buildAxisBound(bounds: BBox, crossLinePadding: Partial<Record<ChartAxisPosition, number>>) {
+    private buildAxisBound(bounds: BBox, crossLinePadding: Partial<Record<AgCartesianAxisPosition, number>>) {
         const result = bounds.clone();
         const { top = 0, right = 0, bottom = 0, left = 0 } = crossLinePadding;
         result.x += left;
@@ -323,7 +325,7 @@ export class CartesianChart extends Chart {
         return result;
     }
 
-    private buildSeriesRect(axisBound: BBox, axisWidths: Partial<Record<ChartAxisPosition, number>>) {
+    private buildSeriesRect(axisBound: BBox, axisWidths: Partial<Record<AgCartesianAxisPosition, number>>) {
         let result = axisBound.clone();
         const { top, bottom, left, right } = axisWidths;
         result.x += left ?? 0;
@@ -350,8 +352,8 @@ export class CartesianChart extends Chart {
     private calculateAxisDimensions(opts: {
         axis: ChartAxis;
         seriesRect: BBox;
-        axisWidths: Partial<Record<ChartAxisPosition, number>>;
-        newAxisWidths: Partial<Record<ChartAxisPosition, number>>;
+        axisWidths: Partial<Record<AgCartesianAxisPosition, number>>;
+        newAxisWidths: Partial<Record<AgCartesianAxisPosition, number>>;
         primaryTickCounts: Partial<Record<ChartAxisDirection, number>>;
         clipSeries: boolean;
         addInterAxisPadding: boolean;
@@ -372,13 +374,13 @@ export class CartesianChart extends Chart {
 
         const axisOffset = newAxisWidths[position] ?? 0;
         switch (position) {
-            case ChartAxisPosition.Top:
-            case ChartAxisPosition.Bottom:
+            case 'top':
+            case 'bottom':
                 axis.range = [0, seriesRect.width];
                 axis.gridLength = seriesRect.height;
                 break;
-            case ChartAxisPosition.Right:
-            case ChartAxisPosition.Left:
+            case 'right':
+            case 'left':
                 axis.range = axisLeftRightRange(axis);
                 axis.gridLength = seriesRect.width;
                 break;
@@ -424,7 +426,7 @@ export class CartesianChart extends Chart {
     private positionAxis(opts: {
         axis: ChartAxis;
         axisBound: BBox;
-        axisWidths: Partial<Record<ChartAxisPosition, number>>;
+        axisWidths: Partial<Record<AgCartesianAxisPosition, number>>;
         primaryTickCounts: Partial<Record<ChartAxisDirection, number>>;
         seriesRect: BBox;
         axisOffset: number;
@@ -434,7 +436,7 @@ export class CartesianChart extends Chart {
         const { position } = axis;
 
         switch (position) {
-            case ChartAxisPosition.Top:
+            case 'top':
                 axis.translation.x = axisBound.x + (axisWidths.left ?? 0);
                 axis.translation.y = this.clampToOutsideSeriesRect(
                     seriesRect,
@@ -443,7 +445,7 @@ export class CartesianChart extends Chart {
                     1
                 );
                 break;
-            case ChartAxisPosition.Bottom:
+            case 'bottom':
                 axis.translation.x = axisBound.x + (axisWidths.left ?? 0);
                 axis.translation.y = this.clampToOutsideSeriesRect(
                     seriesRect,
@@ -452,7 +454,7 @@ export class CartesianChart extends Chart {
                     -1
                 );
                 break;
-            case ChartAxisPosition.Left:
+            case 'left':
                 axis.translation.y = axisBound.y + (axisWidths.top ?? 0);
                 axis.translation.x = this.clampToOutsideSeriesRect(
                     seriesRect,
@@ -461,7 +463,7 @@ export class CartesianChart extends Chart {
                     1
                 );
                 break;
-            case ChartAxisPosition.Right:
+            case 'right':
                 axis.translation.y = axisBound.y + (axisWidths.top ?? 0);
                 axis.translation.x = this.clampToOutsideSeriesRect(
                     seriesRect,

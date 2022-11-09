@@ -2,26 +2,15 @@ import { Path } from '../../../scene/shape/path';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Selection } from '../../../scene/selection';
 import { Group } from '../../../scene/group';
-import {
-    SeriesNodeDatum,
-    CartesianTooltipRendererParams,
-    SeriesTooltip,
-    SeriesNodeDataContext,
-    SeriesNodePickMode,
-} from '../series';
+import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
-import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
+import { Text } from '../../../scene/shape/text';
 import { LegendDatum } from '../../legend';
-import {
-    CartesianSeries,
-    CartesianSeriesMarker,
-    CartesianSeriesMarkerFormat,
-    CartesianSeriesNodeClickEvent,
-} from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxis';
 import { getMarker } from '../../marker/util';
-import { TooltipRendererResult, toTooltipHtml } from '../../tooltip/tooltip';
+import { toTooltipHtml } from '../../tooltip/tooltip';
 import { interpolate } from '../../../util/string';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
@@ -36,6 +25,14 @@ import {
     STRING,
     Validate,
 } from '../../../util/validation';
+import {
+    AgCartesianSeriesLabelFormatterParams,
+    AgCartesianSeriesTooltipRendererParams,
+    AgTooltipRendererResult,
+    FontStyle,
+    FontWeight,
+    AgCartesianSeriesMarkerFormat,
+} from '../../agChartOptions';
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {
@@ -53,16 +50,14 @@ interface LineNodeDatum extends SeriesNodeDatum {
     };
 }
 
-export type LineTooltipRendererParams = CartesianTooltipRendererParams;
-
 class LineSeriesLabel extends Label {
     @Validate(OPT_FUNCTION)
-    formatter?: (params: { value: number; seriesId: string }) => string = undefined;
+    formatter?: (params: AgCartesianSeriesLabelFormatterParams) => string = undefined;
 }
 
-export class LineSeriesTooltip extends SeriesTooltip {
+class LineSeriesTooltip extends SeriesTooltip {
     @Validate(OPT_FUNCTION)
-    renderer?: (params: LineTooltipRendererParams) => string | TooltipRendererResult = undefined;
+    renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult = undefined;
     @Validate(OPT_STRING)
     format?: string = undefined;
 }
@@ -396,7 +391,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     ? highlightedDatumStrokeWidth
                     : markerStrokeWidth;
 
-            let format: CartesianSeriesMarkerFormat | undefined = undefined;
+            let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
             if (formatter) {
                 format = formatter({
                     datum: datum.datum,
@@ -493,7 +488,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const { formatter: markerFormatter, fill, stroke, strokeWidth: markerStrokeWidth, size } = marker;
         const strokeWidth = markerStrokeWidth !== undefined ? markerStrokeWidth : this.strokeWidth;
 
-        let format: CartesianSeriesMarkerFormat | undefined = undefined;
+        let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
         if (markerFormatter) {
             format = markerFormatter({
                 datum,
@@ -510,7 +505,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
         const color = (format && format.fill) || fill;
 
-        const defaults: TooltipRendererResult = {
+        const defaults: AgTooltipRendererResult = {
             title,
             backgroundColor: color,
             content,

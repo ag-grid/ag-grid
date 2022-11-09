@@ -1,8 +1,7 @@
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {Bean, ComponentUtil, Grid, GridOptions, Module} from '@ag-grid-community/core';
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
-import {getAgGridProperties, Properties} from './Utils';
-import {AgGridColumn} from './AgGridColumn';
+import { getAgGridProperties, Properties } from './Utils';
 import {VueFrameworkOverrides} from './VueFrameworkOverrides';
 
 const [props, watch, model] = getAgGridProperties();
@@ -95,10 +94,6 @@ export class AgGridVue extends Vue {
 
         this.checkForBindingConflicts();
         gridOptions.rowData = this.getRowDataBasedOnBindings();
-
-        if (AgGridColumn.hasChildColumns(this.$slots)) {
-            gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(this.$slots);
-        }
 
         const gridParams = {
             globalEventListener: this.globalEventListener.bind(this),

@@ -68,7 +68,7 @@ The data as provided by the application. The grid never modifies this array. It 
     Example: Rows After Map - Closed Group
 </image-caption>
 
-**API:** Use `api.getModel()` and then `model.getVirtualRowCount()` and `getVirtualRow()` to get the nodes.
+**API:** Use `api.getModel()` and then `model.getDisplayedRowCount()` and `getDisplayedRowAtIndex()` to get the nodes.
 
 ## Refreshing the Client-Side Model
 

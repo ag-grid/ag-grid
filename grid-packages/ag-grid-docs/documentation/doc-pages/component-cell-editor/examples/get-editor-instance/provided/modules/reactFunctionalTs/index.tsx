@@ -83,32 +83,27 @@ const GridExample = () => {
         {
             field: "gender",
             width: 100,
-            cellEditor: MySimpleEditor,
-            cellEditorPopup: true
+            cellEditor: MySimpleEditor
         },
         {
             field: "age",
             width: 80,
-            cellEditor: MySimpleEditor,
-            cellEditorPopup: true
+            cellEditor: MySimpleEditor
         },
         {
             field: "mood",
             width: 90,
-            cellEditor: MySimpleEditor,
-            cellEditorPopup: true
+            cellEditor: MySimpleEditor
         },
         {
             field: "country",
             width: 110,
-            cellEditor: MySimpleEditor,
-            cellEditorPopup: true
+            cellEditor: MySimpleEditor
         },
         {
             field: "address",
             minWidth: 502,
-            cellEditor: MySimpleEditor,
-            cellEditorPopup: true
+            cellEditor: MySimpleEditor
         }
     ], []);
 
@@ -117,7 +112,7 @@ const GridExample = () => {
             const interval = window.setInterval(() => {
                 const instances = gridApi!.getCellEditorInstances();
                 if (instances.length > 0) {
-                    const instance = instances[0] as MySimpleInterface;
+                    const instance = instances[0] as Partial<MySimpleInterface>;
                     if (instance.myCustomFunction) {
                         const result = instance.myCustomFunction();
                         console.log(`found editing cell: row index = ${result.rowIndex}, column = ${result.colId}.`);

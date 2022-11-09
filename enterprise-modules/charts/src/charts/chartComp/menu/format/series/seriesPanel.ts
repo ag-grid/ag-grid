@@ -219,8 +219,17 @@ export class SeriesPanel extends Component {
     }
 
     private initLabels() {
-        const params = initFontPanelParams(this.chartTranslationService, this.chartOptionsService, () => this.seriesType);
-        const labelPanelComp = this.createBean(new FontPanel(params));
+        const seriesOptionLabelProperty = this.seriesType === 'pie' ? 'calloutLabel' : 'label';
+        const labelName = this.seriesType === 'pie'
+            ? this.chartTranslationService.translate('calloutLabels')
+            : this.chartTranslationService.translate('labels');
+        const labelParams = initFontPanelParams({
+            labelName,
+            chartOptionsService: this.chartOptionsService,
+            getSelectedSeries: () => this.seriesType,
+            seriesOptionLabelProperty
+        });
+        const labelPanelComp = this.createBean(new FontPanel(labelParams));
 
         if (this.seriesType === 'pie') {
             const calloutPanelComp = this.createBean(new CalloutPanel(this.chartOptionsService, () => this.seriesType));
@@ -229,6 +238,34 @@ export class SeriesPanel extends Component {
         }
 
         this.addWidget(labelPanelComp);
+
+        if (this.seriesType === 'pie') {
+            const sectorParams = initFontPanelParams({
+                labelName: this.chartTranslationService.translate('sectorLabels'),
+                chartOptionsService: this.chartOptionsService,
+                getSelectedSeries: () => this.seriesType,
+                seriesOptionLabelProperty: 'sectorLabel'
+            });
+            const sectorPanelComp = this.createBean(new FontPanel(sectorParams));
+            const positionRatioComp = this.getSectorLabelPositionRatio();
+            sectorPanelComp.addCompToPanel(positionRatioComp);
+
+            this.addWidget(sectorPanelComp);
+        }
+    }
+
+    private getSectorLabelPositionRatio(): AgSlider {
+        const expression = 'sectorLabel.positionRatio';
+        const currentValue = this.chartOptionsService.getSeriesOption<number>(expression, this.seriesType);
+
+        const sectorLabelPositionRatioSlider = this.createBean(new AgSlider());
+        return sectorLabelPositionRatioSlider
+            .setLabel(this.translate("positionRatio"))
+            .setStep(0.05)
+            .setMaxValue(getMaxValue(currentValue, 1))
+            .setTextFieldWidth(45)
+            .setValue(`${currentValue}`)
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.seriesType));
     }
 
     private initShadow() {

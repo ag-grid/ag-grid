@@ -53,8 +53,6 @@ export class GridCtrl extends BeanStub {
 
         this.createManagedBean(new LayoutFeature(this.view));
 
-        // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
-        // which doLayout indirectly depends on
         this.addRtlSupport();
 
         this.addManagedListener(this, Events.EVENT_KEYBOARD_FOCUS, () => {

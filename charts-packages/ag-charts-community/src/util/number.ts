@@ -19,12 +19,6 @@ export function toFixed(value: number, fractionOrSignificantDigits: number = 2):
     return value.toFixed(Math.abs(power) - 1 + fractionOrSignificantDigits); // significant digits
 }
 
-const numberUnits = ['', 'K', 'M', 'B', 'T'];
-
-export function log10(x: number): number {
-    return Math.log(x) * Math.LOG10E;
-}
-
 /**
  * Returns the mathematically correct n modulus of m. For context, the JS % operator is remainder
  * NOT modulus, which is why this is needed.
@@ -33,17 +27,4 @@ export function mod(n: number, m: number) {
     // https://stackoverflow.com/a/13163436
     const remain = n % m;
     return remain >= 0 ? remain : remain + m;
-}
-
-export const EPSILON = Number.EPSILON || Math.pow(2, -52);
-
-export function toReadableNumber(value: number, fractionDigits: number = 2): string {
-    // For example: toReadableNumber(10550000000) yields "10.6B"
-    let prefix = '';
-    if (value <= 0) {
-        value = -value;
-        prefix = '-';
-    }
-    const thousands = ~~(log10(value) / log10(1000)); // discard the floating point part
-    return prefix + (value / Math.pow(1000.0, thousands)).toFixed(fractionDigits) + numberUnits[thousands];
 }

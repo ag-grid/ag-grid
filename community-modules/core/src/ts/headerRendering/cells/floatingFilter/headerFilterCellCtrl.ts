@@ -1,4 +1,3 @@
-
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { KeyCode } from '../../../constants/keyCode';
@@ -24,7 +23,7 @@ import { FilterComponent } from "../../../components/framework/componentTypes";
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     addOrRemoveBodyCssClass(cssClassName: string, on: boolean): void;
-    addOrRemoveButtonWrapperCssClass(cssClassName: string, on: boolean): void;
+    setButtonWrapperDisplayed(displayed: boolean): void;
     setCompDetails(compDetails: UserCompDetails): void;
     getFloatingFilterComp(): AgPromise<IFloatingFilter> | null;
     setWidth(width: string): void;
@@ -75,8 +74,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private setupUi(): void {
-
-        this.comp.addOrRemoveButtonWrapperCssClass('ag-hidden', !this.active || this.suppressFilterButton);
+        this.comp.setButtonWrapperDisplayed(!this.suppressFilterButton && this.active);
 
         if (!this.active) { return; }
 

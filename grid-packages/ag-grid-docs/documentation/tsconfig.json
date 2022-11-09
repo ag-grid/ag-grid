@@ -12,6 +12,11 @@
         "noEmit": true,
         "jsx": "preserve",
         "skipLibCheck": true,
+        "types": [
+            "jasmine",
+            "jquery",
+            "jqueryui"
+        ],
         "lib": [
             "esnext",
             "dom",

@@ -548,9 +548,8 @@ export class CellCtrl extends BeanStub {
     }
 
     private createCellEditorParams(key: string | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
-        const res: any = {
+        return {
             value: this.getValueFromValueService(),
-            key: key,
             eventKey: key,
             charPress: charPress,
             column: this.column,
@@ -568,7 +567,6 @@ export class CellCtrl extends BeanStub {
             parseValue: this.parseValue.bind(this),
             formatValue: this.formatValue.bind(this)
         };
-        return res as ICellEditorParams;
     }
 
     private createCellRendererParams(): ICellRendererParams {

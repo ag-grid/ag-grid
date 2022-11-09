@@ -1,7 +1,7 @@
 import {nextTick} from 'vue';
 
 export default {
-    template: `<input type="number" v-model="value" ref="input" style="width: 100%"/>`,
+    template: `<input type="number" v-model="value" ref="input" class="doubling-input" />`,
     data() {
         return {
             value: null

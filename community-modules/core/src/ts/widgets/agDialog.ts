@@ -46,7 +46,7 @@ export class AgDialog extends AgPanel {
     protected config: DialogOptions | undefined;
 
     constructor(config: DialogOptions) {
-        super({...config, popup: true });
+        super({ ...config, popup: true });
     }
 
     protected postConstruct() {
@@ -164,7 +164,8 @@ export class AgDialog extends AgPanel {
         this.maximizeIcon.classList.add('ag-panel-title-bar-button-icon');
 
         eGui.appendChild(this.minimizeIcon = createIconNoSpan('minimize', this.gridOptionsService)!);
-        this.minimizeIcon.classList.add('ag-panel-title-bar-button-icon', 'ag-hidden');
+        this.minimizeIcon.classList.add('ag-panel-title-bar-button-icon');
+        setDisplayed(this.minimizeIcon, false);
 
         maximizeButtonComp.addManagedListener(eGui, 'click', this.toggleMaximize.bind(this));
 

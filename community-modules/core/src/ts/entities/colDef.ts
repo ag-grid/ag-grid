@@ -11,10 +11,6 @@ import { RowClassParams } from "./gridOptions";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { RowNode } from "./rowNode";
 
-// ***********************************************************************
-// * Don't forget to update ColDefUtil if changing this class. PLEASE! *
-// ***********************************************************************/
-
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef<TData = any> {
     /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */
@@ -103,10 +99,6 @@ export interface ToolPanelClassParams<TData = any> extends AgGridCommon<TData> {
     columnGroup?: ProvidedColumnGroup | null;
 }
 export type ToolPanelClass<TData = any> = string | string[] | ((params: ToolPanelClassParams<TData>) => string | string[] | undefined);
-
-// ***********************************************************************
-// * Don't forget to update ColDefUtil if changing this class. PLEASE! *
-// ***********************************************************************/
 
 /** Configuration options for columns in AG Grid. */
 export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
@@ -207,7 +199,7 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
 
     /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */
     singleClickEdit?: boolean;
-    /** @deprecated use `valueSetter` instead */
+    /** @deprecated v26 use `valueSetter` instead */
     newValueHandler?: (params: NewValueParams<TData>) => boolean;
 
     /**
@@ -290,13 +282,13 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
     /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false`  */
     lockPinned?: boolean;
 
-    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
+    /** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
+    /** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRendererFramework?: any;
-    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
+    /** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRendererParams?: any;
-    /** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned. */
+    /** @deprecated v26 Use valueFormatter for pinned rows, and check params.node.rowPinned. */
     pinnedRowValueFormatter?: string | ValueFormatterFunc<TData>;
 
     // *** Columns: Pivoting *** //

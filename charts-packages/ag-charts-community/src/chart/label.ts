@@ -1,5 +1,6 @@
 import { BOOLEAN, NUMBER, OPT_FONT_STYLE, OPT_FONT_WEIGHT, COLOR_STRING, STRING, Validate } from '../util/validation';
-import { FontStyle, FontWeight, getFont } from '../scene/shape/text';
+import { getFont } from '../scene/shape/text';
+import { FontStyle, FontWeight } from './agChartOptions';
 
 export class Label {
     @Validate(BOOLEAN)

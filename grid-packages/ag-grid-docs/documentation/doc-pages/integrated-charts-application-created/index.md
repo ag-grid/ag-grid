@@ -5,7 +5,7 @@ enterprise: true
 
 This section introduces Integrated Charts that are created programmatically within an application.
 
-<grid-example title='Application Created Charts' name='application-created-charts' type='typescript' options='{ "exampleHeight": 825, "enterprise": true, "modules": ["clientside", "charts"] }'></grid-example>
+<grid-example title='Application Created Charts' name='application-created-charts' type='typescript' options='{ "exampleHeight": 825, "enterprise": true, "modules": ["clientside", "charts", "rowgrouping"] }'></grid-example>
 
 The dummy financial application above shows some of the grid's integrated charting capabilities. Note the following:
 

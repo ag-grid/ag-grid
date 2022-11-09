@@ -393,7 +393,12 @@ export interface AgChartBackground {
     fill?: CssColor;
 }
 
-export interface AgNodeClickEvent {
+interface AgChartEvent<T extends string> {
+    type: T;
+    event: Event;
+}
+
+export interface AgNodeClickEvent extends AgChartEvent<'seriesNodeClick'> {
     /** Event type. */
     type: 'seriesNodeClick';
     /** @deprecated Use seriesId to get the series ID. */
@@ -422,11 +427,13 @@ export interface AgNodeClickEvent {
     radiusKey?: string;
 }
 
+export interface AgChartClickEvent extends AgChartEvent<'click'> {}
+
 export interface AgBaseChartListeners {
     /** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */
-    seriesNodeClick: (event: AgNodeClickEvent) => any;
-    /** Generic listeners. */
-    [key: string]: Function;
+    seriesNodeClick?: (event: AgNodeClickEvent) => any;
+    /** The listener to call to signify a general click on the chart by the user. */
+    click?: (event: AgChartClickEvent) => any;
 }
 
 /** Configuration common to all charts.  */
@@ -799,6 +806,10 @@ export interface AgTooltipRendererResult {
     title?: string;
     /** Content text for the tooltip body. */
     content?: string;
+    /** Tooltip title text color. */
+    color?: string;
+    /** Tooltip title background color. */
+    backgroundColor?: string;
 }
 
 export interface AgSeriesTooltipRendererParams {
@@ -1084,9 +1095,11 @@ export interface AgAreaSeriesOptions<DatumType = any> extends AgBaseSeriesOption
     stacked?: boolean;
 }
 
+export type AgBarSeriesLabelPlacement = 'inside' | 'outside';
+
 export interface AgBarSeriesLabelOptions extends AgCartesianSeriesLabelOptions {
     /** Where to render series labels relative to the segments. */
-    placement?: 'inside' | 'outside';
+    placement?: AgBarSeriesLabelPlacement;
 }
 
 export interface AgBarSeriesFormatterParams<DatumType> {
@@ -1178,14 +1191,15 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     listeners?: AgSeriesListeners<DatumType>;
 }
 
-export interface AgHistogramSeriesLabelOptions extends AgChartLabelOptions {
-    /** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */
-    formatter?: (params: { value: number; seriesId: string }) => string;
+export interface AgHistogramSeriesLabelOptions extends AgCartesianSeriesLabelOptions {}
+
+export interface AgHistogramSeriesTooltipRendererParams extends AgCartesianSeriesTooltipRendererParams {
+    datum: AgHistogramBinDatum<any>;
 }
 
 export interface AgHistogramSeriesTooltip extends AgSeriesTooltip {
     /** Function used to create the content for tooltips. */
-    renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
+    renderer?: (params: AgHistogramSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
 export interface AgHistogramBinDatum<DatumType> {
@@ -1248,13 +1262,9 @@ export interface AgPieSeriesLabelOptions<DatumType> extends AgChartLabelOptions 
 }
 
 export interface AgPieSeriesSectorLabelOptions<DatumType> extends AgChartLabelOptions {
-    /** Distance in pixels, used to make the label text closer to or further from the center. This offset is applied after positionRatio.
-     * Default: `0`
-     */
+    /** Distance in pixels, used to make the label text closer to or further from the center. This offset is applied after positionRatio. */
     positionOffset?: PixelSize;
-    /** Position of labels as a ratio proportional to pie radius (or doughnut thickness). Additional offset in pixels can be applied by using positionOffset.
-     * Default: `0.5`
-     */
+    /** Position of labels as a ratio proportional to pie radius (or doughnut thickness). Additional offset in pixels can be applied by using positionOffset. */
     positionRatio?: Ratio;
     /** A function that allows the modification of the label text based on input parameters. */
     formatter?: (params: AgPieSeriesLabelFormatterParams<DatumType>) => string;
@@ -1519,10 +1529,12 @@ export interface AgTreemapNodeDatum<DatumType> {
 
 export interface AgTreemapSeriesTooltipRendererParams<DatumType> {
     datum: AgTreemapNodeDatum<DatumType>;
-    sizeKey: string;
-    labelKey: string;
-    valueKey: string;
-    color: string;
+    sizeKey?: string;
+    labelKey?: string;
+    valueKey?: string;
+    colorKey?: string;
+    color?: string;
+    title?: string;
     seriesId: string;
 }
 
@@ -1586,15 +1598,15 @@ export interface AgTreemapSeriesFormatterParams<DataValue = any> {
     /** colorKey as specified on series options. */
     readonly colorKey?: string;
     /** The colour of the fill for the treemap tile. */
-    readonly fill?: string;
+    readonly fill?: CssColor;
     /** The opacity of the fill for the treemap tile. */
-    readonly fillOpacity?: string;
+    readonly fillOpacity?: Opacity;
     /** The colour of the stroke for the treemap tile. */
-    readonly stroke?: string;
+    readonly stroke?: CssColor;
     /** The opacity of the stroke for the treemap tile. */
-    readonly strokeOpacity?: number;
+    readonly strokeOpacity?: Opacity;
     /** The width in pixels of the stroke for the treemap tile. */
-    readonly strokeWidth?: number;
+    readonly strokeWidth?: PixelSize;
     /** Whether or not the gradients are used for treemap tiles. */
     readonly gradient?: boolean;
     /** `true` if the tile is highlighted by hovering */
@@ -1606,15 +1618,15 @@ export interface AgTreemapSeriesFormatterParams<DataValue = any> {
 /** The formatted style of a treemap tile */
 export interface AgTreemapSeriesFormat {
     /** The colour of the fill for the treemap tile. */
-    readonly fill?: string;
+    readonly fill?: CssColor;
     /** The opacity of the fill for the treemap tile. */
-    readonly fillOpacity?: string;
+    readonly fillOpacity?: Opacity;
     /** The colour of the stroke for the treemap tile. */
-    readonly stroke?: string;
+    readonly stroke?: CssColor;
     /** The opacity of the stroke for the treemap tile. */
-    readonly strokeOpacity?: number;
+    readonly strokeOpacity?: Opacity;
     /** The width in pixels of the stroke for the treemap tile. */
-    readonly strokeWidth?: number;
+    readonly strokeWidth?: PixelSize;
     /** Whether or not the gradient is used for the treemap tile. */
     readonly gradient?: boolean;
 }
@@ -1657,3 +1669,8 @@ export interface AgHierarchyChartOptions extends AgBaseChartOptions {
 }
 
 export type AgChartOptions = AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions;
+
+/**
+ * Internal Use Only: Used to ensure this file is treated as a module until we can use moduleDetection flag in Ts v4.7
+ */
+export const __FORCE_MODULE_DETECTION = 0;

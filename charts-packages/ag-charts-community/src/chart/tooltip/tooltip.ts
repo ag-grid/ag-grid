@@ -1,4 +1,5 @@
 import { Validate, BOOLEAN, NUMBER, OPT_STRING } from '../../util/validation';
+import { AgTooltipRendererResult } from '../agChartOptions';
 
 export const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
 
@@ -108,14 +109,7 @@ export interface TooltipMeta {
     event: MouseEvent;
 }
 
-export interface TooltipRendererResult {
-    content?: string;
-    title?: string;
-    color?: string;
-    backgroundColor?: string;
-}
-
-export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: TooltipRendererResult): string {
+export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?: AgTooltipRendererResult): string {
     if (typeof input === 'string') {
         return input;
     }

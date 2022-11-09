@@ -37,7 +37,6 @@ import { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { AutoGroupColService } from './autoGroupColService';
 import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
-import { IColumnLimit, ISizeColumnsToFitParams } from '../gridApi';
 import { Constants } from '../constants/constants';
 import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
@@ -98,6 +97,24 @@ export interface ApplyColumnStateParams {
     applyOrder?: boolean;
     /** State to apply to columns where state is missing for those columns */
     defaultState?: ColumnStateParams;
+}
+
+export interface ISizeColumnsToFitParams {
+    /** Defines a default minimum width for every column (does not override the column minimum width) */
+    defaultMinWidth?: number,
+    /** Defines a default maximum width for every column (does not override the column maximum width) */
+    defaultMaxWidth?: number,
+    /** Provides a minimum and/or maximum width to specific columns */
+    columnLimits?: IColumnLimit[]
+}
+
+export interface IColumnLimit {
+    /** Selector for the column to which these dimension limits will apply */
+    key: Column | string,
+    /** Defines a minimum width for this column (does not override the column minimum width) */
+    minWidth?: number,
+    /** Defines a maximum width for this column (does not override the column maximum width) */
+    maxWidth?: number
 }
 
 @Bean('columnModel')
@@ -1402,7 +1419,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public doesMovePassLockedPositions(proposedColumnOrder: Column[]): boolean {
-         // Placement is a number indicating 'left' 'center' or 'right' as 0 1 2
+        // Placement is a number indicating 'left' 'center' or 'right' as 0 1 2
         let lastPlacement = 0;
         let rulePassed = true;
         const lockPositionToPlacement = (position: ColDef['lockPosition']) => {
@@ -3171,7 +3188,7 @@ export class ColumnModel extends BeanStub {
         return this.gridOptionsService.get('processPivotResultColGroupDef') || this.gridOptionsService.get('processSecondaryColGroupDef');
     }
 
-    // called from: setColumnState, setColumnDefs, setSecondaryColumns
+    // called from: applyColumnState, setColumnDefs, setSecondaryColumns
     private updateGridColumns(): void {
         const prevGridCols = this.gridBalancedTree;
         if (this.gridColsArePrimary) {
@@ -3727,7 +3744,7 @@ export class ColumnModel extends BeanStub {
         params?: ISizeColumnsToFitParams,
     ): void {
 
-        const limitsMap: { [colId: string]: Omit<IColumnLimit, 'key'>} = {};
+        const limitsMap: { [colId: string]: Omit<IColumnLimit, 'key'> } = {};
         if (params) {
             params?.columnLimits?.forEach(({ key, ...dimensions }) => {
                 limitsMap[typeof key === 'string' ? key : key.getColId()] = dimensions;

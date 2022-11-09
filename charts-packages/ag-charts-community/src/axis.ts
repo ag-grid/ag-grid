@@ -2,7 +2,7 @@ import { Scale } from './scale/scale';
 import { Group } from './scene/group';
 import { Selection } from './scene/selection';
 import { Line } from './scene/shape/line';
-import { Text, FontStyle, FontWeight } from './scene/shape/text';
+import { Text } from './scene/shape/text';
 import { Arc } from './scene/shape/arc';
 import { Shape } from './scene/shape/shape';
 import { BBox } from './scene/bbox';
@@ -33,6 +33,7 @@ import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
 import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
+import { AgAxisGridStyle, AgAxisLabelFormatterParams, FontStyle, FontWeight } from './chart/agChartOptions';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -61,14 +62,9 @@ enum Tags {
     GridLine,
 }
 
-export interface AxisNodeDatum {
+interface AxisNodeDatum {
     readonly tick: any;
     readonly translationY: number;
-}
-
-export interface GridStyle {
-    stroke?: string;
-    lineDash?: number[];
 }
 
 type TimeTickCount = number | CountableTimeInterval;
@@ -84,7 +80,7 @@ export class AxisLine {
     color?: string = 'rgba(195, 195, 195, 1)';
 }
 
-export class AxisTick<S extends Scale<D, number>, D = any> {
+class AxisTick<S extends Scale<D, number>, D = any> {
     /**
      * The line width to be used by axis ticks.
      */
@@ -115,14 +111,6 @@ export class AxisTick<S extends Scale<D, number>, D = any> {
      */
     @Validate(OPT_TICK_COUNT)
     count?: TickCountType<S> = undefined;
-}
-
-export interface AxisLabelFormatterParams {
-    value: any;
-    index: number;
-    fractionDigits?: number;
-    formatter?: (x: any) => string;
-    axis?: any;
 }
 
 export class AxisLabel {
@@ -204,7 +192,7 @@ export class AxisLabel {
      * digits used by the tick step. For example, if the tick step is `0.0005`,
      * the `fractionDigits` is 4.
      */
-    formatter?: (params: AxisLabelFormatterParams) => string = undefined;
+    formatter?: (params: AgAxisLabelFormatterParams) => string = undefined;
 
     @Validate(OPT_STRING)
     format: string | undefined = undefined;
@@ -276,14 +264,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     private detachCrossLine(crossLine: CrossLine) {
         this.crossLineGroup.removeChild(crossLine.group);
-    }
-
-    /**
-     * Meant to be overridden in subclasses to provide extra context the the label formatter.
-     * The return value of this function will be passed to the laber.formatter as the `axis` parameter.
-     */
-    getMeta(): any {
-        // Override point for subclasses.
     }
 
     constructor(scale: S) {
@@ -436,7 +416,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
      * have the same style.
      */
     @Validate(GRID_STYLE)
-    gridStyle: GridStyle[] = [
+    gridStyle: AgAxisGridStyle[] = [
         {
             stroke: 'rgba(219, 219, 219, 1)',
             lineDash: [4, 2],
@@ -788,12 +768,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const {
             label,
             label: { parallel: parallelLabels },
-            scale,
             tick,
-            requestedRange,
         } = this;
-        const requestedRangeMin = Math.min(...requestedRange);
-        const requestedRangeMax = Math.max(...requestedRange);
         let labelAutoRotation = 0;
 
         const labelRotation = label.rotation ? normalizeAngle360(toRadians(label.rotation)) : 0;
@@ -802,18 +778,23 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // Flip if the axis rotation angle is in the top hemisphere.
         const regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
 
+        const autoRotation = parallelLabels ? (parallelFlipFlag * Math.PI) / 2 : regularFlipFlag === -1 ? Math.PI : 0;
+
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         this.fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
 
         // Update properties that affect the size of the axis labels and measure the labels
         const labelBboxes: Map<number, BBox | null> = new Map();
-        let labelCount = 0;
 
-        let halfFirstLabelLength = false;
-        let halfLastLabelLength = false;
-        const availableRange = requestedRangeMax - requestedRangeMin;
+        const labelX = sideFlag * (tick.size + label.padding);
+
+        const labelMatrix = new Matrix();
+        Matrix.updateTransformMatrix(labelMatrix, 1, 1, autoRotation, 0, 0);
+
+        let labelData: PointLabelDatum[] = [];
+
         const labelSelection = tickLineGroupSelection.selectByClass(Text).each((node, datum, index) => {
-            const { tick } = datum;
+            const { tick, translationY } = datum;
             node.fontStyle = label.fontStyle;
             node.fontWeight = label.fontWeight;
             node.fontSize = label.fontSize;
@@ -822,54 +803,44 @@ export class Axis<S extends Scale<D, number>, D = any> {
             node.text = this.formatTickDatum(tick, index);
 
             const userHidden = node.text === '' || node.text == undefined;
-            labelBboxes.set(index, userHidden ? null : node.computeBBox());
+
+            const bbox = node.computeBBox();
+            const { width, height } = bbox;
+
+            const translatedBBox = new BBox(labelX, translationY, 0, 0);
+            labelMatrix.transformBBox(translatedBBox, 0, bbox);
+
+            const { x = 0, y = 0 } = bbox;
+            bbox.width = width;
+            bbox.height = height;
+
+            labelBboxes.set(index, userHidden ? null : bbox);
 
             if (userHidden) {
                 return;
             }
-            labelCount++;
 
-            if (index === 0 && node.translationY === scale.range[0]) {
-                halfFirstLabelLength = true; // first label protrudes axis line
-            } else if (index === ticks.length - 1 && node.translationY === scale.range[1]) {
-                halfLastLabelLength = true; // last label protrudes axis line
-            }
+            labelData.push({
+                point: {
+                    x,
+                    y,
+                    size: 0,
+                },
+                label: {
+                    width,
+                    height,
+                    text: '',
+                },
+            });
         });
 
-        const labelX = sideFlag * (tick.size + label.padding);
-
-        const step = availableRange / labelCount;
-
-        const rotateLabels = (bboxes: Map<number, BBox | null>, parallelLabels: boolean) => {
-            let rotate = false;
-            const lastIdx = bboxes.size - 1;
-            const padding = 12;
-            for (let [i, bbox] of bboxes.entries()) {
-                if (bbox == null) {
-                    continue;
-                }
-
-                const divideBy = (i === 0 && halfFirstLabelLength) || (i === lastIdx && halfLastLabelLength) ? 2 : 1;
-                // When the labels are parallel to the axis line, use the width of the text to calculate the total length of all labels
-                const length = parallelLabels ? bbox.width / divideBy : bbox.height / divideBy;
-                const lengthWithPadding = length <= 0 ? 0 : length + padding;
-
-                if (lengthWithPadding > step) {
-                    rotate = true;
-                }
-            }
-            return rotate;
-        };
-
-        const rotate = rotateLabels(labelBboxes, parallelLabels);
+        const rotate = axisLabelsOverlap(labelData, 10);
 
         if (label.rotation === undefined && label.autoRotate === true && rotate) {
             // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`rotate` is `true`),
             // automatically rotate the labels
             labelAutoRotation = normalizeAngle360(toRadians(label.autoRotateAngle));
         }
-
-        const autoRotation = parallelLabels ? (parallelFlipFlag * Math.PI) / 2 : regularFlipFlag === -1 ? Math.PI : 0;
 
         const labelTextBaseline =
             parallelLabels && !labelRotation ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom') : 'middle';
@@ -889,15 +860,13 @@ export class Axis<S extends Scale<D, number>, D = any> {
             ? 'end'
             : 'start';
 
-        const labelData: PointLabelDatum[] = [];
-
         const combinedRotation = autoRotation + labelRotation + labelAutoRotation;
-        const labelRotationMatrix = new Matrix();
         if (combinedRotation) {
-            Matrix.updateTransformMatrix(labelRotationMatrix, 1, 1, combinedRotation, 0, 0);
+            Matrix.updateTransformMatrix(labelMatrix, 1, 1, combinedRotation, 0, 0);
         }
 
-        labelSelection.each((label, datum) => {
+        labelData = [];
+        labelSelection.each((label, datum, index) => {
             if (label.text === '' || label.text == undefined) {
                 label.visible = false; // hide empty labels
                 return;
@@ -920,12 +889,17 @@ export class Axis<S extends Scale<D, number>, D = any> {
             // take into account only the rotation and translation applied to individual label nodes to get the x y coordinates of the labels relative to each other
             // this makes label collision detection a lot simpler
 
-            const bbox: BBox = label.computeBBox();
+            const bbox = labelBboxes.get(index);
+            if (!bbox) {
+                return;
+            }
+
             const { width = 0, height = 0 } = bbox;
 
             const { translationY } = datum;
             const translatedBBox = new BBox(labelX, translationY, 0, 0);
-            labelRotationMatrix.transformBBox(translatedBBox, 0, bbox);
+            labelMatrix.transformBBox(translatedBBox, 0, bbox);
+
             const { x = 0, y = 0 } = bbox;
 
             labelData.push({
@@ -1002,7 +976,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
     // For formatting (nice rounded) tick values.
     formatTickDatum(datum: any, index: number): string {
         const { label, labelFormatter, fractionDigits } = this;
-        const meta = this.getMeta();
 
         return label.formatter
             ? label.formatter({
@@ -1010,7 +983,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
                   index,
                   fractionDigits,
                   formatter: labelFormatter,
-                  axis: meta,
               })
             : labelFormatter
             ? labelFormatter(datum)

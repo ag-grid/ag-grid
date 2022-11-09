@@ -81,7 +81,7 @@ export class ChartMenu extends Component {
 
         this.refreshMenuClasses();
 
-        if (this.gridOptionsService.is('enableChartToolPanelsButton')) {
+        if (!this.gridOptionsService.is('suppressChartToolPanelsButton') && this.panels.length > 0) {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
             this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
         }
@@ -99,7 +99,7 @@ export class ChartMenu extends Component {
                 this.chartController.isChartLinked() ? 'chartLink' : 'chartUnlink',
                 'chartDownload'
             ];
-    
+
             const toolbarItemsFunc = this.gridOptionsService.getCallback('getChartToolbarItems');
             const params: WithoutGridCommon<GetChartToolbarItemsParams> = {
                 defaultItems: defaultChartToolbarOptions
@@ -151,33 +151,33 @@ export class ChartMenu extends Component {
                 this.chartController.isChartLinked() ? 'chartLink' : 'chartUnlink',
                 'chartDownload'
             ];
-    
+
             const toolbarItemsFunc = this.gridOptionsService.getCallback('getChartToolbarItems');
-    
+
             if (toolbarItemsFunc) {
                 const params: WithoutGridCommon<GetChartToolbarItemsParams> = {
                     defaultItems: tabOptions
                 };
-    
+
                 tabOptions = toolbarItemsFunc(params).filter(option => {
                     if (!this.buttons[option]) {
                         console.warn(`AG Grid: '${option}' is not a valid Chart Toolbar Option`);
                         return false;
                     }
-    
+
                     return true;
                 });
             }
-    
+
             // pivot charts use the column tool panel instead of the data panel
             if (this.chartController.isPivotChart()) {
                 tabOptions = tabOptions.filter(option => option !== 'chartData');
             }
-    
+
             const ignoreOptions: ChartMenuOptions[] = ['chartUnlink', 'chartLink', 'chartDownload'];
             this.panels = tabOptions.filter(option => ignoreOptions.indexOf(option) === -1) as ChartToolPanelMenuOptions[];
             this.defaultPanel = this.panels[0];
-    
+
             return tabOptions.filter(value =>
                 ignoreOptions.indexOf(value) !== -1 ||
                 (this.panels.length && value === this.panels[0])
@@ -335,7 +335,7 @@ export class ChartMenu extends Component {
         this.eChartContainer.classList.toggle('ag-chart-menu-visible', this.menuVisible);
         this.eChartContainer.classList.toggle('ag-chart-menu-hidden', !this.menuVisible);
 
-        if (this.gridOptionsService.is('enableChartToolPanelsButton')) {
+        if (this.gridOptionsService.is('suppressChartToolPanelsButton')) {
             this.eHideButtonIcon.classList.toggle('ag-icon-contracted', this.menuVisible);
             this.eHideButtonIcon.classList.toggle('ag-icon-expanded', !this.menuVisible);
         }

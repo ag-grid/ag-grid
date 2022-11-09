@@ -4,7 +4,7 @@ import { getData } from "./data";
 
 var swimmingHeight: number;
 var groupHeight: number;
-var russiaHeight: number;
+var usaHeight: number;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -28,10 +28,10 @@ function getRowHeight(params: RowHeightParams<IOlympicData>): number | undefined
     return groupHeight
   } else if (
     params.data &&
-    params.data.country === 'Russia' &&
-    russiaHeight != null
+    params.data.country === 'United States' &&
+    usaHeight != null
   ) {
-    return russiaHeight
+    return usaHeight
   } else if (
     params.data &&
     params.data.sport === 'Swimming' &&
@@ -51,12 +51,12 @@ function setGroupHeight(height: number) {
   gridOptions.api!.resetRowHeights()
 }
 
-function setRussiaHeight(height: number) {
+function setUsaHeight(height: number) {
   // this is used next time resetRowHeights is called
-  russiaHeight = height
+  usaHeight = height
 
   gridOptions.api!.forEachNode(function (rowNode) {
-    if (rowNode.data && rowNode.data.country === 'Russia') {
+    if (rowNode.data && rowNode.data.country === 'United States') {
       rowNode.setRowHeight(height)
     }
   })

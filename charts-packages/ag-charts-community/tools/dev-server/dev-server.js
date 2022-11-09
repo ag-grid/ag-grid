@@ -41,14 +41,14 @@ function createDevServer(port) {
         }
 
         // Fallback to index.html
-        const filePath =
-            pathName === ''
-                ? 'index.html'
-                : files.has(pathName)
-                ? pathName
-                : files.has(`${pathName}/index.html`)
-                ? `${pathName}/index.html`
-                : null;
+        let filePath = null;
+        if (pathName === '') {
+            filePath = 'index.html';
+        } else if (files.has(pathName)) {
+            filePath = pathName;
+        } else if (files.has(`${pathName}/index.html`)) {
+            filePath = `${pathName}/index.html`;
+        }
 
         // 404: not found
         if (!filePath) {

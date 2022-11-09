@@ -15,14 +15,13 @@ export class WatermarkComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         const show = this.shouldDisplayWatermark();
-
-        this.addOrRemoveCssClass('ag-hidden', !show);
+        this.setDisplayed(show);
 
         if (show) {
             this.eLicenseTextRef.innerText = this.licenseManager.getWatermarkMessage();
 
             window.setTimeout(() => this.addCssClass('ag-opacity-zero'), 0);
-            window.setTimeout(() => this.addCssClass('ag-hidden'), 5000);
+            window.setTimeout(() => this.setDisplayed(false), 5000);
         }
     }
 

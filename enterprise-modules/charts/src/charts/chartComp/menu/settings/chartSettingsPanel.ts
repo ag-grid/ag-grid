@@ -102,11 +102,11 @@ export class ChartSettingsPanel extends Component {
             if (isActivePalette) {
                 miniChartsContainer.updateSelectedMiniChart();
             } else {
-                miniChartsContainer.addCssClass('ag-hidden');
+                miniChartsContainer.setDisplayed(false);
             }
         });
 
-        this.eNavBar.classList.toggle('ag-hidden', this.palettes.length <= 1);
+        _.setDisplayed(this.eNavBar, this.palettes.length > 1);
         _.radioCssClass(this.cardItems[this.activePaletteIndex], 'ag-selected', 'ag-not-selected');
     }
 
@@ -164,7 +164,7 @@ export class ChartSettingsPanel extends Component {
 
         const animatingClass = 'ag-animating';
 
-        futurePalette.removeCssClass('ag-hidden');
+        futurePalette.setDisplayed(true);
         currentPalette.addCssClass(animatingClass);
         futurePalette.addCssClass(animatingClass);
 
@@ -180,7 +180,7 @@ export class ChartSettingsPanel extends Component {
 
             currentPalette.removeCssClass(animatingClass);
             futurePalette.removeCssClass(animatingClass);
-            currentPalette.addCssClass('ag-hidden');
+            currentPalette.setDisplayed(false);
         }, 300);
     }
 

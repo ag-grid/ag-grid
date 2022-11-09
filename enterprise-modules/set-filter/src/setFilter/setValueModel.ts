@@ -61,6 +61,8 @@ export class SetValueModel implements IEventEmitter {
 
     private initialised: boolean = false;
 
+    private caseSensitive?: boolean;
+
     constructor(
         private readonly filterParams: ISetFilterParams,
         private readonly setIsLoading: (loading: boolean) => void,
@@ -85,12 +87,13 @@ export class SetValueModel implements IEventEmitter {
         this.doesRowPassOtherFilters = doesRowPassOtherFilter;
         this.suppressSorting = suppressSorting || false;
         this.comparator = comparator || colDef.comparator as (a: any, b: any) => number || _.defaultComparator;
+        this.caseSensitive = caseSensitive;
 
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
                 rowModel as IClientSideRowModel,
                 this.filterParams,
-                this.caseFormat
+                value => this.uniqueKey(value)
             );
         }
 
@@ -228,9 +231,11 @@ export class SetValueModel implements IEventEmitter {
     }
 
     private updateAvailableValues(allValues: (string | null)[]): void {
-        const availableValues = this.showAvailableOnly() ? this.sortValues(this.getValuesFromRows(true)) : allValues;
+        // if case insensitive, we need to know the case from the original values
+        const uniqueValues = this.caseSensitive ? undefined : this.uniqueValues(allValues);
+        const availableValues = this.showAvailableOnly() ? this.sortValues(this.getValuesFromRows(true, uniqueValues)) : allValues;
 
-        this.availableValues = _.convertToSet(availableValues);
+        this.availableValues = new Set(availableValues);
         this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED });
 
         this.updateDisplayedValues();
@@ -247,7 +252,7 @@ export class SetValueModel implements IEventEmitter {
         return values.filter(v => v != null)!.sort(this.comparator).concat(null);
     }
 
-    private getValuesFromRows(removeUnavailableValues = false): (string | null)[] {
+    private getValuesFromRows(removeUnavailableValues = false, uniqueValues?: { [key: string]: string | null }): (string | null)[] {
         if (!this.clientSideValuesExtractor) {
             console.error('AG Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
             return [];
@@ -255,7 +260,7 @@ export class SetValueModel implements IEventEmitter {
 
         const predicate = (node: RowNode) => (!removeUnavailableValues || this.doesRowPassOtherFilters(node));
 
-        return this.clientSideValuesExtractor.extractUniqueValues(predicate);
+        return this.clientSideValuesExtractor.extractUniqueValues(predicate, uniqueValues);
     }
 
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
@@ -333,7 +338,7 @@ export class SetValueModel implements IEventEmitter {
     public selectAllMatchingMiniFilter(clearExistingSelection = false): void {
         if (this.miniFilterText == null) {
             // ensure everything is selected
-            this.selectedValues = _.convertToSet(this.allValues);
+            this.selectedValues = new Set(this.allValues);
         } else {
             // ensure everything that matches the mini filter is selected
             if (clearExistingSelection) { this.selectedValues.clear(); }
@@ -370,11 +375,11 @@ export class SetValueModel implements IEventEmitter {
     }
 
     public isEverythingVisibleSelected(): boolean {
-        return this.displayedValues.filter(it => this.isValueSelected(it))!.length === this.displayedValues.length;
+        return !this.displayedValues.some(it => !this.isValueSelected(it));
     }
 
     public isNothingVisibleSelected(): boolean {
-        return this.displayedValues.filter(it => this.isValueSelected(it))!.length === 0;
+        return !this.displayedValues.some(it => this.isValueSelected(it));
     }
 
     public getModel(): (string | null)[] | null {
@@ -446,7 +451,7 @@ export class SetValueModel implements IEventEmitter {
         if (this.filterParams.defaultToNothingSelected) {
             this.selectedValues.clear();
         } else {
-            this.selectedValues = _.convertToSet(values || []);
+            this.selectedValues = new Set(values);
         }
     }
 }

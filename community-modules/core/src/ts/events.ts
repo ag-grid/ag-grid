@@ -74,7 +74,7 @@ export interface GridColumnsChangedEvent<TData = any> extends AgGridEvent<TData>
 
 export interface DisplayedColumnsChangedEvent<TData = any> extends AgGridEvent<TData> { }
 
-/** @deprecated use RowDataUpdatedEvent instead */
+/** @deprecated v28 use RowDataUpdatedEvent instead */
 export interface RowDataChangedEvent<TData = any> extends AgGridEvent<TData> { }
 
 export interface RowDataUpdatedEvent<TData = any> extends AgGridEvent<TData> { }

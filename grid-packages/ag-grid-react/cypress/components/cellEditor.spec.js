@@ -1,7 +1,7 @@
 // noinspection ES6UnusedImports
 import React, {Component, forwardRef, useImperativeHandle, useState} from 'react'
 import {mount} from 'cypress-react-unit-test'
-import {AgGridColumn, AgGridReact} from "../..";
+import { AgGridReact } from "../..";
 import {ensureGridApiHasBeenSet} from "./utils";
 
 const CellEditor = forwardRef((props, ref) => {
@@ -52,7 +52,9 @@ const GridComponent = () => {
     const [rowData, setRowData] = useState([
         {value: 1}
     ]);
-
+    const [colDefs, setColDefs] = useState([
+        { field: 'value', cellEditor: 'cellEditor', editable: true }
+    ]);
     return (
         <div style={{height: 400, width: 900, marginTop: 15}}
              className="ag-theme-alpine">
@@ -64,8 +66,9 @@ const GridComponent = () => {
                 frameworkComponents={{
                     cellEditor: CellEditor
                 }}
-                rowData={rowData}>
-                <AgGridColumn field="value" editable={true} cellEditor="cellEditor"></AgGridColumn>
+                rowData={rowData}
+                columnDefs={colDefs}
+            >                
             </AgGridReact>
         </div>
     )

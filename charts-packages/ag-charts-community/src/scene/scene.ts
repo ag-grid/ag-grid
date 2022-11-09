@@ -255,7 +255,7 @@ export class Scene {
         const { layers } = this;
         for (const layer of layers) {
             layer.canvas.destroy();
-            delete layer['canvas'];
+            delete (layer as any)['canvas'];
         }
         layers.splice(0, layers.length);
     }
@@ -417,12 +417,13 @@ export class Scene {
                     let {
                         name: treeNodeName,
                         node: { visible, opacity, zIndex, zIndexSubOrder },
+                        node: childNode,
                     } = childTree;
                     if (!visible || opacity <= 0) {
-                        treeNodeName = `( ${treeNodeName} )`;
+                        treeNodeName = `(${treeNodeName})`;
                     }
-                    if (node instanceof Group && node.isLayer()) {
-                        treeNodeName = `[ ${treeNodeName} ]`;
+                    if (childNode instanceof Group && childNode.isLayer()) {
+                        treeNodeName = `*${treeNodeName}*`;
                     }
                     const key = [
                         `${treeNodeName ?? '<unknown>'}`,

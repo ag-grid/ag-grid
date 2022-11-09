@@ -205,7 +205,7 @@ export class AgGroupComponent extends Component {
 
     public hideItem(hide: boolean, index: number) {
         const itemToHide = this.items[index] as HTMLElement;
-        itemToHide.classList.toggle('ag-hidden', hide);
+        setDisplayed(itemToHide, !hide);
     }
 
     public setTitle(title: string): this {

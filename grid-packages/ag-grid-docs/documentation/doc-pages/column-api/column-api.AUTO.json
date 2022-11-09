@@ -137,7 +137,7 @@
     }
   },
   "getAllGridColumns": {
-    "description": "/** Returns all the grid columns, same as `getColumns()`, except\n * \n *   a) it has the order of the columns that are presented in the grid\n * \n *   b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot. */",
+    "description": "/** Returns all the grid columns, same as `getColumns()`, except\n     *\n     *  a) it has the order of the columns that are presented in the grid\n     *\n     *  b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot.\n     */",
     "type": { "arguments": {}, "returnType": "Column[]" }
   },
   "getDisplayedLeftColumns": {
@@ -230,16 +230,6 @@
   "isPivotMode": {
     "description": "/** Get the pivot mode. */",
     "type": { "arguments": {}, "returnType": "boolean" }
-  },
-  "getSecondaryPivotColumn": {
-    "description": "/** @deprecated Use `getPivotResultColumn` instead\n */",
-    "type": {
-      "arguments": {
-        "pivotKeys": "string[]",
-        "valueColKey": "string | Column"
-      },
-      "returnType": "Column | null"
-    }
   },
   "getPivotResultColumn": {
     "description": "/** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */",
@@ -402,13 +392,6 @@
     "description": "/** Calls `autoSizeColumns` on all displayed columns. */",
     "type": { "arguments": { "skipHeader?": "boolean" }, "returnType": "void" }
   },
-  "setSecondaryColumns": {
-    "description": "/** @deprecated Use `setPivotResultColumns` instead.\n */",
-    "type": {
-      "arguments": { "colDefs": "(ColDef | ColGroupDef)[]" },
-      "returnType": "void"
-    }
-  },
   "setPivotResultColumns": {
     "description": "/** Set the pivot result columns. */",
     "type": {
@@ -416,116 +399,44 @@
       "returnType": "void"
     }
   },
-  "getSecondaryColumns": {
-    "description": "/** @deprecated Use `getPivotResultColumns` instead.\n */",
-    "type": { "arguments": {}, "returnType": "Column[] | null" }
-  },
   "getPivotResultColumns": {
     "description": "/** Returns the grid's pivot result columns. */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
-  "getPrimaryColumns": {
-    "description": "/** @deprecated Use `getColumns` instead.\n */",
-    "type": { "arguments": {}, "returnType": "Column[] | null" }
-  },
   "getAllColumns": {
-    "description": "/** @deprecated Use `getColumns` instead\n */",
+    "description": "/** @deprecated v28 Use `getColumns` instead */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }
-  },
-  "columnGroupOpened": {
-    "description": "/** @deprecated columnGroupOpened no longer exists, use setColumnGroupOpened\n */",
-    "type": {
-      "arguments": {
-        "group": "ProvidedColumnGroup | string",
-        "newValue": "boolean"
-      },
-      "returnType": "void"
-    }
-  },
-  "hideColumns": {
-    "description": "/** @deprecated hideColumns is deprecated, use setColumnsVisible\n */",
-    "type": {
-      "arguments": { "colIds": "any", "hide": "any" },
-      "returnType": "void"
-    }
-  },
-  "hideColumn": {
-    "description": "/** @deprecated hideColumn is deprecated, use setColumnVisible\n */",
-    "type": {
-      "arguments": { "colId": "any", "hide": "any" },
-      "returnType": "void"
-    }
-  },
-  "setState": {
-    "description": "/** @deprecated setState is deprecated, use setColumnState\n */",
-    "type": {
-      "arguments": { "columnState": "ColumnState[]" },
-      "returnType": "boolean"
-    }
-  },
-  "getState": {
-    "description": "/** @deprecated getState is deprecated, use getColumnState\n */",
-    "type": { "arguments": {}, "returnType": "ColumnState[]" }
-  },
-  "resetState": {
-    "description": "/** @deprecated resetState is deprecated, use resetColumnState\n */",
-    "type": { "arguments": {}, "returnType": "void" }
-  },
-  "getAggregationColumns": {
-    "description": "/** @deprecated getAggregationColumns is deprecated, use getValueColumns\n */",
-    "type": { "arguments": {}, "returnType": "Column[]" }
-  },
-  "removeAggregationColumn": {
-    "description": "/** @deprecated removeAggregationColumn is deprecated, use removeValueColumn\n */",
-    "type": {
-      "arguments": { "colKey": "(string | Column)" },
-      "returnType": "void"
-    }
-  },
-  "removeAggregationColumns": {
-    "description": "/** @deprecated removeAggregationColumns is deprecated, use removeValueColumns\n */",
-    "type": {
-      "arguments": { "colKeys": "(string | Column)[]" },
-      "returnType": "void"
-    }
-  },
-  "addAggregationColumn": {
-    "description": "/** @deprecated addAggregationColumn is deprecated, use addValueColumn\n */",
-    "type": {
-      "arguments": { "colKey": "(string | Column)" },
-      "returnType": "void"
-    }
-  },
-  "addAggregationColumns": {
-    "description": "/** @deprecated addAggregationColumns is deprecated, use addValueColumns\n */",
-    "type": {
-      "arguments": { "colKeys": "(string | Column)[]" },
-      "returnType": "void"
-    }
-  },
-  "setColumnAggFunction": {
-    "description": "/** @deprecated setColumnAggFunction is deprecated, use setColumnAggFunc\n */",
-    "type": {
-      "arguments": { "column": "Column", "aggFunc": "string" },
-      "returnType": "void"
-    }
-  },
-  "getDisplayNameForCol": {
-    "description": "/** @deprecated getDisplayNameForCol is deprecated, use getDisplayNameForColumn\n */",
-    "type": { "arguments": { "column": "any" }, "returnType": "string" }
-  },
-  "setColumnState": {
-    "description": "/** @deprecated setColumnState is deprecated, use applyColumnState.\n */",
-    "type": {
-      "arguments": { "columnState": "ColumnState[]" },
-      "returnType": "boolean"
-    }
   },
   "getOriginalColumnGroup": {
-    "description": "/** @deprecated getOriginalColumnGroup is deprecated, use getProvidedColumnGroup.\n */",
+    "description": "/** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */",
     "type": {
       "arguments": { "name": "string" },
       "returnType": "ProvidedColumnGroup | null"
+    }
+  },
+  "getPrimaryColumns": {
+    "description": "/** @deprecated v28 Use `getColumns` instead. */",
+    "type": { "arguments": {}, "returnType": "Column[] | null" }
+  },
+  "getSecondaryColumns": {
+    "description": "/** @deprecated v28 Use `getPivotResultColumns` instead. */",
+    "type": { "arguments": {}, "returnType": "Column[] | null" }
+  },
+  "setSecondaryColumns": {
+    "description": "/** @deprecated v28 Use `setPivotResultColumns` instead. */",
+    "type": {
+      "arguments": { "colDefs": "(ColDef | ColGroupDef)[]" },
+      "returnType": "void"
+    }
+  },
+  "getSecondaryPivotColumn": {
+    "description": "/** @deprecated v28 Use `getPivotResultColumn` instead */",
+    "type": {
+      "arguments": {
+        "pivotKeys": "string[]",
+        "valueColKey": "string | Column"
+      },
+      "returnType": "Column | null"
     }
   }
 }

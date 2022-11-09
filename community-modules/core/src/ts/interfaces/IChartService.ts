@@ -1,6 +1,5 @@
-import { ChartToolPanelName, ChartType, SeriesChartType } from "./iChartOptions";
+import { ChartToolPanelName, ChartType, CrossFilterChartType, SeriesChartType } from "./iChartOptions";
 import { ChartRef } from "../entities/gridOptions";
-import { CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams } from "../gridApi";
 import { CellRangeParams } from "./IRangeService";
 import { IAggFunc } from "../entities/colDef";
 import { AgChartThemeOverrides, AgChartThemePalette } from "./iAgChartOptions";
@@ -82,3 +81,40 @@ export interface IChartService {
     openChartToolPanel(params: OpenChartToolPanelParams): void;
     closeChartToolPanel(chartId: string): void;
 }
+
+interface CreateChartParams {
+    /** The type of chart to create. */
+    chartType: ChartType;
+    /** The default theme to use, either a default option or your own custom theme. */
+    chartThemeName?: string;
+    /** Provide to display the chart outside of the grid in your own container. */
+    chartContainer?: HTMLElement;
+    /** Allows specific chart options in the current theme to be overridden. */
+    chartThemeOverrides?: AgChartThemeOverrides;
+    /** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */
+    unlinkChart?: boolean;
+}
+
+export type ChartParamsCellRange = Partial<Omit<CellRangeParams, 'rowStartPinned' | 'rowEndPinned'>>;
+export interface CreateRangeChartParams extends CreateChartParams {
+    /** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */
+    cellRange: ChartParamsCellRange;
+    /** Suppress highlighting the selected range in the grid. */
+    suppressChartRanges?: boolean;
+    /** The aggregation function that should be applied to all series data. */
+    aggFunc?: string | IAggFunc;
+    /** The series chart type configurations used in combination charts */
+    seriesChartTypes?: SeriesChartType[];
+}
+export interface CreateCrossFilterChartParams extends CreateChartParams {
+    /** The type of cross-filter chart to create. */
+    chartType: CrossFilterChartType;
+    /** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */
+    cellRange: ChartParamsCellRange;
+    /** Suppress highlighting the selected range in the grid. */
+    suppressChartRanges?: boolean;
+    /** The aggregation function that should be applied to all series data. */
+    aggFunc?: string | IAggFunc;
+}
+
+export interface CreatePivotChartParams extends CreateChartParams { }

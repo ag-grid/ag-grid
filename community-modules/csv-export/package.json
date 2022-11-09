@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/csv-export",
-  "version": "28.2.0",
+  "version": "28.2.1",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/cjs/es5/main.js",
   "module": "./dist/esm/es5/main.js",
@@ -47,10 +47,10 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "@ag-grid-community/core": "~28.2.0"
+    "@ag-grid-community/core": "~28.2.1"
   },
   "devDependencies": {
-    "typescript": "~3.7.7",
+    "typescript": "~4.0.8",
     "rimraf": "3.0.2"
   },
   "publishConfig": {

@@ -4,7 +4,7 @@ import { ICellEditorParams } from "@ag-grid-community/core";
 
 @Component({
     selector: 'editor-cell',
-    template: `<input type="number" [(ngModel)]="value" #input style="width: 100%" />`
+    template: `<input type="number" [(ngModel)]="value" #input class="doubling-input" />`
 })
 export class DoublingEditor implements ICellEditorAngularComp, AfterViewInit {
     private params!: ICellEditorParams;

@@ -47,9 +47,15 @@ const tscMainTask = () => {
     const communityMainFilename = './node_modules/ag-grid-community/dist/lib/main.d.ts';
     const communityMainFileContents = fs.readFileSync(communityMainFilename, 'UTF-8');
 
-    const newContents = communityMainFileContents.replace(/from .*/g, 'from "ag-grid-community";')
-        .replace(/export \* from "ag-grid-community";/g, "")
-        .replace(/^\s*\n/gm, ""); // delete empty lines
+    const matches = [...communityMainFileContents.matchAll(/export\s*{(.+)}\s*from/g)];
+    let exports = [];
+    matches.forEach(m => {
+        const split = m[1].split(',').map(i => i.trim()).filter(i => !!i);
+        exports = [...exports, ...split]
+    })
+    exports.sort();
+
+    const newExports = `export { ${exports.join(',\n')} } from "ag-grid-community";`
 
     const mainTsFilename = './src/main.ts';
     const mainTsFileContents = fs.readFileSync(mainTsFilename, 'UTF-8');
@@ -57,7 +63,7 @@ const tscMainTask = () => {
     const updatedUtilFileContents = updateBetweenStrings(mainTsFileContents,
         '/* COMMUNITY_EXPORTS_START_DO_NOT_DELETE */',
         '/* COMMUNITY_EXPORTS_END_DO_NOT_DELETE */',
-        newContents);
+        newExports);
 
     fs.writeFileSync(mainTsFilename, updatedUtilFileContents, 'UTF-8');
 

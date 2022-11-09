@@ -1,7 +1,7 @@
 import {nextTick, ref} from 'vue';
 
 export default {
-    template: `<input type="number" v-model="value" ref="input" style="width: 100%"/>`,
+    template: `<input type="number" v-model="value" ref="input" class="doubling-input" />`,
     setup(props) {
         // the current/initial value of the cell (before editing)
         const value = ref(props.params.value);

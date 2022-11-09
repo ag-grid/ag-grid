@@ -1,6 +1,6 @@
 import { BBox } from '../bbox';
 
-export interface GradientColorStop {
+interface GradientColorStop {
     offset: number;
     color: string;
 }

@@ -1,6 +1,6 @@
 export class Events {
 
-    /** Everything has changed with the columns. Either complete new set of columns set, or user called setState() */
+    /** Everything has changed with the columns. Either complete new set of columns set, or user called applyColumnState() */
     /** @deprecated - grid no longer uses this, and setSate() also fires individual events */
     public static EVENT_COLUMN_EVERYTHING_CHANGED: 'columnEverythingChanged' = 'columnEverythingChanged';
 
@@ -52,7 +52,7 @@ export class Events {
     /** A row group was opened / closed */
     public static EVENT_ROW_GROUP_OPENED: 'rowGroupOpened' = 'rowGroupOpened';
 
-    /** @deprecated use EVENT_ROW_DATA_UPDATED instead */
+    /** @deprecated v28 use EVENT_ROW_DATA_UPDATED instead */
     public static EVENT_ROW_DATA_CHANGED: 'rowDataChanged' = 'rowDataChanged';
 
     /** The client has updated data for the grid */

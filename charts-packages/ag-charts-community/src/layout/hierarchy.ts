@@ -1,4 +1,4 @@
-export class HierarchyNode {
+class HierarchyNode {
     datum: any;
     value: number = 0;
     depth: number = 0;

@@ -185,7 +185,7 @@ export class AlignedGridsService extends BeanStub {
 
         switch (colEvent.type) {
             case Events.EVENT_COLUMN_MOVED:
-                // when the user moves columns via setColumnState, we can't depend on moving specific columns
+                // when the user moves columns via applyColumnState, we can't depend on moving specific columns
                 // to an index, as there maybe be many indexes columns moved to (as wasn't result of a mouse drag).
                 // so only way to be sure is match the order of all columns using Column State.
                 {
@@ -199,7 +199,7 @@ export class AlignedGridsService extends BeanStub {
                 }
                 break;
             case Events.EVENT_COLUMN_VISIBLE:
-                // when the user changes visibility via setColumnState, we can't depend on visibility flag in event
+                // when the user changes visibility via applyColumnState, we can't depend on visibility flag in event
                 // as there maybe be mix of true/false (as wasn't result of a mouse click to set visiblity).
                 // so only way to be sure is match the visibility of all columns using Column State.
                 {

@@ -1,7 +1,7 @@
 import { RefSelector } from "./componentAnnotations";
 import { PostConstruct } from "../context/context";
 import { Component } from "./component";
-import { getInnerHeight, getInnerWidth } from "../utils/dom";
+import { getInnerHeight, getInnerWidth, setDisplayed } from "../utils/dom";
 import { createIconNoSpan } from "../utils/icon";
 import { PositionableFeature, PositionableOptions, ResizableStructure } from "../rendering/features/positionableFeature";
 
@@ -77,7 +77,7 @@ export class AgPanel extends Component {
             if (title) { this.setTitle(title); }
             this.setClosable(closable != null ? closable : this.closable);
         } else {
-            this.eTitleBar.classList.add('ag-hidden');
+            setDisplayed(this.eTitleBar, false);
         }
 
         this.addManagedListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {

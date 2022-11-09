@@ -8,7 +8,7 @@ type IsLiteralProperty<T, K extends keyof T> = K extends LiteralProperties
 type IsSkippableProperty<T, K extends keyof T> = K extends SkippableProperties ? true : false;
 
 // Needs to be recursive when we move to TS 4.x+; only supports a maximum level of nesting right now.
-export type DeepPartial<T> = {
+type DeepPartial<T> = {
     [P1 in keyof T]?: IsSkippableProperty<T, P1> extends true
         ? any
         : IsLiteralProperty<T, P1> extends true
@@ -54,12 +54,13 @@ export function jsonDiff<T extends any>(source: T, target: T): Partial<T> | null
     const targetType = classify(target);
 
     if (targetType === 'array') {
-        if (sourceType !== 'array' || source.length !== target.length) {
-            return [...(target as any)];
+        const targetArray = target as any;
+        if (sourceType !== 'array' || (source as any).length !== targetArray.length) {
+            return [...(targetArray)] as any;
         }
 
-        if (target.some((targetElement: any, i: number) => jsonDiff(source?.[i], targetElement) != null)) {
-            return [...(target as any)];
+        if (targetArray.some((targetElement: any, i: number) => jsonDiff((source as any)?.[i], targetElement) != null)) {
+            return [...(targetArray)] as any;
         }
 
         return null;
@@ -67,7 +68,7 @@ export function jsonDiff<T extends any>(source: T, target: T): Partial<T> | null
 
     if (targetType === 'primitive') {
         if (sourceType !== 'primitive') {
-            return { ...target };
+            return { ...(target as any) };
         }
 
         if (source !== target) {
@@ -171,7 +172,11 @@ export function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T {
         if (finalValue instanceof Array) {
             return finalValue.map((v) => {
                 const type = classify(v);
-                return type === 'array' ? jsonMerge([[], v], opts) : type === 'object' ? jsonMerge([{}, v], opts) : v;
+
+                if (type === 'array') return jsonMerge([[], v], opts);
+                if (type === 'object') return jsonMerge([{}, v], opts);
+
+                return v;
             }) as any;
         }
 
@@ -327,8 +332,9 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
                 targetAny[property] = newValue;
             }
         } catch (error) {
+            const err = error as any;
             console.warn(
-                `AG Charts - unable to set [${propertyPath}] in [${targetClass?.name}]; nested error is: ${error.message}`
+                `AG Charts - unable to set [${propertyPath}] in [${targetClass?.name}]; nested error is: ${err.message}`
             );
             continue;
         }
@@ -387,7 +393,7 @@ type Classification = 'array' | 'object' | 'primitive';
 /**
  * Classify the type of a value to assist with handling for merge purposes.
  */
-export function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | 'class-instance' | null {
+function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | 'class-instance' | null {
     if (value == null) {
         return null;
     } else if (value instanceof HTMLElement) {

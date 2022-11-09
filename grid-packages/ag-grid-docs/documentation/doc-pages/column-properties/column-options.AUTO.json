@@ -39,11 +39,11 @@
     "type": { "returnType": "boolean" }
   },
   "tooltipComponent": {
-    "description": "/** Provide your own tooltip component for the column.\n * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details. */",
+    "description": "/** \n    * Provide your own tooltip component for the column.\n    * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.\n    */",
     "type": { "returnType": "any" }
   },
   "tooltipComponentFramework": {
-    "description": "/** @deprecated As of v27, use `tooltipComponent` for framework components too.\n */",
+    "description": "/** @deprecated As of v27, use `tooltipComponent` for framework components too. */",
     "type": { "returnType": "any" }
   },
   "tooltipComponentParams": {
@@ -71,11 +71,11 @@
     "type": { "returnType": "boolean" }
   },
   "headerGroupComponent": {
-    "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.\n * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details. */",
+    "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.\n    * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details.\n    */",
     "type": { "returnType": "any" }
   },
   "headerGroupComponentFramework": {
-    "description": "/** @deprecated As of v27, use `headerGroupComponent` for framework components too.\n */",
+    "description": "/** @deprecated As of v27, use `headerGroupComponent` for framework components too. */",
     "type": { "returnType": "any" }
   },
   "headerGroupComponentParams": {
@@ -83,15 +83,15 @@
     "type": { "returnType": "any" }
   },
   "colId": {
-    "description": "/** The unique ID to give the column. This is optional. If missing, the ID will default to the field.\n * If both field and colId are missing, a unique ID will be generated.\n * This ID is used to identify the column in the API for sorting, filtering etc. */",
+    "description": "/** The unique ID to give the column. This is optional. If missing, the ID will default to the field.\n     *  If both field and colId are missing, a unique ID will be generated.\n     *  This ID is used to identify the column in the API for sorting, filtering etc. */",
     "type": { "returnType": "string" }
   },
   "field": {
-    "description": "/** The field of the row object to get the cell's data from.\n * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`. */",
+    "description": "/** \n     * The field of the row object to get the cell's data from.\n     * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`.\n     */",
     "type": { "returnType": "string" }
   },
   "type": {
-    "description": "/** A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column.\n * This helps to reduce duplication of properties when you have a lot of common column properties. */",
+    "description": "/** A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column.\n     * This helps to reduce duplication of properties when you have a lot of common column properties.\n     */",
     "type": { "returnType": "string | string[]" }
   },
   "valueGetter": {
@@ -107,14 +107,14 @@
     "type": { "returnType": "{ [key: string]: string; }" }
   },
   "keyCreator": {
-    "description": "/** Function to return a string key for a value.\n * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.\n * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value. */",
+    "description": "/** Function to return a string key for a value.\n     * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.\n     * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value. */",
     "type": {
       "arguments": { "params": "KeyCreatorParams<TData>" },
       "returnType": "string"
     }
   },
   "equals": {
-    "description": "/** Custom comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed.\n * By default the grid uses `===` is used which should work for most use cases. */",
+    "description": "/** Custom comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed.\n     * By default the grid uses `===` is used which should work for most use cases.\n     */",
     "type": {
       "arguments": { "valueA": "any", "valueB": "any" },
       "returnType": "boolean"
@@ -125,7 +125,7 @@
     "type": { "returnType": "string" }
   },
   "tooltipValueGetter": {
-    "description": "/** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.\n * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component. */",
+    "description": "/** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.\n     * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.\n     */",
     "type": {
       "arguments": { "params": "ITooltipParams<TData>" },
       "returnType": "string | any"
@@ -144,7 +144,7 @@
     "type": { "returnType": "{ [key: string]: Function | string; }" }
   },
   "suppressNavigable": {
-    "description": "/** Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.\n * Can also be a callback function to have different rows navigable.\n * Default: `false` */",
+    "description": "/** Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.\n     * Can also be a callback function to have different rows navigable.\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean | SuppressNavigableCallback<TData>" }
   },
   "suppressKeyboardEvent": {
@@ -155,7 +155,7 @@
     }
   },
   "suppressPaste": {
-    "description": "/** Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even with a paste operation).\n * Set to `true` turn paste operations off. */",
+    "description": "/** Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even with a paste operation).\n     * Set to `true` turn paste operations off.\n     */",
     "type": { "returnType": "boolean | SuppressPasteCallback<TData>" }
   },
   "suppressFillHandle": {
@@ -195,11 +195,11 @@
     "type": { "returnType": "string | ValueParserFunc<TData>" }
   },
   "cellEditor": {
-    "description": "/** Provide your own cell editor component for this column's cells.\n * See [Cell Editor](https://www.ag-grid.com/javascript-data-grid/component-cell-editor/) for framework specific implementation detail. */",
+    "description": "/** Provide your own cell editor component for this column's cells.\n    * See [Cell Editor](https://www.ag-grid.com/javascript-data-grid/component-cell-editor/) for framework specific implementation detail.\n    */",
     "type": { "returnType": "any" }
   },
   "cellEditorFramework": {
-    "description": "/** @deprecated As of v27, use `cellEditor` for framework components too.\n */",
+    "description": "/** @deprecated As of v27, use `cellEditor` for framework components too. */",
     "type": { "returnType": "any" }
   },
   "cellEditorParams": {
@@ -215,18 +215,18 @@
     "type": { "returnType": "boolean" }
   },
   "newValueHandler": {
-    "description": "/** @deprecated use `valueSetter` instead\n */",
+    "description": "/** @deprecated v26 use `valueSetter` instead */",
     "type": {
       "arguments": { "params": "NewValueParams<TData>" },
       "returnType": "boolean"
     }
   },
   "cellEditorPopup": {
-    "description": "/** Set to `true`, to have the cell editor appear in a popup. */",
+    "description": "/** Set to `true`, to have the cell editor appear in a popup.\n     */",
     "type": { "returnType": "boolean" }
   },
   "cellEditorPopupPosition": {
-    "description": "/** Set the position for the popup cell editor. Possible values are\n *   - `over` Popup will be positioned over the cell\n *   - `under` Popup will be positioned below the cell leaving the cell value visible.\n * \n * Default: `over`. */",
+    "description": "/** Set the position for the popup cell editor. Possible values are\n     *  - `over` Popup will be positioned over the cell\n     *  - `under` Popup will be positioned below the cell leaving the cell value visible.\n     *\n     * Default: `over`. */",
     "type": { "returnType": "string" }
   },
   "onCellValueChanged": {
@@ -277,15 +277,15 @@
     "type": { "returnType": "boolean" }
   },
   "autoHeaderHeight": {
-    "description": "/** If enabled then the column header row will automatically adjust height to acommodate the size of the header cell.\n * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.\n * Default: `false` */",
+    "description": "/** If enabled then the column header row will automatically adjust height to acommodate the size of the header cell.\n    * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.\n    * Default: `false`\n    */",
     "type": { "returnType": "boolean" }
   },
   "headerComponent": {
-    "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
+    "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n    * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail.\n    */",
     "type": { "returnType": "any" }
   },
   "headerComponentFramework": {
-    "description": "/** @deprecated As of v27, use `headerComponent` for framework components too.\n */",
+    "description": "/** @deprecated As of v27, use `headerComponent` for framework components too. */",
     "type": { "returnType": "any" }
   },
   "headerComponentParams": {
@@ -293,7 +293,7 @@
     "type": { "returnType": "any" }
   },
   "menuTabs": {
-    "description": "/** Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.\n * This is used to figure out which menu tabs are present and in which order the tabs are shown. */",
+    "description": "/** Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.\n     * This is used to figure out which menu tabs are present and in which order the tabs are shown.\n     */",
     "type": { "returnType": "ColumnMenuTab[]" }
   },
   "columnsMenuParams": {
@@ -325,25 +325,25 @@
     "type": { "returnType": "boolean | 'left' | 'right'" }
   },
   "lockPinned": {
-    "description": "/** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false` */",
+    "description": "/** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false`  */",
     "type": { "returnType": "boolean" }
   },
   "pinnedRowCellRenderer": {
-    "description": "/** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.\n */",
+    "description": "/** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */",
     "type": {
       "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
     }
   },
   "pinnedRowCellRendererFramework": {
-    "description": "/** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.\n */",
+    "description": "/** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */",
     "type": { "returnType": "any" }
   },
   "pinnedRowCellRendererParams": {
-    "description": "/** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.\n */",
+    "description": "/** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */",
     "type": { "returnType": "any" }
   },
   "pinnedRowValueFormatter": {
-    "description": "/** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned.\n */",
+    "description": "/** @deprecated v26 Use valueFormatter for pinned rows, and check params.node.rowPinned. */",
     "type": { "returnType": "string | ValueFormatterFunc<TData>" }
   },
   "pivot": {
@@ -355,7 +355,7 @@
     "type": { "returnType": "boolean" }
   },
   "pivotIndex": {
-    "description": "/** Set this in columns you want to pivot by.\n * If only pivoting by one column, set this to any number (e.g. `0`).\n * If pivoting by multiple columns, set this to where you want this column to be in the order of pivots (e.g. `0` for first, `1` for second, and so on). */",
+    "description": "/** Set this in columns you want to pivot by.\n     * If only pivoting by one column, set this to any number (e.g. `0`).\n     * If pivoting by multiple columns, set this to where you want this column to be in the order of pivots (e.g. `0` for first, `1` for second, and so on).\n     */",
     "type": { "returnType": "number | null" }
   },
   "initialPivotIndex": {
@@ -363,7 +363,7 @@
     "type": { "returnType": "number" }
   },
   "pivotComparator": {
-    "description": "/** Comparator to use when ordering the pivot columns, when this column is used to pivot on.\n * The values will always be strings, as the pivot service uses strings as keys for the pivot groups. */",
+    "description": "/** Comparator to use when ordering the pivot columns, when this column is used to pivot on.\n     * The values will always be strings, as the pivot service uses strings as keys for the pivot groups.\n     */",
     "type": {
       "arguments": { "valueA": "string", "valueB": "string" },
       "returnType": "number"
@@ -386,11 +386,11 @@
     "type": { "returnType": "CellClassRules<TData>" }
   },
   "cellRenderer": {
-    "description": "/** Provide your own cell Renderer component for this column's cells.\n * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details. */",
+    "description": "/** \n    * Provide your own cell Renderer component for this column's cells.\n    * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details.\n    */",
     "type": { "returnType": "any" }
   },
   "cellRendererFramework": {
-    "description": "/** @deprecated As of v27, use `cellRenderer` for framework components too.\n */",
+    "description": "/** @deprecated As of v27, use `cellRenderer` for framework components too. */",
     "type": { "returnType": "any" }
   },
   "cellRendererParams": {
@@ -422,7 +422,7 @@
     "type": { "returnType": "boolean | RowDragCallback<TData>" }
   },
   "rowDragText": {
-    "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the `rowDragText` callback in the `gridOptions` will be used and\n * if there is no callback in the `gridOptions` the current cell value will be used. */",
+    "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n     * If this callback is not set, the `rowDragText` callback in the `gridOptions` will be used and\n     * if there is no callback in the `gridOptions` the current cell value will be used.\n     */",
     "type": {
       "arguments": { "params": "IRowDragItem", "dragItemCount": "number" },
       "returnType": "string"
@@ -448,7 +448,7 @@
     "type": { "returnType": "boolean" }
   },
   "rowGroupIndex": {
-    "description": "/** Set this in columns you want to group by.\n * If only grouping by one column, set this to any number (e.g. `0`).\n * If grouping by multiple columns, set this to where you want this column to be in the group (e.g. `0` for first, `1` for second, and so on). */",
+    "description": "/** Set this in columns you want to group by.\n     * If only grouping by one column, set this to any number (e.g. `0`).\n     * If grouping by multiple columns, set this to where you want this column to be in the group (e.g. `0` for first, `1` for second, and so on).\n     */",
     "type": { "returnType": "number | null" }
   },
   "initialRowGroupIndex": {
@@ -456,11 +456,11 @@
     "type": { "returnType": "number" }
   },
   "enableRowGroup": {
-    "description": "/** Set to `true` if you want to be able to row group by this column via the GUI.\n * This will not block the API or properties being used to achieve row grouping.\n * Default: `false` */",
+    "description": "/** Set to `true` if you want to be able to row group by this column via the GUI.\n     * This will not block the API or properties being used to achieve row grouping.\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
   "enableValue": {
-    "description": "/** Set to `true` if you want to be able to aggregate by this column via the GUI.\n * This will not block the API or properties being used to achieve aggregation.\n * Default: `false` */",
+    "description": "/** Set to `true` if you want to be able to aggregate by this column via the GUI.\n     * This will not block the API or properties being used to achieve aggregation.\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
   "aggFunc": {
@@ -472,11 +472,11 @@
     "type": { "returnType": "string | IAggFunc<TData>" }
   },
   "defaultAggFunc": {
-    "description": "/** The name of the aggregation function to use for this column when it is enabled via the GUI.\n * Note that this does not immediately apply the aggregation function like `aggFunc`\n * Default: `sum` */",
+    "description": "/** The name of the aggregation function to use for this column when it is enabled via the GUI.\n     * Note that this does not immediately apply the aggregation function like `aggFunc`\n     * Default: `sum`\n     */",
     "type": { "returnType": "string" }
   },
   "allowedAggFuncs": {
-    "description": "/** Aggregation functions allowed on this column e.g. `['sum', 'avg']`.\n * If missing, all installed functions are allowed.\n * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API. */",
+    "description": "/** Aggregation functions allowed on this column e.g. `['sum', 'avg']`.\n     * If missing, all installed functions are allowed.\n     * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API. */",
     "type": { "returnType": "string[]" }
   },
   "showRowGroup": {
@@ -504,11 +504,11 @@
     "type": { "returnType": "number" }
   },
   "sortingOrder": {
-    "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */",
+    "description": "/**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */",
     "type": { "returnType": "('asc' | 'desc' | null)[]" }
   },
   "comparator": {
-    "description": "/** Override the default sorting order by providing a custom sort comparator. \n * \n * - `valueA`, `valueB` are the values to compare.\n * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.\n * - `isDescending` - `true` if sort direction is `desc`. Not to be used for inverting the return value as the grid already applies `asc` or `desc` ordering.\n * \n * Return:\n *   - `0`  valueA is the same as valueB\n *   - `> 0` Sort valueA after valueB \n *   - `< 0` Sort valueA before valueB */",
+    "description": "/** Override the default sorting order by providing a custom sort comparator. \n     * \n     * - `valueA`, `valueB` are the values to compare.\n     * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.\n     * - `isDescending` - `true` if sort direction is `desc`. Not to be used for inverting the return value as the grid already applies `asc` or `desc` ordering.\n     * \n     * Return:\n     *  - `0`  valueA is the same as valueB\n     *  - `> 0` Sort valueA after valueB \n     *  - `< 0` Sort valueA before valueB\n     */",
     "type": {
       "arguments": {
         "valueA": "any",
@@ -525,7 +525,7 @@
     "type": { "returnType": "boolean" }
   },
   "sortedAt": {
-    "description": "/** @deprecated since v24 - use sortIndex instead\n */",
+    "description": "/** @deprecated since v24 - use sortIndex instead*/",
     "type": { "returnType": "number" }
   },
   "colSpan": {
@@ -587,11 +587,11 @@
     "type": { "returnType": "string[]" }
   },
   "filter": {
-    "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
+    "description": "/** Filter component to use for this column.\n     * - Set to `true` to use the default filter.\n     * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n     * - Set to a `IFilterComp`.\n     */",
     "type": { "returnType": "any" }
   },
   "filterFramework": {
-    "description": "/** @deprecated Provided a custom framework filter to use for this column. As of v27, you can use filter instead for Framework Components.\n */",
+    "description": "/** @deprecated Provided a custom framework filter to use for this column. As of v27, you can use filter instead for Framework Components.  */",
     "type": { "returnType": "any" }
   },
   "filterParams": {
@@ -599,11 +599,11 @@
     "type": { "returnType": "any" }
   },
   "floatingFilterComponent": {
-    "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
+    "description": "/** The custom component to be used for rendering the floating filter.\n     * If none is specified the default AG Grid is used.\n     */",
     "type": { "returnType": "any" }
   },
   "floatingFilterComponentFramework": {
-    "description": "/** @deprecated Floating filter framework component to use for this column. As of v27, you can use floatingFilterComponent instead for Framework Components.\n */",
+    "description": "/** @deprecated Floating filter framework component to use for this column. As of v27, you can use floatingFilterComponent instead for Framework Components. */",
     "type": { "returnType": "any" }
   },
   "floatingFilterComponentParams": {

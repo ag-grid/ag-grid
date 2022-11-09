@@ -1,9 +1,10 @@
 import { Group } from '../scene/group';
-import { Text, FontStyle, FontWeight } from '../scene/shape/text';
+import { Text } from '../scene/shape/text';
 import { Square } from './marker/square';
 import { Marker } from './marker/marker';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
 import { RenderContext } from '../scene/node';
+import { FontStyle, FontWeight } from './agChartOptions';
 
 export class MarkerLabel extends Group {
     static className = 'MarkerLabel';
