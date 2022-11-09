@@ -17,7 +17,7 @@
         return result;
     }
 
-    var ANGULAR_VERSION = "13.3.5";
+    var ANGULAR_VERSION = "14.2.6";
 
     System.config({
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER

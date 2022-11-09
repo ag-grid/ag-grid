@@ -5,9 +5,9 @@
  * Adjust as necessary for your application needs.
  */
 (function (global) {
-    var ANGULAR_VERSION = "13.3.5";
-    var ANGULAR_CDK_VERSION = "13.3.5";
-    var ANGULAR_MATERIAL_VERSION = "13.3.5";
+    var ANGULAR_VERSION = "14.2.6";
+    var ANGULAR_CDK_VERSION = "14.2.6";
+    var ANGULAR_MATERIAL_VERSION = "14.2.6";
 
     function assign() {
         var result = {};
@@ -98,6 +98,7 @@
 
                 "@angular/cdk": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/cdk.mjs",
                 "@angular/cdk/platform": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/platform.mjs",
+                "@angular/cdk/layout": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/layout.mjs",
                 "@angular/cdk/bidi": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/bidi.mjs",
                 "@angular/cdk/coercion": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/coercion.mjs",
                 "@angular/cdk/keycodes": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/keycodes.mjs",
