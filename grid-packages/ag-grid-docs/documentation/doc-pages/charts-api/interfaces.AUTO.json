@@ -2904,7 +2904,7 @@
   },
   "InteractionTypes": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'exit'"
+    "type": "'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave'"
   },
   "Listener": {
     "meta": {

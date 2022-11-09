@@ -94,7 +94,6 @@ export class Navigator {
         interactionManager.addListener('drag', (event) => this.onDrag(event));
         interactionManager.addListener('hover', (event) => this.onDrag(event));
         interactionManager.addListener('drag-end', () => this.onDragStop());
-        interactionManager.addListener('exit', () => this.onDragStop());
     }
 
     private onDragStart(offset: Offset) {

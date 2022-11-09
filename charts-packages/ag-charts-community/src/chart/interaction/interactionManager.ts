@@ -1,4 +1,4 @@
-type InteractionTypes = 'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'exit';
+type InteractionTypes = 'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave';
 type Listener<T extends InteractionTypes> = {
     symbol?: Symbol;
     handler: (event: InteractionEvent<T>) => void;
@@ -134,7 +134,7 @@ export class InteractionManager {
 
             case 'mouseout':
             case 'touchcancel':
-                types = ['exit'];
+                types = ['leave'];
                 break;
         }
 
@@ -142,31 +142,20 @@ export class InteractionManager {
         let offsetY = 0;
         let pageX;
         let pageY;
-        switch (event.type) {
-            case 'click':
-            case 'mousedown':
-            case 'mousemove':
-            case 'mouseup':
-            case 'mouseout':
-                const mouseEvent = event as MouseEvent;
-                pageX = mouseEvent.pageX;
-                pageY = mouseEvent.pageY;
-                offsetX = mouseEvent.offsetX;
-                offsetY = mouseEvent.offsetY;
-                break;
-
-            case 'touchstart':
-            case 'touchmove':
-            case 'touchend':
-            case 'touchcancel':
-                const touchEvent = event as TouchEvent;
-                const rect = this.element.getBoundingClientRect();
-                const lastTouch = touchEvent.touches[0] ?? touchEvent.changedTouches[0];
-                pageX = lastTouch?.pageX;
-                pageY = lastTouch?.pageY;
-                offsetX = lastTouch?.clientX - rect.left;
-                offsetY = lastTouch?.clientY - rect.top;
-                break;
+        if (event instanceof MouseEvent) {
+            const mouseEvent = event as MouseEvent;
+            pageX = mouseEvent.pageX;
+            pageY = mouseEvent.pageY;
+            offsetX = mouseEvent.offsetX;
+            offsetY = mouseEvent.offsetY;
+        } else if (event instanceof TouchEvent) {
+            const touchEvent = event as TouchEvent;
+            const rect = this.element.getBoundingClientRect();
+            const lastTouch = touchEvent.touches[0] ?? touchEvent.changedTouches[0];
+            pageX = lastTouch?.pageX;
+            pageY = lastTouch?.pageY;
+            offsetX = lastTouch?.clientX - rect.left;
+            offsetY = lastTouch?.clientY - rect.top;
         }
 
         for (const type of types) {
@@ -180,7 +169,7 @@ export class InteractionManager {
                 sourceEvent: event,
             };
 
-            listeners?.forEach((listener: Listener<any>) => {
+            listeners.forEach((listener: Listener<any>) => {
                 try {
                     listener.handler(interactionEvent);
                 } catch (e) {

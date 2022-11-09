@@ -202,7 +202,7 @@ export abstract class Chart extends Observable {
         this.interactionManager = new InteractionManager(element);
         this.interactionManager.addListener('click', (event) => this.onClick(event));
         this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
-        this.interactionManager.addListener('exit', () => this.togglePointer(false));
+        this.interactionManager.addListener('leave', () => this.togglePointer(false));
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
