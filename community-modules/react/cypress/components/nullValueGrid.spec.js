@@ -1,7 +1,6 @@
 // noinspection ES6UnusedImports
 import React, {useState} from 'react'
-import {mount} from 'cypress-react-unit-test'
-import {AgGridColumn} from "../../lib/shared/agGridColumn";
+import { mount } from 'cypress-react-unit-test'
 import {AgGridReact} from "../../lib/agGridReact";
 import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
 import {ensureGridApiHasBeenSet} from "./utils";
@@ -20,7 +19,9 @@ const App = () => {
             value: null
         }
     ]);
-
+    const [colDefs, setColDefs] = useState([
+        { field: 'value', cellRendererComp: 'cellRenderer' }
+    ]);
     function onGridReady(params) {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
@@ -35,11 +36,11 @@ const App = () => {
                 suppressReactUi={true}
                 onGridReady={onGridReady}
                 rowData={rowData}
+                columnDefs={colDefs}
                 comps={{
                     cellRenderer: CellRenderer
                 }}
                 modules={[ClientSideRowModelModule]}>
-                <AgGridColumn field="value" cellRendererComp="cellRenderer"></AgGridColumn>
             </AgGridReact>
         </div>
     );

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'
-import { AgGridColumn } from './shared/agGridColumn'
 import { AgGridReactUi } from './reactUi/agGridReactUi';
 
 import '@ag-grid-community/styles/ag-grid.css';
@@ -17,6 +16,11 @@ const App = () => {
         { make: 'Ford', model: 'Mondeo', price: 32000 },
         { make: 'Porsche', model: 'Boxster', price: 72000 }
     ]);
+    const [colDefs, setColDefs] = useState([
+        { field: 'make' },
+        { field: 'model' },
+        { field: 'price' },
+    ]);
 
     const onGridReady = (params:any) => {
         setGridApi(params.api);
@@ -27,7 +31,6 @@ const App = () => {
     return (
         <div style={{ display: 'flex' }}>
             <div className="ag-theme-alpine" style={{ height: 400, width: 600, margin: 10 }}>
-                {/*<AgGridReact*/}
                 <AgGridReactUi
                     defaultColDef={{
                         resizable: true,
@@ -39,26 +42,10 @@ const App = () => {
                     animateRows={ true }
                     onGridReady={ onGridReady }
                     rowData={ rowData }
-                    modules={ [ClientSideRowModelModule] }>
-                    <AgGridColumn field="make"></AgGridColumn>
-                    <AgGridColumn field="model"></AgGridColumn>
-                    <AgGridColumn field="price"></AgGridColumn>
-                </AgGridReactUi>
-                {/*</AgGridReact>*/}
-            </div>
-{/*
-            <div className="ag-theme-alpine" style={{ height: 400, width: 600, margin: 10 }}>
-                <AgGridReact
-                    onGridReady={onGridReady}
-                    rowData={rowData}
-                    rowHeight={42}
+                    columnDefs={colDefs}
                     modules={[ClientSideRowModelModule]}>
-                    <AgGridColumn field="make"></AgGridColumn>
-                    <AgGridColumn field="model"></AgGridColumn>
-                    <AgGridColumn field="price"></AgGridColumn>
-                </AgGridReact>
+                </AgGridReactUi>
             </div>
-*/}
         </div>
     );
 };

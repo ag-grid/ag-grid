@@ -189,63 +189,6 @@ function getGridPropertiesAndEventsJs() {
     return generateAngularInputOutputs(ComponentUtil, context);
 }
 
-function getGridColumnPropertiesJs() {
-    const { ColDefUtil } = require("@ag-grid-community/core");
-
-    // colDef properties that dont make sense in an angular context (or are private)
-    const skippableProperties = ['template',
-        'templateUrl',
-        'pivotKeys',
-        'pivotValueColumn',
-        'pivotTotalColumnIds',
-        'templateUrl'
-    ];
-
-    const filename = "../../community-modules/core/src/ts/entities/colDef.ts";
-    const srcFile = parseFile(filename);
-    const abstractColDefNode = findNode('AbstractColDef', srcFile);
-    const colGroupDefNode = findNode('ColGroupDef', srcFile);
-    const colDefNode = findNode('ColDef', srcFile);
-
-
-    let context = {
-        typeLookup: {},
-        eventTypeLookup: {},
-        docLookup: {},
-        publicEventLookup: {}
-    }
-
-    extractTypesFromNode(srcFile, abstractColDefNode, context);
-    extractTypesFromNode(srcFile, colGroupDefNode, context);
-    extractTypesFromNode(srcFile, colDefNode, context);
-
-    function unique(value, index, self) {
-        return self.indexOf(value) === index;
-    }
-
-    let propsToWrite = [];
-    const typeKeysOrder = Object.keys(context.typeLookup);
-
-    ColDefUtil.ALL_PROPERTIES.filter(unique).forEach((property) => {
-        if (skippableProperties.indexOf(property) === -1) {
-            const typeName = context.typeLookup[property];
-            const inputType = getSafeType(typeName)
-
-            let line = addDocLine(context.docLookup, property, '');
-            // We don't initialise Column Inputs as this breaks the merging with defaultColDef options
-            line += `    @Input() public ${property}: ${inputType};${EOL}`;
-            const order = typeKeysOrder.findIndex(p => p === property);
-            propsToWrite.push({ order, line });
-        }
-    });
-
-    let result = writeSortedLines(propsToWrite, '');
-    result = addTypeCoercionHints(result, ColDefUtil.BOOLEAN_PROPERTIES);
-    const typesToImport = extractTypes(context, skippableProperties);
-
-    return { code: result, types: typesToImport };
-}
-
 const updateGridProperties = (getGridPropertiesAndEvents) => {
     // extract the grid properties & events and add them to our angular grid component
     const { code: gridPropertiesAndEvents, types } = getGridPropertiesAndEvents();
@@ -263,25 +206,8 @@ const updateGridProperties = (getGridPropertiesAndEvents) => {
         });
 };
 
-const updateColProperties = (getGridColumnProperties) => {
-    // extract the grid column properties our angular grid column component    
-    const { code: gridColumnProperties, types } = getGridColumnProperties();
-    const optionsForGridColumn = {
-        files: './projects/ag-grid-angular/src/lib/ag-grid-column.component.ts',
-        from: [/(\/\/ @START@)[^]*(\s.*\/\/ @END@)/, /(\/\/ @START_IMPORTS@)[^]*(\/\/ @END_IMPORTS@)/],
-        to: [`// @START@${EOL}${gridColumnProperties}    // @END@`, `// @START_IMPORTS@${EOL}import {${EOL}    ${types.join(',' + EOL + '    ')}${EOL}} from "@ag-grid-community/core";${EOL}// @END_IMPORTS@`]
-    };
-
-    replace(optionsForGridColumn)
-        .then(filesChecked => {
-            const changes = filesChecked.filter(change => change.hasChanged);
-            console.log(`Column Properties: ${changes.length === 0 ? 'No Modified files' : 'Modified files: ' + changes.map(change => change.file).join(', ')}`);
-        });
-};
-
 updatePropertiesBuilt = () => {
     updateGridProperties(getGridPropertiesAndEventsJs);
-    updateColProperties(getGridColumnPropertiesJs);
 }
 
 console.log(`--------------------------------------------------------------------------------`);

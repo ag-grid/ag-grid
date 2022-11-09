@@ -3,8 +3,7 @@ import {markRaw, toRaw} from '@vue/reactivity';
 import {ComponentUtil, Grid, GridOptions, Module, RowNode} from 'ag-grid-community';
 
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
-import {getAgGridProperties, Properties} from './Utils';
-import {AgGridColumn} from './AgGridColumn';
+import { getAgGridProperties, Properties } from './Utils';
 import {VueFrameworkOverrides} from './VueFrameworkOverrides';
 
 const ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
@@ -192,10 +191,6 @@ export const AgGridVue = defineComponent({
 
         const rowData = this.getRowDataBasedOnBindings();
         gridOptions.rowData = rowData ? (Object.isFrozen(rowData) ? rowData : markRaw(toRaw(rowData))) : rowData;
-
-        if (AgGridColumn.hasChildColumns(this.$slots)) {
-            gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(this.$slots);
-        }
 
         const gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
