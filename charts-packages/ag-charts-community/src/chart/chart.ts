@@ -256,8 +256,8 @@ export abstract class Chart extends Observable {
         if (!visible && this.lastPick) {
             this.changeHighlightDatum();
         }
-        if (!visible && this.lastPointerMeta) {
-            this.lastPointerMeta = undefined;
+        if (!visible && this.lastInteractionEvent) {
+            this.lastInteractionEvent = undefined;
         }
     }
 
@@ -299,7 +299,7 @@ export abstract class Chart extends Observable {
         return this._performUpdateType;
     }
     get updatePending(): boolean {
-        return this._performUpdateType !== ChartUpdateType.NONE || this.lastPointerMeta != null;
+        return this._performUpdateType !== ChartUpdateType.NONE || this.lastInteractionEvent != null;
     }
     private _lastPerformUpdateError?: Error;
     get lastPerformUpdateError() {
@@ -857,7 +857,7 @@ export abstract class Chart extends Observable {
 
     lastPick?: {
         datum: SeriesNodeDatum;
-        event?: MouseEvent;
+        event?: Event;
     };
 
     protected onMouseMove(event: InteractionEvent<'hover'>): void {
@@ -869,13 +869,7 @@ export abstract class Chart extends Observable {
             }
         }
 
-        this.lastPointerMeta = {
-            pageX: event.pageX ?? 0,
-            pageY: event.pageY ?? 0,
-            offsetX: event.offsetX,
-            offsetY: event.offsetY,
-            event: event.sourceEvent as MouseEvent,
-        };
+        this.lastInteractionEvent = event;
         this.pointerScheduler.schedule();
 
         this.extraDebugStats['mouseX'] = event.offsetX;
@@ -888,18 +882,20 @@ export abstract class Chart extends Observable {
         this.togglePointer(false);
     }
 
-    private lastPointerMeta?: PointerMeta = undefined;
+    private lastInteractionEvent?: InteractionEvent<'hover'> = undefined;
     private pointerScheduler = debouncedAnimationFrame(() => {
-        this.handlePointer(this.lastPointerMeta);
-        this.lastPointerMeta = undefined;
+        if (this.lastInteractionEvent) {
+            this.handlePointer(this.lastInteractionEvent!);
+        }
+        this.lastInteractionEvent = undefined;
     });
-    protected handlePointer(meta?: PointerMeta) {
-        if (!meta) {
+    protected handlePointer(event: InteractionEvent<'hover'>) {
+        if (!event) {
             return;
         }
 
         const { lastPick } = this;
-        const { offsetX, offsetY } = meta;
+        const { pageX, pageY, offsetX, offsetY } = event;
 
         const disablePointer = () => {
             if (lastPick) {
@@ -920,12 +916,13 @@ export abstract class Chart extends Observable {
             return;
         }
 
+        const meta = { pageX, pageY, offsetX, offsetY, event: event.sourceEvent };
         if (!lastPick || lastPick.datum !== pick.datum) {
             this.onSeriesDatumPick(meta, pick.datum);
             return;
         }
 
-        lastPick.event = meta.event;
+        lastPick.event = event.sourceEvent;
 
         if (this.tooltip.enabled && pick.series.tooltip.enabled) {
             this.tooltip.show(this.mergePointerDatum(meta, pick.datum));
@@ -1122,8 +1119,8 @@ export abstract class Chart extends Observable {
                 ...meta,
                 pageX: Math.round(canvasRect.left + window.scrollX + point.x),
                 pageY: Math.round(canvasRect.top + window.scrollY + point.y),
-                offsetX: Math.round(canvasRect.left + point.y),
-                offsetY: Math.round(canvasRect.top + point.y),
+                offsetX: Math.round(point.x),
+                offsetY: Math.round(point.y),
             };
         }
 
@@ -1132,10 +1129,7 @@ export abstract class Chart extends Observable {
 
     highlightedDatum?: SeriesNodeDatum;
 
-    changeHighlightDatum(
-        newPick?: { datum: SeriesNodeDatum; event?: MouseEvent },
-        opts?: { updateProcessing: boolean }
-    ) {
+    changeHighlightDatum(newPick?: { datum: SeriesNodeDatum; event?: Event }, opts?: { updateProcessing: boolean }) {
         const { updateProcessing = true } = opts ?? {};
         const seriesToUpdate: Set<Series> = new Set<Series>();
         const { datum: { series: newSeries = undefined } = {}, datum = undefined } = newPick || {};

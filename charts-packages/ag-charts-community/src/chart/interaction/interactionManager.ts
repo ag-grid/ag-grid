@@ -30,8 +30,8 @@ export type InteractionEvent<T extends InteractionTypes> = {
     type: T;
     offsetX: number;
     offsetY: number;
-    pageX?: number;
-    pageY?: number;
+    pageX: number;
+    pageY: number;
     sourceEvent: Event;
 } & (T extends 'drag' ? { startX: number; startY: number } : {});
 

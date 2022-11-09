@@ -4759,7 +4759,7 @@
     "pageY": { "type": { "returnType": "number", "optional": false } },
     "offsetX": { "type": { "returnType": "number", "optional": false } },
     "offsetY": { "type": { "returnType": "number", "optional": false } },
-    "event": { "type": { "returnType": "MouseEvent", "optional": false } }
+    "event": { "type": { "returnType": "Event", "optional": false } }
   },
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }

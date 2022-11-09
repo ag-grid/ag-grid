@@ -107,7 +107,7 @@ export interface TooltipMeta {
     pageY: number;
     offsetX: number;
     offsetY: number;
-    event: MouseEvent;
+    event: Event;
 }
 
 export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?: AgTooltipRendererResult): string {
