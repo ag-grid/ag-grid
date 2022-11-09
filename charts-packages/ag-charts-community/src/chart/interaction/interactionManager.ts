@@ -148,7 +148,7 @@ export class InteractionManager {
             pageY = mouseEvent.pageY;
             offsetX = mouseEvent.offsetX;
             offsetY = mouseEvent.offsetY;
-        } else if (event instanceof TouchEvent) {
+        } else if (typeof TouchEvent !== 'undefined' && event instanceof TouchEvent) {
             const touchEvent = event as TouchEvent;
             const rect = this.element.getBoundingClientRect();
             const lastTouch = touchEvent.touches[0] ?? touchEvent.changedTouches[0];
