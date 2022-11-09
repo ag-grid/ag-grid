@@ -90,18 +90,22 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
         const refreshColumns = () => {
             const rowIndex = sequence.next();
-            const needNewInstance = this.columnsRowCtrl == null || !keepColumns || this.columnsRowCtrl.getRowIndex() !== rowIndex;
 
-            if (needNewInstance || this.hidden) {
+            const needNewInstance = !this.hidden && (this.columnsRowCtrl == null || !keepColumns || this.columnsRowCtrl.getRowIndex() !== rowIndex);
+            const shouldDestroyInstance = needNewInstance || this.hidden;
+
+            if (shouldDestroyInstance) {
                 this.columnsRowCtrl = this.destroyBean(this.columnsRowCtrl);
-                if (!this.hidden) {
-                    this.columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.COLUMN));
-                }
             }
+
+            if (needNewInstance) {
+                this.columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.COLUMN));
+            }
+
         };
 
         const refreshFilters = () => {
-            const includeFloatingFilter = this.columnModel.hasFloatingFilters();
+            const includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
 
             const destroyPreviousComp = () => {
                 this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
@@ -116,12 +120,12 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
             if (this.filtersRowCtrl) {
                 const rowIndexMismatch = this.filtersRowCtrl.getRowIndex() !== rowIndex;
-                if (!keepColumns || rowIndexMismatch || this.hidden) {
+                if (!keepColumns || rowIndexMismatch) {
                     destroyPreviousComp();
                 }
             }
 
-            if (!this.filtersRowCtrl && !this.hidden) {
+            if (!this.filtersRowCtrl) {
                 this.filtersRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.FLOATING_FILTER));
             }
         };

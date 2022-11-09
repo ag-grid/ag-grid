@@ -229,13 +229,13 @@ export class RowCtrl extends BeanStub {
 
         this.updateColumnLists(!this.useAnimationFrameForCreate);
 
-        this.executeSlideAndFadeAnimations(gui);
-
         const comp = gui.rowComp;
         comp.setRole('row');
 
         const initialRowClasses = this.getInitialRowClasses(gui.containerType);
         initialRowClasses.forEach(name => comp.addOrRemoveCssClass(name, true));
+
+        this.executeSlideAndFadeAnimations(gui);
 
         if (this.rowNode.group) {
             setAriaExpanded(gui.element, this.rowNode.expanded == true);
@@ -297,24 +297,23 @@ export class RowCtrl extends BeanStub {
     }
 
     private executeSlideAndFadeAnimations(gui: RowGui): void {
-        const pinned = this.getPinnedForContainer(gui.containerType);
+        const {containerType} = gui;
 
-        [RowContainerType.LEFT, RowContainerType.CENTER, RowContainerType.RIGHT].forEach((side: RowContainerType) => {
-            if (side !== pinned && (pinned || side !== 'center')) { return; }
-            if (this.slideInAnimation[side]) {
-                executeNextVMTurn(() => {
-                    this.onTopChanged();
-                    this.slideInAnimation[side] = false;
-                });
-            }
+        const shouldSlide = this.slideInAnimation[containerType];
+        if (shouldSlide) {
+            executeNextVMTurn(() => {
+                this.onTopChanged();
+            });
+            this.slideInAnimation[containerType] = false;
+        }
 
-            if (this.fadeInAnimation[side]) {
-                executeNextVMTurn(() => {
-                    gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', false);
-                    this.fadeInAnimation[side] = false;
-                });
-            }
-        });
+        const shouldFade = this.fadeInAnimation[containerType];
+        if (shouldFade) {
+            executeNextVMTurn(() => {
+                gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', false);
+            });
+            this.fadeInAnimation[containerType] = false;
+        }
     }
 
     private addRowDraggerToRow(gui: RowGui) {
