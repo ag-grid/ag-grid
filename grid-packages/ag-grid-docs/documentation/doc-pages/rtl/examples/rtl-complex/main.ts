@@ -8,9 +8,9 @@ import {
     GridOptions,
     ICellRendererParams,
     MenuItemDef,
-    NewValueParams,
     RowSelectedEvent,
-    SelectionChangedEvent
+    SelectionChangedEvent,
+    ValueSetterParams
 } from '@ag-grid-community/core'
 
 import { PersonFilter } from './person-filter_typescript'
@@ -466,7 +466,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
         field: 'totalWinnings',
         filter: 'agNumberColumnFilter',
         editable: true,
-        newValueHandler: numberNewValueHandler,
+        valueSetter: numberValueSetter,
         width: 150,
         // aggFunc: 'sum',
         enableValue: true,
@@ -498,7 +498,7 @@ months.forEach(function (month) {
             'good-score': 'typeof x === "number" && x > 50000',
             'bad-score': 'typeof x === "number" && x < 10000',
         },
-        newValueHandler: numberNewValueHandler,
+        valueSetter: numberValueSetter,
         cellRenderer: currencyRenderer,
         cellStyle: { 'text-align': 'right' },
     };
@@ -668,7 +668,7 @@ function rowSelected(event: RowSelectedEvent) {
     }
 }
 
-function numberNewValueHandler(params: NewValueParams) {
+function numberValueSetter(params: ValueSetterParams) {
     const newValue = params.newValue;
     let valueAsNumber;
     if (newValue === null || newValue === undefined || newValue === '') {

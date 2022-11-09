@@ -964,14 +964,6 @@
       "description": "/** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "newValueHandler": {
-      "description": "/** @deprecated v26 use `valueSetter` instead */",
-      "type": {
-        "arguments": { "params": "NewValueParams<TData>" },
-        "returnType": "boolean",
-        "optional": true
-      }
-    },
     "cellEditorPopup": {
       "description": "/** Set to `true`, to have the cell editor appear in a popup.\n     */",
       "type": { "returnType": "boolean", "optional": true }
@@ -1095,28 +1087,6 @@
     "lockPinned": {
       "description": "/** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false`  */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "pinnedRowCellRenderer": {
-      "description": "/** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
-    },
-    "pinnedRowCellRendererFramework": {
-      "description": "/** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "pinnedRowCellRendererParams": {
-      "description": "/** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "pinnedRowValueFormatter": {
-      "description": "/** @deprecated v26 Use valueFormatter for pinned rows, and check params.node.rowPinned. */",
-      "type": {
-        "returnType": "string | ValueFormatterFunc<TData>",
-        "optional": true
-      }
     },
     "pivot": {
       "description": "/** Set to true to pivot by this column. */",
@@ -1317,10 +1287,6 @@
     "unSortIcon": {
       "description": "/** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "sortedAt": {
-      "description": "/** @deprecated since v24 - use sortIndex instead*/",
-      "type": { "returnType": "number", "optional": true }
     },
     "colSpan": {
       "description": "/** By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns. */",

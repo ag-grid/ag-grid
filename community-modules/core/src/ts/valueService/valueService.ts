@@ -1,6 +1,6 @@
 import { ExpressionService } from "./expressionService";
 import { ColumnModel } from "../columns/columnModel";
-import { NewValueParams, ValueGetterParams, KeyCreatorParams } from "../entities/colDef";
+import { ValueGetterParams, KeyCreatorParams, ValueSetterParams } from "../entities/colDef";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
@@ -138,17 +138,14 @@ export class ValueService extends BeanStub {
             rowNode.data = {};
         }
 
-        // for backwards compatibility we are also retrieving the newValueHandler as well as the valueSetter
-        const { field, newValueHandler, valueSetter } = column.getColDef();
+        const { field, valueSetter } = column.getColDef();
 
-        // need either a field or a newValueHandler for this to work
-        if (missing(field) && missing(newValueHandler) && missing(valueSetter)) {
-            // we don't tell user about newValueHandler, as that is deprecated
+        if (missing(field) && missing(valueSetter)) {
             console.warn(`AG Grid: you need either field or valueSetter set on colDef for editing to work`);
             return false;
         }
 
-        const params: NewValueParams = {
+        const params: ValueSetterParams = {
             node: rowNode,
             data: rowNode.data,
             oldValue: this.getValue(column, rowNode),
@@ -164,17 +161,14 @@ export class ValueService extends BeanStub {
 
         let valueWasDifferent: boolean;
 
-        if (newValueHandler && exists(newValueHandler)) {
-            valueWasDifferent = newValueHandler(params);
-        } else if (exists(valueSetter)) {
+        if (exists(valueSetter)) {
             valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
         } else {
             valueWasDifferent = this.setValueUsingField(rowNode.data, field, newValue, column.isFieldContainsDots());
         }
 
         // in case user forgot to return something (possible if they are not using TypeScript
-        // and just forgot, or using an old newValueHandler we didn't always expect a return
-        // value here), we default the return value to true, so we always refresh.
+        // and just forgot we default the return value to true, so we always refresh.
         if (valueWasDifferent === undefined) {
             valueWasDifferent = true;
         }

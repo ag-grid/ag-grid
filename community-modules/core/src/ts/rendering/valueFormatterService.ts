@@ -26,9 +26,7 @@ export class ValueFormatterService extends BeanStub {
             // use supplied formatter if provided, e.g. set filter items can have their own value formatters
             formatter = suppliedFormatter;
         } else if (useFormatterFromColumn) {
-            // if row is pinned, give preference to the pinned formatter
-            formatter = node && node.rowPinned && colDef.pinnedRowValueFormatter ?
-                colDef.pinnedRowValueFormatter : colDef.valueFormatter;
+            formatter = colDef.valueFormatter;
         }
 
         if (formatter) {
