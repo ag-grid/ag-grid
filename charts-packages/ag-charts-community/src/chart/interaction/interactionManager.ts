@@ -48,15 +48,17 @@ const CSS = `
 export class InteractionManager {
     private static interactionDocuments: Document[] = [];
 
+    private readonly rootElement: HTMLElement;
     private readonly element: HTMLElement;
 
     private registeredListeners: Partial<{ [I in InteractionTypes]: Listener<I>[] }> = {};
-    private eventHandler = (event: MouseEvent | TouchEvent) => this.processEvent(event);
+    private eventHandler = (event: MouseEvent | TouchEvent | Event) => this.processEvent(event);
 
     private mouseDown = false;
     private touchDown = false;
 
     public constructor(element: HTMLElement, doc = document) {
+        this.rootElement = doc.body;
         this.element = element;
 
         for (const type of EVENT_HANDLERS) {
@@ -102,7 +104,7 @@ export class InteractionManager {
         }
     }
 
-    private processEvent(event: MouseEvent | TouchEvent) {
+    private processEvent(event: MouseEvent | TouchEvent | Event) {
         let types: InteractionTypes[] = [];
         switch (event.type) {
             case 'click':
@@ -120,7 +122,7 @@ export class InteractionManager {
 
             case 'touchmove':
             case 'mousemove':
-                types = [this.mouseDown || this.touchDown ? 'drag' : 'hover'];
+                types = this.mouseDown || this.touchDown ? ['drag'] : ['hover'];
                 break;
 
             case 'mouseup':
@@ -138,36 +140,25 @@ export class InteractionManager {
                 break;
         }
 
-        let offsetX = 0;
-        let offsetY = 0;
-        let pageX;
-        let pageY;
+        let coordSource;
         if (event instanceof MouseEvent) {
             const mouseEvent = event as MouseEvent;
-            pageX = mouseEvent.pageX;
-            pageY = mouseEvent.pageY;
-            offsetX = mouseEvent.offsetX;
-            offsetY = mouseEvent.offsetY;
+            const { clientX, clientY, pageX, pageY, offsetX, offsetY } = mouseEvent;
+            coordSource = { clientX, clientY, pageX, pageY, offsetX, offsetY };
         } else if (typeof TouchEvent !== 'undefined' && event instanceof TouchEvent) {
             const touchEvent = event as TouchEvent;
-            const rect = this.element.getBoundingClientRect();
             const lastTouch = touchEvent.touches[0] ?? touchEvent.changedTouches[0];
-            pageX = lastTouch?.pageX;
-            pageY = lastTouch?.pageY;
-            offsetX = lastTouch?.clientX - rect.left;
-            offsetY = lastTouch?.clientY - rect.top;
+            const { clientX, clientY, pageX, pageY } = lastTouch;
+            coordSource = { clientX, clientY, pageX, pageY };
+        } else {
+            // Unsupported event - abort.
+            return;
         }
 
         for (const type of types) {
-            const listeners = this.registeredListeners[type as InteractionTypes] ?? [];
-            const interactionEvent = {
-                type,
-                offsetX,
-                offsetY,
-                pageX,
-                pageY,
-                sourceEvent: event,
-            };
+            const interactionType = type as InteractionTypes;
+            const listeners = this.registeredListeners[interactionType] ?? [];
+            const interactionEvent = this.buildEvent({ event, ...coordSource, type: interactionType });
 
             listeners.forEach((listener: Listener<any>) => {
                 try {
@@ -181,5 +172,38 @@ export class InteractionManager {
                 event.stopPropagation();
             }
         }
+    }
+
+    private buildEvent(opts: {
+        type: InteractionTypes;
+        event: Event;
+        clientX: number;
+        clientY: number;
+        offsetX?: number;
+        offsetY?: number;
+        pageX?: number;
+        pageY?: number;
+    }) {
+        let { type, event, clientX, clientY, offsetX, offsetY, pageX, pageY } = opts;
+
+        if (offsetX == null || offsetY == null) {
+            const rect = this.element.getBoundingClientRect();
+            offsetX = clientX - rect.left;
+            offsetY = clientY - rect.top;
+        }
+        if (pageX == null || pageY == null) {
+            const pageRect = this.rootElement.getBoundingClientRect();
+            pageX = clientX - pageRect.left;
+            pageY = clientY - pageRect.top;
+        }
+
+        return {
+            type,
+            offsetX,
+            offsetY,
+            pageX,
+            pageY,
+            sourceEvent: event,
+        };
     }
 }

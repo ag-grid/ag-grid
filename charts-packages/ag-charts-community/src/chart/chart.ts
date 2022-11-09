@@ -223,11 +223,7 @@ export abstract class Chart extends Observable {
             this.resize(width, height);
         });
 
-        this.tooltip = new Tooltip(
-            () => this.scene.canvas.element,
-            document,
-            () => this.container
-        );
+        this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
     }
 
     destroy() {
