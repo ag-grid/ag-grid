@@ -41,7 +41,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
     // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
-    useEffect( () => {
+    useEffect(() => {
         setRowCtrlsOrdered( prev => {
             if (domOrder) {
                 return rowCtrls;
@@ -67,6 +67,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
         const ctrl = context.createBean(new RowContainerCtrl(name));
         beansToDestroy.push(ctrl);
+
         ctrl.setComp(compProxy, eContainer.current!, eViewport.current!, eWrapper.current!);
 
         return () => {
@@ -90,7 +91,9 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
             role={ rowCtrls.length ? "rowgroup" : "presentation" }
             style={ containerStyle }>
             {
-                rowCtrlsOrdered.map(rowCtrl => <RowComp rowCtrl={ rowCtrl } containerType={ containerType } key={ rowCtrl.getInstanceId() }></RowComp>)
+                rowCtrlsOrdered.map(rowCtrl =>
+                    <RowComp rowCtrl={ rowCtrl } containerType={ containerType } key={ rowCtrl.getInstanceId() }></RowComp>
+                )
             }
         </div>
     );

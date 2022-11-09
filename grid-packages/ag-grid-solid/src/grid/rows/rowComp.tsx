@@ -1,5 +1,5 @@
 import { CellCtrl, CssClassManager, ICellRenderer, IRowComp, RowContainerType, RowCtrl, UserCompDetails } from 'ag-grid-community';
-import { createEffect, createMemo, createSignal, For, onMount } from "solid-js";
+import { createEffect, createMemo, createSignal, For, onCleanup, onMount } from "solid-js";
 import CellComp from '../cells/cellComp';
 import UserComp from '../userComps/userComp';
 
@@ -65,8 +65,8 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
 
     // these styles have initial values, so element is placed into the DOM with them,
     // rather than an transition getting applied.
-    const [getTop, setTop] = createSignal<string | undefined>(rowCtrl.getInitialRowTop());
-    const [getTransform, setTransform] = createSignal<string | undefined>(rowCtrl.getInitialTransform());
+    const [getTop, setTop] = createSignal<string | undefined>(rowCtrl.getInitialRowTop(containerType));
+    const [getTransform, setTransform] = createSignal<string | undefined>(rowCtrl.getInitialTransform(containerType));
 
     let eGui: HTMLDivElement;
     let fullWidthCompRef: ICellRenderer;
@@ -133,7 +133,9 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
             getFullWidthCellRenderer: ()=> fullWidthCompRef,
         };
         rowCtrl.setComp(compProxy, eGui, containerType);
+        onCleanup(() => rowCtrl.unsetComp(containerType));
     });
+
 
     const getRowStyles = createMemo(() => {
         const res = { 
