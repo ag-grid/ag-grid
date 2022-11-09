@@ -2,10 +2,9 @@ import React from 'react';
 import Styles from './Styles';
 import Scripts from './Scripts';
 
+var ANGULAR_VERSION = "14.2.6";
+
 const extrasMap = {
-    xlsx: {
-        scripts: ['https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.3/xlsx.core.min.js']
-    },
     jquery: {
         scripts: ['https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js']
     },
@@ -31,12 +30,6 @@ const extrasMap = {
     alasql: {
         scripts: ['https://cdnjs.cloudflare.com/ajax/libs/alasql/0.5.5/alasql.min.js']
     },
-    d3: {
-        scripts: ['https://d3js.org/d3.v4.min.js']
-    },
-    sparkline: {
-        scripts: ['https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js']
-    },
     bootstrap: {
         scripts: ['https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'],
         styles: [
@@ -51,9 +44,6 @@ const extrasMap = {
             'https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.2/themes/material_blue.css'
         ]
     },
-    roboto: {
-        styles: ['https://fonts.googleapis.com/css?family=Roboto']
-    },
     fontawesome: {
         styles: ['https://use.fontawesome.com/releases/v5.6.3/css/all.css']
     },
@@ -62,7 +52,7 @@ const extrasMap = {
     },
     materialdesign: {
         styles: [
-            'https://cdn.jsdelivr.net/npm/@angular/material/prebuilt-themes/indigo-pink.css',
+            `https://cdn.jsdelivr.net/npm/@angular/material@${ANGULAR_VERSION}/prebuilt-themes/indigo-pink.css`,
             'https://fonts.googleapis.com/icon?family=Material+Icons'
         ]
     },
