@@ -55,7 +55,7 @@ const tscMainTask = () => {
     })
     exports.sort();
 
-    const newExports = `export { ${exports.join(',')} } from "ag-grid-community";`
+    const newExports = `export { ${exports.join(',\n')} } from "ag-grid-community";`
 
     const mainTsFilename = './src/main.ts';
     const mainTsFileContents = fs.readFileSync(mainTsFilename, 'UTF-8');
