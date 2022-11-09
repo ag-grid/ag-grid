@@ -4527,8 +4527,7 @@
   },
   "SubGroup": {
     "paths": { "type": { "returnType": "Path[]", "optional": false } },
-    "group": { "type": { "returnType": "Group", "optional": false } },
-    "pickGroup": { "type": { "returnType": "Group", "optional": false } },
+    "dataNodeGroup": { "type": { "returnType": "Group", "optional": false } },
     "labelGroup": { "type": { "returnType": "Group", "optional": false } },
     "markerGroup": { "type": { "returnType": "Group", "optional": true } },
     "datumSelection": {
@@ -4550,19 +4549,12 @@
       ]
     }
   },
-  "PickGroupInclude": {},
-  "SeriesFeature": {},
   "SeriesOpts": {
-    "pickGroupIncludes": {
-      "type": { "returnType": "PickGroupInclude[]", "optional": false }
-    },
     "pathsPerSeries": { "type": { "returnType": "number", "optional": false } },
     "pathsZIndexSubOrderOffset": {
       "type": { "returnType": "number[]", "optional": false }
     },
-    "features": {
-      "type": { "returnType": "SeriesFeature[]", "optional": false }
-    },
+    "hasMarkers": { "type": { "returnType": "boolean", "optional": false } },
     "renderLayerPerSubSeries": {
       "type": { "returnType": "boolean", "optional": false }
     }
@@ -4874,6 +4866,9 @@
         "returnType": "HdpiOffscreenCanvas | HdpiCanvas",
         "optional": false
       }
+    },
+    "getComputedOpacity": {
+      "type": { "arguments": {}, "returnType": "number", "optional": false }
     }
   },
   "ValueFn": { "meta": { "typeParams": ["P", "GDatum", "PDatum"] } },

@@ -40,22 +40,17 @@ type LabelDataSelection<N extends Node, ContextType extends SeriesNodeDataContex
 
 interface SubGroup<C extends SeriesNodeDataContext, SceneNodeType extends Node> {
     paths: Path[];
-    group: Group;
-    pickGroup: Group;
+    dataNodeGroup: Group;
     labelGroup: Group;
     markerGroup?: Group;
     datumSelection: NodeDataSelection<SceneNodeType, C>;
     labelSelection: LabelDataSelection<Text, C>;
     markerSelection?: NodeDataSelection<Marker, C>;
 }
-
-type PickGroupInclude = 'mainPath' | 'datumNodes' | 'markers';
-type SeriesFeature = 'markers';
 interface SeriesOpts {
-    pickGroupIncludes: PickGroupInclude[];
     pathsPerSeries: number;
     pathsZIndexSubOrderOffset: number[];
-    features: SeriesFeature[];
+    hasMarkers: boolean;
     renderLayerPerSubSeries: boolean;
 }
 
@@ -101,13 +96,12 @@ export abstract class CartesianSeries<
         super({ useSeriesGroupLayer: true, pickModes: opts.pickModes });
 
         const {
-            pickGroupIncludes = ['datumNodes'] as PickGroupInclude[],
             pathsPerSeries = 1,
-            features = [],
+            hasMarkers = false,
             pathsZIndexSubOrderOffset = [],
             renderLayerPerSubSeries = true,
         } = opts;
-        this.opts = { pickGroupIncludes, pathsPerSeries, features, pathsZIndexSubOrderOffset, renderLayerPerSubSeries };
+        this.opts = { pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset, renderLayerPerSubSeries };
     }
 
     destroy() {
@@ -215,24 +209,22 @@ export abstract class CartesianSeries<
     private async updateSeriesGroups() {
         const {
             _contextNodeData: contextNodeData,
-            seriesGroup,
+            contentGroup,
             subGroups,
-            opts: { pickGroupIncludes, pathsPerSeries, features, pathsZIndexSubOrderOffset, renderLayerPerSubSeries },
+            opts: { pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset, renderLayerPerSubSeries },
         } = this;
         if (contextNodeData.length === subGroups.length) {
             return;
         }
 
         if (contextNodeData.length < subGroups.length) {
-            subGroups.splice(contextNodeData.length).forEach(({ group, markerGroup, paths }) => {
-                seriesGroup.removeChild(group);
+            subGroups.splice(contextNodeData.length).forEach(({ dataNodeGroup, markerGroup, paths }) => {
+                contentGroup.removeChild(dataNodeGroup);
                 if (markerGroup) {
-                    seriesGroup.removeChild(markerGroup);
+                    contentGroup.removeChild(markerGroup);
                 }
-                if (!pickGroupIncludes.includes('mainPath')) {
-                    for (const path of paths) {
-                        seriesGroup.removeChild(path);
-                    }
+                for (const path of paths) {
+                    contentGroup.removeChild(path);
                 }
             });
         }
@@ -242,13 +234,13 @@ export abstract class CartesianSeries<
             const layer = renderLayerPerSubSeries;
             const subGroupId = this.subGroupId++;
             const subGroupZOffset = subGroupId;
-            const group = new Group({
-                name: `${this.id}-series-sub${subGroupId}`,
+            const dataNodeGroup = new Group({
+                name: `${this.id}-series-sub${subGroupId}-dataNodes`,
                 layer,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
                 zIndexSubOrder: [this.id, subGroupZOffset],
             });
-            const markerGroup = features.includes('markers')
+            const markerGroup = hasMarkers
                 ? new Group({
                       name: `${this.id}-series-sub${this.subGroupId++}-markers`,
                       layer,
@@ -262,26 +254,14 @@ export abstract class CartesianSeries<
                 zIndex: Layers.SERIES_LABEL_ZINDEX,
                 zIndexSubOrder: [this.id, subGroupId],
             });
-            const pickGroup = new Group({
-                name: `${this.id}-series-sub${this.subGroupId++}-pickGroup`,
-                zIndex: Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [this.id, 10000 + subGroupId],
-            });
 
-            let pathParentGroup = seriesGroup; // Default group for paths.
-            if (pickGroupIncludes.includes('mainPath')) {
-                pathParentGroup = pickGroup;
-            } else if (renderLayerPerSubSeries) {
-                pathParentGroup = group;
-            }
-            const datumParentGroup = pickGroupIncludes.includes('datumNodes') ? pickGroup : group;
-
-            seriesGroup.appendChild(group);
-            seriesGroup.appendChild(labelGroup);
+            contentGroup.appendChild(dataNodeGroup);
+            contentGroup.appendChild(labelGroup);
             if (markerGroup) {
-                seriesGroup.appendChild(markerGroup);
+                contentGroup.appendChild(markerGroup);
             }
 
+            const pathParentGroup = renderLayerPerSubSeries ? dataNodeGroup : contentGroup;
             const paths: Path[] = [];
             for (let index = 0; index < pathsPerSeries; index++) {
                 paths[index] = new Path();
@@ -289,16 +269,14 @@ export abstract class CartesianSeries<
                 paths[index].zIndexSubOrder = [this.id, (pathsZIndexSubOrderOffset[index] ?? 0) + subGroupZOffset];
                 pathParentGroup.appendChild(paths[index]);
             }
-            group.appendChild(pickGroup);
 
             subGroups.push({
                 paths,
-                group,
-                pickGroup,
+                dataNodeGroup,
                 markerGroup,
                 labelGroup,
                 labelSelection: Selection.select(labelGroup).selectAll<Text>(),
-                datumSelection: Selection.select(datumParentGroup).selectAll<N>(),
+                datumSelection: Selection.select(dataNodeGroup).selectAll<N>(),
                 markerSelection: markerGroup ? Selection.select(markerGroup).selectAll<Marker>() : undefined,
             });
         }
@@ -310,16 +288,23 @@ export abstract class CartesianSeries<
             highlightLabelSelection,
             _contextNodeData: contextNodeData,
             seriesItemEnabled,
-            opts: { features },
+            opts: { hasMarkers, renderLayerPerSubSeries },
         } = this;
-        const markersEnabled = features.includes('markers');
 
         const visible = this.visible && this._contextNodeData?.length > 0 && anySeriesItemEnabled;
-        this.group.visible = visible;
-        this.seriesGroup.visible = visible;
+        this.rootGroup.visible = visible;
+        this.contentGroup.visible = visible;
         this.highlightGroup.visible = visible && !!seriesHighlighted;
 
-        if (markersEnabled) {
+        const seriesOpacity = this.getOpacity();
+        const subGroupOpacities = this.subGroups.map((_, index) => {
+            const { itemId } = contextNodeData[index];
+            return this.getOpacity({ itemId });
+        });
+        const isSubGroupOpacityDifferent = subGroupOpacities.some((subOp) => subOp !== seriesOpacity);
+        this.contentGroup.opacity = isSubGroupOpacityDifferent ? 1 : seriesOpacity;
+
+        if (hasMarkers) {
             await this.updateMarkerNodes({
                 markerSelection: highlightSelection as any,
                 isHighlight: true,
@@ -333,27 +318,29 @@ export abstract class CartesianSeries<
         await Promise.all(
             this.subGroups.map(async (subGroup, seriesIdx) => {
                 const {
-                    group,
+                    dataNodeGroup,
                     markerGroup,
                     datumSelection,
                     labelSelection,
                     markerSelection,
                     paths,
                     labelGroup,
-                    pickGroup,
                 } = subGroup;
                 const { itemId } = contextNodeData[seriesIdx];
 
                 const subGroupVisible = visible && (seriesItemEnabled.get(itemId) ?? true);
-                const subGroupOpacity = this.getOpacity({ itemId });
-                group.opacity = subGroupOpacity;
-                group.visible = subGroupVisible;
-                pickGroup.visible = subGroupVisible;
+                const subGroupOpacity = isSubGroupOpacityDifferent ? subGroupOpacities[seriesIdx] : 1;
+
+                dataNodeGroup.opacity = subGroupOpacity;
+                dataNodeGroup.visible = subGroupVisible;
                 labelGroup.visible = subGroupVisible;
 
                 if (markerGroup) {
                     markerGroup.opacity = subGroupOpacity;
-                    markerGroup.zIndex = group.zIndex >= Layers.SERIES_LAYER_ZINDEX ? group.zIndex : group.zIndex + 1;
+                    markerGroup.zIndex =
+                        dataNodeGroup.zIndex >= Layers.SERIES_LAYER_ZINDEX
+                            ? dataNodeGroup.zIndex
+                            : dataNodeGroup.zIndex + 1;
                     markerGroup.visible = subGroupVisible;
                 }
 
@@ -362,20 +349,20 @@ export abstract class CartesianSeries<
                 }
 
                 for (const path of paths) {
-                    if (path.parent !== group) {
+                    if (!renderLayerPerSubSeries) {
                         path.opacity = subGroupOpacity;
                         path.visible = subGroupVisible;
                     }
                 }
 
-                if (!group.visible) {
+                if (!dataNodeGroup.visible) {
                     return;
                 }
 
                 await this.updatePathNodes({ seriesHighlighted, itemId, paths, seriesIdx });
                 await this.updateDatumNodes({ datumSelection, isHighlight: false, seriesIdx });
                 await this.updateLabelNodes({ labelSelection, seriesIdx });
-                if (markersEnabled && markerSelection) {
+                if (hasMarkers && markerSelection) {
                     await this.updateMarkerNodes({ markerSelection, isHighlight: false, seriesIdx });
                 }
             })
@@ -422,14 +409,13 @@ export abstract class CartesianSeries<
 
         const { x, y } = point;
         const {
-            opts: { pickGroupIncludes },
+            opts: { hasMarkers },
         } = this;
-        const markerGroupIncluded = pickGroupIncludes.includes('markers');
 
-        for (const { pickGroup, markerGroup } of this.subGroups) {
-            let match = pickGroup.pickNode(x, y);
+        for (const { dataNodeGroup, markerGroup } of this.subGroups) {
+            let match = dataNodeGroup.pickNode(x, y);
 
-            if (!match && markerGroupIncluded) {
+            if (!match && hasMarkers) {
                 match = markerGroup?.pickNode(x, y);
             }
 
@@ -441,8 +427,8 @@ export abstract class CartesianSeries<
 
     protected pickNodeClosestDatum(point: Point): SeriesNodePickMatch | undefined {
         const { x, y } = point;
-        const { xAxis, yAxis, group, _contextNodeData: contextNodeData } = this;
-        const hitPoint = group.transformPoint(x, y);
+        const { xAxis, yAxis, rootGroup, _contextNodeData: contextNodeData } = this;
+        const hitPoint = rootGroup.transformPoint(x, y);
 
         let minDistance = Infinity;
         let closestDatum: SeriesNodeDatum | undefined;
@@ -480,7 +466,7 @@ export abstract class CartesianSeries<
         requireCategoryAxis: boolean
     ): { datum: SeriesNodeDatum; distance: number } | undefined {
         const { x, y } = point;
-        const { xAxis, yAxis, group, _contextNodeData: contextNodeData } = this;
+        const { xAxis, yAxis, rootGroup, _contextNodeData: contextNodeData } = this;
 
         // Prefer to start search with any available category axis.
         const directions = [xAxis, yAxis]
@@ -493,7 +479,7 @@ export abstract class CartesianSeries<
         // Default to X-axis unless we found a suitable category axis.
         const [primaryDirection = ChartAxisDirection.X] = directions;
 
-        const hitPoint = group.transformPoint(x, y);
+        const hitPoint = rootGroup.transformPoint(x, y);
         const hitPointCoords =
             primaryDirection === ChartAxisDirection.X ? [hitPoint.x, hitPoint.y] : [hitPoint.y, hitPoint.x];
 
@@ -599,14 +585,13 @@ export abstract class CartesianSeries<
         highlightSelection: NodeDataSelection<N, C>;
     }): Promise<NodeDataSelection<N, C>> {
         const {
-            opts: { features },
+            opts: { hasMarkers },
         } = this;
-        const markersEnabled = features.includes('markers');
 
         const { item, highlightSelection } = opts;
         const nodeData = item ? [item] : [];
 
-        if (markersEnabled) {
+        if (hasMarkers) {
             const markerSelection = highlightSelection as any;
             return this.updateMarkerSelection({ nodeData, markerSelection, seriesIdx: -1 }) as any;
         } else {

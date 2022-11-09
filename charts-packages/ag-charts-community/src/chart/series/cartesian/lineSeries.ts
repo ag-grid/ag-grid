@@ -103,8 +103,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
     constructor() {
         super({
-            pickGroupIncludes: ['markers'],
-            features: ['markers'],
+            hasMarkers: true,
             pickModes: [
                 SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
                 SeriesNodePickMode.NEAREST_NODE,

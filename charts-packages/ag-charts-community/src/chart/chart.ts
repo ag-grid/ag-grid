@@ -435,10 +435,10 @@ export abstract class Chart extends Observable {
 
             if (beforeIndex >= 0) {
                 allSeries.splice(beforeIndex, 0, series);
-                seriesRoot.insertBefore(series.group, before!.group);
+                seriesRoot.insertBefore(series.rootGroup, before!.rootGroup);
             } else {
                 allSeries.push(series);
-                seriesRoot.append(series.group);
+                seriesRoot.append(series.rootGroup);
             }
             this.initSeries(series);
 
@@ -470,18 +470,18 @@ export abstract class Chart extends Observable {
 
             if (afterIndex >= 0) {
                 if (afterIndex + 1 < allSeries.length) {
-                    seriesRoot.insertBefore(series.group, allSeries[afterIndex + 1].group);
+                    seriesRoot.insertBefore(series.rootGroup, allSeries[afterIndex + 1].rootGroup);
                 } else {
-                    seriesRoot.append(series.group);
+                    seriesRoot.append(series.rootGroup);
                 }
                 this.initSeries(series);
 
                 allSeries.splice(afterIndex + 1, 0, series);
             } else {
                 if (allSeries.length > 0) {
-                    seriesRoot.insertBefore(series.group, allSeries[0].group);
+                    seriesRoot.insertBefore(series.rootGroup, allSeries[0].rootGroup);
                 } else {
-                    seriesRoot.append(series.group);
+                    seriesRoot.append(series.rootGroup);
                 }
                 this.initSeries(series);
 
@@ -498,7 +498,7 @@ export abstract class Chart extends Observable {
         if (index >= 0) {
             this.series.splice(index, 1);
             this.freeSeries(series);
-            this.seriesRoot.removeChild(series.group);
+            this.seriesRoot.removeChild(series.rootGroup);
             return true;
         }
 
@@ -508,7 +508,7 @@ export abstract class Chart extends Observable {
     removeAllSeries(): void {
         this.series.forEach((series) => {
             this.freeSeries(series);
-            this.seriesRoot.removeChild(series.group);
+            this.seriesRoot.removeChild(series.rootGroup);
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
     }
@@ -849,7 +849,7 @@ export abstract class Chart extends Observable {
 
         let result: { series: Series<any>; datum: SeriesNodeDatum; distance: number } | undefined = undefined;
         for (const series of reverseSeries) {
-            if (!series.visible || !series.group.visible) {
+            if (!series.visible || !series.rootGroup.visible) {
                 continue;
             }
             let { match, distance } = series.pickNode(point, pickModes) ?? {};
@@ -1132,7 +1132,7 @@ export abstract class Chart extends Observable {
         if (datum.point) {
             const { x, y } = datum.point;
             const { canvas } = this.scene;
-            const point = datum.series.group.inverseTransformPoint(x, y);
+            const point = datum.series.rootGroup.inverseTransformPoint(x, y);
             const canvasRect = canvas.element.getBoundingClientRect();
             return {
                 ...meta,

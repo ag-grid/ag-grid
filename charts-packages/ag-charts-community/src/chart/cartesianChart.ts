@@ -84,8 +84,8 @@ export class CartesianChart extends Chart {
 
         this.seriesRect = seriesRect;
         this.series.forEach((series) => {
-            series.group.translationX = Math.floor(seriesRect.x);
-            series.group.translationY = Math.floor(seriesRect.y);
+            series.rootGroup.translationX = Math.floor(seriesRect.x);
+            series.rootGroup.translationY = Math.floor(seriesRect.y);
         });
 
         const { seriesRoot } = this;

@@ -12,7 +12,7 @@ export class MarkerLabel extends Group {
     private label = new Text();
 
     constructor() {
-        super();
+        super({ name: 'markerLabelGroup' });
 
         const label = this.label;
         label.textBaseline = 'middle';

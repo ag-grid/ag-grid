@@ -56,11 +56,13 @@ export function jsonDiff<T extends any>(source: T, target: T): Partial<T> | null
     if (targetType === 'array') {
         const targetArray = target as any;
         if (sourceType !== 'array' || (source as any).length !== targetArray.length) {
-            return [...(targetArray)] as any;
+            return [...targetArray] as any;
         }
 
-        if (targetArray.some((targetElement: any, i: number) => jsonDiff((source as any)?.[i], targetElement) != null)) {
-            return [...(targetArray)] as any;
+        if (
+            targetArray.some((targetElement: any, i: number) => jsonDiff((source as any)?.[i], targetElement) != null)
+        ) {
+            return [...targetArray] as any;
         }
 
         return null;

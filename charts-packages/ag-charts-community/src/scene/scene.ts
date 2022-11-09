@@ -24,6 +24,7 @@ interface SceneLayer {
     zIndex: number;
     zIndexSubOrder?: [string, number];
     canvas: HdpiOffscreenCanvas | HdpiCanvas;
+    getComputedOpacity: () => number;
 }
 
 export class Scene {
@@ -107,10 +108,11 @@ export class Scene {
 
     private _nextZIndex = 0;
     private _nextLayerId = 0;
-    addLayer(opts?: {
+    addLayer(opts: {
         zIndex?: number;
         zIndexSubOrder?: [string, number];
         name?: string;
+        getComputedOpacity: () => number;
     }): HdpiCanvas | HdpiOffscreenCanvas | undefined {
         const { mode } = this.opts;
         const layeredModes = ['composite', 'dom-composite', 'adv-composite'];
@@ -118,7 +120,7 @@ export class Scene {
             return undefined;
         }
 
-        const { zIndex = this._nextZIndex++, name, zIndexSubOrder } = opts || {};
+        const { zIndex = this._nextZIndex++, name, zIndexSubOrder, getComputedOpacity } = opts;
         const { width, height, overrideDevicePixelRatio } = this;
         const domLayer = mode === 'dom-composite';
         const advLayer = mode === 'adv-composite';
@@ -138,12 +140,13 @@ export class Scene {
                       height,
                       overrideDevicePixelRatio,
                   });
-        const newLayer = {
+        const newLayer: SceneLayer = {
             id: this._nextLayerId++,
             name,
             zIndex,
             zIndexSubOrder,
             canvas,
+            getComputedOpacity,
         };
 
         if (zIndex >= this._nextZIndex) {
@@ -335,12 +338,12 @@ export class Scene {
         if (mode !== 'dom-composite' && layers.length > 0 && canvasCleared) {
             ctx.save();
             ctx.setTransform(1 / canvas.pixelRatio, 0, 0, 1 / canvas.pixelRatio, 0, 0);
-            layers.forEach(({ canvas: { imageSource, enabled, opacity } }) => {
+            layers.forEach(({ canvas: { imageSource, enabled }, getComputedOpacity }) => {
                 if (!enabled) {
                     return;
                 }
 
-                ctx.globalAlpha = opacity;
+                ctx.globalAlpha = getComputedOpacity();
                 ctx.drawImage(imageSource, 0, 0);
             });
             ctx.restore();

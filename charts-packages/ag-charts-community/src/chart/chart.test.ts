@@ -1,10 +1,14 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import {
+    AgAreaSeriesOptions,
     AgBarSeriesOptions,
     AgCartesianChartOptions,
     AgLineSeriesOptions,
+    AgPieSeriesOptions,
     AgPolarChartOptions,
+    AgScatterSeriesOptions,
+    AgTreemapSeriesOptions,
 } from './agChartOptions';
 import { AgChartV2 } from './agChartV2';
 import { Chart } from './chart';
@@ -36,8 +40,8 @@ describe('Chart', () => {
 
     setupMockCanvas();
 
-    const dataSamples = {
-        randomAnnual: {
+    const datasets = {
+        economy: {
             data: [
                 { year: '2018', gdp: 12000 },
                 { year: '2019', gdp: 18000 },
@@ -45,6 +49,26 @@ describe('Chart', () => {
             ],
             valueKey: 'gdp',
             categoryKey: 'year',
+        },
+        food: {
+            data: {
+                name: 'Food',
+                children: [
+                    {
+                        name: 'Fruits',
+                        children: [
+                            { name: 'Banana', count: 10 },
+                            { name: 'Apple', count: 5 },
+                        ],
+                    },
+                    {
+                        name: 'Vegetables',
+                        children: [{ name: 'Cucumber', count: 2 }],
+                    },
+                ],
+            },
+            valueKey: 'count',
+            labelKey: 'name',
         },
     };
 
@@ -54,6 +78,8 @@ describe('Chart', () => {
         getNodeData: (series: any) => any[];
         getNodePoint: (nodeItem: any) => [number, number];
         getDatumValues: (datum: any, series: any) => any[];
+        getTooltipRenderedValues: (tooltipRendererParams: any) => any[];
+        getHighlightNode: (series: any) => any;
     }) => {
         const format = (...values: any[]) => values.join(': ');
 
@@ -61,7 +87,8 @@ describe('Chart', () => {
             const tooltip = params.hasTooltip
                 ? {
                       renderer: (params) => {
-                          return format(params.xValue, params.yValue);
+                          const values = testParams.getTooltipRenderedValues!(params);
+                          return format(...values);
                       },
                   }
                 : {
@@ -103,11 +130,11 @@ describe('Chart', () => {
             iterator: (params: { series: any; item: any; x: number; y: number }) => Promise<void>
         ) => {
             for (const series of chart.series) {
-                const nodeData = testParams.getNodeData(series);
+                const nodeData = testParams.getNodeData!(series);
                 expect(nodeData.length).toBeGreaterThan(0);
                 for (const item of nodeData) {
-                    const itemPoint = testParams.getNodePoint(item);
-                    const { x, y } = series!.group.inverseTransformPoint(itemPoint[0], itemPoint[1]);
+                    const itemPoint = testParams.getNodePoint!(item);
+                    const { x, y } = series!.rootGroup.inverseTransformPoint(itemPoint[0], itemPoint[1]);
                     await hoverAction(x, y)(chart);
                     await waitForChartStability(chart);
                     await iterator({ series, item, x, y });
@@ -116,13 +143,11 @@ describe('Chart', () => {
         };
 
         const checkHighlight = async (chart: Chart) => {
-            await hoverChartNodes(chart, async ({ series, item }) => {
+            await hoverChartNodes(chart, async ({ series }) => {
                 // Check the highlighted marker
-                expect(series.highlightNode).toBeDefined();
-                expect(series.highlightNode.children.length).toEqual(1);
-                const marker = series.highlightNode.children[0];
-                expect(marker.datum.datum).toBe(item.datum);
-                expect(marker['fill']).toEqual('lime');
+                const highlightNode = testParams.getHighlightNode!(series);
+                expect(highlightNode).toBeDefined();
+                expect(highlightNode.fill).toEqual('lime');
             });
         };
 
@@ -134,7 +159,7 @@ describe('Chart', () => {
             });
 
             // Check click handler
-            const nodeCount = chart.series.reduce((sum, series) => sum + testParams.getNodeData(series).length, 0);
+            const nodeCount = chart.series.reduce((sum, series) => sum + testParams.getNodeData!(series).length, 0);
             expect(onNodeClick).toBeCalledTimes(nodeCount);
         };
 
@@ -153,7 +178,7 @@ describe('Chart', () => {
                 expect(translateY).toEqual(Math.round(y - 8));
 
                 // Check the tooltip text
-                const values = testParams.getDatumValues(item.datum, series);
+                const values = testParams.getDatumValues!(item, series);
                 expect(tooltip!.textContent).toEqual(format(...values));
             });
 
@@ -187,19 +212,71 @@ describe('Chart', () => {
         });
     };
 
+    const cartesianTestParams = {
+        getNodeData: (series) => series.contextNodeData[0].nodeData,
+        getTooltipRenderedValues: (params) => [params.xValue, params.yValue],
+        // Returns a highlighted marker
+        getHighlightNode: (series) => series.highlightNode.children[0],
+    } as Parameters<typeof testPointerEvents>[0];
+
     describe(`Line Series Pointer Events`, () => {
         testPointerEvents({
+            ...cartesianTestParams,
             seriesOptions: <AgLineSeriesOptions>{
                 type: 'line',
-                data: dataSamples.randomAnnual.data,
-                xKey: dataSamples.randomAnnual.categoryKey,
-                yKey: dataSamples.randomAnnual.valueKey,
+                data: datasets.economy.data,
+                xKey: datasets.economy.categoryKey,
+                yKey: datasets.economy.valueKey,
             },
-            getNodeData: (series) => series.contextNodeData[0].nodeData,
             getNodePoint: (item) => [item.point.x, item.point.y],
-            getDatumValues: (datum, series) => {
-                const xValue = datum[series['xKey']];
-                const yValue = datum[series['yKey']];
+            getDatumValues: (item, series) => {
+                const xValue = item.datum[series['xKey']];
+                const yValue = item.datum[series['yKey']];
+                return [xValue, yValue];
+            },
+        });
+    });
+
+    describe(`Area Series Pointer Events`, () => {
+        testPointerEvents({
+            ...cartesianTestParams,
+            seriesOptions: <AgAreaSeriesOptions>{
+                type: 'area',
+                data: datasets.economy.data,
+                xKey: datasets.economy.categoryKey,
+                yKey: datasets.economy.valueKey,
+                marker: {
+                    enabled: true,
+                },
+            },
+            getNodePoint: (item) => [item.point.x, item.point.y],
+            getDatumValues: (item, series) => {
+                const xValue = item.datum[series['xKey']];
+                const yValue = item.datum[series.yKeys[0]];
+                return [xValue, yValue];
+            },
+        });
+    });
+
+    describe(`Scatter Series Pointer Events`, () => {
+        testPointerEvents({
+            ...cartesianTestParams,
+            seriesOptions: <AgScatterSeriesOptions>{
+                type: 'scatter',
+                data: datasets.economy.data,
+                xKey: datasets.economy.categoryKey,
+                yKey: datasets.economy.valueKey,
+            },
+            chartOptions: {
+                axes: [
+                    { type: 'number', position: 'left' },
+                    { type: 'category', position: 'bottom' },
+                ],
+            },
+            getNodePoint: (item) => [item.point.x, item.point.y],
+            getDatumValues: (item, series) => {
+                const xValue = item.datum[series['xKey']];
+                const yValue = item.datum[series['yKey']];
                 return [xValue, yValue];
             },
         });
@@ -207,18 +284,78 @@ describe('Chart', () => {
 
     describe(`Column Series Pointer Events`, () => {
         testPointerEvents({
+            ...cartesianTestParams,
             seriesOptions: <AgBarSeriesOptions>{
                 type: 'column',
-                data: dataSamples.randomAnnual.data,
-                xKey: dataSamples.randomAnnual.categoryKey,
-                yKey: dataSamples.randomAnnual.valueKey,
+                data: datasets.economy.data,
+                xKey: datasets.economy.categoryKey,
+                yKey: datasets.economy.valueKey,
             },
-            getNodeData: (series) => series.contextNodeData[0].nodeData,
-            getNodePoint: (item) => [item.x, item.y],
-            getDatumValues: (datum, series) => {
-                const xValue = datum[series.xKey];
-                const yValue = datum[series.yKeys[0]];
+            getNodePoint: (item) => [item.x + item.width / 2, item.y + item.height / 2],
+            getDatumValues: (item, series) => {
+                const xValue = item.datum[series.xKey];
+                const yValue = item.datum[series.yKeys[0]];
                 return [xValue, yValue];
+            },
+        });
+    });
+
+    describe(`Pie Series Pointer Events`, () => {
+        testPointerEvents({
+            seriesOptions: <AgPieSeriesOptions>{
+                type: 'pie',
+                data: datasets.economy.data,
+                angleKey: datasets.economy.valueKey,
+                sectorLabelKey: datasets.economy.categoryKey,
+            },
+            getNodeData: (series) => series.sectorLabelSelection.groups[0],
+            getNodePoint: (item) => [item.x, item.y],
+            getDatumValues: (item, series) => {
+                const category = item.datum.datum[series.sectorLabelKey];
+                const value = item.datum.datum[series.angleKey];
+                return [category, value];
+            },
+            getTooltipRenderedValues: (params) => [params.datum[params.sectorLabelKey], params.angleValue],
+            getHighlightNode: (series) => {
+                // Returns a highlighted sector
+                return series.highlightGroup.children.find(
+                    (child: any) => child?.datum === series.chart.highlightedDatum
+                ).children[0];
+            },
+        });
+    });
+
+    describe(`Treemap Series Pointer Events`, () => {
+        testPointerEvents({
+            ...cartesianTestParams,
+            seriesOptions: <AgTreemapSeriesOptions>{
+                type: 'treemap',
+                labelKey: datasets.food.labelKey,
+                sizeKey: datasets.food.valueKey,
+                colorKey: undefined,
+                colorParents: true,
+            },
+            chartOptions: {
+                data: datasets.food.data,
+            },
+            getNodeData: (series) => {
+                const nodes = series.contentGroup.children.map((group) => group.children[0]);
+                const maxDepth = Math.max(...nodes.map((n) => n.datum.depth));
+                return nodes.filter((node) => node.datum.depth === maxDepth);
+            },
+            getNodePoint: (item) => [item.x + item.width / 2, item.y + item.height / 2],
+            getDatumValues: (item, series) => {
+                const { datum } = item.datum;
+                return [datum[series.labelKey], datum[series.sizeKey]];
+            },
+            getTooltipRenderedValues: (params) => {
+                const { datum } = params.datum;
+                return [datum[params.labelKey], datum[params.sizeKey]];
+            },
+            getHighlightNode: (series) => {
+                return series.highlightGroup.children.find(
+                    (child: any) => child?.datum === series.chart.highlightedDatum
+                ).children[0];
             },
         });
     });

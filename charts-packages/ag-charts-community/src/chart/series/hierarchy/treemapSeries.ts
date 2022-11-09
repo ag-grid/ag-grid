@@ -88,7 +88,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     static type = 'treemap' as const;
 
     private groupSelection: Selection<Group, Group, TreemapNodeDatum, any> = Selection.select(
-        this.pickGroup
+        this.contentGroup
     ).selectAll<Group>();
     private highlightSelection: Selection<Group, Group, TreemapNodeDatum, any> = Selection.select(
         this.highlightGroup
