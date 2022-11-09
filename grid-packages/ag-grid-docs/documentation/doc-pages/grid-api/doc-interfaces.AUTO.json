@@ -16455,10 +16455,6 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }
     },
-    "key": {
-      "description": "/** @deprecated Use `eventKey`. */",
-      "type": { "returnType": "string | null", "optional": false }
-    },
     "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
@@ -19319,10 +19315,6 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }
     },
-    "key": {
-      "description": "/** @deprecated Use `eventKey`. */",
-      "type": { "returnType": "string | null", "optional": false }
-    },
     "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
@@ -22022,10 +22014,6 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }
     },
-    "key": {
-      "description": "/** @deprecated Use `eventKey`. */",
-      "type": { "returnType": "string | null", "optional": false }
-    },
     "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
@@ -22113,10 +22101,6 @@
     "value": {
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }
-    },
-    "key": {
-      "description": "/** @deprecated Use `eventKey`. */",
-      "type": { "returnType": "string | null", "optional": false }
     },
     "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
@@ -22206,10 +22190,6 @@
     "value": {
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }
-    },
-    "key": {
-      "description": "/** @deprecated Use `eventKey`. */",
-      "type": { "returnType": "string | null", "optional": false }
     },
     "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",

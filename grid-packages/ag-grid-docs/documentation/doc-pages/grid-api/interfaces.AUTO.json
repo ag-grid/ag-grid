@@ -9556,7 +9556,6 @@
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "value": "TValue",
-      "key": "string | null",
       "eventKey": "string | null",
       "charPress": "string | null",
       "column": "Column",
@@ -9576,7 +9575,6 @@
     },
     "docs": {
       "value": "/** Current value of the cell */",
-      "key": "/** @deprecated Use `eventKey`. */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
       "column": "/** Grid column */",
@@ -11049,7 +11047,6 @@
       "cellRenderer": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "searchDebounceDelay?": "number",
       "value": "TValue",
-      "key": "string | null",
       "eventKey": "string | null",
       "charPress": "string | null",
       "column": "Column",
@@ -11069,7 +11066,6 @@
     },
     "docs": {
       "value": "/** Current value of the cell */",
-      "key": "/** @deprecated Use `eventKey`. */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
       "column": "/** Grid column */",
@@ -12592,7 +12588,6 @@
       "rows": "number",
       "cols": "number",
       "value": "TValue",
-      "key": "string | null",
       "eventKey": "string | null",
       "charPress": "string | null",
       "column": "Column",
@@ -12612,7 +12607,6 @@
     },
     "docs": {
       "value": "/** Current value of the cell */",
-      "key": "/** @deprecated Use `eventKey`. */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
       "column": "/** Grid column */",
@@ -12636,7 +12630,6 @@
     "type": {
       "values": "any[]",
       "value": "TValue",
-      "key": "string | null",
       "eventKey": "string | null",
       "charPress": "string | null",
       "column": "Column",
@@ -12656,7 +12649,6 @@
     },
     "docs": {
       "value": "/** Current value of the cell */",
-      "key": "/** @deprecated Use `eventKey`. */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
       "column": "/** Grid column */",
@@ -12683,7 +12675,6 @@
       "useFormatter": "boolean",
       "maxLength?": "number",
       "value": "TValue",
-      "key": "string | null",
       "eventKey": "string | null",
       "charPress": "string | null",
       "column": "Column",
@@ -12703,7 +12694,6 @@
     },
     "docs": {
       "value": "/** Current value of the cell */",
-      "key": "/** @deprecated Use `eventKey`. */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
       "column": "/** Grid column */",
