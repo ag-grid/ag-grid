@@ -4866,6 +4866,9 @@
         "returnType": "HdpiOffscreenCanvas | HdpiCanvas",
         "optional": false
       }
+    },
+    "getComputedOpacity": {
+      "type": { "arguments": {}, "returnType": "number", "optional": false }
     }
   },
   "ValueFn": { "meta": { "typeParams": ["P", "GDatum", "PDatum"] } },

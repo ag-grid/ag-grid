@@ -15,15 +15,8 @@ export class Group extends Node {
 
     @SceneChangeDetection({
         convertor: (v: number) => Math.min(1, Math.max(0, v)),
-        changeCb: (o) => o.opacityChanged(),
     })
     opacity: number = 1;
-
-    protected opacityChanged() {
-        if (this.layer) {
-            this.layer.opacity = this.opacity;
-        }
-    }
 
     protected zIndexChanged() {
         if (this.layer) {
@@ -71,8 +64,20 @@ export class Group extends Node {
 
         if (scene && this.opts?.layer) {
             const { zIndex, zIndexSubOrder, name } = this.opts || {};
-            this.layer = scene.addLayer({ zIndex, zIndexSubOrder, name });
+            const getComputedOpacity = () => this.getComputedOpacity();
+            this.layer = scene.addLayer({ zIndex, zIndexSubOrder, name, getComputedOpacity });
         }
+    }
+
+    protected getComputedOpacity() {
+        let opacity = 1;
+        let node: Node | undefined = this;
+        do {
+            if (node instanceof Group) {
+                opacity *= node.opacity;
+            }
+        } while ((node = node.parent));
+        return opacity;
     }
 
     protected visibilityChanged() {
@@ -171,7 +176,7 @@ export class Group extends Node {
                 stats.nodesSkipped += this.nodeCount.count;
             }
 
-            super.markClean({ recursive: false });
+            this.markClean({ recursive: false });
 
             // Nothing to do.
             return;

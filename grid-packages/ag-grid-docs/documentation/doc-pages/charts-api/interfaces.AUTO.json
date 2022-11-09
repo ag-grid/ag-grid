@@ -3404,7 +3404,8 @@
       "name?": "string",
       "zIndex": "number",
       "zIndexSubOrder?": "[ string, number ]",
-      "canvas": "HdpiOffscreenCanvas | HdpiCanvas"
+      "canvas": "HdpiOffscreenCanvas | HdpiCanvas",
+      "getComputedOpacity": "() => number"
     }
   },
   "ValueFn": {
