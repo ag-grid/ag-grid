@@ -127,8 +127,8 @@ export function hierarchyChartAssertions(params?: { seriesTypes?: string[] }) {
 export function hoverAction(x: number, y: number): (chart: Chart) => Promise<void> {
     return async (chart) => {
         // Reveal tooltip.
-        chart.scene.canvas.element.dispatchEvent(mouseMoveEvent({ offsetX: x - 1, offsetY: y - 1 }));
-        chart.scene.canvas.element.dispatchEvent(mouseMoveEvent({ offsetX: x, offsetY: y }));
+        chart.scene.container?.dispatchEvent(mouseMoveEvent({ offsetX: x - 1, offsetY: y - 1 }));
+        chart.scene.container?.dispatchEvent(mouseMoveEvent({ offsetX: x, offsetY: y }));
 
         return new Promise((resolve) => {
             setTimeout(resolve, 50);
@@ -138,7 +138,7 @@ export function hoverAction(x: number, y: number): (chart: Chart) => Promise<voi
 
 export function clickAction(x: number, y: number): (chart: Chart) => Promise<void> {
     return async (chart) => {
-        chart.scene.canvas.element.dispatchEvent(clickEvent({ offsetX: x, offsetY: y }));
+        chart.scene.container?.dispatchEvent(clickEvent({ offsetX: x, offsetY: y }));
         return new Promise((resolve) => {
             setTimeout(resolve, 50);
         });
