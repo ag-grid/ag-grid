@@ -148,10 +148,15 @@ export class SetValueModel implements IEventEmitter {
         });
     }
 
-    public refreshAfterAnyFilterChanged(): AgPromise<void> {
-        return this.showAvailableOnly() ?
-            this.allValuesPromise.then(values => this.updateAvailableValues(values || [])) :
-            AgPromise.resolve();
+    /** @return has anything been updated */
+    public refreshAfterAnyFilterChanged(): AgPromise<boolean> {
+        if (this.showAvailableOnly()) {
+            return this.allValuesPromise.then(values => {
+                this.updateAvailableValues(values || []);
+                return true;
+            });
+        }
+        return AgPromise.resolve(false);
     }
 
     public isInitialised(): boolean {
