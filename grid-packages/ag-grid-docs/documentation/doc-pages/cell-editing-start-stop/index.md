@@ -8,9 +8,9 @@ This page discusses the different ways in which Cell Editing can be started and 
 
 Assuming `editable=true` or `editable` has a callback that returns `true` for the Column Definition, editing will start upon any of the following:
 
-- **Edit Key Pressed**: One of the following is pressed: <kbd>Enter</kbd>, <kbd>F2</kbd>. If this happens then `params.key` will contain the key code of the key that started the edit.
+- **Edit Key Pressed**: One of the following is pressed: <kbd>Enter</kbd>, <kbd>F2</kbd>.
 - **Backspace**: The default editor will start and clear the contents of the cell if <kbd>Backspace</kbd> is pressed on Windows. To mimic this behaviour on MacOS, use the `enableCellEditingOnBackspace=true` grid option.
-- **Printable Key Pressed**: Any of the following characters are pressed: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!"£$%^&amp;*()_+-=[];\'#,./\|<>?:@~{}`<br/> If this happens then `params.charPress` will contain the character that started the edit. The default editor places this character into the edit field so that the user experience is they are typing into the cell.
+- **Printable Key Pressed**: Any of the following characters are pressed: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!"£$%^&amp;*()_+-=[];\'#,./\|<>?:@~{}`<br/> The default editor places this character into the edit field so that the user experience is they are typing into the cell.
 - **Mouse Double Click**: If the mouse is double-clicked. There is a grid property `singleClickEdit` that will allow single-click to start editing instead of double-click. Another property `suppressClickEdit` will prevent both single-click and double-click from starting the edit; use this if you only want to have your own way of starting editing, such as clicking a button in your custom cell renderer.
 - **api.startEditingCell(params)**: If you call `startEditingCell(params)` on the grid API
 
@@ -26,6 +26,11 @@ The grid will stop editing when any of the following happen:
 - **Popup Editor Closed**: If using popup editor, the popup is configured to close if you click outside the editor. Closing the popup triggers the grid to stop editing.
 - **gridApi.stopEditing()**: If you call `stopEditing()` on the grid API.
 
+### Start / Stop Events
+
+The following events are fired when editing is started and stopped.
+
+<api-documentation source='grid-events/events.json' section='editing' names='["cellEditingStarted", "cellEditingStopped"]'></api-documentation>
 
 ## Tab Navigation
 

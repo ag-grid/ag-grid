@@ -63,6 +63,8 @@ From a lifecycle and behaviour point of view, 'in cell' and 'popup' have no impa
 
 It is also possible to use different editors for different rows in the same column. To configure this set `colDef.cellEditorSelector` to a function that returns alternative values for `cellEditor` and `cellEditorParams`.
 
+<api-documentation source='column-properties/properties.json' section='editing' names='["cellEditorSelector"]'></api-documentation>
+
 The `params` passed to `cellEditorSelector` are the same as those passed to the [Cell Editor Component](/component-cell-editor/). Typically the selector will use this to check the rows contents and choose an editor accordingly.
 
 The result is an object with `component` and `params` to use instead of `cellEditor` and `cellEditorParams`.
