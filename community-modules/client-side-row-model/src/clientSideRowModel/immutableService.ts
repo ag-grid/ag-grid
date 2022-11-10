@@ -1,9 +1,6 @@
 import {
     Autowired,
-    Bean, BeanStub, ColumnApi, Constants,
-    FilterManager,
-    GridApi,
-    IImmutableService,
+    Bean, BeanStub, Constants, IImmutableService,
     IRowModel,
     PostConstruct,
     RowDataTransaction,
@@ -17,9 +14,6 @@ export class ImmutableService extends BeanStub implements IImmutableService {
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('filterManager') private filterManager: FilterManager;
 
     private clientSideRowModel: ClientSideRowModel;
 

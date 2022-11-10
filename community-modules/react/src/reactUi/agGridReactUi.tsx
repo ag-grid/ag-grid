@@ -30,7 +30,8 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
     private renderedAfterMount = false;
     private mounted = false;
 
-    constructor(public props: AgReactUiProps<TData>) {
+    // Would like props to be of type AgReactUiProps<TData> but currently breaks build
+    constructor(public props: any) {
         super(props);
         debug('AgGridReactUi.constructor');
         this.state = {context: undefined};
