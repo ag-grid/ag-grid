@@ -57,6 +57,34 @@
       "runningTime": "7:53"
     },
     {
+      "title": "Provided Column Filters",
+      "url": "https://www.youtube.com/watch?v=haGW168Mfog&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "JavaScript Column Filters"
+      },
+      "keyPoints": [
+        "Configuring Filters",
+        "Filter Models",
+        "Text, Number & Date Filters",
+        "Set Filter, Multi Filter"
+      ],
+      "runningTime": "13:08"
+    },
+    {
+      "title": "Custom Column Filters",
+      "url": "https://www.youtube.com/watch?v=ibUrhTijRg4&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "JavaScript Cell Renderers"
+      },
+      "keyPoints": [
+        "Creating Filter Components",
+        "Custom Filter Models"
+      ],
+      "runningTime": "18:27"
+    },
+    {
       "title": "Row Grouping",
       "url": "https://www.youtube.com/watch?v=kM0RFOoPDXk&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
       "thumbnail": {
