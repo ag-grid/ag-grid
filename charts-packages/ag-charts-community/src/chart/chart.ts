@@ -885,7 +885,7 @@ export abstract class Chart extends Observable {
     private lastInteractionEvent?: InteractionEvent<'hover'> = undefined;
     private pointerScheduler = debouncedAnimationFrame(() => {
         if (this.lastInteractionEvent) {
-            this.handlePointer(this.lastInteractionEvent!);
+            this.handlePointer(this.lastInteractionEvent);
         }
         this.lastInteractionEvent = undefined;
     });

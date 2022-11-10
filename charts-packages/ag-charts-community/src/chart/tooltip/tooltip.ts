@@ -258,10 +258,11 @@ export class Tooltip {
         const canvasRect = canvasElement.getBoundingClientRect();
         const naiveLeft = canvasRect.left + meta.offsetX - element.clientWidth / 2;
         const naiveTop = canvasRect.top + meta.offsetY - element.clientHeight - 8;
-        const windowBounds = this.getWindowBoundingBox();
 
+        const windowBounds = this.getWindowBoundingBox();
         const maxLeft = windowBounds.x + windowBounds.width - element.clientWidth - 1;
         const maxTop = windowBounds.y + windowBounds.height - element.clientHeight;
+
         const left = limit(windowBounds.x, naiveLeft, maxLeft);
         const top = limit(windowBounds.y, naiveTop, maxTop);
 
