@@ -1,11 +1,11 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { Arc, ClipRect, LinearScale, Shape } from "ag-charts-community";
+import { Integrated } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 
 export class MiniScatter extends MiniChartWithAxes {
 
     static chartType: ChartType = 'scatter';
-    private readonly points: Shape[];
+    private readonly points: Integrated.Shape[];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
         super(container, "scatterTooltip");
@@ -19,19 +19,19 @@ export class MiniScatter extends MiniChartWithAxes {
             [[0, 0.3], [1, 2], [2.4, 1.4], [3, 0]]
         ];
 
-        const xScale = new LinearScale();
+        const xScale = new Integrated.LinearScale();
         xScale.domain = [-0.5, 4];
         xScale.range = [padding * 2, size - padding];
 
-        const yScale = new LinearScale();
+        const yScale = new Integrated.LinearScale();
         yScale.domain = [-0.5, 3.5];
         yScale.range = [size - padding, padding];
 
-        const points: Shape[] = [];
+        const points: Integrated.Shape[] = [];
 
         data.forEach(series => {
             series.forEach(([x, y]) => {
-                const arc = new Arc();
+                const arc = new Integrated.Arc();
                 arc.strokeWidth = 1;
                 arc.centerX = xScale.convert(x);
                 arc.centerY = yScale.convert(y);
@@ -43,7 +43,7 @@ export class MiniScatter extends MiniChartWithAxes {
         this.points = points;
         this.updateColors(fills, strokes);
 
-        const clipRect = new ClipRect();
+        const clipRect = new Integrated.ClipRect();
         clipRect.x = clipRect.y = padding;
         clipRect.width = clipRect.height = size - padding * 2;
 

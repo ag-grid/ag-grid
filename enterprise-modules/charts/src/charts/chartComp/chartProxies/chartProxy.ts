@@ -1,5 +1,5 @@
 import { _, AgChartThemeOverrides, ChartType, SeriesChartType } from "@ag-grid-community/core";
-import { AgChart, AgChartTheme, AgChartThemePalette, Chart, ChartTheme, getIntegratedChartTheme, themes } from "ag-charts-community";
+import { AgChart, AgChartTheme, AgChartThemePalette, AgChartInstance, ChartTheme, getIntegratedChartTheme, themes } from "ag-charts-community";
 import { deepMerge } from "../utils/object";
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
@@ -46,7 +46,7 @@ export abstract class ChartProxy {
     protected readonly chartType: ChartType;
     protected readonly standaloneChartType: ChartSeriesType;
 
-    protected chart: Chart;
+    protected chart: AgChartInstance;
     protected chartOptions: AgChartThemeOverrides;
     protected chartTheme: ChartTheme;
     protected crossFiltering: boolean;
@@ -73,7 +73,7 @@ export abstract class ChartProxy {
     }
 
     public abstract crossFilteringReset(): void;
-    protected abstract createChart(options?: AgChartThemeOverrides): Chart;
+    protected abstract createChart(options?: AgChartThemeOverrides): AgChartInstance;
 
     public abstract update(params: UpdateChartParams): void;
 
@@ -91,7 +91,7 @@ export abstract class ChartProxy {
         }
     }
 
-    public getChart(): Chart {
+    public getChart(): AgChartInstance {
         return this.chart;
     }
 

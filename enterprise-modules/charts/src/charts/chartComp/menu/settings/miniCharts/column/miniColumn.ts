@@ -1,12 +1,12 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { Rect } from "ag-charts-community";
+import { Integrated } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 import { createColumnRects, CreateColumnRectsParams } from "../miniChartHelpers";
 
 export class MiniColumn extends MiniChartWithAxes {
     static chartType: ChartType = 'groupedColumn';
 
-    private readonly columns: Rect[];
+    private readonly columns: Integrated.Rect[];
 
     private columnData = [2, 3, 4];
 
@@ -32,7 +32,7 @@ export class MiniColumn extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.columns.forEach((column: Rect, i) => {
+        this.columns.forEach((column: Integrated.Rect, i) => {
             column.fill = fills[i];
             column.stroke = strokes[i];
         });

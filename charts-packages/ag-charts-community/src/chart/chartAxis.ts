@@ -3,7 +3,7 @@ import { Axis } from '../axis';
 import { Series } from './series/series';
 import { LinearScale } from '../scale/linearScale';
 import { POSITION, STRING_ARRAY, Validate } from '../util/validation';
-import { AgCartesianAxisPosition } from './agChartOptions';
+import { AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
 
 export enum ChartAxisDirection {
     X = 'x', // means 'angle' in polar charts
@@ -27,7 +27,7 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>, D = an
     linkedTo?: ChartAxis;
     includeInvisibleDomains: boolean = false;
 
-    get type(): string {
+    get type(): AgCartesianAxisType {
         return (this.constructor as any).type || '';
     }
 

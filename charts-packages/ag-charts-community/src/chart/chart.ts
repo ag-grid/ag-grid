@@ -13,7 +13,7 @@ import { Observable, SourceEvent } from '../util/observable';
 import { ChartAxis, ChartAxisDirection } from './chartAxis';
 import { createId } from '../util/id';
 import { isPointLabelDatum, PlacedLabel, placeLabels, PointLabelDatum } from '../util/labelPlacement';
-import { AgChartOptions, AgChartClickEvent } from './agChartOptions';
+import { AgChartOptions, AgChartClickEvent, AgChartInstance } from './agChartOptions';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
@@ -34,7 +34,7 @@ export enum ChartUpdateType {
 }
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
-export abstract class Chart extends Observable {
+export abstract class Chart extends Observable implements AgChartInstance {
     readonly id = createId(this);
 
     options: AgChartOptions = {};

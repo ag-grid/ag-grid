@@ -1,7 +1,7 @@
 import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateChartParams } from '../chartProxy';
 import {
     AgChart,
-    PolarChart,
+    AgChartInstance,
     AgChartLegendClickEvent,
     AgPieSeriesOptions,
     AgPolarChartOptions,
@@ -23,7 +23,7 @@ export class PieChartProxy extends ChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(): PolarChart {
+    protected createChart(): AgChartInstance {
         return AgChart.create({
             type: 'pie',
             container: this.chartProxyParams.parentElement,
@@ -44,7 +44,7 @@ export class PieChartProxy extends ChartProxy {
             options = this.getCrossFilterChartOptions(options);
         }
 
-        AgChart.update(this.chart as PolarChart, options);
+        AgChart.update(this.chart as AgChartInstance, options);
     }
 
     private getSeries(params: UpdateChartParams): AgPolarSeriesOptions[] {

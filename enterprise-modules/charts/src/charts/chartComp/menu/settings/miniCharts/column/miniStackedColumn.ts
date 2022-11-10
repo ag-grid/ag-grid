@@ -1,12 +1,12 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { Rect } from "ag-charts-community";
+import { Integrated } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 import { createColumnRects, CreateColumnRectsParams } from "../miniChartHelpers";
 
 export class MiniStackedColumn extends MiniChartWithAxes {
     static chartType: ChartType = 'stackedColumn';
 
-    private readonly stackedColumns: Rect[][];
+    private readonly stackedColumns: Integrated.Rect[][];
 
     static data = [
         [8, 12, 16],
@@ -36,13 +36,13 @@ export class MiniStackedColumn extends MiniChartWithAxes {
             xScalePadding: 0.3,
         } as CreateColumnRectsParams);
 
-        root.append(([] as Rect[]).concat.apply([], this.stackedColumns));
+        root.append(([]as Integrated.Rect[]).concat.apply([], this.stackedColumns));
 
         this.updateColors(fills, strokes);
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.stackedColumns.forEach((series: Rect[], i: number) =>
+        this.stackedColumns.forEach((series: Integrated.Rect[], i: number) =>
             series.forEach(column => {
                 column.fill = fills[i];
                 column.stroke = strokes[i];

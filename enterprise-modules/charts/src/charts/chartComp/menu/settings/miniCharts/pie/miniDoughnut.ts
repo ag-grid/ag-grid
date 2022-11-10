@@ -1,11 +1,12 @@
 import { MiniChart } from "../miniChart";
-import { Sector, toRadians } from "ag-charts-community";
+import { Integrated } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 
+const toRadians = Integrated.toRadians;
 export class MiniDoughnut extends MiniChart {
 
     static chartType: ChartType = 'doughnut';
-    private readonly sectors: Sector[];
+    private readonly sectors: Integrated.Sector[];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[], centerRadiusScaler = 0.6, tooltipName = "doughnutTooltip") {
         super(container, tooltipName);
@@ -22,7 +23,7 @@ export class MiniDoughnut extends MiniChart {
         ];
 
         this.sectors = angles.map(([startAngle, endAngle]) => {
-            const sector = new Sector();
+            const sector = new Integrated.Sector();
             sector.centerX = center;
             sector.centerY = center;
             sector.innerRadius = radius * centerRadiusScaler;

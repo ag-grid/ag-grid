@@ -1,5 +1,5 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { BandScale, LinearScale, Path, Rect } from "ag-charts-community";
+import { Integrated } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 import { createColumnRects, CreateColumnRectsParams } from "../miniChartHelpers";
 
@@ -10,8 +10,8 @@ export interface Coordinate {
 export class MiniAreaColumnCombo extends MiniChartWithAxes {
     static chartType: ChartType = 'areaColumnCombo';
 
-    private columns: Rect[];
-    private areas: Path[];
+    private columns: Integrated.Rect[];
+    private areas: Integrated.Path[];
 
     private columnData = [3, 4.5];
 
@@ -36,13 +36,13 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
         } as CreateColumnRectsParams);
 
         // scale for area series
-        const xScale = new BandScale<number>();
+        const xScale = new Integrated.BandScale<number>();
         xScale.range = [padding, size - padding];
         xScale.domain = [0, 1, 2, 3, 4];
         xScale.paddingInner = 1;
         xScale.paddingOuter = 0;
 
-        const yScale = new LinearScale();
+        const yScale = new Integrated.LinearScale();
         yScale.range = [size - padding, padding];
         yScale.domain = [0, 6];
 
@@ -74,7 +74,7 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
         });
 
         this.areas = pathData.map((points) => {
-            const area = new Path();
+            const area = new Integrated.Path();
             area.strokeWidth = 1;
             area.fillOpacity = 0.8;
 
@@ -85,7 +85,7 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
         });
 
         root.append(this.areas);
-        root.append(([] as Rect[]).concat.apply([], this.columns));
+        root.append(([]as Integrated.Rect[]).concat.apply([], this.columns));
 
         this.updateColors(fills, strokes);
     }
@@ -96,7 +96,7 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
             area.stroke = strokes[i];
         });
 
-        this.columns.forEach((bar: Rect, i: number) => {
+        this.columns.forEach((bar: Integrated.Rect, i: number) => {
             bar.fill = fills[i+1];
             bar.stroke = strokes[i+1];
         });
