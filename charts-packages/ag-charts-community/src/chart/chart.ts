@@ -21,6 +21,7 @@ import { BOOLEAN, Validate } from '../util/validation';
 import { sleep } from '../util/async';
 import { doOnce } from '../util/function';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
+import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 
 /** Types of chart-update, in pipeline execution order. */
 export enum ChartUpdateType {
@@ -177,6 +178,8 @@ export abstract class Chart extends Observable {
         return this._destroyed;
     }
 
+    protected readonly interactionManager: InteractionManager;
+
     protected constructor(document = window.document, overrideDevicePixelRatio?: number) {
         super();
 
@@ -195,6 +198,11 @@ export abstract class Chart extends Observable {
         this.scene.root = root;
         this.scene.container = element;
         this.autoSize = true;
+
+        this.interactionManager = new InteractionManager(element);
+        this.interactionManager.addListener('click', (event) => this.onClick(event));
+        this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
+        this.interactionManager.addListener('leave', () => this.togglePointer(false));
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
@@ -215,13 +223,7 @@ export abstract class Chart extends Observable {
             this.resize(width, height);
         });
 
-        this.tooltip = new Tooltip(
-            () => this.scene.canvas.element,
-            document,
-            () => this.container
-        );
-
-        this.setupDomListeners(this.scene.canvas.element);
+        this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
     }
 
     destroy() {
@@ -232,7 +234,7 @@ export abstract class Chart extends Observable {
         SizeMonitor.unobserve(this.element);
         this.container = undefined;
 
-        this.cleanupDomListeners(this.scene.canvas.element);
+        this.interactionManager.destroy();
 
         this.scene.destroy();
         this.series.forEach((s) => s.destroy());
@@ -250,8 +252,12 @@ export abstract class Chart extends Observable {
     private togglePointer(visible?: boolean) {
         if (this.tooltip.enabled) {
             this.tooltip.toggle(visible);
-        } else if (this.lastPick) {
+        }
+        if (!visible && this.lastPick) {
             this.changeHighlightDatum();
+        }
+        if (!visible && this.lastInteractionEvent) {
+            this.lastInteractionEvent = undefined;
         }
     }
 
@@ -293,7 +299,7 @@ export abstract class Chart extends Observable {
         return this._performUpdateType;
     }
     get updatePending(): boolean {
-        return this._performUpdateType !== ChartUpdateType.NONE || this.lastPointerMeta != null;
+        return this._performUpdateType !== ChartUpdateType.NONE || this.lastInteractionEvent != null;
     }
     private _lastPerformUpdateError?: Error;
     get lastPerformUpdateError() {
@@ -799,28 +805,6 @@ export abstract class Chart extends Observable {
         }
     }
 
-    private _onMouseDown = this.onMouseDown.bind(this);
-    private _onMouseMove = this.onMouseMove.bind(this);
-    private _onMouseUp = this.onMouseUp.bind(this);
-    private _onMouseOut = this.onMouseOut.bind(this);
-    private _onClick = this.onClick.bind(this);
-
-    protected setupDomListeners(chartElement: HTMLCanvasElement) {
-        chartElement.addEventListener('mousedown', this._onMouseDown);
-        chartElement.addEventListener('mousemove', this._onMouseMove);
-        chartElement.addEventListener('mouseup', this._onMouseUp);
-        chartElement.addEventListener('mouseout', this._onMouseOut);
-        chartElement.addEventListener('click', this._onClick);
-    }
-
-    protected cleanupDomListeners(chartElement: HTMLCanvasElement) {
-        chartElement.removeEventListener('mousedown', this._onMouseDown);
-        chartElement.removeEventListener('mousemove', this._onMouseMove);
-        chartElement.removeEventListener('mouseup', this._onMouseUp);
-        chartElement.removeEventListener('mouseout', this._onMouseOut);
-        chartElement.removeEventListener('click', this._onClick);
-    }
-
     // Should be available after the first layout.
     protected seriesRect?: BBox;
     getSeriesRect(): Readonly<BBox | undefined> {
@@ -873,10 +857,10 @@ export abstract class Chart extends Observable {
 
     lastPick?: {
         datum: SeriesNodeDatum;
-        event?: MouseEvent;
+        event?: Event;
     };
 
-    protected onMouseMove(event: MouseEvent): void {
+    protected onMouseMove(event: InteractionEvent<'hover'>): void {
         this.handleLegendMouseMove(event);
 
         if (this.tooltip.enabled) {
@@ -885,13 +869,7 @@ export abstract class Chart extends Observable {
             }
         }
 
-        this.lastPointerMeta = {
-            pageX: event.pageX,
-            pageY: event.pageY,
-            offsetX: event.offsetX,
-            offsetY: event.offsetY,
-            event,
-        };
+        this.lastInteractionEvent = event;
         this.pointerScheduler.schedule();
 
         this.extraDebugStats['mouseX'] = event.offsetX;
@@ -904,14 +882,20 @@ export abstract class Chart extends Observable {
         this.togglePointer(false);
     }
 
-    private lastPointerMeta?: PointerMeta = undefined;
+    private lastInteractionEvent?: InteractionEvent<'hover'> = undefined;
     private pointerScheduler = debouncedAnimationFrame(() => {
-        this.handlePointer(this.lastPointerMeta!);
-        this.lastPointerMeta = undefined;
+        if (this.lastInteractionEvent) {
+            this.handlePointer(this.lastInteractionEvent);
+        }
+        this.lastInteractionEvent = undefined;
     });
-    protected handlePointer(meta: PointerMeta) {
+    protected handlePointer(event: InteractionEvent<'hover'>) {
+        if (!event) {
+            return;
+        }
+
         const { lastPick } = this;
-        const { offsetX, offsetY } = meta;
+        const { pageX, pageY, offsetX, offsetY } = event;
 
         const disablePointer = () => {
             if (lastPick) {
@@ -932,31 +916,21 @@ export abstract class Chart extends Observable {
             return;
         }
 
+        const meta = { pageX, pageY, offsetX, offsetY, event: event.sourceEvent };
         if (!lastPick || lastPick.datum !== pick.datum) {
             this.onSeriesDatumPick(meta, pick.datum);
             return;
         }
 
-        lastPick.event = meta.event;
+        lastPick.event = event.sourceEvent;
 
         if (this.tooltip.enabled && pick.series.tooltip.enabled) {
             this.tooltip.show(this.mergePointerDatum(meta, pick.datum));
         }
     }
 
-    protected onMouseDown(_event: MouseEvent) {
-        // Override point for subclasses.
-    }
-    protected onMouseUp(_event: MouseEvent) {
-        // Override point for subclasses.
-    }
-
-    protected onMouseOut(_event: MouseEvent) {
-        this.togglePointer(false);
-    }
-
-    protected onClick(event: MouseEvent) {
-        if (this.checkSeriesNodeClick()) {
+    protected onClick(event: InteractionEvent<'click'>) {
+        if (this.checkSeriesNodeClick(event)) {
             this.update(ChartUpdateType.SERIES_UPDATE);
             return;
         }
@@ -966,17 +940,24 @@ export abstract class Chart extends Observable {
         }
         this.fireEvent<AgChartClickEvent>({
             type: 'click',
-            event,
+            event: event.sourceEvent,
         });
     }
 
-    private checkSeriesNodeClick(): boolean {
+    private checkSeriesNodeClick(event: InteractionEvent<'click'>): boolean {
         const { lastPick } = this;
 
         if (lastPick && lastPick.event) {
             const { event, datum } = lastPick;
             datum.series.fireNodeClickEvent(event, datum);
             return true;
+        } else if (event.sourceEvent.type.startsWith('touch')) {
+            const pick = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY });
+
+            if (pick) {
+                pick.series.fireNodeClickEvent(event.sourceEvent, pick.datum);
+                return true;
+            }
         }
 
         return false;
@@ -995,7 +976,7 @@ export abstract class Chart extends Observable {
         this.fireEvent(seriesNodeClickEvent);
     }
 
-    private checkLegendClick(event: MouseEvent): boolean {
+    private checkLegendClick(event: InteractionEvent<'click'>): boolean {
         const {
             legend,
             legend: {
@@ -1037,7 +1018,7 @@ export abstract class Chart extends Observable {
 
     private pointerInsideLegend = false;
     private pointerOverLegendDatum = false;
-    private handleLegendMouseMove(event: MouseEvent) {
+    private handleLegendMouseMove(event: InteractionEvent<'hover'>) {
         if (!this.legend.enabled) {
             return;
         }
@@ -1138,8 +1119,8 @@ export abstract class Chart extends Observable {
                 ...meta,
                 pageX: Math.round(canvasRect.left + window.scrollX + point.x),
                 pageY: Math.round(canvasRect.top + window.scrollY + point.y),
-                offsetX: Math.round(canvasRect.left + point.y),
-                offsetY: Math.round(canvasRect.top + point.y),
+                offsetX: Math.round(point.x),
+                offsetY: Math.round(point.y),
             };
         }
 
@@ -1148,10 +1129,7 @@ export abstract class Chart extends Observable {
 
     highlightedDatum?: SeriesNodeDatum;
 
-    changeHighlightDatum(
-        newPick?: { datum: SeriesNodeDatum; event?: MouseEvent },
-        opts?: { updateProcessing: boolean }
-    ) {
+    changeHighlightDatum(newPick?: { datum: SeriesNodeDatum; event?: Event }, opts?: { updateProcessing: boolean }) {
         const { updateProcessing = true } = opts ?? {};
         const seriesToUpdate: Set<Series> = new Set<Series>();
         const { datum: { series: newSeries = undefined } = {}, datum = undefined } = newPick || {};

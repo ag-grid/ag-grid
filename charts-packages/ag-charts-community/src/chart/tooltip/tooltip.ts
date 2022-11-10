@@ -1,3 +1,4 @@
+import { BBox } from '../../scene/bbox';
 import { Validate, BOOLEAN, NUMBER, OPT_STRING } from '../../util/validation';
 import { AgTooltipRendererResult } from '../agChartOptions';
 
@@ -7,7 +8,7 @@ const defaultTooltipCss = `
 .ag-chart-tooltip {
     transition: transform 0.1s ease;
     display: table;
-    position: absolute;
+    position: fixed;
     left: 0px;
     top: 0px;
     user-select: none;
@@ -106,7 +107,7 @@ export interface TooltipMeta {
     pageY: number;
     offsetX: number;
     offsetY: number;
-    event: MouseEvent;
+    event: Event;
 }
 
 export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?: AgTooltipRendererResult): string {
@@ -131,16 +132,14 @@ export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?
     return `${titleHtml}<div class="${DEFAULT_TOOLTIP_CLASS}-content">${content}</div>`;
 }
 
-type OptionalHTMLElement = HTMLElement | undefined | null;
-
 export class Tooltip {
     private static tooltipDocuments: Document[] = [];
 
-    element: HTMLDivElement;
+    private readonly element: HTMLDivElement;
 
-    private observer?: IntersectionObserver;
-    private observedElement: () => HTMLElement;
-    private container: () => OptionalHTMLElement;
+    private readonly observer?: IntersectionObserver;
+    private readonly canvasElement: HTMLElement;
+    private readonly tooltipRoot: HTMLElement;
 
     @Validate(BOOLEAN)
     enabled: boolean = true;
@@ -159,27 +158,26 @@ export class Tooltip {
     @Validate(BOOLEAN)
     tracking: boolean = true;
 
-    constructor(canvasElement: () => HTMLCanvasElement, document: Document, container: () => OptionalHTMLElement) {
-        const tooltipRoot = document.body;
+    constructor(canvasElement: HTMLCanvasElement, document: Document, container: HTMLElement) {
+        this.tooltipRoot = container;
         const element = document.createElement('div');
-        this.element = tooltipRoot.appendChild(element);
+        this.element = this.tooltipRoot.appendChild(element);
         this.element.classList.add(DEFAULT_TOOLTIP_CLASS);
-        this.container = container;
-        this.observedElement = canvasElement;
+        this.canvasElement = canvasElement;
 
         // Detect when the chart becomes invisible and hide the tooltip as well.
         if (window.IntersectionObserver) {
             const observer = new IntersectionObserver(
                 (entries) => {
                     for (const entry of entries) {
-                        if (entry.target === this.observedElement() && entry.intersectionRatio === 0) {
+                        if (entry.target === this.canvasElement && entry.intersectionRatio === 0) {
                             this.toggle(false);
                         }
                     }
                 },
-                { root: tooltipRoot }
+                { root: this.tooltipRoot }
             );
-            observer.observe(this.observedElement());
+            observer.observe(this.canvasElement);
             this.observer = observer;
         }
 
@@ -199,7 +197,7 @@ export class Tooltip {
         }
 
         if (this.observer) {
-            this.observer.unobserve(this.observedElement());
+            this.observer.unobserve(this.canvasElement);
         }
     }
 
@@ -245,37 +243,31 @@ export class Tooltip {
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
      */
     show(meta: TooltipMeta, html?: string, instantly = false) {
-        const el = this.element;
+        const { element, canvasElement } = this;
 
         if (html !== undefined) {
-            el.innerHTML = html;
-        } else if (!el.innerHTML) {
+            element.innerHTML = html;
+        } else if (!element.innerHTML) {
             return;
         }
 
-        let left = meta.pageX - el.clientWidth / 2;
-        let top = meta.pageY - el.clientHeight - 8;
+        const limit = (low: number, actual: number, high: number) => {
+            return Math.max(Math.min(actual, high), low);
+        };
 
-        this.constrained = false;
-        if (this.container()) {
-            const tooltipWidth = el.getBoundingClientRect().width;
-            const minLeft = 0;
-            const maxLeft = window.innerWidth - tooltipWidth - 1;
-            if (left < minLeft) {
-                left = minLeft;
-                this.constrained = true;
-            } else if (left > maxLeft) {
-                left = maxLeft;
-                this.constrained = true;
-            }
+        const canvasRect = canvasElement.getBoundingClientRect();
+        const naiveLeft = canvasRect.left + meta.offsetX - element.clientWidth / 2;
+        const naiveTop = canvasRect.top + meta.offsetY - element.clientHeight - 8;
 
-            if (top < window.scrollY) {
-                top = meta.pageY + 20;
-                this.constrained = true;
-            }
-        }
+        const windowBounds = this.getWindowBoundingBox();
+        const maxLeft = windowBounds.x + windowBounds.width - element.clientWidth - 1;
+        const maxTop = windowBounds.y + windowBounds.height - element.clientHeight;
 
-        el.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
+        const left = limit(windowBounds.x, naiveLeft, maxLeft);
+        const top = limit(windowBounds.y, naiveTop, maxTop);
+
+        this.constrained = left !== naiveLeft || top !== naiveTop;
+        element.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
 
         if (this.delay > 0 && !instantly) {
             this.toggle(false);
@@ -286,6 +278,10 @@ export class Tooltip {
         }
 
         this.toggle(true);
+    }
+
+    private getWindowBoundingBox(): BBox {
+        return new BBox(0, 0, window.innerWidth, window.innerHeight);
     }
 
     toggle(visible?: boolean) {
