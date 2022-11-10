@@ -12,8 +12,7 @@ import {
     waitForChartStability,
 } from '../test/utils';
 import { AgCartesianChartOptions, AgCrossLineOptions, AgCrossLineLabelPosition } from '../agChartOptions';
-import { AgChartV2 } from '../agChartV2';
-import { CartesianChart } from '../cartesianChart';
+import { AgChart } from '../agChartV2';
 import * as examples from './test/examples';
 import { Chart } from '../chart';
 
@@ -280,7 +279,7 @@ describe('crossLines', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChartV2.create<CartesianChart>(options);
+                chart = AgChart.create(options) as Chart;
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
@@ -298,7 +297,7 @@ describe('crossLines', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChartV2.create<CartesianChart>(options);
+                chart = AgChart.create(options) as Chart;
                 await compare();
             });
         }

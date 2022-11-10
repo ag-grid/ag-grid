@@ -5,8 +5,9 @@ import { BarSeries } from './series/cartesian/barSeries';
 import { LineSeries } from './series/cartesian/lineSeries';
 import { NumberAxis } from './axis/numberAxis';
 import { ChartTheme } from './themes/chartTheme';
-import { AgChartV2 } from './agChartV2';
+import { AgChart } from './agChartV2';
 import { waitForChartStability } from './test/utils';
+import { Chart } from './chart';
 
 const revenueProfitData = [
     {
@@ -45,7 +46,7 @@ describe('update', () => {
     });
 
     test('cartesian chart top-level properties', async () => {
-        const chart = AgChartV2.create({
+        const chart = AgChart.create({
             // chart type is optional because it defaults to `cartesian`
             container: document.body,
             data: revenueProfitData,
@@ -71,9 +72,9 @@ describe('update', () => {
                     paddingY: 16,
                 },
             },
-        });
+        }) as Chart;
         await waitForChartStability(chart);
-        AgChartV2.update(chart, {
+        AgChart.update(chart, {
             width: 500,
             height: 500,
             autoSize: false,
@@ -139,7 +140,7 @@ describe('update', () => {
         expect(chart.background.visible).toBe(false);
         expect((chart.series[0] as any).marker.shape).toBe('plus');
 
-        AgChartV2.update(chart, {
+        AgChart.update(chart, {
             data: revenueProfitData,
             series: [
                 {
@@ -175,7 +176,7 @@ describe('update', () => {
     });
 
     test('series', async () => {
-        const chart = AgChartV2.create({
+        const chart = AgChart.create({
             data: revenueProfitData,
             series: [
                 {
@@ -194,11 +195,11 @@ describe('update', () => {
                     fill: 'lime',
                 },
             ],
-        });
+        }) as Chart;
         await waitForChartStability(chart);
         const createdSeries = chart.series;
 
-        AgChartV2.update(chart, {
+        AgChart.update(chart, {
             data: revenueProfitData,
             series: [
                 {
@@ -245,7 +246,7 @@ describe('update', () => {
         expect((updatedSeries[2] as any).xKey).toEqual('month');
         expect((updatedSeries[2] as any).yKeys).toEqual(['foobar']);
 
-        AgChartV2.update(chart, {
+        AgChart.update(chart, {
             data: revenueProfitData,
             series: [
                 {
@@ -278,7 +279,7 @@ describe('update', () => {
         expect(updatedSeries2[0]).not.toBe(updatedSeries[0]);
         expect(updatedSeries2[1]).not.toBe(updatedSeries[1]);
 
-        AgChartV2.update(chart, {
+        AgChart.update(chart, {
             data: revenueProfitData,
             series: [
                 {
@@ -320,7 +321,7 @@ describe('update', () => {
 
         const lineSeries = updatedSeries3[1];
 
-        AgChartV2.update(chart, {
+        AgChart.update(chart, {
             data: revenueProfitData,
             series: [
                 {
@@ -358,7 +359,7 @@ describe('update', () => {
     });
 
     test('axes', async () => {
-        let chart = AgChartV2.create({
+        let chart = AgChart.create({
             data: revenueProfitData,
             series: [
                 {
@@ -366,10 +367,10 @@ describe('update', () => {
                     yKey: 'revenue',
                 },
             ],
-        });
+        }) as Chart;
         await waitForChartStability(chart);
 
-        AgChartV2.update(chart, {
+        AgChart.update(chart, {
             data: revenueProfitData,
             series: [
                 {
@@ -408,7 +409,7 @@ describe('update', () => {
                 lineDash: [4, 2],
             },
         ]);
-        AgChartV2.update(chart, {
+        AgChart.update(chart, {
             data: revenueProfitData,
             series: [
                 {

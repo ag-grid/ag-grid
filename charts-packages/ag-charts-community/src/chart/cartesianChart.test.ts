@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgCartesianChartOptions, AgChartOptions } from './agChartOptions';
-import { AgChartV2 } from './agChartV2';
+import { AgChart } from './agChartV2';
 import { CartesianChart } from './cartesianChart';
 import { Chart, ChartUpdateType } from './chart';
 import { SeriesNodeDataContext } from './series/series';
@@ -207,7 +207,7 @@ describe('CartesianChart', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChartV2.create<any>(options);
+                chart = AgChart.create<any>(options) as CartesianChart;
                 await waitForChartStability(chart);
 
                 const seriesImpl = chart.series.find(
@@ -250,7 +250,7 @@ describe('CartesianChart', () => {
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
 
-            chart = AgChartV2.create<any>(options);
+            chart = AgChart.create<any>(options) as CartesianChart;
             await waitForChartStability(chart);
 
             const series = chart.series.find((v: any) => v.type === 'scatter');

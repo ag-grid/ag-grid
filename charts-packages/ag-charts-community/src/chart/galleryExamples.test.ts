@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
 import { AgChartOptions } from './agChartOptions';
-import { AgChartV2 } from './agChartV2';
+import { AgChart } from './agChartV2';
 import { Chart } from './chart';
 import * as examples from './test/examples';
 import {
@@ -161,7 +161,7 @@ describe('Gallery Examples', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
-                chart = AgChartV2.create<any>(options);
+                chart = AgChart.create<any>(options) as Chart;
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
@@ -179,7 +179,7 @@ describe('Gallery Examples', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChartV2.create<any>(options) as Chart;
+                chart = AgChart.create<any>(options) as Chart;
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -212,7 +212,7 @@ describe('Gallery Examples', () => {
                     options.width = CANVAS_WIDTH;
                     options.height = CANVAS_HEIGHT;
 
-                    chart = AgChartV2.create<any>(options);
+                    chart = AgChart.create<any>(options) as Chart;
                     await waitForChartStability(chart);
                 });
 
@@ -223,7 +223,7 @@ describe('Gallery Examples', () => {
                 });
 
                 it(`it should update chart instance as expected`, async () => {
-                    AgChartV2.update<any>(chart, options);
+                    AgChart.update<any>(chart, options);
                     await waitForChartStability(chart);
 
                     await example.assertions(chart);
@@ -236,10 +236,10 @@ describe('Gallery Examples', () => {
                         return ctx.nodeCanvas.toBuffer('raw');
                     };
 
-                    AgChartV2.update<any>(chart, options);
+                    AgChart.update<any>(chart, options);
 
                     const before = await snapshot();
-                    AgChartV2.update<any>(chart, options);
+                    AgChart.update<any>(chart, options);
                     const after = await snapshot();
 
                     (expect(after) as any).toMatchImage(before);
