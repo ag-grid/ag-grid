@@ -10,7 +10,6 @@ const {createFilePath} = require('gatsby-source-filesystem');
 const {CODES, prefixId} = require('gatsby-source-filesystem/error-utils');
 const {GraphQLString} = require('gatsby/graphql');
 const fs = require('fs-extra');
-const glob = require('glob');
 const publicIp = require('public-ip');
 const gifFrames = require('gif-frames');
 const supportedFrameworks = require('./src/utils/supported-frameworks.js');
@@ -18,9 +17,6 @@ const chartGallery = require('./doc-pages/charts-overview/gallery.json');
 const toKebabCase = require('./src/utils/to-kebab-case');
 const isDevelopment = require('./src/utils/is-development');
 const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
-const lzString = require('lz-string');
-const {graphql} = require("gatsby");
-const PRELOAD_PAGE_DATA = require("./src/preload-page-data.js");
 
 /**
  * This hides the config file that we use to show linting in IDEs from Gatsby.
@@ -114,32 +110,48 @@ exports.setFieldsOnGraphQLNodeType = ({type, getNodeAndSavePathDependency, pathP
                 const forceOverwrite = isExampleFile && (isRecent(file.ctimeMs) || isRecent(file.mtimeMs));
 
                 if (!fs.existsSync(publicPath) || forceOverwrite) {
-                    fs.copySync(details.absolutePath, publicPath, {dereference: true}, err => {
-                        if (err) {
-                            reporter.panic({
-                                id: prefixId(CODES.MissingResource), context: {
-                                    sourceMessage: `error copying file from ${details.absolutePath} to ${publicPath}`,
-                                },
-                            }, err);
+                    fs.copySync(
+                        details.absolutePath,
+                        publicPath,
+                        {dereference: true},
+                        err => {
+                            if (err) {
+                                reporter.panic(
+                                    {
+                                        id: prefixId(CODES.MissingResource),
+                                        context: {
+                                            sourceMessage: `error copying file from ${details.absolutePath} to ${publicPath}`,
+                                        },
+                                    },
+                                    err
+                                );
+                            }
                         }
-                    });
+                    );
 
                     if (!isDevelopment() && publicPath.endsWith('.gif')) {
                         try {
                             // create first frame still
                             const frameData = await gifFrames({
-                                url: details.absolutePath, frames: 0, type: 'png', quality: 100,
+                                url: details.absolutePath,
+                                frames: 0,
+                                type: 'png',
+                                quality: 100,
                             });
 
                             frameData[0].getImage().pipe(fs.createWriteStream(publicPath.replace('.gif', '-still.png')));
                         } catch (err) {
                             console.error(`Failed to create still from ${details.absolutePath}`);
 
-                            reporter.panic({
-                                id: prefixId(CODES.MissingResource), context: {
-                                    sourceMessage: `Could not create still from ${details.absolutePath}`,
+                            reporter.panic(
+                                {
+                                    id: prefixId(CODES.MissingResource),
+                                    context: {
+                                        sourceMessage: `Could not create still from ${details.absolutePath}`,
+                                    },
                                 },
-                            }, err);
+                                err
+                            );
                         }
                     }
                 }
@@ -159,9 +171,11 @@ exports.onCreateNode = async ({node, loadNodeContent, getNode, actions: {createN
         const filePath = createFilePath({node, getNode});
 
         createNodeField({
-            node, name: 'path', value: filePath.substring(0, filePath.length - 1)
+            node,
+            name: 'path',
+            value: filePath.substring(0, filePath.length - 1)
         });
-    } else if (!PRELOAD_PAGE_DATA && node.internal.type === 'File' && node.internal.mediaType === 'application/json') {
+    } else if (node.internal.type === 'File' && node.internal.mediaType === 'application/json') {
         // load contents of JSON files to be used e.g. by ApiDocumentation
         node.internal.content = await loadNodeContent(node);
     }
@@ -207,42 +221,10 @@ const createHomePages = createPage => {
     });
 
     createPage({
-        path: `/documentation/`, component: path.resolve('src/pages/loading.jsx'),
+        path: `/documentation/`,
+        component: path.resolve('src/pages/loading.jsx'),
     });
 };
-
-const docPagesDirectory = path.resolve(__dirname, 'doc-pages');
-const getFiles = (criteria, cwd = docPagesDirectory, ignore = []) => glob.sync(criteria, {cwd, ignore, nodir: true});
-
-function getJsonFileData() {
-    const data = {};
-    getFiles("**/*.json", docPagesDirectory, ["**/_gen**/**", "package.json"]).forEach(relativePath => {
-        const absolutePath = path.resolve(docPagesDirectory, relativePath);
-        data[relativePath] = JSON.parse(fs.readFileSync(absolutePath, 'UTF8'));
-    })
-    return lzString.compress(JSON.stringify(data));
-}
-
-function getExampleIndexFilesForPage(prefix) {
-    const data = [];
-    if (fs.pathExistsSync(path.resolve(`${docPagesDirectory}/${prefix}`))) {
-        getFiles(`**/*`, `${docPagesDirectory}/${prefix}`).forEach(subRelativePath => {
-            const relativePath = `${prefix}/${subRelativePath}`
-            const absolutePath = `${docPagesDirectory}/${relativePath}`;
-
-            const base = path.basename(absolutePath);
-            const publicURL = `${process.env.GATSBY_ROOT_DIRECTORY || ''}/examples/${relativePath.replace('/examples', '/').replace('/_gen', '')}`;
-            const html = relativePath.endsWith(".html") ? fs.readFileSync(absolutePath, 'UTF8') : null;
-
-            data.push({
-                relativePath, publicURL, base, childHtmlRehype: {
-                    html
-                }
-            });
-        })
-    }
-    return data;
-}
 
 /**
  * This creates pages for each of the Markdown files, creating different versions for each framework that the Markdown
@@ -251,7 +233,7 @@ function getExampleIndexFilesForPage(prefix) {
 const createDocPages = async (createPage, graphql, reporter) => {
     const docPageTemplate = path.resolve(`src/templates/doc-page.jsx`);
 
-    const resultMarkDownNodes = await graphql(`
+    const result = await graphql(`
         {
             allMarkdownRemark {
                 nodes {
@@ -267,51 +249,25 @@ const createDocPages = async (createPage, graphql, reporter) => {
         }
     `);
 
-    if (resultMarkDownNodes.errors) {
-        reporter.panicOnBuild(`Error while running GraphQL query while creating doc pages.`);
+    if (result.errors) {
+        reporter.panicOnBuild(`Error while running GraphQL query.`);
         return;
     }
 
-    const results = await graphql(`
-    {
-      allFile(
-        filter: {sourceInstanceName: {eq: "doc-pages"}, relativeDirectory: {regex: "/.*/examples/.*/"}}
-      ) {
-        nodes {
-          publicURL
-          relativePath
-          mtimeMs
-        }
-      }
-    }
-    `);
-
-    if (results.errors) {
-        reporter.panicOnBuild(`Error while running GraphQL query while in setFieldsOnGraphQLNodeType.`);
-        return;
-    }
-
-    // get all json data required by the api and interface doc components
-    // doing this upfront allows us to exclude the content in the resultJsonNodes and allows for a much smaller overall page load size
-    // (esp page-data.json)
-    const jsonData = PRELOAD_PAGE_DATA ? getJsonFileData() : null;
-
-    for (node of resultMarkDownNodes.data.allMarkdownRemark.nodes) {
+    result.data.allMarkdownRemark.nodes.forEach(node => {
         const {frontmatter: {frameworks: specifiedFrameworks}, fields: {path: srcPath}} = node;
         const frameworks = supportedFrameworks.filter(f => !specifiedFrameworks || specifiedFrameworks.includes(f));
         const parts = srcPath.split('/').filter(x => x !== '');
         const pageName = parts[parts.length - 1];
 
-        const exampleIndexData = PRELOAD_PAGE_DATA ? getExampleIndexFilesForPage(`${srcPath.replace('/', '')}/examples`) : null;
-
         frameworks.forEach(framework => {
             createPage({
                 path: convertToFrameworkUrl(srcPath, framework),
                 component: docPageTemplate,
-                context: {frameworks, framework, srcPath, pageName, jsonDataAsString: jsonData, exampleIndexData}
+                context: {frameworks, framework, srcPath, pageName}
             });
         });
-    }
+    });
 };
 
 /**
@@ -321,13 +277,16 @@ const createChartGalleryPages = createPage => {
     const chartGalleryPageTemplate = path.resolve(`src/templates/chart-gallery-page.jsx`);
     const filter = (c) => !c.startsWith('_');
     const categories = Object.keys(chartGallery).filter(filter);
-    const exampleIndexData = PRELOAD_PAGE_DATA ? getExampleIndexFilesForPage("charts-overview/examples") : null;
 
-    const namesByCategory = categories.reduce((names, c) => {
-        return names.concat(Object.keys(chartGallery[c])
-            .filter(filter)
-            .map(k => ({category: c, name: k})));
-    }, []);
+    const namesByCategory = categories.reduce(
+        (names, c) => {
+            return names.concat(
+                Object.keys(chartGallery[c])
+                    .filter(filter)
+                    .map(k => ({category: c, name: k}))
+            );
+        },
+        []);
 
     namesByCategory.forEach(({category, name}, i) => {
         const {description} = chartGallery[category][name];
@@ -337,9 +296,9 @@ const createChartGalleryPages = createPage => {
 
         supportedFrameworks.forEach(framework => {
             createPage({
-                path: `/${framework}-charts/gallery/${toKebabCase(name)}/`, component: chartGalleryPageTemplate, context: {
-                    frameworks: supportedFrameworks, framework, name, description, previous, next, pageName: 'charts-overview', exampleIndexData
-                }
+                path: `/${framework}-charts/gallery/${toKebabCase(name)}/`,
+                component: chartGalleryPageTemplate,
+                context: {frameworks: supportedFrameworks, framework, name, description, previous, next, pageName: 'charts-overview'}
             });
         });
     });
@@ -350,7 +309,8 @@ const createChartGalleryPages = createPage => {
  */
 exports.createPages = async ({actions: {createPage}, graphql, reporter}) => {
     if (!process.env.GATSBY_HOST) {
-        process.env.GATSBY_HOST = process.env.NODE_ENV === 'development' ? `${getInternalIPAddress()}:8080` : `${await publicIp.v4()}:9000`;
+        process.env.GATSBY_HOST =
+            process.env.NODE_ENV === 'development' ? `${getInternalIPAddress()}:8080` : `${await publicIp.v4()}:9000`;
     }
 
     createHomePages(createPage);
@@ -366,7 +326,6 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
     const frameworkRequest = request => {
         return frameworks.some(framework => request.includes(framework))
     }
-
     class AgEs5CjsResolver {
         constructor(source, target) {
             this.source = source || 'resolve';
@@ -377,13 +336,18 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
             var target = resolver.ensureHook(this.target);
             resolver.getHook(this.source).tapAsync('AgEs5CjsResolver', function (request, resolveContext, callback) {
                 const req = request.request;
-                if ((req.startsWith('@ag-grid') || req === 'ag-charts-community') && !req.includes('css') && !frameworkRequest(req)) {
+                if ((req.startsWith('@ag-grid') || req === 'ag-charts-community') &&
+                    !req.includes('css') &&
+                    !frameworkRequest(req)) {
 
                     // point the request to the commonjs es5 dir - this is what gets updated on local build changes
                     const newRequest = `${__dirname}/node_modules/${req}/dist/cjs/es5/main.js`;
 
                     const obj = {
-                        path: request.path, request: newRequest, query: request.query, directory: request.directory
+                        path: request.path,
+                        request: newRequest,
+                        query: request.query,
+                        directory: request.directory
                     };
                     return resolver.doResolve(target, obj, null, resolveContext, callback);
                 }
@@ -397,12 +361,13 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
          * site to load at runtime by providing a dummy fs */
         node: {
             fs: 'empty',
-        }, resolve: {
+        },
+        resolve: {
             // add src folder as default root for imports
             modules: [path.resolve(__dirname, 'src'), 'node_modules'],
         }
     };
-    if (isDevelopment()) {
+    if(isDevelopment()) {
         // favour cjs over es6 (docs only rebuilds cjs...) in dev mode
         newConfig.resolve['plugins'] = [new AgEs5CjsResolver()];
     }
