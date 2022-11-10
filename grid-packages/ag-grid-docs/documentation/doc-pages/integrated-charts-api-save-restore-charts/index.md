@@ -22,6 +22,7 @@ The example below demonstrates how you can save and then later restore a chart. 
 A chart model that represent all the state information about the rendered charts can be obtained using `getChartModels()`. These models are returned in a format that can be easily used with the other API methods to later restore the chart.
 
 <api-documentation source='grid-api/api.json' section='charts' names='["getChartModels"]'></api-documentation>
+<interface-documentation interfaceName="ChartModel"></interface-documentation>
 
 These models can then be supplied to the following grid api method to restore the charts:
 
