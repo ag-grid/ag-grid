@@ -46,7 +46,7 @@ export const axisLabelFormatter = (params) => {
     }
     if (absolute >= 1e12) standardised = '$' + +(absolute / 1e12).toFixed(1) + 'T';
 
-    return value < 0 ? '-' + standardised : standardised;
+    return `${value < 0 ? '-' + standardised : standardised}`;
 };
 export const formatThousands = value => value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 
