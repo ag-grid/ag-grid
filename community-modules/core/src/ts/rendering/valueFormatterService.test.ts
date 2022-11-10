@@ -65,8 +65,8 @@ describe('formatValue', () => {
 
     it('uses pinned value formatter from column definition if row is pinned', () => {
         const returnValue = 'foo';
-        const formatter = (params: ValueFormatterParams) => params.value.toString();
-        colDef.pinnedRowValueFormatter = formatter;
+        const formatter = (params: ValueFormatterParams) => params.node?.isRowPinned() ? params.value.toString() :;
+        colDef.valueFormatter = formatter;
         const value = 'bar';
         const node = mock<RowNode>();
         node.rowPinned = 'top';
