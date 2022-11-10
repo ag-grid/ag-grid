@@ -4358,6 +4358,11 @@
     }
   },
   "AgChartOptions": {},
+  "AgChartInstance": {
+    "destroy": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    }
+  },
   "ChartType": {},
   "AgChartType": { "meta": { "typeParams": ["T"] } },
   "ChartOptionType": { "meta": { "typeParams": ["T extends ChartType"] } },
