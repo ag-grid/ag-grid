@@ -808,7 +808,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             const { width, height } = bbox;
 
             const translatedBBox = new BBox(labelX, translationY, 0, 0);
-            labelMatrix.transformBBox(translatedBBox, 0, bbox);
+            labelMatrix.transformBBox(translatedBBox, bbox);
 
             const { x = 0, y = 0 } = bbox;
             bbox.width = width;
@@ -898,7 +898,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
             const { translationY } = datum;
             const translatedBBox = new BBox(labelX, translationY, 0, 0);
-            labelMatrix.transformBBox(translatedBBox, 0, bbox);
+            labelMatrix.transformBBox(translatedBBox, bbox);
 
             const { x = 0, y = 0 } = bbox;
 

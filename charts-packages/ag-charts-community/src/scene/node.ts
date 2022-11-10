@@ -390,7 +390,7 @@ export abstract class Node extends ChangeDetectable {
             matrix.preMultiplySelf(parent.matrix);
             parent = parent.parent;
         }
-        matrix.transformBBox(bbox, 0, bbox);
+        matrix.transformBBox(bbox, bbox);
 
         return bbox;
     }
