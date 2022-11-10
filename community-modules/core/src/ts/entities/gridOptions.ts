@@ -166,23 +166,7 @@ export interface GridOptions<TData = any> {
     suppressFieldDotNotation?: boolean;
 
     /** @deprecated v24 */
-    deltaColumnMode?: boolean;
-    /** @deprecated v26 */
-    applyColumnDefOrder?: boolean; // is now the default, to turn off, set maintainColumnOrder
-    /** @deprecated v24 */
-    immutableColumns?: boolean;
-    /** @deprecated v24 */
-    suppressSetColumnStateEvents?: boolean;
-    /** @deprecated v24 */
     suppressColumnStateEvents?: boolean;
-
-    /** @deprecated Set via `defaultColDef.width` */
-    colWidth?: number;
-    /** @deprecated Set via `defaultColDef.minWidth` */
-    minColWidth?: number;
-    /** @deprecated Set via `defaultColDef.maxWidth` */
-    maxColWidth?: number;
-
     // *** Column Headers *** //
     /** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`. */
     headerHeight?: number;
@@ -270,9 +254,6 @@ export interface GridOptions<TData = any> {
     /** Set the size of the undo / redo stack. Default: `10` */
     undoRedoCellEditingLimit?: number;
 
-    /** @deprecated v25 Use stopEditingWhenCellsLoseFocus instead */
-    stopEditingWhenGridLosesFocus?: boolean;
-
     // *** Export *** //
     /** A default configuration object used to export to CSV. */
     defaultCsvExportParams?: CsvExportParams;
@@ -284,8 +265,6 @@ export interface GridOptions<TData = any> {
     suppressExcelExport?: boolean;
     /** A list (array) of Excel styles to be used when exporting to Excel with styles. */
     excelStyles?: ExcelStyle[];
-    /** @deprecated v25 Use defaultCsvExportParams or defaultExcelExportParams */
-    defaultExportParams?: CsvExportParams | ExcelExportParams;
 
     // *** Filter *** //
     /** Rows are filtered using this text as a quick filter. */
@@ -538,8 +517,6 @@ export interface GridOptions<TData = any> {
 
     /** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */
     embedFullWidthRows?: boolean;
-    /** @deprecated v21 */
-    deprecatedEmbedFullWidthRows?: boolean;
 
     // *** Row Grouping *** //
     /**
@@ -609,16 +586,6 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/
     groupRowsSticky?: boolean;
 
-    /** @deprecated v24 - this is now groupRowRendererParams.innerRenderer */
-    groupRowInnerRenderer?: any;
-    /** @deprecated v24 - this is now groupRowRendererParams.innerRenderer */
-    groupRowInnerRendererFramework?: any;
-    /** @deprecated v26 - Use groupDisplayType = 'multipleColumns' instead */
-    groupMultiAutoColumn?: boolean;
-    /** @deprecated v26 - Use groupDisplayType = 'groupRows' instead */
-    groupUseEntireRow?: boolean;
-    /** @deprecated v26 - Use groupDisplayType = 'custom' instead */
-    groupSuppressAutoColumn?: boolean;
     /** @deprecated v24 - no longer needed, transaction updates keep group state */
     rememberGroupStateWhenNewData?: boolean;
 
@@ -644,10 +611,6 @@ export interface GridOptions<TData = any> {
     asyncTransactionWaitMillis?: number;
     /** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false` */
     suppressModelUpdateAfterUpdateTransaction?: boolean;
-    /** @deprecated v23 */
-    deltaRowDataMode?: boolean;
-    /** @deprecated v23 use asyncTransactionWaitMillis instead */
-    batchUpdateWaitMillis?: number;
 
     // *** Row Model: Infinite / Server-side *** //
     /** Provide the datasource for infinite scrolling. */
@@ -718,9 +681,6 @@ export interface GridOptions<TData = any> {
     /** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */
     serverSideFilteringAlwaysResets?: boolean;
 
-    /** @deprecated v25 */
-    suppressEnterpriseResetOnNewColumns?: boolean;
-
     // *** Row Model: Viewport *** //
     /** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */
     viewportDatasource?: IViewportDatasource;
@@ -786,9 +746,6 @@ export interface GridOptions<TData = any> {
     /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`*/
     suppressClearOnFillReduction?: boolean;
 
-    /** @deprecated v24 - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */
-    rowDeselection?: boolean;
-
     // *** Sorting *** //
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`  */
     sortingOrder?: ('asc' | 'desc' | null)[];
@@ -825,10 +782,6 @@ export interface GridOptions<TData = any> {
 
     deltaSort?: boolean;
     treeDataDisplayType?: TreeDataDisplayType;
-    /** @deprecated v26 */
-    angularCompileRows?: boolean;
-    /** @deprecated v26 */
-    angularCompileFilters?: boolean;
     functionsPassive?: boolean;
     enableGroupEdit?: boolean;
 
@@ -879,8 +832,6 @@ export interface GridOptions<TData = any> {
     navigateToNextCell?: (params: NavigateToNextCellParams<TData>) => (CellPosition | null);
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.  */
     tabToNextCell?: (params: TabToNextCellParams<TData>) => (CellPosition | null);
-    /** @deprecated v24 - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property. */
-    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams<TData>) => boolean;
 
     // *** Localisation *** //
     /** @deprecated v27.2 - Use `getLocaleText` instead. */
@@ -917,8 +868,6 @@ export interface GridOptions<TData = any> {
     processPivotResultColGroupDef?: (colGroupDef: ColGroupDef<TData>) => void;
     /** Callback to be used when working with Tree Data when `treeData = true`. */
     getDataPath?: GetDataPath<TData>;
-    /** @deprecated v26 - Use initialGroupOrderComparator instead */
-    defaultGroupSortComparator?: (nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number;
 
     // *** Row Model: Server Side *** //
     /** Allows setting the child count for a group row. */

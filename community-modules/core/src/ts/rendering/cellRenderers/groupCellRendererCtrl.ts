@@ -183,7 +183,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         // at this point, we know it's the root node and there is no value present, so it's a footer cell.
         // the only thing to work out is if we are displaying groups  across multiple
-        // columns (groupMultiAutoColumn=true), we only want 'total' to appear in the first column.
+        // columns (groupDisplayType: 'multipleColumns'), we only want 'total' to appear in the first column.
 
         const colDef = this.params.colDef;
         const doingFullWidth = colDef == null;

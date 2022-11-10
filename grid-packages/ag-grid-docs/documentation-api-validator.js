@@ -70,8 +70,6 @@ validateDocFile('GridOptions', './documentation/doc-pages/grid-api/grid-options.
     'columnAggFuncChangeRequest',
     'deltaSort',
     'treeDataDisplayType',
-    'angularCompileRows',
-    'angularCompileFilters',
     'functionsPassive',
     'enableGroupEdit',
     ...ComponentUtil.EXCLUDED_INTERNAL_EVENTS

@@ -327,7 +327,7 @@ Pivot value columns are the lowest level column and correspond to the values sel
 The example below shows mixing in different options for the row group column. For more info on these properties, see [Grouping Rows](/grouping/).
 
 - `groupHideOpenParents=true: ` So that when the row group is expanded, the parent row is not shown.
-- `groupMultiAutoColumn=true: ` So that one group column is created for each row group column (country and athlete).
+- `groupDisplayType: 'multipleColumns':` So that one group column is created for each row group column (country and athlete).
 - `groupDefaultExpanded=2: ` So that all the groups are opened by default.
 
 <grid-example title='Hide Open Parents' name='hide-open-parents' type='generated' options='{ "enterprise": true, "exampleHeight": 650, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>

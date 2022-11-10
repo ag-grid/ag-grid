@@ -23,14 +23,14 @@ export interface SharedProps<TData = any> extends GridOptions<TData> {
     setGridApi?: (gridApi: GridApi<TData>, columnApi: ColumnApi) => void;
     componentWrappingElement?: string; // only used when putting React into JS
     maxComponentCreationTimeMs?: number; // only used when putting React into JS
+    rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
+    children?: any;
 }
 
 export interface AgReactUiProps<TData = any> extends SharedProps<TData> {
 }
 
 export interface AgGridReactProps<TData = any> extends SharedProps<TData> {
-    children?: any;
-    rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     disableStaticMarkup?: boolean;  // only used when legacyComponentRendering is true
     legacyComponentRendering?: boolean,
 }

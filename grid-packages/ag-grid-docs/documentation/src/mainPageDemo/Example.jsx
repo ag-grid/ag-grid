@@ -655,8 +655,6 @@ const Example = () => {
         // pivotColumnGroupTotals: 'before',
         // pivotRowTotals: 'before',
         // suppressRowTransform: true,
-        // minColWidth: 50,
-        // maxColWidth: 300,
         // rowBuffer: 10,
         // columnDefs: [],
         // singleClickEdit: true,
@@ -666,10 +664,10 @@ const Example = () => {
         enterMovesDown: true,
         // domLayout: 'autoHeight',
         // domLayout: 'forPrint',
-        // groupUseEntireRow: true, //one of [true, false]
+        // groupDisplayType = 'groupRows'
         // groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
         // headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
-        // groupSuppressAutoColumn: true,
+        // groupDisplayType = 'custom'
         // pivotSuppressAutoColumn: true,
         // groupSuppressBlankHeader: true,
         // suppressMovingCss: true,
@@ -759,10 +757,10 @@ const Example = () => {
         // autoSizePadding: 20,
         // toolPanelSuppressGroups: true,
         // toolPanelSuppressValues: true,
-        // groupSuppressAutoColumn: true,
+        // groupDisplayType = 'custom',
         // contractColumnSelection: true,
         // groupAggFields: ['bankBalance','totalWinnings'],
-        // groupMultiAutoColumn: true,
+        // groupDisplayType = 'multipleColumns',
         // groupHideOpenParents: true,
         // suppressMenuFilterPanel: true,
         // clipboardDelimiter: ',',

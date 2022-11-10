@@ -147,7 +147,6 @@ import {
     SideBarDef,
     SortChangedEvent,
     StatusPanelDef,
-    SuppressKeyboardEventParams,
     TabToNextCellParams,
     TabToNextHeaderParams,
     ToolPanelSizeChangedEvent,
@@ -349,21 +348,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
     @Input() public suppressFieldDotNotation: boolean | undefined = undefined;
     /** @deprecated v24     */
-    @Input() public deltaColumnMode: boolean | undefined = undefined;
-    /** @deprecated v26     */
-    @Input() public applyColumnDefOrder: boolean | undefined = undefined;
-    /** @deprecated v24     */
-    @Input() public immutableColumns: boolean | undefined = undefined;
-    /** @deprecated v24     */
-    @Input() public suppressSetColumnStateEvents: boolean | undefined = undefined;
-    /** @deprecated v24     */
     @Input() public suppressColumnStateEvents: boolean | undefined = undefined;
-    /** @deprecated Set via `defaultColDef.width`     */
-    @Input() public colWidth: number | undefined = undefined;
-    /** @deprecated Set via `defaultColDef.minWidth`     */
-    @Input() public minColWidth: number | undefined = undefined;
-    /** @deprecated Set via `defaultColDef.maxWidth`     */
-    @Input() public maxColWidth: number | undefined = undefined;
     /** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`.     */
     @Input() public headerHeight: number | undefined = undefined;
     /** The height in pixels for the rows containing header column groups. If not specified, it uses `headerHeight`.     */
@@ -428,8 +413,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public undoRedoCellEditing: boolean | undefined = undefined;
     /** Set the size of the undo / redo stack. Default: `10`     */
     @Input() public undoRedoCellEditingLimit: number | undefined = undefined;
-    /** @deprecated v25 Use stopEditingWhenCellsLoseFocus instead     */
-    @Input() public stopEditingWhenGridLosesFocus: boolean | undefined = undefined;
     /** A default configuration object used to export to CSV.     */
     @Input() public defaultCsvExportParams: CsvExportParams | undefined = undefined;
     /** Prevents the user from exporting the grid to CSV. Default: `false`     */
@@ -440,8 +423,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressExcelExport: boolean | undefined = undefined;
     /** A list (array) of Excel styles to be used when exporting to Excel with styles.     */
     @Input() public excelStyles: ExcelStyle[] | undefined = undefined;
-    /** @deprecated v25 Use defaultCsvExportParams or defaultExcelExportParams     */
-    @Input() public defaultExportParams: CsvExportParams | ExcelExportParams | undefined = undefined;
     /** Rows are filtered using this text as a quick filter.     */
     @Input() public quickFilterText: string | undefined = undefined;
     /** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false`     */
@@ -650,8 +631,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public fullWidthCellRendererParams: any = undefined;
     /** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling.     */
     @Input() public embedFullWidthRows: boolean | undefined = undefined;
-    /** @deprecated v21     */
-    @Input() public deprecatedEmbedFullWidthRows: boolean | undefined = undefined;
     /** Specifies how the results of row grouping should be displayed.
          *
          *  The options are:
@@ -711,16 +690,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public rowGroupPanelSuppressSort: boolean | undefined = undefined;
     /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/
     @Input() public groupRowsSticky: boolean | undefined = undefined;
-    /** @deprecated v24 - this is now groupRowRendererParams.innerRenderer     */
-    @Input() public groupRowInnerRenderer: any = undefined;
-    /** @deprecated v24 - this is now groupRowRendererParams.innerRenderer     */
-    @Input() public groupRowInnerRendererFramework: any = undefined;
-    /** @deprecated v26 - Use groupDisplayType = 'multipleColumns' instead     */
-    @Input() public groupMultiAutoColumn: boolean | undefined = undefined;
-    /** @deprecated v26 - Use groupDisplayType = 'groupRows' instead     */
-    @Input() public groupUseEntireRow: boolean | undefined = undefined;
-    /** @deprecated v26 - Use groupDisplayType = 'custom' instead     */
-    @Input() public groupSuppressAutoColumn: boolean | undefined = undefined;
     /** @deprecated v24 - no longer needed, transaction updates keep group state     */
     @Input() public rememberGroupStateWhenNewData: boolean | undefined = undefined;
     /** Data to be displayed as pinned top rows in the grid.     */
@@ -738,10 +707,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public asyncTransactionWaitMillis: number | undefined = undefined;
     /** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false`     */
     @Input() public suppressModelUpdateAfterUpdateTransaction: boolean | undefined = undefined;
-    /** @deprecated v23     */
-    @Input() public deltaRowDataMode: boolean | undefined = undefined;
-    /** @deprecated v23 use asyncTransactionWaitMillis instead     */
-    @Input() public batchUpdateWaitMillis: number | undefined = undefined;
     /** Provide the datasource for infinite scrolling.     */
     @Input() public datasource: IDatasource | undefined = undefined;
     /** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.
@@ -800,8 +765,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
     /** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead.     */
     @Input() public serverSideFilteringAlwaysResets: boolean | undefined = undefined;
-    /** @deprecated v25     */
-    @Input() public suppressEnterpriseResetOnNewColumns: boolean | undefined = undefined;
     /** To use the viewport row model you need to provide the grid with a `viewportDatasource`.     */
     @Input() public viewportDatasource: IViewportDatasource | undefined = undefined;
     /** When using viewport row model, sets the page size for the viewport.     */
@@ -891,10 +854,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public columnHoverHighlight: boolean | undefined = undefined;
     @Input() public deltaSort: boolean | undefined = undefined;
     @Input() public treeDataDisplayType: TreeDataDisplayType | undefined = undefined;
-    /** @deprecated v26     */
-    @Input() public angularCompileRows: boolean | undefined = undefined;
-    /** @deprecated v26     */
-    @Input() public angularCompileFilters: boolean | undefined = undefined;
     @Input() public functionsPassive: boolean | undefined = undefined;
     @Input() public enableGroupEdit: boolean | undefined = undefined;
     /** For customising the context menu.     */
@@ -931,8 +890,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public navigateToNextCell: ((params: NavigateToNextCellParams<TData>) => (CellPosition | null)) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.      */
     @Input() public tabToNextCell: ((params: TabToNextCellParams<TData>) => (CellPosition | null)) | undefined = undefined;
-    /** @deprecated v24 - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.     */
-    @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams<TData>) => boolean) | undefined = undefined;
     /** @deprecated v27.2 - Use `getLocaleText` instead.     */
     @Input() public localeTextFunc: ((key: string, defaultValue: string, variableValues?: string[]) => string) | undefined = undefined;
     /** A callback for localising text within the grid.     */
@@ -961,8 +918,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public processPivotResultColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.     */
     @Input() public getDataPath: GetDataPath<TData> | undefined = undefined;
-    /** @deprecated v26 - Use initialGroupOrderComparator instead     */
-    @Input() public defaultGroupSortComparator: ((nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number) | undefined = undefined;
     /** Allows setting the child count for a group row.     */
     @Input() public getChildCount: ((dataItem: any) => number) | undefined = undefined;
     /** Allows providing different params for different levels of grouping.     */
@@ -1176,13 +1131,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_debug: boolean | null | '';
     static ngAcceptInputType_enableBrowserTooltips: boolean | null | '';
     static ngAcceptInputType_enableCellExpressions: boolean | null | '';
-    static ngAcceptInputType_angularCompileRows: boolean | null | '';
-    static ngAcceptInputType_angularCompileFilters: boolean | null | '';
-    static ngAcceptInputType_groupSuppressAutoColumn: boolean | null | '';
     static ngAcceptInputType_groupSelectsChildren: boolean | null | '';
     static ngAcceptInputType_groupIncludeFooter: boolean | null | '';
     static ngAcceptInputType_groupIncludeTotalFooter: boolean | null | '';
-    static ngAcceptInputType_groupUseEntireRow: boolean | null | '';
     static ngAcceptInputType_groupSuppressBlankHeader: boolean | null | '';
     static ngAcceptInputType_suppressMenuHide: boolean | null | '';
     static ngAcceptInputType_suppressRowDeselection: boolean | null | '';
@@ -1236,18 +1187,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_rowDragMultiRow: boolean | null | '';
     static ngAcceptInputType_enableGroupEdit: boolean | null | '';
     static ngAcceptInputType_embedFullWidthRows: boolean | null | '';
-    static ngAcceptInputType_deprecatedEmbedFullWidthRows: boolean | null | '';
     static ngAcceptInputType_suppressPaginationPanel: boolean | null | '';
     static ngAcceptInputType_groupHideOpenParents: boolean | null | '';
-    static ngAcceptInputType_groupMultiAutoColumn: boolean | null | '';
     static ngAcceptInputType_pagination: boolean | null | '';
-    static ngAcceptInputType_stopEditingWhenGridLosesFocus: boolean | null | '';
     static ngAcceptInputType_paginationAutoPageSize: boolean | null | '';
     static ngAcceptInputType_suppressScrollOnNewData: boolean | null | '';
     static ngAcceptInputType_suppressScrollWhenPopupsAreOpen: boolean | null | '';
     static ngAcceptInputType_purgeClosedRowNodes: boolean | null | '';
     static ngAcceptInputType_cacheQuickFilter: boolean | null | '';
-    static ngAcceptInputType_deltaRowDataMode: boolean | null | '';
     static ngAcceptInputType_ensureDomOrder: boolean | null | '';
     static ngAcceptInputType_accentedSort: boolean | null | '';
     static ngAcceptInputType_suppressChangeDetection: boolean | null | '';
@@ -1264,17 +1211,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_enterMovesDown: boolean | null | '';
     static ngAcceptInputType_suppressPropertyNamesCheck: boolean | null | '';
     static ngAcceptInputType_rowMultiSelectWithClick: boolean | null | '';
-    static ngAcceptInputType_suppressEnterpriseResetOnNewColumns: boolean | null | '';
     static ngAcceptInputType_suppressRowHoverHighlight: boolean | null | '';
     static ngAcceptInputType_suppressRowTransform: boolean | null | '';
     static ngAcceptInputType_suppressClipboardPaste: boolean | null | '';
     static ngAcceptInputType_suppressLastEmptyLineOnPaste: boolean | null | '';
-    static ngAcceptInputType_suppressSetColumnStateEvents: boolean | null | '';
     static ngAcceptInputType_suppressColumnStateEvents: boolean | null | '';
     static ngAcceptInputType_enableCharts: boolean | null | '';
     static ngAcceptInputType_enableChartToolPanelsButton: boolean | null | '';
     static ngAcceptInputType_suppressChartToolPanelsButton: boolean | null | '';
-    static ngAcceptInputType_deltaColumnMode: boolean | null | '';
     static ngAcceptInputType_suppressMaintainUnsortedOrder: boolean | null | '';
     static ngAcceptInputType_enableCellTextSelection: boolean | null | '';
     static ngAcceptInputType_suppressBrowserResizeObserver: boolean | null | '';
@@ -1287,10 +1231,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_undoRedoCellEditing: boolean | null | '';
     static ngAcceptInputType_allowDragFromColumnsToolPanel: boolean | null | '';
     static ngAcceptInputType_immutableData: boolean | null | '';
-    static ngAcceptInputType_immutableColumns: boolean | null | '';
     static ngAcceptInputType_pivotSuppressAutoColumn: boolean | null | '';
     static ngAcceptInputType_suppressExpandablePivotGroups: boolean | null | '';
-    static ngAcceptInputType_applyColumnDefOrder: boolean | null | '';
     static ngAcceptInputType_debounceVerticalScrollbar: boolean | null | '';
     static ngAcceptInputType_detailRowAutoHeight: boolean | null | '';
     static ngAcceptInputType_serverSideFilteringAlwaysResets: boolean | null | '';

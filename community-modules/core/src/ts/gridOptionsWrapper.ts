@@ -537,7 +537,7 @@ export class GridOptionsWrapper {
     }
 
     public isGroupUseEntireRow(pivotMode: boolean): boolean {
-        // we never allow groupUseEntireRow if in pivot mode, otherwise we won't see the pivot values.
+        // we never allow groupDisplayType = 'groupRows' if in pivot mode, otherwise we won't see the pivot values.
         if (pivotMode) { return false; }
 
         return this.gridOptions.groupDisplayType ?
@@ -850,15 +850,11 @@ export class GridOptionsWrapper {
     }
 
     public isEmbedFullWidthRows() {
-        return isTrue(this.gridOptions.embedFullWidthRows) || isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
+        return isTrue(this.gridOptions.embedFullWidthRows);
     }
 
     public isDetailRowAutoHeight() {
         return isTrue(this.gridOptions.detailRowAutoHeight);
-    }
-
-    public getSuppressKeyboardEventFunc(): ((params: SuppressKeyboardEventParams) => boolean) | undefined {
-        return this.gridOptions.suppressKeyboardEvent;
     }
 
     public getBusinessKeyForNodeFunc() {
@@ -994,14 +990,6 @@ export class GridOptionsWrapper {
         return this.gridOptions.pivotPanelShow;
     }
 
-    public isAngularCompileRows() {
-        return isTrue(this.gridOptions.angularCompileRows);
-    }
-
-    public isAngularCompileFilters() {
-        return isTrue(this.gridOptions.angularCompileFilters);
-    }
-
     public isDebug() {
         return isTrue(this.gridOptions.debug);
     }
@@ -1096,10 +1084,6 @@ export class GridOptionsWrapper {
 
     public isPagination() {
         return isTrue(this.gridOptions.pagination);
-    }
-
-    public isSuppressEnterpriseResetOnNewColumns() {
-        return isTrue(this.gridOptions.suppressEnterpriseResetOnNewColumns);
     }
 
     public getProcessDataFromClipboardFunc() {
@@ -1303,12 +1287,12 @@ export class GridOptionsWrapper {
     public getDefaultExportParams(type: 'csv'): CsvExportParams | undefined;
     public getDefaultExportParams(type: 'excel'): ExcelExportParams | undefined;
     public getDefaultExportParams(type: 'csv' | 'excel'): CsvExportParams | ExcelExportParams | undefined {
-        if (this.gridOptions.defaultExportParams) {
+        if ((this.gridOptions as any).defaultExportParams) {
             console.warn(`AG Grid: Since v25.2 \`defaultExportParams\`  has been replaced by \`default${capitalise(type)}ExportParams\`'`);
             if (type === 'csv') {
-                return this.gridOptions.defaultExportParams as CsvExportParams;
+                return (this.gridOptions as any).defaultExportParams as CsvExportParams;
             }
-            return this.gridOptions.defaultExportParams as ExcelExportParams;
+            return (this.gridOptions as any).defaultExportParams as ExcelExportParams;
         }
 
         if (type === 'csv' && this.gridOptions.defaultCsvExportParams) {
@@ -1688,30 +1672,8 @@ export class GridOptionsWrapper {
     }
 
     public getMinColWidth(): number {
-        const minColWidth = this.gridOptions.minColWidth;
-
-        if (exists(minColWidth) && minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
-            return this.gridOptions.minColWidth!;
-        }
-
         const measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
         return exists(measuredMin) ? Math.max(measuredMin, GridOptionsWrapper.MIN_COL_WIDTH) : GridOptionsWrapper.MIN_COL_WIDTH;
-    }
-
-    public getMaxColWidth() {
-        if (this.gridOptions.maxColWidth && this.gridOptions.maxColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
-            return this.gridOptions.maxColWidth;
-        }
-
-        return null;
-    }
-
-    public getColWidth() {
-        if (typeof this.gridOptions.colWidth !== 'number' || this.gridOptions.colWidth < GridOptionsWrapper.MIN_COL_WIDTH) {
-            return 200;
-        }
-
-        return this.gridOptions.colWidth;
     }
 
     public getRowBuffer(): number {
@@ -1813,20 +1775,6 @@ export class GridOptionsWrapper {
             console.warn('      innerRenderer: "myRenderer",');
             console.warn('      innerRendererParams: {x: a}');
             console.warn('    }');
-            console.warn('  We have copied the properties over for you. However to stop this error message, please change your application code.');
-            if (!options.groupRowRendererParams) {
-                options.groupRowRendererParams = {};
-            }
-            const params = options.groupRowRendererParams;
-            if (options.groupRowInnerRenderer) {
-                params.innerRenderer = options.groupRowInnerRenderer;
-            }
-            if (options.groupRowInnerRendererParams) {
-                params.innerRendererParams = options.groupRowInnerRendererParams;
-            }
-            if (options.groupRowInnerRendererFramework) {
-                params.innerRendererFramework = options.groupRowInnerRendererFramework;
-            }
         }
 
         if (options.rememberGroupStateWhenNewData) {

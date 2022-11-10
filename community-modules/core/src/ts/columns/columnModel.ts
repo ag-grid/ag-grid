@@ -483,7 +483,7 @@ export class ColumnModel extends BeanStub {
 
         this.pivotMode = pivotMode;
 
-        // we need to update grid columns to cover the scenario where user has groupSuppressAutoColumn=true, as
+        // we need to update grid columns to cover the scenario where user has groupDisplayType = 'custom', as
         // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
         // so need to updateGridColumn() to check it autoGroupCol needs to be added / removed
         this.autoGroupsNeedBuilding = true;

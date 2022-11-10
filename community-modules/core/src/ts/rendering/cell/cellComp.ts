@@ -322,14 +322,11 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private createCellRendererInstance(compDetails: UserCompDetails): void {
-        // never use task service if angularCompileRows=true, as that assume the cell renderers
-        // are finished when the row is created. also we never use it if animation frame service
-        // is turned off.
+        // never use task service if animation frame service is turned off.
         // and lastly we never use it if doing auto-height, as the auto-height service checks the
-        // row height directly after the cell is created, it doesn't wait around for the tasks to complete
-        const angularCompileRows = this.beans.gridOptionsWrapper.isAngularCompileRows();
+        // row height directly after the cell is created, it doesn't wait around for the tasks to complete        
         const suppressAnimationFrame = this.beans.gridOptionsWrapper.isSuppressAnimationFrame();
-        const useTaskService = !angularCompileRows && !suppressAnimationFrame;
+        const useTaskService = !suppressAnimationFrame;
 
         const displayComponentVersionCopy = this.rendererVersion;
 
