@@ -1,6 +1,6 @@
 import { PostConstruct } from "@ag-grid-community/core";
 import { MiniChart } from "./miniChart";
-import { Integrated } from "ag-charts-community";
+import { _Scene } from "ag-charts-community";
 
 export abstract class MiniChartWithAxes extends MiniChart {
 
@@ -16,14 +16,14 @@ export abstract class MiniChartWithAxes extends MiniChart {
         const size = this.size;
         const padding = this.padding;
 
-        const leftAxis = new Integrated.Line();
+        const leftAxis = new _Scene.Line();
         leftAxis.x1 = padding;
         leftAxis.y1 = padding;
         leftAxis.x2 = padding;
         leftAxis.y2 = size - padding + this.axisOvershoot;
         leftAxis.stroke = this.stroke;
 
-        const bottomAxis = new Integrated.Line();
+        const bottomAxis = new _Scene.Line();
         bottomAxis.x1 = padding - this.axisOvershoot + 1;
         bottomAxis.y1 = size - padding;
         bottomAxis.x2 = size - padding + 1;

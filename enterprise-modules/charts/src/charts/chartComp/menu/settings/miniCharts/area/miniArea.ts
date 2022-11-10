@@ -1,5 +1,5 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { Integrated } from "ag-charts-community";
+import { _Scene } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 
 export interface ICoordinate {
@@ -10,7 +10,7 @@ export interface ICoordinate {
 export class MiniArea extends MiniChartWithAxes {
 
     static chartType: ChartType = 'area';
-    private readonly areas: Integrated.Path[];
+    private readonly areas: _Scene.Path[];
 
     static readonly data = [
         [1, 3, 5],
@@ -24,13 +24,13 @@ export class MiniArea extends MiniChartWithAxes {
         const size = this.size;
         const padding = this.padding;
 
-        const xScale = new Integrated.BandScale<number>();
+        const xScale = new _Scene.BandScale<number>();
         xScale.domain = [0, 1, 2];
         xScale.paddingInner = 1;
         xScale.paddingOuter = 0;
         xScale.range = [padding + 0.5, size - padding - 0.5];
 
-        const yScale = new Integrated.LinearScale();
+        const yScale = new _Scene.LinearScale();
         yScale.domain = [0, 6];
         yScale.range = [size - padding + 0.5, padding];
 
@@ -59,7 +59,7 @@ export class MiniArea extends MiniChartWithAxes {
         });
 
         this.areas = pathData.reverse().map(points => {
-            const area = new Integrated.Path();
+            const area = new _Scene.Path();
             area.strokeWidth = 1;
             area.fillOpacity = 0.7;
 

@@ -1,4 +1,4 @@
-import { AgCartesianAxisType, Integrated } from 'ag-charts-community';
+import { AgCartesianAxisType, _Scene } from 'ag-charts-community';
 
 // Extensions to the public ag-charts-community API that Integrated Charts currently depends on for
 // correct operation. Over time we aim to eliminate these and only use the public API.
@@ -7,7 +7,7 @@ import { AgCartesianAxisType, Integrated } from 'ag-charts-community';
 
 declare module 'ag-charts-community' {
     interface AgChartInstance {
-        title?: Integrated.Caption;
+        title?: _Scene.Caption;
         width: number;
         height: number;
         series: {

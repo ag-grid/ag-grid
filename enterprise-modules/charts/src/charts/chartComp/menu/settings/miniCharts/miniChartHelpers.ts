@@ -1,8 +1,8 @@
-import { Integrated } from "ag-charts-community";
+import { _Scene } from "ag-charts-community";
 
 export interface CreateColumnRectsParams {
     stacked: boolean;
-    root: Integrated.Group;
+    root: _Scene.Group;
     data: any;
     size: number;
     padding: number;
@@ -14,20 +14,20 @@ export interface CreateColumnRectsParams {
 export function createColumnRects(params: CreateColumnRectsParams) {
     const { stacked, size, padding, xScalePadding, xScaleDomain, yScaleDomain } = params;
 
-    const xScale = new Integrated.BandScale<number>();
+    const xScale = new _Scene.BandScale<number>();
     xScale.domain = xScaleDomain;
     xScale.range = [padding, size - padding];
     xScale.paddingInner = xScalePadding;
     xScale.paddingOuter = xScalePadding;
 
-    const yScale = new Integrated.LinearScale();
+    const yScale = new _Scene.LinearScale();
     yScale.domain = yScaleDomain;
     yScale.range = [size - padding, padding];
 
-    const createBars = (series: number[], xScale: Integrated.BandScale<number>, yScale: Integrated.LinearScale) => {
+    const createBars = (series: number[], xScale: _Scene.BandScale<number>, yScale: _Scene.LinearScale) => {
         return series.map((datum: number, i: number) => {
             const top = yScale.convert(datum);
-            const rect = new Integrated.Rect();
+            const rect = new _Scene.Rect();
             rect.x = xScale.convert(i);
             rect.y = top;
             rect.width = xScale.bandwidth;
@@ -46,17 +46,17 @@ export function createColumnRects(params: CreateColumnRectsParams) {
     return createBars(params.data, xScale, yScale);
 }
 
-export function createLinePaths(root: Integrated.Group, data: number[][], size: number, padding: number): Integrated.Path[] {
-    const xScale = new Integrated.LinearScale();
+export function createLinePaths(root: _Scene.Group, data: number[][], size: number, padding: number): _Scene.Path[] {
+    const xScale = new _Scene.LinearScale();
     xScale.domain = [0, 4];
     xScale.range = [padding, size - padding];
 
-    const yScale = new Integrated.LinearScale();
+    const yScale = new _Scene.LinearScale();
     yScale.domain = [0, 10];
     yScale.range = [size - padding, padding];
 
-    const lines: Integrated.Path[] = data.map(series => {
-        const line = new Integrated.Path();
+    const lines: _Scene.Path[] = data.map(series => {
+        const line = new _Scene.Path();
         line.strokeWidth = 3;
         line.lineCap = "round";
         line.fill = undefined;
@@ -67,7 +67,7 @@ export function createLinePaths(root: Integrated.Group, data: number[][], size: 
         return line;
     });
 
-    const clipRect = new Integrated.ClipRect();
+    const clipRect = new _Scene.ClipRect();
     clipRect.x = clipRect.y = padding;
     clipRect.width = clipRect.height = size - padding * 2;
     clipRect.append(lines);

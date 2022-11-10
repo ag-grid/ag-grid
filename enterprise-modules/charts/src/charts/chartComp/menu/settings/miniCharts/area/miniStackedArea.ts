@@ -1,6 +1,6 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
 import { ICoordinate } from "./miniArea";
-import { Integrated } from "ag-charts-community";
+import { _Scene } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 
 export class MiniStackedArea extends MiniChartWithAxes {
@@ -12,7 +12,7 @@ export class MiniStackedArea extends MiniChartWithAxes {
         [6, 2, 2]
     ];
 
-    private readonly areas: Integrated.Path[];
+    private readonly areas: _Scene.Path[];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniStackedArea.data, tooltipName = "stackedAreaTooltip") {
         super(container, tooltipName);
@@ -20,13 +20,13 @@ export class MiniStackedArea extends MiniChartWithAxes {
         const size = this.size;
         const padding = this.padding;
 
-        const xScale = new Integrated.BandScale<number>();
+        const xScale = new _Scene.BandScale<number>();
         xScale.domain = [0, 1, 2];
         xScale.paddingInner = 1;
         xScale.paddingOuter = 0;
         xScale.range = [padding + 0.5, size - padding - 0.5];
 
-        const yScale = new Integrated.LinearScale();
+        const yScale = new _Scene.LinearScale();
         yScale.domain = [0, 16];
         yScale.range = [size - padding + 0.5, padding + 0.5];
 
@@ -57,7 +57,7 @@ export class MiniStackedArea extends MiniChartWithAxes {
         });
 
         this.areas = pathData.map(points => {
-            const area = new Integrated.Path();
+            const area = new _Scene.Path();
             area.strokeWidth = 1;
 
             const path = area.path;

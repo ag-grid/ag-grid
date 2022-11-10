@@ -1,11 +1,11 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { Integrated } from "ag-charts-community";
+import { _Scene } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 
 export class MiniBubble extends MiniChartWithAxes {
 
     static chartType: ChartType = 'bubble';
-    private readonly points: Integrated.Shape[];
+    private readonly points: _Scene.Shape[];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
         super(container, "bubbleTooltip");
@@ -18,19 +18,19 @@ export class MiniBubble extends MiniChartWithAxes {
             [[0.1, 0.3, 5], [0.5, 0.4, 7], [0.2, 0.8, 7]], [[0.8, 0.7, 5], [0.7, 0.3, 9]]
         ];
 
-        const xScale = new Integrated.LinearScale();
+        const xScale = new _Scene.LinearScale();
         xScale.domain = [0, 1];
         xScale.range = [padding * 2, size - padding];
 
-        const yScale = new Integrated.LinearScale();
+        const yScale = new _Scene.LinearScale();
         yScale.domain = [0, 1];
         yScale.range = [size - padding, padding];
 
-        const points: Integrated.Shape[] = [];
+        const points: _Scene.Shape[] = [];
 
         data.forEach(series => {
             series.forEach(([x, y, radius]) => {
-                const arc = new Integrated.Arc();
+                const arc = new _Scene.Arc();
                 arc.strokeWidth = 1;
                 arc.centerX = xScale.convert(x);
                 arc.centerY = yScale.convert(y);
@@ -43,7 +43,7 @@ export class MiniBubble extends MiniChartWithAxes {
         this.points = points;
         this.updateColors(fills, strokes);
 
-        const clipRect = new Integrated.ClipRect();
+        const clipRect = new _Scene.ClipRect();
         clipRect.x = padding;
         clipRect.y = padding;
         clipRect.width = size - padding * 2;

@@ -1,4 +1,4 @@
-import { Integrated } from "ag-charts-community";
+import { _Scene } from "ag-charts-community";
 import { ChartType } from '@ag-grid-community/core';
 import { createColumnRects, CreateColumnRectsParams, createLinePaths } from '../miniChartHelpers';
 import { MiniChart } from '../miniChart';
@@ -6,8 +6,8 @@ import { MiniChart } from '../miniChart';
 export class MiniCustomCombo extends MiniChart {
     static chartType: ChartType = 'customCombo';
 
-    private columns: Integrated.Rect[];
-    private lines: Integrated.Path[];
+    private columns: _Scene.Rect[];
+    private lines: _Scene.Path[];
 
     private columnData = [3, 4];
 
@@ -36,21 +36,21 @@ export class MiniCustomCombo extends MiniChart {
         const axisStroke = 'grey';
         const axisOvershoot = 3;
 
-        const leftAxis = new Integrated.Line();
+        const leftAxis = new _Scene.Line();
         leftAxis.x1 = padding;
         leftAxis.y1 = padding;
         leftAxis.x2 = padding;
         leftAxis.y2 = size - padding + axisOvershoot;
         leftAxis.stroke = axisStroke;
 
-        const bottomAxis = new Integrated.Line();
+        const bottomAxis = new _Scene.Line();
         bottomAxis.x1 = padding - axisOvershoot + 1;
         bottomAxis.y1 = size - padding;
         bottomAxis.x2 = size - padding + 1;
         bottomAxis.y2 = size - padding;
         bottomAxis.stroke = axisStroke;
 
-        const penIcon = new Integrated.Path();
+        const penIcon = new _Scene.Path();
         this.buildPenIconPath(penIcon);
         penIcon.fill = 'whitesmoke';
         penIcon.stroke = 'darkslategrey';
@@ -62,17 +62,17 @@ export class MiniCustomCombo extends MiniChart {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.columns.forEach((bar: Integrated.Rect, i: number) => {
+        this.columns.forEach((bar: _Scene.Rect, i: number) => {
             bar.fill = fills[i];
             bar.stroke = strokes[i];
         });
 
-        this.lines.forEach((line: Integrated.Path, i: number) => {
+        this.lines.forEach((line: _Scene.Path, i: number) => {
             line.stroke = fills[i + 2];
         });
     }
 
-    buildPenIconPath(penIcon: Integrated.Path) {
+    buildPenIconPath(penIcon: _Scene.Path) {
         const { path } = penIcon;
         path.moveTo(25.76, 43.46);
         path.lineTo(31.27, 48.53);

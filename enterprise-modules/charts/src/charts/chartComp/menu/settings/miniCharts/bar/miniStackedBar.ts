@@ -1,5 +1,5 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { Integrated } from "ag-charts-community";
+import { _Scene } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 
 export class MiniStackedBar extends MiniChartWithAxes {
@@ -11,7 +11,7 @@ export class MiniStackedBar extends MiniChartWithAxes {
         [2, 3, 4]
     ];
 
-    private readonly bars: Integrated.Rect[][];
+    private readonly bars: _Scene.Rect[][];
 
     constructor(
         container: HTMLElement,
@@ -25,13 +25,13 @@ export class MiniStackedBar extends MiniChartWithAxes {
         const size = this.size;
         const padding = this.padding;
 
-        const yScale = new Integrated.BandScale<number>();
+        const yScale = new _Scene.BandScale<number>();
         yScale.domain = [0, 1, 2];
         yScale.range = [padding, size - padding];
         yScale.paddingInner = 0.3;
         yScale.paddingOuter = 0.3;
 
-        const xScale = new Integrated.LinearScale();
+        const xScale = new _Scene.LinearScale();
         xScale.domain = xScaleDomain;
         xScale.range = [size - padding, padding];
 
@@ -40,7 +40,7 @@ export class MiniStackedBar extends MiniChartWithAxes {
 
         this.bars = data.map(series =>
             series.map((datum, i) => {
-                const rect = new Integrated.Rect();
+                const rect = new _Scene.Rect();
                 rect.x = padding;
                 rect.y = yScale.convert(i);
                 rect.width = bottom - xScale.convert(datum);
@@ -53,7 +53,7 @@ export class MiniStackedBar extends MiniChartWithAxes {
         );
 
         this.updateColors(fills, strokes);
-        this.root.append(([] as Integrated.Rect[]).concat.apply([], this.bars));
+        this.root.append(([] as _Scene.Rect[]).concat.apply([], this.bars));
     }
 
     updateColors(fills: string[], strokes: string[]) {
