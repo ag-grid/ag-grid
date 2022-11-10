@@ -3,8 +3,9 @@ import { JSDOM } from 'jsdom';
 
 import * as mockCanvas from '../src/chart/test/mock-canvas';
 import * as examples from '../src/chart/test/examples';
-import { AgChartV2 } from '../src/chart/agChartV2';
+import { AgChart } from '../src/chart/agChartV2';
 import { AgChartOptions } from '../src/chart/agChartOptions';
+import { Chart } from '../src/chart/chart';
 
 const galleryJsonPath = `${__dirname}/../../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/gallery.json`;
 const outputPath = `${__dirname}/../../../grid-packages/ag-grid-docs/documentation/src/components/chart-gallery/thumbnails`;
@@ -73,7 +74,7 @@ const genThumbnails = async () => {
         const mockCtx = mockCanvas.setup({ width, height });
 
         const options = { ...example, ...optionOverrides };
-        const chart = AgChartV2.create<any>(options);
+        const chart = AgChart.create<any>(options) as Chart;
         await chart.waitForUpdate(5_000);
 
         fs.writeFileSync(`${outputPath}/${thumbnail}.png`, mockCtx.ctx.nodeCanvas?.toBuffer());
