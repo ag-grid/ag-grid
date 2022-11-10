@@ -1,6 +1,6 @@
 import {h} from 'vue';
 import {Options, Vue} from 'vue-class-component';
-import {AgChart, AgChartOptions, Chart} from 'ag-charts-community';
+import {AgChart, AgChartOptions, AgChartInstance} from 'ag-charts-community';
 import {toRaw} from '@vue/reactivity';
 
 @Options({
@@ -20,7 +20,7 @@ export class AgChartsVue extends Vue {
     private isCreated = false;
     private isDestroyed = false;
 
-    private chart!: Chart;
+    private chart!: AgChartInstance;
 
     private options!: AgChartOptions;
 
