@@ -52,7 +52,7 @@ const warnSeriesDeprecated = () => warnDeprecated('series', 'Use seriesId to get
 export class SeriesNodeClickEvent<Datum extends { datum: any }> implements TypedEvent {
     readonly type = 'nodeClick';
     readonly datum: any;
-    readonly event: MouseEvent;
+    readonly event: Event;
     readonly seriesId: string;
 
     private readonly _series: Series;
@@ -62,7 +62,7 @@ export class SeriesNodeClickEvent<Datum extends { datum: any }> implements Typed
         return this._series;
     }
 
-    constructor(nativeEvent: MouseEvent, datum: Datum, series: Series) {
+    constructor(nativeEvent: Event, datum: Datum, series: Series) {
         this.event = nativeEvent;
         this.datum = datum.datum;
         this.seriesId = series.id;
@@ -440,12 +440,12 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     abstract getLabelData(): PointLabelDatum[];
 
-    fireNodeClickEvent(_event: MouseEvent, _datum: C['nodeData'][number]): void {
-        const eventObject = this.getNodeClickEvent(_event, _datum);
+    fireNodeClickEvent(event: Event, _datum: C['nodeData'][number]): void {
+        const eventObject = this.getNodeClickEvent(event, _datum);
         this.fireEvent(eventObject);
     }
 
-    protected getNodeClickEvent(event: MouseEvent, datum: SeriesNodeDatum): SeriesNodeClickEvent<any> {
+    protected getNodeClickEvent(event: Event, datum: SeriesNodeDatum): SeriesNodeClickEvent<any> {
         return new SeriesNodeClickEvent(event, datum, this);
     }
 

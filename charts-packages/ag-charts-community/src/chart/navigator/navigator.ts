@@ -5,6 +5,7 @@ import { NavigatorMask } from './navigatorMask';
 import { NavigatorHandle } from './navigatorHandle';
 import { ChartUpdateType } from '../chart';
 import { NUMBER, Validate } from '../../util/validation';
+import { InteractionManager } from '../interaction/interactionManager';
 
 interface Offset {
     offsetX: number;
@@ -83,14 +84,19 @@ export class Navigator {
         return this.rs.max;
     }
 
-    constructor(chart: CartesianChart) {
+    constructor(chart: CartesianChart, interactionManager: InteractionManager) {
         this.chart = chart;
 
         chart.scene.root!!.append(this.rs);
         this.rs.onRangeChange = () => chart.update(ChartUpdateType.PERFORM_LAYOUT, { forceNodeDataRefresh: true });
+
+        interactionManager.addListener('drag-start', (event) => this.onDragStart(event));
+        interactionManager.addListener('drag', (event) => this.onDrag(event));
+        interactionManager.addListener('hover', (event) => this.onDrag(event));
+        interactionManager.addListener('drag-end', () => this.onDragStop());
     }
 
-    onDragStart(offset: Offset) {
+    private onDragStart(offset: Offset) {
         if (!this.enabled) {
             return;
         }
@@ -111,7 +117,7 @@ export class Navigator {
         }
     }
 
-    onDrag(offset: Offset) {
+    private onDrag(offset: Offset) {
         if (!this.enabled) {
             return;
         }
@@ -158,11 +164,11 @@ export class Navigator {
         }
     }
 
-    onDragStop() {
+    private onDragStop() {
         this.stopHandleDragging();
     }
 
-    stopHandleDragging() {
+    private stopHandleDragging() {
         this.minHandleDragging = this.maxHandleDragging = false;
         this.panHandleOffset = NaN;
     }
