@@ -40,6 +40,7 @@ import {
     CtrlsService,
     WithoutGridCommon,
 } from "@ag-grid-community/core";
+import { stringToArray } from "./csv";
 
 interface RowCallback {
     (gridRow: RowPosition, rowNode: RowNode | undefined, columns: Column[], rangeIndex: number, isLastRow?: boolean): void;
@@ -166,7 +167,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private processClipboardData(data: string): void {
         if (data == null) { return; }
 
-        let parsedData: string[][] | null = _.stringToArray(data, this.gridOptionsWrapper.getClipboardDelimiter());
+        let parsedData: string[][] | null = stringToArray(data, this.gridOptionsWrapper.getClipboardDelimiter());
 
         const userFunc = this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
 
