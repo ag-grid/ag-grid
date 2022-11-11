@@ -17,13 +17,15 @@ const unitTests = tests.map(pathToGlob).filter((path) => !e2eTests.includes(path
 const commonConfig = {
     globals: {
         'ts-jest': {
-            tsConfig: 'tsconfig.test.json',
+            tsconfig: 'tsconfig.test.json',
         },
     },
     transform: {
         '^.+\\.tsx?$': 'ts-jest',
     },
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+    testEnvironment: 'jsdom',
+    setupFiles: ['jest-canvas-mock'],
 };
 
 module.exports = {
@@ -38,7 +40,7 @@ module.exports = {
             displayName: 'e2e',
             roots: ['<rootDir>/src'],
             testMatch: e2eTests,
-            runner: 'jest-serial-runner',
+            // runner: 'jest-serial-runner',
             // maxWorkers: 1,
             // maxConcurrency: 1,
             // slowTestThreshold: 10,
