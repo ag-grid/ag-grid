@@ -13191,7 +13191,8 @@
       "suppressKeepFocus?": "boolean",
       "onlyBody?": "boolean",
       "newData?": "boolean",
-      "newPage?": "boolean"
+      "newPage?": "boolean",
+      "domLayoutChanged?": "boolean"
     }
   },
   "ITooltipParams": {

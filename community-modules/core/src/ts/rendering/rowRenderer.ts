@@ -317,7 +317,7 @@ export class RowRenderer extends BeanStub {
         this.embedFullWidthRows = embedFullWidthRows;
 
         if (destroyRows) {
-            this.redrawAfterModelUpdate();
+            this.redrawAfterModelUpdate({ domLayoutChanged: true });
         }
     }
 
@@ -475,9 +475,9 @@ export class RowRenderer extends BeanStub {
         this.updateContainerHeights();
         this.scrollToTopIfNewData(params);
 
-        // never recycle rows when print layout, we draw each row again from scratch. this is because print layout
-        // uses normal dom layout to put cells into dom - it doesn't allow reordering rows.
-        const recycleRows = !this.printLayout && !!params.recycleRows;
+        // never recycle rows on layout change as rows could change from normal DOM layout
+        // back to the grid's row positioning.
+        const recycleRows: boolean = !params.domLayoutChanged && !!params.recycleRows;
         const animate = params.animate && this.gridOptionsWrapper.isAnimateRows();
 
         // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
@@ -1414,4 +1414,5 @@ export interface RefreshViewParams {
     // when new data, grid scrolls back to top
     newData?: boolean;
     newPage?: boolean;
+    domLayoutChanged?: boolean;
 }

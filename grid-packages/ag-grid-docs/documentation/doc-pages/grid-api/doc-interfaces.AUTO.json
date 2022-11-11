@@ -23096,7 +23096,10 @@
     },
     "onlyBody": { "type": { "returnType": "boolean", "optional": true } },
     "newData": { "type": { "returnType": "boolean", "optional": true } },
-    "newPage": { "type": { "returnType": "boolean", "optional": true } }
+    "newPage": { "type": { "returnType": "boolean", "optional": true } },
+    "domLayoutChanged": {
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "ITooltipParams": {
     "location": {
