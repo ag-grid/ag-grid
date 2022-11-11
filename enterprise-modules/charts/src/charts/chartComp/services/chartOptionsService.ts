@@ -177,7 +177,10 @@ export class ChartOptionsService extends BeanStub {
         'scatter',
     ];
     private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {
-        return ChartOptionsService.VALID_SERIES_TYPES.includes(seriesType) && series.type === seriesType;
+        const mapTypeToImplType = (type: ChartSeriesType) => type === 'column' ? 'bar' : type;
+        
+        return ChartOptionsService.VALID_SERIES_TYPES.includes(seriesType) &&
+            series.type === mapTypeToImplType(seriesType);
     }
 
     protected destroy(): void {
