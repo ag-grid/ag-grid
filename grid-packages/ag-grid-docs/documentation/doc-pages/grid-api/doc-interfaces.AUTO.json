@@ -12685,7 +12685,7 @@
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
     "label": {
-      "description": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated Use series.calloutLabel instead.\n     */",
+      "description": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.\n     */",
       "type": {
         "returnType": "AgPieSeriesLabelOptions<DatumType>",
         "optional": true
@@ -12706,7 +12706,7 @@
       }
     },
     "callout": {
-      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated Use series.calloutLine instead.\n     */",
+      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.\n     */",
       "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "calloutLine": {
@@ -12730,11 +12730,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
+      "description": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
+      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -13062,7 +13062,7 @@
   },
   "AgChartLegendLabelFormatterParams": {
     "id": {
-      "description": "/** @deprecated Use seriesId. */",
+      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId. */",
       "type": { "returnType": "string", "optional": false }
     },
     "seriesId": { "type": { "returnType": "string", "optional": false } },
@@ -13214,7 +13214,7 @@
       "type": { "returnType": "'seriesNodeClick'", "optional": false }
     },
     "series": {
-      "description": "/** @deprecated Use seriesId to get the series ID. */",
+      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "type": { "returnType": "any", "optional": false }
     },
     "seriesId": {
@@ -13866,15 +13866,15 @@
   },
   "AgSeriesHighlightStyle": {
     "fill": {
-      "description": "/** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated Use item.fill instead.\n     */",
+      "description": "/** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use item.fill instead.\n     */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {
-      "description": "/** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated Use item.stroke instead.\n     */",
+      "description": "/** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use item.stroke instead.\n     */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated Use item.strokeWidth instead.\n     */",
+      "description": "/** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use item.strokeWidth instead.\n     */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "item": {
@@ -13892,7 +13892,7 @@
       "type": { "returnType": "'nodeClick'", "optional": false }
     },
     "series": {
-      "description": "/** @deprecated Use seriesId to get the series ID. */",
+      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "type": { "returnType": "any", "optional": false }
     },
     "seriesId": {
@@ -14619,23 +14619,23 @@
       "type": { "returnType": "string", "optional": true }
     },
     "fill": {
-      "description": "/** @deprecated Use {@link marker.fill} instead. */",
+      "description": "/** @deprecated since v5.1.0 (ag-grid v27.1.0) Use {@link marker.fill} instead. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {
-      "description": "/** @deprecated Use {@link marker.stroke} instead. */",
+      "description": "/** @deprecated since v5.1.0 (ag-grid v27.1.0) Use {@link marker.stroke} instead. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** @deprecated Use {@link marker.strokeWidth} instead. */",
+      "description": "/** @deprecated since v5.1.0 (ag-grid v27.1.0) Use {@link marker.strokeWidth} instead. */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "fillOpacity": {
-      "description": "/** @deprecated Use {@link marker.fillOpacity} instead. */",
+      "description": "/** @deprecated since v5.1.0 (ag-grid v27.1.0) Use {@link marker.fillOpacity} instead. */",
       "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
-      "description": "/** @deprecated Use {@link marker.strokeOpacity} instead. */",
+      "description": "/** @deprecated since v5.1.0 (ag-grid v27.1.0) Use {@link marker.strokeOpacity} instead. */",
       "type": { "returnType": "Opacity", "optional": true }
     },
     "tooltip": {
@@ -14704,7 +14704,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "yKeys": {
-      "description": "/** The keys to use to retrieve y-values from the data.\n     *\n     * @deprecated use yKey and multiple series instead\n     */",
+      "description": "/** The keys to use to retrieve y-values from the data.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) use yKey and multiple series instead\n     */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "yKey": {
@@ -14716,12 +14716,12 @@
       "type": { "returnType": "string", "optional": true }
     },
     "yNames": {
-      "description": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated use yName and multiple series instead\n     */",
+      "description": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) use yName and multiple series instead\n     */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "yName": { "type": { "returnType": "string", "optional": true } },
     "fills": {
-      "description": "/** The colours to cycle through for the fills of the areas.\n     *\n     * @deprecated use fill and multiple series instead\n     */",
+      "description": "/** The colours to cycle through for the fills of the areas.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) use fill and multiple series instead\n     */",
       "type": { "returnType": "CssColor[]", "optional": true }
     },
     "fill": {
@@ -14729,7 +14729,7 @@
       "type": { "returnType": "CssColor", "optional": true }
     },
     "strokes": {
-      "description": "/** The colours to cycle through for the strokes of the areas.\n     *\n     * @deprecated use stroke and multiple series instead\n     */",
+      "description": "/** The colours to cycle through for the strokes of the areas.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) use stroke and multiple series instead\n     */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "stroke": {
@@ -14891,7 +14891,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "yKeys": {
-      "description": "/** The keys to use to retrieve y-values from the data.\n     *\n     * @deprecated use yKey and multiple series instead\n     */",
+      "description": "/** The keys to use to retrieve y-values from the data.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use yKey and multiple series instead\n     */",
       "type": { "returnType": "string[] | string[][]", "optional": true }
     },
     "xName": {
@@ -14903,7 +14903,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "yNames": {
-      "description": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated use yName and multiple series instead\n     */",
+      "description": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use yName and multiple series instead\n     */",
       "type": {
         "returnType": "string[] | { [key in string]: string }",
         "optional": true
@@ -14911,7 +14911,7 @@
     },
     "flipXY": { "type": { "returnType": "boolean", "optional": true } },
     "fills": {
-      "description": "/** The colours to cycle through for the fills of the bars.\n     *\n     * @deprecated use fill and multiple series instead\n     */",
+      "description": "/** The colours to cycle through for the fills of the bars.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use fill and multiple series instead\n     */",
       "type": { "returnType": "CssColor[]", "optional": true }
     },
     "fill": {
@@ -14919,7 +14919,7 @@
       "type": { "returnType": "CssColor", "optional": true }
     },
     "strokes": {
-      "description": "/** The colours to cycle through for the strokes of the bars.\n     *\n     * @deprecated use stroke and multiple series instead\n     */",
+      "description": "/** The colours to cycle through for the strokes of the bars.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use stroke and multiple series instead\n     */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "stroke": {
@@ -15439,7 +15439,7 @@
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
     "label": {
-      "description": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated Use series.calloutLabel instead.\n     */",
+      "description": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.\n     */",
       "type": {
         "returnType": "AgPieSeriesLabelOptions<DatumType>",
         "optional": true
@@ -15460,7 +15460,7 @@
       }
     },
     "callout": {
-      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated Use series.calloutLine instead.\n     */",
+      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.\n     */",
       "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "calloutLine": {
@@ -15484,11 +15484,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
+      "description": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
+      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -15619,11 +15619,11 @@
   },
   "AgPieSeriesTooltipRendererParams": {
     "labelKey": {
-      "description": "/** labelKey as specified on series options.\n     *\n     * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
+      "description": "/** labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** labelName as specified on series options.\n     *\n     * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
+      "description": "/** labelName as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -15689,15 +15689,15 @@
       "type": { "returnType": "DatumType", "optional": false }
     },
     "labelKey": {
-      "description": "/** labelKey as specified on series options.\n     *\n     * @deprecated Use calloutLabelKey instead.\n     */",
+      "description": "/** labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelKey instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelValue": {
-      "description": "/** labelValue as read from series data via the labelKey property.\n     *\n     * @deprecated Use calloutLabelValue instead.\n     */",
+      "description": "/** labelValue as read from series data via the labelKey property.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelValue instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** labelName as specified on series options.\n     *\n     * @deprecated Use calloutLabelName instead.\n     */",
+      "description": "/** labelName as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -15749,7 +15749,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "value": {
-      "description": "/** The value of labelKey as specified on series options.\n     *\n     * @deprecated Use item.datum instead.\n     */",
+      "description": "/** The value of labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use item.datum instead.\n     */",
       "type": { "returnType": "any", "optional": true }
     },
     "seriesId": {
