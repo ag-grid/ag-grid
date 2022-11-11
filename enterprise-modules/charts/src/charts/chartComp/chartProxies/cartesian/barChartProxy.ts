@@ -25,7 +25,7 @@ export class BarChartProxy extends CartesianChartProxy {
         const isBar = this.standaloneChartType === 'bar';
 
         const axisOptions = this.getAxesOptions();
-        let axes = [
+        const axes = [
             {
                 ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
                 type: this.xAxisType,
@@ -37,7 +37,7 @@ export class BarChartProxy extends CartesianChartProxy {
                 position: isBar ? 'bottom' : 'left',
             },
         ];
-        // special handling to add a default label formatter to show '%' for normalized charts if none is provided
+        // Add a default label formatter to show '%' for normalized charts if none is provided
         if (this.isNormalised()) {
             const numberAxis = axes[1];
             numberAxis.label = { ...numberAxis.label, formatter: (params: any) => Math.round(params.value) + '%' };
