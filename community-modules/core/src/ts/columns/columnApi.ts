@@ -91,13 +91,7 @@ export class ColumnApi {
 
     /** Moves a column to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
     public moveColumn(key: string | Column, toIndex: number): void {
-        if (typeof key === 'number') {
-            // moveColumn used to take indexes, so this is advising user who hasn't moved to new method name
-            console.warn('AG Grid: you are using moveColumn(fromIndex, toIndex) - moveColumn takes a column key and a destination index, not two indexes, to move with indexes use moveColumnByIndex(from,to) instead');
-            this.columnModel.moveColumnByIndex(key as number, toIndex, 'api');
-        } else {
-            this.columnModel.moveColumn(key, toIndex, 'api');
-        }
+        this.columnModel.moveColumn(key, toIndex, 'api');
     }
     /** Same as `moveColumn` but works on index locations. */
     public moveColumnByIndex(fromIndex: number, toIndex: number): void { this.columnModel.moveColumnByIndex(fromIndex, toIndex, 'api'); }
