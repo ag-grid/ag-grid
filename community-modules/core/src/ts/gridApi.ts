@@ -1490,26 +1490,30 @@ export class GridApi<TData = any> {
 
     /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
     public copyToClipboard(params?: IClipboardCopyParams) {
-        if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
-        this.clipboardService.copyToClipboard(params);
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copyToClipboard')) {
+            this.clipboardService.copyToClipboard(params);
+        }
     }
 
     /** Copies the selected rows to the clipboard. */
     public copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void {
-        if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
-        this.clipboardService.copySelectedRowsToClipboard(params);
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRowsToClipboard')) {
+            this.clipboardService.copySelectedRowsToClipboard(params);
+        }
     }
 
     /** Copies the selected ranges to the clipboard. */
     public copySelectedRangeToClipboard(params?: IClipboardCopyParams): void {
-        if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
-        this.clipboardService.copySelectedRangeToClipboard(params);
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeToClipboard')) {
+            this.clipboardService.copySelectedRangeToClipboard(params);
+        }
     }
 
     /** Copies the selected range down, similar to `Ctrl + D` in Excel. */
     public copySelectedRangeDown(): void {
-        if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
-        this.clipboardService.copyRangeDown();
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeDown')) {
+            this.clipboardService.copyRangeDown();
+        }
     }
 
     /** Shows the column menu after and positions it relative to the provided button element. Use in conjunction with your own header template. */
