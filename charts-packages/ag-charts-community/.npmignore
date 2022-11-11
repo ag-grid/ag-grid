@@ -1,6 +1,7 @@
 node_modules
 src
 tools
+coverage
 .npmignore
 gulpfile.js
 jest.config.js

@@ -19,7 +19,7 @@ export class Matrix {
     // `1` means first column
     // `2` means second row
 
-    readonly elements: number[];
+    private readonly elements: number[];
 
     constructor(elements: number[] = [1, 0, 0, 1, 0, 0]) {
         this.elements = elements;
@@ -50,20 +50,7 @@ export class Matrix {
         return this;
     }
 
-    setIdentityElements() {
-        const e = this.elements;
-
-        e[0] = 1;
-        e[1] = 0;
-        e[2] = 0;
-        e[3] = 1;
-        e[4] = 0;
-        e[5] = 0;
-
-        return this;
-    }
-
-    get identity(): boolean {
+    private get identity(): boolean {
         const e = this.elements;
         return e[0] === 1 && e[1] === 0 && e[2] === 0 && e[3] === 1 && e[4] === 0 && e[5] === 0;
     }
@@ -218,10 +205,6 @@ export class Matrix {
         return this;
     }
 
-    clone(): Matrix {
-        return new Matrix(this.elements.slice());
-    }
-
     transformPoint(x: number, y: number): { x: number; y: number } {
         const e = this.elements;
         return {
@@ -230,7 +213,7 @@ export class Matrix {
         };
     }
 
-    transformBBox(bbox: BBox, radius: number = 0, target?: BBox): BBox {
+    transformBBox(bbox: BBox, target?: BBox): BBox {
         const elements = this.elements;
         const xx = elements[0];
         const xy = elements[1];
@@ -241,19 +224,9 @@ export class Matrix {
         let h_h = bbox.height * 0.5;
         const cx = bbox.x + h_w;
         const cy = bbox.y + h_h;
-        let w, h;
 
-        if (radius) {
-            h_w -= radius;
-            h_h -= radius;
-            const sx = Math.sqrt(xx * xx + yx * yx);
-            const sy = Math.sqrt(xy * xy + yy * yy);
-            w = Math.abs(h_w * xx) + Math.abs(h_h * yx) + Math.abs(sx * radius);
-            h = Math.abs(h_w * xy) + Math.abs(h_h * yy) + Math.abs(sy * radius);
-        } else {
-            w = Math.abs(h_w * xx) + Math.abs(h_h * yx);
-            h = Math.abs(h_w * xy) + Math.abs(h_h * yy);
-        }
+        const w = Math.abs(h_w * xx) + Math.abs(h_h * yx);
+        const h = Math.abs(h_w * xy) + Math.abs(h_h * yy);
 
         if (!target) {
             target = new BBox(0, 0, 0, 0);
@@ -296,19 +269,9 @@ export class Matrix {
         ctx.transform(e[0], e[1], e[2], e[3], e[4], e[5]);
     }
 
-    private static matrix = new Matrix();
-    static flyweight(elements?: number[] | Matrix): Matrix {
-        if (elements) {
-            if (elements instanceof Matrix) {
-                Matrix.matrix.setElements(elements.elements);
-            } else {
-                Matrix.matrix.setElements(elements);
-            }
-        } else {
-            Matrix.matrix.setIdentityElements();
-        }
-
-        return Matrix.matrix;
+    private static instance = new Matrix();
+    static flyweight(sourceMatrix: Matrix): Matrix {
+        return Matrix.instance.setElements(sourceMatrix.elements);
     }
 
     static updateTransformMatrix(
