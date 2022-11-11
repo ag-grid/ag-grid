@@ -21,7 +21,7 @@ export interface ICellEditor {
      * should cover the cell, or "under" if it should be positioned below leaving the
      * cell value visible. If this method is not present, the default is "over".
      */
-    getPopupPosition?(): string | undefined;
+    getPopupPosition?(): 'over' | 'under' | undefined;
 
     /** Gets called once after initialised. If you return true, the editor will not be
      * used and the grid will continue editing. Use this to make a decision on editing

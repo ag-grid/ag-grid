@@ -27,12 +27,11 @@ const PopupEditorComp = (props: {
         type: 'popupCellEditor',
         eventSource: eParentCell,
         ePopup: ePopupGui,
+        position: editDetails!.popupPosition,
         keepWithinBounds: true
     };
 
-    const positionCallback = editDetails!.popupPosition === 'under' ?
-        popupService.positionPopupUnderComponent.bind(popupService, positionParams)
-        : popupService.positionPopupOverComponent.bind(popupService, positionParams);
+    const positionCallback = popupService.positionPopupByComponent.bind(popupService, positionParams);
 
     const translate = gridOptionsWrapper.getLocaleTextFunc();
 

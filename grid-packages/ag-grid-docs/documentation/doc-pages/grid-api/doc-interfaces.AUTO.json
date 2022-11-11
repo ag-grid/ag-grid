@@ -211,7 +211,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "popupPositionFromSelector": {
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'over' | 'under'", "optional": true }
     },
     "newAgStackInstance": {
       "type": {
@@ -970,7 +970,7 @@
     },
     "cellEditorPopupPosition": {
       "description": "/** Set the position for the popup cell editor. Possible values are\n     *  - `over` Popup will be positioned over the cell\n     *  - `under` Popup will be positioned below the cell leaving the cell value visible.\n     *\n     * Default: `over`. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'over' | 'under'", "optional": true }
     },
     "onCellValueChanged": {
       "description": "/** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`. */",
@@ -2332,7 +2332,7 @@
     },
     "popupPosition": {
       "description": "/** Equivalent of setting `colDef.cellEditorPopupPosition` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'over' | 'under'", "optional": true }
     }
   },
   "ColumnPinnedType": {},
@@ -16289,7 +16289,7 @@
       "description": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n     * should cover the cell, or \"under\" if it should be positioned below leaving the\n     * cell value visible. If this method is not present, the default is \"over\".\n     */",
       "type": {
         "arguments": {},
-        "returnType": "string | undefined",
+        "returnType": "'over' | 'under' | undefined",
         "optional": true
       }
     },
@@ -16415,7 +16415,7 @@
       "description": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n     * should cover the cell, or \"under\" if it should be positioned below leaving the\n     * cell value visible. If this method is not present, the default is \"over\".\n     */",
       "type": {
         "arguments": {},
-        "returnType": "string | undefined",
+        "returnType": "'over' | 'under' | undefined",
         "optional": true
       }
     },
@@ -21863,7 +21863,7 @@
         "arguments": {
           "compDetails?": "UserCompDetails",
           "popup?": "boolean",
-          "position?": "string"
+          "position?": "'over' | 'under'"
         },
         "returnType": "void",
         "optional": false
@@ -23592,6 +23592,25 @@
       }
     }
   },
+  "PopupPositionParams": {
+    "ePopup": { "type": { "returnType": "HTMLElement", "optional": false } },
+    "column": { "type": { "returnType": "Column | null", "optional": true } },
+    "rowNode": { "type": { "returnType": "RowNode | null", "optional": true } },
+    "x": { "type": { "returnType": "number", "optional": true } },
+    "y": { "type": { "returnType": "number", "optional": true } },
+    "nudgeX": { "type": { "returnType": "number", "optional": true } },
+    "nudgeY": { "type": { "returnType": "number", "optional": true } },
+    "position": {
+      "type": { "returnType": "'over' | 'under'", "optional": true }
+    },
+    "alignSide": {
+      "type": { "returnType": "'left' | 'right'", "optional": true }
+    },
+    "keepWithinBounds": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "skipObserver": { "type": { "returnType": "boolean", "optional": true } }
+  },
   "PopupEventParams": {
     "originalMouseEvent": {
       "type": { "returnType": "MouseEvent | Touch | null", "optional": true }
@@ -24017,7 +24036,7 @@
       "description": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n     * should cover the cell, or \"under\" if it should be positioned below leaving the\n     * cell value visible. If this method is not present, the default is \"over\".\n     */",
       "type": {
         "arguments": {},
-        "returnType": "string | undefined",
+        "returnType": "'over' | 'under' | undefined",
         "optional": true
       }
     },
@@ -24082,7 +24101,7 @@
       "description": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n     * should cover the cell, or \"under\" if it should be positioned below leaving the\n     * cell value visible. If this method is not present, the default is \"over\".\n     */",
       "type": {
         "arguments": {},
-        "returnType": "string | undefined",
+        "returnType": "'over' | 'under' | undefined",
         "optional": true
       }
     },
@@ -32624,7 +32643,7 @@
       "description": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n     * should cover the cell, or \"under\" if it should be positioned below leaving the\n     * cell value visible. If this method is not present, the default is \"over\".\n     */",
       "type": {
         "arguments": {},
-        "returnType": "string | undefined",
+        "returnType": "'over' | 'under' | undefined",
         "optional": true
       }
     },

@@ -220,7 +220,7 @@
   },
   "cellEditorPopupPosition": {
     "description": "/** Set the position for the popup cell editor. Possible values are\n     *  - `over` Popup will be positioned over the cell\n     *  - `under` Popup will be positioned below the cell leaving the cell value visible.\n     *\n     * Default: `over`. */",
-    "type": { "returnType": "string" }
+    "type": { "returnType": "'over' | 'under'" }
   },
   "onCellValueChanged": {
     "description": "/** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`. */",

@@ -146,7 +146,7 @@
       "params": "any",
       "type": "ComponentType",
       "popupFromSelector?": "boolean",
-      "popupPositionFromSelector?": "string",
+      "popupPositionFromSelector?": "'over' | 'under'",
       "newAgStackInstance": "() => AgPromise<any>"
     }
   },
@@ -546,7 +546,7 @@
       "cellEditorSelector?": "CellEditorSelectorFunc<TData>",
       "singleClickEdit?": "boolean",
       "cellEditorPopup?": "boolean",
-      "cellEditorPopupPosition?": "string",
+      "cellEditorPopupPosition?": "'over' | 'under'",
       "onCellValueChanged?": "(event: NewValueParams<TData>) => void",
       "onCellClicked?": "(event: CellClickedEvent<TData>) => void",
       "onCellDoubleClicked?": "(event: CellDoubleClickedEvent<TData>) => void",
@@ -1491,7 +1491,7 @@
       "frameworkComponent?": "any",
       "params?": "any",
       "popup?": "boolean",
-      "popupPosition?": "string"
+      "popupPosition?": "'over' | 'under'"
     },
     "docs": {
       "component?": "/** Equivalent of setting `colDef.cellEditor` */",
@@ -9475,7 +9475,7 @@
     "type": {
       "getValue()": "any",
       "isPopup?()": "boolean",
-      "getPopupPosition?()": "string | undefined",
+      "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
       "isCancelAfterEnd?()": "boolean",
       "focusIn?()": "void",
@@ -9539,7 +9539,7 @@
     "type": {
       "getValue()": "any",
       "isPopup?()": "boolean",
-      "getPopupPosition?()": "string | undefined",
+      "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
       "isCancelAfterEnd?()": "boolean",
       "focusIn?()": "void",
@@ -12519,7 +12519,7 @@
       "getCellRenderer()": "ICellRenderer | null",
       "getParentOfValue()": "HTMLElement | null",
       "setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any, forceNewCellRendererInstance: boolean)": "void",
-      "setEditDetails(compDetails?: UserCompDetails, popup?: boolean, position?: string)": "void"
+      "setEditDetails(compDetails?: UserCompDetails, popup?: boolean, position?: 'over' | 'under')": "void"
     }
   },
   "ILargeTextEditorParams": {
@@ -13584,6 +13584,22 @@
       "onFocusOut?": "(e: FocusEvent) => void"
     }
   },
+  "PopupPositionParams": {
+    "meta": {},
+    "type": {
+      "ePopup": "HTMLElement",
+      "column?": "Column | null",
+      "rowNode?": "RowNode | null",
+      "x?": "number",
+      "y?": "number",
+      "nudgeX?": "number",
+      "nudgeY?": "number",
+      "position?": "'over' | 'under'",
+      "alignSide?": "'left' | 'right'",
+      "keepWithinBounds?": "boolean",
+      "skipObserver?": "boolean"
+    }
+  },
   "PopupEventParams": {
     "meta": {},
     "type": {
@@ -13833,7 +13849,7 @@
       "agInit(params: ICellEditorParams)": "void",
       "getValue()": "any",
       "isPopup?()": "boolean",
-      "getPopupPosition?()": "string | undefined",
+      "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
       "isCancelAfterEnd?()": "boolean",
       "focusIn?()": "void",
@@ -13869,7 +13885,7 @@
       "agInit(params: ICellEditorParams)": "void",
       "getValue()": "any",
       "isPopup?()": "boolean",
-      "getPopupPosition?()": "string | undefined",
+      "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
       "isCancelAfterEnd?()": "boolean",
       "focusIn?()": "void",
@@ -16309,7 +16325,7 @@
     "type": {
       "getValue()": "any",
       "isPopup?()": "boolean",
-      "getPopupPosition?()": "string | undefined",
+      "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
       "isCancelAfterEnd?()": "boolean",
       "focusIn?()": "void",

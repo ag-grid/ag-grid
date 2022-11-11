@@ -21,9 +21,6 @@ const checkCellEditorDeprecations = (popup: boolean, cellEditor: ICellEditor, ce
     }
 }
 
-
-
-
 const CellComp = (props: {
     cellCtrl: CellCtrl,
     printLayout: boolean, 

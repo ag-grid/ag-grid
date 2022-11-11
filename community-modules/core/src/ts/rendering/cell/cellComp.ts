@@ -154,7 +154,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private setEditDetails(compDetails: UserCompDetails | undefined, popup?: boolean, position?: string): void {
+    private setEditDetails(compDetails: UserCompDetails | undefined, popup?: boolean, position?: 'over' | 'under'): void {
         if (compDetails) {
             this.createCellEditorInstance(compDetails, popup, position);
         } else {
@@ -248,7 +248,7 @@ export class CellComp extends Component implements TooltipParentComp {
         setAriaDescribedBy(this.getGui(), describedByIds.join(' '));
     }
 
-    private createCellEditorInstance(compDetails: UserCompDetails, popup?: boolean, position?: string): void {
+    private createCellEditorInstance(compDetails: UserCompDetails, popup?: boolean, position?: 'over' | 'under'): void {
         const versionCopy = this.editorVersion;
 
         const cellEditorPromise = compDetails.newAgStackInstance();
@@ -390,7 +390,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private afterCellEditorCreated(requestVersion: number, cellEditor: ICellEditorComp, params: ICellEditorParams, popup?: boolean, position?: string): void {
+    private afterCellEditorCreated(requestVersion: number, cellEditor: ICellEditorComp, params: ICellEditorParams, popup?: boolean, position?: 'over' | 'under'): void {
 
         // if editingCell=false, means user cancelled the editor before component was ready.
         // if versionMismatch, then user cancelled the edit, then started the edit again, and this
@@ -452,7 +452,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private addPopupCellEditor(params: ICellEditorParams, position?: string): void {
+    private addPopupCellEditor(params: ICellEditorParams, position?: 'over' | 'under'): void {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
             console.warn('AG Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
                 '- either turn off fullRowEdit, or stop using popup editors.');
@@ -472,20 +472,25 @@ export class CellComp extends Component implements TooltipParentComp {
         const useModelPopup = this.beans.gridOptionsWrapper.isStopEditingWhenCellsLoseFocus();
 
         // see if position provided by colDef, if not then check old way of method on cellComp
-        const positionToUse = position != null ? position : cellEditor.getPopupPosition ? cellEditor.getPopupPosition() : 'over';
+        const positionToUse: 'over' | 'under' | undefined = position != null 
+            ? position 
+            : cellEditor.getPopupPosition 
+                ? cellEditor.getPopupPosition() 
+                : 'over';
+        const isRtl = this.beans.gridOptionsWrapper.isEnableRtl();
 
         const positionParams = {
+            ePopup: ePopupGui,
             column: this.column,
             rowNode: this.rowNode,
             type: 'popupCellEditor',
             eventSource: this.getGui(),
-            ePopup: ePopupGui,
+            position: positionToUse,
+            alignSide: isRtl ? 'right' : 'left',
             keepWithinBounds: true
         };
 
-        const positionCallback = positionToUse === 'under' ?
-            popupService.positionPopupUnderComponent.bind(popupService, positionParams)
-            : popupService.positionPopupOverComponent.bind(popupService, positionParams);
+        const positionCallback = popupService.positionPopupByComponent.bind(popupService, positionParams)
 
         const translate = this.beans.gridOptionsWrapper.getLocaleTextFunc();
 

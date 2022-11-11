@@ -67,7 +67,7 @@ export interface ICellComp {
     getParentOfValue(): HTMLElement | null;
 
     setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any, forceNewCellRendererInstance: boolean): void;
-    setEditDetails(compDetails?: UserCompDetails, popup?: boolean, position?: string): void;
+    setEditDetails(compDetails?: UserCompDetails, popup?: boolean, position?: 'over' | 'under'): void;
 }
 
 let instanceIdSequence = 0;
@@ -371,7 +371,7 @@ export class CellCtrl extends BeanStub {
 
         // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
         const popup = compDetails?.popupFromSelector != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup ;
-        const position = compDetails?.popupPositionFromSelector != null ? compDetails.popupPositionFromSelector : colDef.cellEditorPopupPosition;
+        const position: 'over' | 'under' | undefined = compDetails?.popupPositionFromSelector != null ? compDetails.popupPositionFromSelector : colDef.cellEditorPopupPosition;
 
         this.setEditing(true, popup);
         this.cellComp.setEditDetails(compDetails!, popup, position);

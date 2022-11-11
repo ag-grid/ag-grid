@@ -1,5 +1,5 @@
 import { CellCtrl, PopupEditorWrapper } from '@ag-grid-community/core';
-import React, { useEffect, useState, memo, useContext } from 'react';
+import React, { useState, memo, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { EditDetails } from './cellComp';
 import { BeansContext } from '../beansContext';
@@ -39,12 +39,11 @@ const PopupEditorComp = (props: {
             type: 'popupCellEditor',
             eventSource: eParentCell,
             ePopup: ePopupGui,
+            position: editDetails!.popupPosition,
             keepWithinBounds: true
         };
-    
-        const positionCallback = editDetails!.popupPosition === 'under' ?
-            popupService.positionPopupUnderComponent.bind(popupService, positionParams)
-            : popupService.positionPopupOverComponent.bind(popupService, positionParams);
+
+        const positionCallback = popupService.positionPopupByComponent.bind(popupService, positionParams);
 
         const translate = gridOptionsWrapper.getLocaleTextFunc();
     

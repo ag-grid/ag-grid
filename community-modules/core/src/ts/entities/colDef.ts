@@ -210,7 +210,7 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
      *  - `under` Popup will be positioned below the cell leaving the cell value visible.
      *
      * Default: `over`. */
-    cellEditorPopupPosition?: string;
+    cellEditorPopupPosition?: 'over' | 'under';
 
     // *** Columns: Events *** //
 
@@ -694,5 +694,5 @@ export interface CellEditorSelectorResult {
     /** Equivalent of setting `colDef.cellEditorPopup` */
     popup?: boolean;
     /** Equivalent of setting `colDef.cellEditorPopupPosition` */
-    popupPosition?: string;
+    popupPosition?: 'over' | 'under';
 }

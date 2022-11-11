@@ -320,12 +320,13 @@ export class DropZoneColumnComp extends Component {
             }
         });
 
-        this.popupService.positionPopupUnderComponent({
+        this.popupService.positionPopupByComponent({
             type: 'aggFuncSelect',
             eventSource: eGui,
             ePopup: ePopup,
             keepWithinBounds: true,
-            column: this.column
+            column: this.column,
+            position: 'under'
         });
 
         virtualList.refresh();
