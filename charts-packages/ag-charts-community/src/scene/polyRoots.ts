@@ -1,16 +1,3 @@
-// @ts-ignore Suppress tsc error: Property 'sign' does not exist on type 'Math'
-const sign: (x: number) => number = Math.sign
-    ? Math.sign
-    : (x) => {
-          x = +x;
-
-          if (x === 0 || isNaN(x)) {
-              return x;
-          }
-
-          return x > 0 ? 1 : -1;
-      };
-
 /**
  * Finds the roots of a parametric linear equation in `t`,
  * where `t` lies in the interval of `[0,1]`.
@@ -83,8 +70,8 @@ export function cubicRoots(a: number, b: number, c: number, d: number): number[]
     if (D >= 0) {
         // Complex or duplicate roots.
         const rD = Math.sqrt(D);
-        const S = sign(R + rD) * Math.pow(Math.abs(R + rD), third);
-        const T = sign(R - rD) * Math.pow(Math.abs(R - rD), third);
+        const S = Math.sign(R + rD) * Math.pow(Math.abs(R + rD), third);
+        const T = Math.sign(R - rD) * Math.pow(Math.abs(R - rD), third);
         const Im = Math.abs((Math.sqrt(3) * (S - T)) / 2); // Complex part of the root pair.
 
         const t = -third * A + (S + T); // A real root.
