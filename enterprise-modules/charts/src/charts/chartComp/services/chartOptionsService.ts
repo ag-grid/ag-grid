@@ -167,14 +167,17 @@ export class ChartOptionsService extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
+    private static VALID_SERIES_TYPES: ChartSeriesType[] = [
+        'area',
+        'bar',
+        'column',
+        'histogram',
+        'line',
+        'pie',
+        'scatter',
+    ];
     private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {
-        return seriesType === 'area' && series.type === seriesType ? true :
-               seriesType === 'bar' && series.type === seriesType ? true :
-               seriesType === 'column' && series.type === seriesType ? true :
-               seriesType === 'histogram' && series.type === seriesType ? true :
-               seriesType === 'line' && series.type === seriesType ? true :
-               seriesType === 'pie' && series.type === seriesType ? true :
-               seriesType === 'scatter' && series.type === seriesType;
+        return ChartOptionsService.VALID_SERIES_TYPES.includes(seriesType) && series.type === seriesType;
     }
 
     protected destroy(): void {
