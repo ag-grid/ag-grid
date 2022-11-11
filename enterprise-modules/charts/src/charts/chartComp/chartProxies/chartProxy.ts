@@ -1,5 +1,5 @@
 import { _, AgChartThemeOverrides, ChartType, SeriesChartType } from "@ag-grid-community/core";
-import { AgChart, AgChartTheme, AgChartThemePalette, Chart, ChartTheme, getIntegratedChartTheme, themes } from "ag-charts-community";
+import { AgChart, AgChartTheme, AgChartThemePalette, AgChartInstance, _Theme } from "ag-charts-community";
 import { deepMerge } from "../utils/object";
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
@@ -46,9 +46,9 @@ export abstract class ChartProxy {
     protected readonly chartType: ChartType;
     protected readonly standaloneChartType: ChartSeriesType;
 
-    protected chart: Chart;
+    protected chart: AgChartInstance;
     protected chartOptions: AgChartThemeOverrides;
-    protected chartTheme: ChartTheme;
+    protected chartTheme: _Theme.ChartTheme;
     protected crossFiltering: boolean;
     protected crossFilterCallback: (event: any, reset?: boolean) => void;
     private readonly chartPalette: AgChartThemePalette | undefined;
@@ -63,7 +63,7 @@ export abstract class ChartProxy {
             this.chartOptions = this.chartProxyParams.chartOptionsToRestore;
             this.chartPalette = this.chartProxyParams.chartPaletteToRestore;
             const themeOverrides = { overrides:  this.chartOptions, palette: this.chartPalette } as any;
-            this.chartTheme = getIntegratedChartTheme({baseTheme: this.getSelectedTheme(), ...themeOverrides});
+            this.chartTheme = _Theme.getIntegratedChartTheme({baseTheme: this.getSelectedTheme(), ...themeOverrides});
             return;
         }
 
@@ -73,7 +73,7 @@ export abstract class ChartProxy {
     }
 
     public abstract crossFilteringReset(): void;
-    protected abstract createChart(options?: AgChartThemeOverrides): Chart;
+    protected abstract createChart(options?: AgChartThemeOverrides): AgChartInstance;
 
     public abstract update(params: UpdateChartParams): void;
 
@@ -91,11 +91,11 @@ export abstract class ChartProxy {
         }
     }
 
-    public getChart(): Chart {
+    public getChart(): AgChartInstance {
         return this.chart;
     }
 
-    private createChartTheme(): ChartTheme {
+    private createChartTheme(): _Theme.ChartTheme {
         const themeName = this.getSelectedTheme();
         const stockTheme = this.isStockTheme(themeName);
         const gridOptionsThemeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
@@ -107,13 +107,13 @@ export abstract class ChartProxy {
             };
             const mergedThemeOverrides = deepMerge(this.getIntegratedThemeOverrides(), themeOverrides);
             const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), mergedThemeOverrides);
-            return getIntegratedChartTheme(stockTheme ? {baseTheme: themeName, ...mergedThemeOverrides} : getCustomTheme());
+            return _Theme.getIntegratedChartTheme(stockTheme ? {baseTheme: themeName, ...mergedThemeOverrides} : getCustomTheme());
         }
-        return getIntegratedChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
+        return _Theme.getIntegratedChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
     }
 
     public isStockTheme(themeName: string): boolean {
-        return _.includes(Object.keys(themes), themeName);
+        return _.includes(Object.keys(_Theme.themes), themeName);
     }
 
     private getSelectedTheme(): string {

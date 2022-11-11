@@ -10,25 +10,12 @@ import {
     GridApi,
     WithoutGridCommon
 } from "@ag-grid-community/core";
+import { AgChartInstance } from "ag-charts-community";
 import { ChartController } from "../chartController";
-import {
-    AreaSeries,
-    BarSeries,
-    CategoryAxis,
-    Chart,
-    ChartAxis,
-    GroupedCategoryAxis,
-    HistogramSeries,
-    LineSeries,
-    NumberAxis,
-    PieSeries,
-    ScatterSeries,
-    TimeAxis
-} from "ag-charts-community";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 
-type SupportedSeries = AreaSeries | BarSeries | HistogramSeries | LineSeries | PieSeries | ScatterSeries;
-
+type ChartAxis = NonNullable<AgChartInstance['axes']>[number];
+type SupportedSeries = AgChartInstance['series'][number];
 export class ChartOptionsService extends BeanStub {
 
     @Autowired('gridApi') private readonly gridApi: GridApi;
@@ -65,13 +52,13 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public getAxisProperty<T = string>(expression: string): T {
-        return _.get(this.getChart().axes[0], expression, undefined) as T;
+        return _.get(this.getChart().axes?.[0], expression, undefined) as T;
     }
 
     public setAxisProperty<T = string>(expression: string, value: T) {
         // update axis options
         const chart = this.getChart();
-        chart.axes.forEach((axis: any) => {
+        chart.axes?.forEach((axis: any) => {
             this.updateAxisOptions<T>(axis, expression, value);
         });
 
@@ -138,13 +125,13 @@ export class ChartOptionsService extends BeanStub {
     private updateAxisOptions<T = string>(chartAxis: ChartAxis, expression: string, value: T) {
         const optionsType = getSeriesType(this.getChartType());
         const axisOptions = this.getChartOptions()[optionsType].axes;
-        if (chartAxis instanceof NumberAxis) {
+        if (chartAxis.type === 'number') {
             _.set(axisOptions.number, expression, value);
-        } else if (chartAxis instanceof CategoryAxis) {
+        } else if (chartAxis.type === 'category') {
             _.set(axisOptions.category, expression, value);
-        } else if (chartAxis instanceof TimeAxis) {
+        } else if (chartAxis.type === 'time') {
             _.set(axisOptions.time, expression, value);
-        } else if (chartAxis instanceof GroupedCategoryAxis) {
+        } else if (chartAxis.type === 'groupedCategory') {
             _.set(axisOptions.groupedCategory, expression, value);
         }
     }
@@ -153,7 +140,7 @@ export class ChartOptionsService extends BeanStub {
         return this.chartController.getChartType();
     }
 
-    private getChart(): Chart {
+    private getChart(): AgChartInstance {
         return this.chartController.getChartProxy().getChart();
     }
 
@@ -180,14 +167,17 @@ export class ChartOptionsService extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
+    private static VALID_SERIES_TYPES: ChartSeriesType[] = [
+        'area',
+        'bar',
+        'column',
+        'histogram',
+        'line',
+        'pie',
+        'scatter',
+    ];
     private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {
-        return seriesType === 'area' && series instanceof AreaSeries ? true :
-               seriesType === 'bar' && series instanceof BarSeries ? true :
-               seriesType === 'column' && series instanceof BarSeries ? true :
-               seriesType === 'histogram' && series instanceof HistogramSeries ? true :
-               seriesType === 'line' && series instanceof LineSeries ? true :
-               seriesType === 'pie' && series instanceof PieSeries ? true :
-               seriesType === 'scatter' && series instanceof ScatterSeries;
+        return ChartOptionsService.VALID_SERIES_TYPES.includes(seriesType) && series.type === seriesType;
     }
 
     protected destroy(): void {

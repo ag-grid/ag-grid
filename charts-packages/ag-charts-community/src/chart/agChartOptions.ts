@@ -1670,6 +1670,10 @@ export interface AgHierarchyChartOptions extends AgBaseChartOptions {
 
 export type AgChartOptions = AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions;
 
+export interface AgChartInstance {
+    destroy(): void;
+}
+
 /**
  * Internal Use Only: Used to ensure this file is treated as a module until we can use moduleDetection flag in Ts v4.7
  */

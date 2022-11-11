@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgChartOptions } from '../../agChartOptions';
-import { AgChartV2 } from '../../agChartV2';
+import { AgChart } from '../../agChartV2';
 import { Chart } from '../../chart';
 import * as examples from '../../test/examples';
 import {
@@ -105,7 +105,7 @@ describe('AreaSeries', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChartV2.create<any>(options);
+                chart = AgChart.create<any>(options) as Chart;
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
@@ -123,7 +123,7 @@ describe('AreaSeries', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChartV2.create<any>(options) as Chart;
+                chart = AgChart.create<any>(options) as Chart;
                 await compare();
 
                 if (example.extraScreenshotActions) {

@@ -1,9 +1,8 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgPolarChartOptions } from '../../agChartOptions';
-import { AgChartV2 } from '../../agChartV2';
+import { AgChart } from '../../agChartV2';
 import { Chart, ChartUpdateType } from '../../chart';
-import { PolarChart } from '../../polarChart';
 import * as examples from './test/examples';
 import {
     waitForChartStability,
@@ -103,7 +102,7 @@ describe('PolarSeries', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChartV2.create<PolarChart>(options);
+                chart = AgChart.create(options) as Chart;
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
@@ -121,7 +120,7 @@ describe('PolarSeries', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChartV2.create<PolarChart>(options) as Chart;
+                chart = AgChart.create(options) as Chart;
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -151,7 +150,7 @@ describe('PolarSeries', () => {
             options.height = CANVAS_HEIGHT;
             options.legend = { enabled: true };
 
-            chart = AgChartV2.create<any>(options) as Chart;
+            chart = AgChart.create<any>(options) as Chart;
             const reference = await snapshot();
 
             options.data?.forEach((_, idx) => {

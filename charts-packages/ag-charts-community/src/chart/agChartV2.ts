@@ -11,6 +11,7 @@ import {
     AgHistogramSeriesOptions,
     AgPieSeriesOptions,
     AgTreemapSeriesOptions,
+    AgChartInstance,
 } from './agChartOptions';
 import { CartesianChart } from './cartesianChart';
 import { PolarChart } from './polarChart';
@@ -102,44 +103,20 @@ function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian
 
 // Backwards-compatibility layer.
 export abstract class AgChart {
-    /** @deprecated use AgChart.create() or AgChart.update() instead. */
-    static createComponent(options: any, type: string): any {
-        // console.warn('AG Charts - createComponent should no longer be used, use AgChart.update() instead.')
-
-        if (type.indexOf('.series') >= 0) {
-            const optionsWithType = {
-                ...options,
-                type: options.type || type.split('.')[0],
-            };
-            return createSeries([optionsWithType])[0];
-        }
-
-        return null;
-    }
-
-    public static create<T extends AgChartOptions>(
-        options: T,
-        _container?: HTMLElement,
-        _data?: any[]
-    ): AgChartType<T> {
+    public static create<T extends AgChartOptions>(options: T): AgChartInstance {
         return AgChartV2.create(options as any);
     }
 
-    public static update<T extends AgChartOptions>(
-        chart: AgChartType<T>,
-        options: T,
-        _container?: HTMLElement,
-        _data?: any[]
-    ) {
-        return AgChartV2.update(chart, options as any);
+    public static update<T extends AgChartOptions>(chart: AgChartInstance, options: T) {
+        return AgChartV2.update(chart as AgChartType<T>, options as any);
     }
 
-    public static download<T extends AgChartOptions>(chart: AgChartType<T>, options?: DownloadOptions) {
-        return AgChartV2.download(chart, options);
+    public static download(chart: AgChartInstance, options?: DownloadOptions) {
+        return AgChartV2.download(chart as AgChartType<any>, options);
     }
 }
 
-export abstract class AgChartV2 {
+abstract class AgChartV2 {
     static DEBUG = () => windowValue('agChartsDebug') ?? false;
 
     static create<T extends ChartType>(userOptions: ChartOptionType<T> & { overrideDevicePixelRatio?: number }): T {

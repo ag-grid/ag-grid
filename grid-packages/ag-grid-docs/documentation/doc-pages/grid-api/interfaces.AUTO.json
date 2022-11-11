@@ -9455,6 +9455,7 @@
     "meta": { "isTypeAlias": true },
     "type": "AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions"
   },
+  "AgChartInstance": { "meta": {}, "type": { "destroy()": "void" } },
   "IAggFuncService": {
     "meta": {},
     "type": {

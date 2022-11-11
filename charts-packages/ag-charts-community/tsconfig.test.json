@@ -2,7 +2,7 @@
     "extends": "../../module-build/tsconfig.test.json",
     "compilerOptions": {
         "outDir": "dist-test",
-        "rootDir": "src/ts",
+        "rootDir": "src",
         "noUnusedParameters": true,
         "noUnusedLocals": true
         // "strict": true

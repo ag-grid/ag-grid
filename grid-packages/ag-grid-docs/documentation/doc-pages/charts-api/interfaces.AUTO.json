@@ -2824,6 +2824,7 @@
     "meta": { "isTypeAlias": true },
     "type": "AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions"
   },
+  "AgChartInstance": { "meta": {}, "type": { "destroy()": "void" } },
   "ChartType": {
     "meta": { "isTypeAlias": true },
     "type": "CartesianChart | PolarChart | HierarchyChart"

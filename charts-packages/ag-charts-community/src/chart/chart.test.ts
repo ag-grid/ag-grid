@@ -10,7 +10,7 @@ import {
     AgScatterSeriesOptions,
     AgTreemapSeriesOptions,
 } from './agChartOptions';
-import { AgChartV2 } from './agChartV2';
+import { AgChart } from './agChartV2';
 import { Chart } from './chart';
 import {
     waitForChartStability,
@@ -120,7 +120,7 @@ describe('Chart', () => {
                 ],
                 ...(testParams.chartOptions || {}),
             };
-            const chart = AgChartV2.create(options);
+            const chart = AgChart.create(options) as Chart;
             await waitForChartStability(chart);
             return chart;
         };

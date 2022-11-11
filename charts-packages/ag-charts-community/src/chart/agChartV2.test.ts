@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgCartesianChartOptions, AgChartOptions } from './agChartOptions';
-import { AgChartV2 } from './agChartV2';
+import { AgChart } from './agChartV2';
 import { Chart } from './chart';
 import * as examples from './test/examples';
 import {
@@ -29,7 +29,7 @@ function consoleWarnAssertions(options: AgCartesianChartOptions) {
 
         jest.clearAllMocks();
         options.axes[0].label.format = '%X %M'; // format string for Date objects, not valid for number values
-        AgChartV2.update(chart, options);
+        AgChart.update(chart, options);
         await waitForChartStability(chart);
 
         expect(console.warn).toBeCalledTimes(1);
@@ -39,7 +39,7 @@ function consoleWarnAssertions(options: AgCartesianChartOptions) {
 
         jest.clearAllMocks();
         options.axes[0].label.format = '%'; // multiply by 100, and then decimal notation with a percent sign - valid format string for number values
-        AgChartV2.update(chart, options);
+        AgChart.update(chart, options);
         await waitForChartStability(chart);
 
         expect(console.warn).not.toBeCalled();
@@ -109,7 +109,7 @@ describe('AgChartV2', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChartV2.create<any>(options);
+                chart = AgChart.create<any>(options) as Chart;
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
@@ -120,7 +120,7 @@ describe('AgChartV2', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChartV2.create<any>(options) as Chart;
+                chart = AgChart.create<any>(options) as Chart;
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -146,7 +146,7 @@ describe('AgChartV2', () => {
             const snapshots: any[] = [];
 
             // Create initial chart instance.
-            chart = AgChartV2.create<any>(exampleCycle[0]) as Chart;
+            chart = AgChart.create<any>(exampleCycle[0]) as Chart;
             snapshots[0] = await snapshot();
 
             // Execute 2 rounds of comparisons to try and catch any issues. On first round, just
@@ -155,7 +155,7 @@ describe('AgChartV2', () => {
             let previousSnapshot: any = undefined;
             for (let round = 0; round <= 1; round++) {
                 for (let index = 0; index < exampleCycle.length; index++) {
-                    AgChartV2.update<any>(chart, exampleCycle[index]);
+                    AgChart.update<any>(chart, exampleCycle[index]);
 
                     const exampleSnapshot = await snapshot();
                     if (snapshots[index] != null) {
@@ -188,7 +188,7 @@ describe('AgChartV2', () => {
             }));
 
             // Create initial chart instance.
-            chart = AgChartV2.create<any>(exampleCycle[0]) as Chart;
+            chart = AgChart.create<any>(exampleCycle[0]) as Chart;
             await waitForChartStability(chart);
 
             // Execute 2 rounds of comparisons to try and catch any issues. On first round, just
@@ -196,7 +196,7 @@ describe('AgChartV2', () => {
             // generated.
             for (let round = 0; round <= 1; round++) {
                 for (let index = 0; index < exampleCycle.length; index++) {
-                    AgChartV2.update<any>(chart, exampleCycle[index]);
+                    AgChart.update<any>(chart, exampleCycle[index]);
 
                     await waitForChartStability(chart);
                 }

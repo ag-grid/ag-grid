@@ -1,6 +1,6 @@
 import { Autowired, Component, PostConstruct } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { Group, Scene } from "ag-charts-community";
+import { _Scene } from "ag-charts-community";
 
 export abstract class MiniChart extends Component {
 
@@ -9,13 +9,13 @@ export abstract class MiniChart extends Component {
     protected tooltipName: string;
     protected readonly size = 58;
     protected readonly padding = 5;
-    protected readonly root = new Group();
-    protected readonly scene: Scene;
+    protected readonly root = new _Scene.Group();
+    protected readonly scene: _Scene.Scene;
 
     constructor(container: HTMLElement, tooltipName: string) {
         super();
 
-        const scene = new Scene({ document: window.document, width: this.size, height: this.size });
+        const scene = new _Scene.Scene({ document: window.document, width: this.size, height: this.size });
         scene.canvas.element.classList.add('ag-chart-mini-thumbnail-canvas');
         scene.root = this.root;
         scene.container = container;

@@ -1,5 +1,5 @@
 import { Component, Vue } from 'vue-property-decorator';
-import { AgChart, Chart, AgChartOptions } from 'ag-charts-community';
+import { AgChart, AgChartInstance, AgChartOptions } from 'ag-charts-community';
 
 @Component({
     props: {
@@ -10,7 +10,7 @@ export class AgChartsVue extends Vue {
     private isCreated = false;
     private isDestroyed = false;
 
-    private chart!: Chart;
+    private chart!: AgChartInstance;
 
     private options!: AgChartOptions;
 
