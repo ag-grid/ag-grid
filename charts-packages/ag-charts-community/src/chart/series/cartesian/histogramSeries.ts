@@ -470,14 +470,11 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             strokeOpacity,
             shadow,
             highlightStyle: {
-                fill: deprecatedFill,
-                stroke: deprecatedStroke,
-                strokeWidth: deprecatedStrokeWidth,
                 item: {
-                    fill: highlightedFill = deprecatedFill,
+                    fill: highlightedFill,
                     fillOpacity: highlightFillOpacity = seriesFillOpacity,
-                    stroke: highlightedStroke = deprecatedStroke,
-                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
+                    stroke: highlightedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth,
                 },
             },
         } = this;

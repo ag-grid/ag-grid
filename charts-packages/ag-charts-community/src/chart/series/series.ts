@@ -6,7 +6,7 @@ import { Chart } from '../chart';
 import { createId } from '../../util/id';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
-import { Deprecated, createDeprecationWarning } from '../../util/deprecation';
+import { createDeprecationWarning } from '../../util/deprecation';
 import { BOOLEAN, OPT_BOOLEAN, OPT_NUMBER, OPT_COLOR_STRING, STRING, Validate } from '../../util/validation';
 import { PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
@@ -96,21 +96,6 @@ class SeriesHighlightStyle {
 }
 
 export class HighlightStyle {
-    /**
-     * @deprecated Use item.fill instead.
-     */
-    @Deprecated('Use item.fill instead.')
-    fill?: string = undefined;
-    /**
-     * @deprecated Use item.stroke instead.
-     */
-    @Deprecated('Use item.stroke instead.')
-    stroke?: string = undefined;
-    /**
-     * @deprecated Use item.strokeWidth instead.
-     */
-    @Deprecated('Use item.strokeWidth instead.')
-    strokeWidth?: number = undefined;
     readonly item = new SeriesItemHighlightStyle();
     readonly series = new SeriesHighlightStyle();
 }

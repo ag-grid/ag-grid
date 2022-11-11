@@ -720,24 +720,6 @@ export interface AgSeriesHighlightSeriesStyle {
 }
 
 export interface AgSeriesHighlightStyle {
-    /**
-     * The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.
-     *
-     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use item.fill instead.
-     */
-    fill?: CssColor;
-    /**
-     * The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.
-     *
-     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use item.stroke instead.
-     */
-    stroke?: CssColor;
-    /**
-     * The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.
-     *
-     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use item.strokeWidth instead.
-     */
-    strokeWidth?: PixelSize;
     /** Highlight style used for an individual marker when tapped or hovered over. */
     item?: AgSeriesHighlightMarkerStyle;
     /** Highlight style used for whole series when one of its markers is tapped or hovered over. */

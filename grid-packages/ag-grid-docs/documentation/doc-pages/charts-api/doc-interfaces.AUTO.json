@@ -1997,18 +1997,6 @@
     }
   },
   "AgSeriesHighlightStyle": {
-    "fill": {
-      "description": "/** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use item.fill instead.\n     */",
-      "type": { "returnType": "CssColor", "optional": true }
-    },
-    "stroke": {
-      "description": "/** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use item.stroke instead.\n     */",
-      "type": { "returnType": "CssColor", "optional": true }
-    },
-    "strokeWidth": {
-      "description": "/** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use item.strokeWidth instead.\n     */",
-      "type": { "returnType": "PixelSize", "optional": true }
-    },
     "item": {
       "description": "/** Highlight style used for an individual marker when tapped or hovered over. */",
       "type": { "returnType": "AgSeriesHighlightMarkerStyle", "optional": true }

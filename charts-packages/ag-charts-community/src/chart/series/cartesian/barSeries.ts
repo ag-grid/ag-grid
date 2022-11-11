@@ -727,14 +727,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             xKey,
             flipXY,
             highlightStyle: {
-                fill: deprecatedFill,
-                stroke: deprecatedStroke,
-                strokeWidth: deprecatedStrokeWidth,
                 item: {
-                    fill: highlightedFill = deprecatedFill,
+                    fill: highlightedFill,
                     fillOpacity: highlightFillOpacity = seriesFillOpacity,
-                    stroke: highlightedStroke = deprecatedStroke,
-                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
+                    stroke: highlightedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth,
                 },
             },
             id: seriesId,

@@ -316,14 +316,11 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 strokeOpacity: markerStrokeOpacity = seriesStrokeOpacity,
             },
             highlightStyle: {
-                fill: deprecatedFill,
-                stroke: deprecatedStroke,
-                strokeWidth: deprecatedStrokeWidth,
                 item: {
-                    fill: highlightedFill = deprecatedFill,
+                    fill: highlightedFill,
                     fillOpacity: highlightFillOpacity = markerFillOpacity,
-                    stroke: highlightedStroke = deprecatedStroke,
-                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
+                    stroke: highlightedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth,
                 },
             },
             id: seriesId,

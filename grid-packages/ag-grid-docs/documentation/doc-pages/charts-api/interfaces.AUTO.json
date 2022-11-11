@@ -1310,16 +1310,10 @@
   "AgSeriesHighlightStyle": {
     "meta": {},
     "type": {
-      "fill?": "CssColor",
-      "stroke?": "CssColor",
-      "strokeWidth?": "PixelSize",
       "item?": "AgSeriesHighlightMarkerStyle",
       "series?": "AgSeriesHighlightSeriesStyle"
     },
     "docs": {
-      "fill?": "/** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use item.fill instead.\n     */",
-      "stroke?": "/** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use item.stroke instead.\n     */",
-      "strokeWidth?": "/** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use item.strokeWidth instead.\n     */",
       "item?": "/** Highlight style used for an individual marker when tapped or hovered over. */",
       "series?": "/** Highlight style used for whole series when one of its markers is tapped or hovered over. */"
     }
