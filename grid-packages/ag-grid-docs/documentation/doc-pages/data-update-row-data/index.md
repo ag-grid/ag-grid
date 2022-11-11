@@ -22,7 +22,7 @@ Providing [Row IDs](/row-ids/) allows the grid to work optimally in a few areas 
 | Function | Row IDs Provided | Row IDs Missing | 
 | ----------------------------- | ------------------------- | ------------------------ | 
 | Row Selection | Row Selection maintained | Row Selection lost |
-| Row Grouping | Row Groups re-created, all open groups closed | Groups kept / updated, open groups stay open |
+| Row Grouping | Groups kept / updated, open groups stay open | Row Groups re-created, all open groups closed |
 | Row Refresh | Only changed rows are updated in the DOM | All rows destroyed from the DOM and recreated, flicker may occur |
 | Row Animation | Moved rows animate to new position | No row animation |
 | Flashing Cells | Changed values can be flashed to show change | No flashing available, all cells are created from scratch |
